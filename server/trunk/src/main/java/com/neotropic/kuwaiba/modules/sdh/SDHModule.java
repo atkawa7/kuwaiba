@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -385,7 +385,7 @@ public class SDHModule implements GenericCommercialModule {
         
     }
     /**
-     * Deletes a container link
+     * Deletes a container link. 
      * @param containerLinkClass Container link class
      * @param containerLinkId Container class id
      * @param forceDelete Delete recursively all sdh elements contained by the container link
@@ -405,7 +405,7 @@ public class SDHModule implements GenericCommercialModule {
 
         if (!tributaryLinks.isEmpty())
             //This will delete both the tributary link and the container
-            deleteSDHTributaryLink(tributaryLinks.get(0).getClassName(), tributaryLinks.get(0).getId(), forceDelete);
+            deleteSDHTributaryLink(tributaryLinks.get(0).getClassName(), tributaryLinks.get(0).getId());
         else {
             List<BusinessObjectLight> containerLinks = bem.getSpecialAttribute(containerLinkClass, containerLinkId, RELATIONSHIP_SDHCONTAINS);
             if (!containerLinks.isEmpty()) {
@@ -416,14 +416,13 @@ public class SDHModule implements GenericCommercialModule {
         }
     }
     /**
-     * Deletes a tributary link and its corresponding container link
+     * Deletes a tributary link and its corresponding container link. This method will delete all the object relationships
      * @param tributaryLinkClass The class of the tributary link
      * @param tributaryLinkId the id of the tributary link
-     * @param forceDelete Ignore the existing relationships
      * @throws ServerSideException If some high level thing goes wrong
      * @throws InventoryException  If some low level thing goes wrong
      */
-    public void deleteSDHTributaryLink(String tributaryLinkClass, long tributaryLinkId, boolean forceDelete) throws ServerSideException, InventoryException {
+    public void deleteSDHTributaryLink(String tributaryLinkClass, long tributaryLinkId) throws ServerSideException, InventoryException {
         if (bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
@@ -436,9 +435,9 @@ public class SDHModule implements GenericCommercialModule {
 
         //A tributary link has always a container assigned that should be removed as well
         for (BusinessObjectLight container : containers)
-            bem.deleteObject(container.getClassName(), container.getId(), forceDelete);
+            bem.deleteObject(container.getClassName(), container.getId(), true);
 
-        bem.deleteObject(tributaryLinkClass, tributaryLinkId, forceDelete);
+        bem.deleteObject(tributaryLinkClass, tributaryLinkId, true);
     }
     
     /**

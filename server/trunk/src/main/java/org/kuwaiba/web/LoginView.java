@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -123,7 +123,7 @@ public class LoginView extends CustomComponent implements View {
         Image imgLogo = new Image(null, 
                             new ThemeResource("img/neotropic_logo.png"));
         
-        Label lblCopyright = new Label("Copyright 2010-2018 <a style=\"color:white\" target=\"blank\" href=\"http://www.neotropic.co\">Neotropic SAS</a>", ContentMode.HTML);
+        Label lblCopyright = new Label("Copyright 2010-2019 <a style=\"color:white\" target=\"blank\" href=\"http://www.neotropic.co\">Neotropic SAS</a>", ContentMode.HTML);
         
         VerticalLayout lytFooter = new VerticalLayout(new HorizontalLayout(), imgLogo, lblCopyright); 
         lytFooter.setWidth(100, Unit.PERCENTAGE);

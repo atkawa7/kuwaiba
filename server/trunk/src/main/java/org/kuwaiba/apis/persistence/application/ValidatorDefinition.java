@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,13 +27,17 @@ package org.kuwaiba.apis.persistence.application;
  * 
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class ValidatorDefinition implements Comparable<ValidatorDefinition>{
+public class ValidatorDefinition implements Comparable<ValidatorDefinition> {
     /**
-     * The name of the validator
+     * The id of the validator definition.
+     */
+    private long id;
+    /**
+     * The name of the validator definition.
      */
     private String name;
     /**
-     * validator description
+     * Validator definition description.
      */
     private String description;
     /**
@@ -49,12 +53,21 @@ public class ValidatorDefinition implements Comparable<ValidatorDefinition>{
      */
     private boolean enabled;
 
-    public ValidatorDefinition(String name, String description, String classToBeApplied, String script, boolean enabled) {
+    public ValidatorDefinition(long id, String name, String description, String classToBeApplied, String script, boolean enabled) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.classToBeApplied = classToBeApplied;
         this.script = script;
         this.enabled = enabled;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getName() {

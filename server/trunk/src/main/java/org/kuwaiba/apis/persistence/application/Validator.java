@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,10 +16,7 @@
 
 package org.kuwaiba.apis.persistence.application;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import org.kuwaiba.apis.persistence.util.StringPair;
 
 /**
  * Validators are flags indicating things about objects. Of course, every instance may have
@@ -59,7 +56,7 @@ public class Validator {
         return name;
     }
 
-    public void setLabel(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 

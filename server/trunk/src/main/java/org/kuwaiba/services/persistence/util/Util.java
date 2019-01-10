@@ -161,9 +161,9 @@ public class Util {
      * @throws org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException If the object already has relationships
      */
     public static void deleteObject(Node instance, boolean unsafeDeletion) throws OperationNotPermittedException {
-        boolean isDeletionSafe = canDeleteObject(instance, unsafeDeletion);
-        if(!isDeletionSafe)
-            throw new OperationNotPermittedException(String.format("The object with id %s can not be deleted since it has relationships", instance.getId()));
+        if(!canDeleteObject(instance, unsafeDeletion))
+            throw new OperationNotPermittedException(String.format("The object %s with id %s can not be deleted since it has relationships", 
+                    instance.hasProperty(Constants.PROPERTY_NAME) ? instance.getProperty(Constants.PROPERTY_NAME) : "<NOT SET>", instance.getId()));
         
         // Searches the related views to delete the nodes in the data base
         List<Node> relatedViews = new ArrayList();

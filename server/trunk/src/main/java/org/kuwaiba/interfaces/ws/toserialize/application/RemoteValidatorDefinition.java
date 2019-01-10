@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,6 +34,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteValidatorDefinition implements Serializable {
     /**
+     * Id of the validator definition
+     */
+    private long id;
+    /**
      * The name of the validator
      */
     private String name;
@@ -56,7 +60,8 @@ public class RemoteValidatorDefinition implements Serializable {
 
     public RemoteValidatorDefinition() { }
     
-    public RemoteValidatorDefinition(String name, String description, String classToBeApplied, String script, boolean enabled) {
+    public RemoteValidatorDefinition(long id, String name, String description, String classToBeApplied, String script, boolean enabled) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.classToBeApplied = classToBeApplied;
@@ -64,6 +69,14 @@ public class RemoteValidatorDefinition implements Serializable {
         this.enabled = enabled;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+    
     public String getName() {
         return name;
     }
@@ -103,5 +116,4 @@ public class RemoteValidatorDefinition implements Serializable {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-
 }

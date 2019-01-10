@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -2535,14 +2535,16 @@ public class KuwaibaService {
     }
     /**
      * Retrieves all the validator definitions in the system
+     * @param className The class to retrieve the validator definitions from.
      * @param sessionId The session token
      * @return The list of validator definitions
      * @throws ServerSideException In case of an unexpected server side error
      */
-    @WebMethod(operationName = "getValidatorDefinitions")
-    public List<RemoteValidatorDefinition> getValidatorDefinitions(@WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+    @WebMethod(operationName = "getValidatorDefinitionsForClass")
+    public List<RemoteValidatorDefinition> getValidatorDefinitionsForClass(@WebParam(name = "className")String className, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
-            return wsBean.getValidatorDefinitions(getIPAddress(), sessionId);
+            return wsBean.getValidatorDefinitionsForClass(className, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -2574,6 +2576,7 @@ public class KuwaibaService {
             }
         }
     }
+    
     /**
      * Deletes a validator definition
      * @param validatorDefinitionId the id of the validator to be deleted
@@ -6935,10 +6938,9 @@ public class KuwaibaService {
     }
     
     /**
-     * Deletes a tributary link and its corresponding container link
+     * Deletes a tributary link and its corresponding container link. This method will delete all the object relationships.
      * @param tributaryLinkClass The class of the tributary link
      * @param tributaryLinkId the id of the tributary link
-     * @param forceDelete Ignore the existing relationships
      * @param sessionId Session token
      * @throws ServerSideException If the user is not allowed to invoke the method
      *                             If the tributary link could not be found
@@ -6946,10 +6948,9 @@ public class KuwaibaService {
     @WebMethod(operationName = "deleteSDHTributaryLink")
     public void deleteSDHTributaryLink(@WebParam(name = "tributaryLinkClass") String tributaryLinkClass, 
             @WebParam(name = "tributaryLinkId") long tributaryLinkId, 
-            @WebParam(name = "forceDelete") boolean forceDelete, 
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
-            wsBean.deleteSDHTributaryLink(tributaryLinkClass, tributaryLinkId, forceDelete, getIPAddress(), sessionId);
+            wsBean.deleteSDHTributaryLink(tributaryLinkClass, tributaryLinkId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;

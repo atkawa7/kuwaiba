@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -547,7 +547,7 @@ public interface WebserviceBean {
     
     public void deleteSDHContainerLink(String containerLinkClass, long containerLinkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
     
-    public void deleteSDHTributaryLink(String tributaryLinkClass, long tributaryLinkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
+    public void deleteSDHTributaryLink(String tributaryLinkClass, long tributaryLinkId, String ipAddress, String sessionId) throws ServerSideException;
     
     public List<RemoteObjectLightList> findSDHRoutesUsingTransportLinks(String communicationsEquipmentClassA, 
                                             long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
@@ -725,7 +725,7 @@ public interface WebserviceBean {
     public void updateValidatorDefinition(long validatorDefinitionId, String name, String description, String classToBeApplied, String script, Boolean enabled, String ipAddress, String sessionId) 
             throws ServerSideException;
 
-    public List<RemoteValidatorDefinition> getValidatorDefinitions(String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteValidatorDefinition> getValidatorDefinitionsForClass(String className, String ipAddress, String sessionId) throws ServerSideException;
 
     public List<RemoteValidator> runValidationsForObject(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
     

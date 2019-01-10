@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ public class RemoteValidator implements Serializable {
         return name;
     }
 
-    public void setLabel(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 

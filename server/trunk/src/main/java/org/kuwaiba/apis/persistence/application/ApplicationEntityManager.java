@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -1770,9 +1770,10 @@ public interface ApplicationEntityManager {
             throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
     /**
      * Retrieves all the validator definitions in the system
+     * @param className The class to retrieve the validator definitions from.
      * @return The list of validator definitions
      */
-    public List<ValidatorDefinition> getValidatorDefinitions();
+    public List<ValidatorDefinition> getValidatorDefinitionsForClass(String className);
     /**
      * Runs the existing validations for the class associated to the given object. Validators set to enabled = false will be ignored
      * @param objectClass The class of the object

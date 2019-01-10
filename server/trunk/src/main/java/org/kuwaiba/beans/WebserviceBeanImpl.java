@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License
@@ -127,7 +127,6 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResult
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationConfiguration;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationGroup;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationProvider;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteTask;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteTaskResult;
 import org.kuwaiba.interfaces.ws.toserialize.application.ResultRecord;
@@ -4242,18 +4241,18 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public List<RemoteValidatorDefinition> getValidatorDefinitions(String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteValidatorDefinition> getValidatorDefinitionsForClass(String className, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
         try {
             List<RemoteValidatorDefinition> res = new ArrayList<>();
-            aem.validateWebServiceCall("getValidatorDefinitions", ipAddress, sessionId);
+            aem.validateWebServiceCall("getValidatorDefinitionsForClass", ipAddress, sessionId);
             
-            List<ValidatorDefinition> validatorDefinitions = aem.getValidatorDefinitions();
+            List<ValidatorDefinition> validatorDefinitions = aem.getValidatorDefinitionsForClass(className);
             
             for (ValidatorDefinition validatorDefinition : validatorDefinitions) {
-                res.add(new RemoteValidatorDefinition(validatorDefinition.getName(), validatorDefinition.getDescription(), 
+                res.add(new RemoteValidatorDefinition(validatorDefinition.getId(), validatorDefinition.getName(), validatorDefinition.getDescription(), 
                         validatorDefinition.getClassToBeApplied(), validatorDefinition.getScript(), validatorDefinition.isEnabled()));
             }
             
@@ -4834,13 +4833,13 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void deleteSDHTributaryLink(String tributaryLinkClass, long tributaryLinkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException {
+    public void deleteSDHTributaryLink(String tributaryLinkClass, long tributaryLinkId, String ipAddress, String sessionId) throws ServerSideException {
         try {
             aem.validateWebServiceCall("deleteSDHTributaryLink", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
             
             String tributaryLinkName = bem.getObject(tributaryLinkClass, tributaryLinkId).getName();
-            sdhModule.deleteSDHTributaryLink(tributaryLinkClass, tributaryLinkId, forceDelete);
+            sdhModule.deleteSDHTributaryLink(tributaryLinkClass, tributaryLinkId);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 

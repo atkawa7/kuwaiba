@@ -5238,16 +5238,19 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public List<ValidatorDefinition> getValidatorDefinitions() {
+    public List<ValidatorDefinition> getValidatorDefinitionsForClass(String className) {
         try (Transaction tx = graphDb.beginTx()) {
             List<ValidatorDefinition> res = new ArrayList<>();
-            graphDb.findNodes(validatorDefinitions).stream().forEach((aValidatorDefinitionNode) -> {
-                res.add(new ValidatorDefinition((String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_NAME), 
-                        (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
-                        (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_CLASS_NAME), 
-                        (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_SCRIPT), 
-                        (boolean)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_ENABLED)));
-            });
+            graphDb.findNodes(validatorDefinitions).stream().filter((aValidatorNode) -> {
+                    return aValidatorNode.getProperty(Constants.PROPERTY_CLASS_NAME).equals(className);
+                }).forEach((aValidatorDefinitionNode) -> {
+                    res.add(new ValidatorDefinition(aValidatorDefinitionNode.getId(),
+                            (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_NAME), 
+                            (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
+                            (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_CLASS_NAME), 
+                            (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_SCRIPT), 
+                            (boolean)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_ENABLED)));
+                });
             tx.success();
             return res;
         }
@@ -5260,19 +5263,22 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             List<Validator> res = new ArrayList<>();
             graphDb.findNodes(validatorDefinitions).forEachRemaining((aValidatorDefinitionNode) -> { // Is it worth to cache this?
                 String script = (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_SCRIPT);
-                Binding environmentParameters = new Binding();
-                environmentParameters.setVariable("className", objectClass);
-                environmentParameters.setVariable("id", objectId);
-                try {
-                    if (!script.isEmpty() && (boolean)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_ENABLED) && 
-                            mem.isSubClass((String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_CLASS_NAME), objectClass)) {
-                        GroovyShell shell = new GroovyShell(ApplicationEntityManager.class.getClassLoader(), environmentParameters);
-                        Object theResult = shell.evaluate(script);
+                
+                if (!script.trim().isEmpty()) { //Skip`uninitialized scripts
+                    Binding environmentParameters = new Binding();
+                    environmentParameters.setVariable("className", objectClass);
+                    environmentParameters.setVariable("id", objectId);
+                    try {
+                        if (!script.isEmpty() && (boolean)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_ENABLED) && 
+                                mem.isSubClass((String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_CLASS_NAME), objectClass)) {
+                            GroovyShell shell = new GroovyShell(ApplicationEntityManager.class.getClassLoader(), environmentParameters);
+                            Object theResult = shell.evaluate(script);
 
-                        if (theResult instanceof Validator) //The script must return a validator, otherwise, the result will be ignored
-                            res.add((Validator)theResult);
-                    }
-                } catch (MetadataObjectNotFoundException ex) { } // The validators referring to inexistent classes are ignored
+                            if (theResult instanceof Validator) //The script must return a validator, otherwise, the result will be ignored
+                                res.add((Validator)theResult);
+                        }
+                    } catch (MetadataObjectNotFoundException ex) { } // The validators referring to inexistent classes are ignored
+                }
             });
             tx.failure(); //Rollback any non-nested transaction just in case
             return res;
