@@ -1472,7 +1472,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             }
             
             Collections.sort(instances);
-            tx.success();
             return instances;
         }
     }
