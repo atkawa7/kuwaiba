@@ -1645,16 +1645,19 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         getClass(className); //Checks if the class exists
         List<ClassMetadataLight> res = new ArrayList<>();
         try(Transaction tx = graphDb.beginTx()) {
-            String cypherQuery = "MATCH classHierarchy = (sourceClass:classes)-[:EXTENDS*]->(rootClass) WHERE sourceClass.name = " +
-                    "{className} RETURN nodes(classHierarchy) AS classHierarchy"; //NOI18N
+            String cypherQuery = "MATCH paths = (sourceClass:classes)-[:EXTENDS*]->(rootClass) WHERE sourceClass.name = " +  //NOI18N
+                    "{className} WITH nodes(paths) AS classHierarchy " + //NOI18N
+                    "RETURN classHierarchy ORDER BY length(classHierarchy) DESC LIMIT 1"; //NOI18N
             
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put("className", className); //NOI18N
             Result result = graphDb.execute(cypherQuery, parameters);
 
-                ((ArrayList)result.columnAs("classHierarchy").next()).stream().forEach((aClassNode) -> {
-                    res.add(Util.createClassMetadataLightFromNode((Node)aClassNode));
-                });
+            result.columnAs("classHierarchy").stream().forEach((aPathSegment) -> {
+                 ((ArrayList)aPathSegment).forEach((aClassNode) -> {
+                     res.add(Util.createClassMetadataLightFromNode((Node)aClassNode));
+                 });
+            });
         }
         return res;
     }
