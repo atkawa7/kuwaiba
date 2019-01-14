@@ -733,6 +733,23 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
+    public List<RemoteClassMetadataLight> getUpstreamClassHierarchy(String className, boolean includeSelf, String ipAddress, String sessionId) throws ServerSideException {
+        if (mem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getUpstreamClassHierarchy", ipAddress, sessionId);
+            List<RemoteClassMetadataLight> res = new ArrayList<>();
+            for (ClassMetadataLight cil : mem.getUpstreamClassHierarchy(className, includeSelf))
+                res.add(new RemoteClassMetadataLight(cil));
+            
+            return res;
+
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
     public void addPossibleChildren(long parentClassId, long[] possibleChildren, String ipAddress, String sessionId) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));

@@ -18,8 +18,8 @@ package org.kuwaiba.interfaces.ws.toserialize.application;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.util.StringPair;
@@ -56,13 +56,13 @@ public class RemoteValidator implements Serializable {
     //No-arg constructor required
     public RemoteValidator() { }
 
-    public RemoteValidator(String name, HashMap<String, String> properties){
+    public RemoteValidator(String name, Properties properties) {
         this.name = name;
         
         this.properties = new ArrayList<>();
         if (properties != null) {
-            properties.keySet().stream().forEach((aProperty) -> {
-                this.properties.add(new StringPair(aProperty, properties.get(aProperty)));
+            properties.forEach((key, value) -> {
+                this.properties.add(new StringPair((String)key, (String)value));
             });
         }
     }

@@ -357,7 +357,7 @@ public interface MetadataEntityManager {
      */
     public List<ClassMetadataLight> getUpstreamContainmentHierarchy(String className, boolean recursive) throws MetadataObjectNotFoundException;
     /**
-     * Get the upstream special containment hierarchy for a given class, unlike getPossibleChildren (which will give you the 
+     * Gets the upstream special containment hierarchy for a given class, unlike getPossibleChildren (which will give you the 
      * downstream hierarchy).
      * @param className Class name
      * @param recursive Get only the direct possible parents, or go up into the <strong>containment</strong> hierarchy. Beware: don't mistake the class hierarchy for the containment one
@@ -365,6 +365,14 @@ public interface MetadataEntityManager {
      * @throws MetadataObjectNotFoundException if className does not correspond to any existing class
      */
     public List<ClassMetadataLight> getUpstreamSpecialContainmentHierarchy(String className, boolean recursive) throws MetadataObjectNotFoundException;
+    /**
+     * Gets the parent classes of a given class until RootObject
+     * @param className The class to get the superclasses from
+     * @param includeSelf If the result should also include the class in className
+     * @return The list of super classes until the root of the hierarchy
+     * @throws MetadataObjectNotFoundException If the class provided could not be found
+     */
+    public List<ClassMetadataLight> getUpstreamClassHierarchy(String className, boolean includeSelf) throws MetadataObjectNotFoundException;
     /**
      * Retrieves the list of the attributes marked as mandatory
      * @param className the class name

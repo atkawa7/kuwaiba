@@ -43,7 +43,6 @@ import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import net.schmizz.sshj.connection.channel.Channel;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -5252,6 +5251,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                             (boolean)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_ENABLED)));
                 });
             tx.success();
+            Collections.sort(res);
             return res;
         }
     }
@@ -5269,7 +5269,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     environmentParameters.setVariable("className", objectClass);
                     environmentParameters.setVariable("id", objectId);
                     try {
-                        if (!script.isEmpty() && (boolean)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_ENABLED) && 
+                        if ((boolean)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_ENABLED) && 
                                 mem.isSubClass((String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_CLASS_NAME), objectClass)) {
                             GroovyShell shell = new GroovyShell(ApplicationEntityManager.class.getClassLoader(), environmentParameters);
                             Object theResult = shell.evaluate(script);

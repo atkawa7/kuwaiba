@@ -16,7 +16,7 @@
 
 package org.kuwaiba.apis.persistence.application;
 
-import java.util.HashMap;
+import java.util.Properties;
 
 /**
  * Validators are flags indicating things about objects. Of course, every instance may have
@@ -44,9 +44,9 @@ public class Validator {
      * but also extra support values relevant mostly for rendering purposes (such as "display the port name red or with a busy icon since is already connected, 
      * or display it orange if since it's not connected, but it's reserved")
      */
-    private HashMap<String, String> properties;
+    private Properties properties;
 
-    public Validator(String name, HashMap<String, String> properties){
+    public Validator(String name, Properties properties){
         this.name = name;
         
         this.properties = properties;
@@ -60,11 +60,11 @@ public class Validator {
         this.name = name;
     }
 
-    public HashMap<String, String> getProperties() {
+    public Properties getProperties() {
         return properties;
     }
 
-    public void setProperties(HashMap<String, String> properties) {
+    public void setProperties(Properties properties) {
         this.properties = properties;
     }
 }

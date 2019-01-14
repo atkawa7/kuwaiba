@@ -61,13 +61,17 @@ public class RemoteObjectLight implements Serializable, Comparable<RemoteObjectL
         this.id = oid;
         this.name = name;
         this.className = className;
+        this.validators = new ArrayList<>();
     }
-
 
     public RemoteObjectLight(BusinessObjectLight obj){
         this.className = obj.getClassName();
         this.name = obj.getName();
         this.id = obj.getId();
+        this.validators = new ArrayList<>();
+        obj.getValidators().forEach((aValidator) -> {
+            this.validators.add(new RemoteValidator(aValidator.getName(), aValidator.getProperties()));
+        });
     }
 
     public String getClassName() {

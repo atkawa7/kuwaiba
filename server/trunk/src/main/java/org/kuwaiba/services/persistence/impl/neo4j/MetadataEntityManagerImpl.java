@@ -1595,10 +1595,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         try(Transaction tx = graphDb.beginTx()) {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
             
-            if (classNode == null){
+            if (classNode == null)
                throw new MetadataObjectNotFoundException(String.format(
                             "Can not find class %s", className));
-            }
+            
             String cypherQuery = "MATCH (possibleParentClassNode:classes)-[:POSSIBLE_CHILD" + (recursive ? "*" : "") + "]->(classNode:classes) "+
                                  "WHERE classNode.name = \"" + className + "\" "+
                                  "AND possibleParentClassNode.name <> \"" + Constants.NODE_DUMMYROOT + "\" "+
@@ -1621,10 +1621,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         try(Transaction tx = graphDb.beginTx()) {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
             
-            if (classNode == null){
+            if (classNode == null)
                throw new MetadataObjectNotFoundException(String.format(
                             "Can not find class %s", className));
-            }
+            
             String cypherQuery = "MATCH (possibleParentClassNode:classes)-[:POSSIBLE_SPECIAL_CHILD"+ (recursive ? "*" : "") + "]->(classNode:classes) "+
                                  "WHERE classNode.name = \""+ className + "\" " +
                                  "AND possibleParentClassNode.name <> \""+ Constants.NODE_DUMMYROOT +"\" " +
@@ -1636,6 +1636,25 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             Iterator<Node> directPossibleChildren = result.columnAs("possibleParentClassNode"); //NOI18N
             for (Node node : Iterators.asIterable(directPossibleChildren))
                 res.add(Util.createClassMetadataLightFromNode(node));
+        }
+        return res;
+    }
+
+    @Override
+    public List<ClassMetadataLight> getUpstreamClassHierarchy(String className, boolean includeSelf) throws MetadataObjectNotFoundException {
+        getClass(className); //Checks if the class exists
+        List<ClassMetadataLight> res = new ArrayList<>();
+        try(Transaction tx = graphDb.beginTx()) {
+            String cypherQuery = "MATCH classHierarchy = (sourceClass:classes)-[:EXTENDS*]->(rootClass) WHERE sourceClass.name = " +
+                    "{className} RETURN nodes(classHierarchy) AS classHierarchy"; //NOI18N
+            
+            HashMap<String, Object> parameters = new HashMap<>();
+            parameters.put("className", className); //NOI18N
+            Result result = graphDb.execute(cypherQuery, parameters);
+
+                ((ArrayList)result.columnAs("classHierarchy").next()).stream().forEach((aClassNode) -> {
+                    res.add(Util.createClassMetadataLightFromNode((Node)aClassNode));
+                });
         }
         return res;
     }
@@ -1853,62 +1872,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         }
         return everyObjectHasValue;
     }
-    
-    /**
-     * Checks if the value of the given attribute name is unique across other 
-     * objects of the classes and subclasses in the inventory
-     * @param className class name
-     * @param attributeType attribute type
-     * @param attributeName attribute name
-     * @return true if every object of this class or its subclasses has a unique attribute value
-     * @throws MetadataObjectNotFoundException
-     * @throws InvalidArgumentException 
-     */
-//    private boolean canAttributeBeUnique(Node classNode, String attributeType, String attributeName) 
-//            throws MetadataObjectNotFoundException, InvalidArgumentException{
-//        
-//        List<String> values =  new ArrayList<>();
-//        String uniqueAttributeValue = null;
-//        HashMap<String, List<String>> uniqueValues = new HashMap<>();
-//        String className = (String)classNode.getProperty(Constants.PROPERTY_NAME);
-//        
-//        //List<ClassMetadataLight> subClassesLight = getSubClassesLight(className, false, true);
-//        List<ClassMetadataLight> subClassesLight = getSubClassesLight(classNode, false); //Uses this one to avoid the transaction
-//        subClassesLight.add(Util.createClassMetadataLightFromNode(classNode)); //Add itself, since getSubClassesLight(Node, boolean) does not do it on its own
-//        
-//        for(ClassMetadataLight subClassLight : subClassesLight){
-//            Node subClassNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, subClassLight.getName());
-//            ClassMetadata subClassMetadata = Util.createClassMetadataFromNode(subClassNode);
-//            if(subClassMetadata.hasAttribute(attributeName)){
-//                if(subClassNode.hasRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.INCOMING) ||
-//                        subClassNode.hasRelationship(RelTypes.INSTANCE_OF, Direction.INCOMING)){
-//                    Iterable<Relationship> iterableRelationships = subClassNode.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
-//                    Iterator<Relationship> relationships = iterableRelationships.iterator();
-//                    if(attributeType.equals(Util.getTypeOfAttribute(subClassNode, attributeName))){
-//                        while(relationships.hasNext()){
-//                            Relationship relationship = relationships.next();
-//                            BusinessObject remoteObject = Util.createRemoteObjectFromNode(relationship.getStartNode());
-//                            if(remoteObject.getAttributes().get(attributeName) != null)
-//                                uniqueAttributeValue = remoteObject.getAttributes().get(attributeName);
-//                            if(values.contains(uniqueAttributeValue))
-//                                return false;
-//                            else{
-//                                values.add(uniqueAttributeValue);
-//                                uniqueValues.put(className, values); //Put the className because the attributeName doesn't change
-//                            }
-//                        }
-//                    }
-//                }else
-//                    uniqueValues.put(className, null);//when no object has been created
-//            }
-//        }//end for
-//        
-//        for(String _className : uniqueValues.keySet())
-//            cm.putUniqueAttributeValuesIndex(className, attributeName, uniqueValues.get(_className));
-//        
-//        return true;
-//    }
-    
+     
     private boolean canAttributeBeUnique(Node classNode, String attributeName) {
         String className = (String)classNode.getProperty(Constants.PROPERTY_NAME);
         

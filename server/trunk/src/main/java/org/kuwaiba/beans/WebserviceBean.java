@@ -145,6 +145,8 @@ public interface WebserviceBean {
     
     public List<RemoteClassMetadataLight> getUpstreamSpecialContainmentHierarchy(String className, boolean recursive, String ipAddress, String sessionId) throws ServerSideException;
     
+    public List<RemoteClassMetadataLight> getUpstreamClassHierarchy(String className, boolean includeSelf, String ipAddress, String sessionId) throws ServerSideException;
+    
     public void addPossibleChildren(long parentClassId, long[] possibleChildren, String ipAddress, String sessionId) throws ServerSideException;
     
     public void addPossibleSpecialChildren(long parentClassId, long[] possibleSpecialChildren, String ipAddress, String sessionId) throws ServerSideException;

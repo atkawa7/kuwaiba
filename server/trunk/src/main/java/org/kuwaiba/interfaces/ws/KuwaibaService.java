@@ -5396,6 +5396,31 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Gets the parent classes of a given class up to RootObject.
+     * @param className The class to get the superclasses from
+     * @param includeSelf If the result should also include the class in className
+     * @param sessionId The session token
+     * @return The list of super classes until the root of the hierarchy
+     * @throws org.kuwaiba.exceptions.ServerSideException If the class provided could not be found
+     */
+    @WebMethod(operationName = "getUpstreamClassHierarchy")
+    public List<RemoteClassMetadataLight> getUpstreamClassHierarchy(
+        @WebParam(name="className") String className, 
+        @WebParam(name="includeSelf") boolean includeSelf, 
+        @WebParam(name="sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getUpstreamClassHierarchy(className, includeSelf, getIPAddress(), sessionId);
+        } catch(Exception e) {
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getUpstreamClassHierarchy: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Utility methods. Click on the + sign on the left to edit the code.">/**
