@@ -39,7 +39,7 @@ import org.openide.util.lookup.Lookups;
  */
 public class ClassNode extends AbstractNode {
     
-    private static Image ICON = Utils.createRectangleIcon(Color.DARK_GRAY, 
+    private static Image ICON = Utils.createRectangleIcon(Color.GRAY, 
             Utils.DEFAULT_ICON_WIDTH, Utils.DEFAULT_ICON_HEIGHT);
 
     public ClassNode(LocalClassMetadataLight classMetadata) {

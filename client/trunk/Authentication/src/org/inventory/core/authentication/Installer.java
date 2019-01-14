@@ -73,7 +73,7 @@ public class Installer extends ModuleInstall {
                     //again in case of error (versions 0.3 beta and earlier). With the past approach, a new
                     //Dialog was created every time, creating a new window over the past ones
                     //With this approach, errors are painted in the same dialog, but we have to tell the
-                    //descriptor to not close if something went wrong
+                    //descriptor to not close if something goes wrong
                     if (connect())
                         dd.setClosingOptions(new Object[]{DialogDescriptor.OK_OPTION, DialogDescriptor.CANCEL_OPTION, DialogDescriptor.CLOSED_OPTION});
                     else
@@ -120,7 +120,7 @@ public class Installer extends ModuleInstall {
     public boolean connect(){
         try {
             CommunicationsStub.setServerURL(
-                    new URL(connSettings.isSecureConnection()? "https" : "http", connSettings.getServerAddress(), connSettings.getServerPort(),
+                    new URL(connSettings.isSecureConnection()? "https" : "http", connSettings.getServerAddress(), connSettings.getServerPort(), //NOI18N
                     connSettings.getWSDLPath()));
 
         } catch (MalformedURLException ex) {
@@ -140,8 +140,7 @@ public class Installer extends ModuleInstall {
 
                     @Override
                     public void windowOpened(WindowEvent e) {
-                            WindowManager.getDefault().getMainWindow().setTitle(String.format("%s - [%s - %s] - %s",
-                                WindowManager.getDefault().getMainWindow().getTitle(), 
+                            WindowManager.getDefault().getMainWindow().setTitle(String.format("Kuwaiba Open Network Inventory - [%s - %s] - %s",
                                 CommunicationsStub.getInstance().getSession().getUsername(), 
                                 CommunicationsStub.getServerURL().getHost(),
                                 connSettings.isSecureConnection() ? I18N.gm("secure_connection") : I18N.gm("insecure_connection")));

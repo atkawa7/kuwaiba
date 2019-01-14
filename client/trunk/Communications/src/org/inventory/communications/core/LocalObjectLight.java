@@ -67,8 +67,8 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
 
     public LocalObjectLight(String className, String name, long id, List<RemoteValidator> validators){
         this(id, name, className);      
+        this.validators = new ArrayList<>();
         if (validators != null) {
-            this.validators = new ArrayList<>();
             validators.forEach((remoteValidator) -> {
                 this.validators.add(new LocalValidator(remoteValidator.getName(), remoteValidator.getProperties()));
             });
@@ -102,6 +102,14 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
         }
         
         return null;
+    }
+    
+    /**
+     * Gets the validators that matched the class of the object
+     * @return The list of validators
+     */
+    public List<LocalValidator> getValidators() {
+        return validators;
     }
 
     public String getName() {

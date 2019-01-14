@@ -35,6 +35,7 @@ import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
+import org.inventory.communications.core.LocalValidator;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -71,7 +72,11 @@ import org.openide.util.datatransfer.PasteType;
 import org.openide.util.lookup.Lookups;
 
 /**
- * Represents a node within the navigation tree and perhaps other trees displaying inventory objects
+ * Represents a node within the navigation tree and perhaps other trees displaying inventory objects. Note about <code>Validators:</code> 
+ * All validators will be checked here. All of those with the properties "color" and/or "suffix" and/or prefix 
+ * if the property "suffix" is found, the associated string will be added to the end of the name. If "preffix"
+ * is found, it will be added to the beginning. Note that if many validators have a "color" property, the last one will be
+ * used. Also, the value provided must be an hexa value with the RGB color
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ObjectNode extends AbstractNode implements PropertyChangeListener {
@@ -80,13 +85,33 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     protected static OpenLocalExplorerAction explorerAction = new OpenLocalExplorerAction();
     protected CommunicationsStub com = CommunicationsStub.getInstance();
     protected Image icon;
+    /**
+     * The prefix to be added to the name of the object if there's any validator configured to do so. See the Javadoc of this class for details.
+     */
+    private String prefix = "";
+    private String suffix = "";
+    private String color;
 
     public ObjectNode(Children children, Lookup lookup) {
         super(children, lookup);
+        LocalObjectLight anObject = lookup.lookup(LocalObjectLight.class);
+        if (anObject != null && anObject.getValidators() != null) {
+            for (LocalValidator aValidator : anObject.getValidators()) {
+                if (aValidator.getProperties().getProperty("prefix") != null) //NOI18N
+                    prefix += aValidator.getProperties().getProperty("prefix") + " "; //NOI18N
+                
+                if (aValidator.getProperties().getProperty("suffix") != null) //NOI18N
+                    suffix += " " + aValidator.getProperties().getProperty("suffix"); //NOI18N
+                
+                if (aValidator.getProperties().getProperty("color") != null) //NOI18N
+                    color = aValidator.getProperties().getProperty("color"); //NOI18N
+            }
+            
+        }
     }
     
     public ObjectNode(LocalObjectLight lol) {
-        super(new ObjectChildren(), Lookups.singleton(lol));
+        this(new ObjectChildren(), Lookups.singleton(lol));
         if (lol.getClassName() != null) {
             lol.addPropertyChangeListener(WeakListeners.propertyChange(this, lol));
             icon = com.getMetaForClass(lol.getClassName(), false).getSmallIcon();
@@ -95,12 +120,17 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     }
 
     public ObjectNode(LocalObjectLight lol, boolean isLeaf) {
-        super(Children.LEAF, Lookups.singleton(lol));
+        this(Children.LEAF, Lookups.singleton(lol));
         lol.addPropertyChangeListener(WeakListeners.propertyChange(this, lol));
         icon = com.getMetaForClass(lol.getClassName(), false).getSmallIcon();
         explorerAction.putValue(OpenLocalExplorerAction.NAME, "Open an Explorer from Here");
     }
 
+    @Override
+    public String getHtmlDisplayName() {
+        return "<font color='" + (color == null ? "FFFFFF" : color) + "'>" + prefix + getObject() + suffix + "</font>"; // NOI18N
+    }
+    
     /**
      * Returns the wrapped object
      *
@@ -109,11 +139,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     public LocalObjectLight getObject() {
         return getLookup().lookup(LocalObjectLight.class);
     }
-
-    @Override
-    public String getDisplayName() {
-        return getObject().toString();
-    }
+    
 
     @Override
     protected Sheet createSheet() {
@@ -488,9 +514,11 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getSource().equals(getObject())) {
-            if (evt.getPropertyName().equals(Constants.PROPERTY_NAME)) 
-                fireNameChange(null, ""); //Weird, this should be fireDisplayNameChange, but it isn't
-            
+            if (evt.getPropertyName().equals(Constants.PROPERTY_NAME)) {
+                //It is necessary to fire both events so the node is refreshed respecting the HTML formatting usually set using the validators
+                fireNameChange(null, "");
+                fireDisplayNameChange(null, "");
+            }
         }
     }
 
