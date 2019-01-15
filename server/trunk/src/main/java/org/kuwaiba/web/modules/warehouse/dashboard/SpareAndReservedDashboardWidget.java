@@ -48,15 +48,15 @@ import org.kuwaiba.web.procmanager.MiniAppRackView;
  * A widget that displays spare and reserved inventory objects and allows see its rack view
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class SpareAndReservedInventoryObjectsDashboardWidget extends AbstractDashboardWidget {
+public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
     private final WebserviceBean webserviceBean;
     
     private final RemoteObjectLight selectedObject;
 ////    private String stateSpare;
 ////    private String stateReserved;
     
-    public SpareAndReservedInventoryObjectsDashboardWidget(WebserviceBean webserviceBean) {
-        super("Spare and Reserved Inventory Objects");
+    public SpareAndReservedDashboardWidget(WebserviceBean webserviceBean) {
+        super("Spare and Reserved");
         this.webserviceBean = webserviceBean;        
         selectedObject = null;
         
@@ -66,8 +66,8 @@ public class SpareAndReservedInventoryObjectsDashboardWidget extends AbstractDas
         this.createContent();
     }
     
-    public SpareAndReservedInventoryObjectsDashboardWidget(AbstractDashboard parentDashboard, RemoteObjectLight selectedObject, WebserviceBean webserviceBean) {
-        super(String.format("Spare and Reserved Objects of %s", selectedObject), parentDashboard);
+    public SpareAndReservedDashboardWidget(AbstractDashboard parentDashboard, RemoteObjectLight selectedObject, WebserviceBean webserviceBean) {
+        super(String.format("Spare and Reserved in %s", selectedObject), parentDashboard);
         this.webserviceBean = webserviceBean;
         this.selectedObject = selectedObject;
         
@@ -112,7 +112,7 @@ public class SpareAndReservedInventoryObjectsDashboardWidget extends AbstractDas
     @Override
     public void createCover() { 
         VerticalLayout lytViewsWidgetCover = new VerticalLayout();
-        Label lblText = new Label("Spare and Reserved Objects");
+        Label lblText = new Label("Spare and Reserved");
         lblText.setStyleName("text-bottomright"); //NOI18N
         lytViewsWidgetCover.addLayoutClickListener((event) -> {
             if (event.getButton() == MouseEventDetails.MouseButton.LEFT) {
@@ -186,7 +186,7 @@ public class SpareAndReservedInventoryObjectsDashboardWidget extends AbstractDas
 
                         UI.getCurrent().addWindow(window);
                     } catch(Exception ex) {
-                        Notification.show("The rack view cannot be opened", Notification.Type.ERROR_MESSAGE);
+                        Notification.show("The rack view can not be generated", Notification.Type.ERROR_MESSAGE);
                     }
                 }
             });

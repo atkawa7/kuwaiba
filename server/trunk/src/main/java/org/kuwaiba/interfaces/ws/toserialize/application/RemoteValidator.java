@@ -82,4 +82,17 @@ public class RemoteValidator implements Serializable {
     public void setProperties(List<StringPair> properties) {
         this.properties = properties;
     }
+    
+    /**
+     * Gets the value of a property in the current validator (if exists)
+     * @param propertyName The name of the property
+     * @return The value of the property or null if it doesn't exist
+     */
+    public String getProperty(String propertyName) {
+        StringPair matchingProperty = properties.stream().filter((aProperty) -> {
+            return aProperty.getKey().equals(propertyName);
+        }).findFirst().get();
+        
+        return matchingProperty == null ? null : matchingProperty.getValue();
+    }
 }

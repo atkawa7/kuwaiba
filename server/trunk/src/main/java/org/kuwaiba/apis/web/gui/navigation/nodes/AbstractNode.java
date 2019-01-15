@@ -45,6 +45,10 @@ public abstract class AbstractNode<T> {
         this.displayName = displayName;
     }
 
+    /**
+     * Retrieves the business object behind the node
+     * @return The business object, whose type is specified in the template (T)
+     */
     public T getObject() {
         return object;
     }

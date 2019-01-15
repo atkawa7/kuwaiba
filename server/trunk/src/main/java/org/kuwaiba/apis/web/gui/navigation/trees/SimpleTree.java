@@ -23,17 +23,25 @@ import com.vaadin.shared.ui.dnd.EffectAllowed;
 import com.vaadin.ui.IconGenerator;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.TreeGrid;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.components.grid.TreeGridDragSource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.kuwaiba.apis.web.gui.navigation.InventoryObjectTreeData;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidator;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * A tree that extends the features of the default one and makes use of the Nodes API
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class SimpleTree extends Tree<AbstractNode> {
+    /**
+     * A list with the existing styles used to render the nodes so they can be reused
+     */
+    private List<String> existingNodeStyles;
     
     /**
      *  Constructor for trees with only one root node
@@ -56,9 +64,35 @@ public class SimpleTree extends Tree<AbstractNode> {
             }
         });
         
+        this.existingNodeStyles = new ArrayList<>();
+        
         setDataProvider(new TreeDataProvider(treeData));
         setSizeFull();
         setItemIconGenerator(iconGenerator);
+        setStyleGenerator((aNode) -> {
+            if (aNode.getObject() instanceof RemoteObjectLight) { //The RemoteObjectLight instances appearance in the tree could be affected by the its validators
+                String definitiveColor = null;
+                
+                for (RemoteValidator aValidator : ((RemoteObjectLight)aNode.getObject()).getValidators()) {
+                    String validatorColor = aValidator.getProperty(Constants.PROPERTY_COLOR);
+                    if(validatorColor != null)
+                        definitiveColor = validatorColor; //If many different validator define different colors, we only care about the last one
+                }
+                
+                if (definitiveColor == null) //No validator define a color for the given object
+                    return null;
+                else {
+                    if (!existingNodeStyles.contains(definitiveColor)) {
+                        UI.getCurrent().getPage().getStyles().add(String.format(".color-%s .v-tree8-cell-content { color: #%s }", definitiveColor, definitiveColor));
+                        existingNodeStyles.add(definitiveColor);
+                    }
+                    
+                    return "color-" + definitiveColor;
+                }
+            }
+            
+            return null; 
+        });
     }
     
     /**

@@ -1447,17 +1447,17 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             boolean isAbstract = (Boolean) classMetadataNode.getProperty(Constants.PROPERTY_ABSTRACT);
             
-            String cypherQuery = null;
+            String cypherQuery;
             
-            if (isAbstract) {
+            if (isAbstract) 
                 cypherQuery = "match (class:classes)<-[:EXTENDS*]-(subclass:classes)<-[:INSTANCE_OF]-(instance:inventory_objects) "
                             + "where class.name=\"" + className + "\" "
                             + "return instance;";                
-            } else {
+            else 
                 cypherQuery = "match (class:classes)<-[:INSTANCE_OF]-(instance:inventory_objects) "
                             + "where class.name=\"" + className + "\" "
                             + "return instance;";
-            }
+            
             Result result = graphDb.execute(cypherQuery);
             ResourceIterator<Node> instanceColumn = result.columnAs("instance");
             List<Node> lstInstanceColumn = Iterators.asList(instanceColumn);
