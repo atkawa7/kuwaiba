@@ -1670,6 +1670,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                      res.add(Util.createClassMetadataLightFromNode((Node)aClassNode));
                  });
             });
+            tx.success();
         }
         return res;
     }
