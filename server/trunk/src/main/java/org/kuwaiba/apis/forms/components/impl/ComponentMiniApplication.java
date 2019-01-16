@@ -74,13 +74,16 @@ public class ComponentMiniApplication extends GraphicalComponent {
     public void onElementEvent(EventDescriptor event) {
         if (Constants.EventAttribute.ONCLICK.equals(event.getEventName())) {
             if (Constants.Function.OPEN.equals(event.getPropertyName())) {
-                if (ama.launchDetached() instanceof Window) {
-                    UI.getCurrent().addWindow((Window) ama.launchDetached());
+                Object detached = ama.launchDetached();
+                
+                if (detached instanceof Window) {
+                    UI.getCurrent().addWindow((Window) detached);
                 }
-                else if (UI.getCurrent() != null) {
+                else if (detached instanceof Component && 
+                         UI.getCurrent() != null) {
                     window = new Window();                                                            
                     window.setModal(true);
-                    window.setContent((Component) ama.launchDetached());
+                    window.setContent((Component) detached);
                     window.center();
                     window.setSizeFull();
 
@@ -102,15 +105,16 @@ public class ComponentMiniApplication extends GraphicalComponent {
                                         
                     ama.setWebserviceBean(webserviceBean);
                                         
-                    Object content = null;
-                                        
-                    if (Constants.Attribute.Mode.DETACHED.equals(miniApp.getMode()))
-                        content = ama.launchDetached();
-                    else if (Constants.Attribute.Mode.EMBEDDED.equals(miniApp.getMode()))
+                    Object content = null;                                        
+////                    if (Constants.Attribute.Mode.DETACHED.equals(miniApp.getMode()))
+////                        content = ama.launchDetached();
+////                    else if (Constants.Attribute.Mode.EMBEDDED.equals(miniApp.getMode()))
+                    if (Constants.Attribute.Mode.EMBEDDED.equals(miniApp.getMode()))
                         content = ama.launchEmbedded();
-                    if (content instanceof Window) {
-                        //UI.getCurrent().addWindow((Window) content);                        
-                    } else if (content instanceof Component) 
+////                    if (content instanceof Window) {
+////                        //UI.getCurrent().addWindow((Window) content);                        
+////                    } else if (content instanceof Component) 
+                    if (content instanceof Component) 
                         getComponent().setContent((Component) content);
                 }
             }

@@ -22,12 +22,14 @@ import com.vaadin.data.HasValue;
 import com.vaadin.data.HasValue.ValueChangeListener;
 import com.vaadin.event.FieldEvents;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.ItemCaptionGenerator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
- *
+ * Vaadin Implementation to an ElementComboBox to the API Form
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ComponentComboBox extends GraphicalComponent {
@@ -45,7 +47,25 @@ public class ComponentComboBox extends GraphicalComponent {
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementComboBox) {
             ElementComboBox comboBox = (ElementComboBox) element;
-                        
+            
+            getComponent().setItemCaptionGenerator(new ItemCaptionGenerator() {
+                
+                @Override
+                public String apply(Object item) {
+                    if (item == null) {
+                        return null;
+                    }
+                    else if (item instanceof RemoteObjectLight) {
+                        return ((RemoteObjectLight) item).getName();
+                    }
+                    else if (item instanceof String) {
+                        return (String) item;
+                    } else {
+                        return item.toString();
+                    }
+                }
+            });
+                                    
             if (comboBox.getItems() != null) {
                 Collections.sort(comboBox.getItems());
                 getComponent().setItems(comboBox.getItems());

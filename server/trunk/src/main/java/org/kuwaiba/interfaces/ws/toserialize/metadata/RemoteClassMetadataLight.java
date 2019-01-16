@@ -26,7 +26,7 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RemoteClassMetadataLight implements Serializable {
+public class RemoteClassMetadataLight implements Serializable, Comparable<RemoteClassMetadataLight> {
     protected long id;
     protected Boolean _abstract;
     protected Boolean viewable;
@@ -186,5 +186,10 @@ public class RemoteClassMetadataLight implements Serializable {
     @Override
     public String toString() {
         return displayName == null || displayName.trim().isEmpty() ? className : displayName;
+    }
+    
+    @Override
+    public int compareTo(RemoteClassMetadataLight o) {
+        return this.className.compareTo(o.getClassName());
     }
 }

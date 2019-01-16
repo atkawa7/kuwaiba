@@ -52,6 +52,7 @@ public class ComponentButton extends GraphicalComponent {
             ElementButton button = (ElementButton) element;
             
             getComponent().setCaption(button.getCaption());
+            getComponent().setEnabled(button.isEnabled());
             
             if (button.getStyleName() != null) {
                 

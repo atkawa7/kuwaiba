@@ -57,20 +57,11 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
  */
 public class ComponentConnectionCreator extends VerticalLayout {
     private final WebserviceBean webserviceBean;
-////    private List<RemoteObjectLight> endpointsA;
-////    private List<RemoteObjectLight> endpointsB;
-////    private List<RemoteObjectLight> links;
-////    private Grid<RemoteObjectLight> grdEndpointsA; 
-    private Grid<RemoteObjectLight> grdEndpointsB;
-    private Grid<RemoteObjectLight> grdLinks; 
-    
-    public ComponentConnectionCreator(List<RemoteObject> devicesList, /*ComponentConnectionSource componentConnectionSource,*/ WebserviceBean webserviceBean) {
+        
+    public ComponentConnectionCreator(List<RemoteObject> devicesList, WebserviceBean webserviceBean) {
         this.webserviceBean = webserviceBean;        
         setSizeFull();
-////        endpointsA = new ArrayList<>();
-////        endpointsB = new ArrayList<>();
-////        links = new ArrayList<>();
-        initializeComponent(devicesList/*componentConnectionSource*/);                        
+        initializeComponent(devicesList);
     }
     
     @Override
@@ -78,14 +69,13 @@ public class ComponentConnectionCreator extends VerticalLayout {
         super.setSizeFull();
     }
         
-    private void initializeComponent(List<RemoteObject> devicesList/*ComponentConnectionSource componentConnectionSource*/) {
-////        List<RemoteObject> deviceList = componentConnectionSource.getDeviceList();
+    private void initializeComponent(List<RemoteObject> devicesList) {
         //Sources devices and links
         List<RemoteObjectLight> deviceListLight = new ArrayList<>();
         List<RemoteObjectLight> linksListLight = new ArrayList<>();
         
         devicesList.forEach(device -> {
-////            if(device.getClassName().toLowerCase().contains("link"))
+            
             boolean isSubclassOfGenericPhysicalLink = false;
             try {
                 isSubclassOfGenericPhysicalLink = webserviceBean.isSubclassOf(
@@ -105,126 +95,120 @@ public class ComponentConnectionCreator extends VerticalLayout {
         btnConnect.setIcon(VaadinIcons.PLUG);
         btnConnect.addStyleName(ValoTheme.BUTTON_PRIMARY);
         btnConnect.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
-////        btnConnect.addClickListener(new Button.ClickListener() {
-////            @Override
-////            public void buttonClick(Button.ClickEvent event) {
-////                if(endpointsA.size() == endpointsB.size() && endpointsA.size() == links.size()){
-////                    try {
-////                        String[] sideAClassNames =  new String[endpointsA.size()];
-////                        String[] sideBClassNames =  new String[endpointsA.size()];
-////                        String[] linksClassNames =  new String[endpointsA.size()];
-////                        
-////                        Long[] sideAIds =  new Long[endpointsA.size()];
-////                        Long[] sideBIds =  new Long[endpointsA.size()];
-////                        long[] linksIds =  new long[endpointsA.size()];
-////                        List<RemoteObjectLight> newLinksParents = new ArrayList<>();
-////                        
-////                        for (int i = 0; i < endpointsA.size(); i++) {
-////                            sideAClassNames[i] = endpointsA.get(i).getClassName();
-////                            sideAIds[i] = endpointsA.get(i).getId();
-////                            
-////                            newLinksParents.add(webserviceBean.getCommonParent(endpointsA.get(i).getClassName(), endpointsA.get(i).getId(), 
-////                                    endpointsB.get(i).getClassName(), endpointsB.get(i).getId(), 
-////                                    Page.getCurrent().getWebBrowser().getAddress(),
-////                                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()));
-////                            
-////                            sideBClassNames[i] = endpointsB.get(i).getClassName();
-////                            sideBIds[i] = endpointsB.get(i).getId();
-////                            
-////                            linksClassNames[i] = links.get(i).getClassName();
-////                            linksIds[i] = links.get(i).getId();
-////                        }
-////                        //we create the end points
-////                        webserviceBean.connectPhysicalLinks(sideAClassNames, sideAIds, 
-////                                linksClassNames, linksIds, 
-////                                sideBClassNames, sideBIds, 
-////                                Page.getCurrent().getWebBrowser().getAddress(),
-////                                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-////
-////////                        grdEndpointsA.setItems(new ArrayList<>());
-////                        grdEndpointsB.setItems(new ArrayList<>());
-////                        grdLinks.setItems(new ArrayList<>());
-////                        
-////                        //we move the link from to under a new parent
-////                        for (int i = 0; i < newLinksParents.size(); i++) {
-////                            webserviceBean.moveObjects(newLinksParents.get(i).getClassName(), newLinksParents.get(i).getId(), 
-////                                    new String[] {linksClassNames[i]}, new long[] {linksIds[i]}, 
-////                                Page.getCurrent().getWebBrowser().getAddress(),
-////                                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-////                        }
-////                        
-////                        Notifications.showInfo("Las conexiones fueron creadas exitosamente");
-////                        
-////                                                
-////                    } catch (ServerSideException ex) {
-////                        Notifications.showInfo(ex.getLocalizedMessage());
-////                    }
-////                }
-////                else
-////                    Notifications.showInfo("Please select the same number of endpoints and links");
-////            }
-////        });
-
-        Panel pnlLinks = new Panel("Select links from the material for installation");
+        
+        Panel pnlLinks = new Panel("Connections Log");
         pnlLinks.setSizeFull();
         
-        pnlLinks.setContent(createInstallationMaterialGrid(linksListLight));
+        Grid gridLog = createInstallationMaterialGrid(linksListLight);
+        
+        pnlLinks.setContent(gridLog);
                
         HorizontalLayout lytConnection = new HorizontalLayout();
         lytConnection.setWidth(100, Unit.PERCENTAGE);
         lytConnection.setHeight(100, Unit.PERCENTAGE);
-////        lytConnection.setHeightUndefined();
         lytConnection.setSpacing(true);
           
         //we create the connections tables
         Panel pnlConnections = new Panel();
-////        grdEndpointsA=  createEndpointsAGrid();
+        pnlConnections.setSizeFull();
         VerticalLayout verticalLayoutEndpointsA = createEndpointsA();
-////        grdLinks = createEndpointsLinksGrid();
-        grdLinks = createEndpointsLinksGrid(linksListLight);
+        Grid grdLinks = createEndpointsLinksGrid(linksListLight);
         VerticalLayout verticalLayoutEndpointsB = createEndpointsB();
         
         btnConnect.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                if (verticalLayoutEndpointsA.getComponentCount() > 0) {
-                    if (verticalLayoutEndpointsA.getComponent(0) instanceof BasicTree) {
-                        BasicTree simpleTree = (BasicTree) verticalLayoutEndpointsA.getComponent(0);
-                        simpleTree.getSelectedItems();
+                List<RemoteObjectLight> endpointsA = null;
+                List<RemoteObjectLight> links = null;
+                List<RemoteObjectLight> endpointsB = null;
+                
+                if (verticalLayoutEndpointsA.getComponentCount() > 0 && 
+                    verticalLayoutEndpointsA.getComponent(0) instanceof BasicTree) {
+                    
+                    BasicTree simpleTree = (BasicTree) verticalLayoutEndpointsA.getComponent(0);
+                    
+                    if (simpleTree.getSelectedItems() != null && 
+                        !simpleTree.getSelectedItems().isEmpty()) {
+                        
+                        endpointsA = new ArrayList();
+                        
+                        for (Object item : simpleTree.getSelectedItems()) {
+                            if (item instanceof AbstractNode && 
+                                ((AbstractNode) item).getObject() instanceof RemoteObjectLight) {
+                                
+                                endpointsA.add((RemoteObjectLight) ((AbstractNode) item).getObject());
+                            }
+                        }
+                    }
+                }
+                                
+                if (grdLinks.getSelectedItems() != null) {
+                    
+                    if (grdLinks.getSelectedItems() != null && 
+                        !grdLinks.getSelectedItems().isEmpty()) {
+                        
+                        links = new ArrayList();
+                        
+                        for (Object item : grdLinks.getSelectedItems()) {
+                            if (item instanceof RemoteObjectLight) {
+                                links.add((RemoteObjectLight) item);
+                            }
+                        }
                     }
                 }
                 
-                if (verticalLayoutEndpointsB.getComponentCount() > 0) {
-                    if (verticalLayoutEndpointsB.getComponent(0) instanceof BasicTree) {
-                        BasicTree simpleTree = (BasicTree) verticalLayoutEndpointsB.getComponent(0);
-                        simpleTree.getSelectedItems();
+                if (verticalLayoutEndpointsB.getComponentCount() > 0 && 
+                    verticalLayoutEndpointsB.getComponent(0) instanceof BasicTree) {
+                    
+                    BasicTree simpleTree = (BasicTree) verticalLayoutEndpointsB.getComponent(0);
+                    
+                    if (simpleTree.getSelectedItems() != null && 
+                        !simpleTree.getSelectedItems().isEmpty()) {
+                        
+                        endpointsB = new ArrayList();
+                        
+                        for (Object item : simpleTree.getSelectedItems()) {
+                            if (item instanceof AbstractNode && 
+                                ((AbstractNode) item).getObject() instanceof RemoteObjectLight) {
+                                
+                                endpointsB.add((RemoteObjectLight) ((AbstractNode) item).getObject());
+                            }
+                        }
                     }
+                }
+                
+                if (endpointsA != null && links != null && endpointsB != null && 
+                    (endpointsA.size() == links.size() && links.size() ==  endpointsB.size())) {
+                    
+                    if (createConnection(endpointsA, links, endpointsB)) {
+                        grdLinks.setItems(getLinks(linksListLight));
+                        gridLog.setItems(getLinkBeans(linksListLight));
+                    }
+                }
+                else {
+                    Notifications.showInfo("Please select the same number of endpoints and links");
                 }
             }
         });
-////        grdEndpointsB = createEndpointsBGrid();
-        //Connections Table
-////        lytConnection.addComponent(grdEndpointsA);
-////        lytConnection.setExpandRatio(grdEndpointsA, 0.30f);
         lytConnection.addComponent(verticalLayoutEndpointsA);
         lytConnection.setExpandRatio(verticalLayoutEndpointsA, 0.30f);
+        
         lytConnection.addComponent(grdLinks);
         lytConnection.setExpandRatio(grdLinks, 0.30f);
-////        lytConnection.addComponent(grdEndpointsB);
-////        lytConnection.setExpandRatio(grdEndpointsB, 0.30f);
+        
         lytConnection.addComponent(verticalLayoutEndpointsB);
         lytConnection.setExpandRatio(verticalLayoutEndpointsB, 0.30f);
+        
         pnlConnections.setContent(lytConnection);
    
-        VerticalLayout lytRightSide = new VerticalLayout(pnlLinks, pnlConnections, btnConnect);
+        VerticalLayout lytRightSide = new VerticalLayout(pnlConnections, btnConnect, pnlLinks);
         lytRightSide.setSpacing(true);
         lytRightSide.setSizeFull();
         lytRightSide.setExpandRatio(pnlLinks, 0.30f);
-        lytRightSide.setExpandRatio(pnlConnections, 0.50f);
-        lytRightSide.setExpandRatio(btnConnect, 0.20f);
+        lytRightSide.setExpandRatio(pnlConnections, 0.65f);
+        lytRightSide.setExpandRatio(btnConnect, 0.05f);
         lytRightSide.setComponentAlignment(btnConnect, Alignment.BOTTOM_CENTER);
         //End Connections
-
         
         Panel pnlSourceDevices = new Panel("Select a device from the material for installation");
         pnlSourceDevices.setSizeFull();
@@ -257,6 +241,61 @@ public class ComponentConnectionCreator extends VerticalLayout {
                 
         addComponent(mainLayout);
     }
+    
+    private boolean createConnection(List<RemoteObjectLight> endpointsA, List<RemoteObjectLight> links, List<RemoteObjectLight> endpointsB) {
+        try {
+            int size = endpointsA.size();
+            
+            String[] sideAClassNames = new String[size];
+            String[] sideBClassNames = new String[size];
+            String[] linksClassNames = new String[size];
+
+            Long[] sideAIds = new Long[size];
+            Long[] sideBIds = new Long[size];
+            long[] linksIds = new long[size];
+            
+            List<RemoteObjectLight> newLinksParents = new ArrayList<>();
+
+            for (int i = 0; i < size; i++) {
+                sideAClassNames[i] = endpointsA.get(i).getClassName();
+                sideAIds[i] = endpointsA.get(i).getId();
+
+                newLinksParents.add(webserviceBean.getCommonParent(
+                        endpointsA.get(i).getClassName(), endpointsA.get(i).getId(), 
+                        endpointsB.get(i).getClassName(), endpointsB.get(i).getId(), 
+                        Page.getCurrent().getWebBrowser().getAddress(),
+                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()));
+
+                sideBClassNames[i] = endpointsB.get(i).getClassName();
+                sideBIds[i] = endpointsB.get(i).getId();
+
+                linksClassNames[i] = links.get(i).getClassName();
+                linksIds[i] = links.get(i).getId();
+            }
+            //we create the end points
+            webserviceBean.connectPhysicalLinks(sideAClassNames, sideAIds, 
+                    linksClassNames, linksIds, 
+                    sideBClassNames, sideBIds, 
+                    Page.getCurrent().getWebBrowser().getAddress(),
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+            
+            //we move the link from to under a new parent
+            for (int i = 0; i < newLinksParents.size(); i++) {
+                
+                if (newLinksParents.get(i).getId() != -1) { //Ignore the dummy root
+                    webserviceBean.moveObjects(newLinksParents.get(i).getClassName(), newLinksParents.get(i).getId(), 
+                            new String[] {linksClassNames[i]}, new long[] {linksIds[i]}, 
+                        Page.getCurrent().getWebBrowser().getAddress(),
+                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                }
+            }
+            Notifications.showInfo("The connections were created successfully");
+            return true;
+        } catch (ServerSideException ex) {ex.printStackTrace();
+            Notifications.showInfo(ex.getMessage());
+            return false;
+        }
+    }
 
     /**
      * Creates the navigation tree
@@ -272,8 +311,8 @@ public class ComponentConnectionCreator extends VerticalLayout {
     private VerticalLayout createEndpointsA() {
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setWidth(100, Unit.PERCENTAGE);
-//        verticalLayout.setHeight(100, Unit.PERCENTAGE);
-        verticalLayout.setHeight(200, Unit.PIXELS);
+        verticalLayout.setHeight(100, Unit.PERCENTAGE);
+        
         verticalLayout.setCaption("Endpoint A");
         DropTargetExtension<VerticalLayout> dropTarget = new DropTargetExtension(verticalLayout);
         dropTarget.setDropEffect(DropEffect.MOVE);
@@ -304,8 +343,6 @@ public class ComponentConnectionCreator extends VerticalLayout {
                             Notifications.showError(ex.getMessage());
                         }
                         if (businessObject.getId() != -1 && (isGenericCommunicationsElement || isODF)) { //Ignore the dummy root
-////                            endpointsB.add(businessObject);
-////                            grdEndpoints.setItems(endpointsB);
                             
                             BasicTree dynamicTree = new BasicTree(new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
                                 @Override
@@ -314,14 +351,11 @@ public class ComponentConnectionCreator extends VerticalLayout {
                                         return webserviceBean.getChildrenOfClassLightRecursive(
                                             businessObject.getId(), 
                                             businessObject.getClassName(), 
-                                            "GenericCommunicationsPort", 
+                                            "GenericPhysicalPort", 
                                             0, 
                                             Page.getCurrent().getWebBrowser().getAddress(), 
                                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-////                                        return webserviceBean.getObjectChildren(
-////                                                businessObject.getClassName(), 
-////                                                businessObject.getId(), -1, Page.getCurrent().getWebBrowser().getAddress(), 
-////                                                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                                        
                                     } catch (ServerSideException ex) {
                                         Notifications.showError(ex.getLocalizedMessage());
                                         return new ArrayList<>();
@@ -336,6 +370,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
                                         public void refresh(boolean recursive) { }
                                 }
                             );
+                            verticalLayout.removeAllComponents();
                             verticalLayout.addComponent(dynamicTree);
                         }
                     }
@@ -348,9 +383,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
     private VerticalLayout createEndpointsB() {
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setWidth(100, Unit.PERCENTAGE);
-//        verticalLayout.setHeight(100, Unit.PERCENTAGE);
-        verticalLayout.setHeight(200, Unit.PIXELS);
-////        verticalLayout.setSizeFull();
+        verticalLayout.setHeight(100, Unit.PERCENTAGE);
         verticalLayout.setCaption("Endpoint B");
         DropTargetExtension<VerticalLayout> dropTarget = new DropTargetExtension(verticalLayout);
         dropTarget.setDropEffect(DropEffect.MOVE);
@@ -381,9 +414,6 @@ public class ComponentConnectionCreator extends VerticalLayout {
                             Notifications.showError(ex.getMessage());
                         }
                         if (businessObject.getId() != -1 && (isGenericCommunicationsElement || isODF)) { //Ignore the dummy root
-////                            endpointsB.add(businessObject);
-////                            grdEndpoints.setItems(endpointsB);
-                            
                             BasicTree dynamicTree = new BasicTree(new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
                                         @Override
                                         public List<RemoteObjectLight> getChildren(RemoteObjectLight parentObject) {
@@ -391,14 +421,10 @@ public class ComponentConnectionCreator extends VerticalLayout {
                                                 return webserviceBean.getChildrenOfClassLightRecursive(
                                                     businessObject.getId(), 
                                                     businessObject.getClassName(), 
-                                                    "GenericCommunicationsPort", 
+                                                    "GenericPhysicalPort", 
                                                     0, 
                                                     Page.getCurrent().getWebBrowser().getAddress(), 
                                                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-////                                                return webserviceBean.getObjectChildren(
-////                                                        businessObject.getClassName(), 
-////                                                        businessObject.getId(), -1, Page.getCurrent().getWebBrowser().getAddress(), 
-////                                                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
                                             } catch (ServerSideException ex) {
                                                 Notifications.showError(ex.getLocalizedMessage());
                                                 return new ArrayList<>();
@@ -413,6 +439,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
                                         public void refresh(boolean recursive) { }
                                 }
                             );
+                            verticalLayout.removeAllComponents();
                             verticalLayout.addComponent(dynamicTree);
                         }
                     }
@@ -421,134 +448,9 @@ public class ComponentConnectionCreator extends VerticalLayout {
         });
         return verticalLayout;
     }
-        
-////    private Grid createEndpointsAGrid(){
-////        Grid<RemoteObjectLight> grdEndpoints = new Grid();
-////        grdEndpoints.setSizeFull();
-////        grdEndpoints.addColumn(RemoteObjectLight::getName).setCaption("Endpoint A");
-////                
-////        DropTargetExtension<Grid> topDropTarget = new DropTargetExtension<>(grdEndpoints);
-////        topDropTarget.setDropEffect(DropEffect.MOVE);
-////
-////        topDropTarget.addDropListener(new DropListener<Grid>() {
-////            @Override
-////            public void drop(DropEvent<Grid> event) {
-////                Optional<String> transferData = event.getDataTransferData(RemoteObjectLight.DATA_TYPE);
-////                if (transferData.isPresent()) {
-////                    for (String serializedObject : transferData.get().split("\n")) {
-////                        String[] serializedObjectTokens = serializedObject.split("~a~", -1);                            
-////                        RemoteObjectLight businessObject = new RemoteObjectLight(serializedObjectTokens[1], Long.valueOf(serializedObjectTokens[0]), serializedObjectTokens[2]);
-////////                        if (businessObject.getId() !=  -1 && businessObject.getClassName().toLowerCase().contains("port")) { //Ignore the dummy root
-////                        boolean isGenericCommunicationsElement = false;
-////                        boolean isODF = false;
-////                        try {
-////                            isGenericCommunicationsElement = webserviceBean.isSubclassOf(
-////                                businessObject.getClassName(), 
-////                                "GenericCommunicationsElement", //NOI18N
-////                                Page.getCurrent().getWebBrowser().getAddress(), 
-////                                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-////                            
-////                            isODF = webserviceBean.isSubclassOf(
-////                                businessObject.getClassName(), 
-////                                "ODF", //NOI18N
-////                                Page.getCurrent().getWebBrowser().getAddress(), 
-////                                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-////                        } catch(ServerSideException ex) {
-////                            Notifications.showError(ex.getMessage());
-////                        }
-////                        
-////                        if (businessObject.getId() != -1 && (isGenericCommunicationsElement || isODF)) {
-////                            endpointsA.add(businessObject);
-////                            grdEndpoints.setItems(endpointsA);
-////                        }
-////                    }
-////                }
-////            }
-////        });     
-////        
-////        return grdEndpoints;
-////    }
     
-////    private Grid createEndpointsBGrid(){
-////        Grid<RemoteObjectLight> grdEndpoints = new Grid();
-////        grdEndpoints.setSizeFull();
-////        grdEndpoints.addColumn(RemoteObjectLight::getName).setCaption("Endpoint B");
-////                
-////        DropTargetExtension<Grid> topDropTarget = new DropTargetExtension<>(grdEndpoints);
-////        topDropTarget.setDropEffect(DropEffect.MOVE);
-////
-////        topDropTarget.addDropListener(new DropListener<Grid>() {
-////            @Override
-////            public void drop(DropEvent<Grid> event) {
-////                Optional<String> transferData = event.getDataTransferData(RemoteObjectLight.DATA_TYPE);
-////                if (transferData.isPresent()) {
-////                    for (String serializedObject : transferData.get().split("\n")) {
-////                        String[] serializedObjectTokens = serializedObject.split("~a~", -1);                            
-////                        RemoteObjectLight businessObject = new RemoteObjectLight(serializedObjectTokens[1], Long.valueOf(serializedObjectTokens[0]), serializedObjectTokens[2]);
-////////                        if (businessObject.getId() !=  -1 && businessObject.getClassName().toLowerCase().contains("port")){//Ignore the dummy root
-////                        boolean isGenericCommunicationsElement = false;
-////                        boolean isODF = false;
-////                        try {
-////                            isGenericCommunicationsElement = webserviceBean.isSubclassOf(
-////                                businessObject.getClassName(), 
-////                                "GenericCommunicationsElement", //NOI18N
-////                                Page.getCurrent().getWebBrowser().getAddress(), 
-////                                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-////                            
-////                            isODF = webserviceBean.isSubclassOf(
-////                                businessObject.getClassName(), 
-////                                "ODF", //NOI18N
-////                                Page.getCurrent().getWebBrowser().getAddress(), 
-////                                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-////                        } catch(ServerSideException ex) {
-////                            Notifications.showError(ex.getMessage());
-////                        }
-////                        if (businessObject.getId() != -1 && (isGenericCommunicationsElement || isODF)) { //Ignore the dummy root
-////                            endpointsB.add(businessObject);
-////                            grdEndpoints.setItems(endpointsB);
-////                        }
-////                    }
-////                }
-////            }
-////        });     
-////        
-////        return grdEndpoints;
-////    }
-    
-////    private Grid createEndpointsLinksGrid(){
-////        Grid<RemoteObjectLight> grdEndpoints = new Grid();
-////        grdEndpoints.setSizeFull();
-////        grdEndpoints.addColumn(RemoteObjectLight::getName).setCaption("Links");
-////                
-////        DropTargetExtension<Grid> topDropTarget = new DropTargetExtension<>(grdEndpoints);
-////        topDropTarget.setDropEffect(DropEffect.MOVE);
-////
-////        topDropTarget.addDropListener(new DropListener<Grid>() {
-////            @Override
-////            public void drop(DropEvent<Grid> event) {
-////                Optional<String> transferData = event.getDataTransferData(RemoteObjectLight.DATA_TYPE);
-////                if (transferData.isPresent()) {
-////                    for (String serializedObject : transferData.get().split("\n")) {
-////                        String[] serializedObjectTokens = serializedObject.split("~a~", -1);                            
-////                        RemoteObjectLight businessObject = new RemoteObjectLight(serializedObjectTokens[1], Long.valueOf(serializedObjectTokens[0]), serializedObjectTokens[2]);
-////                        if (businessObject.getClassName().toLowerCase().contains("link")){//Ignore the dummy root
-////                            links.add(businessObject);
-////                            grdEndpoints.setItems(links);
-////                        }
-////                    }
-////                }
-////            }
-////        });     
-////        
-////        return grdEndpoints;
-////    }
-    
-    private Grid createEndpointsLinksGrid(List<RemoteObjectLight> links) {
-        Grid<RemoteObjectLight> grdEndpoints = new Grid();
-        grdEndpoints.setSizeFull();
-        grdEndpoints.addColumn(RemoteObjectLight::getName).setCaption("Links");        
-        
-        List<RemoteObjectLight> items = new ArrayList();
+    private List<RemoteObjectLight> getLinks(List<RemoteObjectLight> links) {
+        List<RemoteObjectLight> result = new ArrayList();
         
         for (RemoteObjectLight link : links) {
             RemoteObjectLight endpointA = null;
@@ -581,8 +483,17 @@ public class ComponentConnectionCreator extends VerticalLayout {
                 Notifications.showError(ex.getMessage());
             }
             if (endpointA == null || endpointB == null)
-                items.add(link);
-        }
+                result.add(link);
+        }        
+        return result;                
+    }
+    
+    private Grid createEndpointsLinksGrid(List<RemoteObjectLight> links) {
+        Grid<RemoteObjectLight> grdEndpoints = new Grid();
+        grdEndpoints.setSizeFull();
+        grdEndpoints.addColumn(RemoteObjectLight::getName).setCaption("Links");        
+        
+        List<RemoteObjectLight> items = getLinks(links);
         
         grdEndpoints.setItems(items);
         
@@ -619,53 +530,17 @@ public class ComponentConnectionCreator extends VerticalLayout {
         return tree;
     }
     
-    /**
-     * Creates a simple tree, every device from the material installation is a root
-     * @param deviceList a given device list
-     * @return a simple tree
-     */
-    private Component createInstallationMaterialGrid(List<RemoteObjectLight> deviceList){
-////        SimpleTree tree = new SimpleTree(
-////                new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
-////                    @Override
-////                    public List<RemoteObjectLight> getChildren(RemoteObjectLight c) {
-////                        try {
-////                            return webserviceBean.getObjectChildren(
-////                                c.getClassName(), 
-////                                c.getId(), 
-////                                -1, 
-////                                Page.getCurrent().getWebBrowser().getAddress(),
-////                                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-////                        } catch (ServerSideException ex) {
-////                            Notifications.showError(ex.getLocalizedMessage());
-////                            return new ArrayList<>();
-////                        }
-////                    }
-////                }, 
-////                new SimpleIconGenerator(webserviceBean, ((RemoteSession) UI.getCurrent().getSession().getAttribute("session"))), 
-////                InventoryObjectNode.asNodeList(deviceList));
-////        
-////        tree.resetTo(InventoryObjectNode.asNodeList(deviceList));
-////        tree.setSelectionMode(Grid.SelectionMode.MULTI);
-////        
-////        DragSourceExtension<SimpleTree> dragSource = new DragSourceExtension<>(tree);
-////        dragSource.setEffectAllowed(EffectAllowed.MOVE);
-////
-////        return tree;
-        Grid<LinkBean> grid = new Grid();
-        grid.setSizeFull();
-        
+    private List<LinkBean> getLinkBeans(List<RemoteObjectLight> links) {
         List<LinkBean> items = new ArrayList();
         
-        for (RemoteObjectLight device : deviceList) {        
+        for (RemoteObjectLight link : links) {        
             RemoteObjectLight endpointA = null;
-            RemoteObjectLight objectLink = device;
             RemoteObjectLight endpointB = null;
             
             try {            
                 List<RemoteObjectLight> theEndpointsA = webserviceBean.getSpecialAttribute(
-                    device.getClassName(), 
-                    device.getId(), 
+                    link.getClassName(), 
+                    link.getId(), 
                     "endpointA", 
                     Page.getCurrent().getWebBrowser().getAddress(), 
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
@@ -677,8 +552,8 @@ public class ComponentConnectionCreator extends VerticalLayout {
             }
             try {
                 List<RemoteObjectLight> theEndpointsB = webserviceBean.getSpecialAttribute(
-                    device.getClassName(), 
-                    device.getId(), 
+                    link.getClassName(), 
+                    link.getId(), 
                     "endpointB", 
                     Page.getCurrent().getWebBrowser().getAddress(), 
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
@@ -689,11 +564,27 @@ public class ComponentConnectionCreator extends VerticalLayout {
                 Notifications.showError(ex.getMessage());
             }
             if (endpointA != null || endpointB != null)
-                items.add(new LinkBean(endpointA, objectLink, endpointB));
+                items.add(new LinkBean(endpointA, link, endpointB));
         }
+        
+        return items;
+    }
+    
+    /**
+     * Creates a simple tree, every device from the material installation is a root
+     * @param deviceList a given device list
+     * @return a simple tree
+     */
+    private Grid createInstallationMaterialGrid(List<RemoteObjectLight> deviceList){
+        Grid<LinkBean> grid = new Grid();
+        grid.setSizeFull();
+                
+        List<LinkBean> items = getLinkBeans(deviceList);
+        
         grid.addColumn(LinkBean::getEndpointA).setCaption("Endpoint A");
         grid.addColumn(LinkBean::getObjectLink).setCaption("Link");
         grid.addColumn(LinkBean::getEndpointB).setCaption("Endpoint B");
+        
         grid.setItems(items);
         return grid;        
     }

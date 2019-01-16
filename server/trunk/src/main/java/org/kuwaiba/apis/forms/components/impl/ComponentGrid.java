@@ -22,14 +22,18 @@ import org.kuwaiba.apis.forms.elements.Constants;
 import org.kuwaiba.apis.forms.elements.ElementColumn;
 import org.kuwaiba.apis.forms.elements.ElementGrid;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.renderers.TextRenderer;
+import elemental.json.Json;
+import elemental.json.JsonValue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
- *
+ * Vaadin Implementation to an ElementGrid to the API Form
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ComponentGrid extends GraphicalComponent {
@@ -84,6 +88,28 @@ public class ComponentGrid extends GraphicalComponent {
     public Grid<HashMap<String, Object>> getComponent() {
         return (Grid<HashMap<String, Object>>) super.getComponent();
     }
+    
+    private class ComponentGridTextRenderer extends TextRenderer {
+        
+        public ComponentGridTextRenderer() {            
+        }
+        
+        @Override
+        public JsonValue encode(Object value) {
+            if (value == null) {
+                return super.encode(null);
+            }
+            else if (value instanceof RemoteObjectLight) {
+                return Json.create(((RemoteObjectLight) value).getName());
+            }
+            else if (value instanceof String) {                
+                return Json.create((String) value);
+            }
+            else {
+                return Json.create(value.toString());
+            }
+        }
+    }
 
     @Override
     public void initFromElement(AbstractElement element) {
@@ -91,8 +117,10 @@ public class ComponentGrid extends GraphicalComponent {
             ElementGrid grid = (ElementGrid) element;
             
             if (grid.getColums() != null) {
-                for (ElementColumn column : grid.getColums())
-                    getComponent().addColumn(row -> row.get(column.getCaption())).setCaption(column.getCaption());                
+                for (ElementColumn column : grid.getColums()) {
+                    Grid.Column gridColumn = getComponent().addColumn(row -> row.get(column.getCaption())).setCaption(column.getCaption());
+                    gridColumn.setRenderer(new ComponentGridTextRenderer());
+                }
             }
             if (grid.getRows() != null) {
                                 
