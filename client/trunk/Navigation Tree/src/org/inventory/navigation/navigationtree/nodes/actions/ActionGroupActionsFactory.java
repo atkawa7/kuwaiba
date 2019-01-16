@@ -57,7 +57,7 @@ public class ActionGroupActionsFactory {
             ActionsGroupType.Group.MIRROR_PORT) : mirrorPortActions;
     }
     
-    public static ActionsGroup getInstanceDiagnosticActions() {
+    public static ActionsGroup getInstanceDiagnosticsActions() {
         return diagnosticActions == null ? diagnosticActions = new ActionsGroup("Diagnostics", 
             "org/inventory/navigation/navigationtree/res/diagnostic_actions_group.png", 
             ActionsGroupType.Group.DIAGNOSTICS) : diagnosticActions;
