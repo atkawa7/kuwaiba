@@ -2897,7 +2897,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throw new OperationNotPermittedException(String.format("Class %s is not a business-related class", className));
         try (Transaction tx = graphDb.beginTx()) {   
             Node instance = getInstanceOfClass(className, oid);
-            boolean safeDeletion = Util.canDeleteObject(instance, releaseRelationships);
+            boolean safeDeletion = Util.canDeleteObject(instance, true);
             tx.success();
             return safeDeletion;
         }
