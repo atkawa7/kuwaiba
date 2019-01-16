@@ -35,7 +35,7 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
  * A simple IconGenerator implementation to be used in trees displaying inventory object nodes
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class SimpleIconGenerator implements IconGenerator<AbstractNode> {
+public class BasicIconGenerator implements IconGenerator<AbstractNode> {
     /**
      * Backend bean reference
      */
@@ -45,7 +45,7 @@ public class SimpleIconGenerator implements IconGenerator<AbstractNode> {
      */
     private RemoteSession session;
 
-    public SimpleIconGenerator(WebserviceBean wsBean, RemoteSession session) {
+    public BasicIconGenerator(WebserviceBean wsBean, RemoteSession session) {
         this.wsBean = wsBean;
         this.session = session;
     }

@@ -37,7 +37,7 @@ import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.navigation.nodes.AbstractNode;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.apis.web.gui.navigation.trees.SimpleTree;
+import org.kuwaiba.apis.web.gui.navigation.trees.BasicTree;
 
 /**
  * Connection Link Tool to connect ports with physical links

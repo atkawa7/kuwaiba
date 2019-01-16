@@ -42,9 +42,9 @@ import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.apis.web.gui.navigation.trees.SimpleTree;
+import org.kuwaiba.apis.web.gui.navigation.trees.BasicTree;
 import org.kuwaiba.apis.web.gui.navigation.nodes.InventoryObjectNode;
-import org.kuwaiba.apis.web.gui.navigation.SimpleIconGenerator;
+import org.kuwaiba.apis.web.gui.navigation.BasicIconGenerator;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.web.IndexUI;
@@ -80,7 +80,7 @@ class NavigationTreeComponent extends AbstractTopComponent {
     /**
      * The tree
      */
-    private SimpleTree tree;
+    private BasicTree tree;
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
@@ -155,7 +155,7 @@ class NavigationTreeComponent extends AbstractTopComponent {
         });
         btnSearch.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
-        this.tree = new SimpleTree(
+        this.tree = new BasicTree(
                 new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
                         @Override
                         public List<RemoteObjectLight> getChildren(RemoteObjectLight c) {
@@ -169,7 +169,7 @@ class NavigationTreeComponent extends AbstractTopComponent {
                                 return new ArrayList<>();
                             }
                         }
-                    }, new SimpleIconGenerator(wsBean, session), 
+                    }, new BasicIconGenerator(wsBean, session), 
                     new AbstractNode<RemoteObjectLight>(new RemoteObjectLight(Constants.DUMMY_ROOT, -1, "Navigation Root")) {
                         @Override
                         public AbstractAction[] getActions() { return new AbstractAction[0]; }

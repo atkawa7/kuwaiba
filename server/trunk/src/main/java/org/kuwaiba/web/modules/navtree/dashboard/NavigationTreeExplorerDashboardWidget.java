@@ -25,8 +25,8 @@ import com.vaadin.ui.themes.ValoTheme;
 import java.util.Collections;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
-import org.kuwaiba.apis.web.gui.navigation.SimpleIconGenerator;
-import org.kuwaiba.apis.web.gui.navigation.trees.SimpleContainmentTree;
+import org.kuwaiba.apis.web.gui.navigation.BasicIconGenerator;
+import org.kuwaiba.apis.web.gui.navigation.trees.ContainmentTree;
 import org.kuwaiba.apis.web.gui.properties.PropertySheet;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.apis.web.gui.properties.PropertyFactory;
@@ -87,8 +87,8 @@ public class NavigationTreeExplorerDashboardWidget extends AbstractDashboardWidg
                             Collections.reverse(parents); //Reverse to 
                             Window wdwParents = new Window(String.format("Containment Information of %s", selectedObject));
                             wdwParents.setModal(true);
-                            SimpleContainmentTree treeParents = new SimpleContainmentTree(parents, 
-                                    new SimpleIconGenerator(wsBean, ((RemoteSession) UI.getCurrent().getSession().getAttribute("session"))));
+                            ContainmentTree treeParents = new ContainmentTree(parents, 
+                                    new BasicIconGenerator(wsBean, ((RemoteSession) UI.getCurrent().getSession().getAttribute("session"))));
                             treeParents.expandAll();
                             wdwParents.setContent(new VerticalLayout(treeParents));
                             wdwParents.center();

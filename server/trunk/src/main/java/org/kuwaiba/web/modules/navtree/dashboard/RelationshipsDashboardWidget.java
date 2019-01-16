@@ -24,7 +24,7 @@ import com.vaadin.ui.VerticalLayout;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.navigation.nodes.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.navigation.trees.RelationshipsTree;
-import org.kuwaiba.apis.web.gui.navigation.SimpleIconGenerator;
+import org.kuwaiba.apis.web.gui.navigation.BasicIconGenerator;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -80,7 +80,7 @@ public class RelationshipsDashboardWidget extends AbstractDashboardWidget {
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
 
             RelationshipsTree treeRelationships = new RelationshipsTree(new InventoryObjectNode(selectedObject), 
-                                                    specialAttributes.asHashMap(), new SimpleIconGenerator(wsBean, (RemoteSession) UI.getCurrent().getSession().getAttribute("session")));
+                                                    specialAttributes.asHashMap(), new BasicIconGenerator(wsBean, (RemoteSession) UI.getCurrent().getSession().getAttribute("session")));
 
             
             lytRelationships.addComponent(treeRelationships);

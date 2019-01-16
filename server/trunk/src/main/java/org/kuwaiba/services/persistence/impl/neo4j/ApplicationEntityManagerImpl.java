@@ -5183,17 +5183,21 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throw new InvalidArgumentException("The validator has to be applied to instances of a valid class");
         
         try (Transaction tx = graphDb.beginTx()) {
+            mem.getClass(classToBeApplied); //Checks that the class provided does exist
+            
             Node newValidatorNode = graphDb.createNode(validatorDefinitions);
             
             newValidatorNode.setProperty(Constants.PROPERTY_NAME, name);
             newValidatorNode.setProperty(Constants.PROPERTY_DESCRIPTION, description == null ? "" : description);
             newValidatorNode.setProperty(Constants.PROPERTY_SCRIPT, script == null ? "" : script.trim());
             newValidatorNode.setProperty(Constants.PROPERTY_ENABLED, enabled);
-            
-            mem.getClass(classToBeApplied); //Checks that the class provided does exist
             newValidatorNode.setProperty(Constants.PROPERTY_CLASS_NAME, classToBeApplied);
             
             tx.success();
+            
+            //While not entirely efficient, this will clear all cached validator definitions to prevent that a validator definition 
+            //associated to a super class is missed by the caching system
+            cm.clearValidatorDefinitionsCache();
             return newValidatorNode.getId();
         }
     }
@@ -5232,6 +5236,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (enabled != null)
                 validatorDefinitionNode.setProperty(Constants.PROPERTY_ENABLED, enabled);
             
+            //While not entirely efficient, this will clear all cached validator definitions to prevent that a validator definition 
+            //associated to a super class is missed by the caching system
+            cm.clearValidatorDefinitionsCache();
             tx.success();
         }
     }
@@ -5296,6 +5303,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new ApplicationObjectNotFoundException(String.format("Validator definition with id %s could not be found", validatorDefinitionId));
             
             validatorDefinitionNode.delete();
+            
+            //While not entirely efficient, this will clear all cached validator definitions to prevent that a validator definition 
+            //associated to a super class is missed by the caching system
+            cm.clearValidatorDefinitionsCache();
             tx.success();
         }
     }

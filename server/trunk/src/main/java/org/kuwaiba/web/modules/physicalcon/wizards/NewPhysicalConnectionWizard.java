@@ -30,10 +30,10 @@ import java.util.List;
 import java.util.Properties;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-import org.kuwaiba.apis.web.gui.navigation.SimpleIconGenerator;
+import org.kuwaiba.apis.web.gui.navigation.BasicIconGenerator;
 import org.kuwaiba.apis.web.gui.navigation.nodes.AbstractNode;
 import org.kuwaiba.apis.web.gui.navigation.nodes.ChildrenProvider;
-import org.kuwaiba.apis.web.gui.navigation.trees.SimpleTree;
+import org.kuwaiba.apis.web.gui.navigation.trees.BasicTree;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.apis.web.gui.tools.Wizard;
 import org.kuwaiba.beans.WebserviceBean;
@@ -202,11 +202,11 @@ public class NewPhysicalConnectionWizard extends Wizard {
         /**
          * The tree on the left side of the wizard
          */
-        private SimpleTree aSideTree;
+        private BasicTree aSideTree;
         /**
          * The tree on the right side of the wizard
          */
-        private SimpleTree bSideTree;
+        private BasicTree bSideTree;
         /**
          * Own properties
          */
@@ -233,7 +233,7 @@ public class NewPhysicalConnectionWizard extends Wizard {
             
             RemoteSession session = (RemoteSession) UI.getCurrent().getSession().getAttribute("session");
             
-            this.aSideTree = new SimpleTree(
+            this.aSideTree = new BasicTree(
             new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
                     @Override
                     public List<RemoteObjectLight> getChildren(RemoteObjectLight c) {
@@ -247,7 +247,7 @@ public class NewPhysicalConnectionWizard extends Wizard {
                             return Collections.EMPTY_LIST;
                         }
                     }
-                }, new SimpleIconGenerator(wsBean, session), 
+                }, new BasicIconGenerator(wsBean, session), 
                 new AbstractNode<RemoteObjectLight>((RemoteObjectLight)properties.get("rootASide")) {
                     @Override
                     public AbstractAction[] getActions() { return new AbstractAction[0]; }
@@ -258,7 +258,7 @@ public class NewPhysicalConnectionWizard extends Wizard {
             this.aSideTree.setSelectionMode(Grid.SelectionMode.SINGLE);
             this.aSideTree.setSizeUndefined();
             
-            this.bSideTree = new SimpleTree(
+            this.bSideTree = new BasicTree(
             new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
                     @Override
                     public List<RemoteObjectLight> getChildren(RemoteObjectLight c) {
@@ -272,7 +272,7 @@ public class NewPhysicalConnectionWizard extends Wizard {
                             return Collections.EMPTY_LIST;
                         }
                     }
-                }, new SimpleIconGenerator(wsBean, session), 
+                }, new BasicIconGenerator(wsBean, session), 
                 new AbstractNode<RemoteObjectLight>((RemoteObjectLight)properties.get("rootBSide")) {
                     @Override
                     public AbstractAction[] getActions() { return new AbstractAction[0]; }
@@ -341,11 +341,11 @@ public class NewPhysicalConnectionWizard extends Wizard {
         /**
          * The tree on the left side of the wizard
          */
-        private SimpleTree aSideTree;
+        private BasicTree aSideTree;
         /**
          * The tree on the right side of the wizard
          */
-        private SimpleTree bSideTree;
+        private BasicTree bSideTree;
         /**
          * Own properties
          */
@@ -370,7 +370,7 @@ public class NewPhysicalConnectionWizard extends Wizard {
             
             RemoteSession session = (RemoteSession) UI.getCurrent().getSession().getAttribute("session");
             
-            this.aSideTree = new SimpleTree(
+            this.aSideTree = new BasicTree(
             new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
                     @Override
                     public List<RemoteObjectLight> getChildren(RemoteObjectLight c) {
@@ -384,7 +384,7 @@ public class NewPhysicalConnectionWizard extends Wizard {
                             return Collections.EMPTY_LIST;
                         }
                     }
-                }, new SimpleIconGenerator(wsBean, session), 
+                }, new BasicIconGenerator(wsBean, session), 
                 new AbstractNode<RemoteObjectLight>((RemoteObjectLight)properties.get("rootASide")) {
                     @Override
                     public AbstractAction[] getActions() { return new AbstractAction[0]; }
@@ -394,7 +394,7 @@ public class NewPhysicalConnectionWizard extends Wizard {
             });
             this.aSideTree.setSelectionMode(Grid.SelectionMode.SINGLE);
             
-            this.bSideTree = new SimpleTree(
+            this.bSideTree = new BasicTree(
             new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
                     @Override
                     public List<RemoteObjectLight> getChildren(RemoteObjectLight c) {
@@ -408,7 +408,7 @@ public class NewPhysicalConnectionWizard extends Wizard {
                             return Collections.EMPTY_LIST;
                         }
                     }
-                }, new SimpleIconGenerator(wsBean, session), 
+                }, new BasicIconGenerator(wsBean, session), 
                 new AbstractNode<RemoteObjectLight>((RemoteObjectLight)properties.get("rootBSide")) {
                     @Override
                     public AbstractAction[] getActions() { return new AbstractAction[0]; }

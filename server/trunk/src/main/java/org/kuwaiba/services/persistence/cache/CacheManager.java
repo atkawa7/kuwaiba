@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
+import org.kuwaiba.apis.persistence.application.ValidatorDefinition;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.GenericObjectList;
@@ -71,8 +72,17 @@ public class CacheManager {
      * List of the classes with unique attributes and its values index
      */
     private HashMap<String, HashMap<String, List<String>>> uniqueClassAttributesIndex;
-
-    private CacheManager(){
+    /**
+     * A structure that caches the superclasses of a given class (the key of the hashmap). This structure does contain redundant information, 
+     * but that is the trade off to simplify the access to the upstream class hierarchy
+     */
+    private HashMap<String, List<ClassMetadataLight>> superClassIndex;
+    /**
+     * A structure that caches the validators associated to a given class (the key of the hash).
+     */
+    private HashMap<String, List<ValidatorDefinition>> validatorDefinitionIndex;
+    
+    private CacheManager() {
         classIndex = new HashMap<>();
         userIndex = new HashMap<>();
         groupIndex = new HashMap<>();
@@ -82,6 +92,8 @@ public class CacheManager {
         subClassesNoRecursiveIndex = new HashMap<>();
         uniqueClassAttributesIndex = new HashMap<>();
         listTypeIndex = new HashMap<>();
+        superClassIndex = new HashMap<>();
+        validatorDefinitionIndex = new HashMap<>();
     }
 
     public static CacheManager getInstance(){
@@ -223,19 +235,7 @@ public class CacheManager {
         if (myList != null)
             myList.add(child);
     }
-//
-//    public void removePossibleChild(String parent, String child){
-//        List<String> myList = possibleChildrenIndex.get(parent);
-//        if (myList != null)
-//            myList.remove(child);
-//    }
-//            
-//    public void removePossibleSpecialChild(String parent, String child){
-//        List<String> myList = possibleSpecialChildrenIndex.get(parent);
-//        if (myList != null)
-//            myList.remove(child);
-//    }
-//    
+
     public List<String> getPossibleChildren(String parent){
         if (parent == null)
             return possibleChildrenIndex.get(Constants.NODE_DUMMYROOT);
@@ -354,6 +354,50 @@ public class CacheManager {
     public void removeListType(String listTypeName){
         listTypeIndex.remove(listTypeName);
     }
+    
+    /**
+     * Adds or replaces an entry in the upstream class hierarchy index.
+     * @param className The name of the class the provided class hierarchy belongs to.
+     * @param superClasses The super classes of the given class (including itself)
+     */
+    public void addUpstreamClassHierarchy(String className, List<ClassMetadataLight> superClasses) {
+        superClassIndex.put(className, superClasses);
+    }
+    
+    /**
+     * Retrieves the cached upstream class hierarchy of a given class.
+     * @param className The name of the class.
+     * @return The list of cached super classes up to RootObject (including itself). Null of the class provided is not cached
+     */
+    public List<ClassMetadataLight> getUpstreamClassHierarchy(String className) {
+        return superClassIndex.get(className);
+    }
+    
+    /**
+     * Adds or replaces an entry in the validator definitions index.
+     * @param className The name of the class the provided class hierarchy belongs to.
+     * @param validatorDefinitions The super classes of the given class (including itself)
+     */
+    public void addValidatorDefinitions(String className, List<ValidatorDefinition> validatorDefinitions) {
+        validatorDefinitionIndex.put(className, validatorDefinitions);
+    }
+    
+    /**
+     * Retrieves the cached validator definitions associated to the given class.
+     * @param className The name of the class.
+     * @return The list of cached validator definitions. Null of the class provided is not cached
+     */
+    public List<ValidatorDefinition> getValidatorDefinitions(String className) {
+        return validatorDefinitionIndex.get(className);
+    }
+    
+    /**
+     * Clears the cached validator definitions
+     */
+    public void clearValidatorDefinitionsCache() {
+        validatorDefinitionIndex.clear();
+    }
+    
     /**
      * Clears all cached information
      */
@@ -378,5 +422,7 @@ public class CacheManager {
         subClassesIndex.clear();
         subClassesNoRecursiveIndex.clear();
         uniqueClassAttributesIndex.clear();
+        validatorDefinitionIndex.clear();
+        superClassIndex.clear();
     }
 }

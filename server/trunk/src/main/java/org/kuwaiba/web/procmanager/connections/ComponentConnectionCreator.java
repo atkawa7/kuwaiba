@@ -35,11 +35,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-import org.kuwaiba.apis.web.gui.navigation.SimpleIconGenerator;
+import org.kuwaiba.apis.web.gui.navigation.BasicIconGenerator;
 import org.kuwaiba.apis.web.gui.navigation.nodes.AbstractNode;
 import org.kuwaiba.apis.web.gui.navigation.nodes.ChildrenProvider;
 import org.kuwaiba.apis.web.gui.navigation.nodes.InventoryObjectNode;
-import org.kuwaiba.apis.web.gui.navigation.trees.SimpleTree;
+import org.kuwaiba.apis.web.gui.navigation.trees.BasicTree;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -188,15 +188,15 @@ public class ComponentConnectionCreator extends VerticalLayout {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 if (verticalLayoutEndpointsA.getComponentCount() > 0) {
-                    if (verticalLayoutEndpointsA.getComponent(0) instanceof SimpleTree) {
-                        SimpleTree simpleTree = (SimpleTree) verticalLayoutEndpointsA.getComponent(0);
+                    if (verticalLayoutEndpointsA.getComponent(0) instanceof BasicTree) {
+                        BasicTree simpleTree = (BasicTree) verticalLayoutEndpointsA.getComponent(0);
                         simpleTree.getSelectedItems();
                     }
                 }
                 
                 if (verticalLayoutEndpointsB.getComponentCount() > 0) {
-                    if (verticalLayoutEndpointsB.getComponent(0) instanceof SimpleTree) {
-                        SimpleTree simpleTree = (SimpleTree) verticalLayoutEndpointsB.getComponent(0);
+                    if (verticalLayoutEndpointsB.getComponent(0) instanceof BasicTree) {
+                        BasicTree simpleTree = (BasicTree) verticalLayoutEndpointsB.getComponent(0);
                         simpleTree.getSelectedItems();
                     }
                 }
@@ -307,7 +307,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
 ////                            endpointsB.add(businessObject);
 ////                            grdEndpoints.setItems(endpointsB);
                             
-                            SimpleTree dynamicTree = new SimpleTree(new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
+                            BasicTree dynamicTree = new BasicTree(new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
                                 @Override
                                 public List<RemoteObjectLight> getChildren(RemoteObjectLight parentObject) {
                                     try {       
@@ -327,7 +327,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
                                         return new ArrayList<>();
                                     }
                                 }
-                                    }, new SimpleIconGenerator(webserviceBean, (RemoteSession) UI.getCurrent().getSession().getAttribute("session")),
+                                    }, new BasicIconGenerator(webserviceBean, (RemoteSession) UI.getCurrent().getSession().getAttribute("session")),
                                     new AbstractNode<RemoteObjectLight>(businessObject) {
                                         @Override
                                         public AbstractAction[] getActions() { return new AbstractAction[0]; }
@@ -384,7 +384,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
 ////                            endpointsB.add(businessObject);
 ////                            grdEndpoints.setItems(endpointsB);
                             
-                            SimpleTree dynamicTree = new SimpleTree(new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
+                            BasicTree dynamicTree = new BasicTree(new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
                                         @Override
                                         public List<RemoteObjectLight> getChildren(RemoteObjectLight parentObject) {
                                             try {
@@ -404,7 +404,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
                                                 return new ArrayList<>();
                                             }
                                         }
-                                    }, new SimpleIconGenerator(webserviceBean, (RemoteSession) UI.getCurrent().getSession().getAttribute("session")),
+                                    }, new BasicIconGenerator(webserviceBean, (RemoteSession) UI.getCurrent().getSession().getAttribute("session")),
                                     new AbstractNode<RemoteObjectLight>(businessObject) {
                                         @Override
                                         public AbstractAction[] getActions() { return new AbstractAction[0]; }
@@ -590,7 +590,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
     }
     
     private Component createInstallationMaterialTree(List<RemoteObjectLight> deviceList) {
-        SimpleTree tree = new SimpleTree(
+        BasicTree tree = new BasicTree(
                 new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
                     @Override
                     public List<RemoteObjectLight> getChildren(RemoteObjectLight c) {
@@ -607,13 +607,13 @@ public class ComponentConnectionCreator extends VerticalLayout {
                         }
                     }
                 }, 
-                new SimpleIconGenerator(webserviceBean, ((RemoteSession) UI.getCurrent().getSession().getAttribute("session"))), 
+                new BasicIconGenerator(webserviceBean, ((RemoteSession) UI.getCurrent().getSession().getAttribute("session"))), 
                 InventoryObjectNode.asNodeList(deviceList));
 
         tree.resetTo(InventoryObjectNode.asNodeList(deviceList));
         tree.setSelectionMode(Grid.SelectionMode.MULTI);
 
-        DragSourceExtension<SimpleTree> dragSource = new DragSourceExtension<>(tree);
+        DragSourceExtension<BasicTree> dragSource = new DragSourceExtension<>(tree);
         dragSource.setEffectAllowed(EffectAllowed.MOVE);
 
         return tree;

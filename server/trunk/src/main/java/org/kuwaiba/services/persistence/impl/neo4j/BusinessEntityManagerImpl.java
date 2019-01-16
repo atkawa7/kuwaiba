@@ -49,6 +49,7 @@ import org.kuwaiba.apis.persistence.business.Contact;
 import org.kuwaiba.apis.persistence.application.FileObject;
 import org.kuwaiba.apis.persistence.application.FileObjectLight;
 import org.kuwaiba.apis.persistence.application.Validator;
+import org.kuwaiba.apis.persistence.application.ValidatorDefinition;
 import org.kuwaiba.apis.persistence.business.AnnotatedBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessObject;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
@@ -1639,7 +1640,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 Node child = childOfRelationship.getStartNode();
 
                 if (!child.getRelationships(RelTypes.INSTANCE_OF).iterator().hasNext())
-                    throw new MetadataObjectNotFoundException(String.format("Class for object with ids %s could not be found",child.getId()));
+                    throw new MetadataObjectNotFoundException(String.format("Class for object with id %s could not be found",child.getId()));
 
                 String className = Util.getClassName(child);
                 if (mem.isSubClass(classToFilter, className)) {
@@ -3069,48 +3070,69 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     private BusinessObjectLight createObjectLightFromNode (Node instance) {
         String className = (String)instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME);
         
-        BusinessObjectLight res = new BusinessObjectLight(className, instance.getId(), 
-            (String)instance.getProperty(Constants.PROPERTY_NAME));
+        //First, we create the naked business object, without validators
+        BusinessObjectLight res = new BusinessObjectLight(className, instance.getId(), (String)instance.getProperty(Constants.PROPERTY_NAME));
         
-        try {
-            List<Validator> validators = new ArrayList<>();
-            
-            //Now we run the applicable validator definitions
-            List<ClassMetadataLight> classHierarchy = mem.getUpstreamClassHierarchy(className, true);
-            
-            classHierarchy.forEach((aClass) -> { //Now we get and apply all the validator definitions available for the object class and its superclasses
-                graphDb.findNodes(Label.label(Constants.LABEL_VALIDATOR_DEFINITIONS), 
-                        Constants.PROPERTY_CLASS_NAME, 
-                        aClass.getName()).stream().forEach((aValidatorDefinition) -> {
-                            try {
-                                String script = (String)aValidatorDefinition.getProperty(Constants.PROPERTY_SCRIPT);
-                                if (!script.trim().isEmpty() && (boolean)aValidatorDefinition.getProperty(Constants.PROPERTY_ENABLED)) {
-                                    Binding environmentParameters = new Binding();
-                                    environmentParameters.setVariable("validatorDefinitionName", aValidatorDefinition.getProperty(Constants.PROPERTY_NAME));
-                                    environmentParameters.setVariable("objectClass", className); //Although we already have a reference to the object node, it is not
-                                    environmentParameters.setVariable("objectId", instance.getId()); //a good thing to encourage users to access directly to the database, 
-                                                                                               //since upper layers of the application must be backend-agnostic
-                                    GroovyShell shell = new GroovyShell(ApplicationEntityManager.class.getClassLoader(), environmentParameters);
-                                    Object theResult = shell.evaluate(script);
-
-                                    if (theResult instanceof Validator) //The script must return a validator, otherwise, the result will be ignored
-                                        validators.add((Validator)theResult);
-                                    else
-                                        System.out.println(String.format("[KUWAIBA] Validator %s is not returning a validator from its execution", 
-                                            aValidatorDefinition.getProperty(Constants.PROPERTY_NAME)));
-                                }
-                            } catch (Exception ex) { //Errors will be logged and the validator definition skipped
-                                System.out.println(String.format("[KUWAIBA] An unexpected error occurred while evaluating validator %s in object %s(%s): %s", 
-                                        aValidatorDefinition.getProperty(Constants.PROPERTY_NAME), instance.getProperty(Constants.PROPERTY_NAME), 
-                                        instance.getId(), ex.getLocalizedMessage()));
-                            } 
-                        });            
-            });
-            res.setValidators(validators);
-        } catch (MetadataObjectNotFoundException ex) {
-            //Should not happen
+        //Then, we check the cache for validator definitions
+        List<ValidatorDefinition> validatorDefinitions = CacheManager.getInstance().getValidatorDefinitions(className);
+        if (validatorDefinitions == null) { //Since the validator definitions are not cached, we retrieve them from the object class plus its super classes
+            validatorDefinitions = new ArrayList<>();
+            try {
+                List<ClassMetadataLight> classHierarchy = mem.getUpstreamClassHierarchy(className, true);
+                
+                for (ClassMetadataLight aClass : classHierarchy) {
+                    ResourceIterator<Node> validatorDefinitionNodes = graphDb.findNodes(Label.label(Constants.LABEL_VALIDATOR_DEFINITIONS), 
+                            Constants.PROPERTY_CLASS_NAME, 
+                            aClass.getName());
+                    
+                    while (validatorDefinitionNodes.hasNext()) {
+                        Node aValidatorDefinitionNode = validatorDefinitionNodes.next();
+                        validatorDefinitions.add(new ValidatorDefinition(
+                                        aValidatorDefinitionNode.getId(), 
+                                        (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_NAME), 
+                                        (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
+                                        aClass.getName(), 
+                                        (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_SCRIPT), 
+                                        (boolean)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_ENABLED)));
+                    }
+                }
+                
+                //Now we cachethe results
+                CacheManager.getInstance().addValidatorDefinitions(className, validatorDefinitions);
+            } catch (MetadataObjectNotFoundException ex) {
+                //Should not happen
+            }    
         }
         
+        List<Validator> validators = new ArrayList<>();
+        
+        //Now we run the applicable validator definitions
+        validatorDefinitions.forEach((aValidatorDefinition) -> {
+            try {
+                String script = aValidatorDefinition.getScript();
+                if (!script.trim().isEmpty() && aValidatorDefinition.isEnabled()) {
+                    Binding environmentParameters = new Binding();
+                    environmentParameters.setVariable("validatorDefinitionName", aValidatorDefinition.getName());
+                    environmentParameters.setVariable("objectClass", className); //Although we already have a reference to the object node, it is not
+                    environmentParameters.setVariable("objectId", instance.getId()); //a good thing to encourage users to access directly to the database, 
+                                                                               //since upper layers of the application must be backend-agnostic
+                    GroovyShell shell = new GroovyShell(ApplicationEntityManager.class.getClassLoader(), environmentParameters);
+                    Object theResult = shell.evaluate(script);
+
+                    if (theResult instanceof Validator) //The script must return a validator, otherwise, the result will be ignored
+                        validators.add((Validator)theResult);
+                    else
+                        System.out.println(String.format("[KUWAIBA] Validator %s is not returning a validator from its execution", 
+                            aValidatorDefinition.getName()));
+                }
+            } catch (Exception ex) { //Errors will be logged and the validator definition skipped
+                System.out.println(String.format("[KUWAIBA] An unexpected error occurred while evaluating validator %s in object %s(%s): %s", 
+                        aValidatorDefinition.getName(), instance.getProperty(Constants.PROPERTY_NAME), 
+                        instance.getId(), ex.getLocalizedMessage()));
+            }
+        });
+        
+        res.setValidators(validators);
         return res;
     }
        

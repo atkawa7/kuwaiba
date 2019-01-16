@@ -23,10 +23,10 @@ import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.dashboards.DashboardEventBus;
-import org.kuwaiba.apis.web.gui.navigation.SimpleIconGenerator;
+import org.kuwaiba.apis.web.gui.navigation.BasicIconGenerator;
 import org.kuwaiba.apis.web.gui.navigation.nodes.AbstractNode;
 import org.kuwaiba.apis.web.gui.navigation.nodes.ChildrenProvider;
-import org.kuwaiba.apis.web.gui.navigation.trees.SimpleTree;
+import org.kuwaiba.apis.web.gui.navigation.trees.BasicTree;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -82,7 +82,7 @@ public class NavigationTreeDashboardWidget extends AbstractDashboardWidget {
     @Override
     public void createContent() {
         RemoteSession session = (RemoteSession) UI.getCurrent().getSession().getAttribute("session");
-        this.contentComponent = new SimpleTree(
+        this.contentComponent = new BasicTree(
             new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
                     @Override
                     public List<RemoteObjectLight> getChildren(RemoteObjectLight c) {
@@ -96,7 +96,7 @@ public class NavigationTreeDashboardWidget extends AbstractDashboardWidget {
                             return new ArrayList<>();
                         }
                     }
-                }, new SimpleIconGenerator(wsBean, session), 
+                }, new BasicIconGenerator(wsBean, session), 
                 new AbstractNode<RemoteObjectLight>(root == null ? new RemoteObjectLight(Constants.DUMMY_ROOT, -1, "Navigation Root") : root) {
                     @Override
                     public AbstractAction[] getActions() { return new AbstractAction[0]; }

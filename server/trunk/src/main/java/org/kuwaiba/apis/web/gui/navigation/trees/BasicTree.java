@@ -28,7 +28,7 @@ import com.vaadin.ui.components.grid.TreeGridDragSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.kuwaiba.apis.web.gui.navigation.InventoryObjectTreeData;
+import org.kuwaiba.apis.web.gui.navigation.BasicTreeData;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidator;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.services.persistence.util.Constants;
@@ -37,7 +37,7 @@ import org.kuwaiba.services.persistence.util.Constants;
  * A tree that extends the features of the default one and makes use of the Nodes API
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class SimpleTree extends Tree<AbstractNode> {
+public class BasicTree extends Tree<AbstractNode> {
     /**
      * A list with the existing styles used to render the nodes so they can be reused
      */
@@ -49,9 +49,9 @@ public class SimpleTree extends Tree<AbstractNode> {
      * @param childrenProvider The object that will provide the children of an expanded node
      * @param iconGenerator To generate the icons
      */
-    public SimpleTree(ChildrenProvider childrenProvider, IconGenerator<AbstractNode> iconGenerator, 
+    public BasicTree(ChildrenProvider childrenProvider, IconGenerator<AbstractNode> iconGenerator, 
             AbstractNode... roots) {
-        InventoryObjectTreeData treeData = new InventoryObjectTreeData(childrenProvider);
+        BasicTreeData treeData = new BasicTreeData(childrenProvider);
         treeData.addRootItems(roots);
         
         //Enable the tree as a drag source
@@ -69,8 +69,9 @@ public class SimpleTree extends Tree<AbstractNode> {
         setDataProvider(new TreeDataProvider(treeData));
         setSizeFull();
         setItemIconGenerator(iconGenerator);
-        setStyleGenerator((aNode) -> {
-            if (aNode.getObject() instanceof RemoteObjectLight) { //The RemoteObjectLight instances appearance in the tree could be affected by the its validators
+        
+        setStyleGenerator((aNode) -> { //The RemoteObjectLight instances appearance in the tree could be affected the properties in their validators
+            if (aNode.getObject() instanceof RemoteObjectLight) { 
                 String definitiveColor = null;
                 
                 for (RemoteValidator aValidator : ((RemoteObjectLight)aNode.getObject()).getValidators()) {
@@ -101,9 +102,9 @@ public class SimpleTree extends Tree<AbstractNode> {
      * @param childrenProvider The object that will provide the children of an expanded node
      * @param iconGenerator To generate the icons
      */
-    public SimpleTree(ChildrenProvider childrenProvider, IconGenerator<AbstractNode> iconGenerator, 
+    public BasicTree(ChildrenProvider childrenProvider, IconGenerator<AbstractNode> iconGenerator, 
             List<AbstractNode> roots) {
-        InventoryObjectTreeData treeData = new InventoryObjectTreeData(childrenProvider);
+        BasicTreeData treeData = new BasicTreeData(childrenProvider);
         treeData.addRootItems(roots);
         
         //Enable the tree as a drag source

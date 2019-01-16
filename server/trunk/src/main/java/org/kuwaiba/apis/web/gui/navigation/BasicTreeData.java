@@ -29,13 +29,13 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 
-public class InventoryObjectTreeData extends TreeData<AbstractNode> {
+public class BasicTreeData extends TreeData<AbstractNode> {
     /**
      * A custom data provider that returns the children in the standard containment hierarchy of a given inventory object
      */
     private ChildrenProvider<RemoteObjectLight, RemoteObjectLight> childrenProvider;
 
-    public InventoryObjectTreeData(ChildrenProvider childrenProvider) {
+    public BasicTreeData(ChildrenProvider childrenProvider) {
         super();
         this.childrenProvider = childrenProvider;
     }

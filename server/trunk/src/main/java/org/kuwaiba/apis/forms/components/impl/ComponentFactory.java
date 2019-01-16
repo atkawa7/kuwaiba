@@ -40,8 +40,8 @@ import org.kuwaiba.apis.forms.elements.ElementVerticalLayout;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.navigation.nodes.AbstractNode;
 import org.kuwaiba.apis.web.gui.navigation.nodes.ChildrenProvider;
-import org.kuwaiba.apis.web.gui.navigation.trees.SimpleTree;
-import org.kuwaiba.apis.web.gui.navigation.SimpleIconGenerator;
+import org.kuwaiba.apis.web.gui.navigation.trees.BasicTree;
+import org.kuwaiba.apis.web.gui.navigation.BasicIconGenerator;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -100,7 +100,7 @@ public class ComponentFactory {
             graphicalComponent = new ComponentPanel();            
         } else if (element instanceof ElementTree) {
             
-            SimpleTree dynamicTree = new SimpleTree(new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
+            BasicTree dynamicTree = new BasicTree(new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
                         @Override
                         public List<RemoteObjectLight> getChildren(RemoteObjectLight parentObject) {
                             try {
@@ -113,7 +113,7 @@ public class ComponentFactory {
                                 return new ArrayList<>();
                             }
                         }
-                    }, new SimpleIconGenerator(wsBean, (RemoteSession) UI.getCurrent().getSession().getAttribute("session")),
+                    }, new BasicIconGenerator(wsBean, (RemoteSession) UI.getCurrent().getSession().getAttribute("session")),
                     new AbstractNode<RemoteObjectLight>(new RemoteObjectLight(Constants.DUMMY_ROOT, -1, "Navigation Root")) {
                         @Override
                         public AbstractAction[] getActions() { return new AbstractAction[0]; }

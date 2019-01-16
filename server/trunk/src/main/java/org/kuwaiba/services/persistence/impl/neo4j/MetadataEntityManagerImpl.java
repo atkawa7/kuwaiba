@@ -1591,7 +1591,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     @Override
     public List<ClassMetadataLight> getUpstreamContainmentHierarchy(String className, 
             boolean recursive) throws MetadataObjectNotFoundException {
-        List<ClassMetadataLight> res = new ArrayList<>();
+        
+        //Let's check the cache first
+        List<ClassMetadataLight> res = cm.getUpstreamClassHierarchy(className);
+        
+        if (res != null)
+            return res;
+            
+        res = new ArrayList<>();
         try(Transaction tx = graphDb.beginTx()) {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
             
@@ -1602,7 +1609,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             String cypherQuery = "MATCH (possibleParentClassNode:classes)-[:POSSIBLE_CHILD" + (recursive ? "*" : "") + "]->(classNode:classes) "+
                                  "WHERE classNode.name = \"" + className + "\" "+
                                  "AND possibleParentClassNode.name <> \"" + Constants.NODE_DUMMYROOT + "\" "+
-                                 "RETURN distinct possibleParentClassNode " +
+                                 "RETURN DISTINCT possibleParentClassNode " +
                                  "ORDER BY possibleParentClassNode.name ASC";
 
             Result result = graphDb.execute(cypherQuery);
@@ -1610,8 +1617,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             Iterator<Node> directPossibleChildren = result.columnAs("possibleParentClassNode"); //NOI18N
             for (Node node : Iterators.asIterable(directPossibleChildren))
                 res.add(Util.createClassMetadataLightFromNode(node));
+            
+            //Cache the result and return
+            cm.addUpstreamClassHierarchy(className, res);
+            
+            tx.success();
+            return res;
         }
-        return res;
     }
     
     @Override

@@ -30,13 +30,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.navigation.nodes.ChildrenProvider;
-import org.kuwaiba.apis.web.gui.navigation.trees.SimpleTree;
+import org.kuwaiba.apis.web.gui.navigation.trees.BasicTree;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import java.util.Arrays;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-import org.kuwaiba.apis.web.gui.navigation.SimpleIconGenerator;
+import org.kuwaiba.apis.web.gui.navigation.BasicIconGenerator;
 import org.kuwaiba.apis.web.gui.navigation.nodes.AbstractNode;
 import org.kuwaiba.apis.web.gui.navigation.nodes.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
@@ -49,7 +49,7 @@ import org.kuwaiba.services.persistence.util.Constants;
  */
 public class ComponentConnectionTarget extends VerticalLayout {
     private final WebserviceBean webserviceBean;
-    private SimpleTree tree;
+    private BasicTree tree;
     private AutocompleteTextField txtFilter;
     private RemoteObjectLight selectedTargetDevice;
     private RemoteObjectLight root;
@@ -138,7 +138,7 @@ public class ComponentConnectionTarget extends VerticalLayout {
         });
         btnSearch.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
-        tree = new SimpleTree(
+        tree = new BasicTree(
                 new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
                         @Override
                         public List<RemoteObjectLight> getChildren(RemoteObjectLight c) {
@@ -155,7 +155,7 @@ public class ComponentConnectionTarget extends VerticalLayout {
                                 return new ArrayList<>();
                             }
                         }
-                    }, new SimpleIconGenerator(webserviceBean, ((RemoteSession) UI.getCurrent().getSession().getAttribute("session"))), 
+                    }, new BasicIconGenerator(webserviceBean, ((RemoteSession) UI.getCurrent().getSession().getAttribute("session"))), 
                     new AbstractNode<RemoteObjectLight>(root != null ? root : new RemoteObjectLight(Constants.DUMMY_ROOT, -1, "Navigation Root")) {
                         @Override
                         public AbstractAction[] getActions() { return new AbstractAction[0]; }
@@ -185,7 +185,7 @@ public class ComponentConnectionTarget extends VerticalLayout {
         setSizeFull();
     }    
 
-    public SimpleTree getTree() {
+    public BasicTree getTree() {
         return tree;
     }
 
