@@ -19,6 +19,7 @@ package org.kuwaiba.interfaces.ws.toserialize.application;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -89,10 +90,12 @@ public class RemoteValidator implements Serializable {
      * @return The value of the property or null if it doesn't exist
      */
     public String getProperty(String propertyName) {
-        StringPair matchingProperty = properties.stream().filter((aProperty) -> {
-            return aProperty.getKey().equals(propertyName);
-        }).findFirst().get();
-        
-        return matchingProperty == null ? null : matchingProperty.getValue();
+        try {
+            return properties.stream().filter((aProperty) -> {
+                return aProperty.getKey().equals(propertyName);
+            }).findFirst().get().getValue();
+        } catch (NoSuchElementException ex) {
+            return null;
+        }
     }
 }

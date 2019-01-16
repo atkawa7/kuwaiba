@@ -1640,7 +1640,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 Node child = childOfRelationship.getStartNode();
 
                 if (!child.getRelationships(RelTypes.INSTANCE_OF).iterator().hasNext())
-                    throw new MetadataObjectNotFoundException(String.format("Class for object with id %s could not be found",child.getId()));
+                    throw new MetadataObjectNotFoundException(String.format("Class for object with id %s could not be found", child.getId()));
 
                 String className = Util.getClassName(child);
                 if (mem.isSubClass(classToFilter, className)) {
