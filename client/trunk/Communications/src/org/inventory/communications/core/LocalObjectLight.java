@@ -48,31 +48,41 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
      * Collection of flags
      */
     protected List<LocalValidator> validators;
+    /**
+     * The display name of the object, formed by its name, the suffixes and prefixes in its validators and its class name 
+     */
+    protected String displayName;
 
     /**
      * This constructor is called to create dummy objects where the id is not important
      */
-    public LocalObjectLight(){
+    public LocalObjectLight() {
         this.id = -1;
         this.propertyChangeListeners = new ArrayList<>();
+        this.validators = new ArrayList<>();
     }
 
     public LocalObjectLight(long oid, String name, String className) {
-        this();
         this.id = oid;
         this.name = name;
         this.className = className;
         this.validators = new ArrayList<>();
+        this.propertyChangeListeners = new ArrayList<>();
+        updateDisplayName();
     }
 
     public LocalObjectLight(String className, String name, long id, List<RemoteValidator> validators){
-        this(id, name, className);      
+        this.id = id;
+        this.name = name;
+        this.className = className;
         this.validators = new ArrayList<>();
+        this.propertyChangeListeners = new ArrayList<>();
         if (validators != null) {
             validators.forEach((remoteValidator) -> {
                 this.validators.add(new LocalValidator(remoteValidator.getName(), remoteValidator.getProperties()));
             });
         }
+        updateDisplayName();
     }
 
     public String getClassName() {
@@ -119,6 +129,7 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
     public void setName(String name) {
         String oldName = this.name;
         this.name = name;
+        updateDisplayName();
         firePropertyChangeEvent(Constants.PROPERTY_NAME, oldName, name);
     }
 
@@ -142,6 +153,21 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
             while (listenersIterator.hasNext())
                 listenersIterator.next().propertyChange(new PropertyChangeEvent(this, property, oldValue, newValue));
         }
+    }
+    
+    private void updateDisplayName() {
+        LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(className, false); //This info is usually cached already
+        String prefix = "", suffix = "";
+        for (LocalValidator aValidator : validators) {
+            String thisValidatorPrefix = aValidator.getProperties().getProperty("prefix");
+            if (thisValidatorPrefix != null)
+                prefix += thisValidatorPrefix + " ";
+            String thisValidatorSuffix = aValidator.getProperties().getProperty("suffix");
+            if (thisValidatorSuffix != null)
+                prefix += " " + thisValidatorPrefix;
+        }
+        
+        this.displayName = prefix + (getName() == null ? Constants.LABEL_NONAME : getName()) + suffix + " [" + classMetadata + "]";
     }
 
    @Override
@@ -181,8 +207,7 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
 
     @Override
     public String toString() {
-        LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(className, false); //This info is usually cached already
-        return (getName() == null ? Constants.LABEL_NONAME : getName()) + " [" + (classMetadata == null ? className : classMetadata) + "]"; //NOI18N
+        return displayName;
     }
 
     @Override

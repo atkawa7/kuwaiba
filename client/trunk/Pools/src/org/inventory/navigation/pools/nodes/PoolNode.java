@@ -49,7 +49,7 @@ import org.openide.util.datatransfer.PasteType;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class PoolNode extends AbstractNode implements PropertyChangeListener {
-    private static final Image defaultIcon = ImageUtilities.loadImage("org/inventory/navigation/pools/res/pool.png");
+    private static final Image ICON = ImageUtilities.loadImage("org/inventory/navigation/pools/res/pool.png");
     private NewPoolItemAction newPoolItemAction;
     private DeletePoolAction deletePoolAction;
     private LocalPool pool;
@@ -106,12 +106,12 @@ public class PoolNode extends AbstractNode implements PropertyChangeListener {
  
     @Override
     public Image getIcon(int i){
-        return defaultIcon;
+        return ICON;
     }
 
     @Override
     public Image getOpenedIcon(int i){
-        return getIcon(i);
+        return ICON;
     }
     
     @Override

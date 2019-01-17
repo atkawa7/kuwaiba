@@ -1,9 +1,11 @@
 /**
  * Watches for all support contracts about to expire
- * Neotropic SAS - version 1.0
+ * Neotropic SAS - version 1.1
  * Parameters: -daysBeforeHigh: The upper threshold (number of days). It will generate a red notification
  *             -daysBeforeMid: The lower threshold (number of days). It will generate a red notification
  */
+
+ import org.neo4j.graphdb.Label;
 
 //Creates the task result instance using reflection
 def taskResult = TaskResult.newInstance();
@@ -22,7 +24,7 @@ if (daysBeforeMid <= daysBeforeHigh)
 	return TaskResult.createErrorResult("daysBeforeMid parameter has to be greater than daysBeforeHigh");
 
 //Gets the contract class node
-def supportContractClassNode = classIndex.get(Constants.PROPERTY_NAME, "SupportContract").getSingle();
+def supportContractClassNode = graphDb.findNode(Label.label("classes"), Constants.PROPERTY_NAME, "SupportContract");
 
 if (supportContractClassNode == null)
 	taskResult = TaskResult.createErrorResult("Class SupportContract not found");

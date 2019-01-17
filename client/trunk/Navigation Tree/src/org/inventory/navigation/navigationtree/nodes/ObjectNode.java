@@ -86,27 +86,16 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     protected CommunicationsStub com = CommunicationsStub.getInstance();
     protected Image icon;
     /**
-     * The prefix to be added to the name of the object if there's any validator configured to do so. See the Javadoc of this class for details.
+     * This custom color is set depending on the validators found in the LocalObjectLightInstance
      */
-    private String prefix = "";
-    private String suffix = "";
     private String color;
 
     public ObjectNode(Children children, Lookup lookup) {
         super(children, lookup);
         LocalObjectLight anObject = lookup.lookup(LocalObjectLight.class);
-        if (anObject != null && anObject.getValidators() != null) {
-            for (LocalValidator aValidator : anObject.getValidators()) {
-                if (aValidator.getProperties().getProperty("prefix") != null) //NOI18N
-                    prefix += aValidator.getProperties().getProperty("prefix") + " "; //NOI18N
-                
-                if (aValidator.getProperties().getProperty("suffix") != null) //NOI18N
-                    suffix += " " + aValidator.getProperties().getProperty("suffix"); //NOI18N
-                
-                if (aValidator.getProperties().getProperty("color") != null) //NOI18N
-                    color = aValidator.getProperties().getProperty("color"); //NOI18N
-            }
-            
+        for (LocalValidator aValidator : anObject.getValidators()) {
+            if (aValidator.getProperties().getProperty("color") != null) //NOI18N
+                color = aValidator.getProperties().getProperty("color"); //NOI18N
         }
     }
     
@@ -128,7 +117,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
 
     @Override
     public String getHtmlDisplayName() {
-        return "<font color='" + (color == null ? "FFFFFF" : color) + "'>" + prefix + getObject() + suffix + "</font>"; // NOI18N
+        return "<font color='" + (color == null ? "FFFFFF" : color) + "'>" + getObject() + "</font>"; // NOI18N
     }
     
     /**
