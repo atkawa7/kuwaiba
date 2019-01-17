@@ -94,20 +94,20 @@ public class WarehouseModule implements GenericCommercialModule {
     /**
      * Gets the Warehouse Module Root Pools
      * @return A list of root pools
-     * @throws MetadataObjectNotFoundException If no found the Warehouse or VirtualWarehouse classes 
+     * @throws MetadataObjectNotFoundException If the classes Warehouse or VirtualWarehouse could not be found.
      */
     public List<Pool> getWarehouseRootPools() throws MetadataObjectNotFoundException {
-        List<Pool> warehousePools = aem.getRootPools(Constants.CLASS_WAREHOUSE, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
-        List<Pool> virtualWarehousePools = aem.getRootPools(Constants.CLASS_VIRTUALWAREHOUSE, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
-        // If the Warehouse root pool do not exist then is created
+        List<Pool> warehousePools = bem.getRootPools(Constants.CLASS_WAREHOUSE, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
+        List<Pool> virtualWarehousePools = bem.getRootPools(Constants.CLASS_VIRTUALWAREHOUSE, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
+        // If the Warehouse root pool does not exist then it is created
         if (warehousePools.isEmpty()) {
             aem.createRootPool(Constants.NODE_WAREHOUSE, Constants.NODE_WAREHOUSE, Constants.CLASS_WAREHOUSE, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT);
-            warehousePools = aem.getRootPools(Constants.CLASS_WAREHOUSE, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
+            warehousePools = bem.getRootPools(Constants.CLASS_WAREHOUSE, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
         }
-        // If the VirtualWarehouse root pool do not exist then is created
+        // If the VirtualWarehouse root pool does not exist then it is created
         if (virtualWarehousePools.isEmpty()) {
             aem.createRootPool(Constants.NODE_VIRTUALWAREHOUSE, Constants.NODE_VIRTUALWAREHOUSE, Constants.CLASS_VIRTUALWAREHOUSE, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT);
-            virtualWarehousePools = aem.getRootPools(Constants.CLASS_VIRTUALWAREHOUSE, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
+            virtualWarehousePools = bem.getRootPools(Constants.CLASS_VIRTUALWAREHOUSE, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
         }
         List<Pool> warehouseRootPools = new ArrayList();
         warehouseRootPools.addAll(warehousePools);

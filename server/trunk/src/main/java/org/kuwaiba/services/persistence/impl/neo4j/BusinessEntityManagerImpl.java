@@ -48,6 +48,7 @@ import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.Contact;
 import org.kuwaiba.apis.persistence.application.FileObject;
 import org.kuwaiba.apis.persistence.application.FileObjectLight;
+import org.kuwaiba.apis.persistence.application.Pool;
 import org.kuwaiba.apis.persistence.application.Validator;
 import org.kuwaiba.apis.persistence.application.ValidatorDefinition;
 import org.kuwaiba.apis.persistence.business.AnnotatedBusinessObjectLight;
@@ -2599,6 +2600,159 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     //</editor-fold>
     
+    //<editor-fold desc="Pools" defaultstate="collapsed">
+        @Override
+    public List<Pool> getRootPools(String className, int type, boolean includeSubclasses) {
+        try(Transaction tx = graphDb.beginTx()) {
+            List<Pool> pools  = new ArrayList<>();
+            
+            ResourceIterator<Node> poolNodes = graphDb.findNodes(poolLabel);
+            
+            while (poolNodes.hasNext()) {
+                Node poolNode = poolNodes.next();
+                
+                if (!poolNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF_SPECIAL)) { //Root pools don't have parents
+                    if ((int)poolNode.getProperty(Constants.PROPERTY_TYPE) == type) {
+                        
+                        //The following conditions could probably normalized, but I think this way,
+                        //the code is a bit more readable
+                        if (className != null) { //We will return only those matching with the specified class name or its subclasses, depending on the value of includeSubclasses
+                            String poolClass = (String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME);
+                            if (includeSubclasses) {
+                                try {
+                                    if (mem.isSubClass(className, poolClass))
+                                        pools.add(Util.createPoolFromNode(poolNode));
+                                } catch (MetadataObjectNotFoundException ex) { } //Should not happen
+                            } else {
+                                if (className.equals(poolClass))
+                                    pools.add(Util.createPoolFromNode(poolNode));
+                            }
+                        } else //All pools with no parent are returned
+                            pools.add(Util.createPoolFromNode(poolNode));
+                    }
+                }
+            }
+            tx.success();
+            return pools;
+        }
+    }
+    
+    @Override
+    public List<Pool> getPoolsInObject(String objectClassName, long objectId, String poolClass) throws BusinessObjectNotFoundException {
+        
+        try(Transaction tx = graphDb.beginTx()) {
+            List<Pool> pools  = new ArrayList<>();
+            
+            Node objectNode = Util.findNodeByLabelAndId(inventoryObjectLabel, objectId);
+            
+            if (objectNode == null)
+                throw new BusinessObjectNotFoundException(objectClassName, objectId);
+            
+            for (Relationship containmentRelationship : objectNode.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL)) {
+                if (containmentRelationship.hasProperty(Constants.PROPERTY_NAME) && 
+                        Constants.REL_PROPERTY_POOL.equals(containmentRelationship.getProperty(Constants.PROPERTY_NAME))){
+                    Node poolNode = containmentRelationship.getStartNode();
+                    if (poolClass != null) { //We will return only those matching with the specified class name
+                        if (poolClass.equals((String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME)))
+                            pools.add(Util.createPoolFromNode(poolNode));
+                    } else
+                        pools.add(Util.createPoolFromNode(poolNode));
+                }
+            }
+            tx.success();
+            return pools;
+        }
+    }
+    
+    @Override
+    public List<Pool> getPoolsInPool(long parentPoolId, String poolClass) 
+            throws ApplicationObjectNotFoundException {
+        
+        try(Transaction tx = graphDb.beginTx()) {
+            List<Pool> pools  = new ArrayList<>();
+            
+            Node parentPoolNode = Util.findNodeByLabelAndId(poolLabel, parentPoolId);
+            
+            if (parentPoolNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("The pool with id %s could not be found", parentPoolId));
+            
+            for (Relationship containmentRelationship : parentPoolNode.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL)) {
+                Node poolNode = containmentRelationship.getStartNode();
+                
+                if (poolNode.hasRelationship(Direction.OUTGOING, RelTypes.INSTANCE_OF)) //The pool items and the pools themselves also have CHILD_OF_SPECIAL relationships
+                    continue;
+                
+                if (poolClass != null) { //We will return only those matching with the specified class name
+                    if (poolClass.equals((String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME)))
+                        pools.add(Util.createPoolFromNode(poolNode));
+                } else
+                    pools.add(Util.createPoolFromNode(poolNode));
+            }
+            return pools;
+        }
+    }
+           
+    @Override
+    public Pool getPool(long poolId) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            Node poolNode = Util.findNodeByLabelAndId(poolLabel, poolId);
+            
+            if (poolNode != null) {                
+                
+                String name = poolNode.hasProperty(Constants.PROPERTY_NAME) ? 
+                                    (String)poolNode.getProperty(Constants.PROPERTY_NAME) : null;
+                
+                String description = poolNode.hasProperty(Constants.PROPERTY_DESCRIPTION) ? 
+                                    (String)poolNode.getProperty(Constants.PROPERTY_DESCRIPTION) : null;
+                
+                String className = poolNode.hasProperty(Constants.PROPERTY_CLASS_NAME) ? 
+                                    (String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME) : null;
+                
+                int type = poolNode.hasProperty(Constants.PROPERTY_TYPE) ? 
+                                    (int)poolNode.getProperty(Constants.PROPERTY_TYPE) : 0;
+                
+                return new Pool(poolId, name, description, className, type);
+            }
+            else
+                throw new ApplicationObjectNotFoundException(String.format("Pool with id %s could not be found", poolId));
+        }
+    }
+    
+    @Override
+    public List<BusinessObjectLight> getPoolItems(long poolId, int limit)
+            throws ApplicationObjectNotFoundException {
+        try(Transaction tx = graphDb.beginTx()) {
+            
+            Node poolNode = Util.findNodeByLabelAndId(poolLabel, poolId);
+
+            if (poolNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("The pool with id %s could not be found", poolId));
+
+            List<BusinessObjectLight> poolItems  = new ArrayList<>();
+
+            int i = 0;
+            for (Relationship rel : poolNode.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL)){
+                if (limit != -1){
+                    if (i >= limit)
+                         break;
+                    i++;
+                }
+                if(rel.hasProperty(Constants.PROPERTY_NAME)){
+                    if(rel.getProperty(Constants.PROPERTY_NAME).equals(Constants.REL_PROPERTY_POOL)){
+                        Node item = rel.getStartNode();
+                        Node temp = Util.findNodeByLabelAndId(poolLabel, item.getId());
+                        if(temp == null)  //If it's not a pool, but a normal business object
+                            poolItems.add(createObjectLightFromNode(item));
+                    }
+                }
+            }
+            tx.success();
+            return poolItems;
+        }
+    }
+    //</editor-fold>
+    
     //<editor-fold desc="Helpers" defaultstate="collapsed">
     /**
      * Boiler-plate code. Gets a particular instance given the class name and the oid. Callers must handle associated transactions
@@ -3080,7 +3234,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             validatorDefinitions = new ArrayList<>();
             try {
                 List<ClassMetadataLight> classHierarchy = mem.getUpstreamClassHierarchy(className, true);
-                
+                //The query return the hierarchy from the subclass to the super class, so we reverse it so the lower level validator definitions 
+                //have more priority (that is, are processed the last)
+                Collections.reverse(classHierarchy); 
                 for (ClassMetadataLight aClass : classHierarchy) {
                     ResourceIterator<Node> validatorDefinitionNodes = graphDb.findNodes(Label.label(Constants.LABEL_VALIDATOR_DEFINITIONS), 
                             Constants.PROPERTY_CLASS_NAME, 

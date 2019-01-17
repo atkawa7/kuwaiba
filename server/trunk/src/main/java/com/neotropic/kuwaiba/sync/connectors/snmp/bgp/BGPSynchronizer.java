@@ -176,7 +176,7 @@ public class BGPSynchronizer {
             readCurrentStructure(bem.getObjectChildren(className, id, -1), 1);
             readCurrentStructure(bem.getObjectSpecialChildren(className, id), 2);
             //we get the rood nodes for the ipv4
-            List<Pool> ipv4RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
+            List<Pool> ipv4RootPools = bem.getRootPools(Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
             ipv4Root = ipv4RootPools.get(0);
             try {
                 readcurrentFolder(ipv4RootPools);
@@ -579,7 +579,7 @@ public class BGPSynchronizer {
     {
         for (Pool folder : folders) {
             if(!folders.isEmpty())
-                readcurrentFolder(aem.getPoolsInPool(folder.getId(), folder.getClassName()));
+                readcurrentFolder(bem.getPoolsInPool(folder.getId(), folder.getClassName()));
             readCurrentSubnets(folder);
         }
     }
@@ -595,7 +595,7 @@ public class BGPSynchronizer {
             throws ApplicationObjectNotFoundException, 
             MetadataObjectNotFoundException, BusinessObjectNotFoundException {
         //we read the subnets of the folder
-        List<BusinessObjectLight> subnetsInFolder = aem.getPoolItems(folder.getId(), -1);
+        List<BusinessObjectLight> subnetsInFolder = bem.getPoolItems(folder.getId(), -1);
         for (BusinessObjectLight subnet : subnetsInFolder) {
             //we save the subnet
             if(subnets.get(subnet) == null)

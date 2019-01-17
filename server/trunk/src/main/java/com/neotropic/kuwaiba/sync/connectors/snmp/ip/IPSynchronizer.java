@@ -141,8 +141,8 @@ public class IPSynchronizer {
             readCurrentStructure(bem.getObjectChildren(className, id, -1), 1);
             readCurrentStructure(bem.getObjectSpecialChildren(className, id), 2);
             //we get the rood nodes for ipv4 ipv6 root nodes
-            List<Pool> ipv4RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
-            List<Pool> ipv6RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV6, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
+            List<Pool> ipv4RootPools = bem.getRootPools(Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
+            List<Pool> ipv6RootPools = bem.getRootPools(Constants.CLASS_SUBNET_IPV6, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
             ipv4Root = ipv4RootPools.get(0);
             ipv6Root = ipv6RootPools.get(0);
             readcurrentFolder(ipv4RootPools);
@@ -353,7 +353,7 @@ public class IPSynchronizer {
     {
         for (Pool folder : folders) {
             if(!folders.isEmpty())
-                readcurrentFolder(aem.getPoolsInPool(folder.getId(), folder.getClassName()));
+                readcurrentFolder(bem.getPoolsInPool(folder.getId(), folder.getClassName()));
             readCurrentSubnets(folder);
         }
     }
@@ -369,7 +369,7 @@ public class IPSynchronizer {
             throws ApplicationObjectNotFoundException, 
             MetadataObjectNotFoundException, BusinessObjectNotFoundException {
         //we read the subnets of the folder
-        List<BusinessObjectLight> subnetsInFolder = aem.getPoolItems(folder.getId(), -1);
+        List<BusinessObjectLight> subnetsInFolder = bem.getPoolItems(folder.getId(), -1);
         for (BusinessObjectLight subnet : subnetsInFolder) {
             //we save the subnet
             if(subnets.get(subnet) == null)
@@ -447,16 +447,16 @@ public class IPSynchronizer {
         try{
             List<BusinessObjectLight> servicesCreatedInKuwaiba = new ArrayList<>();
             //We get the services created in kuwaiba
-            List<Pool> serviceRoot = aem.getRootPools("GenericCustomer", 2, false);
+            List<Pool> serviceRoot = bem.getRootPools(Constants.CLASS_GENERICCUSTOMER, 2, false);
             for(Pool customerPool: serviceRoot){
 
                 //TelecoOperators
-                List<BusinessObjectLight> poolItems = aem.getPoolItems(customerPool.getId(), -1);
+                List<BusinessObjectLight> poolItems = bem.getPoolItems(customerPool.getId(), -1);
                 for(BusinessObjectLight telecoOperator : poolItems){
-                    List<Pool> poolsInObject = aem.getPoolsInObject(telecoOperator.getClassName(), telecoOperator.getId(), "GenericService");
+                    List<Pool> poolsInObject = bem.getPoolsInObject(telecoOperator.getClassName(), telecoOperator.getId(), "GenericService");
                     //Service Pool
                     for(Pool servicePool : poolsInObject){
-                        List<BusinessObjectLight> actualServices = aem.getPoolItems(servicePool.getId(), -1);
+                        List<BusinessObjectLight> actualServices = bem.getPoolItems(servicePool.getId(), -1);
                         actualServices.forEach((actualService) -> {
                             servicesCreatedInKuwaiba.add(actualService);
                         });

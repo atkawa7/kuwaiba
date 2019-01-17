@@ -1003,7 +1003,7 @@ public class EntPhysicalSynchronizer {
     private void updateObjectAttributes(long deviceId, String deviceClassName, 
             HashMap<String, String> newAttributes){
         try {
-            bem.updateObject(deviceClassName, Long.valueOf(deviceId), newAttributes);
+            bem.updateObject(deviceClassName, deviceId, newAttributes);
             
             results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR,
                     String.format("This %s attributes were updated in the chassis", newAttributes),
@@ -1389,7 +1389,7 @@ public class EntPhysicalSynchronizer {
      * @throws InvalidArgumentException
      */
     private String findingListTypeId(int i, String listTypeClassName){
-        String SNMPoid, listTypeId = null;; 
+        String SNMPoid, listTypeId = null; 
         if(listTypeClassName.equals("EquipmentVendor")) //NOI18N
             SNMPoid = "entPhysicalMfgName"; //NOI18N
         else
@@ -1625,15 +1625,15 @@ public class EntPhysicalSynchronizer {
     private void checkServices(String serviceName, long portId, String portName, String portClassName) {
         List<BusinessObjectLight> servicesCreatedInKuwaiba = new ArrayList<>();
         //First ee get the services created in kuwaiba
-        List<Pool> serviceRoot = aem.getRootPools("GenericCustomer", 2, false);
+        List<Pool> serviceRoot = bem.getRootPools("GenericCustomer", 2, false);
         try {
             for(Pool customerPool: serviceRoot){
-                List<BusinessObjectLight> poolItems = aem.getPoolItems(customerPool.getId(), -1);  //TelecoOperators
+                List<BusinessObjectLight> poolItems = bem.getPoolItems(customerPool.getId(), -1);  //TelecoOperators
                 for(BusinessObjectLight telecoOperator : poolItems){
-                    List<Pool> poolsInObject = aem.getPoolsInObject(telecoOperator.getClassName(), telecoOperator.getId(), "GenericService");
+                    List<Pool> poolsInObject = bem.getPoolsInObject(telecoOperator.getClassName(), telecoOperator.getId(), "GenericService");
                     
                     for(Pool servicePool : poolsInObject){ //Service Pool
-                        List<BusinessObjectLight> actualServices = aem.getPoolItems(servicePool.getId(), -1);
+                        List<BusinessObjectLight> actualServices = bem.getPoolItems(servicePool.getId(), -1);
                         actualServices.forEach((actualService) -> {
                             servicesCreatedInKuwaiba.add(actualService);
                         });

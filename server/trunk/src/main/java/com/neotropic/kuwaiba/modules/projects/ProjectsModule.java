@@ -95,7 +95,7 @@ public class ProjectsModule implements GenericCommercialModule {
      * @return The list of project pools
      */
     public List<RemotePool> getProjectPools() {
-        List<Pool> projectPools = aem.getRootPools(Constants.CLASS_GENERICPROJECT, ApplicationEntityManager.POOL_TYPE_MODULE_COMPONENT, true);
+        List<Pool> projectPools = bem.getRootPools(Constants.CLASS_GENERICPROJECT, ApplicationEntityManager.POOL_TYPE_MODULE_COMPONENT, true);
         List<RemotePool> remoteProjPools = new ArrayList();
         
         for (Pool projectPool : projectPools)
@@ -111,7 +111,7 @@ public class ProjectsModule implements GenericCommercialModule {
      * @throws ApplicationObjectNotFoundException If the Project pool is not found
      */
     public List<BusinessObjectLight> getProjectsInProjectPool(long poolId, int limit) throws ApplicationObjectNotFoundException {
-        return aem.getPoolItems(poolId, limit);
+        return bem.getPoolItems(poolId, limit);
     }
         
     /**
@@ -130,7 +130,7 @@ public class ProjectsModule implements GenericCommercialModule {
     public long addProject(long parentId, String parentClassName, String className, String[] attributeNames, String[] attributeValues) throws 
         ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, MetadataObjectNotFoundException  {
 
-        aem.getPool(parentId);
+        bem.getPool(parentId);
         return bem.createPoolItem(parentId, className, attributeNames, attributeValues, 0);
     }
         

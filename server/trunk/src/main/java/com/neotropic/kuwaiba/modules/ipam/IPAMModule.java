@@ -124,14 +124,14 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws NotAuthorizedException 
      */
     private List<RemotePool> getDefaultIPAMRootNodes() throws NotAuthorizedException, MetadataObjectNotFoundException{
-        List<Pool> ipv4RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
-        List<Pool> ipv6RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV6, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
+        List<Pool> ipv4RootPools = bem.getRootPools(Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
+        List<Pool> ipv6RootPools = bem.getRootPools(Constants.CLASS_SUBNET_IPV6, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
         
         List<RemotePool> rootSubnetPools = new ArrayList<>();
         if(ipv4RootPools.isEmpty() || ipv6RootPools.isEmpty()){
             createRootNodes();
-            ipv4RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
-            ipv6RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV6, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
+            ipv4RootPools = bem.getRootPools(Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
+            ipv6RootPools = bem.getRootPools(Constants.CLASS_SUBNET_IPV6, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
         }
         
         for (Pool rootPool : ipv4RootPools) 
@@ -205,7 +205,7 @@ public class IPAMModule implements GenericCommercialModule{
     public RemotePool getSubnetPool(long oid) throws NotAuthorizedException, 
             ApplicationObjectNotFoundException
     {
-        return new RemotePool(aem.getPool(oid));
+        return new RemotePool(bem.getPool(oid));
     }
     
     /**
@@ -225,7 +225,7 @@ public class IPAMModule implements GenericCommercialModule{
         if(parentId == -1 && className == null)
             return getDefaultIPAMRootNodes();
         
-        for (Pool pool : aem.getPoolsInPool(parentId, className)) 
+        for (Pool pool : bem.getPoolsInPool(parentId, className)) 
             remotePools.add(new RemotePool(pool));
         return remotePools;
     }
@@ -242,7 +242,7 @@ public class IPAMModule implements GenericCommercialModule{
             long subnetPoolId) throws ApplicationObjectNotFoundException, 
             NotAuthorizedException
     {
-        return aem.getPoolItems(subnetPoolId, limit);
+        return bem.getPoolItems(subnetPoolId, limit);
     }
     
     /**

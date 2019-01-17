@@ -366,7 +366,7 @@ public interface MetadataEntityManager {
      */
     public List<ClassMetadataLight> getUpstreamSpecialContainmentHierarchy(String className, boolean recursive) throws MetadataObjectNotFoundException;
     /**
-     * Gets the parent classes of a given class until RootObject
+     * Gets the parent classes of a given class up to <code> InventoryObject</code>. Please note that <code>RootObject</code> is being deliberately omitted.
      * @param className The class to get the superclasses from
      * @param includeSelf If the result should also include the class in className
      * @return The list of super classes until the root of the hierarchy

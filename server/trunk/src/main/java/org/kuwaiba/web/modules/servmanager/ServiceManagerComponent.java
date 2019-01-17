@@ -27,7 +27,9 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.inject.Inject;
@@ -40,6 +42,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.web.IndexUI;
 import org.kuwaiba.web.modules.servmanager.dashboard.ServiceManagerDashboard;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidator;
 
 /**
  * Main view for the Service Manager module
@@ -76,6 +79,10 @@ public class ServiceManagerComponent extends AbstractTopComponent {
      * main panel
      */
     private HorizontalSplitPanel pnlMain;
+    /**
+     * A list with the existing styles used to render the nodes so they can be reused
+     */
+    private List<String> existingNodeStyles;
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
@@ -84,6 +91,8 @@ public class ServiceManagerComponent extends AbstractTopComponent {
         pnlMain = new HorizontalSplitPanel();
         pnlMain.setSplitPosition(33, Unit.PERCENTAGE);
         MenuBar mnuMain = ((IndexUI)getUI()).getMainMenu();
+        
+        this.existingNodeStyles = new ArrayList<>();
         
         addComponent(mnuMain);
         addComponent(pnlMain);
@@ -129,7 +138,27 @@ public class ServiceManagerComponent extends AbstractTopComponent {
             txtServiceFilter.setSizeFull();
             
             tblServices = new Grid<>();
-            tblServices.addColumn(RemoteObjectLight::getName).setCaption("Name");
+            tblServices.addColumn(RemoteObjectLight::getName).setCaption("Name").setStyleGenerator((aServiceNode) -> {
+
+                String definitiveColor = null;
+                
+                for (RemoteValidator aValidator : aServiceNode.getValidators()) {
+                    String validatorColor = aValidator.getProperty(Constants.PROPERTY_COLOR);
+                    if(validatorColor != null)
+                        definitiveColor = validatorColor; //If many different validator define different colors, we only care about the last one
+                }
+                
+                if (definitiveColor == null) //No validator define a color for the given object
+                    return null;
+                else {
+                    if (!existingNodeStyles.contains(definitiveColor)) {
+                        UI.getCurrent().getPage().getStyles().add(String.format(".v-grid-cell.color-table-%s { color: #%s }", definitiveColor, definitiveColor));
+                        existingNodeStyles.add(definitiveColor);
+                    }
+                    
+                    return "color-table-" + definitiveColor;
+                }
+            });
             tblServices.addColumn(RemoteObjectLight::getClassName).setCaption("Type");
             tblServices.setSizeFull();
             tblServices.setSelectionMode(Grid.SelectionMode.SINGLE);

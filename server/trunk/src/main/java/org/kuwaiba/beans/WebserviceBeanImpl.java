@@ -2195,8 +2195,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 physicalPathForVlansEndpointB = getPhysycalpathVlans(endpointB);
             
             return new RemoteLogicalConnectionDetails(linkObject, endpointA, endpointB, 
-                    physicalPathA == null ? new ArrayList<BusinessObjectLight>() : physicalPathA, 
-                    physicalPathB == null ? new ArrayList<BusinessObjectLight>() : physicalPathB, 
+                    physicalPathA == null ? new ArrayList<>() : physicalPathA, 
+                    physicalPathB == null ? new ArrayList<>() : physicalPathB, 
                     physicalPathForVlansEndpointA, physicalPathForVlansEndpointB);
             
         } catch (InventoryException ex) {
@@ -3242,11 +3242,11 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     @Override
     public RemotePool getPool(long poolId, String ipAddress, String sessionId) throws ServerSideException{
-        if (aem == null)
+        if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getPool", ipAddress, sessionId);
-            return new RemotePool(aem.getPool(poolId));
+            return new RemotePool(bem.getPool(poolId));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3254,12 +3254,12 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     @Override
     public List<RemotePool> getRootPools(String className, int type, boolean includeSubclasses, String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
+        if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getRootPools", ipAddress, sessionId);
             List<RemotePool> res = new ArrayList<>();
-            List<Pool> rootPools = aem.getRootPools(className, type, includeSubclasses);
+            List<Pool> rootPools = bem.getRootPools(className, type, includeSubclasses);
             
             for (Pool aPool : rootPools)
                 res.add(new RemotePool(aPool));
@@ -3272,12 +3272,12 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     @Override
     public List<RemotePool> getPoolsInObject(String objectClassName, long objectId, String poolClass, String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
+        if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getPoolsInObject", ipAddress, sessionId);
             List<RemotePool> res = new ArrayList<>();
-            List<Pool> rootPools = aem.getPoolsInObject(objectClassName, objectId, poolClass);
+            List<Pool> rootPools = bem.getPoolsInObject(objectClassName, objectId, poolClass);
             
             for (Pool aPool : rootPools)
                 res.add(new RemotePool(aPool));
@@ -3290,12 +3290,12 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     @Override
     public List<RemotePool> getPoolsInPool(long parentPoolId, String poolClass, String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
+        if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getPoolsInPool", ipAddress, sessionId);
             List<RemotePool> res = new ArrayList<>();
-            List<Pool> rootPools = aem.getPoolsInPool(parentPoolId, poolClass);
+            List<Pool> rootPools = bem.getPoolsInPool(parentPoolId, poolClass);
             
             for (Pool aPool : rootPools)
                 res.add(new RemotePool(aPool));
@@ -3308,11 +3308,11 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     @Override
     public List<RemoteObjectLight> getPoolItems(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException{
-        if (aem == null)
+        if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getPoolItems", ipAddress, sessionId);
-            return RemoteObjectLight.toRemoteObjectLightArray(aem.getPoolItems(poolId, limit));
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getPoolItems(poolId, limit));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

@@ -1591,14 +1591,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     @Override
     public List<ClassMetadataLight> getUpstreamContainmentHierarchy(String className, 
             boolean recursive) throws MetadataObjectNotFoundException {
-        
-        //Let's check the cache first
-        List<ClassMetadataLight> res = cm.getUpstreamClassHierarchy(className);
-        
-        if (res != null)
-            return res;
-            
-        res = new ArrayList<>();
+        List<ClassMetadataLight> res = new ArrayList<>();
         try(Transaction tx = graphDb.beginTx()) {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
             
@@ -1617,9 +1610,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             Iterator<Node> directPossibleChildren = result.columnAs("possibleParentClassNode"); //NOI18N
             for (Node node : Iterators.asIterable(directPossibleChildren))
                 res.add(Util.createClassMetadataLightFromNode(node));
-            
-            //Cache the result and return
-            cm.addUpstreamClassHierarchy(className, res);
             
             tx.success();
             return res;
@@ -1655,21 +1645,33 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     @Override
     public List<ClassMetadataLight> getUpstreamClassHierarchy(String className, boolean includeSelf) throws MetadataObjectNotFoundException {
         getClass(className); //Checks if the class exists
-        List<ClassMetadataLight> res = new ArrayList<>();
+        
+        //Let's check the cache first
+        List<ClassMetadataLight> res = cm.getUpstreamClassHierarchy(className);
+        
+        if (res != null)
+            return res;
+            
+        res = new ArrayList<>();
         try(Transaction tx = graphDb.beginTx()) {
+            //Without the ORDER BY/LIMIT clauses, this query (oddly) the main path and also its parts separately, so we only take the longest path
             String cypherQuery = "MATCH paths = (sourceClass:classes)-[:EXTENDS*]->(rootClass) WHERE sourceClass.name = " +  //NOI18N
-                    "{className} WITH nodes(paths) AS classHierarchy " + //NOI18N
+                    "{className} AND rootClass.name = 'InventoryObject' WITH nodes(paths) AS classHierarchy " + //NOI18N
                     "RETURN classHierarchy ORDER BY length(classHierarchy) DESC LIMIT 1"; //NOI18N
             
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put("className", className); //NOI18N
             Result result = graphDb.execute(cypherQuery, parameters);
-
-            result.columnAs("classHierarchy").stream().forEach((aPathSegment) -> {
-                 ((ArrayList)aPathSegment).forEach((aClassNode) -> {
-                     res.add(Util.createClassMetadataLightFromNode((Node)aClassNode));
-                 });
-            });
+            
+            ResourceIterator<ArrayList<Node>> classHierarchyPath = result.columnAs("classHierarchy");
+            
+            if (classHierarchyPath.hasNext()) {
+                for (Node aClassNode : classHierarchyPath.next())
+                    res.add(Util.createClassMetadataLightFromNode((Node)aClassNode));
+            }
+                        
+            //Cache the result and return
+            cm.addUpstreamClassHierarchy(className, res);
             tx.success();
         }
         return res;

@@ -2043,176 +2043,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         }
     }
     
-    private String getNameOfSpecialParentByScaleUpRecursive(Node node, int targetLevel, int currentLevel) {
-        if (node.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF_SPECIAL)) {
-            for (Relationship rel : node.getRelationships(Direction.OUTGOING, RelTypes.CHILD_OF_SPECIAL)) {
-                Node endNode = rel.getEndNode();
-                
-                if (currentLevel == targetLevel)
-                    return endNode.hasProperty(Constants.PROPERTY_NAME) ? (String) endNode.getProperty(Constants.PROPERTY_NAME) : "<Not Set>";
-                else
-                    return getNameOfSpecialParentByScaleUpRecursive(endNode, targetLevel, currentLevel + 1);
-            }
-        }
-        return null;                
-    }
-    
-       
-    @Override
-    public List<Pool> getRootPools(String className, int type, boolean includeSubclasses) {
-        try(Transaction tx = graphDb.beginTx()) {
-            List<Pool> pools  = new ArrayList<>();
-            
-            ResourceIterator<Node> poolNodes = graphDb.findNodes(poolLabel);
-            
-            while (poolNodes.hasNext()) {
-                Node poolNode = poolNodes.next();
-                
-                if (!poolNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF_SPECIAL)) { //Root pools don't have parents
-                    if ((int)poolNode.getProperty(Constants.PROPERTY_TYPE) == type) {
-                        
-                        //The following conditions could probably normalized, but I think this way,
-                        //the code is a bit more readable
-                        if (className != null) { //We will return only those matching with the specified class name or its subclasses, depending on the value of includeSubclasses
-                            String poolClass = (String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME);
-                            if (includeSubclasses) {
-                                try {
-                                    if (mem.isSubClass(className, poolClass))
-                                        pools.add(Util.createPoolFromNode(poolNode));
-                                } catch (MetadataObjectNotFoundException ex) { } //Should not happen
-                            } else {
-                                if (className.equals(poolClass))
-                                    pools.add(Util.createPoolFromNode(poolNode));
-                            }
-                        } else //All pools with no parent are returned
-                            pools.add(Util.createPoolFromNode(poolNode));
-                    }
-                }
-            }
-            tx.success();
-            return pools;
-        }
-    }
-    
-    @Override
-    public List<Pool> getPoolsInObject(String objectClassName, long objectId, String poolClass) throws BusinessObjectNotFoundException {
-        
-        try(Transaction tx = graphDb.beginTx()) {
-            List<Pool> pools  = new ArrayList<>();
-            
-            Node objectNode = Util.findNodeByLabelAndId(inventoryObjectLabel, objectId);
-            
-            if (objectNode == null)
-                throw new BusinessObjectNotFoundException(objectClassName, objectId);
-            
-            for (Relationship containmentRelationship : objectNode.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL)) {
-                if (containmentRelationship.hasProperty(Constants.PROPERTY_NAME) && 
-                        Constants.REL_PROPERTY_POOL.equals(containmentRelationship.getProperty(Constants.PROPERTY_NAME))){
-                    Node poolNode = containmentRelationship.getStartNode();
-                    if (poolClass != null) { //We will return only those matching with the specified class name
-                        if (poolClass.equals((String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME)))
-                            pools.add(Util.createPoolFromNode(poolNode));
-                    } else
-                        pools.add(Util.createPoolFromNode(poolNode));
-                }
-            }
-            tx.success();
-            return pools;
-        }
-    }
-    
-    @Override
-    public List<Pool> getPoolsInPool(long parentPoolId, String poolClass) 
-            throws ApplicationObjectNotFoundException {
-        
-        try(Transaction tx = graphDb.beginTx()) {
-            List<Pool> pools  = new ArrayList<>();
-            
-            Node parentPoolNode = Util.findNodeByLabelAndId(poolLabel, parentPoolId);
-            
-            if (parentPoolNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("The pool with id %s could not be found", parentPoolId));
-            
-            for (Relationship containmentRelationship : parentPoolNode.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL)) {
-                Node poolNode = containmentRelationship.getStartNode();
-                
-                if (poolNode.hasRelationship(Direction.OUTGOING, RelTypes.INSTANCE_OF)) //The pool items and the pools themselves also have CHILD_OF_SPECIAL relationships
-                    continue;
-                
-                if (poolClass != null) { //We will return only those matching with the specified class name
-                    if (poolClass.equals((String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME)))
-                        pools.add(Util.createPoolFromNode(poolNode));
-                } else
-                    pools.add(Util.createPoolFromNode(poolNode));
-            }
-            return pools;
-        }
-    }
-           
-    @Override
-    public Pool getPool(long poolId) throws ApplicationObjectNotFoundException {
-        try (Transaction tx = graphDb.beginTx()) {
-            
-            Node poolNode = Util.findNodeByLabelAndId(poolLabel, poolId);
-            
-            if (poolNode != null) {                
-                
-                String name = poolNode.hasProperty(Constants.PROPERTY_NAME) ? 
-                                    (String)poolNode.getProperty(Constants.PROPERTY_NAME) : null;
-                
-                String description = poolNode.hasProperty(Constants.PROPERTY_DESCRIPTION) ? 
-                                    (String)poolNode.getProperty(Constants.PROPERTY_DESCRIPTION) : null;
-                
-                String className = poolNode.hasProperty(Constants.PROPERTY_CLASS_NAME) ? 
-                                    (String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME) : null;
-                
-                int type = poolNode.hasProperty(Constants.PROPERTY_TYPE) ? 
-                                    (int)poolNode.getProperty(Constants.PROPERTY_TYPE) : 0;
-                
-                return new Pool(poolId, name, description, className, type);
-            }
-            else
-                throw new ApplicationObjectNotFoundException(String.format("Pool with id %s could not be found", poolId));
-        }
-    }
-    
-    @Override
-    public List<BusinessObjectLight> getPoolItems(long poolId, int limit)
-            throws ApplicationObjectNotFoundException {
-        try(Transaction tx = graphDb.beginTx()) {
-            
-            Node poolNode = Util.findNodeByLabelAndId(poolLabel, poolId);
-
-            if (poolNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("The pool with id %s could not be found", poolId));
-
-            List<BusinessObjectLight> poolItems  = new ArrayList<>();
-
-            int i = 0;
-            for (Relationship rel : poolNode.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL)){
-                if (limit != -1){
-                    if (i >= limit)
-                         break;
-                    i++;
-                }
-                if(rel.hasProperty(Constants.PROPERTY_NAME)){
-                    if(rel.getProperty(Constants.PROPERTY_NAME).equals(Constants.REL_PROPERTY_POOL)){
-                        Node item = rel.getStartNode();
-                        Node temp = Util.findNodeByLabelAndId(poolLabel, item.getId());
-                        if(temp == null) //if is not a pool
-                        {
-                            BusinessObjectLight rbol = new BusinessObjectLight(Util.getClassName(item), item.getId(), 
-                                                item.hasProperty(Constants.PROPERTY_NAME) ? (String)item.getProperty(Constants.PROPERTY_NAME) : null);
-                            poolItems.add(rbol);
-                        }
-                    }
-                }
-            }
-            tx.success();
-            return poolItems;
-        }
-    }
-    
     @Override
     public List<ActivityLogEntry> getBusinessObjectAuditTrail(String objectClass, long objectId, int limit) 
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
@@ -2607,7 +2437,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 rel.delete();
             
             taskNode.delete();
-            
             tx.success();
         }
     }
@@ -3139,47 +2968,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         return executeScriptQuery(scriptQueryNode);
     }
     
-    /**
-     * Executes a Script Query given the Node in the database
-     */
-    private ScriptQueryResult executeScriptQuery(Node scriptQueryNode) throws ApplicationObjectNotFoundException, InvalidArgumentException {
-        
-        try (Transaction tx = graphDb.beginTx()) {
-            if (!scriptQueryNode.hasProperty(Constants.PROPERTY_SCRIPT))
-                throw new InvalidArgumentException(String.format("The Script Query with id %s does not have a script", scriptQueryNode.getId()));
-                        
-            String script = (String) scriptQueryNode.getProperty(Constants.PROPERTY_SCRIPT);
-                        
-            Iterable<String> allProperties = scriptQueryNode.getPropertyKeys();
-            
-            HashMap<String, String> scriptParameters = new HashMap<>();
-            
-            for (String property : allProperties) {
-                if (property.startsWith("PARAM_"))
-                    scriptParameters.put(property.replace("PARAM_", ""), (String) scriptQueryNode.getProperty(property));
-            }
-            Binding environmentParameters = new Binding();
-                        
-            environmentParameters.setVariable("graphDb", graphDb); //NOI18N
-            environmentParameters.setVariable("inventoryObjectLabel", inventoryObjectLabel);
-            environmentParameters.setVariable("classLabel", classLabel); //NOI18N
-            environmentParameters.setVariable("processInstanceLabel", processInstanceLabel); //NOI18N            
-            environmentParameters.setVariable("Constants", Constants.class); //NOI18N
-            environmentParameters.setVariable("Direction", Direction.class); //NOI18N
-            environmentParameters.setVariable("RelTypes", RelTypes.class); //NOI18N            
-            environmentParameters.setVariable("scriptParameters", scriptParameters); //NOI18N
-            environmentParameters.setVariable("Iterators", Iterators.class); //NOI18N
-                                 
-            GroovyShell shell = new GroovyShell(ApplicationEntityManager.class.getClassLoader(), environmentParameters);
-            Object theResult = shell.evaluate(script);
-            
-            if (scriptQueryNode.hasProperty(Constants.PROPERTY_NAME) && ((String) scriptQueryNode.getProperty(Constants.PROPERTY_NAME)).contains("commit"))
-                tx.success();                
-            else
-                tx.failure();
-            return new ScriptQueryResult(theResult);
-        }
-    }
     //Templates
     @Override
     public long createTemplate(String templateClass, String templateName) throws MetadataObjectNotFoundException, OperationNotPermittedException {  
@@ -5271,7 +5059,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             graphDb.findNodes(validatorDefinitions).forEachRemaining((aValidatorDefinitionNode) -> { // Is it worth to cache this?
                 String script = (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_SCRIPT);
                 
-                if (!script.trim().isEmpty()) { //Skip`uninitialized scripts
+                if (!script.trim().isEmpty()) { //Skip uninitialized scripts
                     Binding environmentParameters = new Binding();
                     environmentParameters.setVariable("className", objectClass);
                     environmentParameters.setVariable("id", objectId);
@@ -5391,9 +5179,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
    
     /**
-     * TODO: The following methods are duplicated in BEM, this should be re-designed
+     * TODO: The following two methods are duplicated in BEM, this should be re-designed
      */
-    
     private BusinessObjectLight createRemoteObjectLightFromNode (Node instance) {
         Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode();
         
@@ -5410,6 +5197,20 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         } catch (MetadataObjectNotFoundException mex) {
             throw new InvalidArgumentException(mex.getLocalizedMessage());
         }
+    }
+    
+    private String getNameOfSpecialParentByScaleUpRecursive(Node node, int targetLevel, int currentLevel) {
+        if (node.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF_SPECIAL)) {
+            for (Relationship rel : node.getRelationships(Direction.OUTGOING, RelTypes.CHILD_OF_SPECIAL)) {
+                Node endNode = rel.getEndNode();
+                
+                if (currentLevel == targetLevel)
+                    return endNode.hasProperty(Constants.PROPERTY_NAME) ? (String) endNode.getProperty(Constants.PROPERTY_NAME) : "<Not Set>";
+                else
+                    return getNameOfSpecialParentByScaleUpRecursive(endNode, targetLevel, currentLevel + 1);
+            }
+        }
+        return null;                
     }
     
     /**
@@ -5475,6 +5276,47 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         BusinessObject res = new BusinessObject(classMetadata.getName(), instance.getId(), name, attributes);
 
         return res;
+    }
+    
+    /**
+     * Executes a Script Query given the Node in the database
+     */
+    private ScriptQueryResult executeScriptQuery(Node scriptQueryNode) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         
+        try (Transaction tx = graphDb.beginTx()) {
+            if (!scriptQueryNode.hasProperty(Constants.PROPERTY_SCRIPT))
+                throw new InvalidArgumentException(String.format("The Script Query with id %s does not have a script", scriptQueryNode.getId()));
+                        
+            String script = (String) scriptQueryNode.getProperty(Constants.PROPERTY_SCRIPT);
+                        
+            Iterable<String> allProperties = scriptQueryNode.getPropertyKeys();
+            
+            HashMap<String, String> scriptParameters = new HashMap<>();
+            
+            for (String property : allProperties) {
+                if (property.startsWith("PARAM_"))
+                    scriptParameters.put(property.replace("PARAM_", ""), (String) scriptQueryNode.getProperty(property));
+            }
+            Binding environmentParameters = new Binding();
+                        
+            environmentParameters.setVariable("graphDb", graphDb); //NOI18N
+            environmentParameters.setVariable("inventoryObjectLabel", inventoryObjectLabel);
+            environmentParameters.setVariable("classLabel", classLabel); //NOI18N
+            environmentParameters.setVariable("processInstanceLabel", processInstanceLabel); //NOI18N            
+            environmentParameters.setVariable("Constants", Constants.class); //NOI18N
+            environmentParameters.setVariable("Direction", Direction.class); //NOI18N
+            environmentParameters.setVariable("RelTypes", RelTypes.class); //NOI18N            
+            environmentParameters.setVariable("scriptParameters", scriptParameters); //NOI18N
+            environmentParameters.setVariable("Iterators", Iterators.class); //NOI18N
+                                 
+            GroovyShell shell = new GroovyShell(ApplicationEntityManager.class.getClassLoader(), environmentParameters);
+            Object theResult = shell.evaluate(script);
+            
+            if (scriptQueryNode.hasProperty(Constants.PROPERTY_NAME) && ((String) scriptQueryNode.getProperty(Constants.PROPERTY_NAME)).contains("commit"))
+                tx.success();                
+            else
+                tx.failure();
+            return new ScriptQueryResult(theResult);
+        }
     }
 }

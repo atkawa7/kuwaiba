@@ -652,52 +652,6 @@ public interface ApplicationEntityManager {
     public String getNameOfSpecialParentByScaleUp(String className, long id, int targetLevel);
     
     /**
-     * Retrieves the pools that don't have any parent and are normally intended to be managed by the Pool Manager
-     * @param className The class name used to filter the results. Only the pools with a className attribute matching the provided value will be returned. Use null if you want to get all
-     * @param type The type of pools that should be retrieved. Root pools can be for general purpose, or as roots in models
-     * @param includeSubclasses Use <code>true</code> if you want to get only the pools whose <code>className</code> property matches exactly the one provided, and <code>false</code> if you want to also include the subclasses
-     * @return A set of pools
-     */
-    public List<Pool> getRootPools(String className, int type, boolean includeSubclasses);
-    /**
-     * Retrieves the pools associated to a particular object
-     * @param objectClassName The parent object class name
-     * @param objectId The parent object id
-     * @param poolClass The class name used to filter the results. Only the pools with a className attribute matching the provided value will be returned. Use null if you want to get all
-     * @return A set of pools
-     * @throws BusinessObjectNotFoundException If the parent object can not be found
-     */
-    public List<Pool> getPoolsInObject(String objectClassName, long objectId, String poolClass) 
-            throws BusinessObjectNotFoundException;
-    /**
-     * Retrieves the pools associated to a particular pool
-     * @param parentPoolId The parent pool id
-     * @param poolClass The class name used to filter the results. Only the pools with a className attribute matching the provided value will be returned. Use null if you want to get all
-     * @return A set of pools
-     * @throws ApplicationObjectNotFoundException If the parent object can not be found
-     */
-    public List<Pool> getPoolsInPool(long parentPoolId, String poolClass) 
-            throws ApplicationObjectNotFoundException;
-    
-    /**
-     * Gets a pool by its id 
-     * @param poolId The pool's id
-     * @return the pool as a Pool object
-     * @throws ApplicationObjectNotFoundException If the pool could not be found
-     */
-    public Pool getPool(long poolId) throws ApplicationObjectNotFoundException;
-    
-    /**
-     * Gets the list of objects into a pool
-     * @param poolId Parent pool id
-     * @param limit Result limit. -1 To return all
-     * @return The list of items inside the pool
-     * @throws ApplicationObjectNotFoundException If the pool id provided is not valid
-     */
-    public List<BusinessObjectLight> getPoolItems(long poolId, int limit)
-            throws ApplicationObjectNotFoundException;
-    
-    /**
      * Gets a business object audit trail
      * @param objectClass Object class
      * @param objectId Object id

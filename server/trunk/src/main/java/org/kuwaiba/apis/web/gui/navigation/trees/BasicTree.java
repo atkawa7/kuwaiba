@@ -84,11 +84,11 @@ public class BasicTree extends Tree<AbstractNode> {
                     return null;
                 else {
                     if (!existingNodeStyles.contains(definitiveColor)) {
-                        UI.getCurrent().getPage().getStyles().add(String.format(".color-%s .v-tree8-cell-content { color: #%s }", definitiveColor, definitiveColor));
+                        UI.getCurrent().getPage().getStyles().add(String.format(".color-tree-%s .v-tree8-cell-content { color: #%s }", definitiveColor, definitiveColor));
                         existingNodeStyles.add(definitiveColor);
                     }
                     
-                    return "color-" + definitiveColor;
+                    return "color-tree-" + definitiveColor;
                 }
             }
             
