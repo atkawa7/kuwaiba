@@ -56,8 +56,7 @@ public class SyncGroupRootNode extends AbstractNode {
         pasteAction.putValue(Action.NAME, I18N.gm("lbl_paste_action"));
             
         return new Action[] {
-            SyncManagerActionFactory.getNewSyncGroupAction(),
-            SyncManagerActionFactory.getNewSyncDataSourceConfigurationAction()
+            SyncManagerActionFactory.getNewSyncGroupAction()
         };
     }
     

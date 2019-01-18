@@ -44,30 +44,52 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.services.api.actions.GenericInventoryAction;
+import org.inventory.communications.core.LocalValidator;
+import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Node;
+import org.openide.util.Lookup;
 import org.openide.util.RequestProcessor;
 import org.openide.util.Utilities;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  * This action launches the synchronization process for a given sync group
  * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
-public class RunSynchronizationProcessAction extends GenericInventoryAction{
+@ActionsGroupType(group=ActionsGroupType.Group.DEVICE_CONFIGURATION)
+@ServiceProvider(service=GenericObjectNodeAction.class)
+public class RunSynchronizationProcessAction extends GenericObjectNodeAction implements ComposedAction{
     
     private static RunSynchronizationProcessAction instace;
         
     public RunSynchronizationProcessAction() {
-        putValue(NAME, I18N.gm("run_sync_process"));
+        putValue(NAME,"Run Synchronization");
     }
     
     public static RunSynchronizationProcessAction getInstance(){
         return instace == null ? instace = new RunSynchronizationProcessAction() : instace;
+    }
+    
+    @Override
+        public boolean isEnabled() {
+        Lookup.Result<? extends AbstractNode> selectedObjectNode = Utilities.actionsGlobalContext().lookupResult(AbstractNode.class);
+        
+        if (selectedObjectNode == null)
+            return false;
+        
+        for (AbstractNode selectedNode : selectedObjectNode.allInstances()){
+            if(selectedNode instanceof ObjectNode || selectedNode instanceof SyncDataSourceConfigurationNode)
+                return true;
+        }
+        
+        return false;
     }
     
     @Override
@@ -186,6 +208,26 @@ public class RunSynchronizationProcessAction extends GenericInventoryAction{
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SYNC, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
+
+    @Override
+    public LocalValidator[] getValidators() {
+        return null;
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return null;
+    }
+
+    @Override
+    public int numberOfNodes() {
+        return -1;
+    }
+
+    @Override
+    public void finalActionPerformed(ActionEvent e) {
+        return;
     }
 
     /**

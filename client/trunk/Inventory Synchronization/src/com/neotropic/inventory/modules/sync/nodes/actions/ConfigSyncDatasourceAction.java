@@ -46,7 +46,7 @@ public class ConfigSyncDatasourceAction extends GenericObjectNodeAction implemen
     SyncDataSourceConfigurationNode syncDataSourceConfigurationNode;
 
     public ConfigSyncDatasourceAction() {
-        putValue(NAME, "Config Datasource");
+        putValue(NAME, "Configure Sync-Datasource");
     }
   
     @Override
