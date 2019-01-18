@@ -54,15 +54,18 @@ public class ScriptQueriesManagerService implements VetoableChangeListener {
                     throw new PropertyVetoException(null, null); //This exception goes to /dev/null anyway
                 }
                 break;
-            default: // The rest are task parameters
-                HashMap<String, String> parameters = new HashMap();
-                parameters.put(evt.getPropertyName(), (String) evt.getNewValue());
-                
-                if (!CommunicationsStub.getInstance().updateScriptQueryParameters(scriptQuery.getId(), parameters)) {
-                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                        NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                    throw new PropertyVetoException(null, null); //This exception goes to /dev/null anyway                    
+            default: // The rest are script query parameters
+                if (evt.getPropertyName() != null && evt.getPropertyName().contains("PARAM_")) { //NOI18N
+                    HashMap<String, String> parameters = new HashMap();
+                    parameters.put(evt.getPropertyName().replaceFirst("PARAM_", ""), (String) evt.getNewValue()); //NOI18N
+
+                    if (!CommunicationsStub.getInstance().updateScriptQueryParameters(scriptQuery.getId(), parameters)) {
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                            NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                        throw new PropertyVetoException(null, null); //This exception goes to /dev/null anyway                    
+                    }
                 }
+                break;
         }
     }
     

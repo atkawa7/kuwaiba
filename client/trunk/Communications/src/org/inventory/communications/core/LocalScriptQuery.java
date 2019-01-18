@@ -73,9 +73,9 @@ public class LocalScriptQuery implements Comparable<LocalScriptQuery> {
                 parameters = new HashMap();
                 
                 for (StringPair parameter : remoteScriptQuery.getParameters())
-                    parameters.put(parameter.getKey(), parameter.getValue());
+                    parameters.put("PARAM_" + parameter.getKey(), parameter.getValue()); //NOI18N
             }
-        }
+        }        
     }
         
     public Long getId() {

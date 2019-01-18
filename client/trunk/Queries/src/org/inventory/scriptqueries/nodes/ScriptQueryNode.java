@@ -91,8 +91,10 @@ public class ScriptQueryNode extends AbstractNode implements VetoableChangeListe
             parametersPropertySet.setName("Parameters");
             parametersPropertySet.setDisplayName("Parameters");
             for (String parameterName : scriptQuery.getParameters().keySet()) {
-                PropertySupport.ReadWrite<String> parameterProperty = new ParameterPropertySupport(scriptQuery, parameterName, String.class, parameterName, "");
-                parametersPropertySet.put(parameterProperty);
+                if (parameterName != null) {                    
+                    PropertySupport.ReadWrite<String> parameterProperty = new ParameterPropertySupport(scriptQuery, parameterName, String.class, parameterName.replaceFirst("PARAM_", ""), ""); //NOI18N
+                    parametersPropertySet.put(parameterProperty);
+                }
             }
 
             sheet.put(generalPropertySet);
