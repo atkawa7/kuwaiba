@@ -21,7 +21,6 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +33,6 @@ import javax.xml.stream.XMLStreamException;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalLogicalConnectionDetails;
-import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.visual.actions.CustomAddRemoveControlPointAction;
@@ -244,15 +242,15 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                 addNode(source);
             if(!destinations.isEmpty()){
                 if(destinations.size() == 1){
-                    addNode(destinations.get(0));
+                    //addNode(destinations.get(0));
+                    //validate();
+                    //LocalObjectLight tempE = new LocalObjectLight(r.nextLong(), port.getName() + " IX ", "BGPLink");
+                    //addEdge(tempE);
+                    //validate();
+                    //setEdgeSource(tempE, source);
                     validate();
-                    LocalObjectLight tempE = new LocalObjectLight(r.nextLong(), port.getName() + " IX ", "BGPLink");
-                    addEdge(tempE);
-                    validate();
-                    setEdgeSource(tempE, source);
-                    validate();
-                    setEdgeTarget(tempE, destinations.get(0)); 
-                    validate();
+                   // setEdgeTarget(tempE, destinations.get(0)); 
+                    //validate();
                 }
                 else{
                     int ix=0;

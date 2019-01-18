@@ -50,8 +50,8 @@ import org.openide.util.NbBundle.Messages;
 )
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @ActionID(category = "Window", id = "com.neotropic.inventory.modules.bgp.BGPTopComponent")
-@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Advanced"),
-    @ActionReference(path = "Toolbars/10_Advanced", position = 9)})
+@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Routing")})
+    //@ActionReference(path = "Toolbars/10_Advanced", position = 9)})
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_BGPAction",
         preferredID = "BGPTopComponent"
