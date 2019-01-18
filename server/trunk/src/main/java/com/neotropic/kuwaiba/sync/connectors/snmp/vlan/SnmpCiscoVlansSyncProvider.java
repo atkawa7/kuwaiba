@@ -75,19 +75,19 @@ public class SnmpCiscoVlansSyncProvider extends AbstractSyncProvider{
             String className = null;                
             String address = null;
             String port = null;
-            //String community = null;
+            String community = null;
 
-            //if (dsConfig.getParameters().containsKey("deviceId")) //NOI18N
-                id = 5188; //Long.valueOf(dsConfig.getParameters().get("deviceId")); //NOI18N
-            //else 
-                //pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
-                   // new InvalidArgumentException(String.format(I18N.gm("parameter_deviceId_no_defined"), syncGroup.getName(), syncGroup.getId())));
+            if (dsConfig.getParameters().containsKey("deviceId")) //NOI18N
+                id = Long.valueOf(dsConfig.getParameters().get("deviceId")); //NOI18N
+            else 
+                pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
+                   new InvalidArgumentException(String.format(I18N.gm("parameter_deviceId_no_defined"), syncGroup.getName(), syncGroup.getId())));
 
-            //if (dsConfig.getParameters().containsKey("deviceClass")) //NOI18N
-                className = "Router"; //NOI18N
-            //else
-               // pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
-                  //  new InvalidArgumentException(String.format(I18N.gm("parameter_deviceClass_no_defined"), syncGroup.getName(), syncGroup.getId())));
+            if (dsConfig.getParameters().containsKey("deviceClass")) //NOI18N
+                className = dsConfig.getParameters().get("deviceClass"); //NOI18N
+            else
+                pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
+                  new InvalidArgumentException(String.format(I18N.gm("parameter_deviceClass_no_defined"), syncGroup.getName(), syncGroup.getId())));
 
             if (dsConfig.getParameters().containsKey("ipAddress")) //NOI18N
                 address = dsConfig.getParameters().get("ipAddress"); //NOI18N
@@ -232,12 +232,9 @@ public class SnmpCiscoVlansSyncProvider extends AbstractSyncProvider{
             });
             
             CiscoVlansSinchronizer ciscoSync = new CiscoVlansSinchronizer(entrySet.getKey().getId(),
-                    new BusinessObjectLight("Router", 
-                    5188, ""), mibTables);
-                    
-//                    new BusinessObjectLight(entrySet.getKey().getParameters().get("deviceClass"), 
-//                    Long.valueOf(entrySet.getKey().getParameters().get("deviceId")), ""), 
-//                    mibTables);
+                    new BusinessObjectLight(entrySet.getKey().getParameters().get("deviceClass"), 
+                    Long.valueOf(entrySet.getKey().getParameters().get("deviceId")), ""), 
+                    mibTables);
             res.addAll(ciscoSync.execute());
         }
         return res;

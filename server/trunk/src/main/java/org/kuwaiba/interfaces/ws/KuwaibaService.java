@@ -82,9 +82,9 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConfigurationVariable;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationProvider;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidator;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidatorDefinition;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLinkObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemotePhysicalConnectionDetails;
 
 /**
@@ -3796,6 +3796,34 @@ public class KuwaibaService {
                                         @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.getLogicalLinkDetails(linkClass, linkId, getIPAddress(), sessionId);
+        } catch(Exception e) {
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getLogicalLinkDetails: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Returns the structure of a logical connection. The current implementation is quite simple and the return object 
+     * simply provides the endpoints and the next ports connected to such endpoints using a physical connection
+     * @param linkClass
+     * @param linkClasses The class of the connection to be evaluated
+     * @param linkIds The id of the connection to be evaluated
+     * @param sessionId Session token
+     * @return An object with the details of the connection and the physical resources associated to it
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             If the provided connection could not be found
+     */
+    @WebMethod(operationName = "getE2EMap")
+    public List<RemoteObjectLinkObject> getE2EMap(@WebParam(name = "linkClass")String linkClass, 
+            @WebParam(name = "linkClasses")List<String> linkClasses,
+            @WebParam(name = "linkIds")List<Long> linkIds,
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getE2EMap(linkClasses, linkIds, true, true, true, getIPAddress(), sessionId);
         } catch(Exception e) {
             if (e instanceof ServerSideException)
                 throw e;

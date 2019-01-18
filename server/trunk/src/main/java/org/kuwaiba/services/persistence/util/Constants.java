@@ -326,6 +326,10 @@ public class Constants {
      */
     public static final String CLASS_INVENTORYOBJECT = "InventoryObject"; //NOI18N ID 286
     /**
+     * Root for all business classes
+     */
+    public static final String CLASS_CONFIGURATIONITEM = "ConfigurationItem"; //NOI18N ID 286
+    /**
      * Root for all objects with a geographical location
      */
     public static final String CLASS_GENERICLOCATION = "GenericLocation"; //NOI18N ID 286

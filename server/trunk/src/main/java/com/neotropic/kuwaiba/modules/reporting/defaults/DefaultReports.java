@@ -1182,7 +1182,7 @@ public class DefaultReports {
             BusinessObject serviceCustomer = null;
                     
             for (BusinessObjectLight parent : parents) {
-                if(mem.isSubClass(Constants.CLASS_GENERICCUSTOMER, parent.getClassName())){
+                if(mem.isSubclassOf(Constants.CLASS_GENERICCUSTOMER, parent.getClassName())){
                     serviceCustomer = bem.getObject(parent.getClassName(), parent.getId());
                     break;
                 }

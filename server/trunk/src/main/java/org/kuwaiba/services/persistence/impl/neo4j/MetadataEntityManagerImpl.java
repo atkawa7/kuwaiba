@@ -338,7 +338,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         "Class %s has subclasses and can not be deleted", node.getProperty(Constants.PROPERTY_NAME)));
 
             String className = (String)node.getProperty(Constants.PROPERTY_NAME);
-            if (isSubClass(Constants.CLASS_GENERICOBJECTLIST, className)) {
+            if (isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, className)) {
                 //If the class is a list type, let's check if it's used by another class
                 ResourceIterator<Node> classes = graphDb.findNodes(classLabel);
                                 
@@ -402,7 +402,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 throw new InvalidArgumentException(String.format(
                         "The class with name %s has subclasses and can not be deleted", className));
             
-            if (isSubClass(Constants.CLASS_GENERICOBJECTLIST, className)) {
+            if (isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, className)) {
                 //If the class is a list type, let's check if it's used by another class
                 ResourceIterator<Node> classes = graphDb.findNodes(classLabel);
                                 
@@ -1272,7 +1272,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
                             "The class with id %s could not be found. Contact your administrator.", parentClassId));
-                if (!isSubClass(Constants.CLASS_INVENTORYOBJECT, (String)parentNode.getProperty(Constants.PROPERTY_NAME)))
+                if (!isSubclassOf(Constants.CLASS_INVENTORYOBJECT, (String)parentNode.getProperty(Constants.PROPERTY_NAME)))
                     throw new InvalidArgumentException(
                             String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
             }else
@@ -1291,7 +1291,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 String newPossibleChildrenClassName = (String)childNode.getProperty(Constants.PROPERTY_NAME);
                 String parentClassName = (String)parentNode.getProperty(Constants.PROPERTY_NAME);
                 
-                if (!isSubClass(Constants.CLASS_INVENTORYOBJECT, newPossibleChildrenClassName))
+                if (!isSubclassOf(Constants.CLASS_INVENTORYOBJECT, newPossibleChildrenClassName))
                     throw new InvalidArgumentException(
                             String.format("%s is not a business class, thus can not be added to the containment hierarchy", newPossibleChildrenClassName));
                 
@@ -1339,7 +1339,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
                             "The class with id %s could not be found. Contact your administrator.", parentClassId));
-                if (!isSubClass(Constants.CLASS_INVENTORYOBJECT, (String)parentNode.getProperty(Constants.PROPERTY_NAME)))
+                if (!isSubclassOf(Constants.CLASS_INVENTORYOBJECT, (String)parentNode.getProperty(Constants.PROPERTY_NAME)))
                     throw new InvalidArgumentException(
                             String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
             } else
@@ -1354,7 +1354,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     throw new MetadataObjectNotFoundException(String.format(
                             "Can not find class with id %s", parentClassId));
                 
-                if (!isSubClass(Constants.CLASS_INVENTORYOBJECT, (String)childNode.getProperty(Constants.PROPERTY_NAME)))
+                if (!isSubclassOf(Constants.CLASS_INVENTORYOBJECT, (String)childNode.getProperty(Constants.PROPERTY_NAME)))
                     throw new InvalidArgumentException(
                             String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)childNode.getProperty(Constants.PROPERTY_NAME)));
                 
@@ -1402,7 +1402,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     throw new MetadataObjectNotFoundException(String.format(
                             "Can not find class %s", parentClassName));
                 
-                if (!isSubClass(Constants.CLASS_INVENTORYOBJECT, (String)parentNode.getProperty(Constants.PROPERTY_NAME)))
+                if (!isSubclassOf(Constants.CLASS_INVENTORYOBJECT, (String)parentNode.getProperty(Constants.PROPERTY_NAME)))
                     throw new InvalidArgumentException(
                             String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
             } else {
@@ -1421,7 +1421,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     throw new MetadataObjectNotFoundException(String.format(
                             "Can not find class %s", possibleChildName));
                 
-                if (!isSubClass(Constants.CLASS_INVENTORYOBJECT, (String)childNode.getProperty(Constants.PROPERTY_NAME)))
+                if (!isSubclassOf(Constants.CLASS_INVENTORYOBJECT, (String)childNode.getProperty(Constants.PROPERTY_NAME)))
                     throw new InvalidArgumentException(
                             String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)childNode.getProperty(Constants.PROPERTY_NAME)));
                 
@@ -1466,7 +1466,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     throw new MetadataObjectNotFoundException(String.format(
                             "Can not find class %s", parentClassName));
                 
-                if (!isSubClass(Constants.CLASS_INVENTORYOBJECT, (String)parentNode.getProperty(Constants.PROPERTY_NAME)))
+                if (!isSubclassOf(Constants.CLASS_INVENTORYOBJECT, (String)parentNode.getProperty(Constants.PROPERTY_NAME)))
                     throw new InvalidArgumentException(
                             String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
             } else {
@@ -1484,7 +1484,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     throw new MetadataObjectNotFoundException(String.format(
                             "Can not find class %s", possibleSpecialChildName));
                 
-                if (!isSubClass(Constants.CLASS_INVENTORYOBJECT, (String)childNode.getProperty(Constants.PROPERTY_NAME)))
+                if (!isSubclassOf(Constants.CLASS_INVENTORYOBJECT, (String)childNode.getProperty(Constants.PROPERTY_NAME)))
                     throw new InvalidArgumentException(
                             String.format("%s is not a business class, thus can not be added to the special containment hierarchy", (String)childNode.getProperty(Constants.PROPERTY_NAME)));
                 
@@ -1689,7 +1689,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     }
      
     @Override
-    public boolean isSubClass(String allegedParent, String classToBeEvaluated) throws MetadataObjectNotFoundException {
+    public boolean isSubclassOf(String allegedParent, String classToBeEvaluated) throws MetadataObjectNotFoundException {
         if (classToBeEvaluated == null)
             return false;
 
@@ -1704,7 +1704,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         if (currentClass.getParentClassName().equals(allegedParent))
             return true;
         else
-            return isSubClass(allegedParent, currentClass.getParentClassName());
+            return isSubclassOf(allegedParent, currentClass.getParentClassName());
     }
     
     @Override

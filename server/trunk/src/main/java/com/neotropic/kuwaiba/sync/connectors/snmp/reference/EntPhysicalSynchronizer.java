@@ -727,6 +727,10 @@ public class EntPhysicalSynchronizer {
                     BusinessObjectLight oldObj = foundPath.get(j);
                     HashMap<String, String> oldAttributes = bem.getObject(oldObj.getId()).getAttributes();
                     BusinessObject newObj = newBranchToEvalueate.get(j); //this is the new object from SNMP
+                    newObj.getAttributes().remove("parentName");
+                    newObj.getAttributes().remove("parentId");
+                    newObj.getAttributes().remove("parentClassName");
+                    
                     updateAttributesInBranch(oldObj, oldAttributes, newObj);//we check if some attributes need to be updated
                 }
                 return null; //we find the whole path, we return null
@@ -922,7 +926,7 @@ public class EntPhysicalSynchronizer {
     private void readCurrentDeviceStructure(List<BusinessObjectLight> objects)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException {
         for (BusinessObjectLight object : objects) {
-            if (!mem.isSubClass("GenericLogicalPort", object.getClassName()) && !mem.isSubClass("Pseudowire", object.getClassName())){ 
+            if (!mem.isSubclassOf("GenericLogicalPort", object.getClassName()) && !mem.isSubclassOf("Pseudowire", object.getClassName())){ 
                 //We standarized the port names
                 object = SyncUtil.wrapPortName(object);
                 tempAuxOldBranch.add(object);
@@ -1090,7 +1094,7 @@ public class EntPhysicalSynchronizer {
     
     public void checkDataToBeDeleted() throws MetadataObjectNotFoundException {
         for (BusinessObjectLight currentChildFirstLevel : currentFirstLevelChildren) {
-            if (!mem.isSubClass("Pseudowire", currentChildFirstLevel.getClassName()) 
+            if (!mem.isSubclassOf("Pseudowire", currentChildFirstLevel.getClassName()) 
                     && !currentChildFirstLevel.getName().toLowerCase().equals("gi0")) 
             {
                 try {

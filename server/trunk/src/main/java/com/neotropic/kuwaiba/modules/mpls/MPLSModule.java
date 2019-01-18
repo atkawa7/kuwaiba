@@ -123,7 +123,7 @@ public class MPLSModule implements GenericCommercialModule {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         long newConnectionId = -1;
         try {
-            if (!mem.isSubClass("GenericLogicalConnection", linkType)) //NOI18N
+            if (!mem.isSubclassOf("GenericLogicalConnection", linkType)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not subclass of GenericLogicalConnection", linkType));
 
             HashMap<String, String> attributesToBeSet = new HashMap<>();

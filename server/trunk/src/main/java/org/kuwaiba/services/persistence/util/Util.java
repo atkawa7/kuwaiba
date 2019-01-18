@@ -340,8 +340,8 @@ public class Util {
         myClass.setColor((Integer)classNode.getProperty(Constants.PROPERTY_COLOR));
         myClass.setCustom((Boolean)classNode.getProperty(Constants.PROPERTY_CUSTOM));
         myClass.setInDesign((Boolean)classNode.getProperty(Constants.PROPERTY_IN_DESIGN));
-        myClass.setViewable((Boolean)isSubClass(Constants.CLASS_VIEWABLEOBJECT, classNode));
-        myClass.setListType((Boolean)isSubClass(Constants.CLASS_GENERICOBJECTLIST, classNode));
+        myClass.setViewable((Boolean)isSubclassOf(Constants.CLASS_VIEWABLEOBJECT, classNode));
+        myClass.setListType((Boolean)isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, classNode));
         myClass.setId(classNode.getId());
         
         //Parent
@@ -380,9 +380,9 @@ public class Util {
         myClass.setIcon((byte[])classNode.getProperty(Constants.PROPERTY_ICON));
         myClass.setSmallIcon((byte[])classNode.getProperty(Constants.PROPERTY_SMALL_ICON));
         myClass.setId(classNode.getId());
-        myClass.setListType(isSubClass(Constants.CLASS_GENERICOBJECTLIST, classNode));
+        myClass.setListType(isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, classNode));
         //Is Viewable if is subclass of
-        myClass.setViewable((Boolean)isSubClass(Constants.CLASS_VIEWABLEOBJECT, classNode));
+        myClass.setViewable((Boolean)isSubclassOf(Constants.CLASS_VIEWABLEOBJECT, classNode));
         //Parent
         if (classNode.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING) != null){
             myClass.setParentClassName(
@@ -772,7 +772,7 @@ public class Util {
      * @param currentNode
      * @return
      */
-    public static boolean isSubClass(String allegedParentClass, Node currentNode){
+    public static boolean isSubclassOf(String allegedParentClass, Node currentNode){
         Iterable<Relationship> parent = currentNode.getRelationships(RelTypes.EXTENDS, Direction.OUTGOING);
         if (!parent.iterator().hasNext())
             return false;
@@ -782,12 +782,12 @@ public class Util {
         if (parentNode.getProperty(Constants.PROPERTY_NAME).equals(allegedParentClass))
             return true;
 
-        return isSubClass(allegedParentClass, parentNode);
+        return isSubclassOf(allegedParentClass, parentNode);
     }
 
    /**
      * Traverses the graph up into the class hierarchy trying to find out if a given class
-     * is the possiblechild of another
+     * is the possible child of another
      * @param allegedParentClass The alleged parent class name
      * @param currentNode
      * @return

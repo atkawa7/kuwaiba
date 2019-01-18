@@ -26,7 +26,6 @@ import java.util.Properties;
 import org.kuwaiba.apis.forms.elements.Constants;
 import org.kuwaiba.apis.forms.elements.FileInformation;
 import org.kuwaiba.apis.forms.elements.ScriptQueryExecutor;
-import org.kuwaiba.apis.forms.elements.XMLUtil;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
@@ -217,6 +216,25 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                     return Files.readAllBytes(new File(newPath + pathEndToEndView).toPath());
                 
             } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+        
+        else if("getE2EMap".equals(scriptQueryName) && 
+            parameterNames != null &&
+            parameterValues != null &&
+            parameterNames.size() == parameterValues.size()){
+            
+            List<Long> linkIds = new ArrayList<>();
+            
+            for (String parameterValue : parameterValues) {
+                    linkIds.add(Long.valueOf(parameterValue));
+            }
+            try {          
+                return wsBean.getE2EMap(parameterNames, linkIds, true, true, true, 
+                    Page.getCurrent().getWebBrowser().getAddress(), 
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+            } catch (Exception ex) {
                 Exceptions.printStackTrace(ex);
             }
         }

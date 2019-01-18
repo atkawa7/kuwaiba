@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import javax.ejb.Singleton;
@@ -112,6 +113,8 @@ import org.kuwaiba.apis.persistence.application.process.KpiResult;
 import org.kuwaiba.apis.persistence.application.process.ProcessDefinition;
 import org.kuwaiba.apis.persistence.application.process.ProcessInstance;
 import org.kuwaiba.apis.persistence.business.Contact;
+import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteForm;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFormInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
@@ -141,6 +144,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.AssetLevelCorrelatedInformation;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteLogicalConnectionDetails;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLinkObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLightList;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
@@ -342,7 +346,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("isSubclassOf", ipAddress, sessionId);
-            return mem.isSubClass(subclassOf, className);
+            return mem.isSubclassOf(subclassOf, className);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -1702,7 +1706,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
 
             ChangeDescriptor theChange = bem.updateObject(className, oid, attributes);
             
-            if (mem.isSubClass(Constants.CLASS_GENERICOBJECTLIST, className))
+            if (mem.isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, className))
                 aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, theChange);
             else
                 aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), className,
@@ -1782,10 +1786,10 @@ public class WebserviceBeanImpl implements WebserviceBean {
             }
             
             for (int i=0; i < aObjectClass.length; i++) {
-                if (!mem.isSubClass("GenericPort", aObjectClass[i])) //NOI18N
+                if (!mem.isSubclassOf("GenericPort", aObjectClass[i])) //NOI18N
                     throw new ServerSideException(String.format("Object %s is not a port", bem.getObjectLight(aObjectClass[i], aObjectId[i])));
             
-                if (!mem.isSubClass("GenericPort", bObjectClass[i])) //NOI18N
+                if (!mem.isSubclassOf("GenericPort", bObjectClass[i])) //NOI18N
                     throw new ServerSideException(String.format("Object %s is not a port", bem.getObjectLight(bObjectClass[i], bObjectId[i])));
 
                 if (bem.hasSpecialRelationship(aObjectClass[i], aObjectId[i], "mirror", 1)) //NOI18N
@@ -1812,7 +1816,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         
         try {
             aem.validateWebServiceCall("releaseMirrorPort", ipAddress, sessionId);
-            if (!mem.isSubClass("GenericPort", objectClass)) //NOI18N
+            if (!mem.isSubclassOf("GenericPort", objectClass)) //NOI18N
                 throw new ServerSideException(String.format("Object %s is not a port", bem.getObjectLight(objectClass, objectId)));
                         
             BusinessObjectLight theOtherPort = null;
@@ -1844,15 +1848,15 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("createPhysicalConnection", ipAddress, sessionId);
             
-            if (!mem.isSubClass(Constants.CLASS_GENERICPHYSICALCONNECTION, connectionClass)) //NOI18N
+            if (!mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONNECTION, connectionClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not subclass of GenericPhysicalConnection", connectionClass)); //NOI18N
 
             boolean isLink = false;
             
             //Check if the endpoints are already connected, but only if the connection is a link (the endpoints are ports)
-            if (mem.isSubClass(Constants.CLASS_GENERICPHYSICALLINK, connectionClass)) { //NOI18N
+            if (mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALLINK, connectionClass)) { //NOI18N
                 
-                if (!mem.isSubClass("GenericPort", aObjectClass) || !mem.isSubClass("GenericPort", bObjectClass)) //NOI18N
+                if (!mem.isSubclassOf("GenericPort", aObjectClass) || !mem.isSubclassOf("GenericPort", bObjectClass)) //NOI18N
                     throw new ServerSideException("One of the endpoints provided is not a port");
                 
                 if (!bem.getSpecialAttribute(aObjectClass, aObjectId, "endpointA").isEmpty()) //NOI18N
@@ -1902,7 +1906,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getConnectionEndpoints", ipAddress, sessionId);
-            if (!mem.isSubClass(Constants.CLASS_GENERICPHYSICALCONNECTION, connectionClass)) //NOI18N
+            if (!mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONNECTION, connectionClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not a physical connection", connectionClass));
 
             List<BusinessObjectLight> endpointA = bem.getSpecialAttribute(connectionClass, connectionId, "endpointA"); //NOI18N
@@ -1926,11 +1930,11 @@ public class WebserviceBeanImpl implements WebserviceBean {
             aem.validateWebServiceCall("connectPhysicalLinks", ipAddress, sessionId);
             for (int i = 0; i < sideAClassNames.length; i++){
                 
-                if (linksClassNames[i] != null && !mem.isSubClass(Constants.CLASS_GENERICPHYSICALLINK, linksClassNames[i])) //NOI18N
+                if (linksClassNames[i] != null && !mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALLINK, linksClassNames[i])) //NOI18N
                     throw new ServerSideException(String.format("Class %s is not a physical link", linksClassNames[i]));
-                if (sideAClassNames[i] != null && !mem.isSubClass("GenericPort", sideAClassNames[i])) //NOI18N
+                if (sideAClassNames[i] != null && !mem.isSubclassOf("GenericPort", sideAClassNames[i])) //NOI18N
                     throw new ServerSideException(String.format("Class %s is not a port", sideAClassNames[i]));
-                if (sideBClassNames[i] != null && !mem.isSubClass("GenericPort", sideBClassNames[i])) //NOI18N
+                if (sideBClassNames[i] != null && !mem.isSubclassOf("GenericPort", sideBClassNames[i])) //NOI18N
                     throw new ServerSideException(String.format("Class %s is not a port", sideBClassNames[i]));
                 
                 if (Objects.equals(sideAIds[i], sideBIds[i]))
@@ -1997,11 +2001,11 @@ public class WebserviceBeanImpl implements WebserviceBean {
             aem.validateWebServiceCall("connectPhysicalContainers", ipAddress, sessionId);
             for (int i = 0; i < sideAClassNames.length; i++){
                 
-                if (containersClassNames[i] != null && !mem.isSubClass(Constants.CLASS_GENERICPHYSICALCONTAINER, containersClassNames[i])) //NOI18N
+                if (containersClassNames[i] != null && !mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONTAINER, containersClassNames[i])) //NOI18N
                     throw new ServerSideException(String.format("Class %s is not a physical container", containersClassNames[i]));
-                if (sideAClassNames[i] != null && mem.isSubClass("GenericPort", sideAClassNames[i])) //NOI18N
+                if (sideAClassNames[i] != null && mem.isSubclassOf("GenericPort", sideAClassNames[i])) //NOI18N
                     throw new ServerSideException(String.format("Can not connect an instance of %s to a port", containersClassNames[i]));
-                if (sideBClassNames[i] != null && mem.isSubClass(Constants.CLASS_GENERICPHYSICALPORT, sideBClassNames[i])) //NOI18N
+                if (sideBClassNames[i] != null && mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALPORT, sideBClassNames[i])) //NOI18N
                     throw new ServerSideException(String.format("Can not connect an instance of %s to a port", containersClassNames[i]));
                 
                 if (Objects.equals(sideAIds[i], sideBIds[i]))
@@ -2037,10 +2041,10 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("reconnectPhysicalConnection", ipAddress, sessionId);
-            if (!mem.isSubClass(Constants.CLASS_GENERICPHYSICALCONNECTION, connectionClass)) //NOI18N
+            if (!mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONNECTION, connectionClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not a physical connection", connectionClass));
             
-            boolean isLink = mem.isSubClass(Constants.CLASS_GENERICPHYSICALLINK, connectionClass);
+            boolean isLink = mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALLINK, connectionClass);
             
             if (newASideClass != null && newASideId != -1) { //Reconnect the A side
                 disconnectPhysicalConnection(connectionClass, connectionId, 1 /*Disconnect A side*/, ipAddress, sessionId);
@@ -2081,7 +2085,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("disconnectPhysicalConnection", ipAddress, sessionId);
-            if (!mem.isSubClass(Constants.CLASS_GENERICPHYSICALCONNECTION, connectionClass)) //NOI18N
+            if (!mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONNECTION, connectionClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not a physical connection", connectionClass));
             
             String  affectedProperties = "", oldValues = "";
@@ -2130,7 +2134,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getPhysicalPath", ipAddress, sessionId);
-            if (!mem.isSubClass("GenericPort", objectClassName))
+            if (!mem.isSubclassOf("GenericPort", objectClassName))
                 throw new ServerSideException(String.format("Class %s is not a port", objectClassName));
             
             List<BusinessObjectLight> thePath = bem.getPhysicalPath(objectClassName, oid); 
@@ -2145,7 +2149,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     public RemoteLogicalConnectionDetails getLogicalLinkDetails(String linkClass, 
             long linkId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
-            throw new ServerSideException(I18N.gm("cannot_reach_backend")); //NOI18N
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getLogicalLinkDetails", ipAddress, sessionId); //NOI18N
             
@@ -2156,48 +2160,33 @@ public class WebserviceBeanImpl implements WebserviceBean {
             List<BusinessObjectLight> physicalPathA = null, physicalPathB = null;
             String endpointARelationshipName, endpointBRelationshipName;
             
-            if (mem.isSubClass("GenericSDHTributaryLink", linkClass)) { //NOI18N
+            if (mem.isSubclassOf("GenericSDHTributaryLink", linkClass)) { //NOI18N
                 endpointARelationshipName = "sdhTTLEndpointA"; //NOI18N
                 endpointBRelationshipName = "sdhTTLEndpointB"; //NOI18N
-                
             } else {
                 if ("MPLSLink".equals(linkClass)) { //NOI18N
                     endpointARelationshipName = "mplsEndpointA"; //NOI18N
                     endpointBRelationshipName = "mplsEndpointB"; //NOI18N
                 }
                 else
-                    throw new ServerSideException(String.format("Class %s is not a supported logical link", linkClass)); //NOI18N
+                    throw new ServerSideException(String.format("Class %s is not a supported logical link", linkClass)); 
             }
             
-            List<BusinessObjectLight> endpointARelationship = bem.getSpecialAttribute(linkClass, linkId, endpointARelationshipName); //NOI18N
+            List<BusinessObjectLight> endpointARelationship = bem.getSpecialAttribute(linkClass, linkId, endpointARelationshipName);
             if (!endpointARelationship.isEmpty()) {
                 endpointA = endpointARelationship.get(0);
                 physicalPathA = bem.getPhysicalPath(endpointA.getClassName(), endpointA.getId());
             }
-            //we check VLANs continuity for side A
-            HashMap<BusinessObjectLight, List<BusinessObjectLight>> physicalPathForVlansEndpointA = new HashMap<>(); 
-            if(physicalPathA != null && !physicalPathA.isEmpty())
-                physicalPathForVlansEndpointA = getPhysycalpathVlans(physicalPathA.get(physicalPathA.size() -1));
-            else if(endpointA != null)
-                physicalPathForVlansEndpointA = getPhysycalpathVlans(endpointA);
-           
-            List<BusinessObjectLight> endpointBRelationship = bem.getSpecialAttribute(linkClass, linkId, endpointBRelationshipName); //NOI18N
+
+            List<BusinessObjectLight> endpointBRelationship = bem.getSpecialAttribute(linkClass, linkId, endpointBRelationshipName);
             if (!endpointBRelationship.isEmpty()) {
                 endpointB = endpointBRelationship.get(0);
                 physicalPathB = bem.getPhysicalPath(endpointB.getClassName(), endpointB.getId());
             }
-            //we check VLANs continuity for side B
-            HashMap<BusinessObjectLight, List<BusinessObjectLight>> physicalPathForVlansEndpointB = new HashMap<>();    
-            if(physicalPathB != null && !physicalPathB.isEmpty())
-                physicalPathForVlansEndpointB = getPhysycalpathVlans(physicalPathB.get(physicalPathB.size() -1));
-            
-            else if(endpointB != null)
-                physicalPathForVlansEndpointB = getPhysycalpathVlans(endpointB);
-            
+
             return new RemoteLogicalConnectionDetails(linkObject, endpointA, endpointB, 
                     physicalPathA == null ? new ArrayList<>() : physicalPathA, 
-                    physicalPathB == null ? new ArrayList<>() : physicalPathB, 
-                    physicalPathForVlansEndpointA, physicalPathForVlansEndpointB);
+                    physicalPathB == null ? new ArrayList<>() : physicalPathB);
             
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -2219,7 +2208,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             List<BusinessObjectLight> physicalPathA = null, physicalPathB = null;
             String endpointARelationshipName, endpointBRelationshipName;
             
-            if (mem.isSubClass(Constants.CLASS_GENERICPHYSICALLINK, linkClass)) { //NOI18N
+            if (mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALLINK, linkClass)) { //NOI18N
                 endpointARelationshipName = "endpointA"; //NOI18N
                 endpointBRelationshipName = "endpointB"; //NOI18N
             }else 
@@ -2245,27 +2234,107 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
     }
     
+    @Override
+    public List<RemoteObjectLinkObject> getE2EMap(List<String> linkClasses, 
+            List<Long> linkIds, boolean includePhyscalPaths, boolean includeVlans, 
+            boolean includePhyscialLinks, String ipAddress, String sessionId) 
+            throws ServerSideException
+    {
+        if (bem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend")); //NOI18N
+        try {
+            aem.validateWebServiceCall("getE2EMap", ipAddress, sessionId); //NOI18N
+            List<RemoteObjectLinkObject> e2eMap = new ArrayList<>();
+            
+            for(int x=0 ; x < linkIds.size(); x++){
+                RemoteLogicalConnectionDetails logicalCircuitDetails = getLogicalLinkDetails(linkClasses.get(x), linkIds.get(x), ipAddress, sessionId);
+                RemoteObjectLight physicalEndpointA = null, logicalEndpointA = null, physicalEndpointB = null, logicalEndpointB = null, deviceA = null, deviceB = null;
+            //start logical part         
+                if(logicalCircuitDetails.getEndpointA() != null){
+                    List<BusinessObjectLight> parentsUntilFirstComEquipmentA = bem.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
+                            getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericCommunicationsElement");
+                    //Side A, we must check if the logical link starts in a physical port
+                    if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALPORT, logicalCircuitDetails.getEndpointA().getClassName()))
+                        physicalEndpointA = logicalCircuitDetails.getEndpointA();
+                    //if starts starts in a virtual port
+                    else if(parentsUntilFirstComEquipmentA.size() > 2 && mem.isSubclassOf(Constants.CLASS_GENERICLOGICALPORT, logicalCircuitDetails.getEndpointA().getClassName())){
+                        logicalEndpointA = logicalCircuitDetails.getEndpointA();
+                        physicalEndpointA = new RemoteObjectLight(parentsUntilFirstComEquipmentA.get(0)); //the physical port
+                    }//a logical port thas is direct child of the GenericCommunicationsElement (maybe a pseudowire)
+                    else if(parentsUntilFirstComEquipmentA.size() == 1 && mem.isSubclassOf(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, parentsUntilFirstComEquipmentA.get(parentsUntilFirstComEquipmentA.size() - 1).getClassName()))
+                        logicalEndpointA = logicalCircuitDetails.getEndpointA(); 
+                    //we set de device  
+                    if(!parentsUntilFirstComEquipmentA.isEmpty() &&  mem.isSubclassOf(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, parentsUntilFirstComEquipmentA.get(parentsUntilFirstComEquipmentA.size() - 1).getClassName()))
+                        deviceA = new RemoteObjectLight(parentsUntilFirstComEquipmentA.get(parentsUntilFirstComEquipmentA.size() - 1)); //GenericCommunicationsElement
+                }//Side B   
+               
+                if(logicalCircuitDetails.getEndpointB() != null){
+                    List<BusinessObjectLight> parentsUntilFirstComEquipmentB = bem.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointB().
+                            getClassName(), logicalCircuitDetails.getEndpointB().getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+                    //Side A, we must check if the logical link starts in a physical port
+                    if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALPORT, logicalCircuitDetails.getEndpointB().getClassName()))
+                        physicalEndpointB = logicalCircuitDetails.getEndpointB();
+                    //if starts starts in a virtual port
+                    else if(parentsUntilFirstComEquipmentB.size() > 2 && mem.isSubclassOf(Constants.CLASS_GENERICLOGICALPORT, logicalCircuitDetails.getEndpointB().getClassName())){
+                        logicalEndpointB = logicalCircuitDetails.getEndpointA();
+                        physicalEndpointB = new RemoteObjectLight(parentsUntilFirstComEquipmentB.get(0)); //the physical port
+                    }//a logical port thas is direct child of the GenericCommunicationsElement (maybe a pseudowire)
+                    else if(parentsUntilFirstComEquipmentB.size() == 1)
+                        logicalEndpointB = logicalCircuitDetails.getEndpointB(); 
+                    //we set de device
+                    if(!parentsUntilFirstComEquipmentB.isEmpty() &&  mem.isSubclassOf(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, parentsUntilFirstComEquipmentB.get(parentsUntilFirstComEquipmentB.size() - 1).getClassName()))
+                        deviceB = new RemoteObjectLight(parentsUntilFirstComEquipmentB.get(parentsUntilFirstComEquipmentB.size() - 1)); //GenericCommunicationsElement
+                }
+                e2eMap.add(new RemoteObjectLinkObject(deviceA, physicalEndpointA, logicalEndpointA, 
+                        logicalCircuitDetails.getConnectionObject(), logicalEndpointB, physicalEndpointB, deviceB));
+                //physical part, side A
+                if (!logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty()) 
+                    e2eMap.addAll(getpPysicalPathMap(logicalCircuitDetails.getPhysicalPathForEndpointA()));
+                //physical part, side B
+                if (!logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty()) 
+                    e2eMap.addAll(getpPysicalPathMap(logicalCircuitDetails.getPhysicalPathForEndpointB()));
+                //VLANs side A
+                HashMap<RemoteObjectLight, List<RemoteObjectLight>> physicalPathForVlansEndpointA = new HashMap<>(); 
+                if(logicalCircuitDetails.getEndpointA() != null && !logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty())
+                    physicalPathForVlansEndpointA = getPhysicalPathVlans(logicalCircuitDetails.getPhysicalPathForEndpointA().get(logicalCircuitDetails.getPhysicalPathForEndpointA().size() -1));
+                else
+                    physicalPathForVlansEndpointA = getPhysicalPathVlans(physicalEndpointA == null ? logicalCircuitDetails.getEndpointA() : physicalEndpointA);
+                //side B
+                HashMap<RemoteObjectLight, List<RemoteObjectLight>> physicalPathForVlansEndpointB = new HashMap<>();    
+                if(logicalCircuitDetails.getEndpointB() != null && !logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty())
+                    physicalPathForVlansEndpointB = getPhysicalPathVlans(logicalCircuitDetails.getPhysicalPathForEndpointB().get(logicalCircuitDetails.getPhysicalPathForEndpointB().size() -1));
+
+                else if(logicalCircuitDetails.getEndpointB() != null)
+                    physicalPathForVlansEndpointB = getPhysicalPathVlans(physicalEndpointB == null ? logicalCircuitDetails.getEndpointB() : physicalEndpointB);
+            
+            }//end for
+            return e2eMap;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+        
+    }
     /**
      * Checks the continuity throw ports that belongs to the same VLAN
      * @param endpoint a given port to check if belong to a vlan
      * @return a map with key: port, value: physical path of that port
      * @throws ServerSideException 
      */
-    private HashMap<BusinessObjectLight, List<BusinessObjectLight>> getPhysycalpathVlans(BusinessObjectLight endpoint) 
+    private HashMap<RemoteObjectLight, List<RemoteObjectLight>> getPhysicalPathVlans(RemoteObjectLight endpoint) 
             throws ServerSideException{
         try {
-            HashMap<BusinessObjectLight, List<BusinessObjectLight>> vlansPhysicalPath = new HashMap<>();
-            //we get the the vlans to which the port belongs
-            List<BusinessObjectLight> vlans = bem.getSpecialAttribute(endpoint.getClassName(), endpoint.getId(), "portBelongsToVlan");
-         
-            for (BusinessObjectLight vlan : vlans) {
-                //We get all the port of every vlan
-                List<BusinessObjectLight> vlanPorts = bem.getSpecialAttribute(vlan.getClassName(), vlan.getId(), "portBelongsToVlan");
-                for (BusinessObjectLight vlanPort : vlanPorts) {
-                    if(vlanPort.getId() != endpoint.getId()){//we get the physical path for every port of the vlan except of the given endpoint 
-                        List<BusinessObjectLight> vlanPhysicalPath = bem.getPhysicalPath(vlanPort.getClassName(), vlanPort.getId());
-                        if(!vlanPhysicalPath.isEmpty())
-                            vlansPhysicalPath.put(vlanPort, vlanPhysicalPath);
+            HashMap<RemoteObjectLight, List<RemoteObjectLight>> vlansPhysicalPath = new HashMap<>();
+            if(endpoint != null){
+                //we get the the vlans to which the port belongs
+                List<BusinessObjectLight> vlans = bem.getSpecialAttribute(endpoint.getClassName(), endpoint.getId(), "portBelongsToVlan");
+                for (BusinessObjectLight vlan : vlans) { //We get all the port of every vlan
+                    List<BusinessObjectLight> vlanPorts = bem.getSpecialAttribute(vlan.getClassName(), vlan.getId(), "portBelongsToVlan");
+                    for (BusinessObjectLight vlanPort : vlanPorts) {
+                        if(vlanPort.getId() != endpoint.getId()){//we get the physical path for every port of the vlan except of the given endpoint 
+                            List<BusinessObjectLight> vlanPhysicalPath = bem.getPhysicalPath(vlanPort.getClassName(), vlanPort.getId());
+                            if(!vlanPhysicalPath.isEmpty())
+                                vlansPhysicalPath.put(new RemoteObjectLight(vlanPort), RemoteObjectLight.toRemoteObjectLightArray(vlanPhysicalPath));
+                        }
                     }
                 }
             }
@@ -2377,7 +2446,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("deletePhysicalConnection", ipAddress, sessionId);
-            if (!mem.isSubClass(Constants.CLASS_GENERICPHYSICALCONNECTION, objectClassName))
+            if (!mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONNECTION, objectClassName))
                 throw new ServerSideException(String.format("Class %s is not a physical connection", objectClassName));
             
             bem.deleteObject(objectClassName, objectId, true);
@@ -2397,7 +2466,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("associateObjectToService", ipAddress, sessionId);
-            if (!mem.isSubClass("GenericService", serviceClass)) //NOI18N
+            if (!mem.isSubclassOf("GenericService", serviceClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not a service", serviceClass));
             
             bem.createSpecialRelationship(serviceClass, serviceId, objectClass, objectId, "uses", true); //NOI18N
@@ -2419,7 +2488,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             String affectedProperties = "", newValues = "";
             aem.validateWebServiceCall("associateObjectsToService", ipAddress, sessionId);
-            if (!mem.isSubClass("GenericService", serviceClass)) //NOI18N
+            if (!mem.isSubclassOf("GenericService", serviceClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not a service", serviceClass));
             for (int i = 0; i < objectId.length; i++) {
                 bem.createSpecialRelationship(serviceClass, serviceId, objectClass[i], objectId[i], "uses", true); //NOI18N
@@ -2457,7 +2526,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getServiceResources", ipAddress, sessionId);
-            if (!mem.isSubClass(Constants.CLASS_GENERICSERVICE, serviceClass)) //NOI18N
+            if (!mem.isSubclassOf(Constants.CLASS_GENERICSERVICE, serviceClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not a service", serviceClass));
             return RemoteObjectLight.toRemoteObjectLightArray(bem.getSpecialAttribute(serviceClass, serviceId, "uses")); //NOI18N
         } catch (InventoryException ex) {
@@ -2471,7 +2540,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getServicesForCustomer", ipAddress, sessionId);
-            if (!mem.isSubClass(Constants.CLASS_GENERICCUSTOMER, customerClass)) //NOI18N
+            if (!mem.isSubclassOf(Constants.CLASS_GENERICCUSTOMER, customerClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not a customer", customerClass));
             return RemoteObjectLight.toRemoteObjectLightArray(bem.getSpecialChildrenOfClassLightRecursive(customerId, customerClass, Constants.CLASS_GENERICSERVICE, limit)); //NOI18N
         } catch (InventoryException ex) {
@@ -4222,6 +4291,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
     }
     // </editor-fold>
+    
     //<editor-fold desc="Validators" defaultstate="collapsed">
 
     @Override
@@ -5267,13 +5337,13 @@ public class WebserviceBeanImpl implements WebserviceBean {
         
         try {
             aem.validateWebServiceCall("associateObjectsToContract", ipAddress, sessionId);
-            if (!mem.isSubClass(Constants.CLASS_GENERICCONTRACT, contractClass))
+            if (!mem.isSubclassOf(Constants.CLASS_GENERICCONTRACT, contractClass))
                 throw new ServerSideException(String.format("Class %s is not a contract", contractClass));
             
             boolean allEquipmentANetworkElement = true;
             
             for (int i = 0; i < objectId.length; i++) {
-                if (!mem.isSubClass(Constants.CLASS_INVENTORYOBJECT, objectClass[i]))
+                if (!mem.isSubclassOf(Constants.CLASS_INVENTORYOBJECT, objectClass[i]))
                     allEquipmentANetworkElement = false;
                 else
                     bem.createSpecialRelationship(objectClass[i], objectId[i], contractClass, contractId, "contractHas", true); //NOI18N
@@ -6397,7 +6467,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("associatePhysicalNodeToWarehouse", ipAddress, sessionId);
             
-            if (mem.isSubClass("Warehouse", warehouseClass) || mem.isSubClass("VirtualWarehouse", warehouseClass)) { //NOI18N
+            if (mem.isSubclassOf("Warehouse", warehouseClass) || mem.isSubclassOf("VirtualWarehouse", warehouseClass)) { //NOI18N
                 
             
                 bem.createSpecialRelationship(warehouseClass, warehouseId, objectClass, objectId, "warehouseHas", true); //NOI18N
@@ -6424,7 +6494,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             aem.validateWebServiceCall("associatesPhysicalNodeToWarehouse", ipAddress, sessionId);
             
-            if (mem.isSubClass("Warehouse", warehouseClass) || mem.isSubClass("VirtualWarehouse", warehouseClass)) { //NOI18N
+            if (mem.isSubclassOf("Warehouse", warehouseClass) || mem.isSubclassOf("VirtualWarehouse", warehouseClass)) { //NOI18N
                 
                 for (int i = 0; i < objectId.length; i++) {
                     bem.createSpecialRelationship(warehouseClass, warehouseId, objectClass[i], objectId[i], "warehouseHas", true); //NOI18N
@@ -6685,7 +6755,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
         // </editor-fold>
     // </editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">
     protected final void connect() {
         try {
@@ -6963,4 +7033,48 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
     }
     // </editor-fold>
+    /**
+     * 
+     * @param path
+     * @return
+     * @throws MetadataObjectNotFoundException
+     * @throws MetadataObjectNotFoundException
+     * @throws BusinessObjectNotFoundException
+     * @throws InvalidArgumentException 
+     */
+    private List<RemoteObjectLinkObject> getpPysicalPathMap(List<RemoteObjectLight> path) throws MetadataObjectNotFoundException, MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException{
+        BusinessObject connection  = null;
+        BusinessObject device = null;
+        BusinessObject tempDevice = null;
+        RemoteObjectLight tempEndPoint = null;
+        List<RemoteObjectLinkObject> e2eMap = new ArrayList<>();
+        
+        for(int i = 0; i < path.size(); i++){
+            if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALLINK, path.get(i).getClassName()))
+                connection = bem.getObject(path.get(i).getClassName(), path.get(i).getId());
+
+            else if(!mem.isSubclassOf(Constants.CLASS_VIRTUALPORT, path.get(i).getClassName())){
+                //when two ports are followed the parent could be a GenericDistributionFrame(e.g. an ODF)
+                if(i+1 < path.size() && mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALPORT, path.get(i+1).getClassName())){
+                    device = bem.getParentOfClass(path.get(i).getClassName(), path.get(i).getId(), Constants.CLASS_GENERICDISTRIBUTIONFRAME);
+                    i++;
+                }//if the parent could not be found it should be aGenericCommunications element(e.g. Router, Cloud, MPLSRouter, etc)
+                if(device == null)
+                    device = bem.getParentOfClass(path.get(i).getClassName(), path.get(i).getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+
+                if(connection == null){
+                    tempEndPoint = path.get(i);
+                    tempDevice = device;
+                    device = null;
+                }else{ //if enters here it means that we have enough information to create the structure RemoteObjectLinkObject 
+                    e2eMap.add(new RemoteObjectLinkObject(new RemoteObjectLight(tempDevice), tempEndPoint, new RemoteObject(connection), path.get(i), new RemoteObjectLight(device)));
+                    connection = null;
+                    tempEndPoint = path.get(i);
+                    tempDevice = device;
+                    device = null;
+                }
+            }
+        }
+        return e2eMap;
+    }
 }

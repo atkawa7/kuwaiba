@@ -82,7 +82,7 @@ public class FunctionValue extends DynamicSectionFunction {
             String attributeValue = remoteBusinessObject.getAttributes().get(attribute);            
             String attributeType = classMetadata.getAttribute(attribute).getType();
             
-            if (attributeValue != null && mem.isSubClass("GenericObjectList", attributeType)) {
+            if (attributeValue != null && mem.isSubclassOf("GenericObjectList", attributeType)) {
                 BusinessObjectLight item = aem.getListTypeItem(attributeType, Long.valueOf(attributeValue));
                 if (item != null)
                     attributeValue = item.getName();

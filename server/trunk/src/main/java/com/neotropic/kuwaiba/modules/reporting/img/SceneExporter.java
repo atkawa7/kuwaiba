@@ -213,7 +213,7 @@ public class SceneExporter {
         List<BusinessObjectLight> trace = bem.getPhysicalPath(portClassName, portId);
         
         for (BusinessObjectLight element : trace){
-            if (!mem.isSubClass(Constants.CLASS_GENERICPHYSICALLINK, element.getClassName())) { //It's a port
+            if (!mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALLINK, element.getClassName())) { //It's a port
                 List<BusinessObjectLight> ancestors = bem.getParents(element.getClassName(), element.getId());
                 
                 lastPortWidget = (ObjectBoxWidget)scene.addNode(element);
@@ -233,7 +233,7 @@ public class SceneExporter {
                         ((ObjectBoxWidget)possibleParent).addBox(lastWidget);
                         break;
                     }
-                    if (mem.isSubClass(Constants.CLASS_GENERICPHYSICALNODE, (ancestors.get(i)).getClassName()) || //Only parents up to the first physical node (say a building) will be displayed
+                    if (mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALNODE, (ancestors.get(i)).getClassName()) || //Only parents up to the first physical node (say a building) will be displayed
                                             i == ancestors.size() - 2){ //Or if the next level is the dummy root
                         scene.addRootWidget(lastWidget);
                         scene.validate();

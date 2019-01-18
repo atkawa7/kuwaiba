@@ -172,7 +172,7 @@ public class SDHModule implements GenericCommercialModule {
         
         long newConnectionId = -1;
         try {
-            if (!mem.isSubClass("GenericSDHTransportLink", linkType)) //NOI18N
+            if (!mem.isSubclassOf("GenericSDHTransportLink", linkType)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not subclass of GenericSDHTransportLink", linkType));
 
             HashMap<String, String> attributesToBeSet = new HashMap<>();
@@ -236,10 +236,10 @@ public class SDHModule implements GenericCommercialModule {
         
         long newConnectionId = -1;
         try {
-            if (!mem.isSubClass("GenericSDHContainerLink", linkType)) //NOI18N
+            if (!mem.isSubclassOf("GenericSDHContainerLink", linkType)) //NOI18N
                 throw new ServerSideException("Class %s is not subclass of GenericSDHContainerLink");
 
-            if (!mem.isSubClass("GenericCommunicationsElement", classNameEndpointA) || !mem.isSubClass("GenericCommunicationsElement", classNameEndpointB))
+            if (!mem.isSubclassOf("GenericCommunicationsElement", classNameEndpointA) || !mem.isSubclassOf("GenericCommunicationsElement", classNameEndpointB))
                 throw new ServerSideException("The endpoints must be subclasses of GenericCommunicationsElement");
                 
             HashMap<String, String> attributesToBeSet = new HashMap<>();
@@ -302,7 +302,7 @@ public class SDHModule implements GenericCommercialModule {
         long newContainerLinkId;
         
         try {
-            if (!mem.isSubClass("GenericSDHTributaryLink", linkType)) //NOI18N
+            if (!mem.isSubclassOf("GenericSDHTributaryLink", linkType)) //NOI18N
                 throw new ServerSideException("Class %s is not subclass of GenericSDHTributaryLink");
 
             HashMap<String, String> attributesToBeSet = new HashMap<>();
@@ -326,10 +326,10 @@ public class SDHModule implements GenericCommercialModule {
             //it's transported by a transport link. There's a different relationship dipending on the case
             String relationship;
             
-            if (mem.isSubClass(CLASS_GENERICSDHHIGHORDERTRIBUTARYLINK, linkType))
+            if (mem.isSubclassOf(CLASS_GENERICSDHHIGHORDERTRIBUTARYLINK, linkType))
                 relationship = RELATIONSHIP_SDHTRANSPORTS;
             else {
-                if (mem.isSubClass(CLASS_GENERICSDHLOWORDERTRIBUTARYLINK, linkType))
+                if (mem.isSubclassOf(CLASS_GENERICSDHLOWORDERTRIBUTARYLINK, linkType))
                     relationship = RELATIONSHIP_SDHCONTAINS;
                 else
                     throw new ServerSideException(String.format("Class %s does not appear to be either a high or low order tributary link", linkType));
@@ -373,7 +373,7 @@ public class SDHModule implements GenericCommercialModule {
         if (bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
-        if (!mem.isSubClass("GenericSDHTransportLink", transportLinkClass)) //NOI18N
+        if (!mem.isSubclassOf("GenericSDHTransportLink", transportLinkClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not subclass of GenericSDHContainerLink", transportLinkClass));
         
         List<BusinessObjectLight> containerLinks = bem.getSpecialAttribute(transportLinkClass, transportLinkId, RELATIONSHIP_SDHTRANSPORTS);
@@ -396,7 +396,7 @@ public class SDHModule implements GenericCommercialModule {
         if (bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
-        if (!mem.isSubClass("GenericSDHContainerLink", containerLinkClass)) //NOI18N
+        if (!mem.isSubclassOf("GenericSDHContainerLink", containerLinkClass)) //NOI18N
                 throw new ServerSideException("Class %s is not subclass of GenericSDHContainerLink");
 
         //The container could carry a tributary link (easy!) or carry more containers inside, in which case, we need to dig one more level.
@@ -427,7 +427,7 @@ public class SDHModule implements GenericCommercialModule {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
         
-        if (!mem.isSubClass("GenericSDHTributaryLink", tributaryLinkClass)) //NOI18N
+        if (!mem.isSubclassOf("GenericSDHTributaryLink", tributaryLinkClass)) //NOI18N
                 throw new ServerSideException("Class %s is not subclass of GenericSDHTributaryLink");
 
         //There should be only one
@@ -453,10 +453,10 @@ public class SDHModule implements GenericCommercialModule {
     public List<BusinessObjectLightList> findSDHRoutesUsingTransportLinks(String communicationsEquipmentClassA, 
                                             long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
                                             long  communicationsEquipmentIB) throws InvalidArgumentException, MetadataObjectNotFoundException {
-        if (!mem.isSubClass(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, communicationsEquipmentClassA))
+        if (!mem.isSubclassOf(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, communicationsEquipmentClassA))
                 throw new InvalidArgumentException(String.format("Class %s is not a GenericCommunicationsEquipment", communicationsEquipmentClassA));
         
-        if (!mem.isSubClass(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, communicationsEquipmentClassB))
+        if (!mem.isSubclassOf(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, communicationsEquipmentClassB))
                 throw new InvalidArgumentException(String.format("Class %s is not a GenericCommunicationsEquipment", communicationsEquipmentClassB));
         
         return bem.findRoutesThroughSpecialRelationships(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, 
@@ -477,10 +477,10 @@ public class SDHModule implements GenericCommercialModule {
                                             long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
                                             long  communicationsEquipmentIB) throws InvalidArgumentException, MetadataObjectNotFoundException {
         
-        if (!mem.isSubClass(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, communicationsEquipmentClassA))
+        if (!mem.isSubclassOf(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, communicationsEquipmentClassA))
                 throw new InvalidArgumentException(String.format("Class %s is not a GenericCommunicationsEquipment", communicationsEquipmentClassA));
         
-        if (!mem.isSubClass(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, communicationsEquipmentClassB))
+        if (!mem.isSubclassOf(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, communicationsEquipmentClassB))
                 throw new InvalidArgumentException(String.format("Class %s is not a GenericCommunicationsEquipment", communicationsEquipmentClassB));
         
         return bem.findRoutesThroughSpecialRelationships(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, 
@@ -499,7 +499,7 @@ public class SDHModule implements GenericCommercialModule {
     public List<SDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, long transportLinkId) 
             throws InvalidArgumentException, BusinessObjectNotFoundException, MetadataObjectNotFoundException {
         
-        if (!mem.isSubClass("GenericSDHTransportLink", transportLinkClass))
+        if (!mem.isSubclassOf("GenericSDHTransportLink", transportLinkClass))
                 throw new InvalidArgumentException(String.format("Class %s is not a GenericSDHTransportLink", transportLinkClass));
         
         ArrayList<SDHContainerLinkDefinition> containers = new ArrayList<>();
@@ -538,7 +538,7 @@ public class SDHModule implements GenericCommercialModule {
     public List<SDHContainerLinkDefinition> getSDHContainerLinkStructure(String containerLinkClass, long containerLinkId) 
             throws InvalidArgumentException, BusinessObjectNotFoundException, MetadataObjectNotFoundException {
         
-        if (!mem.isSubClass("GenericSDHHighOrderContainerLink", containerLinkClass))
+        if (!mem.isSubclassOf("GenericSDHHighOrderContainerLink", containerLinkClass))
                 throw new InvalidArgumentException(String.format("Class %s is not a GenericSDHHighOrderContainerLink", containerLinkClass));
         
         ArrayList<SDHContainerLinkDefinition> containers = new ArrayList<>();

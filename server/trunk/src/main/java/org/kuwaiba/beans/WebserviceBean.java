@@ -70,6 +70,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.AssetLevelCorrelatedInformation;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteLogicalConnectionDetails;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLinkObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLightList;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
@@ -237,6 +238,8 @@ public interface WebserviceBean {
     public List<RemoteObjectLight> getPhysicalPath(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteLogicalConnectionDetails getLogicalLinkDetails(String linkClass, long linkId, String ipAddress, String sessionId) throws ServerSideException;
     public RemotePhysicalConnectionDetails getPhysicalLinkDetails(String linkClass, long linkId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLinkObject> getE2EMap(List<String> linkClasses, List<Long> linkIds, boolean includePhyscalPaths, boolean includeVlans, boolean includePhyscialLinks,String ipAddress, String sessionId) throws ServerSideException;
+    
     public List<RemoteObjectLight> getContainersBetweenObjects(String objectAClassName, long objectAId,
             String objectBClassName, long objectBId, String containerClassName, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteObjectLightList> getPhysicalConnectionsInObject(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;

@@ -141,7 +141,7 @@ public class Patch09EquipmentModel extends GenericPatch {
             }
             AttributeMetadata attrMetadataModel = equipmentClass.getAttribute("model"); //NOI18N
             try {
-                if (attrMetadataModel != null && mem.isSubClass("GenericType", attrMetadataModel.getType())/*equipmentModelClassName.equals(attrMetadataModel.getType())*/)
+                if (attrMetadataModel != null && mem.isSubclassOf("GenericType", attrMetadataModel.getType())/*equipmentModelClassName.equals(attrMetadataModel.getType())*/)
                     continue;
             } catch (MetadataObjectNotFoundException ex) {
                 result.getMessages().add(" * " + ex.getMessage());

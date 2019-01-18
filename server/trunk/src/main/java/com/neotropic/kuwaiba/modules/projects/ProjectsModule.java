@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
@@ -209,7 +209,7 @@ public class ProjectsModule implements GenericCommercialModule {
     public List<BusinessObjectLight> getProjectResurces(String projectClass, long projectId) throws 
         InvalidArgumentException, BusinessObjectNotFoundException, MetadataObjectNotFoundException {
         
-        if (!mem.isSubClass(Constants.CLASS_GENERICPROJECT, projectClass))
+        if (!mem.isSubclassOf(Constants.CLASS_GENERICPROJECT, projectClass))
             throw new InvalidArgumentException(String.format("Class %s is not a project", projectClass));
         
         return bem.getSpecialAttribute(projectClass, projectId, RELATIONSHIP_PROJECTSPROJECTUSES);
@@ -227,14 +227,14 @@ public class ProjectsModule implements GenericCommercialModule {
     public List<BusinessObjectLight> getProjectActivities(String projectClass, long projectId) 
         throws InvalidArgumentException, MetadataObjectNotFoundException, BusinessObjectNotFoundException {
         
-        if (!mem.isSubClass(Constants.CLASS_GENERICPROJECT, projectClass))
+        if (!mem.isSubclassOf(Constants.CLASS_GENERICPROJECT, projectClass))
             throw new InvalidArgumentException(String.format("Class %s is not a project", projectClass));
         
         List<BusinessObjectLight> children = bem.getObjectSpecialChildren(projectClass, projectId);
         List<BusinessObjectLight> activities = new ArrayList();
         
         for (BusinessObjectLight child : children) {
-            if (mem.isSubClass(Constants.CLASS_GENERICACTIVITY, child.getClassName()))
+            if (mem.isSubclassOf(Constants.CLASS_GENERICACTIVITY, child.getClassName()))
                 activities.add(child);
         }
         return activities;
@@ -256,7 +256,7 @@ public class ProjectsModule implements GenericCommercialModule {
         InvalidArgumentException, ArraySizeMismatchException, BusinessObjectNotFoundException, 
         OperationNotPermittedException, MetadataObjectNotFoundException {
         
-        if (!mem.isSubClass(Constants.CLASS_GENERICPROJECT, projectClass))
+        if (!mem.isSubclassOf(Constants.CLASS_GENERICPROJECT, projectClass))
             throw new InvalidArgumentException(String.format("Class %s is not a project", projectClass));
         
         if (objectClass.length != objectId.length)
@@ -282,7 +282,7 @@ public class ProjectsModule implements GenericCommercialModule {
         InvalidArgumentException, BusinessObjectNotFoundException, OperationNotPermittedException, 
         MetadataObjectNotFoundException {
         
-        if (!mem.isSubClass(Constants.CLASS_GENERICPROJECT, projectClass))
+        if (!mem.isSubclassOf(Constants.CLASS_GENERICPROJECT, projectClass))
             throw new InvalidArgumentException(String.format("Class %s is not a project", projectClass));
         
         bem.createSpecialRelationship(projectClass, projectId, objectClass, objectId, RELATIONSHIP_PROJECTSPROJECTUSES, true);
@@ -301,7 +301,7 @@ public class ProjectsModule implements GenericCommercialModule {
     public void releaseObjectFromProject(String objectClass, long objectId, String projectClass, long projectId) throws 
         InvalidArgumentException, BusinessObjectNotFoundException, MetadataObjectNotFoundException {
         
-        if (!mem.isSubClass(Constants.CLASS_GENERICPROJECT, projectClass))
+        if (!mem.isSubclassOf(Constants.CLASS_GENERICPROJECT, projectClass))
             throw new InvalidArgumentException(String.format("Class %s is not a project", projectClass));
         
         bem.releaseSpecialRelationship(objectClass, objectId, projectId, RELATIONSHIP_PROJECTSPROJECTUSES);

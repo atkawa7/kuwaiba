@@ -346,7 +346,7 @@ public interface MetadataEntityManager {
      * @return True if classToBeEvaluated is subclass of allegedParent. False otherwise. This method also returns true if allegedParent == classToBeEvaluated
      * @throws MetadataObjectNotFoundException If any of the classes provided doesn't exist
      */
-    public boolean isSubClass(String allegedParent, String classToBeEvaluated) throws MetadataObjectNotFoundException;
+    public boolean isSubclassOf(String allegedParent, String classToBeEvaluated) throws MetadataObjectNotFoundException;
     /**
      * Get the upstream containment hierarchy for a given class, unlike getPossibleChildren (which will give you the 
      * downstream hierarchy).

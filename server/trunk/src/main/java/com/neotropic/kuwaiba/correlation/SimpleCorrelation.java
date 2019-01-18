@@ -121,7 +121,7 @@ public class SimpleCorrelation {
                 List<BusinessObjectLight> portsInSlot = bem.getObjectChildren(deviceChild.getClassName(), deviceChild.getId(), -1);
                 
                 for (BusinessObjectLight portInSlot : portsInSlot) {
-                    if (mem.isSubClass("GenericPort", portInSlot.getClassName())) 
+                    if (mem.isSubclassOf("GenericPort", portInSlot.getClassName())) 
                         fullPortsInSlot.add(bem.getObject(portInSlot.getId()));
                 }
                 return servicesInPorts(fullPortsInSlot, bem);

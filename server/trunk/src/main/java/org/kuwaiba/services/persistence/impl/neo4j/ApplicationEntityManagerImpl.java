@@ -786,7 +786,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                  cm.putClass(myClass);
              }      
 
-            if (!mem.isSubClass(Constants.CLASS_GENERICOBJECTLIST, className))
+            if (!mem.isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, className))
                  throw new InvalidArgumentException(String.format("Class %s is not a list type", className));
 
             if (myClass.isInDesign())
@@ -813,7 +813,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throws MetadataObjectNotFoundException, OperationNotPermittedException, BusinessObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         try(Transaction tx = graphDb.beginTx())
         {
-            if (!mem.isSubClass(Constants.CLASS_GENERICOBJECTLIST, className))
+            if (!mem.isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, className))
                 throw new InvalidArgumentException(String.format("Class %s is not a list type", className));
 
             Node instance = getInstanceOfClass(className, oid);
@@ -834,7 +834,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (classNode ==  null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.",className));
 
-            if (!Util.isSubClass(Constants.CLASS_GENERICOBJECTLIST, classNode))
+            if (!Util.isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, classNode))
                 throw new InvalidArgumentException(String.format("Class %s is not a list type", className));
 
             Iterable<Relationship> childrenAsRelationships = classNode.getRelationships(RelTypes.INSTANCE_OF);
@@ -862,7 +862,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.", listTypeClassName));
             
-            if (!Util.isSubClass(Constants.CLASS_GENERICOBJECTLIST, classNode))
+            if (!Util.isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, classNode))
                 throw new InvalidArgumentException(String.format("Class %s is not a list type", listTypeClassName));
             
             for (Relationship childRel : classNode.getRelationships(RelTypes.INSTANCE_OF)) {
@@ -887,7 +887,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.", listTypeClassName));
             
-            if (!Util.isSubClass(Constants.CLASS_GENERICOBJECTLIST, classNode))
+            if (!Util.isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, classNode))
                 throw new InvalidArgumentException(String.format("Class %s is not a list type", listTypeClassName));
             
             for (Relationship childRel : classNode.getRelationships(RelTypes.INSTANCE_OF)) {
@@ -940,7 +940,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.", listTypeItemClassName));
             
-            if (!Util.isSubClass(Constants.CLASS_GENERICOBJECTLIST, classNode))
+            if (!Util.isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, classNode))
                 throw new InvalidArgumentException(String.format("Class %s is not a list type", listTypeItemClassName));
             
             Node listTypeItemNode = null;
@@ -2047,7 +2047,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public List<ActivityLogEntry> getBusinessObjectAuditTrail(String objectClass, long objectId, int limit) 
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         try(Transaction tx = graphDb.beginTx()) {
-            if (!mem.isSubClass(Constants.CLASS_INVENTORYOBJECT, objectClass))
+            if (!mem.isSubclassOf(Constants.CLASS_INVENTORYOBJECT, objectClass))
                 throw new InvalidArgumentException(String.format("Class %s is not subclass of %s",
                         objectClass, Constants.CLASS_INVENTORYOBJECT));
             Node instanceNode = getInstanceOfClass(objectClass, objectId);
@@ -3548,10 +3548,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         if (classNode.getProperty(Constants.PROPERTY_NAME).equals(Constants.CLASS_ROOTOBJECT)) {
             xmlew.add(xmlef.createAttribute(new QName("classType"), Integer.toString(Constants.CLASS_TYPE_ROOT)));
         }else{
-            if (Util.isSubClass("InventoryObject", classNode))
+            if (Util.isSubclassOf("InventoryObject", classNode))
                 xmlew.add(xmlef.createAttribute(new QName("classType"), Integer.toString(Constants.CLASS_TYPE_INVENTORY)));
             else{
-                if (Util.isSubClass("ApplicationObject", classNode))
+                if (Util.isSubclassOf("ApplicationObject", classNode))
                     xmlew.add(xmlef.createAttribute(new QName("classType"), Integer.toString(Constants.CLASS_TYPE_APPLICATION)));
                 else
                     xmlew.add(xmlef.createAttribute(new QName("classType"), Integer.toString(Constants.CLASS_TYPE_OTHER)));
@@ -5065,7 +5065,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     environmentParameters.setVariable("id", objectId);
                     try {
                         if ((boolean)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_ENABLED) && 
-                                mem.isSubClass((String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_CLASS_NAME), objectClass)) {
+                                mem.isSubclassOf((String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_CLASS_NAME), objectClass)) {
                             GroovyShell shell = new GroovyShell(ApplicationEntityManager.class.getClassLoader(), environmentParameters);
                             Object theResult = shell.evaluate(script);
 
