@@ -452,8 +452,7 @@ public class ProcessInstanceView extends DynamicComponent {
                             String stringTemplate = new String(byteTemplate);
                                                         
                             List<AbstractElement> elements = ((FormRenderer) artifactView.getContent()).getFormStructure().getElements();
-                            
-                            
+                                                        
                             for (AbstractElement element : elements) {
                                 
                                 if (element instanceof ElementGrid) {
@@ -480,6 +479,12 @@ public class ProcessInstanceView extends DynamicComponent {
                                                 stringTemplate = stringTemplate.replace("${" + id + i + j + "}", value != null ? value : "");
                                             }
                                         }
+                                    }
+                                    if (elementGrid.getRows() == null || 
+                                        (elementGrid.getRows() != null && elementGrid.getRows().isEmpty())) {
+                                        
+                                        for (int j = 0; j < columnsSize; j += 1)
+                                            stringTemplate = stringTemplate.replace("${" + id + "0" + j + "}", "");
                                     }
                                 }
                                 else if (element instanceof AbstractElementField) {
