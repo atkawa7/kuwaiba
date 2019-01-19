@@ -16,10 +16,12 @@ package org.kuwaiba.web.procmanager;
 
 import com.neotropic.kuwaiba.modules.reporting.img.SceneExporter;
 import com.vaadin.server.FileResource;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.VerticalLayout;
 import java.io.File;
 import java.util.Properties;
 import org.kuwaiba.apis.persistence.PersistenceService;
@@ -65,8 +67,13 @@ public class MiniAppPhysicalPath extends AbstractMiniApplication<Component, Comp
                 SceneExporter.PATH = newPath;
 
                 String img = sceneExporter.buildPhysicalPathView(className, id);
-                if(img == null)
-                    panel.setContent(new Label("No physical connections"));
+                if(img == null){
+                    Label lblPortHasNoConnections = new Label("The port has no physical connections");
+                    VerticalLayout content = new VerticalLayout(lblPortHasNoConnections);
+                    content.setHeight("455px");
+                    content.setComponentAlignment(lblPortHasNoConnections, Alignment.MIDDLE_CENTER);
+                    panel.setContent(content);
+                }
                 else{
                     SceneExporter.PATH = oldPath;
 
