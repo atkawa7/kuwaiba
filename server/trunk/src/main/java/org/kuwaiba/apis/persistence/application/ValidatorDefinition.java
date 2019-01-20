@@ -114,4 +114,15 @@ public class ValidatorDefinition implements Comparable<ValidatorDefinition> {
     public int compareTo(ValidatorDefinition o) {
         return name.compareTo(o.getName());
     }
+    
+    /**
+     * This method should be implemented by all validator definition scripts (which must define a subclass of ValidatorDefinition), 
+     * and contains the logic to evaluate the condition. Two variables are injected as parameters: the <code>objectClass</code> and the <code>objectId</code>.
+     * @param objectClass The class of the object to be evaluated.
+     * @param objectId The id of the object to be evaluated.
+     * @return The validator product of evaluating the definition condition
+     */
+    public Validator run(String objectClass, long objectId) {
+        return null; //The default implemention
+    }
 }

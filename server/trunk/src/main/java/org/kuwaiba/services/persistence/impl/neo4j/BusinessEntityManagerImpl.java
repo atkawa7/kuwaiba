@@ -22,6 +22,7 @@ import com.neotropic.kuwaiba.modules.reporting.img.SceneExporter;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import groovy.lang.Binding;
+import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import java.io.File;
 import java.io.IOException;
@@ -81,53 +82,53 @@ import org.neo4j.helpers.collection.Iterators;
  */
 public class BusinessEntityManagerImpl implements BusinessEntityManager {
     /**
-     * Default attachment location
+     * Default attachment location.
      */
     private static String DEFAULT_ATTACHMENTS_PATH = "/data/files/attachments";
     /**
-     * Reference to the Application Entity Manager
+     * Reference to the Application Entity Manager.
      */
     private final ApplicationEntityManager aem;
     /**
-     * Reference to the Metadata Entity Manager
+     * Reference to the Metadata Entity Manager.
      */
     private final MetadataEntityManager mem;
     /**
-     * Reference to the db handler
+     * Reference to the db handler.
      */
     private final GraphDatabaseService graphDb;
     /**
-     * Object Label
+     * Object Label.
      */
     private final Label inventoryObjectLabel;
     /**
-     * Class Label
+     * Class Label.
      */
     private final Label classLabel;
     /**
-     * Pools Label
+     * Pools Label.
      */
     private final Label poolLabel;
     /**
-     * Special nodes Label
+     * Special nodes Label.
      */
     private final Label specialNodeLabel;
     /**
-     * Label for reports
+     * Label for reports.
      */
-    private final Label reportsLabel;
+    private final Label reportsLabel; 
     /**
-     * Contacts index
-     */
-    private Label contactsLabel;    
-    /**
-     * As a temporary workaround, the old hard-coded reports are wrapped instead of being completely migrated to Groovy scripts
+     * As a temporary workaround, the old hard-coded reports are wrapped instead of being completely migrated to Groovy scripts.
      */
     private final DefaultReports defaultReports;
     /**
-     * Global configuration variables
+     * Global configuration variables.
      */
     private Properties configuration;
+    /**
+     * A classloader to place all the validator definition classes created on-the-fly.
+     */
+    private GroovyClassLoader validatorDefinitionsClassLoader = new GroovyClassLoader();
 
     /**
      * Main constructor. It receives references to the other entity managers
@@ -148,7 +149,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         this.poolLabel = Label.label(Constants.LABEL_POOL);
         this.specialNodeLabel = Label.label(Constants.LABEL_SPECIAL_NODE);
         this.reportsLabel = Label.label(Constants.LABEL_REPORTS);
-        this.contactsLabel = Label.label(Constants.LABEL_CONTACTS);
+        this.validatorDefinitionsClassLoader = new GroovyClassLoader();
     }
     
     @Override
@@ -3229,12 +3230,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         
         //Then, we check the cache for validator definitions
         List<ValidatorDefinition> validatorDefinitions = CacheManager.getInstance().getValidatorDefinitions(className);
-        if (validatorDefinitions == null) { //Since the validator definitions are not cached, we retrieve them from the object class plus its super classes
+        if (validatorDefinitions == null) { //Since the validator definitions are not cached, we retrieve them for the object class and its super classes
             validatorDefinitions = new ArrayList<>();
             try {
                 List<ClassMetadataLight> classHierarchy = mem.getUpstreamClassHierarchy(className, true);
-                //The query return the hierarchy from the subclass to the super class, so we reverse it so the lower level validator definitions 
-                //have more priority (that is, are processed the last)
+                //The query returns the hierarchy from the subclass to the super class, and we reverse it so the lower level validator definitions 
+                //have a higher priority (that is, are processed the last)
                 Collections.reverse(classHierarchy); 
                 for (ClassMetadataLight aClass : classHierarchy) {
                     ResourceIterator<Node> validatorDefinitionNodes = graphDb.findNodes(Label.label(Constants.LABEL_VALIDATOR_DEFINITIONS), 
@@ -3243,13 +3244,33 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     
                     while (validatorDefinitionNodes.hasNext()) {
                         Node aValidatorDefinitionNode = validatorDefinitionNodes.next();
-                        validatorDefinitions.add(new ValidatorDefinition(
-                                        aValidatorDefinitionNode.getId(), 
-                                        (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_NAME), 
-                                        (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
-                                        aClass.getName(), 
-                                        (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_SCRIPT), 
-                                        (boolean)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_ENABLED)));
+                        String script = (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_SCRIPT);
+                        
+                        if (!script.trim().isEmpty()) { //Empty scripts are ignored
+                            try {
+                                //We will load on-the-fly a ValidatorDefinition subclass and instantiate an object from it. The the signature class defined in the 
+                                //script file should be something like "public class %s extends ValidatorDefinition" and implement the "run" mathod. The name of the class
+                                //will be built dynamically based on the id of the validator definition and a fixed prefix. This is done so the user doesn't use accidentally a
+                                //class name already in use by another validator definition.
+                                String validatorDefinitionClassName = "ValidatorDefinition" + aValidatorDefinitionNode.getId();
+                                Class validatorDefinitionClass = validatorDefinitionsClassLoader.parseClass(
+                                        String.format(script, validatorDefinitionClassName, validatorDefinitionClassName));
+                            
+                                ValidatorDefinition validatorDefinitionInstance =  (ValidatorDefinition)validatorDefinitionClass.
+                                        getConstructor(long.class, String.class, String.class, String.class, String.class, boolean.class).
+                                        newInstance(aValidatorDefinitionNode.getId(), 
+                                                (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_NAME), 
+                                                (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
+                                                aClass.getName(), 
+                                                (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_SCRIPT), 
+                                                (boolean)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_ENABLED));
+
+                                validatorDefinitions.add(validatorDefinitionInstance);
+                            } catch (Exception ex) { //If there's an error parsing the script or instantiating the class, this validator definition will be ignored and the error logged
+                                System.out.println(String.format("[KUWAIBA]   %s", ex.getLocalizedMessage()));
+                                ex.printStackTrace();
+                            }
+                        }
                     }
                 }
                 
@@ -3266,20 +3287,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         validatorDefinitions.forEach((aValidatorDefinition) -> {
             try {
                 String script = aValidatorDefinition.getScript();
-                if (!script.trim().isEmpty() && aValidatorDefinition.isEnabled()) {
-                    Binding environmentParameters = new Binding();
-                    environmentParameters.setVariable("validatorDefinitionName", aValidatorDefinition.getName());
-                    environmentParameters.setVariable("objectClass", className); //Although we already have a reference to the object node, it is not
-                    environmentParameters.setVariable("objectId", instance.getId()); //a good thing to encourage users to access directly to the database, 
-                                                                               //since upper layers of the application must be backend-agnostic
-                    GroovyShell shell = new GroovyShell(ApplicationEntityManager.class.getClassLoader(), environmentParameters);
-                    Object theResult = shell.evaluate(script);
-
-                    if (theResult instanceof Validator) //The script must return a validator, otherwise, the result will be ignored
-                        validators.add((Validator)theResult);
-                    else
-                        System.out.println(String.format("[KUWAIBA] Validator %s is not returning a validator from its execution", 
-                            aValidatorDefinition.getName()));
+                if (aValidatorDefinition.isEnabled()) {
+                    Validator validator = aValidatorDefinition.run(className, instance.getId());
+                    if (validator != null) //It's possible that after evaluating the condition nothing should be done, so the method "run" could actually return null
+                        validators.add(validator);
                 }
             } catch (Exception ex) { //Errors will be logged and the validator definition skipped
                 System.out.println(String.format("[KUWAIBA] An unexpected error occurred while evaluating validator %s in object %s(%s): %s", 

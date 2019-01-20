@@ -48,7 +48,6 @@ public class Validator {
 
     public Validator(String name, Properties properties){
         this.name = name;
-        
         this.properties = properties;
     }
 
