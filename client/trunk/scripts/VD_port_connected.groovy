@@ -25,7 +25,7 @@ public class %s extends ValidatorDefinition {
             return new Validator(getName(), properties);
         }
         
-        //If the port is not conneced, just pass along
+        //If the port is not connected, just pass along
         return null;
     }
 }

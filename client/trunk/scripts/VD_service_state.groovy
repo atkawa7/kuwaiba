@@ -26,7 +26,7 @@ public class %s extends ValidatorDefinition {
             Properties properties = new Properties();
             properties.setProperty("color", "8632D9");
             properties.setProperty("prefix", "[CEASED]");
-            properties.setProperty("sufffix", "[XXX]");
+            properties.setProperty("suffix", "[XXX]");
             return new Validator(getName(), properties);
         }
         
