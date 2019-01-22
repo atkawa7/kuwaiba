@@ -36,7 +36,7 @@ public abstract class DynamicSectionFunction {
         Matcher matcher = pattern.matcher(dynamicSection);
         
         if (!matcher.find())
-            throw new InvalidArgumentException("Function in Dynamic Section \"" + dynamicSection + "\" not match with the pattern " + functionPattern);
+            throw new InvalidArgumentException("Function in dynamic section \"" + dynamicSection + "\" does not match with the pattern " + functionPattern);
     }
         
     /**

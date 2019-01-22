@@ -244,7 +244,7 @@ public class ResourceFactory {
     }
     
     /**
-     * Creates a file stream from a byte array, so it can be downloaded. Credits to https://vaadin.com/forum/thread/2864064
+     * Creates a file stream from a byte array, so it can be downloaded. See {@link https://vaadin.com/forum/thread/2864064} .
      * @param fileContents The contents of the file
      * @param fileName The name of the file
      * @return The stream to the file

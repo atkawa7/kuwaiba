@@ -29,7 +29,7 @@ import org.kuwaiba.apis.web.gui.miniapps.AbstractMiniApplication;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 
 /**
- * Mini Application used to show the Physical Path View given the object Id and Class Name
+ * Mini Application used to show the Physical Path View of a given port.
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class MiniAppPhysicalPath extends AbstractMiniApplication<Component, Component> {
@@ -40,7 +40,7 @@ public class MiniAppPhysicalPath extends AbstractMiniApplication<Component, Comp
 
     @Override
     public String getDescription() {
-        return "Mini Application used to show the Physical Path View given the object Id and Class Name";
+        return "Mini Application used to show the Physical Path View given a port.";
     }
 
     @Override
@@ -68,7 +68,7 @@ public class MiniAppPhysicalPath extends AbstractMiniApplication<Component, Comp
 
                 String img = sceneExporter.buildPhysicalPathView(className, id);
                 if(img == null){
-                    Label lblPortHasNoConnections = new Label("The port has no physical connections");
+                    Label lblPortHasNoConnections = new Label("The port has no physical connections attached to it.");
                     VerticalLayout content = new VerticalLayout(lblPortHasNoConnections);
                     content.setHeight("455px");
                     content.setComponentAlignment(lblPortHasNoConnections, Alignment.MIDDLE_CENTER);
@@ -91,7 +91,7 @@ public class MiniAppPhysicalPath extends AbstractMiniApplication<Component, Comp
             }
         }
         catch(Exception exception) {
-            Notifications.showError("Unexpected Input Parameter was received in the MiniAppRackView");
+            Notifications.showError("Unexpected input parameter was received in the MiniAppPhysicalPath");
         }
         return panel;
     }

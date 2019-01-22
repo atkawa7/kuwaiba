@@ -182,7 +182,6 @@ public abstract class AbstractFormInstanceLoader {
                                         List<Object> row = new ArrayList();
                                                                                 
                                         while (true) {
-                                            
                                             if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
                                                 
                                                 if (reader.getName().equals(tagData)) {

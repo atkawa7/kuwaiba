@@ -141,10 +141,9 @@ public abstract class AbstractFormInstanceCreator {
                             sharedInformation.put(elementGrid.getId() + "rowscount", String.valueOf(rowsCount));
                             sharedInformation.put(elementGrid.getId() + "columnscount", String.valueOf(columnsCount));
                             
-                            for (int i = 0; i < rowsCount; i += 1) {
+                            for (int i = 0; i < rowsCount; i++) {
                                 
-                                for (int j = 0; j < columnsCount; j += 1) {
-                                    
+                                for (int j = 0; j < columnsCount; j++) {                                 
                                     Object data = rows.get(i).get(j);
                                     
                                     sharedInformation.put(elementGrid.getId() + i + j + Constants.Attribute.DATA_TYPE, Constants.Attribute.DataType.STRING);

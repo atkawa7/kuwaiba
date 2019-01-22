@@ -53,15 +53,15 @@ import org.openide.util.Exceptions;
  */
 public class DeviceLayoutRenderer {
     /**
-     * List of classes that has a default device layout
+     * List of classes whose instances are enable to have a default device layout
      */
-    private static final String[] CLASSES_WITH_DEFAULT_DEVICE_LAYOUT = new String [] {"GenericDistributionFrame", "GenericBoard", "GenericCommunicationsElement", "Slot", "CableManager"};
+    private static final String[] CLASSES_WITH_DEFAULT_DEVICE_LAYOUT = new String [] { "GenericDistributionFrame", "GenericBoard", "GenericCommunicationsElement", "Slot", "CableManager" };
     /**
      * List of classes of ports that can be shown in the layout
      */
-    private static final String[] PORTS_ENABLED = new String[] {"ElectricalPort", "OpticalPort"};
+    private static final String[] PORTS_ENABLED = new String[] { "ElectricalPort", "OpticalPort" };
     
-    private static final List<String> NO_VISIBLE_DEVICES = Arrays.asList(new String [] {"PowerBoard", "VirtualPort", "ServiceInstance", "PowerPort", "Transceiver"}); //NOI18N
+    private static final List<String> NO_VISIBLE_DEVICES = Arrays.asList(new String [] { "PowerBoard", "VirtualPort", "ServiceInstance", "PowerPort", "Transceiver" }); //NOI18N
     
     private String errorMessage;
     /**
@@ -176,11 +176,11 @@ public class DeviceLayoutRenderer {
             RemoteObject model = RackViewImage.getListTypeItemAttributeValue(deviceToRender.getClassName(), deviceToRender.getId(), "model"); //NOI18N
 
             if (model == null)
-                errorMessage = String.format("The object %s does not set the attribute \"model\"", deviceToRender);
+                errorMessage = String.format("Attribute \"model\" not set in object %s", deviceToRender);
             return model;
-        } else {
-            errorMessage = String.format("The object %s does not have an attribute \"model\"", deviceToRender);
-        }
+        } else 
+            errorMessage = String.format("Attribute \"model\" not set in object %s", deviceToRender);
+        
         return null;
     }
     
@@ -446,7 +446,6 @@ public class DeviceLayoutRenderer {
                         
                         if (CustomShape.SHAPE_TYPE.equals(shapeType)) {
                             long id = Long.valueOf(reader.getAttributeValue(null, "id"));
-                            //String className= reader.getAttributeValue(null, "className");
                             
                             for (RemoteObjectLight listItem : structureRepository.keySet()) {
                                 if (listItem.getId() == id && listItem instanceof RemoteObject) {
@@ -872,7 +871,6 @@ public class DeviceLayoutRenderer {
         }
                 
         if (lst != null) {
-        
             for (RemoteObjectLight child :  lst) {
 
                 if (isPortEnabled(child))

@@ -259,7 +259,7 @@ public class BGPSynchronizer {
             if(!asnName.isEmpty()){
                 BusinessObject location = bem.getParentOfClass(className, id, "City");
                 if(location == null)
-                    res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Seacrhing device location",
+                    res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Searching device location",
                             "The sync device has no parent subclass of City"));
                 else{
                     List<BusinessObjectLight> objectChildren = bem.getObjectChildren(location.getClassName(), location.getId(), -1);
@@ -278,7 +278,7 @@ public class BGPSynchronizer {
             }
         } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Creating provider", 
-                    String.format("no provider was created for asn %s related with ip: %s due to: %s", 
+                    String.format("No provider was created for ASN %s related with ip: %s due to: %s", 
                             asn, bgpPeerRemoteAddr, ex.getLocalizedMessage())));
         }
         return null;
@@ -298,8 +298,8 @@ public class BGPSynchronizer {
             if(!asnName.isEmpty()){
                 BusinessObject location = bem.getParentOfClass(className, id, "City");
                 if(location == null)
-                    res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Seacrhing device location",
-                            "The sync device has no parent subclass of City"));
+                    res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Searching device location",
+                            "The device being synced is not located in a City"));
                 else{
                     HashMap<String, String> attributes = new HashMap<>();
                     attributes.put("asn", asn);
@@ -307,18 +307,18 @@ public class BGPSynchronizer {
                     attributes.put(Constants.PROPERTY_NAME, asnName);
                     long createObjectId = bem.createObject("Cloud", location.getClassName(), location.getId(), attributes, -1);
 
-                    res.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, "creating Provider",
+                    res.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, "Creating provider",
                         String.format("Due to no port was related with the remoteAddrIp: %s", bgpPeerRemoteAddr)));
 
-                    res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "creating Provider",
-                        String.format("a Cloud with asn: %s(%s) was created in %s", asnName, asn, location)));
+                    res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Creating Provider",
+                        String.format("A cloud with ASN: %s(%s) was created in %s", asnName, asn, location)));
 
                     return bem.getObject(createObjectId);
                 }
             }
         } catch (OperationNotPermittedException | ApplicationObjectNotFoundException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Creating provider", 
-                    String.format("no provider was created for asn %s related with ip: %s due to: %s", 
+                    String.format("No provider was created for ASN %s related with the IP address: %s due to: %s", 
                             asn, bgpPeerRemoteAddr, ex.getLocalizedMessage())));
         }
         return null;
@@ -331,7 +331,7 @@ public class BGPSynchronizer {
      * @param asnName name of the asn after searchin in peeringDB
      * @param bgpPeerRemoteAddr remote ip addr 
      * @param remotePort remote port
-     * @param bgpPeerIdentifier bgpPeerId to update attribtues
+     * @param bgpPeerIdentifier bgpPeerId to update attributes
      * @return the remote device
      */
     private BusinessObject findRemoteDevice(String asn, String bgpPeerRemoteAddr, BusinessObjectLight remotePort, String bgpPeerIdentifier){
@@ -340,8 +340,8 @@ public class BGPSynchronizer {
             if(remoteDevice == null)//it could be a virtual Port so it is a specialchildren
                 remoteDevice = bem.getObject(bem.getParent(remotePort.getClassName(), remotePort.getId()).getId());
             if(remoteDevice == null)
-                res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "creating BGP Link", 
-                            String.format("parent of %s was not found, could be not subclass of GenericCommunicationsElement", remotePort)));
+                res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Creating BGP Link", 
+                            String.format("The parent of %s was not found, could be not subclass of GenericCommunicationsElement", remotePort)));
             else{
                 //We must update the attributes of the neighbor
                 HashMap<String, String> attributes = remoteDevice.getAttributes();
@@ -349,22 +349,22 @@ public class BGPSynchronizer {
                     String currentAsn = attributes.get("asn");
                     if(currentAsn == null || !currentAsn.equals(asn)){
                         attributes.put("asn", asn);
-                        res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "update attribute", 
-                                String.format("asn was updated from: %s to: %s, in device: %s", currentAsn, asn, remoteDevice)));
+                        res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Attribute Update", 
+                                String.format("ASN was updated from: %s to %s in device: %s", currentAsn, asn, remoteDevice)));
                     }
                 }
                 String currentBgpPeerIdentifier = attributes.get("bgpPeerIdentifier");
                 if(currentBgpPeerIdentifier == null || !currentBgpPeerIdentifier.equals(bgpPeerIdentifier)){
                     attributes.put("bgpPeerIdentifier", bgpPeerIdentifier);
-                    res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "update attribute", 
-                            String.format("bgpPeerIdentifier was updated from: %s to: %s, in device: %s", currentBgpPeerIdentifier, bgpPeerIdentifier, remoteDevice)));
+                    res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Attribute Updated", 
+                            String.format("bgpPeerIdentifier was updated from: %s to %s in device: %s", currentBgpPeerIdentifier, bgpPeerIdentifier, remoteDevice)));
                 }
             }
             return remoteDevice;
             
         } catch (InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException ex) {
             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Searching Parent", 
-                    String.format("no parent was found for: %s related with ip: %s due to: %s", 
+                    String.format("No parent was found for %s related with the IP address %s due to: %s", 
                             remotePort, bgpPeerRemoteAddr, ex.getLocalizedMessage())));
         }
         return null;
@@ -454,20 +454,20 @@ public class BGPSynchronizer {
                     bem.createSpecialRelationship(BGPLINK, sourceBgpLink.getId(), remotePort.getClassName(), remotePort.getId(), RELATIONSHIP_BGPLINKENDPOINTB, false);
                     bem.createSpecialRelationship(BGPLINK, sourceBgpLink.getId(), remoteDevice.getClassName(), remoteDevice.getId(), RELATIONSHIP_BGPLINK, false);
                     res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "BGPLink destiny endpoint created", 
-                                String.format("in %s - %s, for asn: %s(%s)", remoteDevice, remotePort, asnName, asn)));
+                                String.format("in %s - %s, for ASN %s(%s)", remoteDevice, remotePort, asnName, asn)));
                 }
                 else
                     res.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, "BGPLink exists", 
-                       String.format("asn: %s(%s), has endpoints %s to %s in device %s", 
+                       String.format("ASN %s(%s) has endpoints %s to %s in device %s", 
                                localPort, asnName, asn, remoteDevice, remotePort)));
             }
             else
-                res.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, String.format("BGPLink will not be created for asn: %s(%s)", asnName, asn), 
-                   String.format("only source endpoint %s was found, no destiny port was found realted with ip %s", 
+                res.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, String.format("BGPLink will not be created for ASN %s(%s)", asnName, asn), 
+                   String.format("Only source endpoint %s was found, no destination port was found related with ip %s", 
                            localPort, bgpPeerRemoteAddr)));
         } catch (ApplicationObjectNotFoundException | InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException |OperationNotPermittedException ex) {
                 res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "creating BGP Link", 
-                    String.format("Could not create BGPLink, due to: %s", ex.getLocalizedMessage())));
+                    String.format("Could not create BGPLink: %s", ex.getLocalizedMessage())));
         }
     }
     
@@ -487,7 +487,7 @@ public class BGPSynchronizer {
                             return relatedPort.get(0);
                     }
                 } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException ex) {
-                    res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "searching in current IPAM", ex.getLocalizedMessage()));
+                    res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Searching in current IP address structure", ex.getLocalizedMessage()));
                 }
             }
         }
@@ -514,8 +514,8 @@ public class BGPSynchronizer {
 
                 int status = con.getResponseCode();
                 if(status != 200)
-                    res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "searching PeeringDB", 
-                            String.format("Request error looking for the ASN: %s", asn)));
+                    res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Searching PeeringDB", 
+                            String.format("Request error looking up ASN %s", asn)));
                 else{    
                     BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                     String inputLine;
@@ -716,12 +716,12 @@ public class BGPSynchronizer {
                             currentIp.getAttributes().put(Constants.PROPERTY_MASK, syncMask);
                             bem.updateObject(currentIp.getClassName(), currentIp.getId(), currentIp.getAttributes());
                             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, 
-                                String.format("updating the mask of %s", currentIp),
-                                String.format("from: %s to: %s", oldMask, syncMask)));
+                                String.format("Updating the mask of %s", currentIp),
+                                String.format("From %s to %s", oldMask, syncMask)));
                         }
                         return currentIpLight;
                     } catch (InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
-                        res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR,  String.format("updating the mask of %s", currentIpLight), ex.getLocalizedMessage()));
+                        res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR,  String.format("Updating the mask of %s", currentIpLight), ex.getLocalizedMessage()));
                     }
                 }
             }
@@ -761,7 +761,7 @@ public class BGPSynchronizer {
         BusinessObject createdIp = null;
         HashMap<String, String> ipAttributes = new HashMap<>();
         ipAttributes.put(Constants.PROPERTY_NAME, ipAddr);
-        ipAttributes.put(Constants.PROPERTY_DESCRIPTION, "created with sync");
+        ipAttributes.put(Constants.PROPERTY_DESCRIPTION, "Created with sync");
         ipAttributes.put(Constants.PROPERTY_MASK, syncMask); //TODO set the list types attributes
         try { 
             long newIpId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, subnet.getClassName(), subnet.getId(), ipAttributes, -1);
@@ -770,7 +770,7 @@ public class BGPSynchronizer {
             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Add IP to Subnet", String.format("%s was added to %s successfully", ipAddr, subnet)));
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
-                        String.format("%s was not added tot %s", ipAddr, subnet), 
+                        String.format("%s was not added to %s", ipAddr, subnet), 
                         ex.getLocalizedMessage()));
         }
         return createdIp;

@@ -43,7 +43,7 @@ public class AlphabeticLowercaseSequence extends DynamicSectionFunction {
             parameter2 = matcher.group().split(",")[1].charAt(0);
                 
             if (parameter1 >= parameter2)
-                throw new InvalidArgumentException("Dynamic section function malformed \"" + dynamicSectionFunction + "\" the parameter " + parameter1 + " greater than or equal to " + parameter2);
+                throw new InvalidArgumentException("Function definition malformed: In \"" + dynamicSectionFunction + "\", the parameter " + parameter1 + " is greater than or equal to " + parameter2);
         }
     }
         

@@ -80,8 +80,8 @@ public class PolygonWidget extends Widget {
         int w = getPreferredSize().width - insets.left - insets.right;
         int h = getPreferredSize().height - insets.top - insets.bottom;
                 
-        int xpoints[] = {0, w/ 2, w};
-        int ypoints[] = {h, 0, h};
+        int xpoints[] = { 0, w/ 2, w };
+        int ypoints[] = { h, 0, h };
         int npoints = 3;
                 
         Polygon polygon = new Polygon(xpoints, ypoints, npoints);

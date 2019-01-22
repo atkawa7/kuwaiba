@@ -47,9 +47,9 @@ public class RackWidget extends SelectableRackViewWidget {
     private int rackUnitHeight;
     private int spacingRackUnits;
     
-    private static final Color grayColor = new Color(128, 128, 128);
-    private static final Color whiteSmokeColor = new Color(245, 245, 245);
-    private static final Dimension dimension = new Dimension(39, 39);
+    private static final Color COLOR_GRAY = new Color(128, 128, 128);
+    private static final Color COLOR_WHITESMOKE = new Color(245, 245, 245);
+    private static final Dimension DEFAULT_DIMENSION = new Dimension(39, 39);
     
     private int rackUnits;
     private boolean ascending;
@@ -162,8 +162,8 @@ public class RackWidget extends SelectableRackViewWidget {
             
             setLayout(LayoutFactory.createVerticalFlowLayout());
             Widget top = new Widget(getRackViewScene());
-            top.setBackground(grayColor);
-            top.setMinimumSize(dimension);
+            top.setBackground(COLOR_GRAY);
+            top.setMinimumSize(DEFAULT_DIMENSION);
             top.setOpaque(true);
             top.setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.CENTER, 0));
             
@@ -177,13 +177,13 @@ public class RackWidget extends SelectableRackViewWidget {
             middle.setLayout(LayoutFactory.createHorizontalFlowLayout());
             
             Widget bottom = new Widget(getRackViewScene());
-            bottom.setBackground(grayColor);            
-            bottom.setMinimumSize(dimension);
+            bottom.setBackground(COLOR_GRAY);            
+            bottom.setMinimumSize(DEFAULT_DIMENSION);
             bottom.setOpaque(true);
             
             Widget left = new Widget(getRackViewScene());
             left.setLayout(LayoutFactory.createVerticalFlowLayout());
-            left.setBackground(grayColor);
+            left.setBackground(COLOR_GRAY);
             left.setOpaque(true);
             
             LayerWidget numberLayer = new LayerWidget(getRackViewScene());            
@@ -194,11 +194,11 @@ public class RackWidget extends SelectableRackViewWidget {
             rackUnit = ascending ? 1 : rackUnits;
             while (ascending ? rackUnit <= rackUnits : rackUnit >= 1) {
                 Widget numberWidget = new Widget(getRackViewScene());
-                numberWidget.setPreferredSize(new Dimension(dimension.width, getRackUnitHeight()));
+                numberWidget.setPreferredSize(new Dimension(DEFAULT_DIMENSION.width, getRackUnitHeight()));
                 numberWidget.setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.CENTER, 0));
                 
                 LabelWidget lblRackUnit = new LabelWidget(getRackViewScene(), String.valueOf(rackUnit));
-                lblRackUnit.setForeground(whiteSmokeColor);
+                lblRackUnit.setForeground(COLOR_WHITESMOKE);
                 lblRackUnit.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
                 
                 numberWidget.addChild(lblRackUnit);
@@ -209,7 +209,7 @@ public class RackWidget extends SelectableRackViewWidget {
             }
                                     
             Widget center = new Widget(getRackViewScene());
-            center.setBackground(grayColor);
+            center.setBackground(COLOR_GRAY);
             center.setOpaque(true);
             
             rackUnitsLayer = new LayerWidget(getRackViewScene());
@@ -228,7 +228,7 @@ public class RackWidget extends SelectableRackViewWidget {
                 rackUnit = ascending ? rackUnit + 1 : rackUnit - 1;
             }
                                     
-            for (int i = 0; i < equipments.size(); i += 1) {
+            for (int i = 0; i < equipments.size(); i++) {
                 addEquipment(equipments.get(i));
             }
             
@@ -236,8 +236,8 @@ public class RackWidget extends SelectableRackViewWidget {
             center.addChild(edgeLayer);
                         
             Widget right = new Widget(getRackViewScene());
-            right.setBackground(grayColor);
-            right.setPreferredSize(new Dimension(dimension));
+            right.setBackground(COLOR_GRAY);
+            right.setPreferredSize(new Dimension(DEFAULT_DIMENSION));
             right.setOpaque(true);
             
             middle.addChild(left);
@@ -343,7 +343,7 @@ public class RackWidget extends SelectableRackViewWidget {
         for (int i = 0; i < equipmentRackUnits; i += 1)
             currentRackUnits.add(equipmentPosition + i);
                 
-        for (int i = 0; i < equipmentRackUnits; i += 1) {
+        for (int i = 0; i < equipmentRackUnits; i++) {
             int idx = newPosition + i;
             if (idx > rackUnits)
                 return "The device is too large for the given position";
@@ -358,7 +358,7 @@ public class RackWidget extends SelectableRackViewWidget {
         int equipmentRackUnits = Integer.valueOf(equipment.getAttribute("rackUnits"));
         int equipmentPosition = Integer.valueOf(equipment.getAttribute("position"));
                 
-        for (int i = 0; i < equipmentRackUnits; i += 1)
+        for (int i = 0; i < equipmentRackUnits; i++)
             mapRackUnits.get(equipmentPosition + i).setAvailable(true);
     }
     
@@ -374,7 +374,7 @@ public class RackWidget extends SelectableRackViewWidget {
         int equipmentPosition = Integer.valueOf(equipment.getAttribute("position"));
         int equipmentRackUnits = Integer.valueOf(equipment.getAttribute("rackUnits"));
         
-        for (int i = 0; i < equipmentRackUnits; i += 1) {
+        for (int i = 0; i < equipmentRackUnits; i++) {
             int idx = equipmentPosition + i;
             mapRackUnits.get(idx).setAvailable(false);
         }

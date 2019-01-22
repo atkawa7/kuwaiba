@@ -102,11 +102,11 @@ public class SnmpMplsSyncProvider extends AbstractSyncProvider {
                 pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
                     new InvalidArgumentException(String.format(I18N.gm("parameter_port_no_defined"), syncGroup.getName(), syncGroup.getId())));
 
-            String version = SnmpManager.VERSION_2c;
+            String version = SnmpManager.VERSION_2C;
             if (agent.getParameters().containsKey(Constants.PROPERTY_SNMP_VERSION))
                 version = agent.getParameters().get(Constants.PROPERTY_SNMP_VERSION);
 
-            if (SnmpManager.VERSION_2c.equals(version)) {
+            if (SnmpManager.VERSION_2C.equals(version)) {
                 if (!agent.getParameters().containsKey(Constants.PROPERTY_COMMUNITY))
                     pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
                         new InvalidArgumentException(String.format(I18N.gm("parameter_community_no_defined"), syncGroup.getName(), syncGroup.getId())));
@@ -135,7 +135,7 @@ public class SnmpMplsSyncProvider extends AbstractSyncProvider {
                     snmpManager.setAddress(String.format("udp:%s/%s", address, port)); //NOI18N
                     snmpManager.setVersion(version);
 
-                    if (SnmpManager.VERSION_2c.equals(version))
+                    if (SnmpManager.VERSION_2C.equals(version))
                         snmpManager.setCommunity(agent.getParameters().get(Constants.PROPERTY_COMMUNITY));
 
                     if (SnmpManager.VERSION_3.equals(version)) {

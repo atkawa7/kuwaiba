@@ -26,15 +26,15 @@ import org.snmp4j.smi.OID;
 public class ReferenceSnmpEntPhysicalTableResourceDefinition extends HashMap<String, OID>{
 
     public ReferenceSnmpEntPhysicalTableResourceDefinition() {
-        put("entPhysicalDescr", new OID("1.3.6.1.2.1.47.1.1.1.1.2"));
-        put("entPhysicalClass", new OID("1.3.6.1.2.1.47.1.1.1.1.5"));
-        put("entPhysicalContainedIn", new OID("1.3.6.1.2.1.47.1.1.1.1.4"));
-        put("entPhysicalName", new OID("1.3.6.1.2.1.47.1.1.1.1.7"));
-        put("entPhysicalHardwareRev", new OID("1.3.6.1.2.1.47.1.1.1.1.8"));
-        put("entPhysicalFirmwareRev", new OID("1.3.6.1.2.1.47.1.1.1.1.9"));
-        put("entPhysicalSerialNum", new OID("1.3.6.1.2.1.47.1.1.1.1.11"));
-        put("entPhysicalMfgName", new OID("1.3.6.1.2.1.47.1.1.1.1.12"));
-        put("entPhysicalModelName", new OID("1.3.6.1.2.1.47.1.1.1.1.13"));
+        put("entPhysicalDescr", new OID("1.3.6.1.2.1.47.1.1.1.1.2")); //NOI18N
+        put("entPhysicalClass", new OID("1.3.6.1.2.1.47.1.1.1.1.5")); //NOI18N
+        put("entPhysicalContainedIn", new OID("1.3.6.1.2.1.47.1.1.1.1.4")); //NOI18N
+        put("entPhysicalName", new OID("1.3.6.1.2.1.47.1.1.1.1.7")); //NOI18N
+        put("entPhysicalHardwareRev", new OID("1.3.6.1.2.1.47.1.1.1.1.8")); //NOI18N
+        put("entPhysicalFirmwareRev", new OID("1.3.6.1.2.1.47.1.1.1.1.9")); //NOI18N
+        put("entPhysicalSerialNum", new OID("1.3.6.1.2.1.47.1.1.1.1.11")); //NOI18N
+        put("entPhysicalMfgName", new OID("1.3.6.1.2.1.47.1.1.1.1.12")); //NOI18N
+        put("entPhysicalModelName", new OID("1.3.6.1.2.1.47.1.1.1.1.13")); //NOI18N
     }
 }
 

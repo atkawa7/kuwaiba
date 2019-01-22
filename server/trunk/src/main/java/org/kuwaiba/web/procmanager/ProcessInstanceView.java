@@ -239,7 +239,7 @@ public class ProcessInstanceView extends DynamicComponent {
                         remoteSession.getSessionId());
                     updateActivities(-1);
                 } else {
-                    Notifications.showInfo("Can not perform the next activity meanwhile the postcondition is not true");
+                    Notifications.showInfo("Can not move to the next activity while the postconditions haven't been met");
                 }
             } else {
                 wsBean.updateActivity(
@@ -293,7 +293,7 @@ public class ProcessInstanceView extends DynamicComponent {
             if (artifact == null && !enableActivity(currentActivity.getId())) {
                 VerticalLayout verticalLayout = new VerticalLayout();
                 verticalLayout.setSpacing(false);
-                Label label = new Label("<h1 style=\"color:#ff8a80;\">The previous activity must be done in order to start a new one<h1>", ContentMode.HTML);            
+                Label label = new Label("<h1 style=\"color:#ff8a80;\">The previous activity must be finished in order to start a new one<h1>", ContentMode.HTML);            
                 verticalLayout.addComponent(label);
                 verticalLayout.setComponentAlignment(label, Alignment.MIDDLE_CENTER);
                 verticalLayout.setSizeFull();
@@ -346,7 +346,7 @@ public class ProcessInstanceView extends DynamicComponent {
                     
                     if (currentActivity.confirm()) {
                         
-                        Label label = new Label("Are you sure you want to save this Activity?");
+                        Label label = new Label("Are you sure you want to save this activity?");
 ////                        label.setIcon(VaadinIcons.QUESTION_CIRCLE_O);
                                                 
                         MessageBox.getInstance().showMessage(label).addClickListener(new Button.ClickListener() {
@@ -464,10 +464,10 @@ public class ProcessInstanceView extends DynamicComponent {
                                     
                                     if (elementGrid.getRows() != null) {
                                         List<List<Object>> rows = elementGrid.getRows();
-                                        for (int i = 0; i < rows.size(); i += 1) {
+                                        for (int i = 0; i < rows.size(); i++) {
                                             List row = rows.get(i);
                                                                                         
-                                            for (int j = 0; j < columnsSize; j += 1) {
+                                            for (int j = 0; j < columnsSize; j++) {
                                                 String value = null;
                                                 
                                                 if (j < row.size()) {

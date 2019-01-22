@@ -89,7 +89,7 @@ public class ValidatorRunner implements Runner {
                 
         if (parameterNames != null && parameters != null && parameterNames.size() == parameters.size()) {
             
-            for (int i = 0; i < parameters.size(); i += 1)
+            for (int i = 0; i < parameters.size(); i++)
                 binding.setVariable(parameterNames.get(i), parameters.get(i));
             
             shell = new GroovyShell(FunctionRunner.class.getClassLoader(), binding);

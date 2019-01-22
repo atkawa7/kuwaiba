@@ -33,7 +33,7 @@ import org.openide.util.Exceptions;
 public class NestedDeviceWidget extends SelectableRackViewWidget implements NestedDevice {
     private NestedDeviceWidget parent;
         
-    private static final Color selectedColor = new Color(255, 255, 255, 230);
+    private static final Color SELECTED_COLOR = new Color(255, 255, 255, 230);
     private LabelWidget lblName;
     private RackViewWidget widgetToChildren;
     
@@ -112,7 +112,7 @@ public class NestedDeviceWidget extends SelectableRackViewWidget implements Nest
         
         if (state.isSelected()) {
             previousBackground = new Color(((Color) getBackground()).getRGB());
-            setBackground(selectedColor);
+            setBackground(SELECTED_COLOR);
             if (lblName != null)
                 lblName.setForeground(Color.ORANGE);
         }

@@ -130,9 +130,9 @@ public class RackViewConnectionRouter implements Router {
             points.add(pointE);
             points.add(targetPoint);
             // Resolve collisions with other connections
-            while (existCollisions(points, connectionWidget)) {
+            while (existCollisions(points, connectionWidget)) 
                 getControlPoints(points, connectionWidget, leftSide);
-            }
+            
         } else {
             points.add(sourcePoint);
             points.add(targetPoint);

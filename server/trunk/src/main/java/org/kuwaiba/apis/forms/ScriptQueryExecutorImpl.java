@@ -173,7 +173,7 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
             parameterValues != null && parameterValues.size() >= 1 &&
             parameterNames.size() == parameterValues.size()) {
             
-            for (int i = 0; i < parameterNames.size(); i += 1) {
+            for (int i = 0; i < parameterNames.size(); i++) {
                 String parameterName = parameterNames.get(i);
                 
                 if (null != parameterName) {

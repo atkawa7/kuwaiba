@@ -83,9 +83,9 @@ public class DrawGChartFunction extends JavaScriptFunction {
                     codeBlock += "]);"; //NOI18N
                 } else {
                     throw new Exception(String.format(
-                        "In the function %s The length of row %s and labels array do not match", 
-                        Integer.toString(dataTable.getRows().indexOf(row)),
-                        getFunctionName()));
+                        "The length of row %s and labels array do not match in function %s ", 
+                        getFunctionName(),
+                        Integer.toString(dataTable.getRows().indexOf(row))));
                 }
             }
             String colors = "";
@@ -105,7 +105,7 @@ public class DrawGChartFunction extends JavaScriptFunction {
             
         } else {
             throw new Exception(String.format(
-                "In the function %s The length of types array and labels array do not match", 
+                "The length of types array and labels array do not match in function %s ", 
                 getFunctionName()));
         }
         return codeBlock;

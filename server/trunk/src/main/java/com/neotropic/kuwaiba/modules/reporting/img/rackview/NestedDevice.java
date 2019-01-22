@@ -22,10 +22,12 @@ package com.neotropic.kuwaiba.modules.reporting.img.rackview;
 public interface NestedDevice {
     /**
      * Gets the device parent
+     * @return 
      */
     public NestedDeviceWidget getParent();
     /**
      * Sets the parent of the current device
+     * @param parent
      */
     public void setParent(NestedDeviceWidget parent);
 }

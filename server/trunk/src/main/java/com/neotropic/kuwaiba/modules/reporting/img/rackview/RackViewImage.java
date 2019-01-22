@@ -261,7 +261,7 @@ public class RackViewImage {
                                     RemoteObjectLight lol = rackUnitsMap.get(devicePosition);
                                     
                                     if (!lol.equals(device))
-                                        message += String.format("The Position %s set in the %s is used by the %s\n", i, device.toString(), lol.toString());
+                                        message += String.format("The Position %s set in %s is used by the %s\n", i, device, lol);
                                 }
                             }
                         }

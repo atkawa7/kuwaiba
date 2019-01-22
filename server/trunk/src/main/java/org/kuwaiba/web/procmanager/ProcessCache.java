@@ -137,7 +137,7 @@ public final class ProcessCache {
             }
         }
         else
-            throw new InventoryException("The processDefinition directory can not be found") {};
+            throw new InventoryException("The process definition directory can not be found") {};
         
         return instance;
     }
@@ -164,7 +164,7 @@ public final class ProcessCache {
             if (processDefinition.getId() == id)            
                 return processDefinition;                
         }
-        throw new ApplicationObjectNotFoundException("Process Definition can not be found");
+        throw new ApplicationObjectNotFoundException("Process definition can not be found");
     }
     
     public long createProcessInstance(long processInstanceId, long processDefId, String name, String description) throws InventoryException {
@@ -211,7 +211,7 @@ public final class ProcessCache {
         ProcessInstance processInstance = processInstances.get(processInstanceId);
         if (processInstance != null)        
             return processInstance;
-        throw new ApplicationObjectNotFoundException("Process Instances can not be found");
+        throw new ApplicationObjectNotFoundException("Process instance can not be found");
     }
     
     public ActivityDefinition getActivityDefinition(long processDefinitionId, long activityDefinitionId) throws InventoryException {
@@ -225,7 +225,7 @@ public final class ProcessCache {
                         return activityDef;
             }
         }
-        throw new InventoryException("Activity Definition can not be found") {};
+        throw new InventoryException("Activity definition can not be found") {};
     }
     
     public Artifact getArtifactForActivity(long processInstanceId, long activityId) throws ApplicationObjectNotFoundException {
@@ -268,12 +268,12 @@ public final class ProcessCache {
             }
         }
         
-        throw new InventoryException("Artifact Definition can not be found") {};
+        throw new InventoryException("Artifact definition can not be found") {};
     }
     
     private boolean getConditionalArtifactContent(Artifact artifact) throws ApplicationObjectNotFoundException {
         if (artifact == null)
-            throw new ApplicationObjectNotFoundException("Conditional Artifact can not be found");
+            throw new ApplicationObjectNotFoundException("Conditional artifact can not be found");
         
         try {
             byte[] content = artifact.getContent();
@@ -297,7 +297,7 @@ public final class ProcessCache {
             reader.close();
             
         } catch (Exception ex) {
-            throw new ApplicationObjectNotFoundException("Conditional Artifact Content Malformed");
+            throw new ApplicationObjectNotFoundException("Conditional artifact content malformed");
         }
         return false;
     }
@@ -447,7 +447,7 @@ public final class ProcessCache {
                 return parallelActivityDef.getPaths().get(0);
             }
             else {
-                throw new ApplicationObjectNotFoundException("Next Activity can not be found");
+                throw new ApplicationObjectNotFoundException("Next activity can not be found");
             }
         }
         return getNextActivityToParallelActivity(processDefinition.getId(), activityDefinition.getNextActivity().getId());
@@ -490,7 +490,7 @@ public final class ProcessCache {
                 artifactInstance.put(activity.getArfifact(), artifact);
                 
             } else
-                throw new InventoryException("Process Instances can not be found") {};
+                throw new InventoryException("Process instance can not be found") {};
             
             processInstance.setArtifactsContent(processInstanceAsXML(processInstanceId));
         }
@@ -510,7 +510,7 @@ public final class ProcessCache {
                 if (processInstance.getCurrentActivity() == activityDefinitionId)
                     artifactInstance.put(activity.getArfifact(), artifact);
                 else
-                    throw new InventoryException("Process Instances Artifact can no be committed newly") {};
+                    throw new InventoryException("Process instance artifact can no be committed for the first time") {};
             }
                         
             processInstance.setArtifactsContent(processInstanceAsXML(processInstanceId));
@@ -536,7 +536,7 @@ public final class ProcessCache {
         if (relatedProcessInstances.containsKey(processDefinition))
             return relatedProcessInstances.get(processDefinition);
         
-        throw new InventoryException("Process Instances can not be found") {};
+        throw new InventoryException("Process instance can not be found") {};
     }
     
     public List<ProcessDefinition> getProcessDefinitions() throws InventoryException {
@@ -556,10 +556,8 @@ public final class ProcessCache {
                     
                     if (activityDef.getId() == activityDefinitionId) {
                         if (processInstanceArtifacts.containsKey(processInstance) && 
-                            processInstanceArtifacts.get(processInstance).containsKey(activityDef.getArfifact())) {
-                            
-                            return processInstanceArtifacts.get(processInstance).get(activityDef.getArfifact());
-                        }
+                            processInstanceArtifacts.get(processInstance).containsKey(activityDef.getArfifact())) 
+                                return processInstanceArtifacts.get(processInstance).get(activityDef.getArfifact());
                     }
                 }
             }

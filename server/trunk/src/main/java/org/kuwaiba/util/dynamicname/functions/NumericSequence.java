@@ -43,7 +43,7 @@ public class NumericSequence extends DynamicSectionFunction {
             parameter2 = Integer.parseInt(matcher.group().split(",")[1]);
             
             if (parameter1 >= parameter2)
-                throw new InvalidArgumentException("Dynamic section function malformed \"" + dynamicSectionFunction + "\" the parameter " + parameter1 + " greater than or equal to " + parameter2);
+                throw new InvalidArgumentException("Function definition malformed: In \"" + dynamicSectionFunction + "\", the parameter " + parameter1 + " is greater than or equal to " + parameter2);
         }
     }
     

@@ -72,7 +72,7 @@ public class SceneExporter {
     }
     
     public String buildEndToEndView(String ipAddress, RemoteSession remoteSession, WebserviceBean webserviceBean, String serviceClassName, long serviceId) {
-        RemoteObjectLight rol = null;
+        RemoteObjectLight rol;
         try {
             rol = webserviceBean.getObjectLight(serviceClassName, serviceId, ipAddress, remoteSession.getSessionId());
         } catch (ServerSideException ex) {

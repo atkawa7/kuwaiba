@@ -42,7 +42,7 @@ public class MiniAppRackSelector extends AbstractMiniApplication<Component, Comp
 
     @Override
     public String getDescription() {
-        return "Mini Application used to show the Select a Rack to set a material location";
+        return "Mini Application used to show the select a rack to ve used in the \"Material Location\" step";
     }
 
     @Override
@@ -52,8 +52,6 @@ public class MiniAppRackSelector extends AbstractMiniApplication<Component, Comp
 
     @Override
     public Component launchEmbedded() {
-        
-        
         try {
             if (getInputParameters() != null) {
                 List<RemoteObject> selectedDevices = new ArrayList();
@@ -81,7 +79,7 @@ public class MiniAppRackSelector extends AbstractMiniApplication<Component, Comp
                 }
             }
         } catch (ServerSideException ex) {
-            Notifications.showError("Unexpected Input Parameter was received in the MiniAppRackView");
+            Notifications.showError("Unexpected input parameter was received in the MiniAppRackSelector");
         }
         return new Label("<h3 style=\"color:#e57373;\">The input parameters can not be null</h3>", ContentMode.HTML);
     }

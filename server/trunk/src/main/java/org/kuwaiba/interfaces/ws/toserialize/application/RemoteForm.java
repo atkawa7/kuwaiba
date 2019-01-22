@@ -15,7 +15,6 @@
 package org.kuwaiba.interfaces.ws.toserialize.application;
 
 import java.io.Serializable;
-import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.application.forms.FormDefinition;
@@ -29,7 +28,7 @@ public class RemoteForm implements Serializable {
     /**
      * Form Id
      */
-    private Long id;
+    private long id;
     /**
      * Form Name
      */
@@ -100,20 +99,9 @@ public class RemoteForm implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+        if (obj == null || getClass() != obj.getClass()) 
             return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final RemoteForm other = (RemoteForm) obj;
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        return true;
+        return ((RemoteForm)obj).id == this.id;
     }
     
     @Override

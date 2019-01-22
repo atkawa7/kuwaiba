@@ -88,7 +88,7 @@ public class AttachmentArtifactRender extends ArtifactRenderer {
                 }
 
             } catch (Exception ex) {
-                Notifications.showError("Attachment cannot be found");
+                Notifications.showError("Attachment could not be found");
             }
         }
     }

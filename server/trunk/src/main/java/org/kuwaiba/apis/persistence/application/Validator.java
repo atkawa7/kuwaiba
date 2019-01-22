@@ -31,7 +31,7 @@ import java.util.Properties;
  *
  * Why not use getPort retrieving a LocalObject? Well, because the condition might be complicated, and
  * it's easier to compute its value at server side. Besides, it can involve complex queries that would require
- * more calls to the webservice
+ * more calls to the web service
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class Validator {
@@ -46,7 +46,7 @@ public class Validator {
      */
     private Properties properties;
 
-    public Validator(String name, Properties properties){
+    public Validator(String name, Properties properties) {
         this.name = name;
         this.properties = properties;
     }

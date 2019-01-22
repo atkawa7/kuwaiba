@@ -75,7 +75,7 @@ public class FormArtifactRenderer extends ArtifactRenderer {
                 if (artifact.getContent() != null) {
                     
                     if (artifactDefinition.getDefinition() == null)
-                        return new Label("The Artifact Definition is empty");
+                        return new Label("The artifact definition is empty");
                                         
                     AbstractFormInstanceLoader fil = new FormInstanceLoader(wsBean, session);
                     
@@ -87,7 +87,7 @@ public class FormArtifactRenderer extends ArtifactRenderer {
                     return formRenderer;
                     
                 } else {
-                    return new Label("The Artifact Content is empty");
+                    return new Label("The artifact content is empty");
                 }
             } else {
                 if (artifactDefinition.getDefinition() != null) {
@@ -99,7 +99,7 @@ public class FormArtifactRenderer extends ArtifactRenderer {
 
                     return formRenderer;
                 } else
-                    return new Label("The Artifact Definition is empty");
+                    return new Label("The artifact definition is empty");
             }
         }
         return null;

@@ -28,7 +28,6 @@ import com.neotropic.kuwaiba.sync.model.SyncUtil;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import com.neotropic.kuwaiba.sync.model.TableData;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,7 +102,7 @@ public class BgpSyncProvider extends AbstractSyncProvider{
             
             String snmpVersion =  agent.getParameters().get(Constants.PROPERTY_SNMP_VERSION);
             
-            if (SnmpManager.VERSION_2c.equals(snmpVersion)) {
+            if (SnmpManager.VERSION_2C.equals(snmpVersion)) {
                 if (!agent.getParameters().containsKey(Constants.PROPERTY_COMMUNITY)) {
                     pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
                         new InvalidArgumentException(String.format(I18N.gm("parameter_community_no_defined"), syncGroup.getName(), syncGroup.getId())));
@@ -133,7 +132,7 @@ public class BgpSyncProvider extends AbstractSyncProvider{
                 snmpManager.setAddress(String.format("udp:%s/%s", agent.getParameters().get("ipAddress"), agent.getParameters().get("port"))); //NOI18N
                 snmpManager.setVersion(snmpVersion);
 
-                if (SnmpManager.VERSION_2c.equals(snmpVersion))
+                if (SnmpManager.VERSION_2C.equals(snmpVersion))
                     snmpManager.setCommunity(agent.getParameters().get(Constants.PROPERTY_COMMUNITY));
 
                 if (SnmpManager.VERSION_3.equals(snmpVersion)) {

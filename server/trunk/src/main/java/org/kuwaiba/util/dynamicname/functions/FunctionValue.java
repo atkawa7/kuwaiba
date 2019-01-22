@@ -65,7 +65,7 @@ public class FunctionValue extends DynamicSectionFunction {
             classMetadata = mem.getClass(remoteBusinessObject.getClassName());
             
             if (classMetadata.getAttribute(attribute) == null)
-                throw new InvalidArgumentException(String.format("The attribute \"%s\" can not be found for the object with id %s", attribute, id));
+                throw new InvalidArgumentException(String.format("The attribute \"%s\" can not be found in object with id %s", attribute, id));
             
         } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException ex) {
             throw new InvalidArgumentException(String.format("The object with id %s can not be found", id));

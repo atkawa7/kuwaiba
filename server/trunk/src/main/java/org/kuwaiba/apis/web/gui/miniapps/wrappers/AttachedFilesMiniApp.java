@@ -63,7 +63,7 @@ public class AttachedFilesMiniApp extends AbstractMiniApplication<Component, Com
             } catch(NumberFormatException | ServerSideException ex) {
             }
         }
-        Notifications.showError("Unexpected Input Parameter was received in the AttachedFilesMiniApp");
+        Notifications.showError("Unexpected input parameter was received in the AttachedFilesMiniApp");
         return null;
     }
 

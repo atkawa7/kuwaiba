@@ -87,7 +87,7 @@ public class FormManagerView extends CustomComponent implements View {
             List<RemoteForm> forms = wsBean.getForms(address, remoteSession.getSessionId());
             cmbForms.setItems(forms);
         } catch (ServerSideException ex) {
-            Notification.show("The forms can not be load", "The forms can not be load", Notification.Type.ERROR_MESSAGE);
+            Notification.show("The form can not be loaded", "The form can not be loaded", Notification.Type.ERROR_MESSAGE);
         }
         cmbForms.addValueChangeListener(new ValueChangeListener() {
             @Override
@@ -127,7 +127,7 @@ public class FormManagerView extends CustomComponent implements View {
                         
                     } catch (ServerSideException ex) {
                         
-                        Notification.show("Form Save Fail", "Form Save Fail", Notification.Type.ERROR_MESSAGE);
+                        Notification.show("Form Save Failed", "Form Save Failed", Notification.Type.ERROR_MESSAGE);
                     }
                     
                 } else if (update.equals(btnSave.getCaption())) {
@@ -152,7 +152,7 @@ public class FormManagerView extends CustomComponent implements View {
                     cmbForms.setItems(forms);
                     
                 } catch (ServerSideException ex) {
-                    Notification.show("The forms can not be load", "The forms can not be load", Notification.Type.ERROR_MESSAGE);
+                    Notification.show("The form can not be loaded", "The forms can not be loaded", Notification.Type.ERROR_MESSAGE);
                 }
             }
         });
@@ -179,7 +179,7 @@ public class FormManagerView extends CustomComponent implements View {
             cmbFormInstances.setItems(formInstances);
             
         } catch (ServerSideException ex) {
-            Notification.show("The form instances can not be load", "The form instances can not be load", Notification.Type.ERROR_MESSAGE);
+            Notification.show("The form instances can not be loaded", "The form instances can not be loaded", Notification.Type.ERROR_MESSAGE);
         }
         
         btnOpenFormInstance.addClickListener(new Button.ClickListener() {

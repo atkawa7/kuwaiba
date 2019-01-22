@@ -41,7 +41,7 @@ public class WarehouseManagerModule extends AbstractModule {
 
     @Override
     public String getDescription() {
-        return "Manage customer, warehouses and resources associated to those warehouses";
+        return "Manage warehouses and resources in store or reserved to be used.";
     }
 
     @Override

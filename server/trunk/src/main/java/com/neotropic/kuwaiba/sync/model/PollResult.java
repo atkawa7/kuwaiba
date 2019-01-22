@@ -18,7 +18,6 @@ package com.neotropic.kuwaiba.sync.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 
 /**
  * The result of polling a given sync data source

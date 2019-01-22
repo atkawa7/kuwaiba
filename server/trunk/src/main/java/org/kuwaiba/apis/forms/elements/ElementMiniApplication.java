@@ -108,7 +108,7 @@ public class ElementMiniApplication extends AbstractElement {
 
                 List parameters = new ArrayList();
 
-                for (int i = 1; i < list.size(); i += 1) {
+                for (int i = 1; i < list.size(); i++) {
                     AbstractElement anElement = getFormStructure().getElementById(list.get(i));
                     
                     if (anElement == null) {

@@ -40,7 +40,7 @@ public class FormView extends CustomComponent implements View {
         
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        RemoteForm remoteForm = (RemoteForm) getSession().getAttribute("currentform");
+        RemoteForm remoteForm = (RemoteForm) getSession().getAttribute("currentform"); //NOI18N
         
         if (remoteForm == null || remoteForm.getStructure() == null)
             return;
@@ -50,7 +50,7 @@ public class FormView extends CustomComponent implements View {
 
         FormRenderer formRenderer = new FormRenderer(formBuilder, null);
         
-        RemoteSession remoteSession = (RemoteSession) getSession().getAttribute("session");
+        RemoteSession remoteSession = (RemoteSession) getSession().getAttribute("session"); //NOI18N
         formRenderer.render(wsBean, remoteSession);
         
         VerticalLayout verticalLayout = new VerticalLayout();

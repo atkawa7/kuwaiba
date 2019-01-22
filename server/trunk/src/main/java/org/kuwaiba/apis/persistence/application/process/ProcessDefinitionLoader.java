@@ -410,7 +410,7 @@ public class ProcessDefinitionLoader {
                                 reader.next();
                             }
                         } else
-                            throw new XMLProcessDefinitionException(String.format("The Process Definition Structure is malformed the Activity Definition id %s is in used", activityDefinitionId));
+                            throw new XMLProcessDefinitionException(String.format("The Process Definition Structure is malformed: The activity definition id %s is in use", activityDefinitionId));
                         }
                         if (reader.getEventType() == XMLStreamConstants.END_ELEMENT && 
                             reader.getName().equals(tagActivityDefinitions)) {
@@ -593,7 +593,7 @@ public class ProcessDefinitionLoader {
                 
             }
         } else {
-            throw new XMLProcessDefinitionException("The Process Definition Structure is malformed Start Activity Definition cannot be found");
+            throw new XMLProcessDefinitionException("The Process Definition Structure is malformed: The Start activity definition cannot be found");
         }
         return processDefinition;
     }

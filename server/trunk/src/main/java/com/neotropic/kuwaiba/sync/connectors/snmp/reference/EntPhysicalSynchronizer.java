@@ -1105,7 +1105,7 @@ public class EntPhysicalSynchronizer {
 
                 } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
                     results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
-                            String.format("%s [%s] no deleted", currentChildFirstLevel.getName(), currentChildFirstLevel.getClassName()),
+                            String.format("%s [%s] not deleted", currentChildFirstLevel.getName(), currentChildFirstLevel.getClassName()),
                             ex.getLocalizedMessage()));
                 }
             }
@@ -1128,7 +1128,7 @@ public class EntPhysicalSynchronizer {
                     
                     } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException ex ) {
                         results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
-                            String.format("%s [%s] no deleted", deviceToDelete.getName(), deviceToDelete.getClassName()),
+                            String.format("%s [%s] not deleted", deviceToDelete.getName(), deviceToDelete.getClassName()),
                             ex.getLocalizedMessage()));
                     }
                }
@@ -1149,7 +1149,7 @@ public class EntPhysicalSynchronizer {
                         "Deleted successfully"));
             } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
                 results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
-                            String.format("%s [%s] no deleted", oldPort.getName(), oldPort.getClassName()),
+                            String.format("%s [%s] not deleted", oldPort.getName(), oldPort.getClassName()),
                             ex.getLocalizedMessage()));
             }
         }
@@ -1181,7 +1181,7 @@ public class EntPhysicalSynchronizer {
                     createdIdsToMap.put(newPort.getId(), parentId);
                     //this only applies for ASR9001 here you define the creation order of the ports-transceivers
                     List<BusinessObject> extraBranch = newCreatedPortsToCreate.get(newPort.getId());
-                    if(extraBranch != null && extraBranch.size() >1){
+                    if(extraBranch != null && extraBranch.size() > 1){
                         for (int i = 1; i<extraBranch.size(); i++){
                             long tempParentId = Long.valueOf(extraBranch.get(i).getAttributes().get("parentId"));
 
@@ -1280,7 +1280,7 @@ public class EntPhysicalSynchronizer {
                 
                 } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | OperationNotPermittedException | InvalidArgumentException ex) {
                     results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR,
-                                    String.format("%s ", oldPort), "Chekcing port"));
+                                    String.format("%s ", oldPort), "Checking port"));
                 }
             }
         }//end for
@@ -1663,7 +1663,7 @@ public class EntPhysicalSynchronizer {
             }
         }catch (ApplicationObjectNotFoundException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
             results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
-                    String.format("Creating relationship between port %s [%s] and service %s", portName, portClassName, serviceName),
+                    String.format("Creating a relationship between port %s [%s] and service %s", portName, portClassName, serviceName),
                     ex.getLocalizedMessage()));
         }
     }

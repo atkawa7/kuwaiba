@@ -176,7 +176,7 @@ public class ProjectsModule implements GenericCommercialModule {
             if (attributeNames.length != attributeValues.length)
                 throw new ArraySizeMismatchException("attributeNames", "attributeValues");
             
-            for (int i = 0; i < attributeNames.length; i += 1)
+            for (int i = 0; i < attributeNames.length; i++)
                 attributes.put(attributeNames[i], attributeValues[i]);
         }
         return bem.createSpecialObject(className, parentClassName, parentId, attributes, -1);
@@ -262,9 +262,8 @@ public class ProjectsModule implements GenericCommercialModule {
         if (objectClass.length != objectId.length)
             throw new ArraySizeMismatchException("objectClass", "objectId");
         
-        for (int i = 0; i < objectId.length; i += 1) {
+        for (int i = 0; i < objectId.length; i++) 
             bem.createSpecialRelationship(projectClass, projectId, objectClass[i], objectId[i], RELATIONSHIP_PROJECTSPROJECTUSES, true);
-        }
     }
         
     /**
@@ -337,7 +336,7 @@ public class ProjectsModule implements GenericCommercialModule {
         this.aem = aem;
         this.bem = bem;
         
-        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_PROJECTSPROJECTUSES, "Associated to this project");
+        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_PROJECTSPROJECTUSES, "Resource associated to this project");
     }
     
 }

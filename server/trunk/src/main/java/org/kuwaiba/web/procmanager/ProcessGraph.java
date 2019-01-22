@@ -192,7 +192,7 @@ public class ProcessGraph extends Panel {
                         remoteSession.getSessionId());
                 if (path != null) {
                     int pathSize = path.size();
-                    for (int i = 0; i < pathSize; i += 1) {
+                    for (int i = 0; i < pathSize; i++) {
 
                         Graph.Node b = activities.get(path.get(i));
                         if (b != null) {

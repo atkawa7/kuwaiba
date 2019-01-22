@@ -29,7 +29,7 @@ import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
- * Mini Application used to show the Rack View given the object Id and Class Name
+ * Mini Application that Shows the a Rack View of a given object.
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class MiniAppRackView extends AbstractMiniApplication<Component, Component> {
@@ -40,7 +40,7 @@ public class MiniAppRackView extends AbstractMiniApplication<Component, Componen
 
     @Override
     public String getDescription() {
-        return "Mini Application used to show the Rack View given the object Id and Class Name";
+        return "Shows the a Rack View of a given object";
     }
 
     @Override
@@ -88,7 +88,7 @@ public class MiniAppRackView extends AbstractMiniApplication<Component, Componen
             }
         }
         catch(Exception exception) {
-            Notifications.showError("The rack view can no be show");
+            Notifications.showError("The rack view can not be displayed");
         }
         return panel;
     }

@@ -53,7 +53,7 @@ import org.snmp4j.util.TableUtils;
  */
 public class SnmpManager {
     public static final String NONE = "None";
-    public static final String VERSION_2c = "2c";
+    public static final String VERSION_2C = "2c";
     public static final String VERSION_3 = "3";
     public static final String AUTH_MD5 = "MD5";
     public static final String AUTH_SHA = "SHA";
@@ -240,7 +240,7 @@ public class SnmpManager {
             return null;
         
         switch (version) {
-            case VERSION_2c:
+            case VERSION_2C:
                 return getTableAsStringSnmpVersion2c(oids);
             case VERSION_3:
                 return getTableAsStringSnmpVersion3(oids);
@@ -255,7 +255,7 @@ public class SnmpManager {
             return null;
         
         switch(version) {
-            case VERSION_2c:
+            case VERSION_2C:
                 return getCommunityTarget(targetAddress);
             case VERSION_3:
                 return getUserTarget(targetAddress);
