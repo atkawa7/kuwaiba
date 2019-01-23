@@ -717,7 +717,7 @@ public class TableCreator {
         }
         if(carfNumber != null && !carfNumber.isEmpty()){
             Component row = createTitleValueRow("CARF NUMBER", carfNumber);
-             if(isFirstRow)
+            if(isFirstRow)
                 row.addStyleName("cell-with-border-top");
             lytData.addComponent(row);
         }

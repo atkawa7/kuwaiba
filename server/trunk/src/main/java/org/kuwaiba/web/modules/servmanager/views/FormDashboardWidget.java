@@ -213,7 +213,6 @@ public class FormDashboardWidget extends AbstractDashboardWidget{
                         //This only applies if there is a peering, the peering should always be in side B
                         if(aSideEquipmentLogical.getClassName().toLowerCase().contains("cloud"))
                             isSideAPeering = true;
-                        
                         //Now we render the physical part
                         //We start with the A side
                         if (!logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty()) {
@@ -333,7 +332,7 @@ public class FormDashboardWidget extends AbstractDashboardWidget{
                         });
                         isPhysicalSideASet = true;
                     }
-                    //If the view has Mpls links the ODFs should go between the physical and the logical devices
+                    //If the view has MPLSLinks the ODFs should go between the physical and the logical devices
                     if(table.getOdfsA() != null && !isODFASet && isMplsView){
                         for(Component odfComponentA : table.getOdfsA())
                             lytContent.addComponent(odfComponentA);

@@ -368,8 +368,8 @@ public class EndToEndViewScene extends AbstractScene {
                     }
                 }
                 for (SrvNodeWidget node : nodes.values()) {       
-                    node.setWidth(32);
-                    node.setHeight(32);
+                    node.setWidth(10);
+                    node.setHeight(10);
                     lienzoComponent.addNodeWidget(node);
                 }
                 

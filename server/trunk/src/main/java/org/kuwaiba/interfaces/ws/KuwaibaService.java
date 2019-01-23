@@ -6584,62 +6584,7 @@ public class KuwaibaService {
             }
         }
     }
-    /**
-     * Executes an automated synchronization job, which consist on connecting to the sync data source 
-     * using the configuration attached to the given sync group and finding the differences 
-     * between the information currently in the inventory platform and what's in the sync data source. 
-     * An automated sync job does not need human intervention it automatically decides what to do based 
-     * on built-in business rules
-     * @param syncGroupId The sync group id
-     * @param sessionId The session token
-     * @return The set of results 
-     * @throws ServerSideException If the sync group could not be found
-     */
-//    @WebMethod(operationName = "launchAutomatedSynchronizationTask")
-//    public List<SyncResult> launchAutomatedSynchronizationTask(@WebParam(name = "syncGroupId") long syncGroupId, 
-//            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
-//        try {
-//            BackgroundJob managedJob = wsBean.launchAutomatedSynchronizationTask(syncGroupId, getIPAddress(), sessionId);                      
-//            int retries = 0;
-//            while (!managedJob.getStatus().equals(BackgroundJob.JOB_STATUS.FINISHED) && retries < 20) {
-//                try {                
-//                    //For some reason (probably thread-concurrency related), the initial "managedJob" instance is different from the one
-//                    //updated in the SyncProcessor/Writer, so we have to constantly fetch it again.
-//                    managedJob = JobManager.getInstance().getJob(managedJob.getId());
-//
-//                    if (managedJob.getStatus().equals(BackgroundJob.JOB_STATUS.ABORTED)) {
-//                        Exception exceptionThrownByTheJob = managedJob.getExceptionThrownByTheJob();
-//
-//                        if (exceptionThrownByTheJob != null) {
-//                            if (exceptionThrownByTheJob instanceof InventoryException)
-//                                throw new ServerSideException(managedJob.getExceptionThrownByTheJob().getMessage());
-//                            else {
-//                                System.out.println("[KUWAIBA] An unexpected error occurred in launchAutomatedSynchronizationTask: " + exceptionThrownByTheJob.getMessage());
-//                                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-//                            }
-//                        }
-//                    }
-//                    Thread.sleep(2000);
-//                }catch (Exception ex) {
-//                    throw new RuntimeException(ex.getMessage());
-//                }
-//                retries ++;
-//            }
-//            if (retries == 20)
-//                throw new ServerSideException("The automated synchronization task can no be executed");
-//                
-//            return (List<SyncResult>)managedJob.getJobResult();
-//            
-//        } catch(ServerSideException | RuntimeException e){
-//            if (e instanceof ServerSideException)
-//                throw e;
-//            else {
-//                System.out.println("[KUWAIBA] An unexpected error occurred in launchAutomatedSynchronizationTask: " + e.getMessage());
-//                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-//            }
-//        }
-//    }
-    
+  
     /**
      * Executes an automated synchronization job, which consist on connecting to the sync data source 
      * using the configuration attached to the given sync group and finding the differences 
@@ -6660,7 +6605,7 @@ public class KuwaibaService {
         try {
             BackgroundJob managedJob = wsBean.launchAdHocAutomatedSynchronizationTask(syncGroupId, providersName, getIPAddress(), sessionId);                      
             int retries = 0;
-            while (!managedJob.getStatus().equals(BackgroundJob.JOB_STATUS.FINISHED) && retries < 20) {
+            while (!managedJob.getStatus().equals(BackgroundJob.JOB_STATUS.FINISHED) && retries < 30) {
                 try {                
                     //For some reason (probably thread-concurrency related), the initial "managedJob" instance is different from the one
                     //updated in the SyncProcessor/Writer, so we have to constantly fetch it again.
@@ -6678,13 +6623,13 @@ public class KuwaibaService {
                             }
                         }
                     }
-                    Thread.sleep(2000);
+                    Thread.sleep(3000);
                 }catch (Exception ex) {
                     throw new RuntimeException(ex.getMessage());
                 }
                 retries ++;
             }
-            if (retries == 20)
+            if (retries == 30)
                 throw new ServerSideException("The automated synchronization task can no be executed");
                 
             return (List<SyncResult>)managedJob.getJobResult();
@@ -6719,7 +6664,7 @@ public class KuwaibaService {
         try {
             BackgroundJob managedJob = wsBean.launchAdHocAutomatedSynchronizationTask(synDsConfigIds, providersName, getIPAddress(), sessionId);                      
             int retries = 0;
-            while (!managedJob.getStatus().equals(BackgroundJob.JOB_STATUS.FINISHED) && retries < 20) {
+            while (!managedJob.getStatus().equals(BackgroundJob.JOB_STATUS.FINISHED) && retries < 30) {
                 try {                
                     //For some reason (probably thread-concurrency related), the initial "managedJob" instance is different from the one
                     //updated in the SyncProcessor/Writer, so we have to constantly fetch it again.
@@ -6737,13 +6682,13 @@ public class KuwaibaService {
                             }
                         }
                     }
-                    Thread.sleep(2000);
+                    Thread.sleep(3000);
                 }catch (Exception ex) {
                     throw new RuntimeException(ex.getMessage());
                 }
                 retries ++;
             }
-            if (retries == 20)
+            if (retries == 30)
                 throw new ServerSideException("The automated synchronization task can no be executed");
                 
             return (List<SyncResult>)managedJob.getJobResult();

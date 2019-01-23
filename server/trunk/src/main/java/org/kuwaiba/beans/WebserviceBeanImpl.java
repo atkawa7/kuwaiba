@@ -38,7 +38,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import javax.ejb.Singleton;
@@ -2177,16 +2176,31 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 endpointA = endpointARelationship.get(0);
                 physicalPathA = bem.getPhysicalPath(endpointA.getClassName(), endpointA.getId());
             }
+            
+            HashMap<BusinessObjectLight, List<BusinessObjectLight>> physicalPathForVlansEndpointA = new HashMap<>();    
+            if(physicalPathA != null && !physicalPathA.isEmpty())
+                physicalPathForVlansEndpointA = getPhysicalPathVlans(physicalPathA.get(physicalPathA.size() -1));
+            
+            else if(endpointA != null)
+                physicalPathForVlansEndpointA = getPhysicalPathVlans(endpointA);
 
             List<BusinessObjectLight> endpointBRelationship = bem.getSpecialAttribute(linkClass, linkId, endpointBRelationshipName);
             if (!endpointBRelationship.isEmpty()) {
                 endpointB = endpointBRelationship.get(0);
                 physicalPathB = bem.getPhysicalPath(endpointB.getClassName(), endpointB.getId());
             }
+            
+            HashMap<BusinessObjectLight, List<BusinessObjectLight>> physicalPathForVlansEndpointB = new HashMap<>();    
+            if(physicalPathB != null && !physicalPathB.isEmpty())
+                physicalPathForVlansEndpointB = getPhysicalPathVlans(physicalPathB.get(physicalPathB.size() -1));
+            
+            else if(endpointB != null)
+                physicalPathForVlansEndpointB = getPhysicalPathVlans(endpointB);
 
             return new RemoteLogicalConnectionDetails(linkObject, endpointA, endpointB, 
                     physicalPathA == null ? new ArrayList<>() : physicalPathA, 
-                    physicalPathB == null ? new ArrayList<>() : physicalPathB);
+                    physicalPathB == null ? new ArrayList<>() : physicalPathB,
+                    physicalPathForVlansEndpointA, physicalPathForVlansEndpointB);
             
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -2249,7 +2263,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             for(int x=0 ; x < linkIds.size(); x++){
                 RemoteLogicalConnectionDetails logicalCircuitDetails = getLogicalLinkDetails(linkClasses.get(x), linkIds.get(x), ipAddress, sessionId);
                 RemoteObjectLight physicalEndpointA = null, logicalEndpointA = null, physicalEndpointB = null, logicalEndpointB = null, deviceA = null, deviceB = null;
-            //start logical part         
+                //start logical part         
                 if(logicalCircuitDetails.getEndpointA() != null){
                     List<BusinessObjectLight> parentsUntilFirstComEquipmentA = bem.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
                             getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericCommunicationsElement");
@@ -2267,7 +2281,6 @@ public class WebserviceBeanImpl implements WebserviceBean {
                     if(!parentsUntilFirstComEquipmentA.isEmpty() &&  mem.isSubclassOf(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, parentsUntilFirstComEquipmentA.get(parentsUntilFirstComEquipmentA.size() - 1).getClassName()))
                         deviceA = new RemoteObjectLight(parentsUntilFirstComEquipmentA.get(parentsUntilFirstComEquipmentA.size() - 1)); //GenericCommunicationsElement
                 }//Side B   
-               
                 if(logicalCircuitDetails.getEndpointB() != null){
                     List<BusinessObjectLight> parentsUntilFirstComEquipmentB = bem.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointB().
                             getClassName(), logicalCircuitDetails.getEndpointB().getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
@@ -2294,19 +2307,17 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 if (!logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty()) 
                     e2eMap.addAll(getpPysicalPathMap(logicalCircuitDetails.getPhysicalPathForEndpointB()));
                 //VLANs side A
-                HashMap<RemoteObjectLight, List<RemoteObjectLight>> physicalPathForVlansEndpointA = new HashMap<>(); 
-                if(logicalCircuitDetails.getEndpointA() != null && !logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty())
-                    physicalPathForVlansEndpointA = getPhysicalPathVlans(logicalCircuitDetails.getPhysicalPathForEndpointA().get(logicalCircuitDetails.getPhysicalPathForEndpointA().size() -1));
-                else
-                    physicalPathForVlansEndpointA = getPhysicalPathVlans(physicalEndpointA == null ? logicalCircuitDetails.getEndpointA() : physicalEndpointA);
-                //side B
-                HashMap<RemoteObjectLight, List<RemoteObjectLight>> physicalPathForVlansEndpointB = new HashMap<>();    
-                if(logicalCircuitDetails.getEndpointB() != null && !logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty())
-                    physicalPathForVlansEndpointB = getPhysicalPathVlans(logicalCircuitDetails.getPhysicalPathForEndpointB().get(logicalCircuitDetails.getPhysicalPathForEndpointB().size() -1));
-
-                else if(logicalCircuitDetails.getEndpointB() != null)
-                    physicalPathForVlansEndpointB = getPhysicalPathVlans(physicalEndpointB == null ? logicalCircuitDetails.getEndpointB() : physicalEndpointB);
-            
+//                HashMap<RemoteObjectLight, List<RemoteObjectLight>> physicalPathForVlansEndpointA = new HashMap<>(); 
+//                if(logicalCircuitDetails.getEndpointA() != null && !logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty())
+//                    physicalPathForVlansEndpointA = getPhysicalPathVlans(logicalCircuitDetails.getPhysicalPathForEndpointA().get(logicalCircuitDetails.getPhysicalPathForEndpointA().size() -1));
+//                else
+//                    physicalPathForVlansEndpointA = getPhysicalPathVlans(physicalEndpointA == null ? logicalCircuitDetails.getEndpointA() : physicalEndpointA);
+//                //side B
+//                HashMap<RemoteObjectLight, List<RemoteObjectLight>> physicalPathForVlansEndpointB = new HashMap<>();    
+//                if(logicalCircuitDetails.getEndpointB() != null && !logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty())
+//                    physicalPathForVlansEndpointB = getPhysicalPathVlans(logicalCircuitDetails.getPhysicalPathForEndpointB().get(logicalCircuitDetails.getPhysicalPathForEndpointB().size() -1));
+//                else if(logicalCircuitDetails.getEndpointB() != null)
+//                    physicalPathForVlansEndpointB = getPhysicalPathVlans(physicalEndpointB == null ? logicalCircuitDetails.getEndpointB() : physicalEndpointB);
             }//end for
             return e2eMap;
         } catch (InventoryException ex) {
@@ -2320,10 +2331,10 @@ public class WebserviceBeanImpl implements WebserviceBean {
      * @return a map with key: port, value: physical path of that port
      * @throws ServerSideException 
      */
-    private HashMap<RemoteObjectLight, List<RemoteObjectLight>> getPhysicalPathVlans(RemoteObjectLight endpoint) 
+    private HashMap<BusinessObjectLight, List<BusinessObjectLight>> getPhysicalPathVlans(BusinessObjectLight endpoint) 
             throws ServerSideException{
         try {
-            HashMap<RemoteObjectLight, List<RemoteObjectLight>> vlansPhysicalPath = new HashMap<>();
+            HashMap<BusinessObjectLight, List<BusinessObjectLight>> vlansPhysicalPath = new HashMap<>();
             if(endpoint != null){
                 //we get the the vlans to which the port belongs
                 List<BusinessObjectLight> vlans = bem.getSpecialAttribute(endpoint.getClassName(), endpoint.getId(), "portBelongsToVlan");
@@ -2333,7 +2344,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
                         if(vlanPort.getId() != endpoint.getId()){//we get the physical path for every port of the vlan except of the given endpoint 
                             List<BusinessObjectLight> vlanPhysicalPath = bem.getPhysicalPath(vlanPort.getClassName(), vlanPort.getId());
                             if(!vlanPhysicalPath.isEmpty())
-                                vlansPhysicalPath.put(new RemoteObjectLight(vlanPort), RemoteObjectLight.toRemoteObjectLightArray(vlanPhysicalPath));
+                                vlansPhysicalPath.put(vlanPort, vlanPhysicalPath);
                         }
                     }
                 }

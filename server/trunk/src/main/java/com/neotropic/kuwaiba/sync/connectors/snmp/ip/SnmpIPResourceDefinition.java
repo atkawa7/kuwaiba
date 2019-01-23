@@ -19,8 +19,8 @@ import java.util.HashMap;
 import org.snmp4j.smi.OID;
 
 /**
- * This class contains the oids that will be retrieved from the agent 
- * for the IP addresses synchronization.
+ * This class contains the oids that will be retrieved from the agent for 
+ * the IP addresses synchronization.
  * In this case, the oids correspond to columns in the table 
  * mgmt
  *   └─mib-2

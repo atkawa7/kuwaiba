@@ -285,7 +285,7 @@ public class IPSynchronizer {
                                 boolean alreadyRelated = false;
                                 //We also relate the ipAddr with the service
                                 if(!serviceName.isEmpty())
-                                    checkServices(serviceName, currentIpAddress.getId());
+                                    checkServices(serviceName, currentIpAddress.getId(), currentIpAddress.getName());
                                 for (BusinessObjectLight currentRelatedIPAddress : currentRelatedIPAddresses) {
                                     if(currentRelatedIPAddress.getName().equals(currentIpAddress.getName())){ 
                                         alreadyRelated = true;
@@ -436,20 +436,19 @@ public class IPSynchronizer {
      * Checks if a given service name exists in kuwaiba in order to 
      * associate the resource read it form the if-mib 
      * @param serviceName the service read it form the  if-mib
-     * @param ipAddr the ip address of the resource created
+     * @param ipAddrId the ip address id of the resource created
      * @throws ApplicationObjectNotFoundException
      * @throws BusinessObjectNotFoundException
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException
      * @throws OperationNotPermittedException 
      */
-    private void checkServices(String serviceName, long ipAddr){
+    private void checkServices(String serviceName, long ipAddrId, String ipAddr){
         try{
             List<BusinessObjectLight> servicesCreatedInKuwaiba = new ArrayList<>();
             //We get the services created in kuwaiba
             List<Pool> serviceRoot = bem.getRootPools(Constants.CLASS_GENERICCUSTOMER, 2, false);
             for(Pool customerPool: serviceRoot){
-
                 //TelecoOperators
                 List<BusinessObjectLight> poolItems = bem.getPoolItems(customerPool.getId(), -1);
                 for(BusinessObjectLight telecoOperator : poolItems){
@@ -466,35 +465,36 @@ public class IPSynchronizer {
             boolean related = false;
             //Now we check the resources with the given serviceName or ifAlias
             for(BusinessObjectLight currentService : servicesCreatedInKuwaiba){
-                //The service is al ready created in kuwaiba
-                if(!currentService.getName().isEmpty()){
-                    if(serviceName.equals(currentService.getName()) || serviceName.toLowerCase().contains(currentService.getName().toLowerCase())){
-                        List<BusinessObjectLight> serviceResources = bem.getSpecialAttribute(currentService.getClassName(), currentService.getId(), "uses");
-                        for (BusinessObjectLight resource : serviceResources) {
-                            if(resource.getId() == ipAddr) //The port is already a resource of the service
-                                res.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION,
-                                        "Searching service",
-                                        String.format("The service: %s is related with the ip: %s ", serviceName, ipAddr)));
+                //The service is already created in kuwaiba
+                if(!currentService.getName().isEmpty() && 
+                        (serviceName.equals(currentService.getName()) || serviceName.toLowerCase().contains(currentService.getName().toLowerCase()))){
+                    List<BusinessObjectLight> serviceResources = bem.getSpecialAttribute(currentService.getClassName(), currentService.getId(), "uses");
+                    for (BusinessObjectLight resource : serviceResources) {
+                        if(resource.getId() == ipAddrId){ //The port is already a resource of the service
+                            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION,
+                                    "Searching service",
+                                    String.format("The service: %s is related with the ip: %s ", serviceName, ipAddr)));
                             related = true;
                             break;
                         }
-                        if(!related){
-                            bem.createSpecialRelationship(currentService.getClassName(), currentService.getId(), Constants.CLASS_IP_ADDRESS, ipAddr, "uses", true);
-
-                            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,
+                    }//end for search for ip in the resources
+                    if(!related){
+                        bem.createSpecialRelationship(currentService.getClassName(), currentService.getId(), Constants.CLASS_IP_ADDRESS, ipAddrId, "uses", true);
+                        related = true;
+                        res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,
                                 "Searching service",
                                 String.format("The service: %s was related with the ip: %s ", serviceName, ipAddr)));
-                        }
                     }
                 }
-            }
+            }//end for
+            if(!related)
+                res.add(new SyncResult(dsConfigId, SyncResult.TYPE_WARNING, 
+                        "Searching service", String.format("The service: %s Not found, the ip: %s will not be related", serviceName, ipAddr)));
+            
         } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
-               res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR,
-                                        String.format("Serching service %s, related with ip: %s ", serviceName, ipAddr),
-                                        String.format("due to: %s ", ex.getLocalizedMessage())));
+                res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
+                        String.format("Serching service %s, related with ip: %s ", serviceName, ipAddr),
+                        String.format("due to: %s ", ex.getLocalizedMessage())));
         }
-        res.add(new SyncResult(dsConfigId, SyncResult.TYPE_WARNING, 
-                                    "Searching service",
-                                    String.format("The service: %s was not found, the ip: %s was no related ", serviceName, ipAddr)));
     }
 }

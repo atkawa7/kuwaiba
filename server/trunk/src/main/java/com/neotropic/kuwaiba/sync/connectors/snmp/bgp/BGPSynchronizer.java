@@ -82,7 +82,7 @@ public class BGPSynchronizer {
     /**
      * ASN Number for won devices
      */
-    private final String LOCAL_ASN="16591"; //TODO move this into de variable module.
+    private String LOCAL_ASN;
     /**
      * The class name of the object
      */
@@ -186,7 +186,13 @@ public class BGPSynchronizer {
                         "Unexpected error reading current structure", 
                         ex.getLocalizedMessage()));
             }
-           readMibData();
+            try {
+                LOCAL_ASN = String.valueOf(aem.getConfigurationVariableValue("sync.bgp.localAsn"));
+                readMibData();
+            } catch (ApplicationObjectNotFoundException | InvalidArgumentException ex) {
+               res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Retrieving local ASN",
+                            "No local ASN has been set in the configuration variable module"));
+            }
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
             Exceptions.printStackTrace(ex);
         }

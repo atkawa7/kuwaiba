@@ -19,6 +19,7 @@ import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
 import com.neotropic.kuwaiba.sync.model.SyncUtil;
 import com.neotropic.kuwaiba.sync.model.TableData;
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -78,6 +79,10 @@ public class EntPhysicalSynchronizer {
      */
     private final List<BusinessObjectLight> currentVirtualPorts;
     /**
+     * To load the structure of the actual device
+     */
+    private final List<BusinessObjectLight> foundVirtualPorts;
+    /**
      * The current first level children of the actual device
      */
     private List<BusinessObjectLight> currentFirstLevelChildren;
@@ -89,6 +94,10 @@ public class EntPhysicalSynchronizer {
      * Current MPLS tunnels
      */
     private final List<BusinessObjectLight> currentMplsTunnels;
+    /**
+     * To load the structure of the actual device
+     */
+    private final List<BusinessObjectLight> foundMplsTunnels;
     /**
      * To keep a trace of the new ports created during synchronization
      */
@@ -148,8 +157,8 @@ public class EntPhysicalSynchronizer {
     private MetadataEntityManager mem;
     
     private HashMap<Long, Long> createdIdsToMap;
-    private HashMap<Long, List<BusinessObject>> newCreatedPortsToCreate;
-    private List<StringPair> nameOfCreatedPorts;
+    private final HashMap<Long, List<BusinessObject>> newCreatedPortsToCreate;
+    private final List<StringPair> nameOfCreatedPorts;
     /**
      * Helper used to read the actual structure recursively
      */
@@ -191,6 +200,8 @@ public class EntPhysicalSynchronizer {
         newCreatedPortsToCreate = new HashMap<>();
         nameOfCreatedPorts = new ArrayList<>();
         debugMode = (boolean)aem.getConfiguration().get("debugMode");
+        foundMplsTunnels = new ArrayList<>();
+        foundVirtualPorts = new ArrayList<>();
     }
 
     public List<SyncResult> sync() throws MetadataObjectNotFoundException,
@@ -445,11 +456,12 @@ public class EntPhysicalSynchronizer {
                         if(!isPossibleChild)
                             possibleChildrenToAdd.add(possibleChildToAdd);
                     }
-                    
-                    mem.addPossibleChildren(parentClass, possibleChildrenToAdd.toArray(new String[possibleChildrenToAdd.size()]));
-                    results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, 
-                            String.format("%s are now children of class %s ", possibleChildrenToAdd, parentClass), 
-                            "The class hierarchy was updated"));
+                    if(!possibleChildrenToAdd.isEmpty()){
+                        mem.addPossibleChildren(parentClass, possibleChildrenToAdd.toArray(new String[possibleChildrenToAdd.size()]));
+                        results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, 
+                                String.format("%s are now children of class %s ", possibleChildrenToAdd, parentClass), 
+                                "The class hierarchy was updated"));
+                    }
                 }
             } //end for
         }catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
@@ -727,10 +739,7 @@ public class EntPhysicalSynchronizer {
                     BusinessObjectLight oldObj = foundPath.get(j);
                     HashMap<String, String> oldAttributes = bem.getObject(oldObj.getId()).getAttributes();
                     BusinessObject newObj = newBranchToEvalueate.get(j); //this is the new object from SNMP
-                    newObj.getAttributes().remove("parentName");
-                    newObj.getAttributes().remove("parentId");
-                    newObj.getAttributes().remove("parentClassName");
-                    
+                                        
                     updateAttributesInBranch(oldObj, oldAttributes, newObj);//we check if some attributes need to be updated
                 }
                 return null; //we find the whole path, we return null
@@ -863,12 +872,17 @@ public class EntPhysicalSynchronizer {
             HashMap<String, String> attributes = newObj.getAttributes();
             
             HashMap<String, String> attributeChanges = SyncUtil.compareAttributes(oldAttributes, attributes);
-            
-            bem.updateObject(oldObj.getClassName(), oldObj.getId(), attributeChanges);
-            
-            results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,
-                    String.format(I18N.gm("object_attributes_changed"), oldObj.toString()),
-                    newObj.toString()));
+            attributeChanges.remove("parentName");
+            attributeChanges.remove("parentClassName");
+            attributeChanges.remove("parentId");
+            attributeChanges.remove("deviceParentId");
+            if(!attributeChanges.isEmpty()){
+                bem.updateObject(oldObj.getClassName(), oldObj.getId(), attributeChanges);
+
+                results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,
+                        String.format(I18N.gm("object_attributes_changed"), oldObj.toString()),
+                        newObj.toString()));
+            }
         } catch (OperationNotPermittedException ex) {
             
             results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR,
@@ -909,7 +923,7 @@ public class EntPhysicalSynchronizer {
         for (BusinessObjectLight child : children) {
             if (child.getClassName().equals(Constants.CLASS_MPLSTUNNEL))
                 currentMplsTunnels.add(child);
-            else if (child.getClassName().equals(Constants.CLASS_VIRTUALPORT))
+            else if (child.getClassName().equals(Constants.CLASS_VIRTUALPORT) || child.getClassName().equals("ServiceInstance"))
                 currentVirtualPorts.add(child);
             readCurrentSpecialStructure(bem.getObjectSpecialChildren(child.getClassName(), child.getId()));
         }
@@ -1223,8 +1237,8 @@ public class EntPhysicalSynchronizer {
      * @throws OperationNotPermittedException
      */
     private void checkPortsToMigrate(){
-        //List<BusinessObjectLight> foundOldPorts = new ArrayList<>(); //for debug
-        //List<BusinessObject> foundNewPorts = new ArrayList<>(); //for debug
+        List<BusinessObjectLight> foundOldPorts = new ArrayList<>(); //for debug
+        List<BusinessObject> foundNewPorts = new ArrayList<>(); //for debug
         for (BusinessObjectLight oldPort : currentPorts) {
             if(!oldPort.getName().toLowerCase().equals("gi0")){
                 try{
@@ -1234,8 +1248,8 @@ public class EntPhysicalSynchronizer {
 
                     if (portFound != null) {
                         String parentName = oldPortParent.getName();
-                        //foundOldPorts.add(oldPort);    //for debug
-                        //foundNewPorts.add(portFound); //for debug
+                        foundOldPorts.add(oldPort);    //for debug
+                        foundNewPorts.add(portFound); //for debug
                         if(SyncUtil.isSynchronizable(portFound.getName()))
                             portFound = SyncUtil.wrapPortName(portFound);
                         //We found the port, but needs to be moved
@@ -1265,10 +1279,12 @@ public class EntPhysicalSynchronizer {
                         else{//The port its in the rigth place but its attributes needs to be updated
                             HashMap<String, String> oldAttributes = bem.getObject(oldPort.getId()).getAttributes();
                             HashMap<String, String> changedAttributes = SyncUtil.compareAttributes(oldAttributes, portFound.getAttributes());
+                            changedAttributes.remove("parentId");
+                            changedAttributes.remove("parentClassName");
+                            changedAttributes.remove("parentName");
+                            changedAttributes.remove("deviceParentId");   
                             if(!changedAttributes.isEmpty()){ 
-
                                 bem.updateObject(oldPort.getClassName(), oldPort.getId(), changedAttributes);
-
                                 results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,
                                     String.format("From: %s to: in %s", oldAttributes, changedAttributes, oldPort),
                                    "Attributes updated"));
@@ -1287,15 +1303,15 @@ public class EntPhysicalSynchronizer {
         //we remove the ports from both lists the old port and the new ones
         //for debuging don't delete        
 //        for (BusinessObjectLight goodPort : foundOldPorts)
-//            oldPorts.remove(goodPort);
+//            currentPorts.remove(goodPort);
 
-        //we must delete de new ports that were found in the old structure, the 
-        //remaining new ports that were not found will be created
-//        for (BusinessObject foundNewPort : foundNewPorts) {
-//            int index = removeMatchedNewPorts(foundNewPort);
-//            if (index > -1) 
-//                newPorts.remove(index);
-//        }
+//        we must delete de new ports that were found in the old structure, the 
+//        remaining new ports that were not found will be created
+        for (BusinessObject foundNewPort : foundNewPorts) {
+            int index = removeMatchedNewPorts(foundNewPort);
+            if (index > -1) 
+                newPorts.remove(index);
+        }
     }
 
     private int removeMatchedNewPorts(BusinessObject newportFound) {
@@ -1487,35 +1503,35 @@ public class EntPhysicalSynchronizer {
             boolean isAttributeUpdated = false;
             attributes.put(Constants.PROPERTY_NAME, SyncUtil.wrapPortName(ifName));
             attributes.put("highSpeed", portSpeed);  
-             if(!ifAlias.isEmpty())
+            if(!ifAlias.isEmpty())
                 attributes.put("ifAlias", ifAlias);
              
             checkVirtualPorts();
             //We must create the Mngmnt Port, virtualPorts, tunnels and Loopbacks
             if(SyncUtil.isSynchronizable(ifName)){
-                BusinessObjectLight currrentInterface;
+                BusinessObjectLight currentInterface = null;
                 //First we search if the port is the current virtual ports
                 if(ifName.contains(".")){
-                    currrentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), 2);
-                    if(currrentInterface == null)
-                        currrentInterface = searchInCurrentStructure(ifName.split("\\.")[1], 2);
+                    currentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), ifName, 2);
+                    if(currentInterface == null)
+                        currentInterface = searchInCurrentStructure(ifName.split("\\.")[1], ifName, 2);
                 }
                 else if(ifName.toLowerCase().contains("lo")) //NOI18N
-                    currrentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), 2);
+                    currentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), ifName, 2);
                 //We must add the s when we look for po ports because posx/x/x ports has no s in the if mib
                 else if(ifName.toLowerCase().contains("po")) //NOI18N
-                    currrentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), 1);
+                    currentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), ifName,1);
                 //MPLS Tunnel
                 else if(ifName.toLowerCase().contains("tu")) //NOI18N
-                    currrentInterface = searchInCurrentStructure(ifName, 3);
-                else 
-                    currrentInterface = searchInCurrentStructure(ifName, 1);
+                    currentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), ifName, 3);
+                else if(currentInterface != null)
+                    currentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), ifName, 1);
                 
                 try{//The virtual port doesn't exists, so we will create it
-                    if(ifName.contains(".") && currrentInterface == null){
-                        //we search for the physical port parent of the virtual port 
-                        currrentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName.split("\\.")[0]), 1);
-                        if(currrentInterface != null && currrentInterface.getName().equals(SyncUtil.wrapPortName(ifName.split("\\.")[0]))){
+                    if(ifName.contains(".") && currentInterface == null){
+                        //we search for the physical port parent of the virtual port
+                        currentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName.split("\\.")[0]), ifName.split("\\.")[0], 1);
+                        if(currentInterface != null && currentInterface.getName().equals(SyncUtil.wrapPortName(ifName.split("\\.")[0]))){
                             if(ifName.toLowerCase().contains(".si")){
                                 createdClassName = "ServiceInstance";
                                 attributes.put(Constants.PROPERTY_NAME, ifName.split("\\.")[2]);
@@ -1523,37 +1539,50 @@ public class EntPhysicalSynchronizer {
                                 createdClassName = Constants.CLASS_VIRTUALPORT;
                                 attributes.put(Constants.PROPERTY_NAME, ifName.split("\\.")[1]);
                             }
-                            createdId = bem.createObject(createdClassName, currrentInterface.getClassName(), currrentInterface.getId(), attributes, -1);
-                            results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  
-                                    String.format("%s [%s]", attributes.get(Constants.PROPERTY_NAME), createdClassName),    
+                            //the virtual port is already created, but with the standard name plus the . part
+                            BusinessObjectLight currrentvirtualInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), ifName, 2);
+                            if(currrentvirtualInterface == null) //the virtual port is already created, but the name has not been standardiced
+                               currrentvirtualInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), ifName, 2);
+                            if(currrentvirtualInterface == null && ifName.split("\\.").length == 3 && ifName.toLowerCase().contains(".si")) //the virtual port is al ready created with onli the literal.
+                                currentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName.split("\\.")[2]), ifName, 1);
+                            if(currrentvirtualInterface == null){
+                                createdId = bem.createObject(createdClassName, currentInterface.getClassName(), currentInterface.getId(), attributes, -1);
+                                results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  
+                                    String.format("%s [%s], with parent: %s ", attributes.get(Constants.PROPERTY_NAME), createdClassName, currentInterface),    
                                     "Inventory object created"));
+                            }
+                            else if(currrentvirtualInterface != null){
+                                createdClassName = Constants.CLASS_VIRTUALPORT;
+                                attributes.put(Constants.PROPERTY_NAME, ifName.split("\\.")[1]);
+                                bem.updateObject(currentInterface.getClassName(), currentInterface.getId(), attributes);
+                            }
                         }
                     }//We create the Mngmnt port
-                    else if(currrentInterface == null && ifName.toLowerCase().equals("gi0")){ 
+                    else if(currentInterface == null && ifName.toLowerCase().equals("gi0")){ 
                         createdClassName = Constants.CLASS_ELECTRICALPORT;
                         createdId = bem.createObject(createdClassName, className, id, attributes, -1);
                         results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  
                                     String.format("%s [%s]", attributes.get(Constants.PROPERTY_NAME), createdClassName),    
                                     "Inventory object created"));
                     }//MPLS Tunnel
-                    else if(currrentInterface == null && ifName.toLowerCase().contains("tu")){
+                    else if(currentInterface == null && ifName.toLowerCase().contains("tu")){
                         createdClassName = Constants.CLASS_MPLSTUNNEL;
                         createdId = bem.createSpecialObject(createdClassName, className, id, attributes, -1); 
-                        currentMplsTunnels.add(new BusinessObject(Constants.CLASS_MPLSTUNNEL, createdId, ifName));
+                        //currentMplsTunnels.add(new BusinessObject(Constants.CLASS_MPLSTUNNEL, createdId, ifName));
                         results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  
                                     String.format("%s [%s]", attributes.get(Constants.PROPERTY_NAME), createdClassName),    
                                     "Inventory object created"));
                         
                     }//LoopBacks
-                    else if(currrentInterface == null && ifName.toLowerCase().contains("lo")){
+                    else if(currentInterface == null && ifName.toLowerCase().contains("lo")){
                         createdClassName = Constants.CLASS_VIRTUALPORT;
                         createdId = bem.createSpecialObject(createdClassName, className, id, attributes, -1);
-                        currentVirtualPorts.add(new BusinessObject(createdClassName, createdId, ifName));
+                        //currentVirtualPorts.add(new BusinessObject(createdClassName, createdId, ifName));
                         results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  
                                     String.format("%s [%s]", attributes.get(Constants.PROPERTY_NAME), createdClassName),    
                                     "Inventory object created"));
                         
-                    }else if (currrentInterface == null && ifName.toLowerCase().contains("se")){
+                    }else if (currentInterface == null && ifName.toLowerCase().contains("se")){
                         createdClassName = Constants.CLASS_SERIALPORT;
                         createdId = bem.createObject(createdClassName, className, id, attributes, -1);
                         results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  
@@ -1561,8 +1590,13 @@ public class EntPhysicalSynchronizer {
                                     "Inventory object created"));
                         
                     }//we Update attributes, for now only high speed
-                    else if(currrentInterface != null){ 
-                        HashMap<String, String> currentAttributes = bem.getObject(currrentInterface.getId()).getAttributes();
+                    else if(currentInterface != null){ 
+                        if(currentInterface.getClassName().equals("VirtualPort"))
+                            foundVirtualPorts.add(currentInterface);
+                        else if(currentInterface.getClassName().equals( Constants.CLASS_MPLSTUNNEL))
+                            foundMplsTunnels.add(currentInterface);
+                            
+                        HashMap<String, String> currentAttributes = bem.getObject(currentInterface.getId()).getAttributes();
                         attributes = new HashMap<>();
                         //We must update the speedPort
                         String currentHighSpeed = currentAttributes.get("highSpeed");
@@ -1576,27 +1610,48 @@ public class EntPhysicalSynchronizer {
                             isAttributeUpdated = true;
                         }
                         
-                        createdClassName = currrentInterface.getClassName();
-                        createdId = currrentInterface.getId();
+                        createdClassName = currentInterface.getClassName();
+                        createdId = currentInterface.getId();
                         
                         //we update the name of the old virtual ports, taking only the after point part
-                        if(ifName.contains(".") && currentAttributes.get(Constants.PROPERTY_NAME).contains(".")){
-                            attributes.put(Constants.PROPERTY_NAME, SyncUtil.wrapPortName(ifName.split("\\.")[1])); 
-                            bem.updateObject(currrentInterface.getClassName(), currrentInterface.getId(), attributes);
+                        if(ifName.contains(".") && currentAttributes.get(Constants.PROPERTY_NAME).contains(".")
+                            && !currentAttributes.get(Constants.PROPERTY_NAME).equals(SyncUtil.wrapPortName(ifName.split("\\.")[1]))){
+
+                                attributes.put(Constants.PROPERTY_NAME, SyncUtil.wrapPortName(ifName.split("\\.")[1])); 
+                                bem.updateObject(currentInterface.getClassName(), currentInterface.getId(), attributes);
+                                results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  
+                                        String.format("Attribute name was updated from: %s to %s", currentAttributes.get(Constants.PROPERTY_NAME), attributes.get(Constants.PROPERTY_NAME)),    
+                                        "Name updated"));
+                        }
+                        //a service instance
+                        else if(ifName.contains(".") &&  ifName.contains(".si") && ifName.split("\\.").length == 3 && currentAttributes.get(Constants.PROPERTY_NAME).contains(".")
+                                && !currentAttributes.get(Constants.PROPERTY_NAME).equals(SyncUtil.wrapPortName(ifName.split("\\.")[2]))){
+                            
+                            createdClassName = "ServiceInstance";
+                            attributes.put(Constants.PROPERTY_NAME, SyncUtil.wrapPortName(ifName.split("\\.")[2])); 
+                            bem.updateObject(currentInterface.getClassName(), currentInterface.getId(), attributes);
                             results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  
                                     String.format("Attribute name was updated from: %s to %s", currentAttributes.get(Constants.PROPERTY_NAME), attributes.get(Constants.PROPERTY_NAME)),    
                                     "Name updated"));
                         }
-                        //The name should be normalized
-                        else if(!currentAttributes.get(Constants.PROPERTY_NAME).equals(SyncUtil.wrapPortName(currentAttributes.get(Constants.PROPERTY_NAME)))){
-                            attributes.put(Constants.PROPERTY_NAME, SyncUtil.wrapPortName(ifName));
-                            bem.updateObject(currrentInterface.getClassName(), currrentInterface.getId(), attributes);
-                            results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  
+                        //The name should be normalized applies for loopbacks
+                        else if(!currentAttributes.get(Constants.PROPERTY_NAME).equals(SyncUtil.wrapPortName(ifName))){
+                            boolean editName = true;
+                            if(ifName.split("\\.").length == 2 && currentAttributes.get(Constants.PROPERTY_NAME).equals(SyncUtil.wrapPortName(ifName.split("\\.")[1])))
+                                editName = false;
+                            if(ifName.split("\\.").length == 3 && currentAttributes.get(Constants.PROPERTY_NAME).equals(SyncUtil.wrapPortName(ifName.split("\\.")[2])))
+                                editName = false;
+                            
+                            if(editName){
+                                attributes.put(Constants.PROPERTY_NAME, SyncUtil.wrapPortName(ifName));
+                                bem.updateObject(currentInterface.getClassName(), currentInterface.getId(), attributes);
+                                results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  
                                     String.format("Attribute name was updated from: %s to %s", currentAttributes.get(Constants.PROPERTY_NAME), attributes.get(Constants.PROPERTY_NAME)),    
                                     "Name updated"));
+                            }
                         }
                         else if(isAttributeUpdated){
-                            bem.updateObject(currrentInterface.getClassName(), currrentInterface.getId(), attributes);
+                            bem.updateObject(currentInterface.getClassName(), currentInterface.getId(), attributes);
                             results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  
                                     String.format("Attributes were updated from: %s to: %s", currentAttributes, attributes),    
                                     "Attributes updated"));
@@ -1609,9 +1664,41 @@ public class EntPhysicalSynchronizer {
                 }
                 
                 if(!createdClassName.isEmpty() && !ifAlias.isEmpty())
-                    checkServices(ifAlias, createdId, attributes.get("name"), createdClassName);
+                    checkServices(ifAlias, createdId, ifName, createdClassName);
+            }//end for ifNames
+        }//the not found things
+        for (BusinessObjectLight foundVirtualPort : foundVirtualPorts)
+            currentVirtualPorts.remove(foundVirtualPort);
+
+        for (BusinessObjectLight foundVMplsTunnel : foundMplsTunnels)
+            currentMplsTunnels.remove(foundVMplsTunnel);
+
+        for (BusinessObjectLight currentVirtualPort : currentVirtualPorts) {
+            try {
+                bem.deleteObject(currentVirtualPort.getClassName(), currentVirtualPort.getId(), false);
+                results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
+                        String.format("Deleting interface %s", currentVirtualPort),
+                        "The interface was deleted because no math was found"));
+            } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
+                results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
+                    String.format("Deleting virtual interface %s", currentVirtualPort),
+                    ex.getLocalizedMessage()));
             }
-        }//end for ifNames
+        }
+
+        for (BusinessObjectLight currentMplesTunnel : currentMplsTunnels) {
+            try {
+                bem.deleteObject(currentMplesTunnel.getClassName(), currentMplesTunnel.getId(), false);
+                results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
+                        String.format("Deleting interface %s", currentMplesTunnel),
+                        "The interface was deleted because no math was found"));
+            } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
+                results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
+                    String.format("Deleting virtual interface %s", currentMplesTunnel),
+                    ex.getLocalizedMessage()));
+            }
+        }
+    
     }
     
     /**
@@ -1627,16 +1714,17 @@ public class EntPhysicalSynchronizer {
      * @throws OperationNotPermittedException 
      */
     private void checkServices(String serviceName, long portId, String portName, String portClassName) {
-        List<BusinessObjectLight> servicesCreatedInKuwaiba = new ArrayList<>();
-        //First ee get the services created in kuwaiba
-        List<Pool> serviceRoot = bem.getRootPools("GenericCustomer", 2, false);
-        try {
+       try{
+            List<BusinessObjectLight> servicesCreatedInKuwaiba = new ArrayList<>();
+            //We get the services created in kuwaiba
+            List<Pool> serviceRoot = bem.getRootPools(Constants.CLASS_GENERICCUSTOMER, 2, false);
             for(Pool customerPool: serviceRoot){
-                List<BusinessObjectLight> poolItems = bem.getPoolItems(customerPool.getId(), -1);  //TelecoOperators
+                //TelecoOperators
+                List<BusinessObjectLight> poolItems = bem.getPoolItems(customerPool.getId(), -1);
                 for(BusinessObjectLight telecoOperator : poolItems){
                     List<Pool> poolsInObject = bem.getPoolsInObject(telecoOperator.getClassName(), telecoOperator.getId(), "GenericService");
-                    
-                    for(Pool servicePool : poolsInObject){ //Service Pool
+                    //Service Pool
+                    for(Pool servicePool : poolsInObject){
                         List<BusinessObjectLight> actualServices = bem.getPoolItems(servicePool.getId(), -1);
                         actualServices.forEach((actualService) -> {
                             servicesCreatedInKuwaiba.add(actualService);
@@ -1644,27 +1732,37 @@ public class EntPhysicalSynchronizer {
                     }
                 }
             } //Now we check the resources with the given serviceName or ifAlias
-
+            boolean related = false;
             for(BusinessObjectLight currentService : servicesCreatedInKuwaiba){
                 //The service is al ready created in kuwaiba
                 if(serviceName.equals(currentService.getName())){
                     List<BusinessObjectLight> serviceResources = bem.getSpecialAttribute(currentService.getClassName(), currentService.getId(), "uses");
                     for (BusinessObjectLight resource : serviceResources) {
-                        if(resource.getId() == portId) //The port is already a resource of the service
+                        if(resource.getId() == portId){ //The port is already a resource of the service
                             results.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, 
                             String.format("Interface %s [%s] and service %s", portName, portClassName, currentService.getName()),
-                            "Are already related")); //"";
+                            "Are already related")); 
+                            related = true;
+                            break;
+                        } 
                     }
-                    bem.createSpecialRelationship(currentService.getClassName(), currentService.getId(), portClassName, portId, "uses", true);
-                    results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, 
-                           String.format("Interface %s [%s] and service %s", portName, portClassName, currentService.getName()),
-                            "were related successfully"));
+                    if(!related){
+                        bem.createSpecialRelationship(currentService.getClassName(), currentService.getId(), portClassName, portId, "uses", true);
+                        related = true;
+                        results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, 
+                               String.format("Interface %s [%s] and service %s", portName, portClassName, currentService.getName()),
+                                "were related successfully"));
+                    }
                 }
             }
-        }catch (ApplicationObjectNotFoundException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
-            results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
-                    String.format("Creating a relationship between port %s [%s] and service %s", portName, portClassName, serviceName),
-                    ex.getLocalizedMessage()));
+            if(!related)
+                results.add(new SyncResult(dsConfigId, SyncResult.TYPE_WARNING, 
+                        "Searching service", String.format("The service: %s Not found, the interface: %s will not be related", serviceName, portName)));
+            
+        } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
+                results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
+                        String.format("Serching service %s, related with interface: %s ", serviceName, portName),
+                        String.format("due to: %s ", ex.getLocalizedMessage())));
         }
     }
     
@@ -1714,28 +1812,29 @@ public class EntPhysicalSynchronizer {
     }
     
     /**
-     * Checks if a given port exists in the current structure
+     * Checks if a given port exists in the current structure, we search for 
+     * the wrappedifName and the ifName
      * @param ifName a given name for port, virtual port or MPLS Tunnel
      * @param type 1 port, 2 virtual port, 3 MPLSTunnel, 4 bdi, 5 VLAN
      * @return the object, null doesn't exists in the current structure
      */
-    private BusinessObjectLight searchInCurrentStructure(String ifName, int type){
+    private BusinessObjectLight searchInCurrentStructure(String wrappedIfName, String ifName, int type){
         switch(type){
             case 1:
                 for(BusinessObjectLight currentPort: currentPorts){
-                    if(currentPort.getName().toLowerCase().equals(ifName.toLowerCase()))
+                    if(currentPort.getName().toLowerCase().equals(wrappedIfName.toLowerCase()) || currentPort.getName().toLowerCase().equals(ifName))
                         return currentPort;
                 }
                 break;
             case 2:
                 for(BusinessObjectLight currentVirtualPort: currentVirtualPorts){
-                    if(currentVirtualPort.getName().toLowerCase().equals(ifName.toLowerCase()))
+                    if(currentVirtualPort.getName().toLowerCase().equals(wrappedIfName.toLowerCase()) || currentVirtualPort.getName().toLowerCase().equals(ifName))
                         return currentVirtualPort;
                 }
                 break;
             case 3:
                 for(BusinessObjectLight currentMPLSTunnel: currentMplsTunnels){
-                    if(currentMPLSTunnel.getName().toLowerCase().equals(ifName.toLowerCase()))
+                    if(currentMPLSTunnel.getName().toLowerCase().equals(wrappedIfName.toLowerCase()) || currentMPLSTunnel.getName().toLowerCase().equals(ifName))
                         return currentMPLSTunnel;
                 }
                 break;

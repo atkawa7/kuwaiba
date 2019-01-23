@@ -2768,7 +2768,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         if (className == null || className.equals(Constants.NODE_DUMMYROOT))
             return graphDb.findNode(specialNodeLabel, Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
         
-        Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME,className);
+        Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
 
         if (classNode == null)
             throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
