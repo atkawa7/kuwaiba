@@ -348,7 +348,7 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                 return rows;
             }            
         } catch(Exception ex) {
-                        
+            // Expected NumberFormatException or another parse error of an data type no supported in grids                        
         }
                                 
         return null;                

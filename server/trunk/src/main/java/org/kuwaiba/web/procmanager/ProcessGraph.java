@@ -159,11 +159,33 @@ public class ProcessGraph extends Panel {
         vizComponent.setSizeFull();        
         
         Graph graph = new Graph("G" + String.valueOf(processDefinition.getId()), Graph.DIGRAPH);
-        
+                
         for (RemoteActivityDefinition currentActivity : allActivities) {
 
             Graph.Node currentActivityNode = new Graph.Node(String.valueOf(currentActivity.getId()));
-            currentActivityNode.setParam("label", "\"" + currentActivity.getName() + "\"");
+            StringBuilder builder = new StringBuilder();
+            
+            if (currentActivity.getType() == ActivityDefinition.TYPE_CONDITIONAL) {
+                builder.append("<<TABLE BORDER=\"0\">");
+                builder.append("<TR><TD></TD></TR>");
+                builder.append("<TR>");
+                builder.append("<TD><FONT COLOR=\"#37474f\">");
+                builder.append(currentActivity.getName());
+                builder.append("</FONT></TD>");
+                builder.append("</TR>");
+                builder.append("<TR><TD></TD></TR>");
+                builder.append("</TABLE>>");
+            } else {
+                builder.append("<<TABLE BORDER=\"0\">");
+                builder.append("<TR>");
+                builder.append("<TD><FONT COLOR=\"#37474f\">");
+                builder.append(currentActivity.getName());
+                builder.append("</FONT></TD>");
+                builder.append("</TR>");
+                builder.append("</TABLE>>");
+            }
+            
+            currentActivityNode.setParam("label", builder.toString());
             
             if (currentActivity.getType() == ActivityDefinition.TYPE_NORMAL)
                 currentActivityNode.setParam("shape", "box");
@@ -176,13 +198,23 @@ public class ProcessGraph extends Panel {
             
             nodes.put(currentActivityNode, currentActivity);
             activities.put(currentActivity, currentActivityNode);
+            
+            graph.addNode(currentActivityNode);
         }
         addEges(activities, processDefinition.getStartActivity(), graph);
                 
         vizComponent.drawGraph(graph);
         
-        for (Graph.Node node : nodes.keySet())
-            vizComponent.addCss(node, "stroke", "#000000");
+        for (Graph.Node node : nodes.keySet()) {
+            vizComponent.addCss(node, "stroke", "#cfd8dc");
+            vizComponent.addCss(node, "fill", "#eceff1");
+            
+            if (nodes.get(node).getType() == ActivityDefinition.TYPE_START || 
+                nodes.get(node).getType() == ActivityDefinition.TYPE_END) {
+                
+                vizComponent.addCss(node, "fill", "#bbdefb");
+            }
+        }
         
         if (processInstance != null) {
             try {
@@ -202,8 +234,14 @@ public class ProcessGraph extends Panel {
                                     path.get(i).getId(), 
                                     Page.getCurrent().getWebBrowser().getAddress(), 
                                     remoteSession.getSessionId());
-                                if (ra != null)
-                                    vizComponent.addCss(b, "fill", "#c0d5f7");
+                                if (ra != null) {
+                                    
+                                    if (nodes.get(b).getType() != ActivityDefinition.TYPE_START && 
+                                        nodes.get(b).getType() != ActivityDefinition.TYPE_END) {
+                                        
+                                        vizComponent.addCss(b, "fill", "#b0bec5");
+                                    }
+                                }
                             } catch (ServerSideException ex) {
                             }
                         }
