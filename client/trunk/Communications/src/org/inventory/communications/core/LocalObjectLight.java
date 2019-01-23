@@ -133,7 +133,7 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
         firePropertyChangeEvent(Constants.PROPERTY_NAME, oldName, name);
     }
 
-    public void addPropertyChangeListener(PropertyChangeListener newListener){
+    public void addPropertyChangeListener(PropertyChangeListener newListener) {
         if (propertyChangeListeners == null)
             propertyChangeListeners = new ArrayList<>();
         if (propertyChangeListeners.contains(newListener))

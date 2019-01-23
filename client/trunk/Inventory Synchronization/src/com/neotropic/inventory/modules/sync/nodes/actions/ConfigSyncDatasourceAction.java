@@ -46,7 +46,7 @@ public class ConfigSyncDatasourceAction extends GenericObjectNodeAction implemen
     SyncDataSourceConfigurationNode syncDataSourceConfigurationNode;
 
     public ConfigSyncDatasourceAction() {
-        putValue(NAME, "Configure Sync-Datasource");
+        putValue(NAME, "Configure Sync Datasource");
     }
   
     @Override
@@ -66,35 +66,29 @@ public class ConfigSyncDatasourceAction extends GenericObjectNodeAction implemen
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        
         List<LocalSyncGroup> syncGroups = CommunicationsStub.getInstance().getSyncGroups();
-        
-        LocalSyncDataSourceConfiguration syncDataSourceConfiguration = CommunicationsStub.getInstance().getSyncDataSourceConfiguration(selectedObjects.get(0).getId());
-        
-         if (syncGroups ==  null)
+              
+        if (syncGroups ==  null)
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else {
             if (syncGroups.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "There are no sync groups created. Create at least one using the Sync Manager", 
                     I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             } else {
-                if(syncDataSourceConfiguration == null){    
+                LocalSyncDataSourceConfiguration syncDataSourceConfiguration = CommunicationsStub.getInstance().getSyncDataSourceConfiguration(selectedObjects.get(0).getId());
+                if(syncDataSourceConfiguration == null) {    
                     SelectValueFrame frame = new SelectValueFrame(
                         "Available Sync Groups",
                         "Search",
-                        "Create Relationship", syncGroups);
+                        "Add to Sync Group", syncGroups);
                     frame.addListener(this);
                     frame.setVisible(true);
-                }
-                else{
+                } else {
                     syncDataSourceConfigurationNode = new SyncDataSourceConfigurationNode(syncDataSourceConfiguration);
                     
                     ObjectEditorTopComponent component = new ObjectEditorTopComponent(syncDataSourceConfigurationNode);
                     component.open();
                     component.requestActive();
-            
-                    NotificationUtil.getInstance().showSimplePopup("Datasource is already created", 
-                               NotificationUtil.INFO_MESSAGE, "Edit in property sheet");
                 }
             }
         }
@@ -110,6 +104,7 @@ public class ConfigSyncDatasourceAction extends GenericObjectNodeAction implemen
                 JOptionPane.showMessageDialog(null, "Select a sync group from the list");
                 return;
             }
+            
             HashMap<String, String> parameters = new HashMap();
                         parameters.put("deviceId", String.valueOf((selectedObjects.get(0).getId())));
                         parameters.put("deviceClass", (selectedObjects.get(0).getClassName()));
@@ -118,13 +113,15 @@ public class ConfigSyncDatasourceAction extends GenericObjectNodeAction implemen
                                     createSyncDataSourceConfiguration(
                                             selectedObjects.get(0).getId(),
                                             ((LocalSyncGroup)selectedSyncGroup).getId(), 
-                                            selectedObjects.get(0).getName() + " [Datasource config]", parameters);
+                                            selectedObjects.get(0).getName(), parameters);
             
-            syncDataSourceConfigurationNode = new SyncDataSourceConfigurationNode(newSyncConfig);
-
-            ObjectEditorTopComponent component = new ObjectEditorTopComponent(syncDataSourceConfigurationNode);
-            component.open();
-            component.requestActive();
+            if (newSyncConfig != null) {
+                syncDataSourceConfigurationNode = new SyncDataSourceConfigurationNode(newSyncConfig);
+                ObjectEditorTopComponent component = new ObjectEditorTopComponent(syncDataSourceConfigurationNode);
+                component.open();
+                component.requestActive();
+            } else 
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
     }
 

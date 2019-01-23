@@ -66,7 +66,7 @@ public class ActionGroupActionsFactory {
     public static ActionsGroup getInstanceSyncActions() {
        if (syncActions == null)
             syncActions = new ActionsGroup("Sync", 
-                "org/inventory/navigation/navigationtree/res/show_view_actions_group.png", 
+                "org/inventory/navigation/navigationtree/res/sync_group.png", 
                 ActionsGroupType.Group.DEVICE_CONFIGURATION);
         return syncActions;
     }
