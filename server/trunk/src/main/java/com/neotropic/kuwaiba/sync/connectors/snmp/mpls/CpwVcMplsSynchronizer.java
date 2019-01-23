@@ -202,11 +202,11 @@ public class CpwVcMplsSynchronizer {
             String portName = mplsData.get("cpwVcName").get(i);
             String destinyPortName = mplsData.get("cpwVcRemoteIfString").get(i);
             
-            BusinessObjectLight syncSourcePort = searchInCurrentStructure(SyncUtil.wrapPortName(portName));
+            BusinessObjectLight syncSourcePort = searchInCurrentStructure(SyncUtil.wrapPortName(portName.split("\\.").length == 2 ? portName.split("\\.")[1] : portName));
             if(syncSourcePort == null){
                    results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                            "Search in the current device", 
-                           String.format("%s [Port] doesn't exist", portName)));
+                           String.format("%s [Port] doesn't exist", SyncUtil.wrapPortName(portName.split("\\.").length == 2 ? portName.split("\\.")[1] : portName))));
             }else{
                 BusinessObject syncEquipment  = bem.getObject(id);
                 List<ViewObjectLight> mplsViews = aem.getGeneralViews("MPLSModuleView", -1);
