@@ -247,7 +247,7 @@ public class ProcessInstancesView extends VerticalLayout {
             public void click(ClickableRenderer.RendererClickEvent event) {
                 ProcessInstanceBean processInstanceBean = (ProcessInstanceBean) event.getItem();
                 
-                ProcessGraph processGraph = new ProcessGraph(
+                ProcessFlowchart processGraph = new ProcessFlowchart(
                     processInstanceBean.getProcessInstance(), 
                     processInstanceBean.getProcessDefinition(), 
                     wsBean, 

@@ -16,6 +16,9 @@
 
 package com.neotropic.kuwaiba.sync.connectors.ssh.bdi;
 
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
 import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.entities.BridgeDomain;
 import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.entities.NetworkInterface;
 import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.parsers.BridgeDomainsASR1002Parser;
@@ -31,20 +34,18 @@ import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
 import com.neotropic.kuwaiba.sync.model.SyncUtil;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import net.schmizz.sshj.SSHClient;
-import net.schmizz.sshj.common.IOUtils;
-import net.schmizz.sshj.connection.channel.direct.Session;
+import java.util.stream.Collectors;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
-import org.kuwaiba.apis.persistence.business.BusinessObject;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
@@ -82,13 +83,14 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
     public PollResult mappedPoll(SynchronizationGroup syncGroup) {
         List<SyncDataSourceConfiguration> syncDataSourceConfigurations = syncGroup.getSyncDataSourceConfigurations();
         
-        final SSHClient ssh = new SSHClient();
         PollResult res = new PollResult();
-        
         BusinessEntityManager bem = PersistenceService.getInstance().getBusinessEntityManager();
+
+        JSch sshShell = new JSch();
+        Session session = null;
+        ChannelExec channel =  null;
         
         for (SyncDataSourceConfiguration dataSourceConfiguration : syncDataSourceConfigurations) {
-            Session session = null;
             try {
                 long deviceId;
                 int port;
@@ -144,76 +146,68 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
     
                 BusinessObjectLight currentObject = bem.getObjectLight(className, deviceId);
                 
-                ssh.loadKnownHosts();
-                ssh.connect(host, port);
-                ssh.authPassword(user, password);
-                session = ssh.startSession();
-                
+                session = sshShell.getSession(user, host, port);
+                session.setPassword(password);
+                //Enable to -not recommended- disable host key checking
+                session.setConfig("StrictHostKeyChecking", "no");
+//                String knownHostsFileLocation = (String)PersistenceService.getInstance().getApplicationEntityManager().
+//                        getConfigurationVariableValue("sync.bdi.knownHostsFile");
+//                sshShell.setKnownHosts(knownHostsFileLocation);
+                session.connect(10000);
+                channel = (ChannelExec) session.openChannel("exec");
+
                 String modelString = currentObject.getName().split("-")[0];
                 
-                switch (modelString) { //The model of the device is taken from its name. Alternatively, this could be taken from its actual model
+                switch (modelString) { //The model of the device is taken from its name. Alternatively, this could be taken from its actual "model" attribute.
                     case "ASR920": {
-                        Session.Command cmd = session.exec("sh bridge-domain"); //NOI18N
+                        channel.setCommand("sh bridge-domain"); //NOI18N
+                        channel.connect();
                         
                         BridgeDomainsASR920Parser parser = new BridgeDomainsASR920Parser();               
-
-                        cmd.join(5, TimeUnit.SECONDS);
-                        if (cmd.getExitStatus() != 0) 
-                            res.getExceptions().put(dataSourceConfiguration, Arrays.asList(new InvalidArgumentException("The command to retrieve the bridge domain information could not be retrieved. Check the syntax and the firmware version")));
-                        else 
-                            res.getResult().put(dataSourceConfiguration, 
-                                    parser.parse(IOUtils.readFully(cmd.getInputStream()).toString()));
+                        res.getResult().put(dataSourceConfiguration, 
+                                parser.parse(readCommandExecutionResult(channel)));                            
                         break;
                     }
                     case "ASR1002": {
-                        Session.Command cmd = session.exec("sh bridge-domain"); //NOI18N
+                        channel.setCommand("sh bridge-domain"); //NOI18N
+                        channel.connect();
                         
                         BridgeDomainsASR1002Parser parser = new BridgeDomainsASR1002Parser();               
 
-                        cmd.join(5, TimeUnit.SECONDS);
-                        if (cmd.getExitStatus() != 0) 
-                            res.getExceptions().put(dataSourceConfiguration, Arrays.asList(new InvalidArgumentException(cmd.getExitErrorMessage())));
-                        else 
-                            res.getResult().put(dataSourceConfiguration, 
-                                    parser.parse(IOUtils.readFully(cmd.getInputStream()).toString()));
+                        res.getResult().put(dataSourceConfiguration, 
+                                parser.parse(readCommandExecutionResult(channel)));
                         break;
                     }
                     case "ASR9001": {
-                        Session.Command cmd = session.exec("sh l2vpn bridge-domain"); //NOI18N
+                        channel.setCommand("sh l2vpn bridge-domain"); //NOI18N
+                        channel.connect();
+                        
                         BridgeDomainsASR9001Parser parser = new BridgeDomainsASR9001Parser();               
 
-                        cmd.join(5, TimeUnit.SECONDS);
-                        if (cmd.getExitStatus() != 0) 
-                            res.getExceptions().put(dataSourceConfiguration, Arrays.asList(new InvalidArgumentException(cmd.getExitErrorMessage())));
-                        else 
-                            res.getResult().put(dataSourceConfiguration, 
-                                    parser.parse(IOUtils.readFully(cmd.getInputStream()).toString()));
+                        res.getResult().put(dataSourceConfiguration, 
+                                parser.parse(readCommandExecutionResult(channel)));
                         break;
                     }
                     case "ME3600": {
-                        Session.Command cmd = session.exec("sh bridge-domain"); //NOI18N
+                        channel.setCommand("sh bridge-domain"); //NOI18N
+                        channel.connect();
                         BridgeDomainsME3600Parser parser = new BridgeDomainsME3600Parser();               
 
-                        cmd.join(5, TimeUnit.SECONDS);
-                        if (cmd.getExitStatus() != 0) 
-                            res.getExceptions().put(dataSourceConfiguration, Arrays.asList(new InvalidArgumentException(cmd.getExitErrorMessage())));
-                        else 
-                            res.getResult().put(dataSourceConfiguration, 
-                                    parser.parse(IOUtils.readFully(cmd.getInputStream()).toString()));
+                        res.getResult().put(dataSourceConfiguration, 
+                                parser.parse(readCommandExecutionResult(channel)));
                         break;
                     }
                     
                     default:
-                        res.getExceptions().put(dataSourceConfiguration, Arrays.asList(new InvalidArgumentException(String.format("Model %s is not supported. Check your naming conventions, as an hyphen is expected as separator", modelString))));
+                        res.getExceptions().put(dataSourceConfiguration, Arrays.asList(new InvalidArgumentException(String.format("Model %s is not supported. Check your naming conventions [ASR920-XXX, ASR1002-XXX, ASR9001-XXX, ME3600-XXX]", modelString))));
                 }
             } catch (Exception ex) {
                 res.getExceptions().put(dataSourceConfiguration, Arrays.asList(ex));
             } finally {
-                try {
-                    if (session != null)
-                        session.close();
-                    ssh.disconnect();
-                } catch (IOException e) { }
+                if (session != null)
+                    session.disconnect();
+                if (channel != null)
+                    channel.disconnect();
             }
         }
         return res;
@@ -253,7 +247,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                     for (BusinessObjectLight existingBridgeDomain : existingBridgeDomains) {
                         if (existingBridgeDomain.getName().equals(((BridgeDomain)bridgeDomainInDevice).getName())) {
                             res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_INFORMATION, String.format("Check if Bridge Domain %s exists within %s", existingBridgeDomain, relatedOject), 
-                                    "The Bridge Domain exists and was not modified"));
+                                    "The Bridge Domain already exists and was not modified"));
                             matchingBridgeDomain = existingBridgeDomain;
                             break;
                         }
@@ -469,7 +463,22 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
 
     @Override
     public List<SyncResult> finalize(List<SyncAction> actions) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("This provider does not support this operation"); //Not used for now
+    }
+
+    /**
+     * Reads the channel's input stream into a string.
+     * @param channel The session's channel.
+     * @return The string with the result of the command execution.
+     * @throws InvalidArgumentException if there was an error executing the command or reading its result.
+     */
+    private String readCommandExecutionResult (ChannelExec channel) throws InvalidArgumentException {
+        try (BufferedReader buffer = new BufferedReader(new InputStreamReader(channel.getInputStream()))) {
+            String result = buffer.lines().collect(Collectors.joining("\n"));
+            return channel.getExitStatus() == 0 ? result : null;
+        } catch (IOException ex) {
+            throw new InvalidArgumentException(String.format("Error reading the command execution result: %s", ex.getLocalizedMessage()));
+        }
     }
 
 }

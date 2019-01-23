@@ -373,7 +373,7 @@ public class ProcessInstanceView extends DynamicComponent {
                 @Override
                 public void buttonClick(Button.ClickEvent event) {
                     
-                    ProcessGraph processGraph = new ProcessGraph(
+                    ProcessFlowchart processGraph = new ProcessFlowchart(
                         processInstance, 
                         processDefinition, 
                         wsBean, 

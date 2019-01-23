@@ -81,7 +81,7 @@ public class ProcessInstanceToolsView extends TabSheet {
 
         if (GRAPH.equals(caption)) {
 
-            ProcessGraph processGraph = new ProcessGraph(
+            ProcessFlowchart processGraph = new ProcessFlowchart(
                 remoteProcessInstance, 
                 remoteProcessDefinition, 
                 webserviceBean, 

@@ -40,7 +40,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteParallelActivityD
  * Shows graphically the process definition and the current state of a process instance
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class ProcessGraph extends Panel {
+public class ProcessFlowchart extends Panel {
     private final RemoteProcessDefinition processDefinition;
     private final RemoteProcessInstance processInstance;
     private final WebserviceBean wsBean;
@@ -48,7 +48,7 @@ public class ProcessGraph extends Panel {
     private final HashMap<Long, RemoteActivityDefinition> ids = new HashMap();
     private final List<RemoteActivityDefinition> allActivities = new ArrayList();
     
-    public ProcessGraph(RemoteProcessInstance processInstance, RemoteProcessDefinition processDefinition, WebserviceBean wsBean, RemoteSession remoteSession) {
+    public ProcessFlowchart(RemoteProcessInstance processInstance, RemoteProcessDefinition processDefinition, WebserviceBean wsBean, RemoteSession remoteSession) {
         this.processDefinition = processDefinition;
         this.processInstance = processInstance;
         this.wsBean = wsBean;
