@@ -15,6 +15,7 @@
 package org.kuwaiba.web.procmanager.rackview;
 
 import com.vaadin.data.HasValue;
+import com.vaadin.data.HasValue.ValueChangeListener;
 import com.vaadin.event.FieldEvents;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
@@ -25,6 +26,7 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.ItemCaptionGenerator;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
@@ -33,6 +35,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
@@ -55,29 +58,39 @@ public class ComponentRackSelector extends VerticalLayout {
     }
     
     private List<RemoteObjectLight> getItems(String parentClassName, long parentId, String childClassName) {
-        
         try {
-            List<StringPair> scriptQueryParameters = new ArrayList();
-            scriptQueryParameters.add(new StringPair("parentId", String.valueOf(parentId)));
-            scriptQueryParameters.add(new StringPair("parentClassName", parentClassName));
-            scriptQueryParameters.add(new StringPair("childClassName", childClassName));
-            
-            webserviceBean.updateScriptQueryParameters(
-                    "getObjectChildrenRecursive",
-                    scriptQueryParameters,
-                    Page.getCurrent().getWebBrowser().getAddress(),
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-            
-            RemoteScriptQueryResultCollection result = webserviceBean.executeScriptQueryCollection(
-                    "getObjectChildrenRecursive",
-                    Page.getCurrent().getWebBrowser().getAddress(),
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-            
-            return (List<RemoteObjectLight>) result.getResults();
-            
+            return webserviceBean.getChildrenOfClassLightRecursive(
+                parentId, 
+                parentClassName, 
+                childClassName, 
+                0, 
+                Page.getCurrent().getWebBrowser().getAddress(), 
+                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getMessage());
         }
+////        try {
+////            List<StringPair> scriptQueryParameters = new ArrayList();
+////            scriptQueryParameters.add(new StringPair("parentId", String.valueOf(parentId)));
+////            scriptQueryParameters.add(new StringPair("parentClassName", parentClassName));
+////            scriptQueryParameters.add(new StringPair("childClassName", childClassName));
+////            
+////            webserviceBean.updateScriptQueryParameters(
+////                    "getObjectChildrenRecursive",
+////                    scriptQueryParameters,
+////                    Page.getCurrent().getWebBrowser().getAddress(),
+////                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+////            
+////            RemoteScriptQueryResultCollection result = webserviceBean.executeScriptQueryCollection(
+////                    "getObjectChildrenRecursive",
+////                    Page.getCurrent().getWebBrowser().getAddress(),
+////                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+////            
+////            return (List<RemoteObjectLight>) result.getResults();
+////            
+////        } catch (ServerSideException ex) {
+////            Notifications.showError(ex.getMessage());
+////        }
         return null;
     }
         
@@ -109,6 +122,17 @@ public class ComponentRackSelector extends VerticalLayout {
         ComboBox<RemoteObjectLight> cmbCity = new ComboBox();
         ComboBox<RemoteObjectLight> cmbBuildings = new ComboBox();        
         ComboBox<RemoteObjectLight> cmbRacks = new ComboBox();
+        
+        ItemCaptionGenerator itemCaptionGenerator = new ItemCaptionGenerator<RemoteObjectLight>() {
+                
+            @Override
+            public String apply(RemoteObjectLight item) {
+                return item != null ? item.getName() : null;
+            }
+        };
+        cmbCity.setItemCaptionGenerator(itemCaptionGenerator);
+        cmbBuildings.setItemCaptionGenerator(itemCaptionGenerator);
+        cmbRacks.setItemCaptionGenerator(itemCaptionGenerator);
                 
         Button btnCreateBuilding = new Button();
         btnCreateBuilding.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
@@ -170,6 +194,18 @@ public class ComponentRackSelector extends VerticalLayout {
                 lytHorizontal.addComponent(btnOk);                
                 lytHorizontal.addComponent(btnCancel);
                 
+                btnOk.setEnabled(false);
+                
+                txtNewBuildingName.addValueChangeListener(new ValueChangeListener<String>() {
+                    @Override
+                    public void valueChange(HasValue.ValueChangeEvent<String> event) {
+                        if (txtNewBuildingName.getValue() != null && !txtNewBuildingName.getValue().isEmpty())
+                            btnOk.setEnabled(true);
+                        else
+                            btnOk.setEnabled(false);
+                    }
+                });
+                
                 btnOk.addClickListener(new ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
@@ -178,7 +214,7 @@ public class ComponentRackSelector extends VerticalLayout {
                                                                                     
                             RemoteObjectLight rol = cmbCity.getValue();
                             String name = txtNewBuildingName.getValue();
-                            
+                                                        
                             try {
                                 webserviceBean.createObject("Building", rol.getClassName(), rol.getId(), new String[] {"name"}, new String[] {name}, -1, 
                                     Page.getCurrent().getWebBrowser().getAddress(), 
@@ -251,6 +287,22 @@ public class ComponentRackSelector extends VerticalLayout {
                 lytHorizontal.addComponent(btnOk);                
                 lytHorizontal.addComponent(btnCancel);
                 
+                btnOk.setEnabled(false);
+                
+                ValueChangeListener valueChangeListener = new ValueChangeListener<String>() {
+                    @Override
+                    public void valueChange(HasValue.ValueChangeEvent<String> event) {
+                        if (txtNewRackName.getValue() != null && !txtNewRackName.getValue().isEmpty() &&
+                            txtRackNameUnits.getValue() != null && !txtRackNameUnits.getValue().isEmpty())
+                            btnOk.setEnabled(true);
+                        else
+                            btnOk.setEnabled(false);
+                    }
+                };
+                
+                txtNewRackName.addValueChangeListener(valueChangeListener);
+                txtRackNameUnits.addValueChangeListener(valueChangeListener);
+                
                 btnOk.addClickListener(new ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
@@ -303,11 +355,11 @@ public class ComponentRackSelector extends VerticalLayout {
             public void focus(FieldEvents.FocusEvent event) {
                 try {
                     
-                    List<RemoteObjectLight> objects = webserviceBean.getObjectsOfClassLight("City", -1, 
+                    List<RemoteObjectLight> cities = webserviceBean.getObjectsOfClassLight("City", -1, 
                         Page.getCurrent().getWebBrowser().getAddress(), 
                         ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-                    
-                    cmbCity.setItems(objects);
+                    Collections.sort(cities);
+                    cmbCity.setItems(cities);
                 } catch (ServerSideException ex) {
                     Notifications.showError(ex.getMessage());
                 }
@@ -335,6 +387,7 @@ public class ComponentRackSelector extends VerticalLayout {
                     RemoteObjectLight city = cmbCity.getValue();
                     
                     List<RemoteObjectLight> buildings = getItems(city.getClassName(), city.getId(), "Building"); //NOI18N
+                    Collections.sort(buildings);
                     cmbBuildings.setItems(buildings);
                 }
             }
@@ -354,7 +407,7 @@ public class ComponentRackSelector extends VerticalLayout {
                 if (cmbBuildings != null && cmbBuildings.getValue() != null) {
                     RemoteObjectLight building = cmbBuildings.getValue();
                     List<RemoteObjectLight> racks = getItems(building.getClassName(), building.getId(), "Rack"); //NOI18N
-                    
+                    Collections.sort(racks);
                     cmbRacks.setItems(racks);
                 }
             }

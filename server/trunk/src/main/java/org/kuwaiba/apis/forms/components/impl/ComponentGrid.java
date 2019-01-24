@@ -131,8 +131,11 @@ public class ComponentGrid extends GraphicalComponent {
             if (grid.getHeight() != null)
                 getComponent().setHeight(grid.getHeight());
             
-            getComponent().setEnabled(grid.isEnabled());
-            
+            if (!grid.isEnabled()) {
+                getComponent().setSelectionMode(Grid.SelectionMode.NONE);
+                return;
+            }
+                                    
             getComponent().addSelectionListener(new SelectionListener() {
                 @Override
                 public void selectionChange(SelectionEvent event) {

@@ -286,7 +286,7 @@ public class ProcessInstancesView extends VerticalLayout {
             .setId(columnViewId)
             .setMinimumWidth(50f)
             .setMaximumWidth(50f)
-            .setDescriptionGenerator(e -> "<b>Graph</b>", ContentMode.HTML);
+            .setDescriptionGenerator(e -> "<b>Process Flowchart</b>", ContentMode.HTML);
         
         grid.addSelectionListener(new SelectionListener<ProcessInstanceBean>() {
             @Override

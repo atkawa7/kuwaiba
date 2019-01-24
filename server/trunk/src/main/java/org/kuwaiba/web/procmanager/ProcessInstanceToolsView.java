@@ -34,7 +34,7 @@ public class ProcessInstanceToolsView extends TabSheet {
     private final RemoteSession remoteSession;
     private final String TIMELINE = "Timeline";
     private final String ACTIVITIES = "Activities";
-    private final String GRAPH = "Graph";
+    private final String PROCESS_FLOWCHART = "Process Flowchart";
         
     public ProcessInstanceToolsView(
         final RemoteProcessDefinition remoteProcessDefinition, 
@@ -54,11 +54,11 @@ public class ProcessInstanceToolsView extends TabSheet {
         
         setSizeFull();
         
-        addTab(new VerticalLayout(), TIMELINE, VaadinIcons.CALENDAR_CLOCK);
         addTab(new VerticalLayout(), ACTIVITIES, VaadinIcons.TASKS);
-        addTab(new VerticalLayout(), GRAPH, VaadinIcons.SITEMAP);
+        addTab(new VerticalLayout(), TIMELINE, VaadinIcons.CALENDAR_CLOCK);
+        addTab(new VerticalLayout(), PROCESS_FLOWCHART, VaadinIcons.SITEMAP);
         
-        setSelectedTab(1);
+        setSelectedTab(0);
         
         addSelectedTabChangeListener(new TabSheet.SelectedTabChangeListener() {
             
@@ -79,7 +79,7 @@ public class ProcessInstanceToolsView extends TabSheet {
         Component tab = (Component) getSelectedTab();
         String caption = getTab(tab).getCaption();
 
-        if (GRAPH.equals(caption)) {
+        if (PROCESS_FLOWCHART.equals(caption)) {
 
             ProcessFlowchart processGraph = new ProcessFlowchart(
                 remoteProcessInstance, 

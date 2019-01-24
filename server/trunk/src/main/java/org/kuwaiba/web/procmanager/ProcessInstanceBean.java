@@ -16,7 +16,9 @@ package org.kuwaiba.web.procmanager;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
+import java.util.ArrayList;
 import java.util.List;
+import org.kuwaiba.apis.persistence.application.process.ParallelActivityDefinition;
 import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -27,6 +29,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteParallelActivityDefinition;
 
 /**
  *
@@ -60,7 +63,8 @@ public class ProcessInstanceBean {
         return null;
     }
     
-    private RemoteActivityDefinition getCurrentActivityDefinition() {
+    private List<RemoteActivityDefinition> getCurrentActivityDefinition() {
+        List<RemoteActivityDefinition> res = new ArrayList();
         
         RemoteProcessDefinition processDefinition = getProcessDefinition();
         
@@ -72,9 +76,82 @@ public class ProcessInstanceBean {
                     Page.getCurrent().getWebBrowser().getAddress(), 
                     session.getSessionId());
                 
+                if (path != null && !path.isEmpty()) {
+                    RemoteActivityDefinition currentActivity = path.get(path.size() - 1);
+                    
+                    if (currentActivity instanceof RemoteParallelActivityDefinition) {
+                        
+                        RemoteParallelActivityDefinition join= (RemoteParallelActivityDefinition) currentActivity;
+                        
+                        if (join.getSequenceFlow() == ParallelActivityDefinition.JOIN) {
+                            
+                            RemoteParallelActivityDefinition fork = null;
+                            
+                            for (RemoteActivityDefinition activity : path) {
+                                if (activity.getId() == join.getOutgoingSequenceFlowId()) {
+                                    
+                                    if (activity instanceof RemoteParallelActivityDefinition) {
+                                        
+                                        RemoteParallelActivityDefinition tmpFork = (RemoteParallelActivityDefinition) activity;
+                                        
+                                        if (tmpFork.getSequenceFlow() == ParallelActivityDefinition.FORK) {
+                                            fork = tmpFork;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            if (fork != null) {
+                                if (fork.getPaths() != null) {
+                                    for (RemoteActivityDefinition activity : fork.getPaths()) {
+                                        
+                                        RemoteActivityDefinition forkX = null;
+                                                                                                                                                                                                        
+                                        for (RemoteActivityDefinition item : path) {
+                                            if (activity.getId() == item.getId()) {
+                                                forkX = item;                                                
+                                                break;
+                                            }
+                                        }
+                                        if (forkX != null) {
+                                            int index = path.indexOf(forkX);
+                                            if (index != -1) {
+                                                for (int i = index; i < path.size(); i += 1) {
+                                                    RemoteActivityDefinition rad = path.get(i);
+                                                    /**/
+                                                    if (rad != null && rad.getNextActivity() != null) {
+                                                        try {
+                                                            wsBean.getArtifactForActivity(
+                                                                processInstance.getId(),
+                                                                rad.getNextActivity().getId(),
+                                                                Page.getCurrent().getWebBrowser().getAddress(),
+                                                                session.getSessionId());
+                                                        } catch (ServerSideException ex) {
+                                                            res.add(rad);
+                                                            break;
+                                                        }
+                                                    }
+                                                    /**/
+                                                    if (rad != null && rad.getNextActivity() != null && rad.getNextActivity().getId() == join.getId()) {
+                                                        res.add(rad);
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                return res;
+                            }
+                        }
+                    }
+                    res.add(currentActivity);
+                    return res;
+                }
+                /*
                 if (path != null && !path.isEmpty())
                     return path.get(path.size() - 1);
-                
+                */
             } catch (ServerSideException ex) {
                 Notifications.showError(ex.getMessage());
             }
@@ -110,7 +187,12 @@ public class ProcessInstanceBean {
     }
         
     public String getCurrentActivity() {
-        RemoteActivityDefinition currentActivityDefinition = getCurrentActivityDefinition();
+        List<RemoteActivityDefinition> currentActivityDefinitions = getCurrentActivityDefinition();
+        if (currentActivityDefinitions == null && 
+            (currentActivityDefinitions != null && !currentActivityDefinitions.isEmpty()))
+            return null;
+        
+        RemoteActivityDefinition currentActivityDefinition = currentActivityDefinitions.get(0);
         
         String result = "";
         
@@ -122,7 +204,16 @@ public class ProcessInstanceBean {
                     + Integer.toHexString(VaadinIcons.STOP.getCodepoint())
                     + ";</span>";
             
-            result += " " + currentActivityDefinition.getName();
+            result += "";
+////            for (RemoteActivityDefinition item : currentActivityDefinitions) {
+            for (int i = 0; i < currentActivityDefinitions.size(); i += 1) {
+                RemoteActivityDefinition item = currentActivityDefinitions.get(i);                
+                
+                result += item.getName() + " ";
+                
+                if (i != currentActivityDefinitions.size() - 1)
+                    result += "/";
+            }
         }
         return currentActivityDefinition != null ? result : null;
         
@@ -130,14 +221,27 @@ public class ProcessInstanceBean {
     
     public String getCurrentActivityActor() {
         
-        RemoteActivityDefinition activityDefinition = getCurrentActivityDefinition();
+        List<RemoteActivityDefinition> activityDefinitions = getCurrentActivityDefinition();
+        if (activityDefinitions == null && 
+            (activityDefinitions != null && !activityDefinitions.isEmpty()))
+            return null;            
         
-        if (activityDefinition != null) {
-            
-            RemoteActor actor = activityDefinition.getActor();
-            
-            if (actor != null)
-                return actor.getName();
+        if (activityDefinitions != null) {
+            String res = "";
+////            for (RemoteActivityDefinition item : activityDefinitions) {
+            for (int i = 0; i < activityDefinitions.size(); i += 1) {
+                RemoteActivityDefinition item = activityDefinitions.get(i);
+                
+                RemoteActor actor = item.getActor();
+
+                if (actor != null) {
+                    res += actor.getName() + " ";
+                    
+                    if (i != activityDefinitions.size() - 1)
+                        res += "/";
+                }
+            }
+            return res;
         }
         return null;
     }

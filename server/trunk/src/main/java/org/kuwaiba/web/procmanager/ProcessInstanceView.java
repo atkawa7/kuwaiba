@@ -625,7 +625,7 @@ public class ProcessInstanceView extends DynamicComponent {
             boolean isFork = false;
             boolean even = false;
             List<RemoteActivityDefinition> paths = new ArrayList();
-                                    
+                                                
             for (int i = 0; i < lstActivities.size(); i += 1) {
                 RemoteActivityDefinition activity = lstActivities.get(i);
                 

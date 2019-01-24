@@ -113,7 +113,7 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
         Grid<MaterialBean> gridMaterials = new Grid<>();
         gridMaterials.setSelectionMode(Grid.SelectionMode.SINGLE);
         gridMaterials.setWidth(1200, Unit.PIXELS);
-        
+                
         String columnMaterialId = "columnMaterialId"; //NOI18N
         String columnCityId = "columnCityId"; //NOI18N
         String columnBuildingId = "columnBuildingId"; //NOI18N

@@ -89,8 +89,8 @@ public class ProcessFlowchart extends Panel {
                 
                 graph.addEdge(activities.get(activity), activities.get(ifTrue));
                 Graph.Edge edge = graph.getEdge(activities.get(activity), activities.get(ifTrue));
-                edge.setParam("color", "black");
-                edge.setParam("label", "YES");
+                edge.setParam("color", "lightskyblue4");
+                edge.setParam("label", "<<FONT COLOR=\"#37474f\">YES</FONT>>");
                 
                 addEges(activities, ifTrue, graph);
                                                 
@@ -103,8 +103,8 @@ public class ProcessFlowchart extends Panel {
                 
                 graph.addEdge(activities.get(activity), activities.get(ifFalse));
                 edge = graph.getEdge(activities.get(activity), activities.get(ifFalse));
-                edge.setParam("color", "black");
-                edge.setParam("label", "NO");
+                edge.setParam("color", "lightskyblue4");
+                edge.setParam("label", "<<FONT COLOR=\"#37474f\">NO</FONT>>");
                 
                 addEges(activities, ifFalse, graph);
                                 
@@ -119,7 +119,7 @@ public class ProcessFlowchart extends Panel {
                                         
                     graph.addEdge(activities.get(activity), activities.get(path));
                     Graph.Edge edge = graph.getEdge(activities.get(activity), activities.get(path));
-                    edge.setParam("color", "black");
+                    edge.setParam("color", "lightskyblue4");
 
                     addEges(activities, path, graph);
                 }
@@ -135,7 +135,7 @@ public class ProcessFlowchart extends Panel {
                 
                 graph.addEdge(activities.get(activity), activities.get(nextActivity));
                 Graph.Edge edge = graph.getEdge(activities.get(activity), activities.get(nextActivity));
-                edge.setParam("color", "black");
+                edge.setParam("color", "lightskyblue4");
                 
                 addEges(activities, nextActivity, graph);
             }
@@ -159,10 +159,12 @@ public class ProcessFlowchart extends Panel {
         vizComponent.setSizeFull();        
         
         Graph graph = new Graph("G" + String.valueOf(processDefinition.getId()), Graph.DIGRAPH);
-                
+        graph.setParam("rankdir", "TB");
+                        
         for (RemoteActivityDefinition currentActivity : allActivities) {
 
             Graph.Node currentActivityNode = new Graph.Node(String.valueOf(currentActivity.getId()));
+            String label = currentActivity.getName().replace("&", "&amp;").replace(">", "&gt;");
             StringBuilder builder = new StringBuilder();
             
             if (currentActivity.getType() == ActivityDefinition.TYPE_CONDITIONAL) {
@@ -170,7 +172,7 @@ public class ProcessFlowchart extends Panel {
                 builder.append("<TR><TD></TD></TR>");
                 builder.append("<TR>");
                 builder.append("<TD><FONT COLOR=\"#37474f\">");
-                builder.append(currentActivity.getName());
+                builder.append(label);
                 builder.append("</FONT></TD>");
                 builder.append("</TR>");
                 builder.append("<TR><TD></TD></TR>");
@@ -179,7 +181,7 @@ public class ProcessFlowchart extends Panel {
                 builder.append("<<TABLE BORDER=\"0\">");
                 builder.append("<TR>");
                 builder.append("<TD><FONT COLOR=\"#37474f\">");
-                builder.append(currentActivity.getName());
+                builder.append(label);
                 builder.append("</FONT></TD>");
                 builder.append("</TR>");
                 builder.append("</TABLE>>");
