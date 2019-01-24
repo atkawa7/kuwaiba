@@ -1689,21 +1689,21 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     }
      
     @Override
-    public boolean isSubclassOf(String allegedParent, String classToBeEvaluated) throws MetadataObjectNotFoundException {
+    public boolean isSubclassOf(String allegedParent, String classToBeEvaluated) throws MetadataObjectNotFoundException {//CacheManager
         if (classToBeEvaluated == null)
             return false;
-
-        ClassMetadata currentClass = getClass(classToBeEvaluated);
 
         if (allegedParent.equals(classToBeEvaluated))
             return true;
 
+        ClassMetadata currentClass = getClass(classToBeEvaluated);
+        
         if (currentClass.getParentClassName() == null)
             return false;
 
         if (currentClass.getParentClassName().equals(allegedParent))
             return true;
-        else
+        else //Search recursively
             return isSubclassOf(allegedParent, currentClass.getParentClassName());
     }
     

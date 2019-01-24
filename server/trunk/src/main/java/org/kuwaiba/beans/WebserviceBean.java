@@ -243,6 +243,8 @@ public interface WebserviceBean {
     public List<RemoteObjectLight> getContainersBetweenObjects(String objectAClassName, long objectAId,
             String objectBClassName, long objectBId, String containerClassName, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteObjectLightList> getPhysicalConnectionsInObject(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLight> getLogicalConnectionsInObject(String objectClass, long objectId, 
+            String ipAddress, String sessionId) throws ServerSideException;
     public RemoteObject getLinkConnectedToPort(String portClassName, long portId, String ipAddress, String sessionId) throws ServerSideException;
     //Service Manager
     public void associateObjectToService(String objectClass, long objectId, String serviceClass, long serviceId, String ipAddress, String sessionId) throws ServerSideException;

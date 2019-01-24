@@ -331,7 +331,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throw new OperationNotPermittedException("Can not create objects of abstract classes");
         
         try(Transaction tx = graphDb.beginTx()) {
-            Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME,className);
+            Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
             
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
@@ -344,7 +344,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             }
 
             Node parentNode = null;
-            if (parentOid != -1){
+            if (parentOid != -1) {
                  parentNode = getInstanceOfClass(parentClassName, parentOid);
                 if (parentNode == null)
                     throw new BusinessObjectNotFoundException(parentClassName, parentOid);
@@ -818,7 +818,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     return new BusinessObject(Constants.NODE_DUMMYROOT, -1, Constants.NODE_DUMMYROOT);
                 
             }
-            throw new InvalidArgumentException(String.format("The parent of object with id %s could not be found", oid));
+            
+            throw new InvalidArgumentException(String.format("The parent of %s (%s) could not be found", objectNode.getProperty(Constants.PROPERTY_NAME), oid));
         }
     }
     
@@ -1643,7 +1644,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 Node child = childOfRelationship.getStartNode();
 
                 if (!child.getRelationships(RelTypes.INSTANCE_OF).iterator().hasNext())
-                    throw new MetadataObjectNotFoundException(String.format("Class for object with id %s could not be found", child.getId()));
+                    throw new MetadataObjectNotFoundException(String.format("Class for %s (%s) could not be found", 
+                            child.getProperty(Constants.PROPERTY_NAME), child.getId()));
 
                 String className = Util.getClassName(child);
                 if (mem.isSubclassOf(classToFilter, className)){
@@ -3372,9 +3374,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 throw new InvalidArgumentException(String.format("The object with %s (%s) is related to list type %s (%s), but that is not consistent with the data model", 
                             instance.getProperty(Constants.PROPERTY_NAME), instance.getId(), relationship.getEndNode().getProperty(Constants.PROPERTY_NAME), relationship.getEndNode().getId()));
         }
-        BusinessObject res = new BusinessObject(classMetadata.getName(), instance.getId(), name, attributes);
-
-        return res;
         
+        return new BusinessObject(classMetadata.getName(), instance.getId(), name, attributes);
     }
 }

@@ -2433,6 +2433,46 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
+    public List<RemoteObjectLight> getLogicalConnectionsInObject(String objectClass, long objectId, 
+            String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend")); //NOI18N
+        try {
+            aem.validateWebServiceCall("getLogicalConnectionsInObject", ipAddress, sessionId); //NOI18N
+            List<RemoteObjectLight> res = new ArrayList<>();
+            
+            List<BusinessObjectLight> allCommunicationsPorts = bem.getChildrenOfClassLightRecursive(objectId, objectClass, "GenericCommunicationsPort", -1);
+            
+            for (BusinessObjectLight aCommunicationsPort : allCommunicationsPorts) {
+                HashMap<String, List<BusinessObjectLight>> specialAttributes = bem.getSpecialAttributes(aCommunicationsPort.getClassName(), aCommunicationsPort.getId());
+                
+                if (specialAttributes.containsKey("sdhTLEndpointA"))
+                    res.add(new RemoteObjectLight(specialAttributes.get("sdhTLEndpointA").get(0))); //NOI18N
+                
+                if (specialAttributes.containsKey("sdhTLEndpointB"))
+                    res.add(new RemoteObjectLight(specialAttributes.get("sdhTLEndpointB").get(0))); //NOI18N
+                
+                 if (specialAttributes.containsKey("sdhTTLEnpointA"))
+                    res.add(new RemoteObjectLight(specialAttributes.get("sdhTLEndpointA").get(0))); //NOI18N
+                
+                if (specialAttributes.containsKey("sdhTTLEnpointB"))
+                    res.add(new RemoteObjectLight(specialAttributes.get("sdhTLEndpointB").get(0))); //NOI18N
+                
+                if (specialAttributes.containsKey("mplsLinkEndpointA"))
+                    res.add(new RemoteObjectLight(specialAttributes.get("mplsLinkEndpointA").get(0))); //NOI18N
+                
+                if (specialAttributes.containsKey("mplsLinkEndpointB"))
+                    res.add(new RemoteObjectLight(specialAttributes.get("mplsLinkEndpointB").get(0))); //NOI18N
+            }
+            
+            return res;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    
+    @Override
     public RemoteObject getLinkConnectedToPort(String portClassName, long portId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend")); //NOI18N
@@ -7069,24 +7109,24 @@ public class WebserviceBeanImpl implements WebserviceBean {
         RemoteObjectLight tempEndPoint = null;
         List<RemoteObjectLinkObject> e2eMap = new ArrayList<>();
         
-        for(int i = 0; i < path.size(); i++){
+        for(int i = 0; i < path.size(); i++) {
             if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALLINK, path.get(i).getClassName()))
                 connection = bem.getObject(path.get(i).getClassName(), path.get(i).getId());
 
-            else if(!mem.isSubclassOf(Constants.CLASS_VIRTUALPORT, path.get(i).getClassName())){
+            else if(!mem.isSubclassOf(Constants.CLASS_VIRTUALPORT, path.get(i).getClassName())) {
                 //when two ports are followed the parent could be a GenericDistributionFrame(e.g. an ODF)
-                if(i+1 < path.size() && mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALPORT, path.get(i+1).getClassName())){
+                if(i+1 < path.size() && mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALPORT, path.get(i+1).getClassName())) {
                     device = bem.getParentOfClass(path.get(i).getClassName(), path.get(i).getId(), Constants.CLASS_GENERICDISTRIBUTIONFRAME);
                     i++;
                 }//if the parent could not be found it should be aGenericCommunications element(e.g. Router, Cloud, MPLSRouter, etc)
                 if(device == null)
                     device = bem.getParentOfClass(path.get(i).getClassName(), path.get(i).getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
 
-                if(connection == null){
+                if(connection == null) {
                     tempEndPoint = path.get(i);
                     tempDevice = device;
                     device = null;
-                }else{ //if enters here it means that we have enough information to create the structure RemoteObjectLinkObject 
+                } else { //if enters here it means that we have enough information to create the structure RemoteObjectLinkObject 
                     e2eMap.add(new RemoteObjectLinkObject(new RemoteObjectLight(tempDevice), tempEndPoint, new RemoteObject(connection), path.get(i), new RemoteObjectLight(device)));
                     connection = null;
                     tempEndPoint = path.get(i);
