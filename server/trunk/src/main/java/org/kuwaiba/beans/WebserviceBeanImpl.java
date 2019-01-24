@@ -2302,10 +2302,10 @@ public class WebserviceBeanImpl implements WebserviceBean {
                         logicalCircuitDetails.getConnectionObject(), logicalEndpointB, physicalEndpointB, deviceB));
                 //physical part, side A
                 if (!logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty()) 
-                    e2eMap.addAll(getpPysicalPathMap(logicalCircuitDetails.getPhysicalPathForEndpointA()));
+                    e2eMap.addAll(getpPhysicalPathMap(logicalCircuitDetails.getPhysicalPathForEndpointA()));
                 //physical part, side B
                 if (!logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty()) 
-                    e2eMap.addAll(getpPysicalPathMap(logicalCircuitDetails.getPhysicalPathForEndpointB()));
+                    e2eMap.addAll(getpPhysicalPathMap(logicalCircuitDetails.getPhysicalPathForEndpointB()));
                 //VLANs side A
 //                HashMap<RemoteObjectLight, List<RemoteObjectLight>> physicalPathForVlansEndpointA = new HashMap<>(); 
 //                if(logicalCircuitDetails.getEndpointA() != null && !logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty())
@@ -7044,16 +7044,25 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
     }
     // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Get Physical connections helper. Click on the + sign on the left to edit the code.">    
     /**
-     * 
-     * @param path
-     * @return
+     * Provides a generic 
+     * parser between physical path and a simplified list, of objects connections objects
+     * [Node1 - Node2]
+     * [Node1 - Node3]
+     * [Node3 - Node4]
+     * @param path a physical path with endpoint, connection, endpoint(one or several ports, mirror, virtual, service instances)
+     * @return a list of ConfigurationItem-connection-ConfigurationItem
      * @throws MetadataObjectNotFoundException
      * @throws MetadataObjectNotFoundException
      * @throws BusinessObjectNotFoundException
      * @throws InvalidArgumentException 
      */
-    private List<RemoteObjectLinkObject> getpPysicalPathMap(List<RemoteObjectLight> path) throws MetadataObjectNotFoundException, MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException{
+    private List<RemoteObjectLinkObject> getpPhysicalPathMap(List<RemoteObjectLight> path) 
+            throws MetadataObjectNotFoundException, MetadataObjectNotFoundException, 
+            BusinessObjectNotFoundException, InvalidArgumentException
+    {
         BusinessObject connection  = null;
         BusinessObject device = null;
         BusinessObject tempDevice = null;
@@ -7088,4 +7097,5 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
         return e2eMap;
     }
+    // </editor-fold>
 }
