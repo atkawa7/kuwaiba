@@ -246,6 +246,28 @@ public class ProcessInstanceBean {
         return null;
     }
     
+    public String getProcessInstanceInfo() {
+        
+        List<RemoteActivityDefinition> activityDefinitions = getCurrentActivityDefinition();
+        if (activityDefinitions == null)
+            return null;    
+        
+        String info = "";
+                
+        for (int i = 0; i < activityDefinitions.size(); i++) {
+            RemoteActivityDefinition activityDefinition = activityDefinitions.get(i);
+            
+            if (activityDefinition.getName() == null)
+                return null;
+            
+            info += " <b>Path</b> " + (i + 1) + " -> " + activityDefinition.getName();
+            
+            if (i < activityDefinitions.size() - 1)
+                info += " /";
+        }
+        return info;
+    }
+    
     public String getServiceCode() {
         try {
             List<RemoteActivityDefinition> path = wsBean.getProcessInstanceActivitiesPath(

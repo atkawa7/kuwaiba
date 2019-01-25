@@ -25,11 +25,16 @@ import javax.xml.stream.XMLStreamReader;
  *
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class ElementGrid extends AbstractElement {        
+public class ElementGrid extends AbstractElement {
+    public static final String SELECTION_MODE_SINGLE = "single";
+    public static final String SELECTION_MODE_MULTI = "multi";
+    public static final String SELECTION_MODE_NONE = "none";
+    
     private List<ElementColumn> columns;
     private List<List<Object>> rows;
     private boolean shared = false;
     private long selectedRow = -1;
+    private String selectionMode;
         
     public ElementGrid() {
         
@@ -139,10 +144,19 @@ public class ElementGrid extends AbstractElement {
         return null;        
     }
     
+    public String getSelectionMode() {
+        return selectionMode;        
+    }
+        
+    public void setSelectionMode(String selectionMode) {
+        this.selectionMode = selectionMode;        
+    }
+            
     @Override
     public void initFromXML(XMLStreamReader reader) throws XMLStreamException {
         super.initFromXML(reader);
         setShared(reader);
+        setSelectionMode(reader);
         
         columns = new ArrayList();
         QName tagGrid = new QName(Constants.Tag.GRID);
@@ -170,6 +184,10 @@ public class ElementGrid extends AbstractElement {
     
     private void setShared(XMLStreamReader reader) {
         shared = Boolean.valueOf(reader.getAttributeValue(null, Constants.Attribute.SHARED));
+    }
+    
+    public void setSelectionMode(XMLStreamReader reader) {
+        selectionMode = reader.getAttributeValue(null, Constants.Attribute.SELECTION_MODE);
     }
     
     @Override

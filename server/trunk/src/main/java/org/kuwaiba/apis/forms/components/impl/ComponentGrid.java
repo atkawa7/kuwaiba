@@ -78,8 +78,8 @@ public class ComponentGrid extends GraphicalComponent {
         }
     }
     
-    private final List<HashMap<String, Object>> rows = new ArrayList();
-    
+    private final List<HashMap<String, Object>> rows = new ArrayList();    
+  
     public ComponentGrid() {        
         super(new Grid<HashMap<String, Object>>());
     }
@@ -116,6 +116,15 @@ public class ComponentGrid extends GraphicalComponent {
         if (element instanceof ElementGrid) {
             ElementGrid grid = (ElementGrid) element;
             
+            if (grid.getSelectionMode() != null) {
+                if(grid.getSelectionMode().equals(ElementGrid.SELECTION_MODE_MULTI))
+                    getComponent().setSelectionMode(Grid.SelectionMode.MULTI);
+                else if(grid.getSelectionMode().equals(ElementGrid.SELECTION_MODE_NONE))
+                    getComponent().setSelectionMode(Grid.SelectionMode.NONE);
+                else if(grid.getSelectionMode().equals(ElementGrid.SELECTION_MODE_SINGLE))
+                    getComponent().setSelectionMode(Grid.SelectionMode.SINGLE);
+            }
+            
             if (grid.getColums() != null) {
                 for (ElementColumn column : grid.getColums()) {
                     Grid.Column gridColumn = getComponent().addColumn(row -> row.get(column.getCaption())).setCaption(column.getCaption());
@@ -139,22 +148,32 @@ public class ComponentGrid extends GraphicalComponent {
             getComponent().addSelectionListener(new SelectionListener() {
                 @Override
                 public void selectionChange(SelectionEvent event) {
-                    long idSelectRow = -1;
-                    
-                    if (!event.getFirstSelectedItem().equals(Optional.empty())) {
+                    if (ElementGrid.SELECTION_MODE_MULTI.equals(grid.getSelectionMode()) && 
+                        event.getAllSelectedItems() != null) {
                         
-                        Object selectedItem = event.getFirstSelectedItem().get();
-                        
-                        if (selectedItem instanceof IndexedHashMap) {
-                            IndexedHashMap selectedRow = (IndexedHashMap) selectedItem;
-                            idSelectRow = selectedRow.getIndex();
+                        for (Object selectedItem : event.getAllSelectedItems()) {
+                            selectedItem.toString();
+                            int i = 0;
                         }
                     }
-                    if (event.isUserOriginated()) {
-                        fireComponentEvent(new EventDescriptor(
-                            Constants.EventAttribute.ONPROPERTYCHANGE, 
-                            Constants.Property.SELECTED_ROW, 
-                            idSelectRow, -1));
+                    else {                    
+                        long idSelectRow = -1;
+
+                        if (!event.getFirstSelectedItem().equals(Optional.empty())) {
+
+                            Object selectedItem = event.getFirstSelectedItem().get();
+
+                            if (selectedItem instanceof IndexedHashMap) {
+                                IndexedHashMap selectedRow = (IndexedHashMap) selectedItem;
+                                idSelectRow = selectedRow.getIndex();
+                            }
+                        }
+                        if (event.isUserOriginated()) {
+                            fireComponentEvent(new EventDescriptor(
+                                Constants.EventAttribute.ONPROPERTYCHANGE, 
+                                Constants.Property.SELECTED_ROW, 
+                                idSelectRow, -1));
+                        }
                     }
                 }
             });

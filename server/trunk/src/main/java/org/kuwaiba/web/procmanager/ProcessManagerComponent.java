@@ -16,15 +16,10 @@ package org.kuwaiba.web.procmanager;
 
 import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.Page;
 import com.vaadin.ui.MenuBar;
-import java.util.List;
 import javax.inject.Inject;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
-import org.kuwaiba.apis.web.gui.notifications.Notifications;
-import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.web.IndexUI;
@@ -54,19 +49,9 @@ public class ProcessManagerComponent extends AbstractTopComponent {
                 
         RemoteProcessDefinition processDefinition = (RemoteProcessDefinition) getSession().getAttribute("selectedProcessDefinition");
         
-        try {
-            List<RemoteProcessInstance> processInstances = wsBean.getProcessInstances(
-                processDefinition.getId(), 
-                Page.getCurrent().getWebBrowser().getAddress(), 
-                ((RemoteSession) getSession().getAttribute("session")).getSessionId());
-
-            ProcessInstancesView processInstancesView = new ProcessInstancesView(processDefinition, processInstances, wsBean, ((RemoteSession) getSession().getAttribute("session")));
-            addComponent(processInstancesView);
-            setExpandRatio(processInstancesView, 9.7f);
-
-        } catch (ServerSideException ex) {
-            Notifications.showError(ex.getMessage());
-        }
+        ProcessInstancesView processInstancesView = new ProcessInstancesView(processDefinition, wsBean, ((RemoteSession) getSession().getAttribute("session")));
+        addComponent(processInstancesView);
+        setExpandRatio(processInstancesView, 9.7f);
     }
 
     @Override

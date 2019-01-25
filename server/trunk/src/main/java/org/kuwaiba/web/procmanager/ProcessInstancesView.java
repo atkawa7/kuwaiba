@@ -21,9 +21,11 @@ import com.vaadin.event.selection.SelectionListener;
 import org.kuwaiba.apis.web.gui.notifications.MessageBox;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
@@ -54,6 +56,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConditionalActivi
 import org.kuwaiba.util.i18n.I18N;
 import org.kuwaiba.web.IndexUI;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Image;
 import com.vaadin.ui.themes.ValoTheme;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
@@ -76,7 +79,7 @@ public class ProcessInstancesView extends VerticalLayout {
     
     public static Boolean debugMode;
             
-    public ProcessInstancesView(RemoteProcessDefinition processDefinition, List<RemoteProcessInstance> processes, WebserviceBean wsBean, RemoteSession session) {
+    public ProcessInstancesView(RemoteProcessDefinition processDefinition, WebserviceBean wsBean, RemoteSession session) {
         
         debugMode = Boolean.valueOf(String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("debugMode")));
         
@@ -85,13 +88,39 @@ public class ProcessInstancesView extends VerticalLayout {
         setMargin(false);
                 
         this.processDefinition = processDefinition;
-        this.processes = processes;
+        
+        try {
+            this.processes = wsBean.getProcessInstances(
+                processDefinition.getId(), 
+                Page.getCurrent().getWebBrowser().getAddress(), 
+                session.getSessionId());
+            
+        } catch (ServerSideException ex) {
+            this.processes = new ArrayList();
+            Notifications.showError(ex.getMessage());
+        }
         this.wsBean = wsBean;
         this.session = session;
         
         getAllActivities(processDefinition.getStartActivity());
         
         initView();
+    }
+        
+    private RemoteProcessDefinition getRemoteProcessDefinition() {
+        return processDefinition;
+    }
+    
+    private WebserviceBean getWebserviceBean() {
+        return wsBean;
+    }
+    
+    private RemoteSession getRemoteSession() {
+        return session;            
+    }
+    
+    private Grid getGrid() {
+        return grid;
     }
     
     public static void setActionComponent(Component component, ProcessInstancesView processInstancesView) {
@@ -116,11 +145,80 @@ public class ProcessInstancesView extends VerticalLayout {
             btnBack.addClickListener(new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent event) {
-                    setActionComponent(processInstancesView, null);
+                    setActionComponent(
+                        new ProcessInstancesView(processInstancesView.getRemoteProcessDefinition(), processInstancesView.getWebserviceBean(), processInstancesView.getRemoteSession()), 
+                            null);
                 }
             });
-            verticalLayout.addComponent(btnBack);
-            verticalLayout.setExpandRatio(btnBack, 0.5f);
+            
+            UI.getCurrent().getPage().getStyles().add(""
+                + ".v-horizontal-information { "
+                + "    background: #bbdefb; "
+                + "    border: 1px solid #42a5f5; "
+                + "}");
+            
+            HorizontalLayout hlyInformation = new HorizontalLayout();
+            hlyInformation.setStyleName("v-horizontal-information");
+            hlyInformation.setWidth(90, Unit.PERCENTAGE);
+            hlyInformation.setHeight(90, Unit.PERCENTAGE);
+            hlyInformation.setSpacing(false);
+            
+            Image imageInfo = new Image();
+            imageInfo.setSource(new ThemeResource("icons/icon_info.png"));
+            
+            String processInstanceinfo = null;
+            
+            if (processInstancesView.getGrid() != null && processInstancesView.getGrid().getSelectedItems() != null) {
+                if (processInstancesView.getGrid().getSelectedItems().iterator() != null && 
+                    processInstancesView.getGrid().getSelectedItems().iterator().hasNext()) {
+                    Object item = processInstancesView.getGrid().getSelectedItems().iterator().next();
+                    if (item instanceof ProcessInstanceBean)
+                        processInstanceinfo = ((ProcessInstanceBean) item).getProcessInstanceInfo();
+                }
+            }                                    
+            String info = processInstancesView.getRemoteProcessDefinition().getName() + ": " + (processInstanceinfo != null ? processInstanceinfo : "Process Instance Information not Available");
+            Label lblInfo = new Label();
+            lblInfo.addStyleName(ValoTheme.LABEL_LARGE);
+            lblInfo.setContentMode(ContentMode.HTML);
+            lblInfo.setValue(info);            
+                        
+            Button btnClose = new Button(VaadinIcons.CLOSE_CIRCLE);
+            btnClose.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+            btnClose.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+            btnClose.addStyleName(ValoTheme.BUTTON_LARGE);
+            btnClose.addStyleName(ValoTheme.BUTTON_DANGER);
+                        
+            hlyInformation.addComponent(imageInfo);
+            hlyInformation.addComponent(lblInfo);
+            hlyInformation.addComponent(btnClose);
+            
+            hlyInformation.setExpandRatio(imageInfo, 0.5f);
+            hlyInformation.setExpandRatio(lblInfo, 9f);
+            hlyInformation.setExpandRatio(btnClose, 0.5f);
+            hlyInformation.setComponentAlignment(imageInfo, Alignment.MIDDLE_CENTER);
+            hlyInformation.setComponentAlignment(lblInfo, Alignment.MIDDLE_LEFT);
+            hlyInformation.setComponentAlignment(btnClose, Alignment.MIDDLE_RIGHT);
+            
+            HorizontalLayout horizontalLayout = new HorizontalLayout();
+            horizontalLayout.setSpacing(false);
+            horizontalLayout.addComponent(btnBack);
+            horizontalLayout.addComponent(hlyInformation);
+            horizontalLayout.setSizeFull();
+            
+            horizontalLayout.setExpandRatio(btnBack, 0.3f);
+            horizontalLayout.setExpandRatio(hlyInformation, 9.7f);
+            horizontalLayout.setComponentAlignment(hlyInformation, Alignment.MIDDLE_CENTER);
+            
+            btnClose.addClickListener(new ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent event) {
+                    horizontalLayout.removeComponent(hlyInformation);
+                }
+            });
+////            Label lblServiceName = new Label(processInstancesView.getRemoteProcessDefinition().getName());
+////            lblServiceName.addStyleName(ValoTheme.LABEL_BOLD);
+            verticalLayout.addComponent(horizontalLayout);
+            verticalLayout.setExpandRatio(horizontalLayout, 0.5f);
         }
         verticalLayout.addComponent(component);
         verticalLayout.setExpandRatio(component, 9.5f);
@@ -468,7 +566,7 @@ public class ProcessInstancesView extends VerticalLayout {
             return;
         }
         
-        MessageBox.getInstance().showMessage(new Label("Create an instance of the process")).addClickListener(new Button.ClickListener() {
+        MessageBox.getInstance().showMessage(new Label("Create an Instance of the Process")).addClickListener(new Button.ClickListener() {
                                                 
             @Override
             public void buttonClick(Button.ClickEvent event) {

@@ -338,7 +338,7 @@ public class ProcessInstanceView extends DynamicComponent {
             if (currentActivity.getType() == ActivityDefinition.TYPE_END) {
                 btnNext.setEnabled(false);                    
             }
-
+            
             Button.ClickListener clickListener = new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent event) {
@@ -829,13 +829,15 @@ public class ProcessInstanceView extends DynamicComponent {
                         activityIndex = i;
                 }
                 if (activityIndex - 1 >= 0) {
+                    //TODO: The parallel activity JOIN_FORK is not supported yet
                     for (RemoteActivityDefinition activityDef : lstActivities) {
                         
                         if (activityDef instanceof RemoteParallelActivityDefinition) {
                                                         
                             RemoteParallelActivityDefinition parallelAcvitityDef = (RemoteParallelActivityDefinition) activityDef;
                                                         
-                            if (parallelAcvitityDef.getPaths() != null) {
+                            if (parallelAcvitityDef.getSequenceFlow() == ParallelActivityDefinition.FORK && 
+                                parallelAcvitityDef.getPaths() != null) {
                                 
                                 for (RemoteActivityDefinition anActivityDef : parallelAcvitityDef.getPaths()) {
                                     if (anActivityDef.getId() == activityId)
@@ -844,9 +846,55 @@ public class ProcessInstanceView extends DynamicComponent {
                             }
                         }
                     }
-                    
+                    if (lstActivities.get(activityIndex) instanceof RemoteParallelActivityDefinition) {
+                        RemoteParallelActivityDefinition parallelActivityDefinition = (RemoteParallelActivityDefinition) lstActivities.get(activityIndex);
+                        if (parallelActivityDefinition.getSequenceFlow() == ParallelActivityDefinition.JOIN) {
+                            RemoteParallelActivityDefinition join = parallelActivityDefinition;
+                            try {                    
+                                List<RemoteActivityDefinition> path = wsBean.getProcessInstanceActivitiesPath(
+                                    processInstance.getId(), 
+                                    Page.getCurrent().getWebBrowser().getAddress(), 
+                                    remoteSession.getSessionId());
+                                List<RemoteActivityDefinition> incomingActivityDefs = new ArrayList();
+                                for (RemoteActivityDefinition item : path) {
+                                    /*
+                                    Get incoming RemoteConditionalActivityDefinition &  
+                                    RemoteParallelActivityDefinition activities to join
+                                    parallel flow are not supported yet, because
+                                    in the current process definitions no are
+                                    presented cases that use it, in the case of be
+                                    needed this method must be recursive.
+                                    */
+                                    if (item.getNextActivity() != null &&
+                                               item.getNextActivity().getId() == join.getId()){
+                                        incomingActivityDefs.add(item);
+                                    }
+                                }
+                                for (RemoteActivityDefinition incomingActivityDef : incomingActivityDefs) {
+                                    try {
+                                        wsBean.getArtifactForActivity(
+                                            processInstance.getId(),
+                                            incomingActivityDef.getId(),
+                                            Page.getCurrent().getWebBrowser().getAddress(),
+                                            remoteSession.getSessionId());  
+                                    } catch (ServerSideException ex) {
+                                        //Expected exception when the artifact is not found
+                                        Notifications.showWarning(
+                                            (join.getName() != null ? join.getName() : "Activity")
+                                            + " are disable"
+                                            + " meanwhile all the parallel paths of the"
+                                            + " current process are not finish");
+                                        return false;
+                                    }
+                                }
+                                return true;
+                            } catch(ServerSideException ex) {
+                                Notifications.showError(ex.getMessage());
+                            }
+                        }
+                    }
                     RemoteActivityDefinition activityDef = lstActivities.get(activityIndex - 1);
-                    
+                                        
                     if (!(activityDef instanceof RemoteParallelActivityDefinition)) {
                         
                         wsBean.getArtifactForActivity(
