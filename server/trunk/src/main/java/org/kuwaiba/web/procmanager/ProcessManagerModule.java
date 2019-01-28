@@ -71,30 +71,36 @@ public class ProcessManagerModule extends AbstractModule {
     @Override
     public void attachToMenu(MenuBar menuBar) {
         MenuItem menuProcessManager = menuBar.addItem(I18N.gm("procmanager"), null);
-        MenuItem mnuStartNewProcess = menuProcessManager.addItem(I18N.gm("procmanager.start_new_process"), null);
-        MenuItem mnuExplorerProcesses = menuProcessManager.addItem(I18N.gm("procmanager.explore_processes"), null);
-        
-        try {
-            List<RemoteProcessDefinition> processDefinitions = wsBean.getProcessDefinitions(
+        List<RemoteProcessDefinition> processDefinitions = null;
+        try {        
+            processDefinitions = wsBean.getProcessDefinitions(
                 Page.getCurrent().getWebBrowser().getAddress(), 
                 session.getSessionId());
-
+        } catch (ServerSideException ex) {
+            Notifications.showError(ex.getMessage());
+        }
+        
+        if (processDefinitions != null && !processDefinitions.isEmpty()) {
+            
+            MenuItem mnuStartNewProcess = menuProcessManager.addItem(I18N.gm("procmanager.start_new_process"), null);
+            MenuItem mnuExplorerProcesses = menuProcessManager.addItem(I18N.gm("procmanager.explore_processes"), null);
+                        
             for (RemoteProcessDefinition processDefinition : processDefinitions) {
-                
+
                 mnuStartNewProcess.addItem(processDefinition.getName(), null, new MenuBar.Command() {
-                    
+
                     @Override
                     public void menuSelected(MenuItem selectedItem) {
                         UI.getCurrent().getSession().setAttribute("selectedProcessDefinition", processDefinition); //NOI18N
                         UI.getCurrent().getNavigator().addView(ProcessManagerComponent.VIEW_NAME, open());
                         UI.getCurrent().getNavigator().navigateTo(ProcessManagerComponent.VIEW_NAME);
-                        
+
                         ProcessInstancesView.createProcessInstance(null, processDefinition, wsBean, session);
                     }
                 });
-                
+
                 mnuExplorerProcesses.addItem(processDefinition.getName(), null, new MenuBar.Command() {
-                    
+
                     @Override
                     public void menuSelected(MenuBar.MenuItem selectedItem) {
                         UI.getCurrent().getSession().setAttribute("selectedProcessDefinition", processDefinition); //NOI18N
@@ -103,24 +109,24 @@ public class ProcessManagerModule extends AbstractModule {
                     }
                 });
             }
-
-        } catch (ServerSideException ex) {
-            Notifications.showError(ex.getMessage());
-        }
-        
-        MenuItem menuItemOptions = menuProcessManager.addItem(I18N.gm("options"), null);
-        menuItemOptions.addItem(I18N.gm("reload"), null, new MenuBar.Command() {
-            @Override
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                try {
-                    wsBean.reloadProcessDefinitions(
-                            Page.getCurrent().getWebBrowser().getAddress(),
-                            session.getSessionId());
-                } catch (ServerSideException ex) {
-                    Notifications.showError(ex.getMessage());
+            
+            MenuItem menuItemOptions = menuProcessManager.addItem(I18N.gm("options"), null);
+            menuItemOptions.addItem(I18N.gm("reload"), null, new MenuBar.Command() {
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    try {
+                        wsBean.reloadProcessDefinitions(
+                                Page.getCurrent().getWebBrowser().getAddress(),
+                                session.getSessionId());
+                    } catch (ServerSideException ex) {
+                        Notifications.showError(ex.getMessage());
+                    }
                 }
-            }
-        });
+            });
+        }
+        else {
+            menuProcessManager.addItem(I18N.gm("procmanager.no_processes_found"), null).setEnabled(false);            
+        }
     }
 
     @Override

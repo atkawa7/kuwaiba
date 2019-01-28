@@ -117,12 +117,20 @@ public class ComponentGrid extends GraphicalComponent {
             ElementGrid grid = (ElementGrid) element;
             
             if (grid.getSelectionMode() != null) {
-                if(grid.getSelectionMode().equals(ElementGrid.SELECTION_MODE_MULTI))
-                    getComponent().setSelectionMode(Grid.SelectionMode.MULTI);
-                else if(grid.getSelectionMode().equals(ElementGrid.SELECTION_MODE_NONE))
-                    getComponent().setSelectionMode(Grid.SelectionMode.NONE);
-                else if(grid.getSelectionMode().equals(ElementGrid.SELECTION_MODE_SINGLE))
-                    getComponent().setSelectionMode(Grid.SelectionMode.SINGLE);
+                switch(grid.getSelectionMode()) {
+                    case ElementGrid.SELECTION_MODE_MULTI:
+                        getComponent().setSelectionMode(Grid.SelectionMode.MULTI);
+                    break;
+                    case ElementGrid.SELECTION_MODE_NONE:
+                        getComponent().setSelectionMode(Grid.SelectionMode.NONE);
+                    break;
+                    case ElementGrid.SELECTION_MODE_SINGLE:
+                        getComponent().setSelectionMode(Grid.SelectionMode.SINGLE);
+                    break;
+                    default:
+                        getComponent().setSelectionMode(Grid.SelectionMode.SINGLE);
+                    break;
+                }
             }
             
             if (grid.getColums() != null) {
@@ -148,13 +156,28 @@ public class ComponentGrid extends GraphicalComponent {
             getComponent().addSelectionListener(new SelectionListener() {
                 @Override
                 public void selectionChange(SelectionEvent event) {
-                    if (ElementGrid.SELECTION_MODE_MULTI.equals(grid.getSelectionMode()) && 
-                        event.getAllSelectedItems() != null) {
-                        
-                        for (Object selectedItem : event.getAllSelectedItems()) {
-                            selectedItem.toString();
-                            int i = 0;
-                        }
+                    
+                    if (ElementGrid.SELECTION_MODE_MULTI.equals(grid.getSelectionMode())) {
+                        if (event.getAllSelectedItems() != null) {
+                            List<Long> selectedRows = new ArrayList();
+                            
+                            if (!event.getAllSelectedItems().isEmpty()) {
+                                for (Object selectedItem : event.getAllSelectedItems()) {
+                                    if (selectedItem instanceof IndexedHashMap) {
+                                        IndexedHashMap selectedRow = (IndexedHashMap) selectedItem;
+                                        selectedRows.add(selectedRow.getIndex());
+                                    }
+                                }
+                            }
+                            else {
+                                selectedRows = Collections.EMPTY_LIST;
+                            }
+                            fireComponentEvent(new EventDescriptor(
+                                Constants.EventAttribute.ONPROPERTYCHANGE, 
+                                Constants.Property.SELECTED_ROWS, 
+                                selectedRows, 
+                                null));
+                        }                       
                     }
                     else {                    
                         long idSelectRow = -1;
@@ -167,13 +190,11 @@ public class ComponentGrid extends GraphicalComponent {
                                 IndexedHashMap selectedRow = (IndexedHashMap) selectedItem;
                                 idSelectRow = selectedRow.getIndex();
                             }
-                        }
-                        if (event.isUserOriginated()) {
-                            fireComponentEvent(new EventDescriptor(
-                                Constants.EventAttribute.ONPROPERTYCHANGE, 
-                                Constants.Property.SELECTED_ROW, 
-                                idSelectRow, -1));
-                        }
+                        }                        
+                        fireComponentEvent(new EventDescriptor(
+                            Constants.EventAttribute.ONPROPERTYCHANGE, 
+                            Constants.Property.SELECTED_ROW, 
+                            idSelectRow, -1));
                     }
                 }
             });

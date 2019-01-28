@@ -347,8 +347,7 @@ public class ProcessInstanceView extends DynamicComponent {
                     if (currentActivity.confirm()) {
                         
                         Label label = new Label("Are you sure you want to save this activity?");
-////                        label.setIcon(VaadinIcons.QUESTION_CIRCLE_O);
-                                                
+                                                                        
                         MessageBox.getInstance().showMessage(label).addClickListener(new Button.ClickListener() {
                             @Override
                             public void buttonClick(Button.ClickEvent event) {
@@ -722,14 +721,62 @@ public class ProcessInstanceView extends DynamicComponent {
                 RemoteActivityDefinition activityDef = lstActivities.get(lstActivities.size() - 1);
                 
                 if (activities.containsKey(activityDef)) {
+                    
+                    if (activityDef instanceof RemoteParallelActivityDefinition) {
+                        RemoteParallelActivityDefinition join = (RemoteParallelActivityDefinition) activityDef;
+                        if (join.getSequenceFlow() == ParallelActivityDefinition.JOIN) {
+                            int forkIndex = -1;
+                            int joinIndex = -1;
+                            
+                            for (int i = 0; i < lstActivities.size(); i++) {
+                                RemoteActivityDefinition activity = lstActivities.get(i);
+                                if (activity.getId() == join.getOutgoingSequenceFlowId())
+                                    forkIndex = i;
+                                else if (activity.getId() == join.getId())
+                                    joinIndex = i;
+                                if (forkIndex != -1 && joinIndex != -1)
+                                    break;
+                            }
+                            
+                            if (forkIndex != -1 && 
+                                joinIndex != -1 && 
+                                forkIndex + 1 < joinIndex) {
+                                for (int i = forkIndex + 1; i < joinIndex; i++) {
+                                    RemoteActivityDefinition activity = lstActivities.get(i);       
+                                    
+                                    if (actorEnabled(activity.getActor())) {
+                                        try {
+                                            wsBean.getArtifactForActivity(
+                                                processInstance.getId(),
+                                                activity.getId(),
+                                                Page.getCurrent().getWebBrowser().getAddress(),
+                                                remoteSession.getSessionId());
+                                        } catch (ServerSideException ex) {
+                                            //The artifact to render is which doesn't has artifact
+                                            if (activities.containsKey(activity)) {
+                                                Button btn = activities.get(activity);
+                                                activities.get(activity).setIcon(VaadinIcons.FLAG_O);
+
+                                                buttonClicked = btn;
+                                                buttonClickedResource = btn.getIcon();
+                                                btn.setIcon(VaadinIcons.CURSOR_O);
+                                                renderArtifact(activity);
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     Button btn = activities.get(activityDef);
                     activities.get(activityDef).setIcon(VaadinIcons.FLAG_O);
                                         
                     buttonClicked = btn;
                     buttonClickedResource = btn.getIcon();
                     btn.setIcon(VaadinIcons.CURSOR_O);
-                        
-                    renderArtifact(lstActivities.get(lstActivities.size() - 1));
+                    
+                    renderArtifact(activityDef);
                 }
             }
             

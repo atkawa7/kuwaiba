@@ -15,6 +15,7 @@
 package org.kuwaiba.apis.forms.elements;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamConstants;
@@ -35,6 +36,7 @@ public class ElementGrid extends AbstractElement {
     private boolean shared = false;
     private long selectedRow = -1;
     private String selectionMode;
+    private List<Long> selectedRows;
         
     public ElementGrid() {
         
@@ -58,6 +60,14 @@ public class ElementGrid extends AbstractElement {
     
     public List<List<Object>> getRows() {
         return rows;
+    }
+    
+    public List<Long> getSelectedRows() {
+        return selectedRows != null ? selectedRows : Collections.EMPTY_LIST;
+    }
+    
+    public void setSelectedRows(List<Long> selectedRows) {
+        this.selectedRows = selectedRows;
     }
     
     public boolean addRow(List<Object> row) {
@@ -224,6 +234,13 @@ public class ElementGrid extends AbstractElement {
                 }
                 if (Constants.Property.ROWS.equals(event.getPropertyName())) {
                     setRows((List<List<Object>>) event.getNewValue());
+                    firePropertyChangeEvent();
+                }
+                if (Constants.Property.SELECTED_ROWS.equals(event.getPropertyName())) {
+                    setSelectedRows(
+                        event.getNewValue() instanceof List ? 
+                        (List) event.getNewValue() : 
+                        Collections.EMPTY_LIST);
                     firePropertyChangeEvent();
                 }
             }

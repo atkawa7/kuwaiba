@@ -103,19 +103,19 @@ public class Constants {
         }
         
         public class Mode {
-            public static final String DETACHED = "detached";
-            public static final String EMBEDDED = "embedded";
+            public static final String DETACHED = "detached"; //NOI18N
+            public static final String EMBEDDED = "embedded"; //NOI18N
         }
         
         public class StyleName {
-            public static final String BOLD = "bold";
-            public static final String BUTTON_PLUS_ICON_ONLY = "buttonPlusCircleIconOnly";
-            public static final String BUTTON_CLOSE_ICON = "buttonCloseIcon";
-            public static final String BUTTON_PENCIL_ICON = "buttonPencilIcon";
-            public static final String BUTTON_PLUS_ICON = "buttonPlusIcon";
-            public static final String BUTTON_COGS_ICON = "buttonCogsIcon";
-            public static final String BUTTON_PRIMARY = "buttonPrimary";
-            public static final String BUTTON_DANGER = "buttonDanger";
+            public static final String BOLD = "bold"; //NOI18N
+            public static final String BUTTON_PLUS_ICON_ONLY = "buttonPlusCircleIconOnly"; //NOI18N
+            public static final String BUTTON_CLOSE_ICON = "buttonCloseIcon"; //NOI18N
+            public static final String BUTTON_PENCIL_ICON = "buttonPencilIcon"; //NOI18N
+            public static final String BUTTON_PLUS_ICON = "buttonPlusIcon"; //NOI18N
+            public static final String BUTTON_COGS_ICON = "buttonCogsIcon"; //NOI18N
+            public static final String BUTTON_PRIMARY = "buttonPrimary"; //NOI18N
+            public static final String BUTTON_DANGER = "buttonDanger"; //NOI18N
         }
     }
     
@@ -143,9 +143,9 @@ public class Constants {
         public static final String PROPERTY_CHANGE = "propertyChange"; //NOI18N
         
         public class Type {
-            public static final String FUNCTION = "function";
-            public static final String QUERY = "query";
-            public static final String VALIDATOR = "validator";
+            public static final String FUNCTION = "function"; //NOI18N
+            public static final String QUERY = "query"; //NOI18N
+            public static final String VALIDATOR = "validator"; //NOI18N
         }
     }
     
@@ -165,17 +165,18 @@ public class Constants {
         public static final String OUTPUT_PARAMETERS = "outputParameters"; //NOI18N
         public static final String SAVE = "save"; //NOI18N
         public static final String ALIGNMENT = "alignment"; //NOI18N
-        
+        public static final String SELECTED_ROWS = "selectedRows"; //NOI18N
+                        
         public class Alignment {
-            public static final String TOP_RIGHT = "topRight";            
-            public static final String TOP_LEFT = "topLeft";
-            public static final String TOP_CENTER = "topCenter";
-            public static final String MIDDLE_RIGHT = "middleRight";
-            public static final String MIDDLE_LEFT = "middleLeft";
-            public static final String MIDDLE_CENTER = "middleCenter";
-            public static final String BOTTOM_RIGHT = "bottomRight";
-            public static final String BOTTOM_LEFT = "bottomLeft";
-            public static final String BOTTOM_CENTER = "bottomCenter";
+            public static final String TOP_RIGHT = "topRight"; //NOI18N
+            public static final String TOP_LEFT = "topLeft"; //NOI18N
+            public static final String TOP_CENTER = "topCenter"; //NOI18N
+            public static final String MIDDLE_RIGHT = "middleRight"; //NOI18N
+            public static final String MIDDLE_LEFT = "middleLeft"; //NOI18N
+            public static final String MIDDLE_CENTER = "middleCenter"; //NOI18N
+            public static final String BOTTOM_RIGHT = "bottomRight"; //NOI18N
+            public static final String BOTTOM_LEFT = "bottomLeft"; //NOI18N
+            public static final String BOTTOM_CENTER = "bottomCenter"; //NOI18N
         }
     }
 }
