@@ -257,7 +257,6 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                         HashMap<String, String> defaultAttributes = new HashMap<>();
                         defaultAttributes.put(Constants.PROPERTY_NAME, bridgeDomainInDevice.getName());
                         long newBridgeDomain = bem.createSpecialObject("BridgeDomain", relatedOject.getClassName(), relatedOject.getId(), defaultAttributes, -1);
-                        bem.createSpecialRelationship(relatedOject.getClassName(), relatedOject.getId(),"BridgeDomain", newBridgeDomain, "networkBridgeInterface", false);
                         aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [BridgeDomain] (id:%s)", bridgeDomainInDevice.getName(), newBridgeDomain));
                         res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("Check if Bridge Domain %s exists within %s", bridgeDomainInDevice.getName(), relatedOject), 
                                     "The Bridge Domain did not exist and was created successfully"));

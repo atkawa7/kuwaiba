@@ -185,10 +185,23 @@ public class MPLSModule implements GenericCommercialModule {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
         if (!linkClass.equals("MPLSLink")) //NOI18N
-                throw new ServerSideException(String.format("Class %s is not a of MPLSLink", linkClass));
-        
-        List<BusinessObjectLight> containerLinks = bem.getSpecialAttribute(linkClass, linkId, RELATIONSHIP_MPLSLINK);
+                throw new ServerSideException(String.format("Class %s is not an MPLSLink", linkClass));
         
         bem.deleteObject(linkClass, linkId, forceDelete);
+    }
+    
+    /**
+     * Deletes a bridge domain interface. This method assumes that the class that represents a 
+     * @param bridgeDomainClass
+     * @param bridgeDomainInterfaceId 
+     */
+    public void deleteBridgeDomainInterface(String bridgeDomainClass, long bridgeDomainInterfaceId) {
+//        if (bem == null || mem == null)
+//            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+//        
+//        if (!bridgeDomainInterfaceId.equals("MPLSLink")) //NOI18N
+//                throw new ServerSideException(String.format("Class %s is not an MPLSLink", linkClass));
+//        
+//        bem.deleteObject("Bridge", linkId, forceDelete);
     }
 }

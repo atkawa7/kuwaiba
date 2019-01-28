@@ -5452,15 +5452,29 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("deleteMPLSLink", ipAddress, sessionId);
             MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
-            String linkName = bem.getObjectLight(linkClass, linkId).getName();
             mplsModule.deleteMPLSLink(linkClass, linkId, forceDelete);
-            
+            String linkName = bem.getObjectLight(linkClass, linkId).getName();
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
                 String.format("Deleted MPLS Link %s [%s]", linkName, linkClass));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
+    }
+    
+    public void deleteBridgeDomainInterface(long bridgeDomainId, String ipAddress, String sessionId) {
+//        try {
+//            aem.validateWebServiceCall("deleteBridgeDomainInterface", ipAddress, sessionId);
+//            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
+//            String linkName = bem.getObjectLight(linkClass, linkId).getName();
+//            mplsModule.deleteMPLSLink(linkClass, linkId, forceDelete);
+//            
+//            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+//                String.format("Deleted MPLS Link %s [%s]", linkName, linkClass));
+//        } catch (InventoryException ex) {
+//            throw new ServerSideException(ex.getMessage());
+//        }
     }
     // </editor-fold>    
         // <editor-fold defaultstate="collapsed" desc="Project Manager">

@@ -78,10 +78,6 @@ public class CacheManager {
      */
     private HashMap<String, List<ClassMetadataLight>> superClassIndex;
     /**
-     * 
-     */
-    private HashMap<String, List<ClassMetadataLight>> subClassIndex;
-    /**
      * A structure that caches the validators associated to a given class (the key of the hash).
      */
     private HashMap<String, List<ValidatorDefinition>> validatorDefinitionIndex;

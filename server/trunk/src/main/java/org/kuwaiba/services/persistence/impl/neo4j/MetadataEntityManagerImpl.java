@@ -1689,7 +1689,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     }
      
     @Override
-    public boolean isSubclassOf(String allegedParent, String classToBeEvaluated) throws MetadataObjectNotFoundException {//CacheManager
+    public boolean isSubclassOf(String allegedParent, String classToBeEvaluated) throws MetadataObjectNotFoundException {
         if (classToBeEvaluated == null)
             return false;
 
@@ -1728,7 +1728,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         TraversalDescription UPDATE_TRAVERSAL = graphDb.traversalDescription().
                     breadthFirst().relationships(RelTypes.EXTENDS, Direction.INCOMING);
 
-        for(Path p : UPDATE_TRAVERSAL.traverse(rootClassNode)){
+        for(Path p : UPDATE_TRAVERSAL.traverse(rootClassNode)) {
             cm.removeClass((String)p.endNode().getProperty(Constants.PROPERTY_NAME));
             ClassMetadata rootClassMetadata = Util.createClassMetadataFromNode(p.endNode());
             cm.putClass(rootClassMetadata);            
