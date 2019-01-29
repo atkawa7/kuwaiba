@@ -82,7 +82,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
         btnRackTableView.setEnabled(false);
         
         btnSelect.setSelected(true);
-        setName("Rack View to " + rack.toString());
+        setName(String.format("Rack View for %s", rack));
     }
 
     private RackViewTopComponent() {

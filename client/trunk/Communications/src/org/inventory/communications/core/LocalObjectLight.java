@@ -47,11 +47,7 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
     /**
      * Collection of flags
      */
-    protected List<LocalValidator> validators;
-    /**
-     * The display name of the object, formed by its name, the suffixes and prefixes in its validators and its class name 
-     */
-    protected String displayName;
+    protected List<LocalValidator> validators;;
 
     /**
      * This constructor is called to create dummy objects where the id is not important
@@ -60,6 +56,7 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
         this.id = -1;
         this.propertyChangeListeners = new ArrayList<>();
         this.validators = new ArrayList<>();
+        this.name = Constants.LABEL_NONAME;
     }
 
     public LocalObjectLight(long oid, String name, String className) {
@@ -68,7 +65,6 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
         this.className = className;
         this.validators = new ArrayList<>();
         this.propertyChangeListeners = new ArrayList<>();
-        updateDisplayName();
     }
 
     public LocalObjectLight(String className, String name, long id, List<RemoteValidator> validators){
@@ -82,7 +78,6 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
                 this.validators.add(new LocalValidator(remoteValidator.getName(), remoteValidator.getProperties()));
             });
         }
-        updateDisplayName();
     }
 
     public String getClassName() {
@@ -129,7 +124,6 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
     public void setName(String name) {
         String oldName = this.name;
         this.name = name;
-        updateDisplayName();
         firePropertyChangeEvent(Constants.PROPERTY_NAME, oldName, name);
     }
 
@@ -153,21 +147,6 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
             while (listenersIterator.hasNext())
                 listenersIterator.next().propertyChange(new PropertyChangeEvent(this, property, oldValue, newValue));
         }
-    }
-    
-    private void updateDisplayName() {
-        LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(className, false); //This info is usually cached already
-        String prefix = "", suffix = "";
-        for (LocalValidator aValidator : validators) {
-            String thisValidatorPrefix = aValidator.getProperties().getProperty("prefix");
-            if (thisValidatorPrefix != null)
-                prefix += thisValidatorPrefix + " ";
-            String thisValidatorSuffix = aValidator.getProperties().getProperty("suffix");
-            if (thisValidatorSuffix != null)
-                prefix += " " + thisValidatorPrefix;
-        }
-        
-        this.displayName = prefix + (getName() == null ? Constants.LABEL_NONAME : getName()) + suffix + " [" + classMetadata + "]";
     }
 
    @Override
@@ -206,8 +185,19 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
     }
 
     @Override
-    public String toString() {
-        return displayName;
+    public String toString() { //An object has a low probability to have validators, so perhaps it's not worth caching this operation
+        LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(className, false); //This info is usually cached already
+        String prefix = "", suffix = "";
+        for (LocalValidator aValidator : validators) {
+            String thisValidatorPrefix = aValidator.getProperties().getProperty("prefix");
+            if (thisValidatorPrefix != null)
+                prefix += thisValidatorPrefix + " ";
+            String thisValidatorSuffix = aValidator.getProperties().getProperty("suffix");
+            if (thisValidatorSuffix != null)
+                prefix += " " + thisValidatorPrefix;
+        }
+        
+        return prefix + getName() + suffix + " [" + classMetadata + "]";
     }
 
     @Override
