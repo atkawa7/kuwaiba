@@ -245,14 +245,19 @@ public class ProcessInstanceBean {
         }
         return null;
     }
-    
+    /**
+     * Only when process instance is in a parallel path return information
+     * @return the status of each path in a parallel section
+     */
     public String getProcessInstanceInfo() {
         
         List<RemoteActivityDefinition> activityDefinitions = getCurrentActivityDefinition();
         if (activityDefinitions == null)
-            return null;    
-        
-        String info = "";
+            return null;
+        if (activityDefinitions.size() <= 1)
+            return null;
+                        
+        String info = "Parallel Path Notice: ";
                 
         for (int i = 0; i < activityDefinitions.size(); i++) {
             RemoteActivityDefinition activityDefinition = activityDefinitions.get(i);
@@ -260,10 +265,7 @@ public class ProcessInstanceBean {
             if (activityDefinition.getName() == null)
                 return null;
             
-            info += " <b>Path</b> " + (i + 1) + " -> " + activityDefinition.getName();
-            
-            if (i < activityDefinitions.size() - 1)
-                info += " /";
+            info += "<b>Last Activity Path " + (i + 1) + " &rarr;</b> " + activityDefinition.getName() + " ";
         }
         return info;
     }

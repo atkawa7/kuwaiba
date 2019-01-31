@@ -102,7 +102,7 @@ public class ElementGrid extends AbstractElement {
         return false;
     }
     
-    public boolean removeRow(long rowToRemove) {
+    public boolean removeRow(long rowToRemove) {        
         if (rows != null && rowToRemove != -1 && rowToRemove < rows.size()) {
             rows.remove((int) rowToRemove);
             return true;
@@ -272,7 +272,10 @@ public class ElementGrid extends AbstractElement {
             String functionName = list.get(0);
 
             Runner runner = getFormStructure().getElementScript().getFunctionByName(functionName);
-
+            if (runner == null) {
+                System.out.println("[Process Engine] Function with name " + functionName + " is not found");
+                return;
+            }
             List parameters = new ArrayList();
 
             for (int i = 1; i < list.size(); i += 1) {

@@ -151,21 +151,6 @@ public class ProcessInstancesView extends VerticalLayout {
                 }
             });
             
-            UI.getCurrent().getPage().getStyles().add(""
-                + ".v-horizontal-information { "
-                + "    background: #bbdefb; "
-                + "    border: 1px solid #42a5f5; "
-                + "}");
-            
-            HorizontalLayout hlyInformation = new HorizontalLayout();
-            hlyInformation.setStyleName("v-horizontal-information");
-            hlyInformation.setWidth(90, Unit.PERCENTAGE);
-            hlyInformation.setHeight(90, Unit.PERCENTAGE);
-            hlyInformation.setSpacing(false);
-            
-            Image imageInfo = new Image();
-            imageInfo.setSource(new ThemeResource("icons/icon_info.png"));
-            
             String processInstanceinfo = null;
             
             if (processInstancesView.getGrid() != null && processInstancesView.getGrid().getSelectedItems() != null) {
@@ -175,50 +160,70 @@ public class ProcessInstancesView extends VerticalLayout {
                     if (item instanceof ProcessInstanceBean)
                         processInstanceinfo = ((ProcessInstanceBean) item).getProcessInstanceInfo();
                 }
-            }                                    
-            String info = processInstancesView.getRemoteProcessDefinition().getName() + ": " + (processInstanceinfo != null ? processInstanceinfo : "Process Instance Information not Available");
-            Label lblInfo = new Label();
-            lblInfo.addStyleName(ValoTheme.LABEL_LARGE);
-            lblInfo.setContentMode(ContentMode.HTML);
-            lblInfo.setValue(info);            
-                        
-            Button btnClose = new Button(VaadinIcons.CLOSE_CIRCLE);
-            btnClose.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-            btnClose.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-            btnClose.addStyleName(ValoTheme.BUTTON_LARGE);
-            btnClose.addStyleName(ValoTheme.BUTTON_DANGER);
-                        
-            hlyInformation.addComponent(imageInfo);
-            hlyInformation.addComponent(lblInfo);
-            hlyInformation.addComponent(btnClose);
-            
-            hlyInformation.setExpandRatio(imageInfo, 0.5f);
-            hlyInformation.setExpandRatio(lblInfo, 9f);
-            hlyInformation.setExpandRatio(btnClose, 0.5f);
-            hlyInformation.setComponentAlignment(imageInfo, Alignment.MIDDLE_CENTER);
-            hlyInformation.setComponentAlignment(lblInfo, Alignment.MIDDLE_LEFT);
-            hlyInformation.setComponentAlignment(btnClose, Alignment.MIDDLE_RIGHT);
-            
-            HorizontalLayout horizontalLayout = new HorizontalLayout();
-            horizontalLayout.setSpacing(false);
-            horizontalLayout.addComponent(btnBack);
-            horizontalLayout.addComponent(hlyInformation);
-            horizontalLayout.setSizeFull();
-            
-            horizontalLayout.setExpandRatio(btnBack, 0.3f);
-            horizontalLayout.setExpandRatio(hlyInformation, 9.7f);
-            horizontalLayout.setComponentAlignment(hlyInformation, Alignment.MIDDLE_CENTER);
-            
-            btnClose.addClickListener(new ClickListener() {
-                @Override
-                public void buttonClick(Button.ClickEvent event) {
-                    horizontalLayout.removeComponent(hlyInformation);
-                }
-            });
-////            Label lblServiceName = new Label(processInstancesView.getRemoteProcessDefinition().getName());
-////            lblServiceName.addStyleName(ValoTheme.LABEL_BOLD);
-            verticalLayout.addComponent(horizontalLayout);
-            verticalLayout.setExpandRatio(horizontalLayout, 0.5f);
+            }
+            if (processInstanceinfo != null) {
+                UI.getCurrent().getPage().getStyles().add(""
+                    + ".v-horizontal-information { "
+                    + "    background: #bbdefb; "
+                    + "    border: 1px solid #42a5f5; "
+                    + "}"
+                    + ".nuqui .processmanager .v-label-information { "
+                    + "    padding: 0px;"
+                    + "}");
+                
+                HorizontalLayout hlyInformation = new HorizontalLayout();
+                hlyInformation.setStyleName("v-horizontal-information");
+                hlyInformation.setWidth(90, Unit.PERCENTAGE);
+                hlyInformation.setHeight(90, Unit.PERCENTAGE);
+                hlyInformation.setSpacing(false);
+
+                Image imageInfo = new Image();
+                imageInfo.setSource(new ThemeResource("icons/icon_info.png"));
+                                            
+                Label lblInfo = new Label();
+                lblInfo.setStyleName("information");
+                lblInfo.addStyleName(ValoTheme.LABEL_LARGE);
+                lblInfo.setContentMode(ContentMode.HTML);
+                lblInfo.setValue(processInstanceinfo);            
+
+                Button btnClose = new Button(VaadinIcons.CLOSE_CIRCLE);
+                btnClose.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+                btnClose.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+                btnClose.addStyleName(ValoTheme.BUTTON_LARGE);
+                btnClose.addStyleName(ValoTheme.BUTTON_DANGER);
+
+                hlyInformation.addComponent(imageInfo);
+                hlyInformation.addComponent(lblInfo);
+                hlyInformation.addComponent(btnClose);
+
+                hlyInformation.setExpandRatio(imageInfo, 0.5f);
+                hlyInformation.setExpandRatio(lblInfo, 9f);
+                hlyInformation.setExpandRatio(btnClose, 0.5f);
+                hlyInformation.setComponentAlignment(imageInfo, Alignment.MIDDLE_CENTER);
+                hlyInformation.setComponentAlignment(lblInfo, Alignment.MIDDLE_LEFT);
+                hlyInformation.setComponentAlignment(btnClose, Alignment.MIDDLE_RIGHT);
+
+                HorizontalLayout horizontalLayout = new HorizontalLayout();
+                horizontalLayout.setSpacing(false);
+                horizontalLayout.addComponent(btnBack);
+                horizontalLayout.addComponent(hlyInformation);
+                horizontalLayout.setSizeFull();
+
+                horizontalLayout.setExpandRatio(btnBack, 0.3f);
+                horizontalLayout.setExpandRatio(hlyInformation, 9.7f);
+                horizontalLayout.setComponentAlignment(hlyInformation, Alignment.MIDDLE_CENTER);
+
+                btnClose.addClickListener(new ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        horizontalLayout.removeComponent(hlyInformation);
+                    }
+                });
+                verticalLayout.addComponent(horizontalLayout);
+                verticalLayout.setExpandRatio(horizontalLayout, 0.5f);
+            }
+            else
+                verticalLayout.addComponent(btnBack);
         }
         verticalLayout.addComponent(component);
         verticalLayout.setExpandRatio(component, 9.5f);
