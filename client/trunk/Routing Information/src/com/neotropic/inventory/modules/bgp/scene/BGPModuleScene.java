@@ -332,7 +332,7 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
 
     @Override
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
-        ObjectConnectionWidget newEdge = new ObjectConnectionWidget(this, edge);
+        ObjectConnectionWidget newEdge = new ObjectConnectionWidget(this, edge, ObjectConnectionWidget.LINE);
         newEdge.getActions().addAction(selectAction);
         newEdge.getActions().addAction(addRemoveControlPointAction);
         newEdge.getActions().addAction(moveControlPointAction);

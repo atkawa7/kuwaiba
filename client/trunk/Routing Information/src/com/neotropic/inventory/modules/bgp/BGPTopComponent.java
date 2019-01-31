@@ -67,11 +67,12 @@ public final class BGPTopComponent extends TopComponent {
     private ExplorerManager em;
     private BGPModuleScene scene;
     private BGPModuleService service;
-    //private SDHConfigurationObject configObject;
+    private BGPConfigurationObject configObject;
     
     public BGPTopComponent() {
         initComponents();
         initCustomComponents();
+        setName("BGP Routing");
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
     }
     
@@ -94,9 +95,7 @@ public final class BGPTopComponent extends TopComponent {
     private void initComponents() {
 
         barTools = new javax.swing.JToolBar();
-        btnSave = new javax.swing.JButton();
         btnExport = new javax.swing.JButton();
-        btnRefresh = new javax.swing.JButton();
         btnShowConnectionLabels = new javax.swing.JToggleButton();
         btnAddBackground = new javax.swing.JButton();
         btnRemoveBackground = new javax.swing.JButton();
@@ -106,19 +105,6 @@ public final class BGPTopComponent extends TopComponent {
 
         barTools.setRollover(true);
         barTools.setPreferredSize(new java.awt.Dimension(520, 40));
-
-        btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/bgp/res/save.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(BGPTopComponent.class, "BGPTopComponent.btnSave.text")); // NOI18N
-        btnSave.setToolTipText(org.openide.util.NbBundle.getMessage(BGPTopComponent.class, "BGPTopComponent.btnSave.toolTipText")); // NOI18N
-        btnSave.setFocusable(false);
-        btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnSave.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSaveActionPerformed(evt);
-            }
-        });
-        barTools.add(btnSave);
 
         btnExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/bgp/res/export.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnExport, org.openide.util.NbBundle.getMessage(BGPTopComponent.class, "BGPTopComponent.btnExport.text")); // NOI18N
@@ -132,19 +118,6 @@ public final class BGPTopComponent extends TopComponent {
             }
         });
         barTools.add(btnExport);
-
-        btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/bgp/res/refresh.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(BGPTopComponent.class, "BGPTopComponent.btnRefresh.text")); // NOI18N
-        btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(BGPTopComponent.class, "BGPTopComponent.btnRefresh.toolTipText")); // NOI18N
-        btnRefresh.setFocusable(false);
-        btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRefreshActionPerformed(evt);
-            }
-        });
-        barTools.add(btnRefresh);
 
         btnShowConnectionLabels.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/bgp/res/hide_conn_labels.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnShowConnectionLabels, org.openide.util.NbBundle.getMessage(BGPTopComponent.class, "BGPTopComponent.btnShowConnectionLabels.text")); // NOI18N
@@ -189,36 +162,12 @@ public final class BGPTopComponent extends TopComponent {
         add(pnlScrollMain, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        if (scene.getNodes().isEmpty())
-            JOptionPane.showMessageDialog(null, "The view is empty, it won't be saved", "New View", JOptionPane.INFORMATION_MESSAGE);
-        else {
-            if (service.saveCurrentView()) {
-                NotificationUtil.getInstance().showSimplePopup("Save view", NotificationUtil.INFO_MESSAGE, "View saved successfully");
-                setHtmlDisplayName(getDisplayName());
-            }
-        }
-    }//GEN-LAST:event_btnSaveActionPerformed
-
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
         ExportScenePanel exportPanel = new ExportScenePanel(new SceneExportFilter[]{ ImageFilter.getInstance() },
             scene, getDisplayName());
         DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export Options",true, exportPanel);
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }//GEN-LAST:event_btnExportActionPerformed
-
-    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-//        if (!(boolean)configObject.getProperty("saved")) {
-//            switch (JOptionPane.showConfirmDialog(this, "This topology has not been saved, do you want to save it?",
-//                I18N.gm("confirmation"), JOptionPane.YES_NO_CANCEL_OPTION)){
-//                case JOptionPane.YES_OPTION:
-//                    btnSaveActionPerformed(new ActionEvent(this, 0, "close"));
-//                    break;
-//                case JOptionPane.CANCEL_OPTION:
-//                    return;
-//            }
-//        }
-    }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void btnShowConnectionLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowConnectionLabelsActionPerformed
         scene.toggleConnectionLabels(!btnShowConnectionLabels.isSelected());
@@ -248,9 +197,7 @@ public final class BGPTopComponent extends TopComponent {
     private javax.swing.JToolBar barTools;
     private javax.swing.JButton btnAddBackground;
     private javax.swing.JButton btnExport;
-    private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnRemoveBackground;
-    private javax.swing.JButton btnSave;
     private javax.swing.JToggleButton btnShowConnectionLabels;
     private javax.swing.JScrollPane pnlScrollMain;
     // End of variables declaration//GEN-END:variables
