@@ -28,7 +28,7 @@ import org.netbeans.api.visual.widget.Scene;
 public class RackViewConnectionWidget extends ObjectConnectionWidget {
     
     public RackViewConnectionWidget(Scene scene, LocalObjectLight object) {
-        super(scene, object);
+        super(scene, object, ObjectConnectionWidget.LINE);
     }
     
     @Override

@@ -148,7 +148,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
     @Override
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
         LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(edge.getClassName(), false);
-        ObjectConnectionWidget widget = new ObjectConnectionWidget(this, edge);
+        ObjectConnectionWidget widget = new ObjectConnectionWidget(this, edge, ObjectConnectionWidget.LINE);
         widget.getActions().addAction(createSelectAction());
         widget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
         widget.getActions().addAction(addRemoveControlPointAction);
