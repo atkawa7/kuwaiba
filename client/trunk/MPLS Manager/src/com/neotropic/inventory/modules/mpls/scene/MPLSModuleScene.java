@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -297,7 +297,7 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
 
     @Override
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
-        ObjectConnectionWidget newEdge = new ObjectConnectionWidget(this, edge);
+        ObjectConnectionWidget newEdge = new ObjectConnectionWidget(this, edge, ObjectConnectionWidget.LINE);
         newEdge.getActions().addAction(selectAction);
         newEdge.getActions().addAction(addRemoveControlPointAction);
         newEdge.getActions().addAction(moveControlPointAction);
