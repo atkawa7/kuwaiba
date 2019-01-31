@@ -49,7 +49,7 @@ public class NativeTypeProperty extends PropertySupport.ReadWrite {
 
     @Override
     public void setValue(Object t) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        if (t == null || t.equals(value)) //Don't update if no changes were performed
+        if (t == null || t.equals(value) || t.equals("<null value>")) //Don't update if no changes were performed
             return;
         
         HashMap<String, Object> attributesToUpdate = new HashMap<>();
