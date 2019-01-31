@@ -31,12 +31,20 @@ public class ObjectConnectionWidget extends SelectableConnectionWidget {
      * Is this widget in high-contrast mode?
      */
     private boolean highContrast;
+    /**
+     * style for the line, dot line
+     */
+    public static final int DOT_LINE = 2;
+    /**
+     * line dot style
+     */
+    public static final int LINE = 1;
     
-    public ObjectConnectionWidget(Scene scene, LocalObjectLight object) {
+    public ObjectConnectionWidget(Scene scene, LocalObjectLight object, int lineStyle) {
         super(scene, object);
         createActions(AbstractScene.ACTION_SELECT);
         highContrast = false;
-        if(object.getClassName().equals("RadioLink"))
+        if(lineStyle == DOT_LINE)
             this.setStroke(new DotLineStroke(1));
         
     }
