@@ -2065,7 +2065,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         long logicalPortId = 0;
         if(mem.isSubclassOf(Constants.CLASS_GENERICLOGICALPORT, objectClass)){
             logicalPortId = objectId;
-            //This should be deleted after the MPLS synchronization has been finished
             if(objectClass.equals("Pseudowire"))
                 objectId = getFirstParentOfClass(objectClass, objectId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT).getId();
             else{    

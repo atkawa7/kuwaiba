@@ -253,8 +253,7 @@ public class CpwVcMplsSynchronizer {
      {
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         QName qEdge = new QName("edge"); //NOI18N
-        try {
-            //we get a MPLS view.
+        try {//we get a MPLS view.
             byte[] structure = aem.getGeneralView(view.getId()).getStructure();
             ByteArrayInputStream bais = new ByteArrayInputStream(structure);
             XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
@@ -272,10 +271,48 @@ public class CpwVcMplsSynchronizer {
 
                         BusinessObject mplsLink = bem.getObject(MPLSLINK, Long.valueOf(reader.getAttributeValue(null, "id")));
                          //The MPLS link has no been created an the sides are not connected
-                        if (mplsLink == null) 
-                            throw new InvalidArgumentException(String.format("The view is corrupted, no MPLSLink is created", reader.getAttributeValue(null,"class")));
+                        if (mplsLink == null){
+                            //throw new InvalidArgumentException(String.format("The view is corrupted, no MPLSLink is created", reader.getAttributeValue(null,"class")));
+                            BusinessObject objSideA = bem.getObject(currentASideId);
+                            if(objSideA == null)
+                                results.add(new SyncResult(dsConfigId, SyncResult.TYPE_WARNING, "searching device side devices in MPLSLink", 
+                                    String.format("no device found in one side of the connection %s", vcID)));
+                            else{
+                                List<BusinessObjectLight> specialAttribute = bem.getSpecialAttribute(objSideA.getClassName(), objSideA.getId(), "mplsLink");
+                                if(specialAttribute.isEmpty())
+                                    results.add(new SyncResult(dsConfigId, SyncResult.TYPE_WARNING, "searching device in one side of the MPLS", 
+                                        String.format("no device found in one side of the vcID %s", vcID)));
+                                else{
+                                    for (BusinessObjectLight businessObjectLight : specialAttribute) {
+                                        System.out.println("aa");
+                                        System.out.println(businessObjectLight);
+                                    }
+                                }
+                                    
+                            }
+                            BusinessObject objSideB = bem.getObject(currentBSideId);
+                            if(objSideB == null)
+                                results.add(new SyncResult(dsConfigId, SyncResult.TYPE_WARNING, "searching device on one side of the MPLS", 
+                                    String.format("no device found in one side of the connection %s", vcID)));
+                            else{
+                                List<BusinessObjectLight> specialAttribute = bem.getSpecialAttribute(objSideB.getClassName(), objSideB.getId(), "mplsLink");
+                                if(specialAttribute.isEmpty())
+                                    results.add(new SyncResult(dsConfigId, SyncResult.TYPE_WARNING, "searching device in one side of the MPLS", 
+                                        String.format("no device found in one side of the vcID %s", vcID)));
+                                else{
+                                    for (BusinessObjectLight businessObjectLight : specialAttribute) {
+                                        System.out.println("aa");
+                                        System.out.println(businessObjectLight);
+                                    }
+                                }
+                            }
+                            
+                            
+                            
+                            
+                        }
                         //We check the name of the mpls link and update the name
-                        if(!mplsLink.getName().equals(vcID)){
+                        else if(!mplsLink.getName().equals(vcID)){
                             mplsLink.getAttributes().put(Constants.PROPERTY_NAME, vcID);
                             bem.updateObject(mplsLink.getClassName(), mplsLink.getId(), mplsLink.getAttributes());
                             
@@ -422,7 +459,6 @@ public class CpwVcMplsSynchronizer {
                                     String.format("The view is corrupted, a %s is been used instead of a MPLSLink", reader.getAttributeValue(null, "class"))));
 
                         return bem.getObject(MPLSLINK, Long.valueOf(reader.getAttributeValue(null, "id")));
-                        
                     }
                 }
             }//end while

@@ -2183,6 +2183,13 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             else if(endpointA != null)
                 physicalPathForVlansEndpointA = getPhysicalPathVlans(endpointA);
+            
+            HashMap<BusinessObjectLight, List<BusinessObjectLight>> physicalPathForBDisEndpointA = new HashMap<>();    
+            if(physicalPathA != null && !physicalPathA.isEmpty())
+                physicalPathForBDisEndpointA = getEndPointContinuity("networkBridgeInterface", physicalPathA.get(physicalPathA.size() -1));
+            
+            else if(endpointA != null)
+                physicalPathForBDisEndpointA = getEndPointContinuity("networkBridgeInterface", endpointA);
 
             List<BusinessObjectLight> endpointBRelationship = bem.getSpecialAttribute(linkClass, linkId, endpointBRelationshipName);
             if (!endpointBRelationship.isEmpty()) {
@@ -2196,11 +2203,19 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             else if(endpointB != null)
                 physicalPathForVlansEndpointB = getPhysicalPathVlans(endpointB);
+            
+            HashMap<BusinessObjectLight, List<BusinessObjectLight>> physicalPathForBDisEndpointB = new HashMap<>();    
+            if(physicalPathB != null && !physicalPathB.isEmpty())
+                physicalPathForBDisEndpointB = getEndPointContinuity("networkBridgeInterface", physicalPathB.get(physicalPathB.size() -1));
+            
+            else if(endpointB != null)
+                physicalPathForBDisEndpointB =  getEndPointContinuity("networkBridgeInterface", endpointB);
 
             return new RemoteLogicalConnectionDetails(linkObject, endpointA, endpointB, 
                     physicalPathA == null ? new ArrayList<>() : physicalPathA, 
                     physicalPathB == null ? new ArrayList<>() : physicalPathB,
-                    physicalPathForVlansEndpointA, physicalPathForVlansEndpointB);
+                    physicalPathForVlansEndpointA, physicalPathForBDisEndpointA, 
+                    physicalPathForVlansEndpointB, physicalPathForBDisEndpointB);
             
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -2350,6 +2365,35 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 }
             }
             return vlansPhysicalPath;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    /**
+     * Given an endPoint and a relationship with other logical interfaces it retrieves 
+     * a path of continuity.
+     * @param endpoint a given port to check if belong to a set of other interfaces
+     * @param relationshipName a relationship that groups interfaces.
+     * @return a map with key: port, value: physical path of that port
+     * @throws ServerSideException 
+     */
+    private HashMap<BusinessObjectLight, List<BusinessObjectLight>> getEndPointContinuity(String relationshipName, BusinessObjectLight endpoint) 
+            throws ServerSideException{
+        try {
+            HashMap<BusinessObjectLight, List<BusinessObjectLight>> portsPhysicalPath = new HashMap<>();
+            if(endpoint != null){
+                //we get the the vlans to which the port belongs
+                List<BusinessObjectLight> ports = bem.getSpecialAttribute(endpoint.getClassName(), endpoint.getId(), relationshipName);
+                for (BusinessObjectLight port : ports) { //We get all the port of related with this relationship
+                    if(port.getId() != endpoint.getId()){//we get the physical path for every port of the vlan except of the given endpoint 
+                        List<BusinessObjectLight> portPhysicalPath = bem.getPhysicalPath(port.getClassName(), port.getId());
+                        if(!portPhysicalPath.isEmpty())
+                            portsPhysicalPath.put(port, portPhysicalPath);
+                    }
+                }
+            }
+            return portsPhysicalPath;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

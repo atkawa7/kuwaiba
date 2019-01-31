@@ -139,20 +139,20 @@ public class FormDashboardWidget extends AbstractDashboardWidget{
                             isMplsView = true;
                         }//SDH
                         else{
-                            RemoteObject tirbutaryLink = wsBean.getObject(serviceResource.getClassName(), serviceResource.getId(), ipAddress, sessionId);
-                            if(tirbutaryLink != null){
-                                String hop2Name = wsBean.getAttributeValueAsString(tirbutaryLink.getClassName(), 
-                                        tirbutaryLink.getId(), "hop2Name", ipAddress, sessionId);
+                            RemoteObject tributaryLink = wsBean.getObject(serviceResource.getClassName(), serviceResource.getId(), ipAddress, sessionId);
+                            if(tributaryLink != null){
+                                String hop2Name = wsBean.getAttributeValueAsString(tributaryLink.getClassName(), 
+                                        tributaryLink.getId(), "hop2Name", ipAddress, sessionId);
 
-                                String legalOwner = wsBean.getAttributeValueAsString(tirbutaryLink.getClassName(),
-                                            tirbutaryLink.getId(), "hop2LegalOwner", ipAddress, sessionId);
+                                String legalOwner = wsBean.getAttributeValueAsString(tributaryLink.getClassName(),
+                                            tributaryLink.getId(), "hop2LegalOwner", ipAddress, sessionId);
 
-                                String providerId = tirbutaryLink.getAttribute("hop2Id");
+                                String providerId = tributaryLink.getAttribute("hop2Id");
                                 if(hop2Name != null)    
                                     tempForm.getLogicalConnctions().add(tableCreator.createProviderTable(hop2Name, providerId, legalOwner));
-                                if(tirbutaryLink.getAttribute("hop1Name") != null)
-                                    tempForm.getLogicalConnctions().add(tableCreator.createProviderTableS(tirbutaryLink));
-                                RemoteObjectLight container = wsBean.getSpecialAttribute(tirbutaryLink.getClassName(), tirbutaryLink.getId(), "sdhDelivers", ipAddress, sessionId).get(0);
+                                if(tributaryLink.getAttribute("hop1Name") != null)
+                                    tempForm.getLogicalConnctions().add(tableCreator.createProviderTableS(tributaryLink));
+                                RemoteObjectLight container = wsBean.getSpecialAttribute(tributaryLink.getClassName(), tributaryLink.getId(), "sdhDelivers", ipAddress, sessionId).get(0);
                                 stm = wsBean.getSpecialAttribute(container.getClassName(), container.getId(), "sdhTransports", ipAddress, sessionId).get(0);
                             }
                         }
@@ -402,6 +402,11 @@ public class FormDashboardWidget extends AbstractDashboardWidget{
         this.contentComponent = createTables;
     }
     
+    /**
+     * search devices inside the list of tables.
+     * @param id
+     * @return 
+     */
     private int[] search(long id){
         int[] result = new int[2];
         for(int i=1; i< tables.size(); i++){

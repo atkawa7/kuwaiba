@@ -607,9 +607,8 @@ public class TableCreator {
         lytData.addComponent(createTitle(objLight.getName(), ODF));
         Component portRow = createTitleValueRow("ODF-PORT", port.getName());
         portRow.addStyleName("cell-with-border-top");
-        
         lytData.addComponent(portRow);
-        lytData.addComponent(createTitleValueRow("ODF-PORT", port.getName()));
+        
         //row
         lytData.addComponent(createTitleValueRow(""));
         //row
@@ -755,14 +754,14 @@ public class TableCreator {
         return lytProviderTable;
     }
     
-    public Component createVC(RemoteObjectLight vcMplsLink) throws ServerSideException{
-        RemoteObjectLight sideA = wsBean.getSpecialAttribute(vcMplsLink.getClassName(), vcMplsLink.getId(), "mplsEndpointA", ipAddress, sessionId).get(0);
-        RemoteObjectLight sideB = wsBean.getSpecialAttribute(vcMplsLink.getClassName(), vcMplsLink.getId(), "mplsEndpointB", ipAddress, sessionId).get(0);
-        if(sideA != null && sideB != null)
-            return createVC(vcMplsLink, sideA, sideB);
-        else 
-            throw new ServerSideException("Could not determine the end point of the MPLS Link");
-    }
+//    public Component createVC(RemoteObjectLight vcMplsLink) throws ServerSideException{
+//        RemoteObjectLight sideA = wsBean.getSpecialAttribute(vcMplsLink.getClassName(), vcMplsLink.getId(), "mplsEndpointA", ipAddress, sessionId).get(0);
+//        RemoteObjectLight sideB = wsBean.getSpecialAttribute(vcMplsLink.getClassName(), vcMplsLink.getId(), "mplsEndpointB", ipAddress, sessionId).get(0);
+//        if(sideA != null && sideB != null)
+//            return createVC(vcMplsLink, sideA, sideB);
+//        else 
+//            throw new ServerSideException("Could not determine the end point of the MPLS Link");
+//    }
     /**
      * Creates a table for a VC (MPLSLinks)
      * @param vcMPLSLink the given object in this case a MPLSLink
@@ -784,8 +783,8 @@ public class TableCreator {
         
         if(sideA != null && sideB != null){
             Component pwRow = createTitleValueRow(
-                    "PW", sideA !=null ? sideA.getName() : "-", 
-                    "PW",  sideB != null ? sideB.getName() : "-");
+                    "PW", !sideA.getName().isEmpty() ? sideA.getName() : "-", 
+                    "PW", !sideB.getName().isEmpty() ? sideB.getName() : "-");
             pwRow.addStyleName("cell-with-border-top");
             lytData.addComponent(pwRow);
             isFirstRow = false;
@@ -793,8 +792,8 @@ public class TableCreator {
         
         if(ipSource!= null && !ipSource.isEmpty() && ipDestiny != null && !ipDestiny.isEmpty()){
             Component ipsRow = createTitleValueRow(
-                    "IP" , ipSource != null && !ipSource.isEmpty() ? ipSource : "-", 
-                    "IP" , ipDestiny != null && !ipDestiny.isEmpty() ? ipDestiny : "-");
+                    "IP" , !ipSource.isEmpty() ? ipSource : "-", 
+                    "IP" , !ipDestiny.isEmpty() ? ipDestiny : "-");
             if(isFirstRow)
                 ipsRow.addStyleName("cell-with-border-top");
             lytData.addComponent(ipsRow);
@@ -828,7 +827,7 @@ public class TableCreator {
                 Page.getCurrent().getWebBrowser().getAddress(),
                 ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
         String card = "";
-        if(!parents.isEmpty() && parents.get(0).getClassName().toLowerCase().contains("swithc"))
+        if(!parents.isEmpty() && parents.get(0).getClassName().toLowerCase().contains("switch"))
             card = parents.get(parents.size() -1).getName();
         
         String mmr = wsBean.getAttributeValueAsString(port.getClassName(), port.getId(), "meetmeroom", ipAddress, sessionId);
