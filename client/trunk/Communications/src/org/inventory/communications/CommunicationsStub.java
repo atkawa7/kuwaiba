@@ -1412,7 +1412,7 @@ public class CommunicationsStub {
             return res;
         }catch(Exception ex){
             this.error =  ex.getMessage();
-            return null;
+            return new ArrayList<>();
         }
     }
     
