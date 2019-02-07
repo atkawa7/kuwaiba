@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
@@ -367,12 +366,14 @@ public class RackWidget extends SelectableRackViewWidget {
         int equipmentPosition = (int) equipment.getAttribute(Constants.PROPERTY_POSITION);
         int equipmentRackUnits = (int) equipment.getAttribute(Constants.PROPERTY_RACK_UNITS);
         
-        for (int i = 0; i < equipmentRackUnits; i += 1) {
-            int idx = equipmentPosition + i;
-            mapRackUnits.get(idx).setAvailable(false);
+        if (equipmentPosition > 0 && equipmentRackUnits > 0) {
+            for (int i = 0; i < equipmentRackUnits; i += 1) {
+                int idx = equipmentPosition + i;
+                mapRackUnits.get(idx).setAvailable(false);
+            }
+            paintEquipment(equipment);
+            localEquipments.add(equipment);
         }
-        paintEquipment(equipment);
-        localEquipments.add(equipment);
     }
     
     private void paintEquipment(LocalObject equipment) {

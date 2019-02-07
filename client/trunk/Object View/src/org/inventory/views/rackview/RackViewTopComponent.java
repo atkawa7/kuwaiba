@@ -23,10 +23,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import javax.swing.Action;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
@@ -107,7 +109,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
         associateLookup(scene.getLookup());
         pnlMainScrollPanel.setViewportView(scene.createView());
                                
-        service = new RackViewService(scene, rack);
+        service = new RackViewService(scene, rack.getId());
         
         keyEventDispatcher = new KeyEventDispatcher() {
 
@@ -339,7 +341,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
             close();
             return;
         }
-        final ProgressHandle progressHandle = ProgressHandleFactory.createHandle(String.format("Loading rack view for %s", rack));
+        final ProgressHandle progressHandle = ProgressHandleFactory.createHandle(String.format("Loading rack view for %s", rack), (Action) null);
         RackViewService.setProgressHandle(progressHandle);
         
         RequestProcessor.getDefault().post(new Runnable() {
@@ -370,7 +372,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void btnShowConnectionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowConnectionsActionPerformed
-        final ProgressHandle progressHandle = ProgressHandleFactory.createHandle(String.format("Loading rack view for %s", rack));
+        final ProgressHandle progressHandle = ProgressHandleFactory.createHandle(String.format("Loading rack view for %s", rack), (Action) null);
         
         RequestProcessor.getDefault().post(new Runnable() {
 
@@ -533,7 +535,6 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
     @Override
     public void componentClosed() {
         btnShowConnections.setSelected(false);
-////        remove(satelliteView);
         scene.setShowConnections(false);
         scene.clear();
         
@@ -584,54 +585,26 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
     
     private List<LocalObject> getDevices() {
         isCompatible = false;
-////        String title = I18N.gm("error");
         String message = "";
-////        int messageType = JOptionPane.ERROR_MESSAGE;
-        
+                
         if(CommunicationsStub.getInstance().getMetaForClass(Constants.CLASS_CUSTOMSHAPE, false) == null) {
             JOptionPane.showMessageDialog(null, 
                 "This database seems outdated. Contact your administrator to apply the necessary patches to add the CustomShape class", 
                 I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
             return null;            
         }
-////        LocalObject rack = CommunicationsStub.getInstance().getObjectInfo(rackLight.getClassName(), rackLight.getId());
+        rack = CommunicationsStub.getInstance().getObjectInfo(rack.getClassName(), rack.getId());
         
         if (rack == null) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-////            message = CommunicationsStub.getInstance().getError();
         } else {
             Integer rackUnits = (Integer) rack.getAttribute(Constants.PROPERTY_RACK_UNITS);
-            if (rackUnits == null || rackUnits == 0) 
+            if (rackUnits == null || rackUnits <= 0) 
                 message += String.format("Attribute %s in rack %s does not exist or is not set correctly\n", Constants.PROPERTY_RACK_UNITS, rack);                                                             
             else {
                 List<LocalObjectLight> devicesLight = CommunicationsStub.getInstance().getObjectChildren(rack.getId(), rack.getClassName());
                 if (devicesLight != null) {
-////                    List<LocalClassMetadata> objChildrenClasses = new ArrayList<>();
-                    
-////                    for (LocalObjectLight device : devicesLight) {
-////                        LocalClassMetadata lcm = CommunicationsStub.getInstance().getMetaForClass(device.getClassName(), false);
-////                        if (lcm == null) {
-////                            JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), I18N.gm("error"), messageType);
-////                            return false;
-////                        }
-////                        if (!objChildrenClasses.contains(lcm))
-////                            objChildrenClasses.add(lcm);
-////                    }                            
-////                    for (LocalClassMetadata lcm : objChildrenClasses) {
-////                        if (!lcm.hasAttribute(Constants.PROPERTY_POSITION))
-////                            message += String.format("The %s attribute does not exist in class %s\n", Constants.PROPERTY_POSITION, lcm.toString());
-////                        else {
-////                            if (!"Integer".equals(lcm.getTypeForAttribute(Constants.PROPERTY_POSITION)))
-////                                message += String.format("The %s attribute type in class %s must be an Integer\n", Constants.PROPERTY_POSITION, lcm.toString());
-////                        }
-////                        if (!lcm.hasAttribute(Constants.PROPERTY_RACK_UNITS))
-////                            message += String.format("The %s attribute does not exist in class %s\n", Constants.PROPERTY_RACK_UNITS, lcm.toString());
-////                        else {
-////                            if (!"Integer".equals(lcm.getTypeForAttribute(Constants.PROPERTY_RACK_UNITS)))
-////                                message += String.format("The %s attribute type in class %s must be an Integer\n", Constants.PROPERTY_RACK_UNITS, lcm.toString());
-////                        }
-////                    }
                     List<LocalObject> devices = new ArrayList<>();
                     
                     for (LocalObjectLight deviceLight : devicesLight) {
@@ -712,14 +685,10 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
                 } else {
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                         NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-////                    JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), I18N.gm("error"), messageType);
                     return null;
                 }
             }
         }
-////        if (message.isEmpty())
-////            isCompatible = true;
-////        if (!isCompatible)
         JOptionPane.showMessageDialog(null, message, I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
         return null;
     }

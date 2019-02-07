@@ -43,10 +43,12 @@ public class ShowRackViewAction extends GenericObjectNodeAction {
         for (LocalObjectLight rack : selectedObjects) {
             RackViewTopComponent rackView = ((RackViewTopComponent) WindowManager.
                 getDefault().findTopComponent("RackViewTopComponent_" + rack.getId()));
-            
-            rackView = new RackViewTopComponent(rack);
-            rackView.open();
-                
+            if (rackView == null) {
+                rackView = new RackViewTopComponent(rack);
+                rackView.open();
+            }
+            else if (!rackView.isOpened())
+                rackView.open();
             rackView.requestActive();
         }
     }

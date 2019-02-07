@@ -17,7 +17,6 @@ package org.inventory.views.objectview;
 
 import java.awt.event.ActionEvent;
 import org.inventory.core.services.i18n.I18N;
-import static org.inventory.navigation.navigationtree.nodes.actions.DeleteBusinessObjectAction.ACTION_MAP_KEY;
 import org.openide.util.HelpCtx;
 import org.openide.util.actions.CallbackSystemAction;
 

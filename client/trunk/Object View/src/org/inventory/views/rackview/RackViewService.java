@@ -48,13 +48,13 @@ public class RackViewService {
     //this need to be replace, the VirtualPort should be moved under GenericLogicalPort, 
     //find a better place for the other classes under GenericBoard, should be GenericCommunitacionsBoard 
     //to make a diference between the PowerBoards and the Communitacions Boards
-    private final LocalObject rack;
     private final RackViewScene scene;
     private static ProgressHandle progressHandle;
-    
-    public RackViewService(RackViewScene scene, LocalObject rack) {
-        this.rack = rack;
+    private final long rackId;
+        
+    public RackViewService(RackViewScene scene, long rackId) {
         this.scene = scene;
+        this.rackId = rackId;
     }
     
     public static ProgressHandle getProgressHandle() {
@@ -85,12 +85,8 @@ public class RackViewService {
             progressHandle.switchToDeterminate(workunits);
     }
     
-//    public static void switchToIndeterminate(int workunits) {
-//        if (progressHandle != null)
-//            progressHandle.switchToIndeterminate();
-//    }
-    
     public void shownRack() {
+        LocalObject rack = CommunicationsStub.getInstance().getObjectInfo("Rack", rackId);
         
         if (rack == null) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), //NOI18N
