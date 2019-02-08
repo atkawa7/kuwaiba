@@ -6135,7 +6135,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             RemoteArtifactDefinition remoteArtifactDefinition = new RemoteArtifactDefinition(artifactDefinition.getId(), artifactDefinition.getName(), 
                 artifactDefinition.getDescription(), artifactDefinition.getVersion(), artifactDefinition.getType(), 
                 artifactDefinition.getDefinition(), artifactDefinition.getPreconditionsScript(), artifactDefinition.getPostconditionsScript(), 
-                artifactDefinition.isPrintable(), artifactDefinition.getPrintableTemplate()
+                artifactDefinition.isPrintable(), artifactDefinition.getPrintableTemplate(), artifactDefinition.getExternalScripts()
             );
                         
             remoteArtifactDefinition.setSharedInformation(artifactDefinition.getSharedInformation());

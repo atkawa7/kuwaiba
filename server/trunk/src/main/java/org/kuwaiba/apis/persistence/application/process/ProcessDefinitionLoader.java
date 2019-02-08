@@ -313,7 +313,8 @@ public class ProcessDefinitionLoader {
                                             type, 
                                             definition, 
                                             Boolean.valueOf(artifactParameters.get("printable")), //NOI18N
-                                            artifactParameters.get("printableTemplate") //NOI18N
+                                            artifactParameters.get("printableTemplate"), //NOI18N
+                                            artifactParameters.get("externalScripts") //NOI18N
                                         );
                                         
                                         artifactDefinition.setPreconditionsScript(artifactParameters.containsKey("preconditionsScript") ? artifactParameters.get("preconditionsScript").getBytes() : null);

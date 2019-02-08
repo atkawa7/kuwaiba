@@ -16,6 +16,7 @@ package org.kuwaiba.web.procmanager;
 
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
+import java.util.Arrays;
 import java.util.List;
 import org.kuwaiba.apis.forms.FormInstanceCreator;
 import org.kuwaiba.apis.forms.FormInstanceLoader;
@@ -23,6 +24,7 @@ import org.kuwaiba.apis.forms.FormRenderer;
 import org.kuwaiba.apis.forms.ScriptQueryExecutorImpl;
 import org.kuwaiba.apis.forms.elements.FormDefinitionLoader;
 import org.kuwaiba.apis.forms.elements.AbstractFormInstanceLoader;
+import org.kuwaiba.apis.forms.elements.ElementScript;
 import org.kuwaiba.apis.forms.elements.FunctionRunner;
 import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
@@ -63,8 +65,10 @@ public class FormArtifactRenderer extends ArtifactRenderer {
                 String script = new String(artifactDefinition.getPreconditionsScript());
                 FunctionRunner functionRunner = new FunctionRunner("precondition", null, script);
                 functionRunner.setScriptQueryExecutor(scriptQueryExecutorImpl);
+                functionRunner.setParametersNames(Arrays.asList("elementScript"));
+                ElementScript elementScript = FormDefinitionLoader.loadExternalScripts(artifactDefinition.getExternalScripts());
                 
-                Object result = functionRunner.run(null);
+                Object result = functionRunner.run(Arrays.asList(elementScript));
                 
                 if (!Boolean.valueOf(result.toString()))
                     return new Label(result.toString());

@@ -207,7 +207,18 @@ public class RemoteActivityDefinition implements Serializable {
         if (activityDefinition instanceof ConditionalActivityDefinition) {
             res = new RemoteConditionalActivityDefinition(activityDefinition.getId(), activityDefinition.getName(), 
                 activityDefinition.getDescription(), activityDefinition.getType(), 
-                new RemoteArtifactDefinition(activityDefinition.getArfifact().getId(), activityDefinition.getArfifact().getName(), activityDefinition.getArfifact().getDescription(), activityDefinition.getArfifact().getVersion(), activityDefinition.getArfifact().getType(), activityDefinition.getArfifact().getDefinition(), activityDefinition.getArfifact().getPreconditionsScript(), activityDefinition.getArfifact().getPostconditionsScript(), activityDefinition.getArfifact().isPrintable(), activityDefinition.getArfifact().getPrintableTemplate()), 
+                new RemoteArtifactDefinition(
+                    activityDefinition.getArfifact().getId(), 
+                    activityDefinition.getArfifact().getName(), 
+                    activityDefinition.getArfifact().getDescription(), 
+                    activityDefinition.getArfifact().getVersion(), 
+                    activityDefinition.getArfifact().getType(), 
+                    activityDefinition.getArfifact().getDefinition(), 
+                    activityDefinition.getArfifact().getPreconditionsScript(), 
+                    activityDefinition.getArfifact().getPostconditionsScript(), 
+                    activityDefinition.getArfifact().isPrintable(), 
+                    activityDefinition.getArfifact().getPrintableTemplate(),
+                    activityDefinition.getArfifact().getExternalScripts()), 
                 activityDefinition.getActor() != null ? new RemoteActor(activityDefinition.getActor().getId(), activityDefinition.getActor().getName(), activityDefinition.getActor().getType()) : null,
                 activityDefinition.confirm(), 
                 activityDefinition.getColor(),
@@ -225,14 +236,36 @@ public class RemoteActivityDefinition implements Serializable {
             
             if (conditionalActivityDefinition.getInformationArtifact() != null) {
                 ArtifactDefinition informationArtifactDef = conditionalActivityDefinition.getInformationArtifact();
-                remoteConditionalActivityDefinition.setInformationArtifact(new RemoteArtifactDefinition(informationArtifactDef.getId(), informationArtifactDef.getName(), informationArtifactDef.getDescription(), informationArtifactDef.getVersion(), informationArtifactDef.getType(), informationArtifactDef.getDefinition(), informationArtifactDef.getPreconditionsScript(), informationArtifactDef.getPostconditionsScript(), informationArtifactDef.isPrintable(), informationArtifactDef.getPrintableTemplate()));
+                remoteConditionalActivityDefinition.setInformationArtifact(new RemoteArtifactDefinition(
+                    informationArtifactDef.getId(), 
+                    informationArtifactDef.getName(), 
+                    informationArtifactDef.getDescription(), 
+                    informationArtifactDef.getVersion(), 
+                    informationArtifactDef.getType(), 
+                    informationArtifactDef.getDefinition(), 
+                    informationArtifactDef.getPreconditionsScript(), 
+                    informationArtifactDef.getPostconditionsScript(), 
+                    informationArtifactDef.isPrintable(), 
+                    informationArtifactDef.getPrintableTemplate(), 
+                    informationArtifactDef.getExternalScripts()));
             }
             
         } 
         else if (activityDefinition instanceof ParallelActivityDefinition) {
             res = new RemoteParallelActivityDefinition(activityDefinition.getId(), activityDefinition.getName(), 
                 activityDefinition.getDescription(), activityDefinition.getType(), 
-                new RemoteArtifactDefinition(activityDefinition.getArfifact().getId(), activityDefinition.getArfifact().getName(), activityDefinition.getArfifact().getDescription(), activityDefinition.getArfifact().getVersion(), activityDefinition.getArfifact().getType(), activityDefinition.getArfifact().getDefinition(), activityDefinition.getArfifact().getPreconditionsScript(), activityDefinition.getArfifact().getPostconditionsScript(), activityDefinition.getArfifact().isPrintable(), activityDefinition.getArfifact().getPrintableTemplate()), 
+                new RemoteArtifactDefinition(
+                    activityDefinition.getArfifact().getId(), 
+                    activityDefinition.getArfifact().getName(), 
+                    activityDefinition.getArfifact().getDescription(), 
+                    activityDefinition.getArfifact().getVersion(), 
+                    activityDefinition.getArfifact().getType(), 
+                    activityDefinition.getArfifact().getDefinition(), 
+                    activityDefinition.getArfifact().getPreconditionsScript(), 
+                    activityDefinition.getArfifact().getPostconditionsScript(), 
+                    activityDefinition.getArfifact().isPrintable(), 
+                    activityDefinition.getArfifact().getPrintableTemplate(),
+                    activityDefinition.getArfifact().getExternalScripts()), 
                 activityDefinition.getActor() != null ? new RemoteActor(activityDefinition.getActor().getId(), activityDefinition.getActor().getName(), activityDefinition.getActor().getType()) : null,
                 activityDefinition.confirm(), 
                 activityDefinition.getColor(),
@@ -258,7 +291,18 @@ public class RemoteActivityDefinition implements Serializable {
             
             res = new RemoteActivityDefinition(activityDefinition.getId(), activityDefinition.getName(), 
                 activityDefinition.getDescription(), activityDefinition.getType(), 
-                new RemoteArtifactDefinition(activityDefinition.getArfifact().getId(), activityDefinition.getArfifact().getName(), activityDefinition.getArfifact().getDescription(), activityDefinition.getArfifact().getVersion(), activityDefinition.getArfifact().getType(), activityDefinition.getArfifact().getDefinition(), activityDefinition.getArfifact().getPreconditionsScript(), activityDefinition.getArfifact().getPostconditionsScript(), activityDefinition.getArfifact().isPrintable(), activityDefinition.getArfifact().getPrintableTemplate()), 
+                new RemoteArtifactDefinition(
+                    activityDefinition.getArfifact().getId(), 
+                    activityDefinition.getArfifact().getName(), 
+                    activityDefinition.getArfifact().getDescription(), 
+                    activityDefinition.getArfifact().getVersion(), 
+                    activityDefinition.getArfifact().getType(), 
+                    activityDefinition.getArfifact().getDefinition(), 
+                    activityDefinition.getArfifact().getPreconditionsScript(), 
+                    activityDefinition.getArfifact().getPostconditionsScript(), 
+                    activityDefinition.getArfifact().isPrintable(), 
+                    activityDefinition.getArfifact().getPrintableTemplate(), 
+                    activityDefinition.getArfifact().getExternalScripts()), 
                 activityDefinition.getActor() != null ? new RemoteActor(activityDefinition.getActor().getId(), activityDefinition.getActor().getName(), activityDefinition.getActor().getType()) : null,
                 activityDefinition.isIdling(),
                 activityDefinition.confirm(), 

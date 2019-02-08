@@ -38,6 +38,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,6 +53,8 @@ import org.kuwaiba.apis.forms.components.impl.PrintWindow;
 import org.kuwaiba.apis.forms.elements.AbstractElement;
 import org.kuwaiba.apis.forms.elements.AbstractElementField;
 import org.kuwaiba.apis.forms.elements.ElementGrid;
+import org.kuwaiba.apis.forms.elements.ElementScript;
+import org.kuwaiba.apis.forms.elements.FormDefinitionLoader;
 import org.kuwaiba.apis.forms.elements.FunctionRunner;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
@@ -213,8 +216,10 @@ public class ProcessInstanceView extends DynamicComponent {
                     String script = new String(artifactDefinition.getPostconditionsScript());
                     FunctionRunner functionRunner = new FunctionRunner("postconditions", null, script);
                     functionRunner.setScriptQueryExecutor(scriptQueryExecutorImpl);
+                    functionRunner.setParametersNames(Arrays.asList("elementScript"));
+                    ElementScript elementScript = FormDefinitionLoader.loadExternalScripts(artifactDefinition.getExternalScripts());
 
-                    Object result = functionRunner.run(null);
+                    Object result = functionRunner.run(Arrays.asList(elementScript));
 
                     performOperation = result instanceof Boolean ? (Boolean) result : Boolean.valueOf(result.toString());
                 }
@@ -346,7 +351,11 @@ public class ProcessInstanceView extends DynamicComponent {
                     
                     if (currentActivity.confirm()) {
                         
-                        Label label = new Label("Are you sure you want to save this activity?");
+                        Label label;
+                        if (currentActivity instanceof RemoteConditionalActivityDefinition)
+                            label = new Label("Are you sure you want to continue?");
+                        else
+                            label = new Label("Are you sure you want to save this activity?");
                                                                         
                         MessageBox.getInstance().showMessage(label).addClickListener(new Button.ClickListener() {
                             @Override

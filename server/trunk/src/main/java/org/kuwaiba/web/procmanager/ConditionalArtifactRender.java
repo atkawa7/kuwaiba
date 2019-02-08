@@ -25,11 +25,14 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 import java.io.ByteArrayInputStream;
+import java.util.Arrays;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.forms.ScriptQueryExecutorImpl;
+import org.kuwaiba.apis.forms.elements.ElementScript;
+import org.kuwaiba.apis.forms.elements.FormDefinitionLoader;
 import org.kuwaiba.apis.forms.elements.FunctionRunner;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
@@ -70,8 +73,10 @@ public class ConditionalArtifactRender extends ArtifactRenderer {
             String script = new String(artifactDefinition.getPreconditionsScript());
             FunctionRunner functionRunner = new FunctionRunner("precondition", null, script);
             functionRunner.setScriptQueryExecutor(scriptQueryExecutorImpl);
+            functionRunner.setParametersNames(Arrays.asList("elementScript"));
+            ElementScript elementScript = FormDefinitionLoader.loadExternalScripts(artifactDefinition.getExternalScripts());
 
-            Object result = functionRunner.run(null);
+            Object result = functionRunner.run(Arrays.asList(elementScript));
 
             if (!Boolean.valueOf(result.toString()))
                 return new Label(result.toString());

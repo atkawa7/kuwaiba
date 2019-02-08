@@ -194,9 +194,9 @@ public class FormDefinitionLoader {
             
             for (String src : arraySrcs) {
             
-                String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath"));
+                String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath")); //NOI18N
 
-                File file = new File(processEnginePath + "/form/scripts/" + src);
+                File file = new File(processEnginePath + "/form/scripts/" + src); //NOI18N
                 byte [] externalScript = ProcessDefinitionLoader.getFileAsByteArray(file);
 
                 if (externalScript != null) {
@@ -223,6 +223,37 @@ public class FormDefinitionLoader {
             }
         }
     }
+    
+    public static ElementScript loadExternalScripts(String srcs) {
+        if (srcs != null) {
+            ElementScript result = new ElementScript();
+            String[] externalScripts = srcs.split(" ");
+            String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().getProperty("processEnginePath")); //NOI18N
+            for (String externalScript : externalScripts) {
+                File file = new File(processEnginePath + "/form/scripts/" + externalScript); //NOI18N
+                byte [] byteArray = ProcessDefinitionLoader.getFileAsByteArray(file);
+                try {
+                    XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+                    ByteArrayInputStream bais = new ByteArrayInputStream(byteArray);
+                    XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
+                    
+                    while (reader.hasNext()) {
+                        int event = reader.next();
+                        if (event == XMLStreamConstants.START_ELEMENT) {
+                            if (reader.getName().equals(TAG_SCRIPT))
+                                result.initFromXML(reader);
+                        }
+                    }
+                } catch (XMLStreamException ex) {
+                }
+            }
+            return result;
+        }
+        return null;
+    }
+    
+        
+    
     
     public void build() {
 

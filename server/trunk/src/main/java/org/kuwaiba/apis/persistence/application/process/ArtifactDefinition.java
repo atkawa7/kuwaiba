@@ -80,8 +80,12 @@ public class ArtifactDefinition {
      * Is the template used to print the artifact
      */
     private String printableTemplate;
+    /**
+     * List of relative path to external scripts separated by space
+     */
+    private String externalScripts;
 
-    public ArtifactDefinition(long id, String name, String description, String version, int type, byte[] definition, Boolean printable, String printableTemplate) {
+    public ArtifactDefinition(long id, String name, String description, String version, int type, byte[] definition, Boolean printable, String printableTemplate, String externalScripts) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -90,6 +94,7 @@ public class ArtifactDefinition {
         this.definition = definition;
         this.printable = printable;
         this.printableTemplate = printableTemplate;
+        this.externalScripts = externalScripts;
     }
 
     public long getId() {
@@ -178,6 +183,14 @@ public class ArtifactDefinition {
     
     public void setPrintableTemplate(String printableTemplate) {
         this.printableTemplate = printableTemplate;
+    }
+    
+    public String getExternalScripts() {
+        return externalScripts;
+    }
+    
+    public void setExternalScripts(String externalScripts) {
+        this.externalScripts = externalScripts;
     }
 
     @Override

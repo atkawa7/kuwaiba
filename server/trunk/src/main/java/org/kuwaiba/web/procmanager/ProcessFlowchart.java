@@ -170,20 +170,20 @@ public class ProcessFlowchart extends Panel {
             if (currentActivity.getType() == ActivityDefinition.TYPE_CONDITIONAL) {
                 builder.append("<<TABLE BORDER=\"0\">");
                 builder.append("<TR><TD></TD></TR>");
-                builder.append("<TR>");
-                builder.append("<TD><FONT COLOR=\"#37474f\">");
+                builder.append("<TR><TD>");
+                builder.append("<FONT COLOR=\"#37474f\">");
                 builder.append(label);
-                builder.append("</FONT></TD>");
-                builder.append("</TR>");
+                builder.append("</FONT>");
+                builder.append("</TD></TR>");
                 builder.append("<TR><TD></TD></TR>");
                 builder.append("</TABLE>>");
             } else {
                 builder.append("<<TABLE BORDER=\"0\">");
-                builder.append("<TR>");
-                builder.append("<TD><FONT COLOR=\"#37474f\">");
+                builder.append("<TR><TD>");
+                builder.append("<FONT COLOR=\"#37474f\">");
                 builder.append(label);
-                builder.append("</FONT></TD>");
-                builder.append("</TR>");
+                builder.append("</FONT>");
+                builder.append("</TD></TR>");
                 builder.append("</TABLE>>");
             }
             
