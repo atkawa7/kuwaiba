@@ -47,7 +47,7 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
     /**
      * Collection of flags
      */
-    protected List<LocalValidator> validators;;
+    protected List<LocalValidator> validators;
 
     /**
      * This constructor is called to create dummy objects where the id is not important
@@ -88,7 +88,7 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
         return id;
     }
 
-    public void setOid(long id){
+    public void setOid(long id) {
         this.id = id;
     }
 

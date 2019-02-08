@@ -84,7 +84,7 @@ public class RunSynchronizationProcessAction extends GenericObjectNodeAction imp
         if (selectedObjectNode == null)
             return false;
         
-        for (AbstractNode selectedNode : selectedObjectNode.allInstances()){
+        for (AbstractNode selectedNode : selectedObjectNode.allInstances()) {
             if(selectedNode instanceof ObjectNode || selectedNode instanceof SyncDataSourceConfigurationNode)
                 return true;
         }
