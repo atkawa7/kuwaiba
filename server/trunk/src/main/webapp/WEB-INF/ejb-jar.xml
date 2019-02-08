@@ -45,7 +45,7 @@
            <description>Google Maps Platform API Key</description>
            <env-entry-name>googleMapsApiKey</env-entry-name>
            <env-entry-type>java.lang.String</env-entry-type>
-           <env-entry-value> </env-entry-value>
+           <env-entry-value>AIzaSyDdSZZu-XWKVw1yoj81xJKrv9RNJsKL4WM</env-entry-value>
         </env-entry>
         <env-entry>
            <description>Language used for the maps</description>

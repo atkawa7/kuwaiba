@@ -15,6 +15,7 @@
  */
 package org.kuwaiba.web;
 
+import org.kuwaiba.web.modules.welcome.WelcomeComponent;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.cdi.CDIUI;
@@ -82,26 +83,26 @@ public class IndexUI extends UI {
             this.mnuMain.setWidth("100%");
             
             this.mnuMain.addItem("", new ExternalResource("/img/company_logo_micro.png"), (selectedItem) -> {
-                getUI().getNavigator().navigateTo(WelcomeView.VIEW_NAME);
+                getUI().getNavigator().navigateTo(WelcomeComponent.VIEW_NAME);
             });
             
             // Navigation Tree Module
-            NavigationTreeModule navTreeModule = new NavigationTreeModule(null, wsBean, 
+            NavigationTreeModule navTreeModule = new NavigationTreeModule(wsBean, 
                         (RemoteSession) getSession().getAttribute("session"));
             navTreeModule.attachToMenu(mnuMain);
             
             // Service Manager Module
-            ServiceManagerModule servManagerModule = new ServiceManagerModule(null, wsBean, 
+            ServiceManagerModule servManagerModule = new ServiceManagerModule(wsBean, 
                         (RemoteSession) getSession().getAttribute("session"));
             servManagerModule.attachToMenu(mnuMain);
             
             // List Type Manager Module
-            ListTypeManagerModule ltmModule = new ListTypeManagerModule(null, wsBean, 
+            ListTypeManagerModule ltmModule = new ListTypeManagerModule(wsBean, 
                         (RemoteSession) getSession().getAttribute("session"));
             ltmModule.attachToMenu(mnuMain);
             
             // IP Address Manager module
-            IPAddressManagerModule ipamModule = new IPAddressManagerModule(null, wsBean, 
+            IPAddressManagerModule ipamModule = new IPAddressManagerModule(wsBean, 
                         (RemoteSession) getSession().getAttribute("session"));
             ipamModule.attachToMenu(mnuMain);
             
@@ -111,22 +112,22 @@ public class IndexUI extends UI {
 //            syncManagerModule.attachToMenu(mnuMain);
 
             // Outside Plant
-            OutsidePlantModule outsidePlantModule = new OutsidePlantModule(null, wsBean, 
+            OutsidePlantModule outsidePlantModule = new OutsidePlantModule(wsBean, 
                         (RemoteSession) getSession().getAttribute("session"));
             outsidePlantModule.attachToMenu(mnuMain);
             
             // Warehouse Manager
-            WarehouseManagerModule warehouseManagerModule = new WarehouseManagerModule(null, wsBean, 
+            WarehouseManagerModule warehouseManagerModule = new WarehouseManagerModule(wsBean, 
                         (RemoteSession) getSession().getAttribute("session"));
             warehouseManagerModule.attachToMenu(mnuMain);
             
             // Process Manager Module
-            ProcessManagerModule processManagerModule = new ProcessManagerModule(null, wsBean, 
+            ProcessManagerModule processManagerModule = new ProcessManagerModule(wsBean, 
                 (RemoteSession) getSession().getAttribute("session"));
             processManagerModule.attachToMenu(mnuMain);
             
             // Contacts Module
-            ContactManagerModule cmModule = new ContactManagerModule(null, wsBean, 
+            ContactManagerModule cmModule = new ContactManagerModule(wsBean, 
                         (RemoteSession) getSession().getAttribute("session"));
             cmModule.attachToMenu(mnuMain);
 
@@ -145,7 +146,7 @@ public class IndexUI extends UI {
 
                 }
             });
-            this.getNavigator().navigateTo(WelcomeView.VIEW_NAME);
+            this.getNavigator().navigateTo(WelcomeComponent.VIEW_NAME);
         }
     }
 

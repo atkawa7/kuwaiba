@@ -16,7 +16,6 @@
 
 package org.kuwaiba.web.modules.osp;
 
-import com.google.common.eventbus.EventBus;
 import com.vaadin.navigator.View;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
@@ -30,8 +29,8 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
  */
 public class OutsidePlantModule extends AbstractModule {
 
-    public OutsidePlantModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
-        super(eventBus, wsBean, session);
+    public OutsidePlantModule(WebserviceBean wsBean, RemoteSession session) {
+        super(wsBean, session);
     }
 
     @Override

@@ -15,7 +15,6 @@
  */
 package org.kuwaiba.web.modules.sync;
 
-import com.google.common.eventbus.EventBus;
 import com.vaadin.navigator.View;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
@@ -31,8 +30,8 @@ public class SyncManagerModule extends AbstractModule {
     
     private SyncManagerComponent syncManagerComponent;
 
-    public SyncManagerModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
-        super(eventBus, wsBean, session);
+    public SyncManagerModule(WebserviceBean wsBean, RemoteSession session) {
+        super(wsBean, session);
     }
 
     @Override

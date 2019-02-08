@@ -14,7 +14,6 @@
  */
 package org.kuwaiba.web.procmanager;
 
-import com.google.common.eventbus.EventBus;
 import com.vaadin.navigator.View;
 import com.vaadin.server.Page;
 import com.vaadin.ui.MenuBar;
@@ -39,8 +38,8 @@ public class ProcessManagerModule extends AbstractModule {
      */
     private ProcessManagerComponent processManagerComponent;
     
-    public ProcessManagerModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
-        super(eventBus, wsBean, session);
+    public ProcessManagerModule(WebserviceBean wsBean, RemoteSession session) {
+        super(wsBean, session);
     }
 
     @Override

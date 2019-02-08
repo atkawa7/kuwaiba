@@ -153,7 +153,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
 //                String knownHostsFileLocation = (String)PersistenceService.getInstance().getApplicationEntityManager().
 //                        getConfigurationVariableValue("sync.bdi.knownHostsFile");
 //                sshShell.setKnownHosts(knownHostsFileLocation);
-                session.connect(10000);
+                session.connect(10000); //Connection timeout
                 channel = (ChannelExec) session.openChannel("exec");
 
                 String modelString = currentObject.getName().split("-")[0];

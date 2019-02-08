@@ -16,7 +16,6 @@
 package org.kuwaiba.web.modules.ltmanager;
 
 import org.kuwaiba.web.modules.ltmanager.actions.AddListTypeItemWindow;
-import com.google.common.eventbus.EventBus;
 import com.vaadin.navigator.View;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.MenuBar;
@@ -37,8 +36,8 @@ public class ListTypeManagerModule  extends AbstractModule {
      */
     private ListTypeManagerComponent listTypeManagerComponent;
     
-    public ListTypeManagerModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
-        super(eventBus, wsBean, session);
+    public ListTypeManagerModule(WebserviceBean wsBean, RemoteSession session) {
+        super(wsBean, session);
         icon = new ThemeResource("img/mod_icon_list.png");
     }
 

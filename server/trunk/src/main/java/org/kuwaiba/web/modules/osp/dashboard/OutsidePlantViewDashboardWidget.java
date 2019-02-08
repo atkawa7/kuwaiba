@@ -257,6 +257,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                 else {
                     VerticalLayout lytContent = new VerticalLayout();
                     Window wdwSave = new Window("Save OSP View");
+                    wdwSave.setWidth(300, Unit.PIXELS);
 
                     TextField txtName = new TextField("Name");
                     txtName.setValue(currentView == null ? "" : currentView.getName());
@@ -319,24 +320,26 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
             });
 
             mnuMain.addItem("Connect", VaadinIcons.CONNECT, (selectedItem) -> {
-                Window wdwSelectRootObjects = new Window("Select the Root Objects");
+                Window wdwSelectRootObjects = new Window("New Connection");
                 
                 ComboBox<OSPNode> cmbASideRoot = new ComboBox<>("A Side", nodes);
                 cmbASideRoot.setEmptySelectionAllowed(false);
                 cmbASideRoot.setEmptySelectionCaption("Select the A Side...");
-                cmbASideRoot.setWidth(170, Unit.PIXELS);
+                cmbASideRoot.setWidth(250, Unit.PIXELS);
                 ComboBox<OSPNode> cmbBSideRoot = new ComboBox<>("B Side", nodes);
                 cmbBSideRoot.setEmptySelectionAllowed(false);
                 cmbBSideRoot.setEmptySelectionCaption("Select the B Side...");
-                cmbBSideRoot.setWidth(170, Unit.PIXELS);
+                cmbBSideRoot.setWidth(250, Unit.PIXELS);
                 Button btnOk = new Button("OK");
                 
                 wdwSelectRootObjects.center();
+                wdwSelectRootObjects.setWidth(80, Unit.PERCENTAGE);
+                wdwSelectRootObjects.setHeight(50, Unit.PERCENTAGE);
                 wdwSelectRootObjects.setModal(true);
                 
                 UI.getCurrent().addWindow(wdwSelectRootObjects);
                 
-                btnOk.addClickListener((event) -> {
+                btnOk.addClickListener((Button.ClickEvent event) -> {
                     
                     if (!cmbASideRoot.getSelectedItem().isPresent() || !cmbBSideRoot.getSelectedItem().isPresent()) {
                         Notifications.showError("Select both sides of the connection");
@@ -352,13 +355,13 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                     NewPhysicalConnectionWizard wizard = new NewPhysicalConnectionWizard(cmbASideRoot.getSelectedItem().get().getBusinessObject(), 
                                     cmbBSideRoot.getSelectedItem().get().getBusinessObject(), wsBean);
                     
-                    wizard.setSizeUndefined();
+                    wizard.setWidth(100, Unit.PERCENTAGE);
                     
                     Window wdwWizard = new Window("New Connection Wizard", wizard);
                     wdwWizard.center();
                     wdwWizard.setModal(true);
-                    wdwWizard.setWidth(50, Unit.PERCENTAGE);
-                    wdwWizard.setHeight(70, Unit.PERCENTAGE);
+                    wdwWizard.setWidth(80, Unit.PERCENTAGE);
+                    wdwWizard.setHeight(50, Unit.PERCENTAGE);
                 
                     wizard.addEventListener((wizardEvent) -> {
                         switch (wizardEvent.getType()) {

@@ -51,13 +51,6 @@
             <version>3.0-alpha-2</version>
         </dependency>
         
-        <!-- Used to support the EventBus implementation -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>12.0-rc2</version>
-        </dependency>
-        
         <!-- Java BCrypt algorithm implementation -->
         <dependency>
             <groupId>org.mindrot</groupId>

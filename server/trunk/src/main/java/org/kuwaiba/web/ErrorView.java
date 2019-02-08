@@ -14,6 +14,7 @@
  */
 package org.kuwaiba.web;
 
+import org.kuwaiba.web.modules.welcome.WelcomeComponent;
 import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -33,7 +34,7 @@ public class ErrorView extends VerticalLayout implements View {
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         Button btnHome = new Button("Home", (e) -> {
-            UI.getCurrent().getNavigator().navigateTo(WelcomeView.VIEW_NAME);
+            UI.getCurrent().getNavigator().navigateTo(WelcomeComponent.VIEW_NAME);
         });
         
         btnHome.setStyleName(ValoTheme.BUTTON_LINK);

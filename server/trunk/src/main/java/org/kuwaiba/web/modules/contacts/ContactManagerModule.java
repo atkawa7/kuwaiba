@@ -15,7 +15,6 @@
  */
 package org.kuwaiba.web.modules.contacts;
 
-import com.google.common.eventbus.EventBus;
 import com.vaadin.navigator.View;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
@@ -31,8 +30,8 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
  */
 public class ContactManagerModule extends AbstractModule {
 
-    public ContactManagerModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
-        super(eventBus, wsBean, session);
+    public ContactManagerModule(WebserviceBean wsBean, RemoteSession session) {
+        super(wsBean, session);
     }
 
     @Override

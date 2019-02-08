@@ -15,7 +15,6 @@
  */
 package org.kuwaiba.web.modules.navtree;
 
-import com.google.common.eventbus.EventBus;
 import com.vaadin.navigator.View;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.MenuBar;
@@ -35,8 +34,8 @@ public class NavigationTreeModule extends AbstractModule {
      */
     private NavigationTreeComponent treeNavTree;
     
-    public NavigationTreeModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
-        super(eventBus, wsBean, session);
+    public NavigationTreeModule(WebserviceBean wsBean, RemoteSession session) {
+        super(wsBean, session);
         icon = new ThemeResource("img/mod_icon_navtree.png");
     }
     

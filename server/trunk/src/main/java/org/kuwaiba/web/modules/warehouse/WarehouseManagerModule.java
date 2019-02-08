@@ -14,7 +14,6 @@
  */
 package org.kuwaiba.web.modules.warehouse;
 
-import com.google.common.eventbus.EventBus;
 import com.vaadin.navigator.View;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
@@ -30,8 +29,8 @@ public class WarehouseManagerModule extends AbstractModule {
         
     private WarehouseManagerComponent warehouseManagerComponent;
     
-    public WarehouseManagerModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
-        super(eventBus, wsBean, session);
+    public WarehouseManagerModule(WebserviceBean wsBean, RemoteSession session) {
+        super(wsBean, session);
     }
 
     @Override

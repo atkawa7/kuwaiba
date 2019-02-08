@@ -15,7 +15,6 @@
  */
 package org.kuwaiba.apis.web.gui.modules;
 
-import com.google.common.eventbus.EventBus;
 import com.vaadin.navigator.View;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.MenuBar;
@@ -40,10 +39,6 @@ public abstract class AbstractModule {
      */
     public static int MODULE_TYPE_COMMERCIAL = 3;
     /**
-     * The event bus used to exchange 
-     */
-    protected EventBus eventBus;
-    /**
      * Reference to the WebserviceBean
      */
     protected WebserviceBean wsBean;
@@ -58,12 +53,10 @@ public abstract class AbstractModule {
 
     /**
      * Use this constructor if the module will need to exchange messages with other modules.
-     * @param eventBus The eventBus used to exchange messages with other modules
      * @param wsBean A reference to the web service bean
      * @param session The current session
      */
-    public AbstractModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
-        this.eventBus = eventBus;
+    public AbstractModule(WebserviceBean wsBean, RemoteSession session) {
         this.wsBean = wsBean;
         this.session = session;
     }

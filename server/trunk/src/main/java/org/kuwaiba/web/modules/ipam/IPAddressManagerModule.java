@@ -16,7 +16,6 @@
 
 package org.kuwaiba.web.modules.ipam;
 
-import com.google.common.eventbus.EventBus;
 import com.vaadin.navigator.View;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
@@ -30,8 +29,8 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
  */
 public class IPAddressManagerModule extends AbstractModule {
 
-    public IPAddressManagerModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
-        super(eventBus, wsBean, session);
+    public IPAddressManagerModule(WebserviceBean wsBean, RemoteSession session) {
+        super(wsBean, session);
     }
 
     @Override
