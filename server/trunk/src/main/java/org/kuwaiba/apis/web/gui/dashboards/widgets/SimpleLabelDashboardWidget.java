@@ -24,20 +24,17 @@ import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
  * A simple dashboard widget with no cover that displays a custom title and subtitle
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class SimpleContentOnlyDashboardWidget extends AbstractDashboardWidget {
+public class SimpleLabelDashboardWidget extends AbstractDashboardWidget {
 
-    public SimpleContentOnlyDashboardWidget(String title, String subtitle) {
+    public SimpleLabelDashboardWidget(String title, String subtitle) {
         super(title);
         addComponents(new Label(String.format("<h2>%s</h2>", title), ContentMode.HTML),
                 new Label(subtitle));
     }
 
     @Override
-    public void createCover() {
-        throw new UnsupportedOperationException("This widget does not support covers"); //To change body of generated methods, choose Tools | Templates.
-    }
+    public void createCover() { }
 
     @Override
     public void createContent() { }
-
 }

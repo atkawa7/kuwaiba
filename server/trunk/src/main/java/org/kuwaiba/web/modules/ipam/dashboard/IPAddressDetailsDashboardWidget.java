@@ -15,7 +15,6 @@
  */
 
 package org.kuwaiba.web.modules.ipam.dashboard;
-
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 
 /**
@@ -37,5 +36,4 @@ public class IPAddressDetailsDashboardWidget extends AbstractDashboardWidget {
     public void createContent() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
 }

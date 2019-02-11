@@ -23,6 +23,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import java.util.Calendar;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.apis.web.gui.resources.ResourceFactory;
@@ -79,7 +80,5 @@ public class ReportShortcutWidget extends AbstractDashboardWidget {
     }
 
     @Override
-    public void createContent() {
-                
-    }
+    public void createContent() { }
 }

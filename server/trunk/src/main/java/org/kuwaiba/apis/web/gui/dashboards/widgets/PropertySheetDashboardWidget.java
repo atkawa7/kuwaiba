@@ -62,5 +62,4 @@ public class PropertySheetDashboardWidget extends AbstractDashboardWidget implem
             }
         }
     }
-
 }

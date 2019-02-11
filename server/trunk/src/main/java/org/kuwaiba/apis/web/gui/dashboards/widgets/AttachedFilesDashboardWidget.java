@@ -109,5 +109,4 @@ public class AttachedFilesDashboardWidget extends AbstractDashboardWidget {
             Notifications.showError(ex.getLocalizedMessage());
         }
     }
-
 }

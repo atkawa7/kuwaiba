@@ -70,5 +70,4 @@ public class ObjectViewDashboardWidget extends AbstractDashboardWidget {
         lytContent.addComponent(new ObjectView(selectedObject, wsBean));
         this.contentComponent = lytContent;
     }
-
 }

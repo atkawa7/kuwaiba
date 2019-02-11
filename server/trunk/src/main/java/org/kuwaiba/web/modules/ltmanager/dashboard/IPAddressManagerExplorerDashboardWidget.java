@@ -159,5 +159,4 @@ public class IPAddressManagerExplorerDashboardWidget extends AbstractDashboardWi
         
         return lytIpAddressDetails;
     }
-
 }

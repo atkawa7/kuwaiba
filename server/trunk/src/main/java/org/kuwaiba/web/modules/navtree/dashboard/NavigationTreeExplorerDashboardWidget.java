@@ -110,5 +110,4 @@ public class NavigationTreeExplorerDashboardWidget extends AbstractDashboardWidg
         this.contentComponent = lytContent;
         addComponent(contentComponent);
     }
-
 }

@@ -24,23 +24,16 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 
 /**
  * A small embeddable component that can be inserted into an AbstractDashboard. A DashboardWidget has two "faces": 
  * A cover that shows a summary or simply a title, and content, with the actual information to be shown. This can be seen as a 
- * Tile in a MS Windows Metro interface
+ * Tile in a MS Windows Metro interface in most of the cases.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public abstract class AbstractDashboardWidget extends VerticalLayout {
-    /**
-     * The number of consecutive horizontal cells this dashboard widget will use
-     */
-    protected int colSpan;
-    /**
-     * The number of consecutive vertical cells this dashboard widget will use
-     */
-    protected int rowSpan;
     /**
      * The active content to be displayed (cover or content)
      */
@@ -66,8 +59,6 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
      */
     protected String title;
     public AbstractDashboardWidget(String title) {
-        this.colSpan = 1;
-        this.rowSpan = 1;
         this.title = title;
         this.activeContent = ActiveContent.CONTENT_COVER;
         this.setMargin(true);
@@ -81,23 +72,13 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
     public AbstractDashboardWidget(String title, DashboardEventBus eventBus) {
         this.eventBus = eventBus;
     }
+    
+    /**
+     * Loads the configuration (if any) of the widget. In most cases, the configuration is extracted from configuration variables.
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the minimum configuration parameters for the widget to work are not available.
+     */
+    protected void loadConfiguration() throws InvalidArgumentException { }
         
-    public int getColSpan() {
-        return colSpan;
-    }
-
-    public void setColSpan(int colSpan) {
-        this.colSpan = colSpan;
-    }
-
-    public int getRowSpan() {
-        return rowSpan;
-    }
-
-    public void setRowSpan(int rowSpan) {
-        this.rowSpan = rowSpan;
-    }
-
     public ActiveContent getActiveContent() {
         return activeContent;
     }
@@ -153,7 +134,7 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
             VerticalLayout content =  new VerticalLayout(btnBack, contentComponent);
             parentDashboard.setContent(content);
         }else 
-            getUI().addWindow(new Window("Error", new Label("The parent or content components has not been set. Please check your scene constructor or the createContent method")));
+            getUI().addWindow(new Window("Error", new Label("The parent or content components have not been set. Please check your scene constructor or the createContent method")));
     }
     
     /**

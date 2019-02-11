@@ -19,11 +19,13 @@ package org.kuwaiba.web.modules.osp.dashboard;
 import com.vaadin.server.Page;
 import com.vaadin.tapio.googlemaps.GoogleMapsComponent;
 import com.vaadin.tapio.googlemaps.client.LatLon;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import java.util.List;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
@@ -38,12 +40,52 @@ import org.kuwaiba.services.persistence.util.Constants;
  */
 public class SimpleMapDashboardWidget extends AbstractDashboardWidget {
     /**
+     * Default map center longitude. This value is used when the configuration variable <code>widgets.simplemap.centerLongitude</code> can not be found or it's not a number.
+     */
+    private static double DEFAULT_CENTER_LONGITUDE = 12.8260721;
+    /**
+     * Default map center latitude. This value is used when the configuration variable <code>widgets.simplemap.centerLatitude</code> can not be found or it's not a number.
+     */
+    private static double DEFAULT_CENTER_LATITUIDE = 11.8399727;
+    /**
+     * Default map center latitude. This value is used when the configuration variable <code>widgets.simplemap.centerLongitude</code> can not be found or it's not a number.
+     */
+    private static int DEFAULT_ZOOM = 3;
+    /**
      * Reference to the backend bean
      */
     private WebserviceBean wsBean;
+    /**
+     * Actual initial map longitude. See DEFAULT_XXX for default values.
+     */
+    private double mapLongitude;
+    /**
+     * Actual initial map latitude. See DEFAULT_XXX for default values.
+     */
+    private double mapLatitude;
+    /**
+     * Actual initial map zoom. See DEFAULT_XXX for default values.
+     */
+    private int mapZoom;
+    
     
     public SimpleMapDashboardWidget(String title, WebserviceBean wsBean) {
         super(title);
+        this.wsBean= wsBean;
+        try {
+            this.loadConfiguration();
+            this.createContent();
+        } catch (InvalidArgumentException ex) {
+            addComponent(new Label(ex.getLocalizedMessage()));
+        }
+        this.setSizeFull();
+    }
+    
+    public SimpleMapDashboardWidget(String title, WebserviceBean wsBean, long longitude, long latitude, int zoom) {
+        super(title);
+        this.mapLongitude = longitude;
+        this.mapLatitude = latitude;
+        this.mapZoom = zoom;
         this.wsBean= wsBean;
         this.createContent();
         this.setSizeFull();
@@ -90,8 +132,8 @@ public class SimpleMapDashboardWidget extends AbstractDashboardWidget {
                 Notifications.showError(ex.getLocalizedMessage());
             }
 
-            mapMain.setCenter(new LatLon(12.8260721, 11.8399727));
-            mapMain.setZoom(3);
+            mapMain.setCenter(new LatLon(mapLatitude, mapLongitude));
+            mapMain.setZoom(mapZoom);
 
             addComponent(mapMain);
 
@@ -100,4 +142,11 @@ public class SimpleMapDashboardWidget extends AbstractDashboardWidget {
         }
     }
 
+    
+    @Override
+    protected void loadConfiguration() throws InvalidArgumentException {
+        this.mapLatitude = DEFAULT_CENTER_LATITUIDE;
+        this.mapLongitude = DEFAULT_CENTER_LONGITUDE;
+        this.mapZoom = DEFAULT_ZOOM;
+    }
 }
