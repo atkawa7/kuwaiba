@@ -24,6 +24,7 @@
     <folder name="Menu">
         <folder name="Tools">
             <file name="PaletteManager_hidden"/>
+            <file name="org-netbeans-modules-autoupdate-ui-actions-PluginManagerAction.shadow_hidden"/>
             <file name="org-netbeans-modules-options-OptionsWindowAction.shadow_hidden"/>
             <file name="org-netbeans-modules-templates-actions-TemplatesAction.shadow_hidden"/>
             <folder name="Configuration">
@@ -80,6 +81,7 @@
     </folder>
     <folder name="Toolbars">
         <folder name="File_hidden"/>
+        <file name="Memory_hidden"/>
         <folder name="UndoRedo_hidden"/>
         <folder name="Performance_hidden"/>
     </folder>
