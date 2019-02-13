@@ -13,7 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.inventory.customization.datamodelmanager;
 
 import java.awt.event.ActionEvent;
@@ -21,11 +20,15 @@ import java.awt.event.ActionListener;
 import javax.swing.JComboBox;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
+import org.inventory.core.services.api.export.GenericExportPanel;
+import org.inventory.core.services.api.export.filters.XMLExportFilter;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.customization.classhierarchy.ClassHierarchyTopComponent;
 import org.inventory.customization.classhierarchy.nodes.ClassMetadataChildren;
 import org.netbeans.api.settings.ConvertAsProperties;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -39,37 +42,40 @@ import org.openide.windows.WindowManager;
 
 /**
  * Data model manager Top component.
+ *
  * @author Adrian Martinez Molina {@literal <charles.bedon@kuwaiba.org>}
  */
 @ConvertAsProperties(
-    dtd = "-//org.inventory.customization.datamodelmanager//DataModelManager//EN",
-autostore = false)
+        dtd = "-//org.inventory.customization.datamodelmanager//DataModelManager//EN",
+        autostore = false)
 @TopComponent.Description(
-    preferredID = "DataModelManagerTopComponent",
-iconBase = "org/inventory/customization/datamodelmanager/res/icon.png",
-persistenceType = TopComponent.PERSISTENCE_NEVER)
+        preferredID = "DataModelManagerTopComponent",
+        iconBase = "org/inventory/customization/datamodelmanager/res/icon.png",
+        persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Tools", id = "org.inventory.customization.datamodelmanager.DataModelManagerTopComponent")
-@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Administration"),
+@ActionReferences(value = {
+    @ActionReference(path = "Menu/Tools/Administration")
+    ,
     @ActionReference(path = "Toolbars/04_Customization", position = 1)})
 @TopComponent.OpenActionRegistration(
-    displayName = "#DataModelManager.module.displayname",
-preferredID = "DataModelManagerTopComponent")
+        displayName = "#DataModelManager.module.displayname",
+        preferredID = "DataModelManagerTopComponent")
 
-public final class DataModelManagerTopComponent extends TopComponent 
+public final class DataModelManagerTopComponent extends TopComponent
         implements ExplorerManager.Provider, Refreshable, ActionListener {
 
     private final ExplorerManager em = new ExplorerManager();
     private DataModelManagerService dmms;
-       
+
     public DataModelManagerTopComponent() {
         initComponents();
         setName(I18N.gm("DataModelManager.module.name"));
         setToolTipText(I18N.gm("DataModelManager.module.tooltiptext"));
         initComponentsCustom();
     }
-    
-    public void initComponentsCustom(){
+
+    public void initComponentsCustom() {
         dmms = new DataModelManagerService(this);
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
         treeView = new BeanTreeView();
@@ -88,6 +94,7 @@ public final class DataModelManagerTopComponent extends TopComponent
         toolBarMain = new javax.swing.JToolBar();
         btndefaultDataModelManaget = new javax.swing.JButton();
         btnshowClassHierarchyView = new javax.swing.JButton();
+        btnExportDatabase = new javax.swing.JButton();
         lblSearch = new javax.swing.JLabel();
         cmbClassList = new javax.swing.JComboBox();
 
@@ -124,6 +131,19 @@ public final class DataModelManagerTopComponent extends TopComponent
         toolBarMain.add(btnshowClassHierarchyView);
         btnshowClassHierarchyView.getAccessibleContext().setAccessibleDescription(I18N.gm("open_graphical_representation_tree")); // NOI18N
 
+        btnExportDatabase.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/customization/datamodelmanager/res/defaultExportDB.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnExportDatabase, org.openide.util.NbBundle.getMessage(DataModelManagerTopComponent.class, "DataModelManagerTopComponent.btnExportDatabase.text")); // NOI18N
+        btnExportDatabase.setToolTipText("Export Data Base");
+        btnExportDatabase.setFocusable(false);
+        btnExportDatabase.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnExportDatabase.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnExportDatabase.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportDatabaseActionPerformed(evt);
+            }
+        });
+        toolBarMain.add(btnExportDatabase);
+
         org.openide.awt.Mnemonics.setLocalizedText(lblSearch, I18N.gm("search")); // NOI18N
         lblSearch.setPreferredSize(new java.awt.Dimension(70, 15));
         toolBarMain.add(lblSearch);
@@ -143,22 +163,21 @@ public final class DataModelManagerTopComponent extends TopComponent
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnshowClassHierarchyViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnshowClassHierarchyViewActionPerformed
-        ClassHierarchyTopComponent classHierarchyTC = (ClassHierarchyTopComponent) 
-            WindowManager.getDefault().findTopComponent("ClassHierarchyTopComponent");
-            
-            if (classHierarchyTC == null) {
-                classHierarchyTC = new ClassHierarchyTopComponent();
+        ClassHierarchyTopComponent classHierarchyTC = (ClassHierarchyTopComponent) WindowManager.getDefault().findTopComponent("ClassHierarchyTopComponent");
+
+        if (classHierarchyTC == null) {
+            classHierarchyTC = new ClassHierarchyTopComponent();
+            classHierarchyTC.open();
+        } else {
+            if (classHierarchyTC.isOpened()) {
+                classHierarchyTC.requestAttention(true);
+            } else { //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
+                //so we will reuse the instance, refreshing the vierw first
+                classHierarchyTC.refresh();
                 classHierarchyTC.open();
-            } else {
-                if (classHierarchyTC.isOpened())
-                    classHierarchyTC.requestAttention(true);
-                else { //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
-                       //so we will reuse the instance, refreshing the vierw first
-                    classHierarchyTC.refresh();
-                    classHierarchyTC.open();
-                }
             }
-            classHierarchyTC.requestActive();
+        }
+        classHierarchyTC.requestActive();
     }//GEN-LAST:event_btnshowClassHierarchyViewActionPerformed
 
     private void btndefaultDataModelManagetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndefaultDataModelManagetActionPerformed
@@ -169,15 +188,23 @@ public final class DataModelManagerTopComponent extends TopComponent
     private void cmbClassListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cmbClassListMouseClicked
         cmbClassList.removeAllItems();
         cmbClassList.addItem(null);
-        for (LocalClassMetadataLight node : dmms.getRoots())
+        for (LocalClassMetadataLight node : dmms.getRoots()) {
             cmbClassList.addItem(node);
+        }
     }//GEN-LAST:event_cmbClassListMouseClicked
 
     private void cmbClassListMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cmbClassListMouseEntered
-        
+
     }//GEN-LAST:event_cmbClassListMouseEntered
 
+    private void btnExportDatabaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportDatabaseActionPerformed
+        GenericExportPanel exportPanel = new GenericExportPanel( new XMLExportFilter[] {XMLExportFilter.getInstance()}, "ExportDB");
+        DialogDescriptor dd = new DialogDescriptor(exportPanel, I18N.gm("export_options"), true, exportPanel);
+        DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
+    }//GEN-LAST:event_btnExportDatabaseActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnExportDatabase;
     private javax.swing.JButton btndefaultDataModelManaget;
     private javax.swing.JButton btnshowClassHierarchyView;
     private javax.swing.JComboBox cmbClassList;
@@ -185,17 +212,18 @@ public final class DataModelManagerTopComponent extends TopComponent
     private javax.swing.JToolBar toolBarMain;
     // End of variables declaration//GEN-END:variables
     private BeanTreeView treeView;
-    
+
     @Override
     public void componentOpened() {
         setRoot();
         ExplorerUtils.activateActions(em, true);
-        
+
         cmbClassList.addActionListener(this);
-        
+
         cmbClassList.addItem(null);
-        for (LocalClassMetadataLight node : dmms.getRoots())
+        for (LocalClassMetadataLight node : dmms.getRoots()) {
             cmbClassList.addItem(node);
+        }
     }
 
     @Override
@@ -215,12 +243,12 @@ public final class DataModelManagerTopComponent extends TopComponent
         // TODO store your settings
     }
 
-    void readProperties(java.util.Properties p) {   
+    void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
     }
-    
-    public void setRoot(){
+
+    public void setRoot() {
         LocalClassMetadataLight[] allMeta = dmms.getRootChildren();
         em.setRootContext(new AbstractNode(new ClassMetadataChildren(allMeta)));
     }
@@ -229,26 +257,27 @@ public final class DataModelManagerTopComponent extends TopComponent
     public ExplorerManager getExplorerManager() {
         return em;
     }
-    
 
     @Override
     public void refresh() {
 
     }
-    
-    public NotificationUtil getNotifier(){
-         return NotificationUtil.getInstance();
+
+    public NotificationUtil getNotifier() {
+        return NotificationUtil.getInstance();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if("comboBoxChanged".equals(e.getActionCommand()))
+        if ("comboBoxChanged".equals(e.getActionCommand())) {
             comboBoxChanged(e);
+        }
     }
-    
+
     public void comboBoxChanged(ActionEvent e) {
-        LocalClassMetadataLight selectedItem = (LocalClassMetadataLight) ((JComboBox)e.getSource()).getSelectedItem();
-        if (selectedItem != null)
-            em.setRootContext(new AbstractNode(new ClassMetadataChildren(new LocalClassMetadataLight []{selectedItem})));
+        LocalClassMetadataLight selectedItem = (LocalClassMetadataLight) ((JComboBox) e.getSource()).getSelectedItem();
+        if (selectedItem != null) {
+            em.setRootContext(new AbstractNode(new ClassMetadataChildren(new LocalClassMetadataLight[]{selectedItem})));
+        }
     }
 }
