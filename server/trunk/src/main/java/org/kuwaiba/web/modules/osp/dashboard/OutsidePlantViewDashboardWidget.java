@@ -642,7 +642,6 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                 }
                 reader.close();
             } catch (Exception ex) {
-                System.out.println("Unexpected error reading OSP view" + ex.getLocalizedMessage());
                 Notifications.showError(String.format("An unexpected error appeared while reading the OSP view: " + ex.getLocalizedMessage()));
             } 
     }
