@@ -45,9 +45,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -97,14 +94,6 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
      */
     private RemoteViewObject currentView;
     /**
-     * Default center as in the ejb-jar.xml file
-     */
-    private LatLon defaultCenter;
-    /**
-     * Default zoom as in the ejb-jar.xml file
-     */
-    private int defaultZoom;
-    /**
      * A hash that caches the colors of the connections by connection class name
      */
     private HashMap<String, String> connectionColors;
@@ -112,6 +101,14 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
      * Reference to the backend bean
      */
     private WebserviceBean wsBean;
+    /**
+     * The default zoom of the map.
+     */
+    private int defaultZoom;
+    /**
+     * Default center of the map
+     */
+    private LatLon defaultCenter;
     
     public OutsidePlantViewDashboardWidget(DashboardEventBus eventBus, WebserviceBean wsBean) {
         super("Outside Plant Viewer", eventBus);
@@ -130,293 +127,325 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
     
     @Override
     public void createContent() {
+        
+        String apiKey, language;
+        double mapLatitude, mapLongitude;
+        int mapZoom;
+
         try {
-            
-            Context context = new InitialContext();
-            String apiKey = (String)context.lookup("java:comp/env/googleMapsApiKey");
-            String language = (String)context.lookup("java:comp/env/mapLanguage");
-            defaultCenter = new LatLon((double)context.lookup("java:comp/env/defaultCenterLatitude") , (double)context.lookup("java:comp/env/defaultCenterLongitude"));
-            defaultZoom = (int)context.lookup("java:comp/env/defaultZoom");
+            apiKey = (String)wsBean.getConfigurationVariableValue("general.maps.apiKey", Page.getCurrent().getWebBrowser().getAddress(), 
+                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+        } catch (ServerSideException ex) {
+            apiKey = null;
+            Notifications.showWarning("The configuration variable general.maps.apiKey has not been set. The default map will be used");
+        }
 
-            mapMain = new GoogleMapsComponent(apiKey, null, language);
-            mapMain.setSizeFull();
-            mapMain.setCenter(defaultCenter);
-            mapMain.setZoom(defaultZoom);
-            
-            mapMain.showEdgeLabels(true);
-            mapMain.showMarkerLabels(true);
-            
-            //Enable the tree as a drop target
-            DropTargetExtension<GoogleMapsComponent> dropTarget = new DropTargetExtension<>(mapMain);
-            dropTarget.setDropEffect(DropEffect.MOVE);
+        try {
+            language = (String)wsBean.getConfigurationVariableValue("general.maps.language", Page.getCurrent().getWebBrowser().getAddress(), 
+                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+        } catch (ServerSideException ex) {
+            language = OSPConstants.DEFAULT_LANGUAGE;
+        }
 
-            dropTarget.addDropListener(new DropListener<GoogleMapsComponent>() {
-                @Override
-                public void drop(DropEvent<GoogleMapsComponent> event) {
-                    Optional<String> transferData = event.getDataTransferData(RemoteObjectLight.DATA_TYPE); //Only get this type of data. Note that the type of the data to be trasferred is set in the drag source
+        try {
+            mapLatitude = (double)wsBean.getConfigurationVariableValue("widgets.simplemap.centerLatitude", Page.getCurrent().getWebBrowser().getAddress(), 
+                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+        } catch (ServerSideException ex) {
+            mapLatitude = OSPConstants.DEFAULT_CENTER_LATITUIDE;
+        }
 
-                    if (transferData.isPresent()) {
-                        for (String serializedObject : transferData.get().split("~o~")) {
-                            String[] serializedObjectTokens = serializedObject.split("~a~", -1);                            
-                            RemoteObjectLight businessObject = new RemoteObjectLight(serializedObjectTokens[1], Long.valueOf(serializedObjectTokens[0]), serializedObjectTokens[2]);
-                            
-                            if (businessObject.getId() !=  -1) { //Ignore the dummy root
-                                
-                                if (getMarkerFromBusinesObject(businessObject) != null)
-                                    Notifications.showError(String.format("The object %s already exists in this view", businessObject));
-                                else {
-                                    GoogleMapMarker newMarker = mapMain.addMarker(businessObject.toString(), mapMain.getCenter(), true, "/icons/" + businessObject.getClassName() + ".png");
-                                    nodes.add(new OSPNode(newMarker, businessObject));
-                                }
+        try {
+            mapLongitude = (double)wsBean.getConfigurationVariableValue("widgets.simplemap.centerLongitude", Page.getCurrent().getWebBrowser().getAddress(), 
+                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+        } catch (ServerSideException ex) {
+            mapLongitude = OSPConstants.DEFAULT_CENTER_LONGITUDE;
+        }
+
+        try {
+            mapZoom = (int)wsBean.getConfigurationVariableValue("widgets.simplemap.zoom", Page.getCurrent().getWebBrowser().getAddress(), 
+                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+        } catch (ServerSideException ex) {
+            mapZoom = OSPConstants.DEFAULT_ZOOM;
+        }
+
+        mapMain = new GoogleMapsComponent(apiKey, null, language);
+        mapMain.setSizeFull();
+        
+        this.defaultCenter = new LatLon(mapLatitude, mapLongitude);
+        mapMain.setCenter(defaultCenter);
+        this.defaultZoom = mapZoom;
+        mapMain.setZoom(defaultZoom);
+
+        mapMain.showEdgeLabels(true);
+        mapMain.showMarkerLabels(true);
+
+        //Enable the tree as a drop target
+        DropTargetExtension<GoogleMapsComponent> dropTarget = new DropTargetExtension<>(mapMain);
+        dropTarget.setDropEffect(DropEffect.MOVE);
+
+        dropTarget.addDropListener(new DropListener<GoogleMapsComponent>() {
+            @Override
+            public void drop(DropEvent<GoogleMapsComponent> event) {
+                Optional<String> transferData = event.getDataTransferData(RemoteObjectLight.DATA_TYPE); //Only get this type of data. Note that the type of the data to be trasferred is set in the drag source
+
+                if (transferData.isPresent()) {
+                    for (String serializedObject : transferData.get().split("~o~")) {
+                        String[] serializedObjectTokens = serializedObject.split("~a~", -1);                            
+                        RemoteObjectLight businessObject = new RemoteObjectLight(serializedObjectTokens[1], Long.valueOf(serializedObjectTokens[0]), serializedObjectTokens[2]);
+
+                        if (businessObject.getId() !=  -1) { //Ignore the dummy root
+
+                            if (getMarkerFromBusinesObject(businessObject) != null)
+                                Notifications.showError(String.format("The object %s already exists in this view", businessObject));
+                            else {
+                                GoogleMapMarker newMarker = mapMain.addMarker(businessObject.toString(), mapMain.getCenter(), true, "/icons/" + businessObject.getClassName() + ".png");
+                                nodes.add(new OSPNode(newMarker, businessObject));
                             }
                         }
-                    } 
-                }
-            });
-            
-            mapMain.addMarkerClickListener((clickedMarker) -> {
-                eventBus.notifySubscribers(new DashboardEventListener.DashboardEvent(this, 
-                        DashboardEventListener.DashboardEvent.TYPE_SELECTION, getBusinesObjectFromMarker(clickedMarker)));
-            });
-            
-            mapMain.addEdgeClickListener((clickedEdge) -> {
-                eventBus.notifySubscribers(new DashboardEventListener.DashboardEvent(this, 
-                        DashboardEventListener.DashboardEvent.TYPE_SELECTION, getBusinesObjectFromPolyline(clickedEdge)));
-            });
-                      
-            MenuBar mnuMain = new MenuBar();
-        
-            mnuMain.addItem("New", VaadinIcons.FOLDER_ADD, (selectedItem) -> {
-                currentView = null;
-                clearView();
-            });
-
-            mnuMain.addItem("Open", VaadinIcons.FOLDER_OPEN, (selectedItem) -> {
-                try {
-                    
-                    List<RemoteViewObjectLight> ospViews = wsBean.getOSPViews(Page.getCurrent().getWebBrowser().getAddress(), 
-                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-                    
-                    if (ospViews.isEmpty())
-                        Notifications.showInfo("There are not OSP views saved at the moment");
-                    else {
-                        Window wdwOpen = new Window("Open OSP View");
-                        VerticalLayout lytContent = new VerticalLayout();
-                        Grid<RemoteViewObjectLight> tblOSPViews = new Grid<>("Select a view from the list", ospViews);
-                        tblOSPViews.setHeaderVisible(false);
-                        tblOSPViews.setSelectionMode(Grid.SelectionMode.SINGLE);
-                        tblOSPViews.addColumn(RemoteViewObjectLight::getName).setWidthUndefined();
-                        tblOSPViews.addColumn(RemoteViewObjectLight::getDescription);
-                        tblOSPViews.setSizeFull();
-                        
-                        Button btnOk = new Button("OK", (event) -> {
-                            
-                            if (tblOSPViews.getSelectedItems().isEmpty())
-                                Notifications.showInfo("You have to select a view");
-                            else {
-                                try {
-                                    currentView = wsBean.getOSPView(tblOSPViews.getSelectedItems().iterator().next().getId(), Page.getCurrent().getWebBrowser().getAddress(), 
-                                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-                                    clearView();
-                                    render(currentView.getStructure());
-                                    wdwOpen.close();
-                                } catch (ServerSideException ex) {
-                                    Notifications.showError(ex.getLocalizedMessage());
-                                    wdwOpen.close();
-                                }
-                            }
-                            
-                        });
-                        
-                        Button btnCancel = new Button("Cancel", (event) -> {
-                            wdwOpen.close();
-                        });
-                        
-                        HorizontalLayout lytButtons = new HorizontalLayout(btnOk, btnCancel);
-                        
-                        lytContent.addComponents(tblOSPViews, lytButtons);
-                        lytContent.setExpandRatio(tblOSPViews, 9);
-                        lytContent.setExpandRatio(lytButtons, 1);
-                        lytContent.setComponentAlignment(lytButtons, Alignment.MIDDLE_RIGHT);
-                        lytContent.setWidth(100, Unit.PERCENTAGE);
-                        
-                        wdwOpen.setContent(lytContent);
-                        
-                        wdwOpen.center();
-                        wdwOpen.setModal(true);
-                        UI.getCurrent().addWindow(wdwOpen);
                     }
-                } catch (ServerSideException ex) {
-                    Notifications.showError(ex.getLocalizedMessage());
-                }
-            });
-            
-            mnuMain.addItem("Save", VaadinIcons.ARROW_DOWN, (selectedItem) -> {
-                if (nodes.isEmpty()) 
-                    Notifications.showInfo("The view is empty. There's nothing to save");
-                else {
-                    VerticalLayout lytContent = new VerticalLayout();
-                    Window wdwSave = new Window("Save OSP View");
-                    wdwSave.setWidth(300, Unit.PIXELS);
+                } 
+            }
+        });
 
-                    TextField txtName = new TextField("Name");
-                    txtName.setValue(currentView == null ? "" : currentView.getName());
-                    TextField txtDescription = new TextField("Description");
-                    txtDescription.setValue(currentView == null ? "" : currentView.getDescription());
+        mapMain.addMarkerClickListener((clickedMarker) -> {
+            eventBus.notifySubscribers(new DashboardEventListener.DashboardEvent(this, 
+                    DashboardEventListener.DashboardEvent.TYPE_SELECTION, getBusinesObjectFromMarker(clickedMarker)));
+        });
+
+        mapMain.addEdgeClickListener((clickedEdge) -> {
+            eventBus.notifySubscribers(new DashboardEventListener.DashboardEvent(this, 
+                    DashboardEventListener.DashboardEvent.TYPE_SELECTION, getBusinesObjectFromPolyline(clickedEdge)));
+        });
+
+        MenuBar mnuMain = new MenuBar();
+
+        mnuMain.addItem("New", VaadinIcons.FOLDER_ADD, (selectedItem) -> {
+            currentView = null;
+            clearView();
+        });
+
+        mnuMain.addItem("Open", VaadinIcons.FOLDER_OPEN, (selectedItem) -> {
+            try {
+
+                List<RemoteViewObjectLight> ospViews = wsBean.getOSPViews(Page.getCurrent().getWebBrowser().getAddress(), 
+                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+
+                if (ospViews.isEmpty())
+                    Notifications.showInfo("There are not OSP views saved at the moment");
+                else {
+                    Window wdwOpen = new Window("Open OSP View");
+                    VerticalLayout lytContent = new VerticalLayout();
+                    Grid<RemoteViewObjectLight> tblOSPViews = new Grid<>("Select a view from the list", ospViews);
+                    tblOSPViews.setHeaderVisible(false);
+                    tblOSPViews.setSelectionMode(Grid.SelectionMode.SINGLE);
+                    tblOSPViews.addColumn(RemoteViewObjectLight::getName).setWidthUndefined();
+                    tblOSPViews.addColumn(RemoteViewObjectLight::getDescription);
+                    tblOSPViews.setSizeFull();
 
                     Button btnOk = new Button("OK", (event) -> {
 
-                        if (txtName.getValue().trim().isEmpty())
-                            Notifications.showInfo("The name of the view can not be empty");
+                        if (tblOSPViews.getSelectedItems().isEmpty())
+                            Notifications.showInfo("You have to select a view");
                         else {
                             try {
-                                if (currentView == null) { //It's a new view
-                                    long newViewId = wsBean.createOSPView(txtName.getValue(), txtDescription.getValue(), getAsXml(), Page.getCurrent().getWebBrowser().getAddress(), 
+                                currentView = wsBean.getOSPView(tblOSPViews.getSelectedItems().iterator().next().getId(), Page.getCurrent().getWebBrowser().getAddress(), 
                                         ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-                                    currentView = new RemoteViewObject();
-                                    currentView.setId(newViewId);
-                                } else
-                                    wsBean.updateOSPView(currentView.getId(), txtName.getValue(), txtDescription.getValue(), getAsXml(), Page.getCurrent().getWebBrowser().getAddress(), 
-                                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-                                    
-                                currentView.setName(txtName.getValue());
-                                    currentView.setDescription(txtName.getDescription());
-                                
-                                Notifications.showInfo("View saved successfully");
-                                wdwSave.close();
+                                clearView();
+                                render(currentView.getStructure());
+                                wdwOpen.close();
                             } catch (ServerSideException ex) {
                                 Notifications.showError(ex.getLocalizedMessage());
-                                wdwSave.close();
+                                wdwOpen.close();
                             }
                         }
 
                     });
 
                     Button btnCancel = new Button("Cancel", (event) -> {
-                        wdwSave.close();
+                        wdwOpen.close();
                     });
 
-                    FormLayout lytProperties = new FormLayout(txtName, txtDescription);
-                    lytProperties.setSizeFull();
-                    
                     HorizontalLayout lytButtons = new HorizontalLayout(btnOk, btnCancel);
-                    
-                    lytContent.addComponents(lytProperties, lytButtons);
-                    lytContent.setExpandRatio(lytProperties, 9);
+
+                    lytContent.addComponents(tblOSPViews, lytButtons);
+                    lytContent.setExpandRatio(tblOSPViews, 9);
                     lytContent.setExpandRatio(lytButtons, 1);
                     lytContent.setComponentAlignment(lytButtons, Alignment.MIDDLE_RIGHT);
-                    lytContent.setSizeFull();
+                    lytContent.setWidth(100, Unit.PERCENTAGE);
 
-                    wdwSave.setHeight(20, Unit.PERCENTAGE);
-                    wdwSave.setWidth(25, Unit.PERCENTAGE);
-                    wdwSave.setContent(lytContent);
+                    wdwOpen.setContent(lytContent);
 
-                    wdwSave.center();
-                    wdwSave.setModal(true);
-                    UI.getCurrent().addWindow(wdwSave);
+                    wdwOpen.center();
+                    wdwOpen.setModal(true);
+                    UI.getCurrent().addWindow(wdwOpen);
                 }
-                
-                
-            });
+            } catch (ServerSideException ex) {
+                Notifications.showError(ex.getLocalizedMessage());
+            }
+        });
 
-            mnuMain.addItem("Connect", VaadinIcons.CONNECT, (selectedItem) -> {
-                Window wdwSelectRootObjects = new Window("New Connection");
-                
-                ComboBox<OSPNode> cmbASideRoot = new ComboBox<>("A Side", nodes);
-                cmbASideRoot.setEmptySelectionAllowed(false);
-                cmbASideRoot.setEmptySelectionCaption("Select the A Side...");
-                cmbASideRoot.setWidth(250, Unit.PIXELS);
-                ComboBox<OSPNode> cmbBSideRoot = new ComboBox<>("B Side", nodes);
-                cmbBSideRoot.setEmptySelectionAllowed(false);
-                cmbBSideRoot.setEmptySelectionCaption("Select the B Side...");
-                cmbBSideRoot.setWidth(250, Unit.PIXELS);
-                Button btnOk = new Button("OK");
-                
-                wdwSelectRootObjects.center();
-                wdwSelectRootObjects.setWidth(80, Unit.PERCENTAGE);
-                wdwSelectRootObjects.setHeight(50, Unit.PERCENTAGE);
-                wdwSelectRootObjects.setModal(true);
-                
-                UI.getCurrent().addWindow(wdwSelectRootObjects);
-                
-                btnOk.addClickListener((Button.ClickEvent event) -> {
-                    
-                    if (!cmbASideRoot.getSelectedItem().isPresent() || !cmbBSideRoot.getSelectedItem().isPresent()) {
-                        Notifications.showError("Select both sides of the connection");
-                        return;
-                    }
-                    
-                    if (cmbASideRoot.getSelectedItem().get().equals(cmbBSideRoot.getSelectedItem().get())){
-                        Notifications.showError("The selected nodes must be different");
-                        return;
-                    }
-                    
-                    wdwSelectRootObjects.close();
-                    NewPhysicalConnectionWizard wizard = new NewPhysicalConnectionWizard(cmbASideRoot.getSelectedItem().get().getBusinessObject(), 
-                                    cmbBSideRoot.getSelectedItem().get().getBusinessObject(), wsBean);
-                    
-                    wizard.setWidth(100, Unit.PERCENTAGE);
-                    
-                    Window wdwWizard = new Window("New Connection Wizard", wizard);
-                    wdwWizard.center();
-                    wdwWizard.setModal(true);
-                    wdwWizard.setWidth(80, Unit.PERCENTAGE);
-                    wdwWizard.setHeight(50, Unit.PERCENTAGE);
-                
-                    wizard.addEventListener((wizardEvent) -> {
-                        switch (wizardEvent.getType()) {
-                            case Wizard.WizardEvent.TYPE_FINAL_STEP:
-                                RemoteObjectLight newConnection = (RemoteObjectLight)wizardEvent.getInformation().get("connection");
-                                RemoteObjectLight aSide = (RemoteObjectLight)wizardEvent.getInformation().get("rootASide");
-                                RemoteObjectLight bSide = (RemoteObjectLight)wizardEvent.getInformation().get("rootBSide");
+        mnuMain.addItem("Save", VaadinIcons.ARROW_DOWN, (selectedItem) -> {
+            if (nodes.isEmpty()) 
+                Notifications.showInfo("The view is empty. There's nothing to save");
+            else {
+                VerticalLayout lytContent = new VerticalLayout();
+                Window wdwSave = new Window("Save OSP View");
+                wdwSave.setWidth(300, Unit.PIXELS);
 
-                                GoogleMapMarker mrkSource = getMarkerFromBusinesObject(aSide);
-                                GoogleMapMarker mrkDestination = getMarkerFromBusinesObject(bSide);
-                                
-                                List<LatLon> coordinates = new ArrayList();
-                                coordinates.add(mrkSource.getPosition());
-                                coordinates.add(mrkDestination.getPosition());
-                                                                
-                                GoogleMapPolyline connection = new GoogleMapPolyline(newConnection.toString(), coordinates);
-                                connection.setStrokeWeight(3);
-                                
-                                connection.setStrokeColor(getConnectionColorFromClassName(newConnection.getClassName()));
-                                
-                                OSPEdge newEdge = new OSPEdge(connection, newConnection);
-                                newEdge.setSourceObject(getNodeFromBusinessObject(aSide));
-                                newEdge.setTargetObject(getNodeFromBusinessObject(bSide));
-                                
-                                edges.add(newEdge);
-                                mapMain.addEdge(connection, mrkSource, mrkDestination);
-                                
-                                Notifications.showInfo(String.format("Connection %s created successfully", newConnection));
-                            case Wizard.WizardEvent.TYPE_CANCEL:
-                                wdwWizard.close();
+                TextField txtName = new TextField("Name");
+                txtName.setValue(currentView == null ? "" : currentView.getName());
+                TextField txtDescription = new TextField("Description");
+                txtDescription.setValue(currentView == null ? "" : currentView.getDescription());
+
+                Button btnOk = new Button("OK", (event) -> {
+
+                    if (txtName.getValue().trim().isEmpty())
+                        Notifications.showInfo("The name of the view can not be empty");
+                    else {
+                        try {
+                            if (currentView == null) { //It's a new view
+                                long newViewId = wsBean.createOSPView(txtName.getValue(), txtDescription.getValue(), getAsXml(), Page.getCurrent().getWebBrowser().getAddress(), 
+                                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                                currentView = new RemoteViewObject();
+                                currentView.setId(newViewId);
+                            } else
+                                wsBean.updateOSPView(currentView.getId(), txtName.getValue(), txtDescription.getValue(), getAsXml(), Page.getCurrent().getWebBrowser().getAddress(), 
+                                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+
+                            currentView.setName(txtName.getValue());
+                                currentView.setDescription(txtName.getDescription());
+
+                            Notifications.showInfo("View saved successfully");
+                            wdwSave.close();
+                        } catch (ServerSideException ex) {
+                            Notifications.showError(ex.getLocalizedMessage());
+                            wdwSave.close();
                         }
-                        
-                    });
-                    
+                    }
 
-                    UI.getCurrent().addWindow(wdwWizard);
                 });
-                
-                FormLayout lytContent = new FormLayout(cmbASideRoot, cmbBSideRoot, btnOk);
-                lytContent.setMargin(true);
-                lytContent.setWidthUndefined();
-                
-                wdwSelectRootObjects.setContent(lytContent);
+
+                Button btnCancel = new Button("Cancel", (event) -> {
+                    wdwSave.close();
+                });
+
+                FormLayout lytProperties = new FormLayout(txtName, txtDescription);
+                lytProperties.setSizeFull();
+
+                HorizontalLayout lytButtons = new HorizontalLayout(btnOk, btnCancel);
+
+                lytContent.addComponents(lytProperties, lytButtons);
+                lytContent.setExpandRatio(lytProperties, 9);
+                lytContent.setExpandRatio(lytButtons, 1);
+                lytContent.setComponentAlignment(lytButtons, Alignment.MIDDLE_RIGHT);
+                lytContent.setSizeFull();
+
+                wdwSave.setHeight(20, Unit.PERCENTAGE);
+                wdwSave.setWidth(25, Unit.PERCENTAGE);
+                wdwSave.setContent(lytContent);
+
+                wdwSave.center();
+                wdwSave.setModal(true);
+                UI.getCurrent().addWindow(wdwSave);
+            }
+
+
+        });
+
+        mnuMain.addItem("Connect", VaadinIcons.CONNECT, (selectedItem) -> {
+            Window wdwSelectRootObjects = new Window("New Connection");
+
+            ComboBox<OSPNode> cmbASideRoot = new ComboBox<>("A Side", nodes);
+            cmbASideRoot.setEmptySelectionAllowed(false);
+            cmbASideRoot.setEmptySelectionCaption("Select the A Side...");
+            cmbASideRoot.setWidth(250, Unit.PIXELS);
+            ComboBox<OSPNode> cmbBSideRoot = new ComboBox<>("B Side", nodes);
+            cmbBSideRoot.setEmptySelectionAllowed(false);
+            cmbBSideRoot.setEmptySelectionCaption("Select the B Side...");
+            cmbBSideRoot.setWidth(250, Unit.PIXELS);
+            Button btnOk = new Button("OK");
+
+            wdwSelectRootObjects.center();
+            wdwSelectRootObjects.setWidth(80, Unit.PERCENTAGE);
+            wdwSelectRootObjects.setHeight(50, Unit.PERCENTAGE);
+            wdwSelectRootObjects.setModal(true);
+
+            UI.getCurrent().addWindow(wdwSelectRootObjects);
+
+            btnOk.addClickListener((Button.ClickEvent event) -> {
+
+                if (!cmbASideRoot.getSelectedItem().isPresent() || !cmbBSideRoot.getSelectedItem().isPresent()) {
+                    Notifications.showError("Select both sides of the connection");
+                    return;
+                }
+
+                if (cmbASideRoot.getSelectedItem().get().equals(cmbBSideRoot.getSelectedItem().get())){
+                    Notifications.showError("The selected nodes must be different");
+                    return;
+                }
+
+                wdwSelectRootObjects.close();
+                NewPhysicalConnectionWizard wizard = new NewPhysicalConnectionWizard(cmbASideRoot.getSelectedItem().get().getBusinessObject(), 
+                                cmbBSideRoot.getSelectedItem().get().getBusinessObject(), wsBean);
+
+                wizard.setWidth(100, Unit.PERCENTAGE);
+
+                Window wdwWizard = new Window("New Connection Wizard", wizard);
+                wdwWizard.center();
+                wdwWizard.setModal(true);
+                wdwWizard.setWidth(80, Unit.PERCENTAGE);
+                wdwWizard.setHeight(50, Unit.PERCENTAGE);
+
+                wizard.addEventListener((wizardEvent) -> {
+                    switch (wizardEvent.getType()) {
+                        case Wizard.WizardEvent.TYPE_FINAL_STEP:
+                            RemoteObjectLight newConnection = (RemoteObjectLight)wizardEvent.getInformation().get("connection");
+                            RemoteObjectLight aSide = (RemoteObjectLight)wizardEvent.getInformation().get("rootASide");
+                            RemoteObjectLight bSide = (RemoteObjectLight)wizardEvent.getInformation().get("rootBSide");
+
+                            GoogleMapMarker mrkSource = getMarkerFromBusinesObject(aSide);
+                            GoogleMapMarker mrkDestination = getMarkerFromBusinesObject(bSide);
+
+                            List<LatLon> coordinates = new ArrayList();
+                            coordinates.add(mrkSource.getPosition());
+                            coordinates.add(mrkDestination.getPosition());
+
+                            GoogleMapPolyline connection = new GoogleMapPolyline(newConnection.toString(), coordinates);
+                            connection.setStrokeWeight(3);
+
+                            connection.setStrokeColor(getConnectionColorFromClassName(newConnection.getClassName()));
+
+                            OSPEdge newEdge = new OSPEdge(connection, newConnection);
+                            newEdge.setSourceObject(getNodeFromBusinessObject(aSide));
+                            newEdge.setTargetObject(getNodeFromBusinessObject(bSide));
+
+                            edges.add(newEdge);
+                            mapMain.addEdge(connection, mrkSource, mrkDestination);
+
+                            Notifications.showInfo(String.format("Connection %s created successfully", newConnection));
+                        case Wizard.WizardEvent.TYPE_CANCEL:
+                            wdwWizard.close();
+                    }
+
+                });
+
+
+                UI.getCurrent().addWindow(wdwWizard);
             });
-            
-            VerticalLayout lytContent = new VerticalLayout(mnuMain, mapMain);
-            lytContent.setExpandRatio(mnuMain, 0.3f);
-            lytContent.setExpandRatio(mapMain, 9.7f);
-            lytContent.setSizeFull();
-            contentComponent = lytContent;
-            addComponent(contentComponent);
-            
-        } catch (NamingException ne) {
-            Notifications.showError("An error ocurred while reading the map provider configuration. Contact your administrator");
-        }
+
+            FormLayout lytContent = new FormLayout(cmbASideRoot, cmbBSideRoot, btnOk);
+            lytContent.setMargin(true);
+            lytContent.setWidthUndefined();
+
+            wdwSelectRootObjects.setContent(lytContent);
+        });
+
+        VerticalLayout lytContent = new VerticalLayout(mnuMain, mapMain);
+        lytContent.setExpandRatio(mnuMain, 0.3f);
+        lytContent.setExpandRatio(mapMain, 9.7f);
+        lytContent.setSizeFull();
+        contentComponent = lytContent;
+        addComponent(contentComponent);
     }
     
     /**

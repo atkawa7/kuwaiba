@@ -1288,7 +1288,7 @@ public class KuwaibaService {
      * Creates an XML document describing the class hierarchy
      * @param showAll should this method return all entity classes or only InventoryObject subclasses
      * @param sessionId session identifier
-     * @return A byte array containing the class hierarchy as an XML document. See the <a href="http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_Save_Queries">wiki entry</a> for details on the document structure
+     * @return A byte array containing the class hierarchy as an XML document. 
      * @throws ServerSideException If one of the core classes could not be found
      */
     @WebMethod(operationName = "getClassHierarchy")

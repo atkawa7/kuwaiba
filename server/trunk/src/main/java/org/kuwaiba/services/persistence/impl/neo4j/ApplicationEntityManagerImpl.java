@@ -4684,8 +4684,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     break;
                 default:
                     throw new InvalidArgumentException(String.format("Invalid configuration variable property: %s", propertyToUpdate));
-            }            
+            }
+            
             tx.success();
+            cm.removeConfigurationVariableValue(name); //Removes the variable from the cache, it will be cached the next time it is requested 
         }
     }
 
@@ -4703,6 +4705,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             configVariableNode.delete();
             tx.success();
+            cm.removeConfigurationVariableValue(name);
         }
     }
 
@@ -4723,42 +4726,51 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public Object getConfigurationVariableValue(String name) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+    public Object getConfigurationVariableValue(String name) throws InvalidArgumentException, ApplicationObjectNotFoundException {
+        if (cm.getConfigurationVariableValue(name) != null)
+            return cm.getConfigurationVariableValue(name);
+        
         try (Transaction tx = graphDb.beginTx()) {
             Node configVariableNode = graphDb.findNode(configurationVariables, Constants.PROPERTY_NAME, name);
             
-            if (configVariableNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("Can not find a configuration variable named %s", name));
+            if (configVariableNode == null) 
+                throw new ApplicationObjectNotFoundException(String.format("The configuration variable %s could not be found", name));
             
-            String configVariableValue = (String)configVariableNode.getProperty(Constants.PROPERTY_VALUE);
+            String rawConfigVariableValue = (String)configVariableNode.getProperty(Constants.PROPERTY_VALUE); //The values are always stored as string, serialized versions of an object.
+            Object realConfigVariableValue = null;
             switch ((int)configVariableNode.getProperty(Constants.PROPERTY_TYPE)) {
                 case ConfigurationVariable.TYPE_STRING:
-                    return configVariableValue;
+                    realConfigVariableValue = rawConfigVariableValue;
+                    break;
                 case ConfigurationVariable.TYPE_INTEGER:
                     try {
-                        return Integer.valueOf(configVariableValue);
+                        realConfigVariableValue = Integer.valueOf(rawConfigVariableValue);
                     } catch (NumberFormatException nfex) {
-                        throw new InvalidArgumentException(String.format("%s can not be converted to integer", configVariableValue));
+                        throw new InvalidArgumentException(String.format("Value of configuration variable %s (%s) can not be converted to integer", name, rawConfigVariableValue));
                     }
+                    break;
                 case ConfigurationVariable.TYPE_FLOAT:
                     try {
-                        return Float.valueOf(configVariableValue);
+                        //In Java, Floats are 32-bits numbers, while Doubles are 64. For the sake of simplicity, while taking a bit more memory, all floats will be taken as doubles
+                        realConfigVariableValue =  Double.valueOf(rawConfigVariableValue);
                     } catch (NumberFormatException nfex) {
-                        throw new InvalidArgumentException(String.format("%s can not be converted to float", configVariableValue));
+                        throw new InvalidArgumentException(String.format("Value of configuration variable %s (%s) can not be converted to float", name, rawConfigVariableValue));
                     }
+                    break;
                 case ConfigurationVariable.TYPE_BOOLEAN:
-                    return Boolean.valueOf(configVariableValue);
+                    realConfigVariableValue = Boolean.valueOf(rawConfigVariableValue);
+                    break;
                 case ConfigurationVariable.TYPE_ARRAY: //Not implemented yet
                 case ConfigurationVariable.TYPE_MATRIX:
                     return new ArrayList<>();
+                default:
+                    throw new InvalidArgumentException(String.format("Unknown data type for variable %s", name));
             }
             
-            throw new InvalidArgumentException(String.format("Unknown data type for variable %s", name));
-            
+            cm.addConfigurationValue(name, realConfigVariableValue);
+            return realConfigVariableValue;
         }
     }
-    
-    
 
     @Override
     public List<ConfigurationVariable> getConfigurationVariablesInPool(long parentPoolId) throws ApplicationObjectNotFoundException {

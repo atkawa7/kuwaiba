@@ -22,9 +22,6 @@ import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import java.util.List;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
@@ -39,18 +36,6 @@ import org.kuwaiba.services.persistence.util.Constants;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class SimpleMapDashboardWidget extends AbstractDashboardWidget {
-    /**
-     * Default map center longitude. This value is used when the configuration variable <code>widgets.simplemap.centerLongitude</code> can not be found or it's not a number.
-     */
-    private static double DEFAULT_CENTER_LONGITUDE = 12.8260721;
-    /**
-     * Default map center latitude. This value is used when the configuration variable <code>widgets.simplemap.centerLatitude</code> can not be found or it's not a number.
-     */
-    private static double DEFAULT_CENTER_LATITUIDE = 11.8399727;
-    /**
-     * Default map center latitude. This value is used when the configuration variable <code>widgets.simplemap.centerLongitude</code> can not be found or it's not a number.
-     */
-    private static int DEFAULT_ZOOM = 3;
     /**
      * Reference to the backend bean
      */
@@ -71,7 +56,7 @@ public class SimpleMapDashboardWidget extends AbstractDashboardWidget {
     
     public SimpleMapDashboardWidget(String title, WebserviceBean wsBean) {
         super(title);
-        this.wsBean= wsBean;
+        this.wsBean = wsBean;
         try {
             this.loadConfiguration();
             this.createContent();
@@ -83,70 +68,95 @@ public class SimpleMapDashboardWidget extends AbstractDashboardWidget {
     
     public SimpleMapDashboardWidget(String title, WebserviceBean wsBean, long longitude, long latitude, int zoom) {
         super(title);
+        this.wsBean= wsBean;
         this.mapLongitude = longitude;
         this.mapLatitude = latitude;
         this.mapZoom = zoom;
-        this.wsBean= wsBean;
         this.createContent();
         this.setSizeFull();
     }
 
     @Override
     public void createContent() {
+        
+        String apiKey, language;
+        
         try {
-            Context context = new InitialContext();
-            String apiKey = (String)context.lookup("java:comp/env/googleMapsApiKey");
-            String language = (String)context.lookup("java:comp/env/mapLanguage");
-
-
-            GoogleMapsComponent mapMain = new GoogleMapsComponent(apiKey.trim().isEmpty() ? null : apiKey, null, language);
-
-            mapMain.setSizeFull();
-            mapMain.showMarkerLabels(true);
-
-            try {
-                List<RemoteObjectLight> allPhysicalLocations = wsBean.getObjectsOfClassLight(Constants.CLASS_GENERICLOCATION, -1, Page.getCurrent().getWebBrowser().getAddress(), 
+            apiKey = (String)wsBean.getConfigurationVariableValue("general.maps.apiKey", Page.getCurrent().getWebBrowser().getAddress(), 
                         ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-
-                allPhysicalLocations.stream().forEach(aPhysicalLocation -> {
-                        try {
-                            String longitude = wsBean.getAttributeValueAsString(aPhysicalLocation.getClassName(), 
-                                    aPhysicalLocation.getId(), "longitude", Page.getCurrent().getWebBrowser().getAddress(), 
-                                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-
-                            if (longitude != null) {
-                                String latitude = wsBean.getAttributeValueAsString(aPhysicalLocation.getClassName(), 
-                                    aPhysicalLocation.getId(), "latitude", Page.getCurrent().getWebBrowser().getAddress(), 
-                                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-
-                                if (latitude != null)
-                                    mapMain.addMarker(aPhysicalLocation.toString(), new LatLon(
-                                        Float.valueOf(latitude), Float.valueOf(longitude)), false, "/icons/" + aPhysicalLocation.getClassName() + ".png");
-                            }
-
-                        } catch (ServerSideException ex) {
-                            Notifications.showError(ex.getLocalizedMessage());
-                        }
-                });
-            } catch (ServerSideException ex) {
-                Notifications.showError(ex.getLocalizedMessage());
-            }
-
-            mapMain.setCenter(new LatLon(mapLatitude, mapLongitude));
-            mapMain.setZoom(mapZoom);
-
-            addComponent(mapMain);
-
-        } catch (NamingException ex) {
-            Notifications.showError(String.format("Map configuration could not be retrieved: %s", ex.getLocalizedMessage()));
+        } catch (ServerSideException ex) {
+            apiKey = null;
+            Notifications.showWarning("The configuration variable general.maps.apiKey has not been set. The default map will be used");
         }
+        
+        try {
+            language = (String)wsBean.getConfigurationVariableValue("general.maps.language", Page.getCurrent().getWebBrowser().getAddress(), 
+                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+        } catch (ServerSideException ex) {
+            language = OSPConstants.DEFAULT_LANGUAGE;
+        }
+
+        GoogleMapsComponent mapMain = new GoogleMapsComponent(apiKey, null, language);
+
+        mapMain.setSizeFull();
+        mapMain.showMarkerLabels(true);
+
+        try {
+            List<RemoteObjectLight> allPhysicalLocations = wsBean.getObjectsOfClassLight(Constants.CLASS_GENERICLOCATION, -1, Page.getCurrent().getWebBrowser().getAddress(), 
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+
+            allPhysicalLocations.stream().forEach(aPhysicalLocation -> {
+                    try {
+                        String longitude = wsBean.getAttributeValueAsString(aPhysicalLocation.getClassName(), 
+                                aPhysicalLocation.getId(), "longitude", Page.getCurrent().getWebBrowser().getAddress(), 
+                                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+
+                        if (longitude != null) {
+                            String latitude = wsBean.getAttributeValueAsString(aPhysicalLocation.getClassName(), 
+                                aPhysicalLocation.getId(), "latitude", Page.getCurrent().getWebBrowser().getAddress(), 
+                                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+
+                            if (latitude != null)
+                                mapMain.addMarker(aPhysicalLocation.toString(), new LatLon(
+                                    Float.valueOf(latitude), Float.valueOf(longitude)), false, "/icons/" + aPhysicalLocation.getClassName() + ".png");
+                        }
+
+                    } catch (ServerSideException ex) {
+                        Notifications.showError(ex.getLocalizedMessage());
+                    }
+            });
+        } catch (ServerSideException ex) {
+            Notifications.showError(ex.getLocalizedMessage());
+        }
+
+        mapMain.setCenter(new LatLon(mapLatitude, mapLongitude));
+        mapMain.setZoom(mapZoom);
+
+        addComponent(mapMain);
     }
 
     
     @Override
     protected void loadConfiguration() throws InvalidArgumentException {
-        this.mapLatitude = DEFAULT_CENTER_LATITUIDE;
-        this.mapLongitude = DEFAULT_CENTER_LONGITUDE;
-        this.mapZoom = DEFAULT_ZOOM;
+        try {
+            this.mapLatitude = (double)wsBean.getConfigurationVariableValue("widgets.simplemap.centerLatitude", Page.getCurrent().getWebBrowser().getAddress(), 
+                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+        } catch (ServerSideException ex) {
+            this.mapLatitude = OSPConstants.DEFAULT_CENTER_LATITUIDE;
+        }
+        
+        try {
+            this.mapLongitude = (double)wsBean.getConfigurationVariableValue("widgets.simplemap.centerLongitude", Page.getCurrent().getWebBrowser().getAddress(), 
+                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+        } catch (ServerSideException ex) {
+            this.mapLongitude = OSPConstants.DEFAULT_CENTER_LONGITUDE;
+        }
+        
+        try {
+            this.mapZoom = (int)wsBean.getConfigurationVariableValue("widgets.simplemap.zoom", Page.getCurrent().getWebBrowser().getAddress(), 
+                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+        } catch (ServerSideException ex) {
+            this.mapZoom = OSPConstants.DEFAULT_ZOOM;
+        }
     }
 }

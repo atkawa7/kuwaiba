@@ -189,9 +189,12 @@ public class BGPSynchronizer {
             try {
                 LOCAL_ASN = String.valueOf(aem.getConfigurationVariableValue("sync.bgp.localAsn"));
                 readMibData();
-            } catch (ApplicationObjectNotFoundException | InvalidArgumentException ex) {
-               res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Retrieving local ASN",
-                            "No local ASN has been set in the configuration variable module"));
+            } catch (InvalidArgumentException ex) {
+               res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Retrieving Local ASN",
+                            "The configuration variable sync.bgp.localAsn is not a number"));
+            } catch (ApplicationObjectNotFoundException ex) {
+                res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Retrieving local ASN",
+                            "The configuration variable sync.bgp.localAsn has not been set"));
             }
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
             Exceptions.printStackTrace(ex);
