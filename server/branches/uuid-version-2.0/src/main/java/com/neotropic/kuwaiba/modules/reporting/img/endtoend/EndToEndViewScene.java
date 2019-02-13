@@ -625,11 +625,14 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
                             setEdgeTarget(physicalPath.get(1), physicalVlan);
 
                             if(!logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty()){
-                                if(lastAddedASideEquipmentPhysical != null && endpointVlan.getId() == lastAddedASideEquipmentPhysical.getId())
+                                if(lastAddedASideEquipmentPhysical != null && 
+                                   endpointVlan.getId() != null && lastAddedASideEquipmentPhysical.getId() != null &&
+                                   endpointVlan.getId().equals(lastAddedASideEquipmentPhysical.getId()))
                                     setEdgeSource(physicalPath.get(1), lastAddedASideEquipmentPhysical);
                             }
                             else if(lastAddedASideEquipmentLogical != null){
-                                if(endpointVlan.getId() == lastAddedASideEquipmentLogical.getId()){
+                                if(endpointVlan.getId() != null && lastAddedASideEquipmentLogical.getId() != null && 
+                                   endpointVlan.getId().equals(lastAddedASideEquipmentLogical.getId())){
                                    setEdgeSource(physicalPath.get(1), lastAddedASideEquipmentLogical);
                                 }
                             }
@@ -721,11 +724,15 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
                             setEdgeTarget(physicalPath.get(1), physicalVlan);
 
                             if(logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty()){
-                                if(lastAddedBSideEquipmentPhysical != null && endpointVlan.getId() == lastAddedBSideEquipmentPhysical.getId())
+                                if(lastAddedBSideEquipmentPhysical != null && 
+                                    endpointVlan.getId() != null && lastAddedBSideEquipmentPhysical.getId() != null &&
+                                    endpointVlan.getId().equals(lastAddedBSideEquipmentPhysical.getId()))
                                     setEdgeSource(physicalPath.get(1), lastAddedBSideEquipmentPhysical);
                             }
                             else if(lastAddedASideEquipmentLogical != null){
-                                if(endpointVlan.getId() == lastAddedBSideEquipmentLogical.getId()){
+                                if(lastAddedBSideEquipmentLogical != null &&
+                                   endpointVlan.getId() != null && lastAddedBSideEquipmentLogical.getId() != null && 
+                                   endpointVlan.getId().equals(lastAddedBSideEquipmentLogical.getId())){
                                    setEdgeSource(physicalPath.get(1), lastAddedBSideEquipmentLogical);
                                 }
                             }

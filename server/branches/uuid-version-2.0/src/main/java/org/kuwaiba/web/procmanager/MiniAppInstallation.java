@@ -315,7 +315,7 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
         }
         
         public String getCountry() {
-            RemoteObjectLight rol = null;
+            RemoteObjectLight rol;
             if (physicalNode == null)
                 rol = device;
             else

@@ -68,7 +68,7 @@ public class ConditionalArtifactRender extends ArtifactRenderer {
 
     @Override
     public Component renderArtifact() {
-        if (artifactDefinition.getPreconditionsScript() != null) {
+        if (artifactDefinition != null && artifactDefinition.getPreconditionsScript() != null) {
             ScriptQueryExecutorImpl scriptQueryExecutorImpl = new ScriptQueryExecutorImpl(wsBean, session, processInstance);
             String script = new String(artifactDefinition.getPreconditionsScript());
             FunctionRunner functionRunner = new FunctionRunner("precondition", null, script);

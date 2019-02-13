@@ -166,7 +166,7 @@ public class ConfigureSyncGroupMiniApp extends AbstractMiniApplication<Window, P
                     for (RemoteSynchronizationConfiguration dataSourceConfig : dataSourceConfigs) {
                         if (syncConfig.getId() == dataSourceConfig.getId()) {
                             hasDataSourceConfig = true;
-                            continue;                                                        
+                            break;                                                        
                         }
                     }
                     if (!hasDataSourceConfig)

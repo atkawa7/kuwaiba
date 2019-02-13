@@ -291,7 +291,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
             }
             Notifications.showInfo("The connections were created successfully");
             return true;
-        } catch (ServerSideException ex) {ex.printStackTrace();
+        } catch (ServerSideException ex) {
             Notifications.showInfo(ex.getMessage());
             return false;
         }
@@ -590,9 +590,9 @@ public class ComponentConnectionCreator extends VerticalLayout {
     }
     
     private class LinkBean {
-        private RemoteObjectLight endpointA;
-        private RemoteObjectLight objectLink;
-        private RemoteObjectLight endpointB;
+        private final RemoteObjectLight endpointA;
+        private final RemoteObjectLight objectLink;
+        private final RemoteObjectLight endpointB;
         
         public LinkBean(RemoteObjectLight endpointA, RemoteObjectLight objectLink, RemoteObjectLight endpointB) {
             this.endpointA = endpointA;

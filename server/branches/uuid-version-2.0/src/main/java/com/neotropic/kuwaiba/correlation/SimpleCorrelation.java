@@ -159,7 +159,7 @@ public class SimpleCorrelation {
             BusinessObjectLight customer = bem.getFirstParentOfClass(rawService.getClassName(), rawService.getId(), Constants.CLASS_GENERICCUSTOMER);
             if (customer != null) {//Services without customers will be ignored. This shouldn't happen, though
                 if (!rawCorrelatedInformation.containsKey(customer))
-                    rawCorrelatedInformation.put(customer, new ArrayList<RemoteObjectLight>());
+                    rawCorrelatedInformation.put(customer, new ArrayList<>());
 
                 rawCorrelatedInformation.get(customer).add(rawService);
             }

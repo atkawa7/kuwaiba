@@ -716,7 +716,8 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
     
     public GoogleMapMarker getMarkerFromBusinesObject(RemoteObjectLight businessObject) {
         for (OSPNode node : nodes) {
-            if (node.getBusinessObject().getId() == businessObject.getId())
+            if (node.getBusinessObject().getId() != null && businessObject.getId() != null && 
+                node.getBusinessObject().getId().equals(businessObject.getId()))
                 return node.getMarker();
         }
         return null;
@@ -724,7 +725,8 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
     
     public GoogleMapPolyline getPolylineFromBusinessObject(RemoteObjectLight businessObject) {
         for (OSPEdge edge : edges) {
-            if (edge.getBusinessObject().getId() == businessObject.getId())
+            if (edge.getBusinessObject().getId() != null && businessObject.getId() != null && 
+                edge.getBusinessObject().getId().equals(businessObject.getId()))
                 return edge.getPolyline();
         }
         return null;
