@@ -17,6 +17,7 @@ package com.neotropic.tools.dbmigration;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.UUID;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
@@ -58,9 +59,9 @@ public class LabelUpgrader {
     public boolean createLabels(File storDir) {
         GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(storDir);
         
-        for (String indexName : labelNames.keySet())
+        for (String indexName : labelNames.keySet()) {
             createLabel(indexName, labelNames.get(indexName), graphDb);
-        
+        }
         graphDb.shutdown();
         return true;                
     }
@@ -138,5 +139,90 @@ public class LabelUpgrader {
             tx.success();
         }
     }
+    
+    public void replaceLabel(File storeDir, String oldLabel, String newLabel) {
+        GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(storeDir);
         
+        Label lblOld = Label.label(oldLabel);
+        Label lblNew = Label.label(newLabel);
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            ResourceIterator<Node> nodes = graphDb.findNodes(lblOld);
+            
+            while (nodes.hasNext()) {
+                Node node = nodes.next();
+                node.addLabel(lblNew);
+                node.removeLabel(lblOld);
+                
+            }
+            tx.success();
+        }
+        System.out.println(String.format("Replaced node label %s with %s", oldLabel, newLabel));
+        graphDb.shutdown();
+    }
+    
+    private static final String INVENTORY_OBJECTS = "inventoryObjects";
+    private static final String LIST_TYPE_ITEMS = "listTypeItems";
+    private static final String POOLS = "pools";
+    private static final String PROPERTY_UUID = "_uuid";
+    
+    public void setUUIDAttributeToInventoryObjects(File storeDir) {
+        System.out.println(String.format("Start: Set UUID Attribute to Inventory Objects"));
+        GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(storeDir);
+        Label labelInventoryObjects = Label.label(INVENTORY_OBJECTS);
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            ResourceIterator<Node> nodes = graphDb.findNodes(labelInventoryObjects);
+            while (nodes.hasNext()) {
+                Node node = nodes.next();
+                if (!node.hasProperty(PROPERTY_UUID)) {
+                    String uuid = UUID.randomUUID().toString();
+                    node.setProperty(PROPERTY_UUID, uuid);
+                }                
+            }
+            tx.success();
+        }
+        graphDb.shutdown();
+        System.out.println(String.format("End: Set UUID Attribute to Inventory Objects"));
+    }
+    
+    public void setUUIDAttributeToListTypeItems(File storeDir) {
+        System.out.println(String.format("Start: Set UUID Attribute to List Type Items"));
+        GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(storeDir);
+        Label labelListTypeItems = Label.label(LIST_TYPE_ITEMS);
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            ResourceIterator<Node> nodes = graphDb.findNodes(labelListTypeItems);
+            while (nodes.hasNext()) {
+                Node node = nodes.next();
+                if (!node.hasProperty(PROPERTY_UUID)) {
+                    String uuid = UUID.randomUUID().toString();
+                    node.setProperty(PROPERTY_UUID, uuid);
+                }                
+            }
+            tx.success();
+        }
+        graphDb.shutdown();
+        System.out.println(String.format("End: Set UUID Attribute to List Type Items"));
+    }
+    
+    public void setUUIDAttributeToPools(File storeDir) {
+        System.out.println(String.format("Start: Set UUID Attribute to Pools"));
+        GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(storeDir);
+        Label labelPools = Label.label(POOLS);
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            ResourceIterator<Node> nodes = graphDb.findNodes(labelPools);
+            while (nodes.hasNext()) {
+                Node node = nodes.next();
+                if (!node.hasProperty(PROPERTY_UUID)) {
+                    String uuid = UUID.randomUUID().toString();
+                    node.setProperty(PROPERTY_UUID, uuid);
+                }                
+            }
+            tx.success();
+        }
+        graphDb.shutdown();
+        System.out.println(String.format("End: Set UUID Attribute to Pools"));
+    }
 }

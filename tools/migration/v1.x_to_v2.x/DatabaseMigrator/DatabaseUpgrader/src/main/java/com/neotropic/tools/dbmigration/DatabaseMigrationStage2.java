@@ -43,16 +43,24 @@ public class DatabaseMigrationStage2 {
                 dbPath = args[0];
         }
         
-        File dbPathReference = new File(args[0]);
+        File dbPathReference = new File(dbPath);
         
         try {
             System.out.println(String.format("[%s] Starting database upgrade stage 2...", Calendar.getInstance().getTime()));
-            
-            Upgrader.getInstance().upgrade(dbPathReference);
-            LabelUpgrader.getInstance().createLabels(dbPathReference);
-            IndexUpgrader.getInstance().upgrade(dbPathReference);
-            LabelUpgrader.getInstance().deleteIndexes(dbPathReference);
-            LabelUpgrader.getInstance().deleteUnusedLabels(dbPathReference);
+            if (false) {
+                Upgrader.getInstance().upgrade(dbPathReference);
+                LabelUpgrader.getInstance().createLabels(dbPathReference);
+                IndexUpgrader.getInstance().upgrade(dbPathReference);
+                LabelUpgrader.getInstance().deleteIndexes(dbPathReference);
+                LabelUpgrader.getInstance().deleteUnusedLabels(dbPathReference);
+            }
+            if (true) {
+                LabelUpgrader.getInstance().replaceLabel(dbPathReference, "attribute", "attributes");
+                LabelUpgrader.getInstance().replaceLabel(dbPathReference, "inventory_objects", "inventoryObjects");
+                LabelUpgrader.getInstance().setUUIDAttributeToInventoryObjects(dbPathReference);
+                LabelUpgrader.getInstance().setUUIDAttributeToListTypeItems(dbPathReference);
+                LabelUpgrader.getInstance().setUUIDAttributeToPools(dbPathReference);
+            }
             
             System.out.println(String.format("[%s] Database upgrade stage 2 ended successfully...", Calendar.getInstance().getTime()));
         } catch (Exception ex) {
