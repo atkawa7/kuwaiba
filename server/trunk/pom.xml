@@ -65,7 +65,7 @@
             <version>1.0.1</version>
         </dependency>
         
-        <!-- Used to display views, such as the object view or the end-to-end view -->
+        <!--Used to display views, such as the object view or the end-to-end view-->
         <dependency>
             <groupId>com.neotropic</groupId>
             <artifactId>vaadin-lienzo</artifactId>
@@ -88,7 +88,7 @@
         </dependency> 
         -->
                
-        <!-- Java EE support -->
+        <!-- Java EE support-->
         <dependency>
             <groupId>com.vaadin.tapio</groupId>
             <artifactId>vaadin-googlemaps</artifactId>

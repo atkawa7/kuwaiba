@@ -3764,22 +3764,22 @@ public class KuwaibaService {
      *                             If the object can not be found
      *                             If either the object class or the attribute can not be found
      */
-    @WebMethod(operationName = "getPhysicalConnectionEndpoints")
-    public RemoteObjectLight[] getPhysicalConnectionEndpoints(@WebParam(name = "connectionClass")String connectionClass, 
+    @WebMethod(operationName = "getConnectionEndpoints")
+    public RemoteObjectLight[] getConnectionEndpoints(@WebParam(name = "connectionClass")String connectionClass, 
             @WebParam(name = "connectionId")long connectionId, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
-            return wsBean.getPhysicalConnectionEndpoints(connectionClass, connectionId, getIPAddress(), sessionId);
+            return wsBean.getConnectionEndpoints(connectionClass, connectionId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getPhysicalConnectionEndpoints: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in getConnectionEndpoints: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
     }
-    
+        
     /**
      * Returns the structure of a logical connection. The current implementation is quite simple and the return object 
      * simply provides the endpoints and the next ports connected to such endpoints using a physical connection
@@ -3964,9 +3964,9 @@ public class KuwaibaService {
             }
         }
     }  
-    
+   
     /**
-     * Connects pairs of ports (if they are not connected already) using physical link (cable, fibers, any subclass of GenericPhysicalLink)
+     * Connects pairs of ports (if they are not connected already) using link (physical or logical, cable, fibers, any subclass of GenericPhysicalLink)
      * @param sideAClassNames The list of classes of one of the sides of the connection
      * @param sideAIds The list of ids the objects on one side of the connection
      * @param linksClassNames the classes of the links that will connect the two sides
@@ -3981,8 +3981,8 @@ public class KuwaibaService {
      *                             If any of the classes provided can not be found
      *                             If the object activity log could no be found
      */
-    @WebMethod(operationName = "connectPhysicalLinks")
-    public void connectPhysicalLinks (@WebParam(name = "sideAClassNames")String[] sideAClassNames, @WebParam(name = "sideAIds")Long[] sideAIds,
+    @WebMethod(operationName = "connectLinks")
+    public void connectLinks (@WebParam(name = "sideAClassNames")String[] sideAClassNames, @WebParam(name = "sideAIds")Long[] sideAIds,
                                       @WebParam(name = "linksClassNames")String[] linksClassNames, @WebParam(name = "linksIds")long[] linksIds,
                                       @WebParam(name = "sideBClassNames")String[] sideBClassNames, @WebParam(name = "sideBIds")Long[] sideBIds,
                                       @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
@@ -3990,12 +3990,12 @@ public class KuwaibaService {
             if ((sideAClassNames.length + sideAIds.length + linksClassNames.length + linksIds.length + sideBClassNames.length + sideBIds.length) / 4 != sideAClassNames.length)
                 throw new ServerSideException("The array sizes don't match");
             
-            wsBean.connectPhysicalLinks(sideAClassNames, sideAIds, linksClassNames, linksIds, sideBClassNames, sideBIds, getIPAddress(), sessionId);
+            wsBean.connectLinks(sideAClassNames, sideAIds, linksClassNames, linksIds, sideBClassNames, sideBIds, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in connectPhysicalLinks: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in connectLinks: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -4044,18 +4044,18 @@ public class KuwaibaService {
      *                             If any of the relationships is now allowed according to the defined data model
      *                             If the object activity log could no be found
      */
-    @WebMethod(operationName = "disconnectPhysicalConnection")
-    public void disconnectPhysicalConnection(@WebParam(name = "connectionClass")String connectionClass,
+    @WebMethod(operationName = "disconnectConnection")
+    public void disconnectConnection(@WebParam(name = "connectionClass")String connectionClass,
                                       @WebParam(name = "connectionId")long connectionId, 
                                       @WebParam(name = "sideToDisconnect")int sideToDisconnect,
                                       @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
-            wsBean.disconnectPhysicalConnection(connectionClass, connectionId, sideToDisconnect, getIPAddress(), sessionId);
+            wsBean.disconnectConnection(connectionClass, connectionId, sideToDisconnect, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in disconnectPhysicalConnection: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in disconnectConnection: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }

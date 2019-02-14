@@ -245,7 +245,7 @@ public class CpwVcMplsSynchronizer {
             }
         }
     }
-     //abrir todas las vistas MLPS revisar el MPLS link
+    //abrir todas las vistas MLPS revisar el MPLS link
     public void readView(ViewObjectLight view, BusinessObjectLight syncSourcePort, 
              String syncDestinyPortName, BusinessObject syncCommunicationsEquipment, String vcID) 
              throws IllegalArgumentException, MetadataObjectNotFoundException, 

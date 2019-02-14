@@ -449,10 +449,14 @@ public class Constants {
      * Class GenericPhysicalPort 
      */
     public static final String CLASS_GENERICPHYSICALPORT = "GenericPhysicalPort";
-        /**
+    /**
      * Class GenericPhysicalPort 
      */
     public static final String CLASS_GENERICLOGICALPORT = "GenericLogicalPort";
+    /**
+     * Class GenericPhysicalPort 
+     */
+    public static final String CLASS_GENERICLOGICALCONNECTION = "GenericLogicalConnection";
     /**
      * Class Generic Contract
      */
@@ -488,7 +492,11 @@ public class Constants {
     /**
      * Class WireContainer
      */
-    public static final String CLASS_WIRECONTAINER = "WireContainer"; //NOI18N
+    public static final String CLASS_WIRECONTAINER = "WireContainer"; //NOI18N  
+    /**
+     * Class WireContainer
+     */
+    public static final String CLASS_GENERICCONNECTION = "GenericConnection"; //NOI18N
     /**
      * Class WirelessContainer
      */

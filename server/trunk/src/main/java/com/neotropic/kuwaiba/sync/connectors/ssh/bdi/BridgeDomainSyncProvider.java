@@ -120,27 +120,27 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                     continue;
                 }
 
-                if (dataSourceConfiguration.getParameters().containsKey("port")) //NOI18N
-                    port = Integer.valueOf(dataSourceConfiguration.getParameters().get("port")); //NOI18N
+                if (dataSourceConfiguration.getParameters().containsKey("sshPort")) //NOI18N
+                    port = Integer.valueOf(dataSourceConfiguration.getParameters().get("sshPort")); //NOI18N
                 else {
                     res.getSyncDataSourceConfigurationExceptions(dataSourceConfiguration).add(
-                        new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "port", syncGroup.getName())));
+                        new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "sshPort", syncGroup.getName())));
                     continue;
                 }
 
-                if (dataSourceConfiguration.getParameters().containsKey("user")) //NOI18N
-                    user = dataSourceConfiguration.getParameters().get("user"); //NOI18N
+                if (dataSourceConfiguration.getParameters().containsKey("sshUser")) //NOI18N
+                    user = dataSourceConfiguration.getParameters().get("sshUser"); //NOI18N
                 else {
                     res.getSyncDataSourceConfigurationExceptions(dataSourceConfiguration).add(
-                        new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "user", syncGroup.getName()))); //NOI18N
+                        new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "sshUser", syncGroup.getName()))); //NOI18N
                     continue;
                 }
 
-                if (dataSourceConfiguration.getParameters().containsKey("password")) //NOI18N
-                    password = dataSourceConfiguration.getParameters().get("password"); //NOI18N
+                if (dataSourceConfiguration.getParameters().containsKey("sshPassword")) //NOI18N
+                    password = dataSourceConfiguration.getParameters().get("sshPassword"); //NOI18N
                 else {
                     res.getSyncDataSourceConfigurationExceptions(dataSourceConfiguration).add(
-                        new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "password", syncGroup.getName()))); //NOI18N
+                        new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "sshPassword", syncGroup.getName()))); //NOI18N
                     continue;
                 }
     

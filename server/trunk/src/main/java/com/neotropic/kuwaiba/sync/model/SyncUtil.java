@@ -129,6 +129,62 @@ public class SyncUtil {
         return obj;
     }
     
+    
+    /**
+     * Wraps the port name into a standardized port name gi, te, fa, pos
+     * @param portName raw port name
+     * @return normalized port name 
+     */
+    public static String normalizePortName(String portName){
+        portName = portName.toLowerCase();
+        portName = portName.replace("_", "/"); //could happend in some mibs
+        
+        if(portName.contains(".si"))  //is a service instance
+            portName = portName.split("\\.")[2];
+        else if (portName.toLowerCase().contains(".") && portName.split("\\.").length == 2) //is a virtualPort        
+            portName = portName.split("\\.")[1];
+        
+        if(portName.toLowerCase().startsWith("lo") && portName.length() < 6) //is a loopback
+            return portName.replace("lo", "loopback");
+
+        //Fastethernet
+        if(portName.contains("fastethernet"))
+            return portName.replace("fastethernet", "fa");
+        //Te
+        if(portName.contains("tengigabitethernet"))
+            return portName.replace("tengigabitethernet", "te");  
+        if(portName.contains("tengige"))
+            return portName.replace("tengige", "te");
+        if(portName.contains("tentigt"))
+            return portName.replace("tentigt", "te");
+        if(portName.contains("tengig"))
+            return portName.replace("tengig", "te");
+        if(portName.contains("tengi"))
+            return portName.replace("tengi", "te");   
+         
+        //POS and PO
+        if(portName.contains("pos"))
+            return portName;
+        if(portName.contains("po"))
+            return portName.replace("po", "pos");
+        //Gi Ge Gigabitethernet
+        if(portName.contains("gigabitethernet"))
+            return portName.replace("gigabitethernet", "gi");
+        if(portName.contains("gi"))
+            return portName.replace("gi", "gi");
+        if(portName.startsWith("ge "))
+            return portName.toLowerCase().replace("ge ", "gi");
+        if(portName.startsWith("ge"))
+            return portName.toLowerCase().replace("ge", "gi");
+        if(portName.startsWith("g"))
+            return portName.toLowerCase().replace("g", "gi");
+        //Serial Port
+        if(portName.contains("se"))
+            return portName;
+        
+        return portName;
+    }
+    
     /**
      * Wraps the port name into a standardized port name gi, te, fa, pos
      * @param currentPortName raw port name
