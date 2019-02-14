@@ -31,6 +31,7 @@ import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.apis.persistence.integrity.DataIntegrityService;
 import org.kuwaiba.apis.persistence.integrity.DataModelLoader;
+import org.kuwaiba.apis.web.gui.views.ViewFactory;
 import org.kuwaiba.services.persistence.util.Constants;
 
 /**
@@ -49,7 +50,8 @@ public class PersistenceService {
     private ApplicationEntityManager aem;
     private DataIntegrityService dataIntegrityService;
     private DataModelLoader dataModelLoader;
-        
+    private ViewFactory viewFactory;
+    
     private PersistenceService(){
         state = EXECUTION_STATE.STOPPED;
         configuration = new Properties();
@@ -104,6 +106,8 @@ public class PersistenceService {
             bem.setConfiguration(businessConfiguration);
             
             dataModelLoader = new DataModelLoader(connectionManager, mem);
+            viewFactory = new ViewFactory(mem, aem, bem);
+            
             System.out.println(String.format("[KUWAIBA] [%s] Detecting advanced modules...", Calendar.getInstance().getTime()));
             //Place here some fancy OSGi stuff instead of this horrid hardcoded list
             aem.registerCommercialModule(new IPAMModule());
@@ -173,6 +177,12 @@ public class PersistenceService {
         if (state != EXECUTION_STATE.RUNNING)
             throw new IllegalStateException("Can't locate an instance of the Data model loader. Persistence Service is not running");
         return dataModelLoader; 
+    }
+    
+    public ViewFactory getViewFactory() throws IllegalStateException{
+        if (state != EXECUTION_STATE.RUNNING)
+            throw new IllegalStateException("Can't locate an instance of the View Factory. Persistence Service is not running");
+        return viewFactory; 
     }
     
     public EXECUTION_STATE getState() {

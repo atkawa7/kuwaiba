@@ -16,6 +16,8 @@
 
 package org.kuwaiba.apis.web.gui.views;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -26,6 +28,77 @@ import java.util.List;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ViewMap {
-    private List<ViewNode> nodes;
-    private List<ViewEdge> edges;
+    private List<AbstractViewNode> nodes;
+    private List<AbstractViewEdge> edges;
+    private HashMap<AbstractViewEdge, AbstractViewNode> sourceNodes;
+    private HashMap<AbstractViewEdge, AbstractViewNode> targetNodes;
+
+    public ViewMap() {
+        this.nodes  = new ArrayList<>();
+        this.edges = new ArrayList<>();
+        this.sourceNodes = new HashMap<>();
+        this.targetNodes = new HashMap<>();
+    }
+    
+    /**
+     * Adds a node to the map.
+     * @param node The node to be added. If the node is already in the map, nothing will be done.
+     */
+    public void addNode(AbstractViewNode node) {
+        if (!nodes.contains(node))
+            nodes.add(node);
+    }
+    
+    /**
+     * Adds an edge to the map.
+     * @param edge The edge to be added. If the edge is already in the map, nothing will be done.
+     */
+    public void addEdge(AbstractViewEdge edge) {
+        if (!edges.contains(edge))
+            edges.add(edge);
+    }
+    
+    /**
+     * Sets the source node of a connection (edge). If the edge already has a source node, it will be disconnected.
+     * @param edge The edge to be connected to the node.
+     * @param sourceNode The node to be connected to the edge.
+     */
+    public void attachSourceNode(AbstractViewEdge edge, AbstractViewNode sourceNode) {
+        assert (!edges.contains(edge) || !nodes.contains(sourceNode)) : "The map does not contain either the source node or the edge provided";
+        sourceNodes.remove(edge);
+        sourceNodes.put(edge, sourceNode);
+    }
+    
+    /**
+     * Sets the target node of a connection (edge). If the edge already has a target node, it will be disconnected.
+     * @param edge The edge to be connected to the node.
+     * @param targetNode The node to be connected to the edge.
+     */
+    public void attachTargetNode(AbstractViewEdge edge, AbstractViewNode targetNode) {
+        assert (!edges.contains(edge) || !nodes.contains(targetNode)) : "The map does not contain either the target node or the edge provided";
+        targetNodes.remove(edge);
+        targetNodes.put(edge, targetNode);
+    }
+    
+    /**
+     * Gets the object behind a node whose identifier is the one provider.
+     * @param identifier The object to search.
+     * @return The node or null if such identifier does not belong to any node.
+     */
+    public AbstractViewNode getNode(Object identifier) {
+        return nodes.stream().filter((aNode) -> {
+            return aNode.getIdentifier().equals(identifier);
+        }).findFirst().orElse(null);
+    }
+    
+    /**
+     * Gets the object behind a node whose identifier is the one provider.
+     * @param identifier The object to search.
+     * @return The node or null if such identifier does not belong to any node.
+     */
+    public AbstractViewEdge getEdge(Object identifier) {
+        return edges.stream().filter((anEdge) -> {
+            return anEdge.getIdentifier().equals(identifier);
+        }).findFirst().orElse(null);
+    }
 }

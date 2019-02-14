@@ -16,10 +16,15 @@
 
 package org.kuwaiba.apis.web.gui.views;
 
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+
 /**
- * Represent a note or label possibly related to a node or edge in a view.
+ * An edge that represents a business, inventory object.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class Comment {
+public class BusinessObjectViewEdge extends AbstractViewNode<RemoteObjectLight> {
 
+    public BusinessObjectViewEdge(RemoteObjectLight identifier) {
+        super(identifier);
+    }
 }

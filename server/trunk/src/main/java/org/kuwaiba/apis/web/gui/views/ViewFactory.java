@@ -16,6 +16,7 @@
 
 package org.kuwaiba.apis.web.gui.views;
 
+import java.lang.reflect.InvocationTargetException;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
@@ -42,5 +43,24 @@ public class ViewFactory {
         this.mem = mem;
         this.aem = aem;
         this.bem= bem;
+    }
+    
+    /**
+     * Creates an instance of a view, given its FQN (that is, its name including the package information)
+     * @param viewId The FQN of the class.
+     * @return The instance of the view.
+     * @throws java.lang.InstantiationException If the class provided do not exists or it's not subclass of AbstractView.
+     */
+    public AbstractView createViewInstance(String viewId) throws InstantiationException {
+        try {
+            Object aView = Class.forName(viewId).getConstructor(MetadataEntityManager.class, ApplicationEntityManager.class, BusinessEntityManager.class).newInstance(mem, aem, bem);
+            if (!(aView instanceof AbstractView))
+                throw new InstantiationException(String.format("The view identifier provided (%s) is not an AbstractView subclass", viewId));
+            
+            return (AbstractView)aView;
+        } catch (ClassNotFoundException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {
+            throw new InstantiationException(String.format("View with id %s could not be instantiated: %s", viewId, ex.getLocalizedMessage()));
+        }
+        
     }
 }
