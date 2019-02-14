@@ -70,6 +70,7 @@ public class ConfigSyncDatasourceAction extends GenericObjectNodeAction implemen
               
         if (syncGroups ==  null)
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        
         else {
             if (syncGroups.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "There are no sync groups created. Create at least one using the Sync Manager", 
@@ -100,28 +101,28 @@ public class ConfigSyncDatasourceAction extends GenericObjectNodeAction implemen
             SelectValueFrame frame = (SelectValueFrame) e.getSource();
             Object selectedSyncGroup =  frame.getSelectedValue();
             
-            if (selectedSyncGroup  == null) {
+            if (selectedSyncGroup  == null) 
                 JOptionPane.showMessageDialog(null, "Select a sync group from the list");
-                return;
+            
+            else{
+                HashMap<String, String> parameters = new HashMap();
+                            parameters.put("deviceId", String.valueOf((selectedObjects.get(0).getId())));
+                            parameters.put("deviceClass", (selectedObjects.get(0).getClassName()));
+
+                LocalSyncDataSourceConfiguration newSyncConfig = CommunicationsStub.getInstance().
+                                        createSyncDataSourceConfiguration(
+                                                selectedObjects.get(0).getId(),
+                                                ((LocalSyncGroup)selectedSyncGroup).getId(), 
+                                                selectedObjects.get(0).getName(), parameters);
+
+                if (newSyncConfig != null) {
+                    syncDataSourceConfigurationNode = new SyncDataSourceConfigurationNode(newSyncConfig);
+                    ObjectEditorTopComponent component = new ObjectEditorTopComponent(syncDataSourceConfigurationNode);
+                    component.open();
+                    component.requestActive();
+                } else 
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             }
-            
-            HashMap<String, String> parameters = new HashMap();
-                        parameters.put("deviceId", String.valueOf((selectedObjects.get(0).getId())));
-                        parameters.put("deviceClass", (selectedObjects.get(0).getClassName()));
-        
-            LocalSyncDataSourceConfiguration newSyncConfig = CommunicationsStub.getInstance().
-                                    createSyncDataSourceConfiguration(
-                                            selectedObjects.get(0).getId(),
-                                            ((LocalSyncGroup)selectedSyncGroup).getId(), 
-                                            selectedObjects.get(0).getName(), parameters);
-            
-            if (newSyncConfig != null) {
-                syncDataSourceConfigurationNode = new SyncDataSourceConfigurationNode(newSyncConfig);
-                ObjectEditorTopComponent component = new ObjectEditorTopComponent(syncDataSourceConfigurationNode);
-                component.open();
-                component.requestActive();
-            } else 
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
     }
 

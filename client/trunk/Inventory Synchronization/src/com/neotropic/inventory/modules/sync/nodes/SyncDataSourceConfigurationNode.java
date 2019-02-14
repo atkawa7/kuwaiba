@@ -145,10 +145,12 @@ public class SyncDataSourceConfigurationNode extends AbstractNode implements Pro
             !parameters.containsKey(Constants.PROPERTY_PRIVACY_PASS) ? null : parameters.get(Constants.PROPERTY_PRIVACY_PASS));
         
         /*SSH Properties*/
-        PropertySupport.ReadWrite propertySshUser = new SyncConfigurationNativeTypeProperty("user", String.class, I18N.gm("ssh_user"), I18N.gm("ssh_user"), this, 
-            !parameters.containsKey("user") ? null : parameters.get("user"));
-        PropertySupport.ReadWrite propertySshPassword = new SyncConfigurationNativeTypeProperty("password", String.class, I18N.gm("ssh_password"), I18N.gm("ssh_password"), this, 
-            !parameters.containsKey("password") ? null : parameters.get("password"));
+        PropertySupport.ReadWrite propertySshPort = new SyncConfigurationNativeTypeProperty("sshPort", String.class, "ssh Port", "ssh Port", this, 
+            !parameters.containsKey("sshPort") ? null : parameters.get("sshPort"));
+        PropertySupport.ReadWrite propertySshUser = new SyncConfigurationNativeTypeProperty("sshUser", String.class, "ssh User", "ssh User", this, 
+            !parameters.containsKey("sshUser") ? null : parameters.get("sshUser"));
+        PropertySupport.ReadWrite propertySshPassword = new SyncConfigurationNativeTypeProperty("sshPassword", String.class, "ssh Password", "ssh Password", this, 
+            !parameters.containsKey("sshPassword") ? null : parameters.get("sshPassword"));
         /*End SSH Properties*/
         
         String deviceId = parameters.containsKey("deviceId") ? parameters.get("deviceId") : null;
@@ -194,6 +196,7 @@ public class SyncDataSourceConfigurationNode extends AbstractNode implements Pro
         snmpVersion3GeneralPropertySet.setName(I18N.gm("snmp_version_3_properties"));
         snmpVersion3GeneralPropertySet.setDisplayName(I18N.gm("snmp_version_3_properties"));
         
+        sshGeneralPropertySet.put(propertySshPort);
         sshGeneralPropertySet.put(propertySshUser);
         sshGeneralPropertySet.put(propertySshPassword);
         sshGeneralPropertySet.setName(I18N.gm("ssh_properties"));

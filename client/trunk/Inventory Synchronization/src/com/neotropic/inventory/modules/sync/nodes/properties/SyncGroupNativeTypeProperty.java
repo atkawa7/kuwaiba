@@ -47,7 +47,7 @@ public class SyncGroupNativeTypeProperty extends PropertySupport.ReadWrite {
 
     @Override
     public void setValue(Object val) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        HashMap<String, String> properties = new HashMap();
+        HashMap<String, String> properties = new HashMap<>();
         properties.put(getName(), (String) val);
         
         LocalSyncGroup localSyncGroup = syncGroupNode.getLookup().lookup(LocalSyncGroup.class);
