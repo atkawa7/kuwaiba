@@ -52,11 +52,11 @@ public class MPLSModuleService {
     /**
      * Reference to the scene to be displayed
      */
-    private MPLSModuleScene scene;
+    private final MPLSModuleScene scene;
     /**
      * reference to the communications module
      */
-    private CommunicationsStub com = CommunicationsStub.getInstance();
+    private final CommunicationsStub com = CommunicationsStub.getInstance();
     
     public MPLSModuleService(MPLSModuleScene scene) {
         this.scene = scene;
@@ -90,6 +90,7 @@ public class MPLSModuleService {
             NotificationUtil.getInstance().showSimplePopup("Load view", NotificationUtil.ERROR_MESSAGE, com.getError());
         return theView;
     }
+    
     public boolean saveCurrentView() {
          if (view == null || view.getId() == -1) { //New view
             long newViewId = com.createGeneralView(CLASS_VIEW, view.getName(), view.getDescription(), scene.getAsXML(), null);

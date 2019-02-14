@@ -16,15 +16,24 @@
 package com.neotropic.inventory.modules.mpls.scene;
 
 import com.neotropic.inventory.modules.mpls.actions.MPLSModuleActions;
+import com.neotropic.inventory.modules.mpls.providers.MPLSSceneAcceptProvider;
+import com.neotropic.inventory.modules.mpls.windows.EditMPLSLinkEnpointsFrame;
 import com.neotropic.inventory.modules.mpls.wizard.MPLSConnectionWizard;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -38,6 +47,7 @@ import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.actions.CustomAddRemoveControlPointAction;
 import org.inventory.core.visual.actions.CustomMoveControlPointAction;
 import org.inventory.core.visual.actions.providers.CustomAcceptActionProvider;
@@ -47,8 +57,12 @@ import org.inventory.core.visual.actions.providers.SceneConnectProvider;
 import org.inventory.core.visual.scene.ObjectConnectionWidget;
 import org.inventory.core.visual.scene.ObjectNodeWidget;
 import org.inventory.core.visual.scene.AbstractScene;
+import static org.inventory.core.visual.scene.AbstractScene.SCENE_CHANGE;
+import org.inventory.core.visual.scene.EmptyNodeWidget;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
+import org.netbeans.api.visual.action.HoverProvider;
+import org.netbeans.api.visual.action.TwoStateHoverProvider;
 import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.model.ObjectState;
@@ -70,27 +84,31 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
     /**
      * Connect provider
      */
-    private SceneConnectProvider connectProvider;
+    private final SceneConnectProvider connectProvider;
     /**
      * Custom move provider
      */
-    private CustomMoveProvider moveProvider;
+    private final CustomMoveProvider moveProvider;
     /**
      * Custom add/remove control point action
      */
-    private CustomAddRemoveControlPointAction addRemoveControlPointAction;
+    private final CustomAddRemoveControlPointAction addRemoveControlPointAction;
     /**
      * Custom move control point action
      */
-    private CustomMoveControlPointAction moveControlPointAction;
+    private final CustomMoveControlPointAction moveControlPointAction;
     /**
      * Custom select provider
      */
-    private WidgetAction selectAction;
+    private final WidgetAction selectAction;
     /**
      * Reference to the action factory used to assign actions to the nodes and connections
      */
-    private MPLSModuleActions moduleActions;
+    private final MPLSModuleActions moduleActions;
+    /**
+     * Reference to links and its ports created in the scene
+     */
+    private Map<LocalObjectLight, LocalObjectLight[]> connections;
     
     public MPLSModuleScene() {
         getActions().addAction(ActionFactory.createAcceptAction(new CustomAcceptActionProvider(this, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT)));
@@ -104,9 +122,9 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
         selectAction = ActionFactory.createSelectAction(new CustomSelectProvider(this), true);
         addRemoveControlPointAction = new CustomAddRemoveControlPointAction(this);
         moveControlPointAction = new CustomMoveControlPointAction(this);
-        
+        this.initSelectionListener();
         connectProvider = new MPLSModuleConnectProvider();
-        
+        connections = new HashMap<>();
         setState (ObjectState.createNormal ());
     }
 
@@ -137,9 +155,9 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
                 
                 LocalObjectLight nodeObject = (LocalObjectLight) findObject(nodeWidget);
                 
-                xmlew.add(xmlef.createAttribute(new QName("class"), nodeObject.getClassName()));
-                
-                xmlew.add(xmlef.createCharacters(Long.toString(nodeObject.getId())));
+                xmlew.add(xmlef.createAttribute(new QName("class"), nodeObject.getId() < 0 ? "unkown" : nodeObject.getClassName()));
+
+                xmlew.add(xmlef.createCharacters(nodeObject.getId() < 0 ? "-1" : Long.toString(nodeObject.getId())));
                 
                 xmlew.add(xmlef.createEndElement(qnameNode, null));
             }
@@ -155,8 +173,8 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
                 xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(edgeObject.getId())));
                 xmlew.add(xmlef.createAttribute(new QName("class"), edgeObject.getClassName()));
                 
-                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(edgeObject).getId())));
-                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(edgeObject).getId())));
+                xmlew.add(xmlef.createAttribute(new QName("aside"), getEdgeSource(edgeObject).getId() < 0 ? "-1" : Long.toString(getEdgeSource(edgeObject).getId())));
+                xmlew.add(xmlef.createAttribute(new QName("bside"), getEdgeTarget(edgeObject).getId() < 0 ? "-1" : Long.toString(getEdgeTarget(edgeObject).getId())));
                 
                 for (Point point : ((ObjectConnectionWidget)edgeWidget).getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint");
@@ -181,10 +199,17 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
     @Override
     public void render(byte[] structure) throws IllegalArgumentException {
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-
+        List<LocalObjectLight> emptySides = new ArrayList<>();
+//      <editor-fold defaultstate="collapsed" desc="Uncomment this for debugging purposes. This outputs the XML view as a file">
+        try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_ MPLS_VIEW .xml")) {
+            fos.write(structure);
+        } catch(Exception e) { }
+//      </editor-fold>
         QName qNode = new QName("node"); //NOI18N
         QName qEdge = new QName("edge"); //NOI18N
         QName qControlPoint = new QName("controlpoint"); //NOI18N
+        LocalObjectLight[] endpoints = new LocalObjectLight[2];
+        LocalObjectLight emptyObj;
         try {
             ByteArrayInputStream bais = new ByteArrayInputStream(structure);
             XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
@@ -198,55 +223,85 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
                         int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
                         int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
                         long objectId = Long.valueOf(reader.getElementText());
-
+                        //this side is connected
                         LocalObjectLight lol = CommunicationsStub.getInstance().getObjectInfoLight(objectClass, objectId);
                         if (lol != null){
                             Widget widget = addNode(lol);
                             widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
                         }
-                        else {
-                            fireChangeEvent(new ActionEvent(this, SCENE_CHANGE, "equipmentAutomaticallyRemoved")); //NOI18N
-                            NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, String.format("Equipment of class %s and id %s could not be found and was removed from the view", objectClass, objectId));
+                        else if(objectId == -1){// we create an empty side
+                            Random rand = new Random();
+                            emptyObj = new LocalObjectLight((rand.nextInt(90000) + 1) * (objectId), null, null);
+                            emptySides.add(emptyObj);
+                            Widget widget = addNode(emptyObj);
+                            widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
                         }
                     }else {
                         if (reader.getName().equals(qEdge)){
-                            long objectId = Long.valueOf(reader.getAttributeValue(null, "id"));
+                            long mplsLinkId = Long.valueOf(reader.getAttributeValue(null, "id"));
+                            
                             long aSide = Long.valueOf(reader.getAttributeValue(null, "aside"));
                             long bSide = Long.valueOf(reader.getAttributeValue(null, "bside"));
 
-                            String className = reader.getAttributeValue(null,"class");
-                            LocalObjectLight container = CommunicationsStub.getInstance().getObjectInfoLight(className, objectId);
-                            if (container != null) {
-                                LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
-                                Widget aSideWidget = findWidget(aSideObject);
-
-                                LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
-                                Widget bSideWidget = findWidget(bSideObject);
-
-                                if (aSideWidget == null || bSideWidget == null) {
-                                    fireChangeEvent(new ActionEvent(this, SCENE_CHANGE, "connectionAutomaticallyRemoved")); //NOI18N
-                                    NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, String.format("One or both of the endpoints of the connection of class %s and id %s could not be found. The connection was removed from the view", className, objectId));
+                            String className = reader.getAttributeValue(null, "class");
+                            LocalObjectLight mplsLink = CommunicationsStub.getInstance().getObjectInfoLight(className, mplsLinkId);
+                            if (mplsLink != null) {
+                                LocalObjectLight aSideObject, bSideObject;
+                                if(aSide != -1)
+                                    aSideObject = new LocalObjectLight(aSide, null, null);
+                                else{
+                                    aSideObject = emptySides.remove(0);
+                                    endpoints[0] = aSideObject;
                                 }
-                                else {
-                                    ConnectionWidget newEdge = (ObjectConnectionWidget)addEdge(container);
-                                    setEdgeSource(container, aSideObject);
-                                    setEdgeTarget(container, bSideObject);
-                                    List<Point> localControlPoints = new ArrayList<>();
-                                    while(true){
-                                        reader.nextTag();
-
-                                        if (reader.getName().equals(qControlPoint)){
-                                            if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-                                                localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
-                                        }else{
-                                            newEdge.setControlPoints(localControlPoints,false);
-                                            break;
+                                if(bSide != -1)
+                                    bSideObject = new LocalObjectLight(bSide, null, null);
+                                else{
+                                    bSideObject = emptySides.remove(0);
+                                    endpoints[1] = bSideObject;
+                                }            
+                                HashMap<String, LocalObjectLight[]> specialAttributes = CommunicationsStub.getInstance().getSpecialAttributes(mplsLink.getClassName(), mplsLinkId);
+                                for (Map.Entry<String, LocalObjectLight[]> entry : specialAttributes.entrySet()) {
+                                    if(entry.getKey().equals("mplsEndpointA")){
+                                        endpoints[0] = entry.getValue()[0];
+                                        LocalObjectLight parentA = CommunicationsStub.getInstance().getFirstParentOfClass(endpoints[0].getClassName(), endpoints[0].getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+                                        if(parentA != null && parentA.getId() != aSide){
+                                            Widget widget = findWidget(aSideObject);
+                                            detachNodeWidget(aSideObject, widget);
+                                            aSideObject = parentA;
+                                            addNode(aSideObject);
                                         }
+                                    }
+                                    if(entry.getKey().equals("mplsEndpointB")){
+                                        endpoints[1] = entry.getValue()[0];
+                                        LocalObjectLight parentB = CommunicationsStub.getInstance().getFirstParentOfClass(endpoints[1].getClassName(), endpoints[1].getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);                                        
+                                        if(parentB != null && parentB.getId() != bSide){
+                                            Widget widget = findWidget(bSideObject);
+                                            detachNodeWidget(bSideObject, widget);
+                                            bSideObject = parentB;
+                                            addNode(bSideObject);
+                                        }
+                                    }
+                                }
+                                connections.put(mplsLink, endpoints);
+                                
+                                ConnectionWidget newEdge = (ObjectConnectionWidget)addEdge(mplsLink);
+                                setEdgeSource(mplsLink, aSideObject);
+                                setEdgeTarget(mplsLink, bSideObject);
+                                List<Point> localControlPoints = new ArrayList<>();
+                                while(true){
+                                    reader.nextTag();
+
+                                    if (reader.getName().equals(qControlPoint)){
+                                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                                            localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
+                                    }else{
+                                        newEdge.setControlPoints(localControlPoints,false);
+                                        break;
                                     }
                                 }
                             } else {
                                 fireChangeEvent(new ActionEvent(this, SCENE_CHANGE, "connectionAutomaticallyRemoved")); //NOI18N
-                                NotificationUtil.getInstance().showSimplePopup("Load view", NotificationUtil.INFO_MESSAGE, String.format("Connection of class %s and id %s could not be found and was removed from the view", className, objectId));
+                                NotificationUtil.getInstance().showSimplePopup("Load view", NotificationUtil.INFO_MESSAGE, String.format("Connection of class %s and id %s could not be found and was removed from the view", className, mplsLinkId));
                             }
                         }
                     }
@@ -263,6 +318,67 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
         }
     }
 
+    public Map<LocalObjectLight, LocalObjectLight[]> getConnections() {
+        return connections;
+    }
+    
+    public void update(LocalObjectLight mplsLink){
+        LocalObjectLight edgeSource = getEdgeSource(mplsLink);
+        LocalObjectLight edgeTarget = getEdgeTarget(mplsLink);
+        boolean isSideA = false;
+        boolean isSideB = false;
+        HashMap<String, LocalObjectLight[]> specialAttributes = CommunicationsStub.getInstance().getSpecialAttributes(mplsLink.getClassName(), mplsLink.getId());
+        for (Map.Entry<String, LocalObjectLight[]> entry : specialAttributes.entrySet()) {
+            if(entry.getKey().equals("mplsEndpointA")){
+                LocalObjectLight parentA = CommunicationsStub.getInstance().getFirstParentOfClass(
+                        entry.getValue()[0].getClassName(), entry.getValue()[0].getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+                
+                if(edgeSource.getId() < 0 && parentA != null && parentA.getId() != edgeTarget.getId()){
+                    isSideA = true;
+                    Widget unconnectedSideWidget = findWidget(edgeSource);
+                    detachNodeWidget(edgeSource, unconnectedSideWidget);
+                    Widget widget = findWidget(parentA);
+                    if(widget == null)
+                        addNode(parentA);
+                    setEdgeSource(mplsLink, parentA);
+                }
+            }
+            if(entry.getKey().equals("mplsEndpointB")){
+                LocalObjectLight parentB = CommunicationsStub.getInstance().getFirstParentOfClass(
+                        entry.getValue()[0].getClassName(), entry.getValue()[0].getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+               
+                if(edgeTarget.getId() < 0 && parentB != null && parentB.getId() != edgeSource.getId()){
+                    isSideB = true;
+                    Widget unconnectedSideWidget = findWidget(edgeTarget);
+                    detachNodeWidget(edgeTarget, unconnectedSideWidget);
+                    Widget widget = findWidget(parentB);
+                    if(widget == null)
+                        addNode(parentB);
+                    setEdgeTarget(mplsLink, parentB);
+                }
+            }
+            if(!isSideA){
+                Widget widget = findWidget(edgeSource);
+                detachNodeWidget(edgeSource, widget);
+                Random rand = new Random();
+                LocalObjectLight emptyObj = new LocalObjectLight((rand.nextInt(90000) + 1) * (-1), null, null);
+                addNode(emptyObj);
+                setEdgeSource(mplsLink, emptyObj);
+            }
+            
+            if(!isSideB){
+                Widget widget = findWidget(edgeTarget);
+                detachNodeWidget(edgeTarget, widget);
+                Random rand = new Random();
+                LocalObjectLight emptyObj = new LocalObjectLight((rand.nextInt(90000) + 1) * (-1), null, null);
+                addNode(emptyObj);
+                setEdgeTarget(mplsLink, emptyObj);
+            }
+            validate();
+            repaint();
+        }
+    }
+    
     @Override
     public ConnectProvider getConnectProvider() {
         return connectProvider;
@@ -279,19 +395,99 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
     }
 
     @Override
-    protected Widget attachNodeWidget(LocalObjectLight node) {        
-        LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(node.getClassName(), false);
-        ObjectNodeWidget newNode;
-        if (classMetadata == null) //Should not happen, but this check should always be done
-            newNode = new ObjectNodeWidget(this, node);
-        else
-            newNode = new ObjectNodeWidget(this, node, classMetadata.getIcon());
+    protected Widget attachNodeWidget(LocalObjectLight node) { 
+        Widget newNode;
+        if(node.getId() > -1){
+            LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(node.getClassName(), false);
+            if (classMetadata == null) //Should not happen, but this check should always be done
+                newNode = new ObjectNodeWidget(this, node);
+            else
+                newNode = new ObjectNodeWidget(this, node, classMetadata.getIcon());
+            newNode.getActions(ACTION_CONNECT).addAction(selectAction);
+            newNode.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgeLayer, connectProvider));
+            newNode.getActions().addAction(ActionFactory.createPopupMenuAction(moduleActions.createMenuForNode()));
+        }else{
+            newNode = new EmptyNodeWidget(this , node);
+            newNode.getActions().addAction(ActionFactory.createAcceptAction(new MPLSSceneAcceptProvider(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT)));
+            
+            newNode.getActions().addAction(ActionFactory.createHoverAction(new TwoStateHoverProvider() {
+                @Override
+                public void unsetHovering(Widget widget) { }
+
+                @Override
+                public void setHovering(Widget widget) {
+                    LocalObjectLight deviceToConnect =  MPLSModuleScene.this.getLookup().lookup(LocalObjectLight.class);
+                    if (deviceToConnect != null) {
+                        Widget widgetToConnect = MPLSModuleScene.this.findWidget(deviceToConnect);
+
+                        Point toConnectLocation = widgetToConnect.convertLocalToScene(widgetToConnect.getLocation());
+                        double xStart = toConnectLocation.getX();
+                        double yStart = toConnectLocation.getY();
+                        double xEnd = widgetToConnect.getBounds().getWidth() + toConnectLocation.getX();
+                        double yEnd = widgetToConnect.getBounds().getHeight() + toConnectLocation.getY();
+
+                        Point emptyLocation = newNode.convertLocalToScene(newNode.getLocation());
+                        double emptyXStart = emptyLocation.getX();
+                        double emptyXEnd = newNode.getBounds().getWidth() + emptyXStart;
+                        double emptyYStart = emptyLocation.getY();
+                        double emptyYEnd = newNode.getBounds().getHeight() + emptyYStart;
+
+                        if (xStart > emptyXStart && xStart < emptyXEnd && yStart > emptyYStart && yStart < emptyYEnd
+                                || xEnd > emptyXStart && xEnd < emptyXEnd && yStart > emptyYStart && yStart < emptyYEnd
+                                || xEnd > emptyXStart && xEnd < emptyXEnd && yEnd > emptyYStart && yEnd < emptyYEnd
+                                || xStart > emptyXStart && xStart < emptyXEnd && yEnd > emptyYStart && yEnd < emptyYEnd)
+                        {
+                            Collection<LocalObjectLight> findNodeEdges = MPLSModuleScene.this.findNodeEdges(((EmptyNodeWidget)newNode).getEmptyObj(), true, true);
+                            final List<LocalObjectLight>  mplsLinks = new ArrayList<>(findNodeEdges);
+                            HashMap<String, LocalObjectLight[]> specialAttributes = CommunicationsStub.getInstance().getSpecialAttributes(mplsLinks.get(0).getClassName(), mplsLinks.get(0).getId());
+
+                            if (specialAttributes == null) {
+                                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                                return;
+                            }
+
+                            final LocalObjectLight aSideRoot;
+                            final LocalObjectLight bSideRoot;
+
+                            if (specialAttributes.containsKey("mplsEndpointA")) {//NOI18N
+                                aSideRoot = CommunicationsStub.getInstance().getFirstParentOfClass(specialAttributes.get("mplsEndpointA")[0].getClassName(), specialAttributes.get("mplsEndpointA")[0].getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT); //NOI18N  specialAttributes.get("endpointA")[0]; //NOI18N
+                                if (aSideRoot == null) {
+                                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                                    return;
+                                }
+                            }
+                            else
+                                aSideRoot = deviceToConnect;
+                           
+                            if (specialAttributes.containsKey("mplsEndpointB")) { //NOI18N
+                                bSideRoot = CommunicationsStub.getInstance().getFirstParentOfClass(specialAttributes.get("mplsEndpointB")[0].getClassName(), specialAttributes.get("mplsEndpointB")[0].getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT); //NOI18N  specialAttributes.get("endpointA")[0]; //NOI18N
+                                if (bSideRoot == null) {
+                                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                                    return;
+                                }
+                            }
+                            else
+                                 bSideRoot = deviceToConnect;
+
+                            EditMPLSLinkEnpointsFrame frame = new EditMPLSLinkEnpointsFrame(mplsLinks.get(0), aSideRoot, bSideRoot);
+                            frame.setLocationRelativeTo(null);
+                            frame.setVisible(true);
+                            frame.addWindowListener(new WindowAdapter(){
+                                @Override
+                                public void windowClosing(WindowEvent e){
+                                    e.getWindow().dispose();
+                                    update(mplsLinks.get(0));
+                                }
+                            });
+                        }
+                    }
+                }
+            }));
+        }
         nodeLayer.addChild(newNode);
         newNode.getActions(ACTION_SELECT).addAction(selectAction);
         newNode.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction(moveProvider, moveProvider));
-        newNode.getActions(ACTION_CONNECT).addAction(selectAction);
-        newNode.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgeLayer, connectProvider));
-        newNode.getActions().addAction(ActionFactory.createPopupMenuAction(moduleActions.createMenuForNode()));
+        
         return newNode;
     }
 
@@ -319,6 +515,8 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
 
     @Override
     public void render(LocalObjectLight root) {
+        
+        
     }
  
     /**
@@ -333,7 +531,7 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
             LocalObjectLight newConnection = wizard.run(sourceObject, targetObject);
 
             if (newConnection != null) {
-                //Only create edges in the scene if the connection is a TransportLink
+                //Only create edges in the scene if the connection is a MPLSLink
                 if (newConnection.getClassName().equals("MPLSLink")) {
                     addEdge(newConnection);
                     setEdgeSource(newConnection, sourceObject);
