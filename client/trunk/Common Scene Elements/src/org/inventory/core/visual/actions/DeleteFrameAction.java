@@ -27,7 +27,6 @@ import org.inventory.core.services.utils.ImageIconResource;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.openide.util.actions.Presenter;
 
-
 /**
  * Action to delete a frame from topology designer scene
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}

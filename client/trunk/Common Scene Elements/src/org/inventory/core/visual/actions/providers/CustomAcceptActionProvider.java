@@ -41,11 +41,11 @@ import org.openide.util.datatransfer.MultiTransferObject;
  */
 public class CustomAcceptActionProvider implements AcceptProvider {
 
-    private AbstractScene scene;
+    private final AbstractScene scene;
     /**
      * Only subclasses of this class will be allowed to be dropped on the scene
      */
-    private String filterClass;
+    private final String filterClass;
     
     /**
      * This constructor allows to specify the instances of what classes (as in inventory classes) can be dropped where
