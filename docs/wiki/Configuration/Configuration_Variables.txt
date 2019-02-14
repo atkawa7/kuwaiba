@@ -5,3 +5,16 @@ Creation-Date: 2019-02-13T23:17:36-05:00
 ====== Configuration Variables ======
 Created Wednesday 13 February 2019
 
+//Tools → Configuration → Configuration Variables//
+
+The configuration variables are used to provide customized parameters to dashboard widgets, reports, sync providers and many other module components. The configuration variables are organized in pools, but the only relevant thing is their name, not where the aare located, that's why it must be unique. As a naming convention, a variable name has at least three sections separated by dots(.). The first one is the general category (general, widgets, sync, etc), the second is an identifier of the component that uses it (for example a dashboard widget called //SImpleMapDashboardWidget//). The last one is the actual name of the variable. This naming policy is not enforced, but it is highly recommended. Use a consistent format across variables to avoid confusion.
+
+===== List of Default Configuration Variables =====
+* **general.misc.serverName:** //String//. The default name/IP address the server is running on. If not defined, the value is //127.0.0.1//.
+* **general.misc.serverPort:** //Integer//. The default port the server is listening to. If not defined, the value is //8181//.
+* **general.maps.apiKey:** //String//. The API key requested by commercial map providers used in Kuwaiba in the OSP module or the SImpleMapDashboardWidget. There is no default value for this variable.
+* **general.maps.language:** //String//. The language to be used in maps. If not defined, the default value is //english//.
+* **widgets.simplemap.centerLatitude:** //Float//. The default center latitude used in the SImpleMapDashboardWidget. If not defined, the value will be //11.8399727//.
+* **widgets.simplemap.centerLongitude:** //Float//. The default center longitude used in the SImpleMapDashboardWidget. If not defined, the value will be //12.8260721//.
+* **widgets.simplemap.zoom:** //Integer//. The default map zoom used in the SImpleMapDashboardWidget. If not defined, the value is //3//.
+* **sync.bgp.localAsn:** //Integer//. The ASN (Autonomous System Number) that identifies the network of the organization. It's used by the BGP sync provider. There is no default value for this variable.
