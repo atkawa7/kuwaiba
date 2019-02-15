@@ -16,15 +16,15 @@
 
 package org.kuwaiba.apis.web.gui.views;
 
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 
 /**
  * An edge that represents a business, inventory object.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class BusinessObjectViewEdge extends AbstractViewNode<RemoteObjectLight> {
+public class BusinessObjectViewEdge extends AbstractViewEdge<BusinessObjectLight> {
 
-    public BusinessObjectViewEdge(RemoteObjectLight identifier) {
+    public BusinessObjectViewEdge(BusinessObjectLight identifier) {
         super(identifier);
     }
 }

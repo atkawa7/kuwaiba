@@ -16,15 +16,15 @@
 
 package org.kuwaiba.apis.web.gui.views;
 
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 
 /**
  * A node that represents a business, inventory object.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class BusinessObjectViewNode extends AbstractViewNode<RemoteObjectLight> {
+public class BusinessObjectViewNode extends AbstractViewNode<BusinessObjectLight> {
 
-    public BusinessObjectViewNode(RemoteObjectLight identifier) {
+    public BusinessObjectViewNode(BusinessObjectLight identifier) {
         super(identifier);
     }
 

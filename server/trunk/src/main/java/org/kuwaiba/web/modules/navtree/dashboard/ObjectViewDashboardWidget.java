@@ -19,11 +19,15 @@ package org.kuwaiba.web.modules.navtree.dashboard;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
+import org.kuwaiba.apis.web.gui.views.AbstractView;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.modules.navtree.views.ObjectView;
+import org.openide.util.Exceptions;
 
 /**
  * Implements an object view. That is, a view that show the direct children of an object that the connections between them
@@ -67,7 +71,14 @@ public class ObjectViewDashboardWidget extends AbstractDashboardWidget {
     @Override
     public void createContent() {
         VerticalLayout lytContent = new VerticalLayout();
-        lytContent.addComponent(new ObjectView(selectedObject, wsBean));
+        try {
+            AbstractView objectViewInstance = PersistenceService.getInstance().getViewFactory().createViewInstance("org.kuwaiba.web.modules.navtree.views.ObjectView"); //NOI18N
+            objectViewInstance.build(selectedObject);
+            lytContent.addComponent(objectViewInstance.getAsComponent());
+        } catch (InstantiationException ex) {
+            Notifications.showError(String.format("Object view could not be launched: %s", ex.getLocalizedMessage()));
+        }
+        
         this.contentComponent = lytContent;
     }
 }

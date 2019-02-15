@@ -28,9 +28,21 @@ import java.util.List;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ViewMap {
+    /**
+     * The list of nodes in the map.
+     */
     private List<AbstractViewNode> nodes;
+    /**
+     * The list of edges in the map.
+     */
     private List<AbstractViewEdge> edges;
+    /**
+     * A hashmap containing the edges and their source nodes.
+     */
     private HashMap<AbstractViewEdge, AbstractViewNode> sourceNodes;
+    /**
+     * A hashmap containing the edges and their target nodes.
+     */
     private HashMap<AbstractViewEdge, AbstractViewNode> targetNodes;
 
     public ViewMap() {
@@ -101,4 +113,22 @@ public class ViewMap {
             return anEdge.getIdentifier().equals(identifier);
         }).findFirst().orElse(null);
     }
+    
+    /**
+     * Returns the available nodes.
+     * @return The nodes in the map.
+     */
+    public List<AbstractViewNode> getNodes() {
+        return nodes;
+    }
+    
+    /**
+     * Returns the available edges.
+     * @return The edges in the map.
+     */
+    public List<AbstractViewEdge> getEdges() {
+        return edges;
+    }
+    
+    
 }

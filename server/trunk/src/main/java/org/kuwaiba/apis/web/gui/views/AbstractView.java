@@ -30,15 +30,19 @@ public abstract class AbstractView<T> {
     /**
      * Reference to the Metadata Entity Manager
      */
-    private MetadataEntityManager mem;
+    protected MetadataEntityManager mem;
     /**
      * Reference to the Application Entity Manager
      */
-    private ApplicationEntityManager aem;
+    protected ApplicationEntityManager aem;
     /**
      * Reference to the Business Entity Manager
      */
-    private BusinessEntityManager bem;
+    protected BusinessEntityManager bem;
+    /**
+     * The default view map. This view map must be created when the any either {@link  #build()} or {@link  #build(java.lang.Object)} is called.
+     */
+    protected ViewMap viewMap;
     
     public AbstractView(MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem) {
         this.mem = mem;
@@ -85,7 +89,9 @@ public abstract class AbstractView<T> {
      * Exports the view as a ViewMap (a representation of the view as a set of Java objects related each other). It most likely will have to be called after calling {@link #build() } or {@link  #build(java.lang.Object) }.
      * @return The view map of the view.
      */
-    public abstract ViewMap getAsViewMap();
+    public ViewMap getAsViewMap() {
+        return viewMap;
+    }
     /**
      * Builds the view. Call this method if no business object is required to build the view.
      */
