@@ -24,19 +24,26 @@ import com.vaadin.cdi.server.VaadinCDIServlet;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.Page;
+import com.vaadin.server.ServiceException;
 import com.vaadin.server.SessionDestroyEvent;
 import com.vaadin.server.SessionDestroyListener;
+import com.vaadin.server.SessionInitEvent;
+import com.vaadin.server.SessionInitListener;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
+import java.awt.Color;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Locale;
 import javax.inject.Inject;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
+import org.kuwaiba.apis.web.gui.resources.ResourceFactory;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
@@ -158,12 +165,34 @@ public class IndexUI extends UI {
     @VaadinServletConfiguration(productionMode = false, ui = IndexUI.class, widgetset = "org.kuwaiba.KuwaibaWidgetSet")
     public static class Servlet extends VaadinCDIServlet {
         
-//        @Override
-//        protected void servletInitialized() throws ServletException {
-//            super.servletInitialized();
-//            getService().addSessionDestroyListener(new KuwaibaSessionDestroyHandler());
-//        }
-//        
+        @Override
+        protected void servletInitialized() throws ServletException {
+            super.servletInitialized();
+            
+            getService().addSessionInitListener(new SessionInitListener() {
+                @Override
+                public void sessionInit(SessionInitEvent event) throws ServiceException {
+                    event.getSession().addRequestHandler((session, request, response) -> {
+                        if ("/icons".equals(request.getPathInfo())) {
+                            if (session.getAttribute("session") == null) {
+                                response.setContentType("text/plain");
+                                response.getWriter().append("You are not authorized to access this resource");
+                                return true;
+                            }
+                            
+                            response.setContentType("image/png");
+                            response.getOutputStream().write(ResourceFactory.createRectangleIcon(Color.yellow, 24, 24));
+                            return true; // We wrote a response
+                        } else {
+                            return false; // No response was written
+                        }
+                        //return false; //To change body of generated lambdas, choose Tools | Templates.
+                    });
+                }
+            });
+            //getService().addSessionDestroyListener(new KuwaibaSessionDestroyHandler());
+        }
+        
         @Override
         protected void writeStaticResourceResponse(HttpServletRequest request,
                 HttpServletResponse response, URL resourceUrl) throws IOException {

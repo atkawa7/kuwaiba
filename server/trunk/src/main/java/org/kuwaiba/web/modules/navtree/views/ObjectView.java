@@ -19,6 +19,7 @@ package org.kuwaiba.web.modules.navtree.views;
 import com.neotropic.vaadin.lienzo.LienzoComponent;
 import com.neotropic.vaadin.lienzo.client.core.shape.Point;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvNodeWidget;
+import com.vaadin.server.Resource;
 import com.vaadin.server.ResourceReference;
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.AbstractComponent;
@@ -102,11 +103,15 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
             
             for (AbstractViewNode aNode : viewMap.getNodes()) {
                 SrvNodeWidget nodeWidget = new SrvNodeWidget(((BusinessObjectLight)aNode.getIdentifier()).getId());
+                nodeWidget.setCaption(aNode.getIdentifier().toString());
                 nodeWidget.setX((int)aNode.getProperties().get("x"));
                 nodeWidget.setY((int)aNode.getProperties().get("y"));
-                StreamResource res = ResourceFactory.getFileStream(ResourceFactory.createRectangleIcon(Color.yellow, 16, 16), "jaja.png");
+//                StreamResource res = ResourceFactory.getFileStream(ResourceFactory.createRectangleIcon(Color.yellow, 16, 16), ((BusinessObjectLight)aNode.getIdentifier()).getClassName() + ".png");
+//                lytObjectView.setResource(((BusinessObjectLight)aNode.getIdentifier()).getClassName(), res);
+//                ResourceReference resourceReference = ResourceReference.create(res, UI.getCurrent(), ((BusinessObjectLight)aNode.getIdentifier()).getClassName());
                 
-                nodeWidget.setUrlIcon(ResourceReference.create(res, UI.getCurrent(), "dl").getURL());
+                nodeWidget.setUrlIcon("/kuwaiba/icons");
+                //nodeWidget.setUrlIcon("/icons/City.png");
                 
                 lienzoComponent.addNodeWidget(nodeWidget);
             }
@@ -124,10 +129,11 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
             
             
             //lienzoComponent.addEdgeWidget(srvEdge);
-            
+            lienzoComponent.setSizeFull();
             lytObjectView.addComponent(lienzoComponent);
         }
         
+        lytObjectView.setSizeFull();
         return lytObjectView;
     }
 
@@ -217,6 +223,11 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
         }
     }
     
+    /**
+     * If there's a saved view, this method (that should be called <b>after</b> {@link #buildDefaultView(org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight)}), 
+     * updates the location of the nodes and the control points of the edges.
+     * @param theSavedView The saved view (which contains the XML representation of such view).
+     */
     private void updateDefaultView(ViewObject theSavedView) {
         try {
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -272,5 +283,5 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
         } catch (XMLStreamException ex) {
             Notifications.showError("There was an unexpected error parsing the view structure");
         }
-    }
+    }    
 }
