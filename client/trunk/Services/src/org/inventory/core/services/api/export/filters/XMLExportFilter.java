@@ -59,6 +59,10 @@ public class XMLExportFilter extends TextExportFilter {
         return ".xml"; //NOI18N
     }
 
+    public String getExtensionFileChooser() {
+        
+        return "xml"; //NOI18N
+    }
     
     public boolean export(String filename) throws IOException {
         CommunicationsStub communication = CommunicationsStub.getInstance();
