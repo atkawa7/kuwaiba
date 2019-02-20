@@ -22,6 +22,7 @@ import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.export.GenericExportPanel;
 import org.inventory.core.services.api.export.filters.XMLExportFilter;
+import org.inventory.core.services.api.importdb.ImportPanel;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.customization.classhierarchy.ClassHierarchyTopComponent;
@@ -95,6 +96,7 @@ public final class DataModelManagerTopComponent extends TopComponent
         btndefaultDataModelManaget = new javax.swing.JButton();
         btnshowClassHierarchyView = new javax.swing.JButton();
         btnExportDatabase = new javax.swing.JButton();
+        btnImportDatabase = new javax.swing.JButton();
         lblSearch = new javax.swing.JLabel();
         cmbClassList = new javax.swing.JComboBox();
 
@@ -131,9 +133,8 @@ public final class DataModelManagerTopComponent extends TopComponent
         toolBarMain.add(btnshowClassHierarchyView);
         btnshowClassHierarchyView.getAccessibleContext().setAccessibleDescription(I18N.gm("open_graphical_representation_tree")); // NOI18N
 
-        btnExportDatabase.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/customization/datamodelmanager/res/defaultExportDB.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnExportDatabase, org.openide.util.NbBundle.getMessage(DataModelManagerTopComponent.class, "DataModelManagerTopComponent.btnExportDatabase.text")); // NOI18N
-        btnExportDatabase.setToolTipText("Export Data Base");
+        btnExportDatabase.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/customization/datamodelmanager/res/export_22x22.png"))); // NOI18N
+        btnExportDatabase.setToolTipText(I18N.gm("export_db")); // NOI18N
         btnExportDatabase.setFocusable(false);
         btnExportDatabase.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnExportDatabase.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -143,6 +144,18 @@ public final class DataModelManagerTopComponent extends TopComponent
             }
         });
         toolBarMain.add(btnExportDatabase);
+
+        btnImportDatabase.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/customization/datamodelmanager/res/import_22x22.png"))); // NOI18N
+        btnImportDatabase.setToolTipText(I18N.gm("import_db")); // NOI18N
+        btnImportDatabase.setFocusable(false);
+        btnImportDatabase.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnImportDatabase.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnImportDatabase.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImportDatabaseActionPerformed(evt);
+            }
+        });
+        toolBarMain.add(btnImportDatabase);
 
         org.openide.awt.Mnemonics.setLocalizedText(lblSearch, I18N.gm("search")); // NOI18N
         lblSearch.setPreferredSize(new java.awt.Dimension(70, 15));
@@ -203,8 +216,15 @@ public final class DataModelManagerTopComponent extends TopComponent
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }//GEN-LAST:event_btnExportDatabaseActionPerformed
 
+    private void btnImportDatabaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportDatabaseActionPerformed
+        ImportPanel importPanel = new ImportPanel();
+        DialogDescriptor dd = new DialogDescriptor(importPanel, I18N.gm("export_options"), true, (ActionListener) importPanel);
+        DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
+    }//GEN-LAST:event_btnImportDatabaseActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnExportDatabase;
+    private javax.swing.JButton btnImportDatabase;
     private javax.swing.JButton btndefaultDataModelManaget;
     private javax.swing.JButton btnshowClassHierarchyView;
     private javax.swing.JComboBox cmbClassList;
