@@ -22,7 +22,7 @@ import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.export.GenericExportPanel;
 import org.inventory.core.services.api.export.filters.XMLExportFilter;
-import org.inventory.core.services.api.importdb.ImportPanel;
+import org.inventory.customization.classhierarchy.importdb.ImportPanel;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.customization.classhierarchy.ClassHierarchyTopComponent;
