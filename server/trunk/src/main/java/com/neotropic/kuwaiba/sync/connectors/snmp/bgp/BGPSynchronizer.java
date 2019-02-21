@@ -36,6 +36,7 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import org.kuwaiba.apis.persistence.PersistenceService;
+import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.application.Pool;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
@@ -264,25 +265,12 @@ public class BGPSynchronizer {
                             possibleProviders.add(remoteDevice);
                         } //we made this if a ExternalEquipment and a port were craated manually and a relatationship between the created port and the bgpPeerRemoteAddr was created manually
                         else if(remotePort != null && remoteDevice.getClassName().equals("ExternalEquipment")){ 
-                            try {
-                                if(remoteDevice.getAttributes().get("bgpPeerRemoteAddr") == null)
-                                    remoteDevice.getAttributes().put("bgpPeerRemoteAddr", bgpPeerRemoteAddr.get(i));
 
-                                if(remoteDevice.getAttributes().get("asnNumber") == null)
-                                    remoteDevice.getAttributes().put("asnNumber", asnNumber);
-
-                                bem.updateObject(remoteDevice.getClassName(), remoteDevice.getId(), remoteDevice.getAttributes());
-                                res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, 
-                                        String.format("Attributes for: %s were updated", remoteDevice), 
-                                        String.format("AttributesAdded asnNumber: %s, bgpPeerRemoteAddr: %s", asnNumber, bgpPeerRemoteAddr.get(i))));
-
-                                createBGPLink(asnName, remoteDevice.getAttributes().get("asnNumber"), 
-                                        localPort, bgpPeerLocalAddr.get(i), remoteDevice, remotePort, 
-                                        remoteDevice.getAttributes().get("bgpPeerRemoteAddr"), bgpPeerRemotePort.get(i));
+                            updateAttribtues(remoteDevice, asnNumber, bgpPeerRemoteAddr.get(i));
+                            createBGPLink(asnName, remoteDevice.getAttributes().get("asnNumber"), 
+                                localPort, bgpPeerLocalAddr.get(i), remoteDevice, remotePort, 
+                                remoteDevice.getAttributes().get("bgpPeerRemoteAddr"), bgpPeerRemotePort.get(i)); 
                             
-                            } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | OperationNotPermittedException | InvalidArgumentException ex) {
-                                res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, String.format("Creating BGPLink with: %s", remoteDevice), String.format("Due to %s", ex.getLocalizedMessage())));
-                            }
                         }
                         connectedThings.put(localPort, possibleProviders);
                     }
@@ -296,7 +284,7 @@ public class BGPSynchronizer {
 //}
 //</editor-fold>
             }//end for
-            //now we check what is ExternalEquipment and what is Peering
+            //now we check what is ExternalEquipment(those with no ports related to an ipAddr) and what is Peering
             for (Map.Entry<BusinessObjectLight, List<BusinessObject>> entry : connectedThings.entrySet()) {
                 BusinessObjectLight localPort = entry.getKey();
                 List<BusinessObject> peerings = entry.getValue();
@@ -310,7 +298,7 @@ public class BGPSynchronizer {
                     }
                 }else{
                     for(BusinessObject peering : peerings) {
-                        BusinessObject remotePeering = searchPeering(peering.getAttributes().get("asnNumber"), peering.getName(), 
+                        BusinessObjectLight remotePeering = searchPeering(peering.getAttributes().get("asnNumber"), peering.getName(), 
                                 peering.getAttributes().get("bgpPeerRemoteAddr"));
                         
                         BusinessObjectLight remotePort = null;
@@ -351,6 +339,41 @@ public class BGPSynchronizer {
             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "reading bgpLocalAs from mib", "the value is empty"));
     }
    
+    private void updateAttribtues(BusinessObject remoteDevice, String asnNumber, String bgpPeerRemoteAddr){
+        try {
+            boolean mustUpadeteAttributes = false;
+            if(remoteDevice.getAttributes().get("bgpPeerRemoteAddr") == null){
+                remoteDevice.getAttributes().put("bgpPeerRemoteAddr", bgpPeerRemoteAddr);
+                mustUpadeteAttributes = true;
+            }
+            else if(!remoteDevice.getAttributes().get("bgpPeerRemoteAddr").equals(bgpPeerRemoteAddr)){
+                remoteDevice.getAttributes().put("bgpPeerRemoteAddr", bgpPeerRemoteAddr);
+                mustUpadeteAttributes = true;
+            }
+            if(remoteDevice.getAttributes().get("asnNumber") == null){
+                remoteDevice.getAttributes().put("asnNumber", asnNumber);
+                mustUpadeteAttributes = true;
+            }
+            else if(!remoteDevice.getAttributes().get("asnNumber").equals(asnNumber)){
+                remoteDevice.getAttributes().put("asnNumber", asnNumber);
+                mustUpadeteAttributes = true;
+            }
+
+            if(mustUpadeteAttributes){
+                bem.updateObject(remoteDevice.getClassName(), remoteDevice.getId(), remoteDevice.getAttributes());
+                //AuditTrail
+                aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_UPDATE_INVENTORY_OBJECT, 
+                    String.format("%s (id:%s), %s, %s", remoteDevice.toString(), remoteDevice.getId(), asnNumber, bgpPeerRemoteAddr));
+
+                res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, 
+                        String.format("Attributes for: %s were updated", remoteDevice), 
+                        String.format("AttributesAdded asnNumber: %s, bgpPeerRemoteAddr: %s", asnNumber, bgpPeerRemoteAddr)));
+            }
+        } catch (ApplicationObjectNotFoundException | MetadataObjectNotFoundException | BusinessObjectNotFoundException | OperationNotPermittedException | InvalidArgumentException ex) {
+            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, String.format("Creating BGPLink with: %s", remoteDevice), String.format("Due to %s", ex.getLocalizedMessage())));
+        }
+    }
+    
     /**
      * Search a provider(cloud) in the same city of the device that is been sync
      * remote ip addr port
@@ -420,7 +443,7 @@ public class BGPSynchronizer {
      * @param bgpPeerRemoteAddr remote ip addr from snmp
      * @return the created cloud
      */
-    private BusinessObject createPeering(String asnNumber, String asnName, String bgpPeerRemoteAddr){
+    private BusinessObjectLight createPeering(String asnNumber, String asnName, String bgpPeerRemoteAddr){
         try{
             if(!asnName.isEmpty()){
                 BusinessObject location = bem.getParentOfClass(className, id, "City");
@@ -450,11 +473,15 @@ public class BGPSynchronizer {
                     attributes.put(Constants.PROPERTY_NAME, asnName);
 
                     long createdPeeringId = bem.createObject("Peering", providersParent.getClassName(), providersParent.getId(), attributes, -1);
-
+                    BusinessObjectLight createdPeering = new BusinessObjectLight("Peering", createdPeeringId, asnName);
+                    //AuditTrail
+                    aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                                String.format("%s (id:%s)", createdPeering.toString(), createdPeering.getId()));
+                    
                     res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Creating Peering",
                         String.format("Due to no port was related with the remoteAddrIp: %s, a Peering with asnName: %s (asnNumber: %s) was created in: %s", bgpPeerRemoteAddr, asnName, asnNumber, location)));
 
-                    return bem.getObject(createdPeeringId);
+                    return createdPeering;
                 }
             }
         } catch (OperationNotPermittedException | ApplicationObjectNotFoundException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
@@ -472,15 +499,24 @@ public class BGPSynchronizer {
      * @param bgpPeerRemotePort use it for the port name
      * @return remote port
      */
-    private BusinessObjectLight createRemotePeeringInterface(BusinessObject remoteDevice, String bgpPeerRemoteAddr, String bgpPeerRemotePort) {
+    private BusinessObjectLight createRemotePeeringInterface(BusinessObjectLight remoteDevice, String bgpPeerRemoteAddr, String bgpPeerRemotePort) {
         try {
             HashMap<String, String> attributes = new HashMap<>();
             attributes.put(Constants.PROPERTY_NAME, bgpPeerRemotePort);
             long newPortId = bem.createObject("VirtualPort", remoteDevice.getClassName(), remoteDevice.getId(), attributes, -1);
+            BusinessObjectLight remotePort = new BusinessObjectLight("VirtualPort", newPortId, bgpPeerRemotePort);
+            //AuditTrail
+            aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                        String.format("%s (id:%s)", remotePort.toString(), remotePort.getId()));
+            
             BusinessObjectLight newIpAddress = checkSubentsIps(bgpPeerRemoteAddr, "");
-            bem.createSpecialRelationship("VirtualPort", newPortId,
-                                                newIpAddress.getClassName(), newIpAddress.getId(), RELATIONSHIP_IPAMHASADDRESS, true);
-            return bem.getObject(newPortId);
+            bem.createSpecialRelationship("VirtualPort", newPortId, newIpAddress.getClassName(), newIpAddress.getId(), RELATIONSHIP_IPAMHASADDRESS, true);
+            //AuditTrail
+            aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                    String.format("%s (id:%s), %s, %s (id:%s)", remotePort.toString(), remotePort.getId(), RELATIONSHIP_IPAMHASADDRESS, newIpAddress.toString(), newIpAddress.getId()));
+            
+            return remotePort;
+            
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
             Exceptions.printStackTrace(ex);
         }
@@ -577,23 +613,35 @@ public class BGPSynchronizer {
             String bgpPeerRemoteAddr, String bgpPeerIdentifier)
     {
         try{ 
-            BusinessObjectLight sourceBgpLink = isBGPLinkCreated(localPort, remotePort, bgpPeerIdentifier);
-            if(sourceBgpLink == null){
+            BusinessObjectLight bgpLink = isBGPLinkCreated(localPort, remotePort, bgpPeerIdentifier);
+            if(bgpLink == null){
                 HashMap<String, String> attributesToBeSet = new HashMap<>();
                 attributesToBeSet.put(Constants.PROPERTY_NAME, asnName);
                 attributesToBeSet.put("bgpPeerIdentifier", bgpPeerIdentifier);
                 
                 long bgpLinkId = bem.createSpecialObject(BGPLINK, null, -1, attributesToBeSet, -1);
-                sourceBgpLink = new BusinessObject(BGPLINK, bgpLinkId, asnNumber);
+                bgpLink = new BusinessObject(BGPLINK, bgpLinkId, asnNumber);
+                //AuditTrail
+                aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                        String.format("%s (id:%s)", bgpLink.toString(), bgpLink.getId()));
+                
                 //We create the endpoints of the relationship, we also create a relationship between the devices and the bgp link 
                 //endpointA
                 bem.createSpecialRelationship(BGPLINK, bgpLinkId, localPort.getClassName(), localPort.getId(), RELATIONSHIP_BGPLINKENDPOINTA, false);
                 bem.createSpecialRelationship(BGPLINK, bgpLinkId, className, id, RELATIONSHIP_BGPLINK, false);
+                //AuditTrail
+                aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                        String.format("%s (id:%s), %s,  %s (id:%s)", RELATIONSHIP_BGPLINKENDPOINTB, bgpLink.toString(), bgpLink.getId(), localPort.toString() , localPort.getId()));
+                
                 res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "BGPLink source endpoint created", 
                                 String.format("in this device - %s, related with ip: %s, for asn: %s(%s)", localPort, bgpPeerLocalAddr, asnName, asnNumber)));
                 //endpointB
-                bem.createSpecialRelationship(BGPLINK, sourceBgpLink.getId(), remotePort.getClassName(), remotePort.getId(), RELATIONSHIP_BGPLINKENDPOINTB, false);
-                bem.createSpecialRelationship(BGPLINK, sourceBgpLink.getId(), remoteDevice.getClassName(), remoteDevice.getId(), RELATIONSHIP_BGPLINK, false);
+                bem.createSpecialRelationship(BGPLINK, bgpLink.getId(), remotePort.getClassName(), remotePort.getId(), RELATIONSHIP_BGPLINKENDPOINTB, false);
+                bem.createSpecialRelationship(BGPLINK, bgpLink.getId(), remoteDevice.getClassName(), remoteDevice.getId(), RELATIONSHIP_BGPLINK, false);
+                //AuditTrail
+                aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                        String.format("%s (id:%s), %s,  %s (id:%s)", RELATIONSHIP_BGPLINKENDPOINTB, bgpLink.toString(), bgpLink.getId(), remotePort.toString() , remotePort.getId()));
+                
                 res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "BGPLink destiny endpoint created", 
                             String.format("in %s - %s, related with ip: %s, for asn %s(%s), bgpPeerIdentifier: %s", remoteDevice, remotePort, bgpPeerRemoteAddr, asnName, asnNumber, bgpPeerIdentifier)));
             }
@@ -832,10 +880,13 @@ public class BGPSynchronizer {
                         if(!oldMask.equals(syncMask)){
                             currentIp.getAttributes().put(Constants.PROPERTY_MASK, syncMask);
                             bem.updateObject(currentIp.getClassName(), currentIp.getId(), currentIp.getAttributes());
+                            //AuditTrail
+                            aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_UPDATE_INVENTORY_OBJECT, String.format("%s (id:%s)", currentIp.toString(), currentIp.getId()));
+            
                             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, String.format("Updating the mask of %s", currentIp), String.format("From: %s to: %s", oldMask, syncMask)));
                         }
                         return currentIpLight;
-                    } catch (InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
+                    } catch (ApplicationObjectNotFoundException | InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
                         res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR,  String.format("Updating the mask of ipAddr: %s", currentIpLight), ex.getLocalizedMessage()));
                     }
                 }
@@ -855,6 +906,9 @@ public class BGPSynchronizer {
         String [] attributeValues = {newSubnet + ".0/24", "created with sync", newSubnet + ".0", newSubnet + ".255", "254"};
         try {
             currentSubnet = bem.getObject(bem.createPoolItem(ipv4Root.getId(), ipv4Root.getClassName(), attributeNames, attributeValues, 0));
+            //AuditTrail
+            aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s (id:%s)", currentSubnet.toString(), currentSubnet.getId()));
+            
         } catch (ApplicationObjectNotFoundException | ArraySizeMismatchException | BusinessObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException ex) {
             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                     String.format("%s [Subnet] can't be created", newSubnet + ".0/24"), 
@@ -879,8 +933,11 @@ public class BGPSynchronizer {
         ipAttributes.put(Constants.PROPERTY_DESCRIPTION, "Created with sync");
         ipAttributes.put(Constants.PROPERTY_MASK, syncMask); //TODO set the list types attributes
         try { 
-            long newIpId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, subnet.getClassName(), subnet.getId(), ipAttributes, -1);
-            createdIp = bem.getObject(newIpId);
+            long newIpAddrId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, subnet.getClassName(), subnet.getId(), ipAttributes, -1);
+            //AuditTrail
+            aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [IPAddress] (id:%s)", ipAddr, newIpAddrId));
+            
+            createdIp = bem.getObject(newIpAddrId);
             ips.get(subnet).add(createdIp);
             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Add IP to Subnet", String.format("ipAddr: %s was added to subnet: %s successfully", ipAddr, subnet)));
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
