@@ -1,47 +1,36 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
+ * 
+ *   Licensed under the EPL License, Version 1.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *        http://www.eclipse.org/legal/epl-v10.html
+ * 
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ * 
  */
 package com.neotropic.createdefaultdb.view;
 
-import com.neotropic.createdefaultdb.core.DataBaseContants;
 import com.neotropic.createdefaultdb.core.DbManagement;
-import com.neotropic.createdefaultdb.core.RelTypes;
 import java.io.File;
 import java.io.IOException;
-import java.util.Calendar;
-
-import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Label;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.index.IndexManager;
-import org.neo4j.graphdb.index.RelationshipIndex;
-import org.neo4j.io.fs.FileUtils;
 
 /**
+ * Main class, receive parameter from command line to create a basic database to
+ * start Kuwaiba or edit password 'admin' user, if already exist.
  *
  * @author Hardy Ryan Chingal Martinez {@literal <ryan.chingal@kuwaiba.org>}
  */
 public class DefaultInicialation {
 
     private static DbManagement dbManagement;
-
-    // tag::vars[]
-    Node firstNode;
-    Node secondNode;
-    Relationship relationship;
     public String greeting;
-    // end::vars[]
 
     public static void main(final String[] args) throws IOException {
-        String firstArg;
         if (args.length == 3) {
             try {
 
@@ -53,10 +42,9 @@ public class DefaultInicialation {
                 dbManagement.createdefaultData();
                 dbManagement.shutDown();
             } catch (Exception e) {
-               
 
-                System.out.println("ERROR :"+e);
-            
+                System.out.println("ERROR :" + e);
+
             }
         } else {
             System.out.println("Argument needed are 3 but recived " + args.length);
@@ -69,7 +57,6 @@ public class DefaultInicialation {
             System.exit(1);
         }
 
-        //test();
     }
-  
+
 }

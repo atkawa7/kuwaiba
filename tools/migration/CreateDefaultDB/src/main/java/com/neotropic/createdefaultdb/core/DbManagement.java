@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
+ * 
+ *   Licensed under the EPL License, Version 1.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *        http://www.eclipse.org/legal/epl-v10.html
+ * 
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ * 
  */
 package com.neotropic.createdefaultdb.core;
 
@@ -18,18 +28,27 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.Label;
 
 /**
+ * Main process to create a basic database, if database exist only added new
+ * classes.
  *
  * @author Hardy Ryan Chingal Martinez {@literal <ryan.chingal@kuwaiba.org>}
  */
 public class DbManagement {
 
     private Index<Node> specialNodes;
-    private String adminPassword;
+    private final String adminPassword;
     private GraphDatabaseService graphDb;
-    private static Label specialNodeLabel = Label.label(DataBaseContants.INDEX_SPECIAL_NODES.getValue());
-    private boolean connectionStatus;
+    private final Label specialNodeLabel;
+    private final boolean connectionStatus;
 
+    /**
+     * Default constructor
+     *
+     * @param databaseDirectory
+     * @param adminPassword
+     */
     public DbManagement(String databaseDirectory, String adminPassword) {
+        this.specialNodeLabel = Label.label(DataBaseContants.INDEX_SPECIAL_NODES.getValue());
         this.connectionStatus = openConnection(databaseDirectory);
         this.adminPassword = adminPassword;
     }
@@ -97,8 +116,6 @@ public class DbManagement {
             );
             System.out.println("User admin with id " + userID + " updated");
         }
-
-        //setUserProperties(DataBaseContants.DEFAULT_ADMIN_OID.getIntValue(), null, "kuwaiba", null, null, 1, DataBaseContants.USER_TYPE_GUI.getIntValue());
     }
 
     /**
@@ -368,7 +385,7 @@ public class DbManagement {
 
                     if (defaultGroupNode != null) {
                         System.out.println("default group found");
-                        
+
                         //add user to node
                         newUserNode.createRelationshipTo(defaultGroupNode, RelTypes.BELONGS_TO_GROUP);
                         System.out.println("Add user to default group");
@@ -378,14 +395,13 @@ public class DbManagement {
                         Label defaultGrouplabel = Label.label(DataBaseContants.DEFAULT_GROUP_NAME.getValue());
                         defaultGroupNode = graphDb.createNode(defaultGrouplabel);
                         defaultGroupNode.setProperty(DataBaseContants.GROUP_PROPERTY_DESCRIPTION.getValue(), DataBaseContants.DEFAULT_GROUP_DESCRIPTION.getValue());
-                        
+
                         //add user to node                        
                         newUserNode.createRelationshipTo(defaultGroupNode, RelTypes.BELONGS_TO_GROUP);
                         defaultGroup.createRelationshipTo(defaultGroupNode, RelTypes.GROUP);
                         System.out.println("Add user to default group");
                     }
-                    
-                    
+
                     if (privileges != null) {
                         for (Privilege privilege : privileges) {
                             Node privilegeNode = graphDb.createNode();
@@ -395,13 +411,12 @@ public class DbManagement {
                         }
                     }
 
-                    userIndex.putIfAbsent(newUserNode, DataBaseContants.PROPERTY_ID.getValue(), newUserNode.getId());                    
+                    userIndex.putIfAbsent(newUserNode, DataBaseContants.PROPERTY_ID.getValue(), newUserNode.getId());
                     userIndex.putIfAbsent(newUserNode, DataBaseContants.PROPERTY_NAME.getValue(), userName);
                     storedUserID = newUserNode.getId();
                 }
                 tx.success();
 
-                
             } catch (Exception ex) {
                 System.err.println("Error creating default user " + ex);
             }
@@ -415,9 +430,7 @@ public class DbManagement {
     public void shutDown() {
         System.out.println();
         System.out.println("\nShutting down database ...");
-        // tag::shutdownServer[]
         graphDb.shutdown();
         System.out.println("Database Shut down ");
-        // end::shutdownServer[]
     }
 }
