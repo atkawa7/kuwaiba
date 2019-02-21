@@ -56,9 +56,9 @@ import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.dashboards.DashboardEventBus;
 import org.kuwaiba.apis.web.gui.dashboards.DashboardEventListener;
-import org.kuwaiba.apis.web.gui.navigation.views.AbstractScene;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.apis.web.gui.tools.Wizard;
+import org.kuwaiba.apis.web.gui.views.util.HtmlUtil;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -672,7 +672,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
             try {
                 RemoteClassMetadata classMetadata = wsBean.getClass(className, Page.getCurrent().getWebBrowser().getAddress(), 
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-                connectionColor = AbstractScene.toHexString(new Color(classMetadata.getColor()));
+                connectionColor = HtmlUtil.toHexString(new Color(classMetadata.getColor()));
             } catch (ServerSideException ex) {
                 connectionColor = "#FFFFFF"; //NOI18N
                 Notifications.showError(ex.getLocalizedMessage());

@@ -93,21 +93,6 @@ public abstract class AbstractScene extends VerticalLayout {
         return null;
     }
     
-    public static String toHexString(Color c) {
-        StringBuilder sb = new StringBuilder("#");
-
-        if (c.getRed() < 16) sb.append('0');
-        sb.append(Integer.toHexString(c.getRed()));
-
-        if (c.getGreen() < 16) sb.append('0');
-        sb.append(Integer.toHexString(c.getGreen()));
-
-        if (c.getBlue() < 16) sb.append('0');
-        sb.append(Integer.toHexString(c.getBlue()));
-
-        return sb.toString();
-    }
-    
     /**
      * Renders the view from an XML document (most likely a saved view). 
      * This method is usually called after the render(RemoteObjectLight) method and it's commonly used to set 

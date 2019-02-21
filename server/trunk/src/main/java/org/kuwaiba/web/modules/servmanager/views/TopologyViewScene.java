@@ -15,24 +15,17 @@
  */
 package org.kuwaiba.web.modules.servmanager.views;
 
-import com.neotropic.vaadin.lienzo.client.core.shape.Point;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvEdgeWidget;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvNodeWidget;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Label;
 import java.awt.Color;
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.web.gui.navigation.views.AbstractScene;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
+import org.kuwaiba.apis.web.gui.views.util.HtmlUtil;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.beans.WebserviceBean;
@@ -214,8 +207,8 @@ public class TopologyViewScene extends AbstractScene {
             newEdge.setSource(sourceNode);
             newEdge.setTarget(targetNode);
             
-            RemoteClassMetadata classMetadata = wsBean.getClass(edge.getClassName(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-            newEdge.setColor(toHexString(new Color(classMetadata.getColor())));
+            RemoteClassMetadata classMetadata = wsBean.getClass(edge.getClassName(), session.getIpAddress(), session.getSessionId());
+            newEdge.setColor(HtmlUtil.toHexString(new Color(classMetadata.getColor())));
             newEdge.setCaption(edge.toString());
             edges.put(edge, newEdge);
             lienzoComponent.addEdgeWidget(newEdge);

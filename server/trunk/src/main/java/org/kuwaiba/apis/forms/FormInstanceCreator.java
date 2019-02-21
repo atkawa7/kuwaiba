@@ -14,7 +14,6 @@
  */
 package org.kuwaiba.apis.forms;
 
-import com.vaadin.server.Page;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -65,7 +64,7 @@ public class FormInstanceCreator extends AbstractFormInstanceCreator {
                 RemoteObjectLight remoteObjectLight = (RemoteObjectLight) data;
 
                 try {
-                    RemoteClassMetadata classInfo = wsBean.getClass(remoteObjectLight.getClassName(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+                    RemoteClassMetadata classInfo = wsBean.getClass(remoteObjectLight.getClassName(), session.getIpAddress(), session.getSessionId());
                     
                     XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.DATA_TYPE, Constants.Attribute.DataType.REMOTE_OBJECT_LIGTH);
                     XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.OBJECT_ID, String.valueOf(remoteObjectLight.getId()));
@@ -107,7 +106,7 @@ public class FormInstanceCreator extends AbstractFormInstanceCreator {
             RemoteObjectLight remoteObjectLight = (RemoteObjectLight) object;
                         
             try {
-                RemoteClassMetadata classInfo = wsBean.getClass(remoteObjectLight.getClassName(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+                RemoteClassMetadata classInfo = wsBean.getClass(remoteObjectLight.getClassName(), session.getIpAddress(), session.getSessionId());
                 
                 XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.OBJECT_ID, String.valueOf(remoteObjectLight.getId()));
                 XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.OBJECT_NAME, remoteObjectLight.getName());
@@ -161,7 +160,7 @@ public class FormInstanceCreator extends AbstractFormInstanceCreator {
 
                 HashMap<String, String> info = new HashMap();
                 
-                RemoteClassMetadata classInfo = wsBean.getClass(rol.getClassName(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+                RemoteClassMetadata classInfo = wsBean.getClass(rol.getClassName(), session.getIpAddress(), session.getSessionId());
                                 
                 info.put(Constants.Attribute.DATA_TYPE, Constants.Attribute.DataType.REMOTE_OBJECT_LIGTH);
                 info.put(Constants.Attribute.OBJECT_NAME, rol.getName());

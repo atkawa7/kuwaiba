@@ -115,6 +115,24 @@ public class ViewMap {
     }
     
     /**
+     * Gets the registered source node for a given edge.
+     * @param edge The edge.
+     * @return The related source node or null if none was registered.
+     */
+    public AbstractViewNode getEdgeSource(AbstractViewEdge edge) {
+        return sourceNodes.get(edge);
+    }
+    
+    /**
+     * Gets the registered target node for a given edge.
+     * @param edge The edge.
+     * @return The related target node or null if none was registered.
+     */
+    public AbstractViewNode getEdgeTarget(AbstractViewEdge edge) {
+        return targetNodes.get(edge);
+    }
+    
+    /**
      * Returns the available nodes.
      * @return The nodes in the map.
      */

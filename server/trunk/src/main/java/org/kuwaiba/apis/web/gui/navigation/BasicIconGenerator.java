@@ -20,7 +20,6 @@ import org.kuwaiba.apis.web.gui.navigation.nodes.LabelNode;
 import org.kuwaiba.apis.web.gui.navigation.nodes.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.navigation.nodes.AbstractNode;
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.IconGenerator;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
@@ -59,7 +58,7 @@ public class BasicIconGenerator implements IconGenerator<AbstractNode> {
                 return ResourceFactory.getInstance().getSmallIcon(businessObject.getClassName());
             else {
                 try {
-                    RemoteClassMetadata classMetadata = wsBean.getClass(businessObject.getClassName(), Page.getCurrent().getWebBrowser().getAddress(),
+                    RemoteClassMetadata classMetadata = wsBean.getClass(businessObject.getClassName(), session.getIpAddress(),
                             session.getSessionId());
                     return ResourceFactory.getInstance().getSmallIcon(classMetadata);
                 } catch (ServerSideException ex) {

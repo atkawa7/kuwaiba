@@ -1045,7 +1045,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             Session newSession = aem.createSession(user, password, sessionType, IPAddress);
             aem.createGeneralActivityLogEntry(user, ActivityLogEntry.ACTIVITY_TYPE_OPEN_SESSION, String.format("Connected from %s", IPAddress));
-            return new RemoteSession(newSession.getToken(), newSession.getUser(), sessionType);
+            return new RemoteSession(newSession.getToken(), newSession.getUser(), sessionType, newSession.getIpAddress());
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage()); 
         }

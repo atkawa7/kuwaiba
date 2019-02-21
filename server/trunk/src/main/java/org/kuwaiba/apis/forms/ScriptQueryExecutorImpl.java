@@ -15,8 +15,6 @@
 package org.kuwaiba.apis.forms;
 
 import com.neotropic.kuwaiba.modules.reporting.img.SceneExporter;
-import com.vaadin.server.Page;
-import com.vaadin.ui.UI;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -60,7 +58,7 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
         
         List<RemoteScriptQuery> remoteScriptQueries = null;
         try {
-            remoteScriptQueries = wsBean.getScriptQueries(Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+            remoteScriptQueries = wsBean.getScriptQueries(session.getIpAddress(), session.getSessionId());
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getMessage());
         }
@@ -96,7 +94,7 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                     
                     List<RemoteActivityDefinition> path = wsBean.getProcessInstanceActivitiesPath(
                         processInstance.getId(), 
-                        Page.getCurrent().getWebBrowser().getAddress(), 
+                        session.getIpAddress(), 
                         session.getSessionId());
 
                     for (RemoteActivityDefinition activity : path) {
@@ -106,7 +104,7 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                             remoteArtifact = wsBean.getArtifactForActivity(
                                 processInstance.getId(), 
                                 activity.getId(), 
-                                Page.getCurrent().getWebBrowser().getAddress(), 
+                                session.getIpAddress(), 
                                 session.getSessionId());
                             break;
                         }
@@ -143,7 +141,7 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                                     long objId = Long.valueOf(sharedInfo.getProperty(sharedId + Constants.Attribute.OBJECT_ID));
                                     
                                     try {                                    
-                                        return wsBean.getObjectLight(objClassName, objId, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+                                        return wsBean.getObjectLight(objClassName, objId, session.getIpAddress(), session.getSessionId());
                                         
                                     } catch (ServerSideException ex) {
                                         if (debug)
@@ -205,8 +203,7 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
             String oldPath = SceneExporter.PATH;
             SceneExporter.PATH = newPath;
             String pathEndToEndView = SceneExporter.getInstance().buildEndToEndView(
-                Page.getCurrent().getWebBrowser().getAddress(), 
-                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")), 
+                session, 
                 wsBean, 
                 parameterValues.get(0), 
                 Long.valueOf(parameterValues.get(1)));
@@ -232,8 +229,8 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
             }
             try {          
                 return wsBean.getE2EMap(parameterNames, linkIds, true, true, true, 
-                    Page.getCurrent().getWebBrowser().getAddress(), 
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                    session.getIpAddress(), 
+                    session.getSessionId());
             } catch (Exception ex) {
                 Exceptions.printStackTrace(ex);
             }
@@ -252,19 +249,19 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                             for (int i = 0; i < parameterNames.size(); i += 1)
                                 newParameters.add(new StringPair(parameterNames.get(i), parameterValues.get(i)));
                             // Updating the parameters
-                            wsBean.updateScriptQueryParameters(scriptQuery.getId(), newParameters, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+                            wsBean.updateScriptQueryParameters(scriptQuery.getId(), newParameters, session.getIpAddress(), session.getSessionId());
                             
                             if ("false".equals(scriptQuery.getCountable())) {
                                 // Excecuting the Script Query to No Countable result
                                 RemoteScriptQueryResult scriptQueryResult = wsBean.executeScriptQuery(
-                                    scriptQuery.getId(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+                                    scriptQuery.getId(), session.getIpAddress(), session.getSessionId());
                                 
                                 return scriptQueryResult.getResult();
                             }
                             if ("true".equals(scriptQuery.getCountable())) {
                                 // Excecuting the Script Query to Countable results
                                 RemoteScriptQueryResultCollection scriptQueryResultCollection = wsBean.executeScriptQueryCollection(
-                                    scriptQuery.getId(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+                                    scriptQuery.getId(), session.getIpAddress(), session.getSessionId());
                                 
                                 return scriptQueryResultCollection.getResults();
                             }
@@ -317,7 +314,7 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                                 RemoteObjectLight rol = wsBean.getObjectLight(
                                     className, 
                                     objectId,
-                                    Page.getCurrent().getWebBrowser().getAddress(), 
+                                    session.getIpAddress(), 
                                     session.getSessionId());
                                 
                                 row.add(rol != null ? rol : (objectName != null ? objectName : ""));

@@ -18,12 +18,9 @@ package org.kuwaiba.web.modules.navtree.views;
 
 import com.neotropic.vaadin.lienzo.LienzoComponent;
 import com.neotropic.vaadin.lienzo.client.core.shape.Point;
+import com.neotropic.vaadin.lienzo.client.core.shape.SrvEdgeWidget;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvNodeWidget;
-import com.vaadin.server.Resource;
-import com.vaadin.server.ResourceReference;
-import com.vaadin.server.StreamResource;
 import com.vaadin.ui.AbstractComponent;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
@@ -42,15 +39,16 @@ import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
-import org.kuwaiba.apis.web.gui.resources.ResourceFactory;
 import org.kuwaiba.apis.web.gui.views.AbstractView;
 import org.kuwaiba.apis.web.gui.views.AbstractViewEdge;
 import org.kuwaiba.apis.web.gui.views.AbstractViewNode;
 import org.kuwaiba.apis.web.gui.views.BusinessObjectViewEdge;
 import org.kuwaiba.apis.web.gui.views.BusinessObjectViewNode;
 import org.kuwaiba.apis.web.gui.views.ViewMap;
+import org.kuwaiba.apis.web.gui.views.util.HtmlUtil;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.services.persistence.util.Constants;
 
@@ -106,31 +104,32 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
                 nodeWidget.setCaption(aNode.getIdentifier().toString());
                 nodeWidget.setX((int)aNode.getProperties().get("x"));
                 nodeWidget.setY((int)aNode.getProperties().get("y"));
-//                StreamResource res = ResourceFactory.getFileStream(ResourceFactory.createRectangleIcon(Color.yellow, 16, 16), ((BusinessObjectLight)aNode.getIdentifier()).getClassName() + ".png");
-//                lytObjectView.setResource(((BusinessObjectLight)aNode.getIdentifier()).getClassName(), res);
-//                ResourceReference resourceReference = ResourceReference.create(res, UI.getCurrent(), ((BusinessObjectLight)aNode.getIdentifier()).getClassName());
                 
-                nodeWidget.setUrlIcon("/kuwaiba/icons");
-                //nodeWidget.setUrlIcon("/icons/City.png");
-                
+                nodeWidget.setUrlIcon("/kuwaiba/icons?class=" + ((BusinessObjectLight)aNode.getIdentifier()).getClassName()); //NOI18N
                 lienzoComponent.addNodeWidget(nodeWidget);
             }
             
-//            viewMap.getNodes().stream().forEach((aNode) -> {
-//                SrvNodeWidget nodeWidget = new SrvNodeWidget(((BusinessObjectLight)aNode.getIdentifier()).getId());
-//                nodeWidget.setX((double)aNode.getProperties().get("x"));
-//                nodeWidget.setY((double)aNode.getProperties().get("y"));
-//                StreamResource res = ResourceFactory.getFileStream(ResourceFactory.createRectangleIcon(Color.yellow, 16, 16), "jaja.png");
-//                
-//                nodeWidget.setUrlIcon(ResourceReference.create(res, UI.getCurrent(), "dl").getURL());
-//                
-//                lienzoComponent.addNodeWidget(nodeWidget);
-//            });
+            viewMap.getEdges().stream().forEach((anEdge) -> {
+                SrvEdgeWidget edgeWidget = new SrvEdgeWidget(((BusinessObjectLight)anEdge.getIdentifier()).getId());
+                AbstractViewNode sourceNode = viewMap.getEdgeSource(anEdge);
+                if (sourceNode != null) {
+                    edgeWidget.setSource(lienzoComponent.getNodeWidget(((BusinessObjectLight)sourceNode.getIdentifier()).getId()));
+                    AbstractViewNode targetNode = viewMap.getEdgeTarget(anEdge);
+                    if (targetNode != null) { //The edge is only added if both sides are found
+                        edgeWidget.setTarget(lienzoComponent.getNodeWidget(((BusinessObjectLight)targetNode.getIdentifier()).getId()));
+                        edgeWidget.setControlPoints((List<Point>)anEdge.getProperties().get("controlPoints")); 
+                        try {
+                            ClassMetadata theClass = mem.getClass(((BusinessObjectLight)anEdge.getIdentifier()).getClassName());
+                            edgeWidget.setColor(HtmlUtil.toHexString(new Color(theClass.getColor())));
+                        } catch (MetadataObjectNotFoundException ex) {
+                            //In case of error, use a default black line
+                        }
+                        lienzoComponent.addEdgeWidget(edgeWidget);
+                    }
+                }
+            });
             
-            
-            //lienzoComponent.addEdgeWidget(srvEdge);
-            lienzoComponent.setSizeFull();
-            lytObjectView.addComponent(lienzoComponent);
+            lytObjectView.addComponentsAndExpand(lienzoComponent);
         }
         
         lytObjectView.setSizeFull();
@@ -140,12 +139,9 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
     @Override
     public void build(RemoteObjectLight businessObject) {
         try {
-            
-            this.viewMap = new ViewMap();
-            
+            this.viewMap = new ViewMap();            
             //First we build the default view
             this.buildDefaultView(businessObject);
- 
             //Now, we check if there's a view saved previously..If so, the default location of the nodes will be updated accordingly
             List<ViewObjectLight> objectViews = aem.getObjectRelatedViews(businessObject.getId(), businessObject.getClassName(), -1);
 
@@ -162,6 +158,9 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
      */
     private void buildDefaultView(RemoteObjectLight businessObject) {
         try {
+            
+            BusinessObjectLight asLocalBusinessObject = new BusinessObjectLight(businessObject.getClassName(), businessObject.getId(), businessObject.getName());
+            
             //First the direct children that not connections
             List<BusinessObjectLight> nodeChildren = bem.getObjectChildren(businessObject.getClassName(), businessObject.getId(), -1);
             
@@ -182,6 +181,7 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
 
                 for (BusinessObjectLight child : connectionChildren) {
                     BusinessObjectViewEdge connection = new BusinessObjectViewEdge(child);
+                    viewMap.addEdge(connection);
                     
                     List<BusinessObjectLight> aSide = bem.getSpecialAttribute(child.getClassName(), child.getId(), "endpointA"); 
                     if (aSide.isEmpty()) {
@@ -198,7 +198,7 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
                     //The endpoints of the connections are ports, but the direct children of the selected object are (most likely) communication devices,
                     //so we need to find the equipment these ports belong to and try to find them among the nodes that were just added above. 
                     List<BusinessObjectLight> parentsASide = bem.getParents(aSide.get(0).getClassName(), aSide.get(0).getId());
-                    int currentObjectIndexASide = parentsASide.indexOf(businessObject);
+                    int currentObjectIndexASide = parentsASide.indexOf(asLocalBusinessObject);
                     if (currentObjectIndexASide == -1) {
                         Notifications.showError(String.format("The endpoint A of connection %s is not located in this object", child));
                         continue;
@@ -206,7 +206,7 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
                     AbstractViewNode sourceNode = currentObjectIndexASide == 0 ? viewMap.getNode(aSide.get(0)) : viewMap.getNode(parentsASide.get(currentObjectIndexASide - 1));
 
                     List<BusinessObjectLight> parentsBSide = bem.getParents(bSide.get(0).getClassName(), bSide.get(0).getId());
-                    int currentObjectIndexBSide = parentsBSide.indexOf(businessObject);
+                    int currentObjectIndexBSide = parentsBSide.indexOf(asLocalBusinessObject);
                     if (currentObjectIndexBSide == -1) {
                         Notifications.showError(String.format("The endpoint B of connection %s is not located in this object", child));
                         continue;
@@ -215,7 +215,6 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
 
                     viewMap.attachSourceNode(connection, sourceNode);
                     viewMap.attachTargetNode(connection, targetNode);
-
                 }
             }
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
@@ -244,8 +243,8 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
                     if (reader.getName().equals(qNode)) {
                         int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue(); //NOI18N
                         int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue(); //NOI18N
-                        long objectId = Long.valueOf(reader.getElementText());
                         String className = reader.getAttributeValue(null, "class"); //NOI18N
+                        long objectId = Long.valueOf(reader.getElementText());
                         
                         AbstractViewNode node = viewMap.getNode(new BusinessObjectLight(className, objectId, "")); //NOI18N
                         
@@ -257,8 +256,7 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
                         if (reader.getName().equals(qEdge)) {
                             long objectId = Long.valueOf(reader.getAttributeValue(null, "id")); //NOI18N
                             String className = reader.getAttributeValue(null, "class"); //NOI18N
-
-                            AbstractViewEdge edge = viewMap.getEdge(new BusinessObjectLight(className, objectId, ""));
+                            AbstractViewEdge edge = viewMap.getEdge(new BusinessObjectLight(className, objectId, "")); //NOI18N
                             
                             if (edge != null) {
                                 List<Point> controlPoints = new ArrayList<>();

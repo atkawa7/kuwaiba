@@ -90,7 +90,7 @@ public class BusinessObjectLight implements Serializable, Comparable<BusinessObj
 
     @Override
     public int compareTo(BusinessObjectLight o) {
-        return getName().compareTo(o.getName());
+        return this.name.compareTo(o.getName());
     }
     
     @Override
@@ -99,7 +99,7 @@ public class BusinessObjectLight implements Serializable, Comparable<BusinessObj
            return false;
        if (!(obj instanceof BusinessObjectLight))
            return false;
-       return (this.getId() == ((BusinessObjectLight)obj).getId());
+       return (this.id == ((BusinessObjectLight)obj).getId());
    }
 
     @Override

@@ -14,7 +14,6 @@
  */
 package org.kuwaiba.apis.forms.components.impl;
 
-import com.vaadin.server.Page;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -72,7 +71,7 @@ public class ObjectHierarchyProvider implements HierarchyProvider<RemoteObjectLi
                 parent.getClassName(), 
                 parent.getId(), 
                 -1, 
-                Page.getCurrent().getWebBrowser().getAddress(), 
+                remoteSession.getIpAddress(), 
                 remoteSession.getSessionId());
             
         } catch (ServerSideException ex) {
