@@ -27,7 +27,6 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.core.services.i18n.I18N;
-import org.openide.DialogDescriptor;
 
 /**
  * Interface to show uploading progress saving data into database and shows

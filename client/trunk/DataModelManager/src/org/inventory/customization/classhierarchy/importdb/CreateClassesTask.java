@@ -17,7 +17,6 @@ package org.inventory.customization.classhierarchy.importdb;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.swing.SwingWorker;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadata;
