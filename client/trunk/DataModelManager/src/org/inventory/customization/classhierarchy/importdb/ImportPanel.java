@@ -22,26 +22,26 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.List;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.core.services.api.export.filters.XMLExportFilter;
-import org.openide.DialogDescriptor;
 
 /**
  *
  * @author Hardy Ryan Chingal Martinez {@literal <ryan.chingal@kuwaiba.org>}
  */
-public class ImportPanel extends javax.swing.JPanel implements ActionListener, PropertyChangeListener {
+public class ImportPanel extends javax.swing.JPanel implements ActionListener {
 
     private File selectedFile;
     private List<LocalClassMetadata> rootElements;
+    private boolean fileCorrect;
 
     /**
      * Creates new form ImportPanel
      */
     public ImportPanel() {
+        this.fileCorrect = false;
         initComponents();
     }
 
@@ -55,11 +55,8 @@ public class ImportPanel extends javax.swing.JPanel implements ActionListener, P
     private void initComponents() {
 
         lblFile = new javax.swing.JLabel();
-        pbUpload = new javax.swing.JProgressBar();
         btnBrowseFile = new javax.swing.JButton();
         txtFileName = new javax.swing.JTextField();
-        btnUpload = new javax.swing.JToggleButton();
-        lblProgress = new javax.swing.JLabel();
 
         org.openide.awt.Mnemonics.setLocalizedText(lblFile, "Choose a File:");
 
@@ -72,37 +69,17 @@ public class ImportPanel extends javax.swing.JPanel implements ActionListener, P
 
         txtFileName.setEditable(false);
 
-        org.openide.awt.Mnemonics.setLocalizedText(btnUpload, "Upload");
-        btnUpload.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnUploadActionPerformed(evt);
-            }
-        });
-
-        org.openide.awt.Mnemonics.setLocalizedText(lblProgress, "Progress:");
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblFile)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(8, 8, 8)
-                        .addComponent(lblProgress)))
+                .addComponent(lblFile)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(txtFileName, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnBrowseFile))
-                    .addComponent(pbUpload, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(40, 40, 40))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(183, 183, 183)
-                .addComponent(btnUpload)
+                .addComponent(txtFileName, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnBrowseFile)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -113,13 +90,7 @@ public class ImportPanel extends javax.swing.JPanel implements ActionListener, P
                     .addComponent(lblFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnBrowseFile))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnUpload)
-                .addGap(17, 17, 17)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pbUpload, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblProgress))
-                .addGap(21, 21, 21))
+                .addGap(20, 20, 20))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -139,84 +110,21 @@ public class ImportPanel extends javax.swing.JPanel implements ActionListener, P
 
         if (fChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 
-            selectedFile = fChooser.getSelectedFile();
-            txtFileName.setText(selectedFile.getName());
+            setSelectedFile(fChooser.getSelectedFile());
+            txtFileName.setText(getSelectedFile().getName());
         }
     }//GEN-LAST:event_btnBrowseFileActionPerformed
 
     /**
-     * First upload one file in memory, this process is a thread Second save
-     * this structure into data base, this process is a thread
+     * Override in DataModelManagerTopComponent, default behavior open a new
+     * windows where it show the progress saving in database
      *
-     * @param evt
-     */
-    private void btnUploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUploadActionPerformed
-        pbUpload.setValue(0);
-        pbUpload.setIndeterminate(true);
-        final PropertyChangeListener parent = this;
-
-        FileReaderTask task = new FileReaderTask(selectedFile) {
-            /**
-             * Executed in Swing's event dispatching thread
-             */
-            @Override
-            protected void done() {
-                if (!isCancelled()) {
-                    JOptionPane.showMessageDialog(null,
-                            "File has been uploaded successfully!", "Message",
-                            JOptionPane.INFORMATION_MESSAGE);
-                    pbUpload.setIndeterminate(false);
-                    pbUpload.setStringPainted(true);
-                    pbUpload.setValue(0);
-
-                    //create classs
-                    CreateClassesTask task = new CreateClassesTask(this.getRoots()) {
-                        /**
-                         * Executed in Swing's event dispatching thread
-                         */
-                        @Override
-                        protected void done() {
-                            if (!isCancelled()) {
-                                JOptionPane.showMessageDialog(null,
-                                        "Process end successfully!", "Message",
-                                        JOptionPane.INFORMATION_MESSAGE);
-
-                            }
-                        }
-                    };
-                    task.addPropertyChangeListener(parent);
-                    task.execute();
-
-                }
-            }
-        };
-
-        task.execute();
-    }//GEN-LAST:event_btnUploadActionPerformed
-
-    /**
-     * not yet implemented, default behavior close the window
-     * 
      * @param ae
      */
     @Override
     public void actionPerformed(ActionEvent ae) {
-        
-    }
 
-    /**
-     * Places the progress of save into database in JProgressbar component
-     *
-     * @param pce
-     */
-    @Override
-    public void propertyChange(PropertyChangeEvent pce) {
-        if ("progress".equals(pce.getPropertyName())) {
-            int progress = (Integer) pce.getNewValue();
-            pbUpload.setValue(progress);
-        }
-
-    }
+    }    
 
     //getters and setters
     /**
@@ -232,12 +140,38 @@ public class ImportPanel extends javax.swing.JPanel implements ActionListener, P
     public void setRootElements(List<LocalClassMetadata> rootElements) {
         this.rootElements = rootElements;
     }
+
+    /**
+     * @return the fileCorrect
+     */
+    public boolean isFileCorrect() {
+        return fileCorrect;
+    }
+
+    /**
+     * @param fileCorrect the fileCorrect to set
+     */
+    public void setFileCorrect(boolean fileCorrect) {
+        this.fileCorrect = fileCorrect;
+    }
+
+    /**
+     * @return the selectedFile
+     */
+    public File getSelectedFile() {
+        return selectedFile;
+    }
+
+    /**
+     * @param selectedFile the selectedFile to set
+     */
+    public void setSelectedFile(File selectedFile) {
+        this.selectedFile = selectedFile;
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBrowseFile;
-    private javax.swing.JToggleButton btnUpload;
     private javax.swing.JLabel lblFile;
-    private javax.swing.JLabel lblProgress;
-    private javax.swing.JProgressBar pbUpload;
     private javax.swing.JTextField txtFileName;
     // End of variables declaration//GEN-END:variables
 

@@ -15,7 +15,9 @@
  */
 package org.inventory.customization.classhierarchy.importdb;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.SwingWorker;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadata;
@@ -28,7 +30,8 @@ import org.inventory.communications.core.LocalClassMetadata;
  */
 public class CreateClassesTask extends SwingWorker<Void, Void> {
 
-    private List<LocalClassMetadata> roots;
+    private final List<LocalClassMetadata> roots;
+    private final HashMap<String, String> errors;
 
     /**
      * default constructor
@@ -37,6 +40,7 @@ public class CreateClassesTask extends SwingWorker<Void, Void> {
      */
     public CreateClassesTask(List<LocalClassMetadata> roots) {
         this.roots = roots;
+        this.errors = new HashMap<>();
     }
 
     /**
@@ -67,13 +71,22 @@ public class CreateClassesTask extends SwingWorker<Void, Void> {
                     root.isAbstract(),
                     root.isInDesign()
             );
+            if (newClass == -1) {
+                getErrors().put(root.getClassName(), stub.getError());
+            }
 
             totalBytesRead++;
             percentCompleted = (int) (totalBytesRead * 100 / fileSize);
             setProgress(percentCompleted);
-
         }
         return null;
+    }
+
+    /**
+     * @return the errors
+     */
+    public HashMap<String, String> getErrors() {
+        return errors;
     }
 
 }

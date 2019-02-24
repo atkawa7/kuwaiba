@@ -17,7 +17,11 @@ package org.inventory.customization.datamodelmanager;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.List;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.export.GenericExportPanel;
@@ -26,6 +30,8 @@ import org.inventory.customization.classhierarchy.importdb.ImportPanel;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.customization.classhierarchy.ClassHierarchyTopComponent;
+import org.inventory.customization.classhierarchy.importdb.FileReaderTask;
+import org.inventory.customization.classhierarchy.importdb.UpdateProcessPanel;
 import org.inventory.customization.classhierarchy.nodes.ClassMetadataChildren;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.DialogDescriptor;
@@ -211,16 +217,52 @@ public final class DataModelManagerTopComponent extends TopComponent
     }//GEN-LAST:event_cmbClassListMouseEntered
 
     private void btnExportDatabaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportDatabaseActionPerformed
-        GenericExportPanel exportPanel = new GenericExportPanel( new XMLExportFilter[] {XMLExportFilter.getInstance()}, "ExportDB");
+        GenericExportPanel exportPanel = new GenericExportPanel(new XMLExportFilter[]{XMLExportFilter.getInstance()}, "Export_Datamodel");
         DialogDescriptor dd = new DialogDescriptor(exportPanel, I18N.gm("export_options"), true, exportPanel);
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }//GEN-LAST:event_btnExportDatabaseActionPerformed
 
+    /**
+     * Open a windows to show file update progress Launch a thread to manage the
+     * uploading file process
+     *
+     * @param evt
+     */
     private void btnImportDatabaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportDatabaseActionPerformed
-        ImportPanel importPanel = new ImportPanel();
+        ImportPanel importPanel = new ImportPanel() {
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                
+                //create new window
+                if (ae.getSource() == DialogDescriptor.OK_OPTION) {
+                    uploadDatamodel(this.getSelectedFile());
+                }
+
+            }
+        };
+        //display window
         DialogDescriptor dd = new DialogDescriptor(importPanel, I18N.gm("export_options"), true, (ActionListener) importPanel);
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
+
     }//GEN-LAST:event_btnImportDatabaseActionPerformed
+
+    /**
+     * open a new windows where it show the progress saving in database
+     *
+     * @param selectedFile;File
+     */
+    private void uploadDatamodel(File selectedFile) {
+
+        //launch update datamodel process
+        UpdateProcessPanel processDialog = new UpdateProcessPanel();
+        processDialog.uploadFileProcess(selectedFile);
+
+        //display window        
+        DialogDescriptor dd = new DialogDescriptor(processDialog, I18N.gm("import_windowslbl"), true, processDialog);
+        DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
+
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnExportDatabase;
@@ -300,4 +342,10 @@ public final class DataModelManagerTopComponent extends TopComponent
             em.setRootContext(new AbstractNode(new ClassMetadataChildren(new LocalClassMetadataLight[]{selectedItem})));
         }
     }
+
+    @Override
+    public String getName() {
+        return "DataModelManagerTopComponent";
+    }
+
 }

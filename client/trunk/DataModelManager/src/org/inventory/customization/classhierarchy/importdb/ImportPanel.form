@@ -18,27 +18,11 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
               <EmptySpace max="32767" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="lblFile" min="-2" max="-2" attributes="0"/>
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
-                      <Component id="lblProgress" min="-2" max="-2" attributes="0"/>
-                  </Group>
-              </Group>
+              <Component id="lblFile" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
-              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Group type="102" attributes="0">
-                      <Component id="txtFileName" min="-2" pref="197" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="btnBrowseFile" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <Component id="pbUpload" max="32767" attributes="0"/>
-              </Group>
-              <EmptySpace min="-2" pref="40" max="-2" attributes="0"/>
-          </Group>
-          <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="183" max="-2" attributes="0"/>
-              <Component id="btnUpload" min="-2" max="-2" attributes="0"/>
+              <Component id="txtFileName" min="-2" pref="197" max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="btnBrowseFile" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
@@ -52,14 +36,7 @@
                   <Component id="txtFileName" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnBrowseFile" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="btnUpload" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="pbUpload" min="-2" pref="24" max="-2" attributes="0"/>
-                  <Component id="lblProgress" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -69,8 +46,6 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Choose a File:"/>
       </Properties>
-    </Component>
-    <Component class="javax.swing.JProgressBar" name="pbUpload">
     </Component>
     <Component class="javax.swing.JButton" name="btnBrowseFile">
       <Properties>
@@ -83,19 +58,6 @@
     <Component class="javax.swing.JTextField" name="txtFileName">
       <Properties>
         <Property name="editable" type="boolean" value="false"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JToggleButton" name="btnUpload">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Upload"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnUploadActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JLabel" name="lblProgress">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Progress:"/>
       </Properties>
     </Component>
   </SubComponents>
