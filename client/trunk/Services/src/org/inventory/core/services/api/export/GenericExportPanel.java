@@ -30,7 +30,7 @@ import org.inventory.core.services.i18n.I18N;
 import org.openide.DialogDescriptor;
 
 /**
- * panel to export a simple xml file
+ * panel to export a simple 'xml' file
  *
  * @author Hardy Ryan Chingal Martinez {@literal <ryan.chingal@kuwaiba.org>}
  */

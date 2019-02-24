@@ -37,10 +37,12 @@ import org.openide.DialogDisplayer;
  */
 public class ExportTablePanel extends JPanel implements ActionListener{
 
-    private TextExportFilter[] filters;
-    private ExportableTable exportable;
+    private final TextExportFilter[] filters;
+    private final ExportableTable exportable;
 
-    /** Creates new form ExportSettingsPanel */
+    /** Creates new form ExportSettingsPanel
+     * @param filters
+     * @param exportable */
     public ExportTablePanel(TextExportFilter[] filters, ExportableTable exportable) {
         this.filters = filters;
         initComponents();
@@ -53,12 +55,8 @@ public class ExportTablePanel extends JPanel implements ActionListener{
         cmbRange.addItem(ExportableTable.Range.CURRENT_PAGE);
         for (TextExportFilter filter : filters)
             cmbExportTo.addItem(filter);
-        cmbExportTo.addItemListener(new ItemListener() {
-
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                updateExtension(e.getSource());
-            }
+        cmbExportTo.addItemListener((ItemEvent e) -> {
+            updateExtension(e.getSource());
         });
     }
 
