@@ -34,6 +34,7 @@ public class ElementGrid extends AbstractElement {
     private List<ElementColumn> columns;
     private List<List<Object>> rows;
     private boolean shared = false;
+    private boolean usePagination = false; // attribute to determine if pagination will be used on the grid
     private long selectedRow = -1;
     private String selectionMode;
     private List<Long> selectedRows;
@@ -161,12 +162,17 @@ public class ElementGrid extends AbstractElement {
     public void setSelectionMode(String selectionMode) {
         this.selectionMode = selectionMode;        
     }
+
+    public boolean isUsePagination() {
+        return usePagination;
+    }
             
     @Override
     public void initFromXML(XMLStreamReader reader) throws XMLStreamException {
         super.initFromXML(reader);
         setShared(reader);
         setSelectionMode(reader);
+        setUsePagination(reader);
         
         columns = new ArrayList();
         QName tagGrid = new QName(Constants.Tag.GRID);
@@ -194,6 +200,10 @@ public class ElementGrid extends AbstractElement {
     
     private void setShared(XMLStreamReader reader) {
         shared = Boolean.valueOf(reader.getAttributeValue(null, Constants.Attribute.SHARED));
+    }
+    
+    private void setUsePagination(XMLStreamReader reader) {
+        usePagination = Boolean.valueOf(reader.getAttributeValue(null, Constants.Attribute.USE_PAGINATION));
     }
     
     public void setSelectionMode(XMLStreamReader reader) {

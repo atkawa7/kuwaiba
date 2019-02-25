@@ -14,15 +14,23 @@
  */
 package org.kuwaiba.apis.forms.components.impl;
 
+import com.vaadin.data.provider.DataProvider;
 import com.vaadin.event.selection.SelectionEvent;
 import com.vaadin.event.selection.SelectionListener;
+import com.vaadin.server.SerializablePredicate;
+import com.vaadin.server.Sizeable;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import org.kuwaiba.apis.forms.elements.EventDescriptor;
 import org.kuwaiba.apis.forms.elements.AbstractElement;
 import org.kuwaiba.apis.forms.elements.Constants;
 import org.kuwaiba.apis.forms.elements.ElementColumn;
 import org.kuwaiba.apis.forms.elements.ElementGrid;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.renderers.TextRenderer;
+import com.vaadin.ui.themes.ValoTheme;
 import elemental.json.Json;
 import elemental.json.JsonValue;
 import java.util.ArrayList;
@@ -31,6 +39,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.vaadin.teemusa.gridextensions.paging.PagedDataProvider;
+import org.vaadin.teemusa.gridextensions.paging.PagingControls;
 
 /**
  * Vaadin Implementation to an ElementGrid to the API Form
@@ -78,15 +88,31 @@ public class ComponentGrid extends GraphicalComponent {
         }
     }
     
-    private final List<HashMap<String, Object>> rows = new ArrayList();    
+    private final List<HashMap<String, Object>> rows = new ArrayList();
+
+    private Grid<HashMap<String, Object>> mainGrid;
+    private VerticalLayout paginationButtons;
+    private boolean usePagination;
   
     public ComponentGrid() {        
-        super(new Grid<HashMap<String, Object>>());
+        //super(new Grid<HashMap<String, Object>>());
+        super(new VerticalLayout());
+        mainGrid = new Grid<HashMap<String, Object>>();
+        mainGrid.setStyleName(ValoTheme.TABLE_SMALL);
+        paginationButtons = new VerticalLayout();
+        getComponent().addComponent(mainGrid);
+        getComponent().addComponent(paginationButtons);
+        //paginationButtons.setHeight(25, Sizeable.Unit.PIXELS);
+        paginationButtons.setSpacing(false);
+        paginationButtons.setMargin(false);
+        getComponent().setSpacing(false);
+        getComponent().setMargin(false);
+        usePagination = false;
     }
     
     @Override
-    public Grid<HashMap<String, Object>> getComponent() {
-        return (Grid<HashMap<String, Object>>) super.getComponent();
+    public VerticalLayout getComponent() {
+        return (VerticalLayout) super.getComponent();
     }
     
     private class ComponentGridTextRenderer extends TextRenderer {
@@ -115,45 +141,48 @@ public class ComponentGrid extends GraphicalComponent {
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementGrid) {
             ElementGrid grid = (ElementGrid) element;
-            
+            getComponent().setId("contenedorBtnPag");
             if (grid.getSelectionMode() != null) {
                 switch(grid.getSelectionMode()) {
                     case ElementGrid.SELECTION_MODE_MULTI:
-                        getComponent().setSelectionMode(Grid.SelectionMode.MULTI);
+                        mainGrid.setSelectionMode(Grid.SelectionMode.MULTI);
                     break;
                     case ElementGrid.SELECTION_MODE_NONE:
-                        getComponent().setSelectionMode(Grid.SelectionMode.NONE);
+                        mainGrid.setSelectionMode(Grid.SelectionMode.NONE);
                     break;
                     case ElementGrid.SELECTION_MODE_SINGLE:
-                        getComponent().setSelectionMode(Grid.SelectionMode.SINGLE);
+                        mainGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
                     break;
                     default:
-                        getComponent().setSelectionMode(Grid.SelectionMode.SINGLE);
+                        mainGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
                     break;
                 }
             }
             
+            if(grid.isUsePagination())
+                usePagination = true;
+            
             if (grid.getColums() != null) {
                 for (ElementColumn column : grid.getColums()) {
-                    Grid.Column gridColumn = getComponent().addColumn(row -> row.get(column.getCaption())).setCaption(column.getCaption());
+                    Grid.Column gridColumn = mainGrid.addColumn(row -> row.get(column.getCaption())).setCaption(column.getCaption());
                     gridColumn.setRenderer(new ComponentGridTextRenderer());
                 }
             }
             if (grid.getRows() != null) {
-                                
                 updateRows(grid);
+                
             }
             if (grid.getWidth() != null)
-                getComponent().setWidth(grid.getWidth());
+                mainGrid.setWidth(grid.getWidth());
             if (grid.getHeight() != null)
-                getComponent().setHeight(grid.getHeight());
+                mainGrid.setHeight(grid.getHeight());
             
             if (!grid.isEnabled()) {
-                getComponent().setSelectionMode(Grid.SelectionMode.NONE);
+                mainGrid.setSelectionMode(Grid.SelectionMode.NONE);
                 return;
             }
                                     
-            getComponent().addSelectionListener(new SelectionListener() {
+            mainGrid.addSelectionListener(new SelectionListener() {
                 @Override
                 public void selectionChange(SelectionEvent event) {
                     
@@ -198,6 +227,7 @@ public class ComponentGrid extends GraphicalComponent {
                     }
                 }
             });
+            
         }
     }
         
@@ -221,9 +251,49 @@ public class ComponentGrid extends GraphicalComponent {
                 
                 rows.add(row);
             }
-            getComponent().setItems(Collections.EMPTY_LIST);
-            getComponent().setItems(rows);
+            mainGrid.setItems(Collections.EMPTY_LIST);
+            mainGrid.setItems(rows);
+            
+            if(usePagination){
+                PagedDataProvider<HashMap<String, Object>, SerializablePredicate<HashMap<String, Object>>> dataProvider = new PagedDataProvider<HashMap<String, Object>, SerializablePredicate<HashMap<String, Object>>>(
+                    DataProvider.ofCollection(getRows()));
+                mainGrid.setDataProvider(dataProvider);
+                PagingControls pagingControls = dataProvider.getPagingControls();
+
+                HorizontalLayout pages = new HorizontalLayout();
+                pages.setSpacing(false);
+                pages.setMargin(false);
+
+                pagingControls.setPageLength(10);
+                pages.setCaption("");
+                Button firstBtn = new Button("First", e -> pagingControls.setPageNumber(0));
+                Button previousBtn = new Button("Previous", e -> pagingControls.previousPage());
+                Button nextBtn = new Button("Next", e -> pagingControls.nextPage());
+                Button lastBtn = new Button("Last", e -> pagingControls.setPageNumber(pagingControls.getPageCount() - 1));
+                firstBtn.setStyleName(ValoTheme.BUTTON_SMALL);
+                previousBtn.setStyleName(ValoTheme.BUTTON_SMALL);
+                nextBtn.setStyleName(ValoTheme.BUTTON_SMALL);
+                lastBtn.setStyleName(ValoTheme.BUTTON_SMALL);
+                pages.addComponent(firstBtn);
+                pages.addComponent(previousBtn);
+                pages.addComponent(nextBtn);
+                pages.addComponent(lastBtn);
+                VerticalLayout controls = new VerticalLayout();
+                controls.setSpacing(false);
+                controls.setMargin(false);
+                controls.addComponent(pages);
+                controls.setWidth("100%");
+                controls.setComponentAlignment(pages, Alignment.BOTTOM_CENTER);
+                paginationButtons.addComponent(controls);
+                paginationButtons.setComponentAlignment(controls, Alignment.MIDDLE_CENTER);
+                paginationButtons.setSpacing(false);
+                paginationButtons.setMargin(false);
+            }
         }
+    }
+    
+    public List<HashMap<String, Object>> getRows() {
+        return rows;
     }
     
     @Override

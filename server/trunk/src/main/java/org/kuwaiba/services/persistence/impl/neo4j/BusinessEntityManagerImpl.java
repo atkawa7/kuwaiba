@@ -399,7 +399,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             if (!pool.hasProperty(Constants.PROPERTY_CLASS_NAME))
                 throw new InvalidArgumentException("This pool has not set his class name attribute");
-            
+            if(className == null)
+                throw new InvalidArgumentException("classname cannot be null");
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
@@ -3048,12 +3049,19 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public boolean canDeleteObject(String className, long oid, boolean releaseRelationships) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException {
+    public boolean canDeleteObject(String className, long oid) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException {
         if (!mem.isSubclassOf(Constants.CLASS_INVENTORYOBJECT, className))
             throw new OperationNotPermittedException(String.format("Class %s is not a business-related class", className));
         try (Transaction tx = graphDb.beginTx()) {   
             Node instance = getInstanceOfClass(className, oid);
             boolean isSafeToDelete = canDeleteObject(instance);
+            if(!isSafeToDelete)
+                return false;
+            else{
+                for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF, RelTypes.CHILD_OF_SPECIAL))
+                    isSafeToDelete = canDeleteObject(rel.getStartNode());
+            }
+            
             tx.success();
             return isSafeToDelete;
         }

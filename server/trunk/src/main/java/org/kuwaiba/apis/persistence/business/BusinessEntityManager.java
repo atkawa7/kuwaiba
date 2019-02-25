@@ -346,13 +346,12 @@ public interface BusinessEntityManager {
      * Checks recursively if it's safe to delete a single object
      * @param className Object's class name
      * @param oid Objects oid
-     * @param releaseRelationships Release relationships automatically. If set to false, it will fail if the object already has incoming relationships
      * @return True if the object does not have relationships that keep it from being deleted. False otherwise.
      * @throws BusinessObjectNotFoundException If the object couldn't be found
      * @throws MetadataObjectNotFoundException If the requested object class can't be found
      * @throws OperationNotPermittedException If the object could not be deleted because there's some business rules that avoids it or it has incoming relationships.
      */
-    public boolean canDeleteObject(String className, long oid, boolean releaseRelationships)
+    public boolean canDeleteObject(String className, long oid)
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException;
     
     /**
