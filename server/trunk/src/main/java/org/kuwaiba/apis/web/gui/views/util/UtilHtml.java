@@ -22,7 +22,7 @@ import java.awt.Color;
  * A collection of commonly used methods to generate HTML-related content. 
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class HtmlUtil {
+public class UtilHtml {
     
     /**
      * Converts a Java Color instance into an hexadecimal string that can be used to format HTML components.

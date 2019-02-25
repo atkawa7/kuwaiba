@@ -11,7 +11,7 @@
     <!--
     <inherits name="com.google.gwt.precompress.Precompress"/>-->
     <inherits name="com.vaadin.pontus.vizcomponent.WidgetSet" />
-    <inherits name="com.vaadin.contextmenu.WidgetSet" />
+    
     <inherits name="com.vaadin.DefaultWidgetSet" />
     
     <inherits name="com.neotropic.vaadin.lienzo.WidgetSet" />

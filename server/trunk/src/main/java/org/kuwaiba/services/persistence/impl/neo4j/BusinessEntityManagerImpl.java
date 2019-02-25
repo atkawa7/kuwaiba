@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -959,7 +960,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public void deleteObjects(HashMap<String, List<Long>> objects, boolean releaseRelationships)
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException {
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException {
 
         try(Transaction tx = graphDb.beginTx()) {
             //TODO: Optimize so it can find all objects of a single class in one query
@@ -971,16 +972,21 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         throw new OperationNotPermittedException(String.format("Class %s is not a business-related class", className));
 
                     Node instance = getInstanceOfClass(className, oid);
-                    //updates the cache
-                    BusinessObject remoteObject = createObjectFromNode(instance);
-                    for(AttributeMetadata attribute : classMetadata.getAttributes()){
-                        if(attribute.isUnique()){
-                            String attributeValues = remoteObject.getAttributes().get(attribute.getName());
-                            if(attributeValues != null)
-                                CacheManager.getInstance().removeUniqueAttributeValue(className, attribute.getName(), attributeValues);
+                    
+                    //Updates the unique attributes cache
+                    try {
+                        BusinessObject remoteObject = createObjectFromNode(instance);
+                        for(AttributeMetadata attribute : classMetadata.getAttributes()) {
+                            if(attribute.isUnique()) { 
+                                String attributeValues = remoteObject.getAttributes().get(attribute.getName());
+                                if(attributeValues != null)
+                                    CacheManager.getInstance().removeUniqueAttributeValue(className, attribute.getName(), attributeValues);
+                            }
                         }
+                    } catch (InvalidArgumentException ex) {
+                        //Should not happen
                     }
-                    Util.deleteObject(instance, releaseRelationships);
+                    deleteObject(instance, releaseRelationships);
                 }
             }
             tx.success();
@@ -989,15 +995,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public void deleteObject(String className, long oid, boolean releaseRelationships) 
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException{
-        try (Transaction tx = graphDb.beginTx()) {
-            if (!mem.isSubclassOf(Constants.CLASS_INVENTORYOBJECT, className))
-                        throw new OperationNotPermittedException(String.format("Class %s is not a business-related class", className));
-
-            Node instance = getInstanceOfClass(className, oid);
-            Util.deleteObject(instance, releaseRelationships);
-            tx.success();
-        }
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException {
+        HashMap<String, List<Long>> objectsToDelete = new HashMap<>();
+        objectsToDelete.put(className, Arrays.asList(oid));
+        deleteObjects(objectsToDelete, releaseRelationships);
     }
 
     @Override
@@ -2013,8 +2014,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     
                     try {
                         String fileName = objectNode.getId() + "_" + fileObjectId;
-                        new File(configuration.getProperty("attachmentsPath", DEFAULT_ATTACHMENTS_PATH) + "/" + fileName).delete();
-                    }catch(Exception ex){
+                        new File(configuration.getProperty("attachmentsPath", DEFAULT_ATTACHMENTS_PATH) + File.separator + fileName).delete();
+                    } catch(Exception ex){
                         throw new InvalidArgumentException(String.format("File with id %s could not be retrieved: %s", fileObjectId, ex.getMessage()));
                     }
                     tx.success();
@@ -3052,9 +3053,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throw new OperationNotPermittedException(String.format("Class %s is not a business-related class", className));
         try (Transaction tx = graphDb.beginTx()) {   
             Node instance = getInstanceOfClass(className, oid);
-            boolean safeDeletion = Util.canDeleteObject(instance, true);
+            boolean isSafeToDelete = canDeleteObject(instance);
             tx.success();
-            return safeDeletion;
+            return isSafeToDelete;
         }
     }
     
@@ -3374,5 +3375,68 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         }
         
         return new BusinessObject(classMetadata.getName(), instance.getId(), name, attributes);
+    }
+    
+    /**
+     * Deletes recursively and object and all its children. Note that the transaction should be handled by the caller
+     * @param instance The object to be deleted
+     * @param unsafeDeletion True if you want the object to be deleted no matter if it has RELATED_TO, HAS_PROCESS_INSTANCE or RELATED_TO_SPECIAL relationships
+     * @throws org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException If the object already has relationships
+     */
+    private void deleteObject(Node instance, boolean unsafeDeletion) throws OperationNotPermittedException {
+        if(!unsafeDeletion && !canDeleteObject(instance)) 
+            throw new OperationNotPermittedException(String.format("The object with %s (%s) can not be deleted since it has relationships", 
+                    instance.getProperty(Constants.PROPERTY_NAME), instance.getId()));
+        
+        for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF, RelTypes.CHILD_OF_SPECIAL))
+            deleteObject(rel.getStartNode(), unsafeDeletion);
+        
+        // Searches the related views to delete the nodes in the data base       
+        for (Relationship aHasViewRelationship : instance.getRelationships(RelTypes.HAS_VIEW)) {
+            Node viewNode = aHasViewRelationship.getEndNode();
+            aHasViewRelationship.delete();
+            viewNode.delete();
+        }
+        
+        //Now we delete the audit trail entries
+        for (Relationship aHasHistoryEntryRelationship : instance.getRelationships(RelTypes.HAS_HISTORY_ENTRY)) {
+            Node historyEntryNode = aHasHistoryEntryRelationship.getEndNode();
+            if (historyEntryNode.hasRelationship(RelTypes.PERFORMED_BY))
+                historyEntryNode.getSingleRelationship(RelTypes.PERFORMED_BY, Direction.OUTGOING).delete();
+            if (historyEntryNode.hasRelationship(RelTypes.CHILD_OF_SPECIAL))
+                historyEntryNode.getSingleRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).delete();
+            aHasHistoryEntryRelationship.delete();
+            historyEntryNode.delete();
+        }
+        
+        //Now we dispose of the attachments
+        for (Relationship aHasAttachmentRelationship : instance.getRelationships(RelTypes.HAS_ATTACHMENT)) {
+            Node attachmentNode = aHasAttachmentRelationship.getEndNode();
+            aHasAttachmentRelationship.delete();
+            
+            String fileName = configuration.getProperty("attachmentsPath", DEFAULT_ATTACHMENTS_PATH) +  //NOI18N
+                    File.separator + instance.getId() + "_" + attachmentNode.getId(); //NOI18N
+            try {
+                new File(fileName).delete();
+            } catch (Exception ex) {
+                System.out.println(String.format("[KUWAIBA] An error occurred while deleting attachment %s for object %s (%s)", 
+                        fileName, instance.getProperty(Constants.PROPERTY_NAME), instance.getId()));
+            }
+            attachmentNode.delete();
+        }
+        
+        for (Relationship rel : instance.getRelationships())
+            rel.delete();
+
+        instance.delete();
+    }
+    
+    /**
+     * Checks if it's safe to deletes recursively an object and all its children. Note that the transaction should be handled by the caller
+     * @param instance The object to be deleted
+     * @return true if the deletion of the object is safe or 
+     */
+    private boolean canDeleteObject(Node instance) {
+        return !instance.hasRelationship(RelTypes.RELATED_TO, RelTypes.RELATED_TO_SPECIAL, RelTypes.HAS_PROCESS_INSTANCE);        
     }
 }

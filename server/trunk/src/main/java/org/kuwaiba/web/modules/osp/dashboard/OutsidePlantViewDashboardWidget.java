@@ -58,7 +58,7 @@ import org.kuwaiba.apis.web.gui.dashboards.DashboardEventBus;
 import org.kuwaiba.apis.web.gui.dashboards.DashboardEventListener;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.apis.web.gui.tools.Wizard;
-import org.kuwaiba.apis.web.gui.views.util.HtmlUtil;
+import org.kuwaiba.apis.web.gui.views.util.UtilHtml;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -69,7 +69,7 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.web.modules.physicalcon.wizards.NewPhysicalConnectionWizard;
 
 /**
- * A widget that displays a map and allows to drop elements from a navigation tree and create physical connections
+ * A widget that displays a map and allows to drop elements from a navigation tree and create physical connections.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
@@ -131,39 +131,36 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
         String apiKey, language;
         double mapLatitude, mapLongitude;
         int mapZoom;
-
+        
+        RemoteSession session = (RemoteSession) UI.getCurrent().getSession().getAttribute("session");
+        
         try {
-            apiKey = (String)wsBean.getConfigurationVariableValue("general.maps.apiKey", Page.getCurrent().getWebBrowser().getAddress(), 
-                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+            apiKey = (String)wsBean.getConfigurationVariableValue("general.maps.apiKey", session.getIpAddress(), session.getSessionId());
         } catch (ServerSideException ex) {
             apiKey = null;
             Notifications.showWarning("The configuration variable general.maps.apiKey has not been set. The default map will be used");
         }
 
         try {
-            language = (String)wsBean.getConfigurationVariableValue("general.maps.language", Page.getCurrent().getWebBrowser().getAddress(), 
-                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+            language = (String)wsBean.getConfigurationVariableValue("general.maps.language", session.getIpAddress(), session.getSessionId());
         } catch (ServerSideException ex) {
             language = OSPConstants.DEFAULT_LANGUAGE;
         }
 
         try {
-            mapLatitude = (double)wsBean.getConfigurationVariableValue("widgets.simplemap.centerLatitude", Page.getCurrent().getWebBrowser().getAddress(), 
-                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+            mapLatitude = (double)wsBean.getConfigurationVariableValue("widgets.simplemap.centerLatitude", session.getIpAddress(), session.getSessionId());
         } catch (ServerSideException ex) {
             mapLatitude = OSPConstants.DEFAULT_CENTER_LATITUIDE;
         }
 
         try {
-            mapLongitude = (double)wsBean.getConfigurationVariableValue("widgets.simplemap.centerLongitude", Page.getCurrent().getWebBrowser().getAddress(), 
-                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+            mapLongitude = (double)wsBean.getConfigurationVariableValue("widgets.simplemap.centerLongitude", session.getIpAddress(), session.getSessionId());
         } catch (ServerSideException ex) {
             mapLongitude = OSPConstants.DEFAULT_CENTER_LONGITUDE;
         }
 
         try {
-            mapZoom = (int)wsBean.getConfigurationVariableValue("widgets.simplemap.zoom", Page.getCurrent().getWebBrowser().getAddress(), 
-                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+            mapZoom = (int)wsBean.getConfigurationVariableValue("widgets.simplemap.zoom", session.getIpAddress(), session.getSessionId());
         } catch (ServerSideException ex) {
             mapZoom = OSPConstants.DEFAULT_ZOOM;
         }
@@ -227,7 +224,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
         mnuMain.addItem("Open", VaadinIcons.FOLDER_OPEN, (selectedItem) -> {
             try {
 
-                List<RemoteViewObjectLight> ospViews = wsBean.getOSPViews(Page.getCurrent().getWebBrowser().getAddress(), 
+                List<RemoteViewObjectLight> ospViews = wsBean.getOSPViews(((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getIpAddress(), 
                         ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
 
                 if (ospViews.isEmpty())
@@ -285,69 +282,69 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
         });
 
         mnuMain.addItem("Save", VaadinIcons.ARROW_DOWN, (selectedItem) -> {
-            if (nodes.isEmpty()) 
-                Notifications.showInfo("The view is empty. There's nothing to save");
-            else {
-                VerticalLayout lytContent = new VerticalLayout();
-                Window wdwSave = new Window("Save OSP View");
-                wdwSave.setWidth(300, Unit.PIXELS);
-
-                TextField txtName = new TextField("Name");
-                txtName.setValue(currentView == null ? "" : currentView.getName());
-                TextField txtDescription = new TextField("Description");
-                txtDescription.setValue(currentView == null ? "" : currentView.getDescription());
-
-                Button btnOk = new Button("OK", (event) -> {
-
-                    if (txtName.getValue().trim().isEmpty())
-                        Notifications.showInfo("The name of the view can not be empty");
-                    else {
-                        try {
-                            if (currentView == null) { //It's a new view
-                                long newViewId = wsBean.createOSPView(txtName.getValue(), txtDescription.getValue(), getAsXml(), Page.getCurrent().getWebBrowser().getAddress(), 
-                                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-                                currentView = new RemoteViewObject();
-                                currentView.setId(newViewId);
-                            } else
-                                wsBean.updateOSPView(currentView.getId(), txtName.getValue(), txtDescription.getValue(), getAsXml(), Page.getCurrent().getWebBrowser().getAddress(), 
-                                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-
-                            currentView.setName(txtName.getValue());
-                                currentView.setDescription(txtName.getDescription());
-
-                            Notifications.showInfo("View saved successfully");
-                            wdwSave.close();
-                        } catch (ServerSideException ex) {
-                            Notifications.showError(ex.getLocalizedMessage());
-                            wdwSave.close();
-                        }
-                    }
-
-                });
-
-                Button btnCancel = new Button("Cancel", (event) -> {
-                    wdwSave.close();
-                });
-
-                FormLayout lytProperties = new FormLayout(txtName, txtDescription);
-                lytProperties.setSizeFull();
-
-                HorizontalLayout lytButtons = new HorizontalLayout(btnOk, btnCancel);
-
-                lytContent.addComponents(lytProperties, lytButtons);
-                lytContent.setExpandRatio(lytProperties, 9);
-                lytContent.setExpandRatio(lytButtons, 1);
-                lytContent.setComponentAlignment(lytButtons, Alignment.MIDDLE_RIGHT);
-                lytContent.setSizeFull();
-
-                wdwSave.setHeight(20, Unit.PERCENTAGE);
-                wdwSave.setWidth(25, Unit.PERCENTAGE);
-                wdwSave.setContent(lytContent);
-
-                wdwSave.center();
-                wdwSave.setModal(true);
-                UI.getCurrent().addWindow(wdwSave);
-            }
+//            if (nodes.isEmpty()) 
+//                Notifications.showInfo("The view is empty. There's nothing to save");
+//            else {
+//                VerticalLayout lytContent = new VerticalLayout();
+//                Window wdwSave = new Window("Save OSP View");
+//                wdwSave.setWidth(300, Unit.PIXELS);
+//
+//                TextField txtName = new TextField("Name");
+//                txtName.setValue(currentView == null ? "" : currentView.getName());
+//                TextField txtDescription = new TextField("Description");
+//                txtDescription.setValue(currentView == null ? "" : currentView.getDescription());
+//
+//                Button btnOk = new Button("OK", (event) -> {
+//
+//                    if (txtName.getValue().trim().isEmpty())
+//                        Notifications.showInfo("The name of the view can not be empty");
+//                    else {
+//                        try {
+//                            if (currentView == null) { //It's a new view
+//                                long newViewId = wsBean.createOSPView(txtName.getValue(), txtDescription.getValue(), getAsXml(), Page.getCurrent().getWebBrowser().getAddress(), 
+//                                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+//                                currentView = new RemoteViewObject();
+//                                currentView.setId(newViewId);
+//                            } else
+//                                wsBean.updateOSPView(currentView.getId(), txtName.getValue(), txtDescription.getValue(), getAsXml(), Page.getCurrent().getWebBrowser().getAddress(), 
+//                                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+//
+//                            currentView.setName(txtName.getValue());
+//                                currentView.setDescription(txtName.getDescription());
+//
+//                            Notifications.showInfo("View saved successfully");
+//                            wdwSave.close();
+//                        } catch (ServerSideException ex) {
+//                            Notifications.showError(ex.getLocalizedMessage());
+//                            wdwSave.close();
+//                        }
+//                    }
+//
+//                });
+//
+//                Button btnCancel = new Button("Cancel", (event) -> {
+//                    wdwSave.close();
+//                });
+//
+//                FormLayout lytProperties = new FormLayout(txtName, txtDescription);
+//                lytProperties.setSizeFull();
+//
+//                HorizontalLayout lytButtons = new HorizontalLayout(btnOk, btnCancel);
+//
+//                lytContent.addComponents(lytProperties, lytButtons);
+//                lytContent.setExpandRatio(lytProperties, 9);
+//                lytContent.setExpandRatio(lytButtons, 1);
+//                lytContent.setComponentAlignment(lytButtons, Alignment.MIDDLE_RIGHT);
+//                lytContent.setSizeFull();
+//
+//                wdwSave.setHeight(20, Unit.PERCENTAGE);
+//                wdwSave.setWidth(25, Unit.PERCENTAGE);
+//                wdwSave.setContent(lytContent);
+//
+//                wdwSave.center();
+//                wdwSave.setModal(true);
+//                UI.getCurrent().addWindow(wdwSave);
+//            }
 
 
         });
@@ -448,84 +445,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
         addComponent(contentComponent);
     }
     
-    /**
-     * Exports the view to XML
-     * @return The XML document as a byte array
-     */
-    public byte[] getAsXml() {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
-            XMLEventWriter xmlew = xmlof.createXMLEventWriter(baos);
-            XMLEventFactory xmlef = XMLEventFactory.newInstance();
 
-            QName qnameView = new QName("view"); //NOI18N
-            xmlew.add(xmlef.createStartElement(qnameView, null, null));
-            xmlew.add(xmlef.createAttribute(new QName("version"), VIEW_FORMAT_VERSION)); //NOI18N
-
-            QName qnameClass = new QName("class"); //NOI18N
-            xmlew.add(xmlef.createStartElement(qnameClass, null, null));
-            xmlew.add(xmlef.createCharacters("OSPView")); //NOI18N
-            xmlew.add(xmlef.createEndElement(qnameClass, null));
-            
-            QName qCenter = new QName("center"); //NOI18N
-            xmlew.add(xmlef.createStartElement(qCenter, null, null));
-            xmlew.add(xmlef.createAttribute(new QName("lon"), Double.toString(mapMain.getCenter().getLon()))); //NOI18N
-            xmlew.add(xmlef.createAttribute(new QName("lat"), Double.toString(mapMain.getCenter().getLat()))); //NOI18N
-            xmlew.add(xmlef.createEndElement(qCenter, null));
-            
-            QName qZoom = new QName("zoom"); //NOI18N
-            xmlew.add(xmlef.createStartElement(qZoom, null, null));
-            xmlew.add(xmlef.createCharacters(String.valueOf(mapMain.getZoom()))); //NOI18N
-            xmlew.add(xmlef.createEndElement(qZoom, null));
-
-            QName qnameNodes = new QName("nodes"); //NOI18N
-            xmlew.add(xmlef.createStartElement(qnameNodes, null, null));
-            
-            //First the nodes
-            for (OSPNode node : nodes) {
-                QName qnameNode = new QName("node"); //NOI18N
-                xmlew.add(xmlef.createStartElement(qnameNode, null, null));
-                xmlew.add(xmlef.createAttribute(new QName("lon"), Double.toString(node.getMarker().getPosition().getLon()))); //NOI18N
-                xmlew.add(xmlef.createAttribute(new QName("lat"), Double.toString(node.getMarker().getPosition().getLat()))); //NOI18N
-                xmlew.add(xmlef.createAttribute(new QName("class"), node.getBusinessObject().getClassName())); //NOI18N
-                xmlew.add(xmlef.createCharacters(Long.toString(node.getBusinessObject().getId())));
-                xmlew.add(xmlef.createEndElement(qnameNode, null));
-            }
-            xmlew.add(xmlef.createEndElement(qnameNodes, null));
-
-            //Now the connections
-            QName qnameEdges = new QName("edges"); //NOI18N
-            xmlew.add(xmlef.createStartElement(qnameEdges, null, null));
-            
-            for (OSPEdge edge : edges) {
-                GoogleMapPolyline lnEdge = edge.getPolyline();
-                QName qnameEdge = new QName("edge"); //NOI18N
-                xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
-                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(edge.getBusinessObject().getId()))); //NOI18N
-                xmlew.add(xmlef.createAttribute(new QName("class"), edge.getBusinessObject().getClassName())); //NOI18N
-
-                xmlew.add(xmlef.createAttribute(new QName("aside"), String.valueOf(edge.getSourceObject().getBusinessObject().getId()))); //NOI18N
-                xmlew.add(xmlef.createAttribute(new QName("bside"), String.valueOf(edge.getTargetObject().getBusinessObject().getId()))); //NOI18N
-                
-                for (LatLon point : lnEdge.getCoordinates()) {
-                    QName qnameControlpoint = new QName("controlpoint"); //NOI18N
-                    xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
-                    xmlew.add(xmlef.createAttribute(new QName("lon"), Double.toString(point.getLon()))); //NOI18N
-                    xmlew.add(xmlef.createAttribute(new QName("lat"), Double.toString(point.getLat()))); //NOI18N
-                    xmlew.add(xmlef.createEndElement(qnameControlpoint, null));
-                }
-                xmlew.add(xmlef.createEndElement(qnameEdge, null));
-            }
-            xmlew.add(xmlef.createEndElement(qnameEdges, null));
-            xmlew.add(xmlef.createEndElement(qnameView, null));
-            xmlew.close();
-            return baos.toByteArray();
-        } catch (XMLStreamException ex) { 
-            //Should not happen
-            return new byte[0];
-        }
-    }
     
     /**
      * Renders a view from an XML document
@@ -672,7 +592,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
             try {
                 RemoteClassMetadata classMetadata = wsBean.getClass(className, Page.getCurrent().getWebBrowser().getAddress(), 
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-                connectionColor = HtmlUtil.toHexString(new Color(classMetadata.getColor()));
+                connectionColor = UtilHtml.toHexString(new Color(classMetadata.getColor()));
             } catch (ServerSideException ex) {
                 connectionColor = "#FFFFFF"; //NOI18N
                 Notifications.showError(ex.getLocalizedMessage());

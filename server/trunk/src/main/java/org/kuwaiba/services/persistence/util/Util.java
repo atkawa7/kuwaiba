@@ -50,7 +50,6 @@ import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
@@ -151,73 +150,6 @@ public class Util {
         for (Relationship relatedItemRelationship : relatedItems){
             if (relatedItemRelationship.getProperty(propertyName).equals(propertyValue))
                 relatedItemRelationship.delete();
-        }
-    }
-
-    /**
-     * Deletes recursively and object and all its children. Note that the transaction should be handled by the caller
-     * @param instance The object to be deleted
-     * @param unsafeDeletion True if you want the object to be deleted no matter if it has RELATED_TO and RELATED_TO_SPECIAL relationships
-     * @throws org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException If the object already has relationships
-     */
-    public static void deleteObject(Node instance, boolean unsafeDeletion) throws OperationNotPermittedException {
-        boolean isDeletionSafe = false;
-        if(!unsafeDeletion){
-            isDeletionSafe = canDeleteObject(instance, true);
-            if(!isDeletionSafe)
-                throw new OperationNotPermittedException(String.format("The object with id %s can not be deleted since it has relationships", instance.getId()));
-        }
-        // Searches the related views to delete the nodes in the data base
-        List<Node> relatedViews = new ArrayList();
-        for (Relationship rel : instance.getRelationships()) {
-            if (rel.getType().name().equals(RelTypes.HAS_VIEW.name())) {
-                if (rel.getEndNode().getId() != instance.getId())
-                    relatedViews.add(rel.getEndNode());
-            }
-        }
-        
-        for (Relationship rel : instance.getRelationships())
-            rel.delete();
-
-        instance.delete();
-        
-        while (!relatedViews.isEmpty()) {
-            // Removing the node to the current related view
-            relatedViews.remove(0).delete();
-        }
-    }
-    
-    /**
-     * Checks if it's safe to deletes recursively an object and all its children. Note that the transaction should be handled by the caller
-     * @param instance The object to be deleted
-     * @param result True if you want the object to be deleted no matter if it has RELATED_TO and RELATED_TO_SPECIAL relationships
-     * @return true if the deletion of the object is safe or 
-     */
-    public static boolean canDeleteObject(Node instance, boolean result) throws OperationNotPermittedException {
-        
-        GraphDatabaseService graphDb = (GraphDatabaseService) PersistenceService.getInstance().getConnectionManager().getConnectionHandler();
-        try (Transaction tx = graphDb.beginTx()) {
-            if (instance.getRelationships(RelTypes.RELATED_TO, Direction.INCOMING).iterator().hasNext())
-                result = false;
-
-            if (instance.getRelationships(RelTypes.RELATED_TO_SPECIAL, Direction.INCOMING).iterator().hasNext())
-                result = false;
-            
-            if (instance.getRelationships(RelTypes.HAS_PROCESS_INSTANCE, Direction.OUTGOING).iterator().hasNext())
-                result = false;
-
-            if(result){
-                for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF, RelTypes.CHILD_OF_SPECIAL)){
-                    if(result){
-                        result = canDeleteObject(rel.getStartNode(), result);
-                    }
-                    else{
-                        break;
-                    }
-                }
-            }
-            tx.success();
-            return result;
         }
     }
     

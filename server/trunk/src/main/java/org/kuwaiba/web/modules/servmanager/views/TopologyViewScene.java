@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import org.kuwaiba.apis.web.gui.navigation.views.AbstractScene;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
-import org.kuwaiba.apis.web.gui.views.util.HtmlUtil;
+import org.kuwaiba.apis.web.gui.views.util.UtilHtml;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.beans.WebserviceBean;
@@ -208,7 +208,7 @@ public class TopologyViewScene extends AbstractScene {
             newEdge.setTarget(targetNode);
             
             RemoteClassMetadata classMetadata = wsBean.getClass(edge.getClassName(), session.getIpAddress(), session.getSessionId());
-            newEdge.setColor(HtmlUtil.toHexString(new Color(classMetadata.getColor())));
+            newEdge.setColor(UtilHtml.toHexString(new Color(classMetadata.getColor())));
             newEdge.setCaption(edge.toString());
             edges.put(edge, newEdge);
             lienzoComponent.addEdgeWidget(newEdge);

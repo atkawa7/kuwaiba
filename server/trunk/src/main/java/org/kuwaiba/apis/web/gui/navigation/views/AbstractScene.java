@@ -20,7 +20,6 @@ import com.neotropic.vaadin.lienzo.LienzoComponent;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvEdgeWidget;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvNodeWidget;
 import com.vaadin.ui.VerticalLayout;
-import java.awt.Color;
 import java.util.HashMap;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;

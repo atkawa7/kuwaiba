@@ -44,12 +44,17 @@ public class ViewMap {
      * A hashmap containing the edges and their target nodes.
      */
     private HashMap<AbstractViewEdge, AbstractViewNode> targetNodes;
+    /**
+     * Extra settings that might be applicable to the view map. Typical examples are properties such as "zoom", or "units".
+     */
+    private HashMap<String, Object> settings;
 
     public ViewMap() {
         this.nodes  = new ArrayList<>();
         this.edges = new ArrayList<>();
         this.sourceNodes = new HashMap<>();
         this.targetNodes = new HashMap<>();
+        this.settings = new HashMap<>();
     }
     
     /**
@@ -147,6 +152,8 @@ public class ViewMap {
     public List<AbstractViewEdge> getEdges() {
         return edges;
     }
-    
-    
+
+    public HashMap<String, Object> getSettings() {
+        return settings;
+    }
 }

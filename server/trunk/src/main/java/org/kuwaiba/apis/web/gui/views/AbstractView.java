@@ -93,13 +93,14 @@ public abstract class AbstractView<T> {
         return viewMap;
     }
     /**
-     * Builds the view. Call this method if no business object is required to build the view.
+     * Builds the view. Call this method if no business object is required to build the view. It just loads the elements from an view definition structure (like an XML document).
+     * @param view The view to be rendered.
      */
-    public void build() { /*By default (perhaps most of the times because most of the views are liked to an object), does nothing*/ }
+    public abstract void buildWithSavedView(byte[] view);
     /**
-     * Builds the view. Call this method if a business object is required to build the view (e.g. a service or a room   ).
+     * Builds the view. Call this method if a business object is required to build the view (e.g. a service or a room).
      * @param businessObject The business object that will be used
      */
-    public abstract void build(T businessObject);
+    public abstract void buildWithBusinessObject(T businessObject);
     
 }

@@ -20,11 +20,13 @@ import com.neotropic.kuwaiba.modules.GenericCommercialModule;
 import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import groovy.lang.Binding;
-import groovy.lang.GroovyRuntimeException;
 import groovy.lang.GroovyShell;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -816,8 +818,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (!mem.isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, className))
                 throw new InvalidArgumentException(String.format("Class %s is not a list type", className));
 
-            Node instance = getInstanceOfClass(className, oid);
-            Util.deleteObject(instance, realeaseRelationships);
+            Node listTypeItemNode = getInstanceOfClass(className, oid);
+            
+            for (Relationship aRelatedToRelationship : listTypeItemNode.getRelationships(RelTypes.RELATED_TO)) 
+                aRelatedToRelationship.delete();
+            
+            listTypeItemNode.delete();
             tx.success();
             cm.removeListType(className);
         }
@@ -2619,7 +2625,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
             return (TaskResult)theResult;
 
-        } catch(GroovyRuntimeException | InvalidArgumentException ex) {
+        } catch(Exception ex) {
             return TaskResult.createErrorResult(ex.getMessage());
         }
        
@@ -2956,7 +2962,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public ScriptQueryResult executeScriptQuery(String scriptQueryName) throws ApplicationObjectNotFoundException, InvalidArgumentException {
-        Node scriptQueryNode = null;
+        Node scriptQueryNode;
                 
         try (Transaction tx = graphDb.beginTx()) {
             scriptQueryNode = graphDb.findNode(scriptQueryLabel, Constants.PROPERTY_NAME, scriptQueryName);
@@ -3657,7 +3663,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 //A pool may have inventory objects as children or other pools
                 Node child = containmentRelationship.getStartNode();
                 if (child.hasRelationship(RelTypes.INSTANCE_OF)) //It's an inventory object
-                    Util.deleteObject(child, false);
+                    deleteObject(child, false);
                 else
                     deletePool(child); //Although making deletePool to receive a node as argument would be more efficient,
                                                //the impact is not that much since the number of pools is expected to be low
@@ -4605,7 +4611,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 
                 Node startNode = rel.getStartNode();
                 rel.delete();
-                Util.deleteObject(startNode, false);
+                deleteObject(startNode, false);
             }
             processInstanceNode.delete();
             
@@ -5330,5 +5336,58 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 tx.failure();
             return new ScriptQueryResult(theResult);
         }
+    }
+    
+    //The following methods are used 
+    
+    /**
+     * Deletes recursively and object and all its children. Note that the transaction should be handled by the caller
+     * @param instance The object to be deleted
+     * @param unsafeDeletion True if you want the object to be deleted no matter if it has RELATED_TO, HAS_PROCESS_INSTANCE or RELATED_TO_SPECIAL relationships
+     * @throws org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException If the object already has relationships
+     */
+    private void deleteObject(Node instance, boolean unsafeDeletion) throws OperationNotPermittedException {
+        if(!unsafeDeletion && instance.hasRelationship(RelTypes.RELATED_TO, RelTypes.RELATED_TO_SPECIAL, RelTypes.HAS_PROCESS_INSTANCE)) 
+            throw new OperationNotPermittedException(String.format("The object with %s (%s) can not be deleted since it has relationships", 
+                    instance.getProperty(Constants.PROPERTY_NAME), instance.getId()));
+        
+        for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF, RelTypes.CHILD_OF_SPECIAL))
+            deleteObject(rel.getStartNode(), unsafeDeletion);
+        
+        // Searches the related views to delete the nodes in the data base       
+        for (Relationship aHasViewRelationship : instance.getRelationships(RelTypes.HAS_VIEW)) {
+            Node viewNode = aHasViewRelationship.getEndNode();
+            aHasViewRelationship.delete();
+            viewNode.delete();
+        }
+        
+        //Now we delete the audit trail entries
+        for (Relationship aHasHistoryEntryRelationship : instance.getRelationships(RelTypes.HAS_HISTORY_ENTRY)) {
+            Node historyEntryNode = aHasHistoryEntryRelationship.getEndNode();
+            aHasHistoryEntryRelationship.delete();
+            historyEntryNode.delete();
+        }
+        
+        //Now we dispose of the attachments
+        for (Relationship aHasAttachmentRelationship : instance.getRelationships(RelTypes.HAS_ATTACHMENT)) {
+            Node attachmentNode = aHasAttachmentRelationship.getEndNode();
+            aHasAttachmentRelationship.delete();
+            
+            String fileName = instance.getId() + "_" + attachmentNode.getId(); //NOI18N
+            try {
+                Files.deleteIfExists(Paths.get(fileName));
+                File fileToBeDeleted = new File(fileName);
+                fileToBeDeleted.delete();
+            } catch (IOException ex) {
+                System.out.println(String.format("[KUWAIBA] An error occurred while deleting attachment %s for object %s (%s)", 
+                        fileName, instance.getProperty(Constants.PROPERTY_NAME), instance.getId()));
+            }
+            attachmentNode.delete();
+        }
+        
+        for (Relationship rel : instance.getRelationships())
+            rel.delete();
+
+        instance.delete();
     }
 }

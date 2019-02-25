@@ -343,10 +343,11 @@ public interface BusinessEntityManager {
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
     
     /**
-     * Checks if it's safe to delete a single object
+     * Checks recursively if it's safe to delete a single object
      * @param className Object's class name
      * @param oid Objects oid
      * @param releaseRelationships Release relationships automatically. If set to false, it will fail if the object already has incoming relationships
+     * @return True if the object does not have relationships that keep it from being deleted. False otherwise.
      * @throws BusinessObjectNotFoundException If the object couldn't be found
      * @throws MetadataObjectNotFoundException If the requested object class can't be found
      * @throws OperationNotPermittedException If the object could not be deleted because there's some business rules that avoids it or it has incoming relationships.
@@ -361,10 +362,9 @@ public interface BusinessEntityManager {
      * @throws BusinessObjectNotFoundException If the requested object can't be found
      * @throws MetadataObjectNotFoundException If the requested object class can't be found
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked or it has relationships and releaseRelationships is false
-     * @throws InvalidArgumentException If it was not possible to release the possible unique attributes
      */
     public void deleteObjects(HashMap<String, List<Long>> objects, boolean releaseRelationships)
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException;
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException;
 
     /**
      * Deletes a single object
@@ -853,6 +853,8 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException If the class of the object file is attached to could not be found
      */
     public void updateFileProperties(long fileObjectId, List<StringPair> properties, String className, long objectId) throws BusinessObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException;
+    
+    //<editor-fold desc="Contacts" defaultstate="collapsed">
     /**
      * Creates a contact. Contacts are always associated to a customer
      * @param contactClass Class of the contact. This class should always be a subclass of GenericContact
@@ -915,6 +917,7 @@ public interface BusinessEntityManager {
      * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If an error occurs while building the contact objects
      */
     public List<Contact> searchForContacts(String searchString, int maxResults) throws InvalidArgumentException;
+    //</editor-fold>
     
     //<editor-fold desc="Pools" defaultstate="collapsed">
     /**

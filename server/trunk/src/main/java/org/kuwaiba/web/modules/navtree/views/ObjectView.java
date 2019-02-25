@@ -32,7 +32,6 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
-import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
@@ -48,7 +47,7 @@ import org.kuwaiba.apis.web.gui.views.AbstractViewNode;
 import org.kuwaiba.apis.web.gui.views.BusinessObjectViewEdge;
 import org.kuwaiba.apis.web.gui.views.BusinessObjectViewNode;
 import org.kuwaiba.apis.web.gui.views.ViewMap;
-import org.kuwaiba.apis.web.gui.views.util.HtmlUtil;
+import org.kuwaiba.apis.web.gui.views.util.UtilHtml;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.services.persistence.util.Constants;
 
@@ -120,7 +119,7 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
                         edgeWidget.setControlPoints((List<Point>)anEdge.getProperties().get("controlPoints")); 
                         try {
                             ClassMetadata theClass = mem.getClass(((BusinessObjectLight)anEdge.getIdentifier()).getClassName());
-                            edgeWidget.setColor(HtmlUtil.toHexString(new Color(theClass.getColor())));
+                            edgeWidget.setColor(UtilHtml.toHexString(new Color(theClass.getColor())));
                         } catch (MetadataObjectNotFoundException ex) {
                             //In case of error, use a default black line
                         }
@@ -137,7 +136,7 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
     }
 
     @Override
-    public void build(RemoteObjectLight businessObject) {
+    public void buildWithBusinessObject(RemoteObjectLight businessObject) {
         try {
             this.viewMap = new ViewMap();            
             //First we build the default view
@@ -146,7 +145,7 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
             List<ViewObjectLight> objectViews = aem.getObjectRelatedViews(businessObject.getId(), businessObject.getClassName(), -1);
 
             if (!objectViews.isEmpty()) 
-                updateDefaultView(aem.getObjectRelatedView(businessObject.getId(), businessObject.getClassName(), objectViews.get(0).getId())); 
+                buildWithSavedView(aem.getObjectRelatedView(businessObject.getId(), businessObject.getClassName(), objectViews.get(0).getId()).getStructure()); 
             
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException ex) {
         }
@@ -227,14 +226,15 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
      * updates the location of the nodes and the control points of the edges.
      * @param theSavedView The saved view (which contains the XML representation of such view).
      */
-    private void updateDefaultView(ViewObject theSavedView) {
+    @Override
+    public void buildWithSavedView(byte[] theSavedView) {
         try {
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
             QName qNode = new QName("node"); //NOI18N
             QName qEdge = new QName("edge"); //NOI18N
             QName qControlPoint = new QName("controlpoint"); //NOI18N
 
-            ByteArrayInputStream bais = new ByteArrayInputStream(theSavedView.getStructure());
+            ByteArrayInputStream bais = new ByteArrayInputStream(theSavedView);
             XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
 
             while (reader.hasNext()) {
