@@ -447,6 +447,9 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
                     List<RemoteObjectLight> result = new ArrayList();
                     
                     for (RemoteObjectLight operationalState : operationalStates) {
+                        RemoteSession remoteSession = ((RemoteSession) UI.getCurrent().getSession().getAttribute("session"));
+                        List<RemoteObjectLight> objects = webserviceBean.getListTypeItemUses(operationalState.getClassName(), operationalState.getId(), -1, remoteSession.getIpAddress(), remoteSession.getSessionId());
+                        /*
                         List<RemoteObjectLight> objects = webserviceBean.getObjectsWithListTypeFilterLight(
                             "ConfigurationItem", //NOI18N
                             "state", //NOI18N
@@ -456,6 +459,7 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
                             1000,
                             Page.getCurrent().getWebBrowser().getAddress(), 
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
+                        */
                         result.addAll(objects);
                     }
                     return result;

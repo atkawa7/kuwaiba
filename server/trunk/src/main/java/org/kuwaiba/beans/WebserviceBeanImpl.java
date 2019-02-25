@@ -1454,7 +1454,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
         try {
-            return bem.canDeleteObject(className, oid, releaseRelationships);
+            return bem.canDeleteObject(className, oid);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

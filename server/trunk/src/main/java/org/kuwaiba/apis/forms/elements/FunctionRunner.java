@@ -28,10 +28,11 @@ public class FunctionRunner implements Runner {
     private String functionName;
     private List<String> parameterNames = new ArrayList();;
     private String script;
-        
+    
+    private final ElementScript elementScript;         
     private ScriptQueryExecutor scriptQueryExecutor;
     
-    public FunctionRunner(String functionName, String paramNames, String script) {
+    public FunctionRunner(String functionName, String paramNames, String script, ElementScript elementScript) {
         this.functionName = functionName;
         
         if (paramNames != null) {
@@ -44,6 +45,7 @@ public class FunctionRunner implements Runner {
             }
         }
         this.script = script;
+        this.elementScript = elementScript;
     }
     
     public String getFunctionName() {
@@ -76,6 +78,7 @@ public class FunctionRunner implements Runner {
         Binding binding = new Binding();
         
         binding.setVariable("scriptQueryExecutor", scriptQueryExecutor);
+        binding.setVariable("elementScript", elementScript);
                 
         if (parameterNames != null && parameters != null && parameterNames.size() == parameters.size()) {
             

@@ -63,12 +63,11 @@ public class FormArtifactRenderer extends ArtifactRenderer {
             if (artifactDefinition.getPreconditionsScript() != null) {
                 ScriptQueryExecutorImpl scriptQueryExecutorImpl = new ScriptQueryExecutorImpl(wsBean, session, processInstance);
                 String script = new String(artifactDefinition.getPreconditionsScript());
-                FunctionRunner functionRunner = new FunctionRunner("precondition", null, script);
-                functionRunner.setScriptQueryExecutor(scriptQueryExecutorImpl);
-                functionRunner.setParametersNames(Arrays.asList("elementScript"));
                 ElementScript elementScript = FormDefinitionLoader.loadExternalScripts(artifactDefinition.getExternalScripts());
-                
-                Object result = functionRunner.run(Arrays.asList(elementScript));
+                FunctionRunner functionRunner = new FunctionRunner("precondition", null, script, elementScript);
+                functionRunner.setScriptQueryExecutor(scriptQueryExecutorImpl);
+                                
+                Object result = functionRunner.run(null);
                 
                 if (!Boolean.valueOf(result.toString()))
                     return new Label(result.toString());

@@ -214,12 +214,11 @@ public class ProcessInstanceView extends DynamicComponent {
                 if (artifactDefinition.getPostconditionsScript() != null) {
                     ScriptQueryExecutorImpl scriptQueryExecutorImpl = new ScriptQueryExecutorImpl(wsBean, remoteSession, processInstance);
                     String script = new String(artifactDefinition.getPostconditionsScript());
-                    FunctionRunner functionRunner = new FunctionRunner("postconditions", null, script);
-                    functionRunner.setScriptQueryExecutor(scriptQueryExecutorImpl);
-                    functionRunner.setParametersNames(Arrays.asList("elementScript"));
                     ElementScript elementScript = FormDefinitionLoader.loadExternalScripts(artifactDefinition.getExternalScripts());
-
-                    Object result = functionRunner.run(Arrays.asList(elementScript));
+                    FunctionRunner functionRunner = new FunctionRunner("postconditions", null, script, elementScript);
+                    functionRunner.setScriptQueryExecutor(scriptQueryExecutorImpl);
+                    
+                    Object result = functionRunner.run(null);
 
                     performOperation = result instanceof Boolean ? (Boolean) result : Boolean.valueOf(result.toString());
                 }
