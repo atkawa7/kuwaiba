@@ -16,6 +16,7 @@
 
 package org.kuwaiba.web.modules.osp.dashboard;
 
+import org.kuwaiba.web.modules.osp.OSPConstants;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.shared.ui.dnd.DropEffect;
@@ -150,7 +151,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
         try {
             mapLatitude = (double)wsBean.getConfigurationVariableValue("widgets.simplemap.centerLatitude", session.getIpAddress(), session.getSessionId());
         } catch (ServerSideException ex) {
-            mapLatitude = OSPConstants.DEFAULT_CENTER_LATITUIDE;
+            mapLatitude = OSPConstants.DEFAULT_CENTER_LATITUDE;
         }
 
         try {

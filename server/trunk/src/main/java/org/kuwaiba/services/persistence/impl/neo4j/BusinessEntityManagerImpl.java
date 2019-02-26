@@ -3333,7 +3333,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         HashMap<String, String> attributes = new HashMap<>();
         String name = "";
         
-        for (AttributeMetadata myAtt : classMetadata.getAttributes()){
+        for (AttributeMetadata myAtt : classMetadata.getAttributes()) {
             //Only set the attributes existing in the current node. Please note that properties can't be null in
             //Neo4J, so a null value is actually a non-existing relationship/value
             if (instance.hasProperty(myAtt.getName())){
@@ -3440,9 +3440,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     /**
-     * Checks if it's safe to deletes recursively an object and all its children. Note that the transaction should be handled by the caller
-     * @param instance The object to be deleted
-     * @return true if the deletion of the object is safe or 
+     * Checks if it's safe to delete (not recursively) an object and all its children. Note that the transaction should be handled by the caller.
+     * @param instance The object to be deleted.
+     * @return true if the object is safe to be deleted, false otherwise.
      */
     private boolean canDeleteObject(Node instance) {
         return !instance.hasRelationship(RelTypes.RELATED_TO, RelTypes.RELATED_TO_SPECIAL, RelTypes.HAS_PROCESS_INSTANCE);        

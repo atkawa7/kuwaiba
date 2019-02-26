@@ -16,13 +16,13 @@
 
 package org.kuwaiba.web.modules.osp;
 
-import com.vaadin.tapio.googlemaps.client.LatLon;
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
-import com.vaadin.ui.AbstractComponent;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.Label;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -35,17 +35,17 @@ import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.apis.web.gui.views.AbstractView;
+import org.kuwaiba.apis.web.gui.views.AbstractViewEdge;
+import org.kuwaiba.apis.web.gui.views.AbstractViewNode;
 import org.kuwaiba.apis.web.gui.views.BusinessObjectViewEdge;
 import org.kuwaiba.apis.web.gui.views.BusinessObjectViewNode;
 import org.kuwaiba.apis.web.gui.views.ViewMap;
-import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.web.modules.osp.dashboard.OutsidePlantViewDashboardWidget;
-import static org.kuwaiba.web.modules.osp.dashboard.OutsidePlantViewDashboardWidget.VIEW_FORMAT_VERSION;
 
 /**
  * Places a set of selected elements on a map and allows the user to connect and explore them.
@@ -64,7 +64,7 @@ public class OSPView extends AbstractView<RemoteObjectLight> {
 
     @Override
     public String getDescription() {
-        return "Places a set of selected elements on a map and allows the user to connect and explore them";
+        return "Places a set of selected elements on a map and allows the user to connect and explore them.";
     }
 
     @Override
@@ -78,95 +78,144 @@ public class OSPView extends AbstractView<RemoteObjectLight> {
     }
 
     @Override
-    public byte[] getAsXML() {
-//        try {
-//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//            XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
-//            XMLEventWriter xmlew = xmlof.createXMLEventWriter(baos);
-//            XMLEventFactory xmlef = XMLEventFactory.newInstance();
-//
-//            QName qnameView = new QName("view"); //NOI18N
-//            xmlew.add(xmlef.createStartElement(qnameView, null, null));
-//            xmlew.add(xmlef.createAttribute(new QName("version"), VIEW_FORMAT_VERSION)); //NOI18N
-//
-//            QName qnameClass = new QName("class"); //NOI18N
-//            xmlew.add(xmlef.createStartElement(qnameClass, null, null));
-//            xmlew.add(xmlef.createCharacters("OSPView")); //NOI18N
-//            xmlew.add(xmlef.createEndElement(qnameClass, null));
-//            
-//            QName qCenter = new QName("center"); //NOI18N
-//            xmlew.add(xmlef.createStartElement(qCenter, null, null));
-//            xmlew.add(xmlef.createAttribute(new QName("lon"), Double.toString(mapMain.getCenter().getLon()))); //NOI18N
-//            xmlew.add(xmlef.createAttribute(new QName("lat"), Double.toString(mapMain.getCenter().getLat()))); //NOI18N
-//            xmlew.add(xmlef.createEndElement(qCenter, null));
-//            
-//            QName qZoom = new QName("zoom"); //NOI18N
-//            xmlew.add(xmlef.createStartElement(qZoom, null, null));
-//            xmlew.add(xmlef.createCharacters(String.valueOf(mapMain.getZoom()))); //NOI18N
-//            xmlew.add(xmlef.createEndElement(qZoom, null));
-//
-//            QName qnameNodes = new QName("nodes"); //NOI18N
-//            xmlew.add(xmlef.createStartElement(qnameNodes, null, null));
-//            
-//            //First the nodes
-//            for (OutsidePlantViewDashboardWidget.OSPNode node : nodes) {
-//                QName qnameNode = new QName("node"); //NOI18N
-//                xmlew.add(xmlef.createStartElement(qnameNode, null, null));
-//                xmlew.add(xmlef.createAttribute(new QName("lon"), Double.toString(node.getMarker().getPosition().getLon()))); //NOI18N
-//                xmlew.add(xmlef.createAttribute(new QName("lat"), Double.toString(node.getMarker().getPosition().getLat()))); //NOI18N
-//                xmlew.add(xmlef.createAttribute(new QName("class"), node.getBusinessObject().getClassName())); //NOI18N
-//                xmlew.add(xmlef.createCharacters(Long.toString(node.getBusinessObject().getId())));
-//                xmlew.add(xmlef.createEndElement(qnameNode, null));
-//            }
-//            xmlew.add(xmlef.createEndElement(qnameNodes, null));
-//
-//            //Now the connections
-//            QName qnameEdges = new QName("edges"); //NOI18N
-//            xmlew.add(xmlef.createStartElement(qnameEdges, null, null));
-//            
-//            for (OutsidePlantViewDashboardWidget.OSPEdge edge : edges) {
-//                GoogleMapPolyline lnEdge = edge.getPolyline();
-//                QName qnameEdge = new QName("edge"); //NOI18N
-//                xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
-//                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(edge.getBusinessObject().getId()))); //NOI18N
-//                xmlew.add(xmlef.createAttribute(new QName("class"), edge.getBusinessObject().getClassName())); //NOI18N
-//
-//                xmlew.add(xmlef.createAttribute(new QName("aside"), String.valueOf(edge.getSourceObject().getBusinessObject().getId()))); //NOI18N
-//                xmlew.add(xmlef.createAttribute(new QName("bside"), String.valueOf(edge.getTargetObject().getBusinessObject().getId()))); //NOI18N
-//                
-//                for (LatLon point : lnEdge.getCoordinates()) {
-//                    QName qnameControlpoint = new QName("controlpoint"); //NOI18N
-//                    xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
-//                    xmlew.add(xmlef.createAttribute(new QName("lon"), Double.toString(point.getLon()))); //NOI18N
-//                    xmlew.add(xmlef.createAttribute(new QName("lat"), Double.toString(point.getLat()))); //NOI18N
-//                    xmlew.add(xmlef.createEndElement(qnameControlpoint, null));
-//                }
-//                xmlew.add(xmlef.createEndElement(qnameEdge, null));
-//            }
-//            xmlew.add(xmlef.createEndElement(qnameEdges, null));
-//            xmlew.add(xmlef.createEndElement(qnameView, null));
-//            xmlew.close();
-//            return baos.toByteArray();
-//        } catch (XMLStreamException ex) { 
-//            //Should not happen
-//            return new byte[0];
-//        }
-return null;
+    public byte[] getAsXml() {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
+            XMLEventWriter xmlew = xmlof.createXMLEventWriter(baos);
+            XMLEventFactory xmlef = XMLEventFactory.newInstance();
+
+            QName qnameView = new QName("view"); //NOI18N
+            xmlew.add(xmlef.createStartElement(qnameView, null, null));
+            xmlew.add(xmlef.createAttribute(new QName("version"), OSPConstants.VIEW_VERSION)); //NOI18N
+
+            QName qnameClass = new QName("class"); //NOI18N
+            xmlew.add(xmlef.createStartElement(qnameClass, null, null));
+            xmlew.add(xmlef.createCharacters("OSPView")); //NOI18N
+            xmlew.add(xmlef.createEndElement(qnameClass, null));
+            
+            QName qCenter = new QName("center"); //NOI18N
+            xmlew.add(xmlef.createStartElement(qCenter, null, null));
+            xmlew.add(xmlef.createAttribute(new QName("lon"), Double.toString(((GeoCoordinate)this.viewMap.getSettings().get("center")).getLongitude()))); //NOI18N
+            xmlew.add(xmlef.createAttribute(new QName("lat"), Double.toString(((GeoCoordinate)this.viewMap.getSettings().get("center")).getLatitude()))); //NOI18N
+            xmlew.add(xmlef.createEndElement(qCenter, null));
+            
+            QName qZoom = new QName("zoom"); //NOI18N
+            xmlew.add(xmlef.createStartElement(qZoom, null, null));
+            xmlew.add(xmlef.createCharacters(String.valueOf(this.viewMap.getSettings().get("zoom")))); //NOI18N
+            xmlew.add(xmlef.createEndElement(qZoom, null));
+
+            QName qnameNodes = new QName("nodes"); //NOI18N
+            xmlew.add(xmlef.createStartElement(qnameNodes, null, null));
+            
+            //First the nodes
+            for (AbstractViewNode node : this.viewMap.getNodes()) {
+                QName qnameNode = new QName("node"); //NOI18N
+                xmlew.add(xmlef.createStartElement(qnameNode, null, null));
+                xmlew.add(xmlef.createAttribute(new QName("lon"), String.valueOf(node.getProperties().get("lon")))); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("lat"), String.valueOf(node.getProperties().get("lat")))); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("class"), ((BusinessObjectLight)node.getIdentifier()).getClassName())); //NOI18N
+                xmlew.add(xmlef.createCharacters(String.valueOf(((BusinessObjectLight)node.getIdentifier()).getId())));
+                xmlew.add(xmlef.createEndElement(qnameNode, null));
+            }
+            xmlew.add(xmlef.createEndElement(qnameNodes, null));
+
+            //Now the connections
+            QName qnameEdges = new QName("edges"); //NOI18N
+            xmlew.add(xmlef.createStartElement(qnameEdges, null, null));
+            
+            for (AbstractViewEdge edge : this.viewMap.getEdges()) {
+                QName qnameEdge = new QName("edge"); //NOI18N
+                BusinessObjectLight theObject = (BusinessObjectLight)edge.getIdentifier();
+                xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
+                xmlew.add(xmlef.createAttribute(new QName("id"), String.valueOf(theObject.getId()))); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("class"), theObject.getClassName())); //NOI18N
+                
+                BusinessObjectLight sourceObject = (BusinessObjectLight)this.viewMap.getEdgeSource(edge).getIdentifier();
+                BusinessObjectLight targetObject = (BusinessObjectLight)this.viewMap.getEdgeTarget(edge).getIdentifier();
+                xmlew.add(xmlef.createAttribute(new QName("asideid"), String.valueOf(sourceObject.getId()))); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("asideclass"), sourceObject.getClassName())); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("bsideid"), String.valueOf(targetObject.getId()))); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("bsideclass"), targetObject.getClassName())); //NOI18N
+                
+                for (GeoCoordinate controlPoint : (List<GeoCoordinate>)edge.getProperties().get("controlPoints")) {
+                    QName qnameControlpoint = new QName("controlpoint"); //NOI18N
+                    xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
+                    xmlew.add(xmlef.createAttribute(new QName("lon"), String.valueOf(controlPoint.getLongitude()))); //NOI18N
+                    xmlew.add(xmlef.createAttribute(new QName("lat"), String.valueOf(controlPoint.getLatitude()))); //NOI18N
+                    xmlew.add(xmlef.createEndElement(qnameControlpoint, null));
+                }
+                xmlew.add(xmlef.createEndElement(qnameEdge, null));
+            }
+            xmlew.add(xmlef.createEndElement(qnameEdges, null));
+            xmlew.add(xmlef.createEndElement(qnameView, null));
+            xmlew.close();
+            return baos.toByteArray();
+        } catch (XMLStreamException ex) { 
+            //Should not happen
+            return new byte[0];
+        }
     }
 
     @Override
-    public byte[] getAsImage() {
+    public byte[] getAsImage() { //Should use Google Maps Static API in the future
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public AbstractComponent getAsComponent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Component getAsComponent() {
+        try {
+            Class mapsProviderClass = Class.forName((String)aem.getConfigurationVariableValue("general.maps.provider"));
+            if (AbstractMapProvider.class.isAssignableFrom(mapsProviderClass)) {
+                Properties mapProperties = new Properties();
+                try {
+                    mapProperties.put("apiKey", aem.getConfigurationVariableValue("general.maps.apiKey"));
+                } catch (InventoryException ex) {
+                    mapProperties.put("apiKey", null);
+                    Notifications.showWarning("The configuration variable general.maps.apiKey has not been set. The default map will be used");
+                }
+
+                try {
+                    mapProperties.put("language", aem.getConfigurationVariableValue("general.maps.language"));
+                } catch (InventoryException ex) {
+                    mapProperties.put("language", OSPConstants.DEFAULT_LANGUAGE);
+                }
+
+                double mapCenterLatitude, mapCenterLongitude;
+                
+                try {
+                    mapCenterLatitude = (double)aem.getConfigurationVariableValue("widgets.simplemap.centerLatitude");
+                } catch (InventoryException ex) {
+                    mapCenterLatitude = OSPConstants.DEFAULT_CENTER_LATITUDE;
+                }
+
+                try {
+                    mapCenterLongitude = (double)aem.getConfigurationVariableValue("widgets.simplemap.centerLongitude");
+                } catch (InventoryException ex) {
+                    mapCenterLongitude = OSPConstants.DEFAULT_CENTER_LONGITUDE;
+                }
+                
+                mapProperties.put("center", new GeoCoordinate(mapCenterLatitude, mapCenterLongitude));
+
+                try {
+                    mapProperties.put("zoom", aem.getConfigurationVariableValue("widgets.simplemap.zoom"));
+                } catch (InventoryException ex) {
+                    mapProperties.put("zoom", OSPConstants.DEFAULT_ZOOM);
+                }
+                
+                AbstractMapProvider mapProviderComponent = (AbstractMapProvider)mapsProviderClass.newInstance();
+                mapProviderComponent.initialize(mapProperties);
+                return mapProviderComponent.getComponent();
+            } else
+                return new Label(String.format("Class %s is not a valid map provider", mapsProviderClass.getCanonicalName()));
+        } catch (Exception ex) {
+            return new Label(String.format("An unexpected error occurred while loading the OSP view: %s", ex.getLocalizedMessage()));
+        }
     }
 
     @Override
     public void buildWithBusinessObject(RemoteObjectLight businessObject) {
-        throw new UnsupportedOperationException("This view can not be built from an object"); 
+        throw new UnsupportedOperationException("This view can not be built from an object. Use buildWithSavedView instead."); 
     }
 
     @Override
@@ -207,13 +256,16 @@ return null;
                     } else {
                         if (reader.getName().equals(qEdge)) {
                             long objectId = Long.valueOf(reader.getAttributeValue(null, "id")); //NOI18N
-                            long aSide = Long.valueOf(reader.getAttributeValue(null, "aside")); //NOI18N
-                            long bSide = Long.valueOf(reader.getAttributeValue(null, "bside")); //NOI18N
+                            long aSideId = Long.valueOf(reader.getAttributeValue(null, "asideid")); //NOI18N
+                            String aSideClass = reader.getAttributeValue(null, "asideclass"); //NOI18N
+                            long bSideId = Long.valueOf(reader.getAttributeValue(null, "bsideid")); //NOI18N
+                            String bSideClass = reader.getAttributeValue(null, "bsideclass"); //NOI18N
                             String objectClass = reader.getAttributeValue(null,"class"); //NOI18N
                             try {
-                                BusinessObjectLight anObject = bem.getObjectLight(objectClass, objectId);
-                                BusinessObjectViewEdge anEdge = new BusinessObjectViewEdge(anObject);
-
+                                BusinessObjectViewEdge anEdge = new BusinessObjectViewEdge(bem.getObjectLight(objectClass, objectId));
+                                AbstractViewNode sourceNode = this.viewMap.getNode(bem.getObjectLight(aSideClass, aSideId));
+                                AbstractViewNode targetNode = this.viewMap.getNode(bem.getObjectLight(bSideClass, bSideId));
+                                
                                 List<GeoCoordinate> controlPoints = new ArrayList<>();
 
                                 while(true) {
@@ -227,6 +279,8 @@ return null;
                                 }
                                 anEdge.getProperties().put("controlPoints", controlPoints); //NOI18N
                                 this.viewMap.addEdge(anEdge);
+                                this.viewMap.attachSourceNode(anEdge, sourceNode);
+                                this.viewMap.attachSourceNode(anEdge, targetNode);
                             } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
                                 Notifications.showError(String.format("The object of class %s and id %s could not be found", objectClass, objectId));
                             }
@@ -254,6 +308,4 @@ return null;
             Notifications.showError(String.format("An unexpected error appeared while parsing the OSP view: " + ex.getLocalizedMessage()));
         }
     }
-    
-    
 }

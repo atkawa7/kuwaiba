@@ -16,6 +16,7 @@
 
 package org.kuwaiba.web.modules.osp.dashboard;
 
+import org.kuwaiba.web.modules.osp.OSPConstants;
 import com.vaadin.server.Page;
 import com.vaadin.tapio.googlemaps.GoogleMapsComponent;
 import com.vaadin.tapio.googlemaps.client.LatLon;
@@ -142,7 +143,7 @@ public class SimpleMapDashboardWidget extends AbstractDashboardWidget {
             this.mapLatitude = (double)wsBean.getConfigurationVariableValue("widgets.simplemap.centerLatitude", Page.getCurrent().getWebBrowser().getAddress(), 
                         ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
         } catch (ServerSideException ex) {
-            this.mapLatitude = OSPConstants.DEFAULT_CENTER_LATITUIDE;
+            this.mapLatitude = OSPConstants.DEFAULT_CENTER_LATITUDE;
         }
         
         try {

@@ -28,6 +28,7 @@ import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 import com.vaadin.ui.Component;
 import java.util.ArrayList;
 import java.util.HashMap;
+import org.kuwaiba.web.modules.osp.OSPConstants;
 
 /**
  * A wrapper of the Google Maps Vaadin component.
@@ -53,7 +54,12 @@ public class GoogleMapsMapProvider extends AbstractMapProvider {
     
     @Override
     public void initialize(Properties properties) {
-        this.map = new GoogleMapsComponent((String)properties.get("apiKey"), null, (String)properties.get("language"));
+        this.map = new GoogleMapsComponent((String)properties.get("apiKey"), null, 
+                properties.get("language") != null ? (String)properties.get("language") : OSPConstants.DEFAULT_LANGUAGE);
+        this.map.setZoom(properties.get("zoom") != null ? (int)properties.get("zoom") : OSPConstants.DEFAULT_ZOOM);
+        GeoCoordinate center = (GeoCoordinate)properties.get("center");
+        this.map.setCenter(properties.get("center") != null ? new LatLon(center.getLatitude(), 
+                center.getLongitude()) : new LatLon(OSPConstants.DEFAULT_CENTER_LATITUDE, OSPConstants.DEFAULT_CENTER_LONGITUDE));
     }
       
     @Override
@@ -62,24 +68,21 @@ public class GoogleMapsMapProvider extends AbstractMapProvider {
     }
 
     @Override
-    public void addPolyline(BusinessObjectLight businessObject, List<GeoCoordinate> controlPoints) {
-        GoogleMapPolyline aPolyline = map.addPolyline(businessObject.toString());
-        List<LatLon> gMapsCoordinates = new ArrayList<>();
-        controlPoints.forEach((aGeoCoordinate) -> {
-            gMapsCoordinates.add(new LatLon(aGeoCoordinate.getLatitude(), aGeoCoordinate.getLongitude()));
-        });
-        aPolyline.setCoordinates(gMapsCoordinates);
-        edges.put(businessObject, aPolyline);
-    }
-
-    @Override
-    public void connectPolylineSource(BusinessObjectLight edge, BusinessObjectLight sourceObject) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void connectPolylineTarget(BusinessObjectLight edge, BusinessObjectLight targetObject) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void addPolyline(BusinessObjectLight businessObject, BusinessObjectLight sourceObject, BusinessObjectLight targetObject, List<GeoCoordinate> controlPoints) {
+        GoogleMapMarker sourceMarker = this.nodes.get(sourceObject);
+        if (sourceMarker != null) {
+            GoogleMapMarker targetMarker = this.nodes.get(targetObject);
+            if (targetMarker != null) {
+                GoogleMapPolyline aPolyline = map.addPolyline(businessObject.toString());
+                List<LatLon> gMapsCoordinates = new ArrayList<>();
+                controlPoints.forEach((aGeoCoordinate) -> {
+                    gMapsCoordinates.add(new LatLon(aGeoCoordinate.getLatitude(), aGeoCoordinate.getLongitude()));
+                });
+                aPolyline.setCoordinates(gMapsCoordinates);
+                this.map.addEdge(aPolyline, sourceMarker, targetMarker);
+                this.edges.put(businessObject, aPolyline);
+            }
+        }
     }
 
     @Override

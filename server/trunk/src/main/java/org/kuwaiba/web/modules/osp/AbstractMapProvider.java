@@ -39,23 +39,13 @@ public abstract class AbstractMapProvider {
      */
     public abstract void addMarker(BusinessObjectLight businessObject, GeoCoordinate position, String iconUrl);
     /**
-     * Adds a poly line to the map (not necessarily connected to any endpoint).
+     * Adds a poly line to the map (not necessarily connected to any endpoint). No line will be added to the map if any of the endpoints are missing.
      * @param businessObject The business object behind the poly line;
+     * @param sourceObject The business object behind the source marker.
+     * @param targetObject The business object behind the source marker.
      * @param controlPoints The route of the poly line.
      */
-    public abstract void addPolyline(BusinessObjectLight businessObject, List<GeoCoordinate> controlPoints);
-    /**
-     * Sets the source of an existing poly line.
-     * @param edge The object behind the poly line to be connected.
-     * @param sourceObject The object behind the source node.
-     */
-    public abstract void connectPolylineSource(BusinessObjectLight edge, BusinessObjectLight sourceObject);
-    /**
-     * Sets the target of an existing poly line.
-     * @param edge The object behind the poly line to be connected.
-     * @param targetObject The object behind the target node.
-     */
-    public abstract void connectPolylineTarget(BusinessObjectLight edge, BusinessObjectLight targetObject);
+    public abstract void addPolyline(BusinessObjectLight businessObject, BusinessObjectLight sourceObject, BusinessObjectLight targetObject, List<GeoCoordinate> controlPoints);
     /**
      * Fetches the existing markers.
      * @return The markers.

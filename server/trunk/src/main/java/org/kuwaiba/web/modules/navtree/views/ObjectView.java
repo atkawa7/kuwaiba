@@ -82,7 +82,7 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
     }
 
     @Override
-    public byte[] getAsXML() {
+    public byte[] getAsXml() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

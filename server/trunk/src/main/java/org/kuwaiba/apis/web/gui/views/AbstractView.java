@@ -16,7 +16,7 @@
 
 package org.kuwaiba.apis.web.gui.views;
 
-import com.vaadin.ui.AbstractComponent;
+import com.vaadin.ui.Component;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
@@ -74,7 +74,7 @@ public abstract class AbstractView<T> {
      * Exports the view to XML. It most likely will have to be called after calling {@link #build() } or {@link  #build(java.lang.Object) }.
      * @return A byte array with an XML document representing the view. The format of the document must follow the Standard Kuwaiba View Text Format (SKTF)
      */
-    public abstract byte[] getAsXML();
+    public abstract byte[] getAsXml();
     /**
      * Exports the view to a PNG image. It most likely will have to be called after calling {@link #build() } or {@link  #build(java.lang.Object) }.
      * @return A byte array with a PNG formatted image of the view.
@@ -84,7 +84,7 @@ public abstract class AbstractView<T> {
      * Gets an embeddable  Vaadin component that can be rendered in a dashboard. It most likely will have to be called after calling {@link #build() } or {@link  #build(java.lang.Object) }.
      * @return An embeddable component (Panel, VerticalLayout, etc)
      */
-    public abstract AbstractComponent getAsComponent();
+    public abstract Component getAsComponent();
     /**
      * Exports the view as a ViewMap (a representation of the view as a set of Java objects related each other). It most likely will have to be called after calling {@link #build() } or {@link  #build(java.lang.Object) }.
      * @return The view map of the view.

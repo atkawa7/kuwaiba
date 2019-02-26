@@ -9,6 +9,7 @@ This software makes use of the following third-party components and neither of t
 * Vaadin Graphviz Component Add-on, used to create flowchart for the Process Engine (APL2) https://github.com/pontusbostrom/VaadinGraphvizComponent
 * Vaadin Context Menu Add-on, used in navigation trees and views (APL2) https://github.com/vaadin/context-menu
 * Vaadin Auto-complete Add-on, used in navigation trees and dashboards (APL2) https://github.com/maxschuster/Vaadin-AutocompleteTextField
+* Vaadin Grid Extension Pack Add-on, used to add pagination support for standard Vaadin's grids (APL2) https://github.com/tsuoanttila/GridExtensionPack
 
 Guava
 
