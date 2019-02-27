@@ -157,7 +157,6 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
      */
     private void buildDefaultView(RemoteObjectLight businessObject) {
         try {
-            
             BusinessObjectLight asLocalBusinessObject = new BusinessObjectLight(businessObject.getClassName(), businessObject.getId(), businessObject.getName());
             
             //First the direct children that not connections
@@ -282,4 +281,9 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
             Notifications.showError("There was an unexpected error parsing the view structure");
         }
     }    
+
+    @Override
+    public void buildEmptyView() {
+        // This method is never called, because this kind of view is always created from an object, calling at least buildWithBusinessObject
+    }
 }

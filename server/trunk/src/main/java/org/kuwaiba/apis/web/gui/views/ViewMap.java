@@ -142,7 +142,7 @@ public class ViewMap {
      * @return The nodes in the map.
      */
     public List<AbstractViewNode> getNodes() {
-        return nodes;
+        return this.nodes;
     }
     
     /**
@@ -150,10 +150,25 @@ public class ViewMap {
      * @return The edges in the map.
      */
     public List<AbstractViewEdge> getEdges() {
-        return edges;
+        return this.edges;
     }
 
+    /**
+     * Returns the extra information associated to the view that uses this map. This 
+     * can be stuff like the coordinates of the center of a map, or the zoom of an object view. 
+     * @return 
+     */
     public HashMap<String, Object> getSettings() {
-        return settings;
+        return this.settings;
+    }
+    /**
+     * Removes all the entries in the lists and hashmaps.
+     */
+    public void clear() {
+        this.edges.clear();
+        this.nodes.clear();
+        this.sourceNodes.clear();
+        this.targetNodes.clear();
+        this.settings.clear();
     }
 }

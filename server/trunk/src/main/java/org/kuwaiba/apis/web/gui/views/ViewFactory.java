@@ -46,7 +46,7 @@ public class ViewFactory {
     }
     
     /**
-     * Creates an instance of a view, given its FQN (that is, its name including the package information)
+     * Creates an instance of a view, given its canonical name (that is, its name including the package information)
      * @param viewId The FQN of the class.
      * @return The instance of the view.
      * @throws java.lang.InstantiationException If the class provided do not exists or it's not subclass of AbstractView.

@@ -102,5 +102,9 @@ public abstract class AbstractView<T> {
      * @param businessObject The business object that will be used
      */
     public abstract void buildWithBusinessObject(T businessObject);
+    /**
+     * Builds an empty view map that can be use to render default views.
+     */
+    public abstract void buildEmptyView();
     
 }

@@ -16,7 +16,7 @@
 
 package org.kuwaiba.web.modules.osp;
 
-import com.vaadin.ui.Component;
+import com.vaadin.ui.AbstractComponent;
 import java.util.List;
 import java.util.Properties;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
@@ -70,7 +70,7 @@ public abstract class AbstractMapProvider {
      * Gets the embeddable component that can be placed in a view or a dashboard widget.
      * @return The component,
      */
-    public abstract Component getComponent();
+    public abstract AbstractComponent getComponent();
     
     /**
      * A wrapper of a marker object in a map.
@@ -116,12 +116,23 @@ public abstract class AbstractMapProvider {
          */
         private BusinessObjectLight businessObject;
         /**
+         * The business object behind the source node of the present connection.
+         */
+        private BusinessObjectLight sourceObject;
+        /**
+         * The business object behind the target node of the present connection.
+         */
+        private BusinessObjectLight targetObject;
+        /**
          * The geolocation of route of the poly line.
          */
         private List<GeoCoordinate> controlPoints;
 
-        public OSPEdge(BusinessObjectLight businessObject, List<GeoCoordinate> controlPoints) {
+        public OSPEdge(BusinessObjectLight businessObject, BusinessObjectLight sourceObject, 
+                BusinessObjectLight targetObject, List<GeoCoordinate> controlPoints) {
             this.businessObject = businessObject;
+            this.sourceObject = sourceObject;
+            this.targetObject = targetObject;
             this.controlPoints = controlPoints;
         }
 
@@ -139,6 +150,22 @@ public abstract class AbstractMapProvider {
 
         public void setControlPoints(List<GeoCoordinate> controlPoints) {
             this.controlPoints = controlPoints;
+        }
+
+        public BusinessObjectLight getSourceObject() {
+            return sourceObject;
+        }
+
+        public void setSourceObject(BusinessObjectLight sourceObject) {
+            this.sourceObject = sourceObject;
+        }
+
+        public BusinessObjectLight getTargetObject() {
+            return targetObject;
+        }
+
+        public void setTargetObject(BusinessObjectLight targetObject) {
+            this.targetObject = targetObject;
         }
     }
 }

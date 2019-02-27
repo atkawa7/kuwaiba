@@ -25,7 +25,7 @@ import com.vaadin.tapio.googlemaps.GoogleMapsComponent;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
-import com.vaadin.ui.Component;
+import com.vaadin.ui.AbstractComponent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.kuwaiba.web.modules.osp.OSPConstants;
@@ -47,9 +47,20 @@ public class GoogleMapsMapProvider extends AbstractMapProvider {
      * The list of edges
      */
     private HashMap<BusinessObjectLight, GoogleMapPolyline> edges;
+    /**
+     * A map with pairs connection - source node, being the source node, the business object behind the marker.
+     */
+    private HashMap<GoogleMapPolyline, BusinessObjectLight> sourceNodes;
+    /**
+     * A map with pairs connection - target node, being the target node, the business object behind the marker.
+     */
+    private HashMap<GoogleMapPolyline, BusinessObjectLight> targetNodes;
     
     public GoogleMapsMapProvider() {
         this.nodes = new HashMap<>();
+        this.edges = new HashMap<>();
+        this.sourceNodes = new HashMap<>();
+        this.targetNodes = new HashMap<>();
     }
     
     @Override
@@ -60,6 +71,8 @@ public class GoogleMapsMapProvider extends AbstractMapProvider {
         GeoCoordinate center = (GeoCoordinate)properties.get("center");
         this.map.setCenter(properties.get("center") != null ? new LatLon(center.getLatitude(), 
                 center.getLongitude()) : new LatLon(OSPConstants.DEFAULT_CENTER_LATITUDE, OSPConstants.DEFAULT_CENTER_LONGITUDE));
+        this.map.showEdgeLabels(true);
+        this.map.showMarkerLabels(true);
     }
       
     @Override
@@ -80,6 +93,8 @@ public class GoogleMapsMapProvider extends AbstractMapProvider {
                 });
                 aPolyline.setCoordinates(gMapsCoordinates);
                 this.map.addEdge(aPolyline, sourceMarker, targetMarker);
+                this.sourceNodes.put(aPolyline, sourceObject);
+                this.targetNodes.put(aPolyline, targetObject);
                 this.edges.put(businessObject, aPolyline);
             }
         }
@@ -104,13 +119,14 @@ public class GoogleMapsMapProvider extends AbstractMapProvider {
                 controlPoints.add(new GeoCoordinate(aGMapsCoordinate.getLat(), aGMapsCoordinate.getLon()));
             });
             
-            res.add(new OSPEdge(anEntry.getKey(), controlPoints));
+            res.add(new OSPEdge(anEntry.getKey(), sourceNodes.get(anEntry.getValue()), 
+                    targetNodes.get(anEntry.getValue()), controlPoints));
         });
         return res;
     }
 
     @Override
-    public Component getComponent() {
+    public AbstractComponent getComponent() {
         return this.map;
     }
 
