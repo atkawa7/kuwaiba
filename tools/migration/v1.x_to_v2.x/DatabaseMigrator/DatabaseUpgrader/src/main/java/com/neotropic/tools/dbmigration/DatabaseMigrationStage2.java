@@ -47,14 +47,14 @@ public class DatabaseMigrationStage2 {
         
         try {
             System.out.println(String.format("[%s] Starting database upgrade stage 2...", Calendar.getInstance().getTime()));
-            if (false) {
+            if (true) {
                 Upgrader.getInstance().upgrade(dbPathReference);
                 LabelUpgrader.getInstance().createLabels(dbPathReference);
                 IndexUpgrader.getInstance().upgrade(dbPathReference);
                 LabelUpgrader.getInstance().deleteIndexes(dbPathReference);
                 LabelUpgrader.getInstance().deleteUnusedLabels(dbPathReference);
             }
-            if (true) {
+            if (false) {
                 LabelUpgrader.getInstance().replaceLabel(dbPathReference, "attribute", "attributes");
                 LabelUpgrader.getInstance().replaceLabel(dbPathReference, "inventory_objects", "inventoryObjects");
                 LabelUpgrader.getInstance().setUUIDAttributeToInventoryObjects(dbPathReference);
