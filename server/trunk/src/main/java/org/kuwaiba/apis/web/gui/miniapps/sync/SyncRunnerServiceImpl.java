@@ -24,8 +24,9 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import java.util.LinkedHashMap;
 import java.util.List;
+import javax.ejb.Asynchronous;
+import javax.ejb.Singleton;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
@@ -37,43 +38,13 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationCo
  *
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class SyncRunner {
-    private final UI ui;
-    private final WebserviceBean webserviceBean;
-    private final RemoteSession remoteSession;
-    
-////    private final List<SyncProvider> syncProviders;
-    private final RemoteSynchronizationConfiguration syncConfig;
+@Singleton
+public class SyncRunnerServiceImpl implements SyncRunnerService {
     
     private final Window window = new Window();
     private final TabSheet tabSheet = new TabSheet();
     
-    private final LinkedHashMap<SyncProvider, Thread> syncProviderThreads;
-    
-        
-    public SyncRunner(UI ui, WebserviceBean webserviceBean, RemoteSession remoteSession, List<SyncProvider> syncProviders, RemoteSynchronizationConfiguration syncConfig) {
-        this.ui = ui;
-        this.webserviceBean = webserviceBean;
-        this.remoteSession = remoteSession;
-        
-////        this.syncProviders = syncProviders;
-        this.syncProviderThreads = new LinkedHashMap<>();
-        for (SyncProvider syncProvider : syncProviders) {
-            Thread thread = new Thread() {
-                @Override
-                public void run() {
-                    ui.access(new Runnable() {
-                        @Override
-                        public void run() {
-                            launchNextAdHocAutomatedSynchronizationTask(syncProvider);                        
-                        }
-                    });
-                }
-            };
-            this.syncProviderThreads.put(syncProvider, thread);
-        }
-        this.syncConfig = syncConfig;
-        
+    public SyncRunnerServiceImpl() {
         tabSheet.setSizeFull();
         window.setModal(true);
         window.setWidth(80, Sizeable.Unit.PERCENTAGE);
@@ -81,43 +52,25 @@ public class SyncRunner {
         window.setContent(tabSheet);
     }
     
-////    public List<SyncProvider> getSyncProviders() {
-////        return syncProviders;
-////    }
-////    public LinkedHashMap<SyncProvider, Thread> setSyncProviders(List<SyncProvider> syncProviders) {
-////        LinkedHashMap<SyncProvider, Thread> result = new LinkedHashMap<>();
-////        for (SyncProvider syncProvider : syncProviders) {
-////            Thread thread = new Thread() {
-////                @Override
-////                public void run() {
-////                    ui.access(new Runnable() {
-////                        @Override
-////                        public void run() {
-////                            launchNextAdHocAutomatedSynchronizationTask(syncProvider);                        
-////                        }
-////                    });
-////                }
-////            };
-////            result.put(syncProvider, thread);
-////        }
-////        return result;
-////    }
-    
-    public void launchAdHocAutomatedSynchronizationTask(SyncProvider syncProvider) {
-        if (syncProvider != null && syncProviderThreads.containsKey(syncProvider)) {
-            syncProviderThreads.get(syncProvider).start();
-        }
+    @Asynchronous
+    @Override
+    public void launchAdHocAutomatedSynchronizationTask(UI ui, WebserviceBean webserviceBean, RemoteSession remoteSession, List<SyncProvider> syncProviders, RemoteSynchronizationConfiguration syncConfig) {
+        tabSheet.removeAllComponents();
+        launchNextAdHocAutomatedSynchronizationTask(ui, webserviceBean, remoteSession, syncProviders, syncConfig);
     }
-        
-    public void launchNextAdHocAutomatedSynchronizationTask(SyncProvider syncProvider) {
-        if (syncProvider != null) {
+    
+////    @Asynchronous
+    private void launchNextAdHocAutomatedSynchronizationTask(UI ui, WebserviceBean webserviceBean, RemoteSession remoteSession, List<SyncProvider> syncProviders, RemoteSynchronizationConfiguration syncConfig) {
+        if (!syncProviders.isEmpty()) {
+            
             try {
-                BackgroundJob managedJob = webserviceBean.launchAdHocAutomatedSynchronizationTask(
-                    new long[] {syncConfig.getId()}, 
-                    syncProvider.getName(), 
-                    remoteSession.getIpAddress(), 
-                    remoteSession.getSessionId());                      
+                SyncProvider syncProvider = syncProviders.get(0);
                 
+                BackgroundJob managedJob = webserviceBean.launchAdHocAutomatedSynchronizationTask(
+                    new long[] {syncConfig.getId()},
+                    syncProvider.getName(),
+                    remoteSession.getIpAddress(),  
+                    remoteSession.getSessionId());
                 int retries = 0;
                 while (!managedJob.getStatus().equals(BackgroundJob.JOB_STATUS.FINISHED) && retries < 30) {
                     try {                
@@ -160,34 +113,28 @@ public class SyncRunner {
                 vly.setComponentAlignment(grdSyncResult, Alignment.MIDDLE_CENTER);
                                 
                 tabSheet.addTab(vly, syncProvider.getValue());
-                if (!window.isAttached())
-                    ui.addWindow(window);
+                
+                ui.access(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!window.isAttached())
+                            ui.addWindow(window);
+                    }
+                });
                 
                 System.out.println(">>>" + syncProvider.getValue());
+                syncProviders.remove(0);
+                launchAdHocAutomatedSynchronizationTask(ui, webserviceBean, remoteSession, syncProviders, syncConfig);
                 
-                boolean isNext = false;
-                
-                for (SyncProvider key : syncProviderThreads.keySet()) {
-                    if (isNext) {
-                        launchAdHocAutomatedSynchronizationTask(key);
-                        //syncProviderThreads.get(key).start();
-                        break;
+            } catch (ServerSideException | RuntimeException ex) {
+                ui.access(new Runnable() {
+                    @Override
+                    public void run() {
+                        Notifications.showError(ex.getMessage());
                     }
-                    if (syncProvider.equals(key))
-                        isNext = true;                        
-                }
-                //Following with the next provider
-////                if (!syncProviderś
-                
-            } catch(ServerSideException | RuntimeException ex){
-                Notifications.showError(ex.getMessage());
-////                if (e instanceof ServerSideException)
-////                    throw e;
-////                else {
-////                    System.out.println("[KUWAIBA] An unexpected error occurred in launchAdHocAutomatedSynchronizationTask: " + e.getMessage());
-////                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-////                }
-            }            
+                });
+            }
+                        
         }
     }
 }
