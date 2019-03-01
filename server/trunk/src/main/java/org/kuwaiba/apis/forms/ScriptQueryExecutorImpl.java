@@ -31,9 +31,6 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQuery;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResult;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResultCollection;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
@@ -47,22 +44,12 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
     private final WebserviceBean wsBean;
     private final RemoteSession session;
     private final RemoteProcessInstance processInstance;
-    private final List<RemoteScriptQuery> scriptQueries;
     private boolean debug = true;
         
     public ScriptQueryExecutorImpl(WebserviceBean wsBean, RemoteSession session, RemoteProcessInstance processInstance) {
         this.wsBean = wsBean;
         this.session = session;
-        
         this.processInstance = processInstance;
-        
-        List<RemoteScriptQuery> remoteScriptQueries = null;
-        try {
-            remoteScriptQueries = wsBean.getScriptQueries(session.getIpAddress(), session.getSessionId());
-        } catch (ServerSideException ex) {
-            Notifications.showError(ex.getMessage());
-        }
-        scriptQueries = remoteScriptQueries != null ? remoteScriptQueries : new ArrayList();
     }
     
     @Override
@@ -74,13 +61,13 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
     public Object execute(String scriptQueryName, List<String> parameterNames, List<String> parameterValues) {
         // The Keyword "shared" is used as Function Name to get to the execution 
         // of a Script Query the Artifacts shared values
-        if ("shared".equals(scriptQueryName) && parameterValues != null && parameterValues.size() >= 1) {
+        if ("shared".equals(scriptQueryName) && parameterValues != null && parameterValues.size() >= 1) { //NOI18N
             
             String paramValue0 = parameterValues.get(0);
             
-            if (paramValue0.equals("__processInstanceId__"))
+            if (paramValue0.equals("__processInstanceId__")) //NOI18N
                 return String.valueOf(processInstance.getId());
-            if (paramValue0.equals("__userName__") && session != null)
+            if (paramValue0.equals("__userName__") && session != null) //NOI18N
                 return session.getUsername();
             
             if (parameterValues.size() == 2) {
@@ -166,7 +153,7 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
             }
             return null;
         }
-        else if ("notifications".equals(scriptQueryName) && 
+        else if ("notifications".equals(scriptQueryName) && //NOI18N
             parameterNames != null && parameterNames.size() >= 1 &&
             parameterValues != null && parameterValues.size() >= 1 &&
             parameterNames.size() == parameterValues.size()) {
@@ -176,13 +163,13 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                 
                 if (null != parameterName) {
                     switch (parameterName) {
-                        case "error":
+                        case "error": //NOI18N
                             Notifications.showError(parameterValues.get(i));
                             break;
-                        case "info":
+                        case "info": //NOI18N
                             Notifications.showInfo(parameterValues.get(i));
                             break;
-                        case "warning":
+                        case "warning": //NOI18N
                             Notifications.showWarning(parameterValues.get(i));
                             break;
                         default:
@@ -190,14 +177,14 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                     }
                 }
             }
-        } else if ("endToEndViewAsByteArray".equals(scriptQueryName)&& 
+        } else if ("endToEndViewAsByteArray".equals(scriptQueryName)&& //NOI18N
             parameterNames != null && parameterNames.size() == 2 &&
             parameterValues != null && parameterValues.size() == 2 &&
             parameterNames.size() == parameterValues.size()) {
             /*parameterNames ["id", "className"];
             parameterValues ["service.getClassName()", "service.getId()"];*/
             
-            String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath"));
+            String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath")); //NOI18N
             String newPath = processEnginePath + "/temp/";
             
             String oldPath = SceneExporter.PATH;
@@ -215,12 +202,11 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
-        }
-        
-        else if("getE2EMap".equals(scriptQueryName) && 
+        }        
+        else if("getE2EMap".equals(scriptQueryName) && //NOI18N
             parameterNames != null &&
             parameterValues != null &&
-            parameterNames.size() == parameterValues.size()){
+            parameterNames.size() == parameterValues.size()) {
             
             List<Long> linkIds = new ArrayList<>();
             
@@ -234,45 +220,8 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
             } catch (Exception ex) {
                 Exceptions.printStackTrace(ex);
             }
-        }
-        
-        if (scriptQueries != null) {
-            
-            for (RemoteScriptQuery scriptQuery : scriptQueries) {
-                // Finds the Script Query to execute
-                if (scriptQuery.getName().equals(scriptQueryName)) {
-                    // Checks if the arrays to parameters match in size
-                    if (parameterNames != null && parameterValues != null && parameterNames.size() == parameterValues.size()) {
-                        try {
-                            List<StringPair> newParameters = new ArrayList();
-
-                            for (int i = 0; i < parameterNames.size(); i += 1)
-                                newParameters.add(new StringPair(parameterNames.get(i), parameterValues.get(i)));
-                            // Updating the parameters
-                            wsBean.updateScriptQueryParameters(scriptQuery.getId(), newParameters, session.getIpAddress(), session.getSessionId());
-                            
-                            if ("false".equals(scriptQuery.getCountable())) {
-                                // Excecuting the Script Query to No Countable result
-                                RemoteScriptQueryResult scriptQueryResult = wsBean.executeScriptQuery(
-                                    scriptQuery.getId(), session.getIpAddress(), session.getSessionId());
-                                
-                                return scriptQueryResult.getResult();
-                            }
-                            if ("true".equals(scriptQuery.getCountable())) {
-                                // Excecuting the Script Query to Countable results
-                                RemoteScriptQueryResultCollection scriptQueryResultCollection = wsBean.executeScriptQueryCollection(
-                                    scriptQuery.getId(), session.getIpAddress(), session.getSessionId());
-                                
-                                return scriptQueryResultCollection.getResults();
-                            }
-
-                        } catch (ServerSideException ex) {
-                            if (debug)
-                                Notifications.showError(ex.getMessage());
-                        }
-                    }
-                }
-            }
+        } else {
+            Notifications.showError(scriptQueryName + " does not exist");            
         }
         return null;
     }

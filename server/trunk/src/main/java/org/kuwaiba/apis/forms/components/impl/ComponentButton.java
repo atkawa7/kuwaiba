@@ -78,10 +78,10 @@ public class ComponentButton extends GraphicalComponent {
                             getComponent().addStyleName(ValoTheme.BUTTON_ICON_ONLY);
                         break;
                         case Constants.Attribute.StyleName.BUTTON_PRIMARY:
-                            getComponent().addStyleName(ValoTheme.BUTTON_PRIMARY);
+                            //getComponent().addStyleName(ValoTheme.BUTTON_PRIMARY);
                         break;
                         case Constants.Attribute.StyleName.BUTTON_DANGER:
-                            getComponent().addStyleName(ValoTheme.BUTTON_DANGER);
+                            //getComponent().addStyleName(ValoTheme.BUTTON_DANGER);
                         break;
                     }
                 }

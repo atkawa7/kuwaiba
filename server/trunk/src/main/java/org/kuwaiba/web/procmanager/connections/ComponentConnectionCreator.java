@@ -15,19 +15,24 @@
 package org.kuwaiba.web.procmanager.connections;
 
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.Page;
 import com.vaadin.shared.ui.dnd.DropEffect;
 import com.vaadin.shared.ui.dnd.EffectAllowed;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.dnd.DragSourceExtension;
 import com.vaadin.ui.dnd.DropTargetExtension;
 import com.vaadin.ui.dnd.event.DropEvent;
@@ -36,7 +41,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.kuwaiba.apis.web.gui.actions.AbstractAction;
+import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.apis.web.gui.navigation.BasicIconGenerator;
 import org.kuwaiba.apis.web.gui.navigation.nodes.AbstractNode;
 import org.kuwaiba.apis.web.gui.navigation.nodes.ChildrenProvider;
@@ -50,7 +55,7 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.openide.util.Exceptions;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 
 /**
  * A list of a given devices, links and a nav tree are shown, with this
@@ -76,6 +81,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
     }
         
     private void initializeComponent(List<RemoteObject> devicesList) {
+        RemoteSession remoteSession = (RemoteSession) UI.getCurrent().getSession().getAttribute("session"); //NOI18N
         //Sources devices and links
         List<RemoteObjectLight> deviceListLight = new ArrayList<>();
         List<RemoteObjectLight> linksListLight = new ArrayList<>();
@@ -86,8 +92,9 @@ public class ComponentConnectionCreator extends VerticalLayout {
             try {
                 isSubclassOfGenericPhysicalLink = webserviceBean.isSubclassOf(
                     device.getClassName(), 
-                    "GenericPhysicalLink", 
-                    Page.getCurrent().getWebBrowser().getAddress(), ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                    "GenericPhysicalLink", //NOI18N 
+                    remoteSession.getIpAddress(), 
+                    remoteSession.getSessionId());
             } catch(ServerSideException ex) {
                 Notifications.showError(ex.getMessage());
             }
@@ -254,6 +261,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
     
     private boolean createConnection(List<RemoteObjectLight> endpointsA, List<RemoteObjectLight> links, List<RemoteObjectLight> endpointsB) {
         try {
+            RemoteSession remoteSession = (RemoteSession) UI.getCurrent().getSession().getAttribute("session"); //NOI18N
             int size = endpointsA.size();
             
             String[] sideAClassNames = new String[size];
@@ -273,8 +281,8 @@ public class ComponentConnectionCreator extends VerticalLayout {
                 newLinksParents.add(webserviceBean.getCommonParent(
                         endpointsA.get(i).getClassName(), endpointsA.get(i).getId(), 
                         endpointsB.get(i).getClassName(), endpointsB.get(i).getId(), 
-                        Page.getCurrent().getWebBrowser().getAddress(),
-                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()));
+                        remoteSession.getIpAddress(),
+                        remoteSession.getSessionId()));
 
                 sideBClassNames[i] = endpointsB.get(i).getClassName();
                 sideBIds[i] = endpointsB.get(i).getId();
@@ -286,22 +294,25 @@ public class ComponentConnectionCreator extends VerticalLayout {
             webserviceBean.connectLinks(sideAClassNames, sideAIds, 
                     linksClassNames, linksIds, 
                     sideBClassNames, sideBIds, 
-                    Page.getCurrent().getWebBrowser().getAddress(),
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                    remoteSession.getIpAddress(),
+                    remoteSession.getSessionId());
             
             //we move the link from to under a new parent
             for (int i = 0; i < newLinksParents.size(); i++) {
                 
                 if (newLinksParents.get(i).getId() != -1) { //Ignore the dummy root
-                    webserviceBean.moveObjects(newLinksParents.get(i).getClassName(), newLinksParents.get(i).getId(), 
-                            new String[] {linksClassNames[i]}, new long[] {linksIds[i]}, 
-                        Page.getCurrent().getWebBrowser().getAddress(),
-                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                    webserviceBean.moveSpecialObjects(
+                        newLinksParents.get(i).getClassName(), 
+                        newLinksParents.get(i).getId(), 
+                        new String[] {linksClassNames[i]}, 
+                        new long[] {linksIds[i]}, 
+                        remoteSession.getIpAddress(),
+                        remoteSession.getSessionId());
                 }
             }
             Notifications.showInfo("The connections were created successfully");
             return true;
-        } catch (ServerSideException ex) {ex.printStackTrace();
+        } catch (ServerSideException ex) {
             Notifications.showInfo(ex.getMessage());
             return false;
         }
@@ -339,7 +350,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
                     for (String serializedObject : transferData.get().split("\n")) {
                         String[] serializedObjectTokens = serializedObject.split("~a~", -1);
                         try {
-                            final RemoteSession remoteSession = (RemoteSession) UI.getCurrent().getSession().getAttribute("session");
+                            final RemoteSession remoteSession = (RemoteSession) UI.getCurrent().getSession().getAttribute("session"); //NOI18N
                                                         
                             RemoteObjectLight businessObject = webserviceBean.getObjectLight(
                                 serializedObjectTokens[1], 
@@ -383,7 +394,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
                                                 return webserviceBean.getChildrenOfClassLightRecursive(
                                                         parent.getId(),
                                                         parent.getClassName(),
-                                                        "GenericPhysicalPort",
+                                                        "GenericPhysicalPort", //NOI18N
                                                         0,
                                                         remoteSession.getIpAddress(),
                                                         remoteSession.getSessionId());
@@ -440,15 +451,174 @@ public class ComponentConnectionCreator extends VerticalLayout {
                                                             remoteSession.getIpAddress(),
                                                             remoteSession.getSessionId());
                                                         
-                                                        webserviceBean.moveObjects(
-                                                            parent.getClassName(), 
-                                                            parent.getId(), 
-                                                            new String[] {businessObject.getClassName()}, 
-                                                            new long[] {businessObject.getId()}, 
-                                                            remoteSession.getIpAddress(), 
-                                                            remoteSession.getSessionId());
-                                                        treeHierarchy.expand(parentNode);
+                                                        String classNameTransceiver = "Transceiver";
                                                         
+                                                        if (webserviceBean.isSubclassOf(
+                                                            businessObject.getClassName(), 
+                                                            classNameTransceiver, //NOI18N
+                                                            remoteSession.getIpAddress(), 
+                                                            remoteSession.getSessionId())) {
+                                                            
+                                                            String opticalPortClassName = "OpticalPort";
+                                                            
+                                                            List<RemoteClassMetadataLight> possibleChildren = webserviceBean.getPossibleChildren(
+                                                                parent.getClassName(), remoteSession.getIpAddress(), remoteSession.getSessionId());
+                                                            
+                                                            boolean isPossibleChild = false;
+                                                            
+                                                            for (RemoteClassMetadataLight possibleChild : possibleChildren) {
+                                                                if (opticalPortClassName.equals(possibleChild.getClassName())) {
+                                                                    isPossibleChild = true;
+                                                                    break;
+                                                                }
+                                                            }
+                                                            if (isPossibleChild) {
+                                                                Window window = new Window();
+                                                                window.setHeight(50, Unit.PERCENTAGE);
+                                                                window.setWidth(50, Unit.PERCENTAGE);
+                                                                window.setModal(true);
+                                                                
+                                                                VerticalLayout vly = new VerticalLayout();
+                                                                vly.setSizeFull();
+                                                                
+                                                                GridLayout gly = new GridLayout();
+                                                                gly.setSpacing(true);
+                                                                gly.setColumns(2);
+                                                                gly.setRows(3);
+                                                                
+                                                                Label lblTransceiverName = new Label("Transceiver Name");
+                                                                final TextField txtTransceiverName = new TextField();
+                                                                
+                                                                Label lblPortType = new Label("Port Type");
+                                                                final ComboBox<String> cmbPortType = new ComboBox<>();
+                                                                
+                                                                Label lblPortName = new Label("Port Name");
+                                                                final TextField txtPortName = new TextField();
+                                                                
+                                                                Button btnOK = new Button("OK");
+                                                                Button btnCancel = new Button("Cancel");
+                                                                
+                                                                cmbPortType.setItems("OpticalPort", "ElectricalPort");
+                                                                
+                                                                btnOK.setWidth(80, Unit.PIXELS);
+                                                                btnOK.addClickListener(new ClickListener() {
+                                                                    @Override
+                                                                    public void buttonClick(Button.ClickEvent event) {
+                                                                        if (txtTransceiverName.getValue() != null && !txtTransceiverName.getValue().isEmpty()) {
+                                                                            if (cmbPortType.getValue() != null && !cmbPortType.getValue().isEmpty()) {
+                                                                                if (txtPortName.getValue() != null && !txtPortName.getValue().isEmpty()) {
+                                                                                    try {
+                                                                                        long portId = webserviceBean.createObject(
+                                                                                            cmbPortType.getValue(), //NOI18N
+                                                                                            parent.getClassName(), 
+                                                                                            parent.getId(), 
+                                                                                            new String[] {"name"}, //NOI18N
+                                                                                            new String[] {txtPortName.getValue()}, 
+                                                                                            -1, 
+                                                                                            remoteSession.getIpAddress(), 
+                                                                                            remoteSession.getSessionId());
+
+                                                                                        RemoteObjectLight portObject = webserviceBean.getObjectLight(
+                                                                                            cmbPortType.getValue(), //NOI18N
+                                                                                            portId, 
+                                                                                            remoteSession.getIpAddress(), 
+                                                                                            remoteSession.getSessionId());
+
+                                                                                        webserviceBean.moveObjects(
+                                                                                            portObject.getClassName(), 
+                                                                                            portObject.getId(), 
+                                                                                            new String[] {businessObject.getClassName()}, 
+                                                                                            new long[] {businessObject.getId()}, 
+                                                                                            remoteSession.getIpAddress(), 
+                                                                                            remoteSession.getSessionId());
+                                                                                        
+                                                                                        List<StringPair> attrs = new ArrayList();
+                                                                                        attrs.add(new StringPair("name", txtTransceiverName.getValue()));
+                                                                                                                                                                                
+                                                                                        webserviceBean.updateObject(
+                                                                                            businessObject.getClassName(),
+                                                                                            businessObject.getId(), 
+                                                                                            attrs, 
+                                                                                            remoteSession.getIpAddress(), 
+                                                                                            remoteSession.getSessionId());
+                                                                                        
+                                                                                        treeHierarchy.expand(parentNode);
+                                                                                    } catch (ServerSideException ex) {
+                                                                                        Notifications.showError(ex.getMessage());
+                                                                                    }
+                                                                                    window.close();
+                                                                                }
+                                                                                else
+                                                                                    Notifications.showWarning("Port Name not set");
+                                                                            }
+                                                                            else
+                                                                                Notifications.showWarning("Port Type not set");
+                                                                        }
+                                                                        else
+                                                                            Notifications.showWarning("Transceiver Name not set");
+                                                                    }
+                                                                });
+                                                                
+                                                                btnCancel.setWidth(80, Unit.PIXELS);
+                                                                btnCancel.addClickListener(new ClickListener() {
+                                                                    @Override
+                                                                    public void buttonClick(Button.ClickEvent event) {
+                                                                        window.close();
+                                                                    }
+                                                                });
+                                                                
+                                                                gly.addComponent(lblTransceiverName);
+                                                                gly.addComponent(txtTransceiverName);
+                                                                gly.addComponent(lblPortType);
+                                                                gly.addComponent(cmbPortType);
+                                                                gly.addComponent(lblPortName);
+                                                                gly.addComponent(txtPortName);
+                                                                gly.addComponent(btnOK);
+                                                                gly.addComponent(btnCancel);
+                                                                
+                                                                gly.setComponentAlignment(lblTransceiverName, Alignment.MIDDLE_LEFT);
+                                                                gly.setComponentAlignment(lblPortType, Alignment.MIDDLE_LEFT);
+                                                                gly.setComponentAlignment(lblPortName, Alignment.MIDDLE_LEFT);
+                                                                gly.setComponentAlignment(txtTransceiverName, Alignment.MIDDLE_CENTER);
+                                                                gly.setComponentAlignment(cmbPortType, Alignment.MIDDLE_CENTER);
+                                                                gly.setComponentAlignment(txtPortName, Alignment.MIDDLE_CENTER);
+                                                                gly.setComponentAlignment(btnOK, Alignment.MIDDLE_RIGHT);
+                                                                gly.setComponentAlignment(btnCancel, Alignment.MIDDLE_LEFT);
+                                                                
+                                                                vly.addComponent(gly);
+                                                                vly.setComponentAlignment(gly, Alignment.MIDDLE_CENTER);
+                                                                window.setContent(vly);
+                                                                                                                                
+                                                                UI.getCurrent().addWindow(window);
+                                                            }
+                                                            else
+                                                                Notifications.showWarning(String.format("%s cannot contain %s", parent.getClassName(), opticalPortClassName));
+                                                        }
+                                                        else {
+                                                            List<RemoteClassMetadataLight> possibleChildren = webserviceBean.getPossibleChildren(
+                                                                parent.getClassName(), remoteSession.getIpAddress(), remoteSession.getSessionId());
+                                                            
+                                                            boolean isPossibleChild = false;
+                                                            
+                                                            for (RemoteClassMetadataLight possibleChild : possibleChildren) {
+                                                                if (businessObject.getClassName().equals(possibleChild.getClassName())) {
+                                                                    isPossibleChild = true;
+                                                                    break;
+                                                                }
+                                                            }
+                                                            if (isPossibleChild) {
+                                                                webserviceBean.moveObjects(
+                                                                    parent.getClassName(), 
+                                                                    parent.getId(), 
+                                                                    new String[] {businessObject.getClassName()}, 
+                                                                    new long[] {businessObject.getId()}, 
+                                                                    remoteSession.getIpAddress(), 
+                                                                    remoteSession.getSessionId());
+                                                                treeHierarchy.expand(parentNode);
+                                                            }
+                                                            else
+                                                                Notifications.showWarning(String.format("%s cannot contain %s", parent.getClassName(), businessObject.getClassName()));
+                                                        }
                                                     } catch (ServerSideException ex) {
                                                         Notifications.showError(ex.getMessage());
                                                     }
@@ -486,79 +656,12 @@ public class ComponentConnectionCreator extends VerticalLayout {
         });
         return vlEndpoint;
     }
-    
-////    private VerticalLayout createEndpointsB() {
-////        VerticalLayout verticalLayout = new VerticalLayout();
-////        verticalLayout.setWidth(100, Unit.PERCENTAGE);
-////        verticalLayout.setHeight(100, Unit.PERCENTAGE);
-////        verticalLayout.setCaption("Endpoint B");
-////        DropTargetExtension<VerticalLayout> dropTarget = new DropTargetExtension(verticalLayout);
-////        dropTarget.setDropEffect(DropEffect.MOVE);
-////        
-////        dropTarget.addDropListener(new DropListener<VerticalLayout>() {
-////            @Override
-////            public void drop(DropEvent<VerticalLayout> event) {
-////                Optional<String> transferData = event.getDataTransferData(RemoteObjectLight.DATA_TYPE);
-////                if (transferData.isPresent()) {
-////                    for (String serializedObject : transferData.get().split("\n")) {
-////                        String[] serializedObjectTokens = serializedObject.split("~a~", -1);
-////                        RemoteObjectLight businessObject = new RemoteObjectLight(serializedObjectTokens[1], Long.valueOf(serializedObjectTokens[0]), serializedObjectTokens[2]);
-////                        boolean isGenericCommunicationsElement = false;
-////                        boolean isODF = false;
-////                        try {
-////                            isGenericCommunicationsElement = webserviceBean.isSubclassOf(
-////                                businessObject.getClassName(), 
-////                                "GenericCommunicationsElement", //NOI18N
-////                                Page.getCurrent().getWebBrowser().getAddress(), 
-////                                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-////                            
-////                            isODF = webserviceBean.isSubclassOf(
-////                                businessObject.getClassName(), 
-////                                "ODF", //NOI18N
-////                                Page.getCurrent().getWebBrowser().getAddress(), 
-////                                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-////                        } catch(ServerSideException ex) {
-////                            Notifications.showError(ex.getMessage());
-////                        }
-////                        if (businessObject.getId() != -1 && (isGenericCommunicationsElement || isODF)) { //Ignore the dummy root
-////                            BasicTree dynamicTree = new BasicTree(new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
-////                                        @Override
-////                                        public List<RemoteObjectLight> getChildren(RemoteObjectLight parentObject) {
-////                                            try {
-////                                                return webserviceBean.getChildrenOfClassLightRecursive(
-////                                                    businessObject.getId(), 
-////                                                    businessObject.getClassName(), 
-////                                                    "GenericPhysicalPort", 
-////                                                    0, 
-////                                                    Page.getCurrent().getWebBrowser().getAddress(), 
-////                                                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-////                                            } catch (ServerSideException ex) {
-////                                                Notifications.showError(ex.getLocalizedMessage());
-////                                                return new ArrayList<>();
-////                                            }
-////                                        }
-////                                    }, new BasicIconGenerator(webserviceBean, (RemoteSession) UI.getCurrent().getSession().getAttribute("session")),
-////                                    new AbstractNode<RemoteObjectLight>(businessObject) {
-////                                        @Override
-////                                        public AbstractAction[] getActions() { return new AbstractAction[0]; }
-////
-////                                        @Override
-////                                        public void refresh(boolean recursive) { }
-////                                }
-////                            );
-////                            verticalLayout.removeAllComponents();
-////                            verticalLayout.addComponent(dynamicTree);
-////                        }
-////                    }
-////                }
-////            }
-////        });
-////        return verticalLayout;
-////    }
-    
-    private List<RemoteObjectLight> getLinks(List<RemoteObjectLight> links) {
-        List<RemoteObjectLight> result = new ArrayList();
         
+    private List<RemoteObjectLight> getLinks(List<RemoteObjectLight> links) {
+        RemoteSession remoteSession = (RemoteSession) UI.getCurrent().getSession().getAttribute("session"); //NOI18N
+        
+        List<RemoteObjectLight> result = new ArrayList();
+                
         for (RemoteObjectLight link : links) {
             RemoteObjectLight endpointA = null;
             RemoteObjectLight endpointB = null;
@@ -567,9 +670,9 @@ public class ComponentConnectionCreator extends VerticalLayout {
                 List<RemoteObjectLight> theEndpointsA = webserviceBean.getSpecialAttribute(
                     link.getClassName(), 
                     link.getId(), 
-                    "endpointA", 
-                    Page.getCurrent().getWebBrowser().getAddress(), 
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                    "endpointA", //NOI18N
+                    remoteSession.getIpAddress(), 
+                    remoteSession.getSessionId());
                 
                 if (theEndpointsA != null && !theEndpointsA.isEmpty())
                     endpointA = theEndpointsA.get(0);
@@ -580,9 +683,9 @@ public class ComponentConnectionCreator extends VerticalLayout {
                 List<RemoteObjectLight> theEndpointsB = webserviceBean.getSpecialAttribute(
                     link.getClassName(), 
                     link.getId(), 
-                    "endpointB", 
-                    Page.getCurrent().getWebBrowser().getAddress(), 
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                    "endpointB", //NOI18N
+                    remoteSession.getIpAddress(), 
+                    remoteSession.getSessionId());
                 
                 if (theEndpointsB != null && !theEndpointsB.isEmpty())
                     endpointB = theEndpointsB.get(0);
@@ -608,6 +711,8 @@ public class ComponentConnectionCreator extends VerticalLayout {
     }
     
     private Component createInstallationMaterialTree(List<RemoteObjectLight> deviceList) {
+        RemoteSession remoteSession = (RemoteSession) UI.getCurrent().getSession().getAttribute("session"); //NOI18N
+        
         BasicTree tree = new BasicTree(
                 new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
                     @Override
@@ -617,15 +722,15 @@ public class ComponentConnectionCreator extends VerticalLayout {
                                 c.getClassName(), 
                                 c.getId(), 
                                 -1, 
-                                Page.getCurrent().getWebBrowser().getAddress(),
-                                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                                remoteSession.getIpAddress(),
+                                remoteSession.getSessionId());
                         } catch (ServerSideException ex) {
                             Notifications.showError(ex.getLocalizedMessage());
                             return new ArrayList<>();
                         }
                     }
                 }, 
-                new BasicIconGenerator(webserviceBean, ((RemoteSession) UI.getCurrent().getSession().getAttribute("session"))), 
+                new BasicIconGenerator(webserviceBean, remoteSession), 
                 InventoryObjectNode.asNodeList(deviceList));
 
         tree.resetTo(InventoryObjectNode.asNodeList(deviceList));
@@ -638,6 +743,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
     }
     
     private List<LinkBean> getLinkBeans(List<RemoteObjectLight> links) {
+        RemoteSession remoteSession = (RemoteSession) UI.getCurrent().getSession().getAttribute("session"); //NOI18N
         List<LinkBean> items = new ArrayList();
         
         for (RemoteObjectLight link : links) {        
@@ -648,9 +754,9 @@ public class ComponentConnectionCreator extends VerticalLayout {
                 List<RemoteObjectLight> theEndpointsA = webserviceBean.getSpecialAttribute(
                     link.getClassName(), 
                     link.getId(), 
-                    "endpointA", 
-                    Page.getCurrent().getWebBrowser().getAddress(), 
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                    "endpointA", //NOI18N
+                    remoteSession.getIpAddress(), 
+                    remoteSession.getSessionId());
                 
                 if (theEndpointsA != null && !theEndpointsA.isEmpty())
                     endpointA = theEndpointsA.get(0);
@@ -661,9 +767,9 @@ public class ComponentConnectionCreator extends VerticalLayout {
                 List<RemoteObjectLight> theEndpointsB = webserviceBean.getSpecialAttribute(
                     link.getClassName(), 
                     link.getId(), 
-                    "endpointB", 
-                    Page.getCurrent().getWebBrowser().getAddress(), 
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                    "endpointB", //NOI18N
+                    remoteSession.getIpAddress(), 
+                    remoteSession.getSessionId());
                 
                 if (theEndpointsB != null && !theEndpointsB.isEmpty())
                     endpointB = theEndpointsB.get(0);
@@ -682,7 +788,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
      * @param deviceList a given device list
      * @return a simple tree
      */
-    private Grid createInstallationMaterialGrid(List<RemoteObjectLight> deviceList){
+    private Grid createInstallationMaterialGrid(List<RemoteObjectLight> deviceList) {
         Grid<LinkBean> grid = new Grid();
         grid.setSizeFull();
                 
@@ -697,9 +803,9 @@ public class ComponentConnectionCreator extends VerticalLayout {
     }
     
     private class LinkBean {
-        private RemoteObjectLight endpointA;
-        private RemoteObjectLight objectLink;
-        private RemoteObjectLight endpointB;
+        private final RemoteObjectLight endpointA;
+        private final RemoteObjectLight objectLink;
+        private final RemoteObjectLight endpointB;
         
         public LinkBean(RemoteObjectLight endpointA, RemoteObjectLight objectLink, RemoteObjectLight endpointB) {
             this.endpointA = endpointA;

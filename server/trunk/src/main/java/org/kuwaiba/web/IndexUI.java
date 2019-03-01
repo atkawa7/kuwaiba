@@ -15,6 +15,7 @@
  */
 package org.kuwaiba.web;
 
+import com.vaadin.annotations.Push;
 import org.kuwaiba.web.modules.welcome.WelcomeComponent;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -55,6 +56,7 @@ import org.kuwaiba.web.procmanager.ProcessManagerModule;
 @Theme("nuqui")
 @CDIUI("")
 @SuppressWarnings("serial")
+@Push
 public class IndexUI extends UI {
     @Inject
     CDIViewProvider viewProvider;

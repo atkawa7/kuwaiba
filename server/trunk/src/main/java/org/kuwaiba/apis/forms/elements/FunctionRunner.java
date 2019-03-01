@@ -86,7 +86,7 @@ public class FunctionRunner implements Runner {
                 binding.setVariable(parameterNames.get(i), parameters.get(i));
         }
         GroovyShell shell = new GroovyShell(FunctionRunner.class.getClassLoader(), binding);
-        
+        //System.out.println(">>><<<" + getFunctionName());
         return shell.evaluate(script);
     }
 
