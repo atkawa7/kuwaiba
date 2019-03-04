@@ -27,6 +27,9 @@ import com.ait.lienzo.client.core.event.NodeMouseEnterEvent;
 import com.ait.lienzo.client.core.event.NodeMouseEnterHandler;
 import com.ait.lienzo.client.core.event.NodeMouseExitEvent;
 import com.ait.lienzo.client.core.event.NodeMouseExitHandler;
+import com.ait.lienzo.client.core.mediator.EventFilter;
+import com.ait.lienzo.client.core.mediator.MousePanMediator;
+import com.ait.lienzo.client.core.mediator.MouseWheelZoomMediator;
 import com.ait.lienzo.client.core.shape.Circle;
 import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.core.shape.Line;
@@ -278,7 +281,10 @@ public class LienzoComponentWidget extends LienzoPanel implements ClntFrameWidge
         }
     };
     
-    public LienzoComponentWidget() {
+    public LienzoComponentWidget() {        
+        getViewport().pushMediator(new MousePanMediator(EventFilter.CONTROL, EventFilter.BUTTON_LEFT));
+        getViewport().pushMediator(new MouseWheelZoomMediator(EventFilter.SHIFT, EventFilter.CONTROL));
+        
         this.tempEdge = new Edge();
         backgroundLayer = new Layer();
         add(backgroundLayer);
