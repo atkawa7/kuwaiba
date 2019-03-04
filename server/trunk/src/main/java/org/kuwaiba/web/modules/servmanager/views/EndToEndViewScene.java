@@ -37,6 +37,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.web.gui.navigation.views.AbstractScene;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
+import org.kuwaiba.apis.web.gui.resources.ResourceFactory;
 import org.kuwaiba.apis.web.gui.views.util.UtilHtml;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteLogicalConnectionDetails;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
@@ -369,8 +370,8 @@ public class EndToEndViewScene extends AbstractScene {
                     }
                 }
                 for (SrvNodeWidget node : nodes.values()) {       
-                    node.setWidth(10);
-                    node.setHeight(10);
+                    node.setWidth(ResourceFactory.DEFAULT_ICON_WIDTH + 8);
+                    node.setHeight(ResourceFactory.DEFAULT_ICON_HEIGHT + 8);
                     lienzoComponent.addNodeWidget(node);
                 }
                 
