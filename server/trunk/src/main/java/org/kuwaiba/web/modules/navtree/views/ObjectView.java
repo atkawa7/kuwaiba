@@ -96,26 +96,26 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
         VerticalLayout lytObjectView = new VerticalLayout();
         
         if (viewMap != null) {
-            LienzoComponent lienzoComponent = new LienzoComponent();
+            LienzoComponent<BusinessObjectLight, BusinessObjectLight> lienzoComponent = new LienzoComponent();
             
             for (AbstractViewNode aNode : viewMap.getNodes()) {
-                SrvNodeWidget nodeWidget = new SrvNodeWidget(((BusinessObjectLight)aNode.getIdentifier()).getId());
+                SrvNodeWidget nodeWidget = new SrvNodeWidget();
                 nodeWidget.setCaption(aNode.getIdentifier().toString());
                 nodeWidget.setX((int)aNode.getProperties().get("x"));
                 nodeWidget.setY((int)aNode.getProperties().get("y"));
                 
                 nodeWidget.setUrlIcon("/kuwaiba/icons?class=" + ((BusinessObjectLight)aNode.getIdentifier()).getClassName()); //NOI18N
-                lienzoComponent.addNodeWidget(nodeWidget);
+                lienzoComponent.addNodeWidget((BusinessObjectLight) aNode.getIdentifier(), nodeWidget);
             }
             
             viewMap.getEdges().stream().forEach((anEdge) -> {
-                SrvEdgeWidget edgeWidget = new SrvEdgeWidget(((BusinessObjectLight)anEdge.getIdentifier()).getId());
+                SrvEdgeWidget edgeWidget = new SrvEdgeWidget();
                 AbstractViewNode sourceNode = viewMap.getEdgeSource(anEdge);
                 if (sourceNode != null) {
-                    edgeWidget.setSource(lienzoComponent.getNodeWidget(((BusinessObjectLight)sourceNode.getIdentifier()).getId()));
+                    edgeWidget.setSource(lienzoComponent.getNodeWidget((BusinessObjectLight)sourceNode.getIdentifier()));
                     AbstractViewNode targetNode = viewMap.getEdgeTarget(anEdge);
                     if (targetNode != null) { //The edge is only added if both sides are found
-                        edgeWidget.setTarget(lienzoComponent.getNodeWidget(((BusinessObjectLight)targetNode.getIdentifier()).getId()));
+                        edgeWidget.setTarget(lienzoComponent.getNodeWidget((BusinessObjectLight)targetNode.getIdentifier()));
                         edgeWidget.setControlPoints((List<Point>)anEdge.getProperties().get("controlPoints")); 
                         try {
                             ClassMetadata theClass = mem.getClass(((BusinessObjectLight)anEdge.getIdentifier()).getClassName());
@@ -123,7 +123,7 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
                         } catch (MetadataObjectNotFoundException ex) {
                             //In case of error, use a default black line
                         }
-                        lienzoComponent.addEdgeWidget(edgeWidget);
+                        lienzoComponent.addEdgeWidget((BusinessObjectLight) anEdge.getIdentifier(), edgeWidget);
                     }
                 }
             });

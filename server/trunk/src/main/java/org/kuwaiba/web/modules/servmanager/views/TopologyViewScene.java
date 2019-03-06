@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import org.kuwaiba.apis.web.gui.navigation.views.AbstractScene;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.apis.web.gui.views.util.UtilHtml;
@@ -191,19 +192,19 @@ public class TopologyViewScene extends AbstractScene {
     }
 
     protected SrvNodeWidget attachNodeWidget(RemoteObjectLight node) {
-        SrvNodeWidget newNode = new SrvNodeWidget(node.getId());
+        SrvNodeWidget newNode = new SrvNodeWidget();
         newNode.setUrlIcon("/icons/" + node.getClassName() + ".png");
         newNode.setCaption(node.toString());
         newNode.setX(nodes.size() * 20);
         newNode.setY((nodes.size() % 2) * 20);
         nodes.put(node, newNode);
-        lienzoComponent.addNodeWidget(newNode);
+        lienzoComponent.addNodeWidget(node, newNode);
         return newNode;
     }
     
     protected SrvEdgeWidget attachEdgeWidget(RemoteObjectLight edge, SrvNodeWidget sourceNode, SrvNodeWidget targetNode) {
         try {
-            SrvEdgeWidget newEdge = new SrvEdgeWidget(edge.getId());
+            SrvEdgeWidget newEdge = new SrvEdgeWidget();
             newEdge.setSource(sourceNode);
             newEdge.setTarget(targetNode);
             
@@ -211,10 +212,12 @@ public class TopologyViewScene extends AbstractScene {
             newEdge.setColor(UtilHtml.toHexString(new Color(classMetadata.getColor())));
             newEdge.setCaption(edge.toString());
             edges.put(edge, newEdge);
-            lienzoComponent.addEdgeWidget(newEdge);
+            lienzoComponent.addEdgeWidget(edge, newEdge);
             return newEdge; 
         } catch (ServerSideException ex) {
-            return new SrvEdgeWidget(323927373);
+            SrvEdgeWidget srvEdgeWidget = new SrvEdgeWidget();
+            srvEdgeWidget.setId(UUID.randomUUID().toString());
+            return srvEdgeWidget;
         }
     }
 }

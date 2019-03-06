@@ -30,6 +30,7 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -78,8 +79,8 @@ public class EndToEndViewScene extends AbstractScene {
     EdgeWidgetClickListener edgeWidgetClickListener = new EdgeWidgetClickListener() {
 
         @Override
-        public void edgeWidgetClicked(long id) {
-            SrvEdgeWidget srvEdge = lienzoComponent.getEdge(id);
+        public void edgeWidgetClicked(String id) {
+            SrvEdgeWidget srvEdge = lienzoComponent.getEdge(lienzoComponent.getEdgeObject(id));
             Window tableInfo = new Window(" ");
             tableInfo.addStyleName("v-window-center");
 //            try {
@@ -104,19 +105,21 @@ public class EndToEndViewScene extends AbstractScene {
     NodeWidgetClickListener nodeWidgetClickListener = new NodeWidgetClickListener() {
 
         @Override
-        public void nodeWidgetClicked(long id) {
-            SrvNodeWidget srvNode = lienzoComponent.getNodeWidget(id);
+        public void nodeWidgetClicked(String id) {
+            RemoteObjectLight nodeObject = (RemoteObjectLight) lienzoComponent.getNodeObject(id);
+            SrvNodeWidget srvNode = lienzoComponent.getNodeWidget(nodeObject);
             Window tableInfo = new Window(" ");
             tableInfo.setId("report-forms-container");
             tableInfo.addStyleName("report-forms");
             try {
                 Component x = null;
                 for (RemoteObjectLight device : nodes.keySet()) {
-                    if (device.getId() == id){
+                    if (id.equals(String.valueOf(device.getId()))){
                         TableCreator formView = new TableCreator(service, wsBean);
                         
                         List<SrvEdgeWidget> connectedEdgeWidgets = lienzoComponent.getNodeEdgeWidgets(srvNode);
                         for(SrvEdgeWidget edge : connectedEdgeWidgets){
+                            
                             RemoteObjectLight foundEdge = findEdge(edge.getId());
                             RemoteObjectSpecialRelationships specialAttributes = wsBean.getSpecialAttributes(foundEdge.getClassName(), 
                                     foundEdge.getId(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
@@ -161,7 +164,7 @@ public class EndToEndViewScene extends AbstractScene {
             } catch (ServerSideException ex) {
                 Exceptions.printStackTrace(ex);
             }
-            lienzoComponent.updateNodeWidget(id);
+            lienzoComponent.updateNodeWidget(nodeObject);
         }
     };
     
@@ -369,15 +372,17 @@ public class EndToEndViewScene extends AbstractScene {
                         }
                     }
                 }
-                for (SrvNodeWidget node : nodes.values()) {       
+                for (RemoteObjectLight object : nodes.keySet()) {       
+                    SrvNodeWidget node = nodes.get(object);
                     node.setWidth(ResourceFactory.DEFAULT_ICON_WIDTH + 8);
                     node.setHeight(ResourceFactory.DEFAULT_ICON_HEIGHT + 8);
-                    lienzoComponent.addNodeWidget(node);
+                    lienzoComponent.addNodeWidget(object, node);
                 }
                 
-                for (SrvEdgeWidget edge : edges.values())
-                    lienzoComponent.addEdgeWidget(edge);
-                
+                for (RemoteObjectLight edgeObjects : edges.keySet()) {
+                    SrvEdgeWidget edge = edges.get(edgeObjects);
+                    lienzoComponent.addEdgeWidget(edgeObjects, edge);
+                }
                 addComponent(lienzoComponent);
             }
         } catch (ServerSideException ex) {
@@ -391,7 +396,7 @@ public class EndToEndViewScene extends AbstractScene {
     }
 
     protected SrvNodeWidget attachNodeWidget(RemoteObjectLight node) {
-        SrvNodeWidget newNode = new SrvNodeWidget(node.getId());
+        SrvNodeWidget newNode = new SrvNodeWidget();
         
             
         newNode.setUrlIcon("/icons/" + node.getClassName() + ".png");
@@ -405,7 +410,7 @@ public class EndToEndViewScene extends AbstractScene {
     
     protected SrvEdgeWidget attachEdgeWidget(RemoteObjectLight edge, SrvNodeWidget sourceNode, SrvNodeWidget targetNode) {
         try {
-            SrvEdgeWidget newEdge = new SrvEdgeWidget(edge.getId());
+            SrvEdgeWidget newEdge = new SrvEdgeWidget();
             newEdge.setSource(sourceNode);
             newEdge.setTarget(targetNode);
             
@@ -416,7 +421,9 @@ public class EndToEndViewScene extends AbstractScene {
             //lienzoComponent.addEdgeWidget(newEdge);
             return newEdge; 
         } catch (ServerSideException ex) {
-            return new SrvEdgeWidget(323927373);
+            SrvEdgeWidget srvEdgeWidget = new SrvEdgeWidget();
+            srvEdgeWidget.setId(UUID.randomUUID().toString());
+            return srvEdgeWidget;
         }
     }
     

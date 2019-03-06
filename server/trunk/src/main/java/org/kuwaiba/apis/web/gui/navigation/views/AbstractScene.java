@@ -33,7 +33,7 @@ public abstract class AbstractScene extends VerticalLayout {
     /**
      * The component that is used to render the view at low level
      */
-    protected LienzoComponent lienzoComponent;
+    protected LienzoComponent<RemoteObjectLight, RemoteObjectLight> lienzoComponent;
     /**
      * A dictionary with the nodes in the current view
      */
@@ -84,12 +84,8 @@ public abstract class AbstractScene extends VerticalLayout {
         return null;
     }
     
-    public RemoteObjectLight findEdge(long id){
-        for (RemoteObjectLight edge : edges.keySet()) {
-            if(edge.getId() == id)
-                return edge;
-        }
-        return null;
+    public RemoteObjectLight findEdge(String id){
+        return lienzoComponent.getEdgeObject(id);
     }
     
     /**

@@ -38,7 +38,7 @@ public class GoogleMapsMapProvider extends AbstractMapProvider {
     /**
      * The map component
      */
-    private GoogleMapsComponent map;
+    private GoogleMapsComponent<BusinessObjectLight, BusinessObjectLight> map;
     /**
      * The list of nodes
      */
@@ -77,7 +77,7 @@ public class GoogleMapsMapProvider extends AbstractMapProvider {
       
     @Override
     public void addMarker(BusinessObjectLight businessObject, GeoCoordinate position, String iconUrl) {
-        nodes.put(businessObject, this.map.addMarker(businessObject.toString(), new LatLon(position.getLatitude(), position.getLongitude()), true, iconUrl));
+        nodes.put(businessObject, this.map.addMarker(businessObject, businessObject.toString(), new LatLon(position.getLatitude(), position.getLongitude()), true, iconUrl));
     }
 
     @Override
@@ -92,7 +92,7 @@ public class GoogleMapsMapProvider extends AbstractMapProvider {
                     gMapsCoordinates.add(new LatLon(aGeoCoordinate.getLatitude(), aGeoCoordinate.getLongitude()));
                 });
                 aPolyline.setCoordinates(gMapsCoordinates);
-                this.map.addEdge(aPolyline, sourceMarker, targetMarker);
+                this.map.addEdge(businessObject, aPolyline, sourceMarker, targetMarker);
                 this.sourceNodes.put(aPolyline, sourceObject);
                 this.targetNodes.put(aPolyline, targetObject);
                 this.edges.put(businessObject, aPolyline);

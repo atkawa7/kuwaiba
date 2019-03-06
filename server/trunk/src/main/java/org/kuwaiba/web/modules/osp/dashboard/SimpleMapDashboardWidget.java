@@ -97,7 +97,7 @@ public class SimpleMapDashboardWidget extends AbstractDashboardWidget {
             language = OSPConstants.DEFAULT_LANGUAGE;
         }
 
-        GoogleMapsComponent mapMain = new GoogleMapsComponent(apiKey, null, language);
+        GoogleMapsComponent<RemoteObjectLight, RemoteObjectLight> mapMain = new GoogleMapsComponent(apiKey, null, language);
 
         mapMain.setSizeFull();
         mapMain.showMarkerLabels(true);
@@ -118,7 +118,7 @@ public class SimpleMapDashboardWidget extends AbstractDashboardWidget {
                                 ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
 
                             if (latitude != null)
-                                mapMain.addMarker(aPhysicalLocation.toString(), new LatLon(
+                                mapMain.addMarker(aPhysicalLocation, aPhysicalLocation.toString(), new LatLon(
                                     Float.valueOf(latitude), Float.valueOf(longitude)), false, "/icons/" + aPhysicalLocation.getClassName() + ".png");
                         }
 
