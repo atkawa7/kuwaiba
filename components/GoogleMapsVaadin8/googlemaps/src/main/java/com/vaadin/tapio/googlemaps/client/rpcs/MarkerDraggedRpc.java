@@ -8,5 +8,5 @@ import com.vaadin.tapio.googlemaps.client.LatLon;
  * Google Maps.
  */
 public interface MarkerDraggedRpc extends ServerRpc {
-    void markerDragged(long markerId, LatLon newPosition);
+    void markerDragged(String markerId, LatLon newPosition);
 }

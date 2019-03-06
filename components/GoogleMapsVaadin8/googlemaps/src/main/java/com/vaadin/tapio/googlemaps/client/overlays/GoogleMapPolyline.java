@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vaadin.tapio.googlemaps.client.LatLon;
+import java.util.Objects;
 
 /**
  * A class representing a polyline (a line consisting of multiple points)
@@ -14,9 +15,7 @@ public class GoogleMapPolyline implements Serializable {
 
     private static final long serialVersionUID = 646346543563L;
 
-    private static long idCounter = 0;
-
-    private long id;
+    private String id;
     
     private String caption;
 
@@ -37,8 +36,6 @@ public class GoogleMapPolyline implements Serializable {
     private boolean editable = false;
 
     public GoogleMapPolyline() {
-        id = idCounter;
-        idCounter++;
     }
 
     public GoogleMapPolyline(String caption, List<LatLon> coordinates) {
@@ -223,20 +220,19 @@ public class GoogleMapPolyline implements Serializable {
         this.editable = editable;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
-
+    
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int) (id ^ (id >>> 32));
-        return result;
+        int hash = 5;
+        hash = 23 * hash + Objects.hashCode(this.id);
+        return hash;
     }
 
     @Override
@@ -250,13 +246,13 @@ public class GoogleMapPolyline implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        GoogleMapPolyline other = (GoogleMapPolyline) obj;
-        if (id != other.id) {
+        final GoogleMapPolyline other = (GoogleMapPolyline) obj;
+        if (!Objects.equals(this.id, other.id)) {
             return false;
         }
         return true;
     }
-    
+        
     public boolean hasSameCoordinates(GoogleMapPolyline other) {        
         if (other.getCoordinates() == null && getCoordinates() == null)
             return true;

@@ -3,16 +3,15 @@ package com.vaadin.tapio.googlemaps.client.overlays;
 import java.io.Serializable;
 
 import com.vaadin.tapio.googlemaps.client.LatLon;
+import java.util.Objects;
 
 /**
  * The class representing a marker of the Google Map.
  */
 public class GoogleMapMarker implements Serializable {
     private static final long serialVersionUID = 612346543243L;
-
-    private static long idCounter = 0;
-
-    private long id;
+    
+    private String id;
 
     private LatLon position = new LatLon(0, 0);
 
@@ -32,8 +31,6 @@ public class GoogleMapMarker implements Serializable {
      * Instantiates a new GoogleMapMarker.
      */
     public GoogleMapMarker() {
-        id = idCounter;
-        idCounter++;
     }
 
     /**
@@ -191,20 +188,19 @@ public class GoogleMapMarker implements Serializable {
         this.visible = visible;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int) (id ^ (id >>> 32));
-        return result;
+        int hash = 7;
+        hash = 53 * hash + Objects.hashCode(this.id);
+        return hash;
     }
 
     @Override
@@ -218,13 +214,13 @@ public class GoogleMapMarker implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        GoogleMapMarker other = (GoogleMapMarker) obj;
-        if (id != other.id) {
+        final GoogleMapMarker other = (GoogleMapMarker) obj;
+        if (!Objects.equals(this.id, other.id)) {
             return false;
         }
         return true;
     }
-
+    
     public boolean hasSameFieldValues(GoogleMapMarker other) {
         if ((other.getCaption() != null || getCaption() != null)
             && !other.getCaption().equals(getCaption())) {

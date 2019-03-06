@@ -1,5 +1,6 @@
 package com.vaadin.tapio.googlemaps;
 
+import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -66,12 +67,16 @@ import com.vaadin.tapio.googlemaps.client.rpcs.PolylineRightClickedRpc;
 import com.vaadin.ui.AbstractComponentContainer;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
+import java.util.UUID;
 
 /**
  * The class representing Google Maps.
+ * @param <N> The node object type wrapped by the marker
+ * @param <E> The edge object type to be wrapped
  */
-public class GoogleMapsComponent extends AbstractComponentContainer {
-
+public class GoogleMapsComponent<N, E> extends AbstractComponentContainer {
+    private HashMap<N, String> nodeObjects = new HashMap();
+    private HashMap<E, String> edgeObjects = new HashMap();
     /**
      * Base map types supported by Google Maps.
      */
@@ -81,7 +86,7 @@ public class GoogleMapsComponent extends AbstractComponentContainer {
     
     private final MarkerClickedRpc markerClickedRpc = new MarkerClickedRpc() {
         @Override
-        public void markerClicked(long markerId) {
+        public void markerClicked(String markerId) {
 
             GoogleMapMarker marker = getState().markers.get(markerId);
             for (MarkerClickListener listener : markerClickListeners) {
@@ -92,7 +97,7 @@ public class GoogleMapsComponent extends AbstractComponentContainer {
     
     private final MarkerDblClickedRpc markerDblClickedRpc = new MarkerDblClickedRpc() {
         @Override
-        public void markerDblClicked(long markerId) {
+        public void markerDblClicked(String markerId) {
 
             GoogleMapMarker marker = getState().markers.get(markerId);
             for (MarkerDblClickListener listener : markerDblClickListeners) {
@@ -103,7 +108,7 @@ public class GoogleMapsComponent extends AbstractComponentContainer {
     
     private final MarkerRightClickedRpc markerRightClickedRpc = new MarkerRightClickedRpc() {
         @Override
-        public void markerRightClicked(long markerId) {
+        public void markerRightClicked(String markerId) {
 
             GoogleMapMarker marker = getState().markers.get(markerId);
             for (MarkerRightClickListener listener : markerRightClickListeners) {
@@ -114,7 +119,7 @@ public class GoogleMapsComponent extends AbstractComponentContainer {
 
     private final MarkerDraggedRpc markerDraggedRpc = new MarkerDraggedRpc() {
         @Override
-        public void markerDragged(long markerId, LatLon newPosition) {
+        public void markerDragged(String markerId, LatLon newPosition) {
             GoogleMapMarker marker = getState().markers.get(markerId);
             LatLon oldPosition = marker.getPosition();
             marker.setPosition(newPosition);
@@ -181,7 +186,7 @@ public class GoogleMapsComponent extends AbstractComponentContainer {
     
     private final PolylineClickedRpc polylineClickedRpc = new PolylineClickedRpc() {
         @Override
-        public void polylineClicked(long polylineId) {
+        public void polylineClicked(String polylineId) {
 
             GoogleMapPolyline polyline = getState().polylines.get(polylineId);
             for (PolylineClickListener listener : polylineClickListeners) {
@@ -192,7 +197,7 @@ public class GoogleMapsComponent extends AbstractComponentContainer {
     
     private final PolylineDblClickedRpc polylineDblClickedRpc = new PolylineDblClickedRpc() {
         @Override
-        public void polylineDblClicked(long polylineId) {
+        public void polylineDblClicked(String polylineId) {
 
             GoogleMapPolyline polyline = getState().polylines.get(polylineId);
             for (PolylineDblClickListener listener : polylineDblClickListeners) {
@@ -203,7 +208,7 @@ public class GoogleMapsComponent extends AbstractComponentContainer {
     
     private final PolylineRightClickedRpc polylineRightClickedRpc = new PolylineRightClickedRpc() {
         @Override
-        public void polylineRightClicked(long polylineId) {
+        public void polylineRightClicked(String polylineId) {
 
             GoogleMapPolyline polyline = getState().polylines.get(polylineId);
             for (PolylineRightClickListener listener : polylineRightClickListeners) {
@@ -394,7 +399,7 @@ public class GoogleMapsComponent extends AbstractComponentContainer {
 
     private final Map<GoogleMapInfoWindow, Component> infoWindowContents = new HashMap<>();
     
-    private final Map<Long, GoogleMapPolyline> edgeIDs = new HashMap<>();
+    private final Map<String, GoogleMapPolyline> edgeIDs = new HashMap<>();
 
     /**
      * The layout that actually contains the contents of Info Windows (if Vaadin components are used).
@@ -506,43 +511,69 @@ public class GoogleMapsComponent extends AbstractComponentContainer {
     /**
      * Adds a new marker to the map.
      *
+     * @param nodeObject The object wrapped by the marker
      * @param caption   Caption of the marker shown when the marker is hovered.
      * @param position  Coordinates of the marker on the map.
      * @param draggable Set true to enable dragging of the marker.
      * @param iconUrl   The url of the icon of the marker.
      * @return GoogleMapMarker object created with the given settings.
      */
-    public GoogleMapMarker addMarker(String caption, LatLon position,
+    public GoogleMapMarker addMarker(N nodeObject, String caption, LatLon position,
         boolean draggable, String iconUrl) {
         GoogleMapMarker marker = new GoogleMapMarker(caption, position,
             draggable, iconUrl);
+        
+        String id = new Gson().toJson(nodeObject);
+        marker.setId(id);
+        nodeObjects.put(nodeObject, id);
+        
         getState().markers.put(marker.getId(), marker);
         return marker;
     }
     
     /**
      * Adds a new marker to the map.
-     *
+     * @param nodeObject The object wrapped by the marker
      * @param caption   Caption of the marker shown when the marker is hovered.
      * @param position  Coordinates of the marker on the map.
      * @param draggable Set true to enable dragging of the marker.
      * @return GoogleMapMarker object created with the given settings.
      */
-    public GoogleMapMarker addMarker(String caption, LatLon position,
+    public GoogleMapMarker addMarker(N nodeObject, String caption, LatLon position,
         boolean draggable) {
         GoogleMapMarker marker = new GoogleMapMarker(caption, position,
             draggable);
+        
+        String id = new Gson().toJson(nodeObject);
+        marker.setId(id);
+        nodeObjects.put(nodeObject, id);
+        
         getState().markers.put(marker.getId(), marker);
         return marker;
     }
 
     /**
      * Adds a marker to the map.
-     *
+     * @param nodeObject The object wrapped by the marker
      * @param marker The marker to add.
      */
-    public void addMarker(GoogleMapMarker marker) {
+    public void addMarker(N nodeObject, GoogleMapMarker marker) {
+        String id = new Gson().toJson(nodeObject);
+        marker.setId(id);
+        nodeObjects.put(nodeObject, id);
+        
         getState().markers.put(marker.getId(), marker);
+    }
+    
+    public N getNodeObject(String id) {
+        if (id != null) {
+            for (N nodeObject : nodeObjects.keySet()) {
+                if (id.equals(nodeObjects.get(nodeObject))) {
+                    return nodeObject;
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -552,6 +583,9 @@ public class GoogleMapsComponent extends AbstractComponentContainer {
      */
     public void removeMarker(GoogleMapMarker marker) {
         getState().markers.remove(marker.getId());
+        
+        N nodeObject = getNodeObject(marker.getId());
+        nodeObjects.remove(nodeObject);
     }
 
     /**
@@ -559,6 +593,7 @@ public class GoogleMapsComponent extends AbstractComponentContainer {
      */
     public void clearMarkers() {
         getState().markers = new HashMap<>();
+        nodeObjects = new HashMap<>();
     }
 
     /**
@@ -1042,6 +1077,7 @@ public class GoogleMapsComponent extends AbstractComponentContainer {
      */
     public GoogleMapPolyline addPolyline(String caption) {
         GoogleMapPolyline polyline = new GoogleMapPolyline();
+        polyline.setId(UUID.randomUUID().toString());
         getState().polylines.put(polyline.getId(), polyline);
         return polyline;
     }
@@ -1378,25 +1414,45 @@ public class GoogleMapsComponent extends AbstractComponentContainer {
         getState().disableDoubleClickZoom = disableDoubleClickZoom;
     }
     
-    public void addEdge(GoogleMapPolyline edge, GoogleMapMarker sourceNode, GoogleMapMarker targetNode) {
+    public void addEdge(E edgeObject, GoogleMapPolyline edge, GoogleMapMarker sourceNode, GoogleMapMarker targetNode) {
         if (!getState().edges.containsKey(edge)) {
             List<GoogleMapMarker> nodes = new ArrayList();
             nodes.add(sourceNode);
             nodes.add(targetNode);
+            
+            String id = new Gson().toJson(edgeObject);
+            edge.setId(id);
+            
+            edgeObjects.put(edgeObject, id);
             
             edgeIDs.put(edge.getId(), edge);
             getState().edges.put(edge, nodes);
         }
     }
     
+    public E getEdgeObject(String id) {
+        if (id != null) {
+            for (E edgeObject : edgeObjects.keySet()) {
+                if (id.equals(edgeObjects.get(edgeObject))) {
+                    return edgeObject;
+                }
+            }
+        }
+        return null;
+    }
+    
     public void removeEdge(GoogleMapPolyline edge) {
         edgeIDs.remove(edge.getId());
         getState().edges.remove(edge);
+        
+        E edgeObject = getEdgeObject(edge.getId());
+        edgeObjects.remove(edgeObject);
     }
     
     public void removeEdges() {
         edgeIDs.clear();
         getState().edges.clear();
+        edgeObjects.clear();
     }
     
     public boolean getMeasureDistance() {

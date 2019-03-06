@@ -7,5 +7,5 @@ import com.vaadin.shared.communication.ServerRpc;
  * Google Maps.
  */
 public interface PolylineRightClickedRpc extends ServerRpc {
-    void polylineRightClicked(long polylineId);
+    void polylineRightClicked(String polylineId);
 }

@@ -7,5 +7,5 @@ import com.vaadin.shared.communication.ServerRpc;
  * Google Maps.
  */
 public interface MarkerClickedRpc extends ServerRpc {
-    void markerClicked(long markerId);
+    void markerClicked(String markerId);
 }

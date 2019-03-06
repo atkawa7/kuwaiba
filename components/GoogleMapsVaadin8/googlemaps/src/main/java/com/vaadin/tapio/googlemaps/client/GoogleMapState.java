@@ -54,9 +54,9 @@ public class GoogleMapState extends AbstractComponentContainerState {
     
     public Set<GoogleMapKmlLayer> kmlLayers = new HashSet<>();
 
-    public Map<Long, GoogleMapMarker> markers = new HashMap<>();
+    public Map<String, GoogleMapMarker> markers = new HashMap<>();
     public Map<Long, GoogleMapPolygon> polygons = new HashMap<>();
-    public Map<Long, GoogleMapPolyline> polylines = new HashMap<>();
+    public Map<String, GoogleMapPolyline> polylines = new HashMap<>();
     
 
     public Map<Long, GoogleMapInfoWindow> infoWindows = new HashMap<>();

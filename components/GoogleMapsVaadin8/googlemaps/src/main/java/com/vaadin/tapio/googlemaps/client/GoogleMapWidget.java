@@ -1036,7 +1036,7 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
         });
     }
     
-    private void setPolylines(Map<Long, GoogleMapPolyline> polylineOverlays) {
+    private void setPolylines(Map<String, GoogleMapPolyline> polylineOverlays) {
         for (Polyline polyline : polylineMap.keySet())
             polyline.setMap((MapWidget) null);
         
@@ -1052,7 +1052,7 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
         }
     }
     
-    public void setPolylineOverlays(Map<Long, GoogleMapPolyline> polylineOverlays) {
+    public void setPolylineOverlays(Map<String, GoogleMapPolyline> polylineOverlays) {
         if (polylineOverlays.size() == polylineMap.size() 
                 && polylineMap.values().containsAll(polylineOverlays.values()))
             return;
@@ -1501,7 +1501,7 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
                     @Override
                     public void onEvent(ClickMapEvent event) {
                         GoogleMapPolyline gmPolyline = new GoogleMapPolyline();
-                        gmPolyline.setId(-1);
+                        gmPolyline.setId("-1");
                         polylineClickListener.polylineClicked(gmPolyline);
                     }
                 });
