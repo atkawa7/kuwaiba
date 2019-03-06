@@ -77,7 +77,7 @@ public class BGPModuleService {
         if (theView == null)
             NotificationUtil.getInstance().showSimplePopup("Load view", NotificationUtil.ERROR_MESSAGE, com.getError());
         else if(theView.isEmpty()){
-            List<LocalLogicalConnectionDetails> bgpMap = com.getBGPMap(new ArrayList<Long>());
+            List<LocalLogicalConnectionDetails> bgpMap = com.getBGPMap(new ArrayList<>());
             scene.createBGPView(bgpMap);
         }
         return null;

@@ -207,7 +207,7 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
             
             if(endpointA != null){ 
                 if(portDevices.get(endpointA) == null)
-                    portDevices.put(endpointA, new ArrayList<LocalObjectLight>());
+                    portDevices.put(endpointA, new ArrayList<>());
             
                 portParent.put(endpointA, physicalPathForEndpointA.get(0));
                 if(!physicalPathForEndpointB.isEmpty() && 

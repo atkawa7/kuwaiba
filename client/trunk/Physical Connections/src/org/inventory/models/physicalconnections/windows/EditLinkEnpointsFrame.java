@@ -202,7 +202,7 @@ public class EditLinkEnpointsFrame extends JFrame {
             return;
         }
         
-        LocalObjectLight[] connectionEndpoints = com.getConnectionEndpoints(centerSelectedObject.getClassName(), centerSelectedObject.getId());
+        LocalObjectLight[] connectionEndpoints = com.getPhysicalConnectionEndpoints(centerSelectedObject.getClassName(), centerSelectedObject.getId());
         if (connectionEndpoints == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
@@ -246,7 +246,7 @@ public class EditLinkEnpointsFrame extends JFrame {
                 JOptionPane.showMessageDialog(null, "Choose a single connection (link or container) from the central panel", "Error", JOptionPane.ERROR_MESSAGE);
             else {
                 if (com.isSubclassOf(centerSelectedObject.getClassName(), "GenericPhysicalLink")) {
-                    if (com.connectLinks(Arrays.asList(aSelectedObject == null ? null :aSelectedObject.getClassName()),
+                    if (com.connectPhysicalLinks(Arrays.asList(aSelectedObject == null ? null :aSelectedObject.getClassName()),
                                 Arrays.asList(aSelectedObject == null ? null : aSelectedObject.getId()),
                                 Arrays.asList(centerSelectedObject.getClassName()),
                                 Arrays.asList(centerSelectedObject.getId()),
@@ -287,7 +287,7 @@ public class EditLinkEnpointsFrame extends JFrame {
             if (selectedConnections.length != 1)
                 JOptionPane.showMessageDialog(null, "Choose a single connection (link or container) from the central panel", "Error", JOptionPane.ERROR_MESSAGE);
             else {
-                if (com.disconnectConnection(centerSelectedObject.getClassName(), centerSelectedObject.getId(), 3)) {
+                if (com.disconnectPhysicalConnection(centerSelectedObject.getClassName(), centerSelectedObject.getId(), 3)) {
                     JOptionPane.showMessageDialog(null, "Endpoint disconnected successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
                     updateConnectionDetails();
                 }
@@ -301,7 +301,7 @@ public class EditLinkEnpointsFrame extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(com.disconnectConnection(centerSelectedObject.getClassName(), centerSelectedObject.getId(), 1)) { // "1" means release only aSide
+            if(com.disconnectPhysicalConnection(centerSelectedObject.getClassName(), centerSelectedObject.getId(), 1)) { // "1" means release only aSide
                 JOptionPane.showMessageDialog(null, "Endpoint released sucessfully", "Success", JOptionPane.INFORMATION_MESSAGE);
                 updateConnectionDetails();
             } else
@@ -313,7 +313,7 @@ public class EditLinkEnpointsFrame extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(com.disconnectConnection(centerSelectedObject.getClassName(), centerSelectedObject.getId(), 2)) { // "1" means release only aSide
+            if(com.disconnectPhysicalConnection(centerSelectedObject.getClassName(), centerSelectedObject.getId(), 2)) { // "1" means release only aSide
                 JOptionPane.showMessageDialog(null, "Endpoint released sucessfully", "Success", JOptionPane.INFORMATION_MESSAGE);
                 updateConnectionDetails();
             } else

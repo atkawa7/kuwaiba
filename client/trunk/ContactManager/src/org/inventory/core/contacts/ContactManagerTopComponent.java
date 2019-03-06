@@ -233,9 +233,9 @@ public final class ContactManagerTopComponent extends TopComponent implements Ex
         
         JTextField txtContactName = new JTextField();
         txtContactName.setName("txtContactName"); //NOI18N
-        JComboBox cmbContactTypes = new JComboBox(contactTypes.toArray());
+        JComboBox<LocalClassMetadataLight> cmbContactTypes = new JComboBox(contactTypes.toArray());
         cmbContactTypes.setName("cmbContactTypes"); //NOI18N
-        JComboBox cmbCustomers = new JComboBox(customers.toArray());
+        JComboBox<LocalObjectLight> cmbCustomers = new JComboBox(customers.toArray());
         cmbCustomers.setName("cmbCustomers"); //NOI18N
 
         JComplexDialogPanel pnlNewContact = new JComplexDialogPanel(new String[] { "Name", "Type", "Company" }, 

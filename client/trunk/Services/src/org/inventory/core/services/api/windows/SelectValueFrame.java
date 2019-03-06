@@ -149,6 +149,7 @@ public class SelectValueFrame extends JFrame {
     }
         
     private void btnActionPerformed(ActionEvent actionEvent) {
+        dispose();
         fireChangeEvent(actionEvent);
     }
     
