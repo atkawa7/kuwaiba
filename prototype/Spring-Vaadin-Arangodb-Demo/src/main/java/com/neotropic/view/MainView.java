@@ -29,13 +29,9 @@ import java.util.stream.StreamSupport;
 public class MainView extends VerticalLayout {
 
     private final CharacterRepository repo;
-
     private final CharacterEditor editor;
-
     final Grid<Character> grid;
-
     final TextField filter;
-
     private final Button addNewBtn;
 
     public MainView(CharacterRepository repo, CharacterEditor editor) {

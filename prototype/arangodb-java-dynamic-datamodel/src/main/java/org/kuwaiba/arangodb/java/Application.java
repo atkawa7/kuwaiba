@@ -13,7 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.kuwaiba.arangodb.java;
 
 import com.arangodb.ArangoDB;
@@ -26,11 +25,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Sample application that shows how to create a graph composed by nodes in the same collection, 
- * but not necessarily with the same properties 
+ * Sample application that shows how to create a graph composed by nodes in the
+ * same collection, but not necessarily with the same properties
+ *
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class Application {
+
     protected static final String TEST_DB = "test_db";
     protected static final String GRAPH_NAME = "graph";
     protected static final String EDGE_COLLECTION_NAME = "edges";
@@ -46,14 +47,14 @@ public class Application {
         } catch (final ArangoDBException e) {
             //It doesn't matter of the db exists or not
         }
-        
+
         arangoDB.createDatabase(TEST_DB);
         ArangoDatabase db = arangoDB.db(TEST_DB);
 
         //The nodes that we are going to connect are in the same collection. The collections are created automatically
         Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
         EdgeDefinition edgeDefinition = new EdgeDefinition().collection(EDGE_COLLECTION_NAME)
-                        .from(VERTEX_COLLECTION_NAME).to(VERTEX_COLLECTION_NAME);
+                .from(VERTEX_COLLECTION_NAME).to(VERTEX_COLLECTION_NAME);
         edgeDefinitions.add(edgeDefinition);
         try {
             db.createGraph(GRAPH_NAME, edgeDefinitions, null);
@@ -75,12 +76,12 @@ public class Application {
             c.addAttribute("name", "relationship");
 
             db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(c);
-            
+
             //Now we modify the attributes of one of the nodes, and commiit the changes. 
             //Note tha here, it's the node's key what it's required to find it, not its id.
             b.addAttribute("description", "This is an extra attribute");
             db.graph(GRAPH_NAME).vertexCollection(VERTEX_COLLECTION_NAME).updateVertex(b.getKey(), b);
-            
+
             //Don't forget to shutdown the session.
             arangoDB.shutdown();
             System.out.println("Done and closed.");
