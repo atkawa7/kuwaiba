@@ -3649,7 +3649,7 @@ public class KuwaibaService {
      * Models
      */
 
-    //Physical connections
+    //Physical and Logical connections
     /**
      * Connect two ports using a mirror relationship
      * @param aObjectClass Port A class
@@ -3764,17 +3764,43 @@ public class KuwaibaService {
      *                             If the object can not be found
      *                             If either the object class or the attribute can not be found
      */
-    @WebMethod(operationName = "getConnectionEndpoints")
-    public RemoteObjectLight[] getConnectionEndpoints(@WebParam(name = "connectionClass")String connectionClass, 
+    @WebMethod(operationName = "getPhysicalConnectionEndpoints")
+    public RemoteObjectLight[] getPhysicalConnectionEndpoints(@WebParam(name = "connectionClass")String connectionClass, 
             @WebParam(name = "connectionId")long connectionId, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
-            return wsBean.getConnectionEndpoints(connectionClass, connectionId, getIPAddress(), sessionId);
+            return wsBean.getPhysicalConnectionEndpoints(connectionClass, connectionId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getConnectionEndpoints: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in getPhysicalConnectionEndpoints: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Returns the endpoints of a logical connection
+     * @param connectionClass Connection class
+     * @param connectionId Connection id
+     * @param sessionId Session token
+     * @return An array of two positions: the first is the A endpoint and the second is the B endpoint
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             If the object can not be found
+     *                             If either the object class or the attribute can not be found
+     */
+    @WebMethod(operationName = "getLogicalConnectionEndpoints")
+    public RemoteObjectLight[] getLogicalConnectionEndpoints(@WebParam(name = "connectionClass")String connectionClass, 
+            @WebParam(name = "connectionId")long connectionId, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
+        try{
+            return wsBean.getLogicalConnectionEndpoints(connectionClass, connectionId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getLogicalConnectionEndpoints: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -3966,7 +3992,7 @@ public class KuwaibaService {
     }  
    
     /**
-     * Connects pairs of ports (if they are not connected already) using link (physical or logical, cable, fibers, any subclass of GenericPhysicalLink)
+     * Connects pairs of ports (if they are not connected already) using physical link
      * @param sideAClassNames The list of classes of one of the sides of the connection
      * @param sideAIds The list of ids the objects on one side of the connection
      * @param linksClassNames the classes of the links that will connect the two sides
@@ -3981,8 +4007,8 @@ public class KuwaibaService {
      *                             If any of the classes provided can not be found
      *                             If the object activity log could no be found
      */
-    @WebMethod(operationName = "connectLinks")
-    public void connectLinks (@WebParam(name = "sideAClassNames")String[] sideAClassNames, @WebParam(name = "sideAIds")Long[] sideAIds,
+    @WebMethod(operationName = "connectPhysicalLinks")
+    public void connectPhysicalLinks (@WebParam(name = "sideAClassNames")String[] sideAClassNames, @WebParam(name = "sideAIds")Long[] sideAIds,
                                       @WebParam(name = "linksClassNames")String[] linksClassNames, @WebParam(name = "linksIds")long[] linksIds,
                                       @WebParam(name = "sideBClassNames")String[] sideBClassNames, @WebParam(name = "sideBIds")Long[] sideBIds,
                                       @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
@@ -3990,12 +4016,48 @@ public class KuwaibaService {
             if ((sideAClassNames.length + sideAIds.length + linksClassNames.length + linksIds.length + sideBClassNames.length + sideBIds.length) / 4 != sideAClassNames.length)
                 throw new ServerSideException("The array sizes don't match");
             
-            wsBean.connectLinks(sideAClassNames, sideAIds, linksClassNames, linksIds, sideBClassNames, sideBIds, getIPAddress(), sessionId);
+            wsBean.connectPhysicalLinks(sideAClassNames, sideAIds, linksClassNames, linksIds, sideBClassNames, sideBIds, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in connectLinks: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in connectPhysicalLinks: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Connects pairs of ports (if they are not connected already) using logical link
+     * @param sideAClassNames The list of classes of one of the sides of the connection
+     * @param sideAIds The list of ids the objects on one side of the connection
+     * @param linksClassNames the classes of the links that will connect the two sides
+     * @param linksIds The ids of these links
+     * @param sideBClassNames The list of classes of the other side of the connection
+     * @param sideBIds The list of ids the objects on the other side of the connection
+     * @param sessionId Session token
+     * @throws ServerSideException If the object can not be found
+     *                             If either the object class or the attribute can not be found
+     *                             If any of the objects can't be found
+     *                             If any of the objects involved can't be connected (i.e. if it's not an inventory object)
+     *                             If any of the classes provided can not be found
+     *                             If the object activity log could no be found
+     */
+    @WebMethod(operationName = "connectLogicalLinks")
+    public void connectLogicalLinks (@WebParam(name = "sideAClassNames")String[] sideAClassNames, @WebParam(name = "sideAIds")Long[] sideAIds,
+                                      @WebParam(name = "linksClassNames")String[] linksClassNames, @WebParam(name = "linksIds")long[] linksIds,
+                                      @WebParam(name = "sideBClassNames")String[] sideBClassNames, @WebParam(name = "sideBIds")Long[] sideBIds,
+                                      @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            if ((sideAClassNames.length + sideAIds.length + linksClassNames.length + linksIds.length + sideBClassNames.length + sideBIds.length) / 4 != sideAClassNames.length)
+                throw new ServerSideException("The array sizes don't match");
+            
+            wsBean.connectLogicalLinks(sideAClassNames, sideAIds, linksClassNames, linksIds, sideBClassNames, sideBIds, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in connectLogicalLinks: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -4032,7 +4094,7 @@ public class KuwaibaService {
         }
     }
     
-    /**
+        /**
      * Disconnects a side or both sides of a physical connection (a link or a container)
      * @param connectionClass Class of the connection to be edited
      * @param connectionId Id of the connection to be edited
@@ -4044,18 +4106,47 @@ public class KuwaibaService {
      *                             If any of the relationships is now allowed according to the defined data model
      *                             If the object activity log could no be found
      */
-    @WebMethod(operationName = "disconnectConnection")
-    public void disconnectConnection(@WebParam(name = "connectionClass")String connectionClass,
+    @WebMethod(operationName = "disconnectPhysicalConnection")
+    public void disconnectPhysicalConnection(@WebParam(name = "connectionClass")String connectionClass,
                                       @WebParam(name = "connectionId")long connectionId, 
                                       @WebParam(name = "sideToDisconnect")int sideToDisconnect,
                                       @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
-            wsBean.disconnectConnection(connectionClass, connectionId, sideToDisconnect, getIPAddress(), sessionId);
+            wsBean.disconnectPhysicalConnection(connectionClass, connectionId, sideToDisconnect, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in disconnectConnection: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in disconnectPhysicalConnection: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Disconnects a side or both sides of a logical connection (a link or a container)
+     * @param connectionClass Class of the connection to be edited
+     * @param connectionId Id of the connection to be edited
+     * @param sideToDisconnect Side to disconnect. Use 1 to disconnect only the side a, 2 to disconnect only side b and 3 to disconnect both sides at once
+     * @param sessionId Session token
+     * @throws ServerSideException If the object can not be found
+     *                             If either the object class or the attribute can not be found
+     *                             If the class provided does not exist
+     *                             If any of the relationships is now allowed according to the defined data model
+     *                             If the object activity log could no be found
+     */
+    @WebMethod(operationName = "disconnectLogicalConnection")
+    public void disconnectLogicalConnection(@WebParam(name = "connectionClass")String connectionClass,
+                                      @WebParam(name = "connectionId")long connectionId, 
+                                      @WebParam(name = "sideToDisconnect")int sideToDisconnect,
+                                      @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.disconnectLogicalConnection(connectionClass, connectionId, sideToDisconnect, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in disconnectLogicalConnection: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }

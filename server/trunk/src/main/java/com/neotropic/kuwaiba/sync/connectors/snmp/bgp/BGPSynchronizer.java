@@ -511,6 +511,9 @@ public class BGPSynchronizer {
             
             BusinessObjectLight newIpAddress = checkSubentsIps(bgpPeerRemoteAddr, "");
             bem.createSpecialRelationship("VirtualPort", newPortId, newIpAddress.getClassName(), newIpAddress.getId(), RELATIONSHIP_IPAMHASADDRESS, true);
+            
+            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Relating interface with ipAddr", 
+                            String.format("%s was related with: %s", remotePort, newIpAddress)));
             //AuditTrail
             aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
                     String.format("%s (id:%s), %s, %s (id:%s)", remotePort.toString(), remotePort.getId(), RELATIONSHIP_IPAMHASADDRESS, newIpAddress.toString(), newIpAddress.getId()));

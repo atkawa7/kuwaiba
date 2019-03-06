@@ -179,7 +179,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                         break;
                     }
                     case "ASR9001": {
-                        channel.setCommand("sh l2vpn bridge-domain"); //NOI18N
+                        channel.setCommand("sh l2vpnxconnect"); //NOI18N
                         channel.connect();
                         
                         BridgeDomainsASR9001Parser parser = new BridgeDomainsASR9001Parser();               

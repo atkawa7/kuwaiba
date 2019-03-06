@@ -291,7 +291,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
                 linksIds[i] = links.get(i).getId();
             }
             //we create the end points
-            webserviceBean.connectLinks(sideAClassNames, sideAIds, 
+            webserviceBean.connectPhysicalLinks(sideAClassNames, sideAIds, 
                     linksClassNames, linksIds, 
                     sideBClassNames, sideBIds, 
                     remoteSession.getIpAddress(),
