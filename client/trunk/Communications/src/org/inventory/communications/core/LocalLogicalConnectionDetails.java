@@ -58,15 +58,6 @@ public class LocalLogicalConnectionDetails {
      * Physical paths, one for every port that belongs to the same VLAN of the endpoint B
      */
     private Map<LocalObjectLight, List<LocalObjectLight>> physicalPathForVlansEndpointB;
-    
-    /**
-     * Physical paths, one for every port that belongs to the same VLAN of the endpoint A
-     */
-    private Map<LocalObjectLight, List<LocalObjectLight>> physicalPathForBDisEndpointA;
-    /**
-     * Physical paths, one for every port that belongs to the same VLAN of the endpoint B
-     */
-    private Map<LocalObjectLight, List<LocalObjectLight>> physicalPathForBDisEndpointB;
 
     public LocalLogicalConnectionDetails(RemoteLogicalConnectionDetails remoteCircuitDetails) {
         
@@ -126,52 +117,6 @@ public class LocalLogicalConnectionDetails {
                         Arrays.asList(relatedLocalObjects));
             }
         }
-        
-        this.physicalPathForBDisEndpointA = new HashMap<>();
-        if(remoteCircuitDetails.getPhysicalPathForBDisEndpointA() != null){
-            List<RemoteObjectLight> objsA = remoteCircuitDetails.getPhysicalPathForBDisEndpointA().getObjs();
-            List<RemoteObjectLightList> relatedObjectsA = remoteCircuitDetails.getPhysicalPathForBDisEndpointA().getRelatedObjects();
-
-            for (int i = 0; i < objsA.size(); i++){
-                RemoteObjectLightList relatedRemoteObjects = relatedObjectsA.get(i);
-                LocalObjectLight[] relatedLocalObjects = new LocalObjectLight[relatedRemoteObjects.getList().size()];
-                int j = 0;
-                for (RemoteObjectLight relatedRemoteObject : relatedRemoteObjects.getList()) {
-                    relatedLocalObjects[j] = new LocalObjectLight(relatedRemoteObject.getId(), 
-                                                    relatedRemoteObject.getName(), 
-                                                    relatedRemoteObject.getClassName());
-                    j++;
-                }
-                this.physicalPathForBDisEndpointA.put(
-                        new LocalObjectLight(objsA.get(i).getId(), 
-                                objsA.get(i).getName(), 
-                                objsA.get(i).getClassName()),
-                        Arrays.asList(relatedLocalObjects));
-            }
-        }
-        
-        this.physicalPathForBDisEndpointA = new HashMap<>();
-        if(remoteCircuitDetails.getPhysicalPathForBDisEndpointB() != null){
-            List<RemoteObjectLight> objsA = remoteCircuitDetails.getPhysicalPathForBDisEndpointB().getObjs();
-            List<RemoteObjectLightList> relatedObjectsA = remoteCircuitDetails.getPhysicalPathForBDisEndpointB().getRelatedObjects();
-
-            for (int i = 0; i < objsA.size(); i++){
-                RemoteObjectLightList relatedRemoteObjects = relatedObjectsA.get(i);
-                LocalObjectLight[] relatedLocalObjects = new LocalObjectLight[relatedRemoteObjects.getList().size()];
-                int j = 0;
-                for (RemoteObjectLight relatedRemoteObject : relatedRemoteObjects.getList()) {
-                    relatedLocalObjects[j] = new LocalObjectLight(relatedRemoteObject.getId(), 
-                                                    relatedRemoteObject.getName(), 
-                                                    relatedRemoteObject.getClassName());
-                    j++;
-                }
-                this.physicalPathForBDisEndpointA.put(
-                        new LocalObjectLight(objsA.get(i).getId(), 
-                                objsA.get(i).getName(), 
-                                objsA.get(i).getClassName()),
-                        Arrays.asList(relatedLocalObjects));
-            }
-        }
     }
     
     
@@ -202,22 +147,6 @@ public class LocalLogicalConnectionDetails {
 
     public Map<LocalObjectLight, List<LocalObjectLight>> getPhysicalPathForVlansEndpointB() {
         return physicalPathForVlansEndpointB;
-    }
-
-    public Map<LocalObjectLight, List<LocalObjectLight>> getPhysicalPathForBDisEndpointA() {
-        return physicalPathForBDisEndpointA;
-    }
-
-    public void setPhysicalPathForBDisEndpointA(Map<LocalObjectLight, List<LocalObjectLight>> physicalPathForBDisEndpointA) {
-        this.physicalPathForBDisEndpointA = physicalPathForBDisEndpointA;
-    }
-
-    public Map<LocalObjectLight, List<LocalObjectLight>> getPhysicalPathForBDisEndpointB() {
-        return physicalPathForBDisEndpointB;
-    }
-
-    public void setPhysicalPathForBDisEndpointB(Map<LocalObjectLight, List<LocalObjectLight>> physicalPathForBDisEndpointB) {
-        this.physicalPathForBDisEndpointB = physicalPathForBDisEndpointB;
     }
 
 }

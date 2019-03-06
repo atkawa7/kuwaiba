@@ -2255,23 +2255,9 @@ public class CommunicationsStub {
         }
     }
     
-    public LocalObjectLight[] getLogicalConnectionEndpoints(String connectionClass, long connectionId) {
+    public LocalObjectLight[] getConnectionEndpoints(String connectionClass, long connectionId) {
         try{
-            List<RemoteObjectLight> endpoints = service.getLogicalConnectionEndpoints(connectionClass, connectionId, session.getSessionId());
-            LocalObjectLight[] res = new LocalObjectLight[]{endpoints.get(0) == null ? 
-                    null : new LocalObjectLight(endpoints.get(0).getId(), endpoints.get(0).getName(), endpoints.get(0).getClassName()),
-                    endpoints.get(1) == null ? 
-                    null : new LocalObjectLight(endpoints.get(1).getId(), endpoints.get(1).getName(), endpoints.get(1).getClassName())};
-            return res;
-        }catch(Exception ex){
-            this.error =  ex.getMessage();
-            return null;
-        }
-    }
-    
-    public LocalObjectLight[] getPhysicalConnectionEndpoints(String connectionClass, long connectionId) {
-        try{
-            List<RemoteObjectLight> endpoints = service.getPhysicalConnectionEndpoints(connectionClass, connectionId, session.getSessionId());
+            List<RemoteObjectLight> endpoints = service.getConnectionEndpoints(connectionClass, connectionId, session.getSessionId());
             LocalObjectLight[] res = new LocalObjectLight[]{endpoints.get(0) == null ? 
                     null : new LocalObjectLight(endpoints.get(0).getId(), endpoints.get(0).getName(), endpoints.get(0).getClassName()),
                     endpoints.get(1) == null ? 
@@ -2414,23 +2400,11 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean connectPhysicalLinks(List<String> sideAClassNames, List<Long> sideAIds, 
+    public boolean connectLinks(List<String> sideAClassNames, List<Long> sideAIds, 
                 List<String> linksClassNames, List<Long> linksIds, List<String> sideBClassNames, 
                 List<Long> sideBIds) {
         try {            
-            service.connectPhysicalLinks(sideAClassNames, sideAIds, linksClassNames, linksIds, sideBClassNames, sideBIds, session.getSessionId());
-            return true;
-        }catch(Exception ex){
-            this.error =  ex.getMessage();
-            return false;
-        }
-    }
-    
-    public boolean connectLogicalLinks(List<String> sideAClassNames, List<Long> sideAIds, 
-                List<String> linksClassNames, List<Long> linksIds, List<String> sideBClassNames, 
-                List<Long> sideBIds) {
-        try {            
-            service.connectLogicalLinks(sideAClassNames, sideAIds, linksClassNames, linksIds, sideBClassNames, sideBIds, session.getSessionId());
+            service.connectLinks(sideAClassNames, sideAIds, linksClassNames, linksIds, sideBClassNames, sideBIds, session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -2457,26 +2431,9 @@ public class CommunicationsStub {
      * @param sideToDisconnect Side to disconnect. Use 1 to disconnect only the side a, 2 to disconnect only side b and 3 to disconnect both sides at once
      * @return True if the operation was successful, false otherwise. Retrieve the details of the error using the getError method
      */
-    public boolean disconnectPhysicalConnection(String connectionClass, long connectionId, int sideToDisconnect) {
+    public boolean disconnectConnection(String connectionClass, long connectionId, int sideToDisconnect) {
         try {
-            service.disconnectPhysicalConnection(connectionClass, connectionId, sideToDisconnect, session.getSessionId());
-            return true;
-        }catch(Exception ex){
-            this.error =  ex.getMessage();
-            return false;
-        }
-    }
-    
-    /**
-     * Disconnects a side or both sides of a physical connection (a link or a container)
-     * @param connectionClass Class of the connection to be edited
-     * @param connectionId Id of the connection to be edited
-     * @param sideToDisconnect Side to disconnect. Use 1 to disconnect only the side a, 2 to disconnect only side b and 3 to disconnect both sides at once
-     * @return True if the operation was successful, false otherwise. Retrieve the details of the error using the getError method
-     */
-    public boolean disconnectLogicalConnection(String connectionClass, long connectionId, int sideToDisconnect) {
-        try {
-            service.disconnectLogicalConnection(connectionClass, connectionId, sideToDisconnect, session.getSessionId());
+            service.disconnectConnection(connectionClass, connectionId, sideToDisconnect, session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error =  ex.getMessage();

@@ -10,12 +10,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getLogicalConnectionEndpointsResponse complex type.
+ * <p>Java class for getConnectionEndpointsResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getLogicalConnectionEndpointsResponse">
+ * &lt;complexType name="getConnectionEndpointsResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -29,10 +29,10 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getLogicalConnectionEndpointsResponse", propOrder = {
+@XmlType(name = "getConnectionEndpointsResponse", propOrder = {
     "_return"
 })
-public class GetLogicalConnectionEndpointsResponse {
+public class GetConnectionEndpointsResponse {
 
     @XmlElement(name = "return", nillable = true)
     protected List<RemoteObjectLight> _return;

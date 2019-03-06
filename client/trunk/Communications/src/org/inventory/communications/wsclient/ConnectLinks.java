@@ -10,12 +10,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for connectLogicalLinks complex type.
+ * <p>Java class for connectLinks complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="connectLogicalLinks">
+ * &lt;complexType name="connectLinks">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "connectLogicalLinks", propOrder = {
+@XmlType(name = "connectLinks", propOrder = {
     "sideAClassNames",
     "sideAIds",
     "linksClassNames",
@@ -44,7 +44,7 @@ import javax.xml.bind.annotation.XmlType;
     "sideBIds",
     "sessionId"
 })
-public class ConnectLogicalLinks {
+public class ConnectLinks {
 
     @XmlElement(nillable = true)
     protected List<String> sideAClassNames;
