@@ -36,19 +36,19 @@ public class TestJschConnector {
     /**
      * The ssh user
      */
-    private static final String user = "";
+    private static final String USER = "";
     /**
      * The ssh pasword
      */
-    private static final String pwd = "";
+    private static final String PWD = "";
     /**
      * Default host ipAddr
      */
-    private static final String ipAddr = "127.0.0.1";
+    private static final String IPADRR = "127.0.0.1";
     /**
      * Default port for ssh
      */
-    private static final int port = 22;
+    private static final int PORT = 22;
     /**
      * @param args the command line arguments
      */
@@ -63,15 +63,15 @@ public class TestJschConnector {
         Session session = null;
         ChannelExec channel =  null;
         try {
-            session = sshShell.getSession(user, ipAddr, port);
-            session.setPassword(pwd);
+            session = sshShell.getSession(USER, IPADRR, PORT);
+            session.setPassword(PWD);
             //Enable to -not recommended- disable host key checking
             
             session.setConfig("StrictHostKeyChecking", "no");
             session.connect(10000); //Connection timeout
             channel = (ChannelExec) session.openChannel("exec");
 
-            channel.setCommand("sh l2vpnxconnect"); //NOI18N
+            channel.setCommand("sh script_test"); //NOI18N
             channel.connect();
             DefaultParser defaultParser = new DefaultParser();
             defaultParser.parse(readCommandExecutionResult(channel));   
