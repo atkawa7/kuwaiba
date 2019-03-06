@@ -45,6 +45,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalValidator;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
@@ -97,10 +98,10 @@ public class RunSynchronizationProcessAction extends GenericObjectNodeAction imp
         
         LocalSyncProvider[] availableProviders = {
             new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.reference.ReferenceSnmpSyncProvider", "Physical / Virtual Interfaces", true),
-            new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.mpls.SnmpMplsSyncProvider", "General MPLS Information", true),
+            new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.mpls.SshMplsSyncProvider", "General MPLS Information", true),
             new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.ip.IPAddressesSyncProvider", "IP Addresses", true),
             new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.vlan.SnmpCiscoVlansSyncProvider", "VLANs", true),
-            new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.ssh.bdi.BridgeDomainSyncProvider", "Bridge Domains", true),
+            new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.ssh.bdi.SshBridgeDomainSyncProvider", "Bridge Domains", true),
             new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.bgp.BgpSyncProvider", "Border Gateway Protocol", true)};
          
         Iterator<? extends AbstractNode> selectedNodes = Utilities.actionsGlobalContext()
@@ -217,7 +218,7 @@ public class RunSynchronizationProcessAction extends GenericObjectNodeAction imp
 
     @Override
     public String[] appliesTo() {
-        return null;
+        return new String[] {Constants.CLASS_GENERICCOMMUNICATIONSELEMENT};
     }
 
     @Override
