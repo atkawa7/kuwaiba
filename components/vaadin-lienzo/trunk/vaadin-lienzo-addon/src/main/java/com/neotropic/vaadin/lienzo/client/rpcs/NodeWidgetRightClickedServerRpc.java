@@ -22,5 +22,5 @@ import com.vaadin.shared.communication.ServerRpc;
  * @author Johny Andres Ortega Ruiz johny.ortega@kuwaiba.org
  */
 public interface NodeWidgetRightClickedServerRpc extends ServerRpc {
-    public void lienzoNodeRightClicked(long id);
+    public void lienzoNodeRightClicked(String id);
 }

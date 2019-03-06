@@ -27,5 +27,5 @@ public interface NodeWidgetRightClickListener extends Serializable {
      * 
      * @param id node id
      */
-    void nodeWidgetRightClicked(long id);    
+    void nodeWidgetRightClicked(String id);    
 }

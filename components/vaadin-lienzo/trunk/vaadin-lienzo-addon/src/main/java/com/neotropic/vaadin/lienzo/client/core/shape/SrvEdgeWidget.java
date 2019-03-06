@@ -17,13 +17,14 @@ package com.neotropic.vaadin.lienzo.client.core.shape;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A widget that represents a connection between two nodes
  * @author Johny Andres Ortega Ruiz johny.ortega@kuwaiba.org
  */
 public class SrvEdgeWidget implements Serializable {
-    private long id;
+    private String id;
     private SrvNodeWidget source;
     private SrvNodeWidget target;
     private String caption;
@@ -32,16 +33,12 @@ public class SrvEdgeWidget implements Serializable {
     private boolean editable = true;
 
     public SrvEdgeWidget() { }
-    
-    public SrvEdgeWidget(long edgeId) {
-        id = edgeId;
-    }
-    
-    public long getId() {
+        
+    public String getId() {
         return id;
     }
     
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
     
@@ -92,22 +89,30 @@ public class SrvEdgeWidget implements Serializable {
     public void setEditable(boolean editable) {
         this.editable = editable;
     }
-    
+        
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null)
-            return false;
-        
-        if (getClass() != obj.getClass())
-            return false;
-        
-        return getId() == ((SrvEdgeWidget) obj).getId();
+    public int hashCode() {
+        int hash = 5;
+        hash = 11 * hash + Objects.hashCode(this.id);
+        return hash;
     }
 
     @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 71 * hash + (int) (this.id ^ (this.id >>> 32));
-        return hash;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final SrvEdgeWidget other = (SrvEdgeWidget) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
     }
+    
 }

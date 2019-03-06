@@ -248,17 +248,17 @@ public class LienzoComponentConnector extends AbstractComponentConnector impleme
     }
 
     @Override
-    public void nodeWidgetClicked(long id) {
+    public void nodeWidgetClicked(String id) {
         nodeWidgetClickedServerRpc.lienzoNodeClicked(id);
     }
 
     @Override
-    public void nodeWidgetRightClicked(long id) {
+    public void nodeWidgetRightClicked(String id) {
         nodeWidgetRightClickedServerRpc.lienzoNodeRightClicked(id);
     }
 
     @Override
-    public void nodeWidgetDoubleClicked(long id) {
+    public void nodeWidgetDoubleClicked(String id) {
         nodeWidgetDblClickedServerRpc.lienzoNodeDblClicked(id);
     }
     
@@ -293,17 +293,17 @@ public class LienzoComponentConnector extends AbstractComponentConnector impleme
     }
 
     @Override
-    public void edgeWidgetClicked(long id) {
+    public void edgeWidgetClicked(String id) {
         edgeWidgetClickedServerRpc.edgeWidgetClicked(id);
     }
 
     @Override
-    public void edgeWidgetDblClicked(long id) {
+    public void edgeWidgetDblClicked(String id) {
         edgeWidgetDblClickedServerRpc.edgeWidgetDblClicked(id);
     }
 
     @Override
-    public void edgeWidgetRightClicked(long id) {
+    public void edgeWidgetRightClicked(String id) {
         edgeWidgetRightClickedServerRpc.edgeWidgetRightClicked(id);
     }
     

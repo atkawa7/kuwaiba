@@ -27,5 +27,5 @@ public interface EdgeWidgetRightClickListener extends Serializable {
      * 
      * @param id Frame Widget id
      */
-    void edgeWidgetRightClicked(long id);
+    void edgeWidgetRightClicked(String id);
 }

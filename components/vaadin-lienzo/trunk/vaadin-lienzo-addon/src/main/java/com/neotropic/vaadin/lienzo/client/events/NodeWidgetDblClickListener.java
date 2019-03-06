@@ -27,5 +27,5 @@ public interface NodeWidgetDblClickListener extends Serializable {
      * 
      * @param id node id
      */
-    void nodeWidgetDoubleClicked(long id);    
+    void nodeWidgetDoubleClicked(String id);    
 }

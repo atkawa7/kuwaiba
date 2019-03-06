@@ -18,13 +18,14 @@ package com.neotropic.vaadin.lienzo.client.core.shape;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The Class representing a Lienzo Shape
  * @author Johny Andres Ortega Ruiz johny.ortega@kuwaiba.org
  */
 public class ServerElement implements Serializable {
-    private long id;
+    private String id;
     private ServerElement parent;
     private List<ServerElement> children;
     /**
@@ -50,28 +51,17 @@ public class ServerElement implements Serializable {
     /**
      * Is the shape draggable? Default value true.
      */
-    private boolean draggable;   
+    private boolean draggable;
     
     public ServerElement() {
         this.resizable = false;
         this.draggable = true;
     }
-    
-    public ServerElement(long id) {
-        this();
-        this.id = id;
-    }
-    
-    public ServerElement(long id, ServerElement parent) {
-        this(id);
-        this.parent = parent;
-    }
-    
-    public long getId() {
+        
+    public String getId() {
         return id;
     }
-    
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
     
@@ -144,20 +134,28 @@ public class ServerElement implements Serializable {
     }
     
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null)
-            return false;
-        
-        if (getClass() != obj.getClass())
-            return false;
-        
-        return getId() == ((ServerElement) obj).getId();
+    public int hashCode() {
+        int hash = 5;
+        hash = 53 * hash + Objects.hashCode(this.id);
+        return hash;
     }
 
     @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 61 * hash + (int) (this.id ^ (this.id >>> 32));
-        return hash;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ServerElement other = (ServerElement) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
     }
+    
 }

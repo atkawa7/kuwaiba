@@ -22,17 +22,11 @@ package com.neotropic.vaadin.lienzo.client.core.shape;
 public class SrvNodeWidget extends ServerElement {
     private String caption;
     private String urlIcon;
-
-    public SrvNodeWidget() { }
     
-    public SrvNodeWidget(long nodeId) {        
-        super(nodeId);
+    public SrvNodeWidget() {
+        super();
     }
-    
-    public SrvNodeWidget(long nodeId, ServerElement parent) {
-        super(nodeId, parent);
-    }
-  
+      
     public String getCaption() {
         return caption;
     }

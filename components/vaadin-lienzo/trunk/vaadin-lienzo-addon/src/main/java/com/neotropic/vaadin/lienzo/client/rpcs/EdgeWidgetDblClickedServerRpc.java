@@ -22,5 +22,5 @@ import com.vaadin.shared.communication.ServerRpc;
  * @author Johny Andres Ortega Ruiz johny.ortega@kuwaiba.org
  */
 public interface EdgeWidgetDblClickedServerRpc extends ServerRpc {
-    public void edgeWidgetDblClicked(long id);    
+    public void edgeWidgetDblClicked(String id);    
 }

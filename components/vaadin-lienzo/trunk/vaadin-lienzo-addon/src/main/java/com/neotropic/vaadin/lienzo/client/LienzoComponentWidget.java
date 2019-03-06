@@ -39,6 +39,7 @@ import com.ait.lienzo.client.core.shape.Shape;
 import com.ait.lienzo.client.core.shape.Text;
 import com.ait.lienzo.client.core.types.Point2DArray;
 import com.ait.lienzo.client.widget.LienzoPanel;
+import com.ait.tooling.common.api.java.util.UUID;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.neotropic.vaadin.lienzo.client.events.LienzoMouseOverListener;
@@ -152,7 +153,8 @@ public class LienzoComponentWidget extends LienzoPanel implements ClntFrameWidge
 	public void addEdgeWidget() {
             edgeLayer.remove(line);
                         
-            SrvEdgeWidget clntNewEdge = new SrvEdgeWidget(293434236);
+            SrvEdgeWidget clntNewEdge = new SrvEdgeWidget();
+            clntNewEdge.setId(UUID.uuid());
                         
             List<Point> controlPoints = new ArrayList<>();
             controlPoints.add(new Point(source.getX(), source.getY()));
@@ -254,7 +256,7 @@ public class LienzoComponentWidget extends LienzoPanel implements ClntFrameWidge
                     if (shapeMouseEnter instanceof NodeWidget) {
                         
                         if (nodeWidgetRightClickListener != null) {
-                            long id = clntNodeWidgets.get((NodeWidget) shapeMouseEnter).getId();
+                            String id = clntNodeWidgets.get((NodeWidget) shapeMouseEnter).getId();
                             nodeWidgetRightClickListener.nodeWidgetRightClicked(id);
                         }
                         return;
@@ -272,7 +274,7 @@ public class LienzoComponentWidget extends LienzoPanel implements ClntFrameWidge
                     if (shapeMouseEnter instanceof PolyLine) {
                         
                         if (edgeWidgetRightClickListener != null) {
-                            long id = clntEdgeWidgets.get(edgeWidgetMouseEnter).getId();
+                            String id = clntEdgeWidgets.get(edgeWidgetMouseEnter).getId();
                             edgeWidgetRightClickListener.edgeWidgetRightClicked(id);
                         }
                     }
