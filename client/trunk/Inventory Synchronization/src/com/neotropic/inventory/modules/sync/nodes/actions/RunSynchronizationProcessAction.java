@@ -98,10 +98,10 @@ public class RunSynchronizationProcessAction extends GenericObjectNodeAction imp
         
         LocalSyncProvider[] availableProviders = {
             new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.reference.ReferenceSnmpSyncProvider", "Physical / Virtual Interfaces", true),
-            new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.mpls.SshMplsSyncProvider", "General MPLS Information", true),
+            new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.mpls.MplsSyncProvider", "General MPLS Information", true),
             new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.ip.IPAddressesSyncProvider", "IP Addresses", true),
             new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.vlan.SnmpCiscoVlansSyncProvider", "VLANs", true),
-            new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.ssh.bdi.SshBridgeDomainSyncProvider", "Bridge Domains", true),
+            new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.ssh.bdi.BridgeDomainSyncProvider", "Bridge Domains", true),
             new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.bgp.BgpSyncProvider", "Border Gateway Protocol", true)};
          
         Iterator<? extends AbstractNode> selectedNodes = Utilities.actionsGlobalContext()
