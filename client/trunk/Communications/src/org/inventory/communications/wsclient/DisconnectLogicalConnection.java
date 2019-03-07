@@ -7,17 +7,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getConnectionEndpoints complex type.
+ * <p>Java class for disconnectLogicalConnection complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getConnectionEndpoints">
+ * &lt;complexType name="disconnectLogicalConnection">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="connectionClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="connectionId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="sideToDisconnect" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -28,15 +29,17 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getConnectionEndpoints", propOrder = {
+@XmlType(name = "disconnectLogicalConnection", propOrder = {
     "connectionClass",
     "connectionId",
+    "sideToDisconnect",
     "sessionId"
 })
-public class GetConnectionEndpoints {
+public class DisconnectLogicalConnection {
 
     protected String connectionClass;
     protected long connectionId;
+    protected int sideToDisconnect;
     protected String sessionId;
 
     /**
@@ -77,6 +80,22 @@ public class GetConnectionEndpoints {
      */
     public void setConnectionId(long value) {
         this.connectionId = value;
+    }
+
+    /**
+     * Gets the value of the sideToDisconnect property.
+     * 
+     */
+    public int getSideToDisconnect() {
+        return sideToDisconnect;
+    }
+
+    /**
+     * Sets the value of the sideToDisconnect property.
+     * 
+     */
+    public void setSideToDisconnect(int value) {
+        this.sideToDisconnect = value;
     }
 
     /**

@@ -7,12 +7,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for connectLinksResponse complex type.
+ * <p>Java class for connectLogicalLinksResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="connectLinksResponse">
+ * &lt;complexType name="connectLogicalLinksResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "connectLinksResponse")
-public class ConnectLinksResponse {
+@XmlType(name = "connectLogicalLinksResponse")
+public class ConnectLogicalLinksResponse {
 
 
 }

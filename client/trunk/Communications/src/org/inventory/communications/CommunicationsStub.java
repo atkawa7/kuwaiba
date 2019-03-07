@@ -2255,9 +2255,9 @@ public class CommunicationsStub {
         }
     }
     
-    public LocalObjectLight[] getConnectionEndpoints(String connectionClass, long connectionId) {
+    public LocalObjectLight[] getPhysicalConnectionEndpoints(String connectionClass, long connectionId) {
         try{
-            List<RemoteObjectLight> endpoints = service.getConnectionEndpoints(connectionClass, connectionId, session.getSessionId());
+            List<RemoteObjectLight> endpoints = service.getPhysicalConnectionEndpoints(connectionClass, connectionId, session.getSessionId());
             LocalObjectLight[] res = new LocalObjectLight[]{endpoints.get(0) == null ? 
                     null : new LocalObjectLight(endpoints.get(0).getId(), endpoints.get(0).getName(), endpoints.get(0).getClassName()),
                     endpoints.get(1) == null ? 
@@ -2400,11 +2400,11 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean connectLinks(List<String> sideAClassNames, List<Long> sideAIds, 
+    public boolean connectPhysicalLinks(List<String> sideAClassNames, List<Long> sideAIds, 
                 List<String> linksClassNames, List<Long> linksIds, List<String> sideBClassNames, 
                 List<Long> sideBIds) {
         try {            
-            service.connectLinks(sideAClassNames, sideAIds, linksClassNames, linksIds, sideBClassNames, sideBIds, session.getSessionId());
+            service.connectPhysicalLinks(sideAClassNames, sideAIds, linksClassNames, linksIds, sideBClassNames, sideBIds, session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -2431,9 +2431,9 @@ public class CommunicationsStub {
      * @param sideToDisconnect Side to disconnect. Use 1 to disconnect only the side a, 2 to disconnect only side b and 3 to disconnect both sides at once
      * @return True if the operation was successful, false otherwise. Retrieve the details of the error using the getError method
      */
-    public boolean disconnectConnection(String connectionClass, long connectionId, int sideToDisconnect) {
+    public boolean disconnectPhysicalConnection(String connectionClass, long connectionId, int sideToDisconnect) {
         try {
-            service.disconnectConnection(connectionClass, connectionId, sideToDisconnect, session.getSessionId());
+            service.disconnectPhysicalConnection(connectionClass, connectionId, sideToDisconnect, session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -6190,4 +6190,16 @@ public class CommunicationsStub {
         return null;
     }
     //</editor-fold>
+
+    public boolean connectLogicalLinks(List<String> asList, List<Long> asList0, List<String> asList1, List<Long> asList2, List<String> asList3, List<Long> asList4) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public LocalObjectLight[] getLogicalConnectionEndpoints(String className, long id) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public boolean disconnectLogicalConnection(String className, long id, int i) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
