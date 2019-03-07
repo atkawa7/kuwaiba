@@ -74,16 +74,16 @@ public class SceneExporter {
     public String buildEndToEndView(String ipAddress, RemoteSession remoteSession, WebserviceBean webserviceBean, String serviceClassName, String serviceId) {
         RemoteObjectLight rol;
         try {
-            rol = webserviceBean.getObjectLight(serviceClassName, serviceId, ipAddress, remoteSession.getSessionId());
+            rol = webserviceBean.getObjectLight(serviceClassName, serviceId, remoteSession.getIpAddress(), remoteSession.getSessionId());
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getMessage());
             return null;
         }
-        EndToEndViewScene scene = new EndToEndViewScene(ipAddress, remoteSession, webserviceBean); 
+        EndToEndViewScene scene = new EndToEndViewScene(remoteSession.getIpAddress(), remoteSession, webserviceBean); 
         
         List<RemoteViewObjectLight> serviceViews = null;
         try {
-            serviceViews = webserviceBean.getObjectRelatedViews(serviceId, serviceClassName, -1, 10, ipAddress, remoteSession.getSessionId());
+            serviceViews = webserviceBean.getObjectRelatedViews(serviceId, serviceClassName, -1, 10, remoteSession.getIpAddress(), remoteSession.getSessionId());
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getMessage());
         }
@@ -94,7 +94,7 @@ public class SceneExporter {
             for (RemoteViewObjectLight serviceView : serviceViews) {
                 if (EndToEndViewScene.VIEW_CLASS.equals(serviceView.getViewClassName())) {
                     try {
-                        currentView = webserviceBean.getObjectRelatedView(serviceId, serviceClassName, serviceView.getId(), ipAddress, remoteSession.getSessionId());
+                        currentView = webserviceBean.getObjectRelatedView(serviceId, serviceClassName, serviceView.getId(), remoteSession.getIpAddress(), remoteSession.getSessionId());
                     } catch (ServerSideException ex) {
                         Notifications.showError(ex.getMessage());
                         return null;

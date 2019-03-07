@@ -25,22 +25,16 @@ import javax.xml.stream.XMLStreamReader;
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ElementScript implements Tag {
-    private HashMap<String, Runner> functions;
+    private final HashMap<String, Runner> functions;
         
     public ElementScript() {
+        functions = new HashMap();
     }
     
-    public HashMap<String, Runner> getFunctions() {
-        if (functions == null)
-            functions = new HashMap();
-        
+    protected HashMap<String, Runner> getFunctions() {
         return functions;
     }
-    
-    public void setFunctions(HashMap<String, Runner> functions) {
-        this.functions = functions;
-    }
-    
+        
     public Runner getFunctionByName(String name) {
         return functions != null ? functions.get(name) : null;
     }
@@ -69,7 +63,7 @@ public class ElementScript implements Tag {
                         
                         if (Constants.Function.Type.FUNCTION.equals(functionType)) {
                             if (blockOfCode != null)
-                                getFunctions().put(functionName, new FunctionRunner(functionName, parameterNames, blockOfCode));
+                                getFunctions().put(functionName, new FunctionRunner(functionName, parameterNames, blockOfCode, ElementScript.this));
                         }
                         if (Constants.Function.Type.QUERY.equals(functionType)) {
                             if (queryName != null)

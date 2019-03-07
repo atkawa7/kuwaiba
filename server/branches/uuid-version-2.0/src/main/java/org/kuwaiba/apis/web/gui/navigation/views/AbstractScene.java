@@ -20,7 +20,6 @@ import com.neotropic.vaadin.lienzo.LienzoComponent;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvEdgeWidget;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvNodeWidget;
 import com.vaadin.ui.VerticalLayout;
-import java.awt.Color;
 import java.util.HashMap;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -34,7 +33,7 @@ public abstract class AbstractScene extends VerticalLayout {
     /**
      * The component that is used to render the view at low level
      */
-    protected LienzoComponent lienzoComponent;
+    protected LienzoComponent<RemoteObjectLight, RemoteObjectLight> lienzoComponent;
     /**
      * A dictionary with the nodes in the current view
      */
@@ -85,27 +84,8 @@ public abstract class AbstractScene extends VerticalLayout {
         return null;
     }
     
-    public RemoteObjectLight findEdge(long id){
-//////        for (RemoteObjectLight edge : edges.keySet()) {
-//////            if(edge.getId() == id)
-//////                return edge;
-//////        }
-        return null;
-    }
-    
-    public static String toHexString(Color c) {
-        StringBuilder sb = new StringBuilder("#");
-
-        if (c.getRed() < 16) sb.append('0');
-        sb.append(Integer.toHexString(c.getRed()));
-
-        if (c.getGreen() < 16) sb.append('0');
-        sb.append(Integer.toHexString(c.getGreen()));
-
-        if (c.getBlue() < 16) sb.append('0');
-        sb.append(Integer.toHexString(c.getBlue()));
-
-        return sb.toString();
+    public RemoteObjectLight findEdge(String id){
+        return lienzoComponent.getEdgeObject(id);
     }
     
     /**

@@ -16,7 +16,6 @@
 
 package org.kuwaiba.apis.web.gui.dashboards.widgets;
 
-import com.vaadin.server.Page;
 import com.vaadin.ui.UI;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +87,7 @@ public class NavigationTreeDashboardWidget extends AbstractDashboardWidget {
                     public List<RemoteObjectLight> getChildren(RemoteObjectLight c) {
                         try {
                             return wsBean.getObjectChildren(c.getClassName(), 
-                                c.getId(), -1, Page.getCurrent().getWebBrowser().getAddress(),
+                                c.getId(), -1, session.getIpAddress(),
                                     session.getSessionId());
 
                         } catch (ServerSideException ex) {

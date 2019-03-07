@@ -9,12 +9,13 @@
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.h
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
 package org.kuwaiba.web;
 
+import com.vaadin.annotations.Push;
 import org.kuwaiba.web.modules.welcome.WelcomeComponent;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -23,13 +24,10 @@ import com.vaadin.cdi.CDIViewProvider;
 import com.vaadin.cdi.server.VaadinCDIServlet;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.ExternalResource;
-import com.vaadin.server.Page;
-import com.vaadin.server.SessionDestroyEvent;
-import com.vaadin.server.SessionDestroyListener;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
+import java.awt.Color;
 import java.io.IOException;
 import java.net.URL;
 import javax.inject.Inject;
@@ -37,9 +35,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
+import org.kuwaiba.apis.web.gui.resources.ResourceFactory;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.web.modules.contacts.ContactManagerModule;
 import org.kuwaiba.web.modules.ipam.IPAddressManagerModule;
 import org.kuwaiba.web.modules.ltmanager.ListTypeManagerModule;
@@ -56,6 +56,7 @@ import org.kuwaiba.web.procmanager.ProcessManagerModule;
 @Theme("nuqui")
 @CDIUI("")
 @SuppressWarnings("serial")
+@Push
 public class IndexUI extends UI {
     @Inject
     CDIViewProvider viewProvider;
@@ -68,12 +69,14 @@ public class IndexUI extends UI {
      * Main menu
      */
     private MenuBar mnuMain;
-        
+            
     @Override
     protected void init(VaadinRequest request) {
-        this.setNavigator(new Navigator(this, this));
+        this.setNavigator(new Navigator(this, this));        
         this.getNavigator().addProvider(viewProvider);
-        this.getNavigator().setErrorView(new ErrorView());
+        
+        //if (this.getSession().getRequestHandlers().isEmpty()) // init is called twice: One when the login page is hit for the first time, and once the login success. To avoid addin the same request handler twice, this is verified first
+            
         
         if (getSession().getAttribute("session") == null)
             this.getNavigator().navigateTo(LoginView.VIEW_NAME);
@@ -105,11 +108,6 @@ public class IndexUI extends UI {
             IPAddressManagerModule ipamModule = new IPAddressManagerModule(wsBean, 
                         (RemoteSession) getSession().getAttribute("session"));
             ipamModule.attachToMenu(mnuMain);
-            
-            // Synchronization Manager module
-//            SyncManagerModule syncManagerModule = new SyncManagerModule(null, wsBean, 
-//                        (RemoteSession) getSession().getAttribute("session"));
-//            syncManagerModule.attachToMenu(mnuMain);
 
             // Outside Plant
             OutsidePlantModule outsidePlantModule = new OutsidePlantModule(wsBean, 
@@ -136,7 +134,7 @@ public class IndexUI extends UI {
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     RemoteSession session = (RemoteSession) getSession().getAttribute("session");
                     try {
-                        wsBean.closeSession(session.getSessionId(), Page.getCurrent().getWebBrowser().getAddress());
+                        wsBean.closeSession(session.getSessionId(), session.getIpAddress());
                         getSession().setAttribute("session", null);
                     } catch (ServerSideException ex) {
                         Notifications.showError(ex.getMessage());
@@ -146,7 +144,40 @@ public class IndexUI extends UI {
 
                 }
             });
+            
+            this.getSession().addRequestHandler((mySession, myRequest, myResponse) -> {
+                if ("/icons".equals(myRequest.getPathInfo())) { //NOI18N
+
+                    RemoteSession session = (RemoteSession) this.getSession().getAttribute("session"); //NOI18N
+                    if (session == null) {
+                        myResponse.setContentType("text/plain"); //NOI18N
+                        myResponse.getWriter().append("You are not authorized to access this resource");
+                        return true;
+                    }
+
+                    String className = myRequest.getParameter("class");
+                    if (className == null) {
+                        myResponse.setContentType("text/plain");
+                        myResponse.getWriter().append("You have to provide a class name (include a parameter named <b>class</b>)");
+                    } else {
+                        myResponse.setContentType("image/png"); //NOI18N
+                        try {
+                            RemoteClassMetadata aClass = wsBean.getClass(className, 
+                                    session.getIpAddress(), 
+                                    session.getSessionId());
+                            myResponse.getOutputStream().write(aClass.getIcon());
+                        } catch (ServerSideException ex) {
+                            myResponse.getOutputStream().write(ResourceFactory.createRectangleIcon(Color.BLACK, 24, 24));
+                        }
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+            
             this.getNavigator().navigateTo(WelcomeComponent.VIEW_NAME);
+            
         }
     }
 
@@ -156,14 +187,7 @@ public class IndexUI extends UI {
     
     @WebServlet(value = "/*", asyncSupported = true)
     @VaadinServletConfiguration(productionMode = false, ui = IndexUI.class, widgetset = "org.kuwaiba.KuwaibaWidgetSet")
-    public static class Servlet extends VaadinCDIServlet {
-        
-//        @Override
-//        protected void servletInitialized() throws ServletException {
-//            super.servletInitialized();
-//            getService().addSessionDestroyListener(new KuwaibaSessionDestroyHandler());
-//        }
-//        
+    public static class Servlet extends VaadinCDIServlet {               
         @Override
         protected void writeStaticResourceResponse(HttpServletRequest request,
                 HttpServletResponse response, URL resourceUrl) throws IOException {
@@ -181,22 +205,22 @@ public class IndexUI extends UI {
         }
     }
     
-    private class KuwaibaSessionDestroyHandler implements SessionDestroyListener {
-
-        @Override
-        public void sessionDestroy(SessionDestroyEvent event) {
-            RemoteSession session = (RemoteSession) VaadinSession.getCurrent().getSession().getAttribute("session");
-            if (session != null) { //The Vaadin session is being destroyed, but the Kuwaiba session is still open
-                System.out.println("Session is being purged");
-                try {
-                    wsBean.closeSession(session.getSessionId(), Page.getCurrent().getWebBrowser().getAddress());
-                } catch (ServerSideException ex) {
-                    //No matter what happens here
-                }
-
-                VaadinSession.getCurrent().setAttribute("session", null);
-            }
-            getNavigator().navigateTo(LoginView.VIEW_NAME);
-        }
-    }
+//    private class KuwaibaSessionDestroyHandler implements SessionDestroyListener {
+//
+//        @Override
+//        public void sessionDestroy(SessionDestroyEvent event) {
+//            RemoteSession session = (RemoteSession) VaadinSession.getCurrent().getSession().getAttribute("session");
+//            if (session != null) { //The Vaadin session is being destroyed, but the Kuwaiba session is still open
+//                System.out.println("Session is being purged");
+//                try {
+//                    wsBean.closeSession(session.getSessionId(), Page.getCurrent().getWebBrowser().getAddress());
+//                } catch (ServerSideException ex) {
+//                    //No matter what happens here
+//                }
+//
+//                VaadinSession.getCurrent().setAttribute("session", null);
+//            }
+//            getNavigator().navigateTo(LoginView.VIEW_NAME);
+//        }
+//    }
 }

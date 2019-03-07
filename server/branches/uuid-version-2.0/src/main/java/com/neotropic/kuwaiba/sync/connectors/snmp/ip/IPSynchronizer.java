@@ -102,7 +102,7 @@ public class IPSynchronizer {
      */
     private MetadataEntityManager mem;
     /**
-     * 
+     * List of results after sync process
      */
     private List<SyncResult> res;
     
@@ -140,7 +140,7 @@ public class IPSynchronizer {
         try {
             readCurrentStructure(bem.getObjectChildren(className, id, -1), 1);
             readCurrentStructure(bem.getObjectSpecialChildren(className, id), 2);
-            //we get the rood nodes for ipv4 ipv6 root nodes
+            //we get the root nodes for ipv4, ipv6
             List<Pool> ipv4RootPools = bem.getRootPools(Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
             List<Pool> ipv6RootPools = bem.getRootPools(Constants.CLASS_SUBNET_IPV6, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
             ipv4Root = ipv4RootPools.get(0);
@@ -262,14 +262,15 @@ public class IPSynchronizer {
         List<String> ifportIds = ifXTable.get("instance");
         List<String> portNames = ifXTable.get("ifName");
         List<String> servicesNames = ifXTable.get("ifAlias");
+        //read every port from the mib
         for(int i=0; i < addrPortsIds.size(); i++){
             String portId = addrPortsIds.get(i);
-            String ipAddress = ipAddresses.get(i);
+            String ipAddress = ipAddresses.get(i); //get the ipAddr related in the mib data
             String mask = masks.get(i);
             //We search for the ip address
             BusinessObjectLight currentIpAddress = updateSubentsIps(ipAddress, mask);
             if(currentIpAddress != null){
-                for(int j=0; j < ifportIds.size(); j++){
+                for(int j=0; j < ifportIds.size(); j++){ //we read the list of interfaces from ifXmib
                     if(ifportIds.get(j).equals(portId)){
                         String portName = portNames.get(j);
                         String serviceName = servicesNames.get(j);

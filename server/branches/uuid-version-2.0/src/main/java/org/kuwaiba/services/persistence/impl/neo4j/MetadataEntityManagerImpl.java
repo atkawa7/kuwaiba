@@ -1919,6 +1919,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         
         Node inventoryObject = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, Constants.CLASS_INVENTORYOBJECT);
         
+        if (inventoryObject == null)
+            return;
+        
         TraversalDescription td = new MonoDirectionalTraversalDescription(); //TODO Check this!
         td = td.breadthFirst();
         td = td.relationships(RelTypes.EXTENDS, Direction.INCOMING);

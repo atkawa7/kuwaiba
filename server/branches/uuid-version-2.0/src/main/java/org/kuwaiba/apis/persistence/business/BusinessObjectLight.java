@@ -91,7 +91,7 @@ public class BusinessObjectLight implements Serializable, Comparable<BusinessObj
 
     @Override
     public int compareTo(BusinessObjectLight o) {
-        return getName().compareTo(o.getName());
+        return this.name.compareTo(o.getName());
     }
     
     @Override

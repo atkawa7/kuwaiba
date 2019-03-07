@@ -48,14 +48,9 @@ import org.kuwaiba.services.persistence.util.Constants;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class NewPhysicalConnectionWizard extends Wizard {
-    /**
-     * Reference to the backend bean
-     */
-    private WebserviceBean wsBean;
     
     public NewPhysicalConnectionWizard(RemoteObjectLight rootASide, RemoteObjectLight rootBSide, WebserviceBean wsBean) {
         super(new GeneralInfoStep(rootASide, rootBSide, wsBean));
-        this.wsBean = wsBean;
     }
     
     /**

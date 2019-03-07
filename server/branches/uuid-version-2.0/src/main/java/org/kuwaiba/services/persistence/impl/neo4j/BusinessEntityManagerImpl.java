@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -405,7 +406,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             if (!pool.hasProperty(Constants.PROPERTY_CLASS_NAME))
                 throw new InvalidArgumentException("This pool has not set his class name attribute");
-            
+            if(className == null)
+                throw new InvalidArgumentException("classname cannot be null");
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
@@ -992,16 +994,21 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         throw new OperationNotPermittedException(String.format("Class %s is not a business-related class", className));
 
                     Node instance = getInstanceOfClass(className, oid);
-                    //updates the cache
-                    BusinessObject remoteObject = createObjectFromNode(instance);
-                    for(AttributeMetadata attribute : classMetadata.getAttributes()){
-                        if(attribute.isUnique()){
-                            String attributeValues = remoteObject.getAttributes().get(attribute.getName());
-                            if(attributeValues != null)
-                                CacheManager.getInstance().removeUniqueAttributeValue(className, attribute.getName(), attributeValues);
+                    
+                    //Updates the unique attributes cache
+                    try {
+                        BusinessObject remoteObject = createObjectFromNode(instance);
+                        for(AttributeMetadata attribute : classMetadata.getAttributes()) {
+                            if(attribute.isUnique()) { 
+                                String attributeValues = remoteObject.getAttributes().get(attribute.getName());
+                                if(attributeValues != null)
+                                    CacheManager.getInstance().removeUniqueAttributeValue(className, attribute.getName(), attributeValues);
+                            }
                         }
+                    } catch (InvalidArgumentException ex) {
+                        //Should not happen
                     }
-                    Util.deleteObject(instance, releaseRelationships);
+                    deleteObject(instance, releaseRelationships);
                 }
             }
             tx.success();
@@ -1011,14 +1018,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     @Override
     public void deleteObject(String className, String oid, boolean releaseRelationships) 
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException {
-        try (Transaction tx = graphDb.beginTx()) {
-            if (!mem.isSubclassOf(Constants.CLASS_INVENTORYOBJECT, className))
-                throw new OperationNotPermittedException(String.format("Class %s is not a business-related class", className));
-
-            Node instance = getInstanceOfClass(className, oid);
-            Util.deleteObject(instance, releaseRelationships);
-            tx.success();
-        }
+        HashMap<String, List<String>> objectsToDelete = new HashMap<>();
+        objectsToDelete.put(className, Arrays.asList(oid));
+        deleteObjects(objectsToDelete, releaseRelationships);
     }
 
     @Override
@@ -1499,11 +1501,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             String cypherQuery;
             
             if (isAbstract) 
-                cypherQuery = "match (class:classes)<-[:EXTENDS*]-(subclass:classes)<-[:INSTANCE_OF]-(instance:inventoryObjects) "
+                cypherQuery = "match (class:classes)<-[:EXTENDS*]-(subclass:classes)<-[:INSTANCE_OF]-(instance:inventory_objects) "
                             + "where class.name=\"" + className + "\" "
                             + "return instance;";                
             else 
-                cypherQuery = "match (class:classes)<-[:INSTANCE_OF]-(instance:inventoryObjects) "
+                cypherQuery = "match (class:classes)<-[:INSTANCE_OF]-(instance:inventory_objects) "
                             + "where class.name=\"" + className + "\" "
                             + "return instance;";
             
@@ -2074,8 +2076,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     
                     try {
                         String fileName = objectNode.getId() + "_" + fileObjectId;
-                        new File(configuration.getProperty("attachmentsPath", DEFAULT_ATTACHMENTS_PATH) + "/" + fileName).delete();
-                    }catch(Exception ex){
+                        new File(configuration.getProperty("attachmentsPath", DEFAULT_ATTACHMENTS_PATH) + File.separator + fileName).delete();
+                    } catch(Exception ex){
                         throw new InvalidArgumentException(String.format("File with id %s could not be retrieved: %s", fileObjectId, ex.getMessage()));
                     }
                     tx.success();
@@ -2841,7 +2843,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         //if any of the parameters is null, return the dummy root
         if (className == null || className.equals(Constants.NODE_DUMMYROOT))
             return graphDb.findNode(specialNodeLabel, Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
-                
+        
         Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
 
         if (classNode == null)
@@ -3136,15 +3138,21 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public boolean canDeleteObject(String className, String oid, boolean releaseRelationships) 
-        throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException {
+    public boolean canDeleteObject(String className, String oid) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException {
         if (!mem.isSubclassOf(Constants.CLASS_INVENTORYOBJECT, className))
             throw new OperationNotPermittedException(String.format("Class %s is not a business-related class", className));
         try (Transaction tx = graphDb.beginTx()) {   
             Node instance = getInstanceOfClass(className, oid);
-            boolean safeDeletion = Util.canDeleteObject(instance, true);
+            boolean isSafeToDelete = canDeleteObject(instance);
+            if(!isSafeToDelete)
+                return false;
+            else{
+                for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF, RelTypes.CHILD_OF_SPECIAL))
+                    isSafeToDelete = canDeleteObject(rel.getStartNode());
+            }
+            
             tx.success();
-            return safeDeletion;
+            return isSafeToDelete;
         }
     }
     
@@ -3316,14 +3324,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         }
     }
     
-    private BusinessObjectLight createObjectLightFromNode (Node instance) throws InvalidArgumentException {
+    private BusinessObjectLight createObjectLightFromNode (Node instance) {
         String className = (String)instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME);
         
-        String uuid = instance.hasProperty(Constants.PROPERTY_UUID) ? (String) instance.getProperty(Constants.PROPERTY_UUID) : null;
-        if (uuid == null)
-            throw new InvalidArgumentException(String.format("The object with id %s does not have uuid", instance.getId()));
+        String instanceUUID = instance.hasProperty(Constants.PROPERTY_UUID) ? (String) instance.getProperty(Constants.PROPERTY_UUID) : null;
         //First, we create the naked business object, without validators
-        BusinessObjectLight res = new BusinessObjectLight(className, uuid, (String)instance.getProperty(Constants.PROPERTY_NAME));
+        BusinessObjectLight res = new BusinessObjectLight(className, instanceUUID, (String)instance.getProperty(Constants.PROPERTY_NAME));
         
         //Then, we check the cache for validator definitions
         List<ValidatorDefinition> validatorDefinitions = CacheManager.getInstance().getValidatorDefinitions(className);
@@ -3421,7 +3427,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         HashMap<String, String> attributes = new HashMap<>();
         String name = "";
         
-        for (AttributeMetadata myAtt : classMetadata.getAttributes()){
+        for (AttributeMetadata myAtt : classMetadata.getAttributes()) {
             //Only set the attributes existing in the current node. Please note that properties can't be null in
             //Neo4J, so a null value is actually a non-existing relationship/value
             if (instance.hasProperty(myAtt.getName())){
@@ -3469,9 +3475,72 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 throw new InvalidArgumentException(String.format("The object with %s (%s) is related to list type %s (%s), but that is not consistent with the data model", 
                             instance.getProperty(Constants.PROPERTY_NAME), instance.getId(), relationship.getEndNode().getProperty(Constants.PROPERTY_NAME), relationship.getEndNode().getId()));
         }
-        String uuid = instance.hasProperty(Constants.PROPERTY_UUID) ? (String) instance.getProperty(Constants.PROPERTY_UUID) : null;
-        if (uuid == null)
-            throw new InvalidArgumentException(String.format("The object with id %s does not have uuid", instance.getId()));
+        
+        String uuid = instance.hasProperty(Constants.PROPERTY_UUID) ? instance.getProperty(Constants.PROPERTY_UUID).toString() : null;
+        
         return new BusinessObject(classMetadata.getName(), uuid, name, attributes);
+    }
+    
+    /**
+     * Deletes recursively and object and all its children. Note that the transaction should be handled by the caller
+     * @param instance The object to be deleted
+     * @param unsafeDeletion True if you want the object to be deleted no matter if it has RELATED_TO, HAS_PROCESS_INSTANCE or RELATED_TO_SPECIAL relationships
+     * @throws org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException If the object already has relationships
+     */
+    private void deleteObject(Node instance, boolean unsafeDeletion) throws OperationNotPermittedException {
+        if(!unsafeDeletion && !canDeleteObject(instance)) 
+            throw new OperationNotPermittedException(String.format("The object with %s (%s) can not be deleted since it has relationships", 
+                    instance.getProperty(Constants.PROPERTY_NAME), instance.getId()));
+        
+        for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF, RelTypes.CHILD_OF_SPECIAL))
+            deleteObject(rel.getStartNode(), unsafeDeletion);
+        
+        // Searches the related views to delete the nodes in the data base       
+        for (Relationship aHasViewRelationship : instance.getRelationships(RelTypes.HAS_VIEW)) {
+            Node viewNode = aHasViewRelationship.getEndNode();
+            aHasViewRelationship.delete();
+            viewNode.delete();
+        }
+        
+        //Now we delete the audit trail entries
+        for (Relationship aHasHistoryEntryRelationship : instance.getRelationships(RelTypes.HAS_HISTORY_ENTRY)) {
+            Node historyEntryNode = aHasHistoryEntryRelationship.getEndNode();
+            if (historyEntryNode.hasRelationship(RelTypes.PERFORMED_BY))
+                historyEntryNode.getSingleRelationship(RelTypes.PERFORMED_BY, Direction.OUTGOING).delete();
+            if (historyEntryNode.hasRelationship(RelTypes.CHILD_OF_SPECIAL))
+                historyEntryNode.getSingleRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).delete();
+            aHasHistoryEntryRelationship.delete();
+            historyEntryNode.delete();
+        }
+        
+        //Now we dispose of the attachments
+        for (Relationship aHasAttachmentRelationship : instance.getRelationships(RelTypes.HAS_ATTACHMENT)) {
+            Node attachmentNode = aHasAttachmentRelationship.getEndNode();
+            aHasAttachmentRelationship.delete();
+            
+            String fileName = configuration.getProperty("attachmentsPath", DEFAULT_ATTACHMENTS_PATH) +  //NOI18N
+                    File.separator + instance.getId() + "_" + attachmentNode.getId(); //NOI18N
+            try {
+                new File(fileName).delete();
+            } catch (Exception ex) {
+                System.out.println(String.format("[KUWAIBA] An error occurred while deleting attachment %s for object %s (%s)", 
+                        fileName, instance.getProperty(Constants.PROPERTY_NAME), instance.getId()));
+            }
+            attachmentNode.delete();
+        }
+        
+        for (Relationship rel : instance.getRelationships())
+            rel.delete();
+
+        instance.delete();
+    }
+    
+    /**
+     * Checks if it's safe to delete (not recursively) an object and all its children. Note that the transaction should be handled by the caller.
+     * @param instance The object to be deleted.
+     * @return true if the object is safe to be deleted, false otherwise.
+     */
+    private boolean canDeleteObject(Node instance) {
+        return !instance.hasRelationship(RelTypes.RELATED_TO, RelTypes.RELATED_TO_SPECIAL, RelTypes.HAS_PROCESS_INSTANCE);        
     }
 }

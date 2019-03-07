@@ -14,7 +14,6 @@
  */
 package org.kuwaiba.apis.forms.components.impl;
 
-import com.vaadin.server.Page;
 import com.vaadin.ui.UI;
 import java.util.ArrayList;
 import java.util.List;
@@ -104,10 +103,11 @@ public class ComponentFactory {
                         @Override
                         public List<RemoteObjectLight> getChildren(RemoteObjectLight parentObject) {
                             try {
+                                RemoteSession session = (RemoteSession) UI.getCurrent().getSession().getAttribute("session");
                                 return wsBean.getObjectChildren(
                                         parentObject.getClassName(), 
-                                        parentObject.getId(), -1, Page.getCurrent().getWebBrowser().getAddress(), 
-                                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                                        parentObject.getId(), -1, session.getIpAddress(), 
+                                        session.getSessionId());
                             } catch (ServerSideException ex) {
                                 Notifications.showError(ex.getLocalizedMessage());
                                 return new ArrayList<>();

@@ -81,6 +81,10 @@ public class CacheManager {
      * A structure that caches the validators associated to a given class (the key of the hash).
      */
     private HashMap<String, List<ValidatorDefinition>> validatorDefinitionIndex;
+    /**
+     * Caches the existing configuration variables values (not definitions).
+     */
+    private HashMap<String, Object> configurationVariablesIndex;
     
     private CacheManager() {
         classIndex = new HashMap<>();
@@ -94,6 +98,7 @@ public class CacheManager {
         listTypeIndex = new HashMap<>();
         superClassIndex = new HashMap<>();
         validatorDefinitionIndex = new HashMap<>();
+        configurationVariablesIndex = new HashMap<>();
     }
 
     public static CacheManager getInstance(){
@@ -399,6 +404,32 @@ public class CacheManager {
     }
     
     /**
+     * Adds (or replaces) the value of a configuration variable.
+     * @param configVariableName The name of the configuration variable.
+     * @param configVariableValue  The value of the configuration value.
+     */
+    public void addConfigurationValue(String configVariableName, Object configVariableValue) {
+        configurationVariablesIndex.put(configVariableName, configVariableValue);
+    }
+    
+    /**
+     * Gets the cached value of a configuration variable.
+     * @param configVariableName The name of the configuration variable.
+     * @return The value of the config variable, or null if it is not cached.
+     */
+    public Object getConfigurationVariableValue(String configVariableName) {
+        return configurationVariablesIndex.get(configVariableName);
+    }
+    
+    /**
+     * Removes a cached value of a configuration variable (if present).
+     * @param configVariableName The name of the config variable.
+     */
+    public void removeConfigurationVariableValue(String configVariableName) {
+        configurationVariablesIndex.remove(configVariableName);
+    }
+    
+    /**
      * Clears all cached information
      */
     public void clearAll() {
@@ -406,6 +437,7 @@ public class CacheManager {
         userIndex.clear();
         groupIndex.clear();
         listTypeIndex.clear();
+        configurationVariablesIndex.clear();
         clearClassCache();
     }
     

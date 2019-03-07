@@ -33,10 +33,10 @@ public class SnmpBgpResourceDefinition extends HashMap<String, OID>{
 
     public SnmpBgpResourceDefinition() {
         put("bgpPeerIdentifier", new OID("1.3.6.1.2.1.15.3.1.1")); //The BGP Identifier of this entry's BGP peer.
-        put("bgpPeerRemoteAs", new OID("1.3.6.1.2.1.15.3.1.9")); //Remote ASN (remote autonomous system number).
+        put("bgpPeerRemoteAs", new OID("1.3.6.1.2.1.15.3.1.9"));   //Remote ASN (remote autonomous system number).
         put("bgpPeerRemoteAddr", new OID("1.3.6.1.2.1.15.3.1.7")); //The remote IP address of this entry's BGP peer.  
         put("bgpPeerRemotePort", new OID("1.3.6.1.2.1.15.3.1.8")); //The remote port, not really useful but it is been set as port name in external neighbors
-        put("bgpPeerLocalAddr", new OID("1.3.6.1.2.1.15.3.1.5")); //The local IP address of this entry's BGP connection.
+        put("bgpPeerLocalAddr", new OID("1.3.6.1.2.1.15.3.1.5"));  //The local IP address of this entry's BGP connection.
     }
 }
 

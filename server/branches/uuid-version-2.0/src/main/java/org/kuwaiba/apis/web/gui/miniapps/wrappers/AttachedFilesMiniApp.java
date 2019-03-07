@@ -14,7 +14,6 @@
  */
 package org.kuwaiba.apis.web.gui.miniapps.wrappers;
 
-import com.vaadin.server.Page;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.UI;
 import java.util.Properties;
@@ -26,7 +25,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
- * A mini application to wrapper the AttachedFilesDashboardWidget
+ * A mini application that wraps the AttachedFilesDashboardWidget
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class AttachedFilesMiniApp extends AbstractMiniApplication<Component, Component> {
@@ -52,7 +51,7 @@ public class AttachedFilesMiniApp extends AbstractMiniApplication<Component, Com
                 RemoteObjectLight rol = wsBean.getObjectLight(
                     objectClassName, 
                     objectId, 
-                    Page.getCurrent().getWebBrowser().getAddress(), 
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getIpAddress(), 
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
 
                 AttachedFilesDashboardWidget attachedFilesDashboardWidget = new AttachedFilesDashboardWidget(rol, wsBean);

@@ -68,17 +68,22 @@ public class RemoteSession implements Serializable {
      * The last name of the user
      */
     private String lastName;
+    /**
+     * The address this session was created from
+     */
+    private String ipAddress;
 
     //No-arg constructor required
     public RemoteSession() {    }
 
-    public RemoteSession(String sessionID, UserProfile user, int sessionType) {
+    public RemoteSession(String sessionID, UserProfile user, int sessionType, String ipAddress) {
         this.sessionId = sessionID;
         this.username = user.getUserName();
         this.userId = user.getId();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.sessionType = sessionType;
+        this.ipAddress = ipAddress;
     }
 
     public String getSessionId() {
@@ -127,5 +132,13 @@ public class RemoteSession implements Serializable {
 
     public void setSessionType(int sessionType) {
         this.sessionType = sessionType;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 }

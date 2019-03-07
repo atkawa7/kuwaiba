@@ -15,7 +15,6 @@
 package org.kuwaiba.apis.forms.components.impl;
 
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.Page;
 import org.kuwaiba.apis.forms.elements.EventDescriptor;
 import org.kuwaiba.apis.forms.elements.AbstractElement;
 import org.kuwaiba.apis.forms.elements.Constants;
@@ -79,10 +78,10 @@ public class ComponentButton extends GraphicalComponent {
                             getComponent().addStyleName(ValoTheme.BUTTON_ICON_ONLY);
                         break;
                         case Constants.Attribute.StyleName.BUTTON_PRIMARY:
-                            getComponent().addStyleName(ValoTheme.BUTTON_PRIMARY);
+                            //getComponent().addStyleName(ValoTheme.BUTTON_PRIMARY);
                         break;
                         case Constants.Attribute.StyleName.BUTTON_DANGER:
-                            getComponent().addStyleName(ValoTheme.BUTTON_DANGER);
+                            //getComponent().addStyleName(ValoTheme.BUTTON_DANGER);
                         break;
                     }
                 }
@@ -111,14 +110,10 @@ public class ComponentButton extends GraphicalComponent {
                 
                 try {
                     WebserviceBean wsBean = (WebserviceBean) getComponent().getUI().getSession().getAttribute("wsBean");
-                    RemoteSession session = (RemoteSession) getComponent().getUI().getSession().getAttribute("session");
-                                        
+                    RemoteSession session = (RemoteSession) getComponent().getUI().getSession().getAttribute("session");                
                     byte [] structure = new FormInstanceCreator(((ElementButton) getComponentEventListener()).getFormStructure(), wsBean, session).getStructure();
                     
-                    String address = Page.getCurrent().getWebBrowser().getAddress();
-
-                    wsBean.createFormInstance(-1, String.valueOf(new Date().getTime()), String.valueOf(new Date().getTime()), structure, address, session.getSessionId());
-                                                            
+                    wsBean.createFormInstance(-1, String.valueOf(new Date().getTime()), String.valueOf(new Date().getTime()), structure, session.getIpAddress(), session.getSessionId());                                        
                 } catch (ServerSideException ex) {
                     
                     Notification.show("Error", ex.getMessage(), Notification.Type.ERROR_MESSAGE);

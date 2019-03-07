@@ -1172,8 +1172,10 @@ public class EntPhysicalSynchronizer {
             if(newPort.getAttributes().get("deviceParentId") != null)
                 parentId = newPort.getAttributes().get("deviceParentId");
 
+
             else
                 parentId = createdIdsToMap.get(newPort.getAttributes().get("parentId"));
+            
             
             if(parentId == null)
                 results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR,

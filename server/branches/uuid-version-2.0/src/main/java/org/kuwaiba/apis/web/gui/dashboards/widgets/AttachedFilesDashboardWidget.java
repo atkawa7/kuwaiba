@@ -66,8 +66,9 @@ public class AttachedFilesDashboardWidget extends AbstractDashboardWidget {
     @Override
     public void createContent() {
         try {
-            List<RemoteFileObjectLight> attachedFiles = wsBean.getFilesForObject(businessObject.getClassName(), businessObject.getId(), Page.getCurrent().getWebBrowser().getAddress(), 
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+            RemoteSession session = (RemoteSession) UI.getCurrent().getSession().getAttribute("session");
+            List<RemoteFileObjectLight> attachedFiles = wsBean.getFilesForObject(businessObject.getClassName(), businessObject.getId(), session.getIpAddress(), 
+                    session.getSessionId());
             
             if (attachedFiles.isEmpty())
                 this.contentComponent = new Label("This object does not have files attached to it");

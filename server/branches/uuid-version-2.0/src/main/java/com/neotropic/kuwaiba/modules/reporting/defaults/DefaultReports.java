@@ -471,15 +471,17 @@ public class DefaultReports {
         } else {
             String serverName, serverPort;
             try {
-                serverName = (String)aem.getConfigurationVariableValue("general.misc.serverName");
+            serverName = (String)aem.getConfigurationVariableValue("general.misc.serverName");
             } catch (ApplicationObjectNotFoundException ex) {
                 serverName = "127.0.0.1";
             }
+
             try {
                 serverPort = String.valueOf(aem.getConfigurationVariableValue("general.misc.serverPort"));
             } catch (ApplicationObjectNotFoundException ex) {
                 serverPort = "8181";
-            }
+            }    
+                
 //            try {
 //                logoURL = (String)aem.getConfigurationVariableValue("general.misc.logoURL");
 //            } catch (ApplicationObjectNotFoundException ex) {

@@ -120,27 +120,27 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                     continue;
                 }
 
-                if (dataSourceConfiguration.getParameters().containsKey("port")) //NOI18N
-                    port = Integer.valueOf(dataSourceConfiguration.getParameters().get("port")); //NOI18N
+                if (dataSourceConfiguration.getParameters().containsKey("sshPort")) //NOI18N
+                    port = Integer.valueOf(dataSourceConfiguration.getParameters().get("sshPort")); //NOI18N
                 else {
                     res.getSyncDataSourceConfigurationExceptions(dataSourceConfiguration).add(
-                        new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "port", syncGroup.getName())));
+                        new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "sshPort", syncGroup.getName())));
                     continue;
                 }
 
-                if (dataSourceConfiguration.getParameters().containsKey("user")) //NOI18N
-                    user = dataSourceConfiguration.getParameters().get("user"); //NOI18N
+                if (dataSourceConfiguration.getParameters().containsKey("sshUser")) //NOI18N
+                    user = dataSourceConfiguration.getParameters().get("sshUser"); //NOI18N
                 else {
                     res.getSyncDataSourceConfigurationExceptions(dataSourceConfiguration).add(
-                        new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "user", syncGroup.getName()))); //NOI18N
+                        new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "sshUser", syncGroup.getName()))); //NOI18N
                     continue;
                 }
 
-                if (dataSourceConfiguration.getParameters().containsKey("password")) //NOI18N
-                    password = dataSourceConfiguration.getParameters().get("password"); //NOI18N
+                if (dataSourceConfiguration.getParameters().containsKey("sshPassword")) //NOI18N
+                    password = dataSourceConfiguration.getParameters().get("sshPassword"); //NOI18N
                 else {
                     res.getSyncDataSourceConfigurationExceptions(dataSourceConfiguration).add(
-                        new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "password", syncGroup.getName()))); //NOI18N
+                        new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "sshPassword", syncGroup.getName()))); //NOI18N
                     continue;
                 }
     
@@ -179,7 +179,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                         break;
                     }
                     case "ASR9001": {
-                        channel.setCommand("sh l2vpn bridge-domain"); //NOI18N
+                        channel.setCommand("sh l2vpnxconnect"); //NOI18N
                         channel.connect();
                         
                         BridgeDomainsASR9001Parser parser = new BridgeDomainsASR9001Parser();               
@@ -292,6 +292,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                                 HashMap<String, String> defaultAttributes = new HashMap<>();
                                 defaultAttributes.put(Constants.PROPERTY_NAME, networkInterface.getName());
                                 String newBridgeDomainInterface = bem.createSpecialObject("BridgeDomainInterface", "BridgeDomain", matchingBridgeDomain.getId(), defaultAttributes, -1);
+                                bem.createSpecialRelationship(relatedOject.getClassName(), relatedOject.getId(),"BridgeDomain", matchingBridgeDomain.getId(), "networkBridgeInterface", false);
                                 bem.createSpecialRelationship(relatedOject.getClassName(), relatedOject.getId(),"BridgeDomain", matchingBridgeDomain.getId(), "networkBridgeInterface", false);
                                 res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
                                         String.format("The BDI %s did not exist and was created.", networkInterface.getName())));

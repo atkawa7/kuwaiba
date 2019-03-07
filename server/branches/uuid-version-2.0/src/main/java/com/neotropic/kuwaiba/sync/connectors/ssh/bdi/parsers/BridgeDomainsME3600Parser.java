@@ -70,7 +70,6 @@ public class BridgeDomainsME3600Parser {
                         else if (line.contains("service instance")) 
                             currentBridgeDomain.getNetworkInterfaces().add(new NetworkInterface(lineTokens[0] + " " + lineTokens[1] + " " + lineTokens[2] + " " + lineTokens[3], NetworkInterface.TYPE_SERVICE_INSTANCE));
                         
-                        
                         else 
                             currentBridgeDomain.getNetworkInterfaces().add(new NetworkInterface(line.trim(), NetworkInterface.TYPE_UNKNOWN));
                     }

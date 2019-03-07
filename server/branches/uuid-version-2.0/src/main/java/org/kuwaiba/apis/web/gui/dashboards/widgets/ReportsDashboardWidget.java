@@ -79,8 +79,9 @@ public class ReportsDashboardWidget extends AbstractDashboardWidget {
     @Override
     public void createContent() {
         try {
-            List<RemoteReportLight> classLevelReports = wsBean.getClassLevelReports(businessObject.getClassName(), true, false, Page.getCurrent().getWebBrowser().getAddress(), 
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+            RemoteSession session = (RemoteSession) UI.getCurrent().getSession().getAttribute("session");
+            List<RemoteReportLight> classLevelReports = wsBean.getClassLevelReports(businessObject.getClassName(), true, false, session.getIpAddress(),
+                    session.getSessionId());
             
             if (classLevelReports.isEmpty())
                 this.contentComponent = new Label(String.format("The class %s does not have reports associated to it", businessObject.getClassName()));
@@ -94,10 +95,9 @@ public class ReportsDashboardWidget extends AbstractDashboardWidget {
                     btnReport.setStyleName(ValoTheme.BUTTON_LINK);
                     btnReport.addClickListener((event) -> {
                         try {
-
                             byte[] reportBody = wsBean.executeClassLevelReport(businessObject.getClassName(), 
-                                    businessObject.getId(), source.getId(), Page.getCurrent().getWebBrowser().getAddress(),
-                                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                                    businessObject.getId(), source.getId(), session.getIpAddress(),
+                                    session.getSessionId());
 
                             StreamResource fileStream = ResourceFactory.getFileStream(reportBody, businessObject.getClassName() + "_" + Calendar.getInstance().getTimeInMillis() + ".html");
                             fileStream.setMIMEType("text/html"); //NOI18N

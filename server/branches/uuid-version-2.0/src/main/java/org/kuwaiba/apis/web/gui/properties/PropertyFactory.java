@@ -15,7 +15,6 @@
  */
 package org.kuwaiba.apis.web.gui.properties;
 
-import com.vaadin.server.Page;
 import com.vaadin.ui.UI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +26,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 
 /**
- * A factory class that builds property sets given business objects
+ * A factory class that builds property sets given business objects.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class PropertyFactory {
@@ -38,12 +37,16 @@ public class PropertyFactory {
      * @return The set of properties ready to used in a property sheet component
      * @throws org.kuwaiba.exceptions.ServerSideException if retrieving the class metadata or the attribute values raised an exception
      */
-    public static List<AbstractProperty> propertiesFromRemoteObject(RemoteObjectLight businessObject, WebserviceBean wsBean) throws ServerSideException{
-        HashMap<String, String> objectAttributes = wsBean.getAttributeValuesAsString(businessObject.getClassName(), businessObject.getId(), Page.getCurrent().getWebBrowser().getAddress(), 
-                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+    public static List<AbstractProperty> propertiesFromRemoteObject(RemoteObjectLight businessObject, WebserviceBean wsBean) throws ServerSideException {
+        
+        RemoteSession session = (RemoteSession) UI.getCurrent().getSession().getAttribute("session");
+        
+        HashMap<String, String> objectAttributes = wsBean.getAttributeValuesAsString(businessObject.getClassName(), businessObject.getId(), 
+                session.getIpAddress(), 
+                session.getSessionId());
 
-            RemoteClassMetadata classMetadata = wsBean.getClass(businessObject.getClassName(), Page.getCurrent().getWebBrowser().getAddress(), 
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+            RemoteClassMetadata classMetadata = wsBean.getClass(businessObject.getClassName(), session.getIpAddress(), 
+                    session.getSessionId());
             
             ArrayList<AbstractProperty> objectProperties = new ArrayList<>();
             

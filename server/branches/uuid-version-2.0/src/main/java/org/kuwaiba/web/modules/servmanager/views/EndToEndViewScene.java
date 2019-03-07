@@ -30,6 +30,7 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -37,6 +38,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.web.gui.navigation.views.AbstractScene;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
+import org.kuwaiba.apis.web.gui.resources.ResourceFactory;
+import org.kuwaiba.apis.web.gui.views.util.UtilHtml;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteLogicalConnectionDetails;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.services.persistence.util.Constants;
@@ -76,8 +79,8 @@ public class EndToEndViewScene extends AbstractScene {
     EdgeWidgetClickListener edgeWidgetClickListener = new EdgeWidgetClickListener() {
 
         @Override
-        public void edgeWidgetClicked(long id) {
-            SrvEdgeWidget srvEdge = lienzoComponent.getEdge(id);
+        public void edgeWidgetClicked(String id) {
+            SrvEdgeWidget srvEdge = lienzoComponent.getEdge(lienzoComponent.getEdgeObject(id));
             Window tableInfo = new Window(" ");
             tableInfo.addStyleName("v-window-center");
 //            try {
@@ -102,64 +105,66 @@ public class EndToEndViewScene extends AbstractScene {
     NodeWidgetClickListener nodeWidgetClickListener = new NodeWidgetClickListener() {
 
         @Override
-        public void nodeWidgetClicked(long id) {
-            SrvNodeWidget srvNode = lienzoComponent.getNodeWidget(id);
+        public void nodeWidgetClicked(String id) {
+            RemoteObjectLight nodeObject = (RemoteObjectLight) lienzoComponent.getNodeObject(id);
+            SrvNodeWidget srvNode = lienzoComponent.getNodeWidget(nodeObject);
             Window tableInfo = new Window(" ");
             tableInfo.setId("report-forms-container");
             tableInfo.addStyleName("report-forms");
-//////            try {
-//////                Component x = null;
-//////                for (RemoteObjectLight device : nodes.keySet()) {
-//////                    if (device.getId() == id){
-//////                        TableCreator formView = new TableCreator(service, wsBean);
-//////                        
-//////                        List<SrvEdgeWidget> connectedEdgeWidgets = lienzoComponent.getNodeEdgeWidgets(srvNode);
-//////                        for(SrvEdgeWidget edge : connectedEdgeWidgets){
-//////                            RemoteObjectLight foundEdge = findEdge(edge.getId());
-//////                            RemoteObjectSpecialRelationships specialAttributes = wsBean.getSpecialAttributes(foundEdge.getClassName(), 
-//////                                    foundEdge.getId(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-//////                            List<RemoteObjectLightList> relatedObjects = specialAttributes.getRelatedObjects();
-//////                            List<String> relationships = specialAttributes.getRelationships();
-//////                            for(int i = 0; i < relationships.size(); i++){
-//////                                String relationShipName = relationships.get(i);
-//////                                if(relationShipName.toLowerCase().contains("endpoint")){
-//////                                    RemoteObjectLightList get = relatedObjects.get(i);
-//////                                    RemoteObjectLight port = get.getList().get(0);
-//////                                    if(port.getClassName().toLowerCase().contains("port") || port.getClassName().equals("Pseudowire")){
-//////                                        List<RemoteObjectLight> parentsUntilFirstOfClass = 
-//////                                                wsBean.getParentsUntilFirstOfClass(port.getClassName(), port.getId(), 
-//////                                                        device.getClassName(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-//////                                        if(parentsUntilFirstOfClass.contains(device)){
-//////                                            if(device.getClassName().toLowerCase().contains("router"))
-//////                                                x = formView.createRouter(device, port);
-//////                                            else if(device.getClassName().equals("ODF"))
-//////                                                x = formView.createODF(device, port);
-//////                                            else if(device.getClassName().toLowerCase().contains("external"))
-//////                                                x = formView.createExternalEquipment(device);
-//////                                            else if(device.getClassName().equals("Cloud"))
-//////                                                x = formView.createPeering(device);
-//////                                            tableInfo.setCaption(device.toString());
-//////                                            tableInfo.center();
-//////                                            HorizontalLayout lytContent = new HorizontalLayout();
-//////                                            lytContent.setSpacing(true);
-//////                                            lytContent.setId("report-forms-content");
-//////                                            lytContent.addComponent(x);
-//////                                            tableInfo.setContent(lytContent);
-//////                                            //We close if there are any open window
-//////                                            closeWindows();
-//////                                            getUI().addWindow(tableInfo);
-//////                                        }
-//////                                    }
-//////                                }
-//////                            }
-//////                        }
-//////                        break;
-//////                    }
-//////                }
-//////            } catch (ServerSideException ex) {
-//////                Exceptions.printStackTrace(ex);
-//////            }
-            lienzoComponent.updateNodeWidget(id);
+            try {
+                Component x = null;
+                for (RemoteObjectLight device : nodes.keySet()) {
+                    if (id.equals(String.valueOf(device.getId()))){
+                        TableCreator formView = new TableCreator(service, wsBean);
+                        
+                        List<SrvEdgeWidget> connectedEdgeWidgets = lienzoComponent.getNodeEdgeWidgets(srvNode);
+                        for(SrvEdgeWidget edge : connectedEdgeWidgets){
+                            
+                            RemoteObjectLight foundEdge = findEdge(edge.getId());
+                            RemoteObjectSpecialRelationships specialAttributes = wsBean.getSpecialAttributes(foundEdge.getClassName(), 
+                                    foundEdge.getId(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+                            List<RemoteObjectLightList> relatedObjects = specialAttributes.getRelatedObjects();
+                            List<String> relationships = specialAttributes.getRelationships();
+                            for(int i = 0; i < relationships.size(); i++){
+                                String relationShipName = relationships.get(i);
+                                if(relationShipName.toLowerCase().contains("endpoint")){
+                                    RemoteObjectLightList get = relatedObjects.get(i);
+                                    RemoteObjectLight port = get.getList().get(0);
+                                    if(port.getClassName().toLowerCase().contains("port") || port.getClassName().equals("Pseudowire")){
+                                        List<RemoteObjectLight> parentsUntilFirstOfClass = 
+                                                wsBean.getParentsUntilFirstOfClass(port.getClassName(), port.getId(), 
+                                                        device.getClassName(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+                                        if(parentsUntilFirstOfClass.contains(device)){
+                                            if(device.getClassName().toLowerCase().contains("router"))
+                                                x = formView.createRouter(device, port);
+                                            else if(device.getClassName().equals("ODF"))
+                                                x = formView.createODF(device, port);
+                                            else if(device.getClassName().toLowerCase().contains("external"))
+                                                x = formView.createExternalEquipment(device);
+                                            else if(device.getClassName().equals("Cloud"))
+                                                x = formView.createPeering(device);
+                                            tableInfo.setCaption(device.toString());
+                                            tableInfo.center();
+                                            HorizontalLayout lytContent = new HorizontalLayout();
+                                            lytContent.setSpacing(true);
+                                            lytContent.setId("report-forms-content");
+                                            lytContent.addComponent(x);
+                                            tableInfo.setContent(lytContent);
+                                            //We close if there are any open window
+                                            closeWindows();
+                                            getUI().addWindow(tableInfo);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+            } catch (ServerSideException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+            lienzoComponent.updateNodeWidget(nodeObject);
         }
     };
     
@@ -367,15 +372,17 @@ public class EndToEndViewScene extends AbstractScene {
                         }
                     }
                 }
-                for (SrvNodeWidget node : nodes.values()) {       
-                    node.setWidth(10);
-                    node.setHeight(10);
-                    lienzoComponent.addNodeWidget(node);
+                for (RemoteObjectLight object : nodes.keySet()) {       
+                    SrvNodeWidget node = nodes.get(object);
+                    node.setWidth(ResourceFactory.DEFAULT_ICON_WIDTH + 8);
+                    node.setHeight(ResourceFactory.DEFAULT_ICON_HEIGHT + 8);
+                    lienzoComponent.addNodeWidget(object, node);
                 }
                 
-                for (SrvEdgeWidget edge : edges.values())
-                    lienzoComponent.addEdgeWidget(edge);
-                
+                for (RemoteObjectLight edgeObjects : edges.keySet()) {
+                    SrvEdgeWidget edge = edges.get(edgeObjects);
+                    lienzoComponent.addEdgeWidget(edgeObjects, edge);
+                }
                 addComponent(lienzoComponent);
             }
         } catch (ServerSideException ex) {
@@ -389,35 +396,35 @@ public class EndToEndViewScene extends AbstractScene {
     }
 
     protected SrvNodeWidget attachNodeWidget(RemoteObjectLight node) {
-//////        SrvNodeWidget newNode = new SrvNodeWidget(node.getId());
-//////        
-//////            
-//////        newNode.setUrlIcon("/icons/" + node.getClassName() + ".png");
-//////
-//////        newNode.setCaption(node.toString());
-//////        newNode.setX(nodes.size() * 200);
-//////        newNode.setY((nodes.size() % 2) * 200 );
-//////        nodes.put(node, newNode);
-//////        return newNode;
-        return null;
+        SrvNodeWidget newNode = new SrvNodeWidget();
+        
+            
+        newNode.setUrlIcon("/icons/" + node.getClassName() + ".png");
+
+        newNode.setCaption(node.toString());
+        newNode.setX(nodes.size() * 200);
+        newNode.setY((nodes.size() % 2) * 200 );
+        nodes.put(node, newNode);
+        return newNode;
     }
     
     protected SrvEdgeWidget attachEdgeWidget(RemoteObjectLight edge, SrvNodeWidget sourceNode, SrvNodeWidget targetNode) {
-//////        try {
-//////            SrvEdgeWidget newEdge = new SrvEdgeWidget(edge.getId());
-//////            newEdge.setSource(sourceNode);
-//////            newEdge.setTarget(targetNode);
-//////            
-//////            RemoteClassMetadata classMetadata = wsBean.getClass(edge.getClassName(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-//////            newEdge.setColor(toHexString(new Color(classMetadata.getColor())));
-//////            newEdge.setCaption(edge.toString());
-//////            edges.put(edge, newEdge);
-//////            //lienzoComponent.addEdgeWidget(newEdge);
-//////            return newEdge; 
-//////        } catch (ServerSideException ex) {
-//////            return new SrvEdgeWidget(323927373);
-//////        }
-        return null;
+        try {
+            SrvEdgeWidget newEdge = new SrvEdgeWidget();
+            newEdge.setSource(sourceNode);
+            newEdge.setTarget(targetNode);
+            
+            RemoteClassMetadata classMetadata = wsBean.getClass(edge.getClassName(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+            newEdge.setColor(UtilHtml.toHexString(new Color(classMetadata.getColor())));
+            newEdge.setCaption(edge.toString());
+            edges.put(edge, newEdge);
+            //lienzoComponent.addEdgeWidget(newEdge);
+            return newEdge; 
+        } catch (ServerSideException ex) {
+            SrvEdgeWidget srvEdgeWidget = new SrvEdgeWidget();
+            srvEdgeWidget.setId(UUID.randomUUID().toString());
+            return srvEdgeWidget;
+        }
     }
     
     private void closeWindows(){

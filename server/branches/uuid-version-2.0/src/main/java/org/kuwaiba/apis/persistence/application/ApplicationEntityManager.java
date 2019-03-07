@@ -1663,13 +1663,13 @@ public interface ApplicationEntityManager {
      */
     public ConfigurationVariable getConfigurationVariable(String name) throws ApplicationObjectNotFoundException;
     /**
-     * Retrieves only the value of a configuration variable. Masked values are returned as null
-     * @param name The name of the variable
-     * @return The value of the variable as a java object/data type. The numbers are returned as floats. The arrays and matrixes are returned as ArrayList<String> and ArrayList<ArrayList<String>> instances respectively
-     * @throws ApplicationObjectNotFoundException If the variable could not be found
+     * Retrieves only the value of a configuration variable. Masked values are returned as null. Unexisting variables will be returned as null.
+     * @param name The name of the variable. Masked values are returned as null. Unexisting variables will be returned as null.
+     * @return The value of the variable as a java object/data type. The numbers are returned as floats. The arrays and matrixes are returned as <code>ArrayList{@literal <String>}</code> and <code>ArrayList<ArrayList{@literal <String>}</code> instances respectively
      * @throws InvalidArgumentException If the value of the variable could not be successfully translated into a java type variable
+     * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException If no configuration variable with that name could be found.
      */
-    public Object getConfigurationVariableValue(String name) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    public Object getConfigurationVariableValue(String name) throws InvalidArgumentException, ApplicationObjectNotFoundException;
     /**
      * Gets the config variables in a config variable pool
      * @param parentPoolId The id pool to retrieve the variables from

@@ -37,40 +37,7 @@
            <env-entry-type>java.lang.Integer</env-entry-type>
            <env-entry-value>7070</env-entry-value>
         </env-entry>
-        <!-- Outside Plant -->
-        <!-- The API key used to consume Google maps. Check how to get one here: -->
-        <!-- IMPORTANT: If you don't have a key, the map will display Google's "for development only" watermarks -->
-        <!-- IMPORTANT: Note that an empty API key actually has a "space". If you remove that space, after logging in you will get an error about a variable not found -->
-        <env-entry>
-           <description>Google Maps Platform API Key</description>
-           <env-entry-name>googleMapsApiKey</env-entry-name>
-           <env-entry-type>java.lang.String</env-entry-type>
-           <env-entry-value> </env-entry-value>
-        </env-entry>
-        <env-entry>
-           <description>Language used for the maps</description>
-           <env-entry-name>mapLanguage</env-entry-name>
-           <env-entry-type>java.lang.String</env-entry-type>
-           <env-entry-value>english</env-entry-value>
-        </env-entry>
-        <env-entry>
-           <description>Default longitude of the center of a map</description>
-           <env-entry-name>defaultCenterLongitude</env-entry-name>
-           <env-entry-type>java.lang.Double</env-entry-type>
-           <env-entry-value>-76.6063356</env-entry-value>
-        </env-entry>
-        <env-entry>
-           <description>Default latitude of the center of a map</description>
-           <env-entry-name>defaultCenterLatitude</env-entry-name>
-           <env-entry-type>java.lang.Double</env-entry-type>
-           <env-entry-value>2.441916</env-entry-value>
-        </env-entry>
-        <env-entry>
-           <description>Default zoom of a map</description>
-           <env-entry-name>defaultZoom</env-entry-name>
-           <env-entry-type>java.lang.Integer</env-entry-type>
-           <env-entry-value>5</env-entry-value>
-        </env-entry>
+
         <!-- Business rules -->
         <env-entry>
            <description>Check defined business rules before performing any action</description>
