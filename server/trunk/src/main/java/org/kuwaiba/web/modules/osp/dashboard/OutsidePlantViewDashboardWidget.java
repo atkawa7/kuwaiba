@@ -16,19 +16,14 @@
 
 package org.kuwaiba.web.modules.osp.dashboard;
 
-import org.kuwaiba.web.modules.osp.OSPConstants;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.shared.ui.dnd.DropEffect;
-import com.vaadin.tapio.googlemaps.GoogleMapsComponent;
-import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
@@ -42,29 +37,19 @@ import com.vaadin.ui.dnd.DropTargetExtension;
 import com.vaadin.ui.dnd.event.DropEvent;
 import com.vaadin.ui.dnd.event.DropListener;
 import java.awt.Color;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventFactory;
-import javax.xml.stream.XMLEventWriter;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
+import java.util.Properties;
 import org.kuwaiba.apis.persistence.PersistenceService;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.dashboards.DashboardEventBus;
-import org.kuwaiba.apis.web.gui.dashboards.DashboardEventListener;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.apis.web.gui.tools.Wizard;
 import org.kuwaiba.apis.web.gui.views.AbstractView;
-import org.kuwaiba.apis.web.gui.views.ViewFactory;
+import org.kuwaiba.apis.web.gui.views.AbstractViewNode;
 import org.kuwaiba.apis.web.gui.views.util.UtilHtml;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -73,7 +58,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObject;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
-import org.kuwaiba.web.modules.osp.OutsidePlantView;
+import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.web.modules.physicalcon.wizards.NewPhysicalConnectionWizard;
 
 /**
@@ -81,10 +66,6 @@ import org.kuwaiba.web.modules.physicalcon.wizards.NewPhysicalConnectionWizard;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
-    /**
-     * Reference to the currently displayed view
-     */
-    private RemoteViewObject currentView;
     /**
      * A hash that caches the colors of the connections by connection class name
      */
@@ -110,7 +91,8 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
     @Override
     public void createContent() {
         try {
-            OutsidePlantView theOspView = (OutsidePlantView)PersistenceService.getInstance().getViewFactory().createViewInstance("org.kuwaiba.web.modules.osp.OutsidePlantView"); //NOI18N
+            AbstractView theOspView = (AbstractView)PersistenceService.getInstance().getViewFactory().
+                    createViewInstance("org.kuwaiba.web.modules.osp.OutsidePlantView"); //NOI18N
             theOspView.buildEmptyView();
             AbstractComponent mapComponent = theOspView.getAsComponent();
 
@@ -118,30 +100,28 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
             DropTargetExtension<AbstractComponent> dropTarget = new DropTargetExtension<>(mapComponent);
             dropTarget.setDropEffect(DropEffect.MOVE);
 
-//            dropTarget.addDropListener(new DropListener<AbstractComponent>() {
-//                @Override
-//                public void drop(DropEvent<AbstractComponent> event) {
-//                    Optional<String> transferData = event.getDataTransferData(RemoteObjectLight.DATA_TYPE); //Only get this type of data. Note that the type of the data to be trasferred is set in the drag source
-//
-//                    if (transferData.isPresent()) {
-//                        for (String serializedObject : transferData.get().split("~o~")) {
-//                            String[] serializedObjectTokens = serializedObject.split("~a~", -1);                            
-//                            RemoteObjectLight businessObject = new RemoteObjectLight(serializedObjectTokens[1], Long.valueOf(serializedObjectTokens[0]), serializedObjectTokens[2]);
-//
-//                            if (businessObject.getId() !=  -1) { //Ignore the dummy root
-//                                if (getMarkerFromBusinesObject(businessObject) != null)
-//                                    Notifications.showError(String.format("The object %s already exists in this view", businessObject));
-//                                else {
-//                                    GoogleMapMarker newMarker = mapMain.addMarker(businessObject.toString(), mapMain.getCenter(), true, "/icons/" + businessObject.getClassName() + ".png");
-//                                    nodes.add(new OSPNode(newMarker, businessObject));
-//                                }
-//                            }
-//                        }
-//                    } 
-//                }
-//            });
-//
-//            mapMain.addMarkerClickListener((clickedMarker) -> {
+            dropTarget.addDropListener(new DropListener<AbstractComponent>() {
+                @Override
+                public void drop(DropEvent<AbstractComponent> event) {
+                    Optional<String> transferData = event.getDataTransferData(RemoteObjectLight.DATA_TYPE); //Only get this type of data. Note that the type of the data to be trasferred is set in the drag source
+
+                    if (transferData.isPresent()) {
+                        for (String serializedObject : transferData.get().split("~o~")) {
+                            String[] serializedObjectTokens = serializedObject.split("~a~", -1);                            
+                            RemoteObjectLight businessObject = new RemoteObjectLight(serializedObjectTokens[1], Long.valueOf(serializedObjectTokens[0]), serializedObjectTokens[2]);
+
+                            if (businessObject.getId() !=  -1) { //Ignore the dummy root
+                                if (theOspView.getAsViewMap().findNode(businessObject.getId()) != null)
+                                    Notifications.showError(String.format("The object %s already exists in this view", businessObject));
+                                else
+                                    theOspView.addNode(businessObject, new Properties());
+                            }
+                        }
+                    } 
+                }
+            });
+
+//            mapComponent.addMarkerClickListener((clickedMarker) -> {
 //                eventBus.notifySubscribers(new DashboardEventListener.DashboardEvent(this, 
 //                        DashboardEventListener.DashboardEvent.TYPE_SELECTION, getBusinesObjectFromMarker(clickedMarker)));
 //            });
@@ -150,253 +130,228 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
 //                eventBus.notifySubscribers(new DashboardEventListener.DashboardEvent(this, 
 //                        DashboardEventListener.DashboardEvent.TYPE_SELECTION, getBusinesObjectFromPolyline(clickedEdge)));
 //            });
-//
-//            MenuBar mnuMain = new MenuBar();
-//
-//            mnuMain.addItem("New", VaadinIcons.FOLDER_ADD, (selectedItem) -> {
-//                currentView = null;
-//                clearView();
-//            });
-//
-//            mnuMain.addItem("Open", VaadinIcons.FOLDER_OPEN, (selectedItem) -> {
-//                try {
-//
-//                    List<RemoteViewObjectLight> ospViews = wsBean.getOSPViews(((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getIpAddress(), 
-//                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-//
-//                    if (ospViews.isEmpty())
-//                        Notifications.showInfo("There are not OSP views saved at the moment");
-//                    else {
-//                        Window wdwOpen = new Window("Open OSP View");
-//                        VerticalLayout lytContent = new VerticalLayout();
-//                        Grid<RemoteViewObjectLight> tblOSPViews = new Grid<>("Select a view from the list", ospViews);
-//                        tblOSPViews.setHeaderVisible(false);
-//                        tblOSPViews.setSelectionMode(Grid.SelectionMode.SINGLE);
-//                        tblOSPViews.addColumn(RemoteViewObjectLight::getName).setWidthUndefined();
-//                        tblOSPViews.addColumn(RemoteViewObjectLight::getDescription);
-//                        tblOSPViews.setSizeFull();
-//
-//                        Button btnOk = new Button("OK", (event) -> {
-//
-//                            if (tblOSPViews.getSelectedItems().isEmpty())
-//                                Notifications.showInfo("You have to select a view");
-//                            else {
-//                                try {
-//                                    currentView = wsBean.getOSPView(tblOSPViews.getSelectedItems().iterator().next().getId(), Page.getCurrent().getWebBrowser().getAddress(), 
-//                                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-//                                    clearView();
-//                                    render(currentView.getStructure());
-//                                    wdwOpen.close();
-//                                } catch (ServerSideException ex) {
-//                                    Notifications.showError(ex.getLocalizedMessage());
-//                                    wdwOpen.close();
-//                                }
-//                            }
-//
-//                        });
-//
-//                        Button btnCancel = new Button("Cancel", (event) -> {
-//                            wdwOpen.close();
-//                        });
-//
-//                        HorizontalLayout lytButtons = new HorizontalLayout(btnOk, btnCancel);
-//
-//                        lytContent.addComponents(tblOSPViews, lytButtons);
-//                        lytContent.setExpandRatio(tblOSPViews, 9);
-//                        lytContent.setExpandRatio(lytButtons, 1);
-//                        lytContent.setComponentAlignment(lytButtons, Alignment.MIDDLE_RIGHT);
-//                        lytContent.setWidth(100, Unit.PERCENTAGE);
-//
-//                        wdwOpen.setContent(lytContent);
-//
-//                        wdwOpen.center();
-//                        wdwOpen.setModal(true);
-//                        UI.getCurrent().addWindow(wdwOpen);
-//                    }
-//                } catch (ServerSideException ex) {
-//                    Notifications.showError(ex.getLocalizedMessage());
-//                }
-//            });
-//
-//            mnuMain.addItem("Save", VaadinIcons.ARROW_DOWN, (selectedItem) -> {
-//                if (nodes.isEmpty()) 
-//                    Notifications.showInfo("The view is empty. There's nothing to save");
-//                else {
-//                    VerticalLayout lytContent = new VerticalLayout();
-//                    Window wdwSave = new Window("Save OSP View");
-//                    wdwSave.setWidth(300, Unit.PIXELS);
-//
-//                    TextField txtName = new TextField("Name");
-//                    txtName.setValue(currentView == null ? "" : currentView.getName());
-//                    TextField txtDescription = new TextField("Description");
-//                    txtDescription.setValue(currentView == null ? "" : currentView.getDescription());
-//
-//                    Button btnOk = new Button("OK", (event) -> {
-//
-//                        if (txtName.getValue().trim().isEmpty())
-//                            Notifications.showInfo("The name of the view can not be empty");
-//                        else {
-//                            try {
-//                                if (currentView == null) { //It's a new view
-//                                    long newViewId = wsBean.createOSPView(txtName.getValue(), txtDescription.getValue(), getAsXml(), Page.getCurrent().getWebBrowser().getAddress(), 
-//                                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-//                                    currentView = new RemoteViewObject();
-//                                    currentView.setId(newViewId);
-//                                } else
-//                                    wsBean.updateOSPView(currentView.getId(), txtName.getValue(), txtDescription.getValue(), getAsXml(), Page.getCurrent().getWebBrowser().getAddress(), 
-//                                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-//
-//                                currentView.setName(txtName.getValue());
-//                                    currentView.setDescription(txtName.getDescription());
-//
-//                                Notifications.showInfo("View saved successfully");
-//                                wdwSave.close();
-//                            } catch (ServerSideException ex) {
-//                                Notifications.showError(ex.getLocalizedMessage());
-//                                wdwSave.close();
-//                            }
-//                        }
-//
-//                    });
-//
-//                    Button btnCancel = new Button("Cancel", (event) -> {
-//                        wdwSave.close();
-//                    });
-//
-//                    FormLayout lytProperties = new FormLayout(txtName, txtDescription);
-//                    lytProperties.setSizeFull();
-//
-//                    HorizontalLayout lytButtons = new HorizontalLayout(btnOk, btnCancel);
-//
-//                    lytContent.addComponents(lytProperties, lytButtons);
-//                    lytContent.setExpandRatio(lytProperties, 9);
-//                    lytContent.setExpandRatio(lytButtons, 1);
-//                    lytContent.setComponentAlignment(lytButtons, Alignment.MIDDLE_RIGHT);
-//                    lytContent.setSizeFull();
-//
-//                    wdwSave.setHeight(20, Unit.PERCENTAGE);
-//                    wdwSave.setWidth(25, Unit.PERCENTAGE);
-//                    wdwSave.setContent(lytContent);
-//
-//                    wdwSave.center();
-//                    wdwSave.setModal(true);
-//                    UI.getCurrent().addWindow(wdwSave);
-//                }
-//            });
-//
-//            mnuMain.addItem("Connect", VaadinIcons.CONNECT, (selectedItem) -> {
-//                Window wdwSelectRootObjects = new Window("New Connection");
-//
-//                ComboBox<OSPNode> cmbASideRoot = new ComboBox<>("A Side", nodes);
-//                cmbASideRoot.setEmptySelectionAllowed(false);
-//                cmbASideRoot.setEmptySelectionCaption("Select the A Side...");
-//                cmbASideRoot.setWidth(250, Unit.PIXELS);
-//                ComboBox<OSPNode> cmbBSideRoot = new ComboBox<>("B Side", nodes);
-//                cmbBSideRoot.setEmptySelectionAllowed(false);
-//                cmbBSideRoot.setEmptySelectionCaption("Select the B Side...");
-//                cmbBSideRoot.setWidth(250, Unit.PIXELS);
-//                Button btnOk = new Button("OK");
-//
-//                wdwSelectRootObjects.center();
-//                wdwSelectRootObjects.setWidth(80, Unit.PERCENTAGE);
-//                wdwSelectRootObjects.setHeight(50, Unit.PERCENTAGE);
-//                wdwSelectRootObjects.setModal(true);
-//
-//                UI.getCurrent().addWindow(wdwSelectRootObjects);
-//
-//                btnOk.addClickListener((Button.ClickEvent event) -> {
-//
-//                    if (!cmbASideRoot.getSelectedItem().isPresent() || !cmbBSideRoot.getSelectedItem().isPresent()) {
-//                        Notifications.showError("Select both sides of the connection");
-//                        return;
-//                    }
-//
-//                    if (cmbASideRoot.getSelectedItem().get().equals(cmbBSideRoot.getSelectedItem().get())){
-//                        Notifications.showError("The selected nodes must be different");
-//                        return;
-//                    }
-//
-//                    wdwSelectRootObjects.close();
-//                    NewPhysicalConnectionWizard wizard = new NewPhysicalConnectionWizard(cmbASideRoot.getSelectedItem().get().getBusinessObject(), 
-//                                    cmbBSideRoot.getSelectedItem().get().getBusinessObject(), wsBean);
-//
-//                    wizard.setWidth(100, Unit.PERCENTAGE);
-//
-//                    Window wdwWizard = new Window("New Connection Wizard", wizard);
-//                    wdwWizard.center();
-//                    wdwWizard.setModal(true);
-//                    wdwWizard.setWidth(80, Unit.PERCENTAGE);
-//                    wdwWizard.setHeight(50, Unit.PERCENTAGE);
-//
-//                    wizard.addEventListener((wizardEvent) -> {
-//                        switch (wizardEvent.getType()) {
-//                            case Wizard.WizardEvent.TYPE_FINAL_STEP:
-//                                RemoteObjectLight newConnection = (RemoteObjectLight)wizardEvent.getInformation().get("connection");
-//                                RemoteObjectLight aSide = (RemoteObjectLight)wizardEvent.getInformation().get("rootASide");
-//                                RemoteObjectLight bSide = (RemoteObjectLight)wizardEvent.getInformation().get("rootBSide");
-//
-//                                GoogleMapMarker mrkSource = getMarkerFromBusinesObject(aSide);
-//                                GoogleMapMarker mrkDestination = getMarkerFromBusinesObject(bSide);
-//
-//                                List<LatLon> coordinates = new ArrayList();
-//                                coordinates.add(mrkSource.getPosition());
-//                                coordinates.add(mrkDestination.getPosition());
-//
-//                                GoogleMapPolyline connection = new GoogleMapPolyline(newConnection.toString(), coordinates);
-//                                connection.setStrokeWeight(3);
-//
-//                                connection.setStrokeColor(getConnectionColorFromClassName(newConnection.getClassName()));
-//
-//                                OSPEdge newEdge = new OSPEdge(connection, newConnection);
-//                                newEdge.setSourceObject(getNodeFromBusinessObject(aSide));
-//                                newEdge.setTargetObject(getNodeFromBusinessObject(bSide));
-//
-//                                edges.add(newEdge);
-//                                mapMain.addEdge(connection, mrkSource, mrkDestination);
-//
-//                                Notifications.showInfo(String.format("Connection %s created successfully", newConnection));
-//                            case Wizard.WizardEvent.TYPE_CANCEL:
-//                                wdwWizard.close();
-//                        }
-//                    });
-//                    UI.getCurrent().addWindow(wdwWizard);
-//                });
-//
-//                FormLayout lytContent = new FormLayout(cmbASideRoot, cmbBSideRoot, btnOk);
-//                lytContent.setMargin(true);
-//                lytContent.setWidthUndefined();
-//
-//                wdwSelectRootObjects.setContent(lytContent);
-//            });
-//
-//            VerticalLayout lytContent = new VerticalLayout(mnuMain, mapMain);
-//            lytContent.setExpandRatio(mnuMain, 0.3f);
-//            lytContent.setExpandRatio(mapMain, 9.7f);
-//            lytContent.setSizeFull();
-//            contentComponent = lytContent;
-//            addComponent(contentComponent);
+
+            MenuBar mnuMain = new MenuBar();
+
+            mnuMain.addItem("New", VaadinIcons.FOLDER_ADD, (selectedItem) -> {
+                theOspView.buildEmptyView();
+                ((VerticalLayout)contentComponent).replaceComponent(mapComponent, theOspView.getAsComponent());
+            });
+
+            mnuMain.addItem("Open", VaadinIcons.FOLDER_OPEN, (selectedItem) -> {
+                try {
+
+                    List<RemoteViewObjectLight> ospViews = wsBean.getOSPViews(((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getIpAddress(), 
+                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+
+                    if (ospViews.isEmpty())
+                        Notifications.showInfo("There are not OSP views saved at the moment");
+                    else {
+                        Window wdwOpen = new Window("Open an OSP View");
+                        VerticalLayout lytContent = new VerticalLayout();
+                        Grid<RemoteViewObjectLight> tblOSPViews = new Grid<>("Select a view from the list", ospViews);
+                        tblOSPViews.setHeaderVisible(false);
+                        tblOSPViews.setSelectionMode(Grid.SelectionMode.SINGLE);
+                        tblOSPViews.addColumn(RemoteViewObjectLight::getName).setWidthUndefined();
+                        tblOSPViews.addColumn(RemoteViewObjectLight::getDescription);
+                        tblOSPViews.setSizeFull();
+
+                        Button btnOk = new Button("OK", (event) -> {
+
+                            if (tblOSPViews.getSelectedItems().isEmpty())
+                                Notifications.showInfo("You have to select a view");
+                            else {
+                                try {
+                                    RemoteViewObject savedView = wsBean.getOSPView(tblOSPViews.getSelectedItems().iterator().next().getId(), Page.getCurrent().getWebBrowser().getAddress(), 
+                                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                                    
+                                    theOspView.getProperties().put(Constants.PROPERTY_ID, savedView.getId());
+                                    theOspView.getProperties().put(Constants.PROPERTY_NAME, savedView.getName());
+                                    theOspView.getProperties().put(Constants.PROPERTY_DESCRIPTION, savedView.getDescription());
+                                    theOspView.buildWithSavedView(savedView.getStructure());
+                                    ((VerticalLayout)contentComponent).replaceComponent(((VerticalLayout)contentComponent).getComponent(1), //Replace the old map with the new one
+                                            theOspView.getAsComponent());
+                                    wdwOpen.close();
+                                } catch (ServerSideException ex) {
+                                    Notifications.showError(ex.getLocalizedMessage());
+                                    wdwOpen.close();
+                                }
+                            }
+
+                        });
+
+                        Button btnCancel = new Button("Cancel", (event) -> {
+                            wdwOpen.close();
+                        });
+
+                        HorizontalLayout lytButtons = new HorizontalLayout(btnOk, btnCancel);
+
+                        lytContent.addComponents(tblOSPViews, lytButtons);
+                        lytContent.setExpandRatio(tblOSPViews, 9);
+                        lytContent.setExpandRatio(lytButtons, 1);
+                        lytContent.setComponentAlignment(lytButtons, Alignment.MIDDLE_RIGHT);
+                        lytContent.setWidth(100, Unit.PERCENTAGE);
+
+                        wdwOpen.setContent(lytContent);
+
+                        wdwOpen.center();
+                        wdwOpen.setModal(true);
+                        UI.getCurrent().addWindow(wdwOpen);
+                    }
+                } catch (ServerSideException ex) {
+                    Notifications.showError(ex.getLocalizedMessage());
+                }
+            });
+
+            mnuMain.addItem("Save", VaadinIcons.ARROW_DOWN, (selectedItem) -> {
+                if (theOspView.getAsViewMap().getNodes().isEmpty()) 
+                    Notifications.showInfo("The view is empty. There's nothing to save");
+                else {
+                    VerticalLayout lytContent = new VerticalLayout();
+                    Window wdwSave = new Window("Save OSP View");
+                    wdwSave.setWidth(300, Unit.PIXELS);
+
+                    TextField txtName = new TextField("Name");
+                    txtName.setValue(theOspView.getProperties().getProperty(Constants.PROPERTY_NAME)== null ? "" : 
+                            theOspView.getProperties().getProperty(Constants.PROPERTY_NAME));
+                    TextField txtDescription = new TextField("Description");
+                    txtDescription.setValue(theOspView.getProperties().getProperty(Constants.PROPERTY_DESCRIPTION)== null ? "" : 
+                            theOspView.getProperties().getProperty(Constants.PROPERTY_DESCRIPTION));
+
+                    Button btnOk = new Button("OK", (event) -> {
+
+                        if (txtName.getValue().trim().isEmpty())
+                            Notifications.showInfo("The name of the view can not be empty");
+                        else {
+                            try {
+                                if (theOspView.getProperties().get(Constants.PROPERTY_ID).equals(-1)) { //It's a new view
+                                    long newViewId = wsBean.createOSPView(txtName.getValue(), txtDescription.getValue(), theOspView.getAsXml(), Page.getCurrent().getWebBrowser().getAddress(), 
+                                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                                    theOspView.getProperties().put(Constants.PROPERTY_ID, newViewId);
+                                } else
+                                    wsBean.updateOSPView((Long)theOspView.getProperties().get(Constants.PROPERTY_ID), txtName.getValue(), txtDescription.getValue(), theOspView.getAsXml(), Page.getCurrent().getWebBrowser().getAddress(), 
+                                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+
+                                theOspView.getProperties().put(Constants.PROPERTY_NAME, txtName.getValue());
+                                theOspView.getProperties().put(Constants.PROPERTY_DESCRIPTION, txtName.getDescription());
+                                
+                                Notifications.showInfo("View saved successfully");
+                                wdwSave.close();
+                            } catch (ServerSideException ex) {
+                                Notifications.showError(ex.getLocalizedMessage());
+                                wdwSave.close();
+                            }
+                        }
+
+                    });
+
+                    Button btnCancel = new Button("Cancel", (event) -> {
+                        wdwSave.close();
+                    });
+
+                    FormLayout lytProperties = new FormLayout(txtName, txtDescription);
+                    lytProperties.setSizeFull();
+
+                    HorizontalLayout lytButtons = new HorizontalLayout(btnOk, btnCancel);
+
+                    lytContent.addComponents(lytProperties, lytButtons);
+                    lytContent.setExpandRatio(lytProperties, 9);
+                    lytContent.setExpandRatio(lytButtons, 1);
+                    lytContent.setComponentAlignment(lytButtons, Alignment.MIDDLE_RIGHT);
+                    lytContent.setSizeFull();
+
+                    wdwSave.setHeight(20, Unit.PERCENTAGE);
+                    wdwSave.setWidth(25, Unit.PERCENTAGE);
+                    wdwSave.setContent(lytContent);
+
+                    wdwSave.center();
+                    wdwSave.setModal(true);
+                    UI.getCurrent().addWindow(wdwSave);
+                }
+            });
+
+            mnuMain.addItem("Connect", VaadinIcons.CONNECT, (selectedItem) -> {
+                Window wdwSelectRootObjects = new Window("New Connection");
+
+                ComboBox<AbstractViewNode> cmbASideRoot = new ComboBox<>("A Side", theOspView.getAsViewMap().getNodes());
+                cmbASideRoot.setEmptySelectionAllowed(false);
+                cmbASideRoot.setEmptySelectionCaption("Select the A Side...");
+                cmbASideRoot.setWidth(250, Unit.PIXELS);
+                ComboBox<AbstractViewNode> cmbBSideRoot = new ComboBox<>("B Side", theOspView.getAsViewMap().getNodes());
+                cmbBSideRoot.setEmptySelectionAllowed(false);
+                cmbBSideRoot.setEmptySelectionCaption("Select the B Side...");
+                cmbBSideRoot.setWidth(250, Unit.PIXELS);
+                Button btnOk = new Button("OK");
+
+                wdwSelectRootObjects.center();
+                wdwSelectRootObjects.setWidth(80, Unit.PERCENTAGE);
+                wdwSelectRootObjects.setHeight(50, Unit.PERCENTAGE);
+                wdwSelectRootObjects.setModal(true);
+
+                UI.getCurrent().addWindow(wdwSelectRootObjects);
+
+                btnOk.addClickListener((Button.ClickEvent event) -> {
+
+                    if (!cmbASideRoot.getSelectedItem().isPresent() || !cmbBSideRoot.getSelectedItem().isPresent()) {
+                        Notifications.showError("Select both sides of the connection");
+                        return;
+                    }
+
+                    if (cmbASideRoot.getSelectedItem().get().equals(cmbBSideRoot.getSelectedItem().get())){
+                        Notifications.showError("The selected nodes must be different");
+                        return;
+                    }
+
+                    wdwSelectRootObjects.close();
+                    
+                    NewPhysicalConnectionWizard wizard = new NewPhysicalConnectionWizard(new RemoteObjectLight((BusinessObjectLight)cmbASideRoot.getSelectedItem().get().getIdentifier()), 
+                                    new RemoteObjectLight((BusinessObjectLight)cmbBSideRoot.getSelectedItem().get().getIdentifier()), wsBean);
+
+                    wizard.setWidth(100, Unit.PERCENTAGE);
+
+                    Window wdwWizard = new Window("New Connection Wizard", wizard);
+                    wdwWizard.center();
+                    wdwWizard.setModal(true);
+                    wdwWizard.setWidth(80, Unit.PERCENTAGE);
+                    wdwWizard.setHeight(50, Unit.PERCENTAGE);
+
+                    wizard.addEventListener((wizardEvent) -> {
+                        switch (wizardEvent.getType()) {
+                            case Wizard.WizardEvent.TYPE_FINAL_STEP:
+                                RemoteObjectLight newConnection = (RemoteObjectLight)wizardEvent.getInformation().get("connection");
+                                RemoteObjectLight aSide = (RemoteObjectLight)wizardEvent.getInformation().get("rootASide");
+                                RemoteObjectLight bSide = (RemoteObjectLight)wizardEvent.getInformation().get("rootBSide");
+                                
+                                Properties edgeProperties = new Properties();
+                                edgeProperties.put(Constants.PROPERTY_COLOR, getConnectionColorFromClassName(newConnection.getClassName()));
+                                
+                                theOspView.addEdge(newConnection, aSide, bSide, edgeProperties);
+                                Notifications.showInfo(String.format("Connection %s created successfully", newConnection));
+                            case Wizard.WizardEvent.TYPE_CANCEL:
+                                wdwWizard.close();
+                        }
+                    });
+                    UI.getCurrent().addWindow(wdwWizard);
+                });
+
+                FormLayout lytContent = new FormLayout(cmbASideRoot, cmbBSideRoot, btnOk);
+                lytContent.setMargin(true);
+                lytContent.setWidthUndefined();
+
+                wdwSelectRootObjects.setContent(lytContent);
+            });
+
+            VerticalLayout lytContent = new VerticalLayout(mnuMain, mapComponent);
+            lytContent.setExpandRatio(mnuMain, 0.3f);
+            lytContent.setExpandRatio(mapComponent, 9.7f);
+            lytContent.setSizeFull();
+            this.contentComponent = lytContent;
+            addComponent(contentComponent);
         } catch (Exception ex) {
             this.contentComponent = new Label(String.format("An unexpected error occurred while creating the content of this view: %s", ex.getLocalizedMessage()));
         }
-        
-
-        
     }
 
-    /**
-     * Clears and centers the map
-     */
-    public void clearView() {
-//        nodes.forEach((node) -> { mapMain.removeMarker(node.getMarker()); });
-//        edges.forEach((edge) -> { mapMain.removeEdge(edge.getPolyline()); });
-//        
-//        nodes.clear();
-//        edges.clear();
-//        
-//        mapMain.setCenter(defaultCenter);
-//        mapMain.setZoom(defaultZoom);
-    }
-    
     /**
      * Gets the color of a connection using as input its class
      * @param className The connection class
@@ -443,133 +398,6 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
 
         public RemoteObjectLight getBusinessObject() {
             return businessObject;
-        }
-        
-        @Override
-        public boolean equals(Object obj) {
-            return obj instanceof OSPNode ? ((OSPNode)obj).getBusinessObject().equals(businessObject) : false;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 3;
-            hash = 97 * hash + Objects.hashCode(this.businessObject);
-            return hash;
-        }
-        
-        @Override
-        public String toString() {
-            return businessObject.toString();
-        }
-    }
-    
-//    public RemoteObjectLight getBusinesObjectFromMarker(GoogleMapMarker marker) {
-//        for (OSPNode node : nodes) {
-//            if (node.getMarker().getId() == marker.getId())
-//                return node.getBusinessObject();
-//        }
-//        return null;
-//    }
-//    
-//    public RemoteObjectLight getBusinesObjectFromPolyline(GoogleMapPolyline polyLine) {
-//        for (OSPEdge edge : edges) {
-//            if (edge.getPolyline().getId() == polyLine.getId())
-//                return edge.getBusinessObject();
-//        }
-//        return null;
-//    }
-//    
-//    public GoogleMapMarker getMarkerFromBusinesObject(RemoteObjectLight businessObject) {
-//        for (OSPNode node : nodes) {
-//            if (node.getBusinessObject().getId() == businessObject.getId())
-//                return node.getMarker();
-//        }
-//        return null;
-//    }
-//    
-//    public GoogleMapPolyline getPolylineFromBusinessObject(RemoteObjectLight businessObject) {
-//        for (OSPEdge edge : edges) {
-//            if (edge.getBusinessObject().getId() == businessObject.getId())
-//                return edge.getPolyline();
-//        }
-//        return null;
-//    }
-//    
-//    private OSPNode getNodeFromBusinessObject(RemoteObjectLight businessObject) {
-//        for (OSPNode node : nodes) {
-//            if (node.getBusinessObject().equals(businessObject))
-//                return node;
-//        }
-//        
-//        return null;
-//    }
-//    
-//    private OSPEdge getEdgeFromBusinessObject(RemoteObjectLight businessObject) {
-//        for (OSPEdge edge : edges) {
-//            if (edge.getBusinessObject().equals(businessObject))
-//                return edge;
-//        }
-//        
-//        return null;
-//    }
-//    
-//    private OSPNode getNodeFromBusinessObjectId(long id) {
-//        for (OSPNode node : nodes) {
-//            if (node.getBusinessObject().getId() == id)
-//                return node;
-//        }
-//        
-//        return null;
-//    }
-    
-    /**
-     * A simple class wrapping a node and its properties and high level events not managed by the map widget
-     */
-    private class OSPEdge {
-        /**
-         * The polyline displayed in the map
-         */
-        private GoogleMapPolyline polyLine;
-        /**
-         * The business object behind the marker
-         */
-        private RemoteObjectLight businessObject;
-        /**
-         * Reference to the source node
-         */
-        private OSPNode sourceObject;
-        /**
-         * Reference to the target node
-         */
-        private OSPNode targetObject;
-
-        public OSPEdge(GoogleMapPolyline polyLine, RemoteObjectLight businessObject) {
-            this.polyLine =polyLine;
-            this.businessObject = businessObject;
-        }
-
-        public GoogleMapPolyline getPolyline() {
-            return polyLine;
-        }
-
-        public RemoteObjectLight getBusinessObject() {
-            return businessObject;
-        }
-
-        public OSPNode getSourceObject() {
-            return sourceObject;
-        }
-
-        public void setSourceObject(OSPNode sourceObject) {
-            this.sourceObject = sourceObject;
-        }
-        
-        public OSPNode getTargetObject() {
-            return targetObject;
-        }
-
-        public void setTargetObject(OSPNode targetObject) {
-            this.targetObject = targetObject;
         }
         
         @Override

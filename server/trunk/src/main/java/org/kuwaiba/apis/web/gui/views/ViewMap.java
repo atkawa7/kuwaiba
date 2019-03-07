@@ -19,6 +19,7 @@ package org.kuwaiba.apis.web.gui.views;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * A representation of a view (which in turn a graphical representation of an inventory object or a function in the domain of the inventory system) as a set of java objects. 
@@ -170,5 +171,39 @@ public class ViewMap {
         this.sourceNodes.clear();
         this.targetNodes.clear();
         this.settings.clear();
+    }
+    
+    /**
+     * Tries to match a node in the view with a business object provided as parameter. 
+     * The <code>identifier</code> is compared with the business object behind each one of the existing nodes 
+     * using its <code>equals</code> method, thus being able to support multiple types of comparisons.
+     * @param identifier The business object to be matched against.
+     * @return The view node if existent, null otherwise.
+     */
+    public AbstractViewNode findNode(Object identifier) {
+        try {
+            return this.nodes.stream().filter((aNode) -> {
+                return aNode.equals(identifier);
+            }).findFirst().get();
+        } catch (NoSuchElementException ex) {
+            return null;
+        }
+    }
+    
+    /**
+     * Tries to match an edge in the view with a business object provided as parameter. 
+     * The <code>identifier</code> is compared with the business object behind each one of the existing edges 
+     * using its <code>equals</code> method, thus being able to support multiple types of comparisons.
+     * @param identifier The business object to be matched against.
+     * @return The view edge if existent, null otherwise.
+     */
+    public AbstractViewEdge findEdge(Object identifier) {
+        try {
+            return this.edges.stream().filter((anEdge) -> {
+                return anEdge.equals(identifier);
+            }).findFirst().get();
+        } catch (NoSuchElementException ex) {
+            return null;
+        }
     }
 }

@@ -26,6 +26,7 @@ import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -271,7 +272,6 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
                                     }
                                 }
                             }
-                            
                         } 
                     }
                 }
@@ -284,6 +284,16 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
 
     @Override
     public void buildEmptyView() {
-        // This method is never called, because this kind of view is always created from an object, calling at least buildWithBusinessObject
+        // This method is never called, because this kind of view is always created from an object, calling at least once the method buildWithBusinessObject.
+    }
+
+    @Override
+    public AbstractViewNode addNode(RemoteObjectLight businessObject, Properties properties) {
+        throw new UnsupportedOperationException("This view is generated automatically and does not support nodes to be added manually"); 
+    }
+
+    @Override
+    public AbstractViewEdge addEdge(RemoteObjectLight businessObject, RemoteObjectLight sourceBusinessObject, RemoteObjectLight targetBusinessObject, Properties properties) {
+        throw new UnsupportedOperationException("This action is not supported yet.");
     }
 }

@@ -28,4 +28,29 @@ public class BusinessObjectViewNode extends AbstractViewNode<BusinessObjectLight
         super(identifier);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        //A node can be matched using an instance of the its identifier, or simply its id
+        if (obj instanceof Long)
+            return getIdentifier().getId() == (long)obj;
+        
+        if (obj instanceof BusinessObjectLight)
+            return getIdentifier().equals(obj);
+        
+        if (obj instanceof AbstractViewNode)
+            return getIdentifier().equals(((AbstractViewNode)obj).getIdentifier());
+        
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
+    
+    @Override
+    public String toString() {
+        return getIdentifier().toString();
+    }
 }

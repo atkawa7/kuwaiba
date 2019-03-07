@@ -44,8 +44,10 @@ public abstract class AbstractMapProvider {
      * @param sourceObject The business object behind the source marker.
      * @param targetObject The business object behind the source marker.
      * @param controlPoints The route of the poly line.
+     * @param properties Misc properties used mainly to format the appearance of the edge (color, stroke, etc)
      */
-    public abstract void addPolyline(BusinessObjectLight businessObject, BusinessObjectLight sourceObject, BusinessObjectLight targetObject, List<GeoCoordinate> controlPoints);
+    public abstract void addPolyline(BusinessObjectLight businessObject, BusinessObjectLight sourceObject, BusinessObjectLight targetObject, 
+            List<GeoCoordinate> controlPoints, Properties properties);
     /**
      * Fetches the existing markers.
      * @return The markers.

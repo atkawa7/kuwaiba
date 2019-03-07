@@ -81,7 +81,8 @@ public class GoogleMapsMapProvider extends AbstractMapProvider {
     }
 
     @Override
-    public void addPolyline(BusinessObjectLight businessObject, BusinessObjectLight sourceObject, BusinessObjectLight targetObject, List<GeoCoordinate> controlPoints) {
+    public void addPolyline(BusinessObjectLight businessObject, BusinessObjectLight sourceObject, BusinessObjectLight targetObject, 
+            List<GeoCoordinate> controlPoints, Properties properties) {
         GoogleMapMarker sourceMarker = this.nodes.get(sourceObject);
         if (sourceMarker != null) {
             GoogleMapMarker targetMarker = this.nodes.get(targetObject);
@@ -92,6 +93,7 @@ public class GoogleMapsMapProvider extends AbstractMapProvider {
                     gMapsCoordinates.add(new LatLon(aGeoCoordinate.getLatitude(), aGeoCoordinate.getLongitude()));
                 });
                 aPolyline.setCoordinates(gMapsCoordinates);
+                aPolyline.setStrokeColor(properties.getProperty("color") == null ? "#00FF00" : properties.getProperty("color")); //NOI18N
                 this.map.addEdge(businessObject, aPolyline, sourceMarker, targetMarker);
                 this.sourceNodes.put(aPolyline, sourceObject);
                 this.targetNodes.put(aPolyline, targetObject);

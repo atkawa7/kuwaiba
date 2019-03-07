@@ -46,6 +46,7 @@ import org.kuwaiba.apis.web.gui.views.BusinessObjectViewEdge;
 import org.kuwaiba.apis.web.gui.views.BusinessObjectViewNode;
 import org.kuwaiba.apis.web.gui.views.ViewMap;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * Places a set of selected elements on a map and allows the user to connect and explore them.
@@ -194,22 +195,23 @@ public class OutsidePlantView extends AbstractView<RemoteObjectLight> {
                 mapProperties.put("zoom", this.viewMap.getSettings().get("zoom"));
                                 
                 this.mapProvider = (AbstractMapProvider)mapsProviderClass.newInstance();
-                mapProvider.initialize(mapProperties);
+                this.mapProvider.initialize(mapProperties);
                 
                 for (AbstractViewNode node : this.viewMap.getNodes()) {
                     BusinessObjectLight businessObject = (BusinessObjectLight)node.getIdentifier();
-                    mapProvider.addMarker(businessObject, 
+                    this.mapProvider.addMarker(businessObject, 
                             new GeoCoordinate((double)node.getProperties().get("lat"), 
                                     (double)node.getProperties().get("lon")), "/kuwaiba/icons?class=" + businessObject.getClassName());
                 }
                 
                 for (AbstractViewEdge edge : this.viewMap.getEdges()) {
                     BusinessObjectLight businessObject = (BusinessObjectLight)edge.getIdentifier();
-                    mapProvider.addPolyline(businessObject, (BusinessObjectLight)this.viewMap.getEdgeSource(edge).getIdentifier(), 
-                            (BusinessObjectLight)this.viewMap.getEdgeTarget(edge).getIdentifier(), (List<GeoCoordinate>)edge.getProperties().get("controlPoints")); //NOI18N
+                    this.mapProvider.addPolyline(businessObject, (BusinessObjectLight)this.viewMap.getEdgeSource(edge).getIdentifier(), 
+                            (BusinessObjectLight)this.viewMap.getEdgeTarget(edge).getIdentifier(), (List<GeoCoordinate>)edge.getProperties().get("controlPoints"), edge.getProperties()); //NOI18N
                 }
                 
-                return mapProvider.getComponent();
+                this.mapProvider.getComponent().setSizeFull();
+                return this.mapProvider.getComponent();
             } else
                 return new Label(String.format("Class %s is not a valid map provider", mapsProviderClass.getCanonicalName()));
         } catch (Exception ex) {
@@ -243,8 +245,8 @@ public class OutsidePlantView extends AbstractView<RemoteObjectLight> {
                 if (event == XMLStreamConstants.START_ELEMENT) {
                     if (reader.getName().equals(qNode)) {
                         String objectClass = reader.getAttributeValue(null, "class"); //NOI18N
-                        double lon = Double.valueOf(reader.getAttributeValue(null,"lon")); //NOI18N
-                        double lat = Double.valueOf(reader.getAttributeValue(null,"lat")); //NOI18N
+                        double lon = Double.valueOf(reader.getAttributeValue(null, "lon")); //NOI18N
+                        double lat = Double.valueOf(reader.getAttributeValue(null, "lat")); //NOI18N
                         long objectId = Long.valueOf(reader.getElementText());
 
                         try {
@@ -315,7 +317,11 @@ public class OutsidePlantView extends AbstractView<RemoteObjectLight> {
     
     @Override
     public void buildEmptyView() {
+        this.getProperties().put(Constants.PROPERTY_ID, -1);
+        this.getProperties().put(Constants.PROPERTY_NAME, "");
+        this.getProperties().put(Constants.PROPERTY_DESCRIPTION, "");
         this.viewMap = new ViewMap();
+        
         double mapCenterLatitude, mapCenterLongitude;
                 
         try {
@@ -350,6 +356,11 @@ public class OutsidePlantView extends AbstractView<RemoteObjectLight> {
         if (mapProvider == null)
             return;
         
+        this.viewMap.getSettings().put("center", new GeoCoordinate(mapProvider.getCenter().getLatitude(), 
+                mapProvider.getCenter().getLatitude()));
+        
+        this.viewMap.getSettings().put("zoom", mapProvider.getZoom());
+        
         mapProvider.getMarkers().forEach((aMarker) -> {
             this.viewMap.getNodes().add(new BusinessObjectViewNode(aMarker.getBusinessObject()));
         });
@@ -362,5 +373,51 @@ public class OutsidePlantView extends AbstractView<RemoteObjectLight> {
             this.viewMap.attachSourceNode(anEdge, new BusinessObjectViewNode(aPolyline.getSourceObject()));
             this.viewMap.attachTargetNode(anEdge, new BusinessObjectViewNode(aPolyline.getTargetObject()));
         });
+    }
+
+    @Override
+    public AbstractViewNode addNode(RemoteObjectLight businessObject, Properties properties) {
+        AbstractViewNode aNode = this.viewMap.findNode(businessObject.getId());
+        if (aNode == null) {
+            BusinessObjectLight localObject = new BusinessObjectLight(businessObject.getClassName(), businessObject.getId(), businessObject.getName());
+            BusinessObjectViewNode newNode = new BusinessObjectViewNode(localObject);
+            this.viewMap.addNode(newNode);
+            if (this.mapProvider != null) { //The view could be created without a graphical representation (the map). so here we make sure that's not the case
+                GeoCoordinate position = (GeoCoordinate)properties.get("position");
+                this.mapProvider.addMarker(localObject, position == null ? this.mapProvider.getCenter() : position , 
+                        "/kuwaiba/icons?class=" + businessObject.getClassName());
+            }
+            return newNode;
+        } else
+            return aNode;
+    }
+
+    @Override
+    public AbstractViewEdge addEdge(RemoteObjectLight businessObject, RemoteObjectLight sourceBusinessObject, RemoteObjectLight targetBusinessObject, Properties properties) {
+        AbstractViewEdge anEdge = this.viewMap.findEdge(businessObject.getId());
+        if (anEdge == null) {
+            BusinessObjectLight localObject = new BusinessObjectLight(businessObject.getClassName(), businessObject.getId(), businessObject.getName());
+            BusinessObjectViewEdge newEdge = new BusinessObjectViewEdge(localObject);
+            
+            //if any of the end points is missing, the edge is not added
+            AbstractViewNode aSourceNode = this.viewMap.findNode(sourceBusinessObject.getId());
+            if (aSourceNode == null)
+                return null;
+            
+            AbstractViewNode aTargetNode = this.viewMap.findNode(targetBusinessObject.getId());
+            if (aTargetNode == null)
+                return null;
+            
+            this.viewMap.addEdge(newEdge);
+            this.viewMap.attachSourceNode(anEdge, aSourceNode);
+            this.viewMap.attachTargetNode(anEdge, aTargetNode);
+            if (this.mapProvider != null) { //The view could be created without a graphical representation (the map). so here we make sure that's not the case
+                List<GeoCoordinate> controlPoints = (List<GeoCoordinate>)properties.get("controlPoints");
+                this.mapProvider.addPolyline(localObject, (BusinessObjectLight)aSourceNode.getIdentifier(), 
+                        (BusinessObjectLight)aTargetNode.getIdentifier(), controlPoints == null ? new ArrayList<>() : controlPoints, properties);
+            }
+            return newEdge;
+        } else
+            return anEdge;
     }
 }

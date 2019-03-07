@@ -16,7 +16,8 @@
 
 package org.kuwaiba.apis.web.gui.views;
 
-import com.vaadin.ui.Component;
+import com.vaadin.ui.AbstractComponent;
+import java.util.Properties;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
@@ -28,26 +29,31 @@ import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
  */
 public abstract class AbstractView<T> {
     /**
-     * Reference to the Metadata Entity Manager
+     * Reference to the Metadata Entity Manager.
      */
     protected MetadataEntityManager mem;
     /**
-     * Reference to the Application Entity Manager
+     * Reference to the Application Entity Manager.
      */
     protected ApplicationEntityManager aem;
     /**
-     * Reference to the Business Entity Manager
+     * Reference to the Business Entity Manager.
      */
     protected BusinessEntityManager bem;
     /**
      * The default view map. This view map must be created when the any either {@link  #build()} or {@link  #build(java.lang.Object)} is called.
      */
     protected ViewMap viewMap;
+    /**
+     * The properties associated an instance of the view, typically an id, a name and a description.
+     */
+    protected Properties properties;
     
     public AbstractView(MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem) {
         this.mem = mem;
         this.aem = aem;
         this.bem= bem;
+        this.properties = new Properties();
     }
     
     /**
@@ -65,6 +71,13 @@ public abstract class AbstractView<T> {
      * @return The version of the view.
      */
     public abstract String getVersion();
+    /**
+     * The properties associated to an instance of the view, typically an id, a name and a description.
+     * @return The set or properties.
+     */
+    public Properties getProperties() {
+        return this.properties;
+    }
     /**
      * Who wrote the view.
      * @return A string with the name of the creator of the view, and preferably a way to contact him/her.
@@ -84,7 +97,7 @@ public abstract class AbstractView<T> {
      * Gets an embeddable  Vaadin component that can be rendered in a dashboard. It most likely will have to be called after calling {@link #build() } or {@link  #build(java.lang.Object) }.
      * @return An embeddable component (Panel, VerticalLayout, etc)
      */
-    public abstract Component getAsComponent();
+    public abstract AbstractComponent getAsComponent();
     /**
      * Exports the view as a ViewMap (a representation of the view as a set of Java objects related each other). It most likely will have to be called after calling {@link #build() } or {@link  #build(java.lang.Object) }.
      * @return The view map of the view.
@@ -106,5 +119,20 @@ public abstract class AbstractView<T> {
      * Builds an empty view map that can be use to render default views.
      */
     public abstract void buildEmptyView();
-    
+    /**
+     * Adds a node to views that are not generated automatically.
+     * @param businessObject The business object behind the node to be added. Nodes that already exist will not be added.
+     * @param properties The properties associated to this object, such as the location that will be used to place it or the URL of the icon that will represent the node.
+     * @return A reference to the newly added node.
+     */
+    public abstract AbstractViewNode addNode(T businessObject, Properties properties);
+    /**
+     * Adds an edge to views that are not generated automatically.
+     * @param businessObject The business object behind the edge to be added. Edges that already exist will not be added.
+     * @param sourceBusinessObject The business object behind the source node to the edge to be created. 
+     * @param targetBusinessObject The business object behind the target node to the edge to be created.
+     * @param properties The properties associated to this object, such as the control points of the edge, or its color.
+     * @return A reference to the newly added edge.
+     */
+    public abstract AbstractViewEdge addEdge(T businessObject, T sourceBusinessObject, T targetBusinessObject, Properties properties);
 }

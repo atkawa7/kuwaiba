@@ -117,7 +117,7 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
             UI.getCurrent().addWindow(wnwContent);
         } else Notifications.showError("The content component has not been set. Please check your createContent method");
     }
-    
+
     /**
      * Displays the contents of the content widget replacing the whole dashboard space
      */

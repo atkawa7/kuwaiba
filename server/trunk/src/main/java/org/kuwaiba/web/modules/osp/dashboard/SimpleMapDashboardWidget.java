@@ -119,7 +119,7 @@ public class SimpleMapDashboardWidget extends AbstractDashboardWidget {
 
                             if (latitude != null)
                                 mapMain.addMarker(aPhysicalLocation, aPhysicalLocation.toString(), new LatLon(
-                                    Float.valueOf(latitude), Float.valueOf(longitude)), false, "/icons/" + aPhysicalLocation.getClassName() + ".png");
+                                    Float.valueOf(latitude), Float.valueOf(longitude)), false, "/kuwaiba/icons?class=" + aPhysicalLocation.getClassName());
                         }
 
                     } catch (ServerSideException ex) {
