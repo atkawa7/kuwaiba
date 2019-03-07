@@ -31,40 +31,66 @@ public class DatabaseMigrationStage2 {
      * /data/db/kuwaiba.db will be used.
      */
     public static void main(String[] args) {
-        String dbPath;
-        
-        if (args.length == 0)
-            dbPath = "/data/db/kuwaiba.db";
-        else {
-            if (args.length != 1) {
-                System.out.println("Wrong parameter set. Usage: DatabaseMigrationTool <dbPath>");
-                return;
-            } else
-                dbPath = args[0];
-        }
-        
-        File dbPathReference = new File(dbPath);
-        
-        try {
-            System.out.println(String.format("[%s] Starting database upgrade stage 2...", Calendar.getInstance().getTime()));
-            if (true) {
-                Upgrader.getInstance().upgrade(dbPathReference);
-                LabelUpgrader.getInstance().createLabels(dbPathReference);
-                IndexUpgrader.getInstance().upgrade(dbPathReference);
-                LabelUpgrader.getInstance().deleteIndexes(dbPathReference);
-                LabelUpgrader.getInstance().deleteUnusedLabels(dbPathReference);
+        if (args.length == 2) {
+            String dbPath = args[0];
+
+            File dbPathReference = new File(dbPath);
+
+            try {
+                int migrationType = Integer.valueOf(args[1]);
+                boolean flag1;
+                boolean flag2;
+                switch(migrationType) {
+                    case 1:
+                        flag1 = true;
+                        flag2 = true;
+                    break;
+                    case 2:
+                        flag1 = false;
+                        flag2 = true;
+                    break;
+                    case 3:
+                        flag1 = true;
+                        flag2 = false;
+                    break;
+                    default:
+                        flag1 = true;
+                        flag2 = true;
+                    break;
+                }
+                
+                System.out.println(String.format("[%s] Starting database upgrade stage 2...", Calendar.getInstance().getTime()));
+                if (flag1) {
+                    Upgrader.getInstance().upgrade(dbPathReference);
+                    LabelUpgrader.getInstance().createLabels(dbPathReference);
+                    IndexUpgrader.getInstance().upgrade(dbPathReference);
+                    LabelUpgrader.getInstance().deleteIndexes(dbPathReference);
+                    LabelUpgrader.getInstance().deleteUnusedLabels(dbPathReference);
+                }
+                if (flag2) {
+                    LabelUpgrader.getInstance().replaceLabel(dbPathReference, "attribute", "attributes");
+                    LabelUpgrader.getInstance().replaceLabel(dbPathReference, "inventory_objects", "inventoryObjects");
+                    LabelUpgrader.getInstance().setUUIDAttributeToInventoryObjects(dbPathReference);
+                    LabelUpgrader.getInstance().setUUIDAttributeToListTypeItems(dbPathReference);
+                    LabelUpgrader.getInstance().setUUIDAttributeToPools(dbPathReference);
+                }
+
+                System.out.println(String.format("[%s] Database upgrade stage 2 ended successfully...", Calendar.getInstance().getTime()));
+            } catch (Exception ex) {
+                System.out.println(String.format("An unexpected error was found: %s", ex.getMessage()));
             }
-            if (false) {
-                LabelUpgrader.getInstance().replaceLabel(dbPathReference, "attribute", "attributes");
-                LabelUpgrader.getInstance().replaceLabel(dbPathReference, "inventory_objects", "inventoryObjects");
-                LabelUpgrader.getInstance().setUUIDAttributeToInventoryObjects(dbPathReference);
-                LabelUpgrader.getInstance().setUUIDAttributeToListTypeItems(dbPathReference);
-                LabelUpgrader.getInstance().setUUIDAttributeToPools(dbPathReference);
-            }
+        } else {
+            System.out.println("Argument needed are 2 but recived " + args.length);
+            System.out.println("1. Argument: database name ");
+            System.out.println("2. Argument: Migration Type ");
+            System.out.println(" Migration Type = 1 (Databases from stage 1 which apply stage 2 to use UUIDs)");
+            System.out.println(" Migration Type = 2 (Databases from stage 2 which apply again stage 2 to use UUID)");
+            System.out.println(" Migration Type = 3 (Databases from stage 1 which apply stage 2 and continue using ids)");
             
-            System.out.println(String.format("[%s] Database upgrade stage 2 ended successfully...", Calendar.getInstance().getTime()));
-        } catch (Exception ex) {
-            System.out.println(String.format("An unexpected error was found: %s", ex.getMessage()));
+            System.out.println("Example :");
+
+            System.out.println("java -jar DatabaseMigrationStage2 /data/db/kuwaiba.db 1");
+            //System.exit(1);
         }
     }
     
