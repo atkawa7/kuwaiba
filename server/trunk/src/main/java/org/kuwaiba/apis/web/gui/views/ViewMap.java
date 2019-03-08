@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Properties;
 
 /**
  * A representation of a view (which in turn a graphical representation of an inventory object or a function in the domain of the inventory system) as a set of java objects. 
@@ -48,14 +49,14 @@ public class ViewMap {
     /**
      * Extra settings that might be applicable to the view map. Typical examples are properties such as "zoom", or "units".
      */
-    private HashMap<String, Object> settings;
+    private Properties properties;
 
     public ViewMap() {
         this.nodes  = new ArrayList<>();
         this.edges = new ArrayList<>();
         this.sourceNodes = new HashMap<>();
         this.targetNodes = new HashMap<>();
-        this.settings = new HashMap<>();
+        this.properties = new Properties();
     }
     
     /**
@@ -157,10 +158,11 @@ public class ViewMap {
     /**
      * Returns the extra information associated to the view that uses this map. This 
      * can be stuff like the coordinates of the center of a map, or the zoom of an object view. 
-     * @return 
+     * @return The set of properties set for this map.
      */
-    public HashMap<String, Object> getSettings() {
-        return this.settings;
+    public Properties getProperties() {
+        return this.properties;
+        
     }
     /**
      * Removes all the entries in the lists and hashmaps.
@@ -170,7 +172,7 @@ public class ViewMap {
         this.nodes.clear();
         this.sourceNodes.clear();
         this.targetNodes.clear();
-        this.settings.clear();
+        this.properties.clear();
     }
     
     /**

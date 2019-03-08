@@ -32,12 +32,24 @@ public abstract class AbstractMapProvider {
      */
     public abstract void initialize(Properties properties);
     /**
+     * Reconfigures the map with a new set of properties. In a way is very similar to {@link #initialize(java.util.Properties)}, but the latter is called 
+     * to actually create the map, while this method assumes that the map component already exists and make sure all the provisions are taken so 
+     * the new settings are reflected in the map.
+     * @param properties The new set of properties.
+     */
+    public abstract void reload(Properties properties);
+    /**
      * Adds a marker to the map.
      * @param businessObject The business object behind the marker.
      * @param position The default position of the marker.
      * @param iconUrl The URL of the marker icon.
      */
     public abstract void addMarker(BusinessObjectLight businessObject, GeoCoordinate position, String iconUrl);
+    /**
+     * Removes a marker from the map.
+     * @param businessObject The business object behind the marker to be removed.
+     */
+    public abstract void removeMarker(BusinessObjectLight businessObject);
     /**
      * Adds a poly line to the map (not necessarily connected to any endpoint). No line will be added to the map if any of the endpoints are missing.
      * @param businessObject The business object behind the poly line;
@@ -48,6 +60,15 @@ public abstract class AbstractMapProvider {
      */
     public abstract void addPolyline(BusinessObjectLight businessObject, BusinessObjectLight sourceObject, BusinessObjectLight targetObject, 
             List<GeoCoordinate> controlPoints, Properties properties);
+    /**
+     * Removes a poly line from the map.
+     * @param businessObject The business object behind the poly line to be removed.
+     */
+    public abstract void removePolyline(BusinessObjectLight businessObject);
+    /**
+     * Removes all nodes, connections and annotations in the map.
+     */
+    public abstract void clear();
     /**
      * Fetches the existing markers.
      * @return The markers.

@@ -73,13 +73,34 @@ public class GoogleMapsMapProvider extends AbstractMapProvider {
                 center.getLongitude()) : new LatLon(OSPConstants.DEFAULT_CENTER_LATITUDE, OSPConstants.DEFAULT_CENTER_LONGITUDE));
         this.map.showEdgeLabels(true);
         this.map.showMarkerLabels(true);
+        this.map.setSizeFull();
+    }
+    
+    @Override
+    public void reload(Properties properties) {
+        if (properties.get("zoom") != null)
+            this.map.setZoom((int)properties.get("zoom"));
+        if (properties.get("center") != null) 
+            this.map.setCenter(new LatLon(((GeoCoordinate)properties.get("center")).getLatitude(), 
+                        ((GeoCoordinate)properties.get("center")).getLongitude()));
+        
     }
       
     @Override
     public void addMarker(BusinessObjectLight businessObject, GeoCoordinate position, String iconUrl) {
-        nodes.put(businessObject, this.map.addMarker(businessObject, businessObject.toString(), new LatLon(position.getLatitude(), position.getLongitude()), true, iconUrl));
+        nodes.put(businessObject, this.map.addMarker(businessObject, businessObject.toString(), 
+                new LatLon(position.getLatitude(), position.getLongitude()), true, iconUrl));
     }
 
+    @Override
+    public void removeMarker(BusinessObjectLight businessObject) {
+        GoogleMapMarker aMarker = this.nodes.get(businessObject);
+        if (aMarker != null) {
+            this.map.removeMarker(aMarker);
+            this.nodes.remove(businessObject);
+        }
+    }
+    
     @Override
     public void addPolyline(BusinessObjectLight businessObject, BusinessObjectLight sourceObject, BusinessObjectLight targetObject, 
             List<GeoCoordinate> controlPoints, Properties properties) {
@@ -87,13 +108,18 @@ public class GoogleMapsMapProvider extends AbstractMapProvider {
         if (sourceMarker != null) {
             GoogleMapMarker targetMarker = this.nodes.get(targetObject);
             if (targetMarker != null) {
-                GoogleMapPolyline aPolyline = map.addPolyline(businessObject.toString());
                 List<LatLon> gMapsCoordinates = new ArrayList<>();
-                controlPoints.forEach((aGeoCoordinate) -> {
-                    gMapsCoordinates.add(new LatLon(aGeoCoordinate.getLatitude(), aGeoCoordinate.getLongitude()));
-                });
-                aPolyline.setCoordinates(gMapsCoordinates);
-                aPolyline.setStrokeColor(properties.getProperty("color") == null ? "#00FF00" : properties.getProperty("color")); //NOI18N
+                if (controlPoints.isEmpty()) { //It's an entirely new connection without controlpoints. The addon requires that at least the endpoint coordinates are provided in this case
+                    gMapsCoordinates.add(sourceMarker.getPosition());
+                    gMapsCoordinates.add(targetMarker.getPosition());
+                } else
+                    controlPoints.forEach((aGeoCoordinate) -> {
+                        gMapsCoordinates.add(new LatLon(aGeoCoordinate.getLatitude(), aGeoCoordinate.getLongitude()));
+                    });
+                
+                GoogleMapPolyline aPolyline = new GoogleMapPolyline(businessObject.toString(), gMapsCoordinates);
+                aPolyline.setStrokeWeight(2);
+                aPolyline.setStrokeColor(properties.getProperty("color") == null ? "#000000" : properties.getProperty("color")); //NOI18N
                 this.map.addEdge(businessObject, aPolyline, sourceMarker, targetMarker);
                 this.sourceNodes.put(aPolyline, sourceObject);
                 this.targetNodes.put(aPolyline, targetObject);
@@ -101,12 +127,24 @@ public class GoogleMapsMapProvider extends AbstractMapProvider {
             }
         }
     }
+    
+    @Override
+    public void removePolyline(BusinessObjectLight businessObject) {
+        GoogleMapPolyline aPolyline = this.edges.get(businessObject);
+        if (aPolyline != null) {
+            this.map.removePolyline(aPolyline);
+            this.edges.remove(businessObject);
+            this.sourceNodes.remove(aPolyline);
+            this.targetNodes.remove(aPolyline);
+        }
+    }
 
     @Override
     public List<OSPNode> getMarkers() {
         List<OSPNode> res = new ArrayList<>();
         this.nodes.entrySet().stream().forEach((anEntry) -> {
-            res.add(new OSPNode(anEntry.getKey(), new GeoCoordinate(anEntry.getValue().getPosition().getLat(), anEntry.getValue().getPosition().getLat())));
+            res.add(new OSPNode(anEntry.getKey(), new GeoCoordinate(anEntry.getValue().getPosition().getLat(), 
+                    anEntry.getValue().getPosition().getLon())));
         });
         return res;
     }
@@ -126,7 +164,12 @@ public class GoogleMapsMapProvider extends AbstractMapProvider {
         });
         return res;
     }
-
+    
+    @Override
+    public void clear() {
+        this.map.removeEdges();
+        this.map.clearMarkers();
+    }
     @Override
     public AbstractComponent getComponent() {
         return this.map;

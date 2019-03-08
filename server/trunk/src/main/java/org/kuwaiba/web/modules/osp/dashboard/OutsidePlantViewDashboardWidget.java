@@ -135,7 +135,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
 
             mnuMain.addItem("New", VaadinIcons.FOLDER_ADD, (selectedItem) -> {
                 theOspView.buildEmptyView();
-                ((VerticalLayout)contentComponent).replaceComponent(mapComponent, theOspView.getAsComponent());
+                theOspView.getAsComponent(); //This will not create a new map, it will only refresh it, and since the new viewMap is empty, it will clean up the actual map
             });
 
             mnuMain.addItem("Open", VaadinIcons.FOLDER_OPEN, (selectedItem) -> {
@@ -168,9 +168,10 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                                     theOspView.getProperties().put(Constants.PROPERTY_ID, savedView.getId());
                                     theOspView.getProperties().put(Constants.PROPERTY_NAME, savedView.getName());
                                     theOspView.getProperties().put(Constants.PROPERTY_DESCRIPTION, savedView.getDescription());
+                                    
                                     theOspView.buildWithSavedView(savedView.getStructure());
-                                    ((VerticalLayout)contentComponent).replaceComponent(((VerticalLayout)contentComponent).getComponent(1), //Replace the old map with the new one
-                                            theOspView.getAsComponent());
+                                    theOspView.getAsComponent();
+                                    
                                     wdwOpen.close();
                                 } catch (ServerSideException ex) {
                                     Notifications.showError(ex.getLocalizedMessage());
@@ -313,7 +314,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                     wdwWizard.center();
                     wdwWizard.setModal(true);
                     wdwWizard.setWidth(80, Unit.PERCENTAGE);
-                    wdwWizard.setHeight(50, Unit.PERCENTAGE);
+                    wdwWizard.setHeight(80, Unit.PERCENTAGE);
 
                     wizard.addEventListener((wizardEvent) -> {
                         switch (wizardEvent.getType()) {

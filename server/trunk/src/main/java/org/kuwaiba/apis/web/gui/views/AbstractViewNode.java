@@ -20,7 +20,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 /**
- *
+ * 
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  * @param <N>
  */
