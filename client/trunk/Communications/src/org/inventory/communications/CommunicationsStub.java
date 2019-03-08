@@ -2269,6 +2269,20 @@ public class CommunicationsStub {
         }
     }
     
+    public LocalObjectLight[] getLogicalConnectionEndpoints(String connectionClass, long connectionId) {
+        try{
+            List<RemoteObjectLight> endpoints = service.getLogicalConnectionEndpoints(connectionClass, connectionId, session.getSessionId());
+            LocalObjectLight[] res = new LocalObjectLight[]{endpoints.get(0) == null ? 
+                    null : new LocalObjectLight(endpoints.get(0).getId(), endpoints.get(0).getName(), endpoints.get(0).getClassName()),
+                    endpoints.get(1) == null ? 
+                    null : new LocalObjectLight(endpoints.get(1).getId(), endpoints.get(1).getName(), endpoints.get(1).getClassName())};
+            return res;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
     /**
      * Returns the structure of a logical connection. The current implementation is quite simple and the return object 
      * simply provides the endpoints and the next ports connected to such endpoints using a physical connection
@@ -2412,6 +2426,18 @@ public class CommunicationsStub {
         }
     }
     
+    public boolean connectLogicalLinks(List<String> sideAClassNames, List<Long> sideAIds, 
+                List<String> linksClassNames, List<Long> linksIds, List<String> sideBClassNames, 
+                List<Long> sideBIds) {
+        try {            
+            service.connectLogicalLinks(sideAClassNames, sideAIds, linksClassNames, linksIds, sideBClassNames, sideBIds, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return false;
+        }
+    }
+    
     public boolean connectPhysicalContainers(List<String> sideAClassNames, List<Long> sideAIds, 
                 List<String> containersClassNames, List<Long> containersIds, List<String> sideBClassNames, 
                 List<Long> sideBIds) {
@@ -2432,6 +2458,24 @@ public class CommunicationsStub {
      * @return True if the operation was successful, false otherwise. Retrieve the details of the error using the getError method
      */
     public boolean disconnectPhysicalConnection(String connectionClass, long connectionId, int sideToDisconnect) {
+        try {
+            service.disconnectPhysicalConnection(connectionClass, connectionId, sideToDisconnect, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return false;
+        }
+    }
+    
+    
+    /**
+     * Disconnects a side or both sides of a physical connection (a link or a container)
+     * @param connectionClass Class of the connection to be edited
+     * @param connectionId Id of the connection to be edited
+     * @param sideToDisconnect Side to disconnect. Use 1 to disconnect only the side a, 2 to disconnect only side b and 3 to disconnect both sides at once
+     * @return True if the operation was successful, false otherwise. Retrieve the details of the error using the getError method
+     */
+    public boolean disconnectLogicalConnection(String connectionClass, long connectionId, int sideToDisconnect) {
         try {
             service.disconnectPhysicalConnection(connectionClass, connectionId, sideToDisconnect, session.getSessionId());
             return true;
@@ -5763,7 +5807,6 @@ public class CommunicationsStub {
 
         } catch (Exception ex) {
             this.error = ex.getMessage();
-    
         }
     }
     
@@ -6190,16 +6233,4 @@ public class CommunicationsStub {
         return null;
     }
     //</editor-fold>
-
-    public boolean connectLogicalLinks(List<String> asList, List<Long> asList0, List<String> asList1, List<Long> asList2, List<String> asList3, List<Long> asList4) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public LocalObjectLight[] getLogicalConnectionEndpoints(String className, long id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public boolean disconnectLogicalConnection(String className, long id, int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 }
