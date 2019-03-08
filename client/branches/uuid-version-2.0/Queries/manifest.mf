@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.inventory.queries/1
+OpenIDE-Module-Implementation-Version: 1
+OpenIDE-Module-Localizing-Bundle: org/inventory/queries/Bundle.properties
+OpenIDE-Module-Requires: org.openide.windows.WindowManager
+
