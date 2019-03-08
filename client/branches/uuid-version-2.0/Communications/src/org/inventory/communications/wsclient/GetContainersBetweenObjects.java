@@ -17,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="objectAClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="objectAId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="objectAId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="objectBClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="objectBId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="objectBId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="containerClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -42,9 +42,9 @@ import javax.xml.bind.annotation.XmlType;
 public class GetContainersBetweenObjects {
 
     protected String objectAClass;
-    protected long objectAId;
+    protected String objectAId;
     protected String objectBClass;
-    protected long objectBId;
+    protected String objectBId;
     protected String containerClass;
     protected String sessionId;
 
@@ -75,16 +75,24 @@ public class GetContainersBetweenObjects {
     /**
      * Gets the value of the objectAId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getObjectAId() {
+    public String getObjectAId() {
         return objectAId;
     }
 
     /**
      * Sets the value of the objectAId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setObjectAId(long value) {
+    public void setObjectAId(String value) {
         this.objectAId = value;
     }
 
@@ -115,16 +123,24 @@ public class GetContainersBetweenObjects {
     /**
      * Gets the value of the objectBId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getObjectBId() {
+    public String getObjectBId() {
         return objectBId;
     }
 
     /**
      * Sets the value of the objectBId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setObjectBId(long value) {
+    public void setObjectBId(String value) {
         this.objectBId = value;
     }
 

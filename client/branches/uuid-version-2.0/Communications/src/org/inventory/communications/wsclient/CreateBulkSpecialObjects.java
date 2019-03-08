@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="className" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="parentClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="parentId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="parentId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="numberOfSpecialObjects" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="namePattern" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -43,7 +43,7 @@ public class CreateBulkSpecialObjects {
 
     protected String className;
     protected String parentClassName;
-    protected long parentId;
+    protected String parentId;
     protected int numberOfSpecialObjects;
     protected String namePattern;
     protected String sessionId;
@@ -99,16 +99,24 @@ public class CreateBulkSpecialObjects {
     /**
      * Gets the value of the parentId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getParentId() {
+    public String getParentId() {
         return parentId;
     }
 
     /**
      * Sets the value of the parentId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setParentId(long value) {
+    public void setParentId(String value) {
         this.parentId = value;
     }
 

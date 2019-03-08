@@ -36,7 +36,7 @@ public class RootObjectNode extends AbstractNode {
    public static final String DEFAULT_ICON_PATH = "org/inventory/navigation/navigationtree/res/root.png";
 
     public RootObjectNode(Children children) {
-        super(children, Lookups.singleton(new LocalObjectLight(-1, Constants.DUMMYROOT, Constants.DUMMYROOT))); //Dummy object
+        super(children, Lookups.singleton(new LocalObjectLight("-1", Constants.DUMMYROOT, Constants.DUMMYROOT))); //Dummy object
         setDisplayName("Navigation Tree Root");
         setIconBaseWithExtension(DEFAULT_ICON_PATH);
     }

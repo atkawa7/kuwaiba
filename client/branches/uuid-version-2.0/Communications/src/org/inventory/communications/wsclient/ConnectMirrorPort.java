@@ -20,9 +20,9 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="aObjectClass" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="aObjectId" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="aObjectId" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="bObjectClass" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="bObjectId" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="bObjectId" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -45,11 +45,11 @@ public class ConnectMirrorPort {
     @XmlElement(nillable = true)
     protected List<String> aObjectClass;
     @XmlElement(nillable = true)
-    protected List<Long> aObjectId;
+    protected List<String> aObjectId;
     @XmlElement(nillable = true)
     protected List<String> bObjectClass;
     @XmlElement(nillable = true)
-    protected List<Long> bObjectId;
+    protected List<String> bObjectId;
     protected String sessionId;
 
     /**
@@ -99,13 +99,13 @@ public class ConnectMirrorPort {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Long }
+     * {@link String }
      * 
      * 
      */
-    public List<Long> getAObjectId() {
+    public List<String> getAObjectId() {
         if (aObjectId == null) {
-            aObjectId = new ArrayList<Long>();
+            aObjectId = new ArrayList<String>();
         }
         return this.aObjectId;
     }
@@ -157,13 +157,13 @@ public class ConnectMirrorPort {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Long }
+     * {@link String }
      * 
      * 
      */
-    public List<Long> getBObjectId() {
+    public List<String> getBObjectId() {
         if (bObjectId == null) {
-            bObjectId = new ArrayList<Long>();
+            bObjectId = new ArrayList<String>();
         }
         return this.bObjectId;
     }

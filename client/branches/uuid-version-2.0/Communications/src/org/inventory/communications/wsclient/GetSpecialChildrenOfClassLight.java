@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="parentOid" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="parentOid" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="parentClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="classToFilter" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="maxResults" type="{http://www.w3.org/2001/XMLSchema}int"/>
@@ -39,7 +39,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class GetSpecialChildrenOfClassLight {
 
-    protected long parentOid;
+    protected String parentOid;
     protected String parentClass;
     protected String classToFilter;
     protected int maxResults;
@@ -48,16 +48,24 @@ public class GetSpecialChildrenOfClassLight {
     /**
      * Gets the value of the parentOid property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getParentOid() {
+    public String getParentOid() {
         return parentOid;
     }
 
     /**
      * Sets the value of the parentOid property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setParentOid(long value) {
+    public void setParentOid(String value) {
         this.parentOid = value;
     }
 

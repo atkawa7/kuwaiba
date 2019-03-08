@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="contactClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="properties" type="{http://ws.interfaces.kuwaiba.org/}stringPair" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="customerClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="customerId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="customerId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -44,7 +44,7 @@ public class CreateContact {
     protected String contactClass;
     protected List<StringPair> properties;
     protected String customerClassName;
-    protected long customerId;
+    protected String customerId;
     protected String sessionId;
 
     /**
@@ -127,16 +127,24 @@ public class CreateContact {
     /**
      * Gets the value of the customerId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getCustomerId() {
+    public String getCustomerId() {
         return customerId;
     }
 
     /**
      * Sets the value of the customerId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setCustomerId(long value) {
+    public void setCustomerId(String value) {
         this.customerId = value;
     }
 

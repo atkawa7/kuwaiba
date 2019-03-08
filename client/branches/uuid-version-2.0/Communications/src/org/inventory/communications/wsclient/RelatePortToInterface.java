@@ -16,10 +16,10 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="portId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="portId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="portClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="interfaceClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="interfaceId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="interfaceId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -39,25 +39,33 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class RelatePortToInterface {
 
-    protected long portId;
+    protected String portId;
     protected String portClassName;
     protected String interfaceClassName;
-    protected long interfaceId;
+    protected String interfaceId;
     protected String sessionId;
 
     /**
      * Gets the value of the portId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getPortId() {
+    public String getPortId() {
         return portId;
     }
 
     /**
      * Sets the value of the portId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setPortId(long value) {
+    public void setPortId(String value) {
         this.portId = value;
     }
 
@@ -112,16 +120,24 @@ public class RelatePortToInterface {
     /**
      * Gets the value of the interfaceId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getInterfaceId() {
+    public String getInterfaceId() {
         return interfaceId;
     }
 
     /**
      * Sets the value of the interfaceId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setInterfaceId(long value) {
+    public void setInterfaceId(String value) {
         this.interfaceId = value;
     }
 

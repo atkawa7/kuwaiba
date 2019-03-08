@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="listTypeItemId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="listTypeItemId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="listTypeItemClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="viewClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -47,7 +47,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class CreateListTypeItemRelatedView {
 
-    protected long listTypeItemId;
+    protected String listTypeItemId;
     protected String listTypeItemClassName;
     protected String viewClassName;
     protected String name;
@@ -61,16 +61,24 @@ public class CreateListTypeItemRelatedView {
     /**
      * Gets the value of the listTypeItemId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getListTypeItemId() {
+    public String getListTypeItemId() {
         return listTypeItemId;
     }
 
     /**
      * Sets the value of the listTypeItemId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setListTypeItemId(long value) {
+    public void setListTypeItemId(String value) {
         this.listTypeItemId = value;
     }
 

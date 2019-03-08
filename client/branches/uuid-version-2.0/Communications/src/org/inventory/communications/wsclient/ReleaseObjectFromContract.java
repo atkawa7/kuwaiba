@@ -17,8 +17,8 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="objectClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="objectId" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="contractId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="objectId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="contractId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -38,8 +38,8 @@ import javax.xml.bind.annotation.XmlType;
 public class ReleaseObjectFromContract {
 
     protected String objectClass;
-    protected long objectId;
-    protected long contractId;
+    protected String objectId;
+    protected String contractId;
     protected String sessionId;
 
     /**
@@ -69,32 +69,48 @@ public class ReleaseObjectFromContract {
     /**
      * Gets the value of the objectId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getObjectId() {
+    public String getObjectId() {
         return objectId;
     }
 
     /**
      * Sets the value of the objectId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setObjectId(long value) {
+    public void setObjectId(String value) {
         this.objectId = value;
     }
 
     /**
      * Gets the value of the contractId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getContractId() {
+    public String getContractId() {
         return contractId;
     }
 
     /**
      * Sets the value of the contractId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setContractId(long value) {
+    public void setContractId(String value) {
         this.contractId = value;
     }
 

@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="poolId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="poolId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="className" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="attributes" type="{http://ws.interfaces.kuwaiba.org/}stringPair" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -39,7 +39,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class CreateSubnet {
 
-    protected long poolId;
+    protected String poolId;
     protected String className;
     protected List<StringPair> attributes;
     protected String sessionId;
@@ -47,16 +47,24 @@ public class CreateSubnet {
     /**
      * Gets the value of the poolId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getPoolId() {
+    public String getPoolId() {
         return poolId;
     }
 
     /**
      * Sets the value of the poolId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setPoolId(long value) {
+    public void setPoolId(String value) {
         this.poolId = value;
     }
 

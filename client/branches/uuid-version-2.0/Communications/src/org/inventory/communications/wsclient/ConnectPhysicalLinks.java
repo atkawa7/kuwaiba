@@ -20,11 +20,11 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="sideAClassNames" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="sideAIds" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="sideAIds" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="linksClassNames" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="linksIds" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="linksIds" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="sideBClassNames" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="sideBIds" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="sideBIds" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -49,15 +49,15 @@ public class ConnectPhysicalLinks {
     @XmlElement(nillable = true)
     protected List<String> sideAClassNames;
     @XmlElement(nillable = true)
-    protected List<Long> sideAIds;
+    protected List<String> sideAIds;
     @XmlElement(nillable = true)
     protected List<String> linksClassNames;
     @XmlElement(nillable = true)
-    protected List<Long> linksIds;
+    protected List<String> linksIds;
     @XmlElement(nillable = true)
     protected List<String> sideBClassNames;
     @XmlElement(nillable = true)
-    protected List<Long> sideBIds;
+    protected List<String> sideBIds;
     protected String sessionId;
 
     /**
@@ -107,13 +107,13 @@ public class ConnectPhysicalLinks {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Long }
+     * {@link String }
      * 
      * 
      */
-    public List<Long> getSideAIds() {
+    public List<String> getSideAIds() {
         if (sideAIds == null) {
-            sideAIds = new ArrayList<Long>();
+            sideAIds = new ArrayList<String>();
         }
         return this.sideAIds;
     }
@@ -165,13 +165,13 @@ public class ConnectPhysicalLinks {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Long }
+     * {@link String }
      * 
      * 
      */
-    public List<Long> getLinksIds() {
+    public List<String> getLinksIds() {
         if (linksIds == null) {
-            linksIds = new ArrayList<Long>();
+            linksIds = new ArrayList<String>();
         }
         return this.linksIds;
     }
@@ -223,13 +223,13 @@ public class ConnectPhysicalLinks {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Long }
+     * {@link String }
      * 
      * 
      */
-    public List<Long> getSideBIds() {
+    public List<String> getSideBIds() {
         if (sideBIds == null) {
-            sideBIds = new ArrayList<Long>();
+            sideBIds = new ArrayList<String>();
         }
         return this.sideBIds;
     }

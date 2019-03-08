@@ -20,9 +20,9 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="objectClass" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="objectId" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="objectId" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="serviceClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="serviceId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="serviceId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -45,9 +45,9 @@ public class AssociateObjectsToService {
     @XmlElement(nillable = true)
     protected List<String> objectClass;
     @XmlElement(nillable = true)
-    protected List<Long> objectId;
+    protected List<String> objectId;
     protected String serviceClass;
-    protected long serviceId;
+    protected String serviceId;
     protected String sessionId;
 
     /**
@@ -97,13 +97,13 @@ public class AssociateObjectsToService {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Long }
+     * {@link String }
      * 
      * 
      */
-    public List<Long> getObjectId() {
+    public List<String> getObjectId() {
         if (objectId == null) {
-            objectId = new ArrayList<Long>();
+            objectId = new ArrayList<String>();
         }
         return this.objectId;
     }
@@ -135,16 +135,24 @@ public class AssociateObjectsToService {
     /**
      * Gets the value of the serviceId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getServiceId() {
+    public String getServiceId() {
         return serviceId;
     }
 
     /**
      * Sets the value of the serviceId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setServiceId(long value) {
+    public void setServiceId(String value) {
         this.serviceId = value;
     }
 

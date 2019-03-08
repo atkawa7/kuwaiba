@@ -20,9 +20,9 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="targetClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="targetOid" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="targetOid" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="objectsClasses" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="objectsOids" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="objectsOids" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -43,11 +43,11 @@ import javax.xml.bind.annotation.XmlType;
 public class MoveObjects {
 
     protected String targetClass;
-    protected long targetOid;
+    protected String targetOid;
     @XmlElement(nillable = true)
     protected List<String> objectsClasses;
     @XmlElement(nillable = true)
-    protected List<Long> objectsOids;
+    protected List<String> objectsOids;
     protected String sessionId;
 
     /**
@@ -77,16 +77,24 @@ public class MoveObjects {
     /**
      * Gets the value of the targetOid property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getTargetOid() {
+    public String getTargetOid() {
         return targetOid;
     }
 
     /**
      * Sets the value of the targetOid property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setTargetOid(long value) {
+    public void setTargetOid(String value) {
         this.targetOid = value;
     }
 
@@ -137,13 +145,13 @@ public class MoveObjects {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Long }
+     * {@link String }
      * 
      * 
      */
-    public List<Long> getObjectsOids() {
+    public List<String> getObjectsOids() {
         if (objectsOids == null) {
-            objectsOids = new ArrayList<Long>();
+            objectsOids = new ArrayList<String>();
         }
         return this.objectsOids;
     }

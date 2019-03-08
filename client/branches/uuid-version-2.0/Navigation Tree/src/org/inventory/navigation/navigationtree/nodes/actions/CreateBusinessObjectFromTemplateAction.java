@@ -140,7 +140,7 @@ public final class CreateBusinessObjectFromTemplateAction extends GenericObjectN
                 
                 LocalObjectLight newObject = CommunicationsStub.getInstance().createObject(
                     ((LocalObjectLight) selectedTemplate).getClassName(), selectedObject.getClassName(), 
-                    selectedObject.getId(), attributes, ((LocalObjectLight) selectedTemplate).getId());
+                    selectedObject.getId(), attributes, Long.valueOf(((LocalObjectLight) selectedTemplate).getId()));
                 
                 if (newObject == null)
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

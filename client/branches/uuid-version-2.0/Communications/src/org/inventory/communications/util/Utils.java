@@ -186,10 +186,10 @@ public class Utils {
                 case Constants.MAPPING_MANYTOMANY:
                     List<LocalObjectListItem> res = new ArrayList<>();
                     for (String value : valueAsString.split(";"))
-                        res.add(Utils.getListTypeItem(type, Long.valueOf(value)));
+                        res.add(Utils.getListTypeItem(type, value));
                     return res;
                 case Constants.MAPPING_MANYTOONE:
-                    return Utils.getListTypeItem(type, Long.valueOf(valueAsString));
+                    return Utils.getListTypeItem(type, valueAsString);
                 default:
                     throw new Exception();
             }
@@ -329,13 +329,13 @@ public class Utils {
         return globalFileChooser;
     }
     
-    public static LocalObjectListItem getListTypeItem(String listTypeClass, long listTypeItemId) throws IllegalAccessException {
+    public static LocalObjectListItem getListTypeItem(String listTypeClass, String listTypeItemId) throws IllegalAccessException {
         List<LocalObjectListItem> list = CommunicationsStub.getInstance().getList(listTypeClass, true, false);
         if (list == null)
             throw new IllegalAccessException(CommunicationsStub.getInstance().getError());
         
         for (LocalObjectListItem listItem : list) {
-            if (listItem.getId() == listTypeItemId)
+            if (listItem.getId() != null && listTypeItemId != null && listItem.getId().equals(listTypeItemId))
                 return listItem;
         }
         

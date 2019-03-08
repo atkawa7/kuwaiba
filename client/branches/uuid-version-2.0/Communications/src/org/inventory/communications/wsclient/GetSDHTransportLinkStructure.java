@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="transportLinkClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="transportLinkId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="transportLinkId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlType;
 public class GetSDHTransportLinkStructure {
 
     protected String transportLinkClass;
-    protected long transportLinkId;
+    protected String transportLinkId;
     protected String sessionId;
 
     /**
@@ -66,16 +66,24 @@ public class GetSDHTransportLinkStructure {
     /**
      * Gets the value of the transportLinkId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getTransportLinkId() {
+    public String getTransportLinkId() {
         return transportLinkId;
     }
 
     /**
      * Sets the value of the transportLinkId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setTransportLinkId(long value) {
+    public void setTransportLinkId(String value) {
         this.transportLinkId = value;
     }
 

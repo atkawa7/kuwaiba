@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="ids" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="ids" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -37,7 +37,7 @@ import javax.xml.bind.annotation.XmlType;
 public class DeletePools {
 
     @XmlElement(nillable = true)
-    protected List<Long> ids;
+    protected List<String> ids;
     protected String sessionId;
 
     /**
@@ -58,13 +58,13 @@ public class DeletePools {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Long }
+     * {@link String }
      * 
      * 
      */
-    public List<Long> getIds() {
+    public List<String> getIds() {
         if (ids == null) {
-            ids = new ArrayList<Long>();
+            ids = new ArrayList<String>();
         }
         return this.ids;
     }

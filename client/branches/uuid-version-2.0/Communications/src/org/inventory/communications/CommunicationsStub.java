@@ -248,7 +248,7 @@ public class CommunicationsStub {
      * @param objectClassId object's class id
      * @return an array of local objects representing the object's children. Null if a problem occurs during the execution
      */
-    public List<LocalObjectLight> getObjectChildren(long oid, long objectClassId){
+    public List<LocalObjectLight> getObjectChildren(String oid, long objectClassId){
         try{
             List <RemoteObjectLight> children = service.getObjectChildrenForClassWithId(oid, objectClassId, 0, this.session.getSessionId());
             List <LocalObjectLight> res = new ArrayList<>();
@@ -263,7 +263,7 @@ public class CommunicationsStub {
         }
     }
     
-    public List<LocalObjectLight> getObjectChildrenAsync(long oid, String className) {
+    public List<LocalObjectLight> getObjectChildrenAsync(String oid, String className) {
         try {
             Response<GetObjectChildrenResponse> response = service.getObjectChildrenAsync(className, oid, 0, session.getSessionId());
             while (!response.isDone())
@@ -285,7 +285,7 @@ public class CommunicationsStub {
         }
     }
     
-    public LocalObjectLight[] getSiblings(String objectClass, long objectId) {
+    public LocalObjectLight[] getSiblings(String objectClass, String objectId) {
         try{
             List <RemoteObjectLight> siblings = service.getSiblings(objectClass, objectId, 0,this.session.getSessionId());
             LocalObjectLight[] res = new LocalObjectLight[siblings.size()];
@@ -308,7 +308,7 @@ public class CommunicationsStub {
      * @param className object class name
      * @return an array of local objects representing the object's children. Null in a problem occurs during the execution
      */
-    public List<LocalObjectLight> getObjectChildren(long oid, String className) {
+    public List<LocalObjectLight> getObjectChildren(String oid, String className) {
         try {
             List <RemoteObjectLight> children = service.getObjectChildren(className, oid, 0,this.session.getSessionId());
             List <LocalObjectLight> res = new ArrayList<>();
@@ -330,7 +330,7 @@ public class CommunicationsStub {
      * @param childrenClassName The class used to filter the children. Abstract super classes are supported
      * @return The list of children filtered using the class provided as parameter
      */
-    public List<LocalObject> getChildrenOfClass(long id, String parentClassName, String childrenClassName){
+    public List<LocalObject> getChildrenOfClass(String id, String parentClassName, String childrenClassName){
         try{
             List <RemoteObject> remoteChildren = service.getChildrenOfClass(id, parentClassName, childrenClassName, 0, this.session.getSessionId());
             List <LocalObject> res = new ArrayList<>();
@@ -353,7 +353,7 @@ public class CommunicationsStub {
      * @param classToFilter The superclass/class to be used to filter the results. You can also use abstract superclasses.
      * @return The list of special children of the given object, filtered using classToFilter. Null if  the parent class name provided could not be found or if the parent object could not be found
      */
-    public List<LocalObjectLight> getSpecialChildrenOfClassLight(String parentClass, long parentOid, String classToFilter) {
+    public List<LocalObjectLight> getSpecialChildrenOfClassLight(String parentClass, String parentOid, String classToFilter) {
         try {
             List <RemoteObjectLight> children = service.getSpecialChildrenOfClassLight(parentOid, parentClass, classToFilter, -1, session.getSessionId());
             List <LocalObjectLight> res = new ArrayList<>();
@@ -375,7 +375,7 @@ public class CommunicationsStub {
      * @param childrenClassName The type of children we want to retrieve
      * @return An array with the children objects
      */
-    public List<LocalObjectLight> getChildrenOfClassLightRecursive(long oid, String parentClassName, String childrenClassName) {
+    public List<LocalObjectLight> getChildrenOfClassLightRecursive(String oid, String parentClassName, String childrenClassName) {
         try {
             List <RemoteObjectLight> children = service.getChildrenOfClassLightRecursive(oid, parentClassName, childrenClassName, -1, session.getSessionId());
             List <LocalObjectLight> res = new ArrayList<>();
@@ -420,7 +420,7 @@ public class CommunicationsStub {
      * @param attributesToBeUpdated A key-value dictionary with the attributes and their respective values to be updated
      * @return True if the operation was successful, false otherwise
      */
-    public boolean updateObject(String className, long id, HashMap<String, Object> attributesToBeUpdated) {
+    public boolean updateObject(String className, String id, HashMap<String, Object> attributesToBeUpdated) {
 
         try {
             List<StringPair> attributes = new ArrayList<>();
@@ -449,7 +449,7 @@ public class CommunicationsStub {
      * @param id object id
      * @return The local representation of the object
      */
-    public LocalObject getObjectInfo(String objectClass, long id) {
+    public LocalObject getObjectInfo(String objectClass, String id) {
         try {
             LocalClassMetadata classMetadata = getMetaForClass(objectClass, false);
             RemoteObject remoteObject = service.getObject(objectClass, id,this.session.getSessionId());
@@ -467,7 +467,7 @@ public class CommunicationsStub {
      * @param id The id of the object
      * @return The local representation of the object
      */
-    public LocalObject getObjectInfoAsync(String objectClass, long id) {
+    public LocalObject getObjectInfoAsync(String objectClass, String id) {
         try {
             LocalClassMetadata classMetadata = getMetaForClassAsync(objectClass, false);
             
@@ -497,7 +497,7 @@ public class CommunicationsStub {
      * @param bOid Object id for the child b
      * @return The common parent object
      */
-    public LocalObjectLight getCommonParent(String aObjectClass, long aOid, String bObjectClass, long bOid) {
+    public LocalObjectLight getCommonParent(String aObjectClass, String aOid, String bObjectClass, String bOid) {
         try {
             RemoteObjectLight parent = service.getCommonParent(aObjectClass, aOid, bObjectClass, bOid, session.getSessionId());
             return new LocalObjectLight(parent.getId(), parent.getName(), parent.getClassName());
@@ -514,7 +514,7 @@ public class CommunicationsStub {
      * @param objectId Object id for the child
      * @return The list of ancestors.
      */
-    public List<LocalObjectLight> getParents(String objectClass, long objectId) {
+    public List<LocalObjectLight> getParents(String objectClass, String objectId) {
         try {
             List<RemoteObjectLight> parents = service.getParents(objectClass, objectId, session.getSessionId());
             List<LocalObjectLight> res = new ArrayList<>();
@@ -535,7 +535,7 @@ public class CommunicationsStub {
      * @param objectId Object id for the child
      * @return The parent object
      */
-    public LocalObjectLight getParent(String objectClass, long objectId) {
+    public LocalObjectLight getParent(String objectClass, String objectId) {
         try {
             RemoteObjectLight parent = service.getParent(objectClass, objectId, session.getSessionId());
             return new LocalObjectLight(parent.getId(), parent.getName(), parent.getClassName());
@@ -553,7 +553,7 @@ public class CommunicationsStub {
      * @param objectToMatchClassName Class of the object that will limit the search. It can be a superclass, if you want to match many classes at once
      * @return The list of parents until an instance of objectToMatchClassName is found. If no instance of that class is found, all parents until the Dummy Root will be returned. NUll in case of error
      */
-    public List<LocalObjectLight> getParentsUntilFirstOfClass(String objectClass, long objectId, String objectToMatchClassName) {
+    public List<LocalObjectLight> getParentsUntilFirstOfClass(String objectClass, String objectId, String objectToMatchClassName) {
         try {
             List<RemoteObjectLight> parents = service.getParentsUntilFirstOfClass(objectClass, objectId, objectToMatchClassName, session.getSessionId());
             List<LocalObjectLight> res = new ArrayList<>();
@@ -575,7 +575,7 @@ public class CommunicationsStub {
      * @param objectToMatchClassName Class of the object that will limit the search. It can be a superclass, if you want to match many classes at once
      * @return The the first occurrence of a parent with a given class. If no instance of that class is found, the Dummy Root will be returned
      */
-    public LocalObjectLight getFirstParentOfClass(String objectClass, long objectId, String objectToMatchClassName) {
+    public LocalObjectLight getFirstParentOfClass(String objectClass, String objectId, String objectToMatchClassName) {
         try {
             RemoteObjectLight parent = service.getFirstParentOfClass(objectClass, objectId, objectToMatchClassName, session.getSessionId());
             return parent != null ? new LocalObjectLight(parent.getId(), parent.getName(), parent.getClassName()) : null;
@@ -585,7 +585,7 @@ public class CommunicationsStub {
         }
     }
     
-    public HashMap<String, LocalObjectLight[]> getSpecialAttributes (String objectClass, long objectId) {
+    public HashMap<String, LocalObjectLight[]> getSpecialAttributes (String objectClass, String objectId) {
         try{
             RemoteObjectSpecialRelationships remoteRelationships = service.getSpecialAttributes(objectClass, objectId, session.getSessionId());
             HashMap<String, LocalObjectLight[]> res = new HashMap<>();
@@ -610,7 +610,7 @@ public class CommunicationsStub {
         }
     }
     
-    public HashMap<String, LocalObjectLight[]> getSpecialAttributesAsync (String objectClass, long objectId) {
+    public HashMap<String, LocalObjectLight[]> getSpecialAttributesAsync (String objectClass, String objectId) {
         try{
             Response<GetSpecialAttributesResponse> response = service.getSpecialAttributesAsync(objectClass, objectId, session.getSessionId());
             while (!response.isDone())
@@ -641,7 +641,7 @@ public class CommunicationsStub {
         }
     }
 
-    public List<LocalObjectLight> getSpecialAttribute(String objectClass, long objectId, String attributeName){
+    public List<LocalObjectLight> getSpecialAttribute(String objectClass, String objectId, String attributeName){
         try{
 
             List<RemoteObjectLight> values = service.getSpecialAttribute(objectClass, objectId,attributeName, session.getSessionId());
@@ -662,7 +662,7 @@ public class CommunicationsStub {
      * @param oid object id
      * @return The local representation of the object
      */
-    public LocalObjectLight getObjectInfoLight(String objectClass, long oid){
+    public LocalObjectLight getObjectInfoLight(String objectClass, String oid){
         try{
             RemoteObjectLight myLocalObject = service.getObjectLight(objectClass, oid,this.session.getSessionId());
             return new LocalObjectLight(myLocalObject.getClassName(), myLocalObject.getName(), 
@@ -673,7 +673,7 @@ public class CommunicationsStub {
         }
     }
     
-    public LocalApplicationLogEntry[] getBusinessObjectAuditTrail(String objectClass, long oid){
+    public LocalApplicationLogEntry[] getBusinessObjectAuditTrail(String objectClass, String oid){
         try{
             List<ApplicationLogEntry> myEntries = service.getBusinessObjectAuditTrail(objectClass, oid, 0, this.session.getSessionId());
             
@@ -935,7 +935,7 @@ public class CommunicationsStub {
      * @return True if the operation was successful, false otherwise
      */
     public boolean createContact(String contactClass, String name, 
-            String customerClassName, long customerId) {
+            String customerClassName, String customerId) {
         try {
             service.createContact(contactClass, Arrays.asList(new StringPair(Constants.PROPERTY_NAME, name)), 
                     customerClassName, customerId, session.getSessionId());
@@ -953,7 +953,7 @@ public class CommunicationsStub {
      * @param contactId Id of the contact
      * @return True if the operation was successful, false otherwise
      */
-    public boolean deleteContact(String contactClass, long contactId) {
+    public boolean deleteContact(String contactClass, String contactId) {
         try {
             service.deleteContact(contactClass, contactId, session.getSessionId());
             return true;
@@ -992,7 +992,7 @@ public class CommunicationsStub {
      * @param customerId The id of the customer to retrieve the contacts from
      * @return The list of contacts associated to the customer provided
      */
-    public List<LocalContact> getContactsForCustomer(String customerClass, long customerId) {
+    public List<LocalContact> getContactsForCustomer(String customerClass, String customerId) {
         try {
             List<RemoteContact> remoteContacts = service.getContactsForCustomer(customerClass, customerId, session.getSessionId());
             List<LocalContact> res = new ArrayList<>();
@@ -1020,7 +1020,7 @@ public class CommunicationsStub {
      * @param objectId The id of the inventory object the file will be attached to
      * @return The file object that was created or null if the file can not be saved or if there's already a file with that name related to the object
      */
-    public LocalFileObjectLight attachFileToObject(String name, String tags, byte[] file, String className, long objectId) {
+    public LocalFileObjectLight attachFileToObject(String name, String tags, byte[] file, String className, String objectId) {
         try {
             long fileObjectId = service.attachFileToObject(name, tags, file, className, objectId, session.getSessionId());
             return new LocalFileObjectLight(fileObjectId, name, Calendar.getInstance().getTimeInMillis(), tags);
@@ -1037,7 +1037,7 @@ public class CommunicationsStub {
      * @param objectId The id of the object the file will be detached from
      * @return True if the operation was successful, false otherwise
      */
-    public boolean detachFileFromObject(long fileObjectId, String className, long objectId) {
+    public boolean detachFileFromObject(long fileObjectId, String className, String objectId) {
         try{
             service.detachFileFromObject(fileObjectId, className, objectId, session.getSessionId());
             return true;
@@ -1053,7 +1053,7 @@ public class CommunicationsStub {
      * @param objectId The id of the object o retrieve the files from
      * @return  The list of files or null in case of error
      */
-    public List<LocalFileObjectLight> getFilesForObject(String className, long objectId) {
+    public List<LocalFileObjectLight> getFilesForObject(String className, String objectId) {
         try {
             List<LocalFileObjectLight> res = new ArrayList<>();
             List<RemoteFileObjectLight> remoteFiles = service.getFilesForObject(className, objectId, session.getSessionId());
@@ -1074,7 +1074,7 @@ public class CommunicationsStub {
      * @param objectId The id of the object the file will be detached from
      * @return The object file encapsulating the contents of the file or null otherwise.
      */
-    public LocalFileObject getFile(long fileObjectId, String className, long objectId) {
+    public LocalFileObject getFile(long fileObjectId, String className, String objectId) {
         try {
             RemoteFileObject remoteObject = service.getFile(fileObjectId, className, objectId, session.getSessionId());
             return new LocalFileObject(remoteObject.getFileOjectId(), remoteObject.getName(), 
@@ -1094,7 +1094,7 @@ public class CommunicationsStub {
      * @param objectId The id of the object the file is attached to
      * @return True if the operation was completed successfully, false otherwise
      */
-    public boolean updateFileProperties(long fileObjectId, String propertyName, String propertyValue, String className, long objectId) {
+    public boolean updateFileProperties(long fileObjectId, String propertyName, String propertyValue, String className, String objectId) {
         try {
             
             List<StringPair> remoteProperties = new ArrayList<>();
@@ -1445,7 +1445,7 @@ public class CommunicationsStub {
      */
     public LocalObjectListItem createListTypeItem(String className) {
         try {
-            long myObjectId = service.createListTypeItem(className, "", "", this.session.getSessionId());
+            String myObjectId = service.createListTypeItem(className, "", "", this.session.getSessionId());
             return new LocalObjectListItem(myObjectId, className, null);
         } catch (Exception ex) {
             this.error = ex.getMessage();
@@ -1490,7 +1490,7 @@ public class CommunicationsStub {
         }
     }// </editor-fold>
     
-    public LocalObjectListItem getCustomShape(long customShapeId, boolean ignoreCache) {        
+    public LocalObjectListItem getCustomShape(String customShapeId, boolean ignoreCache) {        
         if (!ignoreCache) {
             for (LocalObjectListItem customShape : cache.getCustomShapes()) {
                 if (customShape.getId() == customShapeId)
@@ -1506,7 +1506,7 @@ public class CommunicationsStub {
         return null;
     }
     
-    public LocalObjectView getCustomShapeLayout(long customShapeId, boolean ignoreCache) {
+    public LocalObjectView getCustomShapeLayout(String customShapeId, boolean ignoreCache) {
         LocalObjectListItem customShape = getCustomShape(customShapeId, false);
         
         if (customShape != null) {
@@ -1827,7 +1827,7 @@ public class CommunicationsStub {
      * @return 
      */
     public LocalObjectLight createObject(String objectClass, String parentClass, 
-            long parentOid, HashMap<String, Object> attributes, long template)
+            String parentOid, HashMap<String, Object> attributes, long template)
     {
         try {
             List<String> attributeNames = new ArrayList<>();
@@ -1848,7 +1848,7 @@ public class CommunicationsStub {
                 }
                 attributeValues.add(value);
             }
-            long objectId  = service.createObject(objectClass, parentClass, 
+            String objectId  = service.createObject(objectClass, parentClass, 
                     parentOid, attributeNames,
                     attributeValues,
                     template, this.session.getSessionId());
@@ -1860,7 +1860,7 @@ public class CommunicationsStub {
     }
     
     public LocalObjectLight createSpecialObject(String className, String parentClassName, 
-            long parentOid, HashMap<String, Object> attributes, long templateId) {
+            String parentOid, HashMap<String, Object> attributes, long templateId) {
         try{
             List<String> attributeNames = new ArrayList<>();
             List<String> attributeValues = new ArrayList<>();
@@ -1880,7 +1880,7 @@ public class CommunicationsStub {
                 }
                 attributeValues.add(value);
             }
-            long objectId  = service.createSpecialObject(className,parentClassName, parentOid, 
+            String objectId  = service.createSpecialObject(className,parentClassName, parentOid, 
                     attributeNames, attributeValues,templateId,this.session.getSessionId());
             return new LocalObjectLight(objectId, null, className);
         }catch(Exception ex){
@@ -1975,7 +1975,7 @@ public class CommunicationsStub {
      * @param releaseRelationships Should this method check if there are existing relationships and stop the operation if any?
      * @return  True if the operation was successful, an exception if not
      */
-    public boolean deleteObject(String className, long oid, boolean releaseRelationships) {
+    public boolean deleteObject(String className, String oid, boolean releaseRelationships) {
         try {
             service.deleteObject(className, oid, releaseRelationships, this.session.getSessionId());
             return true;
@@ -1991,7 +1991,7 @@ public class CommunicationsStub {
      * @param oids object ids
      * @return Success or failure
      */
-    public boolean deleteObjects(List<String> classNames, List<Long> oids){
+    public boolean deleteObjects(List<String> classNames, List<String> oids){
         try {
             service.deleteObjects(classNames, oids, false, this.session.getSessionId());
             return true;
@@ -2001,10 +2001,10 @@ public class CommunicationsStub {
         }
     }
 
-    public boolean moveObjectsToPool(String targetClass, long targetOid, LocalObjectLight[] objects) {
+    public boolean moveObjectsToPool(String targetClass, String targetOid, LocalObjectLight[] objects) {
 
         try{
-            List<Long> objectOids = new ArrayList<>();
+            List<String> objectOids = new ArrayList<>();
             List<String> objectClasses = new ArrayList<>();
 
             for (LocalObjectLight lol : objects){
@@ -2019,9 +2019,9 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean moveObjects(String targetClass, long targetOid, List<LocalObjectLight> objects) {
+    public boolean moveObjects(String targetClass, String targetOid, List<LocalObjectLight> objects) {
         try{
-            List<Long> objectOids = new ArrayList<>();
+            List<String> objectOids = new ArrayList<>();
             List<String> objectClasses = new ArrayList<>();
 
             for (LocalObjectLight lol : objects){
@@ -2036,9 +2036,9 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean moveSpecialObjects(String targetClass, long targetOid, List<LocalObjectLight> objects) {
+    public boolean moveSpecialObjects(String targetClass, String targetOid, List<LocalObjectLight> objects) {
         try{
-            List<Long> objectOids = new ArrayList<>();
+            List<String> objectOids = new ArrayList<>();
             List<String> objectClasses = new ArrayList<>();
 
             for (LocalObjectLight lol : objects){
@@ -2060,7 +2060,7 @@ public class CommunicationsStub {
      * @param poolItemId The id for the pool item
      * @return True if the pool item was moved
      */
-    public boolean movePoolItem(long poolId, String poolItemClassName, long poolItemId) {
+    public boolean movePoolItem(String poolId, String poolItemClassName, String poolItemId) {
         try {
             service.movePoolItemToPool(poolId, poolItemClassName, poolItemId, session.getSessionId());
             return true;
@@ -2070,9 +2070,9 @@ public class CommunicationsStub {
         }
     }
 
-    public LocalObjectLight[] copyObjects(String targetClass, long targetOid, LocalObjectLight[] objects){
+    public LocalObjectLight[] copyObjects(String targetClass, String targetOid, LocalObjectLight[] objects){
         try{
-            List<Long> objectOids = new ArrayList<>();
+            List<String> objectOids = new ArrayList<>();
             List<String> objectClasses = new ArrayList<>();
 
             for (LocalObjectLight lol : objects){
@@ -2081,7 +2081,7 @@ public class CommunicationsStub {
             }
 
             //Let's do the copy recursive by default
-            List<Long> objs = service.copyObjects(targetClass, targetOid, objectClasses, objectOids, true, this.session.getSessionId());
+            List<String> objs = service.copyObjects(targetClass, targetOid, objectClasses, objectOids, true, this.session.getSessionId());
 
             LocalObjectLight[] res = new LocalObjectLight[objs.size()];
             for (int i = 0; i < res.length ; i++){
@@ -2096,9 +2096,9 @@ public class CommunicationsStub {
         }
     }
     
-    public LocalObjectLight[] copySpecialObjects(String targetClass, long targetOid, LocalObjectLight[] objects){
+    public LocalObjectLight[] copySpecialObjects(String targetClass, String targetOid, LocalObjectLight[] objects){
         try{
-            List<Long> objectOids = new ArrayList<>();
+            List<String> objectOids = new ArrayList<>();
             List<String> objectClasses = new ArrayList<>();
 
             for (LocalObjectLight lol : objects){
@@ -2107,7 +2107,7 @@ public class CommunicationsStub {
             }
 
             //Let's do the copy recursive by default
-            List<Long> objs = service.copySpecialObjects(targetClass, targetOid, objectClasses, objectOids, true, this.session.getSessionId());
+            List<String> objs = service.copySpecialObjects(targetClass, targetOid, objectClasses, objectOids, true, this.session.getSessionId());
 
             LocalObjectLight[] res = new LocalObjectLight[objs.size()];
             for (int i = 0; i < res.length ; i++){
@@ -2130,7 +2130,7 @@ public class CommunicationsStub {
      * @param recursive If this operation should also copy the children objects recursively
      * @return True if the pool item was moved
      */
-    public boolean copyPoolItem(long poolId, String poolItemClassName, long poolItemId, boolean recursive) {
+    public boolean copyPoolItem(String poolId, String poolItemClassName, String poolItemId, boolean recursive) {
         try {
             service.copyPoolItemToPool(poolId, poolItemClassName, poolItemId, recursive, session.getSessionId());
             return true ;
@@ -2166,13 +2166,13 @@ public class CommunicationsStub {
      * @param namePattern A pattern to create the names for the new objects
      * @return A list of new objects or null if occur an error
      */
-    public List<LocalObjectLight> createBulkObjects(String className, String parentClassName, long parentOid, int numberOfObjects, String namePattern) {
+    public List<LocalObjectLight> createBulkObjects(String className, String parentClassName, String parentOid, int numberOfObjects, String namePattern) {
         try {
-            List<Long> ids = service.createBulkObjects(className, parentClassName, parentOid, numberOfObjects, namePattern, session.getSessionId());
+            List<String> ids = service.createBulkObjects(className, parentClassName, parentOid, numberOfObjects, namePattern, session.getSessionId());
             
             List<LocalObjectLight> newObjects = new ArrayList<>();
             
-            for (Long id : ids) {
+            for (String id : ids) {
                 newObjects.add(getObjectInfoLight(className, id));
             }
             
@@ -2192,13 +2192,13 @@ public class CommunicationsStub {
      * @param namePattern A pattern to create the names for the new special objects
      * @return A list of new special objects or null if occur an error
      */
-    public List<LocalObjectLight> createBulkSpecialObjects(String className, String parentClassName, long parentId, int numberOfSpecialObjects, String namePattern) {
+    public List<LocalObjectLight> createBulkSpecialObjects(String className, String parentClassName, String parentId, int numberOfSpecialObjects, String namePattern) {
         try {
-            List<Long> ids = service.createBulkSpecialObjects(className, parentClassName, parentId, numberOfSpecialObjects, namePattern, session.getSessionId());
+            List<String> ids = service.createBulkSpecialObjects(className, parentClassName, parentId, numberOfSpecialObjects, namePattern, session.getSessionId());
             
             List<LocalObjectLight> newSpecialObjects = new ArrayList<>();
             
-            for (Long id : ids) {
+            for (String id : ids) {
                 newSpecialObjects.add(getObjectInfoLight(className, id));
             }
             
@@ -2210,7 +2210,7 @@ public class CommunicationsStub {
     }
         
     public boolean connectMirrorPort (List<String> aObjectClass, 
-            List<Long> aObjectId, List<String> bObjectClass, List<Long> bObjectId) {
+            List<String> aObjectId, List<String> bObjectClass, List<String> bObjectId) {
         try{
             service.connectMirrorPort(aObjectClass, aObjectId, bObjectClass, bObjectId, session.getSessionId());
             return true;
@@ -2220,7 +2220,7 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean releaseMirrorPort (String objectClass, long objectId) {
+    public boolean releaseMirrorPort (String objectClass, String objectId) {
         try {
             service.releaseMirrorPort (objectClass, objectId, session.getSessionId());
             return true;
@@ -2243,10 +2243,10 @@ public class CommunicationsStub {
      * @param templateId Id of the template for the connectionClass. Use -1 to create a connection without template
      * @return A local object light representing the new connection
      */
-    public LocalObjectLight createPhysicalConnection(String endpointAClass, long endpointAId,
-            String endpointBClass, long endpointBId, String parentClass, long parentId, String name, String connectionClass, long templateId) {
+    public LocalObjectLight createPhysicalConnection(String endpointAClass, String endpointAId,
+            String endpointBClass, String endpointBId, String parentClass, String parentId, String name, String connectionClass, long templateId) {
         try {
-            long myObjectId = service.createPhysicalConnection(endpointAClass, endpointAId,
+            String myObjectId = service.createPhysicalConnection(endpointAClass, endpointAId,
                     endpointBClass, endpointBId, parentClass, parentId, name, connectionClass, templateId, this.session.getSessionId());
             return new LocalObjectLight(myObjectId, name, connectionClass);
         }catch(Exception ex){
@@ -2255,7 +2255,7 @@ public class CommunicationsStub {
         }
     }
     
-    public LocalObjectLight[] getPhysicalConnectionEndpoints(String connectionClass, long connectionId) {
+    public LocalObjectLight[] getPhysicalConnectionEndpoints(String connectionClass, String connectionId) {
         try{
             List<RemoteObjectLight> endpoints = service.getPhysicalConnectionEndpoints(connectionClass, connectionId, session.getSessionId());
             LocalObjectLight[] res = new LocalObjectLight[]{endpoints.get(0) == null ? 
@@ -2269,7 +2269,7 @@ public class CommunicationsStub {
         }
     }
     
-    public LocalObjectLight[] getLogicalConnectionEndpoints(String connectionClass, long connectionId) {
+    public LocalObjectLight[] getLogicalConnectionEndpoints(String connectionClass, String connectionId) {
         try{
             List<RemoteObjectLight> endpoints = service.getLogicalConnectionEndpoints(connectionClass, connectionId, session.getSessionId());
             LocalObjectLight[] res = new LocalObjectLight[]{endpoints.get(0) == null ? 
@@ -2290,7 +2290,7 @@ public class CommunicationsStub {
      * @param linkId The id of the connection to be evaluated
      * @return An object with the details of the connection and the physical resources associated to it. Null in case of error
      */
-    public LocalLogicalConnectionDetails getLogicalLinkDetails(String linkClass, long linkId) { 
+    public LocalLogicalConnectionDetails getLogicalLinkDetails(String linkClass, String linkId) { 
         try {
             
             return new LocalLogicalConnectionDetails(service.getLogicalLinkDetails(linkClass, linkId, session.getSessionId()));
@@ -2307,7 +2307,7 @@ public class CommunicationsStub {
      * @param linkId The id of the connection to be evaluated
      * @return An object with the details of the connection and the physical resources associated to it. Null in case of error
      */
-    public LocalPhysicalConnectionDetails getPhysicalLinkDetails(String linkClass, long linkId) { 
+    public LocalPhysicalConnectionDetails getPhysicalLinkDetails(String linkClass, String linkId) { 
         try {
             return new LocalPhysicalConnectionDetails(service.getPhysicalLinkDetails(linkClass, linkId, session.getSessionId()));
         }catch(Exception ex) {
@@ -2316,7 +2316,7 @@ public class CommunicationsStub {
         }
     }
     
-    public LocalObjectLight[] getPhysicalPath(String objectClass, long objectId) {
+    public LocalObjectLight[] getPhysicalPath(String objectClass, String objectId) {
         try{
             List<RemoteObjectLight> trace = service.getPhysicalPath(objectClass, objectId, session.getSessionId());
             LocalObjectLight[] res = new LocalObjectLight[trace.size()];
@@ -2340,7 +2340,7 @@ public class CommunicationsStub {
      * @return The link connected to the port or null if there isn't any
      * @throws InventoryException If the port could not be found or if the class provided does not exist or if The class provided is not a subclass of GenericPort
      */
-    public LocalObject getLinkConnectedToPort(String portClassName, long portId) throws InventoryException {
+    public LocalObject getLinkConnectedToPort(String portClassName, String portId) throws InventoryException {
         try {
             RemoteObject remoteLink = service.getLinkConnectedToPort(portClassName, portId, session.getSessionId());
             
@@ -2368,8 +2368,8 @@ public class CommunicationsStub {
      * @param containerClass The class of the containers to be return.
      * @return The list of physical paths of the connected ports inside the given objects or null in case of error.
      */
-    public List<LocalObjectLight> getContainersBetweenObjects(String objectAClass, long objectAId,
-            String objectBClass, long objectBId, String containerClass){
+    public List<LocalObjectLight> getContainersBetweenObjects(String objectAClass, String objectAId,
+            String objectBClass, String objectBId, String containerClass){
         try{
             List<RemoteObjectLight> existingContainers = service.getContainersBetweenObjects(objectAClass, objectAId, objectBClass, objectBId, containerClass, session.getSessionId());
             List<LocalObjectLight> res = new ArrayList<>();
@@ -2390,7 +2390,7 @@ public class CommunicationsStub {
      * @param objectId The object id
      * @return The list of physical paths of the connected ports inside the given objects or null in case of error.
      */
-    public List<LocalObjectLightList> getPhysicalConnectionsInObject(String objectClass, long objectId){
+    public List<LocalObjectLightList> getPhysicalConnectionsInObject(String objectClass, String objectId){
         try{
             List<RemoteObjectLightList> paths = service.getPhysicalConnectionsInObject(objectClass, objectId, session.getSessionId());
             List<LocalObjectLightList> res = new ArrayList<>();
@@ -2404,7 +2404,7 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean deletePhysicalConnection(String objectClass, long objectId) {
+    public boolean deletePhysicalConnection(String objectClass, String objectId) {
         try {
             service.deletePhysicalConnection(objectClass, objectId, session.getSessionId());
             return true;
@@ -2414,9 +2414,9 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean connectPhysicalLinks(List<String> sideAClassNames, List<Long> sideAIds, 
-                List<String> linksClassNames, List<Long> linksIds, List<String> sideBClassNames, 
-                List<Long> sideBIds) {
+    public boolean connectPhysicalLinks(List<String> sideAClassNames, List<String> sideAIds, 
+                List<String> linksClassNames, List<String> linksIds, List<String> sideBClassNames, 
+                List<String> sideBIds) {
         try {            
             service.connectPhysicalLinks(sideAClassNames, sideAIds, linksClassNames, linksIds, sideBClassNames, sideBIds, session.getSessionId());
             return true;
@@ -2426,9 +2426,9 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean connectLogicalLinks(List<String> sideAClassNames, List<Long> sideAIds, 
-                List<String> linksClassNames, List<Long> linksIds, List<String> sideBClassNames, 
-                List<Long> sideBIds) {
+    public boolean connectLogicalLinks(List<String> sideAClassNames, List<String> sideAIds, 
+                List<String> linksClassNames, List<String> linksIds, List<String> sideBClassNames, 
+                List<String> sideBIds) {
         try {            
             service.connectLogicalLinks(sideAClassNames, sideAIds, linksClassNames, linksIds, sideBClassNames, sideBIds, session.getSessionId());
             return true;
@@ -2438,9 +2438,9 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean connectPhysicalContainers(List<String> sideAClassNames, List<Long> sideAIds, 
-                List<String> containersClassNames, List<Long> containersIds, List<String> sideBClassNames, 
-                List<Long> sideBIds) {
+    public boolean connectPhysicalContainers(List<String> sideAClassNames, List<String> sideAIds, 
+                List<String> containersClassNames, List<String> containersIds, List<String> sideBClassNames, 
+                List<String> sideBIds) {
         try {
             service.connectPhysicalContainers(sideAClassNames, sideAIds, containersClassNames, containersIds, sideBClassNames, sideBIds, session.getSessionId());
             return true;
@@ -2457,7 +2457,7 @@ public class CommunicationsStub {
      * @param sideToDisconnect Side to disconnect. Use 1 to disconnect only the side a, 2 to disconnect only side b and 3 to disconnect both sides at once
      * @return True if the operation was successful, false otherwise. Retrieve the details of the error using the getError method
      */
-    public boolean disconnectPhysicalConnection(String connectionClass, long connectionId, int sideToDisconnect) {
+    public boolean disconnectPhysicalConnection(String connectionClass, String connectionId, int sideToDisconnect) {
         try {
             service.disconnectPhysicalConnection(connectionClass, connectionId, sideToDisconnect, session.getSessionId());
             return true;
@@ -2475,7 +2475,7 @@ public class CommunicationsStub {
      * @param sideToDisconnect Side to disconnect. Use 1 to disconnect only the side a, 2 to disconnect only side b and 3 to disconnect both sides at once
      * @return True if the operation was successful, false otherwise. Retrieve the details of the error using the getError method
      */
-    public boolean disconnectLogicalConnection(String connectionClass, long connectionId, int sideToDisconnect) {
+    public boolean disconnectLogicalConnection(String connectionClass, String connectionId, int sideToDisconnect) {
         try {
             service.disconnectPhysicalConnection(connectionClass, connectionId, sideToDisconnect, session.getSessionId());
             return true;
@@ -2499,9 +2499,9 @@ public class CommunicationsStub {
      * @return false, If any of the objects provided could not be found or if the new endpoint is not a port (if reconnecting a link) or if it is a port 
      * (if reconnecting a container). True in case of success
      */
-    public boolean reconnectPhysicalConnection(String connectionClass, long connectionId, 
-                                      String newASideClass, long newASideId,
-                                      String newBSideClass, long newBSideId) {
+    public boolean reconnectPhysicalConnection(String connectionClass, String connectionId, 
+                                      String newASideClass, String newASideId,
+                                      String newBSideClass, String newBSideId) {
         try {
             service.reconnectPhysicalConnection(connectionClass, connectionId, newASideClass, newASideId,
                                       newBSideClass, newBSideId, session.getSessionId());
@@ -2513,10 +2513,10 @@ public class CommunicationsStub {
     }
     
     //Service Manager
-    public boolean associateObjectsToService(List<String> classNames, List<Long> objectIds, String serviceClass, long serviceId){
+    public boolean associateObjectsToService(List<String> classNames, List<String> objectIds, String serviceClass, String serviceId){
         try{
             List<String> objectsClassList = new ArrayList<>();
-            List<Long> objectsIdList = new ArrayList<>();
+            List<String> objectsIdList = new ArrayList<>();
             objectsClassList.addAll(classNames);
             objectsIdList.addAll(objectIds);
             service.associateObjectsToService(objectsClassList, objectsIdList, serviceClass, serviceId, session.getSessionId());
@@ -2527,7 +2527,7 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean releaseObjectFromService(String serviceClass, long serviceId, long targetId){
+    public boolean releaseObjectFromService(String serviceClass, String serviceId, String targetId){
         try{
             service.releaseObjectFromService(serviceClass, serviceId, targetId, session.getSessionId());
             return true;
@@ -2537,7 +2537,7 @@ public class CommunicationsStub {
         }
     }
     
-    public List<LocalObjectLight> getServiceResources(String serviceClass, long serviceId){
+    public List<LocalObjectLight> getServiceResources(String serviceClass, String serviceId){
         try{
             List <RemoteObjectLight> instances = service.getServiceResources(serviceClass, serviceId, this.session.getSessionId());
             List<LocalObjectLight> res = new ArrayList<>();
@@ -2553,7 +2553,7 @@ public class CommunicationsStub {
     }
     //End Service Manager
     
-    public List<LocalObjectLight> getObjectSpecialChildren(String objectClass, long objectId) {
+    public List<LocalObjectLight> getObjectSpecialChildren(String objectClass, String objectId) {
         try {
             List<RemoteObjectLight> specialChildren = service.getObjectSpecialChildren (
                     objectClass, objectId, session.getSessionId());
@@ -2993,7 +2993,7 @@ public class CommunicationsStub {
      * @param id the given list type id
      * @return an array with all possible list types of a given class
      */
-    public LocalObjectListItem getListTypeItem(String className, long id) {
+    public LocalObjectListItem getListTypeItem(String className, String id) {
        try{
             LocalObjectListItem res = new LocalObjectListItem();
             List<LocalObjectListItem> cachedLists = new ArrayList<>();
@@ -3054,7 +3054,7 @@ public class CommunicationsStub {
      * @param force should it release all relationships to (or from) this object?
      * @return success or failure
      */
-    public boolean deleteListTypeItem(String className, long oid, boolean force){
+    public boolean deleteListTypeItem(String className, String oid, boolean force){
         try{
             service.deleteListTypeItem(className, oid, force, session.getSessionId());
             return true;
@@ -3361,7 +3361,7 @@ public class CommunicationsStub {
      * @param background background image
      * @return The id of the new view.
      */
-    public long createListTypeItemRelatedView(long listTypeItemId, String listTypeItemClassName, String viewClassName, 
+    public long createListTypeItemRelatedView(String listTypeItemId, String listTypeItemClassName, String viewClassName, 
         String name, String description, byte [] structure, byte [] background) {
         
         try{
@@ -3383,7 +3383,7 @@ public class CommunicationsStub {
      * @param background Background image. If null, the previous will be removed, if 0-sized array, it will remain unchanged
      * @return true if the related view was updated
      */
-    public boolean updateListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, 
+    public boolean updateListTypeItemRelatedView(String listTypeItemId, String listTypeItemClass, long viewId, 
         String name, String description, byte[] structure, byte[] background) {
         
         try{
@@ -3402,7 +3402,7 @@ public class CommunicationsStub {
      * @param viewId view id
      * @return The associated view (there should be only one of each type). Null if there's none yet
      */
-    public LocalObjectView getListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId) {
+    public LocalObjectView getListTypeItemRelatedView(String listTypeItemId, String listTypeItemClass, long viewId) {
         try{
             RemoteViewObject view = service.getListTypeItemRelatedView(listTypeItemId, listTypeItemClass, viewId, session.getSessionId());
             return new LocalObjectView(view.getId(), view.getClassName(), view.getName(), view.getDescription(), view.getStructure(), view.getBackground());
@@ -3418,7 +3418,7 @@ public class CommunicationsStub {
      * @param listTypeItemClass list type class name
      * @return The associated views
      */
-    public List<LocalObjectViewLight> getListTypeItemRelatedViews(long listTypeItemId, String listTypeItemClass) {
+    public List<LocalObjectViewLight> getListTypeItemRelatedViews(String listTypeItemId, String listTypeItemClass) {
         try{
             List<RemoteViewObjectLight> views = service.getListTypeItemRelatedViews(listTypeItemId, listTypeItemClass, -1, session.getSessionId());
             List<LocalObjectViewLight> res = new ArrayList<>();
@@ -3439,7 +3439,7 @@ public class CommunicationsStub {
      * @param viewId Related view id
      * @return true if the related view was deleted
      */
-    public boolean deleteListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId) {
+    public boolean deleteListTypeItemRelatedView(String listTypeItemId, String listTypeItemClass, long viewId) {
         try{
             service.deleteListTypeItemRelatedView(listTypeItemId, listTypeItemClass, viewId, session.getSessionId());
             return true;
@@ -3475,7 +3475,7 @@ public class CommunicationsStub {
      * @param className class of object
      * @return the structure of the device layout
      */
-    public byte[] getDeviceLayoutStructure(long oid, String className) {
+    public byte[] getDeviceLayoutStructure(String oid, String className) {
         try {
             return service.getDeviceLayoutStructure(oid, className, session.getSessionId());
         } catch (Exception ex) {
@@ -3491,7 +3491,7 @@ public class CommunicationsStub {
      * @param viewId view id
      * @return The associated view (there should be only one of each type). Null if there's none yet
      */
-    public LocalObjectView getObjectRelatedView(long oid, String objectClass, long viewId){
+    public LocalObjectView getObjectRelatedView(String oid, String objectClass, long viewId){
         try{
             RemoteViewObject view = service.getObjectRelatedView(oid, objectClass, viewId, session.getSessionId());
             return new LocalObjectView(view.getId(), view.getName(), view.getDescription(), view.getClassName(), view.getStructure(), view.getBackground());
@@ -3507,7 +3507,7 @@ public class CommunicationsStub {
      * @param objectClass object's class
      * @return The associated view (there should be only one of each type). Null if there's none yet
      */
-    public List<LocalObjectViewLight> getObjectRelatedViews(long oid, String objectClass){
+    public List<LocalObjectViewLight> getObjectRelatedViews(String oid, String objectClass){
         try{
             List<RemoteViewObjectLight> views = service.getObjectRelatedViews(oid, objectClass, -1, 10, session.getSessionId());
             List<LocalObjectViewLight> res = new ArrayList<>();
@@ -3565,7 +3565,7 @@ public class CommunicationsStub {
      * @param background background image
      * @return the new object id
      */
-    public long createObjectRelatedView(long oid, String objectClass, String name, String description, String viewClassName, byte[] structure, byte[] background){
+    public long createObjectRelatedView(String oid, String objectClass, String name, String description, String viewClassName, byte[] structure, byte[] background){
         try{
             return service.createObjectRelatedView(oid, objectClass, name, description, viewClassName, structure, background, session.getSessionId());
         }catch(Exception ex){
@@ -3603,7 +3603,7 @@ public class CommunicationsStub {
      * @param background Background image. If null, the previous will be removed, if 0-sized array, it will remain unchanged
      * @return 
      */
-    public boolean updateObjectRelatedView(long oid, String objectClass, long viewId, String name, String description, byte[] structure, byte[] background){
+    public boolean updateObjectRelatedView(String oid, String objectClass, long viewId, String name, String description, byte[] structure, byte[] background){
         try{
             service.updateObjectRelatedView(oid, objectClass, viewId, name, description, structure, background, session.getSessionId());
             return true;
@@ -3666,7 +3666,7 @@ public class CommunicationsStub {
      */
     public LocalPool createRootPool(String name, String description, String instancesOfClass, int type){
         try {
-            long newPoolId  = service.createRootPool(name, description, instancesOfClass, type, session.getSessionId());
+            String newPoolId  = service.createRootPool(name, description, instancesOfClass, type, session.getSessionId());
             return new LocalPool(newPoolId, name, instancesOfClass, description, type);
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -3686,9 +3686,9 @@ public class CommunicationsStub {
      * @param type Type of pool. For possible values see ApplicationManager.POOL_TYPE_XXX
      * @return The id of the new pool
      */
-    public LocalPool createPoolInObject(String parentClassname, long parentId, String name, String description, String instancesOfClass, int type){
+    public LocalPool createPoolInObject(String parentClassname, String parentId, String name, String description, String instancesOfClass, int type){
         try {
-            long newPoolId  = service.createPoolInObject(parentClassname, parentId, name, description, instancesOfClass, type, session.getSessionId());
+            String newPoolId  = service.createPoolInObject(parentClassname, parentId, name, description, instancesOfClass, type, session.getSessionId());
             return new LocalPool(newPoolId, name, instancesOfClass, description, type);
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -3706,9 +3706,9 @@ public class CommunicationsStub {
      * @param type Type of pool. Not used so far, but it will be in the future. It will probably be used to help organize the existing pools
      * @return The id of the new pool
      */
-    public LocalPool createPoolInPool(long parentId, String name, String description, String instancesOfClass, int type){
+    public LocalPool createPoolInPool(String parentId, String name, String description, String instancesOfClass, int type){
         try {
-            long newPoolId  = service.createPoolInPool(parentId, name, description, instancesOfClass, type, session.getSessionId());
+            String newPoolId  = service.createPoolInPool(parentId, name, description, instancesOfClass, type, session.getSessionId());
             return new LocalPool(newPoolId, name, instancesOfClass, description, type);
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -3745,7 +3745,7 @@ public class CommunicationsStub {
      * @param poolClass The class name used to filter the results. Only the pools with a className attribute matching the provided value will be returned. Use null if you want to get all
      * @return A set of pools
      */
-    public List<LocalPool> getPoolsInObject(String objectClassName, long objectId, String poolClass)  {
+    public List<LocalPool> getPoolsInObject(String objectClassName, String objectId, String poolClass)  {
         try {
             List<LocalPool> res = new ArrayList<>();
             List<RemotePool> rootPools = service.getPoolsInObject(objectClassName, objectId, poolClass, session.getSessionId());
@@ -3766,7 +3766,7 @@ public class CommunicationsStub {
      * @param poolClass The class name used to filter the results. Only the pools with a className attribute matching the provided value will be returned. Use null if you want to get all
      * @return A set of pools
      */
-    public List<LocalPool> getPoolsInPool(long parentPoolId, String poolClass)  {
+    public List<LocalPool> getPoolsInPool(String parentPoolId, String poolClass)  {
         try {
             List<LocalPool> res = new ArrayList<>();
             List<RemotePool> rootPools = service.getPoolsInPool(parentPoolId, poolClass, session.getSessionId());
@@ -3787,9 +3787,9 @@ public class CommunicationsStub {
      * @param className Class of the object to be created
      * @return A local representation of the newly created object
      */
-    public LocalObjectLight createPoolItem (long poolId, String className){
+    public LocalObjectLight createPoolItem (String poolId, String className){
         try {
-            long objectId  = service.createPoolItem(poolId, className, null, null, -1,session.getSessionId());
+            String objectId  = service.createPoolItem(poolId, className, null, null, -1,session.getSessionId());
             return new LocalObjectLight(objectId, null, className);
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -3797,7 +3797,7 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean deletePool(long id){
+    public boolean deletePool(String id){
         try{
             service.deletePools(Arrays.asList(id), this.session.getSessionId());
             return true;
@@ -3807,7 +3807,7 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean setPoolProperties(long poolId, String name, String description) {
+    public boolean setPoolProperties(String poolId, String name, String description) {
         try {
             service.setPoolProperties(poolId, name, description, this.session.getSessionId());
             return true;
@@ -3821,7 +3821,7 @@ public class CommunicationsStub {
      * @param oid
      * @return The local representation of the pool
      */
-    public LocalPool getPoolInfo(long oid) {
+    public LocalPool getPoolInfo(String oid) {
         try {
             RemotePool remotePool = service.getPool(oid, this.session.getSessionId());
             
@@ -3842,7 +3842,7 @@ public class CommunicationsStub {
      * @param oid The pool
      * @return The list of items inside the pool. Null in case of error
      */
-    public List<LocalObjectLight> getPoolItems(long oid) {
+    public List<LocalObjectLight> getPoolItems(String oid) {
         try {
             List<RemoteObjectLight> items = service.getPoolItems(oid, -1, this.session.getSessionId());
             List<LocalObjectLight> res = new ArrayList<>();
@@ -4062,7 +4062,7 @@ public class CommunicationsStub {
      * @param reportId The id of the report.
      * @return The result of the report execution. Null in case of error.
      */
-    public byte[] executeClassLevelReport(String objectClassName, long objectId, long reportId) {
+    public byte[] executeClassLevelReport(String objectClassName, String objectId, long reportId) {
         try {
             return service.executeClassLevelReport(objectClassName, objectId, reportId, session.getSessionId());
         } catch(Exception ex){
@@ -4101,8 +4101,8 @@ public class CommunicationsStub {
      */
     public LocalObjectLight createTemplate(String templateClass, String templateName) {
         try {
-            LocalObjectLight newTemplate = new LocalObjectLight(service.createTemplate(templateClass, 
-                    templateName, session.getSessionId()), templateName, templateClass);
+            LocalObjectLight newTemplate = new LocalObjectLight(String.valueOf(service.createTemplate(templateClass, 
+                    templateName, session.getSessionId())), templateName, templateClass);
             cache.removeTemplateForClass(templateName);
             return newTemplate;
         } catch (Exception ex) {
@@ -4119,10 +4119,10 @@ public class CommunicationsStub {
      * @return The id of the new object.
      */
     public LocalObjectLight createTemplateElement(String templateElementClass, 
-            String templateElementParentClassName, long templateElementParentId, String templateElementName) {
+            String templateElementParentClassName, String templateElementParentId, String templateElementName) {
             try {
-            return new LocalObjectLight(service.createTemplateElement(templateElementClass, templateElementParentClassName, 
-                    templateElementParentId, templateElementName, session.getSessionId()), templateElementName, templateElementClass);
+            return new LocalObjectLight(String.valueOf(service.createTemplateElement(templateElementClass, templateElementParentClassName, 
+                    Long.valueOf(templateElementParentId), templateElementName, session.getSessionId())), templateElementName, templateElementClass);
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
@@ -4136,10 +4136,10 @@ public class CommunicationsStub {
      * @param tsElementName Name of the element.
      * @return The id of the new special object.
      */
-    public LocalObjectLight createTemplateSpecialElement(String tsElementClass, String tsElementParentClassName, long tsElementParentId, String tsElementName) {
+    public LocalObjectLight createTemplateSpecialElement(String tsElementClass, String tsElementParentClassName, String tsElementParentId, String tsElementName) {
         try {
-            return new LocalObjectLight(service.createTemplateSpecialElement(tsElementClass, tsElementParentClassName, 
-                    tsElementParentId, tsElementName, session.getSessionId()), tsElementName, tsElementClass);
+            return new LocalObjectLight(String.valueOf(service.createTemplateSpecialElement(tsElementClass, tsElementParentClassName, 
+                    Long.valueOf(tsElementParentId), tsElementName, session.getSessionId())), tsElementName, tsElementClass);
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
@@ -4345,7 +4345,7 @@ public class CommunicationsStub {
             List<LocalObjectLight> localTemplateElements = new ArrayList<>();
             
             for (int i = 0; i < sourceObjectsClassNames.size(); i++) 
-                localTemplateElements.add(new LocalObjectLight(sourceObjectsIds.get(i), "", sourceObjectsClassNames.get(i)));
+                localTemplateElements.add(new LocalObjectLight(String.valueOf(sourceObjectsIds.get(i)), "", sourceObjectsClassNames.get(i)));
             
             return localTemplateElements;
         } catch (Exception ex) {
@@ -4363,7 +4363,7 @@ public class CommunicationsStub {
             List<LocalObjectLight> localTemplateSpecialElements = new ArrayList<>();
             
             for (int i = 0; i < sourceObjectsClassNames.size(); i += 1)
-                localTemplateSpecialElements.add(new LocalObjectLight(sourceObjectsIds.get(i), "", sourceObjectsClassNames.get(i)));
+                localTemplateSpecialElements.add(new LocalObjectLight(String.valueOf(sourceObjectsIds.get(i)), "", sourceObjectsClassNames.get(i)));
             
             return localTemplateSpecialElements;
         } catch (Exception ex) {
@@ -4406,7 +4406,7 @@ public class CommunicationsStub {
     public LocalObjectLight createSDHTransportLink(LocalObjectLight endpointA, LocalObjectLight endpointB, String transportLinkType, String defaultName){
         
         try { 
-            long newObjectId = service.createSDHTransportLink(endpointA.getClassName(),
+            String newObjectId = service.createSDHTransportLink(endpointA.getClassName(),
                     endpointA.getId(), endpointB.getClassName(), endpointB.getId(), transportLinkType, defaultName, session.getSessionId());
             return new LocalObjectLight(newObjectId, defaultName, transportLinkType);
         } catch (Exception ex) {
@@ -4429,7 +4429,7 @@ public class CommunicationsStub {
                 remotepositions.add(aRemotePosition);
             }
             
-            long newObjectId = service.createSDHContainerLink(equipmentA.getClassName(),
+            String newObjectId = service.createSDHContainerLink(equipmentA.getClassName(),
                     equipmentA.getId(), equipmentB.getClassName(), equipmentB.getId(), 
                     containerLinkType, remotepositions, defaultName, session.getSessionId());
             return new LocalObjectLight(newObjectId, defaultName, containerLinkType);
@@ -4453,7 +4453,7 @@ public class CommunicationsStub {
                 remotepositions.add(aRemotePosition);
             }
             
-            long newObjectId = service.createSDHTributaryLink(equipmentA.getClassName(),
+            String newObjectId = service.createSDHTributaryLink(equipmentA.getClassName(),
                     equipmentA.getId(), equipmentB.getClassName(), equipmentB.getId(), 
                     containerLinkType, remotepositions, defaultName, session.getSessionId());
             return new LocalObjectLight(newObjectId, defaultName, containerLinkType);
@@ -4491,7 +4491,7 @@ public class CommunicationsStub {
         }
     }
     
-    public List<LocalSDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, long transportLinkId) {
+    public List<LocalSDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, String transportLinkId) {
         try {
             List<RemoteSDHContainerLinkDefinition> transportLinkStructure = service.getSDHTransportLinkStructure(transportLinkClass, transportLinkId, session.getSessionId());
             List<LocalSDHContainerLinkDefinition> res = new ArrayList<>();
@@ -4514,7 +4514,7 @@ public class CommunicationsStub {
             return null;
         }
     }
-    public List<LocalSDHContainerLinkDefinition> getSDHContainerLinkStructure(String containerLinkClass, long containerLinkId) {
+    public List<LocalSDHContainerLinkDefinition> getSDHContainerLinkStructure(String containerLinkClass, String containerLinkId) {
         try {
             List<RemoteSDHContainerLinkDefinition> containerLinkStructure = service.getSDHContainerLinkStructure(containerLinkClass, containerLinkId, session.getSessionId());
             List<LocalSDHContainerLinkDefinition> res = new ArrayList<>();
@@ -4539,7 +4539,7 @@ public class CommunicationsStub {
     }
         // </editor-fold>
         // <editor-fold defaultstate="collapsed" desc="IPAM Module">
-    public List<LocalPool> getSubnetPools(long parentId, String className){
+    public List<LocalPool> getSubnetPools(String parentId, String className){
         try{
             List <RemotePool> pools = service.getSubnetPools(parentId, className, this.session.getSessionId());
             List <LocalPool> res = new ArrayList<>();
@@ -4554,7 +4554,7 @@ public class CommunicationsStub {
         }
     }
     
-    public LocalPool getSubnetPool(long id){
+    public LocalPool getSubnetPool(String id){
         try {
             RemotePool subnetPool = service.getSubnetPool(id, this.session.getSessionId());
             return new LocalPool(subnetPool.getId(), subnetPool.getName(), subnetPool.getClassName(), 
@@ -4571,7 +4571,7 @@ public class CommunicationsStub {
      * @param className The class of the subnet
      * @return The subnet as a LocalObject instance
      */
-    public LocalObject getSubnet(long id, String className){
+    public LocalObject getSubnet(String id, String className){
         try{
             LocalClassMetadata classMetadata = getMetaForClass(className, false);
             RemoteObject subnet = service.getSubnet(id, className, this.session.getSessionId());
@@ -4583,7 +4583,7 @@ public class CommunicationsStub {
         }
     }
     
-    public List<LocalObjectLight> getSubnets(long oid) {
+    public List<LocalObjectLight> getSubnets(String oid) {
         try {
             List<RemoteObjectLight> items = service.getSubnets(oid, -1, this.session.getSessionId());
             List<LocalObjectLight> res = new ArrayList<>();
@@ -4598,10 +4598,10 @@ public class CommunicationsStub {
         }
     }
     
-    public LocalObjectLight createSubnetPool(long parentId, String className, String subnetPoolName, 
+    public LocalObjectLight createSubnetPool(String parentId, String className, String subnetPoolName, 
             String subnetPoolDescription, int type) {
          try{
-             long objectId = service.createSubnetPool(parentId, subnetPoolName, subnetPoolDescription, className, this.session.getSessionId());
+             String objectId = service.createSubnetPool(parentId, subnetPoolName, subnetPoolDescription, className, this.session.getSessionId());
              return new LocalObjectLight(objectId, subnetPoolName, className);
          }catch(Exception ex){
             this.error = ex.getMessage();
@@ -4609,9 +4609,9 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean deleteSubnet(String className, long subnetId){
+    public boolean deleteSubnet(String className, String subnetId){
         try {
-            List<Long> subnetsToBeDeleted = new ArrayList<>();
+            List<String> subnetsToBeDeleted = new ArrayList<>();
             subnetsToBeDeleted.add(subnetId);
             service.deleteSubnets(className, subnetsToBeDeleted, false, this.session.getSessionId());
             return true;
@@ -4621,7 +4621,7 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean deleteSubnetPool(long id){
+    public boolean deleteSubnetPool(String id){
         try{
             service.deleteSubnetPools(Arrays.asList(id), this.session.getSessionId());
             return true;
@@ -4631,14 +4631,14 @@ public class CommunicationsStub {
         }
     }
         
-    public LocalObjectLight createSubnet(long poolId, String parentClassName, String name, HashMap<String, String> attributes){
+    public LocalObjectLight createSubnet(String poolId, String parentClassName, String name, HashMap<String, String> attributes){
         try {
             
             List<StringPair> remoteAttributes = new ArrayList<>();
             for (String attribute : attributes.keySet())
                 remoteAttributes.add(new StringPair(attribute, attributes.get(attribute)));
             
-            long objectId  = service.createSubnet(poolId, parentClassName, remoteAttributes, this.session.getSessionId());
+            String objectId  = service.createSubnet(poolId, parentClassName, remoteAttributes, this.session.getSessionId());
             return new LocalObjectLight(objectId, name, parentClassName);
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -4652,7 +4652,7 @@ public class CommunicationsStub {
      * @param transportLinkId The id of the transport link
      * @return True of the operation was successful, false otherwise
      */
-    public boolean deleteSDHTransportLink(String transportLinkClass, long transportLinkId) {
+    public boolean deleteSDHTransportLink(String transportLinkClass, String transportLinkId) {
         try {
             service.deleteSDHTransportLink(transportLinkClass, transportLinkId, true, session.getSessionId());
             return true;
@@ -4668,7 +4668,7 @@ public class CommunicationsStub {
      * @param containerLinkId Id of the container
      * @return True of the operation was successful, false otherwise
      */
-    public boolean deleteSDHContainerLink(String containerLinkClass, long containerLinkId) {
+    public boolean deleteSDHContainerLink(String containerLinkClass, String containerLinkId) {
         try {
             service.deleteSDHContainerLink(containerLinkClass, containerLinkId, true, session.getSessionId());
             return true;
@@ -4684,7 +4684,7 @@ public class CommunicationsStub {
      * @param tributaryLinkId Id of the link
      * @return True if the operation was successful, false otherwise
      */
-    public boolean deleteSDHTributaryLink(String tributaryLinkClass, long tributaryLinkId) {
+    public boolean deleteSDHTributaryLink(String tributaryLinkClass, String tributaryLinkId) {
         try {
             service.deleteSDHTributaryLink(tributaryLinkClass, tributaryLinkId, session.getSessionId());
             return true;
@@ -4694,13 +4694,13 @@ public class CommunicationsStub {
         }
     }
     
-    public LocalObjectLight addIPAddress(long id, String className, String name, HashMap<String, String> attributes){
+    public LocalObjectLight addIPAddress(String id, String className, String name, HashMap<String, String> attributes){
         try {
             List<StringPair> remoteAttributes = new ArrayList<>();
             for (String attribute : attributes.keySet())
                 remoteAttributes.add(new StringPair(attribute, attributes.get(attribute)));
             
-            long objectId  = service.addIPAddress(id, className, remoteAttributes, this.session.getSessionId());
+            String objectId  = service.addIPAddress(id, className, remoteAttributes, this.session.getSessionId());
             return new LocalObjectLight(objectId, name, className);
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -4708,7 +4708,7 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean removeIP(List<Long> oids){
+    public boolean removeIP(List<String> oids){
         try{
             service.removeIP(oids, false, this.session.getSessionId());
             return true;
@@ -4718,7 +4718,7 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean relateIPtoPort(long id, String portClassName, long PortId){
+    public boolean relateIPtoPort(String id, String portClassName, String PortId){
         try{
             service.relateIPtoPort(id, portClassName, PortId, this.session.getSessionId());
             return true;
@@ -4728,7 +4728,7 @@ public class CommunicationsStub {
         }
     }
     
-    public List<LocalObjectLight> getSubnetUsedIps(long id, String className){
+    public List<LocalObjectLight> getSubnetUsedIps(String id, String className){
         try {
             List<LocalObjectLight> res = new ArrayList<>();
             for (RemoteObjectLight anIp : service.getSubnetUsedIps(id, 0, className, this.session.getSessionId())) 
@@ -4740,7 +4740,7 @@ public class CommunicationsStub {
         return null;
     }
     
-    public List<LocalObjectLight> getSubnetsInSubnet(long id, String className){
+    public List<LocalObjectLight> getSubnetsInSubnet(String id, String className){
         try {
             List<LocalObjectLight> res = new ArrayList<>();
             for (RemoteObjectLight anIp : service.getSubnetsInSubnet(id, 0, className, this.session.getSessionId())) 
@@ -4752,7 +4752,7 @@ public class CommunicationsStub {
         return null;
     }
 
-    public boolean relateSubnetToVLAN(long subnetId, String className, long vlanId){
+    public boolean relateSubnetToVLAN(String subnetId, String className, String vlanId){
         try{
             service.relateSubnetToVlan(subnetId, className, vlanId, this.session.getSessionId());
             return true;
@@ -4762,7 +4762,7 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean relateSubnetToVFR(long subnetId, String className, long vfrId){
+    public boolean relateSubnetToVFR(String subnetId, String className, String vfrId){
         try{
             service.relateSubnetToVrf(subnetId, className, vfrId, this.session.getSessionId());
             return true;
@@ -4772,7 +4772,7 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean releasePortFromIPAddress(String deviceClassName, long deviceId, long id){
+    public boolean releasePortFromIPAddress(String deviceClassName, String deviceId, String id){
         try{
             service.releasePortFromIP(deviceClassName, deviceId, id, this.session.getSessionId());
             return true;
@@ -4788,7 +4788,7 @@ public class CommunicationsStub {
      * @param subnetId Subnet Id
      * @return true if the operation was successful, false otherwise
      */
-    public boolean releaseSubnetFromVLAN(long subnetId, long vlanId){
+    public boolean releaseSubnetFromVLAN(String subnetId, String vlanId){
         try{
             service.releaseSubnetFromVlan(subnetId, vlanId, this.session.getSessionId());
             return true;
@@ -4798,7 +4798,7 @@ public class CommunicationsStub {
         } 
     }
     
-    public boolean releaseSubnetFromVFR(long subnetId, long vfrId){
+    public boolean releaseSubnetFromVFR(String subnetId, String vfrId){
         try{
             service.releaseSubnetFromVRF(subnetId, vfrId, this.session.getSessionId());
             return true;
@@ -4816,10 +4816,10 @@ public class CommunicationsStub {
     }
         // </editor-fold>
         // <editor-fold defaultstate="collapsed" desc="Contract manager">
-    public boolean associateObjectsToContract(String[] objectsClass, Long[] objectsId, String contractClass, long contractId) {
+    public boolean associateObjectsToContract(String[] objectsClass, String[] objectsId, String contractClass, String contractId) {
         try {
             List<String> objectsClassList = new ArrayList<>();
-            List<Long> objectsIdList = new ArrayList<>();
+            List<String> objectsIdList = new ArrayList<>();
             objectsClassList.addAll(Arrays.asList(objectsClass));
             objectsIdList.addAll(Arrays.asList(objectsId));
             service.associateObjectsToContract(objectsClassList, objectsIdList, contractClass, contractId, session.getSessionId());
@@ -4830,7 +4830,7 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean releaseObjectFromContract(String contractClass, long contractId, long targetId){
+    public boolean releaseObjectFromContract(String contractClass, String contractId, String targetId){
         try{
             service.releaseObjectFromContract(contractClass, contractId, targetId, session.getSessionId());
             return true;
@@ -4844,7 +4844,7 @@ public class CommunicationsStub {
         // <editor-fold defaultstate="collapsed" desc="MPLS Module">
     public LocalObjectLight createMPLSLink(LocalObjectLight endpointA, LocalObjectLight endpointB, String transportLinkType, String defaultName){
         try { 
-            long newObjectId = service.createMPLSLink(endpointA.getClassName(),
+            String newObjectId = service.createMPLSLink(endpointA.getClassName(),
                     endpointA.getId(), endpointB.getClassName(), endpointB.getId(), transportLinkType, defaultName, session.getSessionId());
             return new LocalObjectLight(newObjectId, defaultName, transportLinkType);
         } catch (Exception ex) {
@@ -4853,7 +4853,7 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean deleteMPLSLink(String linkClass, long linkId) {
+    public boolean deleteMPLSLink(String linkClass, String linkId) {
         try {
             service.deleteMPLSLink(linkClass, linkId, true, session.getSessionId());
             return true;
@@ -4863,7 +4863,7 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean relatePortToInterface(long id, String className, String interfaceClassName, long interfaceId){
+    public boolean relatePortToInterface(String id, String className, String interfaceClassName, String interfaceId){
         try{
             service.relatePortToInterface(id, className, interfaceClassName, interfaceId, this.session.getSessionId());
             return true;
@@ -4873,7 +4873,7 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean releasePortFromInterface(String interfaceClassName, long interfaceId, long id){
+    public boolean releasePortFromInterface(String interfaceClassName, String interfaceId, String id){
         try{
             service.releasePortFromInterface(interfaceClassName, interfaceId,  id, this.session.getSessionId());
             return true;
@@ -4917,9 +4917,9 @@ public class CommunicationsStub {
      * @param className Project class name
      * @return The new remoteProject
      */
-    public LocalObjectLight addProject(long parentId, String parentClassName, String className) {
+    public LocalObjectLight addProject(String parentId, String parentClassName, String className) {
         try {
-            long objectId = service.addProject(parentId, parentClassName, className, new ArrayList<String>(),new ArrayList<String>(), session.getSessionId());
+            String objectId = service.addProject(parentId, parentClassName, className, new ArrayList<String>(),new ArrayList<String>(), session.getSessionId());
             return new LocalObjectLight(objectId, null, className);
         } catch (Exception ex) { 
             error = ex.getMessage(); 
@@ -4933,7 +4933,7 @@ public class CommunicationsStub {
      * @param projectId Project id
      * @return If the remoteProject was deleted
      */
-    public boolean deleteProject(String projectClass, long projectId) {
+    public boolean deleteProject(String projectClass, String projectId) {
         try {
             service.deleteProject(projectClass, projectId, false, session.getSessionId());
             return true;
@@ -4950,9 +4950,9 @@ public class CommunicationsStub {
      * @param activityClass Activity class name
      * @return A new activity
      */
-    public LocalObjectLight addActivity(long projectId, String projectClass, String activityClass) {
+    public LocalObjectLight addActivity(String projectId, String projectClass, String activityClass) {
         try {
-            long activityId = service.addActivity(projectId, projectClass, activityClass, new ArrayList<String>(), new ArrayList<String>(), session.getSessionId());
+            String activityId = service.addActivity(projectId, projectClass, activityClass, new ArrayList<String>(), new ArrayList<String>(), session.getSessionId());
             return new LocalObjectLight(activityId, null, activityClass);
         } catch (Exception ex) {
             error = ex.getMessage();
@@ -4966,7 +4966,7 @@ public class CommunicationsStub {
      * @param activityId Activity id
      * @return True if the remoteActivity was successfully deleted
      */
-    public boolean deleteActivity(String activityClass, long activityId) {
+    public boolean deleteActivity(String activityClass, String activityId) {
         try {
             service.deleteActivity(activityClass, activityId, false, session.getSessionId());
             return true;
@@ -4983,7 +4983,7 @@ public class CommunicationsStub {
      * @param limit Max number of results, -1 without limit
      * @return The list of projects
      */
-    public List<LocalObjectLight> getProjectInProjectPool(long poolId, int limit) {
+    public List<LocalObjectLight> getProjectInProjectPool(String poolId, int limit) {
         try {
             List<RemoteObjectLight> remoteProjects = service.getProjectsInProjectPool(poolId, limit, session.getSessionId());
             
@@ -5005,7 +5005,7 @@ public class CommunicationsStub {
      * @param projectId
      * @return The list of resources
      */
-    public List<LocalObjectLight> getProjectResources(String projectClass, long projectId) {
+    public List<LocalObjectLight> getProjectResources(String projectClass, String projectId) {
         try {
             List<LocalObjectLight> resources = new ArrayList<>();
             
@@ -5026,7 +5026,7 @@ public class CommunicationsStub {
      * @param projectId Project id
      * @return The list of activities
      */
-    public List<LocalObjectLight> getProjectActivities(String projectClass, long projectId) {
+    public List<LocalObjectLight> getProjectActivities(String projectClass, String projectId) {
         try {
             List<LocalObjectLight> activities = new ArrayList<>();
             
@@ -5048,7 +5048,7 @@ public class CommunicationsStub {
      * @param objectId The list of object ids
      * @return True if the objects was associated successfully
      */
-    public boolean associateObjectsToProject(String projectClass, long projectId, List<String> objectClass, List<Long> objectId) {
+    public boolean associateObjectsToProject(String projectClass, String projectId, List<String> objectClass, List<String> objectId) {
         try {
             service.associateObjectsToProject(projectClass, projectId, objectClass, objectId, session.getSessionId());
             return true;
@@ -5066,7 +5066,7 @@ public class CommunicationsStub {
      * @param objectId Object id
      * @return True if the object was associated successfully
      */
-    public boolean associateObjectToProject(String projectClass, long projectId, String objectClass, long objectId) {
+    public boolean associateObjectToProject(String projectClass, String projectId, String objectClass, String objectId) {
         try {
             service.associateObjectToProject(projectClass, projectId, objectClass, objectId, session.getSessionId());
             return true;
@@ -5084,7 +5084,7 @@ public class CommunicationsStub {
      * @param projectId Project id
      * @return True if the object was released successfully
      */
-    public boolean releaseObjectFromProject(String objectClass, long objectId, String projectClass, long projectId) {
+    public boolean releaseObjectFromProject(String objectClass, String objectId, String projectClass, String projectId) {
         try {
             service.freeObjectFromProject(objectClass, objectId, projectClass, projectId, session.getSessionId());
             return true;
@@ -5100,7 +5100,7 @@ public class CommunicationsStub {
      * @param objectId Object id
      * @return The list of projects
      */
-    public List<LocalObjectLight> getProjectsAssociateToObject(String objectClass, long objectId) {
+    public List<LocalObjectLight> getProjectsAssociateToObject(String objectClass, String objectId) {
         try {
             List<RemoteObjectLight> remoteProjects = service.getProjectsAssociateToObject(objectClass, objectId, session.getSessionId());
             
@@ -5125,7 +5125,7 @@ public class CommunicationsStub {
      */
     public LocalPool createProjectPool(String name, String description, String instanceOfClass) {
         try {
-            long projId = service.createProjectPool(name, description, instanceOfClass, session.getSessionId());
+            String projId = service.createProjectPool(name, description, instanceOfClass, session.getSessionId());
             return getPoolInfo(projId);
         } catch (Exception ex) {
             error = ex.getMessage();
@@ -5166,10 +5166,10 @@ public class CommunicationsStub {
     *  If any of the objects involved can't be connected (i.e. if it's not an inventory object)
     *  If any of the classes provided can not be found
     */
-    public boolean associatesPhysicalNodeToWarehouse(List<String> classNames, List<Long> objectIds, String warehouseClass, long warehouseId){
+    public boolean associatesPhysicalNodeToWarehouse(List<String> classNames, List<String> objectIds, String warehouseClass, String warehouseId){
         try{
             List<String> objectsClassList = new ArrayList<>();
-            List<Long> objectsIdList = new ArrayList<>();
+            List<String> objectsIdList = new ArrayList<>();
             objectsClassList.addAll(classNames);
             objectsIdList.addAll(objectIds);
             service.associatesPhysicalNodeToWarehouse(objectsClassList, objectsIdList, warehouseClass, warehouseId, session.getSessionId());
@@ -5190,7 +5190,7 @@ public class CommunicationsStub {
      *  If the class can not be found
      *  If the object activity log could no be found
      */
-    public boolean releasePhysicalNodeFromWarehouse(String warehouseClass, long warehouseId, long targetId){
+    public boolean releasePhysicalNodeFromWarehouse(String warehouseClass, String warehouseId, String targetId){
         try{
             service.releasePhysicalNodeFromWarehouse(warehouseClass, warehouseId, targetId, session.getSessionId());
             return true;
@@ -5209,10 +5209,10 @@ public class CommunicationsStub {
     *   If the object or its new parent can't be found
     *   If the update can't be performed due to a business rule
     */
-    public boolean moveObjectsToWarehousePool(String targetClass, long targetOid, LocalObjectLight[] objects) {
+    public boolean moveObjectsToWarehousePool(String targetClass, String targetOid, LocalObjectLight[] objects) {
 
         try{
-            List<Long> objectOids = new ArrayList<>();
+            List<String> objectOids = new ArrayList<>();
             List<String> objectClasses = new ArrayList<>();
 
             for (LocalObjectLight lol : objects){
@@ -5236,9 +5236,9 @@ public class CommunicationsStub {
      *  If the object or its new parent can't be found
      *  If the update can't be performed due to a business rule
      */
-    public boolean moveObjectsToWarehouse(String targetClass, long targetOid, List<LocalObjectLight> objects) {
+    public boolean moveObjectsToWarehouse(String targetClass, String targetOid, List<LocalObjectLight> objects) {
         try{
-            List<Long> objectOids = new ArrayList<>();
+            List<String> objectOids = new ArrayList<>();
             List<String> objectClasses = new ArrayList<>();
 
             for (LocalObjectLight lol : objects){
@@ -5280,7 +5280,7 @@ public class CommunicationsStub {
      * @param bookmarkFolderId Favorites folder id
      * @return True if objects are associated with the bookmark
      */
-    public boolean addObjectsToFavoritesFolder(List<String> objectClass, List<Long> objectId, long bookmarkFolderId) {
+    public boolean addObjectsToFavoritesFolder(List<String> objectClass, List<String> objectId, long bookmarkFolderId) {
         try {
             service.addObjectsToFavoritesFolder(objectClass, objectId, bookmarkFolderId, session.getUserId(), session.getSessionId());
             return true;
@@ -5297,7 +5297,7 @@ public class CommunicationsStub {
      * @param bookmarkFolderId Favorites folder id
      * @return True if objects are released of the bookmark
      */
-    public boolean removeObjectsFromFavoritesFolder(List<String> objectClass, List<Long> objectId, long bookmarkFolderId) {
+    public boolean removeObjectsFromFavoritesFolder(List<String> objectClass, List<String> objectId, long bookmarkFolderId) {
         try {
             service.removeObjectsFromFavoritesFolder(objectClass, objectId, bookmarkFolderId, session.getUserId(), session.getSessionId());
             return true;
@@ -5386,7 +5386,7 @@ public class CommunicationsStub {
      * @param objectId the id of the object
      * @return The list of bookmarks where a given object are an item of the Favorites folder
      */
-    public List<LocalFavoritesFolder> objectIsBookmarkItemIn(String objectClass, long objectId) {
+    public List<LocalFavoritesFolder> objectIsBookmarkItemIn(String objectClass, String objectId) {
         try {
             List<RemoteFavoritesFolder> remotefavoritesFolders = service.getFavoritesFoldersForObject(session.getUserId(), objectClass, objectId, session.getSessionId());
             
@@ -5493,7 +5493,7 @@ public class CommunicationsStub {
      * @param parameters the parameters associated to the configuration
      * @return The local representation of the sync configuration
      */        
-    public LocalSyncDataSourceConfiguration createSyncDataSourceConfiguration(long objectId, long syncGroupId, String syncDataSourceConfigName, HashMap<String, String> parameters) {
+    public LocalSyncDataSourceConfiguration createSyncDataSourceConfiguration(String objectId, long syncGroupId, String syncDataSourceConfigName, HashMap<String, String> parameters) {
         try {
             List<StringPair> remoteParameters = new ArrayList<>();
             
@@ -5690,7 +5690,7 @@ public class CommunicationsStub {
      * @param objectId the synchronization group id
      * @return a list of the data source configurations
      */
-    public LocalSyncDataSourceConfiguration getSyncDataSourceConfiguration(long objectId) {
+    public LocalSyncDataSourceConfiguration getSyncDataSourceConfiguration(String objectId) {
         try {
             List<LocalSyncDataSourceConfiguration> res = new ArrayList<>();
             RemoteSynchronizationConfiguration remoteConfiguration = 
@@ -6018,7 +6018,7 @@ public class CommunicationsStub {
     public LocalPool createConfigurationVariablesPool(String name, String description) {
         try {
             long newPoolId = service.createConfigurationVariablesPool(name, description, session.getSessionId());
-            return new LocalPool(newPoolId, name, "Pool of Configuration Variables", description, LocalPool.POOL_TYPE_MODULE_ROOT);
+            return new LocalPool(String.valueOf(newPoolId), name, "Pool of Configuration Variables", description, LocalPool.POOL_TYPE_MODULE_ROOT);
             
         } catch (Exception ex) {
             this.error = ex.getMessage();
@@ -6219,7 +6219,7 @@ public class CommunicationsStub {
      * @param mappedBGPLinksIds
      * @return True if the Favorites folder was updated successfully
      */
-    public List<LocalLogicalConnectionDetails> getBGPMap(List<Long> mappedBGPLinksIds) {
+    public List<LocalLogicalConnectionDetails> getBGPMap(List<String> mappedBGPLinksIds) {
         try {
             List<LocalLogicalConnectionDetails> bgpMap = new ArrayList<>();
             List<RemoteLogicalConnectionDetails> remoteBgpMap = service.getBGPMap(mappedBGPLinksIds, session.getSessionId());

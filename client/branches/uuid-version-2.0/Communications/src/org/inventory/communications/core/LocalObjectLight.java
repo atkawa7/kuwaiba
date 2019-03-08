@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.wsclient.RemoteValidator;
@@ -37,7 +38,7 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
     public static DataFlavor DATA_FLAVOR =
             new DataFlavor(LocalObjectLight.class,"Object/LocalObjectLight");
     
-    protected long id;
+    protected String id;
     protected String name;
     protected String className;
     /**
@@ -53,13 +54,13 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
      * This constructor is called to create dummy objects where the id is not important
      */
     public LocalObjectLight() {
-        this.id = -1;
+        this.id = "-1";
         this.propertyChangeListeners = new ArrayList<>();
         this.validators = new ArrayList<>();
         this.name = Constants.LABEL_NONAME;
     }
 
-    public LocalObjectLight(long oid, String name, String className) {
+    public LocalObjectLight(String oid, String name, String className) {
         this.id = oid;
         this.name = name;
         this.className = className;
@@ -67,7 +68,7 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
         this.propertyChangeListeners = new ArrayList<>();
     }
 
-    public LocalObjectLight(String className, String name, long id, List<RemoteValidator> validators){
+    public LocalObjectLight(String className, String name, String id, List<RemoteValidator> validators){
         this.id = id;
         this.name = name;
         this.className = className;
@@ -84,11 +85,11 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
         return className;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setOid(long id) {
+    public void setOid(String id) {
         this.id = id;
     }
 
@@ -149,22 +150,31 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
         }
     }
 
-   @Override
-   public boolean equals(Object obj){
-       if(obj == null)
-           return false;
-       if (!(obj instanceof LocalObjectLight))
-           return false;
-       return (this.getId() == ((LocalObjectLight)obj).getId());
-   }
-
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 47 * hash + (int) (this.id ^ (this.id >>> 32));
+        int hash = 3;
+        hash = 17 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final LocalObjectLight other = (LocalObjectLight) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
+    }
+        
     //Transferable methods
     @Override
     public DataFlavor[] getTransferDataFlavors() {

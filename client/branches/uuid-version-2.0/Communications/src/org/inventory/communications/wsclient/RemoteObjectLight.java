@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="className" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="validators" type="{http://ws.interfaces.kuwaiba.org/}remoteValidator" maxOccurs="unbounded" minOccurs="0"/>
@@ -44,7 +44,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class RemoteObjectLight {
 
-    protected long id;
+    protected String id;
     protected String name;
     protected String className;
     @XmlElement(nillable = true)
@@ -53,16 +53,24 @@ public class RemoteObjectLight {
     /**
      * Gets the value of the id property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getId() {
+    public String getId() {
         return id;
     }
 
     /**
      * Sets the value of the id property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setId(long value) {
+    public void setId(String value) {
         this.id = value;
     }
 
@@ -142,12 +150,14 @@ public class RemoteObjectLight {
         }
         return this.validators;
     }
-public int hashCode() {
+    @Override
+    public int hashCode() {
         int hash = 3;
-        hash = 59 * hash + (int) (this.id ^ (this.id >>> 32));
+        hash = 71 * hash + this.id.hashCode();
         return hash;
     }
-    
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -159,12 +169,13 @@ public int hashCode() {
             return false;
         }
         final RemoteObjectLight other = (RemoteObjectLight) obj;
-        if (this.id != other.id) {
+        if (!this.id.equals(other.id)) {
             return false;
         }
         return true;
     }
     
+    @Override
     public String toString() {
         return name + " [" + className + "]";
     }

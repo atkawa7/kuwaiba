@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="connectionId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="connectionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="connectionClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="position" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *       &lt;/sequence>
@@ -35,23 +35,31 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class RemoteSDHPosition {
 
-    protected long connectionId;
+    protected String connectionId;
     protected String connectionClass;
     protected int position;
 
     /**
      * Gets the value of the connectionId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getConnectionId() {
+    public String getConnectionId() {
         return connectionId;
     }
 
     /**
      * Sets the value of the connectionId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setConnectionId(long value) {
+    public void setConnectionId(String value) {
         this.connectionId = value;
     }
 

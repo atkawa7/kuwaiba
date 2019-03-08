@@ -42,7 +42,7 @@ public class CommunicationsStubTask {
         return fixedThreadPool == null ? fixedThreadPool = Executors.newFixedThreadPool(10) : fixedThreadPool;
     }
     
-    public Callable<List<LocalObjectLight>> getObjectChildrenCallable(final long oid, final String className) {
+    public Callable<List<LocalObjectLight>> getObjectChildrenCallable(final String oid, final String className) {
         return new Callable<List<LocalObjectLight>>() {
 
             @Override
@@ -52,7 +52,7 @@ public class CommunicationsStubTask {
         };
     }
     
-    public Callable<LocalObject> getObjectInfoCallable(final String objectClass, final long oid) {
+    public Callable<LocalObject> getObjectInfoCallable(final String objectClass, final String oid) {
         return new Callable<LocalObject>() {
 
             @Override
@@ -62,7 +62,7 @@ public class CommunicationsStubTask {
         };
     }
     
-    public Callable<HashMap<String, LocalObjectLight[]>> getSpecialAttributesCallable(final String objectClass, final long objectId) {
+    public Callable<HashMap<String, LocalObjectLight[]>> getSpecialAttributesCallable(final String objectClass, final String objectId) {
         return new Callable<HashMap<String, LocalObjectLight[]>>() {
             @Override
             public HashMap<String, LocalObjectLight[]> call() throws Exception {

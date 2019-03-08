@@ -23,7 +23,7 @@ public class LocalSDHPosition {
    /**
    * Id of the connection being used (a TransportLink or a ContainerLink)
    */
-  private long connectionId;
+  private String connectionId;
   /**
    * Id of the connection being used (a TransportLink or a ContainerLink)
    */
@@ -34,17 +34,17 @@ public class LocalSDHPosition {
   private int position;
 
 
-  public LocalSDHPosition(String connectionClass, long connectionId, int position) {
+  public LocalSDHPosition(String connectionClass, String connectionId, int position) {
       this.connectionId = connectionId;
       this.connectionClass = connectionClass;
       this.position = position;
   }
 
-  public long getLinkId() {
+  public String getLinkId() {
       return connectionId;
   }
 
-  public void setLinkId(long connectionId) {
+  public void setLinkId(String connectionId) {
       this.connectionId = connectionId;
   }
 

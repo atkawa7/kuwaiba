@@ -16,10 +16,10 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="arg2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="arg3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="objectClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="oid" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="objectToMatchClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -30,104 +30,112 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getParentsUntilFirstOfClass", propOrder = {
-    "arg0",
-    "arg1",
-    "arg2",
-    "arg3"
+    "objectClass",
+    "oid",
+    "objectToMatchClassName",
+    "sessionId"
 })
 public class GetParentsUntilFirstOfClass {
 
-    protected String arg0;
-    protected long arg1;
-    protected String arg2;
-    protected String arg3;
+    protected String objectClass;
+    protected String oid;
+    protected String objectToMatchClassName;
+    protected String sessionId;
 
     /**
-     * Gets the value of the arg0 property.
+     * Gets the value of the objectClass property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getArg0() {
-        return arg0;
+    public String getObjectClass() {
+        return objectClass;
     }
 
     /**
-     * Sets the value of the arg0 property.
+     * Sets the value of the objectClass property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setArg0(String value) {
-        this.arg0 = value;
+    public void setObjectClass(String value) {
+        this.objectClass = value;
     }
 
     /**
-     * Gets the value of the arg1 property.
-     * 
-     */
-    public long getArg1() {
-        return arg1;
-    }
-
-    /**
-     * Sets the value of the arg1 property.
-     * 
-     */
-    public void setArg1(long value) {
-        this.arg1 = value;
-    }
-
-    /**
-     * Gets the value of the arg2 property.
+     * Gets the value of the oid property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getArg2() {
-        return arg2;
+    public String getOid() {
+        return oid;
     }
 
     /**
-     * Sets the value of the arg2 property.
+     * Sets the value of the oid property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setArg2(String value) {
-        this.arg2 = value;
+    public void setOid(String value) {
+        this.oid = value;
     }
 
     /**
-     * Gets the value of the arg3 property.
+     * Gets the value of the objectToMatchClassName property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getArg3() {
-        return arg3;
+    public String getObjectToMatchClassName() {
+        return objectToMatchClassName;
     }
 
     /**
-     * Sets the value of the arg3 property.
+     * Sets the value of the objectToMatchClassName property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setArg3(String value) {
-        this.arg3 = value;
+    public void setObjectToMatchClassName(String value) {
+        this.objectToMatchClassName = value;
+    }
+
+    /**
+     * Gets the value of the sessionId property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    /**
+     * Sets the value of the sessionId property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSessionId(String value) {
+        this.sessionId = value;
     }
 
 }

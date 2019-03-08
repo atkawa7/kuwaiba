@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="objectClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="oid" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="oid" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="maxResults" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlType;
 public class GetObjectChildren {
 
     protected String objectClassName;
-    protected long oid;
+    protected String oid;
     protected int maxResults;
     protected String sessionId;
 
@@ -69,16 +69,24 @@ public class GetObjectChildren {
     /**
      * Gets the value of the oid property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getOid() {
+    public String getOid() {
         return oid;
     }
 
     /**
      * Sets the value of the oid property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setOid(long value) {
+    public void setOid(String value) {
         this.oid = value;
     }
 

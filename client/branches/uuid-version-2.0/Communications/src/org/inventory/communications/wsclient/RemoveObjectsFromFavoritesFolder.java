@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="objectClass" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="objectId" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="objectId" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="favoritesFolderId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="userId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -45,7 +45,7 @@ public class RemoveObjectsFromFavoritesFolder {
     @XmlElement(nillable = true)
     protected List<String> objectClass;
     @XmlElement(nillable = true)
-    protected List<Long> objectId;
+    protected List<String> objectId;
     protected long favoritesFolderId;
     protected long userId;
     protected String sessionId;
@@ -97,13 +97,13 @@ public class RemoveObjectsFromFavoritesFolder {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Long }
+     * {@link String }
      * 
      * 
      */
-    public List<Long> getObjectId() {
+    public List<String> getObjectId() {
         if (objectId == null) {
-            objectId = new ArrayList<Long>();
+            objectId = new ArrayList<String>();
         }
         return this.objectId;
     }

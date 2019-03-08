@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="objectClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="objectId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="objectId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="reportId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlType;
 public class ExecuteClassLevelReport {
 
     protected String objectClassName;
-    protected long objectId;
+    protected String objectId;
     protected long reportId;
     protected String sessionId;
 
@@ -69,16 +69,24 @@ public class ExecuteClassLevelReport {
     /**
      * Gets the value of the objectId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getObjectId() {
+    public String getObjectId() {
         return objectId;
     }
 
     /**
      * Sets the value of the objectId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setObjectId(long value) {
+    public void setObjectId(String value) {
         this.objectId = value;
     }
 

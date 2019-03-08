@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="tags" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="file" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
  *         &lt;element name="className" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="objectId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="objectId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -48,7 +48,7 @@ public class AttachFileToObject {
     @XmlElementRef(name = "file", type = JAXBElement.class, required = false)
     protected JAXBElement<byte[]> file;
     protected String className;
-    protected long objectId;
+    protected String objectId;
     protected String sessionId;
 
     /**
@@ -150,16 +150,24 @@ public class AttachFileToObject {
     /**
      * Gets the value of the objectId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getObjectId() {
+    public String getObjectId() {
         return objectId;
     }
 
     /**
      * Sets the value of the objectId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setObjectId(long value) {
+    public void setObjectId(String value) {
         this.objectId = value;
     }
 

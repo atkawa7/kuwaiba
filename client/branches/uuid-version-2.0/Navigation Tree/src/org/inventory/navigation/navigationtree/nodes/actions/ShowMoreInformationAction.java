@@ -30,14 +30,14 @@ import org.inventory.communications.core.LocalValidator;
  */
 public final class ShowMoreInformationAction extends GenericObjectNodeAction {
     private static ShowMoreInformationAction instance;
-    private long id;
+    private String id;
     private String className;
 
     private ShowMoreInformationAction() {
         putValue(NAME, "Show More Information");
     }
     
-    public static ShowMoreInformationAction getInstance(long id, String className) {
+    public static ShowMoreInformationAction getInstance(String id, String className) {
         if (instance == null)        
             instance = new ShowMoreInformationAction();
         instance.setId(id);
@@ -45,7 +45,7 @@ public final class ShowMoreInformationAction extends GenericObjectNodeAction {
         return instance;
     }
     
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
     

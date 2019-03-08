@@ -17,11 +17,11 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="connectionClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="connectionId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="connectionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="newASideClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="newASideId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="newASideId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="newBSideClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="newBSideId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="newBSideId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -44,11 +44,11 @@ import javax.xml.bind.annotation.XmlType;
 public class ReconnectPhysicalConnection {
 
     protected String connectionClass;
-    protected long connectionId;
+    protected String connectionId;
     protected String newASideClass;
-    protected long newASideId;
+    protected String newASideId;
     protected String newBSideClass;
-    protected long newBSideId;
+    protected String newBSideId;
     protected String sessionId;
 
     /**
@@ -78,16 +78,24 @@ public class ReconnectPhysicalConnection {
     /**
      * Gets the value of the connectionId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getConnectionId() {
+    public String getConnectionId() {
         return connectionId;
     }
 
     /**
      * Sets the value of the connectionId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setConnectionId(long value) {
+    public void setConnectionId(String value) {
         this.connectionId = value;
     }
 
@@ -118,16 +126,24 @@ public class ReconnectPhysicalConnection {
     /**
      * Gets the value of the newASideId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getNewASideId() {
+    public String getNewASideId() {
         return newASideId;
     }
 
     /**
      * Sets the value of the newASideId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setNewASideId(long value) {
+    public void setNewASideId(String value) {
         this.newASideId = value;
     }
 
@@ -158,16 +174,24 @@ public class ReconnectPhysicalConnection {
     /**
      * Gets the value of the newBSideId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getNewBSideId() {
+    public String getNewBSideId() {
         return newBSideId;
     }
 
     /**
      * Sets the value of the newBSideId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setNewBSideId(long value) {
+    public void setNewBSideId(String value) {
         this.newBSideId = value;
     }
 

@@ -16,9 +16,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="className" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="vlanId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="vlanId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -37,24 +37,32 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class RelateSubnetToVlan {
 
-    protected long id;
+    protected String id;
     protected String className;
-    protected long vlanId;
+    protected String vlanId;
     protected String sessionId;
 
     /**
      * Gets the value of the id property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getId() {
+    public String getId() {
         return id;
     }
 
     /**
      * Sets the value of the id property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setId(long value) {
+    public void setId(String value) {
         this.id = value;
     }
 
@@ -85,16 +93,24 @@ public class RelateSubnetToVlan {
     /**
      * Gets the value of the vlanId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getVlanId() {
+    public String getVlanId() {
         return vlanId;
     }
 
     /**
      * Sets the value of the vlanId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setVlanId(long value) {
+    public void setVlanId(String value) {
         this.vlanId = value;
     }
 

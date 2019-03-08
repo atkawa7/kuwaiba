@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="parentPoolId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="parentPoolId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="poolClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -35,23 +35,31 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class GetPoolsInPool {
 
-    protected long parentPoolId;
+    protected String parentPoolId;
     protected String poolClass;
     protected String sessionId;
 
     /**
      * Gets the value of the parentPoolId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getParentPoolId() {
+    public String getParentPoolId() {
         return parentPoolId;
     }
 
     /**
      * Sets the value of the parentPoolId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setParentPoolId(long value) {
+    public void setParentPoolId(String value) {
         this.parentPoolId = value;
     }
 

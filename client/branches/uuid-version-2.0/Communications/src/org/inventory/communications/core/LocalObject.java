@@ -36,7 +36,7 @@ public class LocalObject extends LocalObjectLight {
      */
     private LocalClassMetadata myMetadata;
 
-    public LocalObject(String className, long id, HashMap<String, Object> attributes){
+    public LocalObject(String className, String id, HashMap<String, Object> attributes){
         this.className = className;
         this.id = id;
         this.attributes = attributes;
@@ -50,7 +50,7 @@ public class LocalObject extends LocalObjectLight {
      * @param  remoteAttributes A dictionary with the attributes and values as strings
      * @param classMetadata The class metadata to be used to map the attributes to actual Java data types
      */
-    public LocalObject(String className, long id, List<StringPair> remoteAttributes, LocalClassMetadata classMetadata) throws IllegalArgumentException{
+    public LocalObject(String className, String id, List<StringPair> remoteAttributes, LocalClassMetadata classMetadata) throws IllegalArgumentException{
         this.className = className;
         this.id = id;
         this.myMetadata = classMetadata;

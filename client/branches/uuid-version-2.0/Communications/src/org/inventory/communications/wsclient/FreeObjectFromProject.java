@@ -17,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="objectClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="objectId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="objectId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="projectClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="projectId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="projectId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -40,9 +40,9 @@ import javax.xml.bind.annotation.XmlType;
 public class FreeObjectFromProject {
 
     protected String objectClass;
-    protected long objectId;
+    protected String objectId;
     protected String projectClass;
-    protected long projectId;
+    protected String projectId;
     protected String sessionId;
 
     /**
@@ -72,16 +72,24 @@ public class FreeObjectFromProject {
     /**
      * Gets the value of the objectId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getObjectId() {
+    public String getObjectId() {
         return objectId;
     }
 
     /**
      * Sets the value of the objectId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setObjectId(long value) {
+    public void setObjectId(String value) {
         this.objectId = value;
     }
 
@@ -112,16 +120,24 @@ public class FreeObjectFromProject {
     /**
      * Gets the value of the projectId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getProjectId() {
+    public String getProjectId() {
         return projectId;
     }
 
     /**
      * Sets the value of the projectId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setProjectId(long value) {
+    public void setProjectId(String value) {
         this.projectId = value;
     }
 

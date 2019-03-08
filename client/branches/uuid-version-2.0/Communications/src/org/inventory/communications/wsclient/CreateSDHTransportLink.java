@@ -17,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="classNameEndpointA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="idEndpointA" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="idEndpointA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="classNameEndpointB" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="idEndpointB" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="idEndpointB" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="linkType" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="defaultName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -44,9 +44,9 @@ import javax.xml.bind.annotation.XmlType;
 public class CreateSDHTransportLink {
 
     protected String classNameEndpointA;
-    protected long idEndpointA;
+    protected String idEndpointA;
     protected String classNameEndpointB;
-    protected long idEndpointB;
+    protected String idEndpointB;
     protected String linkType;
     protected String defaultName;
     protected String sessionId;
@@ -78,16 +78,24 @@ public class CreateSDHTransportLink {
     /**
      * Gets the value of the idEndpointA property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getIdEndpointA() {
+    public String getIdEndpointA() {
         return idEndpointA;
     }
 
     /**
      * Sets the value of the idEndpointA property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setIdEndpointA(long value) {
+    public void setIdEndpointA(String value) {
         this.idEndpointA = value;
     }
 
@@ -118,16 +126,24 @@ public class CreateSDHTransportLink {
     /**
      * Gets the value of the idEndpointB property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getIdEndpointB() {
+    public String getIdEndpointB() {
         return idEndpointB;
     }
 
     /**
      * Sets the value of the idEndpointB property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setIdEndpointB(long value) {
+    public void setIdEndpointB(String value) {
         this.idEndpointB = value;
     }
 

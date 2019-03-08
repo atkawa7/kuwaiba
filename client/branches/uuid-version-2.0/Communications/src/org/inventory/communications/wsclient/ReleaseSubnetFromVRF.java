@@ -16,8 +16,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="subnetId" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="vrfId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="subnetId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="vrfId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -35,39 +35,55 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class ReleaseSubnetFromVRF {
 
-    protected long subnetId;
-    protected long vrfId;
+    protected String subnetId;
+    protected String vrfId;
     protected String sessionId;
 
     /**
      * Gets the value of the subnetId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getSubnetId() {
+    public String getSubnetId() {
         return subnetId;
     }
 
     /**
      * Sets the value of the subnetId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setSubnetId(long value) {
+    public void setSubnetId(String value) {
         this.subnetId = value;
     }
 
     /**
      * Gets the value of the vrfId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getVrfId() {
+    public String getVrfId() {
         return vrfId;
     }
 
     /**
      * Sets the value of the vrfId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setVrfId(long value) {
+    public void setVrfId(String value) {
         this.vrfId = value;
     }
 

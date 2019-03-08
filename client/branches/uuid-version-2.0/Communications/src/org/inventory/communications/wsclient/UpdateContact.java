@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="contactClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="contactId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="contactId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="properties" type="{http://ws.interfaces.kuwaiba.org/}stringPair" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlType;
 public class UpdateContact {
 
     protected String contactClass;
-    protected long contactId;
+    protected String contactId;
     protected List<StringPair> properties;
     protected String sessionId;
 
@@ -71,16 +71,24 @@ public class UpdateContact {
     /**
      * Gets the value of the contactId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getContactId() {
+    public String getContactId() {
         return contactId;
     }
 
     /**
      * Sets the value of the contactId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setContactId(long value) {
+    public void setContactId(String value) {
         this.contactId = value;
     }
 

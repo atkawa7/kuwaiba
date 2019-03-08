@@ -17,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="communicationsEquipmentClassA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="communicationsEquipmentIdA" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="communicationsEquipmentIdA" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="communicationsEquipmentClassB" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="communicationsEquipmentIB" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="communicationsEquipmentIB" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -40,9 +40,9 @@ import javax.xml.bind.annotation.XmlType;
 public class FindSDHRoutesUsingTransportLinks {
 
     protected String communicationsEquipmentClassA;
-    protected long communicationsEquipmentIdA;
+    protected String communicationsEquipmentIdA;
     protected String communicationsEquipmentClassB;
-    protected long communicationsEquipmentIB;
+    protected String communicationsEquipmentIB;
     protected String sessionId;
 
     /**
@@ -72,16 +72,24 @@ public class FindSDHRoutesUsingTransportLinks {
     /**
      * Gets the value of the communicationsEquipmentIdA property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getCommunicationsEquipmentIdA() {
+    public String getCommunicationsEquipmentIdA() {
         return communicationsEquipmentIdA;
     }
 
     /**
      * Sets the value of the communicationsEquipmentIdA property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setCommunicationsEquipmentIdA(long value) {
+    public void setCommunicationsEquipmentIdA(String value) {
         this.communicationsEquipmentIdA = value;
     }
 
@@ -112,16 +120,24 @@ public class FindSDHRoutesUsingTransportLinks {
     /**
      * Gets the value of the communicationsEquipmentIB property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getCommunicationsEquipmentIB() {
+    public String getCommunicationsEquipmentIB() {
         return communicationsEquipmentIB;
     }
 
     /**
      * Sets the value of the communicationsEquipmentIB property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setCommunicationsEquipmentIB(long value) {
+    public void setCommunicationsEquipmentIB(String value) {
         this.communicationsEquipmentIB = value;
     }
 

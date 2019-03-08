@@ -20,9 +20,9 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="targetClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="targetOid" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="targetOid" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="templateClases" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="templateOids" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="templateOids" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="recursive" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -45,11 +45,11 @@ import javax.xml.bind.annotation.XmlType;
 public class CopyObjects {
 
     protected String targetClass;
-    protected long targetOid;
+    protected String targetOid;
     @XmlElement(nillable = true)
     protected List<String> templateClases;
     @XmlElement(nillable = true)
-    protected List<Long> templateOids;
+    protected List<String> templateOids;
     protected boolean recursive;
     protected String sessionId;
 
@@ -80,16 +80,24 @@ public class CopyObjects {
     /**
      * Gets the value of the targetOid property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getTargetOid() {
+    public String getTargetOid() {
         return targetOid;
     }
 
     /**
      * Sets the value of the targetOid property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setTargetOid(long value) {
+    public void setTargetOid(String value) {
         this.targetOid = value;
     }
 
@@ -140,13 +148,13 @@ public class CopyObjects {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Long }
+     * {@link String }
      * 
      * 
      */
-    public List<Long> getTemplateOids() {
+    public List<String> getTemplateOids() {
         if (templateOids == null) {
-            templateOids = new ArrayList<Long>();
+            templateOids = new ArrayList<String>();
         }
         return this.templateOids;
     }

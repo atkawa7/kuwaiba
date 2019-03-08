@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="oid" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="oid" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="releaseRelationships" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -39,7 +39,7 @@ import javax.xml.bind.annotation.XmlType;
 public class RemoveIP {
 
     @XmlElement(nillable = true)
-    protected List<Long> oid;
+    protected List<String> oid;
     protected boolean releaseRelationships;
     protected String sessionId;
 
@@ -61,13 +61,13 @@ public class RemoveIP {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Long }
+     * {@link String }
      * 
      * 
      */
-    public List<Long> getOid() {
+    public List<String> getOid() {
         if (oid == null) {
-            oid = new ArrayList<Long>();
+            oid = new ArrayList<String>();
         }
         return this.oid;
     }

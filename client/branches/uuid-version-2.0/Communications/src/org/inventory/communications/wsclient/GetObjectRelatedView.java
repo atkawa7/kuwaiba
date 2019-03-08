@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="oid" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="oid" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="objectClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="viewId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -37,7 +37,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class GetObjectRelatedView {
 
-    protected long oid;
+    protected String oid;
     protected String objectClass;
     protected long viewId;
     protected String sessionId;
@@ -45,16 +45,24 @@ public class GetObjectRelatedView {
     /**
      * Gets the value of the oid property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getOid() {
+    public String getOid() {
         return oid;
     }
 
     /**
      * Sets the value of the oid property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setOid(long value) {
+    public void setOid(String value) {
         this.oid = value;
     }
 

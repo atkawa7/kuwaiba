@@ -177,7 +177,7 @@ public class AttributesForm {
                         @Override
                         public void itemStateChanged(ItemEvent e) {
                             boolean canSave = false;
-                            mandatoryAttrtsState.put(comboBox.getName(), ((LocalObjectListItem)e.getItem()).getId() != 0);
+                            mandatoryAttrtsState.put(comboBox.getName(), ((LocalObjectListItem)e.getItem()).getId() != null);
                             for (String name : mandatoryAttrtsState.keySet()){
                                 if(!mandatoryAttrtsState.get(name)){
                                     canSave = false;

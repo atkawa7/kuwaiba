@@ -17,8 +17,8 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="deviceClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="deviceId" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="deviceId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -38,8 +38,8 @@ import javax.xml.bind.annotation.XmlType;
 public class ReleasePortFromIP {
 
     protected String deviceClassName;
-    protected long deviceId;
-    protected long id;
+    protected String deviceId;
+    protected String id;
     protected String sessionId;
 
     /**
@@ -69,32 +69,48 @@ public class ReleasePortFromIP {
     /**
      * Gets the value of the deviceId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getDeviceId() {
+    public String getDeviceId() {
         return deviceId;
     }
 
     /**
      * Sets the value of the deviceId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setDeviceId(long value) {
+    public void setDeviceId(String value) {
         this.deviceId = value;
     }
 
     /**
      * Gets the value of the id property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getId() {
+    public String getId() {
         return id;
     }
 
     /**
      * Sets the value of the id property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setId(long value) {
+    public void setId(String value) {
         this.id = value;
     }
 

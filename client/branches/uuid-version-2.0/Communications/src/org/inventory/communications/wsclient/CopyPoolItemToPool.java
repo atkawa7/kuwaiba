@@ -16,9 +16,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="poolId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="poolId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="poolItemClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="poolItemId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="poolItemId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="recursive" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -39,25 +39,33 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class CopyPoolItemToPool {
 
-    protected long poolId;
+    protected String poolId;
     protected String poolItemClassName;
-    protected long poolItemId;
+    protected String poolItemId;
     protected boolean recursive;
     protected String sessionId;
 
     /**
      * Gets the value of the poolId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getPoolId() {
+    public String getPoolId() {
         return poolId;
     }
 
     /**
      * Sets the value of the poolId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setPoolId(long value) {
+    public void setPoolId(String value) {
         this.poolId = value;
     }
 
@@ -88,16 +96,24 @@ public class CopyPoolItemToPool {
     /**
      * Gets the value of the poolItemId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getPoolItemId() {
+    public String getPoolItemId() {
         return poolItemId;
     }
 
     /**
      * Sets the value of the poolItemId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setPoolItemId(long value) {
+    public void setPoolItemId(String value) {
         this.poolItemId = value;
     }
 

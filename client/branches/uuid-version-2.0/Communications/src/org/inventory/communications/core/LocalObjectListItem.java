@@ -25,11 +25,10 @@ public class LocalObjectListItem extends LocalObjectLight {
     /**
      * Id for null values
      */
-    public static final long NULL_ID = 0;
     private String displayName;
 
     public LocalObjectListItem(){
-        this.id = NULL_ID;
+        this.id = null;
         this.name = "None";
     }
 
@@ -39,7 +38,7 @@ public class LocalObjectListItem extends LocalObjectLight {
      * @param className
      * @param name
      */
-    public LocalObjectListItem(long id, String className, String name){
+    public LocalObjectListItem(String id, String className, String name){
         super(id, name, className);
     }
 

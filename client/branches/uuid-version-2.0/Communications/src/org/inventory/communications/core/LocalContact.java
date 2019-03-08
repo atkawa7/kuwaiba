@@ -30,7 +30,7 @@ public class LocalContact extends LocalObject {
      */
     private LocalObjectLight customer;
 
-    public LocalContact(String className, long id, List<StringPair> attributes, LocalClassMetadata classMetadata, LocalObjectLight customer) throws IllegalArgumentException {
+    public LocalContact(String className, String id, List<StringPair> attributes, LocalClassMetadata classMetadata, LocalObjectLight customer) throws IllegalArgumentException {
         super(className, id, attributes, classMetadata);
         this.customer = customer;
     }

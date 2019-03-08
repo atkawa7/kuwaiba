@@ -17,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="objectClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="objectId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="objectId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="warehouseClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="warehouseId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="warehouseId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -40,9 +40,9 @@ import javax.xml.bind.annotation.XmlType;
 public class AssociatePhysicalNodeToWarehouse {
 
     protected String objectClass;
-    protected long objectId;
+    protected String objectId;
     protected String warehouseClass;
-    protected long warehouseId;
+    protected String warehouseId;
     protected String sessionId;
 
     /**
@@ -72,16 +72,24 @@ public class AssociatePhysicalNodeToWarehouse {
     /**
      * Gets the value of the objectId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getObjectId() {
+    public String getObjectId() {
         return objectId;
     }
 
     /**
      * Sets the value of the objectId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setObjectId(long value) {
+    public void setObjectId(String value) {
         this.objectId = value;
     }
 
@@ -112,16 +120,24 @@ public class AssociatePhysicalNodeToWarehouse {
     /**
      * Gets the value of the warehouseId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getWarehouseId() {
+    public String getWarehouseId() {
         return warehouseId;
     }
 
     /**
      * Sets the value of the warehouseId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setWarehouseId(long value) {
+    public void setWarehouseId(String value) {
         this.warehouseId = value;
     }
 

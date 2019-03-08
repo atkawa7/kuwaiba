@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="objectOid" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="objectOid" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="objectClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="viewId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="viewName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -47,7 +47,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class UpdateObjectRelatedView {
 
-    protected long objectOid;
+    protected String objectOid;
     protected String objectClass;
     protected long viewId;
     protected String viewName;
@@ -61,16 +61,24 @@ public class UpdateObjectRelatedView {
     /**
      * Gets the value of the objectOid property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getObjectOid() {
+    public String getObjectOid() {
         return objectOid;
     }
 
     /**
      * Sets the value of the objectOid property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setObjectOid(long value) {
+    public void setObjectOid(String value) {
         this.objectOid = value;
     }
 

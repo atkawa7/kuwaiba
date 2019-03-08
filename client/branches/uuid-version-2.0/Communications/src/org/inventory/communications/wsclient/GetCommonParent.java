@@ -17,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="aObjectClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="aOid" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="aOid" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="bObjectClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="bOid" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="bOid" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -40,9 +40,9 @@ import javax.xml.bind.annotation.XmlType;
 public class GetCommonParent {
 
     protected String aObjectClass;
-    protected long aOid;
+    protected String aOid;
     protected String bObjectClass;
-    protected long bOid;
+    protected String bOid;
     protected String sessionId;
 
     /**
@@ -72,16 +72,24 @@ public class GetCommonParent {
     /**
      * Gets the value of the aOid property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getAOid() {
+    public String getAOid() {
         return aOid;
     }
 
     /**
      * Sets the value of the aOid property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setAOid(long value) {
+    public void setAOid(String value) {
         this.aOid = value;
     }
 
@@ -112,16 +120,24 @@ public class GetCommonParent {
     /**
      * Gets the value of the bOid property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getBOid() {
+    public String getBOid() {
         return bOid;
     }
 
     /**
      * Sets the value of the bOid property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setBOid(long value) {
+    public void setBOid(String value) {
         this.bOid = value;
     }
 

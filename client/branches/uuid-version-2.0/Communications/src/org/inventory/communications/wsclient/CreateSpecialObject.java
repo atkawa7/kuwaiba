@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="className" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="parentObjectClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="parentOid" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="parentOid" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="attributeNames" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="attributeValues" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="templateId" type="{http://www.w3.org/2001/XMLSchema}long"/>
@@ -48,7 +48,7 @@ public class CreateSpecialObject {
 
     protected String className;
     protected String parentObjectClassName;
-    protected long parentOid;
+    protected String parentOid;
     @XmlElement(nillable = true)
     protected List<String> attributeNames;
     @XmlElement(nillable = true)
@@ -107,16 +107,24 @@ public class CreateSpecialObject {
     /**
      * Gets the value of the parentOid property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getParentOid() {
+    public String getParentOid() {
         return parentOid;
     }
 
     /**
      * Sets the value of the parentOid property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setParentOid(long value) {
+    public void setParentOid(String value) {
         this.parentOid = value;
     }
 

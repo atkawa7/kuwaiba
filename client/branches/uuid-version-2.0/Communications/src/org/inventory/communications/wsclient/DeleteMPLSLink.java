@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="linkClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="linkId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="linkId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="forceDelete" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlType;
 public class DeleteMPLSLink {
 
     protected String linkClass;
-    protected long linkId;
+    protected String linkId;
     protected boolean forceDelete;
     protected String sessionId;
 
@@ -69,16 +69,24 @@ public class DeleteMPLSLink {
     /**
      * Gets the value of the linkId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getLinkId() {
+    public String getLinkId() {
         return linkId;
     }
 
     /**
      * Sets the value of the linkId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setLinkId(long value) {
+    public void setLinkId(String value) {
         this.linkId = value;
     }
 

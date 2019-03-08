@@ -45,7 +45,7 @@ public class ObjectChildren extends AbstractChildren {
         List <LocalObjectLight> children;
         //The tree root is not an AbstractNode, but a RootObjectNode
         if (this.getNode() instanceof RootObjectNode)
-            children = com.getObjectChildren(-1, -1);
+            children = com.getObjectChildren("-1", -1);
         else {
             LocalObjectLight node = ((ObjectNode)this.getNode()).getObject();
         

@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="parentId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="parentId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="className" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -35,23 +35,31 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class GetSubnetPools {
 
-    protected long parentId;
+    protected String parentId;
     protected String className;
     protected String sessionId;
 
     /**
      * Gets the value of the parentId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getParentId() {
+    public String getParentId() {
         return parentId;
     }
 
     /**
      * Sets the value of the parentId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setParentId(long value) {
+    public void setParentId(String value) {
         this.parentId = value;
     }
 

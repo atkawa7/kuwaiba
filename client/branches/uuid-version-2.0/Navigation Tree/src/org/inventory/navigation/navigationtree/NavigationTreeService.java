@@ -34,7 +34,7 @@ public class NavigationTreeService {
     }
     
     public List<LocalObjectLight> getRootChildren(){
-        List<LocalObjectLight> rootChildren = com.getObjectChildren(-1, -1);
+        List<LocalObjectLight> rootChildren = com.getObjectChildren("-1", -1);
         if(rootChildren != null)
             return rootChildren;
         else

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -19,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="mappedBgpLinksIds" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="mappedBgpLinksIds" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -36,8 +35,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class GetBGPMap {
 
-    @XmlElement(type = Long.class)
-    protected List<Long> mappedBgpLinksIds;
+    protected List<String> mappedBgpLinksIds;
     protected String sessionId;
 
     /**
@@ -58,13 +56,13 @@ public class GetBGPMap {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Long }
+     * {@link String }
      * 
      * 
      */
-    public List<Long> getMappedBgpLinksIds() {
+    public List<String> getMappedBgpLinksIds() {
         if (mappedBgpLinksIds == null) {
-            mappedBgpLinksIds = new ArrayList<Long>();
+            mappedBgpLinksIds = new ArrayList<String>();
         }
         return this.mappedBgpLinksIds;
     }

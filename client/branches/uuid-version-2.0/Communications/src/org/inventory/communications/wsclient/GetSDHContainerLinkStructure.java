@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="containerLinkClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="containerLinkId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="containerLinkId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlType;
 public class GetSDHContainerLinkStructure {
 
     protected String containerLinkClass;
-    protected long containerLinkId;
+    protected String containerLinkId;
     protected String sessionId;
 
     /**
@@ -66,16 +66,24 @@ public class GetSDHContainerLinkStructure {
     /**
      * Gets the value of the containerLinkId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getContainerLinkId() {
+    public String getContainerLinkId() {
         return containerLinkId;
     }
 
     /**
      * Sets the value of the containerLinkId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setContainerLinkId(long value) {
+    public void setContainerLinkId(String value) {
         this.containerLinkId = value;
     }
 
