@@ -155,7 +155,7 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
                 
                 LocalObjectLight nodeObject = (LocalObjectLight) findObject(nodeWidget);
                 
-                xmlew.add(xmlef.createAttribute(new QName("class"), nodeObject.getId() < 0 ? "unkown" : nodeObject.getClassName()));
+                xmlew.add(xmlef.createAttribute(new QName("class"), nodeObject.getId() < 0 ? "unknown" : nodeObject.getClassName()));
 
                 xmlew.add(xmlef.createCharacters(nodeObject.getId() < 0 ? "-1" : Long.toString(nodeObject.getId())));
                 
@@ -201,9 +201,9 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         List<LocalObjectLight> emptySides = new ArrayList<>();
 //      <editor-fold defaultstate="collapsed" desc="Uncomment this for debugging purposes. This outputs the XML view as a file">
-        try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_ MPLS_VIEW .xml")) {
-            fos.write(structure);
-        } catch(Exception e) { }
+//        try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_ MPLS_VIEW .xml")) {
+//            fos.write(structure);
+//        } catch(Exception e) { }
 //      </editor-fold>
         QName qNode = new QName("node"); //NOI18N
         QName qEdge = new QName("edge"); //NOI18N
