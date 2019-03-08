@@ -2626,7 +2626,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getObjectChildrenForClassWithId")
     public List<RemoteObjectLight> getObjectChildrenForClassWithId(@WebParam(name = "oid") String oid,
-            @WebParam(name = "objectClassId") String objectClassId,
+            @WebParam(name = "objectClassId") long objectClassId,
             @WebParam(name = "maxResults") int maxResults,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
