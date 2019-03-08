@@ -47,6 +47,7 @@ import org.kuwaiba.apis.web.gui.views.AbstractViewEdge;
 import org.kuwaiba.apis.web.gui.views.AbstractViewNode;
 import org.kuwaiba.apis.web.gui.views.BusinessObjectViewEdge;
 import org.kuwaiba.apis.web.gui.views.BusinessObjectViewNode;
+import org.kuwaiba.apis.web.gui.views.ViewEventListener;
 import org.kuwaiba.apis.web.gui.views.ViewMap;
 import org.kuwaiba.apis.web.gui.views.util.UtilHtml;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
@@ -296,5 +297,15 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
     @Override
     public AbstractViewEdge addEdge(RemoteObjectLight businessObject, RemoteObjectLight sourceBusinessObject, RemoteObjectLight targetBusinessObject, Properties properties) {
         throw new UnsupportedOperationException("This action is not supported yet.");
+    }
+
+    @Override
+    public void addNodeClickListener(ViewEventListener listener) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void addEdgeClickListener(ViewEventListener listener) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

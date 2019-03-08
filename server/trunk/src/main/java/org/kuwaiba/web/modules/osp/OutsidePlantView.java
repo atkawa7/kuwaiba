@@ -45,6 +45,7 @@ import org.kuwaiba.apis.web.gui.views.AbstractViewEdge;
 import org.kuwaiba.apis.web.gui.views.AbstractViewNode;
 import org.kuwaiba.apis.web.gui.views.BusinessObjectViewEdge;
 import org.kuwaiba.apis.web.gui.views.BusinessObjectViewNode;
+import org.kuwaiba.apis.web.gui.views.ViewEventListener;
 import org.kuwaiba.apis.web.gui.views.ViewMap;
 import org.kuwaiba.apis.web.gui.views.util.UtilHtml;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
@@ -439,4 +440,15 @@ public class OutsidePlantView extends AbstractView<RemoteObjectLight> {
         } else
             return anEdge;
     }
+
+    @Override
+    public void addNodeClickListener(ViewEventListener listener) {
+        this.mapProvider.addMarkerClickListener(listener);
+    }
+
+    @Override
+    public void addEdgeClickListener(ViewEventListener listener) {
+        this.mapProvider.addPolylineClickListener(listener);
+    }
+    
 }

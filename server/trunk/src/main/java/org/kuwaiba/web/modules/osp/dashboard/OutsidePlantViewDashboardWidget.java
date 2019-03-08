@@ -27,7 +27,6 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -46,6 +45,7 @@ import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.dashboards.DashboardEventBus;
+import org.kuwaiba.apis.web.gui.dashboards.DashboardEventListener;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.apis.web.gui.tools.Wizard;
 import org.kuwaiba.apis.web.gui.views.AbstractView;
@@ -121,15 +121,15 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                 }
             });
 
-//            mapComponent.addMarkerClickListener((clickedMarker) -> {
-//                eventBus.notifySubscribers(new DashboardEventListener.DashboardEvent(this, 
-//                        DashboardEventListener.DashboardEvent.TYPE_SELECTION, getBusinesObjectFromMarker(clickedMarker)));
-//            });
-//
-//            mapMain.addEdgeClickListener((clickedEdge) -> {
-//                eventBus.notifySubscribers(new DashboardEventListener.DashboardEvent(this, 
-//                        DashboardEventListener.DashboardEvent.TYPE_SELECTION, getBusinesObjectFromPolyline(clickedEdge)));
-//            });
+            theOspView.addNodeClickListener((source, type) -> {
+                eventBus.notifySubscribers(new DashboardEventListener.DashboardEvent(this, 
+                        DashboardEventListener.DashboardEvent.TYPE_SELECTION, new RemoteObjectLight((BusinessObjectLight)source)));
+            });
+                    
+            theOspView.addEdgeClickListener((source, type) -> {
+                eventBus.notifySubscribers(new DashboardEventListener.DashboardEvent(this, 
+                        DashboardEventListener.DashboardEvent.TYPE_SELECTION, new RemoteObjectLight((BusinessObjectLight)source)));
+            });
 
             MenuBar mnuMain = new MenuBar();
 
@@ -349,7 +349,8 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
             this.contentComponent = lytContent;
             addComponent(contentComponent);
         } catch (Exception ex) {
-            this.contentComponent = new Label(String.format("An unexpected error occurred while creating the content of this view: %s", ex.getLocalizedMessage()));
+            this.contentComponent = new VerticalLayout();
+            Notifications.showError(String.format("An unexpected error occurred while creating the content of this view: %s", ex.getLocalizedMessage()));
         }
     }
 

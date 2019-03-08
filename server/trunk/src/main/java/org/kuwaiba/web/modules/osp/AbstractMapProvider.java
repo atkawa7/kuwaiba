@@ -20,6 +20,7 @@ import com.vaadin.ui.AbstractComponent;
 import java.util.List;
 import java.util.Properties;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
+import org.kuwaiba.apis.web.gui.views.ViewEventListener;
 
 /**
  * All map provider components must extend from this class. This way, using Google Maps, Bing Maps or OpenStreet Map will be transparent for the OSP module
@@ -94,7 +95,30 @@ public abstract class AbstractMapProvider {
      * @return The component,
      */
     public abstract AbstractComponent getComponent();
-    
+    /**
+     * Adds a listener to the node click event.
+     * @param ev The listener object
+     */
+    public abstract void addMarkerClickListener(ViewEventListener ev);
+    /**
+     * Adds a listener to the node right click event.
+     * @param ev The listener object
+     */
+    public abstract void addMarkerRightClickListener(ViewEventListener ev);
+    /**
+     * Adds a listener to the edge click event.
+     * @param ev The listener object
+     */
+    public abstract void addPolylineClickListener(ViewEventListener ev);
+    /**
+     * Adds a listener to the edge right click event.
+     * @param ev The listener object
+     */
+    public abstract void addPolylineRightClickListener(ViewEventListener ev);
+    /**
+     * Clears the current lists of node and edge click listeners
+     */
+    public abstract void removeListeners();
     /**
      * A wrapper of a marker object in a map.
      */

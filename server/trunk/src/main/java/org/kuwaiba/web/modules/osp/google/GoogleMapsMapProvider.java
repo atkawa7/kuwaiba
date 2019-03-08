@@ -28,6 +28,8 @@ import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 import com.vaadin.ui.AbstractComponent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
+import org.kuwaiba.apis.web.gui.views.ViewEventListener;
 import org.kuwaiba.web.modules.osp.OSPConstants;
 
 /**
@@ -55,12 +57,22 @@ public class GoogleMapsMapProvider extends AbstractMapProvider {
      * A map with pairs connection - target node, being the target node, the business object behind the marker.
      */
     private HashMap<GoogleMapPolyline, BusinessObjectLight> targetNodes;
+    /**
+     * The list of node click listeners.
+     */
+    private List<ViewEventListener> nodeClickListeners;
+    /**
+     * The list of edge click listeners.
+     */
+    private List<ViewEventListener> edgeClickListeners;
     
     public GoogleMapsMapProvider() {
         this.nodes = new HashMap<>();
         this.edges = new HashMap<>();
         this.sourceNodes = new HashMap<>();
         this.targetNodes = new HashMap<>();
+        this.nodeClickListeners = new ArrayList<>();
+        this.edgeClickListeners = new ArrayList<>();
     }
     
     @Override
@@ -118,7 +130,7 @@ public class GoogleMapsMapProvider extends AbstractMapProvider {
                     });
                 
                 GoogleMapPolyline aPolyline = new GoogleMapPolyline(businessObject.toString(), gMapsCoordinates);
-                aPolyline.setStrokeWeight(2);
+                aPolyline.setStrokeWeight(3);
                 aPolyline.setStrokeColor(properties.getProperty("color") == null ? "#000000" : properties.getProperty("color")); //NOI18N
                 this.map.addEdge(businessObject, aPolyline, sourceMarker, targetMarker);
                 this.sourceNodes.put(aPolyline, sourceObject);
@@ -183,6 +195,46 @@ public class GoogleMapsMapProvider extends AbstractMapProvider {
     @Override
     public GeoCoordinate getCenter() {
         return new GeoCoordinate(this.map.getCenter().getLat(), this.map.getCenter().getLon());
+    }
+
+    @Override
+    public void addMarkerClickListener(ViewEventListener ev) {
+        this.map.addMarkerClickListener((clickedMarker) -> {
+            for (BusinessObjectLight businessObject : nodes.keySet()) {
+                if (nodes.get(businessObject).equals(clickedMarker)) {
+                    ev.eventProcessed(businessObject, ViewEventListener.EventType.TYPE_CLICK);
+                    break;
+                }
+            }
+        });
+    }
+
+    @Override
+    public void addMarkerRightClickListener(ViewEventListener ev) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    @Override
+    public void addPolylineClickListener(ViewEventListener ev) {
+        this.map.addEdgeClickListener((clickedPolyline) -> {
+            for (BusinessObjectLight businessObject : edges.keySet()) {
+                if (edges.get(businessObject).equals(clickedPolyline)) {
+                    ev.eventProcessed(businessObject, ViewEventListener.EventType.TYPE_CLICK);
+                    break;
+                }
+            }
+        });
+    }
+
+    @Override
+    public void addPolylineRightClickListener(ViewEventListener ev) {
+        Notifications.showInfo("This event is not supported by this provider");
+    }
+
+    @Override
+    public void removeListeners() {
+        this.nodeClickListeners.clear();
+        this.edgeClickListeners.clear();
     }
 
 }
