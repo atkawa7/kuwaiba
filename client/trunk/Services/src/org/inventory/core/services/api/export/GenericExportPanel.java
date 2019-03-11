@@ -186,8 +186,7 @@ public class GenericExportPanel extends javax.swing.JPanel implements ActionList
                     JOptionPane.showMessageDialog(this, I18N.gm("save_file_successful"), I18N.gm("save_file_successful"), JOptionPane.INFORMATION_MESSAGE);
                 }
             } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, I18N.gm("save_file_error"), I18N.gm("save_file_error"), JOptionPane.ERROR_MESSAGE);
-                return;
+                JOptionPane.showMessageDialog(this, I18N.gm("save_file_error"), I18N.gm("save_file_error"), JOptionPane.ERROR_MESSAGE);        
             }
         }
     }    
