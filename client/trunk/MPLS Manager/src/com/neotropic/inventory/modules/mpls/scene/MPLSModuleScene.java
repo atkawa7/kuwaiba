@@ -231,7 +231,7 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
                         }
                         else if(objectId == -1){// we create an empty side
                             Random rand = new Random();
-                            emptyObj = new LocalObjectLight((rand.nextInt(90000) + 1) * (objectId), null, null);
+                            emptyObj = new LocalObjectLight((rand.nextInt(90000) + 1), null, null);
                             emptySides.add(emptyObj);
                             Widget widget = addNode(emptyObj);
                             widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
@@ -397,7 +397,7 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
     @Override
     protected Widget attachNodeWidget(LocalObjectLight node) { 
         Widget newNode;
-        if(node.getId() > -1){
+        if(node.getName() != null && node.getClassName() != null){
             LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(node.getClassName(), false);
             if (classMetadata == null) //Should not happen, but this check should always be done
                 newNode = new ObjectNodeWidget(this, node);
@@ -407,7 +407,8 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
             newNode.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgeLayer, connectProvider));
             newNode.getActions().addAction(ActionFactory.createPopupMenuAction(moduleActions.createMenuForNode()));
         }else{
-            newNode = new EmptyNodeWidget(this , node);
+            node.setName("unconnectedSide");
+            newNode = new EmptyNodeWidget(this , node,  null);
             newNode.getActions().addAction(ActionFactory.createAcceptAction(new MPLSSceneAcceptProvider(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT)));
             
             newNode.getActions().addAction(ActionFactory.createHoverAction(new TwoStateHoverProvider() {
