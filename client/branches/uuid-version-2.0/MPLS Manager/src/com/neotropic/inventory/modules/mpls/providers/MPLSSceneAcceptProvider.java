@@ -100,11 +100,11 @@ public class MPLSSceneAcceptProvider implements AcceptProvider {
                                 LocalObjectLight mplsLink = entry.getKey();
                                 LocalObjectLight[] endpoints = entry.getValue();
                                 LocalObjectLight parentA = null, parentB = null;
-                                if(endpoints[0] != null && endpoints[0].getId() > 0 &&
+                                if(endpoints[0] != null && endpoints[0].getId().contains("-*") &&
                                         CommunicationsStub.getInstance().isSubclassOf(endpoints[0].getClassName(), Constants.CLASS_GENERICPORT)){
                                     parentA = CommunicationsStub.getInstance().getFirstParentOfClass(endpoints[0].getClassName(), endpoints[0].getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
                                 }
-                                if(endpoints[1] != null && endpoints[1].getId() > 0 &&
+                                if(endpoints[1] != null && endpoints[1].getId().contains("-*") &&
                                         CommunicationsStub.getInstance().isSubclassOf(endpoints[1].getClassName(), Constants.CLASS_GENERICPORT)){
                                     parentB = CommunicationsStub.getInstance().getFirstParentOfClass(endpoints[1].getClassName(), endpoints[1].getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
                                 }

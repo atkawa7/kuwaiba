@@ -87,8 +87,8 @@ public class ReleaseEndPointFromIPAddresAction extends GenericObjectNodeAction i
                    I18N.gm("warning"),JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
                 if (CommunicationsStub.getInstance().releasePortFromIPAddress(
                     (String) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty("portClassName"), //NOI18N
-                    (long) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty("portId"), //NOI18N
-                    (long) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty("ipAddressId")) //NOI18N
+                    (String) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty("portId"), //NOI18N
+                    (String) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty("ipAddressId")) //NOI18N
                    ) {
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, 
                         I18N.gm("element_release_successfully"));

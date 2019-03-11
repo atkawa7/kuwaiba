@@ -428,12 +428,12 @@ public class DeviceLayoutRenderer {
                         Shape shape = null;
                         
                         if (CustomShape.SHAPE_TYPE.equals(shapeType)) {
-                            long id = Long.valueOf(reader.getAttributeValue(null, Constants.PROPERTY_ID));
+                            String id = reader.getAttributeValue(null, Constants.PROPERTY_ID);
                             String className= reader.getAttributeValue(null, Constants.PROPERTY_CLASSNAME);
                             
                             if (structureRepository.containsKey(new LocalObjectListItem(id, className, null))) {
                                 for (LocalObjectListItem listItem : structureRepository.keySet()) {
-                                    if (listItem.getId() == id)
+                                    if (listItem.getId().equals(id))
                                         shape = ShapeFactory.getInstance().getCustomShape(listItem);                                        
                                 }
                             }

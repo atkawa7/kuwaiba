@@ -151,7 +151,7 @@ public class FavoritesFolderNode extends AbstractNode implements PropertyChangeL
                             List<String> objClass = new ArrayList<>();
                             objClass.add(favoritesItem.getObject().getClassName());
                             
-                            List<Long> objId = new ArrayList<>();
+                            List<String> objId = new ArrayList<>();
                             objId.add(favoritesItem.getObject().getId());
                                 
                             if (CommunicationsStub.getInstance().addObjectsToFavoritesFolder(objClass, objId, localFavoritesFolder.getId())) {
@@ -174,7 +174,7 @@ public class FavoritesFolderNode extends AbstractNode implements PropertyChangeL
                             List<String> objClass = new ArrayList<>();
                             objClass.add(favoritesItem.getObject().getClassName());
                                 
-                            List<Long> objId = new ArrayList<>();
+                            List<String> objId = new ArrayList<>();
                             objId.add(favoritesItem.getObject().getId());
                             if (CommunicationsStub.getInstance().removeObjectsFromFavoritesFolder(
                                 objClass, 

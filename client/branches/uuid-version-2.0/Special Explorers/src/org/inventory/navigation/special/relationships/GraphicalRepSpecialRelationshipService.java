@@ -55,7 +55,7 @@ public class GraphicalRepSpecialRelationshipService {
             LocalObjectLight parent = CommunicationsStub.getInstance().getParent(lol.getClassName(), lol.getId());
             
             //Ignore the dummy root and the pools
-            if (parent != null && parent.getId() != -1 && !parent.getClassName().startsWith("Pool of")) 
+            if (parent != null && parent.getId() != null && !parent.getId().equals("-1") && !parent.getClassName().startsWith("Pool of")) 
                 specialRelationships.put(Constants.PROPERTY_PARENT, new LocalObjectLight[] { parent });
             //else
             //    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

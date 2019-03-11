@@ -81,7 +81,7 @@ public class RelateToContractAction extends GenericObjectNodeAction implements C
                 JOptionPane.showMessageDialog(null, I18N.gm("select_contract_from_list"));
             else {
                 String [] objectsClassName = new String[selectedObjects.size()];
-                Long [] objectsId = new Long[selectedObjects.size()];
+                String [] objectsId = new String[selectedObjects.size()];
                 
                 for (int i = 0; i < selectedObjects.size(); i += 1) {
                     objectsClassName[i] = selectedObjects.get(i).getClassName();

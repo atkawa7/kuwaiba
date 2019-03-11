@@ -367,7 +367,7 @@ public class DeviceLayoutImporter {
                         String className = reader.getAttributeValue(null, Constants.PROPERTY_CLASSNAME);
                         String name = reader.getAttributeValue(null, Constants.PROPERTY_NAME);
                         
-                        objects.add(new LocalObjectLight(Long.valueOf(id), name, className));
+                        objects.add(new LocalObjectLight(id, name, className));
                     }
                     if (reader.getName().equals(tagIcon)) {
                         String strIcon = reader.getElementText();
@@ -378,7 +378,7 @@ public class DeviceLayoutImporter {
                         String className = reader.getAttributeValue(null, Constants.PROPERTY_CLASSNAME);
                         String name = reader.getAttributeValue(null, Constants.PROPERTY_NAME);
                         
-                        objects.add(new LocalObjectLight(Long.valueOf(id), name, className));
+                        objects.add(new LocalObjectLight(id, name, className));
                     }
                 }
                 reader.close();

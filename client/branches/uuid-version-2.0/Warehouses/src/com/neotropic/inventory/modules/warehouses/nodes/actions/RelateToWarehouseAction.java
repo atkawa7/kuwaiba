@@ -85,7 +85,7 @@ public class RelateToWarehouseAction extends GenericObjectNodeAction implements 
                 JOptionPane.showMessageDialog(null, "Select a warehouse from the list");
             else{
                 List<String> classNames = new ArrayList<>();
-                List<Long> objectIds = new ArrayList<>();
+                List<String> objectIds = new ArrayList<>();
                 for(LocalObjectLight selectedObject : selectedObjects){
                     classNames.add(selectedObject.getClassName());
                     objectIds.add(selectedObject.getId());

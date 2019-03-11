@@ -271,7 +271,7 @@ public class DeviceLayoutScene extends AbstractScene<Shape, String> implements S
                         xmlew.add(xmlef.createEndElement(qnameChild, null));
                     }                    
                 } else if (CustomShape.SHAPE_TYPE.equals(shape.getShapeType())) {
-                    xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), Long.toString(((CustomShape) shape).getListItem().getId())));
+                    xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), ((CustomShape) shape).getListItem().getId()));
                     xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASSNAME), ((CustomShape) shape).getListItem().getClassName()));
                     
                 } else {                    
@@ -427,7 +427,7 @@ public class DeviceLayoutScene extends AbstractScene<Shape, String> implements S
                             String id = reader.getAttributeValue(null, Constants.PROPERTY_ID);
                             String className= reader.getAttributeValue(null, Constants.PROPERTY_CLASSNAME);
                             
-                            LocalObjectLight lol = CommunicationsStub.getInstance().getObjectInfoLight(className, Long.valueOf(id));
+                            LocalObjectLight lol = CommunicationsStub.getInstance().getObjectInfoLight(className, id);
                             if (lol == null)
                                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

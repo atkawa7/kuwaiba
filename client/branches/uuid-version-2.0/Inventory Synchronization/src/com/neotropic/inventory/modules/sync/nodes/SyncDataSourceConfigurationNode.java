@@ -155,7 +155,7 @@ public class SyncDataSourceConfigurationNode extends AbstractNode implements Pro
         
         String deviceId = parameters.containsKey("deviceId") ? parameters.get("deviceId") : null;
         String deviceClass = parameters.containsKey("deviceClass") ? parameters.get("deviceClass") : null;
-        LocalObjectLight deviceObj = CommunicationsStub.getInstance().getObjectInfoLight(deviceClass, Long.valueOf(deviceId));
+        LocalObjectLight deviceObj = CommunicationsStub.getInstance().getObjectInfoLight(deviceClass, deviceId);
         
         PropertySupport.ReadOnly propertyDeviceId = new DevicePropertyReadEditor("deviceId", String.class, "deviceId", "deviceId", deviceId);
         PropertySupport.ReadOnly propertyDevice = new DevicePropertyReadEditor("device", String.class, "device", "device", deviceObj.toString());

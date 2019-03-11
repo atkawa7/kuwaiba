@@ -61,8 +61,8 @@ public class ConnectMirrorPortAction extends GenericObjectNodeAction {
             if (selectedObject != null){
                 List<String> aObjectsClasses = new ArrayList<>();
                 List<String> bObjectsClasses = new ArrayList<>();
-                List<Long> aObjectsIds = new ArrayList<>();
-                List<Long> bObjectsIds = new ArrayList<>();
+                List<String> aObjectsIds = new ArrayList<>();
+                List<String> bObjectsIds = new ArrayList<>();
                 
                 aObjectsClasses.add(selectedObjects.get(0).getClassName());
                 aObjectsIds.add(selectedObjects.get(0).getId());

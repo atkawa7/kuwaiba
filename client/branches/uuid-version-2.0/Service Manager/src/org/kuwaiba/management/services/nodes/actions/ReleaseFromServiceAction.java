@@ -91,7 +91,7 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction implements
                     ObjectNode selectedNode = selectedNodes.next();
                     if (CommunicationsStub.getInstance().releaseObjectFromService(
                         (String) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty(Constants.PROPERTY_CLASSNAME), 
-                        (long) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty(Constants.PROPERTY_ID), 
+                        (String) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty(Constants.PROPERTY_ID), 
                         selectedNode.getObject().getId())) {
                         
                         if (selectedNode.getParentNode() instanceof ServiceNode)

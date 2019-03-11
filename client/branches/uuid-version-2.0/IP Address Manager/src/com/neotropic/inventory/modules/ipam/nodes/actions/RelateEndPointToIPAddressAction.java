@@ -49,7 +49,7 @@ public class RelateEndPointToIPAddressAction extends GenericObjectNodeAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        List<LocalPool> subnets = CommunicationsStub.getInstance().getSubnetPools(-1, null);
+        List<LocalPool> subnets = CommunicationsStub.getInstance().getSubnetPools("-1", null);
         Lookup.Result<LocalObjectLight> selectedNodes = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
         
         if(subnets == null)

@@ -92,8 +92,8 @@ public class ReleaseSubnetFromVlanAction  extends GenericInventoryAction impleme
             SubMenuItem selectedItem = ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem();
                         
             if (CommunicationsStub.getInstance().releaseSubnetFromVLAN(
-                    (long) selectedItem.getProperty("subnetId"), //NOI18N
-                    (long) selectedItem.getProperty("vlanId")) //NOI18N
+                    (String) selectedItem.getProperty("subnetId"), //NOI18N
+                    (String) selectedItem.getProperty("vlanId")) //NOI18N
                 )
                 NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
                     java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUCCESS"));

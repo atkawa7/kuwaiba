@@ -91,9 +91,9 @@ public class ReleaseFromProject extends GenericObjectNodeAction implements Compo
         if (e != null && e.getSource() instanceof SubMenuDialog) {
             SubMenuDialog eventSource = (SubMenuDialog) e.getSource();
             String objectClass = selectedObjects.get(0).getClassName();
-            long objectId = selectedObjects.get(0).getId();
+            String objectId = selectedObjects.get(0).getId();
             String projectClass = (String) eventSource.getSelectedSubMenuItem().getProperty(Constants.PROPERTY_CLASSNAME);
-            long projectId = (long) eventSource.getSelectedSubMenuItem().getProperty(Constants.PROPERTY_ID);
+            String projectId = (String) eventSource.getSelectedSubMenuItem().getProperty(Constants.PROPERTY_ID);
 
             if (CommunicationsStub.getInstance().releaseObjectFromProject(objectClass, objectId, projectClass, projectId)) {
                 NotificationUtil.getInstance().showSimplePopup(

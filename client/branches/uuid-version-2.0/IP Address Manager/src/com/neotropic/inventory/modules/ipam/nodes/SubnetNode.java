@@ -147,7 +147,7 @@ public class SubnetNode extends ObjectNode {
                     Node parentNode = null;
                     if (action == DnDConstants.ACTION_MOVE) {
                         String className = getObject().getClassName();
-                        long oid = getObject().getId();
+                        String oid = getObject().getId();
                         boolean networkIpBelongsTo = false;
                         boolean broadcastIpBelongsTo = false;
                             

@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -146,7 +147,7 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                 
                 xmlew.add(xmlef.createAttribute(new QName("class"), nodeObject.getClassName()));
                 
-                xmlew.add(xmlef.createCharacters(Long.toString(nodeObject.getId())));
+                xmlew.add(xmlef.createCharacters(nodeObject.getId()));
                 
                 xmlew.add(xmlef.createEndElement(qnameNode, null));
             }
@@ -159,11 +160,11 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                 
                 QName qnameEdge = new QName("edge");
                 xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
-                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(edgeObject.getId())));
+                xmlew.add(xmlef.createAttribute(new QName("id"), edgeObject.getId()));
                 xmlew.add(xmlef.createAttribute(new QName("class"), edgeObject.getClassName()));
                 
-                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(edgeObject).getId())));
-                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(edgeObject).getId())));
+                xmlew.add(xmlef.createAttribute(new QName("aside"), getEdgeSource(edgeObject).getId()));
+                xmlew.add(xmlef.createAttribute(new QName("bside"), getEdgeTarget(edgeObject).getId()));
                 
                 for (Point point : ((ObjectConnectionWidget)edgeWidget).getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint");
@@ -261,7 +262,7 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                                 addNode(device);
                             notIx ++;
                             validate();
-                            LocalObjectLight tempE = new LocalObjectLight(r.nextLong(), port.getName() + " IX ", "BGPLink");
+                            LocalObjectLight tempE = new LocalObjectLight(UUID.randomUUID().toString(), port.getName() + " IX ", "BGPLink");
                             addEdge(tempE);
                             validate();
                             setEdgeSource(tempE, source);
@@ -272,11 +273,11 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                         ix++;
                     }
                     if(destinations.size() - notIx != 0){
-                        LocalObjectLight temp = new LocalObjectLight(50373, "IX", "Cloud");
+                        LocalObjectLight temp = new LocalObjectLight("50373", "IX", "Cloud");
                         if(findWidget(temp) == null)
                                addNode(temp);
                         validate();
-                        LocalObjectLight tempE = new LocalObjectLight(r.nextLong(), port.getName() + " IX ", "BGPLink");
+                        LocalObjectLight tempE = new LocalObjectLight(UUID.randomUUID().toString(), port.getName() + " IX ", "BGPLink");
                         addEdge(tempE);
                         validate();
                         setEdgeSource(tempE, source);

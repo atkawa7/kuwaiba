@@ -50,9 +50,9 @@ public class RackViewService {
     //to make a diference between the PowerBoards and the Communitacions Boards
     private final RackViewScene scene;
     private static ProgressHandle progressHandle;
-    private final long rackId;
+    private final String rackId;
         
-    public RackViewService(RackViewScene scene, long rackId) {
+    public RackViewService(RackViewScene scene, String rackId) {
         this.scene = scene;
         this.rackId = rackId;
     }

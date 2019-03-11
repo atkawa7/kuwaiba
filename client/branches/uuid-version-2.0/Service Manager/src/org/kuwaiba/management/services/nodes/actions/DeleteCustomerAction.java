@@ -52,7 +52,7 @@ class DeleteCustomerAction extends GenericInventoryAction {
                 return;
             
             ArrayList<String> classNames = new ArrayList<>();
-            ArrayList<Long> oids = new ArrayList<>();
+            ArrayList<String> oids = new ArrayList<>();
             HashSet<Node> parents = new HashSet<>();
             
             while (selectedNodes.hasNext()) {

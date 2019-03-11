@@ -87,7 +87,7 @@ public class ContractNode extends ObjectNode {
                                                         
                             if (CommunicationsStub.getInstance().associateObjectsToContract(
                                 new String [] {objNode.getObject().getClassName()}, 
-                                new Long [] {objNode.getObject().getId()}, 
+                                new String [] {objNode.getObject().getId()}, 
                                 getObject().getClassName(), getObject().getId())) {
                                 
                                 ((ContractChildren) getChildren()).addNotify();
@@ -106,7 +106,7 @@ public class ContractNode extends ObjectNode {
                             
                             if (CommunicationsStub.getInstance().associateObjectsToContract(
                                 new String [] {objNode.getObject().getClassName()}, 
-                                new Long [] {objNode.getObject().getId()},
+                                new String [] {objNode.getObject().getId()},
                                 getObject().getClassName(), getObject().getId())) {
                                 
                                 ((ContractChildren) getChildren()).addNotify();

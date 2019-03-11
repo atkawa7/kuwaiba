@@ -97,7 +97,7 @@ public class ReleaseFromContractAction extends GenericObjectNodeAction implement
                 while (selectedNodes.hasNext()) {
                     ObjectNode selectedNode = selectedNodes.next();
                     if (CommunicationsStub.getInstance().releaseObjectFromContract(selectedNode.getObject().getClassName(), 
-                        selectedNode.getObject().getId(), (Long) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty(Constants.PROPERTY_ID))) {
+                        selectedNode.getObject().getId(), (String) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty(Constants.PROPERTY_ID))) {
                         if (selectedNode.getParentNode() instanceof ContractNode)
                             ((ContractNode.ContractChildren)selectedNode.getParentNode().getChildren()).addNotify();
                     } else {

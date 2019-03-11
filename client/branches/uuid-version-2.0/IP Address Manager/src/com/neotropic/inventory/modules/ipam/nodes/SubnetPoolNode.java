@@ -145,7 +145,7 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
                     if (action == DnDConstants.ACTION_MOVE) {
                         String className = getSubnetPool().getClassName();
                         int type = getSubnetPool().getType();
-                        long oid = getSubnetPool().getId();
+                        String oid = getSubnetPool().getId();
                         
                         if(className.equals(obj.getClassName())){
                             if(com.moveObjectsToPool(className, oid, new LocalObjectLight[]{obj})){

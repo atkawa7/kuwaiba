@@ -93,8 +93,8 @@ public class ReleaseSubnetFromVFRAction extends GenericInventoryAction implement
                 SubMenuItem selectedItem = ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem();
                 
                 if (CommunicationsStub.getInstance().releaseSubnetFromVFR(
-                        (long) selectedItem.getProperty("subnetId"),  //NOI18N
-                        (long) selectedItem.getProperty("vfrId"))) //NOI18N
+                        (String) selectedItem.getProperty("subnetId"),  //NOI18N
+                        (String) selectedItem.getProperty("vfrId"))) //NOI18N
                     NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
                             java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUCCESS"));
                 else

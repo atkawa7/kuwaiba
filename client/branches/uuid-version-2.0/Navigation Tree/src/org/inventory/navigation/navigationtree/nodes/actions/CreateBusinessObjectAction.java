@@ -126,7 +126,7 @@ public final class CreateBusinessObjectAction extends GenericObjectNodeAction im
         LocalObjectLight myLol = com.createObject(
                         objectClass,
                         node instanceof RootObjectNode ? null : ((ObjectNode)node).getObject().getClassName(),
-                        node instanceof RootObjectNode? -1 : ((ObjectNode)node).getObject().getId(), attributes, -1);
+                        node instanceof RootObjectNode? "-1" : ((ObjectNode)node).getObject().getId(), attributes, -1);
 
         if (myLol == null)
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());

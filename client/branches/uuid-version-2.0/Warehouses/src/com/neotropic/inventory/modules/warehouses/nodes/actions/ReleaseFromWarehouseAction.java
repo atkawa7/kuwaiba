@@ -91,7 +91,7 @@ public class ReleaseFromWarehouseAction extends GenericObjectNodeAction implemen
                     ObjectNode selectedNode = selectedNodes.next();
                     if (CommunicationsStub.getInstance().releasePhysicalNodeFromWarehouse(
                         (String) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty(Constants.PROPERTY_CLASSNAME), 
-                        (long) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty(Constants.PROPERTY_ID), 
+                        (String) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty(Constants.PROPERTY_ID), 
                         selectedNode.getObject().getId())) {
                         
 //                        if (selectedNode.getParentNode() instanceof ServiceNode)

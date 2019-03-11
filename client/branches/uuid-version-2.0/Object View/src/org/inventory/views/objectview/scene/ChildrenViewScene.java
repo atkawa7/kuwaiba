@@ -208,7 +208,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                 xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(nodeWidget.getPreferredLocation().y))); //NOI18N
                 LocalObjectLight lolNode = (LocalObjectLight) findObject(nodeWidget);
                 xmlew.add(xmlef.createAttribute(new QName("class"), lolNode.getClassName())); //NOI18N
-                xmlew.add(xmlef.createCharacters(Long.toString(lolNode.getId())));
+                xmlew.add(xmlef.createCharacters(lolNode.getId()));
                 xmlew.add(xmlef.createEndElement(qnameNode, null));
             }
             xmlew.add(xmlef.createEndElement(qnameNodes, null));
@@ -226,11 +226,11 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                 xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
                 
                 LocalObjectLight lolEdge = (LocalObjectLight) findObject(acwEdge);
-                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(lolEdge.getId()))); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("id"), lolEdge.getId())); //NOI18N
                 xmlew.add(xmlef.createAttribute(new QName("class"), lolEdge.getClassName())); //NOI18N
                 
-                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(((LocalObjectLight) findObject(acwEdge.getSourceAnchor().getRelatedWidget())).getId()))); //NOI18N
-                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(((LocalObjectLight) findObject(acwEdge.getTargetAnchor().getRelatedWidget())).getId()))); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("aside"), ((LocalObjectLight) findObject(acwEdge.getSourceAnchor().getRelatedWidget())).getId())); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("bside"), ((LocalObjectLight) findObject(acwEdge.getTargetAnchor().getRelatedWidget())).getId())); //NOI18N
                 
                 for (Point point : acwEdge.getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint"); //NOI18N
@@ -299,7 +299,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
 
                             int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue(); //NOI18N
                             int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue(); //NOI18N
-                            long objectId = Long.valueOf(reader.getElementText());
+                            String objectId = reader.getElementText();
 
                             LocalObjectLight lol = CommunicationsStub.getInstance().getObjectInfoLight(objectClass, objectId);
                             if (lol != null) {
@@ -320,10 +320,10 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                                 currentView.setDirty(true);
                         } else {
                             if (reader.getName().equals(qEdge)) {
-                                long objectId = Long.valueOf(reader.getAttributeValue(null, "id")); //NOI18N
+                                String objectId = reader.getAttributeValue(null, "id"); //NOI18N
 
-                                long aSide = Long.valueOf(reader.getAttributeValue(null, "aside")); //NOI18N
-                                long bSide = Long.valueOf(reader.getAttributeValue(null, "bside")); //NOI18N
+                                String aSide = reader.getAttributeValue(null, "aside"); //NOI18N
+                                String bSide = reader.getAttributeValue(null, "bside"); //NOI18N
 
                                 String className = reader.getAttributeValue(null,"class"); //NOI18N
 

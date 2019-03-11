@@ -97,7 +97,7 @@ public class ServiceNode extends ObjectNode {
                         
                         if (objNode.getParentNode() instanceof ServiceNode) {
                             List<String> classNames = new ArrayList<>();
-                            List<Long> objectIds = new ArrayList<>();
+                            List<String> objectIds = new ArrayList<>();
                             
                             classNames.add(objNode.getObject().getClassName());
                             objectIds.add(objNode.getObject().getId());
@@ -116,7 +116,7 @@ public class ServiceNode extends ObjectNode {
                     if (dropNode instanceof ObjectNode) {
                         ObjectNode objectNode = (ObjectNode) dropNode;
                         List<String> classNames = new ArrayList<>();
-                        List<Long> objectIds = new ArrayList<>();
+                        List<String> objectIds = new ArrayList<>();
                         
                         classNames.add(objectNode.getObject().getClassName());
                         objectIds.add(objectNode.getObject().getId());

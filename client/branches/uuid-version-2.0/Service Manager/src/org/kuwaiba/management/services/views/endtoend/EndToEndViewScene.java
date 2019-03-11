@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -141,7 +142,7 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                 xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(nodeWidget.getPreferredLocation().y)));
                 LocalObjectLight lolNode = (LocalObjectLight) findObject(nodeWidget);
                 xmlew.add(xmlef.createAttribute(new QName("class"), lolNode.getClassName()));
-                xmlew.add(xmlef.createCharacters(Long.toString(lolNode.getId())));
+                xmlew.add(xmlef.createCharacters(lolNode.getId()));
                 xmlew.add(xmlef.createEndElement(qnameNode, null));
             }
             xmlew.add(xmlef.createEndElement(qnameNodes, null));
@@ -158,11 +159,11 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                 QName qnameEdge = new QName("edge");
                 xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
                 
-                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(lolEdge.getId())));
+                xmlew.add(xmlef.createAttribute(new QName("id"), lolEdge.getId()));
                 xmlew.add(xmlef.createAttribute(new QName("class"), lolEdge.getClassName()));
                 
-                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(lolEdge).getId())));
-                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(lolEdge).getId())));
+                xmlew.add(xmlef.createAttribute(new QName("aside"), getEdgeSource(lolEdge).getId()));
+                xmlew.add(xmlef.createAttribute(new QName("bside"), getEdgeTarget(lolEdge).getId()));
                 
                 for (Point point : acwEdge.getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint");
@@ -266,7 +267,7 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
 
                         int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
                         int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
-                        long objectId = Long.valueOf(reader.getElementText());
+                        String objectId = reader.getElementText();
 
                         LocalObjectLight lol = CommunicationsStub.getInstance().getObjectInfoLight(objectClass, objectId);
                         if (lol != null) {
@@ -281,10 +282,10 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                         }
                     }else {
                         if (reader.getName().equals(qEdge)) {
-                            long objectId = Long.valueOf(reader.getAttributeValue(null, "id")); //NOI18N
+                            String objectId = reader.getAttributeValue(null, "id"); //NOI18N
 
-                            long aSide = Long.valueOf(reader.getAttributeValue(null, "aside")); //NOI18N
-                            long bSide = Long.valueOf(reader.getAttributeValue(null, "bside")); //NOI18N
+                            String aSide = reader.getAttributeValue(null, "aside"); //NOI18N
+                            String bSide = reader.getAttributeValue(null, "bside"); //NOI18N
 
                             String className = reader.getAttributeValue(null,"class"); //NOI18N
 
@@ -324,7 +325,7 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                         }
                         // FREE FRAMES
                         else if (reader.getName().equals(qPolygon)) { 
-                                long oid = randomGenerator.nextInt(1000);
+                                String oid = UUID.randomUUID().toString();
                                 LocalObjectLight lol = new LocalObjectLight(oid, oid + FREE_FRAME + reader.getAttributeValue(null, "title"), null);
                                 Widget myPolygon = addNode(lol);
                                 Point p = new Point();
@@ -766,7 +767,7 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
     }
     
     public void addFreeFrame() {
-        long oid = randomGenerator.nextInt(1000);
+        String oid = UUID.randomUUID().toString();
         LocalObjectLight lol = new LocalObjectLight(oid, oid + FREE_FRAME + "New Frame", null);
         Widget newWidget = addNode(lol);
         newWidget.setPreferredLocation(new Point(100, 100));

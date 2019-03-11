@@ -27,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -119,7 +120,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
     }    
     
     public void addFreeFrame() {
-        long oid = randomGenerator.nextInt(1000);
+        String oid = UUID.randomUUID().toString();
         LocalObjectLight lol = new LocalObjectLight(oid, oid + FREE_FRAME + "New Frame", null);
         Widget newWidget = addNode(lol);
         newWidget.setPreferredLocation(new Point(100, 100));
@@ -128,7 +129,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
     }
     
     public void addFreeCloud() {
-        long oid = randomGenerator.nextInt(1000);
+        String oid = UUID.randomUUID().toString();
         LocalObjectLight lol = new LocalObjectLight(oid, oid + CLOUD_ICON + "New Cloud", null);
         Widget newWidget = addNode(lol);
         newWidget.setPreferredLocation(new Point(100, 100));
@@ -167,7 +168,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                 xmlew.add(xmlef.createAttribute(new QName("x"), Double.toString(nodeWidget.getPreferredLocation().getX())));
                 xmlew.add(xmlef.createAttribute(new QName("y"), Double.toString(nodeWidget.getPreferredLocation().getY())));
                 xmlew.add(xmlef.createAttribute(new QName("class"), ((LocalObjectLight)findObject(nodeWidget)).getClassName()));
-                xmlew.add(xmlef.createCharacters(Long.toString(((LocalObjectLight)findObject(nodeWidget)).getId())));
+                xmlew.add(xmlef.createCharacters(((LocalObjectLight)findObject(nodeWidget)).getId()));
                 xmlew.add(xmlef.createEndElement(qnameNode, null));
             }
             xmlew.add(xmlef.createEndElement(qnameNodes, null));
@@ -178,7 +179,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                 QName qnameIcon = new QName("icon");
                 xmlew.add(xmlef.createStartElement(qnameIcon, null, null));
                 xmlew.add(xmlef.createAttribute(new QName("type"), "1"));
-                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(((LocalObjectLight)findObject(iconWidget)).getId())));
+                xmlew.add(xmlef.createAttribute(new QName("id"), ((LocalObjectLight)findObject(iconWidget)).getId()));
                 xmlew.add(xmlef.createAttribute(new QName("x"), Double.toString(iconWidget.getPreferredLocation().getX())));
                 xmlew.add(xmlef.createAttribute(new QName("y"), Double.toString(iconWidget.getPreferredLocation().getY())));
                 xmlew.add(xmlef.createCharacters(((LocalObjectLight)findObject(iconWidget)).getName()));
@@ -197,8 +198,8 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                 
                 String edgeObject = (String)findObject(edgeWidget);
                 
-                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(edgeObject).getId())));
-                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(edgeObject).getId())));
+                xmlew.add(xmlef.createAttribute(new QName("aside"), getEdgeSource(edgeObject).getId()));
+                xmlew.add(xmlef.createAttribute(new QName("bside"), getEdgeTarget(edgeObject).getId()));
                 
                 for (Point point : ((ConnectionWidget)edgeWidget).getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint");
@@ -295,7 +296,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
 
                         int x = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
                         int y = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
-                        Long objectId = Long.valueOf(reader.getElementText());
+                        String objectId = reader.getElementText();
 
                         LocalObjectLight lol = CommunicationsStub.getInstance().
                                 getObjectInfoLight(objectClass, objectId);
@@ -309,15 +310,15 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                                     int x = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
                                     int y = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
                                     
-                                    long oid = Long.valueOf(reader.getAttributeValue(null,"id"));
+                                    String oid = reader.getAttributeValue(null,"id");
                                     LocalObjectLight lol = new LocalObjectLight(oid, reader.getElementText(), null);
                                     this.addNode(lol).setPreferredLocation(new Point(x, y));
                                 }
                             }
                         else {
                             if (reader.getName().equals(qEdge)) {
-                                Long aSide = Long.valueOf(reader.getAttributeValue(null,"aside"));
-                                Long bSide = Long.valueOf(reader.getAttributeValue(null,"bside"));
+                                String aSide = reader.getAttributeValue(null,"aside");
+                                String bSide = reader.getAttributeValue(null,"bside");
 
                                 LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
                                 Widget aSideWidget = this.findWidget(aSideObject);
@@ -352,7 +353,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                             }// edges endign 
                             else{ // FREE FRAMES
                                 if (reader.getName().equals(qPolygon)) { 
-                                    long oid = randomGenerator.nextInt(1000);
+                                    String oid = UUID.randomUUID().toString();
                                     LocalObjectLight lol = new LocalObjectLight(oid, oid + FREE_FRAME + reader.getAttributeValue(null, "title"), null);
                                     Widget myPolygon = addNode(lol);
                                     Point p = new Point();

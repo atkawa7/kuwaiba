@@ -60,7 +60,7 @@ public class AddProjectAction extends GenericInventoryAction implements Presente
         
         if (selectedNode == null)
             return;
-        long id = selectedNode.getPool().getId();
+        String id = selectedNode.getPool().getId();
         String className = selectedNode.getPool().getClassName();
         
         LocalObjectLight newProject = CommunicationsStub.getInstance().addProject(id, className, ((JMenuItem)e.getSource()).getText());

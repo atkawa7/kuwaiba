@@ -52,7 +52,7 @@ public class DeviceTypeProperty extends PropertySupport.ReadWrite<LocalObjectLig
         this.value = val;
         propertyDeviceId.setValue(String.valueOf(val.getId()));
         
-        if (val.getId() != -1) {
+        if (val.getId() != null && !val.getId().equals("-1")) {
             HashMap<String, String> parameters = new HashMap();
 
             LocalSyncDataSourceConfiguration localSyncDataSrcConfig = syncConfigNode.getLookup().lookup(LocalSyncDataSourceConfiguration.class);

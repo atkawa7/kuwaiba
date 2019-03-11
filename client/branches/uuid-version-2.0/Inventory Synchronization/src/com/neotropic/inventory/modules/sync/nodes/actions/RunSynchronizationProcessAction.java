@@ -165,7 +165,7 @@ public class RunSynchronizationProcessAction extends GenericObjectNodeAction imp
                     for (LocalSyncDataSourceConfiguration dsConfig : localSyncGroup.getDataSourceConfig()) {
                         if (dsConfig != null) {
                             HashMap<String, String> parameters = dsConfig.getParameters();
-                            Long deviceId = parameters.containsKey("deviceId") ? Long.valueOf(parameters.get("deviceId")) : null;
+                            String deviceId = parameters.containsKey("deviceId") ? parameters.get("deviceId") : null;
                             String deviceClass = parameters.containsKey("deviceClass") ? parameters.get("deviceClass") : null;
                             if (deviceClass != null && deviceId != null) {
                                 LocalObjectLight deviceObj = CommunicationsStub.getInstance().getObjectInfoLight(deviceClass, deviceId);

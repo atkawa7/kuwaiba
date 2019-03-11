@@ -338,7 +338,7 @@ public class SyncActionsFrame extends JFrame {
             if(LocalClassMetadata.getMappingFromType(key, false) == Constants.MAPPING_MANYTOONE &&
                isNumeric(attributes.getString(key)))
             {
-                LocalClassMetadata objectMetadata = CommunicationsStub.getInstance().getObjectInfo(obj.getString("deviceClassName"), Long.valueOf(obj.getString("deviceId"))).getObjectMetadata();
+                LocalClassMetadata objectMetadata = CommunicationsStub.getInstance().getObjectInfo(obj.getString("deviceClassName"), obj.getString("deviceId")).getObjectMetadata();
                 String[] attributesNames = objectMetadata.getAttributesNames();
                 String listType = "";
                 for (int i=0; i<attributesNames.length; i++) {
@@ -348,12 +348,12 @@ public class SyncActionsFrame extends JFrame {
                     }
                 }
                 if(listType != null){
-                    LocalObjectListItem listTypeItem = CommunicationsStub.getInstance().getListTypeItem(listType, Long.valueOf(attributes.getString(key)));
+                    LocalObjectListItem listTypeItem = CommunicationsStub.getInstance().getListTypeItem(listType, attributes.getString(key));
                     if(listTypeItem != null)
                         newAttrs += key + ": " + listTypeItem.getName()+"; ";
                     if(oldAttributes != null && !oldAttributes.isEmpty()){
                         if(oldAttributes.get(key) != null){
-                            long listtypeId = Long.valueOf(oldAttributes.getString(key));
+                            String listtypeId = oldAttributes.getString(key);
                             listTypeItem = CommunicationsStub.getInstance().getListTypeItem(listType, listtypeId);
                             if(listTypeItem != null)
                                 oldAttrs += key + ": " + listTypeItem.getName()+"; ";

@@ -214,7 +214,7 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                 
                 xmlew.add(xmlef.createAttribute(new QName("class"), nodeObject.getClassName()));
                 
-                xmlew.add(xmlef.createCharacters(Long.toString(nodeObject.getId())));
+                xmlew.add(xmlef.createCharacters(nodeObject.getId()));
                 
                 xmlew.add(xmlef.createEndElement(qnameNode, null));
             }
@@ -227,11 +227,11 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                 
                 QName qnameEdge = new QName("edge");
                 xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
-                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(edgeObject.getId())));
+                xmlew.add(xmlef.createAttribute(new QName("id"), edgeObject.getId()));
                 xmlew.add(xmlef.createAttribute(new QName("class"), edgeObject.getClassName()));
                 
-                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(edgeObject).getId())));
-                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(edgeObject).getId())));
+                xmlew.add(xmlef.createAttribute(new QName("aside"), getEdgeSource(edgeObject).getId()));
+                xmlew.add(xmlef.createAttribute(new QName("bside"), getEdgeTarget(edgeObject).getId()));
                 
                 for (Point point : ((ObjectConnectionWidget)edgeWidget).getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint");
@@ -272,7 +272,7 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
 
                         int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
                         int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
-                        long objectId = Long.valueOf(reader.getElementText());
+                        String objectId = reader.getElementText();
 
                         LocalObjectLight lol = CommunicationsStub.getInstance().getObjectInfoLight(objectClass, objectId);
                         if (lol != null){
@@ -287,9 +287,9 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                         }
                     }else {
                         if (reader.getName().equals(qEdge)){
-                            long objectId = Long.valueOf(reader.getAttributeValue(null, "id"));
-                            long aSide = Long.valueOf(reader.getAttributeValue(null, "aside"));
-                            long bSide = Long.valueOf(reader.getAttributeValue(null, "bside"));
+                            String objectId = reader.getAttributeValue(null, "id");
+                            String aSide = reader.getAttributeValue(null, "aside");
+                            String bSide = reader.getAttributeValue(null, "bside");
 
                             String className = reader.getAttributeValue(null,"class");
                             LocalObjectLight container = CommunicationsStub.getInstance().getObjectInfoLight(className, objectId);

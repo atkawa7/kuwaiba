@@ -63,7 +63,7 @@ public class CreateSubnetAction extends GenericInventoryAction {
         Iterator<? extends AbstractNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(AbstractNode.class).allInstances().iterator();
         String className;
         String subnetParent;
-        long id;
+        String id;
         
         if (!selectedNodes.hasNext())
             return;
@@ -103,13 +103,13 @@ public class CreateSubnetAction extends GenericInventoryAction {
         private javax.swing.JCheckBox cbxCreateAllIps;
         
         private final String className;
-        private final long parentId;
+        private final String parentId;
         private final String subnetParent;
         private LocalObjectLight newSubnet;
         
         private AbstractNode selectedNode;
 
-        public CreateSubnetFrame(long parentId, String className, String subnetParent, AbstractNode selectedNode) {
+        public CreateSubnetFrame(String parentId, String className, String subnetParent, AbstractNode selectedNode) {
             this.className = className;
             this.parentId = parentId;
             this.subnetParent = subnetParent;

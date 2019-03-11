@@ -57,7 +57,7 @@ public class DeviceLayoutStructure {
             return;
         }
         try {
-            HashMap<LocalObjectLight, Long> devices = new HashMap();
+            HashMap<LocalObjectLight, String> devices = new HashMap();
             
             ByteArrayInputStream bais = new ByteArrayInputStream(structure);
             XMLInputFactory xmlif = XMLInputFactory.newInstance();
@@ -72,12 +72,12 @@ public class DeviceLayoutStructure {
                 int event = xmlsr.next();
                 if (event == XMLStreamConstants.START_ELEMENT) {
                     if (xmlsr.getName().equals(tagDevice)) {
-                        long id = Long.valueOf(xmlsr.getAttributeValue(null, Constants.PROPERTY_ID));
+                        String id = xmlsr.getAttributeValue(null, Constants.PROPERTY_ID);
                         
-                        if (id != device.getId()) {
+                        if (id.equals(device.getId())) {
                             String className = xmlsr.getAttributeValue(null, Constants.PROPERTY_CLASSNAME);
                             String name = xmlsr.getAttributeValue(null, Constants.PROPERTY_NAME);
-                            long parentId = Long.valueOf(xmlsr.getAttributeValue(null, "parentId")); //NOI18N
+                            String parentId = xmlsr.getAttributeValue(null, "parentId"); //NOI18N
                             devices.put(new LocalObjectLight(id, name, className), parentId);
                         }
                         if (xmlsr.hasNext()) {
@@ -85,7 +85,7 @@ public class DeviceLayoutStructure {
                             
                             if (event == XMLStreamConstants.START_ELEMENT) {
                                 if (xmlsr.getName().equals(tagModel)) {
-                                    id = Long.valueOf(xmlsr.getAttributeValue(null, Constants.PROPERTY_ID));
+                                    id = xmlsr.getAttributeValue(null, Constants.PROPERTY_ID);
                                     String className = xmlsr.getAttributeValue(null, Constants.PROPERTY_CLASSNAME);
                                     String name = xmlsr.getAttributeValue(null, Constants.PROPERTY_NAME);
                                     
@@ -96,7 +96,7 @@ public class DeviceLayoutStructure {
 
                                         if (event == XMLStreamConstants.START_ELEMENT) {
                                             if (xmlsr.getName().equals(tagView)) {
-                                                id = Long.valueOf(xmlsr.getAttributeValue(null, Constants.PROPERTY_ID));
+                                                id = xmlsr.getAttributeValue(null, Constants.PROPERTY_ID);
                                                 className = xmlsr.getAttributeValue(null, Constants.PROPERTY_CLASSNAME);
                                                 
                                                 if (xmlsr.hasNext()) {
@@ -105,7 +105,7 @@ public class DeviceLayoutStructure {
                                                         if (xmlsr.getName().equals(tagStructure)) {
                                                             byte [] modelStructure = DatatypeConverter.parseBase64Binary(xmlsr.getElementText());                                                            
                                                                                                                     
-                                                            LocalObjectView lov = new LocalObjectView(id, className, null, null, modelStructure, null);
+                                                            LocalObjectView lov = new LocalObjectView(Long.valueOf(id), className, null, null, modelStructure, null);
                                                             
                                                             layouts.put(modelObj, lov);
                                                         }

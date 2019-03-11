@@ -51,8 +51,8 @@ public class ConnectMultipleMirrorPortAction extends GenericObjectNodeAction {
         
         List<String> aObjectsClasses = new ArrayList<>();
         List<String> bObjectsClasses = new ArrayList<>();
-        List<Long> aObjectsIds = new ArrayList<>();
-        List<Long> bObjectsIds = new ArrayList<>();
+        List<String> aObjectsIds = new ArrayList<>();
+        List<String> bObjectsIds = new ArrayList<>();
         
         for (LocalObjectLight child : children) {
             if(child.getClassName().equals("OpticalPort") || child.getClassName().equals("ElectricalPort")) 

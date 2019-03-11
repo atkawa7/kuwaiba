@@ -36,7 +36,7 @@ public class IPAMModuleService {
     }
     
     public List<LocalPool> getRootChildren(){
-        List<LocalPool> rootChildren = com.getSubnetPools(-1, null);
+        List<LocalPool> rootChildren = com.getSubnetPools("-1", null);
         if(rootChildren != null)
             return rootChildren;
         else {

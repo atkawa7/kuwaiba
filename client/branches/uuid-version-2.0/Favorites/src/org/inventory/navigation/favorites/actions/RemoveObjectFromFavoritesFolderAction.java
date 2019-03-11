@@ -94,7 +94,7 @@ public class RemoveObjectFromFavoritesFolderAction extends GenericObjectNodeActi
                 Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
 
                 List<String> objClass = new ArrayList<>();
-                List<Long> objId = new ArrayList<>();
+                List<String> objId = new ArrayList<>();
 
                 boolean success = true;
                 while (selectedNodes.hasNext()) {

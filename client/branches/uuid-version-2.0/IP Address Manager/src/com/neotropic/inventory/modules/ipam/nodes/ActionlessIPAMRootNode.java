@@ -39,7 +39,7 @@ public class ActionlessIPAMRootNode extends AbstractNode {
 
         @Override
         public void addNotify(){
-        List<LocalPool> pools = CommunicationsStub.getInstance().getSubnetPools(-1, null);
+        List<LocalPool> pools = CommunicationsStub.getInstance().getSubnetPools("-1", null);
         Collections.sort(pools);
         setKeys(pools);
     }

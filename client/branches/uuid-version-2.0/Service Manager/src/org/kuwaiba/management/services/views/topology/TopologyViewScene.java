@@ -138,7 +138,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                 xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(nodeWidget.getPreferredLocation().y)));
                 LocalObjectLight lolNode = (LocalObjectLight) findObject(nodeWidget);
                 xmlew.add(xmlef.createAttribute(new QName("class"), lolNode.getClassName()));
-                xmlew.add(xmlef.createCharacters(Long.toString(lolNode.getId())));
+                xmlew.add(xmlef.createCharacters(lolNode.getId()));
                 xmlew.add(xmlef.createEndElement(qnameNode, null));
             }
             xmlew.add(xmlef.createEndElement(qnameNodes, null));
@@ -158,11 +158,11 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                 xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
                 
                 
-                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(lolEdge.getId())));
+                xmlew.add(xmlef.createAttribute(new QName("id"), lolEdge.getId()));
                 xmlew.add(xmlef.createAttribute(new QName("class"), lolEdge.getClassName()));
                 
-                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(lolEdge).getId())));
-                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(lolEdge).getId())));
+                xmlew.add(xmlef.createAttribute(new QName("aside"), getEdgeSource(lolEdge).getId()));
+                xmlew.add(xmlef.createAttribute(new QName("bside"), getEdgeTarget(lolEdge).getId()));
                 
                 //Note that the edges will all be saved, whether they're STMX, physical connnections or ContainerLinks, 
                 //The expanded STMX will be marked as such, but when the view is rendered, they will be invisible by default, 
@@ -192,10 +192,10 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                     for (LocalObjectLight extandedTransportLink : expandedTransportLinks.get(lolEdge)) {
                         xmlew.add(xmlef.createStartElement(qnameExpandedTL, null, null));
                         
-                        xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(extandedTransportLink.getId())));
+                        xmlew.add(xmlef.createAttribute(new QName("id"), extandedTransportLink.getId()));
                         xmlew.add(xmlef.createAttribute(new QName("class"), extandedTransportLink.getClassName()));
-                        xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(extandedTransportLink).getId())));
-                        xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(extandedTransportLink).getId())));
+                        xmlew.add(xmlef.createAttribute(new QName("aside"), getEdgeSource(extandedTransportLink).getId()));
+                        xmlew.add(xmlef.createAttribute(new QName("bside"), getEdgeTarget(extandedTransportLink).getId()));
                         
                         xmlew.add(xmlef.createEndElement(qnameExpandedTL, null));
                     }
@@ -246,7 +246,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
 
                         int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
                         int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
-                        long objectId = Long.valueOf(reader.getElementText());
+                        String objectId = reader.getElementText();
                         
                         Widget dummyNodeWidget = findWidget(new LocalObjectLight(objectId, "", objectClass));
                         
@@ -258,7 +258,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                             NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, String.format("Node with id %s could not be found. Save the view to keep the changes", objectId));
                     }else {
                         if (reader.getName().equals(qEdge)) {
-                            long objectId = Long.valueOf(reader.getAttributeValue(null, "id")); //NOI18N
+                            String objectId = reader.getAttributeValue(null, "id"); //NOI18N
                             String objectClass = reader.getAttributeValue(null, "class"); //NOI18N
                             String expanded = reader.getAttributeValue("", "expanded"); //NOI18N
 
@@ -295,7 +295,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
 
                                             if (reader.getName().equals(qExtendedTL)) {
                                                 if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
-                                                    long expandedLinkId = Long.valueOf(reader.getAttributeValue(null, "id")); //NOI18N
+                                                    String expandedLinkId = reader.getAttributeValue(null, "id"); //NOI18N
                                                     String expandedLinkClass = reader.getAttributeValue(null, "class"); //NOI18N
                                                     
                                                     ObjectConnectionWidget expandedConnectionWidget = 
@@ -331,7 +331,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
         if (serviceResources == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
-            Map<Long, LocalObjectLight> portsInDevice = new HashMap<>();
+            Map<String, LocalObjectLight> portsInDevice = new HashMap<>();
             //We will ignore all resources that are not GenericCommunicationsElement
             for (LocalObjectLight serviceResource : serviceResources) {
                 if (com.isSubclassOf(serviceResource.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT)) {

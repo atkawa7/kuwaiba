@@ -66,7 +66,7 @@ public class AddIPAddressAction extends GenericInventoryAction {
     public void actionPerformed(ActionEvent e) {
         Iterator<? extends SubnetNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(SubnetNode.class).allInstances().iterator();
         String className = "";
-        long id = 0;
+        String id = "0";
         if (!selectedNodes.hasNext())
             return;
         
@@ -128,9 +128,9 @@ public class AddIPAddressAction extends GenericInventoryAction {
         private String broadcastIp;
         private String nextIp;
         private String className;
-        private long parentId;
+        private String parentId;
 
-        public AddIPAddressFrame(long parentId, String networkIp, String broadcastIp, String className, String nextIp) {
+        public AddIPAddressFrame(String parentId, String networkIp, String broadcastIp, String className, String nextIp) {
             this.networkIp = networkIp;
             this.broadcastIp = broadcastIp;
             this.className = className;

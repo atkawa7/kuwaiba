@@ -93,7 +93,7 @@ public class EditLinkEndpointsAction extends GenericObjectNodeAction {
         }
         
         EditLinkEnpointsFrame frame = new EditLinkEnpointsFrame(selectedObject, aSideRoot != null ? 
-                aSideRoot : new LocalObjectLight(-1, Constants.DUMMYROOT, Constants.DUMMYROOT), bSideRoot != null ? bSideRoot : new LocalObjectLight(-1, Constants.DUMMYROOT, Constants.DUMMYROOT));
+                aSideRoot : new LocalObjectLight("-1", Constants.DUMMYROOT, Constants.DUMMYROOT), bSideRoot != null ? bSideRoot : new LocalObjectLight("-1", Constants.DUMMYROOT, Constants.DUMMYROOT));
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }

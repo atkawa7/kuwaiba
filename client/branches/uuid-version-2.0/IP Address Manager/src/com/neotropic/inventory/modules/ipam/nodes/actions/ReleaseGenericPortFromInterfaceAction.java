@@ -93,8 +93,8 @@ public class ReleaseGenericPortFromInterfaceAction extends GenericObjectNodeActi
                 
                 if (CommunicationsStub.getInstance().releasePortFromInterface(
                         (String) selectedInterface.getProperty("portClassName"), //NOI18N
-                        (long) selectedInterface.getProperty("portId"), //NOI18N
-                        (long) selectedInterface.getProperty("serviceInstanceId")) //NOI18N
+                        (String) selectedInterface.getProperty("portId"), //NOI18N
+                        (String) selectedInterface.getProperty("serviceInstanceId")) //NOI18N
                     )
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, 
                             java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUCCESS"));

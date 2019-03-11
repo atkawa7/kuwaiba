@@ -72,7 +72,7 @@ public final class CreateMultipleSpecialTemplateElementAction extends CreateTemp
             LocalObjectLight selectedObject = selectedNode.getLookup().lookup(LocalObjectLight.class);
             
             List<LocalObjectLight> specialTemplateElements = CommunicationsStub.getInstance().createBulkSpecialTemplateElement(
-                ((JMenuItem)e.getSource()).getName(), selectedObject.getClassName(), selectedObject.getId(), numberOfObjects, namePattern);
+                ((JMenuItem)e.getSource()).getName(), selectedObject.getClassName(), Long.valueOf(selectedObject.getId()), numberOfObjects, namePattern);
             
             if (specialTemplateElements == null) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 

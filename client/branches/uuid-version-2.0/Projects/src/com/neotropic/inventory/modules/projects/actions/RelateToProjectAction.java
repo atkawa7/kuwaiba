@@ -81,10 +81,10 @@ public class RelateToProjectAction extends GenericObjectNodeAction implements Co
                 JOptionPane.showMessageDialog(null, "Select a project from the list");
             else {
                 for (LocalObjectLight selectedObject : selectedObjects) {
-                    long objId = selectedObject.getId();
+                    String objId = selectedObject.getId();
                     String objClassName = selectedObject.getClassName();
                     
-                    long projectId = ((LocalObjectLight) selectedValue).getId();
+                    String projectId = ((LocalObjectLight) selectedValue).getId();
                     String projectClass = ((LocalObjectLight) selectedValue).getClassName();
                     
                     if (CommunicationsStub.getInstance().associateObjectToProject(projectClass, projectId, objClassName, objId)) {

@@ -15,8 +15,18 @@
  */
 package org.inventory.core.visual.scene;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import org.inventory.communications.core.LocalObjectLight;
 import org.netbeans.api.visual.laf.LookFeel;
 import org.netbeans.api.visual.layout.LayoutFactory;
@@ -53,12 +63,18 @@ public class EmptyNodeWidget extends Widget{
      * Widgets in high-contrast mode are opaque, with a dark background and light-colored letter
      */
     private boolean highContrast;
+    /**
+     * Extra info
+     */
+    private String[] extraInfo;
+    
     private final Image icon = ImageUtilities.loadImage("org/inventory/core/visual/res/empty.png");
     
-   public EmptyNodeWidget(Scene scene, LocalObjectLight emptyObj) {
+   public EmptyNodeWidget(Scene scene, LocalObjectLight emptyObj, String[] extraInfo) {
         super(scene);
         LookFeel lookFeel = scene.getLookFeel();
         
+        this.extraInfo = extraInfo;
         this.emptyObj = emptyObj;
         this.nodeWidget = new Widget(scene);
         this.nodeWidget.setPreferredSize(DEFAULT_DIMENSION);
@@ -66,7 +82,7 @@ public class EmptyNodeWidget extends Widget{
         this.nodeWidget = new ImageWidget(scene, icon);
         this.nodeWidget.setOpaque(true);
         
-        this.labelWidget = new LabelWidget(scene, "unconnected side");
+        this.labelWidget = new LabelWidget(scene, emptyObj.getName());
         this.labelWidget.setBorder(getScene().getLookFeel().getBorder(getState()));
         this.labelWidget.setOpaque(true);
         
@@ -100,6 +116,29 @@ public class EmptyNodeWidget extends Widget{
         this.highContrast = highContrast;
         notifyStateChanged(getState(), getState());
     }
+    
+    public void showExtraInfo(){
+        final JFrame frame = new JFrame("Available Syncrhonization Providers");
+        frame.setLayout(new BorderLayout());
+        frame.setSize(400, 350);
+        frame.setLocationRelativeTo(null);
+        JLabel lblInstructions = new JLabel("Detail List of Peerings");
+        lblInstructions.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        
+        frame.add(lblInstructions, BorderLayout.NORTH);
+        frame.add(new JScrollPane(new JList<>(extraInfo)), BorderLayout.CENTER);
+        JButton btnClose = new JButton("Close");
+        btnClose.addActionListener((ActionEvent e) -> {
+            frame.dispose();
+        });
+        JPanel pnlButtons = new JPanel();
+        pnlButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
+        pnlButtons.add(btnClose);
+        frame.add(pnlButtons, BorderLayout.SOUTH);
+        frame.setVisible(true);
+    }
+    
+    
     
     /**
      * Implements the widget-state specific look of the widget.

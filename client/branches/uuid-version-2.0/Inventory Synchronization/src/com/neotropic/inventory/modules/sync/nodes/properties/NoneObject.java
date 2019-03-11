@@ -26,7 +26,7 @@ public class NoneObject extends LocalObjectLight {
     private static NoneObject instance;
 
     private NoneObject() {
-        super(-1, NONE, NONE);
+        super("-1", NONE, NONE);
     }
 
     public static NoneObject getInstance() {

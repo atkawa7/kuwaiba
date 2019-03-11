@@ -79,7 +79,7 @@ public class CreatePhysicalConnectionAction extends GenericObjectNodeAction {
             return;
         }
             
-        if (commonParent.getId() == -1L) {
+        if (commonParent.getId() != null && commonParent.getId().equals("-1L")) {
             JOptionPane.showMessageDialog(null, I18N.gm("can_not_create_connection_whose_common_parent_is_root_of_hierarchy"), 
                 I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             return;

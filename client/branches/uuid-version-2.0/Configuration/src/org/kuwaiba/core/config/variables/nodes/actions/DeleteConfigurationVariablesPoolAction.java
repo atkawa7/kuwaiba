@@ -52,7 +52,7 @@ public class DeleteConfigurationVariablesPoolAction extends GenericInventoryActi
         ConfigurationVariablesPoolNode selectedNode = Utilities.actionsGlobalContext().lookup(ConfigurationVariablesPoolNode.class);
         if (selectedNode != null) {
             
-            if (CommunicationsStub.getInstance().deleteConfigurationVariablesPool(selectedNode.getLookup().lookup(LocalPool.class).getId()))
+            if (CommunicationsStub.getInstance().deleteConfigurationVariablesPool(Long.valueOf(selectedNode.getLookup().lookup(LocalPool.class).getId())))
                 ((ConfigurationVariablesRootNode.ConfigurationVariablesRootChildren)selectedNode.getParentNode().getChildren()).addNotify();
             else
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

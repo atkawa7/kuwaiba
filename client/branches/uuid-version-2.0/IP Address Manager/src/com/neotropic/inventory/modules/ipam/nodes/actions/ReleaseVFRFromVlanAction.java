@@ -93,8 +93,8 @@ public class ReleaseVFRFromVlanAction  extends GenericObjectNodeAction implement
                 SubMenuItem vlanItem = ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem();
                 
                 if (CommunicationsStub.getInstance().releaseSubnetFromVLAN(
-                        (long) vlanItem.getProperty("vlanId"), //NOI18N
-                        (long) vlanItem.getProperty("subnetId") //NOI18N
+                        (String) vlanItem.getProperty("vlanId"), //NOI18N
+                        (String) vlanItem.getProperty("subnetId") //NOI18N
                 ))
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, 
                             java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUCCESS"));

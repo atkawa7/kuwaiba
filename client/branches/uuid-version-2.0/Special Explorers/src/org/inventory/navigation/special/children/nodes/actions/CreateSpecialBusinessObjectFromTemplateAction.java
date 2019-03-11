@@ -131,7 +131,7 @@ public class CreateSpecialBusinessObjectFromTemplateAction extends GenericObject
                 LocalObjectLight selectedObject = Utilities.actionsGlobalContext().lookup(LocalObjectLight.class);
 
                 LocalObjectLight newObject = CommunicationsStub.getInstance().createSpecialObject(((LocalObjectLight) selectedTemplate).getClassName(), 
-                    selectedObject.getClassName(), selectedObject.getId(), attributes, ((LocalObjectLight) selectedTemplate).getId());
+                    selectedObject.getClassName(), selectedObject.getId(), attributes, Long.valueOf(((LocalObjectLight) selectedTemplate).getId()));
 
                 if (newObject == null) {
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 

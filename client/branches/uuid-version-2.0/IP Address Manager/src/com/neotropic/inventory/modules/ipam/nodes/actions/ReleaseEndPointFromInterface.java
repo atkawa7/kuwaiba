@@ -83,8 +83,8 @@ public class ReleaseEndPointFromInterface extends GenericObjectNodeAction implem
                 
                 if (CommunicationsStub.getInstance().releasePortFromInterface(
                     (String) selectedItem.getProperty("portClassName"), //NOI18N
-                    (long) selectedItem.getProperty("portId"), //NOI18N
-                    (long) selectedItem.getProperty("serviceInstanceId"))) //NOI18N
+                    (String) selectedItem.getProperty("portId"), //NOI18N
+                    (String) selectedItem.getProperty("serviceInstanceId"))) //NOI18N
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, 
                             java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUCCESS"));
                 else

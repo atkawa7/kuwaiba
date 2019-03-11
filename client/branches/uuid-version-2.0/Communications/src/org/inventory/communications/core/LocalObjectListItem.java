@@ -25,6 +25,7 @@ public class LocalObjectListItem extends LocalObjectLight {
     /**
      * Id for null values
      */
+    public static final String NULL_ID = "0";
     private String displayName;
 
     public LocalObjectListItem(){

@@ -75,7 +75,7 @@ public class SpecialRelatedObjectNode extends ObjectNode {
                     
                     Collections.sort(relationshipNames);
                     
-                    if (!listOfParents.isEmpty() && listOfParents.get(0).getId() != -1 && !listOfParents.get(0).getClassName().startsWith("Pool of")) { //Ignore the dummy root and the pools
+                    if (!listOfParents.isEmpty() && listOfParents.get(0).getId() != null && !listOfParents.get(0).getId().equals("-1") && !listOfParents.get(0).getClassName().startsWith("Pool of")) { //Ignore the dummy root and the pools
                         relationshipNames.add(0, Constants.PROPERTY_PARENT);
                         specialRelationships.put(Constants.PROPERTY_PARENT, new LocalObjectLight[] { listOfParents.get(0) });
                     }
