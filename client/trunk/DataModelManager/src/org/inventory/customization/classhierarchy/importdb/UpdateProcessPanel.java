@@ -40,9 +40,7 @@ public class UpdateProcessPanel extends javax.swing.JPanel implements ActionList
      * Default constructor Creates new form UpdateProcessPanel
      */
     public UpdateProcessPanel() {
-        initComponents();
-        //setPropertiesErrorTable();
-        //saveIntoDatabase(roots);
+        initComponents();       
     }
 
     /**

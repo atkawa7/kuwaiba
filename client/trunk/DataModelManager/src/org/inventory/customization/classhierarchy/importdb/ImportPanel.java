@@ -17,8 +17,6 @@ package org.inventory.customization.classhierarchy.importdb;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.List;
 import javax.swing.JFileChooser;
@@ -28,6 +26,8 @@ import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.core.services.api.export.filters.XMLExportFilter;
 
 /**
+ * The default import panel for the xml file, in this view, the user must choose
+ * the 'xml' file and it should be a kuwaiba data object file
  *
  * @author Hardy Ryan Chingal Martinez {@literal <ryan.chingal@kuwaiba.org>}
  */
@@ -124,7 +124,7 @@ public class ImportPanel extends javax.swing.JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ae) {
 
-    }    
+    }
 
     //getters and setters
     /**
