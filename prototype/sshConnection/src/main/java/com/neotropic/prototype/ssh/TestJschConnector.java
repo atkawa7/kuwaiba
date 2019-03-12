@@ -28,53 +28,70 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- * Main class to launch the test connector of SSH with JSCH library
- *  @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
+ * This application creates an SSH connection using the JSCH library.
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class TestJschConnector {
-    
     /**
      * The ssh user
      */
-    private static final String USER = "";
+    private static final String DEFAULT_USER = "root";
     /**
-     * The ssh pasword
+     * The ssh password
      */
-    private static final String PWD = "";
+    private static final String DEFAULT_PWD = "root";
     /**
      * Default host ipAddr
      */
-    private static final String IPADRR = "127.0.0.1";
+    private static final String DEFAULT_IPADRR = "127.0.0.1";
     /**
      * Default port for ssh
      */
     private static final int PORT = 22;
     /**
-     * @param args the command line arguments
+     * @param args the command line arguments. If no arguments are supplied, it will try to connect to localhost
+     * and use root/root as default credentials. Else, it will require the server address, the user name and the password, in that order.
      */
     public static void main(String[] args) {
        
         TestJschConnector x = new  TestJschConnector();
-        x.connect();
+        x.connect(args);
     }
 
-    private void connect(){
+    private void connect(String[] args) {
+        String user, password, serverName;
+        switch (args.length) {
+            case 0:
+                serverName = DEFAULT_IPADRR;
+                user  = DEFAULT_USER;
+                password = DEFAULT_PWD;
+                break;
+            case 3:
+                serverName = args[0];
+                user = args[1];
+                password = args[2];
+                break;
+            default:
+                System.out.println(String.format("The number of parameters is inconsistent. 3 or none were expected, but %s received", args.length));
+                return;
+        }
+        
         JSch sshShell = new JSch();
         Session session = null;
         ChannelExec channel =  null;
         try {
-            session = sshShell.getSession(USER, IPADRR, PORT);
-            session.setPassword(PWD);
+            session = sshShell.getSession(user, serverName, PORT);
+            session.setPassword(password);
             //Enable to -not recommended- disable host key checking
-            
             session.setConfig("StrictHostKeyChecking", "no");
-            session.connect(10000); //Connection timeout
+            session.connect(1000); //Connection timeout
             channel = (ChannelExec) session.openChannel("exec");
 
             channel.setCommand("sh script_test"); //NOI18N
             channel.connect();
             DefaultParser defaultParser = new DefaultParser();
-            defaultParser.parse(readCommandExecutionResult(channel));   
+            System.out.println(readCommandExecutionResult(channel));
+            //defaultParser.parse(readCommandExecutionResult(channel));   
             
         } catch (JSchException ex) {
                 Logger.getLogger(TestJschConnector.class.getName()).log(Level.SEVERE, null, ex);
