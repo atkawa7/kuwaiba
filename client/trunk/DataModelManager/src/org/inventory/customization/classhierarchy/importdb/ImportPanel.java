@@ -26,9 +26,8 @@ import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.core.services.api.export.filters.XMLExportFilter;
 
 /**
- * The default import panel for the xml file, in this view, the user must choose
- * the 'xml' file and it should be a kuwaiba data object file
- *
+ * A simple window used to import an xml file that describes a data model to be uploaded. 
+ * A sample of the file format can usually be found in the server installation package.
  * @author Hardy Ryan Chingal Martinez {@literal <ryan.chingal@kuwaiba.org>}
  */
 public class ImportPanel extends javax.swing.JPanel implements ActionListener {

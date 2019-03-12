@@ -27,7 +27,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -61,7 +60,6 @@ import static org.inventory.core.visual.scene.AbstractScene.SCENE_CHANGE;
 import org.inventory.core.visual.scene.EmptyNodeWidget;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
-import org.netbeans.api.visual.action.HoverProvider;
 import org.netbeans.api.visual.action.TwoStateHoverProvider;
 import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.anchor.PointShape;
@@ -201,7 +199,7 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         List<LocalObjectLight> emptySides = new ArrayList<>();
 //      <editor-fold defaultstate="collapsed" desc="Uncomment this for debugging purposes. This outputs the XML view as a file">
-//        try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_ MPLS_VIEW .xml")) {
+//        try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_MPLS_VIEW.xml")) {
 //            fos.write(structure);
 //        } catch(Exception e) { }
 //      </editor-fold>

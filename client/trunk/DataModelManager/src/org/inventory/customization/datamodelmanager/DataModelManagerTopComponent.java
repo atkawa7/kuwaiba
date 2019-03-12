@@ -18,10 +18,7 @@ package org.inventory.customization.datamodelmanager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.List;
 import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
-import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.export.GenericExportPanel;
@@ -30,7 +27,6 @@ import org.inventory.customization.classhierarchy.importdb.ImportPanel;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.customization.classhierarchy.ClassHierarchyTopComponent;
-import org.inventory.customization.classhierarchy.importdb.FileReaderTask;
 import org.inventory.customization.classhierarchy.importdb.UpdateProcessPanel;
 import org.inventory.customization.classhierarchy.nodes.ClassMetadataChildren;
 import org.netbeans.api.settings.ConvertAsProperties;
@@ -77,7 +73,7 @@ public final class DataModelManagerTopComponent extends TopComponent
 
     public DataModelManagerTopComponent() {
         initComponents();
-        setName(I18N.gm("DataModelManager.module.name"));
+        setDisplayName(I18N.gm("DataModelManager.module.name"));
         setToolTipText(I18N.gm("DataModelManager.module.tooltiptext"));
         initComponentsCustom();
     }

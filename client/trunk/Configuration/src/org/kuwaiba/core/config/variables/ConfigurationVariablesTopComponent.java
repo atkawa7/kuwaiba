@@ -27,7 +27,7 @@ import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
 /**
- * Main TopComponent for the Configuration Variables module
+ * Main TopComponent for the Configuration Variables module.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @ConvertAsProperties(
@@ -48,7 +48,7 @@ import org.openide.util.NbBundle.Messages;
 )
 @Messages({
     "CTL_ConfigurationVariablesAction=Configuration Variables",
-    "CTL_ConfigurationVariablesTopComponent=Configuration Variables Module",
+    "CTL_ConfigurationVariablesTopComponent=Configuration Variables",
     "HINT_ConfigurationVariablesTopComponent=Create and Edit Configuration Variables"
 })
 public final class ConfigurationVariablesTopComponent extends TopComponent 
