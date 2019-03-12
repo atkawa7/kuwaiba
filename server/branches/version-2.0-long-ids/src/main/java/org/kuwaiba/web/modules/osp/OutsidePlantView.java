@@ -173,7 +173,7 @@ public class OutsidePlantView extends AbstractView<RemoteObjectLight> {
 
     @Override
     public byte[] getAsImage() { //Should use Google Maps Static API in the future
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 
     @Override
@@ -189,8 +189,7 @@ public class OutsidePlantView extends AbstractView<RemoteObjectLight> {
                     
                     try {
                         mapProperties.put("apiKey", aem.getConfigurationVariableValue("general.maps.apiKey"));
-                    } catch (InventoryException ex) {
-                        mapProperties.put("apiKey", null);
+                    } catch (InventoryException ex) { //If the API key is not defined, null will be provided to the map component. Depending on the map provider, this could mean displaying a map with a lot of water marks
                         Notifications.showWarning("The configuration variable general.maps.apiKey has not been set. The default map will be used");
                     }
 
