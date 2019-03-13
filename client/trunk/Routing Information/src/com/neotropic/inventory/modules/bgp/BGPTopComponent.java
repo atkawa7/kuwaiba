@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 adrian.
+ * Copyright (c) 2019 adrian.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.inventory.communications.util.Utils;
+import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.export.ExportScenePanel;
@@ -27,12 +28,12 @@ import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.netbeans.api.settings.ConvertAsProperties;
-import org.openide.*;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
-import org.openide.awt.ActionReferences;
 import org.openide.explorer.ExplorerManager;
-import org.openide.util.ImageUtilities;
+import org.openide.util.Lookup;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
@@ -50,8 +51,7 @@ import org.openide.util.NbBundle.Messages;
 )
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @ActionID(category = "Window", id = "com.neotropic.inventory.modules.bgp.BGPTopComponent")
-@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Routing")})
-    //@ActionReference(path = "Toolbars/10_Advanced", position = 9)})
+@ActionReference(path = "Menu/Tools/Routing" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_BGPAction",
         preferredID = "BGPTopComponent"
@@ -61,9 +61,8 @@ import org.openide.util.NbBundle.Messages;
     "CTL_BGPTopComponent=BGP Window",
     "HINT_BGPTopComponent=This is a BGP window"
 })
-public final class BGPTopComponent extends TopComponent {
+public final class BGPTopComponent extends TopComponent implements Refreshable{
 
-    private static final String ICON_PATH = "com/neotropic/inventory/modules/bgp/res/icon.png";
     private ExplorerManager em;
     private BGPModuleScene scene;
     private BGPModuleService service;
@@ -72,11 +71,11 @@ public final class BGPTopComponent extends TopComponent {
     public BGPTopComponent() {
         initComponents();
         initCustomComponents();
-        setName(Bundle.CTL_BGPAction());
+        setName(Bundle.CTL_BGPTopComponent());
         setToolTipText(Bundle.HINT_BGPTopComponent());
-        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
+
     }
-    
+
     public void initCustomComponents() {
         em = new ExplorerManager();
         scene = new BGPModuleScene();
@@ -84,9 +83,13 @@ public final class BGPTopComponent extends TopComponent {
        
         associateLookup(scene.getLookup());
         
+        configObject = Lookup.getDefault().lookup(BGPConfigurationObject.class);
+        configObject.setProperty("saved", true);
+        
         scene.setActiveTool(BGPModuleScene.ACTION_SELECT);
         pnlScrollMain.setViewportView(scene.createView());
     }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -99,7 +102,6 @@ public final class BGPTopComponent extends TopComponent {
         btnSave = new javax.swing.JButton();
         btnExport = new javax.swing.JButton();
         btnRefresh = new javax.swing.JButton();
-        btnShowConnectionLabels = new javax.swing.JToggleButton();
         btnAddBackground = new javax.swing.JButton();
         btnRemoveBackground = new javax.swing.JButton();
         pnlScrollMain = new javax.swing.JScrollPane();
@@ -111,7 +113,6 @@ public final class BGPTopComponent extends TopComponent {
 
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/bgp/res/save.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(BGPTopComponent.class, "BGPTopComponent.btnSave.text")); // NOI18N
-        btnSave.setToolTipText(org.openide.util.NbBundle.getMessage(BGPTopComponent.class, "BGPTopComponent.btnSave.toolTipText")); // NOI18N
         btnSave.setFocusable(false);
         btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -124,7 +125,6 @@ public final class BGPTopComponent extends TopComponent {
 
         btnExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/bgp/res/export.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnExport, org.openide.util.NbBundle.getMessage(BGPTopComponent.class, "BGPTopComponent.btnExport.text")); // NOI18N
-        btnExport.setToolTipText(org.openide.util.NbBundle.getMessage(BGPTopComponent.class, "BGPTopComponent.btnExport.toolTipText")); // NOI18N
         btnExport.setFocusable(false);
         btnExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnExport.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -137,7 +137,6 @@ public final class BGPTopComponent extends TopComponent {
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/bgp/res/refresh.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(BGPTopComponent.class, "BGPTopComponent.btnRefresh.text")); // NOI18N
-        btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(BGPTopComponent.class, "BGPTopComponent.btnRefresh.toolTipText")); // NOI18N
         btnRefresh.setFocusable(false);
         btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -148,22 +147,8 @@ public final class BGPTopComponent extends TopComponent {
         });
         barTools.add(btnRefresh);
 
-        btnShowConnectionLabels.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/bgp/res/hide_conn_labels.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnShowConnectionLabels, org.openide.util.NbBundle.getMessage(BGPTopComponent.class, "BGPTopComponent.btnShowConnectionLabels.text")); // NOI18N
-        btnShowConnectionLabels.setToolTipText(org.openide.util.NbBundle.getMessage(BGPTopComponent.class, "BGPTopComponent.btnShowConnectionLabels.toolTipText")); // NOI18N
-        btnShowConnectionLabels.setFocusable(false);
-        btnShowConnectionLabels.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnShowConnectionLabels.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnShowConnectionLabels.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnShowConnectionLabelsActionPerformed(evt);
-            }
-        });
-        barTools.add(btnShowConnectionLabels);
-
         btnAddBackground.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/bgp/res/add-background.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnAddBackground, org.openide.util.NbBundle.getMessage(BGPTopComponent.class, "BGPTopComponent.btnAddBackground.text")); // NOI18N
-        btnAddBackground.setToolTipText(org.openide.util.NbBundle.getMessage(BGPTopComponent.class, "BGPTopComponent.btnAddBackground.toolTipText")); // NOI18N
         btnAddBackground.setFocusable(false);
         btnAddBackground.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnAddBackground.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -176,7 +161,6 @@ public final class BGPTopComponent extends TopComponent {
 
         btnRemoveBackground.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/bgp/res/remove-background.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnRemoveBackground, org.openide.util.NbBundle.getMessage(BGPTopComponent.class, "BGPTopComponent.btnRemoveBackground.text")); // NOI18N
-        btnRemoveBackground.setToolTipText(org.openide.util.NbBundle.getMessage(BGPTopComponent.class, "BGPTopComponent.btnRemoveBackground.toolTipText")); // NOI18N
         btnRemoveBackground.setFocusable(false);
         btnRemoveBackground.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnRemoveBackground.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -193,9 +177,8 @@ public final class BGPTopComponent extends TopComponent {
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         if (scene.getNodes().isEmpty())
-            JOptionPane.showMessageDialog(null, "The view is empty, it won't be saved", "New View", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, "The view is empty, it won't be saved", "BGP View", JOptionPane.INFORMATION_MESSAGE);
         else {
-            
             if (service.saveCurrentView()) {
                 NotificationUtil.getInstance().showSimplePopup("Save view", NotificationUtil.INFO_MESSAGE, "View saved successfully");
                 setHtmlDisplayName(getDisplayName());
@@ -211,21 +194,8 @@ public final class BGPTopComponent extends TopComponent {
     }//GEN-LAST:event_btnExportActionPerformed
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        if (!(boolean)configObject.getProperty("saved")) {
-            switch (JOptionPane.showConfirmDialog(this, "This topology has not been saved, do you want to save it?",
-                I18N.gm("confirmation"), JOptionPane.YES_NO_CANCEL_OPTION)){
-                case JOptionPane.YES_OPTION:
-                    btnSaveActionPerformed(new ActionEvent(this, 0, "close"));
-                    break;
-                case JOptionPane.CANCEL_OPTION:
-                    return;
-            }
-        }
+        refresh();
     }//GEN-LAST:event_btnRefreshActionPerformed
-
-    private void btnShowConnectionLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowConnectionLabelsActionPerformed
-        scene.toggleConnectionLabels(!btnShowConnectionLabels.isSelected());
-    }//GEN-LAST:event_btnShowConnectionLabelsActionPerformed
 
     private void btnAddBackgroundActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddBackgroundActionPerformed
         JFileChooser fChooser = Utils.getGlobalFileChooser();
@@ -254,7 +224,6 @@ public final class BGPTopComponent extends TopComponent {
     private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnRemoveBackground;
     private javax.swing.JButton btnSave;
-    private javax.swing.JToggleButton btnShowConnectionLabels;
     private javax.swing.JScrollPane pnlScrollMain;
     // End of variables declaration//GEN-END:variables
     @Override
@@ -265,7 +234,16 @@ public final class BGPTopComponent extends TopComponent {
 
     @Override
     public void componentClosed() {
-        // TODO add custom code on component closing
+        scene.removeAllListeners();
+        if (!(boolean)configObject.getProperty("saved")) {
+            switch (JOptionPane.showConfirmDialog(this, "This topology has not been saved, do you want to save it?",
+                I18N.gm("confirmation"), JOptionPane.YES_NO_OPTION)){
+                case JOptionPane.YES_OPTION:
+                    btnSaveActionPerformed(new ActionEvent(this, 0, "close"));
+            }
+        }
+        scene.clear();
+        service.setView(null);
     }
 
     void writeProperties(java.util.Properties p) {
@@ -278,5 +256,11 @@ public final class BGPTopComponent extends TopComponent {
     void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
+    }
+
+    @Override
+    public void refresh() {
+        scene.clear();
+        service.reloadBGPView();
     }
 }
