@@ -180,7 +180,7 @@ public class ProcessDefinitionLoader {
                                 
                                 int activityDefinitionType = Integer.valueOf(reader.getAttributeValue(null, Attribute.TYPE));
                                 
-                                ActivityDefinition activityDefinition = null;
+                                ActivityDefinition activityDefinition;
                                 
                                 if (activityDefinitionType == ActivityDefinition.TYPE_CONDITIONAL) {
                                     
@@ -517,7 +517,7 @@ public class ProcessDefinitionLoader {
                         }
                     }
                 } else {
-                    //TODO: exception activity no has artifact
+                    //TODO: exception activity does not have an artifact
                 }
                 
                 if (activityactor.containsKey(activityDefinitionId)) {
@@ -527,7 +527,7 @@ public class ProcessDefinitionLoader {
                         activityDefinition.setActor(actors.get(actorId));
                     
                 } else {
-                    //TODO: exception activity no has actor
+                    //TODO: exception activity does not have an actor
                 }
                 
                 if (activityKpis.containsKey(activityDefinitionId)) {
@@ -559,7 +559,6 @@ public class ProcessDefinitionLoader {
                             }
                         }
                     }
-
                 } 
                 else if (activityDefinition.getType() == ActivityDefinition.TYPE_PARALLEL) {
                     if (paths.containsKey(activityDefinitionId) && paths.get(activityDefinitionId) != null) {
@@ -601,28 +600,21 @@ public class ProcessDefinitionLoader {
     
     private byte[] getFormArtifactDefinition(long processDefinitionId, String artifactDefinitionId) {
         String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath"));
-        
         File file = new File(processEnginePath + "/form/definitions/" + processDefinitionId + "/" + artifactDefinitionId);
         return getFileAsByteArray(file);
     }
     
     public static byte[] getFileAsByteArray(File file) {
         try {
-            Scanner in = new Scanner(file);
-
-            String line = "";
-
-            while (in.hasNext())
-                line += in.nextLine();
-
-            byte [] structure = line.getBytes();
-
-            in.close();
-
+            byte[] structure;
+            try (Scanner in = new Scanner(file)) {
+                String line = "";
+                while (in.hasNext())
+                    line += in.nextLine();
+                structure = line.getBytes();
+            }
             return structure;
-
         } catch (FileNotFoundException ex) {
-
             return null;
         }
     }
