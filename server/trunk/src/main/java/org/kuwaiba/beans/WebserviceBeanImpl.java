@@ -1867,7 +1867,6 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 
                 isLink = true;
             }
-
             
             HashMap<String, String> attributes = new HashMap<>();
             if (name == null || name.isEmpty())
@@ -1929,7 +1928,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             String endpointAName = null, endpointBName = null;
-            if (!mem.isSubclassOf(Constants.CLASS_GENERICLOGICALCONNECTION, connectionClass)) //NOI18N
+            if (!mem.isSubclassOf(Constants.CLASS_GENERICCONNECTION, connectionClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not a physical or logical connection", connectionClass));
 
             else if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONNECTION, connectionClass)){
@@ -6927,7 +6926,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 List<RemoteLogicalConnectionDetails> bgpMap = new ArrayList<>();
                 List<BusinessObjectLight> bgpLinks = bem.getObjectsOfClassLight(Constants.CLASS_BGPLINK, -1);
                 for (BusinessObjectLight bgpLink : bgpLinks) {
-                    if(!mappedBGPLinksIds.contains(bgpLink.getId())){ //We only add the bgp links that are not yet rendered
+                    if(!mappedBGPLinksIds.contains(bgpLink.getId())){//We only add the bgp links that are not yet rendered
                         List<BusinessObjectLight> physicalDeviceA = new ArrayList<>();
                         List<BusinessObjectLight> physicalDeviceB = new ArrayList<>();
                         List<BusinessObjectLight> bgpEndpointA = bem.getSpecialAttribute(bgpLink.getClassName(), bgpLink.getId(), "bgpLinkEndpointA");
@@ -6952,7 +6951,6 @@ public class WebserviceBeanImpl implements WebserviceBean {
                                    bgpEndpointB.isEmpty() ? null : bgpEndpointB.get(0), 
                                    physicalDeviceA, physicalDeviceB));
                     }
-                    
                 }
  
                 return bgpMap;
