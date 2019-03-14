@@ -3445,6 +3445,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * @return true if the object is safe to be deleted, false otherwise.
      */
     private boolean canDeleteObject(Node instance) {
-        return !instance.hasRelationship(RelTypes.RELATED_TO, RelTypes.RELATED_TO_SPECIAL, RelTypes.HAS_PROCESS_INSTANCE);        
+        return !instance.hasRelationship(RelTypes.RELATED_TO_SPECIAL, RelTypes.HAS_PROCESS_INSTANCE);        
     }
 }
