@@ -95,8 +95,6 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
      * Custom select provider
      */
     private final WidgetAction selectAction;
-    private List<LocalLogicalConnectionDetails> bgpMap;
-    private List<Long> bgpLinksIds;
 
     public BGPModuleScene() {
         getActions().addAction(ActionFactory.createAcceptAction(new CustomAcceptActionProvider(this, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT)));
@@ -105,9 +103,6 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         edgeLayer = new LayerWidget(this);
         interactionLayer = new LayerWidget(this);
         backgroundLayer = new LayerWidget(this);
-        
-        bgpMap = new ArrayList<>();
-        bgpLinksIds = new ArrayList<>();
         
         addChild(backgroundLayer);
         addChild(interactionLayer);
