@@ -88,7 +88,7 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
                 try {
                     RemoteObject material = wsBean.getObject(
                             getInputParameters().getProperty(String.valueOf(id)),
-                            String.valueOf(id),
+                            Long.valueOf(String.valueOf(id)),
                             Page.getCurrent().getWebBrowser().getAddress(),
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
                     materials.add(material);
@@ -315,7 +315,7 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
         }
         
         public String getCountry() {
-            RemoteObjectLight rol;
+            RemoteObjectLight rol = null;
             if (physicalNode == null)
                 rol = device;
             else

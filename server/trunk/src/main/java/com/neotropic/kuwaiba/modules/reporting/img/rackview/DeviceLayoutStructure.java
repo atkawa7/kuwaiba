@@ -65,7 +65,7 @@ public class DeviceLayoutStructure {
             return;
         }
         try {
-            HashMap<RemoteObjectLight, String> devices = new HashMap();
+            HashMap<RemoteObjectLight, Long> devices = new HashMap();
             
             ByteArrayInputStream bais = new ByteArrayInputStream(structure);
             XMLInputFactory xmlif = XMLInputFactory.newInstance();
@@ -80,12 +80,12 @@ public class DeviceLayoutStructure {
                 int event = xmlsr.next();
                 if (event == XMLStreamConstants.START_ELEMENT) {
                     if (xmlsr.getName().equals(tagDevice)) {
-                        String id = xmlsr.getAttributeValue(null, "id"); //NOI18N
+                        long id = Long.valueOf(xmlsr.getAttributeValue(null, "id")); //NOI18N
                         
-                        if (id != null && device.getId() != null && id.equals(device.getId())) {
+                        if (id != device.getId()) {
                             String className = xmlsr.getAttributeValue(null, "className"); //NOI18N
                             String name = xmlsr.getAttributeValue(null, "name"); //NOI18N
-                            String parentId = xmlsr.getAttributeValue(null, "parentId"); //NOI18N
+                            long parentId = Long.valueOf(xmlsr.getAttributeValue(null, "parentId")); //NOI18N
                             devices.put(new RemoteObjectLight(className, id, name), parentId);
                         }
                         if (xmlsr.hasNext()) {
@@ -93,7 +93,7 @@ public class DeviceLayoutStructure {
                             
                             if (event == XMLStreamConstants.START_ELEMENT) {
                                 if (xmlsr.getName().equals(tagModel)) {
-                                    id = xmlsr.getAttributeValue(null, "id"); //NOI18N
+                                    id = Long.valueOf(xmlsr.getAttributeValue(null, "id")); //NOI18N
                                     String className = xmlsr.getAttributeValue(null, "className"); //NOI18N
                                     String name = xmlsr.getAttributeValue(null, "name"); //NOI18N
                                     
@@ -104,7 +104,7 @@ public class DeviceLayoutStructure {
 
                                         if (event == XMLStreamConstants.START_ELEMENT) {
                                             if (xmlsr.getName().equals(tagView)) {
-                                                long _id = Long.valueOf(xmlsr.getAttributeValue(null, "id"));
+                                                id = Long.valueOf(xmlsr.getAttributeValue(null, "id"));
                                                 className = xmlsr.getAttributeValue(null, "className");//NOI18N
                                                 
                                                 if (xmlsr.hasNext()) {
@@ -113,7 +113,7 @@ public class DeviceLayoutStructure {
                                                         if (xmlsr.getName().equals(tagStructure)) {
                                                             byte [] modelStructure = DatatypeConverter.parseBase64Binary(xmlsr.getElementText());                                                            
                                                             // (long id, String name, String description, String viewClassName)
-                                                            ViewObject viewObject = new ViewObject(_id, className, null, null);
+                                                            ViewObject viewObject = new ViewObject(id, className, null, null);
                                                             viewObject.setStructure(modelStructure);
                                                                                                                                                                                     
                                                             RemoteViewObject remoteViewObject = new RemoteViewObject(viewObject);
@@ -140,13 +140,13 @@ public class DeviceLayoutStructure {
             
             for (RemoteObjectLight child : devices.keySet()) {
                 
-                String parentId = devices.get(child);                
+                Long parentId = devices.get(child);                
                 if (parentId != null) {
 
                     List<RemoteObjectLight> lst = null;
 
                     for (RemoteObjectLight aParent : hierarchy.keySet()) {
-                        if (aParent.getId() != null && aParent.getId().equals(parentId))
+                        if (aParent.getId() == parentId)
                             lst = hierarchy.get(aParent);
                     }
                                         

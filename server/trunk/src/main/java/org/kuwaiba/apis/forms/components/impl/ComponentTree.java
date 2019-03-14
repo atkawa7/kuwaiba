@@ -68,7 +68,7 @@ public class ComponentTree extends GraphicalComponent {
                 if (event.getNewValue() != null)
                     getComponent().resetTo(new InventoryObjectNode((RemoteObjectLight) event.getNewValue()));                                
                 else {
-                    getComponent().resetTo(new AbstractNode<RemoteObjectLight>(new RemoteObjectLight(org.kuwaiba.services.persistence.util.Constants.DUMMY_ROOT, "-1", "Navigation Root")) {
+                    getComponent().resetTo(new AbstractNode<RemoteObjectLight>(new RemoteObjectLight(org.kuwaiba.services.persistence.util.Constants.DUMMY_ROOT, -1, "Navigation Root")) {
                         @Override
                         public AbstractAction[] getActions() { return new AbstractAction[0]; }
 

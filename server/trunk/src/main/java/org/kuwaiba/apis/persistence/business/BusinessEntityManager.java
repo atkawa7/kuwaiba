@@ -59,7 +59,7 @@ public interface BusinessEntityManager {
      * @throws InvalidArgumentException If any of the attribute values has an invalid value or format.
      * @throws ApplicationObjectNotFoundException If the specified template could not be found
      */
-    public String createObject(String className, String parentClassName, String parentOid,
+    public long createObject(String className, String parentClassName, long parentOid,
             HashMap<String, String> attributes,long template)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, 
                 OperationNotPermittedException, ApplicationObjectNotFoundException;
@@ -78,7 +78,7 @@ public interface BusinessEntityManager {
      * @throws OperationNotPermittedException If there's a business constraint that doesn't allow to create the object.
      * @throws ApplicationObjectNotFoundException If the specified template could not be found.
      */
-    public String createObject(String className, String parentClassName, HashMap<String,String> attributes, long template, String criteria)
+    public long createObject(String className, String parentClassName, String criteria, HashMap<String,String> attributes, long template)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, ApplicationObjectNotFoundException;
     /**
      * Creates a new inventory object for a domain specific model (where the standard containment rules don't apply)
@@ -96,7 +96,7 @@ public interface BusinessEntityManager {
      * @throws InvalidArgumentException If any of the attribute values has an invalid value or format.
      * @throws ApplicationObjectNotFoundException If the specified template could not be found.
      */
-    public String createSpecialObject(String className, String parentClassName, String parentOid,
+    public long createSpecialObject(String className, String parentClassName, long parentOid,
             HashMap<String,String> attributes,long template)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, ApplicationObjectNotFoundException;
     
@@ -113,7 +113,7 @@ public interface BusinessEntityManager {
      * @throws ArraySizeMismatchException If attributeNames and attributeValues have different sizes.
      * @throws MetadataObjectNotFoundException If the class name could not be found 
      */
-    public String createPoolItem(String poolId, String className, String[] attributeNames, String[] attributeValues, long templateId) 
+    public long createPoolItem(long poolId, String className, String[] attributeNames, String[] attributeValues, long templateId) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, MetadataObjectNotFoundException;
     /**
      * Creates multiple objects using a given name pattern
@@ -130,7 +130,7 @@ public interface BusinessEntityManager {
      *                                        If the className is not in design or are abstract.
      *                                        If the className is not an InventoryObject.
      */
-    public String [] createBulkObjects(String className, String parentClassName, String parentOid, int numberOfObjects, String namePattern) 
+    public long [] createBulkObjects(String className, String parentClassName, long parentOid, int numberOfObjects, String namePattern) 
         throws MetadataObjectNotFoundException, OperationNotPermittedException, BusinessObjectNotFoundException, InvalidArgumentException;
     /**
      * Creates multiple special objects using a given name pattern
@@ -147,7 +147,7 @@ public interface BusinessEntityManager {
      *                                        If the className is not in design or are abstract.
      *                                        If the className is not an InventoryObject.
      */
-    public String[] createBulkSpecialObjects(String className, String parentClassName, String parentId, int numberOfSpecialObjects, String namePattern) 
+    public long[] createBulkSpecialObjects(String className, String parentClassName, long parentId, int numberOfSpecialObjects, String namePattern) 
         throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException;
     
     /**
@@ -159,7 +159,7 @@ public interface BusinessEntityManager {
      * @throws BusinessObjectNotFoundException If the requested object can't be found
      * @throws InvalidArgumentException If the object id can not be found.
      */
-    public BusinessObject getObject(String className, String oid)
+    public BusinessObject getObject(String className, long oid)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
     
     /**
@@ -170,7 +170,7 @@ public interface BusinessEntityManager {
      * @throws BusinessObjectNotFoundException If the requested object can't be found
      * @throws InvalidArgumentException If the database object could not be properly mapped into a serializable java object.
      */
-    public BusinessObject getObject(String oid) 
+    public BusinessObject getObject(long oid) 
         throws InvalidArgumentException, BusinessObjectNotFoundException, MetadataObjectNotFoundException;
 
     /**
@@ -181,8 +181,8 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException If the class could not be found
      * @throws BusinessObjectNotFoundException If the object could not be found.
      */
-    public List<BusinessObjectLight> getObjectSpecialChildren(String objectClass, String objectId)
-            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
+    public List<BusinessObjectLight> getObjectSpecialChildren(String objectClass, long objectId)
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException;
     
     /**
      * Gets the simplified information about an object
@@ -191,10 +191,9 @@ public interface BusinessEntityManager {
      * @return A detailed representation of the requested object
      * @throws MetadataObjectNotFoundException If the className class can't be found
      * @throws BusinessObjectNotFoundException If the requested object can't be found
-     * @throws InvalidArgumentException If the oid is null
      */
-    public BusinessObjectLight getObjectLight(String className, String oid)
-            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
+    public BusinessObjectLight getObjectLight(String className, long oid)
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException;
     
     /**
      * Retrieves a list of light instances of a given class given a simple filter. This method will search for all objects with a string-based attribute (filterName) whose value matches a value provided (filterValue)
@@ -203,10 +202,9 @@ public interface BusinessEntityManager {
      * @param filterValue The value to be use to match the instances. Example "Serial-12345"
      * @return The list of instances that matches the filterName/filterValue criteria
      * @throws MetadataObjectNotFoundException If the class provided could not be found
-     * @throws InvalidArgumentException If the uuid attribute could not be found in the result nodes
      */
     public List<BusinessObjectLight> getObjectsWithFilterLight (String className, 
-            String filterName, String filterValue) throws MetadataObjectNotFoundException, InvalidArgumentException;
+            String filterName, String filterValue) throws MetadataObjectNotFoundException;
     
     /**
      * Same as {@link #getObjectsWithFilterLight(java.lang.String, java.lang.String, java.lang.String) }, but returns the full information about the objects involved
@@ -249,7 +247,7 @@ public interface BusinessEntityManager {
      * @throws InvalidArgumentException Check with the data model integrity, because this would mean that a the type of the attribute should be a list type, but it's not
      * @throws ApplicationObjectNotFoundException Check with the data model integrity, because this would mean that a list type item related to the object is not an instance of the right list type class
      */
-    public String getAttributeValueAsString (String objectClass, String objectId, String attributeName) 
+    public String getAttributeValueAsString (String objectClass, long objectId, String attributeName) 
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException;
     
     /**
@@ -263,7 +261,7 @@ public interface BusinessEntityManager {
      * @throws InvalidArgumentException Check with the data model integrity, because this would mean that a the type of the attribute should be a list type, but it's not
      * @throws ApplicationObjectNotFoundException Check with the data model integrity, because this would mean that a list type item related to the object is not an instance of the right list type class
      */
-    public HashMap<String, String> getAttributeValuesAsString (String objectClass, String objectId) 
+    public HashMap<String, String> getAttributeValuesAsString (String objectClass, long objectId) 
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException;
     
     /**
@@ -277,7 +275,7 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException If any of the class nodes involved is malformed
      * @throws InvalidArgumentException If the database object could not be properly mapped into a serializable java object.
      */
-    public BusinessObjectLight getCommonParent(String aObjectClass, String aOid, String bObjectClass, String bOid)
+    public BusinessObjectLight getCommonParent(String aObjectClass, long aOid, String bObjectClass, long bOid)
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
@@ -289,7 +287,7 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException If any of the class nodes involved is malformed
      * @throws InvalidArgumentException If the database object could not be properly mapped into a serializable java object.
      */
-    public BusinessObjectLight getParent(String objectClass, String oid)
+    public BusinessObjectLight getParent(String objectClass, long oid)
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
     
     /**
@@ -299,10 +297,9 @@ public interface BusinessEntityManager {
      * @return The list of parents
      * @throws BusinessObjectNotFoundException If the object does not exist
      * @throws MetadataObjectNotFoundException if the class can not be found
-     * @throws InvalidArgumentException If the oid is null
      */
-    public List<BusinessObjectLight> getParents(String objectClassName, String oid)
-        throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+    public List<BusinessObjectLight> getParents(String objectClassName, long oid)
+        throws BusinessObjectNotFoundException, MetadataObjectNotFoundException;
     
     /**
      * Gets the list of parents (according to the special and standard containment hierarchy) until it finds an instance of class 
@@ -314,10 +311,9 @@ public interface BusinessEntityManager {
      * @throws BusinessObjectNotFoundException If the object to evaluate can not be found
      * @throws MetadataObjectNotFoundException If any of the classes provided could not be found
      * @throws ApplicationObjectNotFoundException If the object provided is not in the standard containment hierarchy
-     * @throws InvalidArgumentException If the oid is null
      */
-    public List<BusinessObjectLight> getParentsUntilFirstOfClass(String objectClassName, String oid, String objectToMatchClassName)
-        throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
+    public List<BusinessObjectLight> getParentsUntilFirstOfClass(String objectClassName, long oid, String objectToMatchClassName)
+        throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException;
 
     /**
      * Gets the first occurrence of a parent with a given class (according to the special and standard containment hierarchy)
@@ -329,10 +325,9 @@ public interface BusinessEntityManager {
      * @throws BusinessObjectNotFoundException If the object to evaluate can not be found
      * @throws MetadataObjectNotFoundException If any of the classes provided could not be found
      * @throws ApplicationObjectNotFoundException If the object provided is not in the standard containment hierarchy
-     * @throws InvalidArgumentException If the oid is null
      */
-    public BusinessObjectLight getFirstParentOfClass(String objectClassName, String oid, String objectToMatchClassName)
-        throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
+    public BusinessObjectLight getFirstParentOfClass(String objectClassName, long oid, String objectToMatchClassName)
+        throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException;
 
     /**
      * Gets the first parent of an object which matches the given class in the containment hierarchy
@@ -344,7 +339,7 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException If any of the class nodes involved is malformed
      * @throws InvalidArgumentException If the database object could not be properly mapped into a serializable java object.
      */
-    public BusinessObject getParentOfClass(String objectClass, String oid, String parentClass)
+    public BusinessObject getParentOfClass(String objectClass, long oid, String parentClass)
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
     
     /**
@@ -356,8 +351,8 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException If the requested object class can't be found
      * @throws OperationNotPermittedException If the object could not be deleted because there's some business rules that avoids it or it has incoming relationships.
      */
-    public boolean canDeleteObject(String className, String oid)
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException;
+    public boolean canDeleteObject(String className, long oid)
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException;
     
     /**
      * Deletes a set of objects
@@ -366,10 +361,9 @@ public interface BusinessEntityManager {
      * @throws BusinessObjectNotFoundException If the requested object can't be found
      * @throws MetadataObjectNotFoundException If the requested object class can't be found
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked or it has relationships and releaseRelationships is false
-     * @throws InvalidArgumentException If the uuid can not be found
      */
-    public void deleteObjects(HashMap<String, List<String>> objects, boolean releaseRelationships)
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException;
+    public void deleteObjects(HashMap<String, List<Long>> objects, boolean releaseRelationships)
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException;
 
     /**
      * Deletes a single object
@@ -379,10 +373,9 @@ public interface BusinessEntityManager {
      * @throws BusinessObjectNotFoundException If the object couldn't be found
      * @throws MetadataObjectNotFoundException If the class could not be found
      * @throws OperationNotPermittedException If the object could not be deleted because there's some business rules that avoids it or it has incoming relationships.
-     * @throws InvalidArgumentException If the oid is null
      */
-    public void deleteObject(String className, String oid, boolean releaseRelationships)
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException;
+    public void deleteObject(String className, long oid, boolean releaseRelationships)
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException;
     
     /**
      * Updates an object attributes. Note that you can't set binary attributes through this
@@ -397,7 +390,7 @@ public interface BusinessEntityManager {
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
      * @throws InvalidArgumentException If any of the names provided does not exist or can't be set using this method or of the value of any of the attributes can not be mapped correctly.
      */
-    public ChangeDescriptor updateObject(String className, String oid, HashMap<String, String> attributes)
+    public ChangeDescriptor updateObject(String className, long oid, HashMap<String, String> attributes)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException;
     /**
      * Updates an object binary attributes.
@@ -423,10 +416,9 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException If the object's or new parent's class can't be found
      * @throws BusinessObjectNotFoundException If the object or its new parent can't be found
      * @throws OperationNotPermittedException If the update can't be performed due to a business rule
-     * @throws InvalidArgumentException If inventory object/pool does no have uuid
      */
-    public void moveObjectsToPool(String targetClassName, String targetOid, HashMap<String, String[]> objects)
-            throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException;
+    public void moveObjectsToPool(String targetClassName, long targetOid, HashMap<String, long[]> objects)
+            throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException;
     /**
      * Move a list of objects to a new parent: this methods ignores those who can't be moved and raises
      * an OperationNotPermittedException, however, it will move those which can be moved
@@ -436,10 +428,9 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException If the object's or new parent's class can't be found
      * @throws BusinessObjectNotFoundException If the object or its new parent can't be found
      * @throws OperationNotPermittedException If the update can't be performed due to a business rule
-     * @throws InvalidArgumentException If inventory object/pool does not have uuid
      */
-    public void moveObjects(String targetClassName, String targetOid, HashMap<String,String[]> objects)
-        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException;
+    public void moveObjects(String targetClassName, long targetOid, HashMap<String,long[]> objects)
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException;
 
      /**
      * Move a list of objects to a new parent(taking into account the special
@@ -451,10 +442,9 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException If the object's or new parent's class can't be found
      * @throws BusinessObjectNotFoundException If the object or its new parent can't be found
      * @throws OperationNotPermittedException If the update can't be performed due to a business rule
-     * @throws InvalidArgumentException If an inventory object/pool does not have uuid
      */
-    public void moveSpecialObjects(String targetClassName, String targetOid, HashMap<String,String[]> objects)
-        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException;
+    public void moveSpecialObjects(String targetClassName, long targetOid, HashMap<String,long[]> objects)
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException;
     /**
      * Move a pool item from a pool to another pool
      * @param poolId The id of the pool node
@@ -465,7 +455,7 @@ public interface BusinessEntityManager {
      * @throws BusinessObjectNotFoundException If the pool item can not be found
      * @throws MetadataObjectNotFoundException If the pool item class name can no be found
      */
-    public void movePoolItem(String poolId, String poolItemClassName, String poolItemId) throws 
+    public void movePoolItem(long poolId, String poolItemClassName, long poolItemId) throws 
         ApplicationObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException, 
         MetadataObjectNotFoundException;
     /**
@@ -478,10 +468,9 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException If any of the provided classes couldn't be found
      * @throws BusinessObjectNotFoundException If any of the template objects couldn't be found
      * @throws OperationNotPermittedException If the target parent can't contain any of the new instances
-     * @throws InvalidArgumentException If an inventory object id is null
      */
-    public String[] copyObjects(String targetClassName, String targetOid, HashMap<String, String[]> objects, boolean recursive)
-            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException;
+    public long[] copyObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects, boolean recursive)
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException;
 
     /**
      * Copy a set of special objects (this is used to copy objects when they are containment are set in the special containment hierarchy)
@@ -495,8 +484,8 @@ public interface BusinessEntityManager {
      * @throws BusinessObjectNotFoundException If any of the template objects couldn't be found
      * @throws OperationNotPermittedException If the target parent can't contain any of the new instances
      */
-    public String[] copySpecialObjects(String targetClassName, String targetOid, HashMap<String, String[]> objects, boolean recursive)
-            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException;
+    public long[] copySpecialObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects, boolean recursive)
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException;
     /**
      * Copy a pool item from a pool to another pool
      * @param poolId The id of the pool node
@@ -509,7 +498,7 @@ public interface BusinessEntityManager {
      * @throws BusinessObjectNotFoundException If the pool item can not be found
      * @throws MetadataObjectNotFoundException If the pool item class name can no be found
      */
-    public String copyPoolItem(String poolId, String poolItemClassName, String poolItemId, boolean recursive) throws 
+    public long copyPoolItem(long poolId, String poolItemClassName, long poolItemId, boolean recursive) throws 
         ApplicationObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException, 
         MetadataObjectNotFoundException;
     /**
@@ -520,10 +509,9 @@ public interface BusinessEntityManager {
      * @return The list of children
      * @throws MetadataObjectNotFoundException If the object's can't be found
      * @throws BusinessObjectNotFoundException If the object or its new parent can't be found
-     * @throws InvalidArgumentException If oid is null
      */
-    public List<BusinessObjectLight> getObjectChildren(String className, String oid, int maxResults)
-            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
+    public List<BusinessObjectLight> getObjectChildren(String className, long oid, int maxResults)
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException;
     
     /**
      * Gets the children of a given object, providing the class and object id.
@@ -533,10 +521,9 @@ public interface BusinessEntityManager {
      * @return The list of children.
      * @throws BusinessObjectNotFoundException If the object could not be found.
      * @throws MetadataObjectNotFoundException If the class could not be found.
-     * @throws InvalidArgumentException If the oid is null
      */
-    public List<BusinessObjectLight> getObjectChildren(long classId, String oid, int maxResults)
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+    public List<BusinessObjectLight> getObjectChildren(long classId, long oid, int maxResults)
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException;
     
     /**
      * Gets the direct children of a given object of a given class.
@@ -549,7 +536,7 @@ public interface BusinessEntityManager {
      * @throws BusinessObjectNotFoundException If parent object can not be found
      * @throws InvalidArgumentException If the database objects can not be correctly mapped into serializable Java objects.
      */
-    public List<BusinessObject> getChildrenOfClass(String parentOid, String parentClass, String classToFilter, int maxResults)
+    public List<BusinessObject> getChildrenOfClass(long parentOid, String parentClass, String classToFilter, int maxResults)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
     
     /**
@@ -562,8 +549,8 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException If the parent class name provided could not be found
      * @throws BusinessObjectNotFoundException If the parent object could not be found
      */
-    public List<BusinessObjectLight> getSpecialChildrenOfClassLight(String parentOid, String parentClass, String classToFilter, int maxResults)
-            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
+    public List<BusinessObjectLight> getSpecialChildrenOfClassLight(long parentOid, String parentClass, String classToFilter, int maxResults)
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException;
     
     /**
      * Gets all class and abstract class children of a given class to filter in 
@@ -576,10 +563,9 @@ public interface BusinessEntityManager {
      * @return The list of object instance of the given class to filter
      * @throws MetadataObjectNotFoundException If the parent class is not found
      * @throws BusinessObjectNotFoundException If the parent is not found
-     * @throws InvalidArgumentException If the parent Id is null
      */
-    public List<BusinessObjectLight> getChildrenOfClassLightRecursive(String parentOid, String parentClass, String classToFilter, int maxResults) 
-        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
+    public List<BusinessObjectLight> getChildrenOfClassLightRecursive(long parentOid, String parentClass, String classToFilter, int maxResults) 
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException;
     /**
      * Gets all class and abstract class special children of a given class to filter 
      * in a hierarchy with root in the given parent.
@@ -591,10 +577,9 @@ public interface BusinessEntityManager {
      * @return The list of object instance of the given class to filter
      * @throws MetadataObjectNotFoundException If the parent class is not found
      * @throws BusinessObjectNotFoundException If the parent is not found
-     * @throws InvalidArgumentException If the parent Id is null
      */
-    public List<BusinessObjectLight> getSpecialChildrenOfClassLightRecursive(String parentOid, String parentClass, String classToFilter, int maxResults) 
-        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
+    public List<BusinessObjectLight> getSpecialChildrenOfClassLightRecursive(long parentOid, String parentClass, String classToFilter, int maxResults) 
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException;
             
     /**
      * Same as getChildrenOfClass, but returns only the light version of the objects
@@ -605,10 +590,9 @@ public interface BusinessEntityManager {
      * @return A list of children of parentid/parentClass instance, instances of classToFilter
      * @throws MetadataObjectNotFoundException If any of the classes can not be found
      * @throws BusinessObjectNotFoundException If parent object can not be found
-     * @throws InvalidArgumentException If the parent object id is null
      */
-    public List<BusinessObjectLight> getChildrenOfClassLight(String parentOid, String parentClass, String classToFilter, int maxResults)
-            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
+    public List<BusinessObjectLight> getChildrenOfClassLight(long parentOid, String parentClass, String classToFilter, int maxResults)
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException;
 
     /**
      * Gets the siblings of a given object in the containment hierarchy
@@ -618,10 +602,9 @@ public interface BusinessEntityManager {
      * @return List of siblings
      * @throws MetadataObjectNotFoundException If the class does not exist
      * @throws BusinessObjectNotFoundException If the object does not exist
-     * @throws InvalidArgumentException If the oid is null
      */
-    public List<BusinessObjectLight> getSiblings(String className, String oid, int maxResults)
-            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
+    public List<BusinessObjectLight> getSiblings(String className, long oid, int maxResults)
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException;
     
     /**
      * Recursively gets all the light instances of given class
@@ -656,10 +639,9 @@ public interface BusinessEntityManager {
      * @throws BusinessObjectNotFoundException If any of the objects can't be found
      * @throws OperationNotPermittedException if any of the objects involved can't be connected (i.e. if it's not an inventory object)
      * @throws MetadataObjectNotFoundException if any of the classes provided can not be found
-     * @throws InvalidArgumentException If the a/bObjectId are null
      */
-    public void createSpecialRelationship(String aObjectClass, String aObjectId, String bObjectClass, String bObjectId, String name, boolean unique)
-            throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException;
+    public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String name, boolean unique)
+            throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException;
     
     /**
      * This method creates a special relationship  with a set of property values
@@ -673,11 +655,9 @@ public interface BusinessEntityManager {
      * @throws BusinessObjectNotFoundException If any of the objects can not be found
      * @throws OperationNotPermittedException If, due to a business rule, the objects can not be related
      * @throws MetadataObjectNotFoundException If any of the classes specified does not exist
-     * @throws InvalidArgumentException If the a/bObjectId are null
      */
-    public void createSpecialRelationship(String aObjectClass, String aObjectId, String bObjectClass, 
-        String bObjectId, String name, boolean unique, HashMap<String, Object> properties) 
-        throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException;
+    public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, 
+            long bObjectId, String name, boolean unique, HashMap<String, Object> properties) throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException;
     
     /**
      * Release all special relationships with a given name
@@ -687,10 +667,9 @@ public interface BusinessEntityManager {
      * @param relationshipName Relationship name
      * @throws BusinessObjectNotFoundException If the object can not be found
      * @throws MetadataObjectNotFoundException  If the class can not be found
-     * @throws InvalidArgumentException If objectId or otherObjectId are null
      */
-    public void releaseSpecialRelationship(String objectClass, String objectId, String otherObjectId, String relationshipName)
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+    public void releaseSpecialRelationship(String objectClass, long objectId, long otherObjectId, String relationshipName)
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException;
     
     /**
      * Release all special relationships with a given name whose target object id matches with the one provided
@@ -700,10 +679,9 @@ public interface BusinessEntityManager {
      * @param targetId Id of the object at the end of the relationship
      * @throws BusinessObjectNotFoundException If the object can not be found
      * @throws MetadataObjectNotFoundException  If the class can not be found
-     * @throws InvalidArgumentException If the object/targetId are null
      */
-    public void releaseSpecialRelationshipInTargetObject(String objectClass, String objectId, String relationshipName, String targetId)
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+    public void releaseSpecialRelationship(String objectClass, long objectId, String relationshipName, long targetId)
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException;
 
     /**
      * Gets the value of a special attribute. A special attribute is one belonging to a business domain specific attribute
@@ -714,10 +692,9 @@ public interface BusinessEntityManager {
      * @return A list of objects related to the object through a special relationship. An empty array if the object provided is not related to others using that relationship.
      * @throws BusinessObjectNotFoundException if the object can not be found
      * @throws MetadataObjectNotFoundException if either the object class or the attribute can not be found
-     * @throws InvalidArgumentException If the object id is null
      */    
-    public List<BusinessObjectLight> getSpecialAttribute(String objectClass, String objectId, String specialAttributeName) 
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+    public List<BusinessObjectLight> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName) 
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException;
     
     /**
      * This method will extract the object at the other side of the special relationship and all the properties of the relationship itself
@@ -727,10 +704,9 @@ public interface BusinessEntityManager {
      * @return The list of elements related with such relationship plus the properties of theirs relationships
      * @throws BusinessObjectNotFoundException If the object could not be found
      * @throws MetadataObjectNotFoundException If the object class could not be found
-     * @throws InvalidArgumentException If the object id is null
      */
-    public List<AnnotatedBusinessObjectLight> getAnnotatedSpecialAttribute(String objectClass, String objectId, String specialAttributeName) 
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+    public List<AnnotatedBusinessObjectLight> getAnnotatedSpecialAttribute(String objectClass, long objectId, String specialAttributeName) 
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException;
     
     /**
      * Returns all the special relationships of a given object as a hashmap whose keys are
@@ -740,10 +716,9 @@ public interface BusinessEntityManager {
      * @return The hash map with the existing special relationships and the associated objects
      * @throws MetadataObjectNotFoundException If the class provided does not exist
      * @throws BusinessObjectNotFoundException if the object does not exist
-     * @throws InvalidArgumentException If the object id is null
      */
-    public HashMap<String,List<BusinessObjectLight>> getSpecialAttributes (String className, String objectId) 
-        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
+    public HashMap<String,List<BusinessObjectLight>> getSpecialAttributes (String className, long objectId) 
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException;
     
     /**
      * Checks if an object has a given number of standard relationships with another object
@@ -754,10 +729,9 @@ public interface BusinessEntityManager {
      * @return True if the object has numberOfRelationships relationships with another object
      * @throws BusinessObjectNotFoundException If the object can not be found
      * @throws MetadataObjectNotFoundException  If objectClass does not exist
-     * @throws InvalidArgumentException If the object id is null
      */
-    public boolean hasRelationship(String objectClass, String objectId, String relationshipName, int numberOfRelationships) 
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+    public boolean hasRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) 
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException;
 
     /**
      * Releases all the relationships with the given names associated to the object provided. If no relationships with such names exist, the method 
@@ -769,7 +743,7 @@ public interface BusinessEntityManager {
      * @throws BusinessObjectNotFoundException If the object could not be found
      * @throws InvalidArgumentException If any of the relationships is now allowed according to the defined data model
      */
-    public void releaseRelationships(String objectClass, String objectId, List<String> relationshipsToRelease) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
+    public void releaseRelationships(String objectClass, long objectId, List<String> relationshipsToRelease) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
     
     /**
      * Checks if an object has a given number of special relationships with another object
@@ -780,10 +754,9 @@ public interface BusinessEntityManager {
      * @return True if the object has numberOfRelationships relationships with another object
      * @throws BusinessObjectNotFoundException If the object can not be found
      * @throws MetadataObjectNotFoundException  if objectClass does not exist
-     * @throws InvalidArgumentException If the object id is null
      */
-    public boolean hasSpecialRelationship(String objectClass, String objectId, String relationshipName, int numberOfRelationships) 
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+    public boolean hasSpecialRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) 
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException;
     
     /**
      * Finds all possible routes between two given inventory objects
@@ -793,9 +766,8 @@ public interface BusinessEntityManager {
      * @param objectBId  Inventory object B id
      * @param relationshipName The name of the relationship used to navigate through nodes and find the route
      * @return A list of the routes, including only the nodes as RemoteBusinessObjectLights
-     * @throws InvalidArgumentException If any of the inventory objects does not have uuid
      */
-    public List<BusinessObjectLightList> findRoutesThroughSpecialRelationships (String objectAClassName, String objectAId, String objectBClassName, String objectBId, String relationshipName) throws InvalidArgumentException;
+    public List<BusinessObjectLightList> findRoutesThroughSpecialRelationships (String objectAClassName, long objectAId, String objectBClassName, long objectBId, String relationshipName);
     
     /**
      * Finds the physical path from one port to another
@@ -805,11 +777,10 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException can't f
      * @throws BusinessObjectNotFoundException 
      * @throws ApplicationObjectNotFoundException
-     * @throws InvalidArgumentException If one of the 
      * @deprecated This method shouldn't be here since it's context dependant. Don't use it, will be removed in the future
      */
-    public List<BusinessObjectLight> getPhysicalPath(String objectClass, String objectId) 
-        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
+    public List<BusinessObjectLight> getPhysicalPath(String objectClass, long objectId) 
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException;
     
     /**
      * Convenience method that returns the link connected to a port (if any). It serves to avoid calling {@link getSpecialAttribute} two times.
@@ -820,7 +791,7 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException If the class provided does not exist
      * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If The class provided is not a subclass of GenericPort
      */
-    public BusinessObject getLinkConnectedToPort(String portClassName, String portId) 
+    public BusinessObject getLinkConnectedToPort(String portClassName, long portId) 
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
     
     //Attachments management
@@ -838,7 +809,7 @@ public interface BusinessEntityManager {
      * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the file size exceeds the max permitted (default value is 10MB)
      */
     public long attachFileToObject(String name, String tags, byte[] file, String className, 
-            String objectId) throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException;
+            long objectId) throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException;
     /**
      * Fetches the files associated to an inventory object. Note that this call won't retrieve the actual files, but only references to them
      * @param className The class of the object whose files will be fetched from
@@ -846,10 +817,8 @@ public interface BusinessEntityManager {
      * @return The list of files
      * @throws org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException If the object could not be found
      * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the class provided does not exist
-     * @throws InvalidArgumentException If the object id is null
      */
-    public List<FileObjectLight> getFilesForObject(String className, String objectId) 
-        throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+    public List<FileObjectLight> getFilesForObject(String className, long objectId) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException;
     /**
      * Retrieves a particular file associated to an inventory object. This call returns the actual file
      * @param fileObjectId The id of the file object
@@ -860,7 +829,7 @@ public interface BusinessEntityManager {
      * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If for some low level reason, the file could not be read from its original location
      * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the class provided does not exist
      */
-    public FileObject getFile(long fileObjectId, String className, String objectId) throws BusinessObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException;
+    public FileObject getFile(long fileObjectId, String className, long objectId) throws BusinessObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException;
     /**
      * Releases (and deletes) a file associated to an inventory object
      * @param fileObjectId The id of the file object
@@ -870,7 +839,7 @@ public interface BusinessEntityManager {
      * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If for some low level reason, the file could not be deleted from disk
      * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the class provided does not exist
      */
-    public void detachFileFromObject(long fileObjectId, String className, String objectId) throws BusinessObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException;
+    public void detachFileFromObject(long fileObjectId, String className, long objectId) throws BusinessObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException;
     /**
      * Updates the properties of a file object (name or tags)
      * @param fileObjectId The id of the file object
@@ -882,7 +851,7 @@ public interface BusinessEntityManager {
      * @throws InvalidArgumentException if any of the properties has an invalid name or if the file name is empty
      * @throws MetadataObjectNotFoundException If the class of the object file is attached to could not be found
      */
-    public void updateFileProperties(long fileObjectId, List<StringPair> properties, String className, String objectId) throws BusinessObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException;
+    public void updateFileProperties(long fileObjectId, List<StringPair> properties, String className, long objectId) throws BusinessObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException;
     
     //<editor-fold desc="Contacts" defaultstate="collapsed">
     /**
@@ -896,8 +865,8 @@ public interface BusinessEntityManager {
      * @throws InvalidArgumentException If any of the properties or its value is invalid
      * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the customer class could not be found
      */
-    public String createContact(String contactClass, List<StringPair> properties, 
-            String customerClassName, String customerId) throws BusinessObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException;
+    public long createContact(String contactClass, List<StringPair> properties, 
+            String customerClassName, long customerId) throws BusinessObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException;
 
     /**
      * Updates a contact's information
@@ -908,7 +877,7 @@ public interface BusinessEntityManager {
      * @throws InvalidArgumentException If any of the properties or its value is invalid
      * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the contact class could not be found
      */
-    public void updateContact(String contactClass, String contactId, List<StringPair> properties) 
+    public void updateContact(String contactClass, long contactId, List<StringPair> properties) 
             throws BusinessObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException;
     /**
      * Deletes a contact
@@ -918,7 +887,7 @@ public interface BusinessEntityManager {
      * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the name is empty or there's an attempt to change the creationDate
      * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the class could not be found
      */
-    public void deleteContact(String contactClass, String contactId) throws BusinessObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException;
+    public void deleteContact(String contactClass, long contactId) throws BusinessObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException;
     /**
      * Gets the entire information of a given contact
      * @param contactClass The class of the contact
@@ -928,7 +897,7 @@ public interface BusinessEntityManager {
      * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the contact class could not be found
      * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the contact is malformed and the customer it should be related to does not exist
      */
-    public Contact getContact(String contactClass, String contactId) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+    public Contact getContact(String contactClass, long contactId) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
     /**
      * Retrieves the list of contacts associated to a customer
      * @param customerClass The class of the customer the contacts belong to
@@ -938,7 +907,7 @@ public interface BusinessEntityManager {
      * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the customer class could not be found
      * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If an error occurs while building the contact objects
      */
-    public List<Contact> getContactsForCustomer(String customerClass, String customerId) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+    public List<Contact> getContactsForCustomer(String customerClass, long customerId) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
     /**
      * Searches in all the properties of a contact for a given string
      * @param searchString The string to be matched
@@ -956,9 +925,8 @@ public interface BusinessEntityManager {
      * @param type The type of pools that should be retrieved. Root pools can be for general purpose, or as roots in models
      * @param includeSubclasses Use <code>true</code> if you want to get only the pools whose <code>className</code> property matches exactly the one provided, and <code>false</code> if you want to also include the subclasses
      * @return A set of pools
-     * @throws InvalidArgumentException If a root pool does not have the uuid
      */
-    public List<Pool> getRootPools(String className, int type, boolean includeSubclasses) throws InvalidArgumentException;
+    public List<Pool> getRootPools(String className, int type, boolean includeSubclasses);
     /**
      * Retrieves the pools associated to a particular object
      * @param objectClassName The parent object class name
@@ -966,29 +934,26 @@ public interface BusinessEntityManager {
      * @param poolClass The class name used to filter the results. Only the pools with a className attribute matching the provided value will be returned. Use null if you want to get all
      * @return A set of pools
      * @throws BusinessObjectNotFoundException If the parent object can not be found
-     * @throws InvalidArgumentException If a pool does not have uuid
      */
-    public List<Pool> getPoolsInObject(String objectClassName, String objectId, String poolClass) 
-        throws BusinessObjectNotFoundException, InvalidArgumentException;
+    public List<Pool> getPoolsInObject(String objectClassName, long objectId, String poolClass) 
+            throws BusinessObjectNotFoundException;
     /**
      * Retrieves the pools associated to a particular pool
      * @param parentPoolId The parent pool id
      * @param poolClass The class name used to filter the results. Only the pools with a className attribute matching the provided value will be returned. Use null if you want to get all
      * @return A set of pools
      * @throws ApplicationObjectNotFoundException If the parent object can not be found
-     * @throws InvalidArgumentException If any pool does no have uuid
      */
-    public List<Pool> getPoolsInPool(String parentPoolId, String poolClass) 
-            throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    public List<Pool> getPoolsInPool(long parentPoolId, String poolClass) 
+            throws ApplicationObjectNotFoundException;
     
     /**
      * Gets a pool by its id 
      * @param poolId The pool's id
      * @return the pool as a Pool object
      * @throws ApplicationObjectNotFoundException If the pool could not be found
-     * @throws InvalidArgumentException If the pool id is null or the result pool does not have uuid
      */
-    public Pool getPool(String poolId) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    public Pool getPool(long poolId) throws ApplicationObjectNotFoundException;
     
     /**
      * Gets the list of objects into a pool
@@ -996,10 +961,9 @@ public interface BusinessEntityManager {
      * @param limit Result limit. -1 To return all
      * @return The list of items inside the pool
      * @throws ApplicationObjectNotFoundException If the pool id provided is not valid
-     * @throws InvalidArgumentException If the pool item is an inventory object and it does not have the uuid
      */
-    public List<BusinessObjectLight> getPoolItems(String poolId, int limit)
-            throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    public List<BusinessObjectLight> getPoolItems(long poolId, int limit)
+            throws ApplicationObjectNotFoundException;
     //</editor-fold>
     
     /**
@@ -1106,7 +1070,7 @@ public interface BusinessEntityManager {
      * @throws BusinessObjectNotFoundException If the inventory object could not be found.
      * @throws InvalidArgumentException If there's an error during the execution of the report.
      */
-    public byte[] executeClassLevelReport(String objectClassName, String objectId, long reportId) 
+    public byte[] executeClassLevelReport(String objectClassName, long objectId, long reportId) 
             throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
     
     /**
@@ -1128,23 +1092,20 @@ public interface BusinessEntityManager {
      * @param objectId The id of the object
      * @return Gets the warehouses in a object
      */
-    public List<BusinessObjectLight> getWarehousesInObject(String objectClassName, String objectId) 
-        throws MetadataObjectNotFoundException, InvalidArgumentException;
+    public List<BusinessObjectLight> getWarehousesInObject(String objectClassName, long objectId) throws MetadataObjectNotFoundException;
     /**
      * Gets the physical node of a warehouse item
      * @param objectClassName The class of the object
      * @param objectId The id of the object
      * @return Gets the physical node of a warehouse item
      */
-    public BusinessObjectLight getPhysicalNodeToObjectInWarehouse(String objectClassName, String objectId) 
-        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
+    public BusinessObjectLight getPhysicalNodeToObjectInWarehouse(String objectClassName, long objectId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException;
     /**
      * Gets warehouse related to object
      * @param objectClassName The class of the object
      * @param objectId The id of the object
      * @return Gets warehouse related to object
      */
-    public BusinessObjectLight getWarehouseToObject(String objectClassName, String objectId) 
-        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
+    public BusinessObjectLight getWarehouseToObject(String objectClassName, long objectId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException;
     //</editor-fold>
 }

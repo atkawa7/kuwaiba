@@ -127,7 +127,7 @@ public class IPAddressesSyncProvider extends AbstractSyncProvider {
 
             try {
                 BusinessObjectLight mappedObjLight = PersistenceService.getInstance().
-                        getBusinessEntityManager().getObjectLight(agent.getParameters().get("deviceClass"), agent.getParameters().get("deviceId"));
+                        getBusinessEntityManager().getObjectLight(agent.getParameters().get("deviceClass"), Long.valueOf(agent.getParameters().get("deviceId")));
                 SnmpManager snmpManager = SnmpManager.getInstance();
 
                 snmpManager.setAddress(String.format("udp:%s/%s", agent.getParameters().get("ipAddress"), agent.getParameters().get("port"))); //NOI18N
@@ -211,7 +211,7 @@ public class IPAddressesSyncProvider extends AbstractSyncProvider {
             });
             IPSynchronizer ipSync = new IPSynchronizer(entrySet.getKey().getId(),
                     new BusinessObjectLight(entrySet.getKey().getParameters().get("deviceClass"), 
-                    entrySet.getKey().getParameters().get("deviceId"), ""), mibTables);
+                    Long.valueOf(entrySet.getKey().getParameters().get("deviceId")), ""), mibTables);
             res.addAll(ipSync.execute());
         }
         return res;

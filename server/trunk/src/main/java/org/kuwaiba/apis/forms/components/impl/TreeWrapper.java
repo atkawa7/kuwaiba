@@ -43,7 +43,7 @@ public class TreeWrapper {
         treeData = new TreeData();
         treeDataProvider = new TreeDataProvider(treeData);
         
-        RemoteObjectLight root = new RemoteObjectLight(Constants.DUMMY_ROOT, "-1", Constants.DUMMY_ROOT);
+        RemoteObjectLight root = new RemoteObjectLight(Constants.DUMMY_ROOT, -1, Constants.DUMMY_ROOT);
                 
         tree.setDataProvider(treeDataProvider);
                 

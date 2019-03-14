@@ -133,12 +133,12 @@ public class MplsSyncProvider extends AbstractSyncProvider {
         
         for (SyncDataSourceConfiguration dataSourceConfiguration : syncDataSourceConfigurations) {
             try {
-                String deviceId;
+                long deviceId;
                 int port;
                 String className, host, user, password;
 
                 if (dataSourceConfiguration.getParameters().containsKey("deviceId")) //NOI18N
-                    deviceId = dataSourceConfiguration.getParameters().get("deviceId"); //NOI18N
+                    deviceId = Long.valueOf(dataSourceConfiguration.getParameters().get("deviceId")); //NOI18N
                 else {
                     res.getSyncDataSourceConfigurationExceptions(dataSourceConfiguration).add(
                         new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "deviceId", syncGroup.getName())));
@@ -251,15 +251,10 @@ public class MplsSyncProvider extends AbstractSyncProvider {
         bem = PersistenceService.getInstance().getBusinessEntityManager();
         aem = PersistenceService.getInstance().getApplicationEntityManager();
         
-        List<Pool> ipv4RootPools = new ArrayList();
-        res = new ArrayList<>();
-        try {
-            ipv4RootPools = bem.getRootPools(Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
-        } catch (InventoryException ex) {
-            res.add(new SyncResult(-1, SyncResult.TYPE_ERROR, "Bridge Domain Information Processing", ex.getLocalizedMessage()));
-            return res;
-        }
+        List<Pool> ipv4RootPools = bem.getRootPools(Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
         ipv4Root = ipv4RootPools.get(0);
+        
+        res = new ArrayList<>();
         //First, we inject the unexpected errors
         for (SyncDataSourceConfiguration dsConfig : pollResult.getExceptions().keySet()) {
             for (Exception ex : pollResult.getExceptions().get(dsConfig))
@@ -282,7 +277,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
                 
                 BusinessObjectLight relatedOject = new BusinessObjectLight(
                                                         dataSourceConfiguration.getParameters().get("deviceClass"), 
-                                                        dataSourceConfiguration.getParameters().get("deviceId"), "");
+                                                        Long.valueOf(dataSourceConfiguration.getParameters().get("deviceId")), "");
                 //we get the current interfaces physicalPorts, VirtualPorts, Pseudowires
                 List<BusinessObjectLight> currentInterfaces = bem.getChildrenOfClassLight(relatedOject.getId(), relatedOject.getClassName(), "GenericPort", -1);
                 //TODO check if here we have virtual ports and pw
@@ -339,7 +334,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
                         if(relatedInterfaceInDetail == null){ 
                             HashMap<String, String> defaultAttributes = new HashMap<>();
                             defaultAttributes.put(Constants.PROPERTY_NAME, localInterfaceDetailFromSync);
-                            String newPwId = bem.createObject("Pseudowire", relatedOject.getClassName(), relatedOject.getId(), defaultAttributes, -1);
+                            long newPwId = bem.createObject("Pseudowire", relatedOject.getClassName(), relatedOject.getId(), defaultAttributes, -1);
                             relatedInterfaceInDetail = new BusinessObjectLight("Pseudowire", newPwId, localInterfaceDetailFromSync);
 
                             aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [Pseudowire] (id:%s)", localInterfaceNameFromSync, newPwId));
@@ -363,7 +358,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
                     else if(matchingLocalInterface == null && localInterfaceNameFromSync.startsWith("pw")) {
                         HashMap<String, String> defaultAttributes = new HashMap<>();
                         defaultAttributes.put(Constants.PROPERTY_NAME, localInterfaceNameFromSync);
-                        String newPwId = bem.createObject("Pseudowire", relatedOject.getClassName(), relatedOject.getId(), defaultAttributes, -1);
+                        long newPwId = bem.createObject("Pseudowire", relatedOject.getClassName(), relatedOject.getId(), defaultAttributes, -1);
                         //The new pseudowire
                         matchingLocalInterface = new BusinessObjectLight("Pseudowire", newPwId, localInterfaceNameFromSync);
                         
@@ -380,7 +375,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
                             HashMap<String, String> attributesToBeSet = new HashMap<>();
                             attributesToBeSet.put(Constants.PROPERTY_NAME, vcIdFromSync);
                             //First we create the mpls link, the name is the vcId
-                            String newMplsLinkId = bem.createSpecialObject("MPLSLink", null, "-1", attributesToBeSet, -1); //NOI18N
+                            long newMplsLinkId = bem.createSpecialObject("MPLSLink", null, -1, attributesToBeSet, -1); //NOI18N
                             BusinessObjectLight newMplsLink = new BusinessObjectLight("MPLSLink", newMplsLinkId, vcIdFromSync); //NOI18N
                             bem.createSpecialRelationship(relatedOject.getClassName(), relatedOject.getId(), "MPLSLink", newMplsLinkId, RELATIONSHIP_MPLSLINK, false); //NOI18N
                             //the RelatedObject need to be relat4ed with the mpls link anyway
@@ -594,7 +589,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
     * @return the object, null doesn't exists in the current structure
     */
     private void readcurrentIPAMFolders(List<Pool> folders) throws ApplicationObjectNotFoundException,
-            MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException
+            MetadataObjectNotFoundException, BusinessObjectNotFoundException
     {
         for (Pool folder : folders) {
             if(!folders.isEmpty())
@@ -612,7 +607,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
      */
     private void readCurrentSubnets(Pool folder) 
             throws ApplicationObjectNotFoundException, 
-            MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
+            MetadataObjectNotFoundException, BusinessObjectNotFoundException {
         //we read the subnets of the folder
         List<BusinessObjectLight> subnetsInFolder = bem.getPoolItems(folder.getId(), -1);
         for (BusinessObjectLight subnet : subnetsInFolder) {
@@ -635,7 +630,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
      */
     private void readCurrentSubnetChildren(BusinessObjectLight subnet) 
         throws ApplicationObjectNotFoundException, 
-        MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException 
+        MetadataObjectNotFoundException, BusinessObjectNotFoundException 
     {
         //we get the ips and the subnets inside subents
         List<BusinessObjectLight> subnetChildren = bem.getObjectSpecialChildren(subnet.getClassName(), subnet.getId());
@@ -744,7 +739,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
         ipAttributes.put(Constants.PROPERTY_DESCRIPTION, "Created with sync");
         ipAttributes.put(Constants.PROPERTY_MASK, syncMask); //TODO set the list types attributes
         try { 
-            String newIpAddrId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, subnet.getClassName(), subnet.getId(), ipAttributes, -1);
+            long newIpAddrId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, subnet.getClassName(), subnet.getId(), ipAttributes, -1);
             //AuditTrail
             aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [IPAddress] (id:%s)", ipAddr, newIpAddrId));
             

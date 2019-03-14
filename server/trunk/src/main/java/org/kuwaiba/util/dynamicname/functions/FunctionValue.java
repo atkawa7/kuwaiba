@@ -36,7 +36,7 @@ import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
  */
 public class FunctionValue extends DynamicSectionFunction {
     public static final String FUNCTION_PATTERN = "value\\([0-9]+,[a-zA-Z]+\\)";
-    private String uuid;
+    private long id;
     private String attribute;
     /**
      * Remote business object representation of the object with the given id
@@ -53,22 +53,22 @@ public class FunctionValue extends DynamicSectionFunction {
         Pattern pattern = Pattern.compile("[0-9]+,[a-zA-Z]+");
         Matcher matcher = pattern.matcher(dynamicSectionFunction);
         if (matcher.find()) {
-            uuid = matcher.group().split(",")[0];
+            id = Long.parseLong(matcher.group().split(",")[0]);
             attribute = matcher.group().split(",")[1];
         }
         
         try {
             BusinessEntityManager bem = PersistenceService.getInstance().getBusinessEntityManager();
-            remoteBusinessObject = bem.getObject(uuid);
+            remoteBusinessObject = bem.getObject(id);
             
             MetadataEntityManager mem = PersistenceService.getInstance().getMetadataEntityManager();
             classMetadata = mem.getClass(remoteBusinessObject.getClassName());
             
             if (classMetadata.getAttribute(attribute) == null)
-                throw new InvalidArgumentException(String.format("The attribute \"%s\" can not be found in object with id %s", attribute, uuid));
+                throw new InvalidArgumentException(String.format("The attribute \"%s\" can not be found in object with id %s", attribute, id));
             
         } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException ex) {
-            throw new InvalidArgumentException(String.format("The object with id %s can not be found", uuid));
+            throw new InvalidArgumentException(String.format("The object with id %s can not be found", id));
         }
     }
     
@@ -83,7 +83,7 @@ public class FunctionValue extends DynamicSectionFunction {
             String attributeType = classMetadata.getAttribute(attribute).getType();
             
             if (attributeValue != null && mem.isSubclassOf("GenericObjectList", attributeType)) {
-                BusinessObjectLight item = aem.getListTypeItem(attributeType, attributeValue);
+                BusinessObjectLight item = aem.getListTypeItem(attributeType, Long.valueOf(attributeValue));
                 if (item != null)
                     attributeValue = item.getName();
             }

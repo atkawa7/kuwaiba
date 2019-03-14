@@ -73,14 +73,14 @@ public class SnmpMplsSyncProvider extends AbstractSyncProvider {
         PollResult pollResult = new PollResult();
         
         for (SyncDataSourceConfiguration agent : syncGroup.getSyncDataSourceConfigurations()) {
-            String id = "-1";
+            long id = -1L;
             String className = null;                
             String address = null;
             String port = null;
             //String community = null;
 
             if (agent.getParameters().containsKey("deviceId")) //NOI18N
-                id = agent.getParameters().get("deviceId"); //NOI18N
+                id = Long.valueOf(agent.getParameters().get("deviceId")); //NOI18N
             else 
                 pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
                     new InvalidArgumentException(String.format(I18N.gm("parameter_deviceId_no_defined"), syncGroup.getName(), syncGroup.getId())));
@@ -224,7 +224,7 @@ public class SnmpMplsSyncProvider extends AbstractSyncProvider {
             });
             CpwVcMplsSynchronizer ciscoSync = new CpwVcMplsSynchronizer(entrySet.getKey().getId(),
                     new BusinessObjectLight(entrySet.getKey().getParameters().get("deviceClass"), 
-                    entrySet.getKey().getParameters().get("deviceId"), ""), 
+                    Long.valueOf(entrySet.getKey().getParameters().get("deviceId")), ""), 
                     mibTables);
             res.addAll(ciscoSync.execute());
         }

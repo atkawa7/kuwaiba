@@ -242,7 +242,7 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException if the class provided is not a list type
      * @throws OperationNotPermittedException If the class is abstract or marked as in design.
      */
-    public String createListTypeItem(String className, String name, String displayName)
+    public long createListTypeItem(String className, String name, String displayName)
             throws MetadataObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException;
 
     /**
@@ -264,7 +264,7 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException if the list type class name provided is not a list type
      * @throws ApplicationObjectNotFoundException If the the item id can not be found
      */
-    public BusinessObjectLight getListTypeItem(String listTypeClassName, String listTypeItemId) throws 
+    public BusinessObjectLight getListTypeItem(String listTypeClassName, long listTypeItemId) throws 
         MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException;
     
     /**
@@ -276,7 +276,7 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException if the list type class name provided is not a list type
      * @throws ApplicationObjectNotFoundException If the the item id can not be found
      */
-    public BusinessObjectLight getListTypeItemWithName(String listTypeClassName, String listTypeItemName) throws 
+    public BusinessObjectLight getListTypeItem(String listTypeClassName, String listTypeItemName) throws 
         MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException;
     
     /**
@@ -290,7 +290,7 @@ public interface ApplicationEntityManager {
      * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the class provided is not a list type
      * @throws org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException If the user can't delete a list type item
      */
-    public void deleteListTypeItem(String className, String oid, boolean realeaseRelationships)
+    public void deleteListTypeItem(String className, long oid, boolean realeaseRelationships)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException, NotAuthorizedException;
 
     /**
@@ -314,7 +314,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException if the list type item class can not be found
      * @throws InvalidArgumentException if the view type is not supported
      */
-    public long createListTypeItemRelatedView(String listTypeItemId, String listTypeItemClassName, String viewClassName, String name, String description, byte [] structure, byte [] background) 
+    public long createListTypeItemRelatedView(long listTypeItemId, String listTypeItemClassName, String viewClassName, String name, String description, byte [] structure, byte [] background) 
         throws MetadataObjectNotFoundException, InvalidArgumentException;
     
     /**
@@ -327,7 +327,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException if the corresponding class metadata can not be found
      * @throws InvalidArgumentException if the provided view type is not supported
      */    
-    public ViewObject getListTypeItemRelatedView(String listTypeItemId, String listTypeItemClass, long viewId) 
+    public ViewObject getListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId) 
         throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException;
     
     /**
@@ -343,11 +343,10 @@ public interface ApplicationEntityManager {
      * @throws BusinessObjectNotFoundException if the list type item can not be found
      * @throws MetadataObjectNotFoundException if the list type item class can not be found
      * @throws InvalidArgumentException if the view type is not supported
-     * @throws ApplicationObjectNotFoundException If the view can not be found
      */
-    public ChangeDescriptor updateListTypeItemRelatedView(String listTypeItemId, String listTypeItemClass, long viewId, 
+    public ChangeDescriptor updateListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, 
         String name, String description, byte[] structure, byte[] background) 
-        throws MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException;
+        throws MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException;
     
     /**
      * Gets the views related to a list type item, such as the default, rack or equipment views
@@ -358,7 +357,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException if the corresponding class metadata can not be found
      * @throws InvalidArgumentException if the provided view type is not supported
      */
-    public List<ViewObjectLight> getListTypeItemRelatedViews(String listTypeItemId, String listTypeItemClass, int limit) 
+    public List<ViewObjectLight> getListTypeItemRelatedViews(long listTypeItemId, String listTypeItemClass, int limit) 
         throws MetadataObjectNotFoundException, InvalidArgumentException;
     
     /**
@@ -368,10 +367,10 @@ public interface ApplicationEntityManager {
      * @param viewId related view id
      * @throws MetadataObjectNotFoundException if the list type item class can not be found
      * @throws InvalidArgumentException if the list type item can no be found using the id
-     * @throws ApplicationObjectNotFoundException if the view can not be found
+     * @throws BusinessObjectNotFoundException if the view can not be found
      */
-    public void deleteListTypeItemRelatedView(String listTypeItemId, String listTypeItemClass, long viewId) 
-        throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException;
+    public void deleteListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId) 
+        throws MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException;
     
     /**
      * Retrieves the objects that make reference to a given list type item
@@ -380,17 +379,14 @@ public interface ApplicationEntityManager {
      * @param limit The limit of results. Use -1 to retrieve all.
      * @return The list of business objects related to the list type item
      * @throws ApplicationObjectNotFoundException 
-     * @throws InvalidArgumentException 
      */
-    public List<BusinessObjectLight> getListTypeItemUses(String listTypeItemClass, String listTypeItemId, int limit) 
-        throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    public List<BusinessObjectLight> getListTypeItemUses(String listTypeItemClass, long listTypeItemId, int limit) throws ApplicationObjectNotFoundException;
     
     /**
      * Gets the list of template elements with a device layout
      * @return the list of template elements with a device layout
-     * @throws InvalidArgumentException If any template does not have uuid
      */
-    public List<BusinessObjectLight> getDeviceLayouts() throws InvalidArgumentException;
+    public List<BusinessObjectLight> getDeviceLayouts();
     
     /**
      * Gets the device layout structure as an XML file
@@ -400,7 +396,7 @@ public interface ApplicationEntityManager {
      * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException In case that any of the devices contained within the main one
      * has a malformed <b>model</b> attribute
      */
-    public byte[] getDeviceLayoutStructure(String oid, String className) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    public byte[] getDeviceLayoutStructure(long oid, String className) throws ApplicationObjectNotFoundException;
         
     /**
      * Get a view related to an object, such as the default rack or object views
@@ -408,13 +404,12 @@ public interface ApplicationEntityManager {
      * @param objectClass object's class
      * @param viewId view id
      * @return The associated view (there should be only one of each type). Null if there's none yet
-     * @throws ApplicationObjectNotFoundException if the object or the view can not be found
+     * @throws BusinessObjectNotFoundException if the object or the view can not be found
      * @throws MetadataObjectNotFoundException if the corresponding class metadata can not be found
      * @throws InvalidArgumentException if the provided view type is not supported
-     * @throws BusinessObjectNotFoundException If the object can not be found
      */
-    public ViewObject getObjectRelatedView(String oid, String objectClass, long viewId)
-            throws ApplicationObjectNotFoundException,  BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+    public ViewObject getObjectRelatedView(long oid, String objectClass, long viewId)
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Get a view related to an object, such as the default, rack or equipment views
@@ -426,7 +421,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException if the corresponding class metadata can not be found
      * @throws InvalidArgumentException if the provided view type is not supported
      */
-    public List<ViewObjectLight> getObjectRelatedViews(String oid, String objectClass, int limit)
+    public List<ViewObjectLight> getObjectRelatedViews(long oid, String objectClass, int limit)
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
   
     /**
@@ -443,9 +438,9 @@ public interface ApplicationEntityManager {
      * Returns a view of those that are not related to a particular object (i.e.: GIS views)
      * @param viewId view id
      * @return An object representing the view
-     * @throws ApplicationObjectNotFoundException If the requested view is not found
+     * @throws BusinessObjectNotFoundException if the requested view
      */
-    public ViewObject getGeneralView(long viewId) throws ApplicationObjectNotFoundException;
+    public ViewObject getGeneralView(long viewId) throws BusinessObjectNotFoundException;
 
     /**
      * Creates a view for a given object. If there's already a view of the provided view type, it will be overwritten
@@ -461,7 +456,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException if the object class can not be found
      * @throws InvalidArgumentException if the view type is not supported
      */
-    public long createObjectRelatedView(String oid, String objectClass, String name, String description, 
+    public long createObjectRelatedView(long oid, String objectClass, String name, String description, 
             String viewClassName, byte[] structure, byte[] background)
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
 
@@ -491,11 +486,10 @@ public interface ApplicationEntityManager {
      * @throws BusinessObjectNotFoundException if the object can not be found
      * @throws MetadataObjectNotFoundException if the object class can not be found
      * @throws InvalidArgumentException if the view type is not supported
-     * @throws ApplicationObjectNotFoundException If the view can not be found
      */
-    public ChangeDescriptor updateObjectRelatedView(String oid, String objectClass, long viewId, String name, 
+    public ChangeDescriptor updateObjectRelatedView(long oid, String objectClass, long viewId, String name, 
             String description, byte[] structure, byte[] background)
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException;
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Saves a view not related to a particular object. The view type can not be changed
@@ -574,9 +568,8 @@ public interface ApplicationEntityManager {
      * @param query The code-friendly representation of the query made using the graphical query builder
      * @return a set of objects matching the specified criteria as ResultRecord array
      * @throws MetadataObjectNotFoundException If the class to be search is cannot be found
-     * @throws InvalidArgumentException If any instance does not have a uuid
      */
-    public List<ResultRecord> executeQuery(ExtendedQuery query) throws MetadataObjectNotFoundException, InvalidArgumentException;
+    public List<ResultRecord> executeQuery(ExtendedQuery query) throws MetadataObjectNotFoundException;
 
     /**
      * Get the data model class hierarchy as an XML document
@@ -597,7 +590,7 @@ public interface ApplicationEntityManager {
      * @return The id of the new pool
      * @throws MetadataObjectNotFoundException If instancesOfClass is not a valid subclass of InventoryObject
      */
-    public String createRootPool(String name, String description, String instancesOfClass, int type)
+    public long createRootPool(String name, String description, String instancesOfClass, int type)
             throws MetadataObjectNotFoundException;
     
     /**
@@ -613,7 +606,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException If instancesOfClass is not a valid subclass of InventoryObject
      * @throws BusinessObjectNotFoundException If the parent object can not be found
      */
-    public String createPoolInObject(String parentClassname, String parentId, String name, String description, String instancesOfClass, int type)
+    public long createPoolInObject(String parentClassname, long parentId, String name, String description, String instancesOfClass, int type)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException;
 
     /**
@@ -628,7 +621,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException If instancesOfClass is not a valid subclass of InventoryObject
      * @throws ApplicationObjectNotFoundException If the parent object can not be found
      */
-    public String createPoolInPool(String parentId, String name, String description, String instancesOfClass, int type)
+    public long createPoolInPool(long parentId, String name, String description, String instancesOfClass, int type)
             throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException;    
     
     /**
@@ -637,7 +630,7 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If any of the pools to be deleted couldn't be found
      * @throws OperationNotPermittedException If any of the objects in the pool can not be deleted because it's not a business related instance (it's more a security restriction)
      */
-    public void deletePools(String[] ids) throws ApplicationObjectNotFoundException, OperationNotPermittedException;
+    public void deletePools(long[] ids) throws ApplicationObjectNotFoundException, OperationNotPermittedException;
    
     /**
      * Updates a pool. The class name field is read only to preserve the integrity of the pool. Same happens to the field type
@@ -646,7 +639,7 @@ public interface ApplicationEntityManager {
      * @param description Pool description. If null, this field will remain unchanged
      * @return The summary of the changes.
      */
-    public ChangeDescriptor setPoolProperties(String poolId, String name, String description);
+    public ChangeDescriptor setPoolProperties(long poolId, String name, String description);
     
     /**
      * Gets the name Of a special parent by scale up the SPECIAL_OF_CHILD hierarchy
@@ -668,7 +661,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException If the provided class couldn't be found
      * @throws InvalidArgumentException If the class provided is not subclass of  InventoryObject
      */
-    public List<ActivityLogEntry> getBusinessObjectAuditTrail(String objectClass, String objectId, int limit)
+    public List<ActivityLogEntry> getBusinessObjectAuditTrail(String objectClass, long objectId, int limit)
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
     
     /**
@@ -773,7 +766,7 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the object activity log could no be found
      * @throws BusinessObjectNotFoundException  If the modified object itself could not be found
      */
-    public void createObjectActivityLogEntry(String userName, String className, String oid, int type, 
+    public void createObjectActivityLogEntry(String userName, String className, long oid, int type, 
         String affectedProperties, String oldValues, String newValues, String notes) throws ApplicationObjectNotFoundException, BusinessObjectNotFoundException;
     
     /**
@@ -786,7 +779,7 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the object activity log could no be found
      * @throws BusinessObjectNotFoundException If the modified object itself could not be found
      */
-    public void createObjectActivityLogEntry(String userName, String className, String oid,  
+    public void createObjectActivityLogEntry(String userName, String className, long oid,  
             int type, ChangeDescriptor changeDescriptor) throws ApplicationObjectNotFoundException, BusinessObjectNotFoundException;
     
     /**
@@ -1235,10 +1228,9 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException If the object can not be found
      * @throws BusinessObjectNotFoundException If the object can not be found
      * @throws OperationNotPermittedException If the object have a relationship with the favorite folder
-     * @throws InvalidArgumentException If a node does not have uuid
      */
-    public void addObjectTofavoritesFolder(String objectClass, String objectId, long favoritesFolderId, long userId) 
-        throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException;
+    public void addObjectTofavoritesFolder(String objectClass, long objectId, long favoritesFolderId, long userId) 
+        throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException;
     
     /**
      * Removes an object associated to a favorites folder
@@ -1249,10 +1241,9 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the favorites folder can not be found
      * @throws MetadataObjectNotFoundException If the object can not be found
      * @throws BusinessObjectNotFoundException If the object can not be found
-     * @throws InvalidArgumentException If a node does not have uuid
      */
-    public void removeObjectFromfavoritesFolder(String objectClass, String objectId, long favoritesFolderId, long userId) 
-        throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
+    public void removeObjectFromfavoritesFolder(String objectClass, long objectId, long favoritesFolderId, long userId) 
+        throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, BusinessObjectNotFoundException;
         
     /**
      * Create a relationship between an user and a new favorites folder
@@ -1290,10 +1281,9 @@ public interface ApplicationEntityManager {
      * @param userId User Id
      * @throws ApplicationObjectNotFoundException If the favorites folder can not be found
      * @return List of objects related to bookmark
-     * @throws InvalidArgumentException If any of the object does not have uuid
      */
     public List<BusinessObjectLight> getObjectsInFavoritesFolder(long favoritesFolderId, long userId, int limit) 
-        throws ApplicationObjectNotFoundException, InvalidArgumentException;
+        throws ApplicationObjectNotFoundException;
     /**
      * Get the bookmarks where an object is associated
      * @param userId User id
@@ -1304,10 +1294,9 @@ public interface ApplicationEntityManager {
      * @throws BusinessObjectNotFoundException If the object can not be found
      * @throws ApplicationObjectNotFoundException If the object is associated to a bookmark folder but 
      *                                            The favorites folder is not associated to the current user
-     * @throws InvalidArgumentException If nodes do not have uuid
      */
-    public List<FavoritesFolder> getFavoritesFoldersForObject(long userId, String objectClass, String objectId) 
-        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
+    public List<FavoritesFolder> getFavoritesFoldersForObject(long userId, String objectClass, long objectId) 
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException;
     
     /**
      * Gets a favorites folder
@@ -1367,8 +1356,8 @@ public interface ApplicationEntityManager {
      * @throws BusinessRuleException If the rule matches, and the involved objects don't comply with the conditions stated by the rule
      * @throws InvalidArgumentException If the rule is malformed or can not be read.
      */
-    public void checkRelationshipByAttributeValueBusinessRules(String sourceObjectClassName, String sourceObjectId ,
-            String targetObjectClassName, String targetObjectId) throws BusinessRuleException, InvalidArgumentException;
+    public void checkRelationshipByAttributeValueBusinessRules(String sourceObjectClassName, long sourceObjectId ,
+            String targetObjectClassName, long targetObjectId) throws BusinessRuleException, InvalidArgumentException;
     
     /**
      * Fetches a synchronization group. From the conceptual point of view, a sync group is a set of Synchronization Data Sources.
@@ -1398,7 +1387,7 @@ public interface ApplicationEntityManager {
      * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException
      * @throws org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException
      */
-    public  SyncDataSourceConfiguration getSyncDataSourceConfiguration(String objectId) throws InvalidArgumentException, ApplicationObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, UnsupportedPropertyException;   /**
+    public  SyncDataSourceConfiguration getSyncDataSourceConfiguration(long objectId) throws InvalidArgumentException, ApplicationObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, UnsupportedPropertyException;   /**
      * Gets the data source configurations associated to a sync group. A data source configuration is a set of parameters to access a sync data source
      * @param syncGroupId The sync group the requested configurations belong to
      * @return A list of data source configurations
@@ -1439,7 +1428,7 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the object has no sync data source configuration group could not be found
      * @throws InvalidArgumentException  If any of the parameters is not valid
      */
-    public long createSyncDataSourceConfig(String objectId, long syncGroupId, String name, List<StringPair> parameters)throws ApplicationObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException;
+    public long createSyncDataSourceConfig(long objectId, long syncGroupId, String name, List<StringPair> parameters)throws ApplicationObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException;
     /**
      * Updates a synchronization data source
      * @param syncDataSourceConfigId The id of an synchronization data source

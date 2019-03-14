@@ -21,7 +21,7 @@ package org.kuwaiba.apis.persistence.exceptions;
  */
 public class BusinessObjectNotFoundException extends InventoryException {
 
-    public BusinessObjectNotFoundException(String objectClass, String oid) {
+    public BusinessObjectNotFoundException(String objectClass, Long oid) {
         super(String.format("Object of class %s and id %s could not be found. It might have been deleted already", objectClass, oid));
     }
 }

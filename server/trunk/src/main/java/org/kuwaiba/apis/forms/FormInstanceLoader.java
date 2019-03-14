@@ -37,7 +37,7 @@ public class FormInstanceLoader extends AbstractFormInstanceLoader {
     }
 
     @Override
-    public RemoteObjectLight getRemoteObjectLight(long classId, String objectId) {
+    public RemoteObjectLight getRemoteObjectLight(long classId, long objectId) {
         try {
             RemoteClassMetadata cli = getClassInfoLight(classId);
             return wsBean.getObjectLight(cli.getClassName(), objectId, session.getIpAddress(), session.getSessionId());

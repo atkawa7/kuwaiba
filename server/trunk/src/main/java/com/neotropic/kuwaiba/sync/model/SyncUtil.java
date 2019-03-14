@@ -477,7 +477,7 @@ public class SyncUtil {
                 if (event.isCharacters() && router != null) {
                     String data = event.asCharacters().getData();
                     if (data.contains("-1"))
-                        event = ef.createCharacters(device.getId());
+                        event = ef.createCharacters(Long.toString(device.getId()));
                     writer.add(event);
                 }else if (event.isStartElement()) {
                     StartElement s = event.asStartElement();
@@ -509,9 +509,9 @@ public class SyncUtil {
                                 Attribute next = (Attribute) attributes.next();
                                 
                                 if(side == 1 && next.getName().equals(aside))
-                                    newAttributes.add(ef.createAttribute(aside, device.getId()));
+                                    newAttributes.add(ef.createAttribute(aside, Long.toString(device.getId())));
                                 else if(side == 2 && next.getName().equals(bside))
-                                    newAttributes.add(ef.createAttribute(bside, device.getId()));
+                                    newAttributes.add(ef.createAttribute(bside, Long.toString(device.getId())));
                                 else
                                     newAttributes.add(next);
                             }   
@@ -570,7 +570,7 @@ public class SyncUtil {
                 xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(y)));
 
                 xmlew.add(xmlef.createAttribute(new QName("class"), device.getClassName()));
-                xmlew.add(xmlef.createCharacters(device.getId()));
+                xmlew.add(xmlef.createCharacters(Long.toString(device.getId())));
                 xmlew.add(xmlef.createEndElement(qnameNode, null));
                 x += 194; y +=18;
             }
@@ -580,11 +580,11 @@ public class SyncUtil {
             xmlew.add(xmlef.createStartElement(qnameEdges, null, null));
             QName qnameEdge = new QName("edge");
             xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
-            xmlew.add(xmlef.createAttribute(new QName("id"), link.getId()));
+            xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(link.getId())));
             xmlew.add(xmlef.createAttribute(new QName("class"), link.getClassName()));
 
-            xmlew.add(xmlef.createAttribute(new QName("aside"), devices.get(0).getId()));
-            xmlew.add(xmlef.createAttribute(new QName("bside"), devices.get(1).getId()));
+            xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(devices.get(0).getId())));
+            xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(devices.get(1).getId())));
             x=114; y=260; 
             for (int i=0; i<2; i++) {
                 QName qnameControlpoint = new QName("controlpoint");

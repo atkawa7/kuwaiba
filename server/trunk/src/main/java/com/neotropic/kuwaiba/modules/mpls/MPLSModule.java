@@ -115,11 +115,11 @@ public class MPLSModule implements GenericCommercialModule {
      *                              If any of the classes provided can not be found
      *                              If any of the objects involved can't be connected
      */
-    public String createMPLSLink(String classNameEndpointA, String idEndpointA, 
-            String classNameEndpointB, String idEndpointB, String linkType, String defaultName) throws ServerSideException {
+    public long createMPLSLink(String classNameEndpointA, long idEndpointA, 
+            String classNameEndpointB, long idEndpointB, String linkType, String defaultName) throws ServerSideException {
         if (bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
-        String newConnectionId = null;
+        long newConnectionId = -1;
         try {
             if (!mem.isSubclassOf("GenericLogicalConnection", linkType)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not subclass of GenericLogicalConnection", linkType));
@@ -135,7 +135,7 @@ public class MPLSModule implements GenericCommercialModule {
             if (communicationsEquipmentB == null)
                 throw new ServerSideException(String.format("The specified port (%s : %s) doesn't seem to be located in a communications equipment", classNameEndpointB, idEndpointB));
             
-            newConnectionId = bem.createSpecialObject(linkType, null, "-1", attributesToBeSet, -1);                      
+            newConnectionId = bem.createSpecialObject(linkType, null, -1, attributesToBeSet, -1);                      
                        
             bem.createSpecialRelationship(linkType, newConnectionId, classNameEndpointA, idEndpointA, RELATIONSHIP_MPLSENDPOINTA, true);
             bem.createSpecialRelationship(linkType, newConnectionId, classNameEndpointB, idEndpointB, RELATIONSHIP_MPLSENDPOINTB, true);
@@ -152,7 +152,7 @@ public class MPLSModule implements GenericCommercialModule {
             //doing commits in every call to the BEM
             //If the new connection was successfully created, but there's a problem creating the relationships,
             //delete the connection and throw an exception
-            if (newConnectionId == null) {
+            if (newConnectionId != -1) {
                 try {
                     bem.deleteObject(linkType, newConnectionId, true);
                 } catch (Exception ex) {
@@ -177,7 +177,7 @@ public class MPLSModule implements GenericCommercialModule {
      *                            If the object could not be deleted because there's some business rules that avoids it or it has incoming relationships.
      * @throws NotAuthorizedException
      */
-    public void deleteMPLSLink(String linkClass, String linkId, boolean forceDelete) 
+    public void deleteMPLSLink(String linkClass, long linkId, boolean forceDelete) 
             throws ServerSideException, InventoryException, NotAuthorizedException {
         if (bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");

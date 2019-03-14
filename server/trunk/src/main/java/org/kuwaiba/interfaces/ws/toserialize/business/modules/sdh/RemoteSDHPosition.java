@@ -29,7 +29,7 @@ public class RemoteSDHPosition implements Serializable {
     /**
      * Id of the connection being used (a TransportLink or a ContainerLink)
      */
-    private String connectionId;
+    private long connectionId;
     /**
      * Id of the connection being used (a TransportLink or a ContainerLink)
      */
@@ -47,17 +47,17 @@ public class RemoteSDHPosition implements Serializable {
         this.position = position.getPosition();
     }
     
-    public RemoteSDHPosition(String connectionClass, String connectionId, int position) {
+    public RemoteSDHPosition(String connectionClass, long connectionId, int position) {
         this.connectionId = connectionId;
         this.connectionClass = connectionClass;
         this.position = position;
     }
 
-    public String getLinkId() {
+    public long getLinkId() {
         return connectionId;
     }
 
-    public void setLinkId(String connectionId) {
+    public void setLinkId(long connectionId) {
         this.connectionId = connectionId;
     }
 

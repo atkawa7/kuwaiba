@@ -31,8 +31,8 @@ public class BusinessObjectViewNode extends AbstractViewNode<BusinessObjectLight
     @Override
     public boolean equals(Object obj) {
         //A node can be matched using an instance of the its identifier, or simply its id
-        if (obj instanceof String)
-            return getIdentifier().getId().equals(obj);
+        if (obj instanceof Long)
+            return getIdentifier().getId() == (long)obj;
         
         if (obj instanceof BusinessObjectLight)
             return getIdentifier().equals(obj);

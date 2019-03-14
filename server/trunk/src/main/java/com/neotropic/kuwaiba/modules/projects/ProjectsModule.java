@@ -94,7 +94,7 @@ public class ProjectsModule implements GenericCommercialModule {
      * Gets the project pools
      * @return The list of project pools
      */
-    public List<RemotePool> getProjectPools() throws InvalidArgumentException {
+    public List<RemotePool> getProjectPools() {
         List<Pool> projectPools = bem.getRootPools(Constants.CLASS_GENERICPROJECT, ApplicationEntityManager.POOL_TYPE_MODULE_COMPONENT, true);
         List<RemotePool> remoteProjPools = new ArrayList();
         
@@ -109,9 +109,8 @@ public class ProjectsModule implements GenericCommercialModule {
      * @param limit Max result number, -1 without limit
      * @return The list of projects
      * @throws ApplicationObjectNotFoundException If the Project pool is not found
-     * @throws InvalidArgumentException If the pool does not have uuid
      */
-    public List<BusinessObjectLight> getProjectsInProjectPool(String poolId, int limit) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+    public List<BusinessObjectLight> getProjectsInProjectPool(long poolId, int limit) throws ApplicationObjectNotFoundException {
         return bem.getPoolItems(poolId, limit);
     }
         
@@ -128,7 +127,7 @@ public class ProjectsModule implements GenericCommercialModule {
      * @throws MetadataObjectNotFoundException If the class name could not be found
      * @throws ApplicationObjectNotFoundException If the specified template could not be found.
      */
-    public String addProject(String parentId, String parentClassName, String className, String[] attributeNames, String[] attributeValues) throws 
+    public long addProject(long parentId, String parentClassName, String className, String[] attributeNames, String[] attributeValues) throws 
         ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, MetadataObjectNotFoundException  {
 
         bem.getPool(parentId);
@@ -143,11 +142,9 @@ public class ProjectsModule implements GenericCommercialModule {
      * @throws BusinessObjectNotFoundException If the object couldn't be found
      * @throws MetadataObjectNotFoundException If the class could not be found
      * @throws OperationNotPermittedException If the object could not be deleted because there's some business rules that avoids it or it has incoming relationships
-     * @throws InvalidArgumentException If the project does not have uudi
      */
-    public void deleteProject(String className, String oid, boolean releaseRelationships) throws 
-        BusinessObjectNotFoundException, MetadataObjectNotFoundException, 
-        OperationNotPermittedException, InvalidArgumentException {
+    public void deleteProject(String className, long oid, boolean releaseRelationships) throws 
+        BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException {
         
         bem.deleteObject(className, oid, releaseRelationships);
     }
@@ -167,7 +164,7 @@ public class ProjectsModule implements GenericCommercialModule {
      * @throws ApplicationObjectNotFoundException If the specified template could not be found
      * @throws ArraySizeMismatchException If attributeNames and attributeValues have different sizes.
      */
-    public String addActivity(String parentId, String parentClassName, String className, String[] attributeNames, String[] attributeValues) throws 
+    public long addActivity(long parentId, String parentClassName, String className, String[] attributeNames, String[] attributeValues) throws 
         MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, 
         OperationNotPermittedException, ApplicationObjectNotFoundException, ArraySizeMismatchException {
         
@@ -193,11 +190,9 @@ public class ProjectsModule implements GenericCommercialModule {
      * @throws BusinessObjectNotFoundException If the object couldn't be found
      * @throws MetadataObjectNotFoundException If the class could not be found
      * @throws OperationNotPermittedException If the object could not be deleted because there's some business rules that avoids it or it has incoming relationships
-     * @throws InvalidArgumentException If the activity does not have uuid
      */
-    public void deleteActivity(String className, String oid, boolean releaseRelationships) throws 
-        BusinessObjectNotFoundException, MetadataObjectNotFoundException, 
-        OperationNotPermittedException, InvalidArgumentException {
+    public void deleteActivity(String className, long oid, boolean releaseRelationships) throws 
+        BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException {
         
         bem.deleteObject(className, oid, releaseRelationships);
     }
@@ -211,7 +206,7 @@ public class ProjectsModule implements GenericCommercialModule {
      * @throws BusinessObjectNotFoundException
      * @throws MetadataObjectNotFoundException
      */
-    public List<BusinessObjectLight> getProjectResurces(String projectClass, String projectId) throws 
+    public List<BusinessObjectLight> getProjectResurces(String projectClass, long projectId) throws 
         InvalidArgumentException, BusinessObjectNotFoundException, MetadataObjectNotFoundException {
         
         if (!mem.isSubclassOf(Constants.CLASS_GENERICPROJECT, projectClass))
@@ -229,7 +224,7 @@ public class ProjectsModule implements GenericCommercialModule {
      * @throws MetadataObjectNotFoundException If the project class is not found
      * @throws BusinessObjectNotFoundException If the project is not found
      */
-    public List<BusinessObjectLight> getProjectActivities(String projectClass, String projectId) 
+    public List<BusinessObjectLight> getProjectActivities(String projectClass, long projectId) 
         throws InvalidArgumentException, MetadataObjectNotFoundException, BusinessObjectNotFoundException {
         
         if (!mem.isSubclassOf(Constants.CLASS_GENERICPROJECT, projectClass))
@@ -257,7 +252,7 @@ public class ProjectsModule implements GenericCommercialModule {
      * @throws OperationNotPermittedException
      * @throws MetadataObjectNotFoundException
      */
-    public void associateObjectsToProject(String projectClass, String projectId, String[] objectClass, String[] objectId) throws 
+    public void associateObjectsToProject(String projectClass, long projectId, String[] objectClass, long[] objectId) throws 
         InvalidArgumentException, ArraySizeMismatchException, BusinessObjectNotFoundException, 
         OperationNotPermittedException, MetadataObjectNotFoundException {
         
@@ -282,7 +277,7 @@ public class ProjectsModule implements GenericCommercialModule {
      * @throws OperationNotPermittedException
      * @throws MetadataObjectNotFoundException
      */
-    public void associateObjectToProject(String projectClass, String projectId, String objectClass, String objectId) throws 
+    public void associateObjectToProject(String projectClass, long projectId, String objectClass, long objectId) throws 
         InvalidArgumentException, BusinessObjectNotFoundException, OperationNotPermittedException, 
         MetadataObjectNotFoundException {
         
@@ -302,7 +297,7 @@ public class ProjectsModule implements GenericCommercialModule {
      * @throws BusinessObjectNotFoundException
      * @throws MetadataObjectNotFoundException
      */
-    public void releaseObjectFromProject(String objectClass, String objectId, String projectClass, String projectId) throws 
+    public void releaseObjectFromProject(String objectClass, long objectId, String projectClass, long projectId) throws 
         InvalidArgumentException, BusinessObjectNotFoundException, MetadataObjectNotFoundException {
         
         if (!mem.isSubclassOf(Constants.CLASS_GENERICPROJECT, projectClass))
@@ -318,10 +313,8 @@ public class ProjectsModule implements GenericCommercialModule {
      * @return The list of projects
      * @throws BusinessObjectNotFoundException If the project is no found
      * @throws MetadataObjectNotFoundException If the project class is no found
-     * @throws InvalidArgumentException If the object does not have uuid
      */
-    public List<BusinessObjectLight> getProjectsAssociateToObject(String objectClass, String objectId) 
-        throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+    public List<BusinessObjectLight> getProjectsAssociateToObject(String objectClass, long objectId) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException {
         return bem.getSpecialAttribute(objectClass, objectId, RELATIONSHIP_PROJECTSPROJECTUSES);
     }
     
@@ -333,7 +326,7 @@ public class ProjectsModule implements GenericCommercialModule {
      * @return The new Project Pool id
      * @throws MetadataObjectNotFoundException If he project pool class is no found
      */
-    public String createProjectPool(String name, String description, String instanceOfClass) throws MetadataObjectNotFoundException {
+    public long createProjectPool(String name, String description, String instanceOfClass) throws MetadataObjectNotFoundException {
         return aem.createRootPool(name, description, instanceOfClass, ApplicationEntityManager.POOL_TYPE_MODULE_COMPONENT);
     }
                     

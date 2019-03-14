@@ -92,12 +92,12 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
         
         for (SyncDataSourceConfiguration dataSourceConfiguration : syncDataSourceConfigurations) {
             try {
-                String deviceId;
+                long deviceId;
                 int port;
                 String className, host, user, password;
 
                 if (dataSourceConfiguration.getParameters().containsKey("deviceId")) //NOI18N
-                    deviceId = dataSourceConfiguration.getParameters().get("deviceId"); //NOI18N
+                    deviceId = Long.valueOf(dataSourceConfiguration.getParameters().get("deviceId")); //NOI18N
                 else {
                     res.getSyncDataSourceConfigurationExceptions(dataSourceConfiguration).add(
                         new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "deviceId", syncGroup.getName())));
@@ -231,7 +231,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
             try {
                 BusinessObjectLight relatedOject = new BusinessObjectLight(
                                                         dataSourceConfiguration.getParameters().get("deviceClass"), 
-                                                        dataSourceConfiguration.getParameters().get("deviceId"), 
+                                                        Long.valueOf(dataSourceConfiguration.getParameters().get("deviceId")), 
                                                         "");
                 
                 List<BusinessObjectLight> existingBridgeDomains = bem.getSpecialChildrenOfClassLight(relatedOject.getId(), 
@@ -256,7 +256,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                     if (matchingBridgeDomain == null) {
                         HashMap<String, String> defaultAttributes = new HashMap<>();
                         defaultAttributes.put(Constants.PROPERTY_NAME, bridgeDomainInDevice.getName());
-                        String newBridgeDomain = bem.createSpecialObject("BridgeDomain", relatedOject.getClassName(), relatedOject.getId(), defaultAttributes, -1);
+                        long newBridgeDomain = bem.createSpecialObject("BridgeDomain", relatedOject.getClassName(), relatedOject.getId(), defaultAttributes, -1);
                         aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [BridgeDomain] (id:%s)", bridgeDomainInDevice.getName(), newBridgeDomain));
                         res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("Check if Bridge Domain %s exists within %s", bridgeDomainInDevice.getName(), relatedOject), 
                                     "The Bridge Domain did not exist and was created successfully"));
@@ -291,8 +291,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                             if (matchingBridgeDomainInterface == null) {
                                 HashMap<String, String> defaultAttributes = new HashMap<>();
                                 defaultAttributes.put(Constants.PROPERTY_NAME, networkInterface.getName());
-                                String newBridgeDomainInterface = bem.createSpecialObject("BridgeDomainInterface", "BridgeDomain", matchingBridgeDomain.getId(), defaultAttributes, -1);
-                                bem.createSpecialRelationship(relatedOject.getClassName(), relatedOject.getId(),"BridgeDomain", matchingBridgeDomain.getId(), "networkBridgeInterface", false);
+                                long newBridgeDomainInterface = bem.createSpecialObject("BridgeDomainInterface", "BridgeDomain", matchingBridgeDomain.getId(), defaultAttributes, -1);
                                 bem.createSpecialRelationship(relatedOject.getClassName(), relatedOject.getId(),"BridgeDomain", matchingBridgeDomain.getId(), "networkBridgeInterface", false);
                                 res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
                                         String.format("The BDI %s did not exist and was created.", networkInterface.getName())));
@@ -338,7 +337,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                                 if (matchingServiceInstance == null) {
                                     HashMap<String, String> defaultAttributes = new HashMap<>();
                                     defaultAttributes.put(Constants.PROPERTY_NAME, interfaceNameTokens[interfaceNameTokens.length - 1]);
-                                    String newServiceInstance = bem.createObject(Constants.CLASS_SERVICE_INSTANCE, matchingPhysicalInterface.getClassName(), matchingPhysicalInterface.getId(), 
+                                    long newServiceInstance = bem.createObject(Constants.CLASS_SERVICE_INSTANCE, matchingPhysicalInterface.getClassName(), matchingPhysicalInterface.getId(), 
                                             defaultAttributes, -1);
                                     
                                     res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
@@ -355,9 +354,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                                     res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
                                             String.format("Service instace %s was successfully related to the bridge domain %s", matchingServiceInstance.getName(), matchingBridgeDomain.getName())));
                                 } else {
-                                    if (relatedBridgeDomain.get(0).getId() != null && 
-                                        matchingBridgeDomain.getId() != null &&
-                                        relatedBridgeDomain.get(0).getId().equals(matchingBridgeDomain.getId()))
+                                    if (relatedBridgeDomain.get(0).getId() == matchingBridgeDomain.getId())
                                         res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_INFORMATION, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
                                             String.format("Service instace %s is already related to bridge domain %s. No changes were made.", matchingServiceInstance.getName(), matchingBridgeDomain.getName())));
                                     else {
@@ -408,7 +405,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                                 if (matchingVirtualPort == null) {
                                     HashMap<String, String> defaultAttributes = new HashMap<>();
                                     defaultAttributes.put(Constants.PROPERTY_NAME, interfaceNameTokens[interfaceNameTokens.length - 1]);
-                                    String newVirtualPort = bem.createObject(Constants.CLASS_VIRTUALPORT, matchingPhysicalInterface.getClassName(), matchingPhysicalInterface.getId(), 
+                                    long newVirtualPort = bem.createObject(Constants.CLASS_VIRTUALPORT, matchingPhysicalInterface.getClassName(), matchingPhysicalInterface.getId(), 
                                             defaultAttributes, -1);
                                     
                                     res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
@@ -425,9 +422,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                                     res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
                                             String.format("Subinterface %s was successfully related to the bridge domain %s", matchingVirtualPort, matchingBridgeDomain.getName())));
                                 } else {
-                                    if (relatedBridgeDomain.get(0).getId() != null &&
-                                        matchingBridgeDomain.getId() != null &&
-                                        relatedBridgeDomain.get(0).getId().equals(matchingBridgeDomain.getId()))
+                                    if (relatedBridgeDomain.get(0).getId() == matchingBridgeDomain.getId())
                                         res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_INFORMATION, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
                                             String.format("Subinterface %s is already related to bridge domain %s. No changes were made.", matchingVirtualPort, matchingBridgeDomain.getName())));
                                     else {

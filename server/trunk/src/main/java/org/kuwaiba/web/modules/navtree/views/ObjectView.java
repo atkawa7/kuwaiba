@@ -36,7 +36,6 @@ import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
-import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -48,7 +47,6 @@ import org.kuwaiba.apis.web.gui.views.AbstractViewEdge;
 import org.kuwaiba.apis.web.gui.views.AbstractViewNode;
 import org.kuwaiba.apis.web.gui.views.BusinessObjectViewEdge;
 import org.kuwaiba.apis.web.gui.views.BusinessObjectViewNode;
-import org.kuwaiba.apis.web.gui.views.ViewEventListener;
 import org.kuwaiba.apis.web.gui.views.ViewMap;
 import org.kuwaiba.apis.web.gui.views.util.UtilHtml;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
@@ -103,7 +101,6 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
             
             for (AbstractViewNode aNode : viewMap.getNodes()) {
                 SrvNodeWidget nodeWidget = new SrvNodeWidget();
-                nodeWidget.setWidth(32); //Use 32x32 px icons
                 nodeWidget.setCaption(aNode.getIdentifier().toString());
                 nodeWidget.setX((int)aNode.getProperties().get("x"));
                 nodeWidget.setY((int)aNode.getProperties().get("y"));
@@ -151,7 +148,7 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
             if (!objectViews.isEmpty()) 
                 buildWithSavedView(aem.getObjectRelatedView(businessObject.getId(), businessObject.getClassName(), objectViews.get(0).getId()).getStructure()); 
             
-        } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+        } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException ex) {
         }
     }
     
@@ -219,7 +216,7 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
                     viewMap.attachTargetNode(connection, targetNode);
                 }
             }
-        } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException ex) {
+        } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
             Notifications.showError(ex.getLocalizedMessage());
         }
     }
@@ -247,7 +244,7 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
                         int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue(); //NOI18N
                         int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue(); //NOI18N
                         String className = reader.getAttributeValue(null, "class"); //NOI18N
-                        String objectId = reader.getElementText();
+                        long objectId = Long.valueOf(reader.getElementText());
                         
                         AbstractViewNode node = viewMap.getNode(new BusinessObjectLight(className, objectId, "")); //NOI18N
                         
@@ -257,7 +254,7 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
                         }
                     } else {
                         if (reader.getName().equals(qEdge)) {
-                            String objectId = reader.getAttributeValue(null, "id"); //NOI18N
+                            long objectId = Long.valueOf(reader.getAttributeValue(null, "id")); //NOI18N
                             String className = reader.getAttributeValue(null, "class"); //NOI18N
                             AbstractViewEdge edge = viewMap.getEdge(new BusinessObjectLight(className, objectId, "")); //NOI18N
                             
@@ -298,15 +295,5 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
     @Override
     public AbstractViewEdge addEdge(RemoteObjectLight businessObject, RemoteObjectLight sourceBusinessObject, RemoteObjectLight targetBusinessObject, Properties properties) {
         throw new UnsupportedOperationException("This action is not supported yet.");
-    }
-
-    @Override
-    public void addNodeClickListener(ViewEventListener listener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void addEdgeClickListener(ViewEventListener listener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

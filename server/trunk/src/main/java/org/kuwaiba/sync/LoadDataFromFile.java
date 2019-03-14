@@ -204,7 +204,7 @@ public final class LoadDataFromFile{
                             List<BusinessObjectLight> listTypeItems = aem.getListTypeItems(classAttribute.getType());
                             for (BusinessObjectLight listTypeItem : listTypeItems) {
                                 if(listTypeItem.getName().equals(attributeValue)){
-                                    attributes.put(classAttribute.getName(), listTypeItem.getId());
+                                    attributes.put(classAttribute.getName(), Long.toString(listTypeItem.getId()));
                                     break;
                                 }
                             }
@@ -214,7 +214,7 @@ public final class LoadDataFromFile{
                     long template = -1; //TODO Support for templates
 
                     if (parentClass.equals(ROOT)){ //The parent is the navigation tree root
-                        bem.createObject(className, null, "-1", 
+                        bem.createObject(className, null, -1, 
                                 attributes, 
                                 template);
                     }
@@ -292,7 +292,7 @@ public final class LoadDataFromFile{
                         attributes.put(attributeDefinitionParts[0], attributeDefinitionParts[1]);
                     }
                     
-                    String oid = aem.createListTypeItem(className, "", "");
+                    long oid = aem.createListTypeItem(className, "", "");
                     bem.updateObject(className, oid, attributes);
                 }catch(Exception ex){
                     errorsMsgs += String.format("ERROR\t%s\tUnexpected error: %s.\n", currentLine, ex.getMessage());

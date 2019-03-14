@@ -41,7 +41,7 @@ public abstract class AbstractFormInstanceLoader {
         captions = new HashMap();
     }
     
-    public abstract Object getRemoteObjectLight(long classId, String objectId);
+    public abstract Object getRemoteObjectLight(long classId, long objectId);
     public abstract Object getClassInfoLight(long classId);
     public abstract Object getAttachment(String name, String path);
     
@@ -73,7 +73,7 @@ public abstract class AbstractFormInstanceLoader {
                 
                 if (objectId != null && classId != null) {
                     
-                    Object rol = getRemoteObjectLight(Long.valueOf(classId), objectId);
+                    Object rol = getRemoteObjectLight(Long.valueOf(classId), Long.valueOf(objectId));
                                         
                     if (rol != null)
                         return rol;

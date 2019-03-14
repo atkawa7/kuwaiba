@@ -91,7 +91,7 @@ public class ConfigureSyncGroupMiniApp extends AbstractMiniApplication<Window, P
                 Notifications.showError("Missing input parameter deviceClass");
                 return null;
             }
-            String deviceId = inputParameters.getProperty("deviceId"); //NOI18N
+            long deviceId = Long.valueOf(inputParameters.getProperty("deviceId")); //NOI18N
             String deviceClass = inputParameters.getProperty("deviceClass"); //NOI18N
             
             final RemoteObjectLight device = wsBean.getObjectLight(deviceClass, deviceId, 
@@ -166,7 +166,7 @@ public class ConfigureSyncGroupMiniApp extends AbstractMiniApplication<Window, P
                     for (RemoteSynchronizationConfiguration dataSourceConfig : dataSourceConfigs) {
                         if (syncConfig.getId() == dataSourceConfig.getId()) {
                             hasDataSourceConfig = true;
-                            break;                                                        
+                            continue;                                                        
                         }
                     }
                     if (!hasDataSourceConfig)

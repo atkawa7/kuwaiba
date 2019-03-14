@@ -71,13 +71,13 @@ public class SnmpCiscoVlansSyncProvider extends AbstractSyncProvider{
         PollResult pollResult = new PollResult();
         
         for (SyncDataSourceConfiguration dsConfig : syncGroup.getSyncDataSourceConfigurations()) {
-            String id = null;
+            long id = -1L;
             String className = null;                
             String address = null;
             String port = null;
 
             if (dsConfig.getParameters().containsKey("deviceId")) //NOI18N
-                id = dsConfig.getParameters().get("deviceId"); //NOI18N
+                id = Long.valueOf(dsConfig.getParameters().get("deviceId")); //NOI18N
             else 
                 pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                    new InvalidArgumentException(String.format(I18N.gm("parameter_deviceId_no_defined"), syncGroup.getName(), syncGroup.getId())));
@@ -232,7 +232,7 @@ public class SnmpCiscoVlansSyncProvider extends AbstractSyncProvider{
             
             CiscoVlansSinchronizer ciscoSync = new CiscoVlansSinchronizer(entrySet.getKey().getId(),
                     new BusinessObjectLight(entrySet.getKey().getParameters().get("deviceClass"), 
-                    entrySet.getKey().getParameters().get("deviceId"), ""), 
+                    Long.valueOf(entrySet.getKey().getParameters().get("deviceId")), ""), 
                     mibTables);
             res.addAll(ciscoSync.execute());
         }

@@ -210,7 +210,7 @@ public class TableCreator {
         String moreInformation = networkDevice.getAttribute("moreinformation");
         
         Properties properties = new Properties();
-        properties.setProperty("id", port.getId());
+        properties.setProperty("id", Long.toString(port.getId()));
         properties.setProperty("className", port.getClassName());
         
         MiniAppPhysicalPath physicalPath = new MiniAppPhysicalPath(properties);
@@ -498,7 +498,7 @@ public class TableCreator {
             mmr = wsBean.getAttributeValueAsString(port1.getClassName(), port1.getId(), "meetmeroom", ipAddress, sessionId);
             rmmr = wsBean.getAttributeValueAsString(port1.getClassName(), port1.getId(), "remotemeetmeroom", ipAddress, sessionId);
            
-            properties.setProperty("id", port1.getId());
+            properties.setProperty("id", Long.toString(port1.getId()));
             properties.setProperty("className", port1.getClassName());
 
             MiniAppPhysicalPath physicalPath = new MiniAppPhysicalPath(properties);
@@ -516,7 +516,7 @@ public class TableCreator {
             mmr2 = wsBean.getAttributeValueAsString(port2.getClassName(), port2.getId(), "meetmeroom", ipAddress, sessionId);
             rmmr2 = wsBean.getAttributeValueAsString(port2.getClassName(), port2.getId(), "remotemeetmeroom", ipAddress, sessionId);
             //values
-            properties.setProperty("id", port2.getId());
+            properties.setProperty("id", Long.toString(port2.getId()));
             properties.setProperty("className", port2.getClassName());
 
             MiniAppPhysicalPath physicalPath2 = new MiniAppPhysicalPath(properties);
@@ -832,7 +832,7 @@ public class TableCreator {
         
         String mmr = wsBean.getAttributeValueAsString(port.getClassName(), port.getId(), "meetmeroom", ipAddress, sessionId);
         Properties properties = new Properties();
-        properties.setProperty("id", port.getId());
+        properties.setProperty("id", Long.toString(port.getId()));
         properties.setProperty("className", port.getClassName());
        
         MiniAppPhysicalPath physicalPath = new MiniAppPhysicalPath(properties);

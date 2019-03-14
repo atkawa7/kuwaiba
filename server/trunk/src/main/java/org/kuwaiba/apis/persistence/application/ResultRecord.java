@@ -28,7 +28,7 @@ import java.util.List;
 public class ResultRecord extends BusinessObjectLight {
     private List<String> extraColumns;
 
-    public ResultRecord(String className, String id, String name) {
+    public ResultRecord(String className, long id, String name) {
         super(className, id, name);
     }
 

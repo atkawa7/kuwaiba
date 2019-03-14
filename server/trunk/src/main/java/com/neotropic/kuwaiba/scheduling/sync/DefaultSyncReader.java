@@ -66,7 +66,7 @@ public class DefaultSyncReader implements ItemReader {
         else if(jobParameters.get("dataSourceConfigIds") != null){ 
             List<SyncDataSourceConfiguration> syncDataSourceConfigurations = new ArrayList<>();
             for(String syncDsConfigId : ((String) jobParameters.get("dataSourceConfigIds")).split(";"))
-                syncDataSourceConfigurations.add(PersistenceService.getInstance().getApplicationEntityManager().getSyncDataSourceConfiguration(syncDsConfigId));
+                syncDataSourceConfigurations.add(PersistenceService.getInstance().getApplicationEntityManager().getSyncDataSourceConfiguration(Long.valueOf(syncDsConfigId)));
             syncGroup = new SynchronizationGroup(-1, "AdhocSyncGroup", syncDataSourceConfigurations);
         }
         String providerName = (String)jobParameters.get("provider");

@@ -388,7 +388,7 @@ public class ComponentRackView extends VerticalLayout {
                 rackObject.getClassName(),
                 rackObject.getId(),
                 new String[] {object.getClassName()}, 
-                new String[] {object.getId()},
+                new long[] {object.getId()},
                 Page.getCurrent().getWebBrowser().getAddress(),
                 ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
 

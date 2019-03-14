@@ -52,10 +52,10 @@ public class MiniAppRackView extends AbstractMiniApplication<Component, Componen
     public Component launchEmbedded() {
         Panel panel = new Panel();
         try {   
-            String id = getInputParameters().getProperty("id") != null ? getInputParameters().getProperty("id") : "-1"; //NOI18N
+            long id = getInputParameters().getProperty("id") != null ? Long.valueOf(getInputParameters().getProperty("id")) : -1; //NOI18N
             String className = getInputParameters().getProperty("className"); //NOI18N
             
-            if (id != null && !id.equals("-1") && className != null) {
+            if (id != -1 && className != null) {
                 
                 SceneExporter sceneExporter = SceneExporter.getInstance();
                 

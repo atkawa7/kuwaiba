@@ -45,7 +45,7 @@ public class AttachedFilesMiniApp extends AbstractMiniApplication<Component, Com
             getInputParameters().containsKey("id") && 
             getInputParameters().containsKey("className")) {
             try {
-                String objectId = getInputParameters().getProperty("id");
+                long objectId = Long.valueOf(getInputParameters().getProperty("id"));
                 String objectClassName = getInputParameters().getProperty("className");
 
                 RemoteObjectLight rol = wsBean.getObjectLight(

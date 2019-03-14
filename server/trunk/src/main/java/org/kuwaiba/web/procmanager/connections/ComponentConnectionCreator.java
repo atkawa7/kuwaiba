@@ -268,9 +268,9 @@ public class ComponentConnectionCreator extends VerticalLayout {
             String[] sideBClassNames = new String[size];
             String[] linksClassNames = new String[size];
 
-            String[] sideAIds = new String[size];
-            String[] sideBIds = new String[size];
-            String[] linksIds = new String[size];
+            Long[] sideAIds = new Long[size];
+            Long[] sideBIds = new Long[size];
+            long[] linksIds = new long[size];
             
             List<RemoteObjectLight> newLinksParents = new ArrayList<>();
 
@@ -300,12 +300,12 @@ public class ComponentConnectionCreator extends VerticalLayout {
             //we move the link from to under a new parent
             for (int i = 0; i < newLinksParents.size(); i++) {
                 
-                if (!newLinksParents.get(i).getId().equals("-1")) { //Ignore the dummy root
+                if (newLinksParents.get(i).getId() != -1) { //Ignore the dummy root
                     webserviceBean.moveSpecialObjects(
                         newLinksParents.get(i).getClassName(), 
                         newLinksParents.get(i).getId(), 
                         new String[] {linksClassNames[i]}, 
-                        new String[] {linksIds[i]}, 
+                        new long[] {linksIds[i]}, 
                         remoteSession.getIpAddress(),
                         remoteSession.getSessionId());
                 }
@@ -354,7 +354,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
                                                         
                             RemoteObjectLight businessObject = webserviceBean.getObjectLight(
                                 serializedObjectTokens[1], 
-                                serializedObjectTokens[0], 
+                                Long.valueOf(serializedObjectTokens[0]), 
                                 remoteSession.getIpAddress(), remoteSession.getSessionId());
                         
                             boolean isGenericCommunicationsElement = false;
@@ -372,7 +372,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
                                 remoteSession.getIpAddress(),
                                 remoteSession.getSessionId());
                             
-                            if (!businessObject.getId().equals("-1") && (isGenericCommunicationsElement | isODF)) { //Ignore the dummy root
+                            if (businessObject.getId() != -1 && (isGenericCommunicationsElement | isODF)) { //Ignore the dummy root
                                 vlEndpoint.setData(businessObject);
                                 vlEndpoint.setCaption(caption + ": " + businessObject);
                                 
@@ -447,7 +447,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
                                                         final RemoteSession remoteSession = (RemoteSession) UI.getCurrent().getSession().getAttribute("session");                                 
                                                         RemoteObjectLight businessObject = webserviceBean.getObjectLight(
                                                             serializedObjectTokens[1], 
-                                                            serializedObjectTokens[0], 
+                                                            Long.valueOf(serializedObjectTokens[0]), 
                                                             remoteSession.getIpAddress(),
                                                             remoteSession.getSessionId());
                                                         
@@ -508,7 +508,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
                                                                             if (cmbPortType.getValue() != null && !cmbPortType.getValue().isEmpty()) {
                                                                                 if (txtPortName.getValue() != null && !txtPortName.getValue().isEmpty()) {
                                                                                     try {
-                                                                                        String portId = webserviceBean.createObject(
+                                                                                        long portId = webserviceBean.createObject(
                                                                                             cmbPortType.getValue(), //NOI18N
                                                                                             parent.getClassName(), 
                                                                                             parent.getId(), 
@@ -528,7 +528,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
                                                                                             portObject.getClassName(), 
                                                                                             portObject.getId(), 
                                                                                             new String[] {businessObject.getClassName()}, 
-                                                                                            new String[] {businessObject.getId()}, 
+                                                                                            new long[] {businessObject.getId()}, 
                                                                                             remoteSession.getIpAddress(), 
                                                                                             remoteSession.getSessionId());
                                                                                         
@@ -611,7 +611,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
                                                                     parent.getClassName(), 
                                                                     parent.getId(), 
                                                                     new String[] {businessObject.getClassName()}, 
-                                                                    new String[] {businessObject.getId()}, 
+                                                                    new long[] {businessObject.getId()}, 
                                                                     remoteSession.getIpAddress(), 
                                                                     remoteSession.getSessionId());
                                                                 treeHierarchy.expand(parentNode);

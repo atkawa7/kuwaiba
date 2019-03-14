@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
-import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.services.persistence.util.Util;
 import org.neo4j.graphdb.Node;
@@ -242,9 +241,8 @@ public class CypherQueryBuilder {
     /**
      * Creates the query
      * @param query 
-     * @throws InvalidArgumentException If any object does not have uuid
      */
-    public void createQuery(ExtendedQuery query) throws InvalidArgumentException {
+    public void createQuery(ExtendedQuery query) {
         cp = new CypherParser();
         Node classNode = classNodes.get(query.getClassName());
         try(Transaction tx = classNode.getGraphDatabase().beginTx()) {
@@ -278,9 +276,8 @@ public class CypherQueryBuilder {
      * Executes the query
      * @param classNode
      * @param cypherQuery
-     * @throws InvalidArgumentException If any object does not have uuid
      */
-    public void executeQuery(Node classNode, String cypherQuery) throws InvalidArgumentException {
+    public void executeQuery(Node classNode, String cypherQuery){
         Result result = classNode.getGraphDatabase().execute(cypherQuery, new HashMap<String, Object>());
         readResult(result);
     }
@@ -288,9 +285,8 @@ public class CypherQueryBuilder {
     /**
      * Read the results
      * @param queryResult
-     * @throws InvalidArgumentException If any object does not have uuid
      */
-    public void readResult(Result queryResult) throws InvalidArgumentException {
+    public void readResult(Result queryResult) {
         List<ResultRecord> onlyResults =  new ArrayList<>();
         ResultRecord rr;
         List<String> vissibleAttibutesTitles = new ArrayList<>();
@@ -306,11 +302,7 @@ public class CypherQueryBuilder {
             List<String> extraColumns = new ArrayList<>();
             //create the class
             Node instanceNode = (Node)column.get(split[0]);
-            String instanceNodeUuid = instanceNode.hasProperty(Constants.PROPERTY_UUID) ? (String) instanceNode.getProperty(Constants.PROPERTY_UUID) : null;
-            if (instanceNodeUuid == null)
-                throw new InvalidArgumentException(String.format("The object with id %s does not have uuid", instanceNode.getId()));
-            
-            rr = new ResultRecord(Util.getClassName(instanceNode), instanceNodeUuid, Util.getAttributeFromNode(instanceNode, Constants.PROPERTY_NAME));
+            rr = new ResultRecord(Util.getClassName(instanceNode), instanceNode.getId(), Util.getAttributeFromNode(instanceNode, Constants.PROPERTY_NAME));
             //iterates by column
             for(int lu=  0; lu <split.length; lu++){
                 for(String va: (List<String>)visibleAttributes.get(split[lu])){
@@ -326,7 +318,7 @@ public class CypherQueryBuilder {
             rr.setExtraColumns(extraColumns);
             onlyResults.add(rr);
         }
-        ResultRecord resltRcrdHeader = new ResultRecord(null, null, null);
+        ResultRecord resltRcrdHeader = new ResultRecord(null, 0, null);
         resltRcrdHeader.setExtraColumns(vissibleAttibutesTitles);
         resultList.add(resltRcrdHeader);
 

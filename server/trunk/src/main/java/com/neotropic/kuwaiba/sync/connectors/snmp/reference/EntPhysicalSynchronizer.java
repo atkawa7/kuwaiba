@@ -64,7 +64,7 @@ public class EntPhysicalSynchronizer {
     /**
      * Device id
      */
-    private final String id;
+    private final long id;
     /**
      * Device Data Source Configuration id
      */
@@ -155,8 +155,8 @@ public class EntPhysicalSynchronizer {
      */
     private MetadataEntityManager mem;
     
-    private HashMap<String, String> createdIdsToMap;
-    private final HashMap<String, List<BusinessObject>> newCreatedPortsToCreate;
+    private HashMap<Long, Long> createdIdsToMap;
+    private final HashMap<Long, List<BusinessObject>> newCreatedPortsToCreate;
     private final List<StringPair> nameOfCreatedPorts;
     /**
      * Helper used to read the actual structure recursively
@@ -212,7 +212,7 @@ public class EntPhysicalSynchronizer {
         readCurrentDeviceStructure(bem.getObjectChildren(className, id, -1));
         readCurrentSpecialStructure(bem.getObjectSpecialChildren(className, id));
         //printData(); //<- for debuging 
-        checkObjects(id, "", "");
+        checkObjects(Long.toString(id), "", "");
         checkPortsToMigrate();
         checkDataToBeDeleted();
         checkPortsWithNoMatch();
@@ -507,7 +507,7 @@ public class EntPhysicalSynchronizer {
         if(mapOfFile.isEmpty())
             throw new InvalidArgumentException("The router model you are trying to synchronize is not yet supported. Contact your administrator");
         
-        if (parentId != null && parentId.equals(id))//If is the first element
+        if (Long.valueOf(parentId) == id)//If is the first element
             parentId = INITAL_ID;
 
         List<String> childrenIds = mapOfFile.get(parentId);
@@ -517,7 +517,7 @@ public class EntPhysicalSynchronizer {
                 int i = entityData.get("instance").indexOf(childId); //NOI18N
                 parentId = entityData.get("entPhysicalContainedIn").get(i); //NOI18N
                 if (parentClassName.equals(className)) //if is the chassis we must keep the id
-                    parentId = id;
+                    parentId = Long.toString(id);
 
                 String objectName = entityData.get("entPhysicalName").get(i); //NOI18N
                 //We parse the class Id from SNMP into kuwaiba's class name
@@ -552,7 +552,7 @@ public class EntPhysicalSynchronizer {
                         newAttributes.put("parentClassName", parentClassName);
                         
                         BusinessObject newObj = new BusinessObject(mappedClass, 
-                                childId, 
+                                Long.valueOf(childId), 
                                 newAttributes.get(Constants.PROPERTY_NAME), 
                                 newAttributes);
                         
@@ -643,7 +643,7 @@ public class EntPhysicalSynchronizer {
                     if(currentObjName.equals(oldObj.getName()) && currentObjClassName.equals(oldObj.getClassName()) &&
                             oldObj.getName().equals(objParentName) && oldObj.getClassName().equals(objParentClassName))
                     {
-                        newObj.getAttributes().put("deviceParentId", oldObj.getId());
+                        newObj.getAttributes().put("deviceParentId", Long.toString(oldObj.getId()));
                         if(newObj.getClassName().contains("Port"))
                             editNewPortWithDeviceParentId(newObj);
                         branch.set(oldBranch.size(), newObj);  
@@ -818,7 +818,7 @@ public class EntPhysicalSynchronizer {
         else if(!hasBeenFound && oldBranchesWithMatches.isEmpty()){
             if(newBranchToEvalueate.get(0).getAttributes().get("parentClassName").equals(className)){
                 BusinessObject obj = newBranchToEvalueate.get(0);
-                obj.getAttributes().put("deviceParentId", id);
+                obj.getAttributes().put("deviceParentId", Long.toString(id));
                 branch.set(0, obj);
                 return new ArrayList<>();
             }
@@ -833,7 +833,7 @@ public class EntPhysicalSynchronizer {
                     BusinessObjectLight oldParent = oldBranch.get(oldBranch.size() - 2);
                     if (oldParent.getName().equals(objParentName) && oldParent.getClassName().equals(objParentClassName)){
                         BusinessObject obj = branch.get(0);
-                        obj.getAttributes().put("deviceParentId", oldParent.getId());
+                        obj.getAttributes().put("deviceParentId", Long.toString(oldParent.getId()));
                         if(obj.getClassName().contains("Port"))
                             editNewPortWithDeviceParentId(obj);
                         branch.set(0, obj);
@@ -851,7 +851,7 @@ public class EntPhysicalSynchronizer {
                     BusinessObjectLight oldParent = oldBranch.get(1);
                     if (oldParent.getName().equals(objParentName) && oldParent.getClassName().equals(objParentClassName)){
                         BusinessObject obj = branch.get(0);
-                        obj.getAttributes().put("deviceParentId", oldParent.getId());
+                        obj.getAttributes().put("deviceParentId", Long.toString(oldParent.getId()));
                         if(obj.getClassName().contains("Port"))
                             editNewPortWithDeviceParentId(obj);
                         branch.set(0, obj);
@@ -917,7 +917,7 @@ public class EntPhysicalSynchronizer {
      * @throws BusinessObjectNotFoundException If the object could not be found
      */
     private void readCurrentSpecialStructure(List<BusinessObjectLight> children) 
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException
     {
         for (BusinessObjectLight child : children) {
             if (child.getClassName().equals(Constants.CLASS_MPLSTUNNEL))
@@ -937,7 +937,7 @@ public class EntPhysicalSynchronizer {
      * @throws BusinessObjectNotFoundException if some object can not be find
      */
     private void readCurrentDeviceStructure(List<BusinessObjectLight> objects)
-            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException {
         for (BusinessObjectLight object : objects) {
             if (!mem.isSubclassOf("GenericLogicalPort", object.getClassName()) && !mem.isSubclassOf("Pseudowire", object.getClassName())){ 
                 //We standarized the port names
@@ -963,7 +963,7 @@ public class EntPhysicalSynchronizer {
         }
     }
 
-    private void readCurrentFirstLevelChildren() throws InvalidArgumentException {
+    private void readCurrentFirstLevelChildren() {
         try {
             currentFirstLevelChildren = bem.getObjectChildren(className, id, -1);
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
@@ -976,11 +976,11 @@ public class EntPhysicalSynchronizer {
         boolean segmentDependsOfPort = false; 
         List<BusinessObject> extraBranch = new ArrayList<>();
         for (BusinessObject businessObject : branch) {
-            String parentId = null;
+            long parentId = 0;
             
-            String tempParentId = businessObject.getAttributes().get("parentId");
+            long tempParentId = Long.valueOf(businessObject.getAttributes().get("parentId"));
             if(businessObject.getAttributes().get("deviceParentId") != null)
-                parentId = businessObject.getAttributes().get("deviceParentId");
+                parentId = Long.valueOf(businessObject.getAttributes().get("deviceParentId"));
             //for transcivers        
             if(segmentDependsOfPort || businessObject.getClassName().equals("OpticalPort")){
                 segmentDependsOfPort = true;
@@ -1001,7 +1001,7 @@ public class EntPhysicalSynchronizer {
                         String parentClassName = businessObject.getAttributes().remove("parentClassName");
                         businessObject.getAttributes().remove("deviceParentId");
                         
-                        String createdObjectId = bem.createObject(businessObject.getClassName(), parentClassName, parentId, businessObject.getAttributes(), -1);
+                        long createdObjectId = bem.createObject(businessObject.getClassName(), parentClassName, parentId, businessObject.getAttributes(), -1);
                         createdIdsToMap.put(businessObject.getId(), createdObjectId);
                         results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,
                                 String.format("%s [%s]", businessObject.getName(), businessObject.getClassName()), 
@@ -1017,7 +1017,7 @@ public class EntPhysicalSynchronizer {
         }
     }
 
-    private void updateObjectAttributes(String deviceId, String deviceClassName, 
+    private void updateObjectAttributes(long deviceId, String deviceClassName, 
             HashMap<String, String> newAttributes){
         try {
             bem.updateObject(deviceClassName, deviceId, newAttributes);
@@ -1105,7 +1105,7 @@ public class EntPhysicalSynchronizer {
             currentObjectStructure.get(branchId).remove(obj);
     }
     
-    public void checkDataToBeDeleted() throws MetadataObjectNotFoundException, InvalidArgumentException {
+    public void checkDataToBeDeleted() throws MetadataObjectNotFoundException {
         for (BusinessObjectLight currentChildFirstLevel : currentFirstLevelChildren) {
             if (!mem.isSubclassOf("Pseudowire", currentChildFirstLevel.getClassName()) 
                     && !currentChildFirstLevel.getName().toLowerCase().equals("gi0")) 
@@ -1160,7 +1160,7 @@ public class EntPhysicalSynchronizer {
                 results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,
                         String.format("%s [%s]", oldPort.getName(), oldPort.getClassName()),
                         "Deleted successfully"));
-            } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | InvalidArgumentException ex) {
+            } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
                 results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                             String.format("%s [%s] not deleted", oldPort.getName(), oldPort.getClassName()),
                             ex.getLocalizedMessage()));
@@ -1168,14 +1168,12 @@ public class EntPhysicalSynchronizer {
         }
 
         for (BusinessObject newPort : newPorts) {
-            String parentId;
+            Long parentId;
             if(newPort.getAttributes().get("deviceParentId") != null)
-                parentId = newPort.getAttributes().get("deviceParentId");
-
+                parentId = Long.valueOf(newPort.getAttributes().get("deviceParentId"));
 
             else
-                parentId = createdIdsToMap.get(newPort.getAttributes().get("parentId"));
-            
+                parentId = createdIdsToMap.get(Long.valueOf(newPort.getAttributes().get("parentId")));
             
             if(parentId == null)
                 results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR,
@@ -1198,7 +1196,7 @@ public class EntPhysicalSynchronizer {
                     List<BusinessObject> extraBranch = newCreatedPortsToCreate.get(newPort.getId());
                     if(extraBranch != null && extraBranch.size() > 1){
                         for (int i = 1; i<extraBranch.size(); i++){
-                            String tempParentId = extraBranch.get(i).getAttributes().get("parentId");
+                            long tempParentId = Long.valueOf(extraBranch.get(i).getAttributes().get("parentId"));
 
                             if(extraBranch.get(i).getAttributes().remove("deviceParentId") == null);
                                 parentId = createdIdsToMap.get(tempParentId);
@@ -1257,16 +1255,16 @@ public class EntPhysicalSynchronizer {
                         if(!parentName.equals(portFound.getAttributes().get("parentName"))){ 
                             portFound.setId(oldPort.getId());
 
-                            String parentId = getParentPortIdIfExists(portFound);
-                            if(parentId != null) //we check if the parent of the port is already created in an old structure
-                                portFound.getAttributes().put("deviceParentId", parentId);
+                            long parentId = getParentPortIdIfExists(portFound);
+                            if(parentId > 0 ) //we check if the parent of the port is already created in an old structure
+                                portFound.getAttributes().put("deviceParentId", Long.toString(parentId));
                             else{
                                 portFound.getAttributes().remove("parentId");
                                 portFound.getAttributes().remove("parentName");
                                
                                 portFound.getAttributes().remove("deviceParentId");
-                                HashMap<String, String[]> objectsToMove = new HashMap<>();
-                                String[] ids = {portFound.getId()} ;
+                                HashMap<String, long[]> objectsToMove = new HashMap<>();
+                                long[] ids = {portFound.getId()} ;
                                 objectsToMove.put(className, ids);
 
                                 bem.updateObject(portFound.getClassName(), portFound.getId(), portFound.getAttributes());
@@ -1365,7 +1363,7 @@ public class EntPhysicalSynchronizer {
         return null;
     }
     
-    private String getParentPortIdIfExists(BusinessObject portFound) 
+    private long getParentPortIdIfExists(BusinessObject portFound) 
             throws InvalidArgumentException, BusinessObjectNotFoundException, MetadataObjectNotFoundException 
     {
         String objParentName = portFound.getAttributes().get("parentName");
@@ -1380,7 +1378,7 @@ public class EntPhysicalSynchronizer {
                     return oldObj.getId();
             }
         }
-        return null;
+        return 0;
     }
     
     private void editNewPortWithDeviceParentId(BusinessObject newPortWithDeviceParentId) {
@@ -1420,18 +1418,18 @@ public class EntPhysicalSynchronizer {
             try{
                 String listTypeNameFromSNMP = entityData.get(SNMPoid).get(i);
                 
-                String id_ = matchListTypeNames(listTypeNameFromSNMP, listTypeClassName);
-                if (id_ != null)
-                    listTypeId = id_;
+                Long id_ = matchListTypeNames(listTypeNameFromSNMP, listTypeClassName);
+                if (id_ > 0) 
+                    listTypeId = Long.toString(id_);
                 else {//The list type doesn't exist, we create a finding
                     if (!listTypeEvaluated.contains(listTypeNameFromSNMP)) {
-                        String createListTypeItem = aem.createListTypeItem(listTypeClassName, listTypeNameFromSNMP.trim(), listTypeNameFromSNMP.trim());
+                        long createListTypeItem = aem.createListTypeItem(listTypeClassName, listTypeNameFromSNMP.trim(), listTypeNameFromSNMP.trim());
                         results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,
                                 String.format("the list type %s", listTypeNameFromSNMP),
                                 "A list type was created"));
 
                         listTypeEvaluated.add(listTypeNameFromSNMP);
-                        return createListTypeItem;
+                        return Long.toString(createListTypeItem);
                     }
                 }
             } catch (MetadataObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException ex) {
@@ -1451,7 +1449,7 @@ public class EntPhysicalSynchronizer {
      * @throws MetadataObjectNotFoundException if the list type doesn't exists
      * @throws InvalidArgumentException if the class name provided is not a list type
      */
-    private String matchListTypeNames(String listTypeNameToLoad, String listTypeClassName) 
+    private long matchListTypeNames(String listTypeNameToLoad, String listTypeClassName) 
             throws MetadataObjectNotFoundException, InvalidArgumentException 
     {
         List<BusinessObjectLight> listTypeItems = aem.getListTypeItems(listTypeClassName);
@@ -1460,7 +1458,7 @@ public class EntPhysicalSynchronizer {
             onlyNameListtypes.add(createdLitType.getName());
         
         if(onlyNameListtypes.contains(listTypeNameToLoad))
-            return listTypeItems.get(onlyNameListtypes.indexOf(listTypeNameToLoad)).getId();
+                return listTypeItems.get(onlyNameListtypes.indexOf(listTypeNameToLoad)).getId();
         
         for (BusinessObjectLight createdLitType : listTypeItems) {
             int matches = 0;
@@ -1486,7 +1484,7 @@ public class EntPhysicalSynchronizer {
             if (matches == listTypeNameToLoad.length()) 
                 return createdLitType.getId();
         }
-        return null;
+        return -1;
     }
     //</editor-fold>
 
@@ -1500,7 +1498,7 @@ public class EntPhysicalSynchronizer {
             String ifAlias = services.get(portNames.indexOf(ifName));
             String portSpeed = portSpeeds.get(portNames.indexOf(ifName));
             String createdClassName = "";
-            String createdId = null; 
+            long createdId = 0; 
             boolean isAttributeUpdated = false;
             attributes.put(Constants.PROPERTY_NAME, SyncUtil.wrapPortName(ifName));
             attributes.put("highSpeed", portSpeed);  
@@ -1680,7 +1678,7 @@ public class EntPhysicalSynchronizer {
                 results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                         String.format("Deleting interface %s", currentVirtualPort),
                         "The interface was deleted because no math was found"));
-            } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | InvalidArgumentException ex) {
+            } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
                 results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                     String.format("Deleting virtual interface %s", currentVirtualPort),
                     ex.getLocalizedMessage()));
@@ -1693,7 +1691,7 @@ public class EntPhysicalSynchronizer {
                 results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                         String.format("Deleting interface %s", currentMplesTunnel),
                         "The interface was deleted because no math was found"));
-            } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | InvalidArgumentException ex) {
+            } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
                 results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                     String.format("Deleting virtual interface %s", currentMplesTunnel),
                     ex.getLocalizedMessage()));
@@ -1714,7 +1712,7 @@ public class EntPhysicalSynchronizer {
      * @throws InvalidArgumentException
      * @throws OperationNotPermittedException 
      */
-    private void checkServices(String serviceName, String portId, String portName, String portClassName) {
+    private void checkServices(String serviceName, long portId, String portName, String portClassName) {
        try{
             List<BusinessObjectLight> servicesCreatedInKuwaiba = new ArrayList<>();
             //We get the services created in kuwaiba
@@ -1739,7 +1737,7 @@ public class EntPhysicalSynchronizer {
                 if(serviceName.equals(currentService.getName())){
                     List<BusinessObjectLight> serviceResources = bem.getSpecialAttribute(currentService.getClassName(), currentService.getId(), "uses");
                     for (BusinessObjectLight resource : serviceResources) {
-                        if(resource.getId() != null && portId != null && resource.getId().equals(portId)){ //The port is already a resource of the service
+                        if(resource.getId() == portId){ //The port is already a resource of the service
                             results.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, 
                             String.format("Interface %s [%s] and service %s", portName, portClassName, currentService.getName()),
                             "Are already related")); 
@@ -1760,7 +1758,7 @@ public class EntPhysicalSynchronizer {
                 results.add(new SyncResult(dsConfigId, SyncResult.TYPE_WARNING, 
                         "Searching service", String.format("The service: %s Not found, the interface: %s will not be related", serviceName, portName)));
             
-        } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException | InvalidArgumentException ex) {
+        } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
                 results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                         String.format("Serching service %s, related with interface: %s ", serviceName, portName),
                         String.format("due to: %s ", ex.getLocalizedMessage())));
@@ -1806,7 +1804,7 @@ public class EntPhysicalSynchronizer {
                         System.out.println("to delete: "+ portChildren.get(i));
                 }
                 
-            } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException ex) {
+            } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
                 Exceptions.printStackTrace(ex);
             }
         }

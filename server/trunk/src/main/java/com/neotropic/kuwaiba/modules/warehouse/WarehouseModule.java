@@ -20,7 +20,6 @@ import java.util.List;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.application.Pool;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
-import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.services.persistence.util.Constants;
@@ -96,9 +95,8 @@ public class WarehouseModule implements GenericCommercialModule {
      * Gets the Warehouse Module Root Pools
      * @return A list of root pools
      * @throws MetadataObjectNotFoundException If the classes Warehouse or VirtualWarehouse could not be found.
-     * @throws InvalidArgumentException If any pool does not have uuid
      */
-    public List<Pool> getWarehouseRootPools() throws MetadataObjectNotFoundException, InvalidArgumentException {
+    public List<Pool> getWarehouseRootPools() throws MetadataObjectNotFoundException {
         List<Pool> warehousePools = bem.getRootPools(Constants.CLASS_WAREHOUSE, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
         List<Pool> virtualWarehousePools = bem.getRootPools(Constants.CLASS_VIRTUALWAREHOUSE, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
         // If the Warehouse root pool does not exist then it is created

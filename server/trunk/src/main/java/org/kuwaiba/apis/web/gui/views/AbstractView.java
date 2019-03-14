@@ -135,14 +135,4 @@ public abstract class AbstractView<T> {
      * @return A reference to the newly added edge.
      */
     public abstract AbstractViewEdge addEdge(T businessObject, T sourceBusinessObject, T targetBusinessObject, Properties properties);
-    /**
-     * Adds a listener to the node click events.
-     * @param listener The listener object.
-     */
-    public abstract void addNodeClickListener(ViewEventListener listener);
-    /**
-     * Adds a listener to the edge click events.
-     * @param listener The listener object.
-     */
-    public abstract void addEdgeClickListener(ViewEventListener listener);
 }

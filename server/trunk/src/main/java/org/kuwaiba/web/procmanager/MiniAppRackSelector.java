@@ -60,7 +60,7 @@ public class MiniAppRackSelector extends AbstractMiniApplication<Component, Comp
 
                     RemoteObject child = wsBean.getObject(
                         getInputParameters().getProperty(String.valueOf(id)), 
-                        String.valueOf(id), 
+                        Long.valueOf(String.valueOf(id)), 
                         Page.getCurrent().getWebBrowser().getAddress(),
                         ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
 

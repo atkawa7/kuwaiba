@@ -27,6 +27,7 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -45,7 +46,6 @@ import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.dashboards.DashboardEventBus;
-import org.kuwaiba.apis.web.gui.dashboards.DashboardEventListener;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.apis.web.gui.tools.Wizard;
 import org.kuwaiba.apis.web.gui.views.AbstractView;
@@ -108,9 +108,9 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                     if (transferData.isPresent()) {
                         for (String serializedObject : transferData.get().split("~o~")) {
                             String[] serializedObjectTokens = serializedObject.split("~a~", -1);                            
-                            RemoteObjectLight businessObject = new RemoteObjectLight(serializedObjectTokens[1], serializedObjectTokens[0], serializedObjectTokens[2]);
+                            RemoteObjectLight businessObject = new RemoteObjectLight(serializedObjectTokens[1], Long.valueOf(serializedObjectTokens[0]), serializedObjectTokens[2]);
 
-                            if (businessObject.getId() != null && !businessObject.getId().equals("-1")) { //Ignore the dummy root
+                            if (businessObject.getId() !=  -1) { //Ignore the dummy root
                                 if (theOspView.getAsViewMap().findNode(businessObject.getId()) != null)
                                     Notifications.showError(String.format("The object %s already exists in this view", businessObject));
                                 else
@@ -121,21 +121,21 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                 }
             });
 
-            theOspView.addNodeClickListener((source, type) -> {
-                eventBus.notifySubscribers(new DashboardEventListener.DashboardEvent(this, 
-                        DashboardEventListener.DashboardEvent.TYPE_SELECTION, new RemoteObjectLight((BusinessObjectLight)source)));
-            });
-                    
-            theOspView.addEdgeClickListener((source, type) -> {
-                eventBus.notifySubscribers(new DashboardEventListener.DashboardEvent(this, 
-                        DashboardEventListener.DashboardEvent.TYPE_SELECTION, new RemoteObjectLight((BusinessObjectLight)source)));
-            });
+//            mapComponent.addMarkerClickListener((clickedMarker) -> {
+//                eventBus.notifySubscribers(new DashboardEventListener.DashboardEvent(this, 
+//                        DashboardEventListener.DashboardEvent.TYPE_SELECTION, getBusinesObjectFromMarker(clickedMarker)));
+//            });
+//
+//            mapMain.addEdgeClickListener((clickedEdge) -> {
+//                eventBus.notifySubscribers(new DashboardEventListener.DashboardEvent(this, 
+//                        DashboardEventListener.DashboardEvent.TYPE_SELECTION, getBusinesObjectFromPolyline(clickedEdge)));
+//            });
 
             MenuBar mnuMain = new MenuBar();
 
             mnuMain.addItem("New", VaadinIcons.FOLDER_ADD, (selectedItem) -> {
                 theOspView.buildEmptyView();
-                theOspView.getAsComponent(); //This will not create a new map, it will only refresh it, and since the new viewMap is empty, it will clean up the actual map
+                ((VerticalLayout)contentComponent).replaceComponent(mapComponent, theOspView.getAsComponent());
             });
 
             mnuMain.addItem("Open", VaadinIcons.FOLDER_OPEN, (selectedItem) -> {
@@ -168,10 +168,9 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                                     theOspView.getProperties().put(Constants.PROPERTY_ID, savedView.getId());
                                     theOspView.getProperties().put(Constants.PROPERTY_NAME, savedView.getName());
                                     theOspView.getProperties().put(Constants.PROPERTY_DESCRIPTION, savedView.getDescription());
-                                    
                                     theOspView.buildWithSavedView(savedView.getStructure());
-                                    theOspView.getAsComponent();
-                                    
+                                    ((VerticalLayout)contentComponent).replaceComponent(((VerticalLayout)contentComponent).getComponent(1), //Replace the old map with the new one
+                                            theOspView.getAsComponent());
                                     wdwOpen.close();
                                 } catch (ServerSideException ex) {
                                     Notifications.showError(ex.getLocalizedMessage());
@@ -314,7 +313,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                     wdwWizard.center();
                     wdwWizard.setModal(true);
                     wdwWizard.setWidth(80, Unit.PERCENTAGE);
-                    wdwWizard.setHeight(80, Unit.PERCENTAGE);
+                    wdwWizard.setHeight(50, Unit.PERCENTAGE);
 
                     wizard.addEventListener((wizardEvent) -> {
                         switch (wizardEvent.getType()) {
@@ -349,8 +348,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
             this.contentComponent = lytContent;
             addComponent(contentComponent);
         } catch (Exception ex) {
-            this.contentComponent = new VerticalLayout();
-            Notifications.showError(String.format("An unexpected error occurred while creating the content of this view: %s", ex.getLocalizedMessage()));
+            this.contentComponent = new Label(String.format("An unexpected error occurred while creating the content of this view: %s", ex.getLocalizedMessage()));
         }
     }
 

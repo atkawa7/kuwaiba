@@ -20,9 +20,9 @@ import java.util.Objects;
 import java.util.Properties;
 
 /**
- * The super class of all classes used to represent nodes inside views.
+ *
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
- * @param <N> The type of the business object represented by this node.
+ * @param <N>
  */
 public class AbstractViewNode<N> {
     /**

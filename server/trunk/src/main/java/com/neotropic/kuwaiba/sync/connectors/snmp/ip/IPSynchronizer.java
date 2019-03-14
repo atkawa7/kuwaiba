@@ -52,7 +52,7 @@ public class IPSynchronizer {
     /**
      * Device id
      */
-    private final String id;
+    private final long id;
     /**
      * Device Data Source Configuration id
      */
@@ -149,7 +149,7 @@ public class IPSynchronizer {
             readcurrentFolder(ipv6RootPools);
            
             readMibData();
-        } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | ApplicationObjectNotFoundException | InvalidArgumentException ex) {
+        } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | ApplicationObjectNotFoundException ex) {
             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                         "Unexpected error reading current structure", 
                         ex.getLocalizedMessage()));
@@ -171,7 +171,7 @@ public class IPSynchronizer {
         ipAttributes.put(Constants.PROPERTY_DESCRIPTION, "created with sync");
         ipAttributes.put(Constants.PROPERTY_MASK, syncMask); //TODO set the list types attributes
         try { 
-            String newIpId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, subnet.getClassName(), subnet.getId(), ipAttributes, -1);
+            long newIpId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, subnet.getClassName(), subnet.getId(), ipAttributes, -1);
             createdIp = bem.getObject(newIpId);
             ips.get(subnet).add(createdIp);
             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Add IP to Subnet", String.format("%s was added to %s successfully", ipAddr, subnet)));
@@ -303,7 +303,7 @@ public class IPSynchronizer {
                                             String.format("%s and %s were related successfully ", currentIpAddress, currentPort)));
                                 }
                                 
-                            } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException |OperationNotPermittedException | InvalidArgumentException ex) {
+                            } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException |OperationNotPermittedException ex) {
                                 res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                                         String.format("trying to relate %s with %s", currentIpAddress, currentPort),
                                         ex.getLocalizedMessage()));
@@ -327,7 +327,7 @@ public class IPSynchronizer {
      * @throws BusinessObjectNotFoundException 
      */
     private void readCurrentStructure(List<BusinessObjectLight> children, int childrenType) 
-            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException
     {
         for (BusinessObjectLight child : children) {
             if (child.getClassName().equals(Constants.CLASS_ELECTRICALPORT) || child.getClassName().equals(Constants.CLASS_SFPPORT) || child.getClassName().contains(Constants.CLASS_OPTICALPORT)) 
@@ -350,7 +350,7 @@ public class IPSynchronizer {
     */
     private void readcurrentFolder(List<Pool> folders) 
             throws ApplicationObjectNotFoundException, 
-            MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException
+            MetadataObjectNotFoundException, BusinessObjectNotFoundException
     {
         for (Pool folder : folders) {
             if(!folders.isEmpty())
@@ -368,7 +368,7 @@ public class IPSynchronizer {
      */
     private void readCurrentSubnets(Pool folder) 
             throws ApplicationObjectNotFoundException, 
-            MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
+            MetadataObjectNotFoundException, BusinessObjectNotFoundException {
         //we read the subnets of the folder
         List<BusinessObjectLight> subnetsInFolder = bem.getPoolItems(folder.getId(), -1);
         for (BusinessObjectLight subnet : subnetsInFolder) {
@@ -391,7 +391,7 @@ public class IPSynchronizer {
      */
     private void readCurrentSubnetChildren(BusinessObjectLight subnet) 
         throws ApplicationObjectNotFoundException, 
-        MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException 
+        MetadataObjectNotFoundException, BusinessObjectNotFoundException 
     {
         //we get the ips and the subnets inside subents
         List<BusinessObjectLight> subnetChildren = bem.getObjectSpecialChildren(subnet.getClassName(), subnet.getId());
@@ -444,7 +444,7 @@ public class IPSynchronizer {
      * @throws InvalidArgumentException
      * @throws OperationNotPermittedException 
      */
-    private void checkServices(String serviceName, String ipAddrId, String ipAddr){
+    private void checkServices(String serviceName, long ipAddrId, String ipAddr){
         try{
             List<BusinessObjectLight> servicesCreatedInKuwaiba = new ArrayList<>();
             //We get the services created in kuwaiba
@@ -471,7 +471,7 @@ public class IPSynchronizer {
                         (serviceName.equals(currentService.getName()) || serviceName.toLowerCase().contains(currentService.getName().toLowerCase()))){
                     List<BusinessObjectLight> serviceResources = bem.getSpecialAttribute(currentService.getClassName(), currentService.getId(), "uses");
                     for (BusinessObjectLight resource : serviceResources) {
-                        if(resource.getId() != null && ipAddrId != null && resource.getId().equals(ipAddrId)){ //The port is already a resource of the service
+                        if(resource.getId() == ipAddrId){ //The port is already a resource of the service
                             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION,
                                     "Searching service",
                                     String.format("The service: %s is related with the ip: %s ", serviceName, ipAddr)));
@@ -492,7 +492,7 @@ public class IPSynchronizer {
                 res.add(new SyncResult(dsConfigId, SyncResult.TYPE_WARNING, 
                         "Searching service", String.format("The service: %s Not found, the ip: %s will not be related", serviceName, ipAddr)));
             
-        } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException | InvalidArgumentException ex) {
+        } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
                 res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                         String.format("Serching service %s, related with ip: %s ", serviceName, ipAddr),
                         String.format("due to: %s ", ex.getLocalizedMessage())));

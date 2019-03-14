@@ -30,7 +30,7 @@ public class RemotePool {
     /**
      * Pool id
      */
-    private String id;
+    private long id;
     /**
      * Pool name
      */
@@ -51,7 +51,7 @@ public class RemotePool {
     //No-arg constructor required
     public RemotePool(){}
 
-    public RemotePool(String id, String name, String description, String className, int type) {
+    public RemotePool(long id, String name, String description, String className, int type) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -67,11 +67,11 @@ public class RemotePool {
         this.type = pool.getType();
     } 
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
