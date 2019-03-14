@@ -15,15 +15,11 @@
  */
 package org.inventory.core.visual.scene;
 
-import com.neotropic.inventory.modules.sync.LocalSyncProvider;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -31,7 +27,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
 import org.inventory.communications.core.LocalObjectLight;
 import org.netbeans.api.visual.laf.LookFeel;
 import org.netbeans.api.visual.layout.LayoutFactory;
@@ -69,7 +64,7 @@ public class EmptyNodeWidget extends Widget{
      */
     private boolean highContrast;
     /**
-     * Extra info
+     * Extra info, keep tracks of grouped nodes
      */
     private String[] extraInfo;
     
@@ -121,7 +116,11 @@ public class EmptyNodeWidget extends Widget{
         this.highContrast = highContrast;
         notifyStateChanged(getState(), getState());
     }
-    
+
+    public String[] getExtraInfo() {
+        return extraInfo;
+    }
+        
     public void showExtraInfo(){
         final JFrame frame = new JFrame("Available Syncrhonization Providers");
         frame.setLayout(new BorderLayout());
@@ -142,8 +141,6 @@ public class EmptyNodeWidget extends Widget{
         frame.add(pnlButtons, BorderLayout.SOUTH);
         frame.setVisible(true);
     }
-    
-    
     
     /**
      * Implements the widget-state specific look of the widget.
