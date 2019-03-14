@@ -9,10 +9,10 @@ import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.Validator;
 import org.kuwaiba.apis.persistence.application.ValidatorDefinition;
 
-//Don't forget to use "%s" as class name, as it will be generated on-the-fly later
+//Don't forget to use the place holder as class name, as it will be generated on-the-fly later
 public class %s extends ValidatorDefinition {
 
-    //Mandatory, boiler-plate constructor. Don't forget to use "%s" as class name, as it will be generated on-the-fly later
+    //Mandatory, boiler-plate constructor. Don't forget to use place holder as class name (and constructor in thie case), as it will be generated on-the-fly later
     public %s (long id, String name, String description, String classToBeApplied, String script, boolean enabled) {
         super(id, name, description, classToBeApplied, script, enabled);
     }
