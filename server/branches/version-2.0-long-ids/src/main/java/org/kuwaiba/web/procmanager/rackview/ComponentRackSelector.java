@@ -34,14 +34,11 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResultCollection;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
@@ -69,28 +66,6 @@ public class ComponentRackSelector extends VerticalLayout {
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getMessage());
         }
-////        try {
-////            List<StringPair> scriptQueryParameters = new ArrayList();
-////            scriptQueryParameters.add(new StringPair("parentId", String.valueOf(parentId)));
-////            scriptQueryParameters.add(new StringPair("parentClassName", parentClassName));
-////            scriptQueryParameters.add(new StringPair("childClassName", childClassName));
-////            
-////            webserviceBean.updateScriptQueryParameters(
-////                    "getObjectChildrenRecursive",
-////                    scriptQueryParameters,
-////                    Page.getCurrent().getWebBrowser().getAddress(),
-////                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-////            
-////            RemoteScriptQueryResultCollection result = webserviceBean.executeScriptQueryCollection(
-////                    "getObjectChildrenRecursive",
-////                    Page.getCurrent().getWebBrowser().getAddress(),
-////                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-////            
-////            return (List<RemoteObjectLight>) result.getResults();
-////            
-////        } catch (ServerSideException ex) {
-////            Notifications.showError(ex.getMessage());
-////        }
         return null;
     }
         
@@ -103,7 +78,8 @@ public class ComponentRackSelector extends VerticalLayout {
         horizontalLayout.setSizeFull();
                 
         Panel leftPanel = new Panel("Devices");
-                
+        leftPanel.addStyleName(ValoTheme.PANEL_BORDERLESS);
+                        
         leftPanel.setContent(componentDeviceList);
                 
         leftPanel.setSizeFull();

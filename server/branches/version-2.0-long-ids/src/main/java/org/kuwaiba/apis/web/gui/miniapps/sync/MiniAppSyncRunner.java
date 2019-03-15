@@ -33,8 +33,6 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationConfiguration;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.web.IndexUI;
-import org.kuwaiba.web.procmanager.ProcessManagerComponent;
 
 /**
  *
@@ -121,11 +119,8 @@ public class MiniAppSyncRunner extends AbstractMiniApplication<Component, Compon
                     
                     final UI ui = UI.getCurrent();
                     if (!selectedsyncProviders.isEmpty()) {
-                        Component component = ((IndexUI) ui).getMainMenu().getParent();
-                        if (component instanceof ProcessManagerComponent) {
-                            SyncRunnerService syncRunnerService = ((ProcessManagerComponent) component).getSyncRunnerService();
-                            syncRunnerService.launchAdHocAutomatedSynchronizationTask(ui, wsBean, remoteSession, selectedsyncProviders, syncConfig);
-                        }
+                        SyncRunner syncRunner = new SyncRunner(ui, wsBean, remoteSession, selectedsyncProviders, syncConfig);
+                        syncRunner.launchAdHocAutomatedSynchronizationTask(selectedsyncProviders.get(0));
                     }
                 }
             });

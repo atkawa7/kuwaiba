@@ -366,7 +366,52 @@ public class ComponentRackView extends VerticalLayout {
         setComponentAlignment(horizontalLayout, Alignment.MIDDLE_CENTER);
     }
     
+    private boolean move(RemoteObject rack, RemoteObject device, int deviceRackUnits, int devicePosition) {
+        if (deviceRackUnits == -1 || devicePosition == -1)
+            return false;
+        
+        HashMap<Integer, RemoteObject> rackMap = new HashMap();
+        
+        try {
+            RemoteSession remoteSession = (RemoteSession) UI.getCurrent().getSession().getAttribute("session"); //NOI18N
+            List<RemoteObjectLight> rackDevicesLight = webserviceBean.getObjectChildren(
+                rack.getClassName(), rack.getId(), 0, remoteSession.getIpAddress(), remoteSession.getSessionId());
+            for (RemoteObjectLight rackDeviceLight : rackDevicesLight) {
+                RemoteObject rackDevice = webserviceBean.getObject(
+                    rackDeviceLight.getClassName(), rackDeviceLight.getId(), remoteSession.getIpAddress(), remoteSession.getSessionId());
+                int rackDeviceRackUnits = rackDevice.getAttribute("rackUnits") != null ? Integer.valueOf(rackDevice.getAttribute("rackUnits")) : -1; //NOI18N
+                int rackDevicePosition = rackDevice.getAttribute("position") != null ? Integer.valueOf(rackDevice.getAttribute("position")) : -1; //NOI18N
+                
+                if (rackDeviceRackUnits > 0 && rackDevicePosition > 0) {
+                    for (int i = rackDevicePosition; i <= rackDevicePosition + (rackDeviceRackUnits - 1); i++)
+                        rackMap.put(rackDevicePosition, rackDevice);                        
+                }
+            }
+            
+            for (int i = devicePosition; i <= devicePosition + (deviceRackUnits - 1); i++) {
+                if (rackMap.containsKey(i)) {
+                    RemoteObject rackDevice = rackMap.get(i);
+                    if (rackDevice.getId() != device.getId())
+                        return false;
+                }
+            }
+            return true;
+        } catch (ServerSideException ex) {
+            return false;
+        }
+    }
+        
     private void updateAndMoveObject(RemoteObject object, String rackUnits, String position) {
+        int objectRackUnits = object.getAttribute("rackUnits") != null ? Integer.valueOf(object.getAttribute("rackUnits")) : -1; //NOI18N
+        int objectPosition = object.getAttribute("position") != null ? Integer.valueOf(object.getAttribute("position")) : -1; //NOI18N
+        
+        if (!move(rackObject, object, 
+            rackUnits != null ? Integer.valueOf(rackUnits) : objectRackUnits, 
+            position != null ? Integer.valueOf(position) : objectPosition)) {
+            Notifications.showWarning("The selected position is busy");
+            return;
+        }
+        
         if (object == null)
             return;
         try {

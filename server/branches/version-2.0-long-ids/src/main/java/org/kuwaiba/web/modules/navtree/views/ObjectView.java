@@ -102,7 +102,7 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
             
             for (AbstractViewNode aNode : viewMap.getNodes()) {
                 SrvNodeWidget nodeWidget = new SrvNodeWidget();
-                nodeWidget.setWidth(32); //Use 32x32 px icons
+                nodeWidget.setHeight(32); //Use 32x32 px icons
                 nodeWidget.setCaption(aNode.getIdentifier().toString());
                 nodeWidget.setX((int)aNode.getProperties().get("x"));
                 nodeWidget.setY((int)aNode.getProperties().get("y"));

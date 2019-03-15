@@ -21,6 +21,7 @@ import org.kuwaiba.apis.forms.elements.ElementTextField;
 import com.vaadin.data.HasValue;
 import com.vaadin.data.HasValue.ValueChangeListener;
 import com.vaadin.ui.TextField;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  *
@@ -42,7 +43,21 @@ public class ComponentTextField extends GraphicalComponent {
         if (element instanceof ElementTextField) {
             ElementTextField textField = (ElementTextField) element;
             
-            getComponent().setValue(textField.getValue() != null ? textField.getValue().toString() : "");
+            Object item = textField.getValue();
+            String value = "";
+            
+            if (item == null) {
+                value = "";
+            }
+            else if (item instanceof RemoteObjectLight) {
+                value = ((RemoteObjectLight) item).getName();
+            }
+            else if (item instanceof String) {
+                value = (String) item;
+            } else {
+                value = item.toString();
+            }
+            getComponent().setValue(value);
             getComponent().setEnabled(textField.isEnabled());
             
             getComponent().addValueChangeListener(new ValueChangeListener() {
@@ -65,8 +80,23 @@ public class ComponentTextField extends GraphicalComponent {
     public void onElementEvent(EventDescriptor event) {
         if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
             
-            if (Constants.Property.VALUE.equals(event.getPropertyName()))
-                getComponent().setValue(event.getNewValue() != null ? event.getNewValue().toString() : "");
+            if (Constants.Property.VALUE.equals(event.getPropertyName())) {
+                Object item = event.getNewValue();
+                String value = "";
+
+                if (item == null) {
+                    value = "";
+                }
+                else if (item instanceof RemoteObjectLight) {
+                    value = ((RemoteObjectLight) item).getName();
+                }
+                else if (item instanceof String) {
+                    value = (String) item;
+                } else {
+                    value = item.toString();
+                }
+                getComponent().setValue(value);
+            }
             
             if (Constants.Property.ENABLED.equals(event.getPropertyName()))
                 getComponent().setEnabled((boolean) event.getNewValue());
