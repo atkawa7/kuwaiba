@@ -3,12 +3,136 @@
 -->
 <script>
   <!-- Queries Section -->
-  <function type="query" name="getSubClassesLight" parameternames="className includeAbstractClasses includeSelf" queryname="getSubClassesLight" return="ClassMetadataLightList"/>
-  <function type="query" name="getProviders" queryname="getProviders"/>
-  <function type="query" name="getListTypeItems" parameternames="className" queryname="getListTypeItems" return="RemoteObjectLight"/>
-  <function type="query" name="getInstancesOfClass" parameternames="className" queryname="getInstancesOfClass" return="RemoteObjectLight"/>
-  <function type="query" name="getInstancesOfFinalClass" parameternames="className" queryname="getInstancesOfFinalClass" return="RemoteObjectLight"/>
   <function type="query" name="shared" parameternames="activityId sharedId" queryname="shared"/>
+  <!-- -->
+  <function type="function" name="getInstancesOfClass" parameternames="className" return="List">
+    <![CDATA[
+      /*
+      Name
+          getInstancesOfClass
+      Description
+          getInstancesOfClass
+      Countable
+          true
+      Parameters
+          className
+      Author
+          Johny Andrés Ortega Ruiz <johny.ortega@kuwaiba.org>
+      Date
+          20180619tue
+      */
+      /*
+      import org.kuwaiba.apis.persistence.PersistenceService;
+      import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+      import org.neo4j.graphdb.Direction;
+      import org.neo4j.graphdb.GraphDatabaseService;
+      import org.neo4j.graphdb.Label;
+      import org.neo4j.graphdb.Node;
+      import org.neo4j.graphdb.Relationship;
+      import org.neo4j.graphdb.ResourceIterator;
+      import org.neo4j.graphdb.Result;
+      import org.neo4j.graphdb.Transaction;
+
+      def bem = PersistenceService.getInstance().getBusinessEntityManager();
+      GraphDatabaseService graphDb;
+
+      def instances = new ArrayList();
+
+      def cypherQuery = "match (class:classes)<-[:EXTENDS*]-(subclass:classes)<-[:INSTANCE_OF]-(instance:inventory_objects) where class.name=\"" + className + "\" return instance;";
+
+      def result = graphDb.execute(cypherQuery);
+
+      def instanceColumn = result.columnAs("instance");
+
+      def lstInstanceColumm = Iterators.asList(instanceColumn);
+
+      lstInstanceColumm.each { instanceNode ->
+
+          cypherQuery = "match (class:classes)<-[:INSTANCE_OF]-(instance:inventory_objects) where id(instance)=" + instanceNode.getId() + " return class;";
+          result = graphDb.execute(cypherQuery);
+
+          def classNode = Iterators.asList(result.columnAs("class")).get(0);
+          def currentClassName = classNode.getProperty(Constants.PROPERTY_NAME);
+
+          instances.add(new RemoteObjectLight(bem.getObjectLight(currentClassName, instanceNode.getId())));
+      };
+
+      instances;
+      */
+      import org.kuwaiba.apis.persistence.PersistenceService;            
+      import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+
+      if (className instanceof String) {
+          try {                    
+              def bem = PersistenceService.getInstance().getBusinessEntityManager();
+              def objects = bem.getObjectsOfClassLight(className, -1);
+              return RemoteObjectLight.toRemoteObjectLightArray(objects);
+          } catch(Exception ex) {
+              println(ex.getMessage());
+          };
+      };
+      return null;
+    ]]>
+  </function>
+
+  <function type="function" name="getListTypeItems" parameternames="className" return="List">
+    <![CDATA[
+      /*
+      Name
+        getListTypeItems
+      Description
+        getListTypeItems
+      Countable
+        true
+      Parameters
+        className
+      Author
+        Johny Andrés Ortega Ruiz <johny.ortega@kuwaiba.org>
+      Date
+        20180619tue
+      */
+      import org.kuwaiba.apis.persistence.PersistenceService;
+      import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+
+      def aem = PersistenceService.getInstance().getApplicationEntityManager();
+      def listTypeItems = aem.getListTypeItems(className);
+
+      return RemoteObjectLight.toRemoteObjectLightArray(listTypeItems);
+    ]]>
+  </function>
+
+  <function type="function" name="getSpecialAttribute" parameternames="objectClassName objectId attributeName" return="List">
+    <![CDATA[
+      /*
+      Name
+          getSpecialAttribute
+      Description
+          getSpecialAttribute
+      Countable
+          true
+      Parameters
+          objectClassName
+          objectId
+          attributeName
+      Author
+          Johny Andrés Ortega Ruiz <johny.ortega@kuwaiba.org>
+      Date
+          20180619tue
+      */
+      import org.kuwaiba.apis.persistence.PersistenceService;
+      import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+
+      def bem = PersistenceService.getInstance().getBusinessEntityManager();
+      def specialAttribute = bem.getSpecialAttribute(objectClassName, objectId, attributeName);
+      def res = new ArrayList();
+      
+      specialAttribute.each { objLight ->
+        res.add(new RemoteObjectLight(bem.getObject(objLight.getClassName(), objLight.getId())));
+      };
+      res;
+    ]]>
+  </function>
+  <!-- -->
   <!-- Validator Section -->
   <function type="validator" name="emailValidator" parameternames="aField" message="The value must be a email">
     <![CDATA[
@@ -527,8 +651,10 @@
 
               paramValues.add(classid);
               paramValues.add(objectId);
-
+              /*
               def rol = scriptQueryExecutor.execute("getObjectLightUsingClassId", paramNames, paramValues);
+              */
+              def rol = elementScript.getFunctionByName("getObjectLightUsingClassId").run(paramValues);
 
               lst.add(rol);
             } else {
@@ -627,8 +753,10 @@
 
               paramValues.add(classid);
               paramValues.add(objectId);
-
+              /*
               def rol = scriptQueryExecutor.execute("getObjectLightUsingClassId", paramNames, paramValues);
+              */
+              def rol = elementScript.getFunctionByName("getObjectLightUsingClassId").run(paramValues);
 
               lst.add(rol);
             } else {
@@ -641,7 +769,7 @@
       res;
     ]]>
   </function>
-
+  <!--
   <function type="function" name="getObjectChildrenRecursive" parameternames="src childClassName" return="RemoteObjectLight">
     <![CDATA[
       if (src.getValue() != null) {
@@ -661,9 +789,15 @@
       null;
     ]]>
   </function>
+  -->
 
   <function type="function" name="getFieldContacts" parameternames="customerField contactClass" return="RemoteObjectLight">
     <![CDATA[
+      import org.kuwaiba.apis.persistence.PersistenceService;
+      import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+
+      def bem = PersistenceService.getInstance().getBusinessEntityManager();
+      
       if (customerField.getValue() != null) {
 
         def paramNames = new ArrayList();
@@ -676,11 +810,12 @@
         paramValues.add(customerField.getValue().getClassName());
         paramValues.add(String.valueOf(customerField.getValue().getId()));
         paramValues.add("contacts");
+        /* def contacts = scriptQueryExecutor.execute("getSpecialAttribute", paramNames, paramValues); */
+        def contacts = bem.getSpecialAttribute(customerField.getValue().getClassName(), Long.valueOf(customerField.getValue().getId()), "contacts");
 
-        def contacts = scriptQueryExecutor.execute("getSpecialAttribute", paramNames, paramValues);
 
         if (contacts != null) {
-
+          /*
           def res = new ArrayList();
 
           contacts.each { contact ->
@@ -688,8 +823,8 @@
               res.add(contact);
             };
           };
-
-          return res;
+          */
+          return RemoteObjectLight.toRemoteObjectLightArray(contacts);
         };
       };
       null;
@@ -725,10 +860,15 @@
     paramNames.add("attributeName");
 
     paramValues.add(provider.getValue().getClassName());
-    paramValues.add(String.valueOf(provider.getValue().getId()));
+    paramValues.add(provider.getValue().getId());
     paramValues.add("contacts");
-
+    /*
     def contacts = scriptQueryExecutor.execute("getSpecialAttribute", paramNames, paramValues);
+    */
+    /*
+    def contacts = elementScript.getFunctionByName("getSpecialAttribute").run(paramValues);
+    */
+    def contacts = bem.getSpecialAttribute(customerField.getValue().getClassName(), Long.valueOf(customerField.getValue().getId()), "contacts");
 
     def result = null;
 
@@ -761,7 +901,6 @@
       properties.add(new StringPair("availability", availability.getValue()));
       properties.add(new StringPair("language", language.getValue().getId().toString()));
       bem.createContact(contactType.getValue(), properties, provider.getValue().getClassName(), provider.getValue().getId());
-
       ]]>
     </function>
 
@@ -798,6 +937,7 @@
         ]]>
     </function>
     <!-- Retrieve an object from a field -->
+    
     <function type="function" name="getObject" queryname="getObject" parameternames="param">
         <![CDATA[
         def object = param.getValue();
@@ -831,102 +971,422 @@
       ]]>
     </function>
 
-  <!-- Add a previously selected equipment to the PurchaseObjects pool within the Virtual Warehouse
-        Purchase Warehouse (InventoryObject)
-        param equipmentType: a combobox holding the name of the new Equipment Type (EquipmentModel)
-        param vendor: a combobox holding the name of the Vendor (EquipmentVendor) to be associated with
-        the equipment.
-        param quantity: how many instances will be created inside the pool
-  -->
-  <function type="function" name="purchaseEquipment" parameternames="equipmentType vendor quantity purchaseCode" return="">
+  <function type="function" name="commitCreateService" parameternames="customerId customerClassName itemServiceId itemServiceClass codeService processInstanceId" return="Object">
     <![CDATA[
+      /*
+      Name
+        commitCreateService
+      Description
+        commitCreateService
+      Countable
+        false
+      Parameters
+        customerId
+        customerClassName
+        itemServiceId
+        itemServiceClass
+        codeService
+        processInstanceId
+      Author
+        Johny Andrés Ortega Ruiz <johny.ortega@kuwaiba.org>
+      Date
+        20180712wed
+      */
       import org.kuwaiba.apis.persistence.PersistenceService;
-      import java.util.Date;
+      import org.kuwaiba.services.persistence.util.Util;
+      /* Loading parameters */
+      def customerId = Long.valueOf(customerId);
+      def itemServiceId = Long.valueOf(itemServiceId);
+      def processInstanceId = Long.valueOf(processInstanceId);
 
       def bem = PersistenceService.getInstance().getBusinessEntityManager();
       def aem = PersistenceService.getInstance().getApplicationEntityManager();
-      def mem = PersistenceService.getInstance().getMetadataEntityManager();
 
-      def pools = bem.getObjectsWithFilterLight("VirtualWarehouse", "acronym", "purchase");
+      def itemService = bem.getObject(itemServiceClass, itemServiceId);
+      def classToMap = itemService.getAttributes().get("classToMap");
 
-      def purchasePools = aem.getPoolsInObject(pools.get(0).getClassName(), pools.get(0).getId(), "InventoryObject");
+      def servicePools = bem.getPoolsInObject(customerClassName, customerId, "GenericService");
 
-      def purchasePool = purchasePools.get(0);
+      String[] attributeNames = ["name"];
+      String[] attributeValues = [codeService];
 
-      if (equipmentType.getValue() != null && vendor.getValue() != null && quantity.getValue() != null){
-        def classEM = bem.getObjectsWithFilterLight("EquipmentModel", "name", equipmentType.getValue().getName());
-        def equipmentClass = "";
+      def flag = false;
 
-        if(classEM.size() > 0){
-          equipmentClass = bem.getAttributeValueAsString(classEM.get(0).getClassName(), classEM.get(0).getId(), "classToMap");
+      servicePools.each { servicePool ->
+        if (servicePool.getName().equals(itemService.getName())) {
+          def newPoolItemId = bem.createPoolItem(servicePool.getId(), classToMap, attributeNames, attributeValues, -1);
+          flag = true;
+          return;
         };
-
-        def stateList = bem.getObjectsWithFilterLight("OperationalState", "name", "Pending Shipment");
-        def pendingShipmentStateId = stateList.get(0).getId();
-        def hasVendor = mem.hasAttribute(equipmentClass, "vendor");
-        def attributeNames = null;
-        def attributeValues = null;
-
-        for(def i = 0; i < Integer.valueOf(quantity.getValue()); i++){
-          if(hasVendor){
-            attributeNames = ["name", "state", "vendor", "purchaseCode"] as String[];
-            def date = System.currentTimeMillis() + i;
-            attributeValues = [equipmentClass + "_"+ date, String.valueOf(pendingShipmentStateId), String.valueOf(vendor.getValue().getId()), String.valueOf(purchaseCode.getValue())] as String[];
-          };
-          else{
-            attributeNames = ["name", "state"] as String[];
-            def date = System.currentTimeMillis() + i;
-            attributeValues = [equipmentClass + "_"+ date, String.valueOf(pendingShipmentStateId)] as String[];
-          };
-          bem.createPoolItem(purchasePool.getId(), equipmentClass, attributeNames, attributeValues, 0);
-        }
       };
-      ]]>
-  </function>
 
-  <!-- Create a new EquipmentVendor ListType item
-        param vendorName: a textfield holding the name of the new EquipmentVendor
-  -->
-  <function type="function" name="createVendor" parameternames="vendorName">
-    <![CDATA[
-    import org.kuwaiba.apis.persistence.PersistenceService;
-
-    def aem = PersistenceService.getInstance().getApplicationEntityManager();
-    def bem = PersistenceService.getInstance().getBusinessEntityManager();
-
-    def newVendorId = null;
-
-    if (vendorName.getValue() != null) {
-      newVendorId = aem.createListTypeItem("EquipmentVendor", vendorName.getValue(), vendorName.getValue());
-    };
+      if (!flag) {
+        def newPoolId = aem.createPoolInObject(customerClassName, customerId, itemService.getName(), itemService.getName(), "GenericService", 3);
+        def newPoolItemId = bem.createPoolItem(newPoolId, classToMap, attributeNames, attributeValues, -1);
+      };
+      "true";
     ]]>
   </function>
+  <function type="function" name="getObjectLightUsingClassId" parameternames="classId objectId" return="Object">
+    <![CDATA[
+      /*
+      Name
+          getObjectLightUsingClassId
+      Description
+          getObjectLightUsingClassId
+      Countable
+          false
+      Parameters
+          classId
+          objectId
+      Author
+          Johny Andrés Ortega Ruiz <johny.ortega@kuwaiba.org>
+      Date
+          20180716mon
+      */
+      import org.kuwaiba.apis.persistence.PersistenceService;
+      import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
-    <!-- Create a new EquipmentModel ListType item and associates it with the classToMap
-         param equipmentName: a textfield holding the name of the new EquipmentModel
-         param classToMap: a comboBox that holds the name of the class the new EquipmentModel needs
-         to be associated with.
-    -->
-    <function type="function" name="createEquipmentModel" parameternames="equipmentName classToMap">
+      def classId = Long.valueOf(classId);
+      def objectId = Long.valueOf(objectId);
+
+      def bem = PersistenceService.getInstance().getBusinessEntityManager();
+      def mem = PersistenceService.getInstance().getMetadataEntityManager();
+
+      def _class = mem.getClass(classId);
+      def objectClassName = _class.getName();
+
+      def object = bem.getObjectLight(objectClassName, objectId);
+
+      new RemoteObjectLight(object);
+    ]]>
+  </function>
+  <function type="function" name="getSubClassesLight" parameternames="className includeAbstractClasses includeSelf" return="List">
+    <![CDATA[
+      /*
+      Name
+          getSubClassesLight
+      Description
+          getSubClassesLight
+      Countable
+          true
+      Parameters
+          className
+          includeAbstractClasses
+          includeSelf
+      Author
+          Johny Andrés Ortega Ruiz <johny.ortega@kuwaiba.org>
+      Date
+          20180619tue
+      */
+      import org.kuwaiba.apis.persistence.PersistenceService;
+      import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
+
+      def includeAbstractClasses = Boolean.valueOf(includeAbstractClasses);
+      def includeSelf = Boolean.valueOf(includeSelf);
+
+      def mem = PersistenceService.getInstance().getMetadataEntityManager();
+
+      def subClassesLight = mem.getSubClassesLight(className, includeAbstractClasses, includeSelf);
+
+      def res = new ArrayList();
+      for (def _class : subClassesLight) {
+          res.add(new RemoteClassMetadataLight(_class));
+      };
+      res;
+    ]]>
+  </function>
+  <function type="function" name="getInstancesOfFinalClass" parameternames="className" return="List">
+    <![CDATA[
+      /*
+      Name
+          getInstancesOfFinalClass
+      Description
+          getInstancesOfFinalClass
+      Countable
+          true
+      Parameters
+          className
+      Author
+          Johny Andrés Ortega Ruiz <johny.ortega@kuwaiba.org>
+      Date
+          20180619tue
+      */
+      import org.kuwaiba.apis.persistence.PersistenceService;
+      import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+
+      def bem = PersistenceService.getInstance().getBusinessEntityManager();
+
+      def instances = new ArrayList();
+      instances = RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectsOfClassLight(className, -1));
+
+      instances;
+    ]]>
+  </function>
+  <!-- Jalbersson Folder -->
+    <!-- This function is used to fill the data of a grid with elements with operational state 'Spare' -->
+    <function type="function" name="getElements" parameternames="cmbId" return="Matriz">
       <![CDATA[
       import org.kuwaiba.apis.persistence.PersistenceService;
+      import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
       def aem = PersistenceService.getInstance().getApplicationEntityManager();
       def bem = PersistenceService.getInstance().getBusinessEntityManager();
 
-      def newModelId = null;
+      def classsInstances = bem.getObjectsOfClass(cmbId.getValue(), -1);
 
-      if (equipmentName.getValue() != null && classToMap.getValue() != null) {
-        newModelId = aem.createListTypeItem("EquipmentModel", equipmentName.getValue(), equipmentName.getValue());
+      def classSpare = new ArrayList();
+      def locationsArray = new ArrayList();
+
+      classsInstances.each { instance ->
+          def equipmentStatusId = instance.getAttributes().get("state");
+          if(equipmentStatusId != null){
+            def equipmentStatus = aem.getListTypeItem("OperationalState", equipmentStatusId as long);
+            if(equipmentStatus != null && equipmentStatus.getName() == "Spare"){
+              def row = new ArrayList();
+              row.add(new RemoteObjectLight(instance));
+
+              locationsArray = bem.getParentsUntilFirstOfClass(instance.getClassName(), instance.getId(), "City");
+
+              def position = 0;
+              def fieldObject = bem.getObject(instance.getClassName(), instance.getId());
+              def positionRecieved = fieldObject.getAttributes().get("position");
+              if(positionRecieved != null)
+                position = positionRecieved;
+              row.add(position);
+
+              def rack = null;
+              def city = "";
+              def building = "";
+              locationsArray.each { location ->
+                switch(location.getClassName()){
+                case "Rack":
+                  rack = new RemoteObjectLight(location);
+                  break;
+
+                case "Building":
+                  building = location.getName();
+                  break;
+
+                case "City":
+                  city = location.getName();
+                  break;
+                default:
+                  break;
+                };
+              };
+              if(rack != null)
+                row.add(rack);
+              else
+                row.add("");
+              row.add(building);
+              row.add(city);
+
+              classSpare.add(row);
+              locationsArray.clear();
+            }
+          }
       };
 
-      def newModel = bem.getObject("EquipmentModel", newModelId);
-      def newModelAttr = bem.getAttributeValuesAsString(newModel.getClassName(), newModel.getId());
-      newModelAttr.put("classToMap", classToMap.getValue().getClassName());
-      bem.updateObject(newModel.getClassName(), newModel.getId(), newModelAttr);
+      classSpare;
+      ]]>
+    </function>
+    
+  <!-- This function is used to fill the ordered material with a status option -->
+    <function type="function" name="getMaterialPreconfigurationStatus" parameternames="activityId sharedGridId" return="Matriz">
+      <![CDATA[
+      import org.kuwaiba.apis.persistence.PersistenceService;
+      import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+
+      def aem = PersistenceService.getInstance().getApplicationEntityManager();
+      def bem = PersistenceService.getInstance().getBusinessEntityManager();
+
+
+      def paramNames = new ArrayList();
+
+      paramNames.add("activityId");
+      paramNames.add("sharedId");
+
+      def paramValues = new ArrayList();
+
+      paramValues.add(activityId);
+      paramValues.add(sharedGridId + "rowscount");
+
+      def strRowsCount = scriptQueryExecutor.execute("shared", paramNames, paramValues);
+
+      paramValues.clear();
+
+      paramValues.add(activityId);
+      paramValues.add(sharedGridId + "columnscount");
+
+      def strColumnsCount = scriptQueryExecutor.execute("shared", paramNames, paramValues);
+
+      def res = new ArrayList();
+      if (strRowsCount != null && strColumnsCount != null) {
+
+        def rowscount = Integer.valueOf(strRowsCount);
+        def columnscount = Integer.valueOf(strColumnsCount);
+
+        for (int i = 0; i < rowscount; i++) {
+          def lst = new ArrayList();
+
+          for (int j = 0; j < columnscount; j++) {
+            paramValues.clear();
+
+            paramValues.add(activityId);
+            paramValues.add(sharedGridId + i + j);
+
+            def dataGrid = scriptQueryExecutor.execute("shared", paramNames, paramValues);
+
+            paramValues.clear();
+
+            paramValues.add(activityId);
+            paramValues.add(sharedGridId + i + j + "datatype");
+
+            def dataType = scriptQueryExecutor.execute("shared", paramNames, paramValues);
+
+            if ("RemoteObjectLight".equals(dataType)) {
+
+              paramNames.clear();
+
+              paramNames.add("activityId");
+              paramNames.add("sharedId");
+
+              paramValues.clear();
+
+              paramValues.add(activityId);
+              paramValues.add(sharedGridId + i + j + "objectname");
+
+              def objectname = scriptQueryExecutor.execute("shared", paramNames, paramValues);
+
+              paramValues.clear();
+
+              paramValues.add(activityId);
+              paramValues.add(sharedGridId + i + j + "objectId");
+
+              def objectId = scriptQueryExecutor.execute("shared", paramNames, paramValues);
+
+              paramValues.clear();
+
+              paramValues.add(activityId);
+              paramValues.add(sharedGridId + i + j + "classid");
+
+              def classid = scriptQueryExecutor.execute("shared", paramNames, paramValues);
+
+              paramNames.clear();
+
+              paramNames.add("classId");
+              paramNames.add("objectId");
+
+              paramValues.clear();
+
+              paramValues.add(classid);
+              paramValues.add(objectId);
+              /*
+              def rol = scriptQueryExecutor.execute("getObjectLightUsingClassId", paramNames, paramValues);
+              */
+              def rol = elementScript.getFunctionByName("getObjectLightUsingClassId").run(paramValues);
+
+              lst.add(rol);
+            } else {
+              lst.add(dataGrid);
+            };
+          };
+          res.add(lst);
+        };
+      };
+
+
+
+
+      def originalData = res;
+
+      def classSpare = new ArrayList();
+      originalData.each{ instanceRow ->
+        def classsInstances = new ArrayList();
+        classsInstances.add(instanceRow.get(0));
+        classsInstances.add("NO");
+        classsInstances.add(instanceRow.get(1));
+        classsInstances.add(instanceRow.get(2));
+        classsInstances.add(instanceRow.get(3));
+        classsInstances.add(instanceRow.get(4));
+        classSpare.add(classsInstances);
+      };
+
+      classSpare;
       ]]>
     </function>
 
+    <!--
+        description: Change equipmpent's operational state from Spare to Reserved
+        parameter srcGrid: the grid that contains the selected object to be reserved
+    -->
+    <function type="function" name="reserveMaterial" parameternames="srcGrid" return="RemoteObjectLight">
+      <![CDATA[
+        import org.kuwaiba.apis.persistence.PersistenceService;
+
+        if (srcGrid != null && srcGrid.getSelectedRow() != -1L) {
+          def bem = PersistenceService.getInstance().getBusinessEntityManager();
+          def aem = PersistenceService.getInstance().getApplicationEntityManager();
+          def reservedOpState = aem.getListTypeItem("OperationalState", "Reserved");
+          HashMap<String, String> attrs = new HashMap();
+          def objectList = srcGrid.getRow();
+
+          attrs.put("state", String.valueOf(reservedOpState.getId()));
+
+          bem.updateObject(objectList.get(0).getClassName(), objectList.get(0).getId(), attrs);
+        };
+        srcGrid;
+      ]]>
+    </function>
+
+    <!--
+        description: Change equipmpent's operational state from Reserved to Spare
+        parameter srcMaterial: a textfield that contains an object to be modified
+    -->
+    <function type="function" name="cancelReserveMaterial" parameternames="srcMaterial" return="RemoteObjectLight">
+      <![CDATA[
+        import org.kuwaiba.apis.persistence.PersistenceService;
+
+
+        if (srcMaterial.getValue() != null) {
+          def bem = PersistenceService.getInstance().getBusinessEntityManager();
+          def aem = PersistenceService.getInstance().getApplicationEntityManager();
+          def spareOpState = aem.getListTypeItem("OperationalState", "Spare");
+          HashMap<String, String> attrs = new HashMap();
+          attrs.put("state", String.valueOf(spareOpState.getId()));
+          bem.updateObject(srcMaterial.getValue().getClassName(), srcMaterial.getValue().getId(), attrs);
+        };
+        srcMaterial;
+      ]]>
+    </function>
+
+    <!--
+        description: Returns the selected row of a grid to be aded to another grid
+        parameter srcGrid: the grid that contains the element to add to the other grid
+        parameter targetGrid: the grid that will add the row from srcGrid
+    -->
+    <function type="function" name="getMaterialRow" parameternames="srcGrid targetGrid">
+    <![CDATA[
+
+      def data = null;
+
+      def name = null;
+      def state = null;
+      def rack = null;
+      def building = null;
+      def city = null;
+      def list = targetGrid.getRows();
+      if(list == null)
+        list = new ArrayList();
+      if (srcGrid != null && srcGrid.getSelectedRow() != -1L) {
+        list.add(srcGrid.getRow());
+      };
+      list;
+
+    ]]>
+    </function>
+    
   <!-- Returns a list of all non abstract classes of type GenericCommunicationsElement, GenericBoard
          GenericDistributionFrame and GenericPhysicalLink.
          param subclassesFunction: a function that retrieves all subclasses of a single type
@@ -989,627 +1449,100 @@
 
       ]]>
     </function>
-    <!--
-        description: Returns all the rows from a source grid
-        parameter srcGrid: the grid that contains the elements to extract
-        return list: contains a list o the rows from the source grid
+
+    <!-- Create a new EquipmentModel ListType item and associates it with the classToMap
+         param equipmentName: a textfield holding the name of the new EquipmentModel
+         param classToMap: a comboBox that holds the name of the class the new EquipmentModel needs
+         to be associated with.
     -->
-    <function type="function" name="getRowsFromGrid" parameternames="srcGrid">
-    <![CDATA[
-
-      def list = new ArrayList();
-      def rows = srcGrid.getRows();
-      if(rows == null)
-        rows = new ArrayList();
-      list.add(rows);
-      list;
-
-    ]]>
-  </function>
-  <!--
-      description: Returns the selected row of a grid to be aded to another grid
-      parameter srcGrid: the grid that contains the element to add to the other grid
-      parameter targetGrid: the grid that will add the row from srcGrid
-  -->
-  <function type="function" name="getMaterialRow" parameternames="srcGrid targetGrid">
-  <![CDATA[
-
-    def data = null;
-
-    def name = null;
-    def state = null;
-    def rack = null;
-    def building = null;
-    def city = null;
-    def list = targetGrid.getRows();
-    if(list == null)
-      list = new ArrayList();
-    if (srcGrid != null && srcGrid.getSelectedRow() != -1L) {
-      list.add(srcGrid.getRow());
-    };
-    list;
-
-  ]]>
-  </function>
-  <!--
-      description: Change equipmpent's operational state from Reserved to Spare
-      parameter srcMaterial: a textfield that contains an object to be modified
-  -->
-  <function type="function" name="cancelReserveMaterial" parameternames="srcMaterial" return="RemoteObjectLight">
-    <![CDATA[
-      import org.kuwaiba.apis.persistence.PersistenceService;
-
-
-      if (srcMaterial.getValue() != null) {
-        def bem = PersistenceService.getInstance().getBusinessEntityManager();
-        def aem = PersistenceService.getInstance().getApplicationEntityManager();
-        def spareOpState = aem.getListTypeItem("OperationalState", "Spare");
-        HashMap<String, String> attrs = new HashMap();
-        attrs.put("state", String.valueOf(spareOpState.getId()));
-        bem.updateObject(srcMaterial.getValue().getClassName(), srcMaterial.getValue().getId(), attrs);
-      };
-      srcMaterial;
-    ]]>
-  </function>
-  <!--
-      description: Change equipmpent's operational state from Spare to Reserved
-      parameter srcGrid: the grid that contains the selected object to be reserved
-  -->
-  <function type="function" name="reserveMaterial" parameternames="srcGrid" return="RemoteObjectLight">
-    <![CDATA[
-      import org.kuwaiba.apis.persistence.PersistenceService;
-
-      if (srcGrid != null && srcGrid.getSelectedRow() != -1L) {
-        def bem = PersistenceService.getInstance().getBusinessEntityManager();
-        def aem = PersistenceService.getInstance().getApplicationEntityManager();
-        def reservedOpState = aem.getListTypeItem("OperationalState", "Reserved");
-        HashMap<String, String> attrs = new HashMap();
-        def objectList = srcGrid.getRow();
-
-        attrs.put("state", String.valueOf(reservedOpState.getId()));
-
-        bem.updateObject(objectList.get(0).getClassName(), objectList.get(0).getId(), attrs);
-      };
-      srcGrid;
-    ]]>
-  </function>
-  <!-- This function is used to fill the ordered material with a status option -->
-  <function type="function" name="getMaterialPreconfigurationStatus" parameternames="activityId sharedGridId" return="Matriz">
-    <![CDATA[
-    import org.kuwaiba.apis.persistence.PersistenceService;
-    import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-
-    def aem = PersistenceService.getInstance().getApplicationEntityManager();
-    def bem = PersistenceService.getInstance().getBusinessEntityManager();
-
-
-    def paramNames = new ArrayList();
-
-    paramNames.add("activityId");
-    paramNames.add("sharedId");
-
-    def paramValues = new ArrayList();
-
-    paramValues.add(activityId);
-    paramValues.add(sharedGridId + "rowscount");
-
-    def strRowsCount = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-    paramValues.clear();
-
-    paramValues.add(activityId);
-    paramValues.add(sharedGridId + "columnscount");
-
-    def strColumnsCount = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-    def res = new ArrayList();
-    if (strRowsCount != null && strColumnsCount != null) {
-
-      def rowscount = Integer.valueOf(strRowsCount);
-      def columnscount = Integer.valueOf(strColumnsCount);
-
-      for (int i = 0; i < rowscount; i++) {
-        def lst = new ArrayList();
-
-        for (int j = 0; j < columnscount; j++) {
-          paramValues.clear();
-
-          paramValues.add(activityId);
-          paramValues.add(sharedGridId + i + j);
-
-          def dataGrid = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-          paramValues.clear();
-
-          paramValues.add(activityId);
-          paramValues.add(sharedGridId + i + j + "datatype");
-
-          def dataType = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-          if ("RemoteObjectLight".equals(dataType)) {
-
-            paramNames.clear();
-
-            paramNames.add("activityId");
-            paramNames.add("sharedId");
-
-            paramValues.clear();
-
-            paramValues.add(activityId);
-            paramValues.add(sharedGridId + i + j + "objectname");
-
-            def objectname = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-            paramValues.clear();
-
-            paramValues.add(activityId);
-            paramValues.add(sharedGridId + i + j + "objectId");
-
-            def objectId = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-            paramValues.clear();
-
-            paramValues.add(activityId);
-            paramValues.add(sharedGridId + i + j + "classid");
-
-            def classid = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-            paramNames.clear();
-
-            paramNames.add("classId");
-            paramNames.add("objectId");
-
-            paramValues.clear();
-
-            paramValues.add(classid);
-            paramValues.add(objectId);
-
-            def rol = scriptQueryExecutor.execute("getObjectLightUsingClassId", paramNames, paramValues);
-
-            lst.add(rol);
-          } else {
-            lst.add(dataGrid);
-          };
-        };
-        res.add(lst);
-      };
-    };
-
-
-
-
-    def originalData = res;
-
-    def classSpare = new ArrayList();
-    originalData.each{ instanceRow ->
-      def classsInstances = new ArrayList();
-      classsInstances.add(instanceRow.get(0));
-      classsInstances.add("NO");
-      classsInstances.add(instanceRow.get(1));
-      classsInstances.add(instanceRow.get(2));
-      classsInstances.add(instanceRow.get(3));
-      classsInstances.add(instanceRow.get(4));
-      classSpare.add(classsInstances);
-    };
-
-    classSpare;
-    ]]>
-  </function>
-
-  <function type="function" name="getRowsInGridSavedPort" parameternames="activityId sharedGridId">
-    <![CDATA[
-
-      def paramNames = new ArrayList();
-
-      paramNames.add("activityId");
-      paramNames.add("sharedId");
-
-      def paramValues = new ArrayList();
-
-      paramValues.add(activityId);
-      paramValues.add(sharedGridId + "rowscount");
-
-      def strRowsCount = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-      paramValues.clear();
-
-      paramValues.add(activityId);
-      paramValues.add(sharedGridId + "columnscount");
-
-      def strColumnsCount = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-      def res = new ArrayList();
-
-      if (strRowsCount != null && strColumnsCount != null) {
-
-        def rowscount = Integer.valueOf(strRowsCount);
-        def columnscount = Integer.valueOf(strColumnsCount);
-
-        for (int i = 0; i < rowscount; i++) {
-          def lst = new ArrayList();
-
-          for (int j = 0; j < columnscount; j++) {
-            paramValues.clear();
-
-            paramValues.add(activityId);
-            paramValues.add(sharedGridId + i + j);
-
-            def dataGrid = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-            paramValues.clear();
-
-            paramValues.add(activityId);
-            paramValues.add(sharedGridId + i + j + "datatype");
-
-            def dataType = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-            if ("RemoteObjectLight".equals(dataType)) {
-
-              paramNames.clear();
-
-              paramNames.add("activityId");
-              paramNames.add("sharedId");
-
-              paramValues.clear();
-
-              paramValues.add(activityId);
-              paramValues.add(sharedGridId + i + j + "objectname");
-
-              def objectname = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-              paramValues.clear();
-
-              paramValues.add(activityId);
-              paramValues.add(sharedGridId + i + j + "objectId");
-
-              def objectId = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-              paramValues.clear();
-
-              paramValues.add(activityId);
-              paramValues.add(sharedGridId + i + j + "classid");
-
-              def classid = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-              paramNames.clear();
-
-              paramNames.add("classId");
-              paramNames.add("objectId");
-
-              paramValues.clear();
-
-              paramValues.add(classid);
-              paramValues.add(objectId);
-
-              def rol = scriptQueryExecutor.execute("getObjectLightUsingClassId", paramNames, paramValues);
-
-              lst.add(rol);
-            } else {
-              lst.add(dataGrid);
-            };
-          };
-          res.add(lst);
-        };
-      };
-      res;
-    ]]>
-  </function>
-
-  <!-- Makes a list of lists that join information from 2 different shared grids
-        param firstActivityId: the id of the first activity containing the grid needed
-        param firstSharedGridId: the id of the grid needed from the first activity
-        param secondActivityId: the id of the second activity containing the grid needed
-        param secondSharedGridId: the id of the grid needed from the second activity
-        param wrapperFunction: the name of a function that returns a list o lists(rows) of a grid
-    -->
-  <function type="function" name="getRowsInTwoGridsSaved" queryname="getRackObject" parameternames="firstActivityId firstSharedGridId secondActivityId secondSharedGridId wrapperFunction">
+    <function type="function" name="createEquipmentModel" parameternames="equipmentName classToMap">
       <![CDATA[
-      import org.kuwaiba.apis.forms.elements.ElementGrid;
+      import org.kuwaiba.apis.persistence.PersistenceService;
 
-      def functionParameters = new ArrayList();
-      def firstMatrix = new ArrayList();
-      def secondMatrix = new ArrayList();
+      def aem = PersistenceService.getInstance().getApplicationEntityManager();
+      def bem = PersistenceService.getInstance().getBusinessEntityManager();
 
-      if(wrapperFunction != null){
-        functionParameters.add(firstActivityId);
-        functionParameters.add(firstSharedGridId);
-        functionParameters.add(new ElementGrid());
-        firstMatrix = wrapperFunction.run(functionParameters);
-        functionParameters.clear();
+      def newModelId = null;
 
-        functionParameters.add(secondActivityId);
-        functionParameters.add(secondSharedGridId);
-        functionParameters.add(new ElementGrid());
-        secondMatrix = wrapperFunction.run(functionParameters);
+      if (equipmentName.getValue() != null && classToMap.getValue() != null) {
+        newModelId = aem.createListTypeItem("EquipmentModel", equipmentName.getValue(), equipmentName.getValue());
       };
 
-      def resultList = new ArrayList();
-      firstMatrix.each{ row ->
-        resultList.add(row);
-      };
-      secondMatrix.each{ row ->
-        resultList.add(row);
-      };
-      resultList;
+      def newModel = bem.getObject("EquipmentModel", newModelId);
+      def newModelAttr = bem.getAttributeValuesAsString(newModel.getClassName(), newModel.getId());
+      newModelAttr.put("classToMap", classToMap.getValue().getClassName());
+      bem.updateObject(newModel.getClassName(), newModel.getId(), newModelAttr);
       ]]>
-  </function>
+    </function>
 
-  <!-- This function is used to fill the data of a grid with ports with operational state 'Spare' -->
-  <function type="function" name="getSparePorts" parameternames="activityId sharedGridId" return="Matriz">
-    <![CDATA[
-    import org.kuwaiba.apis.persistence.PersistenceService;
-    import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+    <!-- Create a new EquipmentVendor ListType item
+         param vendorName: a textfield holding the name of the new EquipmentVendor
+    -->
+    <function type="function" name="createVendor" parameternames="vendorName">
+      <![CDATA[
+      import org.kuwaiba.apis.persistence.PersistenceService;
 
-    def aem = PersistenceService.getInstance().getApplicationEntityManager();
-    def bem = PersistenceService.getInstance().getBusinessEntityManager();
+      def aem = PersistenceService.getInstance().getApplicationEntityManager();
+      def bem = PersistenceService.getInstance().getBusinessEntityManager();
 
+      def newVendorId = null;
 
-    def paramNames = new ArrayList();
-
-    paramNames.add("activityId");
-    paramNames.add("sharedId");
-
-    def paramValues = new ArrayList();
-
-    paramValues.add(activityId);
-    paramValues.add(sharedGridId + "rowscount");
-
-    def strRowsCount = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-    paramValues.clear();
-
-    paramValues.add(activityId);
-    paramValues.add(sharedGridId + "columnscount");
-
-    def strColumnsCount = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-    def res = new ArrayList();
-
-    if (strRowsCount != null && strColumnsCount != null) {
-
-      def rowscount = Integer.valueOf(strRowsCount);
-      def columnscount = Integer.valueOf(strColumnsCount);
-
-      for (int i = 0; i < rowscount; i++) {
-        def lst = new ArrayList();
-
-        for (int j = 0; j < columnscount; j++) {
-          paramValues.clear();
-
-          paramValues.add(activityId);
-          paramValues.add(sharedGridId + i + j);
-
-          def dataGrid = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-          paramValues.clear();
-
-          paramValues.add(activityId);
-          paramValues.add(sharedGridId + i + j + "datatype");
-
-          def dataType = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-          if ("RemoteObjectLight".equals(dataType)) {
-
-            paramNames.clear();
-
-            paramNames.add("activityId");
-            paramNames.add("sharedId");
-
-            paramValues.clear();
-
-            paramValues.add(activityId);
-            paramValues.add(sharedGridId + i + j + "objectname");
-
-            def objectname = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-            paramValues.clear();
-
-            paramValues.add(activityId);
-            paramValues.add(sharedGridId + i + j + "objectId");
-
-            def objectId = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-            paramValues.clear();
-
-            paramValues.add(activityId);
-            paramValues.add(sharedGridId + i + j + "classid");
-
-            def classid = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-            paramNames.clear();
-
-            paramNames.add("classId");
-            paramNames.add("objectId");
-
-            paramValues.clear();
-
-            paramValues.add(classid);
-            paramValues.add(objectId);
-
-            def rol = scriptQueryExecutor.execute("getObjectLightUsingClassId", paramNames, paramValues);
-
-            lst.add(rol);
-          } else {
-            lst.add(dataGrid);
-          };
-        };
-        res.add(lst);
+      if (vendorName.getValue() != null) {
+        newVendorId = aem.createListTypeItem("EquipmentVendor", vendorName.getValue(), vendorName.getValue());
       };
-    };
+      ]]>
+    </function>
 
+    <!-- Add a previously selected equipment to the PurchaseObjects pool within the Virtual Warehouse
+         Purchase Warehouse (InventoryObject)
+         param equipmentType: a combobox holding the name of the new Equipment Type (EquipmentModel)
+         param vendor: a combobox holding the name of the Vendor (EquipmentVendor) to be associated with
+         the equipment.
+         param quantity: how many instances will be created inside the pool
+    -->
+    <function type="function" name="purchaseEquipment" parameternames="equipmentType vendor quantity purchaseCode" return="">
+      <![CDATA[
+        import org.kuwaiba.apis.persistence.PersistenceService;
+        import java.util.Date;
 
+        def bem = PersistenceService.getInstance().getBusinessEntityManager();
+        def aem = PersistenceService.getInstance().getApplicationEntityManager();
+        def mem = PersistenceService.getInstance().getMetadataEntityManager();
 
+        def pools = bem.getObjectsWithFilterLight("VirtualWarehouse", "acronym", "purchase");
 
-    def originalData = res;
+        def purchasePools = bem.getPoolsInObject(pools.get(0).getClassName(), pools.get(0).getId(), "InventoryObject");
 
-    def classsInstances = new ArrayList();
-    originalData.each{ instanceRow ->
-      classsInstances.add(instanceRow.get(0));
-    };
+        def purchasePool = purchasePools.get(0);
 
-    def classSpare = new ArrayList();
-    def locationsArray = new ArrayList();
+        if (equipmentType.getValue() != null && vendor.getValue() != null && quantity.getValue() != null){
+          def classEM = bem.getObjectsWithFilterLight("EquipmentModel", "name", equipmentType.getValue().getName());
+          def equipmentClass = "";
 
-    classsInstances.each { instance ->
-        def sons = bem.getChildrenOfClassLightRecursive(instance.getId(), instance.getClassName(), "GenericPhysicalPort", -1);
-        sons.each { son ->
-
-          def sonStatus = bem.getAttributeValueAsString(son.getClassName(), son.getId(), "state");
-
-            if(sonStatus != null && sonStatus == "Spare"){
-              def row = new ArrayList();
-              row.add(new RemoteObjectLight(son));
-
-              row.add(instance.getName());
-
-              locationsArray = bem.getParentsUntilFirstOfClass(instance.getClassName(), instance.getId(), "City");
-
-              def position = 0;
-              def fieldObject = bem.getObject(instance.getClassName(), instance.getId());
-              def positionRecieved = fieldObject.getAttributes().get("position");
-              if(positionRecieved != null)
-                position = positionRecieved;
-              row.add(position);
-
-              def rack = null;
-              def city = "";
-              def building = "";
-              locationsArray.each { location ->
-                switch(location.getClassName()){
-                case "Rack":
-                  rack = new RemoteObjectLight(location);
-                  break;
-
-                case "Building":
-                  building = location.getName();
-                  break;
-
-                case "City":
-                  city = location.getName();
-                  break;
-                default:
-                  break;
-                };
-              };
-              if(rack != null)
-                row.add(rack);
-              else
-                row.add("");
-              row.add(building);
-              row.add(city);
-
-              classSpare.add(row);
-              locationsArray.clear();
-            };
-
-
-        };
-      };
-
-    classSpare;
-    ]]>
-  </function>
-
-  <!-- This function is used to fill the data of a grid with links with operational state 'Spare' -->
-  <function type="function" name="getSpareLinks" parameternames="cmbId" return="Matriz">
-    <![CDATA[
-    import org.kuwaiba.apis.persistence.PersistenceService;
-    import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-
-    def aem = PersistenceService.getInstance().getApplicationEntityManager();
-    def bem = PersistenceService.getInstance().getBusinessEntityManager();
-
-    def classsInstances = bem.getObjectsOfClass(cmbId, -1);
-
-    def classSpare = new ArrayList();
-
-    classsInstances.each { instance ->
-        def equipmentStatusId = instance.getAttributes().get("state");
-        if(equipmentStatusId != null){
-          def equipmentStatus = aem.getListTypeItem("OperationalState", equipmentStatusId as long);
-          if(equipmentStatus != null && equipmentStatus.getName() == "Spare"){
-            def row = new ArrayList();
-            row.add(new RemoteObjectLight(instance));
-            def fieldObject = bem.getObject(instance.getClassName(), instance.getId());
-            def currentLength = fieldObject.getAttributes().get("currentLength");
-            def totalLength = fieldObject.getAttributes().get("totalLength");
-            row.add(currentLength);
-            row.add(totalLength);
-            classSpare.add(row);
+          if(classEM.size() > 0){
+            equipmentClass = bem.getAttributeValueAsString(classEM.get(0).getClassName(), classEM.get(0).getId(), "classToMap");
           };
-        };
-    };
 
-    classSpare;
-    ]]>
-  </function>
+          def stateList = bem.getObjectsWithFilterLight("OperationalState", "name", "Pending Shipment");
+          def pendingShipmentStateId = stateList.get(0).getId();
+          def hasVendor = mem.hasAttribute(equipmentClass, "vendor");
+          def attributeNames = null;
+          def attributeValues = null;
 
-  <!-- This function is used to fill the data of a grid with elements with operational state 'Spare' -->
-  <function type="function" name="getElements" parameternames="cmbId" return="Matriz">
-    <![CDATA[
-    import org.kuwaiba.apis.persistence.PersistenceService;
-    import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-
-    def aem = PersistenceService.getInstance().getApplicationEntityManager();
-    def bem = PersistenceService.getInstance().getBusinessEntityManager();
-
-    def classsInstances = bem.getObjectsOfClass(cmbId.getValue(), -1);
-
-    def classSpare = new ArrayList();
-    def locationsArray = new ArrayList();
-
-    classsInstances.each { instance ->
-        def equipmentStatusId = instance.getAttributes().get("state");
-        if(equipmentStatusId != null){
-          def equipmentStatus = aem.getListTypeItem("OperationalState", equipmentStatusId as long);
-          if(equipmentStatus != null && equipmentStatus.getName() == "Spare"){
-            def row = new ArrayList();
-            row.add(new RemoteObjectLight(instance));
-
-            locationsArray = bem.getParentsUntilFirstOfClass(instance.getClassName(), instance.getId(), "City");
-
-            def position = 0;
-            def fieldObject = bem.getObject(instance.getClassName(), instance.getId());
-            def positionRecieved = fieldObject.getAttributes().get("position");
-            if(positionRecieved != null)
-              position = positionRecieved;
-            row.add(position);
-
-            def rack = null;
-            def city = "";
-            def building = "";
-            locationsArray.each { location ->
-              switch(location.getClassName()){
-              case "Rack":
-                rack = new RemoteObjectLight(location);
-                break;
-
-              case "Building":
-                building = location.getName();
-                break;
-
-              case "City":
-                city = location.getName();
-                break;
-              default:
-                break;
-              };
+          for(def i = 0; i < Integer.valueOf(quantity.getValue()); i++){
+            if(hasVendor){
+              attributeNames = ["name", "state", "vendor", "purchaseCode"] as String[];
+              def date = System.currentTimeMillis() + i;
+              attributeValues = [equipmentClass + "_"+ date, String.valueOf(pendingShipmentStateId), String.valueOf(vendor.getValue().getId()), String.valueOf(purchaseCode.getValue())] as String[];
             };
-            if(rack != null)
-              row.add(rack);
-            else
-              row.add("");
-            row.add(building);
-            row.add(city);
-
-            classSpare.add(row);
-            locationsArray.clear();
+            else{
+              attributeNames = ["name", "state"] as String[];
+              def date = System.currentTimeMillis() + i;
+              attributeValues = [equipmentClass + "_"+ date, String.valueOf(pendingShipmentStateId)] as String[];
+            };
+            bem.createPoolItem(purchasePool.getId(), equipmentClass, attributeNames, attributeValues, 0);
           }
-        }
-    };
-
-    classSpare;
-    ]]>
-  </function>
-
+        };
+        ]]>
+    </function>  
 </script>

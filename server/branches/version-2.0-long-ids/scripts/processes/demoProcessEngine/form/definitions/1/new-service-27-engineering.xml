@@ -12,9 +12,9 @@
       <textField enabled="false" onload="value.shared.2.txtServiceName"/>
     </gridLayout>
 
-    <label value="Devices to Synchronize" styleName="title"/>
+    <label value="Devices to Synchronization" styleName="title"/>
     <horizontalLayout>
-      <label value="Select a Row and Click Button 'Create Synchronization Group'"/>
+      <label value="Select a row and click button 'Create Synchronization Group'"/>
       <button caption="Create Synchronization Group" onclick="propertyChange.mnaSync.inputParameters.getInputParameters.gridSharedEquipmentOrder.0 open.mnaSync"/>
     </horizontalLayout>
 

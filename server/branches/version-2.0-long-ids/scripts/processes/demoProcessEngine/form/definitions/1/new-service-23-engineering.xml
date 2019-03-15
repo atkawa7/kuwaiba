@@ -13,13 +13,13 @@
 
     </gridLayout>
 
-    <label value="List of Tasks" styleName="title"/>
+    <label value="List of tasks" styleName="title"/>
 
     <gridLayout columns="2" rows="3">
-      <label value="Is Service Configuration Done?"/>
+      <label value="Is Service Configuration done?"/>
       <checkBox id="chkServiceConfig" datatype="Boolean"/>
 
-      <label value="Is Service Synchronization Done?"/>
+      <label value="Is Service Synchronization done?"/>
       <checkBox id="chkSynch" datatype="Boolean" width="100px"/>
 
       <label value="Upload RFC Test"/>

@@ -1,4 +1,4 @@
-<processDefinition name="Create New Service" description="" creationDate="1538425876028" version="1.0" enabled="true" startActivityId="1">
+<processDefinition name="Create a new service" description="" creationDate="1538425876028" version="1.0" enabled="true" startActivityId="1">
   <actors>
     <actor id="1" name="Commercial" type="2"/>
     <actor id="2" name="Engineering" type="2"/>
@@ -7,7 +7,7 @@
   </actors>
   <activityDefinitions>
 
-    <activityDefinition id="1" name="Create New Service" description="Create New Service" type="2" actorId="1">
+    <activityDefinition id="1" name="Create a new service" description="Create a new service" type="2" actorId="1">
       <paths>
         <path>2</path>
       </paths>
@@ -21,7 +21,7 @@
       </artifactDefinition>
     </activityDefinition>
 
-    <activityDefinition id="2" name="New Service Information" description="New Service Information" type="1" actorId="1" idling="true">
+    <activityDefinition id="2" name="New service Info" description="New service Info" type="1" actorId="1" idling="true">
       <paths>
         <path>5</path>
       </paths>
@@ -47,6 +47,7 @@
           <parameter name="description">Description</parameter>
           <parameter name="version">1.0</parameter>
           <parameter name="definition">new-service-5-engineering.xml</parameter>
+          <parameter name="externalScripts"><![CDATA[scripts.xml]]></parameter>
           <parameter name="preconditionsScript">
             <![CDATA[
             def paramNames = new ArrayList();
@@ -120,8 +121,15 @@
             paramValues.add(itemServiceClass);
             paramValues.add(codeService);
             paramValues.add(processInstanceId);
-
+            /*
             res = scriptQueryExecutor.execute("commitCreateService", paramNames, paramValues);
+            */
+            if(elementScript != null){
+              def runner = elementScript.getFunctionByName("commitCreateService");
+              if(runner != null){
+                res = runner.run(paramValues);
+              };
+            };
 
             res = "true";
 
@@ -132,7 +140,7 @@
       </artifactDefinition>
     </activityDefinition>
 
-    <activityDefinition id="7" name="Create a New Service Finish" description="Create a New Service Finish" type="3" actorId="1">
+    <activityDefinition id="7" name="Create a new service Finish" description="Create a new service Finish" type="3" actorId="1">
       <artifactDefinition id="7" type="1">
         <parameters>
           <parameter name="name">Name</parameter>
@@ -143,7 +151,7 @@
       </artifactDefinition>
     </activityDefinition>
 
-    <activityDefinition id="18" name="Is Configuration Necessary?" description="Is Configuration Necessary?" type="4" actorId="2" confirm="true">
+    <activityDefinition id="18" name="Is configuration necessary?" description="Is configuration necessary?" type="4" actorId="2" confirm="true">
       <paths>
         <path>12</path>
         <path>27</path>
@@ -153,7 +161,7 @@
           <parameter name="name">Name</parameter>
           <parameter name="description">Description</parameter>
           <parameter name="version">1.0</parameter>
-          <parameter name="definition">Is Configuration Necessary?</parameter>
+          <parameter name="definition">Is configuration necessary?</parameter>
         </parameters>
       </artifactDefinition>
     </activityDefinition>

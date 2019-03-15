@@ -16,8 +16,8 @@
     <label value="Devices" styleName="title"/>
 
     <gridLayout columns="2" rows="1" alignment="middleCenter">
-      <button caption="Add Device" onclick="open.frmReserveMaterial" width="150px"/>
-      <button caption="Remove Device" onclick="propertyChange.frmCancelReserveMaterial.enabled.isSelectedAnyRow.gridEquipmentOrder open.frmCancelReserveMaterial" width="150px"/>
+      <button caption="Add device" onclick="open.frmReserveMaterial" width="150px"/>
+      <button caption="Remove device" onclick="propertyChange.frmCancelReserveMaterial.enabled.isSelectedAnyRow.gridEquipmentOrder open.frmCancelReserveMaterial" width="150px"/>
     </gridLayout>
 
     <grid id="gridEquipmentOrder" shared="true" height="250px" width="1300px" alignment="middleCenter">

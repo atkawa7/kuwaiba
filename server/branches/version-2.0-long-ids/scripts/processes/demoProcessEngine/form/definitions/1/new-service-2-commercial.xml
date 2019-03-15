@@ -1,7 +1,7 @@
 <root>
   <form>
     <horizontalLayout>
-      <image value="logo_blue.png"/>
+      <image value="logo_kuwaiba1.png"/>
       <label value="New Service Information" styleName="title" alignment="middleCenter"/>
     </horizontalLayout>
 

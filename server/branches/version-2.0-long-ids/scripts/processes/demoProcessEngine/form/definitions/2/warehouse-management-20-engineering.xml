@@ -144,18 +144,13 @@ Date
       <horizontalLayout alignment="bottomCenter">
         <!--<button caption="Start Shipment Process" styleName="buttonPrimary" onclick="editgridrow.gridShipmentTrack.cmbMaterialSelected.cmbMaterialSelected2.cmbMaterialSelected3.cmbDestinationCity.cmbDestinationWarehouse.txtCarrier.dtfShipDate.dtfShipArrival.uplShpReciept.uplArrReciept.InTransit clean.frmEditShipment close.frmEditShipment"/>-->
         <!--<button caption="Edit" width="50px" styleName="buttonPrimary" onclick="editgridrow.gridShipmentTrack.cmbMaterialSelected.cmbMaterialSelected2.cmbMaterialSelected3.cmbMaterialSelected4.cmbDestinationCity.cmbDestinationWarehouse.txtCarrier.dtfShipDate.dtfShipArrival.InTransit clean.frmEditShipment close.frmEditShipment"/>-->
-        <button caption="Edit" width="50px" styleName="buttonPrimary" onclick="propertyChange.gridShipmentTrack.rows.editShipment.gridShipmentTrack.frmEditShipment propertyChange.gridShipmentTrack.selectedRow.unselectedRowValue clean.frmEditShipment close.frmEditShipment"/>
+        <button caption="Edit" width="50px" styleName="buttonPrimary" onclick="propertyChange.gridShipmentTrack.rows.editShipment.gridShipmentTrack.frmEditShipment clean.frmEditShipment close.frmEditShipment"/>
         <button caption="Cancel" width="50px" onclick="close.frmEditShipment clean.frmEditShipment"/>
       </horizontalLayout>
     </subform>
   </form>
 
   <script src="scripts.xml">
-    <function type="function" name="unselectedRowValue">
-      <![CDATA[
-        Long.valueOf('-1');
-      ]]>
-    </function>
     <function type="function" name="isSelectedAnyRow" parameternames="grid">
       <![CDATA[
         grid.getSelectedRow() != -1;
@@ -215,7 +210,7 @@ Date
             def transitWarehouses = bem.getObjectsWithFilterLight("VirtualWarehouse", "acronym", "transit");
             def transitWarehouse = transitWarehouses.get(0);
 
-            def transitPools = aem.getPoolsInObject(transitWarehouse.getClassName(), transitWarehouse.getId(), "InventoryObject");
+            def transitPools = bem.getPoolsInObject(transitWarehouse.getClassName(), transitWarehouse.getId(), "InventoryObject");
             def transitPool = transitPools.get(0);
 
             def objects = new HashMap();
@@ -250,7 +245,7 @@ Date
 
               def dWarehouse = destinationWarehouse.getValue();
 
-              def destinationPools = aem.getPoolsInObject(dWarehouse.getClassName(), dWarehouse.getId(), "InventoryObject");
+              def destinationPools = bem.getPoolsInObject(dWarehouse.getClassName(), dWarehouse.getId(), "InventoryObject");
               def destinationPool = destinationPools.get(0);
 
               def objects = new HashMap();
