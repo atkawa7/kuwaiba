@@ -1823,7 +1823,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 theOtherPort = bem.getSpecialAttribute(objectClass, objectId, "mirror").get(0); //NOI18N
             
             if (theOtherPort == null)
-                throw new ServerSideException(String.format("Object %s no has a mirror port", bem.getObjectLight(objectClass, objectId)));
+                throw new ServerSideException(String.format("Object %s does not have a mirror port", bem.getObjectLight(objectClass, objectId)));
                 
             bem.releaseSpecialRelationship(objectClass, objectId, -1, "mirror"); //NOI18N   
             

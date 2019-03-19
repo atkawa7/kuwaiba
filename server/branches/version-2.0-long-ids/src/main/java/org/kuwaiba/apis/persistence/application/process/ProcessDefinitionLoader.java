@@ -559,6 +559,7 @@ public class ProcessDefinitionLoader {
                             }
                         }
                     }
+
                 } 
                 else if (activityDefinition.getType() == ActivityDefinition.TYPE_PARALLEL) {
                     if (paths.containsKey(activityDefinitionId) && paths.get(activityDefinitionId) != null) {
@@ -600,6 +601,7 @@ public class ProcessDefinitionLoader {
     
     private byte[] getFormArtifactDefinition(long processDefinitionId, String artifactDefinitionId) {
         String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath"));
+        
         File file = new File(processEnginePath + "/form/definitions/" + processDefinitionId + "/" + artifactDefinitionId);
         return getFileAsByteArray(file);
     }
