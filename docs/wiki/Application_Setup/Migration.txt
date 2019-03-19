@@ -3,22 +3,6 @@ Wiki-Format: zim 0.4
 Creation-Date: 2019-02-13T23:17:05-05:00
 
 ====== Migration ======
-Created Wednesday 13 February 2019 @author Adrian Martinez
+^{Created Wednesday 13 February 2019 @author Adrian Martinez}
+This section describes the procedures and requirements to move from one version to the next.
 
-Datamodel updates
-Class: IPAddress
-	Add attribute: isManagementAddress, type: boolean
-Class:PowerPort
-	add attribute: vendor, type: EquipmentVendor
-	add attribute: serialNumber,  type:String
-	add attribute: model, type:EquipmentModel
-Class: Provider should be created under GenericLogicalElement
-Class: Peering, should be created under GenericNetworkElement, 
-	add attribute: asnNumber, type: String
-	add attribute: bgpPeerRemoteAddr, type: String
-
-Update the Contaiment Hierarchy (for BGP synchronization)
-City
- |__Provider 
-	  |__Peering 
-		   |__VirtualPort

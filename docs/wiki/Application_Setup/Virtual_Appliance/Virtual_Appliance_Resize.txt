@@ -3,15 +3,15 @@ Wiki-Format: zim 0.4
 Creation-Date: 2019-03-11T09:28:32-05:00
 
 ====== Virtual Appliance Resize ======
-Created Monday 11 March 2019
+^{Created Monday 11 March 2019 @author Jalbersson Plazas}
 
-The format of the virtual disk (kuwaiba-virtual-appliance.vmdk) used in the Kuwaiba Virtual Appliance doesn't allow the direct size change so in order to expand its capacity
-you need to do the following actions:
+The format of the virtual disk (kuwaiba-virtual-appliance.vmdk) used in the Kuwaiba Virtual Appliance doesn't allow the direct resizing, so in order to expand its capacity
+you need to follow these steps:
 
 1. Make a copy of the disk in vdi format, that is obtained throug the command: "VBoxManage clonehd kuwaiba-virtual-appliance.vmdk copyDiskName.vdi --format vdi" used in a terminal located where the kuwaiba-virtual-appliance.vmdk is.
 2. Change the size of the copy disk to the desired new size, this is obtained using the following command: "VBoxManage modifyhd copyDiskName.vdi --resize 5120" assumming you want to resize the disk to 5GB.
 3. Now you have more space but it's not identified if you use directly the virtual machine, so you need to used GParted to use the new available space on the disk. To acomplish this:
-4. Download a GParted live iso file available in https://gparted.org/[[https://gparted.org/dp|d]][[https://gparted.org/dop|o]][[https://gparted.org/dowp|w]][[https://gparted.org/downp|n]][[https://gparted.org/downlp|l]][[https://gparted.org/downlop|o]][[https://gparted.org/downloap|a]][[https://gparted.org/downloadp|d]][[https://gparted.org/download.p|.]][[https://gparted.org/download.pp|p]][[https://gparted.org/download.php|h]][[p]].  
+4. Download a GParted live iso file available in https://gparted.org/.  
 5. In Virtual Box select the Virtual appliance, go to Storage section, in the optical Drive load the GParted live iso, in the Controller Sata remove the vmdk file and add the copyNameDisk.vdi. {{~/Downloads/vmStorageMarked.png}}{{~/Downloads/gparted.png}}{{~/Downloads/gpartedSetup.png}}
 6. Start the Virtual Appliance, this will start GParted and there you need to delete [[/dev/sda2/]] (extended partition) so that the space in the disk looks like 80% of used disk space and a non assigned space. {{~/Downloads/devsdaInitial.png}}
 7. Now right click the used space, expand size and resize so that a section for the swap space is left. {{~/Downloads/resizePartition.png}}
@@ -24,4 +24,5 @@ c. In VirtualBox in File section select Virtual Media Manager. Remove the old fi
 {{~/Downloads/changeToVmdk.png}}
 Now you are ready to star the Kuwaiba Virtual Appliance with its new size.
 
-For more information about the process: https://tvi.al/resize-sda1-disk-of-your-vagrant-virtualbox-vm/
+===== References =====
+* https://tvi.al/resize-sda1-disk-of-your-vagrant-virtualbox-vm/
