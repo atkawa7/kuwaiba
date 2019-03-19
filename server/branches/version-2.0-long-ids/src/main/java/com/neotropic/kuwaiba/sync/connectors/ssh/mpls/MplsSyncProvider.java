@@ -37,14 +37,11 @@ import com.neotropic.kuwaiba.sync.model.SyncUtil;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
@@ -209,11 +206,12 @@ public class MplsSyncProvider extends AbstractSyncProvider {
                         
                         MplsSyncDefaultParser parser = new MplsSyncDefaultParser();       
                         List<AbstractDataEntity> parseResult = parser.parseVcs(readCommandExecutionResult(channel));
-                        
+                        System.out.println(">>> " + parseResult.size());
                         //We must check the details of every vcid
                         for (AbstractDataEntity mplsLink : parseResult) {
                             if(((MPLSLink)mplsLink).getLocalInterface().toLowerCase().startsWith("pw") && !((MPLSLink)mplsLink).getVcId().isEmpty()){
-                                channel.setCommand("show mpls l2transport vc " + ((MPLSLink)mplsLink).getVcId().isEmpty() + " detail"); //NOI18N
+                                System.out.println(">>> " + ((MPLSLink)mplsLink).getVcId());
+                                channel.setCommand("show mpls l2transport vc " + ((MPLSLink)mplsLink).getVcId() + " detail"); //NOI18N
                                 mplsLink = parser.parseVcDetails(readCommandExecutionResult(channel), (MPLSLink)mplsLink);
                             }
                         }//end for
