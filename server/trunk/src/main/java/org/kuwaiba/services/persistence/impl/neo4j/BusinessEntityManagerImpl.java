@@ -965,8 +965,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
         try(Transaction tx = graphDb.beginTx()) {
             //TODO: Optimize so it can find all objects of a single class in one query
-            for (String className : objects.keySet()){
-                for (long oid : objects.get(className)){
+            for (String className : objects.keySet()) {
+                for (long oid : objects.get(className)) {
                     ClassMetadata classMetadata = Util.createClassMetadataFromNode(graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className));
                     
                     if (!mem.isSubclassOf(Constants.CLASS_INVENTORYOBJECT, className))

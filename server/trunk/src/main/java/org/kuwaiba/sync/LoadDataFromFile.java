@@ -218,17 +218,12 @@ public final class LoadDataFromFile{
                                 attributes, 
                                 template);
                     }
-                    else{
-                        
-                        
-                        
-                        
+                    else
                          bem.createObject(className, 
                                 parentClass, 
                                 parentFilter[0] + ":"  + parentFilter[1], 
                                 attributes, 
                                 template);
-                    }
                 }catch(Exception ex){
                     errorsMsgs += String.format("ERROR\t%s\tUnexpected error: %s.\n", currentLine, ex.getMessage());
                     hasErrors = true;
