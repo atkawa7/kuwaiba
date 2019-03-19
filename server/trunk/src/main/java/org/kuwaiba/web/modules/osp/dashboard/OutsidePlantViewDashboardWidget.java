@@ -20,7 +20,6 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.server.Sizeable;
 import com.vaadin.shared.ui.dnd.DropEffect;
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -40,7 +39,6 @@ import com.vaadin.ui.dnd.event.DropListener;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import org.kuwaiba.apis.persistence.PersistenceService;
@@ -382,49 +380,5 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
         }
         
         return connectionColor;
-    }
-    
-    /**
-     * A simple class wrapping a node and its properties and high level events not managed by the map widget
-     */
-    private class OSPNode {
-        /**
-         * The marker displayed in the map
-         */
-        private GoogleMapMarker marker;
-        /**
-         * The business object behind the marker
-         */
-        private RemoteObjectLight businessObject;
-
-        public OSPNode(GoogleMapMarker marker, RemoteObjectLight businessObject) {
-            this.marker = marker;
-            this.businessObject = businessObject;
-        }
-
-        public GoogleMapMarker getMarker() {
-            return marker;
-        }
-
-        public RemoteObjectLight getBusinessObject() {
-            return businessObject;
-        }
-        
-        @Override
-        public boolean equals(Object obj) {
-            return obj instanceof OSPNode ? ((OSPNode)obj).getBusinessObject().equals(businessObject) : false;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 3;
-            hash = 97 * hash + Objects.hashCode(this.businessObject);
-            return hash;
-        }
-        
-        @Override
-        public String toString() {
-            return businessObject.toString();
-        }
     }
 }
