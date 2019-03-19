@@ -18,8 +18,8 @@ package org.kuwaiba.web.modules.osp.dashboard;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
+import com.vaadin.server.Sizeable;
 import com.vaadin.shared.ui.dnd.DropEffect;
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -39,7 +39,6 @@ import com.vaadin.ui.dnd.event.DropListener;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import org.kuwaiba.apis.persistence.PersistenceService;
@@ -197,7 +196,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                             lytContent.setExpandRatio(tblOSPViews, 9);
                             lytContent.setExpandRatio(lytButtons, 1);
                             lytContent.setComponentAlignment(lytButtons, Alignment.MIDDLE_RIGHT);
-                            lytContent.setWidth(100, Unit.PERCENTAGE);
+                            lytContent.setWidth(100, Sizeable.Unit.PERCENTAGE);
 
                             wdwOpen.setContent(lytContent);
 
@@ -216,7 +215,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                     else {
                         VerticalLayout lytContent = new VerticalLayout();
                         Window wdwSave = new Window("Save OSP View");
-                        wdwSave.setWidth(300, Unit.PIXELS);
+                        wdwSave.setWidth(300, Sizeable.Unit.PIXELS);
 
                         TextField txtName = new TextField("Name");
                         txtName.setValue(theOspView.getProperties().getProperty(Constants.PROPERTY_NAME)== null ? "" : 
@@ -267,8 +266,8 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                         lytContent.setComponentAlignment(lytButtons, Alignment.MIDDLE_RIGHT);
                         lytContent.setSizeFull();
 
-                        wdwSave.setHeight(20, Unit.PERCENTAGE);
-                        wdwSave.setWidth(25, Unit.PERCENTAGE);
+                        wdwSave.setHeight(20, Sizeable.Unit.PERCENTAGE);
+                        wdwSave.setWidth(25, Sizeable.Unit.PERCENTAGE);
                         wdwSave.setContent(lytContent);
 
                         wdwSave.center();
@@ -283,16 +282,16 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                     ComboBox<AbstractViewNode> cmbASideRoot = new ComboBox<>("A Side", theOspView.getAsViewMap().getNodes());
                     cmbASideRoot.setEmptySelectionAllowed(false);
                     cmbASideRoot.setEmptySelectionCaption("Select the A Side...");
-                    cmbASideRoot.setWidth(250, Unit.PIXELS);
+                    cmbASideRoot.setWidth(250, Sizeable.Unit.PIXELS);
                     ComboBox<AbstractViewNode> cmbBSideRoot = new ComboBox<>("B Side", theOspView.getAsViewMap().getNodes());
                     cmbBSideRoot.setEmptySelectionAllowed(false);
                     cmbBSideRoot.setEmptySelectionCaption("Select the B Side...");
-                    cmbBSideRoot.setWidth(250, Unit.PIXELS);
+                    cmbBSideRoot.setWidth(250, Sizeable.Unit.PIXELS);
                     Button btnOk = new Button("OK");
 
                     wdwSelectRootObjects.center();
-                    wdwSelectRootObjects.setWidth(80, Unit.PERCENTAGE);
-                    wdwSelectRootObjects.setHeight(50, Unit.PERCENTAGE);
+                    wdwSelectRootObjects.setWidth(80, Sizeable.Unit.PERCENTAGE);
+                    wdwSelectRootObjects.setHeight(50, Sizeable.Unit.PERCENTAGE);
                     wdwSelectRootObjects.setModal(true);
 
                     UI.getCurrent().addWindow(wdwSelectRootObjects);
@@ -314,13 +313,13 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                         NewPhysicalConnectionWizard wizard = new NewPhysicalConnectionWizard(new RemoteObjectLight((BusinessObjectLight)cmbASideRoot.getSelectedItem().get().getIdentifier()), 
                                         new RemoteObjectLight((BusinessObjectLight)cmbBSideRoot.getSelectedItem().get().getIdentifier()), wsBean);
 
-                        wizard.setWidth(100, Unit.PERCENTAGE);
+                        wizard.setWidth(100, Sizeable.Unit.PERCENTAGE);
 
                         Window wdwWizard = new Window("New Connection Wizard", wizard);
                         wdwWizard.center();
                         wdwWizard.setModal(true);
-                        wdwWizard.setWidth(80, Unit.PERCENTAGE);
-                        wdwWizard.setHeight(80, Unit.PERCENTAGE);
+                        wdwWizard.setWidth(80, Sizeable.Unit.PERCENTAGE);
+                        wdwWizard.setHeight(80, Sizeable.Unit.PERCENTAGE);
 
                         wizard.addEventListener((wizardEvent) -> {
                             switch (wizardEvent.getType()) {
@@ -381,49 +380,5 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
         }
         
         return connectionColor;
-    }
-    
-    /**
-     * A simple class wrapping a node and its properties and high level events not managed by the map widget
-     */
-    private class OSPNode {
-        /**
-         * The marker displayed in the map
-         */
-        private GoogleMapMarker marker;
-        /**
-         * The business object behind the marker
-         */
-        private RemoteObjectLight businessObject;
-
-        public OSPNode(GoogleMapMarker marker, RemoteObjectLight businessObject) {
-            this.marker = marker;
-            this.businessObject = businessObject;
-        }
-
-        public GoogleMapMarker getMarker() {
-            return marker;
-        }
-
-        public RemoteObjectLight getBusinessObject() {
-            return businessObject;
-        }
-        
-        @Override
-        public boolean equals(Object obj) {
-            return obj instanceof OSPNode ? ((OSPNode)obj).getBusinessObject().equals(businessObject) : false;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 3;
-            hash = 97 * hash + Objects.hashCode(this.businessObject);
-            return hash;
-        }
-        
-        @Override
-        public String toString() {
-            return businessObject.toString();
-        }
     }
 }
