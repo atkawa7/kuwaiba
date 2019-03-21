@@ -678,9 +678,9 @@ public class Util {
         if (!syncDataSourceConfigNode.hasProperty(Constants.PROPERTY_NAME))
             throw new InvalidArgumentException(String.format("The sync configuration with id %s is malformed. Check its properties", syncDataSourceConfigNode.getId()));
         
-        if(!syncDataSourceConfigNode.hasRelationship(RelTypes.HAS_CONFIGURATION))
-            throw new InvalidArgumentException(String.format("The sync configuration with id %s is malformed. its not related with a inventory object", syncDataSourceConfigNode.getId()));
-        Node inventoryObjectNode = syncDataSourceConfigNode.getSingleRelationship(RelTypes.HAS_CONFIGURATION, Direction.OUTGOING).getEndNode();
+//        if(!syncDataSourceConfigNode.hasRelationship(RelTypes.HAS_CONFIGURATION))
+//            throw new InvalidArgumentException(String.format("The sync configuration with id %s is malformed. its not related with a inventory object", syncDataSourceConfigNode.getId()));
+        //Node inventoryObjectNode = syncDataSourceConfigNode.getSingleRelationship(RelTypes.HAS_CONFIGURATION, Direction.OUTGOING).getEndNode();
 
         HashMap<String, String> parameters = new HashMap<>();
         String configName = "";
@@ -688,8 +688,8 @@ public class Util {
         for (String property : syncDataSourceConfigNode.getPropertyKeys()) {
             if (property.equals(Constants.PROPERTY_NAME))
                 configName = (String)syncDataSourceConfigNode.getProperty(property);
-            if(property.equals("deviceId") && (Long.valueOf((String)syncDataSourceConfigNode.getProperty(property))) != inventoryObjectNode.getId())
-                throw new InvalidArgumentException(String.format("The sync configuration with id %s is malformed. its not related with correct inventory object", inventoryObjectNode.getId()));   
+//            if(property.equals("deviceId") && (Long.valueOf((String)syncDataSourceConfigNode.getProperty(property))) != inventoryObjectNode.getId())
+//                throw new InvalidArgumentException(String.format("The sync configuration with id %s is malformed. its not related with correct inventory object", inventoryObjectNode.getId()));   
             else
                 parameters.put(property, (String)syncDataSourceConfigNode.getProperty(property));
         }
