@@ -17,11 +17,18 @@ package org.kuwaiba.apis.web.gui.miniapps.sync;
 import java.util.Objects;
 
 /**
- *
+ * Sync Provider is a simple wrapper which storage an existing provider class name and
+ * its description
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class SyncProvider {
+    /**
+     * class name
+     */
     private String name;
+    /**
+     * Description
+     */
     private String value;
 
     SyncProvider(String name, String value) {

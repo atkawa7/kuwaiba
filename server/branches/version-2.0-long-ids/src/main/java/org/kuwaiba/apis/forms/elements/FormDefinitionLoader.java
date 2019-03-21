@@ -211,12 +211,17 @@ public class FormDefinitionLoader {
                             int event = reader.next();
 
                             if (event == XMLStreamConstants.START_ELEMENT) {
+                                
+                                if (reader.getName().equals(TAG_SCRIPT)) {
+                                    String innerSrc = reader.getAttributeValue(null, Constants.Attribute.SRC);
 
-                                if (reader.getName().equals(TAG_SCRIPT))
+                                    if (innerSrc != null)
+                                        loadExternalScript(innerSrc);
+                                    
                                     elementScript.initFromXML(reader);
+                                }
                             }
                         }
-
                     } catch (XMLStreamException ex) {
                     }
                 }

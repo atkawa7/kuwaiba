@@ -34,7 +34,8 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationConfiguration;
 
 /**
- *
+ * Runner to launch AdHoc Automated Synchronization Task. Given a set of sync provider
+ * related to a data source configuration
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class SyncRunner {
@@ -50,7 +51,8 @@ public class SyncRunner {
     private final LinkedHashMap<SyncProvider, Thread> syncProviderThreads;
     
         
-    public SyncRunner(UI ui, WebserviceBean webserviceBean, RemoteSession remoteSession, List<SyncProvider> syncProviders, RemoteSynchronizationConfiguration syncConfig) {
+    public SyncRunner(UI ui, WebserviceBean webserviceBean, RemoteSession remoteSession, 
+        List<SyncProvider> syncProviders, RemoteSynchronizationConfiguration syncConfig) {
         this.ui = ui;
         this.webserviceBean = webserviceBean;
         this.remoteSession = remoteSession;
@@ -139,14 +141,11 @@ public class SyncRunner {
                 if (!window.isAttached())
                     ui.addWindow(window);
                 
-                System.out.println(">>>" + syncProvider.getValue());
-                
                 boolean isNext = false;
                 
                 for (SyncProvider key : syncProviderThreads.keySet()) {
                     if (isNext) {
                         launchAdHocAutomatedSynchronizationTask(key);
-                        //syncProviderThreads.get(key).start();
                         break;
                     }
                     if (syncProvider.equals(key))

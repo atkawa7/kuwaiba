@@ -35,7 +35,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationCo
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
- *
+ * Detached Mini Application Runner to launch AdHoc Automated Synchronization Task
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class MiniAppSyncRunner extends AbstractMiniApplication<Component, Component> {

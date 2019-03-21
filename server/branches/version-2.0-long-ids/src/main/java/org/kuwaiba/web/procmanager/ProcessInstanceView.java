@@ -43,6 +43,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -56,6 +57,7 @@ import org.kuwaiba.apis.forms.elements.ElementGrid;
 import org.kuwaiba.apis.forms.elements.ElementScript;
 import org.kuwaiba.apis.forms.elements.FormDefinitionLoader;
 import org.kuwaiba.apis.forms.elements.FunctionRunner;
+import org.kuwaiba.apis.forms.elements.Runner;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 import org.kuwaiba.apis.persistence.application.process.ParallelActivityDefinition;
@@ -104,7 +106,9 @@ public class ProcessInstanceView extends DynamicComponent {
     
     private Button buttonClicked;
     private Resource buttonClickedResource;
-        
+    
+    private final List<RemoteActivityDefinition> paths = new ArrayList();
+    
     public ProcessInstanceView(RemoteProcessInstance processInstance, RemoteProcessDefinition processDefinition, WebserviceBean wsBean, RemoteSession remoteSession) {
         
         debugMode = Boolean.valueOf(String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("debugMode")));
@@ -197,7 +201,7 @@ public class ProcessInstanceView extends DynamicComponent {
             }
 
             remoteArtifact = new RemoteArtifact(
-                ProcessCache.artifactCounter++, 
+                UUID.randomUUID().toString(), 
                 "", 
                 "", 
                 content, 
@@ -243,18 +247,63 @@ public class ProcessInstanceView extends DynamicComponent {
                         remoteSession.getSessionId());
                     updateActivities(-1);
                 } else {
-                    Notifications.showInfo("Can not move to the next activity while the postconditions haven't been met");
+                    Notifications.showWarning("Can not move to the next activity while the postconditions haven't been met");
                 }
             } else {
-                wsBean.updateActivity(
-                        processInstance.getId(),
-                        currentActivity.getId(),
-                        remoteArtifact,
-                        Page.getCurrent().getWebBrowser().getAddress(),
-                        remoteSession.getSessionId());
+                if (paths.contains(currentActivity)) {
+////                    boolean performOperation = true;
+                    wsBean.updateActivity(
+                            processInstance.getId(),
+                            currentActivity.getId(),
+                            remoteArtifact,
+                            Page.getCurrent().getWebBrowser().getAddress(),
+                            remoteSession.getSessionId());
 
-                updateActivities(currentActivity.getId());
-                Notifications.showInfo("The activity was updated");
+                    updateActivities(currentActivity.getId());
+                    Notifications.showInfo("The activity was updated");
+                    
+                    if (artifactDefinition.getPostconditionsScript() != null) {
+                        ScriptQueryExecutorImpl scriptQueryExecutorImpl = new ScriptQueryExecutorImpl(wsBean, remoteSession, processInstance);
+                        String script = new String(artifactDefinition.getPostconditionsScript());
+                        ElementScript elementScript = FormDefinitionLoader.loadExternalScripts(artifactDefinition.getExternalScripts());
+                        FunctionRunner functionRunner = new FunctionRunner("postconditions", null, script, elementScript);
+                        
+                        for (Runner runner : elementScript.getFunctions().values())
+                            runner.setScriptQueryExecutor(scriptQueryExecutorImpl);
+                        
+                        functionRunner.setScriptQueryExecutor(scriptQueryExecutorImpl);
+                        functionRunner.setParametersNames(Arrays.asList("processInstanceId", "activityDefinitionId", "nextActivityDefinitionId"));
+                        
+                        Object result = functionRunner.run(Arrays.asList(
+                            processInstance.getId(), 
+                            currentActivity.getId(), 
+                            currentActivity.getNextActivity().getId()));
+
+////                        performOperation = result instanceof Boolean ? (Boolean) result : Boolean.valueOf(result != null ? result.toString() : "false");
+                    }
+////                    if (performOperation) {
+                        wsBean.updateActivity(
+                                processInstance.getId(),
+                                currentActivity.getId(),
+                                remoteArtifact,
+                                Page.getCurrent().getWebBrowser().getAddress(),
+                                remoteSession.getSessionId());
+
+                        updateActivities(currentActivity.getId());
+                        Notifications.showInfo("The activity was updated");
+////                    } else {
+////                        Notifications.showWarning("Can not move to the next activity while the postconditions haven't been met");
+////                    }
+                } else {
+                    wsBean.updateActivity(
+                            processInstance.getId(),
+                            currentActivity.getId(),
+                            remoteArtifact,
+                            Page.getCurrent().getWebBrowser().getAddress(),
+                            remoteSession.getSessionId());
+                    updateActivities(currentActivity.getId());
+                    Notifications.showInfo("The activity was updated");
+                }
             }            
             processInstance = wsBean.getProcessInstance(
                 processInstance.getId(), 
@@ -264,7 +313,6 @@ public class ProcessInstanceView extends DynamicComponent {
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getMessage());
         }
-        
     }
         
     private void renderArtifact(RemoteActivityDefinition currentActivity) {
@@ -631,8 +679,8 @@ public class ProcessInstanceView extends DynamicComponent {
             
             boolean isFork = false;
             boolean even = false;
-            List<RemoteActivityDefinition> paths = new ArrayList();
-                                                
+            paths.clear();
+                        
             for (int i = 0; i < lstActivities.size(); i += 1) {
                 RemoteActivityDefinition activity = lstActivities.get(i);
                 
@@ -858,8 +906,6 @@ public class ProcessInstanceView extends DynamicComponent {
                 activityId,
                 Page.getCurrent().getWebBrowser().getAddress(),
                 remoteSession.getSessionId());
-            
-            
             return remoteArtifact != null;
             
         } catch (ServerSideException ex) {

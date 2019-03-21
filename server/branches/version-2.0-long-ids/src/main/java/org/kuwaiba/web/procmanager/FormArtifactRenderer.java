@@ -14,8 +14,10 @@
  */
 package org.kuwaiba.web.procmanager;
 
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.VerticalLayout;
 import java.util.Arrays;
 import java.util.List;
 import org.kuwaiba.apis.forms.FormInstanceCreator;
@@ -75,7 +77,7 @@ public class FormArtifactRenderer extends ArtifactRenderer {
                         
             if (artifact != null) {
                 
-                if (artifact.getContent() != null) {
+                if (artifact.getContent() != null && artifact.getContent().length > 0) {
                     
                     if (artifactDefinition.getDefinition() == null)
                         return new Label("The artifact definition is empty");
