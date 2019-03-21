@@ -20,6 +20,8 @@ import com.neotropic.kuwaiba.sync.model.AbstractDataEntity;
 import com.neotropic.kuwaiba.sync.model.SyncUtil;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A parser for the output of the command "sh mpls l2transport vc" 
@@ -34,28 +36,42 @@ import java.util.List;
  * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class MplsSyncDefaultParser {
+    private final Pattern ptn = Pattern.compile("^(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})$");
     /**
      * Parses the raw input
      * @param input The raw input that corresponds to the output of the command
      * @return The list of bridge domains in the given router (and inside, the related interfaces -VFI, service instances and BDI-)
      */
     public List<AbstractDataEntity> parseVcs(String input) {
-        String[] lines = input.split("\n");
-        ParsingState state = ParsingState.START;
-        
-        MPLSLink currentMplsTransportLink = null;
         List<AbstractDataEntity> mplsTransportLinks = new ArrayList<>();
-        for (String line : lines) {
-            String[] lineTokens = line.trim().split("\\s+");
-            //check here if is necesary add the DOWN interfaces
-            if (state == ParsingState.START && lineTokens.length == 6  &&  lineTokens[5].equals("UP")){ //NOI18N
-                state = ParsingState.READING_INTERFACES;
-                currentMplsTransportLink = new MPLSLink(SyncUtil.normalizePortName(lineTokens[0]), lineTokens[1], lineTokens[3], lineTokens[2]);
-                mplsTransportLinks.add(currentMplsTransportLink);
-            }//TODO the VFIs
-        }//end for
-        state = ParsingState.END;
-        System.out.println("Parser :" + mplsTransportLinks);
+        if(input != null){
+            String[] lines = input.split("\n");
+            ParsingState state = ParsingState.START;
+            System.out.println(">>> in parser");
+            System.out.println(input);
+
+
+            for (String line : lines) {
+                String[] lineTokens = line.trim().split("\\s{2,}");
+                System.out.println(line + "size: "+lineTokens.length);
+                //check here if is necesary add the DOWN interfaces
+                if (lineTokens.length >= 5){ //NOI18N
+                    state = ParsingState.READING_INTERFACES;
+                    System.out.println(">>> rearing up intf");
+                    if(lineTokens.length == 5 && !lineTokens[0].toLowerCase().startsWith("vfi") && lineTokens[4].equals("UP")){ 
+
+                        Matcher mtch = ptn.matcher(lineTokens[1].split("\\s")[0]);
+                        String localIp = null;
+                        if(mtch.find())
+                            localIp = lineTokens[1].split("\\s")[0];
+
+                        mplsTransportLinks.add(new MPLSLink(SyncUtil.normalizePortName(lineTokens[0]), localIp, lineTokens[3], lineTokens[2]));
+                    }
+                }//TODO the VFIs
+            }//end for
+            state = ParsingState.END;
+            System.out.println(">>> exit parser :" + mplsTransportLinks);
+        }
         return mplsTransportLinks;
     }
     
@@ -66,33 +82,50 @@ public class MplsSyncDefaultParser {
      * @return The list of bridge domains in the given router (and inside, the related interfaces -VFI, service instances and BDI-)
      */
     public MPLSLink parseVcDetails(String input, MPLSLink entry) {
-        String[] lines = input.split("\n");
-        ParsingState state = ParsingState.START;
+        if(input != null){
+            String[] lines = input.split("\n");
+            ParsingState state = ParsingState.START;
+            System.out.println(">>> in parser 2");
+            for (String line : lines) {
+                String[] lineTokens = line.trim().split("\\s+");
+                //check here if is necesary add the DOWN interfaces
+                if (state == ParsingState.START && line.toLowerCase().contains("local interface:")){ //NOI18N
+                    //example line: Local interface: pwxxx xxx.xxx.xxx.xx [vcid] up
+                    System.out.println(">>> in parser 2.1");
+                    state = ParsingState.READING_LOCAL_INTERFACE_VCID_DETAIL;
+                    entry.setLocalInterfaceDetail(SyncUtil.normalizePortName(lineTokens[2]));
+                    Matcher mtch = ptn.matcher( lineTokens[3].split("\\s")[0]);
+                    String localIp = null;
+                    if(mtch.find())
+                        localIp = lineTokens[3];
+                    entry.setLocalInterfaceIpDetail(localIp);
 
-        for (String line : lines) {
-            String[] lineTokens = line.trim().split("\\s+");
-            //check here if is necesary add the DOWN interfaces
-            if (state == ParsingState.START && line.toLowerCase().contains("local interface:") && lineTokens.length == 6  &&  lineTokens[5].equals("UP")){ //NOI18N
-                //example line: Local interface: pwxxx xxx.xxx.xxx.xx [vcid] up
-                state = ParsingState.READING_LOCAL_INTERFACE_VCID_DETAIL;
-                entry.setLocalInterfaceDetail(SyncUtil.normalizePortName(lineTokens[2]));
-                entry.setLocalInterfaceIpDetail(lineTokens[3]);
-            }
-            if (state == ParsingState.READING_LOCAL_INTERFACE_VCID_DETAIL && line.toLowerCase().contains("destination address:") && lineTokens.length == 9  &&  lineTokens[8].equals("UP")){ //NOI18N
-                //example line: Destination address: xxx.xxx.xxx.xx, VC ID: xxxx, VC status: up
-                //Whe two pseudowires are connected the vcid should replace with the one in the details not the got from the general list
-                state = ParsingState.READING_OUTPUT_INTERFACE_VCID_DETAIL;
-                entry.setVcId(lineTokens[5]);
-                entry.setDestinationIpDetail(lineTokens[2]);
-            }
-            if (state == ParsingState.READING_OUTPUT_INTERFACE_VCID_DETAIL && line.toLowerCase().contains("output interface:")){ //NOI18N
-                //Output interface: gix/x/x.yyy, imposed label stack {0 24}
-                entry.setOutputInterface(SyncUtil.normalizePortName(lineTokens[2]));
-            }
-        }//end for
-        state = ParsingState.END;
-        
-        System.out.println("Parser detail:" + entry);
+                }
+                if (state == ParsingState.READING_LOCAL_INTERFACE_VCID_DETAIL && line.toLowerCase().contains("destination address:") && lineTokens.length == 9  &&  lineTokens[8].toLowerCase().equals("up")){ //NOI18N
+                    //example line: Destination address: xxx.xxx.xxx.xx, VC ID: xxxx, VC status: up
+                    //Whe two pseudowires are connected the vcid should replace with the one in the details not the got from the general list
+                    System.out.println(">>> in parser 2.2");
+                    state = ParsingState.READING_OUTPUT_INTERFACE_VCID_DETAIL;
+                    entry.setVcId(lineTokens[5].replace(",", ""));
+                    entry.setDestinationIpDetail(lineTokens[2].replace(",", ""));
+                }
+                if (state == ParsingState.READING_OUTPUT_INTERFACE_VCID_DETAIL && line.toLowerCase().contains("output interface:")){ //NOI18N
+                    //Output interface: gix/x/x.yyy, imposed label stack {0 24}
+                    System.out.println(">>> in parser 2.3");
+                    entry.setOutputInterface(SyncUtil.normalizePortName(lineTokens[2].replace(",", "")));
+                }
+            }//end for
+            state = ParsingState.END;
+
+            System.out.println(">>> Parser detail exiting:" + entry);
+        }
+        else{
+            entry.setDestinationIpDetail(null);
+            entry.setOutputInterface(null);
+            entry.setLocalInterfaceDetail(null);
+            entry.setLocalInterfaceIpDetail(null);
+        }
+            
         return entry;
     }
     
