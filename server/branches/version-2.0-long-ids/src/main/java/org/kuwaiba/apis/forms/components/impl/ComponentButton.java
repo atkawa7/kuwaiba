@@ -102,22 +102,7 @@ public class ComponentButton extends GraphicalComponent {
         
         if (Constants.EventAttribute.ONCLICK.equals(event.getEventName())) {
             
-////            if (Constants.Function.OPEN_FORM.equals(event.getPropertyName())) {
-////                File file = new File(Variable.FORM_RESOURCE_STRUCTURES + "/" + event.getNewValue() + ".xml");
-////                FormDisplayer.getInstance().display(file, false);
-////            }
             if (Constants.Function.SAVE.equals(event.getPropertyName())) {
-                
-                try {
-                    WebserviceBean wsBean = (WebserviceBean) getComponent().getUI().getSession().getAttribute("wsBean");
-                    RemoteSession session = (RemoteSession) getComponent().getUI().getSession().getAttribute("session");                
-                    byte [] structure = new FormInstanceCreator(((ElementButton) getComponentEventListener()).getFormStructure(), wsBean, session).getStructure();
-                    
-                    wsBean.createFormInstance(-1, String.valueOf(new Date().getTime()), String.valueOf(new Date().getTime()), structure, session.getIpAddress(), session.getSessionId());                                        
-                } catch (ServerSideException ex) {
-                    
-                    Notification.show("Error", ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-                }
             }
         }
         else if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {

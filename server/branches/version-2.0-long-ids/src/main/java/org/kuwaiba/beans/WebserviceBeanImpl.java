@@ -52,8 +52,6 @@ import org.kuwaiba.apis.persistence.application.ConfigurationVariable;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.FileObject;
 import org.kuwaiba.apis.persistence.application.FileObjectLight;
-import org.kuwaiba.apis.persistence.application.forms.FormDefinition;
-import org.kuwaiba.apis.persistence.application.forms.FormInstance;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.GroupProfileLight;
 import org.kuwaiba.apis.persistence.application.Pool;
@@ -114,8 +112,6 @@ import org.kuwaiba.apis.persistence.application.process.ProcessInstance;
 import org.kuwaiba.apis.persistence.business.Contact;
 import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteForm;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFormInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinition;
@@ -3986,158 +3982,6 @@ public class WebserviceBeanImpl implements WebserviceBean {
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
                 changeDescriptor);
-            
-        } catch(InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    @Override    
-    public long createForm(String name, String description, byte[] structure, String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
-            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-        
-        try {
-            aem.validateWebServiceCall("createForm", ipAddress, sessionId);
-            return aem.createForm(name, description, structure);
-            
-        } catch(InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    @Override
-    public void updateForm(long formId, String name, String description, byte[] structure, String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
-            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-        
-        try {
-            aem.validateWebServiceCall("updateForm", ipAddress, sessionId);
-            aem.updateForm(formId, name, description, structure);
-            
-        } catch(InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    @Override
-    public RemoteForm getForm(long formId, String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
-            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-        
-        try {
-            aem.validateWebServiceCall("getForm", ipAddress, sessionId);
-            return new RemoteForm(aem.getForm(formId));
-            
-        } catch(InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    @Override
-    public List<RemoteForm> getForms(String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
-            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-        
-        try {
-            aem.validateWebServiceCall("getForms", ipAddress, sessionId);
-            
-            List<RemoteForm> remoteForms = new ArrayList();
-            
-            for (FormDefinition remoteForm : aem.getForms())
-                remoteForms.add(new RemoteForm(remoteForm));
-            
-            return remoteForms;
-            
-        } catch(InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    @Override
-    public void deleteForm(long formId, String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
-            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-        
-        try {
-            aem.validateWebServiceCall("deleteForm", ipAddress, sessionId);
-            aem.deleteForm(formId);
-            
-        } catch(InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    @Override
-    public long createFormInstance(long formId, String name, String description, byte[] structure, String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
-            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-        
-        try {
-            aem.validateWebServiceCall("createFormInstance", ipAddress, sessionId);
-            return aem.createFormInstance(formId, name, description, structure);
-            
-        } catch(InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    @Override
-    public void updateFormInstance(long formInstanceId, String name, String description, byte[] structure, String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
-            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-        
-        try {
-            aem.validateWebServiceCall("updateFormInstance", ipAddress, sessionId);
-            aem.updateFormInstance(formInstanceId, name, description, structure);
-            
-        } catch(InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    @Override
-    public RemoteFormInstance getFormInstance(long formInstanceId, String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
-            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-        
-        try {
-            aem.validateWebServiceCall("getFormInstance", ipAddress, sessionId);
-            return new RemoteFormInstance(aem.getFormInstance(formInstanceId));
-            
-        } catch(InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    @Override
-    public List<RemoteFormInstance> getFormInstances(String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
-            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-        
-        try {
-            aem.validateWebServiceCall("getFormInstances", ipAddress, sessionId);
-            
-            List<RemoteFormInstance> remoteFormInstances = new ArrayList();
-            
-            for (FormInstance remoteForm : aem.getFormInstances())
-                remoteFormInstances.add(new RemoteFormInstance(remoteForm));
-            
-            return remoteFormInstances;
-            
-        } catch(InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    @Override
-    public void deleteFormInstance(long formInstanceId, String ipAddress, String sessionId) throws ServerSideException {
-        if (aem == null)
-            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-        
-        try {
-            aem.validateWebServiceCall("deleteFormInstance", ipAddress, sessionId);
-            aem.deleteFormInstance(formInstanceId);
             
         } catch(InventoryException ex) {
             throw new ServerSideException(ex.getMessage());

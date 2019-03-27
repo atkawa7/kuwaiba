@@ -40,8 +40,6 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteBusinessRule;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConfigurationVariable;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteContact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFavoritesFolder;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteForm;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFormInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteKpiResult;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObjectLight;
@@ -406,26 +404,6 @@ public interface WebserviceBean {
     
     public RemoteTaskResult executeTask(long taskId, String ipAddress, String sessionId) throws ServerSideException;
     
-    public long createForm(String name, String description, byte[] structure, String ipAddress, String sessionId) throws ServerSideException;
-    
-    public void updateForm(long formId, String name, String description, byte[] structure, String ipAddress, String sessionId) throws ServerSideException;
-    
-    public RemoteForm getForm(long formId, String ipAddress, String sessionId) throws ServerSideException;
-    
-    public List<RemoteForm> getForms(String ipAddress, String sessionId) throws ServerSideException;
-    
-    public void deleteForm(long formId, String ipAddress, String sessionId) throws ServerSideException;
-    
-    public long createFormInstance(long formId, String name, String description, byte[] structure, String ipAddress, String sessionId) throws ServerSideException;
-    
-    public void updateFormInstance(long formInstanceId, String name, String description, byte[] structure, String ipAddress, String sessionId) throws ServerSideException;
-    
-    public RemoteFormInstance getFormInstance(long formInstanceId, String ipAddress, String sessionId) throws ServerSideException;
-    
-    public List<RemoteFormInstance> getFormInstances(String ipAddress, String sessionId) throws ServerSideException;
-    
-    public void deleteFormInstance(long formInstanceId, String ipAddress, String sessionId) throws ServerSideException;
-                
     public long createScriptQuery(String name, String description, String script, String countable, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException;
     
     public void updateScriptQueryProperties(long scriptQueryId, String propertyName, String propertyValue, String ipAddress, String sessionId) throws ServerSideException;

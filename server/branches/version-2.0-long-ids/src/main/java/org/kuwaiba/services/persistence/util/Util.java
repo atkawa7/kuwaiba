@@ -35,8 +35,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import org.kuwaiba.apis.persistence.PersistenceService;
-import org.kuwaiba.apis.persistence.application.forms.FormDefinition;
-import org.kuwaiba.apis.persistence.application.forms.FormInstance;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.GroupProfileLight;
 import org.kuwaiba.apis.persistence.application.Pool;
@@ -430,23 +428,7 @@ public class Util {
             scriptQueryNode.hasProperty(Constants.PROPERTY_COUNTABLE) ? (String) scriptQueryNode.getProperty(Constants.PROPERTY_COUNTABLE) : null, 
             parameters);
     }
-    
-    public static FormDefinition createFormFromNode(Node formNode) {
-        return new FormDefinition(
-            formNode.getId(), 
-            (String) formNode.getProperty(Constants.PROPERTY_NAME), 
-            (String) formNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
-            (byte[]) formNode.getProperty(Constants.PROPERTY_STRUCTURE));
-    }
-    
-    public static FormInstance createFormInstanceFromNode(Node formInstanceNode) {
-        return new FormInstance(
-            formInstanceNode.getId(), 
-            (String) formInstanceNode.getProperty(Constants.PROPERTY_NAME), 
-            (String) formInstanceNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
-            (byte[]) formInstanceNode.getProperty(Constants.PROPERTY_STRUCTURE));
-    }
-    
+        
     public static ProcessInstance createProcessInstanceFromNode(Node processInstanceNode) {
         ProcessInstance processInstance = new ProcessInstance(processInstanceNode.getId(), 
             (String) processInstanceNode.getProperty(Constants.PROPERTY_NAME), 
