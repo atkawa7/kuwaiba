@@ -1,0 +1,8 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2019-03-27T00:07:20-05:00
+
+====== Other Tools ======
+^{Created Wednesday 27 March 2019 @author Charles Bedon <charles.bedon at kuwaiba.org>}
+
+This set of pages describes how to install and use some common third-party tools used to support (directly or not) the developement process.

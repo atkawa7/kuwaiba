@@ -1,0 +1,33 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2019-03-27T00:08:34-05:00
+
+====== Net-SNMP ======
+^{Created Wednesday 27 March 2019 @author Charles Bedon <charles.bedon at kuwaiba.org>}
+
+===== Description =====
+A set of tools to connect to SNMP agents to retrieve management information. Net-SNMP also provides an SNMP agent itself that can be easily extended to support custom MIBs.
+
+===== Installation =====
+These instructions apply to **version 5.8**.
+1. Download the install package from http://www.net-snmp.org/
+2. Make sure you have already installed the package **libperl-dev** from your reporsitory.
+3. Unzip the source tarball and execute //./configure --libdir=/usr/lib --enable-shared --with-systemd --with-perl-modules//. Use the libdir that best fits to your distribution. This will work well with Debian and perhaps its derivatives.
+4. Select the default values. SNMP version **2** is most likely to work out-of-the-box
+5. If no errors were found, execute //make//.
+6. If no errors were found, execute //sudo make install//.
+7. As normal user, run //snmpconf -g basic_setup//. This will create a default configuration with authentication information and also the basic stuff to be monitored. This will generate a file called snmpd.conf. Copy that file to [[/usr/local/share/snmp]] or wherever you are instructed to. Keep in mind the community names and the authentication parameters. They will be used when exploring the agent with a MIB browser or a command line utility.
+8. If the daemon snmpd is not available as a systemd service, run //sudo service snmpd start//, otherwise, simply start it with //sudo snmpd//. Check if everythig went as expected by reading the file [[/var/log/snmpd.log]] (the location may vary depending on the value you chose in step 4). It should say something like "NET-SNMP version 5.8".
+9. Test that fetching some info with a MIB browser such as [[https://sourceforge.net/projects/snmpb/|SNMPB]] or with a command like //snmpget -v 2c -c YOURCOMMUNITY localhost SNMPv2-MIB::sysUpTime.0// .
+
+=== Notes ===
+* These are the default compilation options. Execute //./configure --help// to see all available options.
+* If you decide to recompile and install with different options, execute //make uninstall// as root.
+* If you get a "error while loading shared libraries: libnetsnmpagent.so.XX: cannot open shared object file: No such file or directory" error, the 
+
+===== Use =====
+Refer too 
+
+===== References =====
+* http://www.net-snmp.org/wiki/index.php/Tutorials
+* https://www.liquidweb.com/kb/how-to-install-and-configure-snmp-on-centos/
