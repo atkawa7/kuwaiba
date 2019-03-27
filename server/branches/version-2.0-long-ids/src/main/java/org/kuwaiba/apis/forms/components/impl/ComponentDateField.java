@@ -45,6 +45,7 @@ public class ComponentDateField extends GraphicalComponent {
             
             ElementDateField dateField = (ElementDateField) element;
             
+            getComponent().setDateFormat("dd-MM-yyyy");
             getComponent().addStyleName(ValoTheme.DATEFIELD_ALIGN_RIGHT);
             getComponent().setValue(dateField.getValue() != null ? (LocalDate) dateField.getValue() : null);
             
