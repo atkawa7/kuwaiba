@@ -17,10 +17,13 @@ package org.kuwaiba.apis.forms.elements;
 import java.util.List;
 
 /**
- * Executes a function which return something
+ * In the Process Engine Executes a function which return something
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public interface Runner {
+    /** The script query executor, executes queries in the web service bean level
+     * @return An implementation of a script query executor
+     */
     ScriptQueryExecutor getScriptQueryExecutor();
     void setScriptQueryExecutor(ScriptQueryExecutor scriptQueryExecutor);
     Object run(List parametersValues);

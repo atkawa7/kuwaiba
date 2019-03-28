@@ -162,18 +162,6 @@ public class Constants {
      */
     public static final String LABEL_LIST_TYPE = "listType";
     /**
-     * Label used for script query nodes
-     */
-    public static final String LABEL_SCRIPT_QUERY = "scriptQuery";
-    /**
-     * Label used for Form nodes
-     */
-    public static final String LABEL_FORM = "forms";
-    /**
-     * Label used for Form Instance nodes
-     */
-    public static final String LABEL_FORM_INSTANCE = "formInstance";
-    /**
      * Label used for Process Instance nodes
      */
     public static final String LABEL_PROCESS_INSTANCE = "processInstance";

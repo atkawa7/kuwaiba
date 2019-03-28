@@ -21,15 +21,29 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- *
+ * The function runner executes the scripts defined in the process engine inside the tags scripts and functions
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class FunctionRunner implements Runner {
+    /**
+     * Function identity
+     */
     private String functionName;
-    private List<String> parameterNames = new ArrayList();;
+    /**
+     * List of parameters names to run in the script
+     */
+    private List<String> parameterNames = new ArrayList();
+    /**
+     * Groovy script to run
+     */
     private String script;
-    
-    private final ElementScript elementScript;         
+    /**
+     * A container of all the existing functions in the current form artifact and the sources defined in the tag script
+     */
+    private final ElementScript elementScript;
+    /**
+     * A runner to execute functions in the level of web service bean
+     */
     private ScriptQueryExecutor scriptQueryExecutor;
     
     public FunctionRunner(String functionName, String paramNames, String script, ElementScript elementScript) {
@@ -86,7 +100,7 @@ public class FunctionRunner implements Runner {
                 binding.setVariable(parameterNames.get(i), parameters.get(i));
         }
         GroovyShell shell = new GroovyShell(FunctionRunner.class.getClassLoader(), binding);
-        //System.out.println(">>><<<" + getFunctionName());
+        System.out.println(">>><<<" + getFunctionName());//Only for test purposes print the function name in production time this line must be commented
         return shell.evaluate(script);
     }
 
