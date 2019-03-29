@@ -53,7 +53,7 @@ import org.kuwaiba.beans.WebserviceBeanImpl;
  * Manages the bulk load for list types an object from CSV files
  * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
-public final class LoadDataFromFile{
+public final class LoadDataFromFile {
     /**
      * Date format for sync 
      */

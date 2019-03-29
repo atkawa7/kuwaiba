@@ -4596,12 +4596,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public List<ProcessDefinition> getProcessDefinitions() {
-        try {
-            return ProcessCache.getInstance().getProcessDefinitions();
-        } catch (InventoryException ex) {
-            Exceptions.printStackTrace(ex);
-            return null;
-        }
+        return ProcessCache.getInstance().getProcessDefinitions();
     }
     
     @Override
@@ -4623,12 +4618,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public void reloadProcessDefinitions() throws InvalidArgumentException {
-        try {
-            ProcessCache.getInstance().reloadProcessDefinitions();
-        } catch (InventoryException ex) {
-            throw new InvalidArgumentException(ex.getMessage());
-        }
+    public void reloadProcessDefinitions() {
+        ProcessCache.getInstance().updateProcessDefinitions();
     }
 
     @Override
@@ -5443,8 +5434,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 File fileToBeDeleted = new File(fileName);
                 fileToBeDeleted.delete();
             } catch (IOException ex) {
-                System.out.println(String.format("[KUWAIBA] An error occurred while deleting attachment %s for object %s (%s)", 
-                        fileName, instance.getProperty(Constants.PROPERTY_NAME), instance.getId()));
+                System.out.println(String.format("[KUWAIBA] [%s] An error occurred while deleting attachment %s for object %s (%s)", 
+                        Calendar.getInstance().getTime(), fileName, instance.getProperty(Constants.PROPERTY_NAME), instance.getId()));
             }
             attachmentNode.delete();
         }
