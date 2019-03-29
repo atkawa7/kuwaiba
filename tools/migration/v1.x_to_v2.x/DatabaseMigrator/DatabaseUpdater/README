@@ -1,0 +1,3 @@
+This is the first stage of the migration tool that takes a 1.X database and makes it 
+usable by a 2.0 server. This stage deletes the legacy indexes and replaces them with labels. 
+The resulting database still has a N4J 2.x format.

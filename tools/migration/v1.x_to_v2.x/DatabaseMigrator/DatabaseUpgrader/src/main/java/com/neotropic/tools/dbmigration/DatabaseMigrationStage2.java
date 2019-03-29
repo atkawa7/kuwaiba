@@ -20,54 +20,61 @@ import java.util.Calendar;
 
 /**
  * Upgrades the database to use the version 3.3.3 of Neo4j creating labels and 
- * schema index, removing the deprecated index and delete unused schema index
+ * schema index, removing the deprecated index and delete unused schema index. This stage 
+ * also can be used to migrate a database version 2 that uses long ids to one using string ids.
+ * See {@link #displayHelp() } for details on what parameters are allowed
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class DatabaseMigrationStage2 {
     
     /**
      * Application entry point
-     * @param args The list of command line arguments, currently only one is needed: dbPath. If not specified, 
-     * /data/db/kuwaiba.db will be used.
+     * @param args The list of command line arguments. Two are expected: The first one 
+     * is either --fullMigration (migrate label and indexes from older versions, and update old long ids),
+     * --onlyUpgradeIds (migrate a version 2 database using long ids to one using string ids) or 
+     * --toDeprecatedVersion2 (takes a database version 1 and migrates it to version 2, but keeps the deprecated long type ids). 
+     * The second argument is the database path.
      */
     public static void main(String[] args) {
         if (args.length == 2) {
-            String dbPath = args[0];
-
+            String migrationType = args[0];
+            String dbPath = args[1];
             File dbPathReference = new File(dbPath);
-
+            
             try {
-                int migrationType = Integer.valueOf(args[1]);
-                boolean flag1;
-                boolean flag2;
+                if (!dbPathReference.exists())
+                    throw new RuntimeException(String.format("Database path %s not found", args[1]));
+                
+                boolean doMigrateFromV1ToV2;
+                boolean doMigrateFromV2WithLongIdsToV2WithStringIds;
                 switch(migrationType) {
-                    case 1:
-                        flag1 = true;
-                        flag2 = true;
+                    case "--fullMigration":
+                        doMigrateFromV1ToV2 = true;
+                        doMigrateFromV2WithLongIdsToV2WithStringIds = true;
                     break;
-                    case 2:
-                        flag1 = false;
-                        flag2 = true;
+                    case "--onlyUpgradeIds":
+                        doMigrateFromV1ToV2 = false;
+                        doMigrateFromV2WithLongIdsToV2WithStringIds = true;
                     break;
-                    case 3:
-                        flag1 = true;
-                        flag2 = false;
+                    case "--toDeprecatedVersion2":
+                        doMigrateFromV1ToV2 = true;
+                        doMigrateFromV2WithLongIdsToV2WithStringIds = false;
                     break;
                     default:
-                        flag1 = true;
-                        flag2 = true;
-                    break;
+                        System.out.println("Invalid migration type.");
+                        displayHelp();
+                        return;
                 }
                 
                 System.out.println(String.format("[%s] Starting database upgrade stage 2...", Calendar.getInstance().getTime()));
-                if (flag1) {
+                if (doMigrateFromV1ToV2) {
                     Upgrader.getInstance().upgrade(dbPathReference);
                     LabelUpgrader.getInstance().createLabels(dbPathReference);
                     IndexUpgrader.getInstance().upgrade(dbPathReference);
                     LabelUpgrader.getInstance().deleteIndexes(dbPathReference);
                     LabelUpgrader.getInstance().deleteUnusedLabels(dbPathReference);
                 }
-                if (flag2) {
+                if (doMigrateFromV2WithLongIdsToV2WithStringIds) {
                     LabelUpgrader.getInstance().replaceLabel(dbPathReference, "attribute", "attributes");
                     LabelUpgrader.getInstance().replaceLabel(dbPathReference, "inventory_objects", "inventoryObjects");
                     LabelUpgrader.getInstance().setUUIDAttributeToInventoryObjects(dbPathReference);
@@ -79,19 +86,19 @@ public class DatabaseMigrationStage2 {
             } catch (Exception ex) {
                 System.out.println(String.format("An unexpected error was found: %s", ex.getMessage()));
             }
-        } else {
-            System.out.println("Argument needed are 2 but recived " + args.length);
-            System.out.println("1. Argument: database name ");
-            System.out.println("2. Argument: Migration Type ");
-            System.out.println(" Migration Type = 1 (Databases from stage 1 which apply stage 2 to use UUIDs)");
-            System.out.println(" Migration Type = 2 (Databases from stage 2 which apply again stage 2 to use UUID)");
-            System.out.println(" Migration Type = 3 (Databases from stage 1 which apply stage 2 and continue using ids)");
-            
-            System.out.println("Example :");
-
-            System.out.println("java -jar DatabaseMigrationStage2 /data/db/kuwaiba.db 1");
-            //System.exit(1);
-        }
+        } else 
+            displayHelp();
     }
     
+    /**
+     * Displays a help message.
+     */
+    private static void displayHelp() {
+        System.out.println("This application expects two parameters:\n " + 
+                    "1. Migration type. Use --fullMigration to migrate label and indexes from older versions, and update old long ids. \n" +
+                    "Use --onlyUpgradeIds to migrate a version 2 database using long ids to one using string ids.\n" + 
+                    "Use --toDeprecatedVersion2 to migrate a database version 1 to version 2, but keeping the deprecated long type ids" +
+                    "2. Database path");
+        System.out.println("Example: java -jar DatabaseMigrationStage2 --fullMigration /data/db/kuwaiba.db");
+    }
 }

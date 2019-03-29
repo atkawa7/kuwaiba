@@ -1,0 +1,4 @@
+This is the second stage of the migration tool that takes a 1.X database and makes it 
+usable by a 2.0 server. This application can also be used to migrate a 2.0 database using 
+long-type ids to one using String-type ids. Run the application without parameters to display 
+the list of available options.
