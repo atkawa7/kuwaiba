@@ -25,7 +25,7 @@ import static com.neotropic.kuwaiba.modules.mpls.MPLSModule.RELATIONSHIP_MPLSEND
 import static com.neotropic.kuwaiba.modules.mpls.MPLSModule.RELATIONSHIP_MPLSLINK;
 import com.neotropic.kuwaiba.sync.connectors.ssh.mpls.entities.MPLSLink;
 import com.neotropic.kuwaiba.sync.connectors.ssh.mpls.parsers.MplsSyncDefaultParser;
-import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.parsers.BridgeDomainsASR9001Parser;
+import com.neotropic.kuwaiba.sync.connectors.ssh.mpls.parsers.MplsSyncASR9001Parser;
 import com.neotropic.kuwaiba.sync.model.AbstractDataEntity;
 import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
 import com.neotropic.kuwaiba.sync.model.PollResult;
@@ -37,14 +37,14 @@ import com.neotropic.kuwaiba.sync.model.SyncUtil;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
@@ -121,16 +121,15 @@ public class MplsSyncProvider extends AbstractSyncProvider {
 
     @Override
     public PollResult mappedPoll(SynchronizationGroup syncGroup) {
-        System.out.println("222");
         List<SyncDataSourceConfiguration> syncDataSourceConfigurations = syncGroup.getSyncDataSourceConfigurations();
         
         PollResult res = new PollResult();
-        BusinessEntityManager bem = PersistenceService.getInstance().getBusinessEntityManager();
-
+        
         JSch sshShell = new JSch();
         Session session = null;
         ChannelExec channel =  null;
-        
+        ChannelExec channelDetail =  null;
+         
         for (SyncDataSourceConfiguration dataSourceConfiguration : syncDataSourceConfigurations) {
             try {
                 String deviceId;
@@ -194,7 +193,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
 //                String knownHostsFileLocation = (String)PersistenceService.getInstance().getApplicationEntityManager().
 //                        getConfigurationVariableValue("sync.bdi.knownHostsFile");
 //                sshShell.setKnownHosts(knownHostsFileLocation);
-                session.connect(10000); //Connection timeout
+                session.connect(6000); //Connection timeout
                 channel = (ChannelExec) session.openChannel("exec");
 
                 String modelString = currentObject.getName().split("-")[0];
@@ -204,29 +203,36 @@ public class MplsSyncProvider extends AbstractSyncProvider {
                     case "ASR1006":
                     case "ASR920": 
                     case "ME3600":{
-                        channel.setCommand("sh mpls l2transport vc"); //NOI18N
+                        channel.setCommand("sh mplsl2transportvc"); //NOI18N
                         channel.connect();
                         
                         MplsSyncDefaultParser parser = new MplsSyncDefaultParser();       
                         List<AbstractDataEntity> parseResult = parser.parseVcs(readCommandExecutionResult(channel));
-                        
                         //We must check the details of every vcid
                         for (AbstractDataEntity mplsLink : parseResult) {
                             if(((MPLSLink)mplsLink).getLocalInterface().toLowerCase().startsWith("pw") && !((MPLSLink)mplsLink).getVcId().isEmpty()){
-                                channel.setCommand("show mpls l2transport vc " + ((MPLSLink)mplsLink).getVcId().isEmpty() + " detail"); //NOI18N
-                                mplsLink = parser.parseVcDetails(readCommandExecutionResult(channel), (MPLSLink)mplsLink);
+                                session = sshShell.getSession(user, host, port);
+                                session.setPassword(password);
+                                //Enable to -not recommended- disable host key checking
+                                session.setConfig("StrictHostKeyChecking", "no");
+                                session.connect(2000); //Connection timeout
+                                channelDetail = (ChannelExec) session.openChannel("exec");
+                                channelDetail.setCommand("sh show\\ mpls\\ l2transport\\ vc\\ " + ((MPLSLink)mplsLink).getVcId() + "\\ detail"); //NOI18N
+                                channelDetail.connect();
+                                String x = readCommandExecutionResult(channelDetail);
+                                mplsLink = parser.parseVcDetails(x, (MPLSLink)mplsLink);
                             }
                         }//end for
-                        res.getResult().put(dataSourceConfiguration, parseResult);                            
+                        
+                        res.getResult().put(dataSourceConfiguration, parser.findRelatedPseudowires(parseResult));                            
                         break;
                     }
                     case "ASR9001": {
-                        channel.setCommand("sh l2vpn xconnect"); //NOI18N
+                        channel.setCommand("sh l2vpnxconnect"); //NOI18N
                         channel.connect();
                                                 
-                        BridgeDomainsASR9001Parser parser = new BridgeDomainsASR9001Parser();               
-                        res.getResult().put(dataSourceConfiguration, 
-                                parser.parse(readCommandExecutionResult(channel)));
+                        MplsSyncASR9001Parser parser = new MplsSyncASR9001Parser();        
+                        res.getResult().put(dataSourceConfiguration, parser.parseVcIds(readCommandExecutionResult(channel)));
                         break;
                     }
                     default:
@@ -244,22 +250,28 @@ public class MplsSyncProvider extends AbstractSyncProvider {
         return res;
     }
 
+    private void readIpam(){
+        try {
+            List<Pool> ipv4RootPools;
+            ipv4RootPools = bem.getRootPools(Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
+            ipv4Root = ipv4RootPools.get(0);
+            readcurrentIPAMFolders(ipv4RootPools);
+            readCurrentSubnets(ipv4RootPools.get(0));
+        } catch (InvalidArgumentException | ApplicationObjectNotFoundException | MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+    
+    
     @Override
     public List<SyncResult> automatedSync(PollResult pollResult) {
         subnets = new HashMap<>();
         ips = new HashMap<>();
         bem = PersistenceService.getInstance().getBusinessEntityManager();
         aem = PersistenceService.getInstance().getApplicationEntityManager();
-        
-        List<Pool> ipv4RootPools = new ArrayList();
+        mem = PersistenceService.getInstance().getMetadataEntityManager();
+        readIpam();
         res = new ArrayList<>();
-        try {
-            ipv4RootPools = bem.getRootPools(Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
-        } catch (InventoryException ex) {
-            res.add(new SyncResult(-1, SyncResult.TYPE_ERROR, "Bridge Domain Information Processing", ex.getLocalizedMessage()));
-            return res;
-        }
-        ipv4Root = ipv4RootPools.get(0);
         //First, we inject the unexpected errors
         for (SyncDataSourceConfiguration dsConfig : pollResult.getExceptions().keySet()) {
             for (Exception ex : pollResult.getExceptions().get(dsConfig))
@@ -270,275 +282,292 @@ public class MplsSyncProvider extends AbstractSyncProvider {
         
         for (SyncDataSourceConfiguration dataSourceConfiguration : pollResult.getResult().keySet()) {
             try {
-                //TODO create this as API functions
-                try {
-                    readcurrentIPAMFolders(ipv4RootPools);
-                    readCurrentSubnets(ipv4RootPools.get(0));
-                } catch (ApplicationObjectNotFoundException ex) {
-                    res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_ERROR, "Unexpected error reading current structure",  ex.getLocalizedMessage()));
-                } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
-                    Exceptions.printStackTrace(ex);
-                }
-                
-                BusinessObjectLight relatedOject = new BusinessObjectLight(
-                                                        dataSourceConfiguration.getParameters().get("deviceClass"), 
-                                                        dataSourceConfiguration.getParameters().get("deviceId"), "");
+                BusinessObjectLight relatedOject = bem.getObjectLight(dataSourceConfiguration.getParameters().get("deviceClass"), 
+                                                        dataSourceConfiguration.getParameters().get("deviceId"));
                 //we get the current interfaces physicalPorts, VirtualPorts, Pseudowires
-                List<BusinessObjectLight> currentInterfaces = bem.getChildrenOfClassLight(relatedOject.getId(), relatedOject.getClassName(), "GenericPort", -1);
+                List<BusinessObjectLight> currentInterfaces = bem.getChildrenOfClassLightRecursive(relatedOject.getId(), relatedOject.getClassName(), "GenericPort", 0);
+                currentInterfaces.addAll(bem.getChildrenOfClassLight(relatedOject.getId(), relatedOject.getClassName(), "MPLSTunnel", 0));
                 //TODO check if here we have virtual ports and pw
                 //check here after update of the pollResult from BusinessObjectLight to SyncDataSourceConfiguration
                 List<AbstractDataEntity> mplsTransportLinks = pollResult.getResult().get(dataSourceConfiguration);
                 List<String> pseudowiresFromSync = new ArrayList<>();
 
-                for (AbstractDataEntity mplsLink : mplsTransportLinks) {
-                    if(((MPLSLink)mplsLink).getLocalInterface().toLowerCase().startsWith("pw"))
-                        pseudowiresFromSync.add(((MPLSLink)mplsLink).getLocalInterface().toLowerCase());
-                }
-                //We process every entry got it from ssh mpls info
-                for (AbstractDataEntity mplsSyncEntry : mplsTransportLinks) {
-                    String localInterfaceNameFromSync = ((MPLSLink)mplsSyncEntry).getLocalInterface();
-                    String localIpFromSync = ((MPLSLink)mplsSyncEntry).getLocalInterfaceIp();
-                    String vcIdFromSync = ((MPLSLink)mplsSyncEntry).getVcId();
-                    String localInterfaceDetailFromSync = ((MPLSLink)mplsSyncEntry).getLocalInterfaceDetail();
-                    String outputInterfaceFromSync = ((MPLSLink)mplsSyncEntry).getOutputInterface();
-                    String destinationIpFromSync = ((MPLSLink)mplsSyncEntry).getDestinationIp();
-                    BusinessObjectLight currentLocalIp = null;
-                    BusinessObjectLight currentPortRelataedWithLocalIpAddr = null;
-                    //fisrt we deal with the the localInterfaceIp
-                    if(localIpFromSync != null){
-                        currentLocalIp = checkSubentsIps(localIpFromSync, "", true, dataSourceConfiguration.getId());
-                        if(currentLocalIp != null){
-                            List<BusinessObjectLight> relatedPorts = bem.getSpecialAttribute(currentLocalIp.getClassName(), currentLocalIp.getId(), RELATIONSHIP_IPAMHASADDRESS);
-                            if(!relatedPorts.isEmpty())
-                                res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_INFORMATION, "Cheking interface related ipAddr", 
-                                    String.format("ipAddr: %s is related with: %s", currentLocalIp, relatedPorts.get(0))));
+                if(mplsTransportLinks.isEmpty())
+                    res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_ERROR, "No data was found", 
+                                "There were an error a no data was retrieve")); 
+                else{
+                    for (AbstractDataEntity mplsLink : mplsTransportLinks) {
+                        if(((MPLSLink)mplsLink).getLocalInterface().toLowerCase().startsWith("pw"))
+                            pseudowiresFromSync.add(((MPLSLink)mplsLink).getLocalInterface().toLowerCase());
+                    }
+                    //We process every entry got it from ssh mpls info
+                    for (AbstractDataEntity mplsSyncEntry : mplsTransportLinks) {
+                        
+                        String localInterfaceNameFromSync = ((MPLSLink)mplsSyncEntry).getLocalInterface();
+                        String localIpFromSync = ((MPLSLink)mplsSyncEntry).getLocalInterfaceIp();
+                        String vcIdFromSync = ((MPLSLink)mplsSyncEntry).getVcId();
+                        String localInterfaceDetailFromSync = ((MPLSLink)mplsSyncEntry).getLocalInterfaceDetail();
+                        String outputInterfaceFromSync = ((MPLSLink)mplsSyncEntry).getOutputInterface();
+                        String serviceNameFromSync = ((MPLSLink)mplsSyncEntry).getService();
+                        BusinessObjectLight currentLocalIp;
+
+                        List<BusinessObjectLight> pseudowireRels;
+                        //fisrt we deal with the the localInterfaceIp
+                        if(localIpFromSync != null){
+                            currentLocalIp = checkSubentsIps(localIpFromSync, "", true, dataSourceConfiguration.getId());
+                            if(currentLocalIp != null){
+                                List<BusinessObjectLight> relatedPorts = bem.getSpecialAttribute(currentLocalIp.getClassName(), currentLocalIp.getId(), RELATIONSHIP_IPAMHASADDRESS);
+                                if(!relatedPorts.isEmpty())
+                                    res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_INFORMATION, "Cheking interface related ipAddr", 
+                                        String.format("ipAddr: %s is related with: %s", currentLocalIp, relatedPorts.get(0))));
+                            }
                         }
-                    }
-                    //we search for the current interface within the device
-                    BusinessObjectLight matchingLocalInterface = null;
-                    for (BusinessObjectLight currentInterface : currentInterfaces) {
-                        if (currentInterface.getName().equals(SyncUtil.normalizePortName(localInterfaceNameFromSync)))
-                            matchingLocalInterface = currentInterface;
-                    }
-                    BusinessObjectLight outputInterface = null;
-                    if(outputInterfaceFromSync != null){//if the interface is a Pseudowire the real endpoint of the mpls is the output interface(a port) not the pseudowire
-                        //we search the output interface it in the current interfaces within the realted object
+                        //we search for the current interface within the device
+                        BusinessObjectLight matchingLocalInterface = null;
                         for (BusinessObjectLight currentInterface : currentInterfaces) {
-                            if (currentInterface.getName().equals(SyncUtil.normalizePortName(outputInterfaceFromSync)))
-                                outputInterface = currentInterface;
-                        }
-                    }
-                    //Local interface in detail
-                    BusinessObjectLight relatedInterfaceInDetail = null;
-                    if(localInterfaceDetailFromSync.toLowerCase().startsWith("pw")){
-                        //we search for the (Pseudowire)localInterface got it from the vcid detail in the current interfaces
-                        for (BusinessObjectLight currentInterface : currentInterfaces) {
-                            if (currentInterface.getName().equals(SyncUtil.normalizePortName(localInterfaceDetailFromSync)))
-                                relatedInterfaceInDetail = currentInterface;
-                        }//if we don't find the related pseudowire we must created it, any way it will be created later
-                        if(relatedInterfaceInDetail == null){ 
+                            if (SyncUtil.normalizePortName(currentInterface.getName()).equals(SyncUtil.normalizePortName(localInterfaceNameFromSync))){
+                                matchingLocalInterface = currentInterface;
+                                break;
+                            }
+                        }//the interface doesn't exists but is a pw we should created
+                        if(matchingLocalInterface == null && !localInterfaceNameFromSync.startsWith("pw"))
+                            res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_WARNING, "Searching interface to connect MPLSLink", 
+                                        String.format("Rreading vcid: %s ,Interface: %s was not found within: %s", vcIdFromSync, localInterfaceNameFromSync, relatedOject)));
+                        //if there is no match with any port in the related object but is pseudowire we must created
+                        else if(matchingLocalInterface == null && localInterfaceNameFromSync.startsWith("pw")) {
                             HashMap<String, String> defaultAttributes = new HashMap<>();
-                            defaultAttributes.put(Constants.PROPERTY_NAME, localInterfaceDetailFromSync);
+                            defaultAttributes.put(Constants.PROPERTY_NAME, localInterfaceNameFromSync);
                             String newPwId = bem.createObject("Pseudowire", relatedOject.getClassName(), relatedOject.getId(), defaultAttributes, -1);
-                            relatedInterfaceInDetail = new BusinessObjectLight("Pseudowire", newPwId, localInterfaceDetailFromSync);
-
+                            //The new pseudowire
+                            matchingLocalInterface = new BusinessObjectLight("Pseudowire", newPwId, localInterfaceNameFromSync);
+                            //we add the new pw to the current interfaces
+                            currentInterfaces.add(matchingLocalInterface); 
                             aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [Pseudowire] (id:%s)", localInterfaceNameFromSync, newPwId));
-                            res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("Creating a an interface %s within: %s", localInterfaceNameFromSync, relatedOject), 
+                            res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("Creating a Pseudowire interface %s within %s", localInterfaceNameFromSync, relatedOject), 
                                         "The inteface was created successfully"));
-                        }
-                    }
-                    //we search for the current vcIds created an related within the device that we are sync 
-                    List<BusinessObjectLight> currentMplsLinksRelated = bem.getSpecialAttribute(relatedOject.getClassName(), relatedOject.getId(), "mplsLink");
-                    BusinessObjectLight currentVcId = null;
-                    for(BusinessObjectLight currentMplsLink : currentMplsLinksRelated){
-                        if(currentMplsLink.getName().equals(vcIdFromSync)){
-                            currentVcId = currentMplsLink;
-                            break;
-                        }
-                    }//the interface doesn't exist
-                    if(matchingLocalInterface == null && !localInterfaceNameFromSync.startsWith("pw"))
-                        res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_WARNING, "Searching interface to connect MPLSLink", 
-                                    String.format("Interface: %s was not found within: %s", localInterfaceNameFromSync, relatedOject)));
-                    //if there is no match with any port in the related object but is pseudowire we must created
-                    else if(matchingLocalInterface == null && localInterfaceNameFromSync.startsWith("pw")) {
-                        HashMap<String, String> defaultAttributes = new HashMap<>();
-                        defaultAttributes.put(Constants.PROPERTY_NAME, localInterfaceNameFromSync);
-                        String newPwId = bem.createObject("Pseudowire", relatedOject.getClassName(), relatedOject.getId(), defaultAttributes, -1);
-                        //The new pseudowire
-                        matchingLocalInterface = new BusinessObjectLight("Pseudowire", newPwId, localInterfaceNameFromSync);
-                        
-                        aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [Pseudowire] (id:%s)", localInterfaceNameFromSync, newPwId));
-                        res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("Creating a Pseudowire interface %s within %s", localInterfaceNameFromSync, relatedOject), 
-                                    "The inteface was created successfully"));
-                        
-                    }
-                    String relSide = null;
-                    BusinessObjectLight endpointA = null, endpointB = null;
-                    boolean sideA = false, sideB = false; //used to check wich side of the link needs to be connected to the destiny pseudowire
-                    if(matchingLocalInterface != null){
-                        if(currentVcId == null){ //We must create the MPLSLink, if doesn't exists
-                            HashMap<String, String> attributesToBeSet = new HashMap<>();
-                            attributesToBeSet.put(Constants.PROPERTY_NAME, vcIdFromSync);
-                            //First we create the mpls link, the name is the vcId
-                            String newMplsLinkId = bem.createSpecialObject("MPLSLink", null, "-1", attributesToBeSet, -1); //NOI18N
-                            BusinessObjectLight newMplsLink = new BusinessObjectLight("MPLSLink", newMplsLinkId, vcIdFromSync); //NOI18N
-                            bem.createSpecialRelationship(relatedOject.getClassName(), relatedOject.getId(), "MPLSLink", newMplsLinkId, RELATIONSHIP_MPLSLINK, false); //NOI18N
-                            //the RelatedObject need to be relat4ed with the mpls link anyway
-                            aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - mplsLink - %s", relatedOject, newMplsLink));
-                            res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("A new created %s was related with %s", newMplsLink, relatedOject), 
-                                                    "The inteface was created successfully"));
-                            //then we relate the mpls link with the interface
-                            if(matchingLocalInterface.getName().equals("VirtualPort") || matchingLocalInterface.getName().equals("OpticalPort") || matchingLocalInterface.getName().equals("ElectricalPort")){
-                                //Because is a new mplslink we alway connect the endpointA
-                                bem.createSpecialRelationship("MPLSLink", newMplsLinkId, matchingLocalInterface.getClassName(), matchingLocalInterface.getId(), RELATIONSHIP_MPLSENDPOINTA, true); //NOI18N
-                                aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s endpointA connected with %s", newMplsLink, matchingLocalInterface));
-                                res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_ERROR, "Connecting MPLSLink with local interface", 
-                                                    String.format("The  endpointA of %s was connected to: %s", newMplsLink, matchingLocalInterface))); 
-                                //The ports also has a relationship with an outputinterface
-                                if(outputInterfaceFromSync != null){
-                                    if(outputInterface == null)
-                                        res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_ERROR, "Searching output interface", 
-                                            String.format("The interface: %s was not found with in: %s, please run the hardware sync first", outputInterfaceFromSync, relatedOject)));
-                                    else{
-                                        //firts the relationship bewteen the pseudowire and the output interface
-                                        bem.createSpecialRelationship(outputInterface.getClassName(), outputInterface.getId(), matchingLocalInterface.getClassName(), matchingLocalInterface.getId(), "pseudowire", true); //NOI18N
-                                        aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - pseudowire - %s", outputInterface, matchingLocalInterface));
-                                        res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, "Creating pesudowire relationship",
-                                                    String.format("Creating pesudowire relationship between %s - %s", outputInterface, matchingLocalInterface)));
-                                    }
-                                }
-                                
-                            }//pseudowires needs special treatment
-                            else if(matchingLocalInterface.getClassName().equals("Pseudowire")){//NOI18N
-                                //first we must check the vcid details, if both the interface and the localInterface in detail are pseudowires we must relate them
-                                if (relatedInterfaceInDetail != null)//the reltaionship between pseudowires will not be created
-                                    res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_ERROR, "Creating pseudowire relationship", String.format("Interface %s was not found", localInterfaceDetailFromSync)));
-                                else if(localInterfaceDetailFromSync.toLowerCase().startsWith("pw") && relatedInterfaceInDetail != null){
-                                    //we must create a relationship pseudowire bewtween the pseudowires
-                                    bem.createSpecialRelationship(relatedInterfaceInDetail.getClassName(), relatedInterfaceInDetail.getId(), matchingLocalInterface.getClassName(), matchingLocalInterface.getId(), "pseudowire", true); //NOI18N
-                                    aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - pseudowire - %s", matchingLocalInterface, relatedInterfaceInDetail));
-                                    res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, "Creating pesudowire relationship",
-                                                    String.format("Creating pesudowire relationship between %s - %s", matchingLocalInterface, relatedInterfaceInDetail)));
-                                }
-                                //the we must deal with the output interfaces, because if the interface is a Pseudowire the real endpoint of the mpls is the output interface(a port) not the pseudowire
-                                if(outputInterfaceFromSync != null){
-                                    if(outputInterface == null)
-                                        res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_ERROR, "Searching output interface", 
-                                            String.format("The interface: %s was not found with in: %s, please run the hardware sync first", outputInterfaceFromSync, relatedOject)));
-                                    else{
-                                        //firts the relationship bewteen the pseudowire and the output interface
-                                        bem.createSpecialRelationship(outputInterface.getClassName(), outputInterface.getId(), matchingLocalInterface.getClassName(), matchingLocalInterface.getId(), "pseudowire", true); //NOI18N
-                                        aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - pseudowire - %s", outputInterface, matchingLocalInterface));
-                                        res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, "Creating pesudowire relationship",
-                                                    String.format("Creating pesudowire relationship between %s - %s", outputInterface, matchingLocalInterface)));
-                                        //second relationship between the output interface and the mplsLink
-                                        //Because is a new mplslink we alway connect the endpointA
-                                        bem.createSpecialRelationship("MPLSLink", newMplsLinkId, outputInterface.getClassName(), outputInterface.getId(), RELATIONSHIP_MPLSENDPOINTA, true); //NOI18N
-                                        aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s endpointA connected with %s", newMplsLink, outputInterface));
-                                        res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_ERROR, "Connecting MPLSLink with local interface", 
-                                                            String.format("The  endpointA of %s was connected to: %s", newMplsLink, outputInterface))); 
-                                    }
-                                }
-                            }//end if pseudowwires
-                        }//end if vcid is null
-                        else{//the vcid exists
-                            List<BusinessObjectLight> endpointARelationship = bem.getSpecialAttribute(currentVcId.getClassName(), currentVcId.getId(), "mplsEndpointA");
-                            if (!endpointARelationship.isEmpty()) 
-                                endpointA = endpointARelationship.get(0);
-                            List<BusinessObjectLight> endpointBRelationship = bem.getSpecialAttribute(currentVcId.getClassName(), currentVcId.getId(), "mplsEndpointB");
-                            if (!endpointBRelationship.isEmpty()) 
-                                endpointB = endpointBRelationship.get(0);
-                            
-                            if(endpointA != null && endpointA.getId() == matchingLocalInterface.getId() || endpointA != null && outputInterface != null && endpointA.getId() == outputInterface.getId()){
-                                res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_INFORMATION, "Checking MPLSLink endpoints",
-                                   String.format("%s exists and one of its sides is connected with %s", currentVcId, matchingLocalInterface)));
-                                sideA = true;
-                            }
-                            else if(endpointB != null && endpointB.getId() == matchingLocalInterface.getId() || endpointB != null && outputInterface != null && endpointB.getId() == outputInterface.getId()){
-                                res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_INFORMATION, "Checking MPLSLink endpoints",
-                                   String.format("%s exists and one of it sides is connected with %s", currentVcId, matchingLocalInterface)));
-                                sideB = true;
-                            }
 
-                            if(!sideA && !sideB){//no side of the mpls
-                                res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_WARNING, "Checking MPLSLink connections",
-                                   String.format("%s exists but not of its endpoints are connected with %s", currentVcId, matchingLocalInterface)));
-                                //we release the sideA, by default
-                                bem.releaseSpecialRelationship(currentVcId.getClassName(), currentVcId.getId(), "mplsEndpointA", matchingLocalInterface.getId());
-                                res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS,  "Updating enpoints of MPLSLink", 
-                                    String.format("An endpoint %s was released from: %s", sideA ? endpointA : endpointB, currentVcId)));
-                                
-                                relSide = RELATIONSHIP_MPLSENDPOINTA;
-                            }
-                            
-                            if(endpointA != null && !sideB)//something connected but belongs to other object, so we connect the sideB that is free
-                                relSide = RELATIONSHIP_MPLSENDPOINTA;
-                            else if(endpointB != null && !sideA) //something connected but belongs to other object, so we connect the sideB that is free
-                                relSide = RELATIONSHIP_MPLSENDPOINTB;
-                            
-                            if(relSide == null){
-                                if(matchingLocalInterface.getClassName().equals("Pseudowire")){
-                                    //because is a pseudowire we must check the localinterface in detail and the outputInterface
-                                    List<BusinessObjectLight> pseudowireRels = bem.getSpecialAttribute(matchingLocalInterface.getClassName(), matchingLocalInterface.getId(), "pseudowire");
-                                    if(relatedInterfaceInDetail != null && !pseudowireRels.contains(relatedInterfaceInDetail)){
-                                        //we must create a relationship pseudowire bewtween the pseudowires
+                        }
+                        else if(matchingLocalInterface != null){
+                            //we must check the relationships with the interface, 
+                            pseudowireRels = bem.getSpecialAttribute(matchingLocalInterface.getClassName(), matchingLocalInterface.getId(), "pseudowire");
+                            //Local interface in detail, local interface in detail an local interface should be diferent 
+                            BusinessObjectLight relatedInterfaceInDetail = null;
+                            if(localInterfaceDetailFromSync != null && localInterfaceDetailFromSync.toLowerCase().startsWith("pw")){
+                                //we search for the (Pseudowire)localInterface got it from the vcid detail in the current interfaces
+                                for (BusinessObjectLight currentInterface : currentInterfaces) {
+                                    if (SyncUtil.normalizePortName(currentInterface.getName()).equals(SyncUtil.normalizePortName(localInterfaceDetailFromSync))){
+                                        relatedInterfaceInDetail = currentInterface;
+                                        break;
+                                    }
+                                }//if we don't find the related pseudowire we must created it, any way it will be created later
+                                if(relatedInterfaceInDetail == null){ 
+                                    HashMap<String, String> defaultAttributes = new HashMap<>();
+                                    defaultAttributes.put(Constants.PROPERTY_NAME, localInterfaceDetailFromSync);
+                                    String newPwId = bem.createObject("Pseudowire", relatedOject.getClassName(), relatedOject.getId(), defaultAttributes, -1);
+                                    relatedInterfaceInDetail = new BusinessObjectLight("Pseudowire", newPwId, localInterfaceDetailFromSync);
+
+                                    aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [Pseudowire] (id:%s)", localInterfaceNameFromSync, newPwId));
+                                    res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("Creating a an interface %s within: %s", localInterfaceNameFromSync, relatedOject), 
+                                                "The inteface was created successfully"));
+                                }
+                                //if both the interface and the localInterface in detail are pseudowires we must relate them
+                                if(matchingLocalInterface.getClassName().equals("Pseudowire") && 
+                                        !pseudowireRels.contains(relatedInterfaceInDetail) && 
+                                        !relatedInterfaceInDetail.getId().equals(matchingLocalInterface.getId()))
+                                {//we must create a relationship pseudowire bewtween the pseudowires
                                         bem.createSpecialRelationship(relatedInterfaceInDetail.getClassName(), relatedInterfaceInDetail.getId(), matchingLocalInterface.getClassName(), matchingLocalInterface.getId(), "pseudowire", true); //NOI18N
                                         aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - pseudowire - %s", matchingLocalInterface, relatedInterfaceInDetail));
                                         res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, "Creating pesudowire relationship",
                                                         String.format("Creating pesudowire relationship between %s - %s", matchingLocalInterface, relatedInterfaceInDetail)));
-                                    }
-                                    if(relatedInterfaceInDetail != null && outputInterface != null && !pseudowireRels.contains(outputInterface)){
-                                        //firts the relationship bewteen the pseudowire and the output interface
-                                        bem.createSpecialRelationship(outputInterface.getClassName(), relatedInterfaceInDetail.getId(), outputInterface.getClassName(), relatedInterfaceInDetail.getId(), "pseudowire", true); //NOI18N
-                                        aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - pseudowire - %s", outputInterface, relatedInterfaceInDetail));
-                                        res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, "Creating pesudowire relationship",
-                                                        String.format("Creating pesudowire relationship between %s - %s", outputInterface, relatedInterfaceInDetail)));
-                                        //second relationship between the output interface and the mplsLink, because is a new mplslink we alway connect the endpointA
-                                        bem.createSpecialRelationship(currentVcId.getName(), currentVcId.getId(), outputInterface.getClassName(), outputInterface.getId(), relSide, true); //NOI18N
-                                        aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s endpointA connected with %s", currentVcId, outputInterface));
-                                        res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_ERROR, "Connecting MPLSLink with local interface", 
-                                                            String.format("The  endpointA of %s was connected to: %s", currentVcId, outputInterface))); 
-                                    }     
-                                    else
-                                        res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_ERROR, "Connecting MPLSLink with local interface", 
-                                                            String.format("unable to determine outputInterface %s was not connected to: %s", currentVcId, outputInterface))); 
-                                    
-                                }//end dealing with pseudowires
-                                else if(matchingLocalInterface.getClassName().equals("VirtualPort") || mem.isSubclassOf(Constants.CLASS_GENERICLOGICALPORT, matchingLocalInterface.getClassName())){
-                                    bem.createSpecialRelationship(currentVcId.getName(), currentVcId.getId(), matchingLocalInterface.getClassName(), matchingLocalInterface.getId(), relSide, true); //NOI18N
-                                    aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - %s", currentVcId, matchingLocalInterface));
-                                    res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_ERROR, "Connecting MPLSLink with local interface", 
-                                                            String.format("The  endpointA of %s was connected to: %s", currentVcId, matchingLocalInterface))); 
-                                    //The ports also has a relationship with an outputinterface
-                                    if(outputInterfaceFromSync != null){
-                                        if(outputInterface == null)
-                                            res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_ERROR, "Searching output interface", 
-                                                String.format("The interface: %s was not found with in: %s, please run the hardware sync first", outputInterfaceFromSync, relatedOject)));
-                                        else{
-                                            //firts the relationship bewteen the pseudowire and the output interface
-                                            bem.createSpecialRelationship(outputInterface.getClassName(), outputInterface.getId(), matchingLocalInterface.getClassName(), matchingLocalInterface.getId(), "pseudowire", true); //NOI18N
-                                            aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - pseudowire - %s", outputInterface, matchingLocalInterface));
-                                            res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, "Creating pesudowire relationship",
-                                                        String.format("Creating pesudowire relationship between %s - %s", outputInterface, matchingLocalInterface)));
-                                        }
+                                }
+                            }
+                            //Output interface
+                            BusinessObjectLight outputInterface = null;
+                            if(outputInterfaceFromSync != null){//if the interface is a Pseudowire the real endpoint of the mpls is the output interface(a port) not the pseudowire
+                                //we search the output interface it in the current interfaces within the realted object
+                                for (BusinessObjectLight currentInterface : currentInterfaces) {
+                                    if (SyncUtil.normalizePortName(currentInterface.getName()).equals(SyncUtil.normalizePortName(outputInterfaceFromSync))){
+                                        outputInterface = currentInterface;
+                                        break;
                                     }
                                 }
                             }
-                        }//end if vcids exists
-                    }//end else inteface was found in the sync device
-                    //we could not found an interface to start the mpls sync
-                    if(matchingLocalInterface == null && !localInterfaceNameFromSync.startsWith("pw"))
-                        res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_ERROR, 
-                                String.format("Check if interface: %s exists within: %s", mplsSyncEntry.getName(), relatedOject), 
-                                    "The inteface was not found, please run hardware/Inteface + IpAddress synchronizations"));
-                    
-                }//end for iterate over mpls links got it from ssh
+                            //we must create the rel between the pseudowire and the output interface
+                            if(!pseudowireRels.contains(outputInterface) && outputInterface != null && matchingLocalInterface.getClassName().equals("Pseudowire")){
+                                bem.createSpecialRelationship(outputInterface.getClassName(), outputInterface.getId(), matchingLocalInterface.getClassName(), matchingLocalInterface.getId(), "pseudowire", true); //NOI18N
+                                aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - pseudowire - %s", outputInterface, matchingLocalInterface));
+                                res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, "Creating pesudowire relationship",
+                                        String.format("Creating pesudowire relationship between %s - %s", outputInterface, matchingLocalInterface)));
+                            }
+                            else if(outputInterfaceFromSync != null && matchingLocalInterface.getClassName().equals("Pseudowire"))
+                                res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_ERROR, "Searching outputInterface",
+                                        String.format("No output interface was found", outputInterfaceFromSync)));
+                            
+                            //VC-IDS we search for the current vcIds created and related within the device that we are sync 
+                            List<BusinessObjectLight> currentMplsLinksRelated = bem.getSpecialAttribute(relatedOject.getClassName(), relatedOject.getId(), "mplsLink");
+                            BusinessObjectLight currentVcId = null;
+                            for(BusinessObjectLight currentMplsLink : currentMplsLinksRelated){
+                                if(currentMplsLink.getName().toLowerCase().equals("vc " + vcIdFromSync) || currentMplsLink.getName().contains(vcIdFromSync)){
+                                    currentVcId = currentMplsLink;
+                                    break;
+                                }
+                            }
+                            //now the vc id and its connections
+                            String relSide = null;
+                            BusinessObjectLight endpointA = null, endpointB = null;
+                            boolean sideA = false, sideB = false; //used to check wich side of the link needs to be connected to the destiny pseudowire
+                            //we check if the localinterface has already relationships with interface in detail or the output interface 
+                            if(currentVcId == null){ //We must create the MPLSLink, if doesn't exists
+                                HashMap<String, String> attributesToBeSet = new HashMap<>();
+                                attributesToBeSet.put(Constants.PROPERTY_NAME, "VC " + vcIdFromSync);
+                                //First we create the mpls link, the name is the vcId
+                                String newMplsLinkId = bem.createSpecialObject("MPLSLink", null, "-1", attributesToBeSet, -1); //NOI18N
+                                BusinessObjectLight newMplsLink = new BusinessObjectLight("MPLSLink", newMplsLinkId, vcIdFromSync); //NOI18N
+                                bem.createSpecialRelationship(relatedOject.getClassName(), relatedOject.getId(), "MPLSLink", newMplsLinkId, RELATIONSHIP_MPLSLINK, false); //NOI18N
+                                //the RelatedObject need to be relat4ed with the mpls link anyway
+                                aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - mplsLink - %s", relatedOject, newMplsLink));
+                                res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("A new created %s was related with %s", newMplsLink, relatedOject), 
+                                                        "The inteface was created successfully"));
+                                //pseudowires needs special treatment
+                                if(matchingLocalInterface.getClassName().equals("Pseudowire") && outputInterface != null && !outputInterface.getClassName().equals("MPLSTunnel")){
+                                        bem.createSpecialRelationship("MPLSLink", newMplsLinkId, outputInterface.getClassName(), outputInterface.getId(), RELATIONSHIP_MPLSENDPOINTA, true); //NOI18N
+                                        aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s endpointA connected with %s", newMplsLink, outputInterface));
+                                        res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, "Connecting MPLSLink with local interface", 
+                                                            String.format("The  endpointA of %s was connected to: %s", newMplsLink, outputInterface))); 
+                                }//end if pseudowwires then we relate the mpls link with the interface
+                                else if(mem.isSubclassOf(Constants.CLASS_GENERICPORT, matchingLocalInterface.getClassName())){
+                                    //Because is a new mplslink we alway connect the endpointA
+                                    bem.createSpecialRelationship("MPLSLink", newMplsLinkId, matchingLocalInterface.getClassName(), matchingLocalInterface.getId(), RELATIONSHIP_MPLSENDPOINTA, true); //NOI18N
+                                    aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s endpointA connected with %s", newMplsLink, matchingLocalInterface));
+                                    res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_ERROR, "Connecting MPLSLink with local interface", 
+                                                        String.format("The  endpointA of %s was connected to: %s", newMplsLink, matchingLocalInterface))); 
+                                }
+                                if(serviceNameFromSync != null)
+                                    checkServices(serviceNameFromSync, newMplsLinkId, vcIdFromSync, dataSourceConfiguration.getId()); 
+                            }//end if vcid is null
+                            else{//the vcid exists
+                                List<BusinessObjectLight> endpointARelationship = bem.getSpecialAttribute(currentVcId.getClassName(), currentVcId.getId(), "mplsEndpointA");
+                                if (!endpointARelationship.isEmpty()) 
+                                    endpointA = endpointARelationship.get(0);
+                                List<BusinessObjectLight> endpointBRelationship = bem.getSpecialAttribute(currentVcId.getClassName(), currentVcId.getId(), "mplsEndpointB");
+                                if (!endpointBRelationship.isEmpty()) 
+                                    endpointB = endpointBRelationship.get(0);
+
+                                if(endpointA != null && endpointA.getId().equals(matchingLocalInterface.getId()) || endpointA != null && outputInterface != null && endpointA.getId().equals(outputInterface.getId())){
+                                    res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_INFORMATION, "Checking MPLSLink endpoints",
+                                       String.format("%s exists and one of its sides is connected with %s", currentVcId, matchingLocalInterface)));
+                                    sideA = true;
+                                }
+                                else if(endpointB != null && endpointB.getId().equals(matchingLocalInterface.getId()) || endpointB != null && outputInterface != null && endpointB.getId().equals(outputInterface.getId())){
+                                    res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_INFORMATION, "Checking MPLSLink endpoints",
+                                       String.format("%s exists and one of it sides is connected with %s", currentVcId, matchingLocalInterface)));
+                                    sideB = true;
+                                }
+
+                                if(!sideA && !sideB && endpointA != null)//no side of the mpls has th right relationships so by default we release and connect the sideA
+                                    res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_WARNING, "Checking MPLSLink connections",
+                                       String.format("%s exists but non of its endpoints are connected with %s", currentVcId, matchingLocalInterface)));
+
+                                if(endpointA == null && !sideB)//something connected but belongs to other object, so we connect the sideB that is free
+                                    relSide = RELATIONSHIP_MPLSENDPOINTA;
+                                else if(endpointB == null && !sideA) //something connected but belongs to other object, so we connect the sideB that is free
+                                    relSide = RELATIONSHIP_MPLSENDPOINTB;
+
+                                if(relSide != null){
+                                    if(matchingLocalInterface.getClassName().equals("Pseudowire") && outputInterface != null && !outputInterface.getClassName().equals("MPLSTunnel")){
+                                            //second relationship between the output interface and the mplsLink, because is a new mplslink we always connect the endpointA
+                                            bem.createSpecialRelationship(currentVcId.getName(), currentVcId.getId(), outputInterface.getClassName(), outputInterface.getId(), relSide, true); //NOI18N
+                                            aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s endpointA connected with %s", currentVcId, outputInterface));
+                                            res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, "Connecting MPLSLink with local interface", 
+                                                                String.format("The  endpointA of %s was connected to: %s", currentVcId, outputInterface))); 
+                                    }//end dealing with pseudowires
+                                    else if(mem.isSubclassOf(Constants.CLASS_GENERICPORT, matchingLocalInterface.getClassName())){
+                                        bem.createSpecialRelationship(currentVcId.getClassName(), currentVcId.getId(), matchingLocalInterface.getClassName(), matchingLocalInterface.getId(), relSide, true); //NOI18N
+                                        aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - %s", currentVcId, matchingLocalInterface));
+                                        res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, "Connecting MPLSLink with local interface", 
+                                                                String.format("The  endpointA of %s was connected to: %s", currentVcId, matchingLocalInterface))); 
+                                    }
+                                }
+                                if(serviceNameFromSync != null)
+                                    checkServices(serviceNameFromSync, currentVcId.getId(), currentVcId.getName(), dataSourceConfiguration.getId()); 
+                            }//end if interface is not null
+                        }//end else inteface was found in the sync device
+                    }//end for iterate over mpls links got it from ssh
+                }
             } catch (InventoryException ex) {
-                res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_ERROR, "Bridge Domain Information Processing", ex.getLocalizedMessage()));
+                res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_ERROR, "MPLS Information Processing", ex.getLocalizedMessage()));
             }
         }
         
         return res;
+    }
+    
+    /**
+     * Checks if a given service name exists in kuwaiba in order to related with 
+     * some resource got it form the sync
+     * @param vcName the service read it form the  if-mib
+     * @param vcId the ip address id of the resource created
+     * @throws ApplicationObjectNotFoundException
+     * @throws BusinessObjectNotFoundException
+     * @throws MetadataObjectNotFoundException
+     * @throws InvalidArgumentException
+     * @throws OperationNotPermittedException 
+     */
+    private void checkServices(String serviceName, String vcId, String vc, long dsConfigId){
+        try{
+            List<BusinessObjectLight> servicesCreatedInKuwaiba = new ArrayList<>();
+            //We get the services created in kuwaiba
+            List<Pool> serviceRoot = bem.getRootPools(Constants.CLASS_GENERICCUSTOMER, 2, false);
+            for(Pool customerPool: serviceRoot){
+                //TelecoOperators
+                List<BusinessObjectLight> poolItems = bem.getPoolItems(customerPool.getId(), -1);
+                for(BusinessObjectLight telecoOperator : poolItems){
+                    List<Pool> poolsInObject = bem.getPoolsInObject(telecoOperator.getClassName(), telecoOperator.getId(), "GenericService");
+                    //Service Pool
+                    for(Pool servicePool : poolsInObject){
+                        List<BusinessObjectLight> actualServices = bem.getPoolItems(servicePool.getId(), -1);
+                        actualServices.forEach((actualService) -> {
+                            servicesCreatedInKuwaiba.add(actualService);
+                        });
+                    }
+                }
+            }
+            boolean related = false;
+            //Now we check the resources with the given serviceName or ifAlias
+            for(BusinessObjectLight currentService : servicesCreatedInKuwaiba){
+                //The service is already created in kuwaiba
+                if(!currentService.getName().isEmpty() && 
+                        (serviceName.equals(currentService.getName()) || serviceName.toLowerCase().contains(currentService.getName().toLowerCase()))){
+                    List<BusinessObjectLight> serviceResources = bem.getSpecialAttribute(currentService.getClassName(), currentService.getId(), "uses");
+                    for (BusinessObjectLight resource : serviceResources) {
+                        if(resource.getId().equals(vcId)){ //The port is already a resource of the service
+                            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION,
+                                    "Searching service",
+                                    String.format("The service: %s is related with the: %s ", serviceName, vc)));
+                            related = true;
+                            break;
+                        }
+                    }//end for search for ip in the resources
+                    if(!related){
+                        bem.createSpecialRelationship(currentService.getClassName(), currentService.getId(), Constants.CLASS_IP_ADDRESS, vcId, "uses", true);
+                        related = true;
+                        res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,
+                                "Searching service",
+                                String.format("The service: %s was related with the: %s ", serviceName, vc)));
+                    }
+                }
+            }//end for
+            if(!related)
+                res.add(new SyncResult(dsConfigId, SyncResult.TYPE_WARNING, 
+                        "Searching service", String.format("The service: %s Not found, : %s will not be related", serviceName, vc)));
+            
+        } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
+                res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
+                        String.format("Serching service %s, related with: %s ", serviceName, vc),
+                        String.format("due to: %s ", ex.getLocalizedMessage())));
+        } catch (InvalidArgumentException ex) {
+            Exceptions.printStackTrace(ex);
+        }
     }
 
     @Override
@@ -567,25 +596,14 @@ public class MplsSyncProvider extends AbstractSyncProvider {
      * @return The string with the result of the command execution.
      * @throws InvalidArgumentException if there was an error executing the command or reading its result.
      */
-    private String readCommandExecutionResult (ChannelExec channel) throws InvalidArgumentException {
-        try {
-            InputStreamReader input= new InputStreamReader(channel.getInputStream());
-            BufferedReader buffer = new BufferedReader(input);
-            
-            
-            System.out.println("a");
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        
-         try (BufferedReader buffer = new BufferedReader(new InputStreamReader(channel.getInputStream()))) {
-//              Supplier<Stream<String>> streamSupplier = () ->  buffer.lines();
-//              System.out.println(streamSupplier.get().findAny());
-            String result = "" ;//= buffer.lines().collect(Collectors.joining("\n"));
+    private String readCommandExecutionResult (ChannelExec channel) {
+        try (BufferedReader buffer = new BufferedReader(new InputStreamReader(channel.getInputStream()))) {
+            String result = buffer.lines().collect(Collectors.joining("\n"));
             return channel.getExitStatus() == 0 ? result : null;
         } catch (IOException ex) {
-            throw new InvalidArgumentException(String.format("Error reading the command execution result: %s", ex.getLocalizedMessage()));
+            Logger.getLogger(MplsSyncProvider.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return null;
     }
 
      /**
