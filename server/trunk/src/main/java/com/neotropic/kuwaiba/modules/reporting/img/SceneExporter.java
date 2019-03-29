@@ -71,7 +71,7 @@ public class SceneExporter {
         return sceneExporter;
     }
     
-    public String buildEndToEndView(RemoteSession remoteSession, WebserviceBean webserviceBean, String serviceClassName, long serviceId) {
+    public String buildEndToEndView(String ipAddress, RemoteSession remoteSession, WebserviceBean webserviceBean, String serviceClassName, String serviceId) {
         RemoteObjectLight rol;
         try {
             rol = webserviceBean.getObjectLight(serviceClassName, serviceId, remoteSession.getIpAddress(), remoteSession.getSessionId());
@@ -116,7 +116,7 @@ public class SceneExporter {
                         0); //Not used
                 return serviceClassName + "_" + serviceId +".png";
             } catch (Exception ex) {
-                Notifications.showError(ex.getMessage());
+////                Notifications.showError(ex.getMessage());
             }
         }
         return null;        
@@ -124,7 +124,7 @@ public class SceneExporter {
     
     public String buildRackView(
         String ipAddress, RemoteSession remoteSession, WebserviceBean webserviceBean, 
-        String rackClassName, long rackId) {
+        String rackClassName, String rackId) {
         
         RackViewImage rackViewImage = RackViewImage.getInstance();
         rackViewImage.setIpAddress(ipAddress);
@@ -161,7 +161,7 @@ public class SceneExporter {
         return null;
     }
         
-    public String buildDeviceLayout(String deviceClassName, long deviceId, WebserviceBean webserviceBean, String ipAddress, RemoteSession remoteSession) {
+    public String buildDeviceLayout(String deviceClassName, String deviceId, WebserviceBean webserviceBean, String ipAddress, RemoteSession remoteSession) {
         try {
             RackViewImage rackViewImage = RackViewImage.getInstance();
             rackViewImage.setIpAddress(ipAddress);
@@ -202,7 +202,7 @@ public class SceneExporter {
         return null;
     }
         
-    public String buildPhysicalPathView(String portClassName, long portId) 
+    public String buildPhysicalPathView(String portClassName, String portId) 
             throws MetadataObjectNotFoundException, ObjectNotFoundException,
             ApplicationObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException
     {

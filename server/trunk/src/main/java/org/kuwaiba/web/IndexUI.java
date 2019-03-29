@@ -75,6 +75,9 @@ public class IndexUI extends UI {
         this.setNavigator(new Navigator(this, this));        
         this.getNavigator().addProvider(viewProvider);
         
+        //if (this.getSession().getRequestHandlers().isEmpty()) // init is called twice: One when the login page is hit for the first time, and once the login success. To avoid addin the same request handler twice, this is verified first
+            
+        
         if (getSession().getAttribute("session") == null)
             this.getNavigator().navigateTo(LoginView.VIEW_NAME);
         else {
@@ -162,8 +165,7 @@ public class IndexUI extends UI {
                             RemoteClassMetadata aClass = wsBean.getClass(className, 
                                     session.getIpAddress(), 
                                     session.getSessionId());
-                            myResponse.getOutputStream().write(aClass.getIcon().length == 0 ? 
-                                    ResourceFactory.createRectangleIcon(Color.BLACK, 32, 32) : aClass.getIcon());
+                            myResponse.getOutputStream().write(aClass.getIcon());
                         } catch (ServerSideException ex) {
                             myResponse.getOutputStream().write(ResourceFactory.createRectangleIcon(Color.BLACK, 24, 24));
                         }

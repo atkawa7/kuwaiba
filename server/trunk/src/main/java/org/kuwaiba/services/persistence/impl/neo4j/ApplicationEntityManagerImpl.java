@@ -37,6 +37,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.DatatypeConverter;
@@ -242,7 +243,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         this.mem = mem;
         
         userLabel = Label.label(Constants.LABEL_USER);
-        inventoryObjectLabel = Label.label(Constants.LABEL_INVENTORY_OBJECTS);
+        inventoryObjectLabel = Label.label(Constants.LABEL_INVENTORY_OBJECT);
         classLabel = Label.label(Constants.LABEL_CLASS);
         groupLabel = Label.label(Constants.LABEL_GROUP);
         listTypeItemLabel = Label.label(Constants.LABEL_LIST_TYPE_ITEM);
@@ -772,7 +773,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
    //List type related methods
     @Override
-   public long createListTypeItem(String className, String name, String displayName)
+   public String createListTypeItem(String className, String name, String displayName)
             throws MetadataObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException {               
        if (name == null || className == null)
            throw new InvalidArgumentException("Item name and class name can not be null");
@@ -798,20 +799,23 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                  throw new OperationNotPermittedException("Can not create instances of abstract classes");
        
            Node newItem = graphDb.createNode(listTypeItemLabel);
+           String uuid = UUID.randomUUID().toString();
+           newItem.setProperty(Constants.PROPERTY_UUID, uuid);
+                      
            newItem.setProperty(Constants.PROPERTY_NAME, name);
            if (displayName != null)
                newItem.setProperty(Constants.PROPERTY_DISPLAY_NAME, displayName);
            newItem.createRelationshipTo(classNode, RelTypes.INSTANCE_OF);
 
            tx.success();
-           GenericObjectList newListType = new GenericObjectList(newItem.getId(), name);
+           GenericObjectList newListType = new GenericObjectList(uuid, name);
            cm.putListType(newListType);
-           return newItem.getId();
+           return uuid;
         }
     }
 
     @Override
-    public void deleteListTypeItem(String className, long oid, boolean realeaseRelationships) 
+    public void deleteListTypeItem(String className, String oid, boolean realeaseRelationships) 
             throws MetadataObjectNotFoundException, OperationNotPermittedException, BusinessObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         try(Transaction tx = graphDb.beginTx())
         {
@@ -848,7 +852,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
             while(relationships.hasNext()){
                 Node child = relationships.next().getStartNode();
-                children.add(new BusinessObjectLight(className, child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME)));
+                String childUuid = child.hasProperty(Constants.PROPERTY_UUID) ? (String) child.getProperty(Constants.PROPERTY_UUID) : null;
+                if (childUuid == null)
+                    throw new InvalidArgumentException(String.format("The list type item with id %s does not have uuid", child.getId()));
+                                    
+                children.add(new BusinessObjectLight(className, childUuid, (String)child.getProperty(Constants.PROPERTY_NAME)));
             }
             tx.success();
         }
@@ -859,7 +867,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public BusinessObjectLight getListTypeItem(String listTypeClassName, long listTypeItemId) throws 
+    public BusinessObjectLight getListTypeItem(String listTypeClassName, String listTypeItemId) throws 
         MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
         
         try (Transaction tx = graphDb.beginTx()) {
@@ -873,9 +881,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             for (Relationship childRel : classNode.getRelationships(RelTypes.INSTANCE_OF)) {
                 Node child = childRel.getStartNode();
-                if (child.getId() == listTypeItemId) { 
+                String childUuid = child.hasProperty(Constants.PROPERTY_UUID) ? (String) child.getProperty(Constants.PROPERTY_UUID) : null;
+                if (childUuid == null)
+                    throw new InvalidArgumentException(String.format("The List Type Item with id %s does not have uuid", child.getId()));
+                                    
+                if (childUuid.equals(listTypeItemId)) { 
                     tx.success();
-                    return new BusinessObjectLight(listTypeClassName, child.getId(), (String) child.getProperty(Constants.PROPERTY_NAME));
+                    return new BusinessObjectLight(listTypeClassName, childUuid, (String) child.getProperty(Constants.PROPERTY_NAME));
                 }
                 
             }
@@ -884,7 +896,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public BusinessObjectLight getListTypeItem(String listTypeClassName, String listTypeItemName) throws 
+    public BusinessObjectLight getListTypeItemWithName(String listTypeClassName, String listTypeItemName) throws 
         MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
         
         try (Transaction tx = graphDb.beginTx()) {
@@ -900,7 +912,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 Node child = childRel.getStartNode();
                 if (child.hasProperty(Constants.PROPERTY_NAME) && child.getProperty(Constants.PROPERTY_NAME).equals(listTypeItemName)) {
                     tx.success();
-                    return new BusinessObjectLight(listTypeClassName, child.getId(), (String) child.getProperty(Constants.PROPERTY_NAME));
+                    String childUuid = child.hasProperty(Constants.PROPERTY_UUID) ? (String) child.getProperty(Constants.PROPERTY_UUID) : null;
+                    if (childUuid == null)
+                        throw new InvalidArgumentException(String.format("The list type item with id %s does not have uuid", child.getId()));                        
+                    return new BusinessObjectLight(listTypeClassName, childUuid, (String) child.getProperty(Constants.PROPERTY_NAME));
                 }
                 
             }
@@ -937,7 +952,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         
     }
     
-    private Node getListTypeItemNode(long listTypeItemId, String listTypeItemClassName) 
+    private Node getListTypeItemNode(String listTypeItemId, String listTypeItemClassName) 
         throws MetadataObjectNotFoundException, InvalidArgumentException {
         
         try (Transaction tx = graphDb.beginTx()) {
@@ -953,7 +968,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             for (Relationship childRel : classNode.getRelationships(RelTypes.INSTANCE_OF)) {
                 Node child = childRel.getStartNode();
-                if (child.getId() == listTypeItemId) {
+                
+                String childUuid = child.hasProperty(Constants.PROPERTY_UUID) ? (String) child.getProperty(Constants.PROPERTY_UUID) : null;
+                if (childUuid == null)
+                    throw new InvalidArgumentException(String.format("The list type item with id %s does not have uuid", child.getId()));
+                
+                if (childUuid.equals(listTypeItemId)) {
                     listTypeItemNode = child;
                     break;
                 }
@@ -967,7 +987,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public long createListTypeItemRelatedView(long listTypeItemId, String listTypeItemClassName, String viewClassName, String name, String description, byte [] structure, byte [] background) 
+    public long createListTypeItemRelatedView(String listTypeItemId, String listTypeItemClassName, String viewClassName, String name, String description, byte [] structure, byte [] background) 
         throws MetadataObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             Node listTypeItemNode = getListTypeItemNode(listTypeItemId, listTypeItemClassName);
@@ -1003,9 +1023,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public ChangeDescriptor updateListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, 
+    public ChangeDescriptor updateListTypeItemRelatedView(String listTypeItemId, String listTypeItemClass, long viewId, 
         String name, String description, byte[] structure, byte[] background) 
-        throws MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException {
+        throws MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node listTypeItemNode = getListTypeItemNode(listTypeItemId, listTypeItemClass);
@@ -1020,8 +1040,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 }
             }
             if (viewNode == null)
-                throw new BusinessObjectNotFoundException("View", viewId); //NOI18N
-            
+                throw new ApplicationObjectNotFoundException(String.format("The view with id %s could not be found", viewId)); 
+                        
             String affectedProperties = "", oldValues = "", newValues = "";
             
             if (name != null) {
@@ -1072,7 +1092,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public ViewObject getListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId) 
+    public ViewObject getListTypeItemRelatedView(String listTypeItemId, String listTypeItemClass, long viewId) 
         throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
         
         try (Transaction tx = graphDb.beginTx()) {
@@ -1107,7 +1127,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override        
-    public List<ViewObjectLight> getListTypeItemRelatedViews(long listTypeItemId, String listTypeItemClass, int limit) 
+    public List<ViewObjectLight> getListTypeItemRelatedViews(String listTypeItemId, String listTypeItemClass, int limit) 
         throws MetadataObjectNotFoundException, InvalidArgumentException {
         
         try (Transaction tx = graphDb.beginTx()) {
@@ -1135,8 +1155,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override        
-    public void deleteListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId) 
-        throws MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException {
+    public void deleteListTypeItemRelatedView(String listTypeItemId, String listTypeItemClass, long viewId) 
+        throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node listTypeItemNode = getListTypeItemNode(listTypeItemId, listTypeItemClass);            
@@ -1154,14 +1174,15 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             }
             tx.success();
         }
-        throw new BusinessObjectNotFoundException("View", viewId);
+        throw new ApplicationObjectNotFoundException(String.format("The view with id %s could not be found", viewId)); 
     }
     
     @Override
-    public List<BusinessObjectLight> getListTypeItemUses(String listTypeItemClass, long listTypeItemId, int limit) throws ApplicationObjectNotFoundException {
+    public List<BusinessObjectLight> getListTypeItemUses(String listTypeItemClass, String listTypeItemId, int limit) 
+        throws ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             
-            String cypherQuery = String.format("MATCH (ltItem:%s)<-[:%s]-(ltUser) WHERE id(ltItem) = %s RETURN ltUser ORDER BY ltUser.name ASC %s", 
+            String cypherQuery = String.format("MATCH (ltItem:%s)<-[:%s]-(ltUser) WHERE ltItem._uuid = %s RETURN ltUser ORDER BY ltUser.name ASC %s", 
                     listTypeItemLabel, RelTypes.RELATED_TO, listTypeItemId, limit < 1 ? "" : "LIMIT " + limit);
             
             List<BusinessObjectLight> res = new ArrayList<>();
@@ -1169,23 +1190,28 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         
             Iterator<Node> objectsThatUseListType = result.columnAs("ltUser");
             
-            objectsThatUseListType.forEachRemaining((node) -> {
+            while (objectsThatUseListType.hasNext()) {
+                Node node = objectsThatUseListType.next();
                 if (node.hasRelationship(RelTypes.INSTANCE_OF))
                     res.add(createRemoteObjectLightFromNode(node));
                 else if (node.hasRelationship(RelTypes.INSTANCE_OF_SPECIAL)) {
                     Node templateObjectClassNode = node.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getEndNode();
+                    
+                    String nodeUuid = node.hasProperty(Constants.PROPERTY_UUID) ? (String) node.getProperty(Constants.PROPERTY_UUID) : null;
+                    if (nodeUuid == null)
+                        throw new InvalidArgumentException(String.format("The object with id %s does not have uuid", node.getId()));
+                    
                     res.add(new BusinessObjectLight((String)templateObjectClassNode.getProperty(Constants.PROPERTY_NAME), 
-                            node.getId(), (String)node.getProperty(Constants.PROPERTY_NAME)));
+                            nodeUuid, (String)node.getProperty(Constants.PROPERTY_NAME)));
                 }
-            });
-
+            }
             tx.success();
             return res;
         }
     }
     
     @Override
-    public List<BusinessObjectLight> getDeviceLayouts() {
+    public List<BusinessObjectLight> getDeviceLayouts() throws InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             String columnName = "elements"; //NOI18N
             String cypherQuery = String.format(
@@ -1202,8 +1228,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             for (Node templateElementNode : Iterators.asIterable(column)) {
                 Node templateObjectClassNode = templateElementNode.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getEndNode();
+                
+                String templateElementNodeUuid = templateElementNode.hasProperty(Constants.PROPERTY_UUID) ? (String) templateElementNode.getProperty(Constants.PROPERTY_UUID) : null;
+                if (templateElementNodeUuid == null)
+                    throw new InvalidArgumentException(String.format("The template with id %s does not have uuid", templateElementNode.getId()));                    
+                                
                 templateElements.add(new BusinessObjectLight((String)templateObjectClassNode.getProperty(Constants.PROPERTY_NAME), 
-                        templateElementNode.getId(), (String)templateElementNode.getProperty(Constants.PROPERTY_NAME)));
+                    templateElementNodeUuid, (String)templateElementNode.getProperty(Constants.PROPERTY_NAME)));
             }
                 
                         
@@ -1212,7 +1243,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public byte[] getDeviceLayoutStructure(long oid, String className) throws ApplicationObjectNotFoundException {
+    public byte[] getDeviceLayoutStructure(String oid, String className) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
@@ -1224,7 +1255,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             QName tagDevice = new QName("device"); // NOI18N
             xmlew.add(xmlef.createStartElement(tagDevice, null, null));
-            xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), Long.toString(oid)));
+            xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), oid));
             xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASS_NAME), className));
             addDeviceModelAsXML(oid, xmlew, xmlef);
             xmlew.add(xmlef.createEndElement(tagDevice, null));
@@ -1242,14 +1273,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         }
     }
     
-    private void addDeviceNodeChildrenAsXml(long id, String className, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException, ApplicationObjectNotFoundException {
+    private void addDeviceNodeChildrenAsXml(String id, String className, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException, ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             
             String columnName = "childNode"; //NOI18N
 
             String cypherQuery = String.format(
                 "MATCH (classNode)<-[:%s]-(objectNode)<-[:%s]-(objChildNode) "
-              + "WHERE id(objectNode)={id} AND classNode.name={className}"
+              + "WHERE objectNode._uuid={id} AND classNode.name={className}"
               + "RETURN objChildNode AS %s "
               + "ORDER BY objChildNode.name ASC "
               , RelTypes.INSTANCE_OF, RelTypes.CHILD_OF, columnName);
@@ -1266,10 +1297,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         }
     }
     
-    private void addDeviceNodeAsXML(Node deviceNode, long parentId, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException, ApplicationObjectNotFoundException {
+    private void addDeviceNodeAsXML(Node deviceNode, String parentId, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException, ApplicationObjectNotFoundException, InvalidArgumentException {
         QName tagDevice = new QName("device"); // NOI18N
         
         long id = deviceNode.getId();
+        String deviceNodeUuid = deviceNode.hasProperty(Constants.PROPERTY_UUID) ? (String) deviceNode.getProperty(Constants.PROPERTY_UUID) : null;
+        if (deviceNodeUuid == null)
+            throw new InvalidArgumentException(String.format("The object with id %s does not have uuid", deviceNode.getId()));
+        
         String className = Util.getClassName(deviceNode);
 
         xmlew.add(xmlef.createStartElement(tagDevice, null, null));
@@ -1277,19 +1312,19 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), Long.toString(id)));
         xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_NAME), deviceNode.getProperty(Constants.PROPERTY_NAME).toString()));
         xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASS_NAME), className));
-        xmlew.add(xmlef.createAttribute(new QName("parentId"), Long.toString(parentId))); //NOI18N     
+        xmlew.add(xmlef.createAttribute(new QName("parentId"), parentId)); //NOI18N     
         
-        addDeviceModelAsXML(id, xmlew, xmlef);
+        addDeviceModelAsXML(deviceNodeUuid, xmlew, xmlef);
         
         xmlew.add(xmlef.createEndElement(tagDevice, null));
         
-        addDeviceNodeChildrenAsXml(id, className, xmlew, xmlef);
+        addDeviceNodeChildrenAsXml(deviceNodeUuid, className, xmlew, xmlef);
     }
     
-    private void addDeviceModelAsXML(long id, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException, ApplicationObjectNotFoundException {
+    private void addDeviceModelAsXML(String id, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException, ApplicationObjectNotFoundException, InvalidArgumentException {
         String cypherQuery = String.format(
             "MATCH (objectNode)-[r1:%s]->(modelNode) "
-          + "WHERE id(objectNode) = %s "
+          + "WHERE objectNode._uuid = \"%s\" "
           + "AND r1.name=\"model\" "
           + "RETURN modelNode;",
             RelTypes.RELATED_TO, id);
@@ -1303,6 +1338,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 Node modelNode = column.next();
 
                 long modelId = modelNode.getId();
+                String modelUuid = modelNode.hasProperty(Constants.PROPERTY_UUID) ? (String) modelNode.getProperty(Constants.PROPERTY_UUID) : null;
+                if (modelUuid == null)
+                    throw new InvalidArgumentException(String.format("The list type item with id %s does not have uuid", modelNode.getId()));
+                                                        
                 String modelName = modelNode.getProperty(Constants.PROPERTY_NAME) != null ? (String) modelNode.getProperty(Constants.PROPERTY_NAME) : null;
 
                 cypherQuery = String.format(""
@@ -1335,7 +1374,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     long modelViewId = viewNode.getId();
 
                     try {
-                        ViewObject modeViewObj = getListTypeItemRelatedView(modelId, modelClassName, modelViewId);
+                        ViewObject modeViewObj = getListTypeItemRelatedView(modelUuid, modelClassName, modelViewId);
 
                         QName tagModel = new QName("model");
 
@@ -1382,7 +1421,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
             
     @Override
-    public long createObjectRelatedView(long oid, String objectClass, String name, String description, String viewClassName, 
+    public long createObjectRelatedView(String oid, String objectClass, String name, String description, String viewClassName, 
         byte[] structure, byte[] background) 
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
@@ -1453,9 +1492,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public ChangeDescriptor updateObjectRelatedView(long oid, String objectClass, long viewId, 
+    public ChangeDescriptor updateObjectRelatedView(String oid, String objectClass, long viewId, 
     String name, String description, byte[] structure, byte[] background)
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
         
         if (objectClass == null)
             throw new InvalidArgumentException("The root object does not have any view");
@@ -1473,7 +1512,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             }
 
             if (viewNode == null)
-                throw new BusinessObjectNotFoundException("View", viewId); //NOI18N
+                throw new ApplicationObjectNotFoundException(String.format("The view with id %s could not be found", viewId)); //NOI18N
 
             if (name != null) {
                 oldValues +=  " " + viewNode.getProperty(Constants.PROPERTY_NAME);
@@ -1586,8 +1625,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public ViewObject getObjectRelatedView(long oid, String objectClass, long viewId)
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+    public ViewObject getObjectRelatedView(String oid, String objectClass, long viewId)
+            throws ApplicationObjectNotFoundException, BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node instance = getInstanceOfClass(objectClass, oid);
@@ -1615,11 +1654,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 }
             }
         }
-        throw new BusinessObjectNotFoundException("View", viewId);
+        throw new ApplicationObjectNotFoundException(String.format("View Object with id %s could not be found. It might have been deleted already", viewId));
     }
 
     @Override
-    public List<ViewObjectLight> getObjectRelatedViews(long oid, String objectClass, int limit)
+    public List<ViewObjectLight> getObjectRelatedViews(String oid, String objectClass, int limit)
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
@@ -1674,13 +1713,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public ViewObject getGeneralView(long viewId) throws BusinessObjectNotFoundException {
+    public ViewObject getGeneralView(long viewId) throws ApplicationObjectNotFoundException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node gView = Util.findNodeByLabelAndId(generalViewsLabel, viewId);
 
             if (gView == null)
-                throw new BusinessObjectNotFoundException("View", viewId);
+                throw new ApplicationObjectNotFoundException(String.format("View Object with id %s could not be found. It might have been deleted already", viewId));
 
             ViewObject aView = new ViewObject(gView.getId(),
                     gView.hasProperty(Constants.PROPERTY_NAME) ? (String)gView.getProperty(Constants.PROPERTY_NAME) : null,
@@ -1862,7 +1901,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public List<ResultRecord> executeQuery(ExtendedQuery query) throws MetadataObjectNotFoundException {
+    public List<ResultRecord> executeQuery(ExtendedQuery query) throws MetadataObjectNotFoundException, InvalidArgumentException {
         try(Transaction tx = graphDb.beginTx()) {
             CypherQueryBuilder cqb = new CypherQueryBuilder();
             cqb.setClassNodes(getNodesFromQuery(query));
@@ -1912,10 +1951,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     //Pools
     @Override
-    public long createRootPool(String name, String description, String instancesOfClass, int type)
+    public String createRootPool(String name, String description, String instancesOfClass, int type)
             throws MetadataObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
-            Node poolNode =  graphDb.createNode(poolLabel);
+            Node poolNode = graphDb.createNode(poolLabel);
+            String uuid = UUID.randomUUID().toString();
+            poolNode.setProperty(Constants.PROPERTY_UUID, uuid);
 
             if (name != null)
                 poolNode.setProperty(Constants.PROPERTY_NAME, name);
@@ -1932,15 +1973,17 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             poolNode.setProperty(Constants.PROPERTY_CLASS_NAME, instancesOfClass);
                                                 
             tx.success();
-            return poolNode.getId();
+            return uuid;
         }
     }
     
     @Override
-    public long createPoolInObject(String parentClassname, long parentId, String name, String description, String instancesOfClass, int type)
+    public String createPoolInObject(String parentClassname, String parentId, String name, String description, String instancesOfClass, int type)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
             Node poolNode =  graphDb.createNode(poolLabel);
+            String uuid = UUID.randomUUID().toString();
+            poolNode.setProperty(Constants.PROPERTY_UUID, uuid);
 
             if (name != null)
                 poolNode.setProperty(Constants.PROPERTY_NAME, name);
@@ -1956,22 +1999,24 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             poolNode.setProperty(Constants.PROPERTY_CLASS_NAME, instancesOfClass);
             
-            Node parentNode = Util.findNodeByLabelAndId(inventoryObjectLabel, parentId);
+            Node parentNode = Util.findNodeByLabelAndUuid(inventoryObjectLabel, parentId);
             if (parentNode == null)
                 throw new BusinessObjectNotFoundException(parentClassname, parentId);
             
             poolNode.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);          
             
             tx.success();
-            return poolNode.getId();
+            return uuid;
         }
     }
     
     @Override
-    public long createPoolInPool(long parentId, String name, String description, String instancesOfClass, int type)
+    public String createPoolInPool(String parentId, String name, String description, String instancesOfClass, int type)
             throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             Node poolNode =  graphDb.createNode(poolLabel);
+            String uuid = UUID.randomUUID().toString();
+            poolNode.setProperty(Constants.PROPERTY_UUID, uuid);
 
             if (name != null)
                 poolNode.setProperty(Constants.PROPERTY_NAME, name);
@@ -1987,7 +2032,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             poolNode.setProperty(Constants.PROPERTY_CLASS_NAME, instancesOfClass);
             
-            Node parentNode = Util.findNodeByLabelAndId(poolLabel, parentId);
+            Node parentNode = Util.findNodeByLabelAndUuid(poolLabel, parentId);
             
             if (parentNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A pool with id %s could not be found", parentId));
@@ -1995,13 +2040,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             poolNode.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);          
                         
             tx.success();
-            return poolNode.getId();
+            return uuid;
         }
     }
         
-    private void deletePool(long id) throws ApplicationObjectNotFoundException, OperationNotPermittedException {
+    private void deletePool(String id) throws ApplicationObjectNotFoundException, OperationNotPermittedException {
         try(Transaction tx = graphDb.beginTx()) {
-            Node poolNode = Util.findNodeByLabelAndId(poolLabel, id);
+            Node poolNode = Util.findNodeByLabelAndUuid(poolLabel, id);
             if (poolNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A pool with id %s does not exist", id));
 
@@ -2012,15 +2057,15 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public void deletePools(long[] ids) throws ApplicationObjectNotFoundException, OperationNotPermittedException {
-        for (long id : ids)
+    public void deletePools(String[] ids) throws ApplicationObjectNotFoundException, OperationNotPermittedException {
+        for (String id : ids)
             deletePool(id);
     }
     
     @Override
-    public ChangeDescriptor setPoolProperties(long poolId, String name, String description) {
+    public ChangeDescriptor setPoolProperties(String poolId, String name, String description) {
         try (Transaction tx = graphDb.beginTx()) {
-            Node poolNode = Util.findNodeByLabelAndId(poolLabel, poolId);
+            Node poolNode = Util.findNodeByLabelAndUuid(poolLabel, poolId);
             String affectedProperties = "", oldValues = "", newValues = "";
             
             if(name != null) {
@@ -2050,7 +2095,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public List<ActivityLogEntry> getBusinessObjectAuditTrail(String objectClass, long objectId, int limit) 
+    public List<ActivityLogEntry> getBusinessObjectAuditTrail(String objectClass, String objectId, int limit) 
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         try(Transaction tx = graphDb.beginTx()) {
             if (!mem.isSubclassOf(Constants.CLASS_INVENTORYOBJECT, objectClass))
@@ -2253,11 +2298,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public void createObjectActivityLogEntry(String userName, String className, long oid, int type, 
+    public void createObjectActivityLogEntry(String userName, String className, String oid, int type, 
         String affectedProperties, String oldValues, String newValues, String notes) throws ApplicationObjectNotFoundException, BusinessObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
         
-            Node objectNode = Util.findNodeByLabelAndId(inventoryObjectLabel, oid);
+            Node objectNode = Util.findNodeByLabelAndUuid(inventoryObjectLabel, oid);
             
             if (objectNode == null)
                 throw new BusinessObjectNotFoundException(className, oid);
@@ -2273,7 +2318,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public void createObjectActivityLogEntry(String userName, String className, long oid,  
+    public void createObjectActivityLogEntry(String userName, String className, String oid,  
             int type, ChangeDescriptor changeDescriptor) throws ApplicationObjectNotFoundException, BusinessObjectNotFoundException {
         createObjectActivityLogEntry(userName, className, oid, type, changeDescriptor.getAffectedProperties(), changeDescriptor.getOldValues(), changeDescriptor.getNewValues(), changeDescriptor.getNotes());
     }
@@ -3288,7 +3333,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     
                     if (attributeValues[i] != null && !attributeValues[i].equals("0") ) { //NOI18N 
                         
-                        Node listTypeItemNode = Util.findNodeByLabelAndId(listTypeItemLabel, Long.valueOf(attributeValues[i]));
+                        Node listTypeItemNode = Util.findNodeByLabelAndUuid(listTypeItemLabel, attributeValues[i]);
 
                         if (listTypeItemNode == null)
                             throw new ApplicationObjectNotFoundException(String.format("A list type %s with id %s could not be found", attributeType, attributeValues[i]));
@@ -3634,8 +3679,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         return className;
     }
     
-    private Node getInstanceOfClass(String className, long oid) 
-            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException
+    private Node getInstanceOfClass(String className, String oid) 
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException
     {
         //Note that for this method, the caller should handle the transaction
         //if any of the parameters is null, return the dummy root
@@ -3651,7 +3696,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
         while (instances.hasNext()){
             Node otherSide = instances.next().getStartNode();
-            if (otherSide.getId() == oid)
+            String otherSideUuid = otherSide.hasProperty(Constants.PROPERTY_UUID) ? (String) otherSide.getProperty(Constants.PROPERTY_UUID) : null;
+            if (otherSideUuid == null)
+                throw new InvalidArgumentException(String.format("The node with id %s does not have uuid", otherSide.getId()));
+                        
+            if (otherSideUuid.equals(oid))
                 return otherSide;
         }
         throw new BusinessObjectNotFoundException(className, oid);
@@ -3726,8 +3775,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     // Bookmarks
     @Override
-    public void addObjectTofavoritesFolder(String objectClass, long objectId, long favoritesFolderId, long userId)
-            throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException {
+    public void addObjectTofavoritesFolder(String objectClass, String objectId, long favoritesFolderId, long userId)
+            throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException{
         
         try (Transaction tx = graphDb.beginTx()) {
             Node favoritesFolderNode = getFavoritesFolderForUser(favoritesFolderId, userId);
@@ -3749,8 +3798,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public void removeObjectFromfavoritesFolder(String objectClass, long objectId, long favoritesFolderId, long userId) 
-        throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, BusinessObjectNotFoundException {
+    public void removeObjectFromfavoritesFolder(String objectClass, String objectId, long favoritesFolderId, long userId) 
+        throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
                 
         try (Transaction tx = graphDb.beginTx()) {
             
@@ -3853,7 +3902,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public List<BusinessObjectLight> getObjectsInFavoritesFolder(long favoritesFolderId, long userId, int limit) 
-        throws ApplicationObjectNotFoundException {
+        throws ApplicationObjectNotFoundException, InvalidArgumentException {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node favoritesFolderNode = getFavoritesFolderForUser(favoritesFolderId, userId);
@@ -3872,8 +3921,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 }
                 Node bookmarkItem = relationship.getStartNode();
                 
+                String bookmarkItemUuid = bookmarkItem.hasProperty(Constants.PROPERTY_UUID) ? (String) bookmarkItem.getProperty(Constants.PROPERTY_UUID) : null;
+                if (bookmarkItemUuid == null)
+                    throw new InvalidArgumentException(String.format("The object with id %s does not have uuid", bookmarkItem.getId()));
+                                                                
                 BusinessObjectLight rbol = new BusinessObjectLight(Util.getClassName(bookmarkItem),
-                    bookmarkItem.getId(), 
+                    bookmarkItemUuid, 
                     bookmarkItem.hasProperty(Constants.PROPERTY_NAME) ? (String) bookmarkItem.getProperty(Constants.PROPERTY_NAME) : null);
                 
                 bookmarkItems.add(rbol);
@@ -3883,8 +3936,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public List<FavoritesFolder> getFavoritesFoldersForObject(long userId, String objectClass, long objectId) 
-        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException {
+    public List<FavoritesFolder> getFavoritesFoldersForObject(long userId, String objectClass, String objectId) 
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node objectNode = getInstanceOfClass(objectClass, objectId);
@@ -3996,8 +4049,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public void checkRelationshipByAttributeValueBusinessRules(String sourceObjectClassName, long sourceObjectId ,
-            String targetObjectClassName, long targetObjectId) throws BusinessRuleException, InvalidArgumentException  {
+    public void checkRelationshipByAttributeValueBusinessRules(String sourceObjectClassName, String sourceObjectId ,
+            String targetObjectClassName, String targetObjectId) throws BusinessRuleException, InvalidArgumentException  {
         
         if (!Boolean.valueOf(getConfiguration().getProperty("enforceBusinessRules", "false")))
             return;
@@ -4028,11 +4081,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         if (sourceObjectAttributeConstraint.isEmpty() || targetObjectAttributeConstraint.isEmpty()) //This link can be connected to any object
                             return;
                         
-                        Node sourceInstance = Util.findNodeByLabelAndId(inventoryObjectLabel, sourceObjectId);
+                        Node sourceInstance = Util.findNodeByLabelAndUuid(inventoryObjectLabel, sourceObjectId);
                         String sourceInstanceAttributeValue = Util.getAttributeFromNode(sourceInstance, (String)businessRuleNode.getProperty("constraint2"));
                         
                         if (sourceObjectAttributeConstraint.equals(sourceInstanceAttributeValue)) {
-                            Node targetInstance = Util.findNodeByLabelAndId(inventoryObjectLabel, targetObjectId);
+                            Node targetInstance = Util.findNodeByLabelAndUuid(inventoryObjectLabel, targetObjectId);
                             String targetInstanceAttributeValue = Util.getAttributeFromNode(targetInstance, (String)businessRuleNode.getProperty("constraint3"));
                             
                             if (!targetObjectAttributeConstraint.equals(targetInstanceAttributeValue))
@@ -4083,13 +4136,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public SyncDataSourceConfiguration getSyncDataSourceConfiguration(long objectId) 
+    public SyncDataSourceConfiguration getSyncDataSourceConfiguration(String objectId) 
             throws InvalidArgumentException, ApplicationObjectNotFoundException, 
             OperationNotPermittedException, MetadataObjectNotFoundException, UnsupportedPropertyException {
         try (Transaction tx = graphDb.beginTx()) {
-            Node inventoryObjectNode = Util.findNodeByLabelAndId(inventoryObjectLabel, objectId);
+            Node inventoryObjectNode = Util.findNodeByLabelAndUuid(inventoryObjectLabel, objectId);
 
-            Node syncDatasourceConfiguration;
+            Node syncDatasourceConfiguration = null;
             if(inventoryObjectNode != null){ 
                 if(!inventoryObjectNode.hasRelationship(RelTypes.HAS_CONFIGURATION))
                    throw new OperationNotPermittedException(String.format("The object id: %s does not have a sync datasource configuration", objectId));
@@ -4097,9 +4150,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 syncDatasourceConfiguration = inventoryObjectNode.getSingleRelationship(RelTypes.HAS_CONFIGURATION, Direction.INCOMING).getStartNode();
             }
             else{ 
-                syncDatasourceConfiguration = graphDb.getNodeById(objectId);
-                if(!syncDatasourceConfiguration.hasRelationship(RelTypes.HAS_CONFIGURATION))
-                    throw new OperationNotPermittedException(String.format("The sync data source configuration with id: %s is not related with anything", objectId));
+//                syncDatasourceConfiguration = graphDb.getNodeBy(objectId);
+//                if(!syncDatasourceConfiguration.hasRelationship(RelTypes.HAS_CONFIGURATION))
+//                    throw new OperationNotPermittedException(String.format("The sync data source configuration with id: %s is not related with anything", objectId));
             }
             tx.success();
             return Util.createSyncDataSourceConfigFromNode(syncDatasourceConfiguration);
@@ -4185,7 +4238,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public long createSyncDataSourceConfig(long objectId, long syncGroupId, String configName, List<StringPair> parameters) throws ApplicationObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException {
+    public long createSyncDataSourceConfig(String objectId, long syncGroupId, String configName, List<StringPair> parameters) throws ApplicationObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException {
         if (configName == null || configName.trim().isEmpty())
                 throw new InvalidArgumentException("The sync configuration name can not be empty");
         
@@ -4195,7 +4248,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if(syncGroupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The sync group with id %s could not be find", syncGroupId));
                        
-            Node objectNode = Util.findNodeByLabelAndId(inventoryObjectLabel, objectId);
+            Node objectNode = Util.findNodeByLabelAndUuid(inventoryObjectLabel, objectId);
             if(syncGroupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The object with id %s could not be find", objectId));
             
@@ -4543,7 +4596,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public List<ProcessDefinition> getProcessDefinitions() {
-        return ProcessCache.getInstance().getProcessDefinitions();
+        try {
+            return ProcessCache.getInstance().getProcessDefinitions();
+        } catch (InventoryException ex) {
+            Exceptions.printStackTrace(ex);
+            return null;
+        }
     }
     
     @Override
@@ -4559,14 +4617,18 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 ProcessCache.getInstance().setProcessInstance(processInstance);
                 return ProcessCache.getInstance().getProcessInstance(processInstance.getId());
             } catch (InventoryException ex) {
-                throw new ApplicationObjectNotFoundException(String.format("The Process instance with id %s could not be found", processInstanceId));
+                throw new ApplicationObjectNotFoundException(String.format("The Process Instance with id %s could not be found", processInstanceId));
             }
         }
     }
     
     @Override
-    public void reloadProcessDefinitions() {
-        ProcessCache.getInstance().updateProcessDefinitions();
+    public void reloadProcessDefinitions() throws InvalidArgumentException {
+        try {
+            ProcessCache.getInstance().reloadProcessDefinitions();
+        } catch (InventoryException ex) {
+            throw new InvalidArgumentException(ex.getMessage());
+        }
     }
 
     @Override
@@ -4806,8 +4868,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         try (Transaction tx = graphDb.beginTx()) {
             List<Pool> res = new ArrayList<>();
             graphDb.findNodes(configurationVariablesPools).stream().forEach((poolNode) -> {
-                res.add(new Pool(poolNode.getId(), (String)poolNode.getProperty(Constants.PROPERTY_NAME), (String)poolNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
-                        "Pool of Configuration Variables", POOL_TYPE_MODULE_ROOT));
+                String poolNodeUuid = poolNode.hasProperty(Constants.PROPERTY_UUID) ? (String) poolNode.getProperty(Constants.PROPERTY_UUID) : null;
+                if (poolNodeUuid != null) {
+                    res.add(new Pool(poolNodeUuid, (String)poolNode.getProperty(Constants.PROPERTY_NAME), (String)poolNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
+                            "Pool of Configuration Variables", POOL_TYPE_MODULE_ROOT));
+                }
             });
             
             tx.success();
@@ -5190,10 +5255,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     /**
      * TODO: The following two methods are duplicated in BEM, this should be re-designed
      */
-    private BusinessObjectLight createRemoteObjectLightFromNode (Node instance) {
+    private BusinessObjectLight createRemoteObjectLightFromNode (Node instance) throws InvalidArgumentException {
         Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode();
         
-        BusinessObjectLight res = new BusinessObjectLight((String)classNode.getProperty(Constants.PROPERTY_NAME), instance.getId(), 
+        String instanceUuid = instance.hasProperty(Constants.PROPERTY_UUID) ? (String) instance.getProperty(Constants.PROPERTY_UUID) : null;
+        if (instanceUuid == null)
+            throw new InvalidArgumentException(String.format("The object with id %s does not have uuid", instance.getId()));
+        
+        BusinessObjectLight res = new BusinessObjectLight((String)classNode.getProperty(Constants.PROPERTY_NAME), instanceUuid, 
             (String)instance.getProperty(Constants.PROPERTY_NAME));
         
         return res;
@@ -5282,8 +5351,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new InvalidArgumentException(String.format("The object with %s (%s) is related to list type %s (%s), but that is not consistent with the data model", 
                             instance.getProperty(Constants.PROPERTY_NAME), instance.getId(), relationship.getEndNode().getProperty(Constants.PROPERTY_NAME), relationship.getEndNode().getId()));
         }
-        BusinessObject res = new BusinessObject(classMetadata.getName(), instance.getId(), name, attributes);
-
+        String instanceUuid = instance.hasProperty(Constants.PROPERTY_UUID) ? (String) instance.getProperty(Constants.PROPERTY_UUID) : null;
+        if (instanceUuid == null)
+            throw new InvalidArgumentException(String.format("The object with id %s does not have uuid", instance.getId()));
+        
+        BusinessObject res = new BusinessObject(classMetadata.getName(), instanceUuid, name, attributes);
+        
         return res;
     }
     

@@ -193,7 +193,7 @@ public class DeviceLayoutRenderer {
         if (structureRepository != null) {
             for (RemoteObjectLight key : structureRepository.keySet()) {
                 
-                if (key.getId() == deviceModelValue.getId())
+                if (key.getId() != null && deviceModelValue.getId() != null && key.getId().equals(deviceModelValue.getId()))
                     deviceLayoutObjView = structureRepository.get(key);
             }
         }
@@ -347,7 +347,7 @@ public class DeviceLayoutRenderer {
         
         for (RemoteObjectLight aNode : nodes.keySet()) {
             
-            if (aNode.getId() == device.getId())
+            if (aNode.getId() != null && device.getId() != null && aNode.getId().equals(device.getId()))
                 lst = nodes.get(aNode);
         }
         
@@ -445,10 +445,10 @@ public class DeviceLayoutRenderer {
                         Shape shape = null;
                         
                         if (CustomShape.SHAPE_TYPE.equals(shapeType)) {
-                            long id = Long.valueOf(reader.getAttributeValue(null, "id"));
+                            String id = reader.getAttributeValue(null, "id");
                             
                             for (RemoteObjectLight listItem : structureRepository.keySet()) {
-                                if (listItem.getId() == id && listItem instanceof RemoteObject) {
+                                if (listItem.getId() != null && id != null && listItem.getId().equals(id) && listItem instanceof RemoteObject) {
                                     shape = ShapeFactory.getInstance().getCustomShape((RemoteObject) listItem);
                                     break;
                                 }
@@ -748,7 +748,7 @@ public class DeviceLayoutRenderer {
         
         for (RemoteObjectLight key : nodes.keySet()) {
             
-            if (key.getId() == slotObj.getId()) {
+            if (key.getId() != null && slotObj.getId() != null && key.getId().equals(slotObj.getId())) {
                 children = nodes.get(key);
                 break;
             }
@@ -770,7 +770,7 @@ public class DeviceLayoutRenderer {
         
         for (RemoteObjectLight key : hierarchy.keySet()) {
             
-            if (object.getId() == key.getId()) {
+            if (object.getId() != null && key.getId() != null && object.getId().equals(key.getId())) {
                 
                 List<RemoteObjectLight> children = hierarchy.get(key);
 
@@ -866,7 +866,7 @@ public class DeviceLayoutRenderer {
         
         for (RemoteObjectLight aNode : nodes.keySet()) {
                         
-            if (aNode.getId() == device.getId())
+            if (aNode.getId() != null && device.getId() != null && aNode.getId().equals(device.getId()))
                 lst = nodes.get(aNode);                        
         }
                 

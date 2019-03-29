@@ -131,7 +131,7 @@ public class SimpleCorrelation {
         throw new ServerSideException("No slot or port with name " + childName + " was found in device " + deviceName);
     }
     
-    public static AssetLevelCorrelatedInformation servicesInPorts(List<BusinessObject> ports, BusinessEntityManager bem) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException {
+    public static AssetLevelCorrelatedInformation servicesInPorts(List<BusinessObject> ports, BusinessEntityManager bem) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
         List<RemoteObjectLight> rawServices = new ArrayList<>();
         
         for (BusinessObject port : ports) {
@@ -159,7 +159,7 @@ public class SimpleCorrelation {
             BusinessObjectLight customer = bem.getFirstParentOfClass(rawService.getClassName(), rawService.getId(), Constants.CLASS_GENERICCUSTOMER);
             if (customer != null) {//Services without customers will be ignored. This shouldn't happen, though
                 if (!rawCorrelatedInformation.containsKey(customer))
-                    rawCorrelatedInformation.put(customer, new ArrayList<RemoteObjectLight>());
+                    rawCorrelatedInformation.put(customer, new ArrayList<>());
 
                 rawCorrelatedInformation.get(customer).add(rawService);
             }

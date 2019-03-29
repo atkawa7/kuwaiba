@@ -19,6 +19,7 @@ package org.kuwaiba.apis.persistence.business;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import org.kuwaiba.apis.persistence.application.Validator;
 
 /**
@@ -30,7 +31,7 @@ public class BusinessObjectLight implements Serializable, Comparable<BusinessObj
     /**
      * Object's id
      */
-    private long id;
+    private String id;
     /**
      * Object's name
      */
@@ -44,18 +45,18 @@ public class BusinessObjectLight implements Serializable, Comparable<BusinessObj
      */
     private List<Validator> validators;
 
-    public BusinessObjectLight(String className, long id, String name) {
+    public BusinessObjectLight(String className, String id, String name) {
         this.id = id;
         this.name = name;
         this.className = className;
         this.validators = new ArrayList<>();
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -99,13 +100,13 @@ public class BusinessObjectLight implements Serializable, Comparable<BusinessObj
            return false;
        if (!(obj instanceof BusinessObjectLight))
            return false;
-       return (this.id == ((BusinessObjectLight)obj).getId());
-   }
-
+       return (this.getId() == null ? ((BusinessObjectLight)obj).getId() == null : this.getId().equals(((BusinessObjectLight)obj).getId()));
+    }
+    
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 47 * hash + (int) (this.id ^ (this.id >>> 32));
+        int hash = 7;
+        hash = 17 * hash + Objects.hashCode(this.id);
         return hash;
     }
 }

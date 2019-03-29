@@ -81,14 +81,14 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
         PollResult pollResult = new PollResult();
         
         for (SyncDataSourceConfiguration dsConfig : syncGroup.getSyncDataSourceConfigurations()) {
-            long id = -1L;
+            String id = null;
             String className = null;                
             String address = null;
             String port = null;
             //String community = null;
 
             if (dsConfig.getParameters().containsKey("deviceId")) //NOI18N
-                id = Long.valueOf(dsConfig.getParameters().get("deviceId")); //NOI18N
+                id = dsConfig.getParameters().get("deviceId"); //NOI18N
             else 
                 pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                     new InvalidArgumentException(String.format(I18N.gm("parameter_deviceId_no_defined"), syncGroup.getName(), syncGroup.getId())));
@@ -224,7 +224,7 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
             
             EntPhysicalSynchronizer x = new EntPhysicalSynchronizer(entrySet.getKey().getId(),
                     new BusinessObjectLight(entrySet.getKey().getParameters().get("deviceClass"), 
-                    Long.valueOf(entrySet.getKey().getParameters().get("deviceId")), ""),
+                    entrySet.getKey().getParameters().get("deviceId"), ""),
                     mibTables);
             
             try {

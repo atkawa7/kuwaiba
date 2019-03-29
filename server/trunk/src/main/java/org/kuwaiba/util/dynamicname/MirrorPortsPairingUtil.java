@@ -18,7 +18,6 @@ package org.kuwaiba.util.dynamicname;
 import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.apis.persistence.PersistenceService;
-import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -35,11 +34,11 @@ public class MirrorPortsPairingUtil {
     /**
      * The created mirror ports
      */
-    private List<StringPair> ports;
+    private final List<StringPair> ports;
     /**
      * The class of the ports created
      */
-    private String objectClassName;
+    private final String objectClassName;
 
     public MirrorPortsPairingUtil(List<StringPair> ports, String className) {
         this.ports = ports;
@@ -47,8 +46,8 @@ public class MirrorPortsPairingUtil {
     }
     
     public void mirrorProts() throws InvalidArgumentException{
-        List<Long> endPointsA = new ArrayList();
-        List<Long> endPointsB = new ArrayList();
+        List<String> endPointsA = new ArrayList();
+        List<String> endPointsB = new ArrayList();
         
         if(ports.size() % 2 == 0){
             for (int i=0; i < ports.size(); i++) {
@@ -58,8 +57,8 @@ public class MirrorPortsPairingUtil {
                         StringPair endPointB = ports.get(j);
                         if(endPointB != null && !(endPointB.getKey().equals(endPointA.getKey())) ){
                             if(matchMirrorPortsNames(endPointA.getValue(), endPointB.getValue())){
-                                endPointsA.add(Long.valueOf(endPointA.getKey()));
-                                endPointsB.add(Long.valueOf(ports.get(j).getKey()));
+                                endPointsA.add(endPointA.getKey());
+                                endPointsB.add(ports.get(j).getKey());
                                 ports.set(j, null);
                                 ports.set(i, null);
                                 break;

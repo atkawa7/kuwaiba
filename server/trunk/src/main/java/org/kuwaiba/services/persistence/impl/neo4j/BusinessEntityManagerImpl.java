@@ -38,6 +38,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -85,7 +86,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     /**
      * Default attachment location.
      */
-    private static String DEFAULT_ATTACHMENTS_PATH = "/data/files/attachments";
+    private static final String DEFAULT_ATTACHMENTS_PATH = "/data/files/attachments";
     /**
      * Reference to the Application Entity Manager.
      */
@@ -101,7 +102,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     /**
      * Object Label.
      */
-    private final Label inventoryObjectsLabel;
+    private final Label inventoryObjectLabel;
     /**
      * Class Label.
      */
@@ -117,11 +118,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     /**
      * Label for reports.
      */
-    private final Label reportsLabel;
-    /**
-     * Label that tags all the nodes representing a contact.
-     */
-    private final Label contactsLabel; 
+    private final Label reportsLabel; 
     /**
      * As a temporary workaround, the old hard-coded reports are wrapped instead of being completely migrated to Groovy scripts.
      */
@@ -149,12 +146,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         
         this.configuration = new Properties();
         
-        this.inventoryObjectsLabel = Label.label(Constants.LABEL_INVENTORY_OBJECTS);
+        this.inventoryObjectLabel = Label.label(Constants.LABEL_INVENTORY_OBJECT);
         this.classLabel = Label.label(Constants.LABEL_CLASS);
         this.poolLabel = Label.label(Constants.LABEL_POOL);
         this.specialNodeLabel = Label.label(Constants.LABEL_SPECIAL_NODE);
         this.reportsLabel = Label.label(Constants.LABEL_REPORTS);
-        this.contactsLabel = Label.label(Constants.LABEL_CONTACTS);
         this.validatorDefinitionsClassLoader = new GroovyClassLoader();
     }
     
@@ -164,9 +160,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public long createObject(String className, String parentClassName, long parentOid, HashMap<String, String> attributes, long template)
+    public String createObject(String className, String parentClassName, String parentOid, HashMap<String, String> attributes, long template)
             throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
         
+        if (parentOid == null)
+            throw new BusinessObjectNotFoundException(parentClassName, parentOid);
+                
         ClassMetadata myClass= mem.getClass(className);
         
         if (!mem.getPossibleChildren(parentClassName).contains(myClass)) 
@@ -187,14 +186,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 throw new OperationNotPermittedException("Can not create non-inventory objects");
 
             //The object should be created under an instance other than the dummy root
-            if (parentClassName != null && parentOid != -1) {
+            if (parentClassName != null && !parentOid.equals("-1")) {
                 ClassMetadata myParentObjectClass= mem.getClass(parentClassName);
                 if (myParentObjectClass == null)
                     throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", parentClassName));
             }
 
             Node parentNode;
-            if (parentOid != -1){
+            if (!parentOid.equals("-1")) {
                  parentNode = getInstanceOfClass(parentClassName, parentOid);
                 if (parentNode == null)
                     throw new BusinessObjectNotFoundException(parentClassName, parentOid);
@@ -220,15 +219,15 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 
                 newObject = copyTemplateElement(templateNode, myClass, true);
             }
-            newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
+            newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);            
             tx.success();
-            return newObject.getId();
+            return newObject.hasProperty(Constants.PROPERTY_UUID) ? newObject.getProperty(Constants.PROPERTY_UUID).toString() : null;
         }
     }
     
     //TODO: Rewrite this!
     @Override
-    public long createObject(String className, String parentClassName, String criteria, HashMap<String, String> attributes, long template)
+    public String createObject(String className, String parentClassName, HashMap<String, String> attributes, long template, String criteria)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, ApplicationObjectNotFoundException {
         
         ClassMetadata objectClass = mem.getClass(className);
@@ -252,7 +251,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throw new InvalidArgumentException("The criteria is not valid, two components expected (attributeName:attributeValue)");
 
         if (splitCriteria[0].equals(Constants.PROPERTY_OID)) //The user is providing the id of te parent node explicitely
-            return createObject(className, parentClassName, Long.parseLong(splitCriteria[1]), attributes, template);
+            return createObject(className, parentClassName, splitCriteria[1], attributes, template);
 
         ClassMetadata parentClass = mem.getClass(parentClassName);
         if (parentClass == null)
@@ -318,14 +317,17 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
                       
             tx.success();
-            return newObject.getId();
+            return newObject.hasProperty(Constants.PROPERTY_UUID) ? newObject.getProperty(Constants.PROPERTY_UUID).toString() : null;
         }
     }
     
     @Override
-    public long createSpecialObject(String className, String parentClassName, long parentOid, HashMap<String,String> attributes, long template)
+    public String createSpecialObject(String className, String parentClassName, String parentOid, HashMap<String,String> attributes, long template)
             throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
-
+        
+        if (parentOid == null)
+            throw new BusinessObjectNotFoundException(parentClassName, parentOid);
+        
         ClassMetadata classMetadata= mem.getClass(className);
         if (classMetadata == null)
             throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
@@ -350,7 +352,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             }
 
             Node parentNode = null;
-            if (parentOid != -1) {
+            if (!parentOid.equals("-1")) {
                  parentNode = getInstanceOfClass(parentClassName, parentOid);
                 if (parentNode == null)
                     throw new BusinessObjectNotFoundException(parentClassName, parentOid);
@@ -381,12 +383,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
             
             tx.success();
-            return newObject.getId();
+            return newObject.hasProperty(Constants.PROPERTY_UUID) ? newObject.getProperty(Constants.PROPERTY_UUID).toString() : null;
         }
     }
     
     @Override
-    public long createPoolItem(long poolId, String className, String[] attributeNames, 
+    public String createPoolItem(String poolId, String className, String[] attributeNames, 
     String[] attributeValues, long templateId) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException, 
             ArraySizeMismatchException, MetadataObjectNotFoundException {
@@ -397,7 +399,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         }
         
         try(Transaction tx =graphDb.beginTx()) {
-            Node pool = Util.findNodeByLabelAndId(poolLabel, poolId);
+            Node pool = Util.findNodeByLabelAndUuid(poolLabel, poolId);
             
             if (pool == null)
                 throw new ApplicationObjectNotFoundException(String.format("Pool with id %s could not be found", poolId));
@@ -425,14 +427,17 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             newObject.createRelationshipTo(pool, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);
             
             tx.success();
-            return newObject.getId();
+            return newObject.hasProperty(Constants.PROPERTY_UUID) ? newObject.getProperty(Constants.PROPERTY_UUID).toString() : null;
         }
     }
     
     @Override
-    public long [] createBulkObjects(String className, String parentClassName, long parentOid, int numberOfObjects, String namePattern) 
+    public String [] createBulkObjects(String className, String parentClassName, String parentOid, int numberOfObjects, String namePattern) 
         throws MetadataObjectNotFoundException, OperationNotPermittedException, BusinessObjectNotFoundException, InvalidArgumentException {
         
+        if (parentOid == null)
+            throw new InvalidArgumentException("The parent id cannot be null");
+                
         ClassMetadata myClass = mem.getClass(className);
         
         if (!mem.getPossibleChildren(parentClassName).contains(myClass))
@@ -453,13 +458,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             if (!mem.isSubclassOf(Constants.CLASS_INVENTORYOBJECT, className))
                 throw new OperationNotPermittedException("Can not create non-inventory objects");
             //The object should be created under an instance other than the dummy root
-            if (parentClassName != null && parentOid != -1) {
+            if (parentClassName != null && !parentOid.equals("-1")) {
                 ClassMetadata myParentObjectClass = mem.getClass(parentClassName);
                 if (myParentObjectClass == null)
                     throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", parentClassName));
             }
             Node parentNode;
-            if (parentOid != -1) {
+            if (!parentOid.equals("-1")) {
                 parentNode = getInstanceOfClass(parentClassName, parentOid);
                 if (parentNode == null)
                     throw new BusinessObjectNotFoundException(parentClassName, parentOid);
@@ -476,7 +481,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 throw new InvalidArgumentException("The given pattern to generate the name has "
                         + "less possibilities that the number of objects to be created");
             }
-            long res[] = new long[numberOfObjects];
+            String res[] = new String[numberOfObjects];
             
             List<StringPair> createdMirrorPorts = new ArrayList<>();
             
@@ -486,10 +491,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 
                 newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
                 
-                res[i] = newObject.getId();
+                res[i] = newObject.hasProperty(Constants.PROPERTY_UUID) ? newObject.getProperty(Constants.PROPERTY_UUID).toString() : null;
                 
-                if(dynamicName.isMirrorPortsSequence())
-                    createdMirrorPorts.add(new StringPair(Long.toString(newObject.getId()), dynamicName.getDynamicNames().get(i)));
+                if(dynamicName.isMirrorPortsSequence()) {
+                    String newObjectUuid = newObject.hasProperty(Constants.PROPERTY_UUID) ? (String) newObject.getProperty(Constants.PROPERTY_UUID) : null;
+                    if (newObjectUuid == null)
+                        throw new InvalidArgumentException(String.format("The object with id %s does not have uuid", newObject.getId()));
+                    createdMirrorPorts.add(new StringPair(newObjectUuid, dynamicName.getDynamicNames().get(i)));
+                }
             }
             
             if(dynamicName.isMirrorPortsSequence())
@@ -501,9 +510,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public long[] createBulkSpecialObjects(String className, String parentClassName, long parentId, int numberOfSpecialObjects, String namePattern) 
+    public String[] createBulkSpecialObjects(String className, String parentClassName, String parentId, int numberOfSpecialObjects, String namePattern) 
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException {
         
+        if (parentId == null)
+            throw new InvalidArgumentException("The parent id cannot be null");
+                            
         ClassMetadata myClass= mem.getClass(className);
         if (myClass == null)
             throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
@@ -535,7 +547,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             }
 
             Node parentNode;
-            if (parentId != -1){
+            if (!parentId.equals("-1")){
                  parentNode = getInstanceOfClass(parentClassName, parentId);
                 if (parentNode == null)
                     throw new BusinessObjectNotFoundException(parentClassName, parentId);
@@ -548,14 +560,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 throw new InvalidArgumentException("The given pattern to generate the name has "
                         + "less possibilities that the number of object to be created");
             }
-            long res[] = new long[numberOfSpecialObjects];
+            String res[] = new String[numberOfSpecialObjects];
             for (int i = 0; i < numberOfSpecialObjects; i++) {
                 Node newObject = createObject(classNode, myClass, null);
                 newObject.setProperty(Constants.PROPERTY_NAME, dynamicName.getDynamicNames().get(i));
                 if (parentNode != null)
                     newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
                 
-                res[i] = newObject.getId();
+                res[i] = newObject.hasProperty(Constants.PROPERTY_UUID) ? newObject.getProperty(Constants.PROPERTY_UUID).toString() : null;
             }
             
             tx.success();
@@ -564,7 +576,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public BusinessObject getObject(String className, long oid)
+    public BusinessObject getObject(String className, String oid)
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         try (Transaction tx = graphDb.beginTx()) {
@@ -577,11 +589,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public BusinessObject getObject(long oid) throws InvalidArgumentException, BusinessObjectNotFoundException, MetadataObjectNotFoundException {
+    public BusinessObject getObject(String oid) throws InvalidArgumentException, BusinessObjectNotFoundException, MetadataObjectNotFoundException {
         String className = null;
         
         try (Transaction tx = graphDb.beginTx()) {
-            Node objectNode = Util.findNodeByLabelAndId(inventoryObjectsLabel, oid);
+            Node objectNode = Util.findNodeByLabelAndUuid(inventoryObjectLabel, oid);
             
             if (objectNode == null)
                 throw new InvalidArgumentException(String.format("The object with id %s could not be found", oid));
@@ -605,9 +617,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public BusinessObjectLight getObjectLight(String className, long oid)
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException {
+    public BusinessObjectLight getObjectLight(String className, String oid)
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
+        if (oid == null)
+            throw new InvalidArgumentException("The object id cannot be null");
         //TODO: Re-write this method and check if a simple Cypher query is faster than the programatic solution!
         try(Transaction tx = graphDb.beginTx()) {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
@@ -617,7 +631,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Iterator<Relationship> instances = iterableInstances.iterator();
             while (instances.hasNext()){
                 Node instance = instances.next().getStartNode();
-                if (instance.getId() == oid) {
+                String uuid = instance.hasProperty(Constants.PROPERTY_UUID) ? instance.getProperty(Constants.PROPERTY_UUID).toString() : null;
+                if (uuid != null && uuid.equals(oid)) {
                     tx.success();
                     return createObjectLightFromNode(instance);
                 }
@@ -628,7 +643,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public List<BusinessObjectLight> getObjectsWithFilterLight (String className, 
-            String filterName, String filterValue) throws MetadataObjectNotFoundException {
+            String filterName, String filterValue) throws MetadataObjectNotFoundException, InvalidArgumentException {
         try(Transaction tx = graphDb.beginTx()) {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
 
@@ -657,8 +672,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     @Override
     public List<BusinessObjectLight> getSuggestedObjectsWithFilter(String filter, int limit) {
         try (Transaction tx = graphDb.beginTx()) {
-            String cypherQuery = "MATCH (object:" + Constants.LABEL_INVENTORY_OBJECTS + ")-[:INSTANCE_OF]->(class)" + 
-                    " WHERE TOLOWER(object.name) CONTAINS TOLOWER({searchString}) OR TOLOWER(class.name) CONTAINS TOLOWER({searchString}) RETURN object.name as oname, id(object) as oid, class.name as cname ORDER BY object.name ASC" + (limit > 0 ? " LIMIT " + limit : ""); //NOI18N
+            String cypherQuery = "MATCH (object:" + inventoryObjectLabel + ")-[:INSTANCE_OF]->(class)" + 
+                    " WHERE TOLOWER(object.name) CONTAINS TOLOWER({searchString}) OR TOLOWER(class.name) CONTAINS TOLOWER({searchString}) RETURN object.name as oname, object._uuid as oid, class.name as cname ORDER BY object.name ASC" + (limit > 0 ? " LIMIT " + limit : ""); //NOI18N
             
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put("searchString", filter);
@@ -668,7 +683,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             while (queryResult.hasNext()) {
                 Map<String, Object> row = queryResult.next();
-                res.add(new BusinessObjectLight((String)row.get("cname"), (long)row.get("oid"), 
+                res.add(new BusinessObjectLight((String)row.get("cname"), (String)row.get("oid"), 
                         (String)row.get("oname")));
             }
             
@@ -680,10 +695,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     @Override
     public List<BusinessObjectLight> getSuggestedObjectsWithFilter(String filter, String superClass, int limit) {
         try (Transaction tx = graphDb.beginTx()) {
-            String cypherQuery = "MATCH (object:" + Constants.LABEL_INVENTORY_OBJECTS + ")-[:INSTANCE_OF]->(class)" +
+            String cypherQuery = "MATCH (object:" + inventoryObjectLabel + ")-[:INSTANCE_OF]->(class)" +
                     "-[:EXTENDS*0..]->(superclass) WHERE (TOLOWER(object.name) CONTAINS TOLOWER({searchString})" + 
                     " OR TOLOWER(class.name) CONTAINS TOLOWER({searchString})) AND superclass.name={superclass} " + 
-                    "RETURN object.name as oname, id(object) as oid, class.name as cname ORDER BY object.name ASC" + (limit > 0 ? " LIMIT " + limit : "");
+                    "RETURN object.name as oname, object._uuid as oid, class.name as cname ORDER BY object.name ASC" + (limit > 0 ? " LIMIT " + limit : "");
 
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put("searchString", filter);
@@ -694,7 +709,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             while (queryResult.hasNext()) {
                 Map<String, Object> row = queryResult.next();
-                res.add(new BusinessObjectLight((String)row.get("cname"), (long)row.get("oid"), 
+                res.add(new BusinessObjectLight((String)row.get("cname"), (String)row.get("oid"), 
                         (String)row.get("oname")));
             }
             
@@ -704,7 +719,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public String getAttributeValueAsString (String objectClass, long objectId, String attributeName) 
+    public String getAttributeValueAsString (String objectClass, String objectId, String attributeName) 
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
         ClassMetadata theClass = mem.getClass(objectClass);
         AttributeMetadata theAttribute = theClass.getAttribute(attributeName);
@@ -726,13 +741,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 case "Timestamp": //NOI18N
                     return new Date(Long.valueOf(theObject.getAttributes().get(attributeName))).toString();
                 default: //It's (or at least should be) a list type
-                    return aem.getListTypeItem(theAttribute.getType(), Long.valueOf(theObject.getAttributes().get(attributeName))).getName();
+                    return aem.getListTypeItem(theAttribute.getType(), theObject.getAttributes().get(attributeName)).getName();
             }
         }
     }
     
     @Override
-    public HashMap<String, String> getAttributeValuesAsString (String objectClass, long objectId) 
+    public HashMap<String, String> getAttributeValuesAsString (String objectClass, String objectId) 
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
     
         BusinessObject theObject = getObject(objectClass, objectId);
@@ -757,7 +772,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         res.put(attributeName, new Date(Long.valueOf(theObject.getAttributes().get(attributeName))).toString());
                         break;
                     default: //It's (or at least should be) a list type
-                        res.put(attributeName, aem.getListTypeItem(theAttribute.getType(), Long.valueOf(theObject.getAttributes().get(attributeName))).getName());
+                        res.put(attributeName, aem.getListTypeItem(theAttribute.getType(), theObject.getAttributes().get(attributeName)).getName());
                 }
             }
         }
@@ -767,33 +782,33 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     
     @Override
-    public BusinessObjectLight getCommonParent(String aObjectClass, long aOid, String bObjectClass, long bOid)
+    public BusinessObjectLight getCommonParent(String aObjectClass, String aOid, String bObjectClass, String bOid)
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         // while we will find a better way to do the query, we use this way
         BusinessObjectLight aParent = getParent(aObjectClass, aOid);
         BusinessObjectLight bParent = getParent(bObjectClass, bOid);
         
-        if (aParent.getId() == bParent.getId())
+        if (aParent.getId() != null && bParent.getId() != null && aParent.getId().equals(bParent.getId()))
             return aParent;
         
         List<BusinessObjectLight> aParents = new ArrayList();
         List<BusinessObjectLight> bParents = new ArrayList();
         
         aParents.add(aParent);
-        while (aParent.getId() != -1L) {
+        while (aParent.getId() != null && !aParent.getId().equals("-1")) {
             aParent = getParent(aParent.getClassName(), aParent.getId());
             aParents.add(aParent);
         }
         
         bParents.add(bParent);
-        while (bParent.getId() != -1L) {
+        while (bParent.getId() != null && bParent.getId().equals("-1")) {
             bParent = getParent(bParent.getClassName(), bParent.getId());
             bParents.add(bParent);
         }
         
         for (int i = 0; i < aParents.size(); i++) {
             for (int j = 0; j < bParents.size(); j++) {
-                if (aParents.get(i).getId() == bParents.get(j).getId())
+                if (aParents.get(i).getId() != null && bParents.get(j).getId() != null && aParents.get(i).getId().equals(bParents.get(j).getId()))
                     return aParents.get(i);                                
             }
         }
@@ -802,7 +817,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public BusinessObjectLight getParent(String objectClass, long oid) 
+    public BusinessObjectLight getParent(String objectClass, String oid) 
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
@@ -812,7 +827,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
                 //If the direct parent is DummyRoot, return a dummy RemoteBusinessObject with oid = -1
                 if (parentNode.hasProperty(Constants.PROPERTY_NAME) && Constants.NODE_DUMMYROOT.equals(parentNode.getProperty(Constants.PROPERTY_NAME)) )
-                    return new BusinessObject(Constants.NODE_DUMMYROOT, -1, Constants.NODE_DUMMYROOT);
+                    return new BusinessObject(Constants.NODE_DUMMYROOT, "-1", Constants.NODE_DUMMYROOT);
                 else    
                     return createObjectLightFromNode(parentNode);
             }
@@ -822,7 +837,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     return createObjectLightFromNode(parentNode);
                 else
                     // Use the dummy root like parent to services, contracts, projects poolNode...
-                    return new BusinessObject(Constants.NODE_DUMMYROOT, -1, Constants.NODE_DUMMYROOT);
+                    return new BusinessObject(Constants.NODE_DUMMYROOT, "-1", Constants.NODE_DUMMYROOT);
                 
             }
             
@@ -831,13 +846,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public List<BusinessObjectLight> getParents (String objectClassName, long oid)
-        throws BusinessObjectNotFoundException, MetadataObjectNotFoundException {
+    public List<BusinessObjectLight> getParents (String objectClassName, String oid)
+        throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         List<BusinessObjectLight> parents =  new ArrayList<>();
               
         String cypherQuery = "MATCH (n)-[:" + RelTypes.CHILD_OF + "|" + RelTypes.CHILD_OF_SPECIAL + "*]->(m) " +
-                             "WHERE id(n) = " + oid + " " +
+                             "WHERE n._uuid = " + oid + " " +
                             "RETURN m as parents";
       
         try (Transaction tx = graphDb.beginTx()) {
@@ -846,7 +861,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             for (Node node : Iterators.asIterable(column)){  
                 if (node.hasProperty(Constants.PROPERTY_NAME)) {
                     if (node.getProperty(Constants.PROPERTY_NAME).equals(Constants.NODE_DUMMYROOT)) {
-                        parents.add(new BusinessObjectLight(Constants.NODE_DUMMYROOT, -1, Constants.NODE_DUMMYROOT));
+                        parents.add(new BusinessObjectLight(Constants.NODE_DUMMYROOT, "-1", Constants.NODE_DUMMYROOT));
                         continue;
                     }
                 }
@@ -862,12 +877,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Override
     public List<BusinessObjectLight> getParentsUntilFirstOfClass(String objectClass, 
-            long oid, String objectToMatchClassName) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException {
+            String oid, String objectToMatchClassName) 
+        throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
                         
         List<BusinessObjectLight> parents =  new ArrayList<>();
               
         String cypherQuery = "MATCH (n)-[:" + RelTypes.CHILD_OF + "|" + RelTypes.CHILD_OF_SPECIAL + "*]->(m) " +
-                             "WHERE id(n) = " + oid + " " +
+                             "WHERE n._uuid = " + oid + " " +
                              "RETURN m as parents";
       
         try (Transaction tx = graphDb.beginTx()) {
@@ -900,8 +916,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public BusinessObjectLight getFirstParentOfClass(String objectClassName, long oid, String objectToMatchClassName)
-        throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException {
+    public BusinessObjectLight getFirstParentOfClass(String objectClassName, String oid, String objectToMatchClassName)
+        throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node objectNode = getInstanceOfClass(objectClassName, oid);
@@ -937,7 +953,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      */
     @Deprecated
     @Override
-    public BusinessObject getParentOfClass(String objectClass, long oid, String parentClass) 
+    public BusinessObject getParentOfClass(String objectClass, String oid, String parentClass) 
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
@@ -965,13 +981,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public void deleteObjects(HashMap<String, List<Long>> objects, boolean releaseRelationships)
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException {
+    public void deleteObjects(HashMap<String, List<String>> objects, boolean releaseRelationships)
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException {
 
         try(Transaction tx = graphDb.beginTx()) {
             //TODO: Optimize so it can find all objects of a single class in one query
-            for (String className : objects.keySet()) {
-                for (long oid : objects.get(className)) {
+            for (String className : objects.keySet()){
+                for (String oid : objects.get(className)){
                     ClassMetadata classMetadata = Util.createClassMetadataFromNode(graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className));
                     
                     if (!mem.isSubclassOf(Constants.CLASS_INVENTORYOBJECT, className))
@@ -1000,15 +1016,15 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public void deleteObject(String className, long oid, boolean releaseRelationships) 
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException {
-        HashMap<String, List<Long>> objectsToDelete = new HashMap<>();
+    public void deleteObject(String className, String oid, boolean releaseRelationships) 
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException {
+        HashMap<String, List<String>> objectsToDelete = new HashMap<>();
         objectsToDelete.put(className, Arrays.asList(oid));
         deleteObjects(objectsToDelete, releaseRelationships);
     }
 
     @Override
-    public ChangeDescriptor updateObject(String className, long oid, HashMap<String, String> attributes)
+    public ChangeDescriptor updateObject(String className, String oid, HashMap<String, String> attributes)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException, 
                 InvalidArgumentException {
 
@@ -1034,24 +1050,27 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String name, boolean unique)
-            throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
+    public void createSpecialRelationship(String aObjectClass, String aObjectId, String bObjectClass, String bObjectId, String name, boolean unique)
+            throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         createSpecialRelationship(aObjectClass, aObjectId, bObjectClass, bObjectId, name, unique, new HashMap<>());
     }
     
     @Override
-    public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, 
-            long bObjectId, String name, boolean unique, HashMap<String, Object> properties) throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
+    public void createSpecialRelationship(String aObjectClass, String aObjectId, String bObjectClass, 
+        String bObjectId, String name, boolean unique, HashMap<String, Object> properties) 
+        throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException {
         
-        if (aObjectId == bObjectId)
+        if (aObjectId != null && bObjectId != null && aObjectId.equals(bObjectId))
             throw new OperationNotPermittedException("An object can not be related with itself");
         
         try(Transaction tx = graphDb.beginTx()) {
             Node nodeA = getInstanceOfClass(aObjectClass, aObjectId);
             for (Relationship rel : nodeA.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
-                if (rel.getOtherNode(nodeA).getId() == bObjectId 
-                        && rel.getProperty(Constants.PROPERTY_NAME).equals(name) && unique)
+                String otherNodeUuid = rel.getOtherNode(nodeA).hasProperty(Constants.PROPERTY_UUID) ? (String) rel.getOtherNode(nodeA).getProperty(Constants.PROPERTY_UUID) : null;
+                
+                if (otherNodeUuid != null && otherNodeUuid.equals(bObjectId) 
+                    && rel.getProperty(Constants.PROPERTY_NAME).equals(name) && unique)
                     throw new OperationNotPermittedException("These elements are already related");
             }
             Node nodeB = getInstanceOfClass(bObjectClass, bObjectId);
@@ -1067,14 +1086,19 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public void releaseSpecialRelationship(String objectClass, long objectId, long otherObjectId, String name)
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException {
+    public void releaseSpecialRelationship(String objectClass, String objectId, String otherObjectId, String name)
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+        
+        if (otherObjectId == null)
+            throw new InvalidArgumentException("The other object id cannot be null");
         
         try(Transaction tx = graphDb.beginTx()) {
             Node node = getInstanceOfClass(objectClass, objectId);
             for (Relationship rel : node.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
+                String otherNodeUuid = rel.getOtherNode(node).hasProperty(Constants.PROPERTY_UUID) ? rel.getOtherNode(node).getProperty(Constants.PROPERTY_UUID).toString() : null;
+                
                 if ((rel.getProperty(Constants.PROPERTY_NAME).equals(name) && 
-                        (rel.getOtherNode(node).getId() == otherObjectId) || otherObjectId == -1))
+                        (otherNodeUuid != null && otherNodeUuid.equals(otherObjectId)) || otherObjectId.equals("-1")))
                     rel.delete();
             }
             tx.success();
@@ -1082,14 +1106,17 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public void releaseSpecialRelationship(String objectClass, long objectId, String relationshipName, long targetId)
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException {
+    public void releaseSpecialRelationshipInTargetObject(String objectClass, String objectId, String relationshipName, String targetId)
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node node = getInstanceOfClass(objectClass, objectId);
             for (Relationship rel : node.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO_SPECIAL)){
+                
+                String endNodeUuid = rel.getEndNode().hasProperty(Constants.PROPERTY_UUID) ? rel.getEndNode().getProperty(Constants.PROPERTY_UUID).toString() : null;
+                
                 if (rel.getProperty(Constants.PROPERTY_NAME).equals(relationshipName) &&
-                            rel.getEndNode().getId() == targetId)
+                    endNodeUuid != null && endNodeUuid.equals(targetId))
                     rel.delete();
             }
             tx.success();
@@ -1097,8 +1124,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public void moveObjectsToPool(String targetClassName, long targetOid, HashMap<String, long[]> objects)
-            throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
+    public void moveObjectsToPool(String targetClassName, String targetOid, HashMap<String, String[]> objects)
+            throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException {
         ClassMetadata newParentClass = mem.getClass(targetClassName);
         
         boolean isPool = true;
@@ -1106,12 +1133,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", targetClassName));
         
         try(Transaction tx = graphDb.beginTx()) {
-            Node newParentNode = Util.findNodeByLabelAndId(poolLabel, targetOid);
+            Node newParentNode = Util.findNodeByLabelAndUuid(poolLabel, targetOid);
             
             if(newParentNode == null){
                 isPool = false;
                 
-                newParentNode = Util.findNodeByLabelAndId(inventoryObjectsLabel, targetOid);
+                newParentNode = Util.findNodeByLabelAndUuid(inventoryObjectLabel, targetOid);
                 
                 if(newParentNode == null)
                     throw new BusinessObjectNotFoundException(targetClassName, targetOid);
@@ -1122,7 +1149,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 
                 if (instanceClassNode == null)
                     throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", myClass));
-                for (long oid : objects.get(myClass)){
+                for (String oid : objects.get(myClass)){
                     Node instance = getInstanceOfClass(instanceClassNode, oid);
                     //If the object was specialChild of a poolNode
                     if (instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().hasNext()){
@@ -1140,8 +1167,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public void moveObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects)
-            throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
+    public void moveObjects(String targetClassName, String targetOid, HashMap<String, String[]> objects)
+            throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException {
         ClassMetadata newParentClass = mem.getClass(targetClassName);
         
         if (newParentClass == null)
@@ -1157,7 +1184,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 
                 if (instanceClassNode == null)
                     throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", myClass));
-                for (long oid : objects.get(myClass)){
+                for (String oid : objects.get(myClass)){
                     Node instance = getInstanceOfClass(instanceClassNode, oid);
                     if (instance.getRelationships(RelTypes.CHILD_OF, Direction.OUTGOING).iterator().hasNext()){
                         Relationship rel = instance.getRelationships(RelTypes.CHILD_OF, Direction.OUTGOING).iterator().next();
@@ -1177,8 +1204,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public void moveSpecialObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects)
-            throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
+    public void moveSpecialObjects(String targetClassName, String targetOid, HashMap<String, String[]> objects)
+            throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException {
         ClassMetadata newParentClass = mem.getClass(targetClassName);
         
         if (newParentClass == null)
@@ -1198,7 +1225,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 
                 if (instanceClassNode == null)
                     throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", myClass));
-                for (long oid : objects.get(myClass)){
+                for (String oid : objects.get(myClass)){
                     Node instance = getInstanceOfClass(instanceClassNode, oid);
                     
                     if (instance.getRelationships(RelTypes.CHILD_OF, Direction.OUTGOING).iterator().hasNext()){
@@ -1218,12 +1245,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public void movePoolItem(long poolId, String poolItemClassName, long poolItemId) throws 
+    public void movePoolItem(String poolId, String poolItemClassName, String poolItemId) throws 
         ApplicationObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException, 
         MetadataObjectNotFoundException {
         
         try (Transaction tx = graphDb.beginTx()) {
-            Node poolNode = Util.findNodeByLabelAndId(poolLabel, poolId);
+            Node poolNode = Util.findNodeByLabelAndUuid(poolLabel, poolId);
             
             if (poolNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Pool with id %s could not be found", poolId));
@@ -1253,8 +1280,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public long[] copyObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects, boolean recursive)
-            throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
+    public String[] copyObjects(String targetClassName, String targetOid, HashMap<String, String[]> objects, boolean recursive)
+            throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException {
         ClassMetadata newParentClass = mem.getClass(targetClassName);
 
         if (newParentClass == null)
@@ -1262,7 +1289,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
         try (Transaction tx = graphDb.beginTx()) {
             Node newParentNode = getInstanceOfClass(targetClassName, targetOid);
-            long[] res = new long[objects.size()];
+            String[] res = new String[objects.size()];
             int i = 0;
             for (String myClass : objects.keySet()){
                 if (!mem.canBeChild(targetClassName, myClass))
@@ -1272,11 +1299,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 
                 if (instanceClassNode == null)
                     throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", myClass));
-                for (long oid : objects.get(myClass)){
+                for (String oid : objects.get(myClass)){
                     Node templateObject = getInstanceOfClass(instanceClassNode, oid);
                     Node newInstance = copyObject(templateObject, recursive);
                     newInstance.createRelationshipTo(newParentNode, RelTypes.CHILD_OF);
-                    res[i] = newInstance.getId();
+                    String newInstanceUuid = newInstance.hasProperty(Constants.PROPERTY_UUID) ? (String) newInstance.getProperty(Constants.PROPERTY_UUID) : null;
+                    if (newInstanceUuid == null)
+                        throw new InvalidArgumentException(String.format("The object with id %s does not have uuid", newInstance.getId()));                        
+                    res[i] = newInstanceUuid;
                     i++;            
                 }
             }
@@ -1286,8 +1316,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public long[] copySpecialObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects, boolean recursive)
-            throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
+    public String[] copySpecialObjects(String targetClassName, String targetOid, HashMap<String, String[]> objects, boolean recursive)
+            throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException {
         ClassMetadata newParentClass = mem.getClass(targetClassName);
 
         if (newParentClass == null)
@@ -1295,7 +1325,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
         try (Transaction tx = graphDb.beginTx()) {
             Node newParentNode = getInstanceOfClass(targetClassName, targetOid);
-            long[] res = new long[objects.size()];
+            String[] res = new String[objects.size()];
             int i = 0;
             for (String myClass : objects.keySet()){
                 if (!mem.canBeSpecialChild(targetClassName, myClass))
@@ -1305,11 +1335,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 
                 if (instanceClassNode == null)
                     throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", myClass));
-                for (long oid : objects.get(myClass)){
+                for (String oid : objects.get(myClass)){
                     Node templateObject = getInstanceOfClass(instanceClassNode, oid);
                     Node newInstance = copyObject(templateObject, recursive);
                     newInstance.createRelationshipTo(newParentNode, RelTypes.CHILD_OF_SPECIAL);
-                    res[i] = newInstance.getId();
+                    String newInstanceUuid = newInstance.hasProperty(Constants.PROPERTY_UUID) ? (String) newInstance.getProperty(Constants.PROPERTY_UUID) : null;
+                    if (newInstanceUuid == null)
+                        throw new InvalidArgumentException(String.format("The object with id %s does not have uuid", newInstance.getId()));
+                    res[i] = newInstanceUuid;
                     i++;            
                 }
             }
@@ -1319,12 +1352,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public long copyPoolItem(long poolId, String poolItemClassName, long poolItemId, boolean recursive) throws 
+    public String copyPoolItem(String poolId, String poolItemClassName, String poolItemId, boolean recursive) throws 
         ApplicationObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException, 
         MetadataObjectNotFoundException {
         
         try (Transaction tx = graphDb.beginTx()) {
-            Node poolNode = Util.findNodeByLabelAndId(poolLabel, poolId);
+            Node poolNode = Util.findNodeByLabelAndUuid(poolLabel, poolId);
             
             if (poolNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Pool with id %s could not be found", poolId));
@@ -1343,18 +1376,21 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Node instance = getInstanceOfClass(poolItemClassNode, poolItemId);
             
             Node newInstance = copyObject(instance, recursive);
-            newInstance.createRelationshipTo(poolNode, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);
+            String newInstanceUuid = newInstance.hasProperty(Constants.PROPERTY_UUID) ? (String) newInstance.getProperty(Constants.PROPERTY_UUID) : null;
+            if (newInstanceUuid == null)
+                throw new InvalidArgumentException(String.format("The object with id %s does not have uuid", newInstance.getId()));
+            newInstance.createRelationshipTo(poolNode, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);            
             tx.success();
-            return newInstance.getId();
+            return newInstanceUuid;
         }
     }
 
     @Override
-    public List<BusinessObjectLight> getObjectChildren(String className, long oid, int maxResults)
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException  {
+    public List<BusinessObjectLight> getObjectChildren(String className, String oid, int maxResults)
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException  {
         try (Transaction tx =  graphDb.beginTx()) {
             Node parentNode;
-            if(oid == -1)
+            if(oid != null && oid.equals("-1"))
                 parentNode = graphDb.findNode(specialNodeLabel, Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
             else
                 parentNode = getInstanceOfClass(className, oid);
@@ -1383,11 +1419,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public List<BusinessObjectLight> getObjectChildren(long classId, long oid, int maxResults)
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException  {
+    public List<BusinessObjectLight> getObjectChildren(long classId, String oid, int maxResults)
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         try(Transaction tx = graphDb.beginTx()) {
             Node parentNode;
-            if(oid == -1)
+            if(oid != null && oid.equals("-1"))
                 parentNode = graphDb.findNode(specialNodeLabel, Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
             else
                 parentNode = getInstanceOfClass(classId, oid);
@@ -1413,8 +1449,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public List<BusinessObjectLight> getSiblings(String className, long oid, int maxResults)
-            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException {
+    public List<BusinessObjectLight> getSiblings(String className, String oid, int maxResults)
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
         try(Transaction tx = graphDb.beginTx()){
             Node node = getInstanceOfClass(className, oid);
             List<BusinessObjectLight> res = new ArrayList<>();
@@ -1434,7 +1470,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 }
                 
                 Node child = rel.getStartNode();
-                if (child.getId() == oid)
+                
+                String childUuid = child.hasProperty(Constants.PROPERTY_UUID) ? (String) child.getProperty(Constants.PROPERTY_UUID) : null;
+                if (childUuid == null)
+                    throw new InvalidArgumentException(String.format("The object with id %s does not have uuid", child.getId()));
+                
+                if (childUuid.equals(oid))
                     continue;
                 
                 res.add(createObjectLightFromNode(child));
@@ -1460,13 +1501,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             String cypherQuery;
             
             if (isAbstract) 
-                cypherQuery = "MATCH (class:classes)<-[:EXTENDS*]-(subclass:classes)<-[:INSTANCE_OF]-(instance:" + Constants.LABEL_INVENTORY_OBJECTS + ") "
-                            + "WHERE class.name=\"" + className + "\" "
-                            + "RETURN instance;";                
+                cypherQuery = "match (class:classes)<-[:EXTENDS*]-(subclass:classes)<-[:INSTANCE_OF]-(instance:inventory_objects) "
+                            + "where class.name=\"" + className + "\" "
+                            + "return instance;";                
             else 
-                cypherQuery = "MATCH (class:classes)<-[:INSTANCE_OF]-(instance:" + Constants.LABEL_INVENTORY_OBJECTS + ") "
-                            + "WHERE class.name=\"" + className + "\" "
-                            + "RETURN instance;";
+                cypherQuery = "match (class:classes)<-[:INSTANCE_OF]-(instance:inventory_objects) "
+                            + "where class.name=\"" + className + "\" "
+                            + "return instance;";
             
             Result result = graphDb.execute(cypherQuery);
             ResourceIterator<Node> instanceColumn = result.columnAs("instance");
@@ -1505,13 +1546,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             String cypherQuery;
             
             if (isAbstract) {
-                cypherQuery = "MATCH (class:classes)<-[:EXTENDS*]-(subclass:classes)<-[:INSTANCE_OF]-(instance:" + Constants.LABEL_INVENTORY_OBJECTS + ") "
-                            + "WHERE class.name=\"" + className + "\" "
-                            + "RETURN instance;";                
+                cypherQuery = "MATCH (class:classes)<-[:EXTENDS*]-(subclass:classes)<-[:INSTANCE_OF]-(instance:inventoryObjects) "
+                            + "where class.name=\"" + className + "\" "
+                            + "return instance;";                
             } else {
-                cypherQuery = "MATCH (class:classes)<-[:INSTANCE_OF]-(instance:" + Constants.LABEL_INVENTORY_OBJECTS + ") "
-                            + "WHERE class.name=\"" + className + "\" "
-                            + "RETURN instance;";
+                cypherQuery = "MATCH (class:classes)<-[:INSTANCE_OF]-(instance:inventoryObjects) "
+                            + "where class.name=\"" + className + "\" "
+                            + "return instance;";
             }
             Result result = graphDb.execute(cypherQuery);
             ResourceIterator<Node> instanceColumn = result.columnAs("instance");
@@ -1521,8 +1562,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 if (maxResults > 0){
                     if (counter < maxResults)
                         counter ++;
-                    else
-                        break;
+                    else break;
                 }
                 instances.add(createObjectFromNode(instance));                                                                                
             }
@@ -1534,7 +1574,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public List<BusinessObject> getChildrenOfClass(long parentOid, String parentClass, String classToFilter, int maxResults)
+    public List<BusinessObject> getChildrenOfClass(String parentOid, String parentClass, String classToFilter, int maxResults)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
         
         try (Transaction tx = graphDb.beginTx()) {
@@ -1591,8 +1631,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public List<BusinessObjectLight> getSpecialChildrenOfClassLight(long parentOid, String parentClass, String classToFilter, int maxResults)
-            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException {
+    public List<BusinessObjectLight> getSpecialChildrenOfClassLight(String parentOid, String parentClass, String classToFilter, int maxResults)
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node parentNode = getInstanceOfClass(parentClass, parentOid);
@@ -1615,8 +1655,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     
     @Override
-    public List<BusinessObjectLight> getChildrenOfClassLightRecursive(long parentOid, String parentClass, String classToFilter, int maxResults) 
-        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException {
+    public List<BusinessObjectLight> getChildrenOfClassLightRecursive(String parentOid, String parentClass, String classToFilter, int maxResults) 
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
         
         List<BusinessObjectLight> res = new ArrayList<>();
         try (Transaction tx = graphDb.beginTx()) {
@@ -1627,8 +1667,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public List<BusinessObjectLight> getSpecialChildrenOfClassLightRecursive(long parentOid, String parentClass, String classToFilter, int maxResults) 
-        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException {
+    public List<BusinessObjectLight> getSpecialChildrenOfClassLightRecursive(String parentOid, String parentClass, String classToFilter, int maxResults) 
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
         List<BusinessObjectLight> res = new ArrayList<>();
         try (Transaction tx = graphDb.beginTx()) {
             getSpecialChildrenOfClassRecursive(getInstanceOfClass(parentClass, parentOid), classToFilter, maxResults, res);
@@ -1638,8 +1678,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public List<BusinessObjectLight> getChildrenOfClassLight(long parentOid, String parentClass, String classToFilter, int maxResults)
-            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException  {
+    public List<BusinessObjectLight> getChildrenOfClassLight(String parentOid, String parentClass, String classToFilter, int maxResults)
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException  {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node parentNode = getInstanceOfClass(parentClass, parentOid);
@@ -1656,7 +1696,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
                 String className = Util.getClassName(child);
                 if (mem.isSubclassOf(classToFilter, className)){
-                    res.add(new BusinessObjectLight(className, child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME)));
+                    String childUuid = child.hasProperty(Constants.PROPERTY_UUID) ? (String) child.getProperty(Constants.PROPERTY_UUID) : null;
+                    if (childUuid == null)                                        
+                        throw new InvalidArgumentException(String.format("The object with id %s does not have uuid", child.getId()));
+                    res.add(new BusinessObjectLight(className, childUuid, (String)child.getProperty(Constants.PROPERTY_NAME)));
                     if (maxResults > 0){
                         if (++counter == maxResults)
                             break;
@@ -1669,17 +1712,22 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public List<BusinessObjectLight> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName) 
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException {
+    public List<BusinessObjectLight> getSpecialAttribute(String objectClass, String objectId, String specialAttributeName) 
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node instance = getInstanceOfClass(objectClass, objectId);
             List<BusinessObjectLight> res = new ArrayList<>();
             for (Relationship rel : instance.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
                 if(rel.hasProperty(Constants.PROPERTY_NAME)){
-                    if (rel.getProperty(Constants.PROPERTY_NAME).equals(specialAttributeName))
-                        res.add(rel.getEndNode().getId() == objectId ? 
+                    if (rel.getProperty(Constants.PROPERTY_NAME).equals(specialAttributeName)) {
+                        //String uuid = instance.hasProperty(Constants.PROPERTY_UUID) ? (String) instance.getProperty(Constants.PROPERTY_UUID) : null;
+                        String endNodeUuid = rel.getEndNode().hasProperty(Constants.PROPERTY_UUID) ? (String) rel.getEndNode().getProperty(Constants.PROPERTY_UUID) : null;
+                        if (endNodeUuid == null)
+                            throw new InvalidArgumentException(String.format("The object with id %s does not have uuid", rel.getEndNode()));
+                        res.add(endNodeUuid.equals(objectId) ? 
                             createObjectLightFromNode(rel.getStartNode()) : createObjectLightFromNode(rel.getEndNode()));
+                    }
                 }
             }
             tx.success();
@@ -1688,15 +1736,18 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public List<AnnotatedBusinessObjectLight> getAnnotatedSpecialAttribute(String objectClass, long objectId, String specialAttributeName) 
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException {
+    public List<AnnotatedBusinessObjectLight> getAnnotatedSpecialAttribute(String objectClass, String objectId, String specialAttributeName) 
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         try(Transaction tx = graphDb.beginTx()) {
             Node instance = getInstanceOfClass(objectClass, objectId);
             List<AnnotatedBusinessObjectLight> res = new ArrayList<>();
             for (Relationship rel : instance.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
                 if(rel.hasProperty(Constants.PROPERTY_NAME)){
                     if (rel.getProperty(Constants.PROPERTY_NAME).equals(specialAttributeName)) {
-                        BusinessObjectLight theObject = rel.getEndNode().getId() == objectId ? 
+                        String endNodeUuid = rel.getEndNode().hasProperty(Constants.PROPERTY_UUID) ? (String) rel.getEndNode().getProperty(Constants.PROPERTY_UUID) : null;
+                        if (endNodeUuid == null)
+                            throw new InvalidArgumentException(String.format("The object with id %s does not have uuid", rel.getEndNode().getId()));                                
+                        BusinessObjectLight theObject = endNodeUuid.equals(objectId) ? 
                             createObjectLightFromNode(rel.getStartNode()) : createObjectLightFromNode(rel.getEndNode());
                         res.add(new AnnotatedBusinessObjectLight(theObject, rel.getAllProperties()));
                     }
@@ -1707,8 +1758,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public HashMap<String,List<BusinessObjectLight>> getSpecialAttributes (String className, long objectId) 
-        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException  {
+    public HashMap<String,List<BusinessObjectLight>> getSpecialAttributes (String className, String objectId) 
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException  {
         
         HashMap<String,List<BusinessObjectLight>> res = new HashMap<>();
         try(Transaction tx = graphDb.beginTx()) {
@@ -1727,8 +1778,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public List<BusinessObjectLight> getObjectSpecialChildren(String objectClass, long objectId)
-            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException  {
+    public List<BusinessObjectLight> getObjectSpecialChildren(String objectClass, String objectId)
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException  {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node instance = getInstanceOfClass(objectClass, objectId);
@@ -1745,8 +1796,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public boolean hasRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships)
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException {
+    public boolean hasRelationship(String objectClass, String objectId, String relationshipName, int numberOfRelationships)
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node object = getInstanceOfClass(objectClass, objectId);
@@ -1762,7 +1813,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public void releaseRelationships(String objectClass, long objectId, List<String> relationshipsToRelease) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
+    public void releaseRelationships(String objectClass, String objectId, List<String> relationshipsToRelease) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
         try(Transaction tx = graphDb.beginTx()) {
             Node object = getInstanceOfClass(objectClass, objectId);
             
@@ -1775,8 +1826,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public boolean hasSpecialRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) 
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException  {
+    public boolean hasSpecialRelationship(String objectClass, String objectId, String relationshipName, int numberOfRelationships) 
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException  {
         try (Transaction tx = graphDb.beginTx()) {
             Node object = getInstanceOfClass(objectClass, objectId);
             int relationshipsCounter = 0;
@@ -1793,7 +1844,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     //<editor-fold desc="Contact Manager" defaultstate="collapsed">
     @Override
-    public long createContact(String contactClass, List<StringPair> properties, String customerClassName, long customerId) 
+    public String createContact(String contactClass, List<StringPair> properties, String customerClassName, String customerId) 
             throws BusinessObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException {
         
         if (!mem.isSubclassOf("GenericCustomer", customerClassName)) //NOI18N
@@ -1806,7 +1857,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", contactClass));
             
             Node customerNode = getInstanceOfClass(customerClassName, customerId);
-            Node newContactNode = graphDb.createNode(this.contactsLabel, this.inventoryObjectsLabel);
+            Node newContactNode = graphDb.createNode(Label.label(Constants.LABEL_CONTACTS), Label.label(Constants.LABEL_INVENTORY_OBJECT));
+            newContactNode.setProperty(Constants.PROPERTY_UUID, UUID.randomUUID());
             
             boolean hasName = false;
             
@@ -1830,15 +1882,18 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             newContactRelationship.setProperty("name", "contacts");
             
             newContactNode.createRelationshipTo(contactClassNode, RelTypes.INSTANCE_OF);
+                        
+            String newContactNodeUuid = newContactNode.hasProperty(Constants.PROPERTY_UUID) ? (String) newContactNode.getProperty(Constants.PROPERTY_UUID) : null;
+            if (newContactNodeUuid == null)
+                throw new InvalidArgumentException(String.format("The contact with id %s does not have uuid", newContactNode.getId()));                
             
             tx.success();
-            
-            return newContactNode.getId();
+            return newContactNodeUuid;
         }
     }
 
     @Override
-    public void updateContact(String contactClass, long contactId, List<StringPair> properties) 
+    public void updateContact(String contactClass, String contactId, List<StringPair> properties) 
             throws BusinessObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             Node contactNode = getInstanceOfClass(contactClass, contactId);
@@ -1855,7 +1910,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public void deleteContact(String contactClass, long contactId) 
+    public void deleteContact(String contactClass, String contactId) 
             throws BusinessObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             Node contactNode = getInstanceOfClass(contactClass, contactId);
@@ -1870,7 +1925,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public Contact getContact(String contactClass, long contactId) 
+    public Contact getContact(String contactClass, String contactId) 
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         if (!mem.isSubclassOf("GenericContact", contactClass))
@@ -1889,7 +1944,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public List<Contact> getContactsForCustomer(String customerClass, long customerId) 
+    public List<Contact> getContactsForCustomer(String customerClass, String customerId) 
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             Node customerNode = getInstanceOfClass(customerClass, customerId);
@@ -1938,7 +1993,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public long attachFileToObject(String name, String tags, byte[] file, String className, long objectId) 
+    public long attachFileToObject(String name, String tags, byte[] file, String className, String objectId) 
             throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         if (file.length > (float)configuration.get("maxAttachmentSize") * 1048576) //Size converted to MB
@@ -1969,7 +2024,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public List<FileObjectLight> getFilesForObject(String className, long objectId) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException {
+    public List<FileObjectLight> getFilesForObject(String className, String objectId) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             Node objectNode = getInstanceOfClass(className, objectId);
             List<FileObjectLight> res = new ArrayList<>();
@@ -1985,7 +2040,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public FileObject getFile(long fileObjectId, String className, long objectId) throws BusinessObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException {
+    public FileObject getFile(long fileObjectId, String className, String objectId) throws BusinessObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             Node objectNode = getInstanceOfClass(className, objectId);
 
@@ -2009,7 +2064,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public void detachFileFromObject(long fileObjectId, String className, long objectId) 
+    public void detachFileFromObject(long fileObjectId, String className, String objectId) 
             throws BusinessObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             Node objectNode = getInstanceOfClass(className, objectId);
@@ -2035,7 +2090,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public void updateFileProperties(long fileObjectId, List<StringPair> properties, String className, long objectId) throws BusinessObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException {
+    public void updateFileProperties(long fileObjectId, List<StringPair> properties, String className, String objectId) throws BusinessObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             Node objectNode = getInstanceOfClass(className, objectId);
 
@@ -2067,10 +2122,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     //TODO DELETE. This is a business dependant method, should not be here. Don't use it
     @Override
-    public List<BusinessObjectLight> getPhysicalPath(String objectClass, long objectId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException {
+    @Deprecated
+    public List<BusinessObjectLight> getPhysicalPath(String objectClass, String objectId) 
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
         List<BusinessObjectLight> path = new ArrayList<>();
         //If the port is a logical port (virtual port, Pseudowire or service instance, we look for the first physical parent port)
-        long logicalPortId = 0;
+        String logicalPortId = null;
         if(mem.isSubclassOf(Constants.CLASS_GENERICLOGICALPORT, objectClass)){
             logicalPortId = objectId;
             if(objectClass.equals("Pseudowire"))
@@ -2083,12 +2140,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         //The first part of the query will return many paths, the longest is the one we need. The others are
         //subsets of the longest
         String cypherQuery = "MATCH paths = (o)-[r:" + RelTypes.RELATED_TO_SPECIAL + "*]-(c) "+
-                             "WHERE id(o) = " + objectId + " AND all(rel in r where rel.name = 'mirror' or rel.name = 'endpointA' or rel.name = 'endpointB') "+
+                             "WHERE o._uuid = " + objectId + " AND all(rel in r where rel.name = 'mirror' or rel.name = 'endpointA' or rel.name = 'endpointB') "+
                              "WITH nodes(paths) as path " +
                              "RETURN path ORDER BY length(path) DESC LIMIT 1";
         try (Transaction tx = graphDb.beginTx()){
-            if(logicalPortId > 0)
-                path.add(createObjectLightFromNode(Util.findNodeByLabelAndId(inventoryObjectsLabel, logicalPortId)));
+            if(logicalPortId != null)
+                path.add(createObjectLightFromNode(Util.findNodeByLabelAndUuid(inventoryObjectLabel, logicalPortId)));
             Result result = graphDb.execute(cypherQuery);
             Iterator<List<Node>> column = result.columnAs("path");
             
@@ -2101,7 +2158,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public BusinessObject getLinkConnectedToPort(String portClassName, long portId) throws MetadataObjectNotFoundException, 
+    public BusinessObject getLinkConnectedToPort(String portClassName, String portId) throws MetadataObjectNotFoundException, 
             BusinessObjectNotFoundException, InvalidArgumentException {
         
         if (!mem.isSubclassOf(Constants.CLASS_GENERICPORT, portClassName))
@@ -2123,11 +2180,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public List<BusinessObjectLightList> findRoutesThroughSpecialRelationships(String objectAClassName, 
-            long objectAId, String objectBClassName, long objectBId, String relationshipName) {
+            String objectAId, String objectBClassName, String objectBId, String relationshipName) throws InvalidArgumentException {
         List<BusinessObjectLightList> paths = new ArrayList<>();
 
         String cypherQuery = String.format("MATCH path = (a)-[:%s*1..30{name:\"%s\"}]-(b) " +
-                            "WHERE id(a) = %s AND id(b) = %s " +
+                            "WHERE a._uuid = %s AND b._uuid = %s " +
                             "RETURN nodes(path) as path LIMIT %s", RelTypes.RELATED_TO_SPECIAL, relationshipName, objectAId, objectBId, 
                                                                     aem.getConfiguration().get("maxRoutes")); //NOI18N
         try (Transaction tx = graphDb.beginTx()) {
@@ -2164,7 +2221,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     //<editor-fold desc="Warehouse" defaultstate="collapsed">
     @Override
-    public List<BusinessObjectLight> getWarehousesInObject(String objectClassName, long objectId) throws MetadataObjectNotFoundException {
+    public List<BusinessObjectLight> getWarehousesInObject(String objectClassName, String objectId) 
+        throws MetadataObjectNotFoundException, InvalidArgumentException {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, objectClassName);
@@ -2175,8 +2233,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             List<BusinessObjectLight> warehouses = new ArrayList();
                                     
             String cypherQuery = ""
-                + "match (warehouse:inventory_objects)-[:RELATED_TO_SPECIAL{ name: 'warehouseHas' }]-(child:inventory_objects)-[:CHILD_OF*]->(parent:inventory_objects)-[:INSTANCE_OF]->(class:classes{name: '" + objectClassName + "'}) "
-                + "where id(parent) = " + objectId + " return warehouse;";
+                + "match (warehouse:inventoryObjects)-[:RELATED_TO_SPECIAL{ name: 'warehouseHas' }]-(child:inventoryObjects)-[:CHILD_OF*]->(parent:inventoryObjects)-[:INSTANCE_OF]->(class:classes{name: '" + objectClassName + "'}) "
+                + "where parent._uuid = " + objectId + " return warehouse;";
             
             Result result = graphDb.execute(cypherQuery);
             ResourceIterator<Node> warehouseColumn = result.columnAs("warehouse");
@@ -2192,7 +2250,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         }
     }
     @Override
-    public BusinessObjectLight getWarehouseToObject(String objectClassName, long objectId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException {
+    public BusinessObjectLight getWarehouseToObject(String objectClassName, String objectId) 
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, objectClassName);
@@ -2206,7 +2265,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                                                 
             String cypherQuery = ""
                 + "MATCH (class{name:'" + objectClassName + "'})<-[:INSTANCE_OF]-(inventoryObject)-[:CHILD_OF_SPECIAL{name: 'pool'}]->(pool)-[:CHILD_OF_SPECIAL{name: 'pool'}]->(warehouse) "
-                + "WHERE id(inventoryObject) = " + objectId + " "
+                + "WHERE inventoryObject._uuid = " + objectId + " "
                 + "RETURN warehouse;";
             
             Result result = graphDb.execute(cypherQuery);
@@ -2226,7 +2285,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public BusinessObjectLight getPhysicalNodeToObjectInWarehouse(String objectClassName, long objectId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException {
+    public BusinessObjectLight getPhysicalNodeToObjectInWarehouse(String objectClassName, String objectId) 
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, objectClassName);
@@ -2240,7 +2300,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                                     
             String cypherQuery = ""
                 + "MATCH (class{name:'" + objectClassName + "'})<-[:INSTANCE_OF]-(inventoryObject)-[:CHILD_OF_SPECIAL{name: 'pool'}]->(pool)-[:CHILD_OF_SPECIAL{name: 'pool'}]->(warehouse)-[:RELATED_TO_SPECIAL{name: 'warehouseHas'}]->(physicalNode) "
-                + "WHERE id(inventoryObject) = " + objectId + " "
+                + "WHERE inventoryObject._uuid = " + objectId + " "
                 + "RETURN physicalNode;";
             
             Result result = graphDb.execute(cypherQuery);
@@ -2524,7 +2584,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public byte[] executeClassLevelReport(String objectClassName, long objectId, long reportId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
+    public byte[] executeClassLevelReport(String objectClassName, String objectId, long reportId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             
             Node reportNode = Util.findNodeByLabelAndId(reportsLabel, reportId);
@@ -2539,7 +2599,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Binding environmentParameters = new Binding();
             environmentParameters.setVariable("instanceNode", instanceNode); //NOI18N
             environmentParameters.setVariable("graphDb", graphDb); //NOI18N
-            environmentParameters.setVariable("inventoryObjectLabel", inventoryObjectsLabel);            
+            environmentParameters.setVariable("inventoryObjectLabel", inventoryObjectLabel);            
             environmentParameters.setVariable("classLabel", classLabel); //NOI18N
             environmentParameters.setVariable("defaultReports", defaultReports); //NOI18N
             
@@ -2585,7 +2645,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Binding environmentParameters = new Binding();
             environmentParameters.setVariable("parameters", scriptParameters); //NOI18N
             environmentParameters.setVariable("graphDb", graphDb); //NOI18N
-            environmentParameters.setVariable("inventoryObjectLabel", inventoryObjectsLabel); //NOI18N
+            environmentParameters.setVariable("inventoryObjectLabel", inventoryObjectLabel); //NOI18N
             environmentParameters.setVariable("classLabel", classLabel); //NOI18N
             environmentParameters.setVariable("defaultReports", defaultReports); //NOI18N
             
@@ -2610,7 +2670,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     //<editor-fold desc="Pools" defaultstate="collapsed">
         @Override
-    public List<Pool> getRootPools(String className, int type, boolean includeSubclasses) {
+    public List<Pool> getRootPools(String className, int type, boolean includeSubclasses) throws InvalidArgumentException {
         try(Transaction tx = graphDb.beginTx()) {
             List<Pool> pools  = new ArrayList<>();
             
@@ -2646,12 +2706,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public List<Pool> getPoolsInObject(String objectClassName, long objectId, String poolClass) throws BusinessObjectNotFoundException {
+    public List<Pool> getPoolsInObject(String objectClassName, String objectId, String poolClass) throws BusinessObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
             List<Pool> pools  = new ArrayList<>();
             
-            Node objectNode = Util.findNodeByLabelAndId(inventoryObjectsLabel, objectId);
+            Node objectNode = Util.findNodeByLabelAndUuid(inventoryObjectLabel, objectId);
             
             if (objectNode == null)
                 throw new BusinessObjectNotFoundException(objectClassName, objectId);
@@ -2673,13 +2733,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public List<Pool> getPoolsInPool(long parentPoolId, String poolClass) 
-            throws ApplicationObjectNotFoundException {
+    public List<Pool> getPoolsInPool(String parentPoolId, String poolClass) 
+            throws ApplicationObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
             List<Pool> pools  = new ArrayList<>();
             
-            Node parentPoolNode = Util.findNodeByLabelAndId(poolLabel, parentPoolId);
+            Node parentPoolNode = Util.findNodeByLabelAndUuid(poolLabel, parentPoolId);
             
             if (parentPoolNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The pool with id %s could not be found", parentPoolId));
@@ -2701,10 +2761,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
            
     @Override
-    public Pool getPool(long poolId) throws ApplicationObjectNotFoundException {
+    public Pool getPool(String poolId) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node poolNode = Util.findNodeByLabelAndId(poolLabel, poolId);
+            Node poolNode = Util.findNodeByLabelAndUuid(poolLabel, poolId);
             
             if (poolNode != null) {                
                 
@@ -2728,11 +2788,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public List<BusinessObjectLight> getPoolItems(long poolId, int limit)
-            throws ApplicationObjectNotFoundException {
+    public List<BusinessObjectLight> getPoolItems(String poolId, int limit)
+            throws ApplicationObjectNotFoundException, InvalidArgumentException {
         try(Transaction tx = graphDb.beginTx()) {
             
-            Node poolNode = Util.findNodeByLabelAndId(poolLabel, poolId);
+            Node poolNode = Util.findNodeByLabelAndUuid(poolLabel, poolId);
 
             if (poolNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The pool with id %s could not be found", poolId));
@@ -2749,7 +2809,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 if(rel.hasProperty(Constants.PROPERTY_NAME)){
                     if(rel.getProperty(Constants.PROPERTY_NAME).equals(Constants.REL_PROPERTY_POOL)){
                         Node item = rel.getStartNode();
-                        Node temp = Util.findNodeByLabelAndId(poolLabel, item.getId());
+                        
+                        String itemUuid = item.hasProperty(Constants.PROPERTY_UUID) ? (String) item.getProperty(Constants.PROPERTY_UUID) : null;
+                        if (itemUuid == null)
+                            throw new InvalidArgumentException(String.format("The pool/object with id %s does not have uuid", item.getId()));
+                        
+                        Node temp = Util.findNodeByLabelAndUuid(poolLabel, itemUuid);
                         if(temp == null)  //If it's not a pool, but a normal business object
                             poolItems.add(createObjectLightFromNode(item));
                     }
@@ -2769,9 +2834,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * @return a Node representing the entity
      * @throws MetadataObjectNotFoundException id the class could not be found
      * @throws org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException if the object could not be found
+     * @throws InvalidArgumentException If the object id is null
      */
-    public Node getInstanceOfClass(String className, long oid) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException{
+    public Node getInstanceOfClass(String className, String oid) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException{
         
+        if (oid == null)
+            throw new InvalidArgumentException("The object id cannot be null");
         //if any of the parameters is null, return the dummy root
         if (className == null || className.equals(Constants.NODE_DUMMYROOT))
             return graphDb.findNode(specialNodeLabel, Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
@@ -2786,7 +2854,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
         while (instances.hasNext()){
             Node otherSide = instances.next().getStartNode();
-            if (otherSide.getId() == oid)
+            
+            String otherSideUuid = otherSide.hasProperty(Constants.PROPERTY_UUID) ? otherSide.getProperty(Constants.PROPERTY_UUID).toString() : null;
+            if (oid.equals(otherSideUuid))
                 return otherSide;
         }
         throw new BusinessObjectNotFoundException(className, oid);
@@ -2800,7 +2870,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * @throws MetadataObjectNotFoundException if the class could not be found
      * @throws org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException
      */
-    public Node getInstanceOfClass(long classId, long oid) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException{
+    public Node getInstanceOfClass(long classId, String oid) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException{
                 
         //if any of the parameters is null, return the dummy root
         if (classId == -1)
@@ -2815,19 +2885,23 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         Iterator<Relationship> instances = iteratorInstances.iterator();
         while (instances.hasNext()){
             Node otherSide = instances.next().getStartNode();
-            if (otherSide.getId() == oid)
+            
+            String otherSideUuid = otherSide.hasProperty(Constants.PROPERTY_UUID) ? (String) otherSide.getProperty(Constants.PROPERTY_UUID) : null;
+            if (otherSideUuid != null && otherSideUuid.equals(oid))
                 return otherSide;
         }
         throw new BusinessObjectNotFoundException((String)classNode.getProperty(Constants.PROPERTY_NAME), oid);
     }
 
-    public Node getInstanceOfClass(Node classNode, long oid) throws BusinessObjectNotFoundException{
+    public Node getInstanceOfClass(Node classNode, String oid) throws BusinessObjectNotFoundException{
         Iterable<Relationship> iterableInstances = classNode.getRelationships(RelTypes.INSTANCE_OF);
         Iterator<Relationship> instances = iterableInstances.iterator();
         
         while (instances.hasNext()){
             Node otherSide = instances.next().getStartNode();
-            if (otherSide.getId() == oid)
+            
+            String otherSideUuid = otherSide.hasProperty(Constants.PROPERTY_UUID) ? (String) otherSide.getProperty(Constants.PROPERTY_UUID) : null;
+            if (otherSideUuid != null && otherSideUuid.equals(oid))
                 return otherSide;
         }
         throw new BusinessObjectNotFoundException((String)classNode.getProperty(Constants.PROPERTY_NAME), oid);
@@ -2839,7 +2913,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         if (classToMap.isAbstract())
             throw new InvalidArgumentException(String.format("Can not create objects from abstract classes (%s)", classToMap.getName()));
         
-        Node newObject = graphDb.createNode(inventoryObjectsLabel);
+        Node newObject = graphDb.createNode(inventoryObjectLabel);
+                
+        String uuid = UUID.randomUUID().toString();
+        newObject.setProperty(Constants.PROPERTY_UUID, uuid);
+        
         newObject.setProperty(Constants.PROPERTY_NAME, ""); //The default value is an empty string 
 
         newObject.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis()); //The default value is right now
@@ -2998,13 +3076,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      */
     private Node copyObject(Node templateObject, boolean recursive) {
         
-        Node newInstance = graphDb.createNode(inventoryObjectsLabel);
+        Node newInstance = graphDb.createNode(inventoryObjectLabel);
         for (String property : templateObject.getPropertyKeys())
             newInstance.setProperty(property, templateObject.getProperty(property));
         for (Relationship rel : templateObject.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING))
             newInstance.createRelationshipTo(rel.getEndNode(), RelTypes.RELATED_TO).setProperty(Constants.PROPERTY_NAME, rel.getProperty(Constants.PROPERTY_NAME));
         
         newInstance.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+        newInstance.setProperty(Constants.PROPERTY_UUID, UUID.randomUUID().toString());
         
         newInstance.createRelationshipTo(templateObject.getRelationships(RelTypes.INSTANCE_OF).iterator().next().getEndNode(), RelTypes.INSTANCE_OF);
 
@@ -3025,7 +3104,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      */
     private Node copyTemplateElement(Node templateObject, ClassMetadata classToMap, boolean recursive) throws InvalidArgumentException {
         
-        Node newInstance = graphDb.createNode(inventoryObjectsLabel);
+        Node newInstance = graphDb.createNode(inventoryObjectLabel);
+                
+        String uuid = UUID.randomUUID().toString();
+        newInstance.setProperty(Constants.PROPERTY_UUID, uuid);
+        
         for (String property : templateObject.getPropertyKeys()){
             if(classToMap.isMandatory(property) && ((String)templateObject.getProperty(property)).isEmpty())
                 throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set null or empty", property));
@@ -3055,7 +3138,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public boolean canDeleteObject(String className, long oid) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException {
+    public boolean canDeleteObject(String className, String oid) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException {
         if (!mem.isSubclassOf(Constants.CLASS_INVENTORYOBJECT, className))
             throw new OperationNotPermittedException(String.format("Class %s is not a business-related class", className));
         try (Transaction tx = graphDb.beginTx()) {   
@@ -3119,7 +3202,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * @return The list of objects matching the search string
      */
     private List<BusinessObjectLight> getObjectsWithFilterLight (Node classNode, 
-            String filterName, String filterValue) {
+            String filterName, String filterValue) throws InvalidArgumentException {
         
         List<BusinessObjectLight> res = new ArrayList<>();
             
@@ -3182,8 +3265,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         return res;
     }
     
-    private void getChildrenOfClassRecursive(long parentOid, String parentClass, String classToFilter, int maxResults, List<BusinessObjectLight> res) 
-        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException {
+    private void getChildrenOfClassRecursive(String parentOid, String parentClass, String classToFilter, int maxResults, List<BusinessObjectLight> res) 
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
         
         if (maxResults > 0 && res.size() == maxResults)
             return;
@@ -3204,12 +3287,16 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 if (maxResults > 0 && res.size() == maxResults)
                     break;
             }
-            getChildrenOfClassRecursive(child.getId(), childClassName, classToFilter, maxResults, res);
+            String childUuid = child.hasProperty(Constants.PROPERTY_UUID) ? (String) child.getProperty(Constants.PROPERTY_UUID) : null;
+            if (childUuid == null)
+                throw new InvalidArgumentException(String.format("The object with id %s does not have uuid", child.getId()));
+            getChildrenOfClassRecursive(childUuid, childClassName, classToFilter, maxResults, res);
         }
     }
     
     private void getSpecialChildrenOfClassRecursive(Node parentNode, String classToFilter, 
-            int maxResults, List<BusinessObjectLight> res) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException {
+        int maxResults, List<BusinessObjectLight> res) 
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
         
         if (maxResults > 0 && res.size() == maxResults)
             return;
@@ -3240,8 +3327,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     private BusinessObjectLight createObjectLightFromNode (Node instance) {
         String className = (String)instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME);
         
+        String instanceUUID = instance.hasProperty(Constants.PROPERTY_UUID) ? (String) instance.getProperty(Constants.PROPERTY_UUID) : null;
         //First, we create the naked business object, without validators
-        BusinessObjectLight res = new BusinessObjectLight(className, instance.getId(), (String)instance.getProperty(Constants.PROPERTY_NAME));
+        BusinessObjectLight res = new BusinessObjectLight(className, instanceUUID, (String)instance.getProperty(Constants.PROPERTY_NAME));
         
         //Then, we check the cache for validator definitions
         List<ValidatorDefinition> validatorDefinitions = CacheManager.getInstance().getValidatorDefinitions(className);
@@ -3388,7 +3476,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                             instance.getProperty(Constants.PROPERTY_NAME), instance.getId(), relationship.getEndNode().getProperty(Constants.PROPERTY_NAME), relationship.getEndNode().getId()));
         }
         
-        return new BusinessObject(classMetadata.getName(), instance.getId(), name, attributes);
+        String uuid = instance.hasProperty(Constants.PROPERTY_UUID) ? instance.getProperty(Constants.PROPERTY_UUID).toString() : null;
+        
+        return new BusinessObject(classMetadata.getName(), uuid, name, attributes);
     }
     
     /**
@@ -3451,6 +3541,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * @return true if the object is safe to be deleted, false otherwise.
      */
     private boolean canDeleteObject(Node instance) {
-        return !instance.hasRelationship(RelTypes.RELATED_TO_SPECIAL, RelTypes.HAS_PROCESS_INSTANCE);        
+        return !instance.hasRelationship(RelTypes.RELATED_TO, RelTypes.RELATED_TO_SPECIAL, RelTypes.HAS_PROCESS_INSTANCE);        
     }
 }

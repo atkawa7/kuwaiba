@@ -63,7 +63,7 @@ public class MiniAppSyncRunner extends AbstractMiniApplication<Component, Compon
             return null;
         }
         try {
-            long deviceId = Long.valueOf(inputParameters.getProperty("deviceId")); //NOI18N
+            String deviceId = inputParameters.getProperty("deviceId"); //NOI18N
             String deviceClass = inputParameters.getProperty("deviceClass"); //NOI18N
 
             RemoteObjectLight remoteObject = wsBean.getObjectLight(

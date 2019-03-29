@@ -49,7 +49,7 @@ public class MiniAppNavTree extends AbstractMiniApplication<Component, Component
      */
     @Override
     public Component launchEmbedded() {
-        long id = getInputParameters().getProperty("startingId") != null ? Long.valueOf(getInputParameters().getProperty("startingId")) : -1;
+        String id = getInputParameters().getProperty("startingId") != null ? getInputParameters().getProperty("startingId") : "-1";
         String rootName = getInputParameters().getProperty("name");
         String rootClassName = getInputParameters().getProperty("className");
         RemoteObjectLight root = new RemoteObjectLight(rootClassName, id, rootName);

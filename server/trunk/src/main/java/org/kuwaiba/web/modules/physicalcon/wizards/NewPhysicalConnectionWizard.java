@@ -304,7 +304,7 @@ public class NewPhysicalConnectionWizard extends Wizard {
                     RemoteObjectLight commonParent = wsBean.getCommonParent(selectedASide.getClassName(), selectedASide.getId(), selectedBSide.getClassName(), 
                             selectedBSide.getId(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
                     
-                    long newConnection = wsBean.createPhysicalConnection(selectedASide.getClassName(), selectedASide.getId(), selectedBSide.getClassName(), 
+                    String newConnection = wsBean.createPhysicalConnection(selectedASide.getClassName(), selectedASide.getId(), selectedBSide.getClassName(), 
                             selectedBSide.getId(), commonParent.getClassName(), commonParent.getId(), properties.getProperty("name"), 
                             properties.getProperty("class"), (long)properties.get("templateId"),  Page.getCurrent().getWebBrowser().getAddress(),
                                 session.getSessionId());
@@ -438,7 +438,7 @@ public class NewPhysicalConnectionWizard extends Wizard {
                     RemoteObjectLight commonParent = wsBean.getCommonParent(selectedASide.getClassName(), selectedASide.getId(), selectedBSide.getClassName(), 
                             selectedBSide.getId(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
                     
-                    long newConnection = wsBean.createPhysicalConnection(selectedASide.getClassName(), selectedASide.getId(), selectedBSide.getClassName(), 
+                    String newConnection = wsBean.createPhysicalConnection(selectedASide.getClassName(), selectedASide.getId(), selectedBSide.getClassName(), 
                             selectedBSide.getId(), commonParent.getClassName(), commonParent.getId(), properties.getProperty("name"), 
                             properties.getProperty("class"), (long)properties.get("templateId"),  Page.getCurrent().getWebBrowser().getAddress(),
                                 session.getSessionId());

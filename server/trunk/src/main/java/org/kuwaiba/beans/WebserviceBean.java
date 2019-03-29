@@ -160,101 +160,101 @@ public interface WebserviceBean {
     
     public void removePossibleSpecialChildren(long parentClassId, long[] specialChildrenToBeRemoved, String ipAddress, String sessionId) throws ServerSideException;
 
-    public String getAttributeValueAsString(String objectClass, long objectId, String attributeName, String ipAddress, String sessionId) throws ServerSideException;
+    public String getAttributeValueAsString(String objectClass, String objectId, String attributeName, String ipAddress, String sessionId) throws ServerSideException;
     
-    public HashMap<String, String> getAttributeValuesAsString(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public HashMap<String, String> getAttributeValuesAsString(String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException;
 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Business methods. Click on the + sign on the left to edit the code.">
-    public List<RemoteObjectLight> getObjectChildren(long oid, long objectClassId, int maxResults, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteObjectLight> getObjectChildren(String objectClassName, long oid, int maxResults, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteObjectLight> getSiblings(String objectClassName, long oid, int maxResults, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLight> getObjectChildren(String oid, long objectClassId, int maxResults, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLight> getObjectChildren(String objectClassName, String oid, int maxResults, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLight> getSiblings(String objectClassName, String oid, int maxResults, String ipAddress, String sessionId) throws ServerSideException;
 
-    public List<RemoteObject> getChildrenOfClass(long parentOid, String parentClass,String classToFilter, int maxResults, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteObjectLight> getChildrenOfClassLight(long parentOid, String parentClass,String classToFilter, int maxResults, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteObjectLight> getSpecialChildrenOfClassLight(long parentOid, String parentClass, String classToFilter, int maxResults, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteObjectLight> getChildrenOfClassLightRecursive(long parentOid, String parentClass, String classToFilter, int maxResults, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObject> getChildrenOfClass(String parentOid, String parentClass,String classToFilter, int maxResults, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLight> getChildrenOfClassLight(String parentOid, String parentClass,String classToFilter, int maxResults, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLight> getSpecialChildrenOfClassLight(String parentOid, String parentClass, String classToFilter, int maxResults, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLight> getChildrenOfClassLightRecursive(String parentOid, String parentClass, String classToFilter, int maxResults, String ipAddress, String sessionId) throws ServerSideException;
     
-    public RemoteObject getObject(String objectClass, long oid, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteObject getObject(String objectClass, String oid, String ipAddress, String sessionId) throws ServerSideException;
 
-    public RemoteObjectLight getObjectLight(String objectClass, long oid, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteObjectLight getObjectLight(String objectClass, String oid, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteObject> getObjectsWithFilter (String className, String filterName, String filterValue, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteObjectLight> getObjectsWithFilterLight (String className, String filterName, String filterValue, String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteObjectLight getCommonParent(String aObjectClass, long aOid, String bObjectClass, long bOid, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteObjectLight getCommonParent(String aObjectClass, String aOid, String bObjectClass, String bOid, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteObjectLight> getSuggestedObjectsWithFilter(String filter, int limit, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteObjectLight> getSuggestedObjectsWithFilter(String filter, String superClass, int limit, String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteObjectLight getParent(String objectClass, long oid, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteObjectLight> getParents(String objectClass, long oid, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteObjectLight> getParentsUntilFirstOfClass(String objectClassName,long oid, String objectToMatchClassName, String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteObjectLight getFirstParentOfClass(String objectClassName,long oid, String objectToMatchClassName, String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteObject getParentOfClass(String objectClass, long oid, String parentClass, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteObjectLight getParent(String objectClass, String oid, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLight> getParents(String objectClass, String oid, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLight> getParentsUntilFirstOfClass(String objectClassName, String oid, String objectToMatchClassName, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteObjectLight getFirstParentOfClass(String objectClassName, String oid, String objectToMatchClassName, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteObject getParentOfClass(String objectClass, String oid, String parentClass, String ipAddress, String sessionId) throws ServerSideException;
 
-    public List<RemoteObjectLight> getSpecialAttribute(String objectClass, long objectId, String attributeName, String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteObjectSpecialRelationships getSpecialAttributes(String objectClass, long oid, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteObjectLight> getObjectSpecialChildren(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLight> getSpecialAttribute(String objectClass, String objectId, String attributeName, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteObjectSpecialRelationships getSpecialAttributes(String objectClass, String oid, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLight> getObjectSpecialChildren(String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException;
 
-    public void updateObject(String className, long oid, List<StringPair> attributesToBeUpdated, String ipAddress, String sessionId) throws ServerSideException;
+    public void updateObject(String className, String oid, List<StringPair> attributesToBeUpdated, String ipAddress, String sessionId) throws ServerSideException;
 
-    public long createObject(String className, String parentClassName, long parentOid, String[] attributeNames, String[] attributeValues, long templateId, String ipAddress, String sessionId) throws ServerSideException;
-    public long createSpecialObject(String className, String parentObjectClassName, long parentOid, String[] attributeNames, String[] attributeValues, long templateId, String ipAddress, String sessionId) throws ServerSideException;
+    public String createObject(String className, String parentClassName, String parentOid, String[] attributeNames, String[] attributeValues, long templateId, String ipAddress, String sessionId) throws ServerSideException;
+    public String createSpecialObject(String className, String parentObjectClassName, String parentOid, String[] attributeNames, String[] attributeValues, long templateId, String ipAddress, String sessionId) throws ServerSideException;
     
-    public long createListTypeItem(String className, String name, String displayName, String ipAddress, String sessionId) throws ServerSideException;
+    public String createListTypeItem(String className, String name, String displayName, String ipAddress, String sessionId) throws ServerSideException;
 
-    public void deleteListTypeItem(String className, long oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
+    public void deleteListTypeItem(String className, String oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
 
     public List<RemoteObjectLight> getListTypeItems(String className, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteObjectLight> getObjectsOfClassLight(String className, int maxResults, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteObject> getObjectsOfClass(String className, int maxResults, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteClassMetadataLight[] getInstanceableListTypes(String ipAddress, String sessionId) throws ServerSideException;
 
-    public boolean canDeleteObject(String className, long oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
-    public void deleteObject(String className, long oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
-    public void deleteObjects(String classNames[], long[] oids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
+    public boolean canDeleteObject(String className, String oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
+    public void deleteObject(String className, String oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
+    public void deleteObjects(String classNames[], String[] oids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
 
-    public void moveObjectsToPool(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, String ipAddress, String sessionId) throws ServerSideException;
-    public void moveObjects(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, String ipAddress, String sessionId) throws ServerSideException;
-    public void moveSpecialObjects(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, String ipAddress, String sessionId) throws ServerSideException;
-    public void movePoolItem(long poolId, String poolItemClassName, long poolItemId, String ipAddress, String sessionId) throws ServerSideException;
+    public void moveObjectsToPool(String targetClass, String targetOid, String[] objectClasses, String[] objectOids, String ipAddress, String sessionId) throws ServerSideException;
+    public void moveObjects(String targetClass, String targetOid, String[] objectClasses, String[] objectOids, String ipAddress, String sessionId) throws ServerSideException;
+    public void moveSpecialObjects(String targetClass, String targetOid, String[] objectClasses, String[] objectOids, String ipAddress, String sessionId) throws ServerSideException;
+    public void movePoolItem(String poolId, String poolItemClassName, String poolItemId, String ipAddress, String sessionId) throws ServerSideException;
 
-    public long[] copyObjects(String targetClass, long targetOid, String[] templateClasses, long[] templateOids, boolean recursive, String ipAddress, String sessionId) throws ServerSideException;
-    public long[] copySpecialObjects(String targetClass, long targetOid, String[] templateClasses, long[] templateOids, boolean recursive, String ipAddress, String sessionId) throws ServerSideException;
-    public long copyPoolItem(long poolId, String poolItemClassName, long poolItemId, boolean recursive, String ipAddress, String sessionId) throws ServerSideException;
+    public String[] copyObjects(String targetClass, String targetOid, String[] templateClasses, String[] templateOids, boolean recursive, String ipAddress, String sessionId) throws ServerSideException;
+    public String[] copySpecialObjects(String targetClass, String targetOid, String[] templateClasses, String[] templateOids, boolean recursive, String ipAddress, String sessionId) throws ServerSideException;
+    public String copyPoolItem(String poolId, String poolItemClassName, String poolItemId, boolean recursive, String ipAddress, String sessionId) throws ServerSideException;
     
     public List<RemoteAttributeMetadata> getMandatoryAttributesInClass(String className, String ipAddress, String sessionId)  throws ServerSideException;
         
-    public long [] createBulkObjects(String className, String parentClassName, long parentOid, int numberOfObjects, String namePattern, String ipAddress, String sessionId) throws ServerSideException;
-    public long[] createBulkSpecialObjects(String className, String parentClassName, long parentId, int numberOfSpecialObjects, String namePattern, String ipAddress, String sessionId) throws ServerSideException;
+    public String[] createBulkObjects(String className, String parentClassName, String parentOid, int numberOfObjects, String namePattern, String ipAddress, String sessionId) throws ServerSideException;
+    public String[] createBulkSpecialObjects(String className, String parentClassName, String parentId, int numberOfSpecialObjects, String namePattern, String ipAddress, String sessionId) throws ServerSideException;
     //Physical connections
-    public void connectMirrorPort(String[] aObjectClass, long[] aObjectId, String[] bObjectClass, long[] bObjectId, String ipAddress, String sessionId) throws ServerSideException;
-    public void releaseMirrorPort(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
-    public long createPhysicalConnection(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String parentClass, long parentId, String name, String connectionClass, long templateId, String ipAddress, String sessionId) throws ServerSideException;
-    public void deletePhysicalConnection(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteObjectLight[] getPhysicalConnectionEndpoints(String connectionClass, long connectionId, String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteObjectLight[] getLogicalConnectionEndpoints(String connectionClass, long connectionId, String ipAddress, String sessionId) throws ServerSideException;
-    public void connectPhysicalLinks(String[] sideAClassNames, Long[] sideAIds, String[] linksClassNames, long[] linksIds, String[] sideBClassNames, Long[] sideBIds, String ipAddress, String sessionId) throws ServerSideException;
-    public void connectLogicalLinks(String[] sideAClassNames, Long[] sideAIds, String[] linksClassNames, long[] linksIds, String[] sideBClassNames, Long[] sideBIds, String ipAddress, String sessionId) throws ServerSideException;
-    public void connectPhysicalContainers(String[] sideAClassNames, Long[] sideAIds, String[] containerssClassNames, long[] containersIds, String[] sideBClassNames, Long[] sideBIds, String ipAddress, String sessionId) throws ServerSideException;
-    public void reconnectPhysicalConnection(String connectionClass, long connectionId, String newASideClass, long newASideId, String newBSideClass, long newBSideId, String ipAddress, String sessionId) throws ServerSideException;
-    public void disconnectPhysicalConnection(String connectionClass, long connectionId, int sideToDisconnect, String ipAddress, String sessionId) throws ServerSideException;
-    public void disconnectLogicalConnection(String connectionClass, long connectionId, int sideToDisconnect, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteObjectLight> getPhysicalPath(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteLogicalConnectionDetails getLogicalLinkDetails(String linkClass, long linkId, String ipAddress, String sessionId) throws ServerSideException;
-    public RemotePhysicalConnectionDetails getPhysicalLinkDetails(String linkClass, long linkId, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteObjectLinkObject> getE2EMap(List<String> linkClasses, List<Long> linkIds, boolean includePhyscalPaths, boolean includeVlans, boolean includePhyscialLinks,String ipAddress, String sessionId) throws ServerSideException;
+    public void connectMirrorPort(String[] aObjectClass, String[] aObjectId, String[] bObjectClass, String[] bObjectId, String ipAddress, String sessionId) throws ServerSideException;
+    public void releaseMirrorPort(String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public String createPhysicalConnection(String aObjectClass, String aObjectId, String bObjectClass, String bObjectId, String parentClass, String parentId, String name, String connectionClass, long templateId, String ipAddress, String sessionId) throws ServerSideException;
+    public void deletePhysicalConnection(String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteObjectLight[] getPhysicalConnectionEndpoints(String connectionClass, String connectionId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteObjectLight[] getLogicalConnectionEndpoints(String connectionClass, String connectionId, String ipAddress, String sessionId) throws ServerSideException;
+    public void connectPhysicalLinks(String[] sideAClassNames, String[] sideAIds, String[] linksClassNames, String[] linksIds, String[] sideBClassNames, String[] sideBIds, String ipAddress, String sessionId) throws ServerSideException;
+    public void connectLogicalLinks(String[] sideAClassNames, String[] sideAIds, String[] linksClassNames, String[] linksIds, String[] sideBClassNames, String[] sideBIds, String ipAddress, String sessionId) throws ServerSideException;
+    public void connectPhysicalContainers(String[] sideAClassNames, String[] sideAIds, String[] containerssClassNames, String[] containersIds, String[] sideBClassNames, String[] sideBIds, String ipAddress, String sessionId) throws ServerSideException;
+    public void reconnectPhysicalConnection(String connectionClass, String connectionId, String newASideClass, String newASideId, String newBSideClass, String newBSideId, String ipAddress, String sessionId) throws ServerSideException;
+    public void disconnectPhysicalConnection(String connectionClass, String connectionId, int sideToDisconnect, String ipAddress, String sessionId) throws ServerSideException;
+    public void disconnectLogicalConnection(String connectionClass, String connectionId, int sideToDisconnect, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLight> getPhysicalPath(String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteLogicalConnectionDetails getLogicalLinkDetails(String linkClass, String linkId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemotePhysicalConnectionDetails getPhysicalLinkDetails(String linkClass, String linkId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLinkObject> getE2EMap(List<String> linkClasses, List<String> linkIds, boolean includePhyscalPaths, boolean includeVlans, boolean includePhyscialLinks,String ipAddress, String sessionId) throws ServerSideException;
     
-    public List<RemoteObjectLight> getContainersBetweenObjects(String objectAClassName, long objectAId,
-            String objectBClassName, long objectBId, String containerClassName, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteObjectLightList> getPhysicalConnectionsInObject(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteObjectLight> getLogicalConnectionsInObject(String objectClass, long objectId, 
+    public List<RemoteObjectLight> getContainersBetweenObjects(String objectAClassName, String objectAId,
+            String objectBClassName, String objectBId, String containerClassName, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLightList> getPhysicalConnectionsInObject(String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLight> getLogicalConnectionsInObject(String objectClass, String objectId, 
             String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteObject getLinkConnectedToPort(String portClassName, long portId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteObject getLinkConnectedToPort(String portClassName, String portId, String ipAddress, String sessionId) throws ServerSideException;
     //Service Manager
-    public void associateObjectToService(String objectClass, long objectId, String serviceClass, long serviceId, String ipAddress, String sessionId) throws ServerSideException;
-    public void associateObjectsToService(String[] objectClass, long[] objectId, String serviceClass, long serviceId, String ipAddress, String sessionId) throws ServerSideException;
-    public void releaseObjectFromService(String serviceClass, long serviceId, long otherObjectId, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteObjectLight> getServiceResources(String serviceClass, long serviceId, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteObjectLight> getServicesForCustomer(String customerClass, long customerId, int limit, String ipAddress, String sessionId) throws ServerSideException;
+    public void associateObjectToService(String objectClass, String objectId, String serviceClass, String serviceId, String ipAddress, String sessionId) throws ServerSideException;
+    public void associateObjectsToService(String[] objectClass, String[] objectId, String serviceClass, String serviceId, String ipAddress, String sessionId) throws ServerSideException;
+    public void releaseObjectFromService(String serviceClass, String serviceId, String otherObjectId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLight> getServiceResources(String serviceClass, String serviceId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLight> getServicesForCustomer(String customerClass, String customerId, int limit, String ipAddress, String sessionId) throws ServerSideException;
 // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">
@@ -289,37 +289,37 @@ public interface WebserviceBean {
     public void deleteGroups(long[] oids, String ipAddress, String sessionId)
             throws ServerSideException;
     
-    public long createListTypeItemRelatedView(long listTypeItemId, String listTypeItemClassName, String viewClassName, 
+    public long createListTypeItemRelatedView(String listTypeItemId, String listTypeItemClassName, String viewClassName, 
         String name, String description, byte [] structure, byte [] background, String ipAddress, String sessionId) 
         throws ServerSideException;
     
-    public void updateListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, 
+    public void updateListTypeItemRelatedView(String listTypeItemId, String listTypeItemClass, long viewId, 
         String name, String description, byte[] structure, byte[] background, String ipAddress, String sessionId) 
         throws ServerSideException;
     
-    public RemoteViewObject getListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, String ipAddress, String sessionId) 
+    public RemoteViewObject getListTypeItemRelatedView(String listTypeItemId, String listTypeItemClass, long viewId, String ipAddress, String sessionId) 
         throws ServerSideException;
     
-    public RemoteViewObjectLight[] getListTypeItemRelatedViews(long listTypeItemId, String listTypeItemClass, int limit, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteViewObjectLight[] getListTypeItemRelatedViews(String listTypeItemId, String listTypeItemClass, int limit, String ipAddress, String sessionId) throws ServerSideException;
     
-    public void deleteListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, String ipAddress, String sessionId) throws ServerSideException;
+    public void deleteListTypeItemRelatedView(String listTypeItemId, String listTypeItemClass, long viewId, String ipAddress, String sessionId) throws ServerSideException;
 
-    public List<RemoteObjectLight> getListTypeItemUses(String listTypeItemClass, long listTypeItemId, int limit, 
+    public List<RemoteObjectLight> getListTypeItemUses(String listTypeItemClass, String listTypeItemId, int limit, 
         String ipAddress, String sessionId) throws ServerSideException;
     
-    public RemoteViewObject getObjectRelatedView(long oid, String objectClass, long viewId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteViewObject getObjectRelatedView(String oid, String objectClass, long viewId, String ipAddress, String sessionId) throws ServerSideException;
 
-    public List<RemoteViewObjectLight> getObjectRelatedViews(long oid, String objectClass, int viewType, int limit, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteViewObjectLight> getObjectRelatedViews(String oid, String objectClass, int viewType, int limit, String ipAddress, String sessionId) throws ServerSideException;
 
     public RemoteViewObject getGeneralView(long viewId, String ipAddress, String sessionId) throws ServerSideException;
     
     public RemoteViewObjectLight[] getGeneralViews(String viewClassName, int limit, String ipAddress, String sessionId) throws ServerSideException;
 
-    public long createObjectRelatedView(long objectId, String objectClass, String name, String description, String viewClassName, byte[] structure, byte[] background, String ipAddress, String sessionId) throws ServerSideException;
+    public long createObjectRelatedView(String objectId, String objectClass, String name, String description, String viewClassName, byte[] structure, byte[] background, String ipAddress, String sessionId) throws ServerSideException;
 
     public long createGeneralView(String viewClass, String name, String description, byte[] structure, byte[] background, String ipAddress, String sessionId) throws ServerSideException;
 
-    public void updateObjectRelatedView(long objectOid, String objectClass, long viewId, String viewName, String viewDescription, byte[] structure, byte[] background, String ipAddress, String sessionId) throws ServerSideException;
+    public void updateObjectRelatedView(String objectOid, String objectClass, long viewId, String viewName, String viewDescription, byte[] structure, byte[] background, String ipAddress, String sessionId) throws ServerSideException;
 
     public void updateGeneralView(long viewId, String viewName, String viewDescription, byte[] structure, byte[] background, String ipAddress, String sessionId) throws ServerSideException;
 
@@ -342,43 +342,43 @@ public interface WebserviceBean {
     public byte[] getClassHierarchy(boolean showAll, String ipAddress, String sessionId) throws ServerSideException;
 
     //Pools
-    public long createRootPool(String name, String description, String instancesOfClass, int type, String ipAddress, String sessionId)
+    public String createRootPool(String name, String description, String instancesOfClass, int type, String ipAddress, String sessionId)
             throws ServerSideException;
     
-    public long createPoolInObject(String parentClassname, long parentId, String name, String description, String instancesOfClass, int type, String ipAddress, String sessionId)
+    public String createPoolInObject(String parentClassname, String parentId, String name, String description, String instancesOfClass, int type, String ipAddress, String sessionId)
             throws ServerSideException;
     
-    public long createPoolInPool(long parentId, String name, String description, String instancesOfClass, int type, String ipAddress, String sessionId) 
+    public String createPoolInPool(String parentId, String name, String description, String instancesOfClass, int type, String ipAddress, String sessionId) 
             throws ServerSideException;
     
-    public long createPoolItem(long poolId, String className, String[] attributeNames, String[] attributeValues, long templateId, String ipAddress, String sessionId) throws ServerSideException;
+    public String createPoolItem(String poolId, String className, String[] attributeNames, String[] attributeValues, long templateId, String ipAddress, String sessionId) throws ServerSideException;
     
-    public void deletePools(long[] ids, String ipAddress, String sessionId) throws ServerSideException;
-    public void setPoolProperties(long poolId, String name, String description, String ipAddress, String sessionId) throws ServerSideException;
+    public void deletePools(String[] ids, String ipAddress, String sessionId) throws ServerSideException;
+    public void setPoolProperties(String poolId, String name, String description, String ipAddress, String sessionId) throws ServerSideException;
     
-    public RemotePool getPool(long poolId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemotePool getPool(String poolId, String ipAddress, String sessionId) throws ServerSideException;
     
     public List<RemotePool> getRootPools(String className, int type, boolean includeSubclasses, String ipAddress, String sessionId) throws ServerSideException;
     
-    public List<RemotePool> getPoolsInObject(String objectClassName, long objectId, String poolClass, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemotePool> getPoolsInObject(String objectClassName, String objectId, String poolClass, String ipAddress, String sessionId) throws ServerSideException;
     
-    public List<RemotePool> getPoolsInPool(long parentPoolId, String poolClass, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemotePool> getPoolsInPool(String parentPoolId, String poolClass, String ipAddress, String sessionId) throws ServerSideException;
     
-    public List<RemoteObjectLight> getPoolItems(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLight> getPoolItems(String poolId, int limit, String ipAddress, String sessionId) throws ServerSideException;
     
-    public ApplicationLogEntry[] getBusinessObjectAuditTrail(String objectClass, long objectId, int limit, String ipAddress, String sessionId) throws ServerSideException;
+    public ApplicationLogEntry[] getBusinessObjectAuditTrail(String objectClass, String objectId, int limit, String ipAddress, String sessionId) throws ServerSideException;
     
     public ApplicationLogEntry[] getGeneralActivityAuditTrail(int page, int limit, String ipAddress, String sessionId) throws ServerSideException;
 
-    public long attachFileToObject(String name, String tags, byte[] file, String className, long objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public long attachFileToObject(String name, String tags, byte[] file, String className, String objectId, String ipAddress, String sessionId) throws ServerSideException;
     
-    public void detachFileFromObject(long fileObjectId, String className, long objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public void detachFileFromObject(long fileObjectId, String className, String objectId, String ipAddress, String sessionId) throws ServerSideException;
     
-    public List<RemoteFileObjectLight> getFilesForObject(String className, long objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteFileObjectLight> getFilesForObject(String className, String objectId, String ipAddress, String sessionId) throws ServerSideException;
 
-    public RemoteFileObject getFile(long fileObjectId, String className, long objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteFileObject getFile(long fileObjectId, String className, String objectId, String ipAddress, String sessionId) throws ServerSideException;
     
-    public void updateFileProperties(long fileObjectId, List<StringPair> properties,String className, long objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public void updateFileProperties(long fileObjectId, List<StringPair> properties,String className, String objectId, String ipAddress, String sessionId) throws ServerSideException;
     
     public long createTask(String name, String description, boolean enabled, boolean commitOnExecute, String script, List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType, String ipAddress, String sessionId) throws ServerSideException;
 
@@ -443,12 +443,12 @@ public interface WebserviceBean {
     public RemoteScriptQueryResult executeScriptQuery(String scriptQueryName, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteScriptQueryResultCollection executeScriptQueryCollection(long scriptQueryId, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteScriptQueryResultCollection executeScriptQueryCollection(String scriptQueryName, String ipAddress, String sessionId) throws ServerSideException;
-    public long createContact(String contactClass, List<StringPair> properties, String customerClassName, long customerId, String ipAddress, String sessionId) throws  ServerSideException;
-    public void updateContact(String contactClass, long contactId, List<StringPair> properties, String ipAddress, String sessionId) throws  ServerSideException;
-    public void deleteContact(String contactClass, long contactId, String ipAddress, String sessionId) throws  ServerSideException;
-    public RemoteContact getContact(String contactClass, long contactId, String ipAddress, String sessionId) throws  ServerSideException;
+    public String createContact(String contactClass, List<StringPair> properties, String customerClassName, String customerId, String ipAddress, String sessionId) throws  ServerSideException;
+    public void updateContact(String contactClass, String contactId, List<StringPair> properties, String ipAddress, String sessionId) throws  ServerSideException;
+    public void deleteContact(String contactClass, String contactId, String ipAddress, String sessionId) throws  ServerSideException;
+    public RemoteContact getContact(String contactClass, String contactId, String ipAddress, String sessionId) throws  ServerSideException;
     public List<RemoteContact> searchForContacts(String searchString, int maxResults, String ipAddress, String sessionId) throws  ServerSideException;
-    public List<RemoteContact> getContactsForCustomer(String customerClass, long customerId, String ipAddress, String sessionId) throws  ServerSideException;
+    public List<RemoteContact> getContactsForCustomer(String customerClass, String customerId, String ipAddress, String sessionId) throws  ServerSideException;
     
     // </editor-fold>
     
@@ -509,7 +509,7 @@ public interface WebserviceBean {
     
     public List<RemoteObjectLight> getDeviceLayouts(String ipAddress, String sessionId) throws ServerSideException;
         
-    public byte[] getDeviceLayoutStructure(long oid, String className, String ipAddress, String sessionId) throws ServerSideException;
+    public byte[] getDeviceLayoutStructure(String oid, String className, String ipAddress, String sessionId) throws ServerSideException;
     //</editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Reporting methods.">
@@ -534,7 +534,7 @@ public interface WebserviceBean {
     
     public RemoteReport getReport(long reportId, String ipAddress, String sessionId) throws ServerSideException;
     
-    public byte[] executeClassLevelReport(String objectClassName, long objectId, 
+    public byte[] executeClassLevelReport(String objectClassName, String objectId, 
             long reportId, String ipAddress, String sessionId) throws ServerSideException;
    
     public byte[] executeInventoryLevelReport(long reportId, List<StringPair> parameters, 
@@ -544,96 +544,96 @@ public interface WebserviceBean {
     
     // <editor-fold defaultstate="collapsed" desc="Commercial modules data methods">
         // <editor-fold defaultstate="collapsed" desc="SDH Networks Module">
-    public long createSDHTransportLink(String classNameEndpointA, long idEndpointA, 
-            String classNameEndpointB, long idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
+    public String createSDHTransportLink(String classNameEndpointA, String idEndpointA, 
+            String classNameEndpointB, String idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
     
-    public long createSDHContainerLink(String classNameEndpointA, long idEndpointA, 
-            String classNameEndpointB, long idEndpointB, String linkType, List<RemoteSDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
+    public String createSDHContainerLink(String classNameEndpointA, String idEndpointA, 
+            String classNameEndpointB, String idEndpointB, String linkType, List<RemoteSDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
     
-    public long createSDHTributaryLink(String classNameEndpointA, long idEndpointA, 
-            String classNameEndpointB, long idEndpointB, String linkType, List<RemoteSDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
+    public String createSDHTributaryLink(String classNameEndpointA, String idEndpointA, 
+            String classNameEndpointB, String idEndpointB, String linkType, List<RemoteSDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
     
-    public void deleteSDHTransportLink(String transportLinkClass, long transportLinkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
+    public void deleteSDHTransportLink(String transportLinkClass, String transportLinkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
     
-    public void deleteSDHContainerLink(String containerLinkClass, long containerLinkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
+    public void deleteSDHContainerLink(String containerLinkClass, String containerLinkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
     
-    public void deleteSDHTributaryLink(String tributaryLinkClass, long tributaryLinkId, String ipAddress, String sessionId) throws ServerSideException;
+    public void deleteSDHTributaryLink(String tributaryLinkClass, String tributaryLinkId, String ipAddress, String sessionId) throws ServerSideException;
     
     public List<RemoteObjectLightList> findSDHRoutesUsingTransportLinks(String communicationsEquipmentClassA, 
-                                            long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
-                                            long  communicationsEquipmentIB, String ipAddress, String sessionId) throws ServerSideException;
+                                            String  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
+                                            String  communicationsEquipmentIB, String ipAddress, String sessionId) throws ServerSideException;
     
     public List<RemoteObjectLightList> findSDHRoutesUsingContainerLinks(String communicationsEquipmentClassA, 
-                                            long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
-                                            long  communicationsEquipmentIB, String ipAddress, String sessionId) throws ServerSideException;
+                                            String  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
+                                            String  communicationsEquipmentIB, String ipAddress, String sessionId) throws ServerSideException;
     
-    public List<RemoteSDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteSDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, String transportLinkId, String ipAddress, String sessionId) throws ServerSideException;
     
-    public List<RemoteSDHContainerLinkDefinition> getSDHContainerLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteSDHContainerLinkDefinition> getSDHContainerLinkStructure(String transportLinkClass, String transportLinkId, String ipAddress, String sessionId) throws ServerSideException;
         // </editor-fold>   
     
         // <editor-fold defaultstate="collapsed" desc="IP Address Manager module">
-        public RemotePool[] getSubnetPools(long parentId, String className, String ipAddress, String sessionId) throws ServerSideException;
-        public List<RemoteObjectLight> getSubnets(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException;
-        public RemoteObject getSubnet(long id, String className, String ipAddress, String sessionId) throws ServerSideException;
-        public RemotePool getSubnetPool(long id, String ipAddress, String sessionId) throws ServerSideException;
-        public long createSubnetPool(long parentId, String subnetPoolName, 
+        public RemotePool[] getSubnetPools(String parentId, String className, String ipAddress, String sessionId) throws ServerSideException;
+        public List<RemoteObjectLight> getSubnets(String poolId, int limit, String ipAddress, String sessionId) throws ServerSideException;
+        public RemoteObject getSubnet(String id, String className, String ipAddress, String sessionId) throws ServerSideException;
+        public RemotePool getSubnetPool(String id, String ipAddress, String sessionId) throws ServerSideException;
+        public String createSubnetPool(String parentId, String subnetPoolName, 
                 String subnetPoolDescription, String className, String ipAddress, 
                 String sessionId) throws ServerSideException;
-        public long createSubnet(long poolId, String className, List<StringPair> attributes, String ipAddress, String sessionId) throws ServerSideException;
-        public void deleteSubnets(String className, List<Long> ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
-        public void deleteSubnetPools(long[] ids, String ipAddress, String sessionId) throws ServerSideException;
-        public long addIPAddress(long id, String parentClassName, List<StringPair> attributesToBeUpdated, String ipAddress, String sessionId) throws ServerSideException;
-        public void removeIP(long[] ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
-        public void relateIPtoPort(long id, String deviceClassName, long deviceId, String ipAddress, String sessionId) throws ServerSideException;
-        public void relateSubnetToVlan(long id, String className, long vlanId, String ipAddress, String sessionId) throws ServerSideException;
-        public void releaseSubnetFromVlan(long vlanId, long id, String ipAddress, String sessionId) throws ServerSideException;
-        public void relateSubnetToVrf(long id, String className, long vrfId, String ipAddress, String sessionId) throws ServerSideException;
-        public void releasePortFromIP(String deviceClassName, long deviceId, long id, String ipAddress, String sessionId) throws ServerSideException;
-        public void releaseSubnetFromVRF(long subnetId, long vrfId, String ipAddress, String sessionId) throws ServerSideException;
-        public List<RemoteObjectLight> getSubnetUsedIps(long id, String className, int limit, String ipAddress, String sessionId) throws ServerSideException;
-        public List<RemoteObjectLight> getSubnetsInSubnet(long id, String className, int limit, String ipAddress, String sessionId)  throws ServerSideException;
+        public String createSubnet(String poolId, String className, List<StringPair> attributes, String ipAddress, String sessionId) throws ServerSideException;
+        public void deleteSubnets(String className, List<String> ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
+        public void deleteSubnetPools(String[] ids, String ipAddress, String sessionId) throws ServerSideException;
+        public String addIPAddress(String id, String parentClassName, List<StringPair> attributesToBeUpdated, String ipAddress, String sessionId) throws ServerSideException;
+        public void removeIP(String[] ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
+        public void relateIPtoPort(String id, String deviceClassName, String deviceId, String ipAddress, String sessionId) throws ServerSideException;
+        public void relateSubnetToVlan(String id, String className, String vlanId, String ipAddress, String sessionId) throws ServerSideException;
+        public void releaseSubnetFromVlan(String vlanId, String id, String ipAddress, String sessionId) throws ServerSideException;
+        public void relateSubnetToVrf(String id, String className, String vrfId, String ipAddress, String sessionId) throws ServerSideException;
+        public void releasePortFromIP(String deviceClassName, String deviceId, String id, String ipAddress, String sessionId) throws ServerSideException;
+        public void releaseSubnetFromVRF(String subnetId, String vrfId, String ipAddress, String sessionId) throws ServerSideException;
+        public List<RemoteObjectLight> getSubnetUsedIps(String id, String className, int limit, String ipAddress, String sessionId) throws ServerSideException;
+        public List<RemoteObjectLight> getSubnetsInSubnet(String id, String className, int limit, String ipAddress, String sessionId)  throws ServerSideException;
         public boolean itOverlaps(String networkIp, String broadcastIp, String ipAddress, String sessionId) throws ServerSideException;
         // </editor-fold>
         
         // <editor-fold defaultstate="collapsed" desc="Contract Manager">
-    public void associateObjectsToContract(String[] deviceClass, long[] deviceId, 
-            String contractClass, long contractId, String ipAddress, String sessionId) throws ServerSideException;
+    public void associateObjectsToContract(String[] deviceClass, String[] deviceId, 
+            String contractClass, String contractId, String ipAddress, String sessionId) throws ServerSideException;
     
-    public void releaseObjectFromContract(String deviceClass, long deviceId, long contractId,
+    public void releaseObjectFromContract(String deviceClass, String deviceId, String contractId,
             String ipAddress, String sessionId) throws ServerSideException;    
         //</editor-fold>
       
         // <editor-fold defaultstate="collapsed" desc="MPLS Networks Module">
-         public long createMPLSLink(String classNameEndpointA, long idEndpointA, 
-            String classNameEndpointB, long idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
+         public String createMPLSLink(String classNameEndpointA, String idEndpointA, 
+            String classNameEndpointB, String idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
     
-         public void deleteMPLSLink(String linkClass, long linkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
-         public void relatePortToInterface(long portId, String portClassName, String interfaceClassName, long interfaceId, String ipAddress, String sessionId) throws ServerSideException;
-         public void releasePortFromInterface(String interfaceClassName, long interfaceId ,long portId, String ipAddress, String sessionId) throws ServerSideException;
+         public void deleteMPLSLink(String linkClass, String linkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
+         public void relatePortToInterface(String portId, String portClassName, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException;
+         public void releasePortFromInterface(String interfaceClassName, String interfaceId ,String portId, String ipAddress, String sessionId) throws ServerSideException;
     // </editor-fold>
          
         // <editor-fold defaultstate="collapsed" desc="Projects Module">
         public List<RemotePool> getProjectPools(String ipAddress, String sessionId) throws ServerSideException;
-        public long addProject(long parentId, String parentClassName, String className, String[] attributeNames, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException;
-        public void deleteProject(String className, long oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
-        public long addActivity(long parentId, String parentClassName, String className, String attributeNames[], String attributeValues[], String ipAddress, String sessionId) throws ServerSideException;
-        public void deleteActivity(String className, long oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
-        public List<RemoteObjectLight> getProjectsInProjectPool(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException;
-        public List<RemoteObjectLight> getProjectResurces(String projectClass, long projectId, String ipAddress, String sessionId) throws ServerSideException;
-        public List<RemoteObjectLight> getProjectActivities(String projectClass, long projectId, String ipAddress, String sessionId) throws ServerSideException;
-        public void associateObjectsToProject(String projectClass, long projectId, String[] objectClass, long[] objectId, String ipAddress, String sessionId) throws ServerSideException;
-        public void associateObjectToProject(String projectClass, long projectId, String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
-        public void releaseObjectFromProject(String objectClass, long objectId, String projectClass, long projectId, String ipAddress, String sessionId) throws ServerSideException;
-        public List<RemoteObjectLight> getProjectsAssociateToObject(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
-        public long createProjectPool(String name, String description, String instanceOfClass, String ipAddress, String sessionId) throws ServerSideException;
+        public String addProject(String parentId, String parentClassName, String className, String[] attributeNames, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException;
+        public void deleteProject(String className, String oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
+        public String addActivity(String parentId, String parentClassName, String className, String attributeNames[], String attributeValues[], String ipAddress, String sessionId) throws ServerSideException;
+        public void deleteActivity(String className, String oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
+        public List<RemoteObjectLight> getProjectsInProjectPool(String poolId, int limit, String ipAddress, String sessionId) throws ServerSideException;
+        public List<RemoteObjectLight> getProjectResurces(String projectClass, String projectId, String ipAddress, String sessionId) throws ServerSideException;
+        public List<RemoteObjectLight> getProjectActivities(String projectClass, String projectId, String ipAddress, String sessionId) throws ServerSideException;
+        public void associateObjectsToProject(String projectClass, String projectId, String[] objectClass, String[] objectId, String ipAddress, String sessionId) throws ServerSideException;
+        public void associateObjectToProject(String projectClass, String projectId, String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException;
+        public void releaseObjectFromProject(String objectClass, String objectId, String projectClass, String projectId, String ipAddress, String sessionId) throws ServerSideException;
+        public List<RemoteObjectLight> getProjectsAssociateToObject(String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException;
+        public String createProjectPool(String name, String description, String instanceOfClass, String ipAddress, String sessionId) throws ServerSideException;
         // </editor-fold>
         
         //<editor-fold desc="Synchronization API" defaultstate="collapsed">
         public long createSynchronizationGroup(String name, String ipAddress, String sessionId)throws ServerSideException;
         public void updateSynchronizationGroup(long syncGroupId, List<StringPair> syncGroupProperties, String ipAddress, String sessionId)throws ServerSideException;
         
-        public long createSynchronizationDataSourceConfig(long objectId, long syncGroupId, String name, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException;
+        public long createSynchronizationDataSourceConfig(String objectId, long syncGroupId, String name, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException;
         public void updateSyncDataSourceConfiguration(long syncDataSourceConfigId, List<StringPair> parameters, String ipAddress, String sessionId)throws ServerSideException;
         public BackgroundJob launchAutomatedSynchronizationTask(long syncGroupId, String ipAddress, String sessionId) throws ServerSideException;
         public BackgroundJob launchSupervisedSynchronizationTask(long syncGroupId, String ipAddress, String sessionId) throws ServerSideException;
@@ -644,7 +644,7 @@ public interface WebserviceBean {
         public RemoteSynchronizationGroup getSynchronizationGroup(long syncGroupId, String ipAddress, String sessionId) throws ServerSideException;
         public List<RemoteSynchronizationGroup> getSynchronizationGroups(String ipAddress, String sessionId)throws ServerSideException;
         
-        public RemoteSynchronizationConfiguration getSyncDataSourceConfiguration(long objectId, String ipAddress, String sessionId)throws ServerSideException;
+        public RemoteSynchronizationConfiguration getSyncDataSourceConfiguration(String objectId, String ipAddress, String sessionId)throws ServerSideException;
         public List<RemoteSynchronizationConfiguration> getSyncDataSourceConfigurations(long syncGroupId, String ipAddress, String sessionId)throws ServerSideException;
         public void deleteSynchronizationGroup(long syncGroupId, String ipAddress, String sessionId)throws ServerSideException;
         public void deleteSynchronizationDataSourceConfig(long syncDataSourceConfigId, String ipAddress, String sessionId)throws ServerSideException;
@@ -660,13 +660,13 @@ public interface WebserviceBean {
         
         // <editor-fold defaultstate="collapsed" desc="Warehouse Module">
     public List<RemotePool> getWarehouseRootPool(String ipAddress, String sessionId) throws ServerSideException;
-    public void associatePhysicalNodeToWarehouse(String objectClass, long objectId, String warehouseClass, long warehouseId, String ipAddress, String sessionId) throws ServerSideException;
-    public void associatesPhysicalNodeToWarehouse(String[] objetClass, long[] objectId, String warehouseClass, long warehouseId, String ipAddress, String sessionId) throws ServerSideException;
-    public void releasePhysicalNodeFromWarehouse(String warehouseClass, long warehouseId, long objectId, String ipAddress, String sessionId) throws ServerSideException;
-    public void moveObjectsToWarehousePool(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, String ipAddress, String sessionId) throws ServerSideException;
-    public void moveObjectsToWarehouse(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteObjectLight getPhysicalNodeToObjectInWarehouse(String objectClassName, long objectId, String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteObjectLight getWarehouseToObject(String objectClassName, long objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public void associatePhysicalNodeToWarehouse(String objectClass, String objectId, String warehouseClass, String warehouseId, String ipAddress, String sessionId) throws ServerSideException;
+    public void associatesPhysicalNodeToWarehouse(String[] objetClass, String[] objectId, String warehouseClass, String warehouseId, String ipAddress, String sessionId) throws ServerSideException;
+    public void releasePhysicalNodeFromWarehouse(String warehouseClass, String warehouseId, String objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public void moveObjectsToWarehousePool(String targetClass, String targetOid, String[] objectClasses, String[] objectOids, String ipAddress, String sessionId) throws ServerSideException;
+    public void moveObjectsToWarehouse(String targetClass, String targetOid, String[] objectClasses, String[] objectOids, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteObjectLight getPhysicalNodeToObjectInWarehouse(String objectClassName, String objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteObjectLight getWarehouseToObject(String objectClassName, String objectId, String ipAddress, String sessionId) throws ServerSideException;
         // </editor-fold>
     
     //<editor-fold desc="Outside Plant" defaultstate="collapsed">
@@ -679,17 +679,17 @@ public interface WebserviceBean {
     //</editor-fold>
         
         // <editor-fold defaultstate="collapsed" desc="BGP Viewer Module">
-        public List<RemoteLogicalConnectionDetails> getBGPMap(List<Long> mappedBGPLinksIds, String ipAddress, String sessionId) throws ServerSideException;
+        public List<RemoteLogicalConnectionDetails> getBGPMap(List<String> mappedBGPLinksIds, String ipAddress, String sessionId) throws ServerSideException;
         //</editor-fold>
     
     // Bookmarks
     public long createFavoritesFolderForUser(String favoritesFolderName, long userId, String ipAddress, String sessionId) throws ServerSideException;
     public void deleteFavoritesFolders (long[] favoritesFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteFavoritesFolder> getFavoritesFoldersForUser(long userId, String ipAddress, String sessionId) throws ServerSideException;
-    public void addObjectsToFavoritesFolder(String[] objectClass, long[] objectId, long favoritesFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
-    public void removeObjectsFromFavoritesFolder(String[] objectClass, long[] objectId, long favoritesFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
+    public void addObjectsToFavoritesFolder(String[] objectClass, String[] objectId, long favoritesFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
+    public void removeObjectsFromFavoritesFolder(String[] objectClass, String[] objectId, long favoritesFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteObjectLight> getObjectsInFavoritesFolder(long favoritesFolderId, long userId, int limit, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteFavoritesFolder> getFavoritesFoldersForObject(long userId ,String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteFavoritesFolder> getFavoritesFoldersForObject(long userId ,String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteFavoritesFolder getFavoritesFolder(long favoritesFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
     public void updateFavoritesFolder(long favoritesFolderId, long userId, String favoritesFolderName, String ipAddress, String sessionId) throws ServerSideException;
     public long createBusinessRule(String ruleName, String ruleDescription, int ruleType, int ruleScope, String appliesTo, String ruleVersion, List<String> constraints, String ipAddress, String sessionId) throws ServerSideException;

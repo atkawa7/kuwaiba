@@ -96,7 +96,7 @@ public class NavigationTreeDashboardWidget extends AbstractDashboardWidget {
                         }
                     }
                 }, new BasicIconGenerator(wsBean, session), 
-                new AbstractNode<RemoteObjectLight>(root == null ? new RemoteObjectLight(Constants.DUMMY_ROOT, -1, "Navigation Root") : root) {
+                new AbstractNode<RemoteObjectLight>(root == null ? new RemoteObjectLight(Constants.DUMMY_ROOT, "-1", "Navigation Root") : root) {
                     @Override
                     public AbstractAction[] getActions() { return new AbstractAction[0]; }
 

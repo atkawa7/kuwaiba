@@ -34,14 +34,12 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Collections;
 import java.util.List;
-import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResultCollection;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
@@ -57,7 +55,7 @@ public class ComponentRackSelector extends VerticalLayout {
         initializeComponent(componentDeviceList, webserviceBean);                        
     }
     
-    private List<RemoteObjectLight> getItems(String parentClassName, long parentId, String childClassName) {
+    private List<RemoteObjectLight> getItems(String parentClassName, String parentId, String childClassName) {
         try {
             return webserviceBean.getChildrenOfClassLightRecursive(
                 parentId, 

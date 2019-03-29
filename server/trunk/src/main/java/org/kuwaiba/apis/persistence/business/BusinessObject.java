@@ -31,11 +31,11 @@ public class BusinessObject extends BusinessObjectLight {
      */
     private HashMap <String, String> attributes;
 
-    public BusinessObject(String className, long id, String name) {
+    public BusinessObject(String className, String id, String name) {
         super(className, id, name);
     }
 
-    public BusinessObject(String className, long id, String name, HashMap<String, String> attributes) {
+    public BusinessObject(String className, String id, String name, HashMap<String, String> attributes) {
         super(className, id, name);
         this.attributes = attributes;
     }

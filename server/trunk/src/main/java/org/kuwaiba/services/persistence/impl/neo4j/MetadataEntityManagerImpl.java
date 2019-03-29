@@ -146,6 +146,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     for (Relationship rel : relationships) {
                         Node parentAttrNode = rel.getEndNode();
                         
+                        //We ignore the attributes already existing in the class definition
+                        //TODO: This block of code only exists because the class hierachy 
+                        //file used to reset the data model is redundant. Once its fixed, please remove it
                         String attributeName = String.valueOf(parentAttrNode.getProperty(Constants.PROPERTY_NAME));
                         boolean skipThis = false;
                         for (AttributeMetadata anAttribute : classDefinition.getAttributes()) {
@@ -158,7 +161,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         if (skipThis)
                             continue;
                         
-                        Label label = Label.label(Constants.LABEL_ATTRIBUTES);
+                        Label label = Label.label(Constants.LABEL_ATTRIBUTE);
                         Node newAttrNode = graphDb.createNode(label);
                         //Locks are not inherited
                         newAttrNode.setProperty(Constants.PROPERTY_NAME, attributeName);

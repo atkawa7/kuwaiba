@@ -156,7 +156,7 @@ public class ComponentConnectionTarget extends VerticalLayout {
                             }
                         }
                     }, new BasicIconGenerator(webserviceBean, ((RemoteSession) UI.getCurrent().getSession().getAttribute("session"))), 
-                    new AbstractNode<RemoteObjectLight>(root != null ? root : new RemoteObjectLight(Constants.DUMMY_ROOT, -1, "Navigation Root")) {
+                    new AbstractNode<RemoteObjectLight>(root != null ? root : new RemoteObjectLight(Constants.DUMMY_ROOT, "-1", "Navigation Root")) {
                         @Override
                         public AbstractAction[] getActions() { return new AbstractAction[0]; }
 

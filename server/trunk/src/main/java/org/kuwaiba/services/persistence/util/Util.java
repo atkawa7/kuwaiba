@@ -359,8 +359,12 @@ public class Util {
         return attribute;
     }
     
-    public static RemotePool createRemotePoolFromNode(Node instance){
-        return new RemotePool(instance.getId(), 
+    public static RemotePool createRemotePoolFromNode(Node instance) throws InvalidArgumentException {
+        String instanceUuid = instance.hasProperty(Constants.PROPERTY_UUID) ? (String) instance.getProperty(Constants.PROPERTY_UUID) : null;
+        if (instanceUuid == null)
+            throw new InvalidArgumentException(String.format("The pool with id %s does not have uuid", instance.getId()));
+                                
+        return new RemotePool(instanceUuid, 
                 (String)instance.getProperty(Constants.PROPERTY_NAME), 
                 (String)instance.getProperty(Constants.PROPERTY_DESCRIPTION),
                 (String)instance.getProperty(Constants.PROPERTY_CLASS_NAME), 
@@ -368,12 +372,23 @@ public class Util {
     }
     
     public static BusinessObjectLight createRemoteObjectLightFromPoolNode (Node instance) {
-        return new BusinessObjectLight(String.format("Pool of %s", instance.getProperty(Constants.PROPERTY_CLASS_NAME)), instance.getId(), 
-                (String)instance.getProperty(Constants.PROPERTY_NAME));
+        
+        return new BusinessObjectLight(
+            String.format("Pool of %s", instance.getProperty(Constants.PROPERTY_CLASS_NAME)), 
+            instance.hasProperty(Constants.PROPERTY_UUID) ? (String) instance.getProperty(Constants.PROPERTY_UUID) : null, 
+            (String)instance.getProperty(Constants.PROPERTY_NAME));
     }
     
-    public static Pool createPoolFromNode(Node poolNode) {
-        return new Pool(poolNode.getId(), 
+    /**
+     * @param poolNode
+     * @return 
+     * @throws InvalidArgumentException
+     */
+    public static Pool createPoolFromNode(Node poolNode) throws InvalidArgumentException {
+        if (!poolNode.hasProperty(Constants.PROPERTY_UUID))
+            throw new InvalidArgumentException(String.format("The pool with id %s does not have uuid", poolNode.getId()));
+            
+        return new Pool((String) poolNode.getProperty(Constants.PROPERTY_UUID), 
                         poolNode.hasProperty(Constants.PROPERTY_NAME) ? (String)poolNode.getProperty(Constants.PROPERTY_NAME) : null, 
                         poolNode.hasProperty(Constants.PROPERTY_DESCRIPTION) ? (String)poolNode.getProperty(Constants.PROPERTY_DESCRIPTION) : null,
                         (String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME), 
@@ -632,8 +647,14 @@ public class Util {
      * @param listTypeNode the list type node
      * @return a list type
      */
-    public static GenericObjectList createGenericObjectListFromNode(Node listTypeNode){
-        GenericObjectList listType = new GenericObjectList(listTypeNode.getId(), 
+    public static GenericObjectList createGenericObjectListFromNode(Node listTypeNode) throws InvalidArgumentException {
+        String listTypeNodeUuid = listTypeNode.hasProperty(Constants.PROPERTY_UUID) ? (String) listTypeNode.getProperty(Constants.PROPERTY_UUID) : null;
+        
+        if (listTypeNodeUuid == null)
+            throw new InvalidArgumentException(String.format("The list type item with id %s does not have uuid", listTypeNode.getId()));
+            
+        
+        GenericObjectList listType = new GenericObjectList(listTypeNodeUuid, 
                 (String)listTypeNode.getProperty(Constants.PROPERTY_NAME));
         return listType;
     }
@@ -834,7 +855,7 @@ public class Util {
             if (hasAttribute)
                 continue;
             
-            Label label = Label.label(Constants.LABEL_ATTRIBUTES);
+            Label label = Label.label(Constants.LABEL_ATTRIBUTE);
             Node attrNode = classNode.getGraphDatabase().createNode(label);
             attrNode.setProperty(Constants.PROPERTY_NAME, attributeDefinition.getName()); //This should not be null. That should be checked in the caller
             attrNode.setProperty(Constants.PROPERTY_MANDATORY, attributeDefinition.isMandatory()== null ? false : attributeDefinition.isMandatory());
@@ -1122,4 +1143,25 @@ public class Util {
             return node.hasNext() ? node.next() : null;
         }
     }
+    
+    public static Node findNodeByLabelAndUuid(Label label, String uuid) {
+        if (label == null || uuid == null)
+            return null;
+        
+        GraphDatabaseService graphDb = (GraphDatabaseService) PersistenceService.getInstance().getConnectionManager().getConnectionHandler();
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            String cypherQuery = "MATCH (node:" + label.name() + ") " +
+                                 "WHERE node." + Constants.PROPERTY_UUID + " = " + uuid + " " +
+                                 "RETURN node";
+            
+            Result result = graphDb.execute(cypherQuery);
+            ResourceIterator<Node> node = result.columnAs("node");
+            
+            tx.success();
+            return node.hasNext() ? node.next() : null;
+        }
+    }
+    
 }

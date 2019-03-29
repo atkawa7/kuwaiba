@@ -5,6 +5,7 @@
 // Defines the plaintext font size, weight and family. Font size affects general component sizing.
 $v-font-size: 13px !default;
 //$v-font-weight: 300;
+$v-font-family: ubuntu-r;
 // Defines the border used by all components.
 //$v-border: 1px solid (v-shade 0.7);
 //$v-border-radius: 4px;
@@ -415,6 +416,7 @@ $v-field-background-color: #ccffe6;
             background: #375187;
             color: white;
             font-size: medium;
+            font-family: ubuntu-l;
             position: relative;
             min-height: 100px;
         }
@@ -424,6 +426,7 @@ $v-field-background-color: #ccffe6;
             color: white;
             font-size: medium;
             position: relative;
+            font-family: ubuntu-l;
             min-height: 100px;
         }
         
@@ -432,6 +435,7 @@ $v-field-background-color: #ccffe6;
             color: white;
             font-size: medium;
             position: relative;
+            font-family: ubuntu-l;
             min-height: 100px;
         }
         
@@ -440,6 +444,7 @@ $v-field-background-color: #ccffe6;
             color: white;
             font-size: medium;
             position: relative;
+            font-family: ubuntu-l;
             min-height: 100px;
         }
         
@@ -448,6 +453,7 @@ $v-field-background-color: #ccffe6;
             color: white;
             font-size: medium;
             position: relative;
+            font-family: ubuntu-l;
             min-height: 100px;
         }
         
@@ -456,6 +462,7 @@ $v-field-background-color: #ccffe6;
             color: white;
             font-size: medium;
             position: relative;
+            font-family: ubuntu-l;
             min-height: 100px;
         }
         
@@ -464,6 +471,7 @@ $v-field-background-color: #ccffe6;
             color: white;
             font-size: medium;
             position: relative;
+            font-family: ubuntu-l;
             min-height: 100px;
         }
         
@@ -472,6 +480,7 @@ $v-field-background-color: #ccffe6;
             color: white;
             font-size: medium;
             position: relative;
+            font-family: ubuntu-l;
             min-height: 100px;
         }
 
@@ -492,6 +501,11 @@ $v-field-background-color: #ccffe6;
         .v-tree8 {
             background: white;
         }
+    }
+    
+    /*Service Manager*/
+    .servmanager {
+        
     }
     
     /*IP Address Manager*/
@@ -760,6 +774,20 @@ $v-field-background-color: #ccffe6;
     }
     
     .indicatortable {
+        .v-verticallayout {
+            /*
+            border-style: solid;
+            border-width: thin;
+            border-color:#000000;            
+            */
+        }
+        .indicatorlayout {
+            /*
+            border-style: solid;
+            border-width: thin;
+            border-color:#000000;            
+            */
+        }
         .normal {
             background: darkseagreen;            
         }

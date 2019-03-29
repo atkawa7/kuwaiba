@@ -164,13 +164,13 @@ public class SDHModule implements GenericCommercialModule {
      * @return The id of the newly created transport link
      * @throws ServerSideException In case something goes wrong with the creation process
      */
-    public long createSDHTransportLink(String classNameEndpointA, long idEndpointA, 
-            String classNameEndpointB, long idEndpointB, String linkType, String defaultName) throws ServerSideException {
+    public String createSDHTransportLink(String classNameEndpointA, String idEndpointA, 
+            String classNameEndpointB, String idEndpointB, String linkType, String defaultName) throws ServerSideException {
 
         if (bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
-        long newConnectionId = -1;
+        String newConnectionId = null;
         try {
             if (!mem.isSubclassOf("GenericSDHTransportLink", linkType)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not subclass of GenericSDHTransportLink", linkType));
@@ -186,7 +186,7 @@ public class SDHModule implements GenericCommercialModule {
             if (communicationsEquipmentB == null)
                 throw new ServerSideException(String.format("The specified port (%s : %s) doesn't seem to be located in a communications equipment", classNameEndpointB, idEndpointB));
             
-            newConnectionId = bem.createSpecialObject(linkType, null, -1, attributesToBeSet, -1);                      
+            newConnectionId = bem.createSpecialObject(linkType, null, "-1", attributesToBeSet, -1);                      
                        
             bem.createSpecialRelationship(linkType, newConnectionId, classNameEndpointA, idEndpointA, RELATIONSHIP_SDHTLENDPOINTA, true);
             bem.createSpecialRelationship(linkType, newConnectionId, classNameEndpointB, idEndpointB, RELATIONSHIP_SDHTLENDPOINTB, true);
@@ -205,7 +205,7 @@ public class SDHModule implements GenericCommercialModule {
             //doing commits in every call to the BEM
             //If the new connection was successfully created, but there's a problem creating the relationships,
             //delete the connection and throw an exception
-            if (newConnectionId != -1) {
+            if (newConnectionId != null) {
                 try {
                     bem.deleteObject(linkType, newConnectionId, true);
                 } catch (Exception ex) {
@@ -229,12 +229,12 @@ public class SDHModule implements GenericCommercialModule {
      * @return The id of the newly created container link
      * @throws ServerSideException In case something goes wrong with the creation process
      */
-    public long createSDHContainerLink(String classNameEndpointA, long idEndpointA, 
-            String classNameEndpointB, long idEndpointB, String linkType, List<SDHPosition> positions, String defaultName) throws ServerSideException {
+    public String createSDHContainerLink(String classNameEndpointA, String idEndpointA, 
+            String classNameEndpointB, String idEndpointB, String linkType, List<SDHPosition> positions, String defaultName) throws ServerSideException {
         if (bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
-        long newConnectionId = -1;
+        String newConnectionId = null;
         try {
             if (!mem.isSubclassOf("GenericSDHContainerLink", linkType)) //NOI18N
                 throw new ServerSideException("Class %s is not subclass of GenericSDHContainerLink");
@@ -246,7 +246,7 @@ public class SDHModule implements GenericCommercialModule {
             attributesToBeSet.put(Constants.PROPERTY_NAME, defaultName == null ? "" : defaultName );
             
             
-            newConnectionId = bem.createSpecialObject(linkType, null, -1, attributesToBeSet, -1);                      
+            newConnectionId = bem.createSpecialObject(linkType, null, "-1", attributesToBeSet, -1);                      
             
             //We add a relationship between the shelves so we can easily find a route between two equipment when creatin low order connections
             //based on ContainerLink paths           
@@ -269,7 +269,7 @@ public class SDHModule implements GenericCommercialModule {
             //doing commits in every call to the BEM
             //If the new connection was successfully created, but there's a problem creating the relationships,
             //delete the connection and throw an exception
-            if (newConnectionId != -1) {
+            if (newConnectionId != null) {
                 try {
                     bem.deleteObject(linkType, newConnectionId, true);
                 } catch (Exception ex) {
@@ -293,13 +293,13 @@ public class SDHModule implements GenericCommercialModule {
      * @return The id of the newly created tributary link
      * @throws ServerSideException In case something goes wrong with the creation process
      */
-    public long createSDHTributaryLink(String classNameEndpointA, long idEndpointA, 
-            String classNameEndpointB, long idEndpointB, String linkType, List<SDHPosition> positions, String defaultName) throws ServerSideException {
+    public String createSDHTributaryLink(String classNameEndpointA, String idEndpointA, 
+            String classNameEndpointB, String idEndpointB, String linkType, List<SDHPosition> positions, String defaultName) throws ServerSideException {
         if (bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
-        long newTributaryLinkId = -1;
-        long newContainerLinkId;
+        String newTributaryLinkId = null;
+        String newContainerLinkId;
         
         try {
             if (!mem.isSubclassOf("GenericSDHTributaryLink", linkType)) //NOI18N
@@ -310,10 +310,10 @@ public class SDHModule implements GenericCommercialModule {
             
             //All tributary links must be delivered using a container link
             String containerLinkType = linkType.replace("TributaryLink", ""); //The name of the corresponding container link is the same as the tributary link without the suffix "TributaryLink"
-            newContainerLinkId = bem.createSpecialObject(containerLinkType, null, -1, attributesToBeSet, -1);
+            newContainerLinkId = bem.createSpecialObject(containerLinkType, null, "-1", attributesToBeSet, -1);
             
             //The new tributary link
-            newTributaryLinkId = bem.createSpecialObject(linkType, null, -1, attributesToBeSet, -1);
+            newTributaryLinkId = bem.createSpecialObject(linkType, null, "-1", attributesToBeSet, -1);
             
             //Relate the new tributary link to the endpoints (ports)
             bem.createSpecialRelationship(linkType, newTributaryLinkId, classNameEndpointA, idEndpointA, RELATIONSHIP_SDHTTLENDPOINTA, true);
@@ -348,7 +348,7 @@ public class SDHModule implements GenericCommercialModule {
             //doing commits in every call to the BEM
             //If the new connection was successfully created, but there's a problem creating the relationships,
             //delete the connection and throw an exception
-            if (newTributaryLinkId != -1) {
+            if (newTributaryLinkId != null) {
                 try {
                     bem.deleteObject(linkType, newTributaryLinkId, true);
                 } catch (Exception ex) {
@@ -368,7 +368,7 @@ public class SDHModule implements GenericCommercialModule {
      * @throws org.kuwaiba.exceptions.ServerSideException If something goes wrong
      * @throws InventoryException If the transport link could not be found
      */
-    public void deleteSDHTransportLink(String transportLinkClass, long transportLinkId, boolean forceDelete) 
+    public void deleteSDHTransportLink(String transportLinkClass, String transportLinkId, boolean forceDelete) 
             throws ServerSideException, InventoryException {
         if (bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
@@ -392,7 +392,7 @@ public class SDHModule implements GenericCommercialModule {
      * @throws ServerSideException If some high level thing goes wrong
      * @throws InventoryException  If some low level thing goes wrong
      */
-    public void deleteSDHContainerLink(String containerLinkClass, long containerLinkId, boolean forceDelete) throws ServerSideException, InventoryException {
+    public void deleteSDHContainerLink(String containerLinkClass, String containerLinkId, boolean forceDelete) throws ServerSideException, InventoryException {
         if (bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
@@ -422,7 +422,7 @@ public class SDHModule implements GenericCommercialModule {
      * @throws ServerSideException If some high level thing goes wrong
      * @throws InventoryException  If some low level thing goes wrong
      */
-    public void deleteSDHTributaryLink(String tributaryLinkClass, long tributaryLinkId) throws ServerSideException, InventoryException {
+    public void deleteSDHTributaryLink(String tributaryLinkClass, String tributaryLinkId) throws ServerSideException, InventoryException {
         if (bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
@@ -451,8 +451,8 @@ public class SDHModule implements GenericCommercialModule {
      * @throws InvalidArgumentException If the given communication equipment is no subclass of GenericCommunicationsEquipment 
      */
     public List<BusinessObjectLightList> findSDHRoutesUsingTransportLinks(String communicationsEquipmentClassA, 
-                                            long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
-                                            long  communicationsEquipmentIB) throws InvalidArgumentException, MetadataObjectNotFoundException {
+                                            String communicationsEquipmentIdA, String communicationsEquipmentClassB, 
+                                            String communicationsEquipmentIB) throws InvalidArgumentException, MetadataObjectNotFoundException {
         if (!mem.isSubclassOf(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, communicationsEquipmentClassA))
                 throw new InvalidArgumentException(String.format("Class %s is not a GenericCommunicationsEquipment", communicationsEquipmentClassA));
         
@@ -474,8 +474,8 @@ public class SDHModule implements GenericCommercialModule {
      * @throws MetadataObjectNotFoundException If the core classes that support the SDH networks model don't exist
      */
     public List<BusinessObjectLightList> findSDHRoutesUsingContainerLinks(String communicationsEquipmentClassA, 
-                                            long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
-                                            long  communicationsEquipmentIB) throws InvalidArgumentException, MetadataObjectNotFoundException {
+                                            String communicationsEquipmentIdA, String communicationsEquipmentClassB, 
+                                            String communicationsEquipmentIB) throws InvalidArgumentException, MetadataObjectNotFoundException {
         
         if (!mem.isSubclassOf(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, communicationsEquipmentClassA))
                 throw new InvalidArgumentException(String.format("Class %s is not a GenericCommunicationsEquipment", communicationsEquipmentClassA));
@@ -496,7 +496,7 @@ public class SDHModule implements GenericCommercialModule {
      * @throws BusinessObjectNotFoundException if the given transport link does not exist
      * @throws MetadataObjectNotFoundException If any of the core classes that support the SDH networks model does not exist
      */
-    public List<SDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, long transportLinkId) 
+    public List<SDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, String transportLinkId) 
             throws InvalidArgumentException, BusinessObjectNotFoundException, MetadataObjectNotFoundException {
         
         if (!mem.isSubclassOf("GenericSDHTransportLink", transportLinkClass))
@@ -535,7 +535,7 @@ public class SDHModule implements GenericCommercialModule {
      * @throws BusinessObjectNotFoundException If the container could not be found
      * @throws MetadataObjectNotFoundException If the class could not be found
      */
-    public List<SDHContainerLinkDefinition> getSDHContainerLinkStructure(String containerLinkClass, long containerLinkId) 
+    public List<SDHContainerLinkDefinition> getSDHContainerLinkStructure(String containerLinkClass, String containerLinkId) 
             throws InvalidArgumentException, BusinessObjectNotFoundException, MetadataObjectNotFoundException {
         
         if (!mem.isSubclassOf("GenericSDHHighOrderContainerLink", containerLinkClass))

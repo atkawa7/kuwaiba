@@ -123,7 +123,7 @@ public class IPAMModule implements GenericCommercialModule{
      * @return default pool for IPv4 and IPv6
      * @throws NotAuthorizedException 
      */
-    private List<RemotePool> getDefaultIPAMRootNodes() throws NotAuthorizedException, MetadataObjectNotFoundException{
+    private List<RemotePool> getDefaultIPAMRootNodes() throws NotAuthorizedException, MetadataObjectNotFoundException, InvalidArgumentException{
         List<Pool> ipv4RootPools = bem.getRootPools(Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
         List<Pool> ipv6RootPools = bem.getRootPools(Constants.CLASS_SUBNET_IPV6, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
         
@@ -170,7 +170,7 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws NotAuthorizedException If the user is not authorized to create pool nodes
      * @throws ApplicationObjectNotFoundException if the IPAM root nodes doesn't exists
      */
-    public long createSubnetsPool(long parentId, String subnetPoolName, 
+    public String createSubnetsPool(String parentId, String subnetPoolName, 
             String subnetPoolDescription, String className) throws ServerSideException, 
             MetadataObjectNotFoundException, NotAuthorizedException, ApplicationObjectNotFoundException 
     {
@@ -189,7 +189,7 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws InvalidArgumentException if the requested object(subnet) can't be found
      * @throws NotAuthorizedException If the user is not authorized to get subnets
      */
-    public BusinessObject getSubnet(String className, long oid) throws MetadataObjectNotFoundException, 
+    public BusinessObject getSubnet(String className, String oid) throws MetadataObjectNotFoundException, 
             BusinessObjectNotFoundException, InvalidArgumentException, NotAuthorizedException
     {
         return bem.getObject(className, oid);
@@ -201,8 +201,9 @@ public class IPAMModule implements GenericCommercialModule{
      * @return a subnet pool
      * @throws ApplicationObjectNotFoundException if the subnet pool can't be found
      * @throws NotAuthorizedException If the user is not authorized to use the IPAM module
+     * @throws InvalidArgumentException It the subnet pool does not have uuid
      */
-    public RemotePool getSubnetPool(long oid) throws NotAuthorizedException, 
+    public RemotePool getSubnetPool(String oid) throws NotAuthorizedException, InvalidArgumentException, 
             ApplicationObjectNotFoundException
     {
         return new RemotePool(bem.getPool(oid));
@@ -216,13 +217,14 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws NotAuthorizedException If the user is not authorized to use the IPAM module
      * @throws ApplicationObjectNotFoundException if can't get the pools of a subnet pool
      * @throws MetadataObjectNotFoundException if there are not IPAM root nodes
+     * @throws InvalidArgumentException If the parent does not have uuid
      */
-    public List<RemotePool> getSubnetPools(long parentId, String className) 
-            throws NotAuthorizedException, ApplicationObjectNotFoundException, 
+    public List<RemotePool> getSubnetPools(String parentId, String className) 
+            throws NotAuthorizedException, ApplicationObjectNotFoundException, InvalidArgumentException, 
             MetadataObjectNotFoundException 
     {
         List<RemotePool> remotePools = new ArrayList<>();
-        if(parentId == -1 && className == null)
+        if("-1".equals(parentId) && className == null)
             return getDefaultIPAMRootNodes();
         
         for (Pool pool : bem.getPoolsInPool(parentId, className)) 
@@ -237,10 +239,11 @@ public class IPAMModule implements GenericCommercialModule{
      * @return a list of subnets
      * @throws ApplicationObjectNotFoundException if the given subnet pool id is not valid
      * @throws NotAuthorizedException If the user is not authorized to use the IPAM module
+     * @throws InvalidArgumentException If the subnet pool does not have uuid
      */
     public List<BusinessObjectLight> getSubnets(int limit, 
-            long subnetPoolId) throws ApplicationObjectNotFoundException, 
-            NotAuthorizedException
+            String subnetPoolId) throws ApplicationObjectNotFoundException, 
+            NotAuthorizedException, InvalidArgumentException
     {
         return bem.getPoolItems(subnetPoolId, limit);
     }
@@ -260,7 +263,7 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws BusinessObjectNotFoundException Thrown if the parent id is not found
      * @throws OperationNotPermittedException  If the update can't be performed due to a format issue
      */
-    public long createSubnet(long parentId, String className, String[] attributeNames, 
+    public String createSubnet(String parentId, String className, String[] attributeNames, 
             String[] attributeValues) throws InvalidArgumentException, 
             ArraySizeMismatchException, NotAuthorizedException,  
             MetadataObjectNotFoundException, OperationNotPermittedException, 
@@ -289,10 +292,10 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked or it has relationships and releaseRelationships is false
      * @throws InvalidArgumentException If it was not possible to release the possible unique attributes
      */
-    public void deleteSubnets(String className, List<Long> subnetIds, boolean releaseRelationships) 
+    public void deleteSubnets(String className, List<String> subnetIds, boolean releaseRelationships) 
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, 
             OperationNotPermittedException, InvalidArgumentException {
-        HashMap<String, List<Long>> objectsToBeDeleted = new HashMap<>();
+        HashMap<String, List<String>> objectsToBeDeleted = new HashMap<>();
         objectsToBeDeleted.put(className, subnetIds);
         bem.deleteObjects(objectsToBeDeleted, releaseRelationships);
     }
@@ -303,7 +306,7 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws OperationNotPermittedException If any of the objects in the pool can not be deleted because it's not a business related instance (it's more a security restriction)
      * @throws ApplicationObjectNotFoundException  If the subnet pool can't be found
      */
-    public void deleteSubnetPools(long[] subnetPoolsId) 
+    public void deleteSubnetPools(String[] subnetPoolsId) 
             throws OperationNotPermittedException, 
             ApplicationObjectNotFoundException
     {
@@ -324,7 +327,7 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws BusinessObjectNotFoundException Thrown if the parent(the subnet) id is not found
      * @throws OperationNotPermittedException If the update can't be performed due to a format issue
      */
-    public long addIPAddress(long parentSubnetId, String parentSubnetClassName, HashMap<String, String> ipAttributes) 
+    public String addIPAddress(String parentSubnetId, String parentSubnetClassName, HashMap<String, String> ipAttributes) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException, 
             ArraySizeMismatchException, NotAuthorizedException, MetadataObjectNotFoundException, 
             BusinessObjectNotFoundException, OperationNotPermittedException
@@ -340,10 +343,11 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws MetadataObjectNotFoundException If can't find IPv4 or IPV6 classes
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked or it has relationships and releaseRelationships is false
      * @throws NotAuthorizedException If the user is not authorized to use the IPAM module
+     * @throws InvalidArgumentException If the ip ids do no have uuid
      */
-    public void removeIP(long[] ipIds, boolean releaseRelationships) 
+    public void removeIP(String[] ipIds, boolean releaseRelationships) 
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, 
-            OperationNotPermittedException, NotAuthorizedException
+            OperationNotPermittedException, NotAuthorizedException, InvalidArgumentException
     {
         if(ipIds != null)
             bem.deleteObject(Constants.CLASS_IP_ADDRESS, ipIds[0], releaseRelationships);
@@ -357,9 +361,10 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws BusinessObjectNotFoundException If any of the objects can't be found
      * @throws OperationNotPermittedException If any of the objects involved can't be connected (i.e. if it's not an inventory object)
      * @throws MetadataObjectNotFoundException If any of the classes provided can not be found
+     * @throws InvalidArgumentException If the subnet/port do not have uuid
      */
-    public void relateIPtoPort(long subnetId, String portClassName, long portId) throws BusinessObjectNotFoundException,
-            OperationNotPermittedException, MetadataObjectNotFoundException{
+    public void relateIPtoPort(String subnetId, String portClassName, String portId) throws BusinessObjectNotFoundException,
+            OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException {
         bem.createSpecialRelationship(portClassName, portId, Constants.CLASS_IP_ADDRESS, subnetId, RELATIONSHIP_IPAMHASADDRESS, true);
     }
     
@@ -372,9 +377,10 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws BusinessObjectNotFoundException If any of the objects can't be found
      * @throws OperationNotPermittedException If any of the objects involved can't be connected (i.e. if it's not an inventory object)
      * @throws MetadataObjectNotFoundException If any of the classes provided can not be found
+     * @throws InvalidArgumentException If the subnet/vlan do not have uuid
      */
-    public void relateSubnetToVLAN(long subnetId, String className, long vlanId)
-        throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException
+    public void relateSubnetToVLAN(String subnetId, String className, String vlanId)
+        throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException
     {
         bem.createSpecialRelationship(Constants.CLASS_VLAN, vlanId, className, subnetId, RELATIONSHIP_IPAMBELONGSTOVLAN, true);
     }
@@ -386,9 +392,10 @@ public class IPAMModule implements GenericCommercialModule{
      * @param subnetId the subnet id
      * @throws BusinessObjectNotFoundException If any of the objects can't be found
      * @throws MetadataObjectNotFoundException If any of the classes provided can not be found
+     * @throws InvalidArgumentException If the subnet/vlan do not have uuid
      */
-    public void releaseSubnetFromVLAN(long subnetId, long vlanId)
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException
+    public void releaseSubnetFromVLAN(String subnetId, String vlanId)
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException
     {
         bem.releaseSpecialRelationship(Constants.CLASS_VLAN, vlanId, subnetId, RELATIONSHIP_IPAMBELONGSTOVLAN);
     }
@@ -401,9 +408,10 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws BusinessObjectNotFoundException If any of the objects can't be found
      * @throws OperationNotPermittedException If any of the objects involved can't be connected (i.e. if it's not an inventory object)
      * @throws MetadataObjectNotFoundException If any of the classes provided can not be found
+     * @throws InvalidArgumentException If the subnet/vrf do not have uuid
      */
-    public void relateSubnetToVRF(long subnetId, String className, long vrfId)
-        throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException
+    public void relateSubnetToVRF(String subnetId, String className, String vrfId)
+        throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException
     {
         bem.createSpecialRelationship(Constants.CLASS_VRF_INSTANCE, vrfId, className, subnetId, RELATIONSHIP_IPAMBELONGSTOVRFINSTACE, true);
     }
@@ -417,9 +425,10 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws BusinessObjectNotFoundException If the object can not be found
      * @throws MetadataObjectNotFoundException If the port class can not be found
      * @throws NotAuthorizedException If the user is not authorized to use the IPAM module
+     * @throws InvalidArgumentException If the port does not have uuid
      */
-    public void releasePortFromIP(String portClass, long portId, long id)
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException,
+    public void releasePortFromIP(String portClass, String portId, String id)
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException,
             NotAuthorizedException
     {
         bem.releaseSpecialRelationship(portClass, portId, id, RELATIONSHIP_IPAMHASADDRESS);
@@ -433,10 +442,11 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws BusinessObjectNotFoundException If the object can not be found
      * @throws MetadataObjectNotFoundException If the port class can not be found
      * @throws NotAuthorizedException If the user is not authorized to use the IPAM module
+     * @throws InvalidArgumentException If the subnet/vrf do not have uuid
      */
-    public void releaseSubnetFromVRF(long subnetId, long vrfId)
+    public void releaseSubnetFromVRF(String subnetId, String vrfId)
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException,
-            NotAuthorizedException
+            NotAuthorizedException, InvalidArgumentException
     {
         bem.releaseSpecialRelationship(Constants.CLASS_VRF_INSTANCE, vrfId, subnetId, RELATIONSHIP_IPAMBELONGSTOVRFINSTACE);
     }
@@ -449,10 +459,11 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws MetadataObjectNotFoundException If can't find IPv4 or IPV6 classes
      * @throws BusinessObjectNotFoundException If the object(subnet) could not be found.
      * @throws NotAuthorizedException If the user is not authorized to use the IPAM module
+     * @throws InvalidArgumentException If the subnet does not have uuid
      */
-    public List<BusinessObjectLight> getSubnetUsedIps(long id, String className) 
+    public List<BusinessObjectLight> getSubnetUsedIps(String id, String className) 
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException,  
-            NotAuthorizedException
+            NotAuthorizedException, InvalidArgumentException
     {
         List<BusinessObjectLight> children = bem.getObjectSpecialChildren(className, id);
         List<BusinessObjectLight> usedIps = new ArrayList<>();
@@ -471,10 +482,11 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws MetadataObjectNotFoundException If can't find IPv4 or IPV6 classes
      * @throws BusinessObjectNotFoundException If the object(subnet) could not be found.
      * @throws NotAuthorizedException If the user is not authorized to use the IPAM module
+     * @throws InvalidArgumentException If the subnet does not have uuid
      */
-    public List<BusinessObjectLight> getSubnetsInSubnet(long id, String className) 
+    public List<BusinessObjectLight> getSubnetsInSubnet(String id, String className) 
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException,
-            NotAuthorizedException
+            NotAuthorizedException, InvalidArgumentException
     {
         List<BusinessObjectLight> children = bem.getObjectSpecialChildren(className, id);
         List<BusinessObjectLight> subnets = new ArrayList<>();
@@ -496,10 +508,11 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws OperationNotPermittedException If any of the objects involved can't be connected (i.e. if it's not an inventory object)
      * @throws MetadataObjectNotFoundException If any of the classes provided can not be found
      * @throws NotAuthorizedException If the user is not authorized to use the IPAM module
+     * @throws InvalidArgumentException If the port/interface do not have uuid
      */
-    public void relatePortToInterface(long portId, String portClassName, 
-            String interfaceClassName, long interfaceId) throws BusinessObjectNotFoundException,
-            OperationNotPermittedException, MetadataObjectNotFoundException, NotAuthorizedException{
+    public void relatePortToInterface(String portId, String portClassName, 
+            String interfaceClassName, String interfaceId) throws BusinessObjectNotFoundException,
+            OperationNotPermittedException, MetadataObjectNotFoundException, NotAuthorizedException, InvalidArgumentException {
         bem.createSpecialRelationship(interfaceClassName, interfaceId, portClassName, portId, RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE, true);
     }
     
@@ -511,10 +524,11 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws BusinessObjectNotFoundException If the object can not be found
      * @throws MetadataObjectNotFoundException If the port class can not be found
      * @throws NotAuthorizedException If the user is not authorized to use the IPAM module
+     * @throws InvalidArgumentException If the interface/port do not have uuid
      */
-    public void releasePortFromInterface(String interfaceClassName, long interfaceId ,long portId)
+    public void releasePortFromInterface(String interfaceClassName, String interfaceId, String portId)
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException,
-            NotAuthorizedException
+            NotAuthorizedException, InvalidArgumentException
     {
         bem.releaseSpecialRelationship(interfaceClassName, interfaceId, portId, RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE);
     }

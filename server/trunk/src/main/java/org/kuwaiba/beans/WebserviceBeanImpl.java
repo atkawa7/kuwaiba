@@ -866,7 +866,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public String getAttributeValueAsString(String objectClass, long objectId, String attributeName, String ipAddress, String sessionId) throws ServerSideException {
+    public String getAttributeValueAsString(String objectClass, String objectId, String attributeName, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -878,7 +878,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public HashMap<String, String> getAttributeValuesAsString(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+    public HashMap<String, String> getAttributeValuesAsString(String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -890,13 +890,13 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public long createListTypeItem(String className, String name, String displayName, String ipAddress, String sessionId) throws ServerSideException{
+    public String createListTypeItem(String className, String name, String displayName, String ipAddress, String sessionId) throws ServerSideException{
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("createListTypeItem", ipAddress, sessionId);
             
-            long lstTypeItemId = aem.createListTypeItem(className, name, displayName);
+            String lstTypeItemId = aem.createListTypeItem(className, name, displayName);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
@@ -910,7 +910,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public void deleteListTypeItem(String className, long oid, boolean realeaseRelationships, String ipAddress, String sessionId) throws ServerSideException {
+    public void deleteListTypeItem(String className, String oid, boolean realeaseRelationships, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -955,7 +955,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public long createContact(String contactClass, List<StringPair> properties, String customerClassName, long customerId, String ipAddress, String sessionId) throws ServerSideException {
+    public String createContact(String contactClass, List<StringPair> properties, String customerClassName, String customerId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -967,7 +967,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public void updateContact(String contactClass, long contactId, List<StringPair> properties, String ipAddress, String sessionId) throws ServerSideException {
+    public void updateContact(String contactClass, String contactId, List<StringPair> properties, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -979,7 +979,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public void deleteContact(String contactClass, long contactId, String ipAddress, String sessionId) throws ServerSideException {
+    public void deleteContact(String contactClass, String contactId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -991,7 +991,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public RemoteContact getContact(String contactClass, long contactId, String ipAddress, String sessionId) throws ServerSideException {
+    public RemoteContact getContact(String contactClass, String contactId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -1019,7 +1019,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public List<RemoteContact> getContactsForCustomer(String customerClass, long customerId, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteContact> getContactsForCustomer(String customerClass, String customerId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -1068,7 +1068,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
 
     // <editor-fold defaultstate="collapsed" desc="Business methods. Click on the + sign on the left to edit the code.">
     @Override
-    public List<RemoteObjectLight> getObjectChildren(long oid, long objectClassId, int maxResults, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteObjectLight> getObjectChildren(String oid, long objectClassId, int maxResults, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -1080,7 +1080,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public List<RemoteObjectLight> getObjectChildren(String className, long oid, int maxResults, String ipAddress, String sessionId)
+    public List<RemoteObjectLight> getObjectChildren(String className, String oid, int maxResults, String ipAddress, String sessionId)
             throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -1093,7 +1093,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<RemoteObjectLight> getSiblings(String className, long oid, int maxResults, String ipAddress, String sessionId)
+    public List<RemoteObjectLight> getSiblings(String className, String oid, int maxResults, String ipAddress, String sessionId)
             throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -1106,7 +1106,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public List<RemoteObject> getChildrenOfClass(long parentOid, String parentClass, String classToFilter, int maxResults, String ipAddress, String sessionId)
+    public List<RemoteObject> getChildrenOfClass(String parentOid, String parentClass, String classToFilter, int maxResults, String ipAddress, String sessionId)
             throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -1119,7 +1119,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public List<RemoteObjectLight> getChildrenOfClassLight(long parentOid, String parentClass, String classToFilter, int maxResults, String ipAddress, String sessionId)
+    public List<RemoteObjectLight> getChildrenOfClassLight(String parentOid, String parentClass, String classToFilter, int maxResults, String ipAddress, String sessionId)
             throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -1132,7 +1132,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<RemoteObjectLight> getSpecialChildrenOfClassLight(long parentOid, String parentClass, 
+    public List<RemoteObjectLight> getSpecialChildrenOfClassLight(String parentOid, String parentClass, 
             String classToFilter, int maxResults, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -1145,7 +1145,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<RemoteObjectLight> getChildrenOfClassLightRecursive(long parentOid, String parentClass, String classToFilter, int maxResults, String ipAddress, String sessionId) 
+    public List<RemoteObjectLight> getChildrenOfClassLightRecursive(String parentOid, String parentClass, String classToFilter, int maxResults, String ipAddress, String sessionId) 
         throws ServerSideException {
         
         if (bem == null || aem == null)
@@ -1159,7 +1159,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public RemoteObject getObject(String objectClass, long oid, String ipAddress, String sessionId) throws ServerSideException{
+    public RemoteObject getObject(String objectClass, String oid, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -1171,7 +1171,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public RemoteObjectLight getObjectLight(String objectClass, long oid, String ipAddress, String sessionId) throws ServerSideException{
+    public RemoteObjectLight getObjectLight(String objectClass, String oid, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -1233,23 +1233,23 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public RemoteObjectLight getCommonParent(String aObjectClass, long aOid, String bObjectClass, long bOid, String ipAddress, String sessionId) throws ServerSideException {
+    public RemoteObjectLight getCommonParent(String aObjectClass, String aOid, String bObjectClass, String bOid, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getCommonParent", ipAddress, sessionId);
             BusinessObjectLight commonParent = bem.getCommonParent(aObjectClass, aOid, bObjectClass, bOid);
-            if (commonParent.getId() != -1) // is not DummyRoot
+            if (commonParent.getId() != null && !commonParent.getId().equals("-1")) // is not DummyRoot
                 return new RemoteObjectLight(commonParent.getClassName(), commonParent.getId(), commonParent.getName());
             else
-                return new RemoteObjectLight("", -1 , "");
+                return new RemoteObjectLight("", "-1" , "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
 
     @Override
-    public RemoteObjectLight getParent(String objectClass, long oid, String ipAddress, String sessionId) throws ServerSideException{
+    public RemoteObjectLight getParent(String objectClass, String oid, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -1262,7 +1262,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<RemoteObjectLight> getParents(String objectClass, long oid, String ipAddress, String sessionId) throws ServerSideException{
+    public List<RemoteObjectLight> getParents(String objectClass, String oid, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -1274,7 +1274,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<RemoteObjectLight> getSpecialAttribute(String objectClass, long objectId, String attributeName, String ipAddress, String sessionId) throws ServerSideException{
+    public List<RemoteObjectLight> getSpecialAttribute(String objectClass, String objectId, String attributeName, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -1286,7 +1286,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public RemoteObjectSpecialRelationships getSpecialAttributes(String objectClass, long oid, String ipAddress, String sessionId)
+    public RemoteObjectSpecialRelationships getSpecialAttributes(String objectClass, String oid, String ipAddress, String sessionId)
             throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -1303,7 +1303,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     @Override
     public List<RemoteObjectLight> getParentsUntilFirstOfClass(String objectClassName, 
-            long oid, String objectToMatchClassName, String ipAddress, String sessionId) throws ServerSideException {
+            String oid, String objectToMatchClassName, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -1319,7 +1319,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     @Override
     public RemoteObjectLight getFirstParentOfClass(String objectClassName, 
-        long oid, String objectToMatchClassName, String ipAddress, String sessionId) throws ServerSideException {
+        String oid, String objectToMatchClassName, String ipAddress, String sessionId) throws ServerSideException {
                 
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -1333,7 +1333,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public RemoteObject getParentOfClass(String objectClass, long oid, String parentClass, String ipAddress, String sessionId) throws ServerSideException {
+    public RemoteObject getParentOfClass(String objectClass, String oid, String parentClass, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -1345,7 +1345,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }  
 
     @Override
-    public List<RemoteObjectLight> getObjectSpecialChildren (String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException{
+    public List<RemoteObjectLight> getObjectSpecialChildren (String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -1399,7 +1399,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public long createObject(String className, String parentClassName, long parentOid, String[] attributeNames,
+    public String createObject(String className, String parentClassName, String parentOid, String[] attributeNames,
             String[] attributeValues, long template, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -1413,7 +1413,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             for (int i = 0; i < attributeNames.length; i++)
                 attributes.put(attributeNames[i], attributeValues[i]);
             
-            long newObjectId = bem.createObject(className, parentClassName, parentOid, attributes, template);
+            String newObjectId = bem.createObject(className, parentClassName, parentOid, attributes, template);
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId),
                     ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.valueOf(newObjectId));
             return newObjectId;
@@ -1423,7 +1423,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public long createSpecialObject(String className, String parentClassName, long parentOid, String[] attributeNames,
+    public String createSpecialObject(String className, String parentClassName, String parentOid, String[] attributeNames,
             String[] attributeValues, long template, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -1437,7 +1437,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             for (int i = 0; i < attributeNames.length; i++)
                 attributes.put(attributeNames[i], attributeValues[i]);
 
-            long newSpecialObjectId = bem.createSpecialObject(className, parentClassName, parentOid, attributes, template);
+            String newSpecialObjectId = bem.createSpecialObject(className, parentClassName, parentOid, attributes, template);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId),
                     ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.valueOf(newSpecialObjectId));
@@ -1449,7 +1449,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public boolean canDeleteObject(String className, long oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException{
+    public boolean canDeleteObject(String className, String oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -1461,7 +1461,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void deleteObject(String className, long oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException{
+    public void deleteObject(String className, String oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -1476,18 +1476,18 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void deleteObjects(String[] classNames, long[] oids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException{
+    public void deleteObjects(String[] classNames, String[] oids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         if (classNames.length != oids.length)
             throw new ServerSideException("Array sizes do not match");
         try {
             aem.validateWebServiceCall("deleteObjects", ipAddress, sessionId);
-            HashMap<String,List<Long>> objects = new HashMap<>();
+            HashMap<String,List<String>> objects = new HashMap<>();
             for (int i = 0; i< classNames.length;i++) {
-                List<Long> existingObjects = objects.get(classNames[i]);
+                List<String> existingObjects = objects.get(classNames[i]);
                 if (existingObjects == null){
-                    List<Long> newIdList = new ArrayList<>();
+                    List<String> newIdList = new ArrayList<>();
                     newIdList.add(oids[i]);
                     objects.put(classNames[i], newIdList);
                 }
@@ -1505,16 +1505,16 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public void moveObjectsToPool(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, String ipAddress, String sessionId) throws ServerSideException {
+    public void moveObjectsToPool(String targetClass, String targetOid, String[] objectClasses, String[] objectOids, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         if (objectClasses.length != objectOids.length)
             throw new ServerSideException("Array sizes do not match");
         try {
             aem.validateWebServiceCall("moveObjectsToPool", ipAddress, sessionId);
-            HashMap<String,List<Long>> temObjects = new HashMap<>();
+            HashMap<String, List<String>> temObjects = new HashMap<>();
             for (int i = 0; i< objectClasses.length; i++){
-                List<Long> ids = temObjects.get(objectClasses[i]);
+                List<String> ids = temObjects.get(objectClasses[i]);
                 if (ids == null)
                     ids = new ArrayList<>();
                 
@@ -1522,10 +1522,10 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 temObjects.put(objectClasses[i], ids);
             }
 
-            HashMap<String,long[]> objects = new HashMap<>();
+            HashMap<String, String[]> objects = new HashMap<>();
             for(String className : temObjects.keySet()){
-                List<Long> ids = temObjects.get(className);
-                long[] ids_ = new long[ids.size()];
+                List<String> ids = temObjects.get(className);
+                String[] ids_ = new String[ids.size()];
                 for (int i=0; i<ids.size(); i++) 
                     ids_[i] = ids.get(i);
                 
@@ -1541,16 +1541,16 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void moveObjects(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, String ipAddress, String sessionId) throws ServerSideException {
+    public void moveObjects(String targetClass, String targetOid, String[] objectClasses, String[] objectOids, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         if (objectClasses.length != objectOids.length)
             throw new ServerSideException("Array sizes do not match");
         try {
             aem.validateWebServiceCall("moveObjects", ipAddress, sessionId);
-            HashMap<String,List<Long>> temObjects = new HashMap<>();
+            HashMap<String,List<String>> temObjects = new HashMap<>();
             for (int i = 0; i< objectClasses.length; i++){
-                List<Long> ids = temObjects.get(objectClasses[i]);
+                List<String> ids = temObjects.get(objectClasses[i]);
                 if (ids == null)
                     ids = new ArrayList<>();
                 
@@ -1558,10 +1558,10 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 temObjects.put(objectClasses[i], ids);
             }
             
-            HashMap<String,long[]> objects = new HashMap<>();
+            HashMap<String,String[]> objects = new HashMap<>();
             for(String className : temObjects.keySet()){
-                List<Long> ids = temObjects.get(className);
-                long[] ids_ = new long[ids.size()];
+                List<String> ids = temObjects.get(className);
+                String[] ids_ = new String[ids.size()];
                 for (int i=0; i<ids.size(); i++) 
                     ids_[i] = ids.get(i);
                 
@@ -1577,17 +1577,17 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void moveSpecialObjects(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, String ipAddress, String sessionId) throws ServerSideException {
+    public void moveSpecialObjects(String targetClass, String targetOid, String[] objectClasses, String[] objectOids, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         if (objectClasses.length != objectOids.length)
             throw new ServerSideException("Array sizes do not match");
         try {
             aem.validateWebServiceCall("moveSpecialObjects", ipAddress, sessionId);
-            HashMap<String,List<Long>> temObjects = new HashMap<>();
+            HashMap<String,List<String>> temObjects = new HashMap<>();
             
             for (int i = 0; i< objectClasses.length; i++){
-                List<Long> ids = temObjects.get(objectClasses[i]);
+                List<String> ids = temObjects.get(objectClasses[i]);
                 if (ids == null)
                     ids = new ArrayList<>();
                 
@@ -1595,10 +1595,10 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 temObjects.put(objectClasses[i], ids);
             }
             
-            HashMap<String,long[]> objects = new HashMap<>();
+            HashMap<String,String[]> objects = new HashMap<>();
             for(String className : temObjects.keySet()){
-                List<Long> ids = temObjects.get(className);
-                long[] ids_ = new long[ids.size()];
+                List<String> ids = temObjects.get(className);
+                String[] ids_ = new String[ids.size()];
                 for (int i=0; i<ids.size(); i++) 
                     ids_[i] = ids.get(i);
                 
@@ -1615,7 +1615,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void movePoolItem(long poolId, String poolItemClassName, long poolItemId, String ipAddress, String sessionId) throws ServerSideException {
+    public void movePoolItem(String poolId, String poolItemClassName, String poolItemId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -1630,19 +1630,19 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public long[] copyObjects(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, boolean recursive, String ipAddress, String sessionId) throws ServerSideException {
+    public String[] copyObjects(String targetClass, String targetOid, String[] objectClasses, String[] objectOids, boolean recursive, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         if (objectClasses.length != objectOids.length)
             throw new ServerSideException("Array sizes do not match");
         try {
             aem.validateWebServiceCall("copyObjects", ipAddress, sessionId);
-            HashMap<String,long[]> objects = new HashMap<>();
+            HashMap<String,String[]> objects = new HashMap<>();
             for (int i = 0; i< objectClasses.length;i++){
                 if (objects.get(objectClasses[i]) == null)
-                    objects.put(objectClasses[i], new long[]{objectOids[i]});
+                    objects.put(objectClasses[i], new String[]{objectOids[i]});
             }
-            long[] newObjects = bem.copyObjects(targetClass, targetOid, objects, recursive);
+            String[] newObjects = bem.copyObjects(targetClass, targetOid, objects, recursive);
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                     ActivityLogEntry.ACTIVITY_TYPE_CHANGE_PARENT, 
                     String.format("%s moved to (Special) object with id %s of class %s", Arrays.toString(newObjects), targetOid, targetClass));
@@ -1653,19 +1653,19 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public long[] copySpecialObjects(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, boolean recursive, String ipAddress, String sessionId) throws ServerSideException {
+    public String[] copySpecialObjects(String targetClass, String targetOid, String[] objectClasses, String[] objectOids, boolean recursive, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         if (objectClasses.length != objectOids.length)
             throw new ServerSideException("Array sizes do not match");
         try {
             aem.validateWebServiceCall("copySpecialObjects", ipAddress, sessionId);
-            HashMap<String,long[]> objects = new HashMap<>();
+            HashMap<String,String[]> objects = new HashMap<>();
             for (int i = 0; i< objectClasses.length;i++){
                 if (objects.get(objectClasses[i]) == null)
-                    objects.put(objectClasses[i], new long[]{objectOids[i]});
+                    objects.put(objectClasses[i], new String[]{objectOids[i]});
             }
-            long[] newObjects = bem.copySpecialObjects(targetClass, targetOid, objects, recursive);
+            String[] newObjects = bem.copySpecialObjects(targetClass, targetOid, objects, recursive);
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                     ActivityLogEntry.ACTIVITY_TYPE_CHANGE_PARENT, 
                     String.format("%s moved to (Special)object with id %s of class %s", Arrays.toString(newObjects), targetOid, targetClass));
@@ -1676,12 +1676,12 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public long copyPoolItem(long poolId, String poolItemClassName, long poolItemId, boolean recursive, String ipAddress, String sessionId) throws ServerSideException {
+    public String copyPoolItem(String poolId, String poolItemClassName, String poolItemId, boolean recursive, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("movePoolItem", ipAddress, sessionId);
-            long id = bem.copyPoolItem(poolId, poolItemClassName, poolItemId, recursive);
+            String id = bem.copyPoolItem(poolId, poolItemClassName, poolItemId, recursive);
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CHANGE_PARENT, 
                 String.format("%s moved to pool with id %s", poolItemId, poolId));
@@ -1692,7 +1692,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void updateObject(String className, long oid, List<StringPair> attributesToBeUpdated, String ipAddress, String sessionId) throws ServerSideException{
+    public void updateObject(String className, String oid, List<StringPair> attributesToBeUpdated, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
 
@@ -1731,13 +1731,13 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public long [] createBulkObjects(String className, String parentClassName, long parentOid, int numberOfObjects, String namePattern, String ipAddress, String sessionId) throws ServerSideException {
+    public String[] createBulkObjects(String className, String parentClassName, String parentOid, int numberOfObjects, String namePattern, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("createBulkObjects", ipAddress, sessionId);
             
-            long[] newObjects = bem.createBulkObjects(className, parentClassName, parentOid, numberOfObjects, namePattern);
+            String[] newObjects = bem.createBulkObjects(className, parentClassName, parentOid, numberOfObjects, namePattern);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
                     String.format("%s new objects of class %s", numberOfObjects, className));
@@ -1750,13 +1750,13 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public long[] createBulkSpecialObjects(String className, String parentClassName, long parentId, int numberOfSpecialObjects, String namePattern, String ipAddress, String sessionId) throws ServerSideException {
+    public String[] createBulkSpecialObjects(String className, String parentClassName, String parentId, int numberOfSpecialObjects, String namePattern, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("createBulkSpecialObjects", ipAddress, sessionId);
             
-            long[] newSpecialObjects = bem.createBulkSpecialObjects(className, parentClassName, parentId, numberOfSpecialObjects, namePattern);
+            String[] newSpecialObjects = bem.createBulkSpecialObjects(className, parentClassName, parentId, numberOfSpecialObjects, namePattern);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
                     String.format("%s new special objects  of class %s", numberOfSpecialObjects, className));
@@ -1770,7 +1770,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     //Physical connections
     @Override
-    public void connectMirrorPort(String[] aObjectClass, long[] aObjectId, String[] bObjectClass, long[] bObjectId, String ipAddress, String sessionId) throws ServerSideException {
+    public void connectMirrorPort(String[] aObjectClass, String[] aObjectId, String[] bObjectClass, String[] bObjectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -1801,7 +1801,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
                 aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), aObjectClass[i], aObjectId[i], 
                     ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
-                    "mirror", "", Long.toString(aObjectId[i]) + ", " + Long.toString(bObjectId[i]), ""); //NOI18N          
+                    "mirror", "", aObjectId[i] + ", " + bObjectId[i], ""); //NOI18N          
             }
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -1809,7 +1809,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void releaseMirrorPort(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+    public void releaseMirrorPort(String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -1823,26 +1823,26 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 theOtherPort = bem.getSpecialAttribute(objectClass, objectId, "mirror").get(0); //NOI18N
             
             if (theOtherPort == null)
-                throw new ServerSideException(String.format("Object %s does not have a mirror port", bem.getObjectLight(objectClass, objectId)));
+                throw new ServerSideException(String.format("Object %s no has a mirror port", bem.getObjectLight(objectClass, objectId)));
                 
-            bem.releaseSpecialRelationship(objectClass, objectId, -1, "mirror"); //NOI18N   
+            bem.releaseSpecialRelationship(objectClass, objectId, "-1", "mirror"); //NOI18N   
             
             aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), objectClass, objectId, 
                 ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
-                "mirror", Long.toString(theOtherPort.getId()), "", ""); //NOI18N            
+                "mirror", theOtherPort.getId(), "", ""); //NOI18N
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
     
     @Override
-    public long createPhysicalConnection(String aObjectClass, long aObjectId,
-            String bObjectClass, long bObjectId, String parentClass, long parentId,
+    public String createPhysicalConnection(String aObjectClass, String aObjectId,
+            String bObjectClass, String bObjectId, String parentClass, String parentId,
             String name, String connectionClass, long templateId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
-        long newConnectionId = -1;
+        String newConnectionId = null;
         
         try {
             aem.validateWebServiceCall("createPhysicalConnection", ipAddress, sessionId);
@@ -1867,6 +1867,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 
                 isLink = true;
             }
+
             
             HashMap<String, String> attributes = new HashMap<>();
             if (name == null || name.isEmpty())
@@ -1891,15 +1892,15 @@ public class WebserviceBeanImpl implements WebserviceBean {
         } catch (InventoryException e) {
             //If the new connection was successfully created, but there's a problem creating the relationships,
             //delete the connection and throw an exception
-            if (newConnectionId != -1)
-                deleteObjects(new String[]{ connectionClass }, new long[]{ newConnectionId }, true, ipAddress, sessionId);
+            if (newConnectionId != null)
+                deleteObjects(new String[]{ connectionClass }, new String[]{ newConnectionId }, true, ipAddress, sessionId);
 
             throw new ServerSideException(e.getMessage());
         }
     }
 
     @Override
-    public RemoteObjectLight[] getPhysicalConnectionEndpoints(String connectionClass, long connectionId, String ipAddress, String sessionId) throws ServerSideException {
+    public RemoteObjectLight[] getPhysicalConnectionEndpoints(String connectionClass, String connectionId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -1911,7 +1912,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public RemoteObjectLight[] getLogicalConnectionEndpoints(String connectionClass, long connectionId, String ipAddress, String sessionId) throws ServerSideException {
+    public RemoteObjectLight[] getLogicalConnectionEndpoints(String connectionClass, String connectionId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -1923,12 +1924,12 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     
-    private RemoteObjectLight[] getConnectionEndpoints(String connectionClass, long connectionId, String sessionId) throws ServerSideException {
+    private RemoteObjectLight[] getConnectionEndpoints(String connectionClass, String connectionId, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             String endpointAName = null, endpointBName = null;
-            if (!mem.isSubclassOf(Constants.CLASS_GENERICCONNECTION, connectionClass)) //NOI18N
+            if (!mem.isSubclassOf(Constants.CLASS_GENERICLOGICALCONNECTION, connectionClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not a physical or logical connection", connectionClass));
 
             else if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONNECTION, connectionClass)){
@@ -1951,9 +1952,9 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
    
     @Override
-    public void connectPhysicalLinks(String[] sideAClassNames, Long[] sideAIds, 
-                String[] linksClassNames, long[] linksIds, String[] sideBClassNames, 
-                Long[] sideBIds, String ipAddress, String sessionId) throws ServerSideException{
+    public void connectPhysicalLinks(String[] sideAClassNames, String[] sideAIds, 
+                String[] linksClassNames, String[] linksIds, String[] sideBClassNames, 
+                String[] sideBIds, String ipAddress, String sessionId) throws ServerSideException{
 
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -1966,9 +1967,9 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void connectLogicalLinks(String[] sideAClassNames, Long[] sideAIds, 
-                String[] linksClassNames, long[] linksIds, String[] sideBClassNames, 
-                Long[] sideBIds, String ipAddress, String sessionId) throws ServerSideException{
+    public void connectLogicalLinks(String[] sideAClassNames, String[] sideAIds, 
+                String[] linksClassNames, String[] linksIds, String[] sideBClassNames, 
+                String[] sideBIds, String ipAddress, String sessionId) throws ServerSideException{
 
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -1980,9 +1981,9 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
     }
     
-    private void connectLinks(String[] sideAClassNames, Long[] sideAIds, 
-                String[] linksClassNames, long[] linksIds, String[] sideBClassNames, 
-                Long[] sideBIds, String sessionId) throws ServerSideException{
+    private void connectLinks(String[] sideAClassNames, String[] sideAIds, 
+                String[] linksClassNames, String[] linksIds, String[] sideBClassNames, 
+                String[] sideBIds, String sessionId) throws ServerSideException{
         try {
             for (int i = 0; i < sideAClassNames.length; i++){
                 if (linksClassNames[i] != null && !mem.isSubclassOf(Constants.CLASS_GENERICCONNECTION, linksClassNames[i])) //NOI18N
@@ -2056,9 +2057,9 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void connectPhysicalContainers(String[] sideAClassNames, Long[] sideAIds, 
-                String[] containersClassNames, long[] containersIds, String[] sideBClassNames, 
-                Long[] sideBIds, String ipAddress, String sessionId) throws ServerSideException{
+    public void connectPhysicalContainers(String[] sideAClassNames, String[] sideAIds, 
+                String[] containersClassNames, String[] containersIds, String[] sideBClassNames, 
+                String[] sideBIds, String ipAddress, String sessionId) throws ServerSideException{
 
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -2101,7 +2102,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public void reconnectPhysicalConnection(String connectionClass, long connectionId, String newASideClass, long newASideId, String newBSideClass, long newBSideId, String ipAddress, String sessionId) throws ServerSideException {
+    public void reconnectPhysicalConnection(String connectionClass, String connectionId, String newASideClass, String newASideId, String newBSideClass, String newBSideId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -2111,28 +2112,28 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             boolean isLink = mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALLINK, connectionClass);
             
-            if (newASideClass != null && newASideId != -1) { //Reconnect the A side
+            if (newASideClass != null && newASideId != null && !newASideId.equals("-1")) { //Reconnect the A side
                 disconnectPhysicalConnection(connectionClass, connectionId, 1 /*Disconnect A side*/, ipAddress, sessionId);
                 if (isLink)
-                    connectPhysicalLinks(new String[] { newASideClass }, new Long[] { newASideId }, new String[] { connectionClass }, 
-                            new long[] { connectionId }, new String[] { null }, 
-                            new Long[] { null }, ipAddress, sessionId);
+                    connectPhysicalLinks(new String[] { newASideClass }, new String[] { newASideId }, new String[] { connectionClass }, 
+                            new String[] { connectionId }, new String[] { null }, 
+                            new String[] { null }, ipAddress, sessionId);
                 else
-                    connectPhysicalContainers(new String[] { newASideClass }, new Long[] { newASideId }, new String[] { connectionClass }, 
-                            new long[] { connectionId }, new String[] { null }, 
-                            new Long[] { null }, ipAddress, sessionId);
+                    connectPhysicalContainers(new String[] { newASideClass }, new String[] { newASideId }, new String[] { connectionClass }, 
+                            new String[] { connectionId }, new String[] { null }, 
+                            new String[] { null }, ipAddress, sessionId);
             }
             
-            if (newBSideClass != null && newBSideId != -1) { //Reconnect the B side
+            if (newBSideClass != null && newBSideId != null && !newBSideId.equals("-1")) { //Reconnect the B side
                 disconnectPhysicalConnection(connectionClass, connectionId, 2 /*Disconnect B side*/, ipAddress, sessionId);
                 if (isLink)
-                    connectPhysicalLinks(new String[] { null }, new Long[] { null }, new String[] { connectionClass }, 
-                            new long[] { connectionId }, new String[] { newBSideClass }, 
-                            new Long[] { newBSideId }, ipAddress, sessionId);
+                    connectPhysicalLinks(new String[] { null }, new String[] { null }, new String[] { connectionClass }, 
+                            new String[] { connectionId }, new String[] { newBSideClass }, 
+                            new String[] { newBSideId }, ipAddress, sessionId);
                 else
-                    connectPhysicalContainers(new String[] { null }, new Long[] { null }, new String[] { connectionClass }, 
-                            new long[] { connectionId }, new String[] { newBSideClass }, 
-                            new Long[] { newBSideId }, ipAddress, sessionId);
+                    connectPhysicalContainers(new String[] { null }, new String[] { null }, new String[] { connectionClass }, 
+                            new String[] { connectionId }, new String[] { newBSideClass }, 
+                            new String[] { newBSideId }, ipAddress, sessionId);
             }
             
             //getCommonParent(connectionClass, newASideId, connectionClass, newBSideId, ipAddress, sessionId)
@@ -2143,7 +2144,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void disconnectPhysicalConnection(String connectionClass, long connectionId, 
+    public void disconnectPhysicalConnection(String connectionClass, String connectionId, 
             int sideToDisconnect, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -2159,7 +2160,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void disconnectLogicalConnection(String connectionClass, long connectionId, 
+    public void disconnectLogicalConnection(String connectionClass, String connectionId, 
             int sideToDisconnect, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -2174,7 +2175,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
     }
     
-    private void disconnectConnection(String connectionClass, long connectionId, int sideToDisconnect,  String sessionId) throws ServerSideException{
+    private void disconnectConnection(String connectionClass, String connectionId, int sideToDisconnect,  String sessionId) throws ServerSideException{
         try {
             String endpointAName = null, endpointBName = null;
             if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONNECTION, connectionClass)){
@@ -2194,14 +2195,14 @@ public class WebserviceBeanImpl implements WebserviceBean {
                     bem.releaseRelationships(connectionClass, connectionId, Arrays.asList(endpointAName)); //NOI18N
                     
                     affectedProperties += endpointAName + " "; //NOI18N
-                    oldValues += Long.toString(endpointA.getId()) + " ";
+                    oldValues += endpointA.getId() + " ";
                     break;
                 case 2: //B side
                     BusinessObjectLight endpointB = bem.getSpecialAttribute(connectionClass, connectionId, endpointBName).get(0); //NOI18N                    
                     bem.releaseRelationships(connectionClass, connectionId, Arrays.asList(endpointBName)); //NOI18N
                     
                     affectedProperties += endpointBName + " "; //NOI18N
-                    oldValues += Long.toString(endpointB.getId()) + " ";
+                    oldValues += endpointB.getId() + " ";
                     break;
                 case 3: //Both sides
                     endpointA = bem.getSpecialAttribute(connectionClass, connectionId, endpointAName).get(0); //NOI18N
@@ -2209,10 +2210,10 @@ public class WebserviceBeanImpl implements WebserviceBean {
                     bem.releaseRelationships(connectionClass, connectionId, Arrays.asList(endpointAName, endpointBName)); //NOI18N
                     
                     affectedProperties += endpointAName + " "; //NOI18N
-                    oldValues += Long.toString(endpointA.getId()) + " ";
+                    oldValues += endpointA.getId() + " ";
                     
                     affectedProperties += endpointBName + " "; //NOI18N
-                    oldValues += Long.toString(endpointB.getId()) + " ";
+                    oldValues += endpointB.getId() + " ";
                     break;
                 default:
                     throw new ServerSideException(String.format("Wrong side to disconnect option"));
@@ -2227,7 +2228,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<RemoteObjectLight> getPhysicalPath(String objectClassName, long oid, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteObjectLight> getPhysicalPath(String objectClassName, String oid, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -2245,7 +2246,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
 
     @Override
     public RemoteLogicalConnectionDetails getLogicalLinkDetails(String linkClass, 
-            long linkId, String ipAddress, String sessionId) throws ServerSideException {
+        String linkId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -2323,7 +2324,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     @Override
     public RemotePhysicalConnectionDetails getPhysicalLinkDetails(String linkClass, 
-            long linkId, String ipAddress, String sessionId) throws ServerSideException {
+            String linkId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend")); //NOI18N
         try {
@@ -2364,7 +2365,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     @Override
     public List<RemoteObjectLinkObject> getE2EMap(List<String> linkClasses, 
-            List<Long> linkIds, boolean includePhyscalPaths, boolean includeVlans, 
+            List<String> linkIds, boolean includePhyscalPaths, boolean includeVlans, 
             boolean includePhyscialLinks, String ipAddress, String sessionId) 
             throws ServerSideException
     {
@@ -2455,7 +2456,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 for (BusinessObjectLight vlan : vlans) { //We get all the port of every vlan
                     List<BusinessObjectLight> vlanPorts = bem.getSpecialAttribute(vlan.getClassName(), vlan.getId(), "portBelongsToVlan");
                     for (BusinessObjectLight vlanPort : vlanPorts) {
-                        if(vlanPort.getId() != endpoint.getId()){//we get the physical path for every port of the vlan except of the given endpoint 
+                        if(vlanPort.getId() != null && endpoint.getId() != null && !vlanPort.getId().equals(endpoint.getId())){//we get the physical path for every port of the vlan except of the given endpoint 
                             List<BusinessObjectLight> vlanPhysicalPath = bem.getPhysicalPath(vlanPort.getClassName(), vlanPort.getId());
                             if(!vlanPhysicalPath.isEmpty())
                                 vlansPhysicalPath.put(vlanPort, vlanPhysicalPath);
@@ -2485,7 +2486,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 //we get the the vlans to which the port belongs
                 List<BusinessObjectLight> ports = bem.getSpecialAttribute(endpoint.getClassName(), endpoint.getId(), relationshipName);
                 for (BusinessObjectLight port : ports) { //We get all the port of related with this relationship
-                    if(port.getId() != endpoint.getId()){//we get the physical path for every port of the vlan except of the given endpoint 
+                    if(port.getId() != null && endpoint.getId() != null && !port.getId().equals(endpoint.getId())){//we get the physical path for every port of the vlan except of the given endpoint 
                         List<BusinessObjectLight> portPhysicalPath = bem.getPhysicalPath(port.getClassName(), port.getId());
                         if(!portPhysicalPath.isEmpty())
                             portsPhysicalPath.put(port, portPhysicalPath);
@@ -2499,8 +2500,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<RemoteObjectLight> getContainersBetweenObjects(String objectAClassName, long objectAId,
-            String objectBClassName, long objectBId, String containerClassName, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteObjectLight> getContainersBetweenObjects(String objectAClassName, String objectAId,
+            String objectBClassName, String objectBId, String containerClassName, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend")); //NOI18N
         try {
@@ -2553,7 +2554,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<RemoteObjectLightList> getPhysicalConnectionsInObject(String objectClass, long objectId, 
+    public List<RemoteObjectLightList> getPhysicalConnectionsInObject(String objectClass, String objectId, 
             String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend")); //NOI18N
@@ -2576,7 +2577,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<RemoteObjectLight> getLogicalConnectionsInObject(String objectClass, long objectId, 
+    public List<RemoteObjectLight> getLogicalConnectionsInObject(String objectClass, String objectId, 
             String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend")); //NOI18N
@@ -2616,7 +2617,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     
     @Override
-    public RemoteObject getLinkConnectedToPort(String portClassName, long portId, String ipAddress, String sessionId) throws ServerSideException {
+    public RemoteObject getLinkConnectedToPort(String portClassName, String portId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend")); //NOI18N
         try {
@@ -2635,7 +2636,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void deletePhysicalConnection(String objectClassName, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+    public void deletePhysicalConnection(String objectClassName, String objectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -2654,7 +2655,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     //Service Manager
     @Override
-    public void associateObjectToService(String objectClass, long objectId, String serviceClass, long serviceId, String ipAddress, String sessionId) 
+    public void associateObjectToService(String objectClass, String objectId, String serviceClass, String serviceId, String ipAddress, String sessionId) 
             throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -2667,7 +2668,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), serviceClass, serviceId, 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
-                "uses", "", Long.toString(objectId), ""); //NOI18N
+                "uses", "", objectId, ""); //NOI18N
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2675,7 +2676,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     
     @Override
-    public void associateObjectsToService(String[] objectClass, long[] objectId, String serviceClass, long serviceId, String ipAddress, String sessionId) 
+    public void associateObjectsToService(String[] objectClass, String[] objectId, String serviceClass, String serviceId, String ipAddress, String sessionId) 
             throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -2698,7 +2699,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void releaseObjectFromService(String serviceClass, long serviceId, long otherObjectId, String ipAddress, String sessionId) 
+    public void releaseObjectFromService(String serviceClass, String serviceId, String otherObjectId, String ipAddress, String sessionId) 
             throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -2708,14 +2709,14 @@ public class WebserviceBeanImpl implements WebserviceBean {
                        
             aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), serviceClass, serviceId, 
                 ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
-                "uses", Long.toString(otherObjectId), "", "Release object from service"); //NOI18N
+                "uses", otherObjectId, "", "Release object from service"); //NOI18N
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
     
     @Override
-    public List<RemoteObjectLight> getServiceResources(String serviceClass, long serviceId, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteObjectLight> getServiceResources(String serviceClass, String serviceId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -2729,7 +2730,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public List<RemoteObjectLight> getServicesForCustomer(String customerClass, long customerId, int limit, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteObjectLight> getServicesForCustomer(String customerClass, String customerId, int limit, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -3025,7 +3026,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public long createListTypeItemRelatedView(long listTypeItemId, String listTypeItemClassName, String viewClassName, 
+    public long createListTypeItemRelatedView(String listTypeItemId, String listTypeItemClassName, String viewClassName, 
         String name, String description, byte [] structure, byte [] background, String ipAddress, String sessionId) 
         throws ServerSideException {
         
@@ -3046,7 +3047,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void updateListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, 
+    public void updateListTypeItemRelatedView(String listTypeItemId, String listTypeItemClass, long viewId, 
         String name, String description, byte[] structure, byte[] background, String ipAddress, String sessionId) 
         throws ServerSideException {
         
@@ -3065,7 +3066,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public RemoteViewObject getListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, String ipAddress, String sessionId) 
+    public RemoteViewObject getListTypeItemRelatedView(String listTypeItemId, String listTypeItemClass, long viewId, String ipAddress, String sessionId) 
         throws ServerSideException {
         
         if (aem == null)
@@ -3084,7 +3085,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public RemoteViewObjectLight[] getListTypeItemRelatedViews(long listTypeItemId, String listTypeItemClass, int limit, 
+    public RemoteViewObjectLight[] getListTypeItemRelatedViews(String listTypeItemId, String listTypeItemClass, int limit, 
         String ipAddress, String sessionId) 
         throws ServerSideException {
         
@@ -3106,7 +3107,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void deleteListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, 
+    public void deleteListTypeItemRelatedView(String listTypeItemId, String listTypeItemClass, long viewId, 
         String ipAddress, String sessionId) 
         throws ServerSideException {        
         if (aem == null)
@@ -3120,7 +3121,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<RemoteObjectLight> getListTypeItemUses(String listTypeItemClass, long listTypeItemId, int limit, 
+    public List<RemoteObjectLight> getListTypeItemUses(String listTypeItemClass, String listTypeItemId, int limit, 
         String ipAddress, String sessionId) throws ServerSideException {        
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -3134,7 +3135,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override   
-    public long createObjectRelatedView(long objectId, String objectClass, String name, 
+    public long createObjectRelatedView(String objectId, String objectClass, String name, 
         String description, String viewClassName, byte[] structure, byte[] background, String ipAddress, String sessionId) throws ServerSideException{
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -3172,7 +3173,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public RemoteViewObject getObjectRelatedView(long oid, String objectClass, long viewId, String ipAddress, String sessionId) throws ServerSideException {
+    public RemoteViewObject getObjectRelatedView(String oid, String objectClass, long viewId, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -3189,7 +3190,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public List<RemoteViewObjectLight> getObjectRelatedViews(long oid, String objectClass, int viewType, int limit, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteViewObjectLight> getObjectRelatedViews(String oid, String objectClass, int viewType, int limit, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -3241,7 +3242,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void updateObjectRelatedView(long objectOid, String objectClass, 
+    public void updateObjectRelatedView(String objectOid, String objectClass, 
         long viewId, String viewName, String viewDescription, byte[] structure, byte[] background, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -3400,14 +3401,14 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     //Pools
     @Override
-    public long createRootPool(String name, String description, String instancesOfClass, int type, String ipAddress, String sessionId)
+    public String createRootPool(String name, String description, String instancesOfClass, int type, String ipAddress, String sessionId)
             throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("createRootPool", ipAddress, sessionId);
             
-            long poolId = aem.createRootPool(name, description, instancesOfClass, type);
+            String poolId = aem.createRootPool(name, description, instancesOfClass, type);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
@@ -3419,13 +3420,13 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public long createPoolInObject(String parentClassname, long parentId, String name, String description, String instancesOfClass, int type, String ipAddress, String sessionId)
+    public String createPoolInObject(String parentClassname, String parentId, String name, String description, String instancesOfClass, int type, String ipAddress, String sessionId)
             throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("createPoolInObject", ipAddress, sessionId);
-            long poolId = aem.createPoolInObject(parentClassname, parentId, name, description, instancesOfClass, type);
+            String poolId = aem.createPoolInObject(parentClassname, parentId, name, description, instancesOfClass, type);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
@@ -3437,13 +3438,13 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public long createPoolInPool(long parentId, String name, String description, String instancesOfClass, int type, String ipAddress, String sessionId) 
+    public String createPoolInPool(String parentId, String name, String description, String instancesOfClass, int type, String ipAddress, String sessionId) 
             throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("createPoolInPool", ipAddress, sessionId);
-            long poolId = aem.createPoolInPool(parentId, name, description, instancesOfClass, type);
+            String poolId = aem.createPoolInPool(parentId, name, description, instancesOfClass, type);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
@@ -3455,12 +3456,12 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public long createPoolItem(long poolId, String className, String attributeNames[], String attributeValues[], long templateId, String ipAddress, String sessionId) throws ServerSideException{
+    public String createPoolItem(String poolId, String className, String attributeNames[], String attributeValues[], long templateId, String ipAddress, String sessionId) throws ServerSideException{
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("createPoolItem", ipAddress, sessionId);
-            long objectId = bem.createPoolItem(poolId, className, attributeNames, attributeValues, templateId);
+            String objectId = bem.createPoolItem(poolId, className, attributeNames, attributeValues, templateId);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
@@ -3473,7 +3474,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
    
     @Override
-    public void deletePools(long[] ids, String ipAddress, String sessionId) throws ServerSideException {
+    public void deletePools(String[] ids, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -3488,7 +3489,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void setPoolProperties(long poolId, String name, String description, String ipAddress, String sessionId) throws ServerSideException {
+    public void setPoolProperties(String poolId, String name, String description, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -3504,7 +3505,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public RemotePool getPool(long poolId, String ipAddress, String sessionId) throws ServerSideException{
+    public RemotePool getPool(String poolId, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -3534,7 +3535,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<RemotePool> getPoolsInObject(String objectClassName, long objectId, String poolClass, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemotePool> getPoolsInObject(String objectClassName, String objectId, String poolClass, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -3552,7 +3553,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<RemotePool> getPoolsInPool(long parentPoolId, String poolClass, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemotePool> getPoolsInPool(String parentPoolId, String poolClass, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -3570,7 +3571,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<RemoteObjectLight> getPoolItems(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException{
+    public List<RemoteObjectLight> getPoolItems(String poolId, int limit, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -3582,7 +3583,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public ApplicationLogEntry[] getBusinessObjectAuditTrail(String objectClass, long objectId, int limit, String ipAddress, String sessionId) throws ServerSideException {
+    public ApplicationLogEntry[] getBusinessObjectAuditTrail(String objectClass, String objectId, int limit, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -3616,7 +3617,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public long attachFileToObject(String name, String tags, byte[] file, String className, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+    public long attachFileToObject(String name, String tags, byte[] file, String className, String objectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -3629,7 +3630,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public void detachFileFromObject(long fileObjectId, String className, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+    public void detachFileFromObject(long fileObjectId, String className, String objectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -3642,7 +3643,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public List<RemoteFileObjectLight> getFilesForObject(String className, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteFileObjectLight> getFilesForObject(String className, String objectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -3658,7 +3659,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public RemoteFileObject getFile(long fileObjectId, String className, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+    public RemoteFileObject getFile(long fileObjectId, String className, String objectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -3672,7 +3673,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     @Override
     public void updateFileProperties(long fileObjectId, List<StringPair> properties, 
-            String className, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+            String className, String objectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -4738,8 +4739,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
             List<RemoteObjectLight> remoteTemplates = new ArrayList<>();
             
             for (TemplateObjectLight template : templates)
-                remoteTemplates.add(new RemoteObjectLight(template.getClassName(), template.getId(), template.getName()));
-            
+                remoteTemplates.add(new RemoteObjectLight(template.getClassName(), String.valueOf(template.getId()), template.getName()));
+                        
             return remoteTemplates;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -4758,7 +4759,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             for (TemplateObjectLight templateElementChild : templateElementChildren)
                 remoteTemplateElementChildren.add(new RemoteObjectLight(templateElementChild.getClassName(), 
-                        templateElementChild.getId(), templateElementChild.getName()));
+                    String.valueOf(templateElementChild.getId()), templateElementChild.getName()));
             
             return remoteTemplateElementChildren;
         } catch (InventoryException ex) {
@@ -4778,7 +4779,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             for (TemplateObjectLight templateElementChild : templateElementChildren)
                 remoteTemplateElementChildren.add(new RemoteObjectLight(templateElementChild.getClassName(), 
-                        templateElementChild.getId(), templateElementChild.getName()));
+                    String.valueOf(templateElementChild.getId()), templateElementChild.getName()));
             
             return remoteTemplateElementChildren;
         } catch (InventoryException ex) {
@@ -4849,7 +4850,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public byte[] getDeviceLayoutStructure(long oid, String className, String ipAddress, String sessionId) throws ServerSideException {
+    public byte[] getDeviceLayoutStructure(String oid, String className, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -4987,7 +4988,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public byte[] executeClassLevelReport(String objectClassName, long objectId, long reportId, String ipAddress, String sessionId) throws ServerSideException {
+    public byte[] executeClassLevelReport(String objectClassName, String objectId, long reportId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -5015,12 +5016,12 @@ public class WebserviceBeanImpl implements WebserviceBean {
     // <editor-fold defaultstate="collapsed" desc="Commercial modules data methods">
         // <editor-fold defaultstate="collapsed" desc="SDH Networks Module">
     @Override
-    public long createSDHTransportLink(String classNameEndpointA, long idEndpointA, String classNameEndpointB, 
-            long idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException {
+    public String createSDHTransportLink(String classNameEndpointA, String idEndpointA, String classNameEndpointB, 
+            String idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException {
         try {
             aem.validateWebServiceCall("createSDHTransportLink", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
-            long SDHTransportLinkId = sdhModule.createSDHTransportLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, defaultName);
+            String SDHTransportLinkId = sdhModule.createSDHTransportLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, defaultName);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
@@ -5032,8 +5033,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public long createSDHContainerLink(String classNameEndpointA, long idEndpointA, 
-            String classNameEndpointB, long idEndpointB, String linkType, List<RemoteSDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException {
+    public String createSDHContainerLink(String classNameEndpointA, String idEndpointA, 
+            String classNameEndpointB, String idEndpointB, String linkType, List<RemoteSDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException {
         try {
             aem.validateWebServiceCall("createSDHContainerLink", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
@@ -5043,7 +5044,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             for (RemoteSDHPosition position : positions)
                 remotePositions.add(new SDHPosition(position.getLinkClass(), position.getLinkId(), position.getPosition()));
             
-            long SDHContainerLinkId = sdhModule.createSDHContainerLink(classNameEndpointA, idEndpointA, 
+            String SDHContainerLinkId = sdhModule.createSDHContainerLink(classNameEndpointA, idEndpointA, 
                     classNameEndpointB, idEndpointB, linkType, remotePositions, defaultName);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
@@ -5056,8 +5057,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public long createSDHTributaryLink(String classNameEndpointA, long idEndpointA, 
-            String classNameEndpointB, long idEndpointB, String linkType, List<RemoteSDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException {
+    public String createSDHTributaryLink(String classNameEndpointA, String idEndpointA, 
+            String classNameEndpointB, String idEndpointB, String linkType, List<RemoteSDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException {
         try {
             aem.validateWebServiceCall("createSDHTributaryLink", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
@@ -5067,7 +5068,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             for (RemoteSDHPosition position : positions)
                 remotePositions.add(new SDHPosition(position.getLinkClass(), position.getLinkId(), position.getPosition()));
             
-            long SDHTributaryLinkId = sdhModule.createSDHTributaryLink(classNameEndpointA, idEndpointA, classNameEndpointB, 
+            String SDHTributaryLinkId = sdhModule.createSDHTributaryLink(classNameEndpointA, idEndpointA, classNameEndpointB, 
                     idEndpointB, linkType, remotePositions, defaultName);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
@@ -5080,7 +5081,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void deleteSDHTransportLink(String transportLinkClass, long transportLinkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException {
+    public void deleteSDHTransportLink(String transportLinkClass, String transportLinkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException {
         try {
             aem.validateWebServiceCall("deleteSDHTransportLink", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
@@ -5097,7 +5098,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void deleteSDHContainerLink(String containerLinkClass, long containerLinkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException {
+    public void deleteSDHContainerLink(String containerLinkClass, String containerLinkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException {
         try {
             aem.validateWebServiceCall("deleteSDHContainerLink", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
@@ -5114,7 +5115,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void deleteSDHTributaryLink(String tributaryLinkClass, long tributaryLinkId, String ipAddress, String sessionId) throws ServerSideException {
+    public void deleteSDHTributaryLink(String tributaryLinkClass, String tributaryLinkId, String ipAddress, String sessionId) throws ServerSideException {
         try {
             aem.validateWebServiceCall("deleteSDHTributaryLink", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
@@ -5132,8 +5133,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     @Override
     public List<RemoteObjectLightList> findSDHRoutesUsingTransportLinks(String communicationsEquipmentClassA, 
-                                            long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
-                                            long  communicationsEquipmentIB, String ipAddress, String sessionId) throws ServerSideException {
+                                            String communicationsEquipmentIdA, String communicationsEquipmentClassB, 
+                                            String communicationsEquipmentIB, String ipAddress, String sessionId) throws ServerSideException {
         try {
             aem.validateWebServiceCall("findSDHRoutesUsingTransportLinks", ipAddress, sessionId);
             
@@ -5151,8 +5152,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     @Override
     public List<RemoteObjectLightList> findSDHRoutesUsingContainerLinks(String communicationsEquipmentClassA, 
-                                            long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
-                                            long  communicationsEquipmentIB, String ipAddress, String sessionId) throws ServerSideException {
+        String communicationsEquipmentIdA, String communicationsEquipmentClassB, 
+        String communicationsEquipmentIB, String ipAddress, String sessionId) throws ServerSideException {
         try {
             aem.validateWebServiceCall("findSDHRoutesUsingContainerLinks", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
@@ -5168,7 +5169,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<RemoteSDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) 
+    public List<RemoteSDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, String transportLinkId, String ipAddress, String sessionId) 
             throws ServerSideException {
         try {
             aem.validateWebServiceCall("getSDHTransportLinkStructure", ipAddress, sessionId);
@@ -5187,7 +5188,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<RemoteSDHContainerLinkDefinition> getSDHContainerLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) 
+    public List<RemoteSDHContainerLinkDefinition> getSDHContainerLinkStructure(String transportLinkClass, String transportLinkId, String ipAddress, String sessionId) 
             throws ServerSideException {
         try {
             aem.validateWebServiceCall("getSDHContainerLinkStructure", ipAddress, sessionId);
@@ -5206,7 +5207,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         // </editor-fold>    
         // <editor-fold defaultstate="collapsed" desc="IP Administration Manager Module">
     @Override
-    public RemoteObject getSubnet(long id, String className, String ipAddress, String sessionId) throws ServerSideException{
+    public RemoteObject getSubnet(String id, String className, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateWebServiceCall("getSubnet", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
@@ -5217,7 +5218,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public RemotePool getSubnetPool(long id, String ipAddress, String sessionId) throws ServerSideException{
+    public RemotePool getSubnetPool(String id, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateWebServiceCall("getSubnetPool", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
@@ -5228,7 +5229,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public RemotePool[] getSubnetPools(long parentId, String className, String ipAddress, String sessionId) throws ServerSideException{
+    public RemotePool[] getSubnetPools(String parentId, String className, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateWebServiceCall("getSubnetPools", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
@@ -5240,7 +5241,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<RemoteObjectLight> getSubnets(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException{
+    public List<RemoteObjectLight> getSubnets(String poolId, int limit, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateWebServiceCall("getSubnets", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
@@ -5252,13 +5253,13 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public long createSubnetPool(long parentId, String subnetPoolName, 
+    public String createSubnetPool(String parentId, String subnetPoolName, 
             String subnetPoolDescription, String className, String ipAddress, 
             String sessionId) throws ServerSideException{
         try {
             aem.validateWebServiceCall("createSubnetPool", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            long subnetPoolId = ipamModule.createSubnetsPool(parentId, subnetPoolName, subnetPoolDescription, className);
+            String subnetPoolId = ipamModule.createSubnetsPool(parentId, subnetPoolName, subnetPoolDescription, className);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
@@ -5271,7 +5272,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public long createSubnet(long id, String className, List<StringPair> attributes, String ipAddress, String sessionId) throws ServerSideException{
+    public String createSubnet(String id, String className, List<StringPair> attributes, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateWebServiceCall("createSubnet", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
@@ -5284,7 +5285,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 attributeValues[i] = attributes.get(i).getValue();
             }
                 
-            long subnetId = ipamModule.createSubnet(id, className, attributeNames, attributeValues);
+            String subnetId = ipamModule.createSubnet(id, className, attributeNames, attributeValues);
             
             String subnameName = bem.getObjectLight(className, subnetId).getName();
             
@@ -5298,7 +5299,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void deleteSubnets(String className, List<Long> ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException{
+    public void deleteSubnets(String className, List<String> ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateWebServiceCall("deleteSubnets", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
@@ -5313,7 +5314,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void deleteSubnetPools(long[] ids, String ipAddress, String sessionId) throws ServerSideException{
+    public void deleteSubnetPools(String[] ids, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateWebServiceCall("deleteSubnetPools", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
@@ -5328,7 +5329,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public long addIPAddress(long id, String parentClassName, List<StringPair> attributesToBeUpdated, String ipAddress, String sessionId) throws ServerSideException{
+    public String addIPAddress(String id, String parentClassName, List<StringPair> attributesToBeUpdated, String ipAddress, String sessionId) throws ServerSideException{
         try{
             aem.validateWebServiceCall("addIPAddress", ipAddress, sessionId);
             HashMap<String, String> attributes = new HashMap<>();
@@ -5337,7 +5338,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 attributes.put(attribute.getKey(), attribute.getValue());
             
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            long ipAddressId = ipamModule.addIPAddress(id, parentClassName, attributes);
+            String ipAddressId = ipamModule.addIPAddress(id, parentClassName, attributes);
                         
             String ipAddressName = bem.getObjectLight(Constants.CLASS_IP_ADDRESS, ipAddressId).getName();
             
@@ -5351,7 +5352,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void removeIP(long[] ids, boolean releaseRelationships, String ipAddress, 
+    public void removeIP(String[] ids, boolean releaseRelationships, String ipAddress, 
             String sessionId) throws ServerSideException{
         try{
             aem.validateWebServiceCall("removeIP", ipAddress, sessionId);
@@ -5367,7 +5368,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void relateIPtoPort(long ipId, String portClassName, long portId, String ipAddress, String sessionId) throws ServerSideException{
+    public void relateIPtoPort(String ipId, String portClassName, String portId, String ipAddress, String sessionId) throws ServerSideException{
         try{
             aem.validateWebServiceCall("relateIPtoDevice", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
@@ -5375,14 +5376,14 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), portClassName, portId,
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
-                IPAMModule.RELATIONSHIP_IPAMHASADDRESS, "", Long.toString(ipId), "");
+                IPAMModule.RELATIONSHIP_IPAMHASADDRESS, "", ipId, "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
     
     @Override
-    public void relateSubnetToVlan(long id, String className, long vlanId, String ipAddress, String sessionId) throws ServerSideException{
+    public void relateSubnetToVlan(String id, String className, String vlanId, String ipAddress, String sessionId) throws ServerSideException{
         try{
             aem.validateWebServiceCall("relateSubnetToVLAN", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
@@ -5390,14 +5391,14 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VLAN, vlanId, 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
-                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN, "", Long.toString(id), "");
+                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN, "", id, "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
     
     @Override
-    public void relateSubnetToVrf(long id, String className, long vrfId, String ipAddress, String sessionId) throws ServerSideException{
+    public void relateSubnetToVrf(String id, String className, String vrfId, String ipAddress, String sessionId) throws ServerSideException{
         try{
             aem.validateWebServiceCall("relateSubnetToVRF", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
@@ -5405,14 +5406,14 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VRF_INSTANCE, vrfId, 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
-                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVRFINSTACE, "", Long.toString(id), "");
+                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVRFINSTACE, "", id, "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
     
     @Override
-    public void releasePortFromIP(String deviceClassName, long deviceId, long id, String ipAddress, String sessionId) throws ServerSideException{
+    public void releasePortFromIP(String deviceClassName, String deviceId, String id, String ipAddress, String sessionId) throws ServerSideException{
     try{
             aem.validateWebServiceCall("releasePortFromIP", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
@@ -5420,14 +5421,14 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), deviceClassName, deviceId,
                 ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
-                IPAMModule.RELATIONSHIP_IPAMHASADDRESS, Long.toString(id), "", "");
+                IPAMModule.RELATIONSHIP_IPAMHASADDRESS, id, "", "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
 
     @Override
-    public void releaseSubnetFromVlan(long vlanId, long id, String ipAddress, String sessionId) throws ServerSideException{
+    public void releaseSubnetFromVlan(String vlanId, String id, String ipAddress, String sessionId) throws ServerSideException{
         try{
             aem.validateWebServiceCall("releaseSubnetFromVLAN", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
@@ -5435,14 +5436,14 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VLAN, vlanId, 
                 ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
-                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN, Long.toString(id), "", "");
+                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN, id, "", "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
 
     @Override
-    public void releaseSubnetFromVRF(long subnetId, long vrfId, String ipAddress, String sessionId) throws ServerSideException{
+    public void releaseSubnetFromVRF(String subnetId, String vrfId, String ipAddress, String sessionId) throws ServerSideException{
         try{
             aem.validateWebServiceCall("releaseSubnetFromVRF", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
@@ -5450,14 +5451,14 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VRF_INSTANCE, vrfId, 
                 ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
-                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVRFINSTACE, Long.toString(subnetId), "", "");
+                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVRFINSTACE, subnetId, "", "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
     
     @Override
-    public List<RemoteObjectLight> getSubnetUsedIps(long id, String className, int limit, String ipAddress, String sessionId) throws ServerSideException{
+    public List<RemoteObjectLight> getSubnetUsedIps(String id, String className, int limit, String ipAddress, String sessionId) throws ServerSideException{
         try{
             aem.validateWebServiceCall("getSubnetUsedIps", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
@@ -5468,7 +5469,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<RemoteObjectLight> getSubnetsInSubnet(long id, String className, int limit, String ipAddress, String sessionId)  throws ServerSideException{
+    public List<RemoteObjectLight> getSubnetsInSubnet(String id, String className, int limit, String ipAddress, String sessionId)  throws ServerSideException{
         try{
             aem.validateWebServiceCall("getSubnetsInSubnet", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
@@ -5479,7 +5480,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void relatePortToInterface(long portId, String portClassName, String interfaceClassName, long interfaceId, String ipAddress, String sessionId) throws ServerSideException{
+    public void relatePortToInterface(String portId, String portClassName, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateWebServiceCall("relatePortToInterface", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
@@ -5487,14 +5488,14 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), interfaceClassName, interfaceId, 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
-                IPAMModule.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE, "", Long.toString(portId), "");            
+                IPAMModule.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE, "", portId, "");            
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
     
     @Override
-    public void releasePortFromInterface(String interfaceClassName, long interfaceId ,long portId, String ipAddress, String sessionId) throws ServerSideException{
+    public void releasePortFromInterface(String interfaceClassName, String interfaceId, String portId, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateWebServiceCall("releasePortFromInterface", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
@@ -5502,7 +5503,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), interfaceClassName, interfaceId, 
                 ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
-                IPAMModule.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE, Long.toString(portId), "", ""); 
+                IPAMModule.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE, portId, "", ""); 
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -5521,7 +5522,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         // </editor-fold>
         // <editor-fold defaultstate="collapsed" desc="Contract Manager">
     @Override
-    public void associateObjectsToContract(String[] objectClass, long[] objectId, String contractClass, long contractId, 
+    public void associateObjectsToContract(String[] objectClass, String[] objectId, String contractClass, String contractId, 
             String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -5556,7 +5557,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void releaseObjectFromContract(String objectClass, long objectId, long contractId,
+    public void releaseObjectFromContract(String objectClass, String objectId, String contractId,
             String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -5566,7 +5567,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), 
                 objectClass, objectId, ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
-                "contractHas", Long.toString(objectId), "", ""); //NOI18N
+                "contractHas", objectId, "", ""); //NOI18N
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -5575,12 +5576,12 @@ public class WebserviceBeanImpl implements WebserviceBean {
     // </editor-fold>    
         // <editor-fold defaultstate="collapsed" desc="MPLS Module">
     @Override
-    public long createMPLSLink(String classNameEndpointA, long idEndpointA, 
-            String classNameEndpointB, long idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException{
+    public String createMPLSLink(String classNameEndpointA, String idEndpointA, 
+            String classNameEndpointB, String idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateWebServiceCall("createMPLSLink", ipAddress, sessionId);
             MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
-            long MPLSLinkId = mplsModule.createMPLSLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, defaultName);
+            String MPLSLinkId = mplsModule.createMPLSLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, defaultName);
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
                 String.format("Created MPLS Link %s [%s]", defaultName, linkType));
@@ -5591,7 +5592,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void deleteMPLSLink(String linkClass, long linkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException{
+    public void deleteMPLSLink(String linkClass, String linkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateWebServiceCall("deleteMPLSLink", ipAddress, sessionId);
             MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
@@ -5635,7 +5636,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public long addProject(long parentId, String parentClassName, String className, String[] attributeNames, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException {
+    public String addProject(String parentId, String parentClassName, String className, String[] attributeNames, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -5643,7 +5644,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             aem.validateWebServiceCall("addProject", ipAddress, sessionId);
             ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
             
-            long projectId = projectsModule.addProject(parentId, parentClassName, className, attributeNames, attributeValues);
+            String projectId = projectsModule.addProject(parentId, parentClassName, className, attributeNames, attributeValues);
             String projectName = bem.getObjectLight(className, projectId).getName();
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
@@ -5656,7 +5657,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void deleteProject(String className, long oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException {
+    public void deleteProject(String className, String oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -5675,7 +5676,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public long addActivity(long parentId, String parentClassName, String className, String attributeNames[], String attributeValues[], String ipAddress, String sessionId) throws ServerSideException {
+    public String addActivity(String parentId, String parentClassName, String className, String attributeNames[], String attributeValues[], String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -5683,7 +5684,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             aem.validateWebServiceCall("addActivity", ipAddress, sessionId);
             ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
             
-            long activityId = projectsModule.addActivity(parentId, parentClassName, className, attributeNames, attributeValues);
+            String activityId = projectsModule.addActivity(parentId, parentClassName, className, attributeNames, attributeValues);
             String activityName = bem.getObjectLight(className, activityId).getName();
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
@@ -5696,7 +5697,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void deleteActivity(String className, long oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException {
+    public void deleteActivity(String className, String oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -5714,7 +5715,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<RemoteObjectLight> getProjectsInProjectPool(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteObjectLight> getProjectsInProjectPool(String poolId, int limit, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -5729,7 +5730,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<RemoteObjectLight> getProjectResurces(String projectClass, long projectId, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteObjectLight> getProjectResurces(String projectClass, String projectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -5744,7 +5745,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<RemoteObjectLight> getProjectActivities(String projectClass, long projectId, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteObjectLight> getProjectActivities(String projectClass, String projectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -5759,7 +5760,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void associateObjectsToProject(String projectClass, long projectId, String[] objectClass, long[] objectId, String ipAddress, String sessionId) throws ServerSideException {
+    public void associateObjectsToProject(String projectClass, String projectId, String[] objectClass, String[] objectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -5779,7 +5780,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void associateObjectToProject(String projectClass, long projectId, String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+    public void associateObjectToProject(String projectClass, String projectId, String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -5792,14 +5793,14 @@ public class WebserviceBeanImpl implements WebserviceBean {
             aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), 
                 objectClass, objectId,
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
-                ProjectsModule.RELATIONSHIP_PROJECTSPROJECTUSES, "", Long.toString(projectId), "");
+                ProjectsModule.RELATIONSHIP_PROJECTSPROJECTUSES, "", projectId, "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
     
     @Override
-    public void releaseObjectFromProject(String objectClass, long objectId, String projectClass, long projectId, String ipAddress, String sessionId) throws ServerSideException {
+    public void releaseObjectFromProject(String objectClass, String objectId, String projectClass, String projectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -5812,14 +5813,14 @@ public class WebserviceBeanImpl implements WebserviceBean {
             aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), 
                 objectClass, objectId,
                 ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
-                ProjectsModule.RELATIONSHIP_PROJECTSPROJECTUSES, Long.toString(projectId), "", "");
+                ProjectsModule.RELATIONSHIP_PROJECTSPROJECTUSES, projectId, "", "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
     
     @Override
-    public List<RemoteObjectLight> getProjectsAssociateToObject(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteObjectLight> getProjectsAssociateToObject(String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -5834,7 +5835,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public long createProjectPool(String name, String description, String instanceOfClass, String ipAddress, String sessionId) throws ServerSideException {
+    public String createProjectPool(String name, String description, String instanceOfClass, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -5842,7 +5843,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             aem.validateWebServiceCall("createProjectPool", ipAddress, sessionId);
             
             ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
-            long projectId = projectsModule.createProjectPool(name, description, instanceOfClass);
+            String projectId = projectsModule.createProjectPool(name, description, instanceOfClass);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
@@ -5855,7 +5856,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         // </editor-fold>    
         //<editor-fold desc="Synchronization API" defaultstate="collapsed">
     @Override
-    public long createSynchronizationDataSourceConfig(long objectId, long syngGroupId, String name, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException{
+    public long createSynchronizationDataSourceConfig(String objectId, long syngGroupId, String name, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException{
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -5933,7 +5934,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public RemoteSynchronizationConfiguration getSyncDataSourceConfiguration(long objectId, String ipAddress, String sessionId)throws ServerSideException{
+    public RemoteSynchronizationConfiguration getSyncDataSourceConfiguration(String objectId, String ipAddress, String sessionId)throws ServerSideException{
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -6669,7 +6670,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void associatePhysicalNodeToWarehouse(String objectClass, long objectId, String warehouseClass, long warehouseId, String ipAddress, String sessionId) throws ServerSideException {
+    public void associatePhysicalNodeToWarehouse(String objectClass, String objectId, String warehouseClass, String warehouseId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -6682,7 +6683,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
 
                 aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), warehouseClass, warehouseId, 
                     ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
-                    "warehouseHas", "", Long.toString(objectId), ""); //NOI18N
+                    "warehouseHas", "", objectId, ""); //NOI18N
             }
             else
                 throw new ServerSideException(String.format("Class %s is not a Warehouse or VirtualWarehouse", warehouseClass));
@@ -6693,7 +6694,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void associatesPhysicalNodeToWarehouse(String[] objectClass, long[] objectId, String warehouseClass, long warehouseId, String ipAddress, String sessionId) throws ServerSideException {
+    public void associatesPhysicalNodeToWarehouse(String[] objectClass, String[] objectId, String warehouseClass, String warehouseId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -6721,7 +6722,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
     }
     @Override
-    public void releasePhysicalNodeFromWarehouse(String warehouseClass, long warehouseId, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+    public void releasePhysicalNodeFromWarehouse(String warehouseClass, String warehouseId, String objectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -6730,23 +6731,23 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), warehouseClass, warehouseId, 
                 ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
-                "warehouseHas", Long.toString(objectId), "", "Release object from service"); //NOI18N
+                "warehouseHas", objectId, "", "Release object from service"); //NOI18N
             
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
     @Override
-    public void moveObjectsToWarehousePool(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, String ipAddress, String sessionId) throws ServerSideException {
+    public void moveObjectsToWarehousePool(String targetClass, String targetOid, String[] objectClasses, String[] objectOids, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         if (objectClasses.length != objectOids.length)
             throw new ServerSideException("Array sizes do not match");
         try {
             aem.validateWebServiceCall("moveObjectsToWarehousePool", ipAddress, sessionId);
-            HashMap<String,List<Long>> temObjects = new HashMap<>();
+            HashMap<String,List<String>> temObjects = new HashMap<>();
             for (int i = 0; i< objectClasses.length; i++){
-                List<Long> ids = temObjects.get(objectClasses[i]);
+                List<String> ids = temObjects.get(objectClasses[i]);
                 if (ids == null)
                     ids = new ArrayList<>();
                 
@@ -6754,10 +6755,10 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 temObjects.put(objectClasses[i], ids);
             }
 
-            HashMap<String,long[]> objects = new HashMap<>();
+            HashMap<String,String[]> objects = new HashMap<>();
             for(String className : temObjects.keySet()){
-                List<Long> ids = temObjects.get(className);
-                long[] ids_ = new long[ids.size()];
+                List<String> ids = temObjects.get(className);
+                String[] ids_ = new String[ids.size()];
                 for (int i=0; i<ids.size(); i++) 
                     ids_[i] = ids.get(i);
                 
@@ -6772,16 +6773,16 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }        
     }
     @Override
-    public void moveObjectsToWarehouse(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, String ipAddress, String sessionId) throws ServerSideException {
+    public void moveObjectsToWarehouse(String targetClass, String targetOid, String[] objectClasses, String[] objectOids, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         if (objectClasses.length != objectOids.length)
             throw new ServerSideException("Array sizes do not match");
         try {
             aem.validateWebServiceCall("moveObjectsToWarehouse", ipAddress, sessionId);
-            HashMap<String,List<Long>> temObjects = new HashMap<>();
+            HashMap<String,List<String>> temObjects = new HashMap<>();
             for (int i = 0; i< objectClasses.length; i++){
-                List<Long> ids = temObjects.get(objectClasses[i]);
+                List<String> ids = temObjects.get(objectClasses[i]);
                 if (ids == null)
                     ids = new ArrayList<>();
                 
@@ -6789,10 +6790,10 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 temObjects.put(objectClasses[i], ids);
             }
             
-            HashMap<String,long[]> objects = new HashMap<>();
+            HashMap<String,String[]> objects = new HashMap<>();
             for(String className : temObjects.keySet()){
-                List<Long> ids = temObjects.get(className);
-                long[] ids_ = new long[ids.size()];
+                List<String> ids = temObjects.get(className);
+                String[] ids_ = new String[ids.size()];
                 for (int i=0; i<ids.size(); i++) 
                     ids_[i] = ids.get(i);
                 
@@ -6807,7 +6808,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
     }
     @Override    
-    public RemoteObjectLight getPhysicalNodeToObjectInWarehouse(String objectClassName, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+    public RemoteObjectLight getPhysicalNodeToObjectInWarehouse(String objectClassName, String objectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -6819,7 +6820,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
     }    
     @Override
-    public RemoteObjectLight getWarehouseToObject(String objectClassName, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+    public RemoteObjectLight getWarehouseToObject(String objectClassName, String objectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -6918,7 +6919,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     //  </editor-fold>
         // <editor-fold defaultstate="collapsed" desc="BGP Viewer Module">
         @Override
-        public List<RemoteLogicalConnectionDetails> getBGPMap(List<Long> mappedBGPLinksIds, String ipAddress, String sessionId) throws ServerSideException{
+        public List<RemoteLogicalConnectionDetails> getBGPMap(List<String> mappedBGPLinksIds, String ipAddress, String sessionId) throws ServerSideException{
             if (aem == null)
                 throw new ServerSideException(I18N.gm("cannot_reach_backend"));
             try {
@@ -6926,7 +6927,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 List<RemoteLogicalConnectionDetails> bgpMap = new ArrayList<>();
                 List<BusinessObjectLight> bgpLinks = bem.getObjectsOfClassLight(Constants.CLASS_BGPLINK, -1);
                 for (BusinessObjectLight bgpLink : bgpLinks) {
-                    if(!mappedBGPLinksIds.contains(bgpLink.getId())){//We only add the bgp links that are not yet rendered
+                    if(!mappedBGPLinksIds.contains(bgpLink.getId())){ //We only add the bgp links that are not yet rendered
                         List<BusinessObjectLight> physicalDeviceA = new ArrayList<>();
                         List<BusinessObjectLight> physicalDeviceB = new ArrayList<>();
                         List<BusinessObjectLight> bgpEndpointA = bem.getSpecialAttribute(bgpLink.getClassName(), bgpLink.getId(), "bgpLinkEndpointA");
@@ -6951,6 +6952,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
                                    bgpEndpointB.isEmpty() ? null : bgpEndpointB.get(0), 
                                    physicalDeviceA, physicalDeviceB));
                     }
+                    
                 }
  
                 return bgpMap;
@@ -7073,7 +7075,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void addObjectsToFavoritesFolder(String[] objectClass, long[] objectId, long favoritesFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException {
+    public void addObjectsToFavoritesFolder(String[] objectClass, String[] objectId, long favoritesFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -7096,7 +7098,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void removeObjectsFromFavoritesFolder(String[] objectClass, long[] objectId, long favoritesFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException {
+    public void removeObjectsFromFavoritesFolder(String[] objectClass, String[] objectId, long favoritesFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -7131,7 +7133,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<RemoteFavoritesFolder> getFavoritesFoldersForObject(long userId ,String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteFavoritesFolder> getFavoritesFoldersForObject(long userId ,String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         

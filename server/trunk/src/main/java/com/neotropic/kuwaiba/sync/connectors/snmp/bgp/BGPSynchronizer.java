@@ -91,7 +91,7 @@ public class BGPSynchronizer {
     /**
      * Device id
      */
-    private final long id;
+    private final String id;
     /**
      * Device Data Source Configuration id
      */
@@ -196,7 +196,7 @@ public class BGPSynchronizer {
                 res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Retrieving local ASN",
                             "The configuration variable sync.bgp.localAsn has not been set"));
             }
-        } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
+        } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException ex) {
             Exceptions.printStackTrace(ex);
         }
        
@@ -260,7 +260,7 @@ public class BGPSynchronizer {
                             possibleProviders = new ArrayList<>();
                         //if we didn't find a remote device we create a temporal one
                         if(remoteDevice == null){
-                            remoteDevice = new BusinessObject("", -1, asnName, newAttributes);
+                            remoteDevice = new BusinessObject("", "-1", asnName, newAttributes);
                             //we add the remote device otherwise we will try to create the BGP link
                             possibleProviders.add(remoteDevice);
                         } //we made this if a ExternalEquipment and a port were craated manually and a relatationship between the created port and the bgpPeerRemoteAddr was created manually
@@ -460,7 +460,7 @@ public class BGPSynchronizer {
                     }
                     if(providersParent == null){
                         attributes.put(Constants.PROPERTY_NAME, "Providers");
-                        long parentCreatedProvidersId = bem.createObject("Provider", "City", location.getId(), attributes, -1);
+                        String parentCreatedProvidersId = bem.createObject("Provider", "City", location.getId(), attributes, -1);
                         providersParent = new BusinessObjectLight("Provider", parentCreatedProvidersId, "Providers");
                         res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Created Peering",
                             String.format("An object to group the peerings was created in: %s", location)));
@@ -472,7 +472,7 @@ public class BGPSynchronizer {
                     attributes.put("bgpPeerRemoteAddr", bgpPeerRemoteAddr);
                     attributes.put(Constants.PROPERTY_NAME, asnName);
 
-                    long createdPeeringId = bem.createObject("Peering", providersParent.getClassName(), providersParent.getId(), attributes, -1);
+                    String createdPeeringId = bem.createObject("Peering", providersParent.getClassName(), providersParent.getId(), attributes, -1);
                     BusinessObjectLight createdPeering = new BusinessObjectLight("Peering", createdPeeringId, asnName);
                     //AuditTrail
                     aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
@@ -503,7 +503,7 @@ public class BGPSynchronizer {
         try {
             HashMap<String, String> attributes = new HashMap<>();
             attributes.put(Constants.PROPERTY_NAME, bgpPeerRemotePort);
-            long newPortId = bem.createObject("VirtualPort", remoteDevice.getClassName(), remoteDevice.getId(), attributes, -1);
+            String newPortId = bem.createObject("VirtualPort", remoteDevice.getClassName(), remoteDevice.getId(), attributes, -1);
             BusinessObjectLight remotePort = new BusinessObjectLight("VirtualPort", newPortId, bgpPeerRemotePort);
             //AuditTrail
             aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
@@ -569,7 +569,7 @@ public class BGPSynchronizer {
         try {
             sourcePortRels = bem.getSpecialAttributes(sourcePort.getClassName(), sourcePort.getId());
             destinyPortRels = bem.getSpecialAttributes(destinyPort.getClassName(), destinyPort.getId());
-        } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
+        } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException ex) {
             Exceptions.printStackTrace(ex);
         }
         List<BusinessObjectLight> sourceBgpLinksA = new ArrayList<>();
@@ -622,7 +622,7 @@ public class BGPSynchronizer {
                 attributesToBeSet.put(Constants.PROPERTY_NAME, asnName);
                 attributesToBeSet.put("bgpPeerIdentifier", bgpPeerIdentifier);
                 
-                long bgpLinkId = bem.createSpecialObject(BGPLINK, null, -1, attributesToBeSet, -1);
+                String bgpLinkId = bem.createSpecialObject(BGPLINK, null, "-1", attributesToBeSet, -1);
                 bgpLink = new BusinessObject(BGPLINK, bgpLinkId, asnNumber);
                 //AuditTrail
                 aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
@@ -674,7 +674,7 @@ public class BGPSynchronizer {
                         if(!relatedPort.isEmpty())
                             return relatedPort.get(0);
                     }
-                } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException ex) {
+                } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
                     res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Searching in current IP address structure", ex.getLocalizedMessage()));
                 }
             }
@@ -740,7 +740,7 @@ public class BGPSynchronizer {
      * @throws BusinessObjectNotFoundException 
      */
     private void readCurrentStructure(List<BusinessObjectLight> children, int childrenType) 
-            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException
     {
         for (BusinessObjectLight child : children) {
             if (child.getClassName().equals(Constants.CLASS_ELECTRICALPORT) || child.getClassName().equals(Constants.CLASS_SFPPORT) || child.getClassName().contains(Constants.CLASS_OPTICALPORT)) 
@@ -762,7 +762,7 @@ public class BGPSynchronizer {
     */
     private void readcurrentIPAMFolders(List<Pool> folders) 
             throws ApplicationObjectNotFoundException, 
-            MetadataObjectNotFoundException, BusinessObjectNotFoundException
+            MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException
     {
         for (Pool folder : folders) {
             if(!folders.isEmpty())
@@ -780,7 +780,7 @@ public class BGPSynchronizer {
      */
     private void readCurrentSubnets(Pool folder) 
             throws ApplicationObjectNotFoundException, 
-            MetadataObjectNotFoundException, BusinessObjectNotFoundException {
+            MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
         //we read the subnets of the folder
         List<BusinessObjectLight> subnetsInFolder = bem.getPoolItems(folder.getId(), -1);
         for (BusinessObjectLight subnet : subnetsInFolder) {
@@ -803,7 +803,7 @@ public class BGPSynchronizer {
      */
     private void readCurrentSubnetChildren(BusinessObjectLight subnet) 
         throws ApplicationObjectNotFoundException, 
-        MetadataObjectNotFoundException, BusinessObjectNotFoundException 
+        MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException 
     {
         //we get the ips and the subnets inside subents
         List<BusinessObjectLight> subnetChildren = bem.getObjectSpecialChildren(subnet.getClassName(), subnet.getId());
@@ -838,7 +838,7 @@ public class BGPSynchronizer {
                         return currentVirtualPort;
                 }
             }
-        } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException ex) {
+        } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, 
                     String.format("Searching local port associated to %s", bgpPeerLocalAddr), 
                     ex.getLocalizedMessage()));
@@ -936,7 +936,7 @@ public class BGPSynchronizer {
         ipAttributes.put(Constants.PROPERTY_DESCRIPTION, "Created with sync");
         ipAttributes.put(Constants.PROPERTY_MASK, syncMask); //TODO set the list types attributes
         try { 
-            long newIpAddrId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, subnet.getClassName(), subnet.getId(), ipAttributes, -1);
+            String newIpAddrId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, subnet.getClassName(), subnet.getId(), ipAttributes, -1);
             //AuditTrail
             aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [IPAddress] (id:%s)", ipAddr, newIpAddrId));
             

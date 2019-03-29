@@ -59,11 +59,11 @@ public class DefaultReports {
         this.corporateLogo = aem.getConfiguration().getProperty("corporateLogo") == null ? "logo.jpg" : aem.getConfiguration().getProperty("corporateLogo");
     }
        
-    public RawReport buildRackUsageReport(long rackId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport buildRackUsageReport(String rackId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         BusinessObject theRack = bem.getObject("Rack", rackId);
                     
         String query = String.format("MATCH (rack)<-[:%s*1..2]-(rackable)-[:%s]->(childClass)-[:%s*]->(superClass) "
-                + "WHERE id(rack) = %s AND (superClass.name=\"%s\" OR superClass.name=\"%s\") "
+                + "WHERE rack._uuid = \"%s\" AND (superClass.name=\"%s\" OR superClass.name=\"%s\") "
                 + "RETURN rackable", RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, rackId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, Constants.CLASS_GENERICBOX);
         HashMap<String, BusinessObjectList> result = aem.executeCustomDbCode(query, true);
 
@@ -96,7 +96,7 @@ public class DefaultReports {
                 usedRackUnits += leaf.getAttributes().get("rackUnits") == null ? 0 : Integer.valueOf(leaf.getAttributes().get("rackUnits"));
 
                 String operationalState = leaf.getAttributes().get("state") == null ? "<span class=\"error\">Not Set</span>" : 
-                        bem.getObjectLight("OperationalState", Long.valueOf(leaf.getAttributes().get("state"))).getName();
+                    bem.getObjectLight("OperationalState", leaf.getAttributes().get("state")).getName();
 
                 equipmentList += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") + "\"><td>" + leaf + "</td>"
                         + "<td>" + (leaf.getAttributes().get("serialNumber") == null ? "<span class=\"error\">Not Set</span>" : leaf.getAttributes().get("serialNumber")) + "</td>"
@@ -137,7 +137,7 @@ public class DefaultReports {
         return new RawReport("Rack Usage", "Neotropic SAS","1.1", rackUsageReportBody);
     }
 
-    public RawReport buildDistributionFrameDetailReport(String frameClass, long frameId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport buildDistributionFrameDetailReport(String frameClass, String frameId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         BusinessObject theFrame =  bem.getObject(frameClass, frameId);
         List<BusinessObjectLight> frameChildren = bem.getObjectChildren(frameClass, frameId, -1);
         
@@ -163,7 +163,7 @@ public class DefaultReports {
                 
                 //Next equipment
                 String query = String.format("MATCH (framePort)-[relationA:%s]-(connection)-[relationB:%s]-(equipmentPort)-[:%s*]->(equipment)-[:%s]->(childClass)-[:%s*]->(superClass) "
-                            + "WHERE id(framePort) = %s  AND (relationA.name =\"%s\" OR  relationA.name =\"%s\") AND (relationB.name =\"%s\" OR  relationB.name =\"%s\")  AND (superClass.name=\"%s\" OR superClass.name=\"%s\") "
+                            + "WHERE framePort._uuid = \"%s\"  AND (relationA.name =\"%s\" OR  relationA.name =\"%s\") AND (relationB.name =\"%s\" OR  relationB.name =\"%s\")  AND (superClass.name=\"%s\" OR superClass.name=\"%s\") "
                             + "RETURN equipment, equipmentPort", RelTypes.RELATED_TO_SPECIAL, RelTypes.RELATED_TO_SPECIAL, RelTypes.CHILD_OF, 
                                     RelTypes.INSTANCE_OF, RelTypes.EXTENDS, aPort.getId(), "endpointA", "endpointB", "endpointA", "endpointB", 
                                     Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, Constants.CLASS_GENERICBOX);
@@ -179,7 +179,7 @@ public class DefaultReports {
                 
                 //Services
                 query = String.format("MATCH (framePort)<-[relation:%s]-(service)-[:%s*]->(customer)-[:%s]->(customerClass)-[:%s*]->(customerSuperClass) "
-                        + "WHERE id(framePort) = %s AND relation.name = \"%s\" AND customerSuperClass.name=\"%s\""
+                        + "WHERE framePort._uuid = \"%s\" AND relation.name = \"%s\" AND customerSuperClass.name=\"%s\""
                         + "RETURN service, customer", RelTypes.RELATED_TO_SPECIAL, 
                                 RelTypes.CHILD_OF_SPECIAL, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, 
                                 aPort.getId(), "uses", Constants.CLASS_GENERICCUSTOMER);
@@ -191,7 +191,7 @@ public class DefaultReports {
                 
                 //Operational State
                 query = String.format("MATCH (framePort)-[relation:%s]->(listType) "
-                        + "WHERE id(framePort) = %s AND relation.name=\"%s\" RETURN listType", RelTypes.RELATED_TO, aPort.getId(), "state");
+                        + "WHERE framePort._uuid = \"%s\" AND relation.name=\"%s\" RETURN listType", RelTypes.RELATED_TO, aPort.getId(), "state");
                 
                 HashMap<String, BusinessObjectList> operationalStateResult = aem.executeCustomDbCode(query, true);
                 
@@ -229,9 +229,9 @@ public class DefaultReports {
         return new RawReport("Distribution Frame Detail", "Neotropic SAS","1.1", frameUsageReportText);
     }
 
-    public RawReport buildTransportLinkUsageReport (String transportLinkClass, long transportLinkId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport buildTransportLinkUsageReport (String transportLinkClass, String transportLinkId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         String query = String.format("MATCH (transportLink)-[relation:%s]-(port)-[:%s*]->(equipment)-[:%s]->(class)-[:%s*]->(superClass) "
-                    + "WHERE id(transportLink) = %s AND superClass.name = \"%s\" AND (relation.name = \"%s\" OR relation.name = \"%s\")"
+                    + "WHERE transportLink._uuid = \"%s\" AND superClass.name = \"%s\" AND (relation.name = \"%s\" OR relation.name = \"%s\")"
                     + "RETURN transportLink, equipment, port",  RelTypes.RELATED_TO_SPECIAL, RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, 
                             RelTypes.EXTENDS, transportLinkId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, 
                             SDHModule.RELATIONSHIP_SDHTLENDPOINTA, SDHModule.RELATIONSHIP_SDHTLENDPOINTB);
@@ -294,9 +294,9 @@ public class DefaultReports {
         return new RawReport("Transport Link Usage", "Neotropic SAS","1.1", transportLinkUsageReportText);
     }
     
-    public RawReport buildLowOrderTributaryLinkDetailReport (String tributaryLinkClass, long tributaryLinkId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport buildLowOrderTributaryLinkDetailReport (String tributaryLinkClass, String tributaryLinkId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         String query = String.format("MATCH (customerSuperClass)<-[:%s*]-(customerClass)<-[:%s]-(customer)<-[:%s*]-(service)-[relationA:%s]->(tributaryLink)-[relationB:%s]-(port)-[:%s*]->(equipment)-[:%s]->(class)-[:%s*]->(superClass) "
-                + "WHERE id(tributaryLink) = %s AND superClass.name=\"%s\" AND relationA.name = \"%s\" AND (relationB.name = \"%s\" OR relationB.name = \"%s\") AND customerSuperClass.name=\"%s\" RETURN tributaryLink, customer, service, port, equipment", 
+                + "WHERE tributaryLink._uuid = \"%s\" AND superClass.name=\"%s\" AND relationA.name = \"%s\" AND (relationB.name = \"%s\" OR relationB.name = \"%s\") AND customerSuperClass.name=\"%s\" RETURN tributaryLink, customer, service, port, equipment", 
                     RelTypes.EXTENDS, RelTypes.INSTANCE_OF, RelTypes.CHILD_OF_SPECIAL, RelTypes.RELATED_TO_SPECIAL, RelTypes.RELATED_TO_SPECIAL, 
                     RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, tributaryLinkId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, "uses", 
                     SDHModule.RELATIONSHIP_SDHTTLENDPOINTA, SDHModule.RELATIONSHIP_SDHTTLENDPOINTB, Constants.CLASS_GENERICCUSTOMER);
@@ -319,7 +319,7 @@ public class DefaultReports {
             
             //Demarcation points
             query = String.format("MATCH (tributaryLink)-[relationA:%s]-(equipmentPort)-[relationB:%s]-(physicalConnection)-[relationC:%s]-(nextEquipmentPort)-[:%s*]->(nextEquipment)-[:%s]->(class)-[:%s*]->(superClass) "
-                + "WHERE id(tributaryLink) = %s AND (relationA.name = \"%s\" OR relationA.name = \"%s\") "
+                + "WHERE tributaryLink._uuid = \"%s\" AND (relationA.name = \"%s\" OR relationA.name = \"%s\") "
                     + "AND (relationB.name = \"%s\" OR relationB.name = \"%s\") "
                     + "AND (relationC.name = \"%s\" OR relationC.name = \"%s\") "
                     + "AND superClass.name=\"%s\" "
@@ -376,9 +376,9 @@ public class DefaultReports {
         return new RawReport("Tributary Link Details", "Neotropic SAS","1.1", tributaryLinkUsageReportText);
     }
 
-    public RawReport buildHighOrderTributaryLinkDetailReport (String tributaryLinkClass, long tributaryLinkId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport buildHighOrderTributaryLinkDetailReport (String tributaryLinkClass, String tributaryLinkId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         String query = String.format("MATCH (customerSuperClass)<-[:%s*]-(customerClass)<-[:%s]-(customer)<-[:%s*]-(service)-[relationA:%s]->(tributaryLink)-[relationB:%s]-(port)-[:%s*]->(equipment)-[:%s]->(class)-[:%s*]->(superClass) "
-                + "WHERE id(tributaryLink) = %s AND superClass.name=\"%s\" AND relationA.name = \"%s\" AND (relationB.name = \"%s\" OR relationB.name = \"%s\") AND customerSuperClass.name=\"%s\" RETURN tributaryLink, customer, service, port, equipment", 
+                + "WHERE tributaryLink._uuid = \"%s\" AND superClass.name=\"%s\" AND relationA.name = \"%s\" AND (relationB.name = \"%s\" OR relationB.name = \"%s\") AND customerSuperClass.name=\"%s\" RETURN tributaryLink, customer, service, port, equipment", 
                     RelTypes.EXTENDS, RelTypes.INSTANCE_OF, RelTypes.CHILD_OF_SPECIAL, RelTypes.RELATED_TO_SPECIAL, RelTypes.RELATED_TO_SPECIAL, 
                     RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, tributaryLinkId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, "uses", 
                     SDHModule.RELATIONSHIP_SDHTTLENDPOINTA, SDHModule.RELATIONSHIP_SDHTTLENDPOINTB, Constants.CLASS_GENERICCUSTOMER);
@@ -401,7 +401,7 @@ public class DefaultReports {
             
             //Demarcation points
             query = String.format("MATCH (tributaryLink)-[relationA:%s]-(equipmentPort)-[relationB:%s]-(physicalConnection)-[relationC:%s]-(nextEquipmentPort)-[:%s*]->(nextEquipment)-[:%s]->(class)-[:%s*]->(superClass) "
-                + "WHERE id(tributaryLink) = %s AND (relationA.name = \"%s\" OR relationA.name = \"%s\") "
+                + "WHERE tributaryLink._uuid = \"%s\" AND (relationA.name = \"%s\" OR relationA.name = \"%s\") "
                     + "AND (relationB.name = \"%s\" OR relationB.name = \"%s\") "
                     + "AND (relationC.name = \"%s\" OR relationC.name = \"%s\") "
                     + "AND superClass.name=\"%s\" "
@@ -449,9 +449,9 @@ public class DefaultReports {
         return new RawReport("Tributary Link Details", "Neotropic SAS","1.1", tributaryLinkUsageReportText);
     }
     
-    public RawReport buildHighOrderTributaryLinkDetailReport2 (String tributaryLinkClass, long tributaryLinkId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport buildHighOrderTributaryLinkDetailReport2 (String tributaryLinkClass, String tributaryLinkId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         String query = String.format("MATCH (customerSuperClass)<-[:%s*]-(customerClass)<-[:%s]-(customer)<-[:%s*]-(service)-[relationA:%s]->(tributaryLink)-[relationB:%s]-(port)-[:%s*]->(equipment)-[:%s]->(class)-[:%s*]->(superClass) "
-                + "WHERE id(tributaryLink) = %s AND superClass.name=\"%s\" AND relationA.name = \"%s\" AND (relationB.name = \"%s\" OR relationB.name = \"%s\") AND customerSuperClass.name=\"%s\" RETURN tributaryLink, customer, service, port, equipment", 
+                + "WHERE tributaryLink._uuid = \"%s\" AND superClass.name=\"%s\" AND relationA.name = \"%s\" AND (relationB.name = \"%s\" OR relationB.name = \"%s\") AND customerSuperClass.name=\"%s\" RETURN tributaryLink, customer, service, port, equipment", 
                     RelTypes.EXTENDS, RelTypes.INSTANCE_OF, RelTypes.CHILD_OF_SPECIAL, RelTypes.RELATED_TO_SPECIAL, RelTypes.RELATED_TO_SPECIAL, 
                     RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, tributaryLinkId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, "uses", 
                     SDHModule.RELATIONSHIP_SDHTTLENDPOINTA, SDHModule.RELATIONSHIP_SDHTTLENDPOINTB, Constants.CLASS_GENERICCUSTOMER);
@@ -504,7 +504,7 @@ public class DefaultReports {
             
             //Demarcation points
             query = String.format("MATCH (tributaryLink)-[relationA:%s]-(equipmentPort)-[relationB:%s]-(physicalConnection)-[relationC:%s]-(nextEquipmentPort)-[:%s*]->(nextEquipment)-[:%s]->(class)-[:%s*]->(superClass) "
-                + "WHERE id(tributaryLink) = %s AND (relationA.name = \"%s\" OR relationA.name = \"%s\") "
+                + "WHERE tributaryLink._uuid = \"%s\" AND (relationA.name = \"%s\" OR relationA.name = \"%s\") "
                     + "AND (relationB.name = \"%s\" OR relationB.name = \"%s\") "
                     + "AND (relationC.name = \"%s\" OR relationC.name = \"%s\") "
                     + "AND superClass.name=\"%s\" "
@@ -718,9 +718,10 @@ public class DefaultReports {
         return new RawReport("Tributary Link Details", "Neotropic SAS","1.2", tributaryLinkUsageReportText);
     }
     
-    public RawReport buildNetworkEquipmentInLocationReport(String locationClass, long locationId) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport buildNetworkEquipmentInLocationReport(String locationClass, String locationId) 
+        throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException {
         String query = String.format("MATCH (location)<-[:%s*]-(networkEquipment)-[:%s]->(class)-[:%s*]->(superclass) "
-                + "WHERE id(location) = %s AND superclass.name = \"%s\" "
+                + "WHERE location._uuid = \"%s\" AND superclass.name = \"%s\" "
                 + "RETURN networkEquipment", RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, 
                                                             locationId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
         HashMap<String, BusinessObjectList> theResult = aem.executeCustomDbCode(query, true);
@@ -749,8 +750,8 @@ public class DefaultReports {
                                                             + "<td>" + networkEquipment.getClassName() + "</td>"
                                                             + "<td>" + (networkEquipment.getAttributes().get("serialNumber") == null ? asError("Not Set") : networkEquipment.getAttributes().get("serialNumber")) + "</td>"
                                                             + "<td>" + Util.formatLocation(bem.getParents(networkEquipment.getClassName(), networkEquipment.getId())) + "</td>"
-                                                            + "<td>" + (networkEquipment.getAttributes().get("vendor") == null ? asError("Not Set") : bem.getObjectLight("EquipmentVendor", Long.valueOf(networkEquipment.getAttributes().get("vendor"))).getName() ) + "</td>"
-                                                            + "<td>" + (networkEquipment.getAttributes().get("state") == null ? asError("Not Set") : bem.getObjectLight("OperationalState", Long.valueOf(networkEquipment.getAttributes().get("state"))).getName() ) + "</td></tr>";
+                                                            + "<td>" + (networkEquipment.getAttributes().get("vendor") == null ? asError("Not Set") : bem.getObjectLight("EquipmentVendor", networkEquipment.getAttributes().get("vendor")).getName() ) + "</td>"
+                                                            + "<td>" + (networkEquipment.getAttributes().get("state") == null ? asError("Not Set") : bem.getObjectLight("OperationalState", networkEquipment.getAttributes().get("state")).getName() ) + "</td></tr>";
                 i ++;
             }
             networkEquipmentInLocationReportText += "</table>";
@@ -762,7 +763,8 @@ public class DefaultReports {
         return new RawReport("Network Equipment", "Neotropic SAS","1.1", networkEquipmentInLocationReportText);
     }
     
-    public RawReport buildServiceResourcesReport(String className, long serviceId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport buildServiceResourcesReport(String className, String serviceId) 
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException {
         BusinessObjectLight service = bem.getObjectLight(className, serviceId);
         String serviceResourcesReportText, title = "Resources Used By " + service.getName();
         serviceResourcesReportText = getHeader(title);
@@ -792,16 +794,13 @@ public class DefaultReports {
         return new RawReport("Service Resources", "Neotropic SAS","1.1", serviceResourcesReportText);
     }
     
-    public RawReport subnetUsageReport(String className, long subnetId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport subnetUsageReport(String className, String subnetId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
     
         BusinessObject subnet = bem.getObject(className, subnetId);
         List<BusinessObjectLight> subnetChildren = bem.getObjectSpecialChildren(className, subnetId);
         HashMap<String, String> subnetAttributes = subnet.getAttributes();
         int hosts = Integer.parseInt(subnetAttributes.get("hosts"));
-        
-        
         int usedIps = 0;
-        
         List<BusinessObjectLight> ips  = new ArrayList<>();
         List<BusinessObjectLight> subnets  = new ArrayList<>();
         
@@ -1007,7 +1006,7 @@ public class DefaultReports {
                 String providerEmail = asError("Not Set");
                 
                 if (fullContractInfo.getAttributes().containsKey("serviceProvider")) {
-                    BusinessObject serviceProvider = bem.getObject(Constants.CLASS_SERVICEPROVIDER, Long.valueOf(fullContractInfo.getAttributes().get("serviceProvider")));
+                    BusinessObject serviceProvider = bem.getObject(Constants.CLASS_SERVICEPROVIDER, fullContractInfo.getAttributes().get("serviceProvider"));
                     if (!serviceProvider.getName().isEmpty())
                         providerName = serviceProvider.getName();
                     if (serviceProvider.getAttributes().get(Constants.PROPERTY_SUPPORT_PHONE_NUMBER) != null)
@@ -1029,7 +1028,7 @@ public class DefaultReports {
         return new RawReport("Contract About to Expire", "Neotropic SAS", "1.1", contractStatusReportText);
     }
     
-    public RawReport buildMPLSServiceReport(String serviceClass, long serviceId) 
+    public RawReport buildMPLSServiceReport(String serviceClass, String serviceId) 
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException,
             InvalidArgumentException, ApplicationObjectNotFoundException, 
             NotAuthorizedException
@@ -1157,7 +1156,7 @@ public class DefaultReports {
         return new RawReport("Logical Configuration", "Neotropic SAS", "1.1", DetailReportText);
     }
     
-    public RawReport buildServicesReport(String serviceClassName, long serviceId) 
+    public RawReport buildServicesReport(String serviceClassName, String serviceId) 
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException,
             InvalidArgumentException, ApplicationObjectNotFoundException, 
             NotAuthorizedException
@@ -1390,7 +1389,7 @@ public class DefaultReports {
             String valueToPrint = "";
             if(valueAsString != null){
                 if(!AttributeMetadata.isPrimitive(a.getType())) //It's a list type
-                    valueToPrint = aem.getListTypeItem(a.getType(), Long.valueOf(valueAsString)).toString();
+                    valueToPrint = aem.getListTypeItem(a.getType(), valueAsString).toString();
                 else if(a.getType().equals("Date"))
                     valueToPrint = new Date(Long.valueOf(valueAsString)).toString();
                 else 

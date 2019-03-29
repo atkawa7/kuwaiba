@@ -572,7 +572,7 @@ public class KuwaibaService {
      *                             If the provided view type is not supported
      */
     @WebMethod(operationName = "getObjectRelatedView")
-    public RemoteViewObject getObjectRelatedView(@WebParam(name = "oid")long oid,
+    public RemoteViewObject getObjectRelatedView(@WebParam(name = "oid")String oid,
             @WebParam(name = "objectClass")String objectClass,
             @WebParam(name = "viewId")long viewId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
@@ -602,7 +602,7 @@ public class KuwaibaService {
      *                             If the provided view type is not supported
      */
     @WebMethod(operationName = "getObjectRelatedViews")
-    public List<RemoteViewObjectLight> getObjectRelatedViews(@WebParam(name = "oid")long oid,
+    public List<RemoteViewObjectLight> getObjectRelatedViews(@WebParam(name = "oid")String oid,
             @WebParam(name = "objectClass")String objectClass,
             @WebParam(name = "viewType")int viewType,
             @WebParam(name = "limit")int limit,
@@ -684,7 +684,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "createListTypeItemRelatedView")
     public long createListTypeItemRelatedView(
-        @WebParam(name = "listTypeItemId") long listTypeItemId, 
+        @WebParam(name = "listTypeItemId") String listTypeItemId, 
         @WebParam(name = "listTypeItemClassName") String listTypeItemClassName, 
         @WebParam(name = "viewClassName") String viewClassName, 
         @WebParam(name = "name") String name, 
@@ -722,7 +722,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "updateListTypeItemRelatedView")
     public void updateListTypeItemRelatedView(
-        @WebParam(name = "listTypeItemId") long listTypeItemId, 
+        @WebParam(name = "listTypeItemId") String listTypeItemId, 
         @WebParam(name = "listTypeItemClass") String listTypeItemClass, 
         @WebParam(name = "viewId") long viewId, 
         @WebParam(name = "name") String name, 
@@ -758,7 +758,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getListTypeItemRelatedView")
     public RemoteViewObject getListTypeItemRelatedView(
-        @WebParam(name = "listTypeItemId") long listTypeItemId, 
+        @WebParam(name = "listTypeItemId") String listTypeItemId, 
         @WebParam(name = "listTypeItemClass") String listTypeItemClass, 
         @WebParam(name = "viewId") long viewId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
@@ -787,7 +787,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getListTypeItemRelatedViews")
     public RemoteViewObjectLight[] getListTypeItemRelatedViews(
-        @WebParam(name = "listTypeItemId")  long listTypeItemId, 
+        @WebParam(name = "listTypeItemId")  String listTypeItemId, 
         @WebParam(name = "listTypeItemClass")  String listTypeItemClass, 
         @WebParam(name = "limit")  int limit, 
         @WebParam(name = "sessionId")  String sessionId) throws ServerSideException {
@@ -816,7 +816,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "deleteListTypeItemRelatedView")
     public void deleteListTypeItemRelatedView(
-        @WebParam(name = "listTypeItemId") long listTypeItemId, 
+        @WebParam(name = "listTypeItemId") String listTypeItemId, 
         @WebParam(name = "listTypeItemClass") String listTypeItemClass, 
         @WebParam(name = "viewId") long viewId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
@@ -863,7 +863,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getDeviceLayoutStructure")
     public byte[] getDeviceLayoutStructure(
-        @WebParam(name = "oid") long oid, 
+        @WebParam(name = "oid") String oid, 
         @WebParam(name = "className") String className, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
@@ -895,7 +895,7 @@ public class KuwaibaService {
      *                             If the view type is not supported
      */
     @WebMethod(operationName = "createObjectRelatedView")
-    public long createObjectRelatedView(@WebParam(name = "objectId")long objectId,
+    public long createObjectRelatedView(@WebParam(name = "objectId")String objectId,
             @WebParam(name = "objectClass")String objectClass,
             @WebParam(name = "name")String name,
             @WebParam(name = "description")String description,
@@ -960,7 +960,7 @@ public class KuwaibaService {
      *                             If the view type is not supported
      */
     @WebMethod(operationName = "updateObjectRelatedView")
-    public void updateObjectRelatedView(@WebParam(name = "objectOid")long objectOid,
+    public void updateObjectRelatedView(@WebParam(name = "objectOid")String objectOid,
             @WebParam(name = "objectClass")String objectClass, @WebParam(name = "viewId")long viewId,
             @WebParam(name = "viewName")String viewName, @WebParam(name = "viewDescription")String viewDescription,
             @WebParam(name = "structure")byte[] structure,
@@ -1037,7 +1037,7 @@ public class KuwaibaService {
      *                             If the class is abstract or marked as in design.
      */
     @WebMethod(operationName = "createListTypeItem")
-    public long createListTypeItem(
+    public String createListTypeItem(
             @WebParam(name = "className") String className,
             @WebParam(name = "name") String name,
             @WebParam(name = "displayName") String displayName,
@@ -1068,7 +1068,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "deleteListTypeItem")
     public void deleteListTypeItem(
             @WebParam(name = "className") String className,
-            @WebParam(name = "oid") long oid,
+            @WebParam(name = "oid") String oid,
             @WebParam(name = "releaseRelationships") boolean releaseRelationships,
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
 
@@ -1321,7 +1321,7 @@ public class KuwaibaService {
      *                             If the log root node could not be found
      */
     @WebMethod(operationName = "createRootPool")
-    public long createRootPool(@WebParam(name = "name")String name, 
+    public String createRootPool(@WebParam(name = "name")String name, 
                                @WebParam(name = "description")String description, 
                                @WebParam(name = "instancesOfClass")String instancesOfClass, 
                                @WebParam(name = "type")int type, 
@@ -1356,8 +1356,8 @@ public class KuwaibaService {
      *                             If the parent object can not be found
      */
     @WebMethod(operationName = "createPoolInObject")
-    public long createPoolInObject(@WebParam(name = "parentClassname")String parentClassname, 
-                                   @WebParam(name = "parentId")long parentId, 
+    public String createPoolInObject(@WebParam(name = "parentClassname")String parentClassname, 
+                                   @WebParam(name = "parentId")String parentId, 
                                    @WebParam(name = "name")String name, 
                                    @WebParam(name = "description")String description, 
                                    @WebParam(name = "instancesOfClass")String instancesOfClass, 
@@ -1391,7 +1391,7 @@ public class KuwaibaService {
      *                             If the parent object can not be found
      */
     @WebMethod(operationName = "createPoolInPool")
-    public long createPoolInPool(@WebParam(name = "parentId")long parentId, 
+    public String createPoolInPool(@WebParam(name = "parentId")String parentId, 
                                    @WebParam(name = "name")String name, 
                                    @WebParam(name = "description")String description, 
                                    @WebParam(name = "instancesOfClass")String instancesOfClass, 
@@ -1424,7 +1424,7 @@ public class KuwaibaService {
      *                             If the class name could not be found 
      */
     @WebMethod(operationName = "createPoolItem")
-    public long createPoolItem(@WebParam(name = "poolId")long poolId,
+    public String createPoolItem(@WebParam(name = "poolId")String poolId,
             @WebParam(name = "className")String className,
             @WebParam(name = "attributeNames")String[] attributeNames,
             @WebParam(name = "attributeValues")String[] attributeValues,
@@ -1451,7 +1451,7 @@ public class KuwaibaService {
      *                             If any of the objects in the pool can not be deleted because it's not a business related instance (it's more a security restriction)
      */
     @WebMethod(operationName = "deletePools")
-    public void deletePools(@WebParam(name = "ids")long[] ids,
+    public void deletePools(@WebParam(name = "ids")String[] ids,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.deletePools(ids, getIPAddress(), sessionId);
@@ -1504,7 +1504,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getPoolsInObject")
     public List<RemotePool> getPoolsInObject(@WebParam(name = "objectClassName")String objectClassName, 
-                                             @WebParam(name = "objectId")long objectId,
+                                             @WebParam(name = "objectId")String objectId,
                                              @WebParam(name = "poolClass")String poolClass, 
                                              @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
@@ -1529,7 +1529,7 @@ public class KuwaibaService {
      *                             If the parent object can not be found
      */
     @WebMethod(operationName = "getPoolsInPool")
-    public List<RemotePool> getPoolsInPool(@WebParam(name = "parentPoolId")long parentPoolId,
+    public List<RemotePool> getPoolsInPool(@WebParam(name = "parentPoolId")String parentPoolId,
                                              @WebParam(name = "poolClass")String poolClass, 
                                              @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
@@ -1553,7 +1553,7 @@ public class KuwaibaService {
      *                             If the pool could not be found
      */
     @WebMethod(operationName = "getPool")
-    public RemotePool getPool(@WebParam(name = "poolId") long poolId,
+    public RemotePool getPool(@WebParam(name = "poolId") String poolId,
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
         try{
             return wsBean.getPool(poolId, getIPAddress(), sessionId);
@@ -1577,7 +1577,7 @@ public class KuwaibaService {
      *                             Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "setPoolProperties")
-    public void setPoolProperties(@WebParam(name = "poolId") long poolId, 
+    public void setPoolProperties(@WebParam(name = "poolId") String poolId, 
             @WebParam(name = "name") String name, 
             @WebParam(name = "description") String description, 
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
@@ -1603,7 +1603,7 @@ public class KuwaibaService {
      *                             If the pool id provided is not valid
      */
     @WebMethod(operationName = "getPoolItems")
-    public List<RemoteObjectLight> getPoolItems(@WebParam(name = "poolId")long poolId,
+    public List<RemoteObjectLight> getPoolItems(@WebParam(name = "poolId")String poolId,
             @WebParam(name = "limit")int limit,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
@@ -2151,8 +2151,12 @@ public class KuwaibaService {
      * @return The id of the newly created contact
      * @throws ServerSideException If the contact class provided is not a valid GenericCustomer, or if the customer does not exist or if any of the properties does not exist or its type is invalid (not a string)
      */
-    public long createContact(@WebParam(name = "contactClass")String contactClass, @WebParam(name = "properties")List<StringPair> properties, 
-            @WebParam(name = "customerClassName")String customerClassName, @WebParam(name = "customerId")long customerId, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+    public String createContact(
+        @WebParam(name = "contactClass")String contactClass, 
+        @WebParam(name = "properties")List<StringPair> properties, 
+        @WebParam(name = "customerClassName")String customerClassName, 
+        @WebParam(name = "customerId")String customerId, 
+        @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.createContact(contactClass, properties, customerClassName, customerId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2173,8 +2177,11 @@ public class KuwaibaService {
      * @param sessionId The session token
      * @throws ServerSideException If the contact could not be found or if any of the attributes to be set could not be found or has an invalid value
      */
-    public void updateContact(@WebParam(name = "contactClass")String contactClass, @WebParam(name = "contactId")long contactId, 
-            @WebParam(name = "properties")List<StringPair> properties, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+    public void updateContact(
+        @WebParam(name = "contactClass")String contactClass, 
+        @WebParam(name = "contactId")String contactId, 
+        @WebParam(name = "properties")List<StringPair> properties, 
+        @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             wsBean.updateContact(contactClass, contactId, properties, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2194,8 +2201,10 @@ public class KuwaibaService {
      * @param sessionId The session token
      * @throws ServerSideException If the contact was not found
      */
-    public void deleteContact(@WebParam(name = "contactClass")String contactClass, 
-            @WebParam(name = "contactId")long contactId, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+    public void deleteContact(
+        @WebParam(name = "contactClass")String contactClass, 
+        @WebParam(name = "contactId")String contactId, 
+        @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             wsBean.deleteContact(contactClass, contactId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2216,8 +2225,10 @@ public class KuwaibaService {
      * @return The contact object
      * @throws ServerSideException If the contact could not be found
      */
-    public RemoteContact getContact(@WebParam(name = "contactClass")String contactClass, 
-            @WebParam(name = "contactId")long contactId, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+    public RemoteContact getContact(
+        @WebParam(name = "contactClass")String contactClass, 
+        @WebParam(name = "contactId")String contactId, 
+        @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.getContact(contactClass, contactId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2260,8 +2271,10 @@ public class KuwaibaService {
      * @return The list of contacts associated to the customer
      * @throws ServerSideException If the customer could not be found
      */
-    public List<RemoteContact> getContactsForCustomer(@WebParam(name = "customerClass")String customerClass, 
-            @WebParam(name = "customerId")long customerId, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+    public List<RemoteContact> getContactsForCustomer(
+        @WebParam(name = "customerClass")String customerClass, 
+        @WebParam(name = "customerId")String customerId, 
+        @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.getContactsForCustomer(customerClass, customerId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -2612,7 +2625,7 @@ public class KuwaibaService {
      * @throws ServerSideException If the class could not be found
      */
     @WebMethod(operationName = "getObjectChildrenForClassWithId")
-    public List<RemoteObjectLight> getObjectChildrenForClassWithId(@WebParam(name = "oid") long oid,
+    public List<RemoteObjectLight> getObjectChildrenForClassWithId(@WebParam(name = "oid") String oid,
             @WebParam(name = "objectClassId") long objectClassId,
             @WebParam(name = "maxResults") int maxResults,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
@@ -2640,7 +2653,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getObjectChildren")
     public List<RemoteObjectLight> getObjectChildren(@WebParam(name = "objectClassName") String objectClassName,
-            @WebParam(name = "oid") long oid,
+            @WebParam(name = "oid") String oid,
             @WebParam(name = "maxResults") int maxResults,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
@@ -2668,7 +2681,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getSiblings")
     public List<RemoteObjectLight> getSiblings(@WebParam(name = "objectClassName") String objectClassName,
-            @WebParam(name = "oid") long oid,
+            @WebParam(name = "oid") String oid,
             @WebParam(name = "maxResults") int  maxResults,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
@@ -2697,7 +2710,7 @@ public class KuwaibaService {
      *                             If the database objects can not be correctly mapped into serializable Java objects.
      */
     @WebMethod(operationName="getChildrenOfClass")
-    public List<RemoteObject> getChildrenOfClass(@WebParam(name="parentOid")long parentOid,
+    public List<RemoteObject> getChildrenOfClass(@WebParam(name="parentOid")String parentOid,
             @WebParam(name="parentClass")String parentClass,
             @WebParam(name="childrenClass")String childrenClass,
             @WebParam(name="maxResults")int maxResults,
@@ -2729,7 +2742,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName="getChildrenOfClassLightRecursive")
     public List<RemoteObjectLight> getChildrenOfClassLightRecursive(
-        @WebParam(name="parentOid") long parentOid,
+        @WebParam(name="parentOid") String parentOid,
         @WebParam(name="parentClass") String parentClass,
         @WebParam(name="childrenClass") String childrenClass,
         @WebParam(name="maxResults") int maxResults,
@@ -2759,7 +2772,7 @@ public class KuwaibaService {
      *                             If parent object can not be found
      */
     @WebMethod(operationName="getChildrenOfClassLight")
-    public List<RemoteObjectLight> getChildrenOfClassLight(@WebParam(name="parentOid")long parentOid,
+    public List<RemoteObjectLight> getChildrenOfClassLight(@WebParam(name="parentOid")String parentOid,
             @WebParam(name="parentClass")String parentClass,
             @WebParam(name="childrenClass")String childrenClass,
             @WebParam(name="maxResults")int maxResults,
@@ -2787,7 +2800,7 @@ public class KuwaibaService {
      * @throws ServerSideException If the parent class name provided could not be found or if the parent object could not be found
      */
     @WebMethod(operationName="getSpecialChildrenOfClassLight")
-    public List<RemoteObjectLight> getSpecialChildrenOfClassLight(@WebParam(name="parentOid")long parentOid,
+    public List<RemoteObjectLight> getSpecialChildrenOfClassLight(@WebParam(name="parentOid")String parentOid,
             @WebParam(name="parentClass")String parentClass,
             @WebParam(name="classToFilter")String classToFilter,
             @WebParam(name="maxResults")int maxResults,
@@ -2818,7 +2831,7 @@ public class KuwaibaService {
       */
     @WebMethod(operationName = "getObject")
     public RemoteObject getObject(@WebParam(name = "objectClass") String objectClass,
-            @WebParam(name = "oid") long oid,
+            @WebParam(name = "oid") String oid,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
 
         try {
@@ -2843,7 +2856,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getObjectLight")
     public RemoteObjectLight getObjectLight(@WebParam(name = "objectclass") String objectClass,
-            @WebParam(name = "oid") long oid,
+            @WebParam(name = "oid") String oid,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getObjectLight(objectClass, oid, getIPAddress(), sessionId);
@@ -2950,9 +2963,9 @@ public class KuwaibaService {
     @WebMethod(operationName = "getCommonParent")
     public RemoteObjectLight getCommonParent(
         @WebParam(name = "aObjectClass") String aObjectClass, 
-        @WebParam(name = "aOid") long aOid, 
+        @WebParam(name = "aOid") String aOid, 
         @WebParam(name = "bObjectClass") String bObjectClass, 
-        @WebParam(name = "bOid") long bOid, 
+        @WebParam(name = "bOid") String bOid, 
         @WebParam(name = "sessionId") String sessionId) 
         throws ServerSideException {
         try {
@@ -2980,7 +2993,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getParent")
     public RemoteObjectLight getParent(@WebParam(name = "objectclass") String objectClass,
-            @WebParam(name = "oid") long oid,
+            @WebParam(name = "oid") String oid,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getParent(objectClass, oid, getIPAddress(), sessionId);
@@ -3004,7 +3017,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getParents")
     public List<RemoteObjectLight> getParents(@WebParam(name = "objectclass") String objectClass,
-            @WebParam(name = "oid") long oid,
+            @WebParam(name = "oid") String oid,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getParents(objectClass, oid, getIPAddress(), sessionId);
@@ -3029,7 +3042,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getSpecialAttributes")
     public RemoteObjectSpecialRelationships getSpecialAttributes(@WebParam(name = "objectClass") String objectClass,
-            @WebParam(name = "oid") long oid,
+            @WebParam(name = "oid") String oid,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getSpecialAttributes(objectClass, oid, getIPAddress(), sessionId);
@@ -3054,8 +3067,11 @@ public class KuwaibaService {
      * @throws ServerSideException If the object to evaluate can not be found or if any of the classes provided could not be found.
      */
     @WebMethod(operationName = "getParentsUntilFirstOfClass")
-    public List<RemoteObjectLight> getParentsUntilFirstOfClass(String objectClass, 
-            long oid, String objectToMatchClassName, String sessionId) throws ServerSideException {
+    public List<RemoteObjectLight> getParentsUntilFirstOfClass(
+        @WebParam(name = "objectClass") String objectClass, 
+        @WebParam(name = "oid") String oid, 
+        @WebParam(name = "objectToMatchClassName") String objectToMatchClassName, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try{
             return wsBean.getParentsUntilFirstOfClass(objectClass, oid, objectToMatchClassName, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -3083,7 +3099,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "getFirstParentOfClass")
     public RemoteObjectLight getFirstParentOfClass(
             @WebParam(name = "objectClass") String objectClass, 
-            @WebParam(name = "oid") long oid, 
+            @WebParam(name = "oid") String oid, 
             @WebParam(name = "objectToMatchClassName") String objectToMatchClassName, 
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try{
@@ -3109,7 +3125,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getParentOfClass")
     public RemoteObject getParentOfClass(@WebParam(name = "objectClass") String objectClass,
-            @WebParam(name = "oid") long oid,
+            @WebParam(name = "oid") String oid,
             @WebParam(name = "parentClass") String parentClass,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
@@ -3136,7 +3152,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getSpecialAttribute")
     public List<RemoteObjectLight> getSpecialAttribute(@WebParam(name = "objectclass") String objectClass,
-            @WebParam(name = "oid") long oid,
+            @WebParam(name = "oid") String oid,
             @WebParam(name = "attributename") String attributeName,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
@@ -3162,7 +3178,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getObjectSpecialChildren")
     public List<RemoteObjectLight> getObjectSpecialChildren (@WebParam(name = "objectclass") String objectClass,
-            @WebParam(name = "objectId") long objectId,
+            @WebParam(name = "objectId") String objectId,
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try{
             return wsBean.getObjectSpecialChildren(objectClass, objectId, getIPAddress(), sessionId);
@@ -3191,7 +3207,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "updateObject")
     public void updateObject(@WebParam(name = "className")String className,
-            @WebParam(name = "id")long id,
+            @WebParam(name = "id")String id,
             @WebParam(name = "attributes")List<StringPair> attributes,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
@@ -3223,9 +3239,9 @@ public class KuwaibaService {
      *                             If the specified template could not be found
      */
     @WebMethod(operationName = "createObject")
-    public long createObject(@WebParam(name = "className")String className,
+    public String createObject(@WebParam(name = "className")String className,
             @WebParam(name = "parentObjectClassName")String parentObjectClassName,
-            @WebParam(name = "parentOid")long parentOid,
+            @WebParam(name = "parentOid")String parentOid,
             @WebParam(name = "attributeNames")String[] attributeNames,
             @WebParam(name = "attributeValues")String[] attributeValues,
             @WebParam(name = "templateId")long templateId,
@@ -3261,9 +3277,9 @@ public class KuwaibaService {
      *                             If the specified template could not be found.
      */
     @WebMethod(operationName = "createSpecialObject")
-    public long createSpecialObject(@WebParam(name = "className")String className,
+    public String createSpecialObject(@WebParam(name = "className")String className,
             @WebParam(name = "parentObjectClassName")String parentObjectClassName,
-            @WebParam(name = "parentOid")long parentOid,
+            @WebParam(name = "parentOid")String parentOid,
             @WebParam(name = "attributeNames")String[] attributeNames,
             @WebParam(name = "attributeValues")String[] attributeValues,
             @WebParam(name = "templateId")long templateId,
@@ -3292,7 +3308,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "deleteObject")
     public void deleteObject(@WebParam(name = "className")String className,
-            @WebParam(name = "oid")long oid,
+            @WebParam(name = "oid")String oid,
             @WebParam(name = "releaseRelationships") boolean releaseRelationships,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
@@ -3320,7 +3336,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "deleteObjects")
     public void deleteObjects(@WebParam(name = "classNames")String[] classNames,
-            @WebParam(name = "oid")long[] oids,
+            @WebParam(name = "oid")String[] oids,
             @WebParam(name = "releaseRelationships") boolean releaseRelationships,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
@@ -3348,9 +3364,9 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "moveObjectsToPool")
     public void moveObjectsToPool(@WebParam(name = "targetClass")String targetClass,
-            @WebParam(name = "targetOid")long targetOid,
+            @WebParam(name = "targetOid")String targetOid,
             @WebParam(name = "objectsClasses")String[] objectClasses,
-            @WebParam(name = "objectsOids")long[] objectOids,
+            @WebParam(name = "objectsOids")String[] objectOids,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.moveObjectsToPool(targetClass,targetOid, objectClasses, objectOids, getIPAddress(), sessionId);
@@ -3377,9 +3393,9 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "moveObjects")
     public void moveObjects(@WebParam(name = "targetClass")String targetClass,
-            @WebParam(name = "targetOid")long targetOid,
+            @WebParam(name = "targetOid")String targetOid,
             @WebParam(name = "objectsClasses")String[] objectClasses,
-            @WebParam(name = "objectsOids")long[] objectOids,
+            @WebParam(name = "objectsOids")String[] objectOids,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.moveObjects(targetClass,targetOid, objectClasses, objectOids, getIPAddress(), sessionId);
@@ -3406,9 +3422,9 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "moveSpecialObjects")
     public void moveSpecialObjects(@WebParam(name = "targetClass")String targetClass,
-            @WebParam(name = "targetOid")long targetOid,
+            @WebParam(name = "targetOid")String targetOid,
             @WebParam(name = "objectsClasses")String[] objectClasses,
-            @WebParam(name = "objectsOids")long[] objectOids,
+            @WebParam(name = "objectsOids")String[] objectOids,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.moveSpecialObjects(targetClass,targetOid, objectClasses, objectOids, getIPAddress(), sessionId);
@@ -3435,9 +3451,9 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "movePoolItemToPool")
     public void movePoolItemToPool(
-        @WebParam(name = "poolId") long poolId, 
+        @WebParam(name = "poolId") String poolId, 
         @WebParam(name = "poolItemClassName") String poolItemClassName, 
-        @WebParam(name = "poolItemId") long poolItemId, 
+        @WebParam(name = "poolItemId") String poolItemId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try{
@@ -3466,11 +3482,11 @@ public class KuwaibaService {
      *                             If the target parent can't contain any of the new instances
      */
     @WebMethod(operationName = "copyObjects")
-    public long[] copyObjects(
+    public String[] copyObjects(
             @WebParam(name = "targetClass")String targetClass,
-            @WebParam(name = "targetOid")long targetOid,
+            @WebParam(name = "targetOid")String targetOid,
             @WebParam(name = "templateClases")String[] objectClasses,
-            @WebParam(name = "templateOids")long[] objectOids,
+            @WebParam(name = "templateOids")String[] objectOids,
             @WebParam(name = "recursive")boolean recursive,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
@@ -3500,11 +3516,11 @@ public class KuwaibaService {
      *                             If the target parent can't contain any of the new instances
      */
     @WebMethod(operationName = "copySpecialObjects")
-    public long[] copySpecialObjects(
+    public String[] copySpecialObjects(
             @WebParam(name = "targetClass")String targetClass,
-            @WebParam(name = "targetOid")long targetOid,
+            @WebParam(name = "targetOid")String targetOid,
             @WebParam(name = "templateClases")String[] objectClasses,
-            @WebParam(name = "templateOids")long[] objectOids,
+            @WebParam(name = "templateOids")String[] objectOids,
             @WebParam(name = "recursive")boolean recursive,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
@@ -3533,9 +3549,9 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "copyPoolItemToPool")
     public void copyPoolItemToPool(
-        @WebParam(name = "poolId") long poolId, 
+        @WebParam(name = "poolId") String poolId, 
         @WebParam(name = "poolItemClassName") String poolItemClassName, 
-        @WebParam(name = "poolItemId") long poolItemId, 
+        @WebParam(name = "poolItemId") String poolItemId, 
         @WebParam(name = "recursive") boolean recursive,
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
@@ -3591,10 +3607,10 @@ public class KuwaibaService {
      *                             If the given name pattern not match with the regular expression to build the new object name.
      */
     @WebMethod(operationName = "createBulkObjects")
-    public long [] createBulkObjects(
+    public String[] createBulkObjects(
         @WebParam(name = "className") String className, 
         @WebParam(name = "parentClassName") String parentClassName, 
-        @WebParam(name = "parentOid") long parentOid, 
+        @WebParam(name = "parentOid") String parentOid, 
         @WebParam(name = "numberOfObjects") int numberOfObjects, 
         @WebParam(name = "namePattern") String namePattern, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
@@ -3627,10 +3643,10 @@ public class KuwaibaService {
      *                             If the className is not an InventoryObject.
      */
     @WebMethod(operationName = "createBulkSpecialObjects")
-    public long[] createBulkSpecialObjects(
+    public String[] createBulkSpecialObjects(
         @WebParam(name = "className") String className, 
         @WebParam(name = "parentClassName") String parentClassName, 
-        @WebParam(name = "parentId") long parentId, 
+        @WebParam(name = "parentId") String parentId, 
         @WebParam(name = "numberOfSpecialObjects") int numberOfSpecialObjects, 
         @WebParam(name = "namePattern") String namePattern, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
@@ -3664,9 +3680,9 @@ public class KuwaibaService {
     @WebMethod(operationName = "connectMirrorPort")
     public void connectMirrorPort(
             @WebParam(name = "aObjectClass")String[] aObjectClass,
-            @WebParam(name = "aObjectId")long[] aObjectId,
+            @WebParam(name = "aObjectId")String[] aObjectId,
             @WebParam(name = "bObjectClass")String[] bObjectClass,
-            @WebParam(name = "bObjectId")long[] bObjectId,
+            @WebParam(name = "bObjectId")String[] bObjectId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.connectMirrorPort(aObjectClass, aObjectId, bObjectClass, bObjectId, getIPAddress(), sessionId);
@@ -3691,7 +3707,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "releaseMirrorPort")
     public void releaseMirrorPort(
             @WebParam(name = "objectClass")String objectClass,
-            @WebParam(name = "objectId")long objectId,
+            @WebParam(name = "objectId")String objectId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.releaseMirrorPort(objectClass, objectId, getIPAddress(), sessionId);
@@ -3730,13 +3746,13 @@ public class KuwaibaService {
      *                             If any of the classes provided can not be found
      */
     @WebMethod(operationName = "createPhysicalConnection")
-    public long createPhysicalConnection(
+    public String createPhysicalConnection(
             @WebParam(name = "aObjectClass")String aObjectClass,
-            @WebParam(name = "aObjectId")long aObjectId,
+            @WebParam(name = "aObjectId")String aObjectId,
             @WebParam(name = "bObjectClass")String bObjectClass,
-            @WebParam(name = "bObjectId")long bObjectId,
+            @WebParam(name = "bObjectId")String bObjectId,
             @WebParam(name = "parentClass")String parentClass,
-            @WebParam(name = "parentId")long parentId,
+            @WebParam(name = "parentId")String parentId,
             @WebParam(name = "name")String name,
             @WebParam(name = "connectionClass") String connectionClass,
             @WebParam(name = "templateId") long templateId,
@@ -3766,7 +3782,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getPhysicalConnectionEndpoints")
     public RemoteObjectLight[] getPhysicalConnectionEndpoints(@WebParam(name = "connectionClass")String connectionClass, 
-            @WebParam(name = "connectionId")long connectionId, 
+            @WebParam(name = "connectionId")String connectionId, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getPhysicalConnectionEndpoints(connectionClass, connectionId, getIPAddress(), sessionId);
@@ -3792,7 +3808,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getLogicalConnectionEndpoints")
     public RemoteObjectLight[] getLogicalConnectionEndpoints(@WebParam(name = "connectionClass")String connectionClass, 
-            @WebParam(name = "connectionId")long connectionId, 
+            @WebParam(name = "connectionId")String connectionId, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getLogicalConnectionEndpoints(connectionClass, connectionId, getIPAddress(), sessionId);
@@ -3818,7 +3834,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getLogicalLinkDetails")
     public RemoteLogicalConnectionDetails getLogicalLinkDetails(@WebParam(name = "linkClass")String linkClass, 
-                                        @WebParam(name = "linkId")long linkId,
+                                        @WebParam(name = "linkId")String linkId,
                                         @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.getLogicalLinkDetails(linkClass, linkId, getIPAddress(), sessionId);
@@ -3846,7 +3862,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "getE2EMap")
     public List<RemoteObjectLinkObject> getE2EMap(@WebParam(name = "linkClass")String linkClass, 
             @WebParam(name = "linkClasses")List<String> linkClasses,
-            @WebParam(name = "linkIds")List<Long> linkIds,
+            @WebParam(name = "linkIds")List<String> linkIds,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.getE2EMap(linkClasses, linkIds, true, true, true, getIPAddress(), sessionId);
@@ -3872,7 +3888,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getPhysicalLinkDetails")
     public RemotePhysicalConnectionDetails getPhysicalLinkDetails(@WebParam(name = "linkClass") String linkClass, 
-                                        @WebParam(name = "linkId")long linkId,
+                                        @WebParam(name = "linkId")String linkId,
                                         @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.getPhysicalLinkDetails(linkClass, linkId, getIPAddress(), sessionId);
@@ -3900,9 +3916,9 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getContainersBetweenObjects")
     public List<RemoteObjectLight> getContainersBetweenObjects(@WebParam(name = "objectAClass")String objectAClass, 
-            @WebParam(name = "objectAId")long objectAId, 
+            @WebParam(name = "objectAId")String objectAId, 
             @WebParam(name = "objectBClass")String objectBClass, 
-            @WebParam(name = "objectBId")long objectBId, 
+            @WebParam(name = "objectBId")String objectBId, 
             @WebParam(name = "containerClass")String containerClass, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
@@ -3929,7 +3945,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getPhysicalConnectionsInObject")
     public List<RemoteObjectLightList> getPhysicalConnectionsInObject(@WebParam(name = "objectClass")String objectClass, 
-            @WebParam(name = "objectId")long objectId, 
+            @WebParam(name = "objectId")String objectId, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.getPhysicalConnectionsInObject(objectClass, objectId, getIPAddress(), sessionId);
@@ -3952,7 +3968,10 @@ public class KuwaibaService {
      * @throws org.kuwaiba.exceptions.ServerSideException If the port could not be found or if the class provided does not exist or if The class provided is not a subclass of GenericPort
      */
     @WebMethod(operationName = "getLinkConnectedToPort")
-    public RemoteObject getLinkConnectedToPort(String portClassName, long portId, String sessionId) throws ServerSideException {
+    public RemoteObject getLinkConnectedToPort(
+        @WebParam(name = "portClassName") String portClassName, 
+        @WebParam(name = "portId") String portId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
             return wsBean.getLinkConnectedToPort(portClassName, portId, getIPAddress(), sessionId);
         } catch(Exception e) {
@@ -3977,7 +3996,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getPhysicalPath")
     public List<RemoteObjectLight> getPhysicalPath (@WebParam(name = "objectClass")String objectClass,
-            @WebParam(name = "objectId")long objectId,
+            @WebParam(name = "objectId")String objectId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.getPhysicalPath(objectClass, objectId, getIPAddress(), sessionId);
@@ -4008,9 +4027,9 @@ public class KuwaibaService {
      *                             If the object activity log could no be found
      */
     @WebMethod(operationName = "connectPhysicalLinks")
-    public void connectPhysicalLinks (@WebParam(name = "sideAClassNames")String[] sideAClassNames, @WebParam(name = "sideAIds")Long[] sideAIds,
-                                      @WebParam(name = "linksClassNames")String[] linksClassNames, @WebParam(name = "linksIds")long[] linksIds,
-                                      @WebParam(name = "sideBClassNames")String[] sideBClassNames, @WebParam(name = "sideBIds")Long[] sideBIds,
+    public void connectPhysicalLinks (@WebParam(name = "sideAClassNames")String[] sideAClassNames, @WebParam(name = "sideAIds")String[] sideAIds,
+                                      @WebParam(name = "linksClassNames")String[] linksClassNames, @WebParam(name = "linksIds")String[] linksIds,
+                                      @WebParam(name = "sideBClassNames")String[] sideBClassNames, @WebParam(name = "sideBIds")String[] sideBIds,
                                       @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             if ((sideAClassNames.length + sideAIds.length + linksClassNames.length + linksIds.length + sideBClassNames.length + sideBIds.length) / 4 != sideAClassNames.length)
@@ -4044,9 +4063,9 @@ public class KuwaibaService {
      *                             If the object activity log could no be found
      */
     @WebMethod(operationName = "connectLogicalLinks")
-    public void connectLogicalLinks (@WebParam(name = "sideAClassNames")String[] sideAClassNames, @WebParam(name = "sideAIds")Long[] sideAIds,
-                                      @WebParam(name = "linksClassNames")String[] linksClassNames, @WebParam(name = "linksIds")long[] linksIds,
-                                      @WebParam(name = "sideBClassNames")String[] sideBClassNames, @WebParam(name = "sideBIds")Long[] sideBIds,
+    public void connectLogicalLinks (@WebParam(name = "sideAClassNames")String[] sideAClassNames, @WebParam(name = "sideAIds")String[] sideAIds,
+                                      @WebParam(name = "linksClassNames")String[] linksClassNames, @WebParam(name = "linksIds")String[] linksIds,
+                                      @WebParam(name = "sideBClassNames")String[] sideBClassNames, @WebParam(name = "sideBIds")String[] sideBIds,
                                       @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             if ((sideAClassNames.length + sideAIds.length + linksClassNames.length + linksIds.length + sideBClassNames.length + sideBIds.length) / 4 != sideAClassNames.length)
@@ -4075,9 +4094,9 @@ public class KuwaibaService {
      * @throws ServerSideException If any of the provided objects can not be found, if the endpoints are already connected, or if one of the endpoints is a port
      */
     @WebMethod(operationName = "connectPhysicalContainers")
-    public void connectPhysicalContainers (@WebParam(name = "sideAClassNames")String[] sideAClassNames, @WebParam(name = "sideAIds")Long[] sideAIds,
-                                      @WebParam(name = "containersClassNames")String[] containersClassNames, @WebParam(name = "containersIds")long[] containersIds,
-                                      @WebParam(name = "sideBClassNames")String[] sideBClassNames, @WebParam(name = "sideBIds")Long[] sideBIds,
+    public void connectPhysicalContainers (@WebParam(name = "sideAClassNames")String[] sideAClassNames, @WebParam(name = "sideAIds")String[] sideAIds,
+                                      @WebParam(name = "containersClassNames")String[] containersClassNames, @WebParam(name = "containersIds")String[] containersIds,
+                                      @WebParam(name = "sideBClassNames")String[] sideBClassNames, @WebParam(name = "sideBIds")String[] sideBIds,
                                       @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             if ((sideAClassNames.length + sideAIds.length + containersClassNames.length + containersIds.length + sideBClassNames.length + sideBIds.length) / 4 != sideAClassNames.length)
@@ -4108,7 +4127,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "disconnectPhysicalConnection")
     public void disconnectPhysicalConnection(@WebParam(name = "connectionClass")String connectionClass,
-                                      @WebParam(name = "connectionId")long connectionId, 
+                                      @WebParam(name = "connectionId")String connectionId, 
                                       @WebParam(name = "sideToDisconnect")int sideToDisconnect,
                                       @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
@@ -4137,7 +4156,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "disconnectLogicalConnection")
     public void disconnectLogicalConnection(@WebParam(name = "connectionClass")String connectionClass,
-                                      @WebParam(name = "connectionId")long connectionId, 
+                                      @WebParam(name = "connectionId")String connectionId, 
                                       @WebParam(name = "sideToDisconnect")int sideToDisconnect,
                                       @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
@@ -4169,11 +4188,11 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "reconnectPhysicalConnection")
     public void reconnectPhysicalConnection(@WebParam(name = "connectionClass")String connectionClass,
-                                      @WebParam(name = "connectionId")long connectionId, 
+                                      @WebParam(name = "connectionId")String connectionId, 
                                       @WebParam(name = "newASideClass")String newASideClass,
-                                      @WebParam(name = "newASideId")long newASideId,
+                                      @WebParam(name = "newASideId")String newASideId,
                                       @WebParam(name = "newBSideClass")String newBSideClass,
-                                      @WebParam(name = "newBSideId")long newBSideId,
+                                      @WebParam(name = "newBSideId")String newBSideId,
                                       @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             wsBean.reconnectPhysicalConnection(connectionClass, connectionId, newASideClass, newASideId, newBSideClass, newBSideId, getIPAddress(), sessionId);
@@ -4202,7 +4221,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "deletePhysicalConnection")
     public void deletePhysicalConnection(
             @WebParam(name = "objectClass")String objectClass,
-            @WebParam(name = "objectId")long objectId,
+            @WebParam(name = "objectId")String objectId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.deletePhysicalConnection(objectClass, objectId, getIPAddress(), sessionId);
@@ -4232,9 +4251,9 @@ public class KuwaibaService {
     @WebMethod(operationName = "associateObjectToService")
     public void associateObjectToService (
             @WebParam(name = "objectClass")String objectClass,
-            @WebParam(name = "objectId")long objectId,
+            @WebParam(name = "objectId")String objectId,
             @WebParam(name = "serviceClass")String serviceClass,
-            @WebParam(name = "serviceId")long serviceId,
+            @WebParam(name = "serviceId")String serviceId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.associateObjectToService(objectClass, objectId, serviceClass, serviceId, getIPAddress(), sessionId);
@@ -4263,9 +4282,9 @@ public class KuwaibaService {
     @WebMethod(operationName = "associateObjectsToService")
     public void associateObjectsToService (
             @WebParam(name = "objectClass")String[] objectClass,
-            @WebParam(name = "objectId")long[] objectId,
+            @WebParam(name = "objectId")String[] objectId,
             @WebParam(name = "serviceClass")String serviceClass,
-            @WebParam(name = "serviceId")long serviceId,
+            @WebParam(name = "serviceId")String serviceId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.associateObjectsToService(objectClass, objectId, serviceClass, serviceId, getIPAddress(), sessionId);
@@ -4293,8 +4312,8 @@ public class KuwaibaService {
     @WebMethod(operationName = "releaseObjectFromService")
     public void releaseObjectFromService (
             @WebParam(name = "serviceClass")String serviceClass,
-            @WebParam(name = "serviceId")long serviceId,
-            @WebParam(name = "targetId")long targetId,           
+            @WebParam(name = "serviceId")String serviceId,
+            @WebParam(name = "targetId")String targetId,           
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.releaseObjectFromService(serviceClass, serviceId, targetId, getIPAddress(), sessionId);
@@ -4321,7 +4340,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "getServiceResources")
     public List<RemoteObjectLight> getServiceResources (
             @WebParam(name = "serviceClass")String serviceClass,
-            @WebParam(name = "serviceId")long serviceId,
+            @WebParam(name = "serviceId")String serviceId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             return wsBean.getServiceResources(serviceClass, serviceId, getIPAddress(), sessionId);
@@ -4349,7 +4368,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "getBusinessObjectAuditTrail")
     public ApplicationLogEntry[] getBusinessObjectAuditTrail (
             @WebParam(name = "objectClass")String objectClass,
-            @WebParam(name = "objectId")long objectId,
+            @WebParam(name = "objectId")String objectId,
             @WebParam(name = "limit")int limit,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
@@ -4403,7 +4422,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "attachFileToObject")
     public long attachFileToObject(@WebParam(name = "name")String name, 
             @WebParam(name = "tags")String tags, @WebParam(name = "file")byte[] file, 
-            @WebParam(name = "className")String className, @WebParam(name = "objectId")long objectId,
+            @WebParam(name = "className")String className, @WebParam(name = "objectId")String objectId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.attachFileToObject(name, tags, file, className, objectId, getIPAddress(), sessionId);
@@ -4427,7 +4446,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "detachFileFromObject")
     public void detachFileFromObject(@WebParam(name = "fileObjectId")long fileObjectId,
-            @WebParam(name = "className")String className, @WebParam(name = "objectId")long objectId,
+            @WebParam(name = "className")String className, @WebParam(name = "objectId")String objectId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.detachFileFromObject(fileObjectId, className, objectId, getIPAddress(), sessionId);
@@ -4450,7 +4469,7 @@ public class KuwaibaService {
      * @throws ServerSideException If the object or its class could not be found
      */
     @WebMethod(operationName = "getFilesForObject")
-    public List<RemoteFileObjectLight> getFilesForObject(@WebParam(name = "className")String className, @WebParam(name = "objectId")long objectId,
+    public List<RemoteFileObjectLight> getFilesForObject(@WebParam(name = "className")String className, @WebParam(name = "objectId")String objectId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             return wsBean.getFilesForObject(className, objectId, getIPAddress(), sessionId);
@@ -4475,7 +4494,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getFile")
     public RemoteFileObject getFile(@WebParam(name = "fileObjectId")long fileObjectId, 
-            @WebParam(name = "className")String className, @WebParam(name = "objectId")long objectId,
+            @WebParam(name = "className")String className, @WebParam(name = "objectId")String objectId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.getFile(fileObjectId, className, objectId, getIPAddress(), sessionId);
@@ -4501,7 +4520,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "updateFileProperties")
     public void updateFileProperties(@WebParam(name = "fileObjectId") long fileObjectId, 
             @WebParam(name = "properties")List<StringPair> properties, @WebParam(name = "className")String className, 
-            @WebParam(name = "objectId")long objectId, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+            @WebParam(name = "objectId")String objectId, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             wsBean.updateFileProperties(fileObjectId, properties, className, objectId, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -6242,7 +6261,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "executeClassLevelReport")
     public byte[] executeClassLevelReport(@WebParam(name = "objectClassName")String objectClassName, 
-            @WebParam(name = "objectId")long objectId, @WebParam(name = "reportId")long reportId, 
+            @WebParam(name = "objectId")String objectId, @WebParam(name = "reportId")long reportId, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.executeClassLevelReport(objectClassName, objectId, reportId, getIPAddress(), sessionId);
@@ -6378,7 +6397,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "addObjectsToFavoritesFolder")    
     public void addObjectsToFavoritesFolder(
         @WebParam(name = "objectClass") String[] objectClass, 
-        @WebParam(name = "objectId") long[] objectId, 
+        @WebParam(name = "objectId") String[] objectId, 
         @WebParam(name = "favoritesFolderId") long favoritesFolderId, 
         @WebParam(name = "userId") long userId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
@@ -6410,7 +6429,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "removeObjectsFromFavoritesFolder")
     public void removeObjectsFromFavoritesFolder(
         @WebParam(name = "objectClass") String[] objectClass, 
-        @WebParam(name = "objectId") long[] objectId, 
+        @WebParam(name = "objectId") String[] objectId, 
         @WebParam(name = "favoritesFolderId") long favoritesFolderId, 
         @WebParam(name = "userId") long userId,
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
@@ -6471,7 +6490,7 @@ public class KuwaibaService {
     public List<RemoteFavoritesFolder> getFavoritesFoldersForObject(
         @WebParam(name = "userId") long userId,
         @WebParam(name = "objectClass") String objectClass, 
-        @WebParam(name = "objectId") long objectId, 
+        @WebParam(name = "objectId") String objectId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try {
@@ -6881,10 +6900,10 @@ public class KuwaibaService {
      *                             If any of the objects involved can't be connected.
      */
     @WebMethod(operationName = "createSDHTransportLink")
-    public long createSDHTransportLink(@WebParam(name = "classNameEndpointA") String classNameEndpointA, 
-            @WebParam(name = "idEndpointA") long idEndpointA, 
+    public String createSDHTransportLink(@WebParam(name = "classNameEndpointA") String classNameEndpointA, 
+            @WebParam(name = "idEndpointA") String idEndpointA, 
             @WebParam(name = "classNameEndpointB") String classNameEndpointB, 
-            @WebParam(name = "idEndpointB") long idEndpointB, 
+            @WebParam(name = "idEndpointB") String idEndpointB, 
             @WebParam(name = "linkType") String linkType, 
             @WebParam(name = "defaultName") String defaultName, 
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
@@ -6917,10 +6936,10 @@ public class KuwaibaService {
      *                             If any of the objects involved can't be connected.
      */
     @WebMethod(operationName = "createSDHContainerLink")
-    public long createSDHContainerLink(@WebParam(name = "classNameEndpointA") String classNameEndpointA, 
-            @WebParam(name = "idEndpointA") long idEndpointA, 
+    public String createSDHContainerLink(@WebParam(name = "classNameEndpointA") String classNameEndpointA, 
+            @WebParam(name = "idEndpointA") String idEndpointA, 
             @WebParam(name = "classNameEndpointB") String classNameEndpointB,
-            @WebParam(name = "idEndpointB") long idEndpointB,
+            @WebParam(name = "idEndpointB") String idEndpointB,
             @WebParam(name = "linkType") String linkType, 
             @WebParam(name = "positions") List<RemoteSDHPosition> positions, 
             @WebParam(name = "defaultName") String defaultName,
@@ -6954,10 +6973,10 @@ public class KuwaibaService {
      *                             If any of the objects involved can't be connected.
      */
     @WebMethod(operationName = "createSDHTributaryLink")
-    public long createSDHTributaryLink(@WebParam(name = "classNameEndpointA") String classNameEndpointA, 
-            @WebParam(name = "idEndpointA") long idEndpointA, 
+    public String createSDHTributaryLink(@WebParam(name = "classNameEndpointA") String classNameEndpointA, 
+            @WebParam(name = "idEndpointA") String idEndpointA, 
             @WebParam(name = "classNameEndpointB") String classNameEndpointB, 
-            @WebParam(name = "idEndpointB") long idEndpointB, 
+            @WebParam(name = "idEndpointB") String idEndpointB, 
             @WebParam(name = "linkType") String linkType, 
             @WebParam(name = "positions") List<RemoteSDHPosition> positions, 
             @WebParam(name = "defaultName") String defaultName, 
@@ -6985,7 +7004,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "deleteSDHTransportLink")
     public void deleteSDHTransportLink(@WebParam(name = "transportLinkClass") String transportLinkClass, 
-            @WebParam(name = "transportLinkId") long transportLinkId, 
+            @WebParam(name = "transportLinkId") String transportLinkId, 
             @WebParam(name = "forceDelete") boolean forceDelete, 
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
@@ -7011,7 +7030,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "deleteSDHContainerLink")
     public void deleteSDHContainerLink(@WebParam(name = "containerLinkClass") String containerLinkClass, 
-            @WebParam(name = "containerLinkId") long containerLinkId, 
+            @WebParam(name = "containerLinkId") String containerLinkId, 
             @WebParam(name = "forceDelete") boolean forceDelete, 
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
@@ -7036,7 +7055,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "deleteSDHTributaryLink")
     public void deleteSDHTributaryLink(@WebParam(name = "tributaryLinkClass") String tributaryLinkClass, 
-            @WebParam(name = "tributaryLinkId") long tributaryLinkId, 
+            @WebParam(name = "tributaryLinkId") String tributaryLinkId, 
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
             wsBean.deleteSDHTributaryLink(tributaryLinkClass, tributaryLinkId, getIPAddress(), sessionId);
@@ -7063,9 +7082,9 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "findSDHRoutesUsingTransportLinks")
     public List<RemoteObjectLightList> findSDHRoutesUsingTransportLinks(@WebParam(name = "communicationsEquipmentClassA") String communicationsEquipmentClassA, 
-                                            @WebParam(name = "communicationsEquipmentIdA") long  communicationsEquipmentIdA, 
+                                            @WebParam(name = "communicationsEquipmentIdA") String  communicationsEquipmentIdA, 
                                             @WebParam(name = "communicationsEquipmentClassB") String communicationsEquipmentClassB, 
-                                            @WebParam(name = "communicationsEquipmentIB") long  communicationsEquipmentIB, 
+                                            @WebParam(name = "communicationsEquipmentIB") String  communicationsEquipmentIB, 
                                             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
             return wsBean.findSDHRoutesUsingTransportLinks(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, communicationsEquipmentIB, getIPAddress(), sessionId);
@@ -7092,9 +7111,9 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "findSDHRoutesUsingContainerLinks")
     public List<RemoteObjectLightList> findSDHRoutesUsingContainerLinks(@WebParam(name = "communicationsEquipmentClassA") String communicationsEquipmentClassA, 
-                                            @WebParam(name = "communicationsEquipmentIdA") long  communicationsEquipmentIdA, 
+                                            @WebParam(name = "communicationsEquipmentIdA") String  communicationsEquipmentIdA, 
                                             @WebParam(name = "communicationsEquipmentClassB") String communicationsEquipmentClassB, 
-                                            @WebParam(name = "communicationsEquipmentIB") long  communicationsEquipmentIB, 
+                                            @WebParam(name = "communicationsEquipmentIB") String  communicationsEquipmentIB, 
                                             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
             return wsBean.findSDHRoutesUsingContainerLinks(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, communicationsEquipmentIB, getIPAddress(), sessionId);
@@ -7119,7 +7138,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getSDHTransportLinkStructure")
     public List<RemoteSDHContainerLinkDefinition> getSDHTransportLinkStructure(@WebParam(name = "transportLinkClass")String transportLinkClass, 
-            @WebParam(name = "transportLinkId")long transportLinkId, 
+            @WebParam(name = "transportLinkId")String transportLinkId, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.getSDHTransportLinkStructure(transportLinkClass, transportLinkId, getIPAddress(), sessionId);
@@ -7145,7 +7164,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getSDHContainerLinkStructure")
     public List<RemoteSDHContainerLinkDefinition> getSDHContainerLinkStructure(@WebParam(name = "containerLinkClass")String containerLinkClass, 
-            @WebParam(name = "containerLinkId")long containerLinkId, 
+            @WebParam(name = "containerLinkId")String containerLinkId, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.getSDHContainerLinkStructure(containerLinkClass, containerLinkId, getIPAddress(), sessionId);
@@ -7171,7 +7190,7 @@ public class KuwaibaService {
      * @throws ServerSideException if there are not IPAM root nodes or if can't get the pools of a subnet pool
      */
     @WebMethod(operationName = "getSubnetPools")
-    public RemotePool[] getSubnetPools(@WebParam(name = "parentId") long parentId,
+    public RemotePool[] getSubnetPools(@WebParam(name = "parentId") String parentId,
             @WebParam(name = "className") String className,
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
         try{
@@ -7195,7 +7214,7 @@ public class KuwaibaService {
      * @throws ServerSideException if the given subnet pool id is not valid
      */
     @WebMethod(operationName = "getSubnets")
-    public List<RemoteObjectLight> getSubnets(@WebParam(name = "poolId")long poolId,
+    public List<RemoteObjectLight> getSubnets(@WebParam(name = "poolId")String poolId,
             @WebParam(name = "limit")int limit,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
@@ -7222,8 +7241,8 @@ public class KuwaibaService {
      * @throws ServerSideException if the IPAM root nodes doesn't exists, or if the IPv4 or IPv6 classes doesn't exists
      */
     @WebMethod(operationName = "createSubnetPool")
-    public long createSubnetPool(
-            @WebParam(name = "parentId")long parentId, 
+    public String createSubnetPool(
+            @WebParam(name = "parentId")String parentId, 
             @WebParam(name = "subnetPoolName")String subnetPoolName, 
             @WebParam(name = "subnetPoolDescription")String subnetPoolDescription, 
             @WebParam(name = "className")String className, 
@@ -7252,7 +7271,7 @@ public class KuwaibaService {
      * attributes, different size between attribute names and attribute values.
      */
     @WebMethod(operationName = "createSubnet")
-    public long createSubnet(@WebParam(name = "poolId")long poolId,
+    public String createSubnet(@WebParam(name = "poolId")String poolId,
             @WebParam(name = "className")String className,
             @WebParam(name = "attributes")List<StringPair> attributes,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
@@ -7275,7 +7294,7 @@ public class KuwaibaService {
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteSubnetPools")
-    public void deleteSubnetPools(@WebParam(name = "ids")long[] ids,
+    public void deleteSubnetPools(@WebParam(name = "ids")String[] ids,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             wsBean.deleteSubnetPools(ids, getIPAddress(), sessionId);
@@ -7299,7 +7318,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "deleteSubnets")
     public void deleteSubnets(@WebParam(name = "className") String className,
-            @WebParam(name = "oids")List<Long> oids,
+            @WebParam(name = "oids")List<String> oids,
             @WebParam(name = "releaseRelationships") boolean releaseRelationships,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try {
@@ -7324,7 +7343,7 @@ public class KuwaibaService {
       */
     @WebMethod(operationName = "getSubnet")
     public RemoteObject getSubnet(
-            @WebParam(name = "id") long id,
+            @WebParam(name = "id") String id,
             @WebParam(name = "className") String className,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
@@ -7348,7 +7367,7 @@ public class KuwaibaService {
       */
     @WebMethod(operationName = "getSubnetPool")
     public RemotePool getSubnetPool(
-            @WebParam(name = "subnetPoolId") long subnetPoolId,
+            @WebParam(name = "subnetPoolId") String subnetPoolId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
 
         try{
@@ -7373,7 +7392,7 @@ public class KuwaibaService {
      * @throws ServerSideException 
      */
     @WebMethod(operationName = "addIPAddress")
-    public long addIPAddress(@WebParam(name = "id")long id,
+    public String addIPAddress(@WebParam(name = "id")String id,
             @WebParam(name = "parentClassName")String parentClassName,
             @WebParam(name = "attributes")List<StringPair> attributes,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
@@ -7398,7 +7417,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "removeIP")
     public void removeIP(
-            @WebParam(name = "oid")long[] oids,
+            @WebParam(name = "oid")String[] oids,
             @WebParam(name = "releaseRelationships") boolean releaseRelationships,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
@@ -7422,7 +7441,7 @@ public class KuwaibaService {
      * @throws ServerSideException 
      */
     @WebMethod(operationName = "getSubnetUsedIps")
-    public List<RemoteObjectLight> getSubnetUsedIps(@WebParam(name = "id")long id,
+    public List<RemoteObjectLight> getSubnetUsedIps(@WebParam(name = "id")String id,
             @WebParam(name = "limit")int limit,
             @WebParam(name = "className")String className,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
@@ -7448,7 +7467,7 @@ public class KuwaibaService {
      * @throws ServerSideException 
      */
     @WebMethod(operationName = "getSubnetsInSubnet")
-    public List<RemoteObjectLight> getSubnetsInSubnet(@WebParam(name = "id")long id,
+    public List<RemoteObjectLight> getSubnetsInSubnet(@WebParam(name = "id")String id,
             @WebParam(name = "limit")int limit,
             @WebParam(name = "className")String className,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
@@ -7476,9 +7495,9 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "relateSubnetToVlan")
     public void relateSubnetToVlan (
-            @WebParam(name = "id")long id,
+            @WebParam(name = "id")String id,
             @WebParam(name = "className")String className,
-            @WebParam(name = "vlanId")long vlanId,
+            @WebParam(name = "vlanId")String vlanId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.relateSubnetToVlan(id, className, vlanId, getIPAddress(), sessionId);
@@ -7503,8 +7522,8 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "releaseSubnetFromVlan")
     public void releaseSubnetFromVlan (
-            @WebParam(name = "subnetId")long subnetId,
-            @WebParam(name = "vlanId")long vlanId,
+            @WebParam(name = "subnetId")String subnetId,
+            @WebParam(name = "vlanId")String vlanId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.releaseSubnetFromVlan(vlanId, subnetId, getIPAddress(), sessionId);
@@ -7527,8 +7546,8 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "releaseSubnetFromVRF")
     public void releaseSubnetFromVRF (
-            @WebParam(name = "subnetId")long subnetId,
-            @WebParam(name = "vrfId")long vrfId,
+            @WebParam(name = "subnetId")String subnetId,
+            @WebParam(name = "vrfId")String vrfId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.releaseSubnetFromVRF(subnetId, vrfId, getIPAddress(), sessionId);
@@ -7552,9 +7571,9 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "relateSubnetToVrf")
     public void relateSubnetToVrf (
-            @WebParam(name = "id")long id,
+            @WebParam(name = "id")String id,
             @WebParam(name = "className")String className,
-            @WebParam(name = "vrfId")long vrfId,
+            @WebParam(name = "vrfId")String vrfId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.relateSubnetToVrf(id, className, vrfId, getIPAddress(), sessionId);
@@ -7578,9 +7597,9 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "relateIPtoPort")
     public void relateIPtoPort (
-            @WebParam(name = "id")long id,
+            @WebParam(name = "id")String id,
             @WebParam(name = "portClassName")String portClassName,
-            @WebParam(name = "portId")long portId,
+            @WebParam(name = "portId")String portId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.relateIPtoPort(id, portClassName, portId, getIPAddress(), sessionId);
@@ -7630,8 +7649,8 @@ public class KuwaibaService {
     @WebMethod(operationName = "releasePortFromIP")
     public void releasePortFromIP (
             @WebParam(name = "deviceClassName")String deviceClassName,
-            @WebParam(name = "deviceId")long deviceId,
-            @WebParam(name = "id")long id,
+            @WebParam(name = "deviceId")String deviceId,
+            @WebParam(name = "id")String id,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.releasePortFromIP(deviceClassName, deviceId, id, getIPAddress(), sessionId);
@@ -7662,9 +7681,9 @@ public class KuwaibaService {
     @WebMethod(operationName = "associateObjectsToContract")
     public void associateObjectsToContract (
             @WebParam(name = "objectClass")String[] objectClass,
-            @WebParam(name = "objectId")long[] objectId,
+            @WebParam(name = "objectId")String[] objectId,
             @WebParam(name = "contractClass")String contractClass,
-            @WebParam(name = "contractId")long contractId,
+            @WebParam(name = "contractId")String contractId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.associateObjectsToContract(objectClass, objectId, contractClass, contractId, getIPAddress(), sessionId);
@@ -7691,8 +7710,8 @@ public class KuwaibaService {
     @WebMethod(operationName = "releaseObjectFromContract")
     public void releaseObjectFromContract (
             @WebParam(name = "objectClass")String objectClass,
-            @WebParam(name = "objectId")long objectId,
-            @WebParam(name = "contractId")long contractId,
+            @WebParam(name = "objectId")String objectId,
+            @WebParam(name = "contractId")String contractId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.releaseObjectFromContract(objectClass, objectId, contractId, getIPAddress(), sessionId);
@@ -7724,10 +7743,10 @@ public class KuwaibaService {
      *                             If any of the objects involved can't be connected
      */
     @WebMethod(operationName = "createMPLSLink")
-    public long createMPLSLink(@WebParam(name = "classNameEndpointA") String classNameEndpointA, 
-            @WebParam(name = "idEndpointA") long idEndpointA, 
+    public String createMPLSLink(@WebParam(name = "classNameEndpointA") String classNameEndpointA, 
+            @WebParam(name = "idEndpointA") String idEndpointA, 
             @WebParam(name = "classNameEndpointB") String classNameEndpointB, 
-            @WebParam(name = "idEndpointB") long idEndpointB, 
+            @WebParam(name = "idEndpointB") String idEndpointB, 
             @WebParam(name = "linkType") String linkType, 
             @WebParam(name = "defaultName") String defaultName, 
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
@@ -7756,7 +7775,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "deleteMPLSLink")
     public void deleteMPLSLink(@WebParam(name = "linkClass") String linkClass, 
-            @WebParam(name = "linkId") long linkId, 
+            @WebParam(name = "linkId") String linkId, 
             @WebParam(name = "forceDelete") boolean forceDelete, 
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
@@ -7782,10 +7801,10 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "relatePortToInterface")
     public void relatePortToInterface (
-            @WebParam(name = "portId")long portId,
+            @WebParam(name = "portId")String portId,
             @WebParam(name = "portClassName")String portClassName,
             @WebParam(name = "interfaceClassName")String interfaceClassName,
-            @WebParam(name = "interfaceId")long interfaceId,
+            @WebParam(name = "interfaceId")String interfaceId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.relatePortToInterface(portId, portClassName, interfaceClassName, interfaceId, getIPAddress(), sessionId);
@@ -7813,8 +7832,8 @@ public class KuwaibaService {
     @WebMethod(operationName = "releasePortFromInterface")
     public void releasePortFromInterface (
             @WebParam(name = "interfaceClassName")String interfaceClassName,
-            @WebParam(name = "interfaceId")long interfaceId,
-            @WebParam(name = "portId")long portId,
+            @WebParam(name = "interfaceId")String interfaceId,
+            @WebParam(name = "portId")String portId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.releasePortFromInterface(interfaceClassName, interfaceId, portId, getIPAddress(), sessionId);
@@ -7865,8 +7884,8 @@ public class KuwaibaService {
      *                             If the class name could not be found
      */
     @WebMethod(operationName = "addProject")
-    public long addProject(
-        @WebParam(name = "parentId") long parentId, 
+    public String addProject(
+        @WebParam(name = "parentId") String parentId, 
         @WebParam(name = "parentClassName") String parentClassName, 
         @WebParam(name = "className") String className, 
         @WebParam(name = "attributeNames") String[] attributeNames, 
@@ -7897,7 +7916,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "deleteProject")
     public void deleteProject(
         @WebParam(name = "className") String className, 
-        @WebParam(name = "oid") long oid, 
+        @WebParam(name = "oid") String oid, 
         @WebParam(name = "releaseRelationships") boolean releaseRelationships, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
@@ -7929,8 +7948,8 @@ public class KuwaibaService {
      *                             If attributeNames and attributeValues have different sizes.
      */
     @WebMethod(operationName = "addActivity")
-    public long addActivity(
-        @WebParam(name ="parentId") long parentId, 
+    public String addActivity(
+        @WebParam(name ="parentId") String parentId, 
         @WebParam(name ="parentClassName") String parentClassName, 
         @WebParam(name ="className") String className, 
         @WebParam(name ="attributeNames") String[] attributeNames, 
@@ -7963,7 +7982,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "deleteActivity")
     public void deleteActivity(
         @WebParam(name ="className") String className, 
-        @WebParam(name ="oid") long oid, 
+        @WebParam(name ="oid") String oid, 
         @WebParam(name ="releaseReltationships") boolean releaseRelationships, 
         @WebParam(name ="sessionId") String sessionId) throws ServerSideException {
         
@@ -7991,7 +8010,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getProjectsInProjectPool")
     public List<RemoteObjectLight> getProjectsInProjectPool(
-        @WebParam(name = "poolId") long poolId, 
+        @WebParam(name = "poolId") String poolId, 
         @WebParam(name = "limit") int limit, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
@@ -8018,7 +8037,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "getProjectResurces")
     public List<RemoteObjectLight> getProjectResurces(
         @WebParam(name = "projectClass") String projectClass, 
-        @WebParam(name = "projectId") long projectId, 
+        @WebParam(name = "projectId") String projectId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try {
@@ -8048,7 +8067,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "getProjectActivities")
     public List<RemoteObjectLight> getProjectActivities(
         @WebParam(name = "projectClass") String projectClass, 
-        @WebParam(name = "projectId") long projectId, 
+        @WebParam(name = "projectId") String projectId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try {
@@ -8077,9 +8096,9 @@ public class KuwaibaService {
     @WebMethod(operationName = "associateObjectsToProject")
     public void associateObjectsToProject(
         @WebParam(name = "projectClass") String projectClass, 
-        @WebParam(name = "projectId") long projectId, 
+        @WebParam(name = "projectId") String projectId, 
         @WebParam(name = "objectClass") String[] objectClass, 
-        @WebParam(name = "objectId") long[] objectId, 
+        @WebParam(name = "objectId") String[] objectId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try {
@@ -8106,9 +8125,9 @@ public class KuwaibaService {
     @WebMethod(operationName = "associateObjectToProject")
     public void associateObjectToProject(
         @WebParam(name = "projectClass") String projectClass, 
-        @WebParam(name = "projectId") long projectId, 
+        @WebParam(name = "projectId") String projectId, 
         @WebParam(name = "objectClass") String objectClass, 
-        @WebParam(name = "objectId") long objectId, 
+        @WebParam(name = "objectId") String objectId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try {
@@ -8136,9 +8155,9 @@ public class KuwaibaService {
     @WebMethod(operationName = "freeObjectFromProject")
     public void freeObjectFromProject(
         @WebParam(name = "objectClass") String objectClass, 
-        @WebParam(name = "objectId") long objectId, 
+        @WebParam(name = "objectId") String objectId, 
         @WebParam(name = "projectClass") String projectClass, 
-        @WebParam(name = "projectId") long projectId, 
+        @WebParam(name = "projectId") String projectId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try {
@@ -8166,7 +8185,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "getProjectsAssociateToObject")
     public List<RemoteObjectLight> getProjectsAssociateToObject(
         @WebParam(name = "objectClass") String objectClass, 
-        @WebParam(name = "ObjectId") long objectId, 
+        @WebParam(name = "ObjectId") String objectId, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try {
@@ -8192,7 +8211,7 @@ public class KuwaibaService {
      * @throws ServerSideException If he project pool class is no found
      */
     @WebMethod(operationName = "createProjectPool")
-    public long createProjectPool(
+    public String createProjectPool(
         @WebParam(name = "name") String name, 
         @WebParam(name = "description") String description, 
         @WebParam(name = "instanceOfClass") String instanceOfClass, 
@@ -8260,7 +8279,7 @@ public class KuwaibaService {
          */
         @WebMethod(operationName = "createSynchronizationDataSourceConfig")
         public long createSynchronizationDataSourceConfig(
-                @WebParam(name="objectId")long objectId, 
+                @WebParam(name="objectId")String objectId, 
                 @WebParam(name="syncGroupId")long syncGroupId,
                 @WebParam(name="name")String name, 
                 @WebParam(name="parameters")List<StringPair> parameters, 
@@ -8378,7 +8397,7 @@ public class KuwaibaService {
          */
         @WebMethod(operationName = "getSyncDataSourceConfiguration")
         public RemoteSynchronizationConfiguration getSyncDataSourceConfiguration(
-                @WebParam(name="objectId")long objectId, 
+                @WebParam(name="objectId")String objectId, 
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
             try {
                 return wsBean.getSyncDataSourceConfiguration(objectId, getIPAddress(), sessionId);
@@ -8840,9 +8859,9 @@ public class KuwaibaService {
         @WebMethod(operationName = "associatePhysicalNodeToWarehouse")
         public void associatePhysicalNodeToWarehouse (
                 @WebParam(name = "objectClass")String objectClass,
-                @WebParam(name = "objectId")long objectId,
+                @WebParam(name = "objectId")String objectId,
                 @WebParam(name = "warehouseClass")String warehouseClass,
-                @WebParam(name = "warehouseId")long warehouseId,
+                @WebParam(name = "warehouseId")String warehouseId,
                 @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
             try{
                 wsBean.associatePhysicalNodeToWarehouse(objectClass, objectId, warehouseClass, warehouseId, getIPAddress(), sessionId);
@@ -8871,9 +8890,9 @@ public class KuwaibaService {
         @WebMethod(operationName = "associatesPhysicalNodeToWarehouse")
         public void associatesPhysicalNodeToWarehouse (
                 @WebParam(name = "objectClass")String[] objectClass,
-                @WebParam(name = "objectId")long[] objectId,
+                @WebParam(name = "objectId")String[] objectId,
                 @WebParam(name = "warehouseClass")String warehouseClass,
-                @WebParam(name = "warehouseId")long warehouseId,
+                @WebParam(name = "warehouseId")String warehouseId,
                 @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
             try{
                 wsBean.associatesPhysicalNodeToWarehouse(objectClass, objectId, warehouseClass, warehouseId, getIPAddress(), sessionId);
@@ -8901,8 +8920,8 @@ public class KuwaibaService {
         @WebMethod(operationName = "releasePhysicalNodeFromWarehouse")
         public void releasePhysicalNodeFromWarehouse (
                 @WebParam(name = "warehouseClass")String warehouseClass,
-                @WebParam(name = "warehouseId")long warehouseId,
-                @WebParam(name = "targetId")long targetId,           
+                @WebParam(name = "warehouseId")String warehouseId,
+                @WebParam(name = "targetId")String targetId,           
                 @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
             try{
                 wsBean.releasePhysicalNodeFromWarehouse(warehouseClass, warehouseId, targetId, getIPAddress(), sessionId);
@@ -8928,9 +8947,9 @@ public class KuwaibaService {
         */
         @WebMethod(operationName = "moveObjectsToWarehousePool")
         public void moveObjectsToWarehousePool(@WebParam(name = "targetClass")String targetClass,
-                @WebParam(name = "targetOid")long targetOid,
+                @WebParam(name = "targetOid")String targetOid,
                 @WebParam(name = "objectsClasses")String[] objectClasses,
-                @WebParam(name = "objectsOids")long[] objectOids,
+                @WebParam(name = "objectsOids")String[] objectOids,
                 @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
             try{
                 wsBean.moveObjectsToWarehousePool(targetClass,targetOid, objectClasses, objectOids, getIPAddress(), sessionId);
@@ -8957,9 +8976,9 @@ public class KuwaibaService {
          */
         @WebMethod(operationName = "moveObjectsToWarehouse")
         public void moveObjectsToWarehouse(@WebParam(name = "targetClass")String targetClass,
-                @WebParam(name = "targetOid")long targetOid,
+                @WebParam(name = "targetOid")String targetOid,
                 @WebParam(name = "objectsClasses")String[] objectClasses,
-                @WebParam(name = "objectsOids")long[] objectOids,
+                @WebParam(name = "objectsOids")String[] objectOids,
                 @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
             try{
                 wsBean.moveObjectsToWarehouse(targetClass,targetOid, objectClasses, objectOids, getIPAddress(), sessionId);
@@ -8984,7 +9003,7 @@ public class KuwaibaService {
          * @throws ServerSideException If the structure is invalid, or the process definition could not be found or one of the properties is malformed or have an unexpected name
          */
         @WebMethod(operationName = "getBGPMap")
-        public List<RemoteLogicalConnectionDetails> getBGPMap(@WebParam(name="mappedBgpLinksIds")List<Long> mappedBgpLinksIds, 
+        public List<RemoteLogicalConnectionDetails> getBGPMap(@WebParam(name="mappedBgpLinksIds")List<String> mappedBgpLinksIds, 
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
             try {
                 return wsBean.getBGPMap(mappedBgpLinksIds, getIPAddress(), sessionId);

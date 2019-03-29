@@ -25,7 +25,7 @@ public class SDHPosition implements Serializable {
     /**
      * Id of the connection being used (a TransportLink or a ContainerLink)
      */
-    private long connectionId;
+    private String connectionId;
     /**
      * Id of the connection being used (a TransportLink or a ContainerLink)
      */
@@ -35,17 +35,17 @@ public class SDHPosition implements Serializable {
      */
     private int position;
 
-    public SDHPosition(String connectionClass, long connectionId, int position) {
+    public SDHPosition(String connectionClass, String connectionId, int position) {
         this.connectionId = connectionId;
         this.connectionClass = connectionClass;
         this.position = position;
     }
 
-    public long getLinkId() {
+    public String getLinkId() {
         return connectionId;
     }
 
-    public void setLinkId(long connectionId) {
+    public void setLinkId(String connectionId) {
         this.connectionId = connectionId;
     }
 

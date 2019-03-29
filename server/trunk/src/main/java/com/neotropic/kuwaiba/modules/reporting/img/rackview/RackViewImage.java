@@ -114,7 +114,7 @@ public class RackViewImage {
         return false;
     }
     
-    public static RemoteObject getListTypeItemAttributeValue(String objectClass, long objectId, String attributeName) {
+    public static RemoteObject getListTypeItemAttributeValue(String objectClass, String objectId, String attributeName) {
         
         try {
             RemoteObject remoteObject = RackViewImage.getInstance().getWebserviceBean().getObject(
@@ -138,7 +138,7 @@ public class RackViewImage {
                                     
             RemoteObject listTypeItem = RackViewImage.getInstance().getWebserviceBean().getObject(
                 attributeType, 
-                Long.valueOf(attributeValue), 
+                attributeValue, 
                 RackViewImage.getInstance().getIpAddress(), 
                 RackViewImage.getInstance().getRemoteSession().getSessionId());
             

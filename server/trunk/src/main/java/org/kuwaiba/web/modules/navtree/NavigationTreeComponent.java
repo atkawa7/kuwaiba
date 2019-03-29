@@ -170,7 +170,7 @@ class NavigationTreeComponent extends AbstractTopComponent {
                             }
                         }
                     }, new BasicIconGenerator(wsBean, session), 
-                    new AbstractNode<RemoteObjectLight>(new RemoteObjectLight(Constants.DUMMY_ROOT, -1, "Navigation Root")) {
+                    new AbstractNode<RemoteObjectLight>(new RemoteObjectLight(Constants.DUMMY_ROOT, "-1", "Navigation Root")) {
                         @Override
                         public AbstractAction[] getActions() { return new AbstractAction[0]; }
 

@@ -72,7 +72,7 @@ public class CpwVcMplsSynchronizer {
     /**
      * Device id
      */
-    private final long id;
+    private final String id;
     /**
      * Device Data Source Configuration id
      */
@@ -151,7 +151,7 @@ public class CpwVcMplsSynchronizer {
      * @throws BusinessObjectNotFoundException 
      */
     private void readCurrentStructure(List<BusinessObjectLight> children, int childrenType) 
-            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException
     {
         for (BusinessObjectLight child : children) {
             if (child.getClassName().equals(Constants.CLASS_ELECTRICALPORT) || child.getClassName().equals(Constants.CLASS_SFPPORT) || child.getClassName().contains(Constants.CLASS_OPTICALPORT)) 
@@ -226,7 +226,7 @@ public class CpwVcMplsSynchronizer {
                     HashMap<String, String> attributesToBeSet = new HashMap<>();
                     attributesToBeSet.put(Constants.PROPERTY_NAME, vcID);
                     //First we create the mpls link, the name is the vcId
-                    long newMplsLinkId = bem.createSpecialObject(MPLSLINK, null, -1, attributesToBeSet, -1);
+                    String newMplsLinkId = bem.createSpecialObject(MPLSLINK, null, "-1", attributesToBeSet, -1);
                     BusinessObject newMplsLink = bem.getObject(newMplsLinkId);
                     //then we relate the device with the new mpls link
                     bem.createSpecialRelationship(MPLSLINK, newMplsLinkId, syncSourcePort.getClassName(), syncSourcePort.getId(), RELATIONSHIP_MPLSENDPOINTA, true);
@@ -234,7 +234,7 @@ public class CpwVcMplsSynchronizer {
                     bem.createSpecialRelationship(syncEquipment.getClassName(), syncEquipment.getId(), MPLSLINK, newMplsLinkId, RELATIONSHIP_MPLSLINK, false); 
                     
                     byte[] createMplsView = SyncUtil.createMplsView(//devices
-                            Arrays.asList(syncEquipment, new BusinessObjectLight(className, -1, "- waiting to be synced -")), 
+                            Arrays.asList(syncEquipment, new BusinessObjectLight(className, "-1", "- waiting to be synced -")), 
                             new BusinessObject(MPLSLINK, newMplsLinkId, vcID));
 
                     aem.createGeneralView(MPLSVIEW, vcID, "Synchronized", createMplsView, null);
@@ -264,13 +264,13 @@ public class CpwVcMplsSynchronizer {
                 if (event == XMLStreamConstants.START_ELEMENT){
                     if (reader.getName().equals(qEdge)){
                         //sino lo encontró en ningún lado, se deben desconectar ambos lados, sino no se hace nada.
-                        long currentASideId = Long.valueOf(reader.getAttributeValue(null, "aside"));
-                        long currentBSideId = Long.valueOf(reader.getAttributeValue(null, "bside"));
+                        String currentASideId = reader.getAttributeValue(null, "aside");
+                        String currentBSideId = reader.getAttributeValue(null, "bside");
                         //we check the classname of the link
                         if(!reader.getAttributeValue(null,"class").equals(MPLSLINK))
                             throw new InvalidArgumentException(String.format("The view is corrupted, a %s is being used instead of a MPLSLink", reader.getAttributeValue(null,"class")));
 
-                        BusinessObject mplsLink = bem.getObject(MPLSLINK, Long.valueOf(reader.getAttributeValue(null, "id")));
+                        BusinessObject mplsLink = bem.getObject(MPLSLINK, reader.getAttributeValue(null, "id"));
                          //The MPLS link has no been created an the sides are not connected
                         if (mplsLink == null){
                             //throw new InvalidArgumentException(String.format("The view is corrupted, no MPLSLink is created", reader.getAttributeValue(null,"class")));
@@ -336,41 +336,41 @@ public class CpwVcMplsSynchronizer {
                             currentEndpointB = endpointBRelationship.get(0);
                         //both sides are connected, source port match with sideA and destiny port match with sideB
                         //>> sideA <<-----------MPLSLink-----------(sideB) 
-                        if (currentASideId == id){ 
+                        if (currentASideId.equals(id)){ 
                             //System.out.println("sync ok its updated side A ok");
-                            if(currentBSideId != -1 && currentEndpointB != null && currentEndpointB.getName().equals(syncDestinyPortName)) //also check if the sideB match with the destiny port name
+                            if(currentBSideId != null && !currentBSideId.equals("-1") && currentEndpointB != null && currentEndpointB.getName().equals(syncDestinyPortName)) //also check if the sideB match with the destiny port name
                                 results.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION,  "MPLS Sync", 
                                     String.format("Source %s and destiny %s enpoints match for: %s, no action was taken", syncSourcePort, currentEndpointB, mplsLink)));
                             break;
                         } 
                         //both sides are connected, source port match with sideB and destiny port match with sideA
                         //>> sideB <<-----------MPLSLink-----------(sideA) 
-                        else if (currentBSideId == id){ 
+                        else if (currentBSideId.equals(id)){ 
                             //System.out.println("sync ok its updated side B ok");
-                            if(currentASideId != -1 && currentEndpointA != null && currentEndpointA.getName().equals(syncDestinyPortName)) //also check if the sideA match with the destiny port name
+                            if(!currentASideId.equals("-1") && currentEndpointA != null && currentEndpointA.getName().equals(syncDestinyPortName)) //also check if the sideA match with the destiny port name
                                 results.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION,  "MPLS Sync", 
                                     String.format("Source %s and destiny %s enpoints match for: %s, no action was taken", currentEndpointB, syncSourcePort, mplsLink)));
                             break;
                         }
-                        if(currentBSideId != -1 && currentBSideId == id && currentEndpointB != null && currentEndpointB.getId() != syncSourcePort.getId()){//The link endpoint needs to be release
+                        if(!currentBSideId.equals("-1") && currentBSideId.equals(id) && currentEndpointB != null && !currentEndpointB.getId().equals(syncSourcePort.getId())){//The link endpoint needs to be release
                             bem.releaseSpecialRelationship(mplsLink.getClassName(), mplsLink.getId(), RELATIONSHIP_MPLSENDPOINTB, currentEndpointB.getId());
                             results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  "MPLS Sync updating enpoints of MPLSLink", 
                                     String.format("The endpoint %s was released from %s", currentEndpointB, mplsLink)));
                         }
                         //Only one side has been connected
-                        if (currentBSideId ==  -1 || currentBSideId == id){
+                        if (currentBSideId.equals("-1") || currentBSideId.equals(id)){
                             bem.createSpecialRelationship(MPLSLINK, mplsLink.getId(), syncSourcePort.getClassName(), syncSourcePort.getId(), RELATIONSHIP_MPLSENDPOINTB, true);
                             structure = SyncUtil.updateView(structure, syncCommunicationsEquipment, 2);
                             results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  "MPLS Sync updating enpoints of MPLSLink", 
                                     String.format("An endpoint of the %s, was connected to %s", syncSourcePort, mplsLink)));
                             break;
                         }
-                        if (currentASideId != -1 && currentASideId == id && currentEndpointA != null && currentEndpointA.getId() != syncSourcePort.getId()){//The link endpoint needs to be release
+                        if (currentASideId.equals("-1") && currentASideId.equals(id) && currentEndpointA != null && !currentEndpointA.getId().equals(syncSourcePort.getId())){//The link endpoint needs to be release
                             bem.releaseSpecialRelationship(mplsLink.getClassName(), mplsLink.getId(), RELATIONSHIP_MPLSENDPOINTA, syncSourcePort.getId());
                             results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  "MPLS Sync updating enpoints of MPLSLink", 
                                     String.format("The endpoint %s was released from %s", currentEndpointA, mplsLink)));
                         }
-                        if (currentASideId ==  -1 || currentASideId == id){
+                        if (currentASideId.equals("-1") || currentASideId.equals(id)){
                             bem.createSpecialRelationship(MPLSLINK, mplsLink.getId(), syncSourcePort.getClassName(), syncSourcePort.getId(), RELATIONSHIP_MPLSENDPOINTA, true);
                             structure = SyncUtil.updateView(structure, syncCommunicationsEquipment, 1);
                             results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  "MPLS Sync updating enpoints of MPLSLink", 
@@ -459,12 +459,12 @@ public class CpwVcMplsSynchronizer {
                                     "Reading MPLS view", 
                                     String.format("The view is corrupted, a %s is been used instead of a MPLSLink", reader.getAttributeValue(null, "class"))));
 
-                        return bem.getObject(MPLSLINK, Long.valueOf(reader.getAttributeValue(null, "id")));
+                        return bem.getObject(MPLSLINK, reader.getAttributeValue(null, "id"));
                     }
                 }
             }//end while
             reader.close();
-        } catch (NumberFormatException | XMLStreamException | BusinessObjectNotFoundException ex) {
+        } catch (NumberFormatException | XMLStreamException | BusinessObjectNotFoundException | ApplicationObjectNotFoundException ex) {
             results.add(new SyncResult(dsConfigId, SyncResult.TYPE_WARNING,  "Reading current MPLS views", 
                         String.format("The view %s has no MPLSLink", view.getName())));
         }

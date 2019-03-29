@@ -125,7 +125,7 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                                     sharedInfo.containsKey(sharedId + Constants.Attribute.OBJECT_NAME)) {
                                     
                                     String objClassName = sharedInfo.getProperty(sharedId + Constants.Attribute.CLASS_NAME);
-                                    long objId = Long.valueOf(sharedInfo.getProperty(sharedId + Constants.Attribute.OBJECT_ID));
+                                    String objId = sharedInfo.getProperty(sharedId + Constants.Attribute.OBJECT_ID);
                                     
                                     try {                                    
                                         return wsBean.getObjectLight(objClassName, objId, session.getIpAddress(), session.getSessionId());
@@ -190,10 +190,11 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
             String oldPath = SceneExporter.PATH;
             SceneExporter.PATH = newPath;
             String pathEndToEndView = SceneExporter.getInstance().buildEndToEndView(
+                session.getIpAddress(),
                 session, 
                 wsBean, 
                 parameterValues.get(0), 
-                Long.valueOf(parameterValues.get(1)));
+                parameterValues.get(1));
             SceneExporter.PATH = oldPath;
             try {
                 if (pathEndToEndView != null)
@@ -208,10 +209,10 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
             parameterValues != null &&
             parameterNames.size() == parameterValues.size()) {
             
-            List<Long> linkIds = new ArrayList<>();
+            List<String> linkIds = new ArrayList<>();
             
             for (String parameterValue : parameterValues) {
-                    linkIds.add(Long.valueOf(parameterValue));
+                    linkIds.add(parameterValue);
             }
             try {          
                 return wsBean.getE2EMap(parameterNames, linkIds, true, true, true, 
@@ -255,7 +256,7 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                             sharedInfo.getProperty(sharedId + Constants.Attribute.DATA_TYPE))) {
                                                         
                             String objectName = sharedInfo.getProperty(sharedId + Constants.Attribute.OBJECT_NAME);
-                            long objectId = Long.valueOf(sharedInfo.getProperty(sharedId + Constants.Attribute.OBJECT_ID));
+                            String objectId = sharedInfo.getProperty(sharedId + Constants.Attribute.OBJECT_ID);
                             String className = sharedInfo.getProperty(sharedId + Constants.Attribute.CLASS_NAME);
                             
                             try {

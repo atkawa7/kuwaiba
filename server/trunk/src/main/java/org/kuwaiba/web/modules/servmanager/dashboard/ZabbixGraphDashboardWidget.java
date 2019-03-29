@@ -54,6 +54,7 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
@@ -350,3 +351,4 @@ private void trustEveryone() {
         }
     }
 }
+

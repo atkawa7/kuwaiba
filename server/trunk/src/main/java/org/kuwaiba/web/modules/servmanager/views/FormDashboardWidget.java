@@ -179,7 +179,7 @@ public class FormDashboardWidget extends AbstractDashboardWidget{
                             stmEndPointA = wsBean.getSpecialAttribute(stm.getClassName(), stm.getId(), "sdhTLEndpointA", ipAddress, sessionId).get(0);
                         Component logicalA = createDeviceTable(aSideEquipmentLogical, 
                                 logicalCircuitDetails.getEndpointA(), stmEndPointA);
-                        logicalA.setId(Long.toString(aSideEquipmentLogical.getId()));
+                        logicalA.setId(aSideEquipmentLogical.getId());
                         tempForm.setLogicalPartA(logicalA);                        
                         //This only applies if there is a peering, the peering should always be in side B
                         if(aSideEquipmentLogical.getClassName().toLowerCase().contains("cloud"))
@@ -208,7 +208,7 @@ public class FormDashboardWidget extends AbstractDashboardWidget{
                         
                         Component logicalB = createDeviceTable(bSideEquipmentLogical, 
                                 logicalCircuitDetails.getEndpointB(), stmEndPointB);
-                        logicalB.setId(Long.toString(bSideEquipmentLogical.getId()));
+                        logicalB.setId(bSideEquipmentLogical.getId());
                         tempForm.setLogicalPartB(logicalB);
                         //This only applies if there is a peering, the peering should always be in side B
                         if(aSideEquipmentLogical.getClassName().toLowerCase().contains("cloud"))

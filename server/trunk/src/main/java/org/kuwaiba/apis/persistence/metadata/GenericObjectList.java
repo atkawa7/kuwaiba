@@ -27,7 +27,7 @@ public class GenericObjectList {
     /**
      * Class id the items are instance of
      */
-    private long id;
+    private String id;
     /**
      * Class name the items are instance of
      */
@@ -50,16 +50,16 @@ public class GenericObjectList {
     public GenericObjectList() {
     }
     
-    public GenericObjectList(long id, String name) {
+    public GenericObjectList(String id, String name) {
         this.id = id;
         this.className = name;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
   

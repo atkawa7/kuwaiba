@@ -133,7 +133,7 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
                 xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(nodeWidget.getPreferredLocation().y)));
                 RemoteObjectLight lolNode = (RemoteObjectLight) findObject(nodeWidget);
                 xmlew.add(xmlef.createAttribute(new QName("class"), lolNode.getClassName()));
-                xmlew.add(xmlef.createCharacters(Long.toString(lolNode.getId())));
+                xmlew.add(xmlef.createCharacters(lolNode.getId()));
                 xmlew.add(xmlef.createEndElement(qnameNode, null));
             }
             xmlew.add(xmlef.createEndElement(qnameNodes, null));
@@ -150,11 +150,11 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
                 QName qnameEdge = new QName("edge");
                 xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
                 
-                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(lolEdge.getId())));
+                xmlew.add(xmlef.createAttribute(new QName("id"), lolEdge.getId()));
                 xmlew.add(xmlef.createAttribute(new QName("class"), lolEdge.getClassName()));
                 
-                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(lolEdge).getId())));
-                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(lolEdge).getId())));
+                xmlew.add(xmlef.createAttribute(new QName("aside"), getEdgeSource(lolEdge).getId()));
+                xmlew.add(xmlef.createAttribute(new QName("bside"), getEdgeTarget(lolEdge).getId()));
                 
                 for (Point point : acwEdge.getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint");
@@ -250,7 +250,7 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
 
                         int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
                         int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
-                        long objectId = Long.valueOf(reader.getElementText());
+                        String objectId = reader.getElementText();
 
                         try {
                             RemoteObjectLight rol = webserviceBean.getObjectLight(objectClass, objectId, ipAddress, remoteSession.getSessionId());
@@ -271,10 +271,10 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
 
                     }else {
                         if (reader.getName().equals(qEdge)) {
-                            long objectId = Long.valueOf(reader.getAttributeValue(null, "id")); //NOI18N
+                            String objectId = reader.getAttributeValue(null, "id"); //NOI18N
 
-                            long aSide = Long.valueOf(reader.getAttributeValue(null, "aside")); //NOI18N
-                            long bSide = Long.valueOf(reader.getAttributeValue(null, "bside")); //NOI18N
+                            String aSide = reader.getAttributeValue(null, "aside"); //NOI18N
+                            String bSide = reader.getAttributeValue(null, "bside"); //NOI18N
 
                             String className = reader.getAttributeValue(null,"class"); //NOI18N
                             
@@ -320,7 +320,7 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
                         }
                         // FREE FRAMES
                         else if (reader.getName().equals(qPolygon)) { 
-                                long oid = randomGenerator.nextInt(1000);
+                                String oid = String.valueOf(randomGenerator.nextInt(1000));
                                 RemoteObjectLight rol = new RemoteObjectLight(null, oid, oid + FREE_FRAME + reader.getAttributeValue(null, "title"));
                                 Widget myPolygon = addNode(rol);
                                 Point p = new Point();
@@ -625,11 +625,14 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
                             setEdgeTarget(physicalPath.get(1), physicalVlan);
 
                             if(!logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty()){
-                                if(lastAddedASideEquipmentPhysical != null && endpointVlan.getId() == lastAddedASideEquipmentPhysical.getId())
+                                if(lastAddedASideEquipmentPhysical != null && 
+                                   endpointVlan.getId() != null && lastAddedASideEquipmentPhysical.getId() != null &&
+                                   endpointVlan.getId().equals(lastAddedASideEquipmentPhysical.getId()))
                                     setEdgeSource(physicalPath.get(1), lastAddedASideEquipmentPhysical);
                             }
                             else if(lastAddedASideEquipmentLogical != null){
-                                if(endpointVlan.getId() == lastAddedASideEquipmentLogical.getId()){
+                                if(endpointVlan.getId() != null && lastAddedASideEquipmentLogical.getId() != null && 
+                                   endpointVlan.getId().equals(lastAddedASideEquipmentLogical.getId())){
                                    setEdgeSource(physicalPath.get(1), lastAddedASideEquipmentLogical);
                                 }
                             }
@@ -721,11 +724,15 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
                             setEdgeTarget(physicalPath.get(1), physicalVlan);
 
                             if(logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty()){
-                                if(lastAddedBSideEquipmentPhysical != null && endpointVlan.getId() == lastAddedBSideEquipmentPhysical.getId())
+                                if(lastAddedBSideEquipmentPhysical != null && 
+                                    endpointVlan.getId() != null && lastAddedBSideEquipmentPhysical.getId() != null &&
+                                    endpointVlan.getId().equals(lastAddedBSideEquipmentPhysical.getId()))
                                     setEdgeSource(physicalPath.get(1), lastAddedBSideEquipmentPhysical);
                             }
                             else if(lastAddedASideEquipmentLogical != null){
-                                if(endpointVlan.getId() == lastAddedBSideEquipmentLogical.getId()){
+                                if(lastAddedBSideEquipmentLogical != null &&
+                                   endpointVlan.getId() != null && lastAddedBSideEquipmentLogical.getId() != null && 
+                                   endpointVlan.getId().equals(lastAddedBSideEquipmentLogical.getId())){
                                    setEdgeSource(physicalPath.get(1), lastAddedBSideEquipmentLogical);
                                 }
                             }

@@ -180,7 +180,7 @@ public class ProcessDefinitionLoader {
                                 
                                 int activityDefinitionType = Integer.valueOf(reader.getAttributeValue(null, Attribute.TYPE));
                                 
-                                ActivityDefinition activityDefinition;
+                                ActivityDefinition activityDefinition = null;
                                 
                                 if (activityDefinitionType == ActivityDefinition.TYPE_CONDITIONAL) {
                                     
@@ -517,7 +517,7 @@ public class ProcessDefinitionLoader {
                         }
                     }
                 } else {
-                    //TODO: exception activity does not have an artifact
+                    //TODO: exception activity no has artifact
                 }
                 
                 if (activityactor.containsKey(activityDefinitionId)) {
@@ -527,7 +527,7 @@ public class ProcessDefinitionLoader {
                         activityDefinition.setActor(actors.get(actorId));
                     
                 } else {
-                    //TODO: exception activity does not have an actor
+                    //TODO: exception activity no has actor
                 }
                 
                 if (activityKpis.containsKey(activityDefinitionId)) {
@@ -608,15 +608,21 @@ public class ProcessDefinitionLoader {
     
     public static byte[] getFileAsByteArray(File file) {
         try {
-            byte[] structure;
-            try (Scanner in = new Scanner(file)) {
-                String line = "";
-                while (in.hasNext())
-                    line += in.nextLine();
-                structure = line.getBytes();
-            }
+            Scanner in = new Scanner(file);
+
+            String line = "";
+
+            while (in.hasNext())
+                line += in.nextLine();
+
+            byte [] structure = line.getBytes();
+
+            in.close();
+
             return structure;
+
         } catch (FileNotFoundException ex) {
+
             return null;
         }
     }

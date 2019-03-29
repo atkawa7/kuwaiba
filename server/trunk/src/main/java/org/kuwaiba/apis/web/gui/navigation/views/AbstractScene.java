@@ -64,10 +64,10 @@ public abstract class AbstractScene extends VerticalLayout {
     }
     
     public SrvEdgeWidget findEdgeWidget(long edgeId) {
-        for (RemoteObjectLight anEdge : edges.keySet()) {
-            if (anEdge.getId() == edgeId)
-                return edges.get(anEdge);
-        }
+//////        for (RemoteObjectLight anEdge : edges.keySet()) {
+//////            if (anEdge.getId() == edgeId)
+//////                return edges.get(anEdge);
+//////        }
         
         return null;
     }
@@ -77,10 +77,10 @@ public abstract class AbstractScene extends VerticalLayout {
     }
     
     public SrvNodeWidget findNodeWidget(long nodeId) {
-        for (RemoteObjectLight aNode : nodes.keySet()) {
-            if (aNode.getId() == nodeId)
-                return nodes.get(aNode);
-        }
+//////        for (RemoteObjectLight aNode : nodes.keySet()) {
+//////            if (aNode.getId() == nodeId)
+//////                return nodes.get(aNode);
+//////        }
         return null;
     }
     

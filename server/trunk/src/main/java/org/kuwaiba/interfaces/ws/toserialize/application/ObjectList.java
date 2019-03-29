@@ -44,7 +44,7 @@ public class ObjectList implements Serializable {
     /**
      * Items
      */
-    private HashMap<Long,String> list;
+    private HashMap<String,String> list;
 
     //No-arg constructor required
     public ObjectList() {    }
@@ -53,7 +53,7 @@ public class ObjectList implements Serializable {
         this.className = listType.getClassName();
         this.type = listType.getType();
         this.displayName = listType.getDisplayName();
-        this.list = new HashMap<Long, String>();
+        this.list = new HashMap<>();
         for (org.kuwaiba.apis.persistence.business.BusinessObjectLight item : listType.getList())
             this.list.put(item.getId(), item.getName());
     }
@@ -66,11 +66,11 @@ public class ObjectList implements Serializable {
         this.className = className;
     }
 
-    public HashMap<Long, String> getList() {
+    public HashMap<String, String> getList() {
         return list;
     }
 
-    public void setList(HashMap<Long, String> list) {
+    public void setList(HashMap<String, String> list) {
         this.list = list;
     }
 

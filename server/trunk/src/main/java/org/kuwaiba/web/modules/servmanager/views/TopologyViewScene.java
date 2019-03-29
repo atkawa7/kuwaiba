@@ -114,7 +114,7 @@ public class TopologyViewScene extends AbstractScene {
                 addComponent(new Label(String.format("%s does not have any resources associated to it", service)));
             else {
 
-                Map<Long, RemoteObjectLight> portsInDevice = new HashMap<>();
+                Map<String, RemoteObjectLight> portsInDevice = new HashMap<>();
                 //We will ignore all resources that are not GenericCommunicationsElement
                 for (RemoteObjectLight serviceResource : serviceResources) {
                     if (wsBean.isSubclassOf(serviceResource.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, 

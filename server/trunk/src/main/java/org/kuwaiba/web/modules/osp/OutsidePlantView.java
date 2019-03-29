@@ -173,7 +173,7 @@ public class OutsidePlantView extends AbstractView<RemoteObjectLight> {
 
     @Override
     public byte[] getAsImage() { //Should use Google Maps Static API in the future
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -189,7 +189,8 @@ public class OutsidePlantView extends AbstractView<RemoteObjectLight> {
                     
                     try {
                         mapProperties.put("apiKey", aem.getConfigurationVariableValue("general.maps.apiKey"));
-                    } catch (InventoryException ex) { //If the API key is not defined, null will be provided to the map component. Depending on the map provider, this could mean displaying a map with a lot of water marks
+                    } catch (InventoryException ex) {
+                        mapProperties.put("apiKey", null);
                         Notifications.showWarning("The configuration variable general.maps.apiKey has not been set. The default map will be used");
                     }
 
@@ -257,7 +258,7 @@ public class OutsidePlantView extends AbstractView<RemoteObjectLight> {
                         String objectClass = reader.getAttributeValue(null, "class"); //NOI18N
                         double lon = Double.valueOf(reader.getAttributeValue(null, "lon")); //NOI18N
                         double lat = Double.valueOf(reader.getAttributeValue(null, "lat")); //NOI18N
-                        long objectId = Long.valueOf(reader.getElementText());
+                        String objectId = reader.getElementText();
 
                         try {
                             //We check if the object still exists
@@ -271,10 +272,10 @@ public class OutsidePlantView extends AbstractView<RemoteObjectLight> {
                         }
                     } else {
                         if (reader.getName().equals(qEdge)) {
-                            long objectId = Long.valueOf(reader.getAttributeValue(null, "id")); //NOI18N
-                            long aSideId = Long.valueOf(reader.getAttributeValue(null, "asideid")); //NOI18N
+                            String objectId = reader.getAttributeValue(null, "id"); //NOI18N
+                            String aSideId = reader.getAttributeValue(null, "asideid"); //NOI18N
                             String aSideClass = reader.getAttributeValue(null, "asideclass"); //NOI18N
-                            long bSideId = Long.valueOf(reader.getAttributeValue(null, "bsideid")); //NOI18N
+                            String bSideId = reader.getAttributeValue(null, "bsideid"); //NOI18N
                             String bSideClass = reader.getAttributeValue(null, "bsideclass"); //NOI18N
                             String objectClass = reader.getAttributeValue(null,"class"); //NOI18N
                             try {
