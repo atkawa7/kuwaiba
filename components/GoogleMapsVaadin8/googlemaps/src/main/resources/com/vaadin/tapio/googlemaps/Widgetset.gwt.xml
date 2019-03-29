@@ -4,8 +4,8 @@
 <module>
     <inherits name="com.vaadin.DefaultWidgetSet"/>
     <inherits name='com.google.gwt.maps.Maps'/>
-    <stylesheet src="googlemaps/styles.css"/>
-<!--
+<!--    <stylesheet src="googlemaps/styles.css"/>
+
     <set-property name="compiler.stackMode" value="emulated" />
     <set-configuration-property name="compiler.emulatedStack.recordFileNames"
                                 value="true" />
