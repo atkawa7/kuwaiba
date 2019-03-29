@@ -104,7 +104,7 @@ public class Constants {
     /**
      * To label the inventory objects
      */
-    public static final String LABEL_INVENTORY_OBJECT = "inventory_objects"; //NOI18N
+    public static final String LABEL_INVENTORY_OBJECTS = "inventoryObjects"; //NOI18N
     /**
      * Label used for the metadata classes nodes label
      */
@@ -152,7 +152,7 @@ public class Constants {
     /**
      * Label used for the attributes nodes label
      */
-    public static final String LABEL_ATTRIBUTE = "attribute"; //NOI18N
+    public static final String LABEL_ATTRIBUTES = "attributes"; //NOI18N
     /**
      * label used for root, dummyRoot, groupsRoot, nodes
      */

@@ -242,7 +242,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         this.mem = mem;
         
         userLabel = Label.label(Constants.LABEL_USER);
-        inventoryObjectLabel = Label.label(Constants.LABEL_INVENTORY_OBJECT);
+        inventoryObjectLabel = Label.label(Constants.LABEL_INVENTORY_OBJECTS);
         classLabel = Label.label(Constants.LABEL_CLASS);
         groupLabel = Label.label(Constants.LABEL_GROUP);
         listTypeItemLabel = Label.label(Constants.LABEL_LIST_TYPE_ITEM);
@@ -4543,12 +4543,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public List<ProcessDefinition> getProcessDefinitions() {
-        try {
-            return ProcessCache.getInstance().getProcessDefinitions();
-        } catch (InventoryException ex) {
-            Exceptions.printStackTrace(ex);
-            return null;
-        }
+        return ProcessCache.getInstance().getProcessDefinitions();
     }
     
     @Override
@@ -4564,18 +4559,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 ProcessCache.getInstance().setProcessInstance(processInstance);
                 return ProcessCache.getInstance().getProcessInstance(processInstance.getId());
             } catch (InventoryException ex) {
-                throw new ApplicationObjectNotFoundException(String.format("The Process Instance with id %s could not be found", processInstanceId));
+                throw new ApplicationObjectNotFoundException(String.format("The Process instance with id %s could not be found", processInstanceId));
             }
         }
     }
     
     @Override
-    public void reloadProcessDefinitions() throws InvalidArgumentException {
-        try {
-            ProcessCache.getInstance().reloadProcessDefinitions();
-        } catch (InventoryException ex) {
-            throw new InvalidArgumentException(ex.getMessage());
-        }
+    public void reloadProcessDefinitions() {
+        ProcessCache.getInstance().updateProcessDefinitions();
     }
 
     @Override

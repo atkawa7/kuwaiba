@@ -834,7 +834,7 @@ public class Util {
             if (hasAttribute)
                 continue;
             
-            Label label = Label.label(Constants.LABEL_ATTRIBUTE);
+            Label label = Label.label(Constants.LABEL_ATTRIBUTES);
             Node attrNode = classNode.getGraphDatabase().createNode(label);
             attrNode.setProperty(Constants.PROPERTY_NAME, attributeDefinition.getName()); //This should not be null. That should be checked in the caller
             attrNode.setProperty(Constants.PROPERTY_MANDATORY, attributeDefinition.isMandatory()== null ? false : attributeDefinition.isMandatory());

@@ -79,9 +79,7 @@ public class SimpleMapDashboardWidget extends AbstractDashboardWidget {
 
     @Override
     public void createContent() {
-        
         String apiKey, language;
-        
         try {
             apiKey = (String)wsBean.getConfigurationVariableValue("general.maps.apiKey", Page.getCurrent().getWebBrowser().getAddress(), 
                         ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());

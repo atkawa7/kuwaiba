@@ -18,6 +18,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import javax.xml.namespace.QName;
@@ -58,11 +59,8 @@ public final class ProcessCache {
     private static ProcessCache instance;
         
     private ProcessCache() {
-        try {
-            updateArtifacts();
-        } catch (InventoryException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+        System.out.println(String.format("[KUWAIBA] [%s] Initiating process definitions cache...", Calendar.getInstance().getTime()));
+        updateProcessDefinitions();
     }
         
     public static ProcessCache getInstance() {
@@ -116,18 +114,13 @@ public final class ProcessCache {
         }
     }
     
-    public void reloadProcessDefinitions() throws InventoryException {        
-        updateArtifacts();        
-    }
-    
-    public ProcessCache updateArtifacts() throws InventoryException {     
-        String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath")); //NOI18N
+    public void updateProcessDefinitions() {     
+        String processEnginePath = String.valueOf(PersistenceService.getInstance().
+                getApplicationEntityManager().getConfiguration().get("processEnginePath")); //NOI18N
         File processDefDir = new File(processEnginePath + "/process/definitions"); //NOI18N
-        File [] files = processDefDir.listFiles();
-        if (files != null) {
-            for (int i = 0; i < files.length; i += 1) {
-                File processDefFile = files[i];
-
+        
+        if (processDefDir.exists()) {
+            for (File processDefFile : processDefDir.listFiles()) {
                 if (processDefFile.isFile()) {
                     long processDefId = Long.valueOf(processDefFile.getName().substring(0, 1));
 
@@ -135,11 +128,9 @@ public final class ProcessCache {
                     cacheProcessDefinition(processDef);
                 }
             }
-        }
-        else
-            throw new InventoryException("The process definition directory can not be found") {};
-        
-        return instance;
+        } else
+            System.out.println(String.format("[KUWAIBA] [%s] Process definitions directory (%s) not found", 
+                    Calendar.getInstance().getTime(), processDefDir.getAbsolutePath()));
     }
     
     public ProcessDefinition getProcessDefinition(long processDefId, File processDefFile) {
@@ -539,7 +530,7 @@ public final class ProcessCache {
         throw new InventoryException("Process instance can not be found") {};
     }
     
-    public List<ProcessDefinition> getProcessDefinitions() throws InventoryException {
+    public List<ProcessDefinition> getProcessDefinitions() {
         return processDefinitions;
     }
     

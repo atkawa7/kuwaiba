@@ -1589,12 +1589,11 @@ public interface ApplicationEntityManager {
      * @return a Process Instance for the given id
      * @throws ApplicationObjectNotFoundException If the process instance could not be found
      */
-    public ProcessInstance getProcessInstance(long processInstanceId) throws ApplicationObjectNotFoundException ;
+    public ProcessInstance getProcessInstance(long processInstanceId) throws ApplicationObjectNotFoundException;
     /**
      * Updates the process definitions
-     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException
      */
-    public void reloadProcessDefinitions() throws InvalidArgumentException;
+    public void reloadProcessDefinitions();
     /**
     * Creates an instance of a process, that is, starts one
     * @param processDefinitionId The id of the process to be started
