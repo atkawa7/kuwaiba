@@ -67,7 +67,7 @@ public class FormArtifactRenderer extends ArtifactRenderer {
                 FunctionRunner functionRunner = new FunctionRunner("precondition", null, script, elementScript);
                 functionRunner.setScriptQueryExecutor(scriptQueryExecutorImpl);
                                 
-                Object result = functionRunner.run(Arrays.asList(elementScript));
+                Object result = functionRunner.run(null);
                 
                 if (!Boolean.valueOf(result.toString()))
                     return new Label(result.toString());

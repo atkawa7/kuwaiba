@@ -9141,6 +9141,3 @@ public class KuwaibaService {
                     get("javax.xml.ws.servlet.request")).getRemoteAddr(); //NOI18N
     }// </editor-fold>
 }
-    
-    // <editor-fold defaultstate="collapsed" desc="Commercial modules data methods">
-    // <editor-fold defaultstate="collapsed" desc="Commercial APIs">

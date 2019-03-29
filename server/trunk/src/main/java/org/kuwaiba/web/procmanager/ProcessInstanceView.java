@@ -218,7 +218,7 @@ public class ProcessInstanceView extends DynamicComponent {
                     FunctionRunner functionRunner = new FunctionRunner("postconditions", null, script, elementScript);
                     functionRunner.setScriptQueryExecutor(scriptQueryExecutorImpl);
                     
-                    Object result = functionRunner.run(Arrays.asList(elementScript));
+                    Object result = functionRunner.run(null);
 
                     performOperation = result instanceof Boolean ? (Boolean) result : Boolean.valueOf(result.toString());
                 }

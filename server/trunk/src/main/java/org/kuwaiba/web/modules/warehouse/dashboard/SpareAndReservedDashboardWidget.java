@@ -16,11 +16,16 @@ package org.kuwaiba.web.modules.warehouse.dashboard;
 
 import com.vaadin.data.HasValue;
 import com.vaadin.data.HasValue.ValueChangeListener;
+import com.vaadin.data.provider.DataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
+import com.vaadin.server.SerializablePredicate;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
@@ -33,6 +38,7 @@ import com.vaadin.ui.renderers.ClickableRenderer;
 import com.vaadin.ui.renderers.ClickableRenderer.RendererClickListener;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
@@ -43,6 +49,10 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.procmanager.MiniAppRackView;
+import org.vaadin.teemusa.gridextensions.client.tableselection.TableSelectionState.TableSelectionMode;
+import org.vaadin.teemusa.gridextensions.paging.PagedDataProvider;
+import org.vaadin.teemusa.gridextensions.paging.PagingControls;
+import org.vaadin.teemusa.gridextensions.tableselection.TableSelectionModel;
 
 /**
  * A widget that displays spare and reserved inventory objects and allows see its rack view
@@ -62,7 +72,7 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
         
         setSizeFull();
         setSpacing(false);
-////        setStates();
+        setStates();
         this.createContent();
     }
     
@@ -73,11 +83,11 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
         
         setSizeFull();
         setSpacing(false);
-////        setStates();
+        setStates();
         this.createCover();
     }
     
-////    private void setStates() {
+    private void setStates() {
 ////        try {
 ////            Object configVariableValue = webserviceBean.getConfigurationVariableValue(
 ////                "widget.state.spare",
@@ -107,7 +117,7 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
 ////            stateReserved = "Reserved";
 ////            Notifications.showError(ex.getMessage());
 ////        }        
-////    }
+    }
     
     @Override
     public void createCover() { 
@@ -194,7 +204,7 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
                         
             Grid<ObjectBean> grid = new Grid();
             grid.setWidth(100, Unit.PERCENTAGE);
-            grid.setHeight(720, Unit.PIXELS);            
+            grid.setHeight(600, Unit.PIXELS);            
             grid.setItems(objectBeans);
             grid.addColumn(ObjectBean::getName).setCaption("Name").setId(columnName);
             grid.addColumn(ObjectBean::getVendor).setCaption("Vendor").setId(columnVendor);
@@ -236,7 +246,7 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
             headerRow.getCell(columnBuilding).setComponent(txtBuilding);
             headerRow.getCell(columnCity).setComponent(txtCity);
             headerRow.getCell(columnCountry).setComponent(txtCountry);
-            
+            List<ObjectBean> filteredItems = new LinkedList<>();
             ValueChangeListener<String> valueChangeListener = new ValueChangeListener<String>() {
                 @Override
                 public void valueChange(HasValue.ValueChangeEvent<String> event) {
@@ -254,7 +264,7 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
                             txtCity.getValue(),
                             txtCountry.getValue());
 
-                        grid.setItems(filteredItems);
+                        //grid.setItems(filteredItems);
                     }
                 }
             };
@@ -271,10 +281,52 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
             txtCountry.addValueChangeListener(valueChangeListener);
                         
             verticalLayout.addComponent(grid);
+            
+            final TableSelectionModel<ObjectBean> tableSelect = new TableSelectionModel<>();
+            //grid.setSelectionModel(tableSelect);
+            tableSelect.setMode(TableSelectionMode.SIMPLE);
+            
+            PagedDataProvider<ObjectBean, SerializablePredicate<ObjectBean>> dataProvider = new PagedDataProvider<>(
+                        DataProvider.ofCollection(getSpareBeans(objectBeans.iterator(), 
+                            txtName.getValue(), 
+                            txtVendor.getValue(), 
+                            txtState.getValue(), 
+                            txtPosition.getValue(), 
+                            txtRack.getValue(), 
+                            txtWarehouse.getValue(),
+                            txtRoom.getValue(),
+                            txtBuilding.getValue(), 
+                            txtCity.getValue(),
+                            txtCountry.getValue())));
+        grid.setDataProvider(dataProvider);
+        PagingControls pagingControls = dataProvider.getPagingControls();
+
+        HorizontalLayout pages = new HorizontalLayout();
+        HorizontalLayout tableSelectionControls = new HorizontalLayout();
+
+        /*for (final TableSelectionState.TableSelectionMode t : TableSelectionState.TableSelectionMode.values()) {
+            tableSelectionControls.addComponent(new Button(t.toString(), e -> tableSelect.setMode(t)));
+        }*/
+        pagingControls.setPageLength(15);
+        pages.setCaption("");
+        pages.addComponent(new Button("First", e -> pagingControls.setPageNumber(0)));
+        pages.addComponent(new Button("Previous", e -> pagingControls.previousPage()));
+        pages.addComponent(new Button("Next", e -> pagingControls.nextPage()));
+        pages.addComponent(new Button("Last", e -> pagingControls.setPageNumber(pagingControls.getPageCount() - 1)));
+        VerticalLayout controls = new VerticalLayout();
+        controls.addComponents(tableSelectionControls, pages);
+        //pagingControls.setPageLength(10);
+        controls.setWidth("100%");
+        controls.setHeightUndefined();
+        controls.setComponentAlignment(tableSelectionControls, Alignment.MIDDLE_CENTER);
+        controls.setComponentAlignment(pages, Alignment.BOTTOM_CENTER);
 ////            verticalLayout.setComponentAlignment(grid, Alignment.MIDDLE_CENTER);
 ////            verticalLayout.setExpandRatio(grid, 1f);
-        }
         addComponent(verticalLayout);   
+        addComponent(controls);
+        setComponentAlignment(controls, Alignment.MIDDLE_CENTER);
+        }
+        
         setExpandRatio(verticalLayout, 1f);
         
         this.contentComponent = verticalLayout;
@@ -395,12 +447,19 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
                     List<RemoteObjectLight> result = new ArrayList();
                     
                     for (RemoteObjectLight operationalState : operationalStates) {
-                        List<RemoteObjectLight> objects = webserviceBean.getObjectsWithFilterLight(
-                            "InventoryObject", //NOI18N
+                        RemoteSession remoteSession = ((RemoteSession) UI.getCurrent().getSession().getAttribute("session"));
+                        List<RemoteObjectLight> objects = webserviceBean.getListTypeItemUses(operationalState.getClassName(), operationalState.getId(), -1, remoteSession.getIpAddress(), remoteSession.getSessionId());
+                        /*
+                        List<RemoteObjectLight> objects = webserviceBean.getObjectsWithListTypeFilterLight(
+                            "ConfigurationItem", //NOI18N
                             "state", //NOI18N
-                            String.valueOf(operationalState.getId()), 
+                            //String.valueOf(operationalState.getId()), 
+                            "Spare",
+                            0,
+                            1000,
                             Page.getCurrent().getWebBrowser().getAddress(), 
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
+                        */
                         result.addAll(objects);
                     }
                     return result;
@@ -479,8 +538,7 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
                             break;
                         }
                     }
-                } catch (ServerSideException exception) {
-                    int i = 0;
+                } catch (Exception exception) {
                 }
                 try {
                     warehouseObject = webserviceBean.getWarehouseToObject(
@@ -557,7 +615,7 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
                     
                     return vendor != null ? vendor : "";
                 } catch (ServerSideException ex) {
-                    Notifications.showError(ex.getMessage());
+
                 }
             }
             return "";
@@ -574,7 +632,6 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
                     
                     return state != null ? state : "";
                 } catch (ServerSideException ex) {
-                    Notifications.showError(ex.getMessage());
                 }
             }
             return "";
@@ -592,7 +649,7 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
                     
                     return position != null ? position : "";
                 } catch (ServerSideException ex) {
-                    Notifications.showError(ex.getMessage());
+
                 }
             }
             return "";
@@ -623,11 +680,11 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
         }
         
         public String getRackViewButtonCaption() {
-            return "<span class=\"v-icon\" style=\"font-family: " //NOI18N
-                + VaadinIcons.SERVER.getFontFamily() 
-                + "\">&#x" //NOI18N
-                + Integer.toHexString(VaadinIcons.SERVER.getCodepoint())
-                + ";</span>"; //NOI18N
+        return "<span class=\"v-icon\" style=\"font-family: " //NOI18N
+            + VaadinIcons.SERVER.getFontFamily() 
+            + "\">&#x" //NOI18N
+            + Integer.toHexString(VaadinIcons.SERVER.getCodepoint())
+            + ";</span>"; //NOI18N
         }
     }
     
