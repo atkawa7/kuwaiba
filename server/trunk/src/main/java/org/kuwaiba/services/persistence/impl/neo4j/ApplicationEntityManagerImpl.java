@@ -243,7 +243,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         this.mem = mem;
         
         userLabel = Label.label(Constants.LABEL_USER);
-        inventoryObjectLabel = Label.label(Constants.LABEL_INVENTORY_OBJECT);
+        inventoryObjectLabel = Label.label(Constants.LABEL_INVENTORY_OBJECTS);
         classLabel = Label.label(Constants.LABEL_CLASS);
         groupLabel = Label.label(Constants.LABEL_GROUP);
         listTypeItemLabel = Label.label(Constants.LABEL_LIST_TYPE_ITEM);
@@ -1182,7 +1182,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         throws ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             
-            String cypherQuery = String.format("MATCH (ltItem:%s)<-[:%s]-(ltUser) WHERE ltItem._uuid = %s RETURN ltUser ORDER BY ltUser.name ASC %s", 
+            String cypherQuery = String.format("MATCH (ltItem:%s)<-[:%s]-(ltUser) WHERE ltItem._uuid = '%s' RETURN ltUser ORDER BY ltUser.name ASC %s", 
                     listTypeItemLabel, RelTypes.RELATED_TO, listTypeItemId, limit < 1 ? "" : "LIMIT " + limit);
             
             List<BusinessObjectLight> res = new ArrayList<>();
@@ -1324,8 +1324,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     private void addDeviceModelAsXML(String id, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException, ApplicationObjectNotFoundException, InvalidArgumentException {
         String cypherQuery = String.format(
             "MATCH (objectNode)-[r1:%s]->(modelNode) "
-          + "WHERE objectNode._uuid = \"%s\" "
-          + "AND r1.name=\"model\" "
+          + "WHERE objectNode._uuid = '%s' "
+          + "AND r1.name = 'model' "
           + "RETURN modelNode;",
             RelTypes.RELATED_TO, id);
 
@@ -1999,7 +1999,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             poolNode.setProperty(Constants.PROPERTY_CLASS_NAME, instancesOfClass);
             
-            Node parentNode = Util.findNodeByLabelAndUuid(inventoryObjectLabel, parentId);
+            Node parentNode = graphDb.findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, parentId);
             if (parentNode == null)
                 throw new BusinessObjectNotFoundException(parentClassname, parentId);
             
@@ -2032,7 +2032,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             poolNode.setProperty(Constants.PROPERTY_CLASS_NAME, instancesOfClass);
             
-            Node parentNode = Util.findNodeByLabelAndUuid(poolLabel, parentId);
+            Node parentNode = graphDb.findNode(poolLabel, Constants.PROPERTY_UUID, parentId);
             
             if (parentNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A pool with id %s could not be found", parentId));
@@ -2046,7 +2046,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         
     private void deletePool(String id) throws ApplicationObjectNotFoundException, OperationNotPermittedException {
         try(Transaction tx = graphDb.beginTx()) {
-            Node poolNode = Util.findNodeByLabelAndUuid(poolLabel, id);
+            Node poolNode = graphDb.findNode(poolLabel, Constants.PROPERTY_UUID, id);
             if (poolNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A pool with id %s does not exist", id));
 
@@ -2065,7 +2065,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public ChangeDescriptor setPoolProperties(String poolId, String name, String description) {
         try (Transaction tx = graphDb.beginTx()) {
-            Node poolNode = Util.findNodeByLabelAndUuid(poolLabel, poolId);
+            Node poolNode = graphDb.findNode(poolLabel, Constants.PROPERTY_UUID, poolId);
             String affectedProperties = "", oldValues = "", newValues = "";
             
             if(name != null) {
@@ -2301,8 +2301,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public void createObjectActivityLogEntry(String userName, String className, String oid, int type, 
         String affectedProperties, String oldValues, String newValues, String notes) throws ApplicationObjectNotFoundException, BusinessObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
-        
-            Node objectNode = Util.findNodeByLabelAndUuid(inventoryObjectLabel, oid);
+            Node objectNode = graphDb.findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, oid);
             
             if (objectNode == null)
                 throw new BusinessObjectNotFoundException(className, oid);
@@ -3333,7 +3332,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     
                     if (attributeValues[i] != null && !attributeValues[i].equals("0") ) { //NOI18N 
                         
-                        Node listTypeItemNode = Util.findNodeByLabelAndUuid(listTypeItemLabel, attributeValues[i]);
+                        Node listTypeItemNode = graphDb.findNode(listTypeItemLabel, Constants.PROPERTY_UUID, attributeValues[i]);
 
                         if (listTypeItemNode == null)
                             throw new ApplicationObjectNotFoundException(String.format("A list type %s with id %s could not be found", attributeType, attributeValues[i]));
@@ -4081,11 +4080,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         if (sourceObjectAttributeConstraint.isEmpty() || targetObjectAttributeConstraint.isEmpty()) //This link can be connected to any object
                             return;
                         
-                        Node sourceInstance = Util.findNodeByLabelAndUuid(inventoryObjectLabel, sourceObjectId);
+                        Node sourceInstance = graphDb.findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, sourceObjectId);
                         String sourceInstanceAttributeValue = Util.getAttributeFromNode(sourceInstance, (String)businessRuleNode.getProperty("constraint2"));
                         
                         if (sourceObjectAttributeConstraint.equals(sourceInstanceAttributeValue)) {
-                            Node targetInstance = Util.findNodeByLabelAndUuid(inventoryObjectLabel, targetObjectId);
+                            Node targetInstance = graphDb.findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, targetObjectId);
                             String targetInstanceAttributeValue = Util.getAttributeFromNode(targetInstance, (String)businessRuleNode.getProperty("constraint3"));
                             
                             if (!targetObjectAttributeConstraint.equals(targetInstanceAttributeValue))
@@ -4093,7 +4092,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                                                                         businessRuleNode.getProperty("constraint3"),
                                                                         targetObjectClassName, businessRuleNode.getProperty("constraint2"), sourceObjectClassName));
                             else
-                                return; //After finding the first matching rule, return. This behavora might change in further releases
+                                return; //After finding the first matching rule, return. This behavior might change in further releases
                         }
                     } else 
                         throw new BusinessRuleException(String.format("Objects of class %s can not be connected to objects of class %s", sourceObjectClassName, targetObjectClassName));
@@ -4140,16 +4139,17 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throws InvalidArgumentException, ApplicationObjectNotFoundException, 
             OperationNotPermittedException, MetadataObjectNotFoundException, UnsupportedPropertyException {
         try (Transaction tx = graphDb.beginTx()) {
-            Node inventoryObjectNode = Util.findNodeByLabelAndUuid(inventoryObjectLabel, objectId);
+            Node inventoryObjectNode = graphDb.findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, objectId);
 
             Node syncDatasourceConfiguration = null;
             if(inventoryObjectNode != null){ 
                 if(!inventoryObjectNode.hasRelationship(RelTypes.HAS_CONFIGURATION))
-                   throw new OperationNotPermittedException(String.format("The object id: %s does not have a sync datasource configuration", objectId));
+                   throw new OperationNotPermittedException(String.format("The object %s (%s) does not have a sync datasource configuration", 
+                           inventoryObjectNode.getProperty(Constants.PROPERTY_NAME), objectId));
                 
                 syncDatasourceConfiguration = inventoryObjectNode.getSingleRelationship(RelTypes.HAS_CONFIGURATION, Direction.INCOMING).getStartNode();
             }
-            else{ 
+            else { 
 //                syncDatasourceConfiguration = graphDb.getNodeBy(objectId);
 //                if(!syncDatasourceConfiguration.hasRelationship(RelTypes.HAS_CONFIGURATION))
 //                    throw new OperationNotPermittedException(String.format("The sync data source configuration with id: %s is not related with anything", objectId));
@@ -4246,11 +4246,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             Node syncGroupNode = Util.findNodeByLabelAndId(syncGroupsLabel, syncGroupId);
             if(syncGroupNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("The sync group with id %s could not be find", syncGroupId));
+                throw new ApplicationObjectNotFoundException(String.format("The sync group with id %s could not be found", syncGroupId));
                        
-            Node objectNode = Util.findNodeByLabelAndUuid(inventoryObjectLabel, objectId);
+            Node objectNode = graphDb.findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, objectId);
             if(syncGroupNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("The object with id %s could not be find", objectId));
+                throw new ApplicationObjectNotFoundException(String.format("The object with id %s could not be found", objectId));
             
             if(objectNode.hasRelationship(Direction.OUTGOING, RelTypes.HAS_CONFIGURATION))
                 throw new OperationNotPermittedException(String.format("The object id %s already has a sync datasource configuration", objectId));

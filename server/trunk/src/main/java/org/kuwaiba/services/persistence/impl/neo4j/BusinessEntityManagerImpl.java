@@ -118,7 +118,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     /**
      * Label for reports.
      */
-    private final Label reportsLabel; 
+    private final Label reportsLabel;
+    /**
+     * Label used to tag the nodes that store contact information.
+     */
+    private final Label contactsLabel;
     /**
      * As a temporary workaround, the old hard-coded reports are wrapped instead of being completely migrated to Groovy scripts.
      */
@@ -146,11 +150,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         
         this.configuration = new Properties();
         
-        this.inventoryObjectLabel = Label.label(Constants.LABEL_INVENTORY_OBJECT);
+        this.inventoryObjectLabel = Label.label(Constants.LABEL_INVENTORY_OBJECTS);
         this.classLabel = Label.label(Constants.LABEL_CLASS);
         this.poolLabel = Label.label(Constants.LABEL_POOL);
         this.specialNodeLabel = Label.label(Constants.LABEL_SPECIAL_NODE);
         this.reportsLabel = Label.label(Constants.LABEL_REPORTS);
+        this.contactsLabel = Label.label(Constants.LABEL_CONTACTS);
         this.validatorDefinitionsClassLoader = new GroovyClassLoader();
     }
     
@@ -399,7 +404,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         }
         
         try(Transaction tx =graphDb.beginTx()) {
-            Node pool = Util.findNodeByLabelAndUuid(poolLabel, poolId);
+            Node pool = graphDb.findNode(poolLabel, Constants.PROPERTY_UUID, poolId);
             
             if (pool == null)
                 throw new ApplicationObjectNotFoundException(String.format("Pool with id %s could not be found", poolId));
@@ -593,7 +598,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         String className = null;
         
         try (Transaction tx = graphDb.beginTx()) {
-            Node objectNode = Util.findNodeByLabelAndUuid(inventoryObjectLabel, oid);
+            Node objectNode = graphDb.findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, oid);
             
             if (objectNode == null)
                 throw new InvalidArgumentException(String.format("The object with id %s could not be found", oid));
@@ -852,7 +857,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         List<BusinessObjectLight> parents =  new ArrayList<>();
               
         String cypherQuery = "MATCH (n)-[:" + RelTypes.CHILD_OF + "|" + RelTypes.CHILD_OF_SPECIAL + "*]->(m) " +
-                             "WHERE n._uuid = " + oid + " " +
+                             "WHERE n._uuid = '" + oid + "' " +
                             "RETURN m as parents";
       
         try (Transaction tx = graphDb.beginTx()) {
@@ -883,7 +888,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         List<BusinessObjectLight> parents =  new ArrayList<>();
               
         String cypherQuery = "MATCH (n)-[:" + RelTypes.CHILD_OF + "|" + RelTypes.CHILD_OF_SPECIAL + "*]->(m) " +
-                             "WHERE n._uuid = " + oid + " " +
+                             "WHERE n._uuid = '" + oid + "' " +
                              "RETURN m as parents";
       
         try (Transaction tx = graphDb.beginTx()) {
@@ -1133,12 +1138,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", targetClassName));
         
         try(Transaction tx = graphDb.beginTx()) {
-            Node newParentNode = Util.findNodeByLabelAndUuid(poolLabel, targetOid);
+            Node newParentNode = graphDb.findNode(poolLabel, Constants.PROPERTY_UUID, targetOid);
             
             if(newParentNode == null){
                 isPool = false;
                 
-                newParentNode = Util.findNodeByLabelAndUuid(inventoryObjectLabel, targetOid);
+                newParentNode = graphDb.findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, targetOid);
                 
                 if(newParentNode == null)
                     throw new BusinessObjectNotFoundException(targetClassName, targetOid);
@@ -1250,7 +1255,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         MetadataObjectNotFoundException {
         
         try (Transaction tx = graphDb.beginTx()) {
-            Node poolNode = Util.findNodeByLabelAndUuid(poolLabel, poolId);
+            Node poolNode = graphDb.findNode(poolLabel, Constants.PROPERTY_UUID, poolId);
             
             if (poolNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Pool with id %s could not be found", poolId));
@@ -1357,7 +1362,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         MetadataObjectNotFoundException {
         
         try (Transaction tx = graphDb.beginTx()) {
-            Node poolNode = Util.findNodeByLabelAndUuid(poolLabel, poolId);
+            Node poolNode = graphDb.findNode(poolLabel, Constants.PROPERTY_UUID, poolId);
             
             if (poolNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Pool with id %s could not be found", poolId));
@@ -1501,13 +1506,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             String cypherQuery;
             
             if (isAbstract) 
-                cypherQuery = "match (class:classes)<-[:EXTENDS*]-(subclass:classes)<-[:INSTANCE_OF]-(instance:inventory_objects) "
-                            + "where class.name=\"" + className + "\" "
-                            + "return instance;";                
+                cypherQuery = "MATCH (class:classes)<-[:EXTENDS*]-(subclass:classes)<-[:INSTANCE_OF]-(instance:" + Constants.LABEL_INVENTORY_OBJECTS + ") "
+                            + "WHERE class.name=\"" + className + "\" "
+                            + "RETURN instance;";                
             else 
-                cypherQuery = "match (class:classes)<-[:INSTANCE_OF]-(instance:inventory_objects) "
-                            + "where class.name=\"" + className + "\" "
-                            + "return instance;";
+                cypherQuery = "MATCH (class:classes)<-[:INSTANCE_OF]-(instance:" + Constants.LABEL_INVENTORY_OBJECTS + ") "
+                            + "WHERE class.name=\"" + className + "\" "
+                            + "RETURN instance;";
             
             Result result = graphDb.execute(cypherQuery);
             ResourceIterator<Node> instanceColumn = result.columnAs("instance");
@@ -1546,13 +1551,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             String cypherQuery;
             
             if (isAbstract) {
-                cypherQuery = "MATCH (class:classes)<-[:EXTENDS*]-(subclass:classes)<-[:INSTANCE_OF]-(instance:inventoryObjects) "
-                            + "where class.name=\"" + className + "\" "
-                            + "return instance;";                
+                cypherQuery = "MATCH (class:classes)<-[:EXTENDS*]-(subclass:classes)<-[:INSTANCE_OF]-(instance:" + Constants.LABEL_INVENTORY_OBJECTS + ") "
+                            + "WHERE class.name=\"" + className + "\" "
+                            + "RETURN instance;";                
             } else {
-                cypherQuery = "MATCH (class:classes)<-[:INSTANCE_OF]-(instance:inventoryObjects) "
-                            + "where class.name=\"" + className + "\" "
-                            + "return instance;";
+                cypherQuery = "MATCH (class:classes)<-[:INSTANCE_OF]-(instance:" + Constants.LABEL_INVENTORY_OBJECTS + ") "
+                            + "WHERE class.name=\"" + className + "\" "
+                            + "RETURN instance;";
             }
             Result result = graphDb.execute(cypherQuery);
             ResourceIterator<Node> instanceColumn = result.columnAs("instance");
@@ -1857,7 +1862,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", contactClass));
             
             Node customerNode = getInstanceOfClass(customerClassName, customerId);
-            Node newContactNode = graphDb.createNode(Label.label(Constants.LABEL_CONTACTS), Label.label(Constants.LABEL_INVENTORY_OBJECT));
+            Node newContactNode = graphDb.createNode(contactsLabel, inventoryObjectLabel);
             newContactNode.setProperty(Constants.PROPERTY_UUID, UUID.randomUUID());
             
             boolean hasName = false;
@@ -1879,7 +1884,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             newContactNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
             
             Relationship newContactRelationship = customerNode.createRelationshipTo(newContactNode, RelTypes.RELATED_TO_SPECIAL);
-            newContactRelationship.setProperty("name", "contacts");
+            newContactRelationship.setProperty(Constants.PROPERTY_NAME, "contacts");
             
             newContactNode.createRelationshipTo(contactClassNode, RelTypes.INSTANCE_OF);
                         
@@ -2140,12 +2145,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         //The first part of the query will return many paths, the longest is the one we need. The others are
         //subsets of the longest
         String cypherQuery = "MATCH paths = (o)-[r:" + RelTypes.RELATED_TO_SPECIAL + "*]-(c) "+
-                             "WHERE o._uuid = " + objectId + " AND all(rel in r where rel.name = 'mirror' or rel.name = 'endpointA' or rel.name = 'endpointB') "+
+                             "WHERE o._uuid = '" + objectId + "' AND all(rel in r where rel.name = 'mirror' or rel.name = 'endpointA' or rel.name = 'endpointB') "+
                              "WITH nodes(paths) as path " +
                              "RETURN path ORDER BY length(path) DESC LIMIT 1";
         try (Transaction tx = graphDb.beginTx()){
             if(logicalPortId != null)
-                path.add(createObjectLightFromNode(Util.findNodeByLabelAndUuid(inventoryObjectLabel, logicalPortId)));
+                path.add(createObjectLightFromNode(graphDb.findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, logicalPortId)));
             Result result = graphDb.execute(cypherQuery);
             Iterator<List<Node>> column = result.columnAs("path");
             
@@ -2184,7 +2189,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         List<BusinessObjectLightList> paths = new ArrayList<>();
 
         String cypherQuery = String.format("MATCH path = (a)-[:%s*1..30{name:\"%s\"}]-(b) " +
-                            "WHERE a._uuid = %s AND b._uuid = %s " +
+                            "WHERE a._uuid = '%s' AND b._uuid = '%s' " +
                             "RETURN nodes(path) as path LIMIT %s", RelTypes.RELATED_TO_SPECIAL, relationshipName, objectAId, objectBId, 
                                                                     aem.getConfiguration().get("maxRoutes")); //NOI18N
         try (Transaction tx = graphDb.beginTx()) {
@@ -2233,8 +2238,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             List<BusinessObjectLight> warehouses = new ArrayList();
                                     
             String cypherQuery = ""
-                + "match (warehouse:inventoryObjects)-[:RELATED_TO_SPECIAL{ name: 'warehouseHas' }]-(child:inventoryObjects)-[:CHILD_OF*]->(parent:inventoryObjects)-[:INSTANCE_OF]->(class:classes{name: '" + objectClassName + "'}) "
-                + "where parent._uuid = " + objectId + " return warehouse;";
+                + "MATCH (warehouse:inventoryObjects)-[:RELATED_TO_SPECIAL{ name: 'warehouseHas' }]-(child:inventoryObjects)-[:CHILD_OF*]->(parent:inventoryObjects)-[:INSTANCE_OF]->(class:classes{name: '" + objectClassName + "'}) "
+                + "WHERE parent._uuid = '" + objectId + "' RETURN warehouse;";
             
             Result result = graphDb.execute(cypherQuery);
             ResourceIterator<Node> warehouseColumn = result.columnAs("warehouse");
@@ -2265,7 +2270,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                                                 
             String cypherQuery = ""
                 + "MATCH (class{name:'" + objectClassName + "'})<-[:INSTANCE_OF]-(inventoryObject)-[:CHILD_OF_SPECIAL{name: 'pool'}]->(pool)-[:CHILD_OF_SPECIAL{name: 'pool'}]->(warehouse) "
-                + "WHERE inventoryObject._uuid = " + objectId + " "
+                + "WHERE inventoryObject._uuid = '" + objectId + "' "
                 + "RETURN warehouse;";
             
             Result result = graphDb.execute(cypherQuery);
@@ -2300,7 +2305,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                                     
             String cypherQuery = ""
                 + "MATCH (class{name:'" + objectClassName + "'})<-[:INSTANCE_OF]-(inventoryObject)-[:CHILD_OF_SPECIAL{name: 'pool'}]->(pool)-[:CHILD_OF_SPECIAL{name: 'pool'}]->(warehouse)-[:RELATED_TO_SPECIAL{name: 'warehouseHas'}]->(physicalNode) "
-                + "WHERE inventoryObject._uuid = " + objectId + " "
+                + "WHERE inventoryObject._uuid = '" + objectId + "' "
                 + "RETURN physicalNode;";
             
             Result result = graphDb.execute(cypherQuery);
@@ -2710,8 +2715,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         
         try(Transaction tx = graphDb.beginTx()) {
             List<Pool> pools  = new ArrayList<>();
-            
-            Node objectNode = Util.findNodeByLabelAndUuid(inventoryObjectLabel, objectId);
+            Node objectNode = graphDb.findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, objectId);
             
             if (objectNode == null)
                 throw new BusinessObjectNotFoundException(objectClassName, objectId);
@@ -2738,8 +2742,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         
         try(Transaction tx = graphDb.beginTx()) {
             List<Pool> pools  = new ArrayList<>();
-            
-            Node parentPoolNode = Util.findNodeByLabelAndUuid(poolLabel, parentPoolId);
+            Node parentPoolNode = graphDb.findNode(poolLabel, Constants.PROPERTY_UUID, parentPoolId);
             
             if (parentPoolNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The pool with id %s could not be found", parentPoolId));
@@ -2764,10 +2767,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public Pool getPool(String poolId) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node poolNode = Util.findNodeByLabelAndUuid(poolLabel, poolId);
+            Node poolNode = graphDb.findNode(poolLabel, Constants.PROPERTY_UUID, poolId);
             
             if (poolNode != null) {                
-                
                 String name = poolNode.hasProperty(Constants.PROPERTY_NAME) ? 
                                     (String)poolNode.getProperty(Constants.PROPERTY_NAME) : null;
                 
@@ -2792,7 +2794,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throws ApplicationObjectNotFoundException, InvalidArgumentException {
         try(Transaction tx = graphDb.beginTx()) {
             
-            Node poolNode = Util.findNodeByLabelAndUuid(poolLabel, poolId);
+            Node poolNode = graphDb.findNode(poolLabel, Constants.PROPERTY_UUID, poolId);
 
             if (poolNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The pool with id %s could not be found", poolId));
@@ -2814,7 +2816,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         if (itemUuid == null)
                             throw new InvalidArgumentException(String.format("The pool/object with id %s does not have uuid", item.getId()));
                         
-                        Node temp = Util.findNodeByLabelAndUuid(poolLabel, itemUuid);
+                        Node temp = graphDb.findNode(poolLabel, Constants.PROPERTY_UUID, itemUuid);
                         if(temp == null)  //If it's not a pool, but a normal business object
                             poolItems.add(createObjectLightFromNode(item));
                     }

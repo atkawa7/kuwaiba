@@ -1143,25 +1143,4 @@ public class Util {
             return node.hasNext() ? node.next() : null;
         }
     }
-    
-    public static Node findNodeByLabelAndUuid(Label label, String uuid) {
-        if (label == null || uuid == null)
-            return null;
-        
-        GraphDatabaseService graphDb = (GraphDatabaseService) PersistenceService.getInstance().getConnectionManager().getConnectionHandler();
-        
-        try (Transaction tx = graphDb.beginTx()) {
-            
-            String cypherQuery = "MATCH (node:" + label.name() + ") " +
-                                 "WHERE node." + Constants.PROPERTY_UUID + " = " + uuid + " " +
-                                 "RETURN node";
-            
-            Result result = graphDb.execute(cypherQuery);
-            ResourceIterator<Node> node = result.columnAs("node");
-            
-            tx.success();
-            return node.hasNext() ? node.next() : null;
-        }
-    }
-    
 }

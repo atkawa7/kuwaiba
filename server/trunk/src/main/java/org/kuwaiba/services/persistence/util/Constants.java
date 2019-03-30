@@ -104,7 +104,7 @@ public class Constants {
     /**
      * To label the inventory objects
      */
-    public static final String LABEL_INVENTORY_OBJECT = "inventoryObjects"; //NOI18N
+    public static final String LABEL_INVENTORY_OBJECTS = "inventoryObjects"; //NOI18N
     /**
      * Label used for the metadata classes nodes label
      */
@@ -129,6 +129,10 @@ public class Constants {
      * Name of the label for reports
      */
     public static final String LABEL_REPORTS = "reports"; //NOI18N
+    /**
+     * Name of the label for reports
+     */
+    public static final String LABEL_CONTACTS = "contacts"; //NOI18N
     /**
      * Name of the label for queries
      */
@@ -189,10 +193,6 @@ public class Constants {
      * The validator definitions
      */
     public static final String LABEL_VALIDATOR_DEFINITIONS = "validatorDefinitions";
-    /**
-     * Label used for contacts
-     */
-    public static final String LABEL_CONTACTS = "contacts";
     /**
      * Label used for file attachments
      */
