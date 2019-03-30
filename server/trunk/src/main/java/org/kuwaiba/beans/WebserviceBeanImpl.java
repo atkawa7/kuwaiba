@@ -1904,42 +1904,12 @@ public class WebserviceBeanImpl implements WebserviceBean {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
-            aem.validateWebServiceCall("getPhysicalConnectionEndpoints", ipAddress, sessionId); 
-            return getConnectionEndpoints(connectionClass, connectionId, sessionId);
-        } catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    @Override
-    public RemoteObjectLight[] getLogicalConnectionEndpoints(String connectionClass, String connectionId, String ipAddress, String sessionId) throws ServerSideException {
-        if (bem == null || aem == null)
-            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-        try {
-            aem.validateWebServiceCall("getLogicalConnectionEndpoints", ipAddress, sessionId);
-            return getConnectionEndpoints(connectionClass, connectionId, sessionId);
-        } catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    
-    private RemoteObjectLight[] getConnectionEndpoints(String connectionClass, String connectionId, String sessionId) throws ServerSideException {
-        if (bem == null || aem == null)
-            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-        try {
             String endpointAName = null, endpointBName = null;
-            if (!mem.isSubclassOf(Constants.CLASS_GENERICLOGICALCONNECTION, connectionClass)) //NOI18N
+            if (!mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONNECTION, connectionClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not a physical or logical connection", connectionClass));
-
-            else if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONNECTION, connectionClass)){
+            else{
                 endpointAName = "endpointA";
                 endpointBName = "endpointB";
-            }else if(mem.isSubclassOf(Constants.CLASS_GENERICLOGICALCONNECTION, connectionClass)){         
-                if(connectionClass.equals("MPLSLink")){
-                    endpointAName = "mplsEndpointA";
-                    endpointBName = "mplsEndpointB";
-                }
             }
             List<BusinessObjectLight> endpointA = bem.getSpecialAttribute(connectionClass, connectionId, endpointAName); //NOI18N
             List<BusinessObjectLight> endpointB = bem.getSpecialAttribute(connectionClass, connectionId, endpointBName); //NOI18N
@@ -1960,33 +1930,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("connectPhysicalLinks", ipAddress, sessionId);
-            connectLinks(sideAClassNames, sideAIds, linksClassNames, linksIds, sideBClassNames, sideBIds, sessionId);
-        } catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    @Override
-    public void connectLogicalLinks(String[] sideAClassNames, String[] sideAIds, 
-                String[] linksClassNames, String[] linksIds, String[] sideBClassNames, 
-                String[] sideBIds, String ipAddress, String sessionId) throws ServerSideException{
-
-        if (bem == null || aem == null)
-            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-        try {
-            aem.validateWebServiceCall("connectLogicalLinks", ipAddress, sessionId);
-            connectLinks(sideAClassNames, sideAIds, linksClassNames, linksIds, sideBClassNames, sideBIds, sessionId);
-        }catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    private void connectLinks(String[] sideAClassNames, String[] sideAIds, 
-                String[] linksClassNames, String[] linksIds, String[] sideBClassNames, 
-                String[] sideBIds, String sessionId) throws ServerSideException{
-        try {
             for (int i = 0; i < sideAClassNames.length; i++){
-                if (linksClassNames[i] != null && !mem.isSubclassOf(Constants.CLASS_GENERICCONNECTION, linksClassNames[i])) //NOI18N
+                if (linksClassNames[i] != null && !mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONNECTION, linksClassNames[i])) //NOI18N
                     throw new ServerSideException(String.format("Class %s is not a physical link", linksClassNames[i]));
                 if (sideAClassNames[i] != null && !mem.isSubclassOf("GenericPort", sideAClassNames[i])) //NOI18N
                     throw new ServerSideException(String.format("Class %s is not a port", sideAClassNames[i]));
@@ -1996,17 +1941,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 if (Objects.equals(sideAIds[i], sideBIds[i]))
                     throw new ServerSideException("Can not connect a port to itself");
                 
-                String endpointAName = null, endpointBName = null;
-                if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONNECTION, linksClassNames[i])){
-                    endpointAName = "endpointA";
-                    endpointBName = "endpointB";
-                }else if(mem.isSubclassOf(Constants.CLASS_GENERICLOGICALCONNECTION, linksClassNames[i])){         
-                    if(linksClassNames[i].equals(Constants.CLASS_MPLSLINK)){
-                        endpointAName = "mplsEndpointA";
-                        endpointBName = "mplsEndpointB";
-                    }
-                }
-                
+                String endpointAName = "endpointA", endpointBName = "endpointB";
+ 
                 List<BusinessObjectLight> aEndpointList = bem.getSpecialAttribute(linksClassNames[i], linksIds[i], endpointAName); //NOI18N
                 List<BusinessObjectLight> bEndpointList = bem.getSpecialAttribute(linksClassNames[i], linksIds[i], endpointBName); //NOI18N
                 
@@ -2150,69 +2086,34 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("disconnectPhysicalConnection", ipAddress, sessionId);
-            if (!mem.isSubclassOf(Constants.CLASS_GENERICCONNECTION, connectionClass)) //NOI18N
+            if (!mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONNECTION, connectionClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not a physical connection", connectionClass));
-            
-            disconnectConnection(connectionClass, connectionId, sideToDisconnect, sessionId);
-        }catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    @Override
-    public void disconnectLogicalConnection(String connectionClass, String connectionId, 
-            int sideToDisconnect, String ipAddress, String sessionId) throws ServerSideException{
-        if (bem == null || aem == null)
-            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-        try {
-            aem.validateWebServiceCall("disconnectLogicalConnection", ipAddress, sessionId);
-            if (!mem.isSubclassOf(Constants.CLASS_GENERICCONNECTION, connectionClass)) //NOI18N
-                throw new ServerSideException(String.format("Class %s is not a physical connection", connectionClass));
-            
-            disconnectConnection(connectionClass, connectionId, sideToDisconnect, sessionId);
-        } catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    private void disconnectConnection(String connectionClass, String connectionId, int sideToDisconnect,  String sessionId) throws ServerSideException{
-        try {
-            String endpointAName = null, endpointBName = null;
-            if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONNECTION, connectionClass)){
-                endpointAName = "endpointA";
-                endpointBName = "endpointB";
-            }else if(mem.isSubclassOf(Constants.CLASS_GENERICLOGICALCONNECTION, connectionClass)){         
-                if(connectionClass.equals(Constants.CLASS_MPLSLINK)){
-                    endpointAName = "mplsEndpointA";
-                    endpointBName = "mplsEndpointB";
-                }
-            }
             
             String  affectedProperties = "", oldValues = "";
             switch (sideToDisconnect) {
                 case 1: //A side
-                    BusinessObjectLight endpointA = bem.getSpecialAttribute(connectionClass, connectionId, endpointAName).get(0); //NOI18N                    
-                    bem.releaseRelationships(connectionClass, connectionId, Arrays.asList(endpointAName)); //NOI18N
+                    BusinessObjectLight endpointA = bem.getSpecialAttribute(connectionClass, connectionId, "endpointA").get(0); //NOI18N                    
+                    bem.releaseRelationships(connectionClass, connectionId, Arrays.asList("endpointA")); //NOI18N
                     
-                    affectedProperties += endpointAName + " "; //NOI18N
+                    affectedProperties += "endpointA" + " "; //NOI18N
                     oldValues += endpointA.getId() + " ";
                     break;
                 case 2: //B side
-                    BusinessObjectLight endpointB = bem.getSpecialAttribute(connectionClass, connectionId, endpointBName).get(0); //NOI18N                    
-                    bem.releaseRelationships(connectionClass, connectionId, Arrays.asList(endpointBName)); //NOI18N
+                    BusinessObjectLight endpointB = bem.getSpecialAttribute(connectionClass, connectionId, "endpointB").get(0); //NOI18N                    
+                    bem.releaseRelationships(connectionClass, connectionId, Arrays.asList("endpointB")); //NOI18N
                     
-                    affectedProperties += endpointBName + " "; //NOI18N
+                    affectedProperties += "endpointB" + " "; //NOI18N
                     oldValues += endpointB.getId() + " ";
                     break;
                 case 3: //Both sides
-                    endpointA = bem.getSpecialAttribute(connectionClass, connectionId, endpointAName).get(0); //NOI18N
-                    endpointB = bem.getSpecialAttribute(connectionClass, connectionId, endpointBName).get(0); //NOI18N
-                    bem.releaseRelationships(connectionClass, connectionId, Arrays.asList(endpointAName, endpointBName)); //NOI18N
+                    endpointA = bem.getSpecialAttribute(connectionClass, connectionId, "endpointA").get(0); //NOI18N
+                    endpointB = bem.getSpecialAttribute(connectionClass, connectionId, "endpointB").get(0); //NOI18N
+                    bem.releaseRelationships(connectionClass, connectionId, Arrays.asList("endpointA", "endpointB")); //NOI18N
                     
-                    affectedProperties += endpointAName + " "; //NOI18N
+                    affectedProperties += "endpointA" + " "; //NOI18N
                     oldValues += endpointA.getId() + " ";
                     
-                    affectedProperties += endpointBName + " "; //NOI18N
+                    affectedProperties += "endpointB" + " "; //NOI18N
                     oldValues += endpointB.getId() + " ";
                     break;
                 default:
@@ -2221,8 +2122,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), connectionClass, connectionId, 
                 ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
                 affectedProperties, oldValues, "", ""); //NOI18N
-            
-        } catch (InventoryException ex) {
+        }catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -2243,10 +2143,10 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(ex.getMessage());
         }
     }
-
+    
     @Override
     public RemoteLogicalConnectionDetails getLogicalLinkDetails(String linkClass, 
-        String linkId, String ipAddress, String sessionId) throws ServerSideException {
+            String linkId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -2328,7 +2228,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend")); //NOI18N
         try {
-            aem.validateWebServiceCall("getPhysicalLinkDetails", ipAddress, sessionId); //NOI18N
+             aem.validateWebServiceCall("getPhysicalLinkDetails", ipAddress, sessionId); //NOI18N
             
             BusinessObject linkObject = bem.getObject(linkId);
             
