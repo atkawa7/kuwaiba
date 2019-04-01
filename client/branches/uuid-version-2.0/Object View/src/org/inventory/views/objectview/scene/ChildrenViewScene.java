@@ -333,8 +333,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                                 LocalObjectLight endpointB = null;
                                 
                                 LocalObjectLight parent = com.getParent(className, objectId);
-                                if (parent != null && object.getId() == parent.getId()) {
-                                    
+                                if (parent != null && object.getId().equals(parent.getId())) {
                                     if (container != null) { // if the connection exist
                                         HashMap<String, LocalObjectLight[]> specialAttributes = com.getSpecialAttributes(className, objectId);
 

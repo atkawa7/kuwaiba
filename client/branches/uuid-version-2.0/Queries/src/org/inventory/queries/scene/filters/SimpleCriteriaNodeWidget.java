@@ -27,7 +27,7 @@ import org.inventory.queries.scene.QueryEditorScene;
  * Subclasses should provide proper filters depending on the data type (numeric, dates, booleans, etc)
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public abstract class SimpleCriteriaNodeWidget extends QueryEditorNodeWidget{
+public abstract class SimpleCriteriaNodeWidget extends QueryEditorNodeWidget {
 
     protected JComboBox condition;
 
