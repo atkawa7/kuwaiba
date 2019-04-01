@@ -112,7 +112,7 @@ public class CypherQueryBuilder {
             _return = _return.concat(", ").concat(LISTTYPE).concat(listTypeName);
 
             if(query.getAttributeNames() != null){
-                for(int i=0; i<query.getAttributeNames().size(); i++){
+                for(int i = 0; i<query.getAttributeNames().size(); i++){
                         if(query.getAttributeValues().get(i) != null){
                             where = where.concat(cp.createJoinWhere(query.getConditions().get(i), listTypeName,
                                                                 query.getAttributeNames().get(i),
@@ -188,7 +188,7 @@ public class CypherQueryBuilder {
         if(query.getVisibleAttributeNames() != null)
              visibleAttributes.put(INSTANCE, query.getVisibleAttributeNames());
         else
-            visibleAttributes.put(INSTANCE, new ArrayList<String>());
+            visibleAttributes.put(INSTANCE, new ArrayList<>());
         if(query.getAttributeNames() != null)
         {
             for(int i=0; i<query.getAttributeNames().size(); i++){
@@ -266,7 +266,7 @@ public class CypherQueryBuilder {
             if(query.getPage() > 0){
                 int min = ((query.getPage() - 1) * query.getLimit()) + (query.getPage() - 1);
                 int max = min + (query.getLimit());
-                cypherQuery = cypherQuery.concat(" skip " + min + " limit " + max);//NOI18N
+                cypherQuery = cypherQuery.concat(" SKIP " + min + " LIMIT " + max);//NOI18N
             }
 
             readVissibleAttributes(query);
@@ -281,7 +281,7 @@ public class CypherQueryBuilder {
      * @throws InvalidArgumentException If any object does not have uuid
      */
     public void executeQuery(Node classNode, String cypherQuery) throws InvalidArgumentException {
-        Result result = classNode.getGraphDatabase().execute(cypherQuery, new HashMap<String, Object>());
+        Result result = classNode.getGraphDatabase().execute(cypherQuery, new HashMap<>());
         readResult(result);
     }
 
@@ -301,7 +301,7 @@ public class CypherQueryBuilder {
                 vissibleAttibutesTitles.add(va);
         }
 
-        while(queryResult.hasNext()){//interates by row
+        while(queryResult.hasNext()){ // Iterates by row
             Map<String, Object> column = queryResult.next();
             List<String> extraColumns = new ArrayList<>();
             //create the class
@@ -312,15 +312,13 @@ public class CypherQueryBuilder {
             
             rr = new ResultRecord(Util.getClassName(instanceNode), instanceNodeUuid, Util.getAttributeFromNode(instanceNode, Constants.PROPERTY_NAME));
             //iterates by column
-            for(int lu=  0; lu <split.length; lu++){
-                for(String va: (List<String>)visibleAttributes.get(split[lu])){
+            for(int lu =  0; lu < split.length; lu++){
+                for(String va: visibleAttributes.get(split[lu])){
                     Node node = (Node)column.get(split[lu]);
-                    if(va.equals(Constants.PROPERTY_ID)){
+                    if(va.equals(Constants.PROPERTY_ID))
                         extraColumns.add(Long.toString(node.getId()));
-                    }
-                    else{
+                    else
                         extraColumns.add(Util.getAttributeFromNode(node, va));
-                    }
                 }
             }
             rr.setExtraColumns(extraColumns);
@@ -330,10 +328,9 @@ public class CypherQueryBuilder {
         resltRcrdHeader.setExtraColumns(vissibleAttibutesTitles);
         resultList.add(resltRcrdHeader);
 
-        if(onlyResults.size() > 0){
-            for(ResultRecord orr: onlyResults){
+        if(onlyResults.size() > 0) {
+            for(ResultRecord orr: onlyResults)
                 resultList.add(orr);
-            }
         }
     }
 

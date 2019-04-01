@@ -2388,7 +2388,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     @Override
     public ChangeDescriptor deleteReport(long reportId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
-            
             Node reportNode = Util.findNodeByLabelAndId(reportsLabel, reportId);
             
             if (reportNode == null)

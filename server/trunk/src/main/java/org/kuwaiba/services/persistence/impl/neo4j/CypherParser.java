@@ -101,7 +101,7 @@ public class CypherParser {
         String operator = getOperator(condition);
 
         if(attributeName.equals("id"))
-            return "ID (instance)".concat("=").concat(attributeValue);
+            return "instance._uuid = '"+ attributeValue +"'";
         else{
             if (!attibuteType.equals("String") && condition == ExtendedQuery.EQUAL)
                 operator = operator.substring(0, operator.length() - 1);
@@ -110,7 +110,7 @@ public class CypherParser {
                 try {
                     attributeValue = Long.toString(dateFormat.parse(attributeValue).getTime());
                 } catch (ParseException ex) {
-                    System.out.println("wrong date format should be " + Constants.DATE_FORMAT);//NOI18N
+                    System.out.println("Wrong date format. It is expected " + Constants.DATE_FORMAT);//NOI18N
                 }
             }
             if(attibuteType.equals("String")){
@@ -180,7 +180,7 @@ public class CypherParser {
      * @return 
      */
     public String createParentRelation(String joinName){
-        return "parentclassmetadata.name=\""+joinName+"\" AND ";
+        return "parentclassmetadata.name=\"" + joinName + "\" AND ";
     }
 
     /**
@@ -196,17 +196,17 @@ public class CypherParser {
         String operator = getOperator(condition);
 
         if (attributeName.equals("id")) {//is small view
-            return "ID (".concat(joinName.concat(")=")).concat(attributeValue);
+            return joinName + "._uuid = '" + attributeValue + "'"; //NOI18N
         }
         else{
             if (!attibuteType.equals("String") && condition == ExtendedQuery.EQUAL)
                 operator = operator.substring(0, operator.length() - 1);
             if (attibuteType.equals("Date")){
-                SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT);//NOI18N
+                SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT); //NOI18N
                 try {
                     attributeValue = Long.toString(dateFormat.parse(attributeValue).getTime());
                 } catch (ParseException ex) {
-                    System.out.println("wrong date format should be " + Constants.DATE_FORMAT);//NOI18N
+                    System.out.println("Wrong date format. It is expected " + Constants.DATE_FORMAT); //NOI18N
                 }
             }
             if(attibuteType.equals("String")){
@@ -216,7 +216,7 @@ public class CypherParser {
                     attributeValue = "\"(?i)".concat(attributeValue).concat("\"");
             }
         }
-        return joinName+"."+attributeName+operator+attributeValue;
+        return joinName + "." + attributeName + operator + attributeValue;
     }
 
     /**

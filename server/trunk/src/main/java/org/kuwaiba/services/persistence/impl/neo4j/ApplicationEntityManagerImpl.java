@@ -4217,20 +4217,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public void deleteSynchronizationGroup(long syncGroupId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
-            
             Node syncGroupNode = Util.findNodeByLabelAndId(syncGroupsLabel, syncGroupId);
             
             if (syncGroupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Can not find the Synchronization group with id %s",syncGroupId));
             
-            List<Relationship> relationshipsToDelete = new ArrayList();
-            List<Node> nodesToDelete = new ArrayList();
-           
-            for (Relationship relationship : syncGroupNode.getRelationships()) {
-                relationshipsToDelete.add(relationship);
-            }
-            while (!relationshipsToDelete.isEmpty())
-                relationshipsToDelete.remove(0).delete();
+            for (Relationship relationship : syncGroupNode.getRelationships())
+                relationship.delete();
      
             syncGroupNode.delete();
             tx.success();
@@ -4243,7 +4236,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new InvalidArgumentException("The sync configuration name can not be empty");
         
         try (Transaction tx = graphDb.beginTx()) {
-            
             Node syncGroupNode = Util.findNodeByLabelAndId(syncGroupsLabel, syncGroupId);
             if(syncGroupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The sync group with id %s could not be found", syncGroupId));
