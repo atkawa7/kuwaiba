@@ -3,6 +3,6 @@ Wiki-Format: zim 0.4
 Creation-Date: 2019-02-13T23:22:38-05:00
 
 ====== Validators ======
-Created Wednesday 13 February 2019
+^{Created Wednesday 13 February 2019 @author }
 
 //Tools → Configuration → Validators//
