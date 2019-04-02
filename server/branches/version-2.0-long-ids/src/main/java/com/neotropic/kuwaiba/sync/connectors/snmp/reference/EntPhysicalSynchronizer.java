@@ -1542,8 +1542,8 @@ public class EntPhysicalSynchronizer {
                             BusinessObjectLight currrentvirtualInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), ifName, 2);
                             if(currrentvirtualInterface == null) //the virtual port is already created, but the name has not been standardiced
                                currrentvirtualInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), ifName, 2);
-                            if(currrentvirtualInterface == null && ifName.split("\\.").length == 3 && ifName.toLowerCase().contains(".si")) //the virtual port is al ready created with onli the literal.
-                                currentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName.split("\\.")[2]), ifName, 1);
+                            if(currrentvirtualInterface == null && ifName.split("\\.").length == 3 && ifName.toLowerCase().contains(".si")) //the virtual port is al ready created with only the literal.
+                                currentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName.split("\\.")[0]), ifName, 1);
                             if(currrentvirtualInterface == null){
                                 createdId = bem.createObject(createdClassName, currentInterface.getClassName(), currentInterface.getId(), attributes, -1);
                                 results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  
@@ -1623,7 +1623,7 @@ public class EntPhysicalSynchronizer {
                                         "Name updated"));
                         }
                         //a service instance
-                        else if(ifName.contains(".") &&  ifName.contains(".si") && ifName.split("\\.").length == 3 && currentAttributes.get(Constants.PROPERTY_NAME).contains(".")
+                        else if(ifName.contains(".") &&  ifName.toLowerCase().contains(".si") && ifName.split("\\.").length == 3 && currentAttributes.get(Constants.PROPERTY_NAME).contains(".")
                                 && !currentAttributes.get(Constants.PROPERTY_NAME).equals(SyncUtil.wrapPortName(ifName.split("\\.")[2]))){
                             
                             createdClassName = "ServiceInstance";
