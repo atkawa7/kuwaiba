@@ -138,7 +138,9 @@ public class SyncUtil {
     public static String normalizePortName(String interfaceName){
         interfaceName = interfaceName.toLowerCase();
         interfaceName = interfaceName.replace("_", "/"); //could happend in some mibs
-        
+        //Pseudowires
+        if(interfaceName.contains("pw"))
+            return interfaceName.replace("\\s", "");
         //mpls tunnel
         if(interfaceName.contains("tunnel-te"))
             return interfaceName.replace("tunnel-te", "tu");
