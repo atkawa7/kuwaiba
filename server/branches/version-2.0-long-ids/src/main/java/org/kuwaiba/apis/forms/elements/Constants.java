@@ -89,6 +89,7 @@ public class Constants {
         public static final String PATH = "path"; //NOI18N       
         public static final String SELECTION_MODE = "selectionMode"; //NOI18N
         public static final String USE_PAGINATION = "usePagination"; //NOI18N
+        public static final String SORT = "sort"; //NOI18N
                 
         public class DataType {
             public static final String REMOTE_OBJECT = "RemoteObject"; //NOI18N

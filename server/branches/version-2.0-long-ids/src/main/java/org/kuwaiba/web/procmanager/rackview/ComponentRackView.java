@@ -379,6 +379,7 @@ public class ComponentRackView extends VerticalLayout {
             for (RemoteObjectLight rackDeviceLight : rackDevicesLight) {
                 RemoteObject rackDevice = webserviceBean.getObject(
                     rackDeviceLight.getClassName(), rackDeviceLight.getId(), remoteSession.getIpAddress(), remoteSession.getSessionId());
+                
                 int rackDeviceRackUnits = rackDevice.getAttribute("rackUnits") != null ? Integer.valueOf(rackDevice.getAttribute("rackUnits")) : -1; //NOI18N
                 int rackDevicePosition = rackDevice.getAttribute("position") != null ? Integer.valueOf(rackDevice.getAttribute("position")) : -1; //NOI18N
                 
@@ -387,12 +388,19 @@ public class ComponentRackView extends VerticalLayout {
                         rackMap.put(rackDevicePosition, rackDevice);                        
                 }
             }
+            int rackUnits = rack.getAttribute("rackUnits") != null ? Integer.valueOf(rack.getAttribute("rackUnits")) : -1; //NOI18N
             
             for (int i = devicePosition; i <= devicePosition + (deviceRackUnits - 1); i++) {
                 if (rackMap.containsKey(i)) {
                     RemoteObject rackDevice = rackMap.get(i);
-                    if (rackDevice.getId() != device.getId())
+                    if (rackDevice.getId() != device.getId()) {
+                        Notifications.showWarning("The device cannot be located in the selected position");
                         return false;
+                    }
+                }
+                if (i > rackUnits) {
+                    Notifications.showWarning("The device cannot be located in the selected position");
+                    return false;
                 }
             }
             return true;
@@ -407,10 +415,8 @@ public class ComponentRackView extends VerticalLayout {
         
         if (!move(rackObject, object, 
             rackUnits != null ? Integer.valueOf(rackUnits) : objectRackUnits, 
-            position != null ? Integer.valueOf(position) : objectPosition)) {
-            Notifications.showWarning("The selected position is busy");
+            position != null ? Integer.valueOf(position) : objectPosition))
             return;
-        }
         
         if (object == null)
             return;

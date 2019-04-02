@@ -36,9 +36,9 @@ import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.renderers.ClickableRenderer;
 import com.vaadin.ui.renderers.ClickableRenderer.RendererClickListener;
+import com.vaadin.ui.themes.ValoTheme;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
@@ -49,10 +49,8 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.procmanager.MiniAppRackView;
-import org.vaadin.teemusa.gridextensions.client.tableselection.TableSelectionState.TableSelectionMode;
 import org.vaadin.teemusa.gridextensions.paging.PagedDataProvider;
 import org.vaadin.teemusa.gridextensions.paging.PagingControls;
-import org.vaadin.teemusa.gridextensions.tableselection.TableSelectionModel;
 
 /**
  * A widget that displays spare and reserved inventory objects and allows see its rack view
@@ -62,9 +60,7 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
     private final WebserviceBean webserviceBean;
     
     private final RemoteObjectLight selectedObject;
-////    private String stateSpare;
-////    private String stateReserved;
-    
+        
     public SpareAndReservedDashboardWidget(WebserviceBean webserviceBean) {
         super("Spare and Reserved");
         this.webserviceBean = webserviceBean;        
@@ -72,7 +68,6 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
         
         setSizeFull();
         setSpacing(false);
-        setStates();
         this.createContent();
     }
     
@@ -83,40 +78,7 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
         
         setSizeFull();
         setSpacing(false);
-        setStates();
         this.createCover();
-    }
-    
-    private void setStates() {
-////        try {
-////            Object configVariableValue = webserviceBean.getConfigurationVariableValue(
-////                "widget.state.spare",
-////                Page.getCurrent().getWebBrowser().getAddress(),
-////                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-////            
-////            if (configVariableValue != null) {
-////                stateSpare = configVariableValue.toString();
-////            }
-////            if (stateSpare == null) {
-////                Notifications.showWarning("Configuration Variable widget.state.spare Not Set");
-////                stateSpare = "Spare";
-////            }
-////            configVariableValue = webserviceBean.getConfigurationVariableValue(
-////                "widget.state.reserved",
-////                Page.getCurrent().getWebBrowser().getAddress(),
-////                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-////            if (configVariableValue != null) {
-////                stateReserved = configVariableValue.toString();
-////            }
-////            if (stateReserved == null) {
-////                Notifications.showWarning("Configuration Variable widget.state.reserved Not Set");
-////                stateReserved = "Reserved";
-////            }
-////        } catch (ServerSideException ex) {
-////            stateSpare = "Spare";
-////            stateReserved = "Reserved";
-////            Notifications.showError(ex.getMessage());
-////        }        
     }
     
     @Override
@@ -149,8 +111,8 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
             "text-decoration:underline;" + //NOI18N
             "cursor:pointer;" + //NOI18N
             "}");
-        
         VerticalLayout verticalLayout = new VerticalLayout();
+        verticalLayout.setMargin(true);
         verticalLayout.setSpacing(false);
         verticalLayout.setSizeFull();
         
@@ -160,9 +122,9 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
             
             List<ObjectBean> objectBeans = new ArrayList();
             
-            for (RemoteObjectLight spareAndReservedObject : spareAndReservedObjects)
+            for (RemoteObjectLight spareAndReservedObject : spareAndReservedObjects) {
                 objectBeans.add(new ObjectBean(spareAndReservedObject, webserviceBean));
-            
+            }
             final String columnName = "name"; //NOI18N
             final String columnVendor = "vendor"; //NOI18N
             final String columnState = "state"; //NOI18N
@@ -203,9 +165,9 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
             buttonRenderer.setHtmlContentAllowed(true);
                         
             Grid<ObjectBean> grid = new Grid();
-            grid.setWidth(100, Unit.PERCENTAGE);
+            grid.setWidth(95, Unit.PERCENTAGE);
             grid.setHeight(600, Unit.PIXELS);            
-            grid.setItems(objectBeans);
+            
             grid.addColumn(ObjectBean::getName).setCaption("Name").setId(columnName);
             grid.addColumn(ObjectBean::getVendor).setCaption("Vendor").setId(columnVendor);
             grid.addColumn(ObjectBean::getState).setWidth(80).setCaption("State").setId(columnState);
@@ -246,45 +208,8 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
             headerRow.getCell(columnBuilding).setComponent(txtBuilding);
             headerRow.getCell(columnCity).setComponent(txtCity);
             headerRow.getCell(columnCountry).setComponent(txtCountry);
-            List<ObjectBean> filteredItems = new LinkedList<>();
-            ValueChangeListener<String> valueChangeListener = new ValueChangeListener<String>() {
-                @Override
-                public void valueChange(HasValue.ValueChangeEvent<String> event) {
-
-                    if (objectBeans != null) {
-                        List<ObjectBean> filteredItems = getSpareBeans(objectBeans.iterator(), 
-                            txtName.getValue(), 
-                            txtVendor.getValue(), 
-                            txtState.getValue(), 
-                            txtPosition.getValue(), 
-                            txtRack.getValue(), 
-                            txtWarehouse.getValue(),
-                            txtRoom.getValue(),
-                            txtBuilding.getValue(), 
-                            txtCity.getValue(),
-                            txtCountry.getValue());
-
-                        //grid.setItems(filteredItems);
-                    }
-                }
-            };
             
-            txtName.addValueChangeListener(valueChangeListener);
-            txtVendor.addValueChangeListener(valueChangeListener);
-            txtState.addValueChangeListener(valueChangeListener);
-            txtPosition.addValueChangeListener(valueChangeListener);
-            txtRack.addValueChangeListener(valueChangeListener);
-            txtWarehouse.addValueChangeListener(valueChangeListener);
-            txtRoom.addValueChangeListener(valueChangeListener);
-            txtBuilding.addValueChangeListener(valueChangeListener);
-            txtCity.addValueChangeListener(valueChangeListener);
-            txtCountry.addValueChangeListener(valueChangeListener);
-                        
-            verticalLayout.addComponent(grid);
-            
-            final TableSelectionModel<ObjectBean> tableSelect = new TableSelectionModel<>();
-            //grid.setSelectionModel(tableSelect);
-            tableSelect.setMode(TableSelectionMode.SIMPLE);
+            final VerticalLayout controls = new VerticalLayout();
             
             PagedDataProvider<ObjectBean, SerializablePredicate<ObjectBean>> dataProvider = new PagedDataProvider<>(
                         DataProvider.ofCollection(getSpareBeans(objectBeans.iterator(), 
@@ -298,37 +223,97 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
                             txtBuilding.getValue(), 
                             txtCity.getValue(),
                             txtCountry.getValue())));
-        grid.setDataProvider(dataProvider);
-        PagingControls pagingControls = dataProvider.getPagingControls();
+            grid.setDataProvider(dataProvider);
+            PagingControls pagingControls = dataProvider.getPagingControls();
+            pagingControls.setPageLength(15);
+            
+            final Button btnFirst = new Button();
+            btnFirst.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+            btnFirst.setDescription("First");
+            btnFirst.setIcon(VaadinIcons.ANGLE_DOUBLE_LEFT, "First");
+            btnFirst.addClickListener(e -> pagingControls.setPageNumber(0));
+            
+            final Button btnPrevious = new Button();
+            btnPrevious.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+            btnPrevious.setDescription("Previous");
+            btnPrevious.setIcon(VaadinIcons.ANGLE_LEFT, "Previous");
+            btnPrevious.addClickListener(e -> pagingControls.previousPage());
+            
+            final Button btnNext = new Button();
+            btnNext.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+            btnNext.setDescription("Next");
+            btnNext.setIcon(VaadinIcons.ANGLE_RIGHT, "Next");
+            btnNext.addClickListener(e -> pagingControls.nextPage());
+            
+            final Button btnLast = new Button();
+            btnLast.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+            btnLast.setDescription("Last");
+            btnLast.setIcon(VaadinIcons.ANGLE_DOUBLE_RIGHT, "Last");
+            btnLast.addClickListener(e -> pagingControls.setPageNumber(pagingControls.getPageCount() - 1));
+            
+            ValueChangeListener<String> valueChangeListener = new ValueChangeListener<String>() {
+                @Override
+                public void valueChange(HasValue.ValueChangeEvent<String> event) {
 
-        HorizontalLayout pages = new HorizontalLayout();
-        HorizontalLayout tableSelectionControls = new HorizontalLayout();
-
-        /*for (final TableSelectionState.TableSelectionMode t : TableSelectionState.TableSelectionMode.values()) {
-            tableSelectionControls.addComponent(new Button(t.toString(), e -> tableSelect.setMode(t)));
-        }*/
-        pagingControls.setPageLength(15);
-        pages.setCaption("");
-        pages.addComponent(new Button("First", e -> pagingControls.setPageNumber(0)));
-        pages.addComponent(new Button("Previous", e -> pagingControls.previousPage()));
-        pages.addComponent(new Button("Next", e -> pagingControls.nextPage()));
-        pages.addComponent(new Button("Last", e -> pagingControls.setPageNumber(pagingControls.getPageCount() - 1)));
-        VerticalLayout controls = new VerticalLayout();
-        controls.addComponents(tableSelectionControls, pages);
-        //pagingControls.setPageLength(10);
-        controls.setWidth("100%");
-        controls.setHeightUndefined();
-        controls.setComponentAlignment(tableSelectionControls, Alignment.MIDDLE_CENTER);
-        controls.setComponentAlignment(pages, Alignment.BOTTOM_CENTER);
-////            verticalLayout.setComponentAlignment(grid, Alignment.MIDDLE_CENTER);
-////            verticalLayout.setExpandRatio(grid, 1f);
-        addComponent(verticalLayout);   
-        addComponent(controls);
-        setComponentAlignment(controls, Alignment.MIDDLE_CENTER);
+                    if (objectBeans != null) {                        
+                        PagedDataProvider<ObjectBean, SerializablePredicate<ObjectBean>> dataProvider = new PagedDataProvider<>(
+                                    DataProvider.ofCollection(getSpareBeans(objectBeans.iterator(), 
+                                        txtName.getValue(), 
+                                        txtVendor.getValue(), 
+                                        txtState.getValue(), 
+                                        txtPosition.getValue(), 
+                                        txtRack.getValue(), 
+                                        txtWarehouse.getValue(),
+                                        txtRoom.getValue(),
+                                        txtBuilding.getValue(), 
+                                        txtCity.getValue(),
+                                        txtCountry.getValue())));
+                        grid.setDataProvider(dataProvider);
+                        PagingControls pagingControls = dataProvider.getPagingControls();
+                        pagingControls.setPageLength(15);
+                        
+                        btnFirst.addClickListener(e -> pagingControls.setPageNumber(0));
+                        btnPrevious.addClickListener(e -> pagingControls.previousPage());
+                        btnNext.addClickListener(e -> pagingControls.nextPage());
+                        btnLast.addClickListener(e -> pagingControls.setPageNumber(pagingControls.getPageCount() - 1));
+                    }
+                }
+            };
+            txtName.addValueChangeListener(valueChangeListener);
+            txtVendor.addValueChangeListener(valueChangeListener);
+            txtState.addValueChangeListener(valueChangeListener);
+            txtPosition.addValueChangeListener(valueChangeListener);
+            txtRack.addValueChangeListener(valueChangeListener);
+            txtWarehouse.addValueChangeListener(valueChangeListener);
+            txtRoom.addValueChangeListener(valueChangeListener);
+            txtBuilding.addValueChangeListener(valueChangeListener);
+            txtCity.addValueChangeListener(valueChangeListener);
+            txtCountry.addValueChangeListener(valueChangeListener);
+            
+            HorizontalLayout pages = new HorizontalLayout();
+            pages.addComponent(btnFirst);
+            pages.addComponent(btnPrevious);
+            pages.addComponent(btnNext);
+            pages.addComponent(btnLast);
+            
+            controls.addComponents(pages);
+            controls.setComponentAlignment(pages, Alignment.MIDDLE_CENTER);
+            controls.setSizeFull();
+            
+            VerticalLayout vly = new VerticalLayout();
+            vly.setSizeFull();
+            
+            verticalLayout.addComponent(vly);
+            verticalLayout.addComponent(grid);
+            verticalLayout.addComponent(controls);
+            verticalLayout.setComponentAlignment(grid, Alignment.MIDDLE_CENTER);
+            verticalLayout.setComponentAlignment(controls, Alignment.MIDDLE_CENTER);
+            verticalLayout.setExpandRatio(vly, 0.2f);
+            verticalLayout.setExpandRatio(grid, 0.7f);
+            verticalLayout.setExpandRatio(controls, 0.1f);
         }
-        
-        setExpandRatio(verticalLayout, 1f);
-        
+        addComponent(verticalLayout);
+                        
         this.contentComponent = verticalLayout;
     }
     
@@ -367,107 +352,54 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
     }
         
     private List<RemoteObjectLight> getSpareAndReservedObjects() {
-////        RemoteObjectLight rolStateSpare = null;
-////        RemoteObjectLight rolStateReserved = null;
-////        try {
-////            List<RemoteObjectLight> operationalStates = webserviceBean.getListTypeItems(
-////                    "OperationalState", //NOI18N
-////                    Page.getCurrent().getWebBrowser().getAddress(),
-////                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-////            
-////            for (RemoteObjectLight operationalState : operationalStates) {
-////                
-////                if (stateSpare.equals(operationalState.getName())) { //NOI18N
-////                    rolStateSpare = operationalState;                                                                               
-////                }
-////                if (stateReserved.equals(operationalState.getName())) { //NOI18N
-////                    rolStateReserved = operationalState;                                                                               
-////                }
-////            }
-////        } catch (ServerSideException ex) {
-////            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-////        }        
-////        if (rolStateSpare != null && rolStateReserved != null) {
-            if (selectedObject != null) {
-                List<RemoteObjectLight> result = new ArrayList();
+        RemoteSession remoteSession = ((RemoteSession) UI.getCurrent().getSession().getAttribute("session"));
+        List<RemoteObjectLight> result = new ArrayList();
                 
-                List<RemoteObjectLight> children = getObjectChildrenRecursive(selectedObject);
-                
-                for (RemoteObjectLight child : children) {
-                    try {
-                        String attributeValue = webserviceBean.getAttributeValueAsString(
-                            child.getClassName(),
-                            child.getId(), "state", //NOI18N
-                            Page.getCurrent().getWebBrowser().getAddress(),
-                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-                        
-                        if (attributeValue != null) {
-                            
-////                            if (attributeValue.equals(rolStateSpare.getName()) || 
-////                                attributeValue.equals(rolStateReserved.getName())) {
+        if (selectedObject != null) {
+            List<RemoteObjectLight> children = getObjectChildrenRecursive(selectedObject);
+
+            for (RemoteObjectLight child : children) {
+                try {
+                    String attributeValue = webserviceBean.getAttributeValueAsString(
+                        child.getClassName(),
+                        child.getId(), "state", //NOI18N
+                        remoteSession.getIpAddress(),
+                        remoteSession.getSessionId()); //NOI18N
+
+                    if (attributeValue != null) {
+                        if (webserviceBean.isSubclassOf(child.getClassName(), "ConfigurationItem", remoteSession.getIpAddress(), remoteSession.getSessionId()) || 
+                            webserviceBean.isSubclassOf(child.getClassName(), "GenericPhysicalLink", remoteSession.getIpAddress(), remoteSession.getSessionId()))
                             result.add(child);
-////                            }
-                        }
-                    } catch (ServerSideException ex) {
-                        Notifications.showError(ex.getMessage());
                     }
+                } catch (ServerSideException ex) {
+                    Notifications.showError(ex.getMessage());
+                }
+            }
+            return result;
+        }
+        else {
+            try {
+                List<RemoteObjectLight> operationalStates = webserviceBean.getListTypeItems(
+                    "OperationalState", //NOI18N
+                    Page.getCurrent().getWebBrowser().getAddress(), 
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
+                
+                for (RemoteObjectLight operationalState : operationalStates) {
+                    
+                    List<RemoteObjectLight> objects = webserviceBean.getListTypeItemUses(
+                        operationalState.getClassName(), operationalState.getId(), -1, remoteSession.getIpAddress(), remoteSession.getSessionId());
+                    for (RemoteObjectLight object : objects) {
+                        if (webserviceBean.isSubclassOf(object.getClassName(), "ConfigurationItem", remoteSession.getIpAddress(), remoteSession.getSessionId()) || 
+                            webserviceBean.isSubclassOf(object.getClassName(), "GenericPhysicalLink", remoteSession.getIpAddress(), remoteSession.getSessionId()))
+                            result.add(object);
+                    }
+                    
                 }
                 return result;
+            } catch (ServerSideException ex) {
+                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
             }
-            else {
-                try {
-////                    List<RemoteObjectLight> spareObjects = webserviceBean.getObjectsWithFilterLight("InventoryObject", //NOI18N
-////                            "state", //NOI18N
-////                            String.valueOf(rolStateSpare.getId()),
-////                            Page.getCurrent().getWebBrowser().getAddress(),
-////                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-////
-////                    List<RemoteObjectLight> reservedObjects = webserviceBean.getObjectsWithFilterLight("InventoryObject", //NOI18N
-////                            "state", //NOI18N
-////                            String.valueOf(rolStateReserved.getId()),
-////                            Page.getCurrent().getWebBrowser().getAddress(),
-////                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-////
-////                    spareObjects.addAll(reservedObjects);
-////
-////                    return spareObjects;OperationalState
-                /*
-////            List<RemoteObjectLight> operationalStates = webserviceBean.getListTypeItems(
-////                    "OperationalState", //NOI18N
-////                    Page.getCurrent().getWebBrowser().getAddress(),
-////                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-////            
-////            for (RemoteObjectLight operationalState : operationalStates) {
-                */
-                    List<RemoteObjectLight> operationalStates = webserviceBean.getListTypeItems(
-                        "OperationalState", //NOI18N
-                        Page.getCurrent().getWebBrowser().getAddress(), 
-                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-                    
-                    List<RemoteObjectLight> result = new ArrayList();
-                    
-                    for (RemoteObjectLight operationalState : operationalStates) {
-                        RemoteSession remoteSession = ((RemoteSession) UI.getCurrent().getSession().getAttribute("session"));
-                        List<RemoteObjectLight> objects = webserviceBean.getListTypeItemUses(operationalState.getClassName(), operationalState.getId(), -1, remoteSession.getIpAddress(), remoteSession.getSessionId());
-                        /*
-                        List<RemoteObjectLight> objects = webserviceBean.getObjectsWithListTypeFilterLight(
-                            "ConfigurationItem", //NOI18N
-                            "state", //NOI18N
-                            //String.valueOf(operationalState.getId()), 
-                            "Spare",
-                            0,
-                            1000,
-                            Page.getCurrent().getWebBrowser().getAddress(), 
-                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-                        */
-                        result.addAll(objects);
-                    }
-                    return result;
-                } catch (ServerSideException ex) {
-                    Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-                }
-            }
-////        }
+        }
         return null;
     }
     

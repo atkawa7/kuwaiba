@@ -14,13 +14,21 @@
  */
 package org.kuwaiba.apis.forms.elements;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 /**
  *
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ElementComboBox extends AbstractElementSelector {
+    private boolean sort = true;
     
     public ElementComboBox() {
+    }
+    
+    public boolean getSort() {
+        return sort;
     }
     
     @Override
@@ -28,4 +36,13 @@ public class ElementComboBox extends AbstractElementSelector {
         return Constants.Tag.COMBO_BOX;
     }
     
+    @Override
+    public void initFromXML(XMLStreamReader reader) throws XMLStreamException {
+        super.initFromXML(reader);
+        setCaption(reader);
+    }
+    
+    private void setCaption(XMLStreamReader reader) {
+        sort = Boolean.valueOf(reader.getAttributeValue(null, Constants.Attribute.SORT));
+    }
 }
