@@ -93,7 +93,7 @@ public class MplsSyncDefaultParser {
                     //example line: Local interface: pwxxx xxx.xxx.xxx.xx [vcid] up
                     System.out.println(">>> in parser 2.1");
                     state = ParsingState.READING_LOCAL_INTERFACE_VCID_DETAIL;
-                    entry.setLocalInterfaceDetail(SyncUtil.normalizePortName(lineTokens[2]));
+                    System.out.println(line);
                     Matcher mtch = ptn.matcher( lineTokens[3].split("\\s")[0]);
                     String localIp = null;
                     if(mtch.find())
@@ -129,6 +129,25 @@ public class MplsSyncDefaultParser {
         return entry;
     }
     
+    /**
+     * Parses the raw input of pseudowires related
+     * @param mplsLinks The raw input that corresponds to the output of the command
+     * @return The list of bridge domains in the given router (and inside, the related interfaces -VFI, service instances and BDI-)
+     */
+    public List<AbstractDataEntity> findRelatedPseudowires(List<AbstractDataEntity> mplsLinks){
+        for (AbstractDataEntity pw : mplsLinks) {
+            if(((MPLSLink)pw).getLocalInterface().toLowerCase().contains("pw")){
+                String pwNumericPart = ((MPLSLink)pw).getLocalInterface().replace("pw", "").replace("\\s", "");
+                for (AbstractDataEntity vc : mplsLinks) {
+                    if(((MPLSLink)vc).getVcId().equals(pwNumericPart)){
+                        ((MPLSLink)pw).setLocalInterfaceDetail(((MPLSLink)vc).getLocalInterface());
+                        break;
+                    }
+                }
+            }
+        }//end for
+        return mplsLinks;
+    }
     /**
      * The possible states of the parsing process
      */
