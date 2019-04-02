@@ -42,7 +42,6 @@ public class MPLSModule implements GenericCommercialModule {
      * The BusinessEntityManager instance
      */
     private BusinessEntityManager bem;
-    
     //Constants
     /**
      * A side in a tributary link
@@ -53,12 +52,20 @@ public class MPLSModule implements GenericCommercialModule {
      */
     public static String RELATIONSHIP_MPLSENDPOINTB = "mplsEndpointB";
     /**
-     * The relationship used to connect two GenericCommunicationsEquipment to 
-     * represent that ports within the equipment are connected with MPLS Links. 
-     * This is used to ease the way to find routes between elements
+     * Relates a pseudowire and its output interface, the output interface is the endpoint of a mpls link if is a port
+     */
+    public static String RELATIONSHIP_MPLSPSEUDOWIREHASOUTPUTINTERFACE = "mplsHasOutputInterface";
+    /**
+     * Relates two pseudowires that are logical linked inside a MPLS device
+     */
+    public static String RELATIONSHIP_MPLSPSEUDOWIRE = "mplsRelatedPseudowire";
+    /**
+     * Relates the mpls link directly with the GenericNetworkElements parents of 
+     * the end points of the mpls link, it is used to explore the mpls links in a 
+     * MPLS device or the routing between devices
      */
     public static String RELATIONSHIP_MPLSLINK = "mplsLink";
-        
+    
     @Override
     public String getName() {
         return "MPLS Networks Module"; //NOI18N
@@ -98,6 +105,12 @@ public class MPLSModule implements GenericCommercialModule {
     public void configureModule(ApplicationEntityManager aem, MetadataEntityManager mem, BusinessEntityManager bem) {
         this.mem = mem;
         this.bem = bem;
+        
+        //Registers the display names       
+        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_MPLSENDPOINTA, "MPLS link A side");
+        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_MPLSENDPOINTB, "MPLS link B side");
+        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_MPLSPSEUDOWIREHASOUTPUTINTERFACE, "Pseudowire has output interface");
+        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_MPLSPSEUDOWIRE, "Pseudowire relate Pseudowire");
     }
     
     /**
@@ -187,19 +200,5 @@ public class MPLSModule implements GenericCommercialModule {
         
         bem.deleteObject(linkClass, linkId, forceDelete);
     }
-    
-    /**
-     * Deletes a bridge domain interface. This method assumes that the class that represents a 
-     * @param bridgeDomainClass
-     * @param bridgeDomainInterfaceId 
-     */
-    public void deleteBridgeDomainInterface(String bridgeDomainClass, long bridgeDomainInterfaceId) {
-//        if (bem == null || mem == null)
-//            throw new ServerSideException("Can't reach the backend. Contact your administrator");
-//        
-//        if (!bridgeDomainInterfaceId.equals("MPLSLink")) //NOI18N
-//                throw new ServerSideException(String.format("Class %s is not an MPLSLink", linkClass));
-//        
-//        bem.deleteObject("Bridge", linkId, forceDelete);
-    }
+
 }
