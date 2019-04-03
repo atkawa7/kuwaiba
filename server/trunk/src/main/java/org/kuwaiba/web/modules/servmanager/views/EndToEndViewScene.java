@@ -60,7 +60,7 @@ import org.openide.util.Exceptions;
  */
 public class EndToEndViewScene extends AbstractScene {
     
-    public final static String VIEW_CLASS = "ServiceSimpleView"; 
+    public final static String VIEW_CLASS = "EndToEndView"; 
     /**
      * The service this view is associated to
      */

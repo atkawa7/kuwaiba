@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamConstants;
-
 import java.util.Random;
 import javax.imageio.ImageIO;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
@@ -69,7 +68,7 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
     /**
      * Version for the XML document to save views (see http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_Save_Object_Views for details)
      */
-    public static final String VIEW_FORMAT_VERSION = "1.1";
+    public static final String VIEW_FORMAT_VERSION = "1.2";
     public static final String FREE_FRAME = "freeFrame";
     public static final String CLASS_GENERICLOGICALPORT = "GenericLogicalPort";
     public static final String CLASS_GENERICPORT = "GenericPort";
@@ -79,7 +78,7 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
     private final RemoteSession remoteSession;    
     private final String ipAddress;
     
-    public final static String VIEW_CLASS = "ServiceSimpleView"; 
+    public final static String VIEW_CLASS = "EndToEndView"; 
         
     private final LayerWidget imagesLayer;
     private final LayerWidget framesLayer;
