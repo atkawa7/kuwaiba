@@ -59,6 +59,16 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
     
     @Override
     public Object execute(String scriptQueryName, List<String> parameterNames, List<String> parameterValues) {
+        if ("activityConditionalValue".equals(scriptQueryName) && parameterValues != null && parameterValues.size() == 1) {
+            String paramValue0 = parameterValues.get(0);
+            try {
+                RemoteArtifact remoteArtifact = wsBean.getArtifactForActivity(processInstance.getId(), Long.valueOf(paramValue0), session.getIpAddress(), session.getSessionId());
+                String content = new String(remoteArtifact.getContent());
+                return content.contains("true");
+            } catch (ServerSideException | NumberFormatException ex) {
+                return false;
+            }
+        }
         // The Keyword "shared" is used as Function Name to get to the execution 
         // of a Script Query the Artifacts shared values
         if ("shared".equals(scriptQueryName) && parameterValues != null && parameterValues.size() >= 1) { //NOI18N
@@ -220,7 +230,8 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
             } catch (Exception ex) {
                 Exceptions.printStackTrace(ex);
             }
-        } else {
+        }
+        else {
             Notifications.showError(scriptQueryName + " does not exist");            
         }
         return null;

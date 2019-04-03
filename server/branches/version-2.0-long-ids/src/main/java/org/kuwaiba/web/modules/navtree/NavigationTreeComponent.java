@@ -55,7 +55,7 @@ import org.kuwaiba.web.modules.navtree.dashboard.NavigationTreeDashboard;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @CDIView("navtree")
-class NavigationTreeComponent extends AbstractTopComponent {
+public class NavigationTreeComponent extends AbstractTopComponent {
     /**
      * View identifier
      */
