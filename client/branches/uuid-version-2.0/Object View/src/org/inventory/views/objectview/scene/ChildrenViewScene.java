@@ -195,7 +195,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
             
             QName qnameClass = new QName("class"); //NOI18N
             xmlew.add(xmlef.createStartElement(qnameClass, null, null));
-            xmlew.add(xmlef.createCharacters("DefaultView")); //NOI18N
+            xmlew.add(xmlef.createCharacters("ObjectView")); //NOI18N
             xmlew.add(xmlef.createEndElement(qnameClass, null));
             
             QName qnameNodes = new QName("nodes"); //NOI18N

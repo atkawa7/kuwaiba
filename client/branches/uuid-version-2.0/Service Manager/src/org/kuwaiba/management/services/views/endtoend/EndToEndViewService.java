@@ -63,10 +63,10 @@ public class EndToEndViewService {
         if (currentService != null) {
             byte[] viewStructure = scene.getAsXML();
             if (currentView == null) {
-                long viewId = CommunicationsStub.getInstance().createObjectRelatedView(currentService.getId(), currentService.getClassName(), null, null, "PlainChildrenView", viewStructure, scene.getBackgroundImage()); //NOI18N
+                long viewId = CommunicationsStub.getInstance().createObjectRelatedView(currentService.getId(), currentService.getClassName(), null, null, "EndToEndView", viewStructure, scene.getBackgroundImage()); //NOI18N
 
                 if (viewId != -1) { //Success
-                    currentView = new LocalObjectView(viewId, "ServiceSimpleView", null, null, viewStructure, scene.getBackgroundImage());
+                    currentView = new LocalObjectView(viewId, "EndToEndView", null, null, viewStructure, scene.getBackgroundImage());
                     NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "The view was saved successfully");
                     configObject.setProperty("saved", true);
                 } else {

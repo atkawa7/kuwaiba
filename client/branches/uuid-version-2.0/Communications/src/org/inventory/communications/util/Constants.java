@@ -486,7 +486,7 @@ public class Constants {
     /**
      * Version for the XML document to save views (see http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_Save_Object_Views for details)
      */
-     public static final String VIEW_FORMAT_VERSION = "1.1";
+     public static final String VIEW_FORMAT_VERSION = "1.2";
      /**
       * Version of the current Topology View XML document
       */

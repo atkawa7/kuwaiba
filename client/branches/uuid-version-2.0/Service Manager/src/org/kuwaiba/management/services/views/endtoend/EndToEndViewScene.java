@@ -74,7 +74,7 @@ import org.openide.util.ImageUtilities;
  */
 public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
     
-    public final static String VIEW_CLASS = "ServiceSimpleView"; 
+    public final static String VIEW_CLASS = "EndToEndView"; 
     
     private CommunicationsStub com = CommunicationsStub.getInstance();
     private final LayerWidget imagesLayer;

@@ -65,7 +65,7 @@ public class ObjectViewService {
             
             byte[] viewStructure = scene.getAsXML();
             if (currentView == null) {
-                long viewId = CommunicationsStub.getInstance().createObjectRelatedView(currentObject.getId(), currentObject.getClassName(), null, null, "PlainChildrenView", viewStructure, scene.getBackgroundImage()); //NOI18N
+                long viewId = CommunicationsStub.getInstance().createObjectRelatedView(currentObject.getId(), currentObject.getClassName(), null, null, "ObjectView", viewStructure, scene.getBackgroundImage()); //NOI18N
                 
                 if (viewId != -1) { //Success
                     currentView = new LocalObjectView(viewId, "ObjectViewModule", null, null, viewStructure, scene.getBackgroundImage()); //NOI18N
