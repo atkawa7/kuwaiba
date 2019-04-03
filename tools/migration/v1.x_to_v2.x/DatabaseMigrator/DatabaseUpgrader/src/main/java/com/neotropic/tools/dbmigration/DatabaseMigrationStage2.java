@@ -15,6 +15,7 @@
  */
 package com.neotropic.tools.dbmigration;
 
+import com.neotropic.tools.dbmigration.views.ObjectViewMigrator;
 import java.io.File;
 import java.util.Calendar;
 
@@ -22,7 +23,7 @@ import java.util.Calendar;
  * Upgrades the database to use the version 3.3.3 of Neo4j creating labels and 
  * schema index, removing the deprecated index and delete unused schema index. This stage 
  * also can be used to migrate a database version 2 that uses long ids to one using string ids.
- * See {@link #displayHelp() } for details on what parameters are allowed
+ * See {@link #displayHelp() } for details on what parameters are allowed.
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class DatabaseMigrationStage2 {
@@ -40,6 +41,11 @@ public class DatabaseMigrationStage2 {
             String migrationType = args[0];
             String dbPath = args[1];
             File dbPathReference = new File(dbPath);
+            
+            if (!dbPathReference.exists()) {
+                System.out.println(String.format("The specified database path (%s) does not exist", dbPathReference.getAbsolutePath()));
+                return;
+            }
             
             try {
                 if (!dbPathReference.exists())
@@ -80,6 +86,7 @@ public class DatabaseMigrationStage2 {
                     LabelUpgrader.getInstance().setUUIDAttributeToInventoryObjects(dbPathReference);
                     LabelUpgrader.getInstance().setUUIDAttributeToListTypeItems(dbPathReference);
                     LabelUpgrader.getInstance().setUUIDAttributeToPools(dbPathReference);
+                    ObjectViewMigrator.migrate(dbPathReference);
                 }
 
                 System.out.println(String.format("[%s] Database upgrade stage 2 ended successfully...", Calendar.getInstance().getTime()));

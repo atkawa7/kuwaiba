@@ -46,7 +46,7 @@ public class Upgrader {
         } catch(Exception ex) {
             allowUpgrade = true;
         }
-        System.out.println("Upgrading database");
+        System.out.println("Upgrading database...");
         
         if (allowUpgrade) {
             GraphDatabaseBuilder gdb = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(storeDir);
