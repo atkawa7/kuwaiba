@@ -54,7 +54,7 @@ public class DatabaseMigrationStage1 {
                 dbPath = args[0];
         }
         
-        File dbPathReference = new File(args[0]);
+        File dbPathReference = new File(dbPath);
         
         if (!dbPathReference.exists()) {
             System.out.println(String.format("The specified dbPath (%s) does not exist", dbPath));
@@ -62,7 +62,7 @@ public class DatabaseMigrationStage1 {
         }
         
         System.out.println(String.format("[%s] Starting database upgrade stage 1...", Calendar.getInstance().getTime()));
-        
+        GraphDatabaseFactory gf = new GraphDatabaseFactory();
         GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(dbPathReference); 
         
         for (String index : INDEXES) 
