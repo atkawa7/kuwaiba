@@ -19,7 +19,6 @@ import java.awt.Point;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.namespace.QName;
@@ -68,11 +67,6 @@ public class ObjectViewMigrator {
                     try {
                         ViewMap parsedView = parseView(structure);
                         byte[] migratedStructure = migrateViewMap(parsedView, graphDb);
-                        try {
-                            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_" + anObjectNode.getId() + ".xml");
-                            fos.write(migratedStructure);
-                            fos.close();
-                        } catch(Exception e) {}
                         aViewNode.setProperty("structure", migratedStructure);
                     } catch (XMLStreamException ex) {
                         System.out.println(String.format("Unexpected error processing object view for %s (%s): %s", 
