@@ -115,6 +115,8 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
         verticalLayout.setMargin(true);
         verticalLayout.setSpacing(false);
         verticalLayout.setSizeFull();
+        Label lblCounter = new Label(); // Show the number of devices in the table
+        lblCounter.addStyleName(ValoTheme.LABEL_HUGE);
         
         List<RemoteObjectLight> spareAndReservedObjects = getSpareAndReservedObjects();
         
@@ -211,18 +213,22 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
             
             final VerticalLayout controls = new VerticalLayout();
             
+            List<ObjectBean> objBeans = getSpareBeans(objectBeans.iterator(), 
+                txtName.getValue(), 
+                txtVendor.getValue(), 
+                txtState.getValue(), 
+                txtPosition.getValue(), 
+                txtRack.getValue(), 
+                txtWarehouse.getValue(),
+                txtRoom.getValue(),
+                txtBuilding.getValue(), 
+                txtCity.getValue(),
+                txtCountry.getValue());
+            
+            lblCounter.setValue(objBeans.size() + " results");
+            
             PagedDataProvider<ObjectBean, SerializablePredicate<ObjectBean>> dataProvider = new PagedDataProvider<>(
-                        DataProvider.ofCollection(getSpareBeans(objectBeans.iterator(), 
-                            txtName.getValue(), 
-                            txtVendor.getValue(), 
-                            txtState.getValue(), 
-                            txtPosition.getValue(), 
-                            txtRack.getValue(), 
-                            txtWarehouse.getValue(),
-                            txtRoom.getValue(),
-                            txtBuilding.getValue(), 
-                            txtCity.getValue(),
-                            txtCountry.getValue())));
+                        DataProvider.ofCollection(objBeans));
             grid.setDataProvider(dataProvider);
             PagingControls pagingControls = dataProvider.getPagingControls();
             pagingControls.setPageLength(15);
@@ -255,19 +261,23 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
                 @Override
                 public void valueChange(HasValue.ValueChangeEvent<String> event) {
 
-                    if (objectBeans != null) {                        
+                    if (objectBeans != null) {
+                        List<ObjectBean> objBeans = getSpareBeans(objectBeans.iterator(), 
+                            txtName.getValue(), 
+                            txtVendor.getValue(), 
+                            txtState.getValue(), 
+                            txtPosition.getValue(), 
+                            txtRack.getValue(), 
+                            txtWarehouse.getValue(),
+                            txtRoom.getValue(),
+                            txtBuilding.getValue(), 
+                            txtCity.getValue(),
+                            txtCountry.getValue());
+                        
+                        lblCounter.setValue(objBeans.size() + " results");
+                        
                         PagedDataProvider<ObjectBean, SerializablePredicate<ObjectBean>> dataProvider = new PagedDataProvider<>(
-                                    DataProvider.ofCollection(getSpareBeans(objectBeans.iterator(), 
-                                        txtName.getValue(), 
-                                        txtVendor.getValue(), 
-                                        txtState.getValue(), 
-                                        txtPosition.getValue(), 
-                                        txtRack.getValue(), 
-                                        txtWarehouse.getValue(),
-                                        txtRoom.getValue(),
-                                        txtBuilding.getValue(), 
-                                        txtCity.getValue(),
-                                        txtCountry.getValue())));
+                                    DataProvider.ofCollection(objBeans));
                         grid.setDataProvider(dataProvider);
                         PagingControls pagingControls = dataProvider.getPagingControls();
                         pagingControls.setPageLength(15);
@@ -301,6 +311,8 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
             controls.setSizeFull();
             
             VerticalLayout vly = new VerticalLayout();
+            vly.addComponent(lblCounter);
+            vly.setComponentAlignment(lblCounter, Alignment.MIDDLE_CENTER);
             vly.setSizeFull();
             
             verticalLayout.addComponent(vly);
