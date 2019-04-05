@@ -5,3 +5,46 @@ Creation-Date: 2019-02-13T23:18:00-05:00
 ====== Process Engine ======
 Created Wednesday 13 February 2019
 
+The process engine allow define multiple process flows using activities that has associated artifacts which storage information given by an user or loaded from another activities to maintain a history of the process instance. And the artifacts also admit doing changes in the database using set of X Entity Manager from the Persistence Service of Kuwaiba.
+
+* Process Definitions
+	* Directory Structure
+	* Activity Definitions
+		* Artifact Definitions
+			* Forms
+				* Mini Application
+				* Templates
+				* Scripts
+					* Default functions
+						* Deprecated Default function
+					* Troubleshooting
+			* Conditionals
+			* Attachments
+		* KPIs Threshold
+	* KPIs Actions
+	* Troubleshooting
+* Code Cleanup
+* Glossary
+
+===== Directory Structure =====
+processEngine
+	form
+		definitions
+			1
+				new-process-definition-1-artifact-form.xml
+		img
+		scripts
+		templates
+	process
+		definitions
+			1-new-process-definition.xml
+	temp
+
+
+==== .sh ====
+
+mkdir processEngine processEngine/form processEngine/process processEngine/temp processEngine/form/definitions processEngine/form/img processEngine/form/scripts processEngine/form/templates processEngine/form/definitions/1 processEngine/process/definitions
+
+touch processEngine/process/definitions/1-new-process-definition.xml processEngine/form/definitions/1/new-process-definition-1-artifact-form.xml
+
+
