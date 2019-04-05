@@ -1,0 +1,7 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2019-04-04T19:58:56-05:00
+
+====== Artifact Definitions ======
+Created Thursday 04 April 2019
+

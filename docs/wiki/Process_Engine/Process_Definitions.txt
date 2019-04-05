@@ -1,0 +1,162 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2019-04-04T19:58:04-05:00
+
+====== Process Definitions ======
+Created Thursday 04 April 2019
+
+The process definition is a xml file which describe a process flow using activities and an optional set of key performance indicators (KPIs) associated to activities
+
+The XML document start with the start tag <processDefinition> and end with the tag </processDefinition> inside the start tag are two mandatory elements <actors/> and <activityDefinitions/> and one optional element <kpis/>.
+
+A draf of the process definition can be the next.
+//<processDefinition>//
+	//<actors> ... </actors>//
+	//<activityDefinitions> ... </activityDefinitions>//
+	//<kpis> ... </kpis>//
+//</processDefinition>//
+
+===== Tag <processDefinition> =====
+The tag **processDefinition** has the next attributes all mandatory: 
+* **name**: is the process name show in the web client of Kuwaiba on the process manager module
+* **description**: a brief description of the process
+* **creationDate**: a long date as string
+* **version**: the current version of the process the values can be 1, 1.x, 1.x.x, etc.
+* **enabled**: if the process is available to be show in the process manager
+* **startActivityId**: is the id of the activity where the process start the flow
+
+===== Tag <actors> and <actor> =====
+The actors tag has a mandatory element **actor** that define which user can access to create and modify the process
+
+==== Tag <actor> ====
+An actor is a user responsible to carry on with an activity defined in the process definition. The tag actor has the next attributes all mandatory.
+* **id**: a long value as string to identify the actor in all the process definition
+* **name**: the actor name is like the actor will be showing in the web client of Kuwaiba on the process manager module
+* **type**: the possible values can be:
+	* TYPE_USER = 1
+	* TYPE_GROUP = 2
+	* TYPE_EXTERNAL = 3
+The **TYPE_GROUP** is the supported by the process engine the another types must be implemented in future versions of the Process Engine
+Up this point the process definition must be has the next appearance:
+//<processDefinition name="Process Name" description="Process Description" creationDate="1528466583423" version="1.0" enabled="true" startActivityId="1">//
+	//<actors>//
+		<actor id="1" name="Group" type="2"/>
+		...
+	//</actors>//
+	...//</processDefinition>//
+
+
+===== Tag <activityDefinitions> and <activityDefinition> =====
+The tag //activityDefinitions// has one or more mandatory elements //activityDefinition// that is an step of the process
+
+==== Tag <activityDefinition> ====
+The //activityDefinition// define the thing that can be doing in this step or activity. And has the next mandatory elements //paths//, //artifactDefinition// and optional //kpis//. The tag //activityDefinition// has the next set of attributes
+* **id***: a long value as string to identify the activity definition in all the process definition
+* **name***: name how will be showing in the web client of Kuwaiba on the process manager module
+* **description***: a brief description of the activity
+* **type***: the possible values can be
+	* TYPE_NORMAL = 1
+	* TYPE_START = 2
+	* TYPE_END = 3
+	* TYPE_CONDITIONAL = 4
+	* TYPE_PARALLEL = 5
+* **actorId***: the actor responsible to execute the activity
+* **sequenceFlow**:  the possible values can be
+	* FORK = 1
+	* JOIN = 2
+	* JOIN_FORK = 3
+* **incomingSequenceFlowId**: Join Parallel Activity Definition Id
+* **outgoingSequenceFlowId**: Fork Parallel Activity Definition Id
+* **confirm**: when an activity need confirm the operation of save or commit the possible values are true/false
+* **idling**: when an activity is commit and in the future can be modified the possible values are true/false
+* **color**: is a value hexadecimal
+
+=== Tag <paths> and <path> ===
+The tag paths has one or more elements path. The tag path define the flow of the process from the current activity to the next activity to **type normal**, the branch YES and NO in **type conditional** and the paths in **type parallel**
+<paths>
+	<path>2</path> <!-- Type normal (Next Activity); Type conditional (YES); Type parallel (Path 1)-->
+	   <path>3</path> <!-- Type conditional (NO); Type parallel (Path 2) -->
+</paths>
+
+=== Tag <artifactDefinition> ===
+The tag **artifactDefinition** has the mandatory attributes //id// and //type// and one element **parameters**. The type attribute has the next possible values:
+	* TYPE_FORM = 1
+	* TYPE_CONDITIONAL = 2
+	* TYPE_ATTACHMENT = 3
+
+== Tag <parameters> and <parameter> ==
+The tag parameters has one or more elements parameter. The tag parameter has the mandatory attribute **name** and the mandatory tag content. Are a limited parameter names supported:
+* name**
+* description**
+* version**
+* definition**
+* printable: true/false
+* printableTemplate
+* preconditionsScript
+* externalScripts
+* postconditionsScript
+
+<activityDefinition id="1" name="Activity Definition" description="Brief Description of the Activity Definition" type="1" actorId="1">
+	<paths>
+		<path>2</path>
+	</paths>
+	<artifactDefinition id="1" type="1">
+		<parameters>
+			<parameter name="name">Name</parameter>
+			<parameter name="description">Description</parameter>
+			<parameter name="version">1.0</parameter>
+			<parameter name="definition"><![CDATA[form.xml]]></parameter>
+		</parameters>
+	</artifactDefinition>
+//</activityDefinition>//
+
+== Tags <kpis>, <kpi> and <threshold> ==
+The tag **kpis** has one or more elements **kpi**. The tag **kpi** has the mandatory attributes //name//, //description// and //action//. The tag **kpi** has one or more elements **threshold**. The tag threshold has the mandatory attributes //name// and //value//
+<kpis>
+	<kpi name="time" description="Time" action="actionTime">
+		<threshold name="normal" value="5"/>
+	</kpi>
+</kpis>
+
+===== Tag <kpis>, <actions> and <action> =====
+The tag **kpis** has one element **actions** which has one or more elements **action** this has the mandatory attributes //type//, //name //and //description// and a mandatory content that is a groovy script which return a **KpiResult**
+<kpis>
+	<actions>
+		<action type="2" name="actionTime" description="Action Time">
+			<![CDATA[
+				import org.kuwaiba.apis.persistence.application.process.KpiResult;          
+				return new KpiResult(0, null, null);
+			]]>
+		</action>
+	</actions>
+</kpis>
+
+===== Notes =====
+*** The attributes are mandatory**
+**** The parameters names are mandatory**
+Up this point the process definition must be has the next appearance:
+//<processDefinition name="Process Name" description="Process Description" creationDate="1528466583423" version="1.0" enabled="true" startActivityId="1">//
+	//<actors>//
+		//<actor id="1" name="Group" type="2"/>//
+		//...//
+	//</actors>//
+	//<activityDefinitions>//
+		//<activityDefinition id="1" name="Start Process" description="Brief Description" type="2" actorId="1">//
+			 ...		//</activityDefinition>//
+		...	//</activityDefinitions>//
+	//...//
+//</processDefinition>//
+
+List of Tags
+	processDefinition
+	actors
+	activityDefinitions
+	kpis
+List of Attributes
+	name
+	description
+	creationDate
+	version
+	enabled
+	startActivityId
+
