@@ -19,15 +19,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.kuwaiba.apis.persistence.PersistenceService;
-import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessObject;
-import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
-import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
-import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 
 /**
  * A dynamic section function used to get an attribute value from an object
@@ -35,40 +31,37 @@ import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class FunctionValue extends DynamicSectionFunction {
-    public static final String FUNCTION_PATTERN = "value\\([0-9]+,[a-zA-Z]+\\)";
-    private long id;
+    public static final String FUNCTION_PATTERN = "value\\([0-9]+,[a-zA-Z]+,[a-zA-Z]+\\)";
+    /**
+     * Attribute Name
+     */
     private String attribute;
     /**
      * Remote business object representation of the object with the given id
      */
     private BusinessObject remoteBusinessObject;
-    /**
-     * Class metadata to the object with the given id
-     */
-    private ClassMetadata classMetadata;
-    
+        
     public FunctionValue(String dynamicSectionFunction) throws InvalidArgumentException {
         super(FUNCTION_PATTERN, dynamicSectionFunction);
         
-        Pattern pattern = Pattern.compile("[0-9]+,[a-zA-Z]+");
+        Pattern pattern = Pattern.compile("[0-9]+,[a-zA-Z]+,[a-zA-Z]+");
         Matcher matcher = pattern.matcher(dynamicSectionFunction);
         if (matcher.find()) {
-            id = Long.parseLong(matcher.group().split(",")[0]);
-            attribute = matcher.group().split(",")[1];
-        }
-        
-        try {
-            BusinessEntityManager bem = PersistenceService.getInstance().getBusinessEntityManager();
-            remoteBusinessObject = bem.getObject(id);
+            long id = Long.parseLong(matcher.group().split(",")[0]);
+            String className = matcher.group().split(",")[1];
             
-            MetadataEntityManager mem = PersistenceService.getInstance().getMetadataEntityManager();
-            classMetadata = mem.getClass(remoteBusinessObject.getClassName());
-            
-            if (classMetadata.getAttribute(attribute) == null)
-                throw new InvalidArgumentException(String.format("The attribute \"%s\" can not be found in object with id %s", attribute, id));
-            
-        } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException ex) {
-            throw new InvalidArgumentException(String.format("The object with id %s can not be found", id));
+            attribute = matcher.group().split(",")[2];
+                    
+            try {
+                BusinessEntityManager bem = PersistenceService.getInstance().getBusinessEntityManager();
+                remoteBusinessObject = bem.getObject(className, id);
+
+                if (!remoteBusinessObject.getAttributes().containsKey(attribute))
+                    throw new InvalidArgumentException(String.format("The attribute \"%s\" can not be found in object with id %s", attribute, id));
+
+            } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException ex) {
+                throw new InvalidArgumentException(String.format("The object with id %s can not be found", id));
+            }
         }
     }
     
@@ -76,18 +69,12 @@ public class FunctionValue extends DynamicSectionFunction {
     public List<String> getPossibleValues() {
         List<String> dynamicSections = new ArrayList();
         try {
-            ApplicationEntityManager aem = PersistenceService.getInstance().getApplicationEntityManager();
-            MetadataEntityManager mem = PersistenceService.getInstance().getMetadataEntityManager();
+            BusinessEntityManager bem = PersistenceService.getInstance().getBusinessEntityManager();
+            String attributeValue = null;
             
-            String attributeValue = remoteBusinessObject.getAttributes().get(attribute);            
-            String attributeType = classMetadata.getAttribute(attribute).getType();
-            
-            if (attributeValue != null && mem.isSubclassOf("GenericObjectList", attributeType)) {
-                BusinessObjectLight item = aem.getListTypeItem(attributeType, Long.valueOf(attributeValue));
-                if (item != null)
-                    attributeValue = item.getName();
-            }
-            
+            if (remoteBusinessObject != null)
+                attributeValue = bem.getAttributeValueAsString(remoteBusinessObject.getClassName(), remoteBusinessObject.getId(), attribute);
+                        
             if (attributeValue == null)
                 attributeValue = "__"; // If the attribute value is null
                             
