@@ -592,34 +592,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             return res;
         }
     }
-    
-    @Override
-    public BusinessObject getObject(String oid) throws InvalidArgumentException, BusinessObjectNotFoundException, MetadataObjectNotFoundException {
-        String className = null;
-        
-        try (Transaction tx = graphDb.beginTx()) {
-            Node objectNode = graphDb.findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, oid);
-            
-            if (objectNode == null)
-                throw new InvalidArgumentException(String.format("The object with id %s could not be found", oid));
-            
-            
-            if (objectNode.hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING)) {
-                for (Relationship relationship : objectNode.getRelationships(RelTypes.INSTANCE_OF, Direction.OUTGOING)) {
-                    Node classNode = relationship.getEndNode();
-                    if (classNode.hasProperty(Constants.PROPERTY_NAME)) {
-                        className = (String) classNode.getProperty(Constants.PROPERTY_NAME);
-                        break;
-                    }
-                }
-            }
-        }
-        
-        if (className == null)
-            throw new InvalidArgumentException(String.format("The class for object with id %s could not be found", oid));
-        
-        return getObject(className, oid);
-    }
 
     @Override
     public BusinessObjectLight getObjectLight(String className, String oid)
@@ -630,18 +602,19 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         //TODO: Re-write this method and check if a simple Cypher query is faster than the programatic solution!
         try(Transaction tx = graphDb.beginTx()) {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
+
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
             Iterable<Relationship> iterableInstances = classNode.getRelationships(RelTypes.INSTANCE_OF);
             Iterator<Relationship> instances = iterableInstances.iterator();
             while (instances.hasNext()){
                 Node instance = instances.next().getStartNode();
-                String uuid = instance.hasProperty(Constants.PROPERTY_UUID) ? instance.getProperty(Constants.PROPERTY_UUID).toString() : null;
-                if (uuid != null && uuid.equals(oid)) {
+                if (instance.getProperty(Constants.PROPERTY_UUID).equals(oid)) {
                     tx.success();
-                    return createObjectLightFromNode(instance);
+                    return (new BusinessObjectLight(className, oid, (String)instance.getProperty(Constants.PROPERTY_NAME)));
                 }
             }
+            
             throw new BusinessObjectNotFoundException(className, oid);
         }
     }
@@ -3328,9 +3301,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     private BusinessObjectLight createObjectLightFromNode (Node instance) {
         String className = (String)instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME);
         
-        String instanceUUID = instance.hasProperty(Constants.PROPERTY_UUID) ? (String) instance.getProperty(Constants.PROPERTY_UUID) : null;
         //First, we create the naked business object, without validators
-        BusinessObjectLight res = new BusinessObjectLight(className, instanceUUID, (String)instance.getProperty(Constants.PROPERTY_NAME));
+        BusinessObjectLight res = new BusinessObjectLight(className, (String)instance.getProperty(Constants.PROPERTY_UUID), 
+                (String)instance.getProperty(Constants.PROPERTY_NAME));
         
         //Then, we check the cache for validator definitions
         List<ValidatorDefinition> validatorDefinitions = CacheManager.getInstance().getValidatorDefinitions(className);
@@ -3440,9 +3413,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                             name = value;
                         
                         attributes.put(myAtt.getName(),value);
-                    } else if (myAtt.getType().equals("Binary")) {
-                        byte [] byteArray = (byte []) instance.getProperty(myAtt.getName());
-                        attributes.put(myAtt.getName(), new String(byteArray));
                     }
                 }
             }
@@ -3463,9 +3433,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             for (AttributeMetadata myAtt : classMetadata.getAttributes()) {
                 if (myAtt.getName().equals(relationshipName)) {
                     if (attributes.containsKey(relationshipName))
-                        attributes.put(relationshipName, attributes.get(relationshipName) + ";" + String.valueOf(relationship.getEndNode().getId())); //A multiple selection list type
+                        attributes.put(relationshipName, attributes.get(relationshipName) + ";" + relationship.getEndNode().getProperty(Constants.PROPERTY_UUID)); //A multiple selection list type
                     else    
-                        attributes.put(relationshipName, String.valueOf(relationship.getEndNode().getId()));
+                        attributes.put(relationshipName, (String)relationship.getEndNode().getProperty(Constants.PROPERTY_UUID));
                     hasRelationship = true;
                     break;
                 }                  
@@ -3477,9 +3447,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                             instance.getProperty(Constants.PROPERTY_NAME), instance.getId(), relationship.getEndNode().getProperty(Constants.PROPERTY_NAME), relationship.getEndNode().getId()));
         }
         
-        String uuid = instance.hasProperty(Constants.PROPERTY_UUID) ? instance.getProperty(Constants.PROPERTY_UUID).toString() : null;
-        
-        return new BusinessObject(classMetadata.getName(), uuid, name, attributes);
+        return new BusinessObject(classMetadata.getName(), (String)instance.getProperty(Constants.PROPERTY_UUID), name, attributes);
     }
     
     /**

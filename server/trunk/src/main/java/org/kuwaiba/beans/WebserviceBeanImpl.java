@@ -6499,7 +6499,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
                                 List<BusinessObjectLight> portsInSlot = bem.getObjectChildren(deviceChild.getClassName(), deviceChild.getId(), -1);
                                 for (BusinessObjectLight portInSlot : portsInSlot) {
                                     if (resourceDefinitionTokens[2].equals(portInSlot.getName())) 
-                                        return SimpleCorrelation.servicesInPorts(Arrays.asList(bem.getObject(portInSlot.getId())), bem);
+                                        return SimpleCorrelation.servicesInPorts(Arrays.asList(bem.getObject("GenericPort", portInSlot.getId())), bem);
                                 }
                                 throw new ServerSideException(String.format("No port %s was found on device %s", 
                                         resourceDefinitionTokens[2], resourceDefinitionTokens[0]));

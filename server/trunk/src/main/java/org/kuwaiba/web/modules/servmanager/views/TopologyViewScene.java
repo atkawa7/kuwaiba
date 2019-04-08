@@ -42,7 +42,7 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
  */
 public class TopologyViewScene extends AbstractScene {
     
-    protected static final String VIEW_CLASS = "ServiceTopologyView"; //NOI18N
+    protected static final String VIEW_CLASS = "TopologyView"; //NOI18N
     /**
      * The service this view is associated to
      */

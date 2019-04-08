@@ -161,17 +161,6 @@ public interface BusinessEntityManager {
      */
     public BusinessObject getObject(String className, String oid)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
-    
-    /**
-     * Gets the detailed information about an object using the id
-     * @param oid Object's oid
-     * @return A detailed representation of the requested object
-     * @throws MetadataObjectNotFoundException If the className class can't be found
-     * @throws BusinessObjectNotFoundException If the requested object can't be found
-     * @throws InvalidArgumentException If the database object could not be properly mapped into a serializable java object.
-     */
-    public BusinessObject getObject(String oid) 
-        throws InvalidArgumentException, BusinessObjectNotFoundException, MetadataObjectNotFoundException;
 
     /**
      * Gets the special children of a given object

@@ -67,7 +67,7 @@ public class MPLSModule implements GenericCommercialModule {
      */
     public static String RELATIONSHIP_MPLSENDPOINTB = "mplsEndpointB";
     /**
-     * Relates a pseudowire and its output interface, the output interface is the endpoint of a mpls link if is a port
+     * Relates a pseudowire and its output interface, the output interface is the endpoint of a MPLS link if is a port
      */
     public static String RELATIONSHIP_MPLSPSEUDOWIREHASOUTPUTINTERFACE = "mplsHasOutputInterface";
     /**
@@ -75,8 +75,8 @@ public class MPLSModule implements GenericCommercialModule {
      */
     public static String RELATIONSHIP_MPLSPSEUDOWIRE = "mplsRelatedPseudowire";
     /**
-     * Relates the mpls link directly with the GenericNetworkElements parents of 
-     * the end points of the mpls link, it is used to explore the mpls links in a 
+     * Relates the MPLS link directly with the GenericNetworkElements parents of 
+     * the end points of the MPLS link, it is used to explore the MPLS links in a 
      * MPLS device or the routing between devices
      */
     public static String RELATIONSHIP_MPLSLINK = "mplsLink";
@@ -129,8 +129,8 @@ public class MPLSModule implements GenericCommercialModule {
      * @param endpointAId id of the end point side A
      * @param endpointBClassName className of the endpoint side B
      * @param endpointBId ind of the endpoint side B
-     * @param attributesToBeSet attributes for the new mpls link
-     * @return the id of the new mpls link
+     * @param attributesToBeSet attributes for the new MPLS link
+     * @return the id of the new MPLS link
      * @throws ServerSideException If the given linkType is no subclass of GenericLogicalConnection
      *                              If any of the requested objects can't be found
      *                              If any of the classes provided can not be found
@@ -147,7 +147,7 @@ public class MPLSModule implements GenericCommercialModule {
                 throw new ServerSideException(String.format("Class %s is not subclass of GenericLogicalConnection", Constants.CLASS_MPLSLINK));
             
             BusinessObject communicationsEquipmentA, communicationsEquipmentB;
-            //at least one side should be not null to create the mpls link
+            //at least one side should be not null to create the MPLS link
             if(endpointAClassName != null && endpointAId != null || endpointBClassName != null && endpointBId != null){
                 newConnectionId = bem.createSpecialObject(Constants.CLASS_MPLSLINK, null, "-1", attributesToBeSet, -1);
                 aem.createGeneralActivityLogEntry("mplsModule", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s [%s] created", attributesToBeSet.get(Constants.PROPERTY_NAME), Constants.CLASS_MPLSLINK));
@@ -166,8 +166,8 @@ public class MPLSModule implements GenericCommercialModule {
                 }
                 else 
                     throw new ServerSideException(String.format("%s is not subClass of GenericPort, can not be endpoint of a mplsLink", endpointAClassName));
-                //besides the reletionship of the mpls link with its endpoints, we create a direct relatioship between the mplsLink and the device 
-                //this relationships helps to easily check the mplsLink in a device and to creates a simple mpls map
+                //besides the reletionship of the MPLS link with its endpoints, we create a direct relatioship between the mplsLink and the device 
+                //this relationships helps to easily check the mplsLink in a device and to creates a simple MPLS map
                 bem.createSpecialRelationship(communicationsEquipmentA.getClassName(), communicationsEquipmentA.getId(), Constants.CLASS_MPLSLINK, newConnectionId, RELATIONSHIP_MPLSLINK, false);
                 aem.createGeneralActivityLogEntry("mplsModule", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - %s - %s", communicationsEquipmentA.getName(), RELATIONSHIP_MPLSLINK, attributesToBeSet.get(Constants.PROPERTY_NAME)));
             }
@@ -272,9 +272,9 @@ public class MPLSModule implements GenericCommercialModule {
     }
     
     /**
-     * Get the mpls link endpoints
-     * @param connectionId mpls link id
-     * @return mpls link endpoints
+     * Get the MPLS link endpoints
+     * @param connectionId MPLS link id
+     * @return MPLS link endpoints
      * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException 
      * @throws org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException 
      * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException 
@@ -297,10 +297,10 @@ public class MPLSModule implements GenericCommercialModule {
     }
     
     /**
-     * Connect mpls links
+     * Connect MPLS links
      * @param sideAClassNames endpoint side A class names
      * @param sideAIds endpoint side A ids
-     * @param linksIds mpls links ids
+     * @param linksIds MPLS links ids
      * @param sideBClassNames endpoint side B class names
      * @param sideBIds endpoint side B ids
      * @throws ServerSideException 
@@ -320,7 +320,7 @@ public class MPLSModule implements GenericCommercialModule {
                 if (linksIds[i] != null)
                     mplsLink = bem.getObjectLight(Constants.CLASS_MPLSLINK, linksIds[i]);
                 if(mplsLink != null && mplsLink.getClassName().equals(Constants.CLASS_MPLSLINK)) //NOI18N
-                    throw new ServerSideException(String.format("Class %s is not a mpls link", mplsLink.getClassName()));
+                    throw new ServerSideException(String.format("Class %s is not a MPLS link", mplsLink.getClassName()));
                 if (sideAClassNames[i] != null && !mem.isSubclassOf(Constants.CLASS_GENERICPORT, sideAClassNames[i])) //NOI18N
                     throw new ServerSideException(String.format("Class %s is not a port", sideAClassNames[i]));
                 if (sideBClassNames[i] != null && !mem.isSubclassOf(Constants.CLASS_GENERICPORT, sideBClassNames[i])) //NOI18N
@@ -378,7 +378,7 @@ public class MPLSModule implements GenericCommercialModule {
     
     /**
      * Disconnect a mplsLink from its endpoints
-     * @param connectionId mpls link id
+     * @param connectionId MPLS link id
      * @param sideToDisconnect if is side A or side B or both sides
      * @throws org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException 
      * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException 

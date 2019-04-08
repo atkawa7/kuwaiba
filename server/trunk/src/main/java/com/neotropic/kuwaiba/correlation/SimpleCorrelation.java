@@ -115,14 +115,12 @@ public class SimpleCorrelation {
                                                                     get(0).getClassName(), matchedCommunicationsElements.get(0).getId(), -1);
             
         for (BusinessObjectLight deviceChild : deviceChildren) {
-            System.out.println("Seraching " + childName + " in " + deviceChild);
             if (childName.equals(deviceChild.getName())) {
-                
                 List<BusinessObjectLight> portsInSlot = bem.getObjectChildren(deviceChild.getClassName(), deviceChild.getId(), -1);
                 
                 for (BusinessObjectLight portInSlot : portsInSlot) {
                     if (mem.isSubclassOf("GenericPort", portInSlot.getClassName())) 
-                        fullPortsInSlot.add(bem.getObject(portInSlot.getId()));
+                        fullPortsInSlot.add(bem.getObject(portInSlot.getClassName(), portInSlot.getId()));
                 }
                 return servicesInPorts(fullPortsInSlot, bem);
             }
