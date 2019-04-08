@@ -7,17 +7,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for deleteMPLSLink complex type.
+ * <p>Java class for getMPLSLinkEndpoints complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="deleteMPLSLink">
+ * &lt;complexType name="getMPLSLinkEndpoints">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="linkId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="forceDelete" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="connectionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -28,55 +27,37 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "deleteMPLSLink", propOrder = {
-    "linkId",
-    "forceDelete",
+@XmlType(name = "getMPLSLinkEndpoints", propOrder = {
+    "connectionId",
     "sessionId"
 })
-public class DeleteMPLSLink {
+public class GetMPLSLinkEndpoints {
 
-    protected String linkId;
-    protected boolean forceDelete;
+    protected String connectionId;
     protected String sessionId;
 
     /**
-     * Gets the value of the linkId property.
+     * Gets the value of the connectionId property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getLinkId() {
-        return linkId;
+    public String getConnectionId() {
+        return connectionId;
     }
 
     /**
-     * Sets the value of the linkId property.
+     * Sets the value of the connectionId property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setLinkId(String value) {
-        this.linkId = value;
-    }
-
-    /**
-     * Gets the value of the forceDelete property.
-     * 
-     */
-    public boolean isForceDelete() {
-        return forceDelete;
-    }
-
-    /**
-     * Sets the value of the forceDelete property.
-     * 
-     */
-    public void setForceDelete(boolean value) {
-        this.forceDelete = value;
+    public void setConnectionId(String value) {
+        this.connectionId = value;
     }
 
     /**

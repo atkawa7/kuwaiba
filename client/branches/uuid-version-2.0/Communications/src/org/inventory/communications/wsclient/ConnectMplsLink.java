@@ -10,18 +10,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for connectLogicalLinks complex type.
+ * <p>Java class for connectMplsLink complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="connectLogicalLinks">
+ * &lt;complexType name="connectMplsLink">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="sideAClassNames" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="sideAIds" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="linksClassNames" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="linksIds" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="sideBClassNames" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="sideBIds" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
@@ -35,23 +34,20 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "connectLogicalLinks", propOrder = {
+@XmlType(name = "connectMplsLink", propOrder = {
     "sideAClassNames",
     "sideAIds",
-    "linksClassNames",
     "linksIds",
     "sideBClassNames",
     "sideBIds",
     "sessionId"
 })
-public class ConnectLogicalLinks {
+public class ConnectMplsLink {
 
     @XmlElement(nillable = true)
     protected List<String> sideAClassNames;
     @XmlElement(nillable = true)
     protected List<String> sideAIds;
-    @XmlElement(nillable = true)
-    protected List<String> linksClassNames;
     @XmlElement(nillable = true)
     protected List<String> linksIds;
     @XmlElement(nillable = true)
@@ -116,35 +112,6 @@ public class ConnectLogicalLinks {
             sideAIds = new ArrayList<String>();
         }
         return this.sideAIds;
-    }
-
-    /**
-     * Gets the value of the linksClassNames property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the linksClassNames property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getLinksClassNames().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
-     */
-    public List<String> getLinksClassNames() {
-        if (linksClassNames == null) {
-            linksClassNames = new ArrayList<String>();
-        }
-        return this.linksClassNames;
     }
 
     /**

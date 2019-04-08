@@ -7,18 +7,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for disconnectLogicalConnection complex type.
+ * <p>Java class for relatePseudowires complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="disconnectLogicalConnection">
+ * &lt;complexType name="relatePseudowires">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="connectionClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="connectionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="sideToDisconnect" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="pseudoWireId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="interfaceClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="interfaceId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -29,81 +29,89 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "disconnectLogicalConnection", propOrder = {
-    "connectionClass",
-    "connectionId",
-    "sideToDisconnect",
+@XmlType(name = "relatePseudowires", propOrder = {
+    "pseudoWireId",
+    "interfaceClassName",
+    "interfaceId",
     "sessionId"
 })
-public class DisconnectLogicalConnection {
+public class RelatePseudowires {
 
-    protected String connectionClass;
-    protected String connectionId;
-    protected int sideToDisconnect;
+    protected String pseudoWireId;
+    protected String interfaceClassName;
+    protected String interfaceId;
     protected String sessionId;
 
     /**
-     * Gets the value of the connectionClass property.
+     * Gets the value of the pseudoWireId property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getConnectionClass() {
-        return connectionClass;
+    public String getPseudoWireId() {
+        return pseudoWireId;
     }
 
     /**
-     * Sets the value of the connectionClass property.
+     * Sets the value of the pseudoWireId property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setConnectionClass(String value) {
-        this.connectionClass = value;
+    public void setPseudoWireId(String value) {
+        this.pseudoWireId = value;
     }
 
     /**
-     * Gets the value of the connectionId property.
+     * Gets the value of the interfaceClassName property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getConnectionId() {
-        return connectionId;
+    public String getInterfaceClassName() {
+        return interfaceClassName;
     }
 
     /**
-     * Sets the value of the connectionId property.
+     * Sets the value of the interfaceClassName property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setConnectionId(String value) {
-        this.connectionId = value;
+    public void setInterfaceClassName(String value) {
+        this.interfaceClassName = value;
     }
 
     /**
-     * Gets the value of the sideToDisconnect property.
+     * Gets the value of the interfaceId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public int getSideToDisconnect() {
-        return sideToDisconnect;
+    public String getInterfaceId() {
+        return interfaceId;
     }
 
     /**
-     * Sets the value of the sideToDisconnect property.
+     * Sets the value of the interfaceId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setSideToDisconnect(int value) {
-        this.sideToDisconnect = value;
+    public void setInterfaceId(String value) {
+        this.interfaceId = value;
     }
 
     /**

@@ -2269,19 +2269,19 @@ public class CommunicationsStub {
         }
     }
     
-    public LocalObjectLight[] getLogicalConnectionEndpoints(String connectionClass, String connectionId) {
-        try{
-            List<RemoteObjectLight> endpoints = service.getLogicalConnectionEndpoints(connectionClass, connectionId, session.getSessionId());
-            LocalObjectLight[] res = new LocalObjectLight[]{endpoints.get(0) == null ? 
-                    null : new LocalObjectLight(endpoints.get(0).getId(), endpoints.get(0).getName(), endpoints.get(0).getClassName()),
-                    endpoints.get(1) == null ? 
-                    null : new LocalObjectLight(endpoints.get(1).getId(), endpoints.get(1).getName(), endpoints.get(1).getClassName())};
-            return res;
-        }catch(Exception ex){
-            this.error =  ex.getMessage();
-            return null;
-        }
-    }
+//    public LocalObjectLight[] getLogicalConnectionEndpoints(String connectionClass, String connectionId) {
+//        try{
+//            List<RemoteObjectLight> endpoints = service.getLogicalConnectionEndpoints(connectionClass, connectionId, session.getSessionId());
+//            LocalObjectLight[] res = new LocalObjectLight[]{endpoints.get(0) == null ? 
+//                    null : new LocalObjectLight(endpoints.get(0).getId(), endpoints.get(0).getName(), endpoints.get(0).getClassName()),
+//                    endpoints.get(1) == null ? 
+//                    null : new LocalObjectLight(endpoints.get(1).getId(), endpoints.get(1).getName(), endpoints.get(1).getClassName())};
+//            return res;
+//        }catch(Exception ex){
+//            this.error =  ex.getMessage();
+//            return null;
+//        }
+//    }
     
     /**
      * Returns the structure of a logical connection. The current implementation is quite simple and the return object 
@@ -2426,18 +2426,18 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean connectLogicalLinks(List<String> sideAClassNames, List<String> sideAIds, 
-                List<String> linksClassNames, List<String> linksIds, List<String> sideBClassNames, 
-                List<String> sideBIds) {
-        try {            
-            service.connectLogicalLinks(sideAClassNames, sideAIds, linksClassNames, linksIds, sideBClassNames, sideBIds, session.getSessionId());
-            return true;
-        }catch(Exception ex){
-            this.error =  ex.getMessage();
-            return false;
-        }
-    }
-    
+//    public boolean connectLogicalLinks(List<String> sideAClassNames, List<String> sideAIds, 
+//                List<String> linksClassNames, List<String> linksIds, List<String> sideBClassNames, 
+//                List<String> sideBIds) {
+//        try {            
+//            service.connectLogicalLinks(sideAClassNames, sideAIds, linksClassNames, linksIds, sideBClassNames, sideBIds, session.getSessionId());
+//            return true;
+//        }catch(Exception ex){
+//            this.error =  ex.getMessage();
+//            return false;
+//        }
+//    }
+//    
     public boolean connectPhysicalContainers(List<String> sideAClassNames, List<String> sideAIds, 
                 List<String> containersClassNames, List<String> containersIds, List<String> sideBClassNames, 
                 List<String> sideBIds) {
@@ -4842,26 +4842,26 @@ public class CommunicationsStub {
         // </editor-fold>
     
         // <editor-fold defaultstate="collapsed" desc="MPLS Module">
-    public LocalObjectLight createMPLSLink(LocalObjectLight endpointA, LocalObjectLight endpointB, String transportLinkType, String defaultName){
-        try { 
-            String newObjectId = service.createMPLSLink(endpointA.getClassName(),
-                    endpointA.getId(), endpointB.getClassName(), endpointB.getId(), transportLinkType, defaultName, session.getSessionId());
-            return new LocalObjectLight(newObjectId, defaultName, transportLinkType);
-        } catch (Exception ex) {
-            this.error = ex.getMessage();
-            return null;
-        }
-    }
+//    public LocalObjectLight createMPLSLink(LocalObjectLight endpointA, LocalObjectLight endpointB, String transportLinkType, String defaultName){
+//        try { 
+//            String newObjectId = service.createMPLSLink(endpointA.getClassName(),
+//                    endpointA.getId(), endpointB.getClassName(), endpointB.getId(), transportLinkType, defaultName, session.getSessionId());
+//            return new LocalObjectLight(newObjectId, defaultName, transportLinkType);
+//        } catch (Exception ex) {
+//            this.error = ex.getMessage();
+//            return null;
+//        }
+//    }
     
-    public boolean deleteMPLSLink(String linkClass, String linkId) {
-        try {
-            service.deleteMPLSLink(linkClass, linkId, true, session.getSessionId());
-            return true;
-        } catch (Exception ex) {
-            this.error = ex.getMessage();
-            return false;
-        }
-    }
+//    public boolean deleteMPLSLink(String linkClass, String linkId) {
+//        try {
+//            service.deleteMPLSLink(linkClass, linkId, true, session.getSessionId());
+//            return true;
+//        } catch (Exception ex) {
+//            this.error = ex.getMessage();
+//            return false;
+//        }
+//    }
     
     public boolean relatePortToInterface(String id, String className, String interfaceClassName, String interfaceId){
         try{
