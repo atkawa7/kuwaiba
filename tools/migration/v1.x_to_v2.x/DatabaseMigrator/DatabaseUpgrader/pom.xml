@@ -5,7 +5,7 @@
     <artifactId>DatabaseMigrationStage2</artifactId>
     <name>Database Migration Stage 2</name>
     <description>Removes the empty legacy indexes from the 1.x database to avoid a bug in the official migration scrip provided by Neo4J</description>
-    <version>1.1</version>
+    <version>1.2</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
