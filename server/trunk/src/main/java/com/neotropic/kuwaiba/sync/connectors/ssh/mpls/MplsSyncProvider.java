@@ -700,7 +700,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
             for (BusinessObjectLight currentIpLight : currentIps) {
                 if(currentIpLight.getName().equals(ipAddr)){
                     try {//we must check the mask if the IP already exists and if its attributes are updated
-                        BusinessObject currentIp = bem.getObject("XXXXXXXXXXXX", currentIpLight.getId());
+                        BusinessObject currentIp = bem.getObject(currentIpLight.getClassName(), currentIpLight.getId());
                         String oldMask = currentIp.getAttributes().get(Constants.PROPERTY_MASK);
                         if(!oldMask.equals(syncMask)){
                             currentIp.getAttributes().put(Constants.PROPERTY_MASK, syncMask);
@@ -733,7 +733,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
         String [] attributeNames = {"name", "description", "networkIp", "broadcastIp", "hosts"};
         String [] attributeValues = {newSubnet + ".0/24", "created with sync", newSubnet + ".0", newSubnet + ".255", "254"};
         try {
-            currentSubnet = bem.getObject("XXXXXXXXXXXX", bem.createPoolItem(ipv4Root.getId(), ipv4Root.getClassName(), attributeNames, attributeValues, 0));
+            currentSubnet = bem.getObject(Constants.CLASS_SUBNET_IPV4, bem.createPoolItem(ipv4Root.getId(), ipv4Root.getClassName(), attributeNames, attributeValues, 0));
             //AuditTrail
             aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s (id:%s)", currentSubnet.toString(), currentSubnet.getId()));
             
@@ -765,7 +765,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
             //AuditTrail
             aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [IPAddress] (%s)", ipAddr, newIpAddrId));
             
-            createdIp = bem.getObject("XXXXXXXXXXXX", newIpAddrId);
+            createdIp = bem.getObject(Constants.CLASS_IP_ADDRESS, newIpAddrId);
             ips.get(subnet).add(createdIp);
             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Add IP to Subnet", String.format("IP address %s was successfully added to subnet %s", ipAddr, subnet)));
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {

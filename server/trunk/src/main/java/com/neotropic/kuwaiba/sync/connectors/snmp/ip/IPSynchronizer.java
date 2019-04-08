@@ -172,7 +172,7 @@ public class IPSynchronizer {
         ipAttributes.put(Constants.PROPERTY_MASK, syncMask); //TODO set the list types attributes
         try { 
             String newIpId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, subnet.getClassName(), subnet.getId(), ipAttributes, -1);
-            createdIp = bem.getObject("XXXXXXXXXXXX", newIpId);
+            createdIp = bem.getObject(Constants.CLASS_IP_ADDRESS, newIpId);
             ips.get(subnet).add(createdIp);
             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Add IP to Subnet", String.format("%s was successfully added to %s", ipAddr, subnet)));
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
@@ -193,7 +193,7 @@ public class IPSynchronizer {
         String [] attributeNames = {"name", "description", "networkIp", "broadcastIp", "hosts"};
         String [] attributeValues = {newSubnet + ".0/24", "created with sync", newSubnet + ".0", newSubnet + ".255", "254"};
         try {
-            currentSubnet = bem.getObject("XXXXXXXXXXXX", bem.createPoolItem(ipv4Root.getId(), ipv4Root.getClassName(), attributeNames, attributeValues, 0));
+            currentSubnet = bem.getObject(Constants.CLASS_SUBNET_IPV4, bem.createPoolItem(ipv4Root.getId(), ipv4Root.getClassName(), attributeNames, attributeValues, 0));
         } catch (ApplicationObjectNotFoundException | ArraySizeMismatchException | BusinessObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException ex) {
             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                     String.format("%s [Subnet] can't be created", newSubnet + ".0/24"), 
@@ -233,7 +233,7 @@ public class IPSynchronizer {
             for (BusinessObjectLight currentIpLight : currentIps) {
                 if(currentIpLight.getName().equals(ipAddr)){
                     try {//we must check the mask if the IP already exists and if its attributes are updated
-                        BusinessObject currentIp = bem.getObject("XXXXXXXXXXXX", currentIpLight.getId());
+                        BusinessObject currentIp = bem.getObject(Constants.CLASS_IP_ADDRESS, currentIpLight.getId());
                         String oldMask = currentIp.getAttributes().get(Constants.PROPERTY_MASK);
                         if(!oldMask.equals(syncMask)){
                             currentIp.getAttributes().put(Constants.PROPERTY_MASK, syncMask);

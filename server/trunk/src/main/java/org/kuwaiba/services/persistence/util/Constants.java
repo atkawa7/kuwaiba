@@ -395,6 +395,10 @@ public class Constants {
      */
     public static final String CLASS_BGPLINK = "BGPLink"; //NOI18N
     /**
+     * Class Peer
+     */
+    public static final String CLASS_PEER = "Peer";
+    /**
      * Class Generic Communications Equipment
      */
     public static final String CLASS_GENERICCOMMUNICATIONSELEMENT = "GenericCommunicationsElement";

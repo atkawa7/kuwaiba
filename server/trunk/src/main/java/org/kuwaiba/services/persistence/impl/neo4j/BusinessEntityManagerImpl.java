@@ -3129,7 +3129,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             return isSafeToDelete;
         }
     }
-    
+
     /**
      * This class wraps a set of attribute definitions necessary to create objects with default values
      */

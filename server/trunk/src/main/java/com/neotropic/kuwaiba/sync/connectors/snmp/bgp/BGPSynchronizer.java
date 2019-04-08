@@ -401,11 +401,11 @@ public class BGPSynchronizer {
                         res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Searching providers location",
                             "To sync BGP information, it is necesary to create an object of class: Provider as child of the City"));
                     else{
-                        List<BusinessObjectLight> peerings = bem.getObjectChildren(providersParent.getClassName(), providersParent.getId(), -1);
-                        for (BusinessObjectLight peering : peerings) {
-                            BusinessObject obj = bem.getObject("XXXXXXXXXXXX", peering.getId());
+                        List<BusinessObjectLight> peers = bem.getObjectChildren(providersParent.getClassName(), providersParent.getId(), -1);
+                        for (BusinessObjectLight peer : peers) {
+                            BusinessObject obj = bem.getObject(Constants.CLASS_PEER, peer.getId());
                             HashMap<String, String> attributes = obj.getAttributes();
-                            if(peering.getName().equals(asnName) && attributes.get("asnNumber").equals(asnNumber)){
+                            if(peer.getName().equals(asnName) && attributes.get("asnNumber").equals(asnNumber)){
                                 //if we found the peering we must check the bgpPeerRemoteAddr
                                 String currentBgpPeerRemoteAddr = obj.getAttributes().get("bgpPeerRemoteAddr");
                                 if(currentBgpPeerRemoteAddr != null && !currentBgpPeerRemoteAddr.contains(bgpPeerRemoteAddr)){
@@ -881,7 +881,7 @@ public class BGPSynchronizer {
             for (BusinessObjectLight currentIpLight : currentIps) {
                 if(currentIpLight.getName().equals(ipAddr)){
                     try {//we must check the mask if the IP already exists and if its attributes are updated
-                        BusinessObject currentIp = bem.getObject("XXXXXXXXXXXX", currentIpLight.getId());
+                        BusinessObject currentIp = bem.getObject(Constants.CLASS_IP_ADDRESS, currentIpLight.getId());
                         String oldMask = currentIp.getAttributes().get(Constants.PROPERTY_MASK);
                         if(!oldMask.equals(syncMask)){
                             currentIp.getAttributes().put(Constants.PROPERTY_MASK, syncMask);
@@ -912,7 +912,8 @@ public class BGPSynchronizer {
         String [] attributeNames = {"name", "description", "networkIp", "broadcastIp", "hosts"};
         String [] attributeValues = {newSubnet + ".0/24", "created with sync", newSubnet + ".0", newSubnet + ".255", "254"};
         try {
-            currentSubnet = bem.getObject("XXXXXXXXXXXX", bem.createPoolItem(ipv4Root.getId(), ipv4Root.getClassName(), attributeNames, attributeValues, 0));
+            //TODO change this for create subnet of the IPAM module
+            currentSubnet = bem.getObject(Constants.CLASS_SUBNET_IPV4, bem.createPoolItem(ipv4Root.getId(), ipv4Root.getClassName(), attributeNames, attributeValues, 0));
             //AuditTrail
             aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s (id:%s)", currentSubnet.toString(), currentSubnet.getId()));
             
@@ -944,7 +945,7 @@ public class BGPSynchronizer {
             //AuditTrail
             aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [IPAddress] (%s)", ipAddr, newIpAddrId));
             
-            createdIp = bem.getObject("XXXXXXXXXXXX", newIpAddrId);
+            createdIp = bem.getObject(Constants.CLASS_IP_ADDRESS, newIpAddrId);
             ips.get(subnet).add(createdIp);
             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Added IP address to Subnet", String.format("%s was added to subnet %s successfully", ipAddr, subnet)));
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {

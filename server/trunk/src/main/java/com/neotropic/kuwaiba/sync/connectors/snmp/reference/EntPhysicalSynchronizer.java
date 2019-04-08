@@ -539,9 +539,9 @@ public class EntPhysicalSynchronizer {
                     //This applies only for the chassis
                     if (className.contains(mappedClass)) {
                         newAttributes.remove("name"); //NOI18N the router name won't be changed
-                        HashMap<String, String> comparedAttributes = SyncUtil.compareAttributes(bem.getObject("XXXXXXXXXXXX", id).getAttributes(), newAttributes);
+                        HashMap<String, String> comparedAttributes = SyncUtil.compareAttributes(bem.getObject(className, id).getAttributes(), newAttributes);
                         if (!comparedAttributes.isEmpty()) {
-                            comparedAttributes.put("name", bem.getObject("XXXXXXXXXXXX", id).getAttributes().get("name"));//we need to add the name as atribute again to show the name in the results
+                            comparedAttributes.put("name", bem.getObject(className, id).getAttributes().get("name"));//we need to add the name as atribute again to show the name in the results
                             updateObjectAttributes(id, mappedClass, comparedAttributes);
                         }
                     //all the data except the chassis
@@ -655,7 +655,7 @@ public class EntPhysicalSynchronizer {
                         BusinessObjectLight oldParent = bem.getParent(oldObj.getClassName(), oldObj.getId());
                         oldParent = SyncUtil.wrapPortName(oldParent);
                         
-                        HashMap<String, String> oldAttributes = bem.getObject("XXXXXXXXXXXX", oldObj.getId()).getAttributes();
+                        HashMap<String, String> oldAttributes = bem.getObject(oldObj.getClassName(), oldObj.getId()).getAttributes();
 
                         currentObj = branch.get(i);
                         currentObjClassName = currentObj.getClassName();
@@ -736,7 +736,7 @@ public class EntPhysicalSynchronizer {
             if(foundPath.size() == newBranchToEvalueate.size()){
                 for (int j=0; j<foundPath.size(); j++) { 
                     BusinessObjectLight oldObj = foundPath.get(j);
-                    HashMap<String, String> oldAttributes = bem.getObject("XXXXXXXXXXXX", oldObj.getId()).getAttributes();
+                    HashMap<String, String> oldAttributes = bem.getObject(oldObj.getClassName(), oldObj.getId()).getAttributes();
                     BusinessObject newObj = newBranchToEvalueate.get(j); //this is the new object from SNMP
                                         
                     updateAttributesInBranch(oldObj, oldAttributes, newObj);//we check if some attributes need to be updated
@@ -778,7 +778,7 @@ public class EntPhysicalSynchronizer {
                 if(foundPath.size() == newBranchToEvalueate.size()){
                     for (int j = foundPath.size() - 1, r = 0; j > -1; j--, r++) { 
                         BusinessObjectLight oldObj = foundPath.get(j);
-                        HashMap<String, String> oldAttributes = bem.getObject("XXXXXXXXXXXX", oldObj.getId()).getAttributes();
+                        HashMap<String, String> oldAttributes = bem.getObject(oldObj.getClassName(), oldObj.getId()).getAttributes();
                         BusinessObject newObj = newBranchToEvalueate.get(r); //this is the new object from SNMP
                         updateAttributesInBranch(oldObj, oldAttributes, newObj);//we check if some attributes need to be updated
                     }
@@ -1278,7 +1278,7 @@ public class EntPhysicalSynchronizer {
                             }
                         }
                         else{//The port its in the rigth place but its attributes needs to be updated
-                            HashMap<String, String> oldAttributes = bem.getObject("XXXXXXXXXXXX", oldPort.getId()).getAttributes();
+                            HashMap<String, String> oldAttributes = bem.getObject(oldPort.getClassName(), oldPort.getId()).getAttributes();
                             HashMap<String, String> changedAttributes = SyncUtil.compareAttributes(oldAttributes, portFound.getAttributes());
                             changedAttributes.remove("parentId");
                             changedAttributes.remove("parentClassName");
@@ -1374,7 +1374,7 @@ public class EntPhysicalSynchronizer {
         for(long key : currentObjectStructure.keySet()){
             List<BusinessObjectLight> oldBranch = currentObjectStructure.get(key);
             for (BusinessObjectLight oldObj : oldBranch) {
-                HashMap<String, String> oldAttributes = bem.getObject("XXXXXXXXXXXX", oldObj.getId()).getAttributes();
+                HashMap<String, String> oldAttributes = bem.getObject(oldObj.getClassName(), oldObj.getId()).getAttributes();
                 if(oldAttributes.get(Constants.PROPERTY_NAME).equals(objParentName)
                         && objParentClassName.equals(oldObj.getClassName()))
                     return oldObj.getId();
@@ -1597,7 +1597,7 @@ public class EntPhysicalSynchronizer {
                         else if(currentInterface.getClassName().equals( Constants.CLASS_MPLSTUNNEL))
                             foundMplsTunnels.add(currentInterface);
                             
-                        HashMap<String, String> currentAttributes = bem.getObject("XXXXXXXXXXXX", currentInterface.getId()).getAttributes();
+                        HashMap<String, String> currentAttributes = bem.getObject(currentInterface.getClassName(), currentInterface.getId()).getAttributes();
                         attributes = new HashMap<>();
                         //We must update the speedPort
                         String currentHighSpeed = currentAttributes.get("highSpeed");

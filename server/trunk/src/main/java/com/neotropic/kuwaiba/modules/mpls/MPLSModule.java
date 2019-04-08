@@ -287,7 +287,7 @@ public class MPLSModule implements GenericCommercialModule {
         if (bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
-        String connectionClass = bem.getObject("XXXXXXXXXXXX", connectionId).getClassName();
+        String connectionClass = bem.getObject(Constants.CLASS_MPLSLINK, connectionId).getClassName();
         if (!mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONNECTION, connectionClass)) //NOI18N
                 throw new InvalidArgumentException(String.format("Class %s is not MPLSLink connection", connectionClass));
             

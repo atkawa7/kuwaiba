@@ -2152,7 +2152,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("getLogicalLinkDetails", ipAddress, sessionId); //NOI18N
             
-            BusinessObject linkObject = bem.getObject("XXXXXXXXXXXX", linkId);
+            BusinessObject linkObject = bem.getObject(linkClass, linkId);
             
             BusinessObjectLight endpointA = null;
             BusinessObjectLight endpointB = null;
@@ -2230,7 +2230,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
              aem.validateWebServiceCall("getPhysicalLinkDetails", ipAddress, sessionId); //NOI18N
             
-            BusinessObject linkObject = bem.getObject("XXXXXXXXXXXX", linkId);
+            BusinessObject linkObject = bem.getObject(linkClass, linkId);
             
             BusinessObjectLight endpointA, endpointB;
             
@@ -6886,7 +6886,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
                                  physicalDeviceB.add(parent);
                         }
 
-                        bgpMap.add(new RemoteLogicalConnectionDetails(bem.getObject("XXXXXXXXXXXX", bgpLink.getId()), 
+                        bgpMap.add(new RemoteLogicalConnectionDetails(bem.getObject(bgpLink.getClassName(), bgpLink.getId()), 
                                    bgpEndpointA.isEmpty() ? null : bgpEndpointA.get(0), 
                                    bgpEndpointB.isEmpty() ? null : bgpEndpointB.get(0), 
                                    physicalDeviceA, physicalDeviceB));
