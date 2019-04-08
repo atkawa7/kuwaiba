@@ -202,7 +202,7 @@ public class EditMPLSLinkEnpointsFrame extends JFrame {
             return;
         }
         
-        LocalObjectLight[] connectionEndpoints = com.getLogicalConnectionEndpoints(centerSelectedObject.getClassName(), centerSelectedObject.getId());
+        LocalObjectLight[] connectionEndpoints = null;//com.getLogicalConnectionEndpoints(centerSelectedObject.getClassName(), centerSelectedObject.getId());
         if (connectionEndpoints == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
@@ -246,17 +246,17 @@ public class EditMPLSLinkEnpointsFrame extends JFrame {
                 JOptionPane.showMessageDialog(null, "Choose a single connection (link or container) from the central panel", "Error", JOptionPane.ERROR_MESSAGE);
             else {
                 if (centerSelectedObject.getClassName().equals("MPLSLink")) {
-                    if (com.connectLogicalLinks(Arrays.asList(aSelectedObject == null ? null :aSelectedObject.getClassName()),
-                                Arrays.asList(aSelectedObject == null ? null : aSelectedObject.getId()),
-                                Arrays.asList(centerSelectedObject.getClassName()),
-                                Arrays.asList(centerSelectedObject.getId()),
-                                Arrays.asList(bSelectedObject == null ? null :bSelectedObject.getClassName()), 
-                                Arrays.asList(bSelectedObject == null ? null : bSelectedObject.getId()))) {
-                        JOptionPane.showMessageDialog(null, aSelectedObject != null && bSelectedObject != null ? 
-                                "Endpoints connected sucessfully" : "Endpoint connected sucessfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-                        updateConnectionDetails();
-                    } else
-                        JOptionPane.showMessageDialog(null, com.getError(), "Error", JOptionPane.ERROR_MESSAGE);
+//                    if (com.connectLogicalLinks(Arrays.asList(aSelectedObject == null ? null :aSelectedObject.getClassName()),
+//                                Arrays.asList(aSelectedObject == null ? null : aSelectedObject.getId()),
+//                                Arrays.asList(centerSelectedObject.getClassName()),
+//                                Arrays.asList(centerSelectedObject.getId()),
+//                                Arrays.asList(bSelectedObject == null ? null :bSelectedObject.getClassName()), 
+//                                Arrays.asList(bSelectedObject == null ? null : bSelectedObject.getId()))) {
+//                        JOptionPane.showMessageDialog(null, aSelectedObject != null && bSelectedObject != null ? 
+//                                "Endpoints connected sucessfully" : "Endpoint connected sucessfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+//                        updateConnectionDetails();
+//                    } else
+//                        JOptionPane.showMessageDialog(null, com.getError(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
