@@ -32,6 +32,7 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.util.Constants;
@@ -7642,8 +7643,7 @@ public class KuwaibaService {
      * @param idEndpointA Id of endpoint A
      * @param classNameEndpointB  The class name of the endpoint Z (some kind of port)
      * @param idEndpointB Id of endpoint Z
-     * @param linkType Type of link (MPLSLink)
-     * @param defaultName The default name of th
+     * @param attributesToBeSet Attributes to be set, e.g. mplsLink's name
      * @param sessionId Session token
      * @return The id of the newly created transport link
      * @throws ServerSideException If the given linkType is no subclass of GenericLogicalConnection
@@ -7656,11 +7656,10 @@ public class KuwaibaService {
             @WebParam(name = "idEndpointA") String idEndpointA, 
             @WebParam(name = "classNameEndpointB") String classNameEndpointB, 
             @WebParam(name = "idEndpointB") String idEndpointB, 
-            @WebParam(name = "linkType") String linkType, 
-            @WebParam(name = "defaultName") String defaultName, 
+            @WebParam(name="parameters") List<StringPair> attributesToBeSet,
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
-            return wsBean.createMPLSLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, defaultName, getIPAddress(), sessionId);
+            return wsBean.createMPLSLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, attributesToBeSet, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -7671,10 +7670,122 @@ public class KuwaibaService {
         }
     }
     
+    
     /**
-     * Deletes a MPLS link and its corresponding container link
-     * @param linkClass The class of the link
-     * @param linkId the id of the link
+     * The endpoints of a given mpls link
+     * @param connectionId the mpls link id
+     * @param sessionId Session token
+     * @return An array of two positions: the first is the A endpoint and the second is the B endpoint
+     * @throws ServerSideException f the given id class name is not MPLS Link
+     *                             If any of the requested objects can't be found
+     *                             If any of the classes provided can not be found
+     *                             If any of the objects involved can't be connected  
+     */
+    @WebMethod(operationName = "getMPLSLinkEndpoints")
+    public RemoteObjectLight[] getMPLSLinkEndpoints(@WebParam(name = "connectionId") String connectionId, 
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getMPLSLinkEndpoints(connectionId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getMPLSLinkEndpoints: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * 
+     * @param pseudoWireId the pseudowire id
+     * @param interfaceClassName interface class name that will be related he given pseudowire
+     * @param interfaceId interface id that will be related with the given pseudowire
+     * @param sessionId session token
+     * @throws ServerSideException if the given pseudowire id class name is not Pseudowire class
+     *                             If any of the requested objects can't be found
+     *                             If any of the classes provided can not be found
+     *                             If any of the objects involved can't be connected  
+     */
+    @WebMethod(operationName = "relatePseudowires")
+    public void relatePseudowires(@WebParam(name = "pseudoWireId") String pseudoWireId,
+            @WebParam(name = "interfaceClassName") String interfaceClassName,
+            @WebParam(name = "interfaceId") String interfaceId,
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            wsBean.relatePseudowires(pseudoWireId, interfaceClassName, interfaceId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in relatePseudowires: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Connect a given mpls links with a given ports for every side
+     * @param sideAClassNames end point side A class names
+     * @param sideAIds end point side A ids
+     * @param linksIds mpls links ids
+     * @param sideBClassNames end point side B class names
+     * @param sideBIds end point side B ids
+     * @param sessionId session token
+     * @throws ServerSideException If the given ports are not subclass of GenericPort
+     *                             If the given link ids are not of the class MPLSLink
+     *                             If any of the requested objects can't be found
+     *                             If any of the classes provided can not be found
+     *                             If any of the objects involved can't be connected  
+     */
+    @WebMethod(operationName = "connectMplsLink")
+    public void connectMplsLink(@WebParam(name = "sideAClassNames") String[] sideAClassNames,
+            @WebParam(name = "sideAIds") String[] sideAIds,
+            @WebParam(name = "linksIds") String[] linksIds,
+            @WebParam(name = "sideBClassNames") String[] sideBClassNames,
+            @WebParam(name = "sideBIds") String[] sideBIds,
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            wsBean.connectMplsLink(sideAClassNames, sideAIds, linksIds, sideBClassNames, sideBIds, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in connectMplsLink: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * disconnect mpls link
+     * @param connectionId mpls link id
+     * @param sideToDisconnect which side will be disconnect 1 side A, 2 side B, 3 both sides 
+     * @param sessionId session token
+     * @throws ServerSideException If the given link id is not of the class MPLSLink
+     *                             If any of the requested objects can't be found
+     *                             If any of the classes provided can not be found
+     *                             If any of the objects involved can't be connected 
+     */
+    @WebMethod(operationName = "disconnetMPLSLink")
+    public void disconnetMPLSLink(@WebParam(name = "connectionId") String connectionId,
+            @WebParam(name = "sideToDisconnect") int sideToDisconnect,
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            wsBean.disconnetMPLSLink(connectionId, sideToDisconnect, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in disconnetMPLSLink: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Deletes a MPLS link
+     * @param linkId the id of the mpls link
      * @param forceDelete Ignore the existing relationships
      * @param sessionId Session token
      * @throws ServerSideException If the object can not be found
@@ -7683,12 +7794,11 @@ public class KuwaibaService {
      *                             If the object could not be deleted because there's some business rules that avoids it or it has incoming relationships.
      */
     @WebMethod(operationName = "deleteMPLSLink")
-    public void deleteMPLSLink(@WebParam(name = "linkClass") String linkClass, 
-            @WebParam(name = "linkId") String linkId, 
+    public void deleteMPLSLink(@WebParam(name = "linkId") String linkId, 
             @WebParam(name = "forceDelete") boolean forceDelete, 
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
-            wsBean.deleteMPLSLink(linkClass, linkId, forceDelete, getIPAddress(), sessionId);
+            wsBean.deleteMPLSLink(linkId, forceDelete, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;

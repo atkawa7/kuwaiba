@@ -576,9 +576,7 @@ public interface WebserviceBean {
         public List<RemoteObjectLight> getSubnets(String poolId, int limit, String ipAddress, String sessionId) throws ServerSideException;
         public RemoteObject getSubnet(String id, String className, String ipAddress, String sessionId) throws ServerSideException;
         public RemotePool getSubnetPool(String id, String ipAddress, String sessionId) throws ServerSideException;
-        public String createSubnetPool(String parentId, String subnetPoolName, 
-                String subnetPoolDescription, String className, String ipAddress, 
-                String sessionId) throws ServerSideException;
+        public String createSubnetPool(String parentId, String subnetPoolName, String subnetPoolDescription, String className, String ipAddress, String sessionId) throws ServerSideException;
         public String createSubnet(String poolId, String className, List<StringPair> attributes, String ipAddress, String sessionId) throws ServerSideException;
         public void deleteSubnets(String className, List<String> ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
         public void deleteSubnetPools(String[] ids, String ipAddress, String sessionId) throws ServerSideException;
@@ -593,6 +591,8 @@ public interface WebserviceBean {
         public List<RemoteObjectLight> getSubnetUsedIps(String id, String className, int limit, String ipAddress, String sessionId) throws ServerSideException;
         public List<RemoteObjectLight> getSubnetsInSubnet(String id, String className, int limit, String ipAddress, String sessionId)  throws ServerSideException;
         public boolean itOverlaps(String networkIp, String broadcastIp, String ipAddress, String sessionId) throws ServerSideException;
+        public void relatePortToInterface(String portId, String portClassName, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException;
+        public void releasePortFromInterface(String interfaceClassName, String interfaceId ,String portId, String ipAddress, String sessionId) throws ServerSideException;
         // </editor-fold>
         
         // <editor-fold defaultstate="collapsed" desc="Contract Manager">
@@ -604,12 +604,12 @@ public interface WebserviceBean {
         //</editor-fold>
       
         // <editor-fold defaultstate="collapsed" desc="MPLS Networks Module">
-         public String createMPLSLink(String classNameEndpointA, String idEndpointA, 
-            String classNameEndpointB, String idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
-    
-         public void deleteMPLSLink(String linkClass, String linkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
-         public void relatePortToInterface(String portId, String portClassName, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException;
-         public void releasePortFromInterface(String interfaceClassName, String interfaceId ,String portId, String ipAddress, String sessionId) throws ServerSideException;
+         public String createMPLSLink(String classNameEndpointA, String idEndpointA, String classNameEndpointB, String idEndpointB, List<StringPair> attributesToBeSet, String ipAddress, String sessionId) throws ServerSideException;
+         public RemoteObjectLight[] getMPLSLinkEndpoints(String connectionId, String ipAddress, String sessionId) throws ServerSideException;
+         public void relatePseudowires(String pseudoWireId, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException;
+         public void connectMplsLink(String[] sideAClassNames, String[] sideAIds, String[] linksIds, String[] sideBClassNames, String[] sideBIds, String ipAddress, String sessionId) throws ServerSideException;
+         public void disconnetMPLSLink(String connectionId, int sideToDisconnect, String ipAddress, String sessionId) throws ServerSideException;
+         public void deleteMPLSLink(String linkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
     // </editor-fold>
          
         // <editor-fold defaultstate="collapsed" desc="Projects Module">
@@ -668,7 +668,7 @@ public interface WebserviceBean {
     public RemoteObjectLight getWarehouseToObject(String objectClassName, String objectId, String ipAddress, String sessionId) throws ServerSideException;
         // </editor-fold>
     
-    //<editor-fold desc="Outside Plant" defaultstate="collapsed">
+        //<editor-fold desc="Outside Plant" defaultstate="collapsed">
     public long createOSPView(String name, String description, byte[] content, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteViewObject getOSPView(long viewId, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteViewObjectLight> getOSPViews(String ipAddressString, String sessionId) throws ServerSideException;
@@ -677,9 +677,23 @@ public interface WebserviceBean {
     
     //</editor-fold>
         
-        // <editor-fold defaultstate="collapsed" desc="BGP Viewer Module">
+        //<editor-fold defaultstate="collapsed" desc="BGP Viewer Module">
         public List<RemoteLogicalConnectionDetails> getBGPMap(List<String> mappedBGPLinksIds, String ipAddress, String sessionId) throws ServerSideException;
         //</editor-fold>
+        
+        //<editor-fold defaultstate="collapsed" desc="OLTs I need to change this name">
+//        public String getEVlans(, String ipAddress, String sessionId) throws ServerSideException;
+//        public String createEVlan(, String ipAddress, String sessionId) throws ServerSideException;
+//        public String deleteEVlan(, String ipAddress, String sessionId) throws ServerSideException;
+//        public String relateEVlan(, String ipAddress, String sessionId) throws ServerSideException;
+//        public String releaseEVlan(, String ipAddress, String sessionId) throws ServerSideException;
+//        public String getEVlanByState(, String ipAddress, String sessionId) throws ServerSideException;
+//        public String getCVlans(, String ipAddress, String sessionId) throws ServerSideException;
+//        public String createCVlan(, String ipAddress, String sessionId) throws ServerSideException;
+//        public String deleteCVlan(, String ipAddress, String sessionId) throws ServerSideException;
+//        public String relateCVlan(, String ipAddress, String sessionId) throws ServerSideException;
+//        public String releaseCVlan(String x, String ipAddress, String sessionId) throws ServerSideException;
+        //</editor-fold> 
     
     // Bookmarks
     public long createFavoritesFolderForUser(String favoritesFolderName, long userId, String ipAddress, String sessionId) throws ServerSideException;

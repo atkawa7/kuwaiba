@@ -431,6 +431,10 @@ public class Constants {
      */
     public static final String CLASS_MPLSLINK = "MPLSLink";
     /**
+     * Class MPLS Link
+     */
+    public static final String CLASS_PSEUDOWIRE = "Pseudowire";
+    /**
      * Class MPLS Tunnel
      */
     public static final String CLASS_BRIDGEDOMAIN = "BridgeDomain";

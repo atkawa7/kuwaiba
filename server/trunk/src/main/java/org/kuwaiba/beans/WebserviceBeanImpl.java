@@ -5475,50 +5475,89 @@ public class WebserviceBeanImpl implements WebserviceBean {
 
     // </editor-fold>    
         // <editor-fold defaultstate="collapsed" desc="MPLS Module">
+    
     @Override
     public String createMPLSLink(String classNameEndpointA, String idEndpointA, 
-            String classNameEndpointB, String idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException{
+            String classNameEndpointB, String idEndpointB, List<StringPair> attributesToBeSet, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateWebServiceCall("createMPLSLink", ipAddress, sessionId);
+            
             MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
-            String MPLSLinkId = mplsModule.createMPLSLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, defaultName);
-            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-                ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
-                String.format("Created MPLS Link %s [%s]", defaultName, linkType));
+            HashMap<String, String> attributes = new HashMap<>();
+            
+            for (StringPair attribute : attributesToBeSet)
+                attributes.put(attribute.getKey(), attribute.getValue());
+            
+            String MPLSLinkId = mplsModule.createMPLSLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, attributes);
             return MPLSLinkId;
+            
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
     
     @Override
-    public void deleteMPLSLink(String linkClass, String linkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException{
+    public RemoteObjectLight[] getMPLSLinkEndpoints(String connectionId, String ipAddress, String sessionId) throws ServerSideException{
+        try{
+            aem.validateWebServiceCall("getMPLSLinkEndpoints", ipAddress, sessionId);
+            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
+            BusinessObjectLight [] endpoints = mplsModule.getMPLSLinkEndpoints(connectionId);
+            
+            RemoteObjectLight[] res = new RemoteObjectLight[endpoints.length];
+            
+            for (int i = 0; i < 10; i++) 
+                res[i] = new RemoteObjectLight(endpoints[i]);
+            
+            return res;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void relatePseudowires(String pseudoWireId, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException{
+        try{
+            aem.validateWebServiceCall("relatePseudowires", ipAddress, sessionId);
+            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
+            mplsModule.relatePseudowires(pseudoWireId, interfaceClassName, interfaceId);
+
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void connectMplsLink(String[] sideAClassNames, String[] sideAIds, String[] linksIds, String[] sideBClassNames, String[] sideBIds, String ipAddress, String sessionId) throws ServerSideException{
+        try{
+            aem.validateWebServiceCall("connectMplsLink", ipAddress, sessionId);
+            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
+            mplsModule.connectMplsLink(sideAClassNames, sideAIds, linksIds, sideBClassNames, sideBIds);
+        }catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void disconnetMPLSLink(String connectionId, int sideToDisconnect, String ipAddress, String sessionId) throws ServerSideException{
+        try{
+            aem.validateWebServiceCall("disconnetMPLSLink", ipAddress, sessionId);
+            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
+            mplsModule.disconnetMPLSLink(connectionId, sideToDisconnect);
+        }catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+            
+    @Override
+    public void deleteMPLSLink(String linkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateWebServiceCall("deleteMPLSLink", ipAddress, sessionId);
             MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
-            mplsModule.deleteMPLSLink(linkClass, linkId, forceDelete);
-            String linkName = bem.getObjectLight(linkClass, linkId).getName();
-            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-                ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
-                String.format("Deleted MPLS Link %s [%s]", linkName, linkClass));
+            mplsModule.deleteMPLSLink(linkId, forceDelete);
+            
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
-    }
-    
-    public void deleteBridgeDomainInterface(long bridgeDomainId, String ipAddress, String sessionId) {
-//        try {
-//            aem.validateWebServiceCall("deleteBridgeDomainInterface", ipAddress, sessionId);
-//            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
-//            String linkName = bem.getObjectLight(linkClass, linkId).getName();
-//            mplsModule.deleteMPLSLink(linkClass, linkId, forceDelete);
-//            
-//            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
-//                String.format("Deleted MPLS Link %s [%s]", linkName, linkClass));
-//        } catch (InventoryException ex) {
-//            throw new ServerSideException(ex.getMessage());
-//        }
     }
     // </editor-fold>    
         // <editor-fold defaultstate="collapsed" desc="Project Manager">

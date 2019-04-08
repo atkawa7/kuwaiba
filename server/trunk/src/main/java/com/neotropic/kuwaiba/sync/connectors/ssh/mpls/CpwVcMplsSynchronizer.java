@@ -307,10 +307,6 @@ public class CpwVcMplsSynchronizer {
                                     }
                                 }
                             }
-                            
-                            
-                            
-                            
                         }
                         //We check the name of the mpls link and update the name
                         else if(!mplsLink.getName().equals(vcID)){
