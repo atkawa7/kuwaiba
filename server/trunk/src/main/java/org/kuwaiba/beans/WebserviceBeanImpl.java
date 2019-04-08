@@ -2152,7 +2152,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("getLogicalLinkDetails", ipAddress, sessionId); //NOI18N
             
-            BusinessObject linkObject = bem.getObject(linkId);
+            BusinessObject linkObject = bem.getObject("XXXXXXXXXXXX", linkId);
             
             BusinessObjectLight endpointA = null;
             BusinessObjectLight endpointB = null;
@@ -2230,7 +2230,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
              aem.validateWebServiceCall("getPhysicalLinkDetails", ipAddress, sessionId); //NOI18N
             
-            BusinessObject linkObject = bem.getObject(linkId);
+            BusinessObject linkObject = bem.getObject("XXXXXXXXXXXX", linkId);
             
             BusinessObjectLight endpointA, endpointB;
             
@@ -6567,7 +6567,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
                     BusinessObjectLight customer = bem.getFirstParentOfClass(rawService.getClassName(), rawService.getId(), Constants.CLASS_GENERICCUSTOMER);
                     if (customer != null) {//Services without customers will be ignored. This shouldn't happen, though
                         if (!rawCorrelatedInformation.containsKey(customer))
-                            rawCorrelatedInformation.put(customer, new ArrayList<RemoteObjectLight>());
+                            rawCorrelatedInformation.put(customer, new ArrayList<>());
                         
                         rawCorrelatedInformation.get(customer).add(rawService);
                     }
@@ -6886,7 +6886,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
                                  physicalDeviceB.add(parent);
                         }
 
-                        bgpMap.add(new RemoteLogicalConnectionDetails(bem.getObject(bgpLink.getId()), 
+                        bgpMap.add(new RemoteLogicalConnectionDetails(bem.getObject("XXXXXXXXXXXX", bgpLink.getId()), 
                                    bgpEndpointA.isEmpty() ? null : bgpEndpointA.get(0), 
                                    bgpEndpointB.isEmpty() ? null : bgpEndpointB.get(0), 
                                    physicalDeviceA, physicalDeviceB));

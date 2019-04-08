@@ -168,16 +168,16 @@ public class IPSynchronizer {
         BusinessObject createdIp = null;
         HashMap<String, String> ipAttributes = new HashMap<>();
         ipAttributes.put(Constants.PROPERTY_NAME, ipAddr);
-        ipAttributes.put(Constants.PROPERTY_DESCRIPTION, "created with sync");
+        ipAttributes.put(Constants.PROPERTY_DESCRIPTION, "Created by the IP sync sync provider");
         ipAttributes.put(Constants.PROPERTY_MASK, syncMask); //TODO set the list types attributes
         try { 
             String newIpId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, subnet.getClassName(), subnet.getId(), ipAttributes, -1);
-            createdIp = bem.getObject(newIpId);
+            createdIp = bem.getObject("XXXXXXXXXXXX", newIpId);
             ips.get(subnet).add(createdIp);
-            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Add IP to Subnet", String.format("%s was added to %s successfully", ipAddr, subnet)));
+            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Add IP to Subnet", String.format("%s was successfully added to %s", ipAddr, subnet)));
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
-                        String.format("%s was not added tot %s", ipAddr, subnet), 
+                        String.format("%s was not added to %s", ipAddr, subnet), 
                         ex.getLocalizedMessage()));
         }
         return createdIp;
@@ -193,7 +193,7 @@ public class IPSynchronizer {
         String [] attributeNames = {"name", "description", "networkIp", "broadcastIp", "hosts"};
         String [] attributeValues = {newSubnet + ".0/24", "created with sync", newSubnet + ".0", newSubnet + ".255", "254"};
         try {
-            currentSubnet = bem.getObject(bem.createPoolItem(ipv4Root.getId(), ipv4Root.getClassName(), attributeNames, attributeValues, 0));
+            currentSubnet = bem.getObject("XXXXXXXXXXXX", bem.createPoolItem(ipv4Root.getId(), ipv4Root.getClassName(), attributeNames, attributeValues, 0));
         } catch (ApplicationObjectNotFoundException | ArraySizeMismatchException | BusinessObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException ex) {
             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                     String.format("%s [Subnet] can't be created", newSubnet + ".0/24"), 
@@ -233,14 +233,14 @@ public class IPSynchronizer {
             for (BusinessObjectLight currentIpLight : currentIps) {
                 if(currentIpLight.getName().equals(ipAddr)){
                     try {//we must check the mask if the IP already exists and if its attributes are updated
-                        BusinessObject currentIp = bem.getObject(currentIpLight.getId());
+                        BusinessObject currentIp = bem.getObject("XXXXXXXXXXXX", currentIpLight.getId());
                         String oldMask = currentIp.getAttributes().get(Constants.PROPERTY_MASK);
                         if(!oldMask.equals(syncMask)){
                             currentIp.getAttributes().put(Constants.PROPERTY_MASK, syncMask);
                             bem.updateObject(currentIp.getClassName(), currentIp.getId(), currentIp.getAttributes());
                             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, 
-                                String.format("updating the mask of %s", currentIp),
-                                String.format("from: %s to: %s", oldMask, syncMask)));
+                                String.format("Updating the netmask for %s", currentIp),
+                                String.format("From %s to %s", oldMask, syncMask)));
                         }
                         return currentIpLight;
                     } catch (InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {

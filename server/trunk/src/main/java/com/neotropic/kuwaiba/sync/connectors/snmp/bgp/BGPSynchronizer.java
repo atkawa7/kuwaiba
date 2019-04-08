@@ -376,10 +376,10 @@ public class BGPSynchronizer {
     
     /**
      * Search a provider(cloud) in the same city of the device that is been sync
-     * remote ip addr port
+     * remote  IP address port
      * @param asnNumber ASN number form SNMP
      * @param asnName ASN name from peeringDB
-     * @param bgpPeerRemoteAddr remote ip addr from SNMP
+     * @param bgpPeerRemoteAddr remote  IP address from SNMP
      * @param bgpPeerIdentifier peering id from SNMP
      * @return The newly created cloud.
      */
@@ -403,7 +403,7 @@ public class BGPSynchronizer {
                     else{
                         List<BusinessObjectLight> peerings = bem.getObjectChildren(providersParent.getClassName(), providersParent.getId(), -1);
                         for (BusinessObjectLight peering : peerings) {
-                            BusinessObject obj = bem.getObject(peering.getId());
+                            BusinessObject obj = bem.getObject("XXXXXXXXXXXX", peering.getId());
                             HashMap<String, String> attributes = obj.getAttributes();
                             if(peering.getName().equals(asnName) && attributes.get("asnNumber").equals(asnNumber)){
                                 //if we found the peering we must check the bgpPeerRemoteAddr
@@ -437,10 +437,10 @@ public class BGPSynchronizer {
     
     /**
      * Creates a provider(cloud) a port and relates thar port with the 
-     * remote ip addr port
+     * remote  IP address port
      * @param asnNumber ASN number form SNMP
      * @param asnName ASN name from peeringDB
-     * @param bgpPeerRemoteAddr remote ip addr from SNMP
+     * @param bgpPeerRemoteAddr remote  IP address from SNMP
      * @return the created cloud
      */
     private BusinessObjectLight createPeering(String asnNumber, String asnName, String bgpPeerRemoteAddr){
@@ -531,7 +531,7 @@ public class BGPSynchronizer {
      * we also update the attributes of the remote Device
      * @param asnNumber The number fetched from MIB data.
      * @param asnName The name of the ASN after searching in peeringDB.
-     * @param bgpPeerRemoteAddr remote ip addr 
+     * @param bgpPeerRemoteAddr remote  IP address 
      * @param remotePort remote port
      * @param bgpPeerIdentifier bgpPeerId to update attributes
      * @return the remote device
@@ -539,8 +539,11 @@ public class BGPSynchronizer {
     private BusinessObject findRemoteDevice(String asnNumber, String bgpPeerRemoteAddr, BusinessObjectLight remotePort, String bgpPeerIdentifier){
         try{
             BusinessObject remoteDevice = bem.getParentOfClass(remotePort.getClassName(), remotePort.getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
-            if(remoteDevice == null)//it could be a virtual Port so it is a specialchildren
-                remoteDevice = bem.getObject(bem.getParent(remotePort.getClassName(), remotePort.getId()).getId());
+            if(remoteDevice == null) {//It could be a virtual port so it is a special child
+                BusinessObjectLight remotePortParent = bem.getParent(remotePort.getClassName(), remotePort.getId());
+                remoteDevice = bem.getObject(remotePortParent.getClassName(), remotePortParent.getId());
+            }
+            
             if(remoteDevice == null)
                 res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Remote Device Search", 
                             String.format("The parent of %s was not found,      ", remotePort)));
@@ -839,7 +842,7 @@ public class BGPSynchronizer {
                 }
             }
         } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
-            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, 
+            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                     String.format("Searching local port associated to %s", bgpPeerLocalAddr), 
                     ex.getLocalizedMessage()));
         }
@@ -878,19 +881,20 @@ public class BGPSynchronizer {
             for (BusinessObjectLight currentIpLight : currentIps) {
                 if(currentIpLight.getName().equals(ipAddr)){
                     try {//we must check the mask if the IP already exists and if its attributes are updated
-                        BusinessObject currentIp = bem.getObject(currentIpLight.getId());
+                        BusinessObject currentIp = bem.getObject("XXXXXXXXXXXX", currentIpLight.getId());
                         String oldMask = currentIp.getAttributes().get(Constants.PROPERTY_MASK);
                         if(!oldMask.equals(syncMask)){
                             currentIp.getAttributes().put(Constants.PROPERTY_MASK, syncMask);
                             bem.updateObject(currentIp.getClassName(), currentIp.getId(), currentIp.getAttributes());
                             //AuditTrail
-                            aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_UPDATE_INVENTORY_OBJECT, String.format("%s (id:%s)", currentIp.toString(), currentIp.getId()));
+                            aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_UPDATE_INVENTORY_OBJECT, String.format("%s (%s)", 
+                                    currentIp, currentIp.getId()));
             
-                            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, String.format("Updating the mask of %s", currentIp), String.format("From: %s to: %s", oldMask, syncMask)));
+                            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, String.format("Updating the netmask for IP address %s", currentIp), String.format("From: %s to: %s", oldMask, syncMask)));
                         }
                         return currentIpLight;
                     } catch (ApplicationObjectNotFoundException | InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
-                        res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR,  String.format("Updating the mask of ipAddr: %s", currentIpLight), ex.getLocalizedMessage()));
+                        res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR,  String.format("Updating the netmask for IP address %s", currentIpLight), ex.getLocalizedMessage()));
                     }
                 }
             }
@@ -908,13 +912,13 @@ public class BGPSynchronizer {
         String [] attributeNames = {"name", "description", "networkIp", "broadcastIp", "hosts"};
         String [] attributeValues = {newSubnet + ".0/24", "created with sync", newSubnet + ".0", newSubnet + ".255", "254"};
         try {
-            currentSubnet = bem.getObject(bem.createPoolItem(ipv4Root.getId(), ipv4Root.getClassName(), attributeNames, attributeValues, 0));
+            currentSubnet = bem.getObject("XXXXXXXXXXXX", bem.createPoolItem(ipv4Root.getId(), ipv4Root.getClassName(), attributeNames, attributeValues, 0));
             //AuditTrail
             aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s (id:%s)", currentSubnet.toString(), currentSubnet.getId()));
             
         } catch (ApplicationObjectNotFoundException | ArraySizeMismatchException | BusinessObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException ex) {
             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
-                    String.format("%s [Subnet] can't be created", newSubnet + ".0/24"), 
+                    String.format("%s [Subnet] ca not be created", newSubnet + ".0/24"), 
                     ex.getLocalizedMessage()));
         }//we must add the new subnet into the current subnets and ips
         subnets.put(currentSubnet, new ArrayList<>()); 
@@ -933,16 +937,16 @@ public class BGPSynchronizer {
         BusinessObject createdIp = null;
         HashMap<String, String> ipAttributes = new HashMap<>();
         ipAttributes.put(Constants.PROPERTY_NAME, ipAddr);
-        ipAttributes.put(Constants.PROPERTY_DESCRIPTION, "Created with sync");
+        ipAttributes.put(Constants.PROPERTY_DESCRIPTION, "Created by the BGP sync provider");
         ipAttributes.put(Constants.PROPERTY_MASK, syncMask); //TODO set the list types attributes
         try { 
             String newIpAddrId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, subnet.getClassName(), subnet.getId(), ipAttributes, -1);
             //AuditTrail
-            aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [IPAddress] (id:%s)", ipAddr, newIpAddrId));
+            aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [IPAddress] (%s)", ipAddr, newIpAddrId));
             
-            createdIp = bem.getObject(newIpAddrId);
+            createdIp = bem.getObject("XXXXXXXXXXXX", newIpAddrId);
             ips.get(subnet).add(createdIp);
-            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Add IP to Subnet", String.format("ipAddr: %s was added to subnet: %s successfully", ipAddr, subnet)));
+            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Added IP address to Subnet", String.format("%s was added to subnet %s successfully", ipAddr, subnet)));
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                         String.format("ipAddr: %s was not added to subnet: %s", ipAddr, subnet), 

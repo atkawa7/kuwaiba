@@ -59,7 +59,7 @@ public class FunctionValue extends DynamicSectionFunction {
         
         try {
             BusinessEntityManager bem = PersistenceService.getInstance().getBusinessEntityManager();
-            remoteBusinessObject = bem.getObject(uuid);
+            remoteBusinessObject = bem.getObject("XXXXXXXXXXXX", uuid);
             
             MetadataEntityManager mem = PersistenceService.getInstance().getMetadataEntityManager();
             classMetadata = mem.getClass(remoteBusinessObject.getClassName());
@@ -68,7 +68,7 @@ public class FunctionValue extends DynamicSectionFunction {
                 throw new InvalidArgumentException(String.format("The attribute \"%s\" can not be found in object with id %s", attribute, uuid));
             
         } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException ex) {
-            throw new InvalidArgumentException(String.format("The object with id %s can not be found", uuid));
+            throw new InvalidArgumentException(String.format("The object with id %s could not be found", uuid));
         }
     }
     

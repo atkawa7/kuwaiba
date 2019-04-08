@@ -177,7 +177,7 @@ public class CiscoVlansSinchronizer {
                 String newVlanId;
                 try {
                     newVlanId = bem.createSpecialObject(Constants.CLASS_VLAN, className, id, attributes, -1);
-                    BusinessObject newVlan = bem.getObject(newVlanId);
+                    BusinessObject newVlan = bem.getObject( "XXXXXXXXXXXX", newVlanId);
                     currentVlans.add(newVlan);
                     results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "", 
                             String.format("%s was created", newVlan)));
@@ -185,7 +185,7 @@ public class CiscoVlansSinchronizer {
                     // ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.valueOf(newObjectId));
                 } catch (ApplicationObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
                    results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR,
-                           String.format("%s can't be created", vlanInstances.get(i).split("\\.")[1]), 
+                           String.format("%s can not be created", vlanInstances.get(i).split("\\.")[1]), 
                            ex.getLocalizedMessage()));
                 }
             }
