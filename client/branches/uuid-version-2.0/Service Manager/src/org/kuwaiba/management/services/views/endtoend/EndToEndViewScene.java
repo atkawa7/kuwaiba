@@ -240,11 +240,11 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
     @Override
     public void render(byte[] structure) throws IllegalArgumentException { 
        //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
-       // try {
-       //     FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_.xml");
-       //     fos.write(structure);
-       //     fos.close();
-       // } catch(Exception e) {}
+//        try {
+//            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_.xml");
+//            fos.write(structure);
+//            fos.close();
+//        } catch(Exception e) {}
         //</editor-fold>
         try{
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -263,65 +263,41 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                 int event = reader.next();
                 if (event == XMLStreamConstants.START_ELEMENT) {
                     if (reader.getName().equals(qNode)) {
-                        String objectClass = reader.getAttributeValue(null, "class");
-
-                        int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
-                        int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
+                        String className = reader.getAttributeValue(null, "class");
+                        int xCoordinate = Integer.valueOf(reader.getAttributeValue(null,"x"));
+                        int yCoordinate = Integer.valueOf(reader.getAttributeValue(null,"y"));
                         String objectId = reader.getElementText();
 
-                        LocalObjectLight lol = CommunicationsStub.getInstance().getObjectInfoLight(objectClass, objectId);
-                        if (lol != null) {
-                            if (getNodes().contains(lol))
-                                NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
-                            else {
-                                Widget widget = addNode(lol);
-                                widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
-                                widget.setBackground(com.getMetaForClass(objectClass, false).getColor());
-                                validate();
-                            }
+                        Widget aNodeWidget = findWidget(new LocalObjectLight(objectId, "", className));
+                        if (aNodeWidget == null) //See if the object is in the default view. If so, just update its location
+                            NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, 
+                                    "Some nodes seem to be removed from the last time the view was loaded. Press the Save button to persist the changes");
+                        else {
+                            aNodeWidget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
+                            validate();
                         }
                     }else {
                         if (reader.getName().equals(qEdge)) {
                             String objectId = reader.getAttributeValue(null, "id"); //NOI18N
-
-                            String aSide = reader.getAttributeValue(null, "aside"); //NOI18N
-                            String bSide = reader.getAttributeValue(null, "bside"); //NOI18N
-
                             String className = reader.getAttributeValue(null,"class"); //NOI18N
-
-                            LocalObjectLight container = com.getObjectInfoLight(className, objectId);
-
-                            if (container != null) { // if the connection exists
-                                LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
-                                ObjectNodeWidget aSideWidget = (ObjectNodeWidget) findWidget(aSideObject);
-
-                                LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
-                                ObjectNodeWidget bSideWidget = (ObjectNodeWidget) findWidget(bSideObject);
-
-                                if (aSideWidget != null && bSideWidget != null) {//If one of the endpoints is missing, don't render the connection
-
-                                    if (getEdges().contains(container))
-                                        NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
-                                    else {
-                                        ObjectConnectionWidget newEdge = (ObjectConnectionWidget) addEdge(container);
-                                        setEdgeSource(container, aSideWidget.getLookup().lookup(LocalObjectLight.class));
-                                        setEdgeTarget(container, bSideWidget.getLookup().lookup(LocalObjectLight.class));
-                                        
-                                        List<Point> localControlPoints = new ArrayList<>();
-                                        while(true) {
-                                            reader.nextTag();
-
-                                            if (reader.getName().equals(qControlPoint)) {
-                                                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-                                                    localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
-                                            } else {
-                                                newEdge.setControlPoints(localControlPoints,false);
-                                                break;
-                                            }
-                                        }
+ 
+                            ObjectConnectionWidget anEdgeWidget = (ObjectConnectionWidget)findWidget(new LocalObjectLight(objectId, "", className));
+                            if (anEdgeWidget != null) { //The connection exists
+                                List<Point> localControlPoints = new ArrayList<>();
+                                while(true) {
+                                    reader.nextTag();
+                                    if (reader.getName().equals(qControlPoint)) {
+                                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                                            localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
+                                    } else {
+                                        anEdgeWidget.setControlPoints(localControlPoints, false);
+                                        validate();
+                                        break;
                                     }
                                 }
-                            }
+                            } else
+                                NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, 
+                                    "Some connections seem to be removed from the last time the view was loaded. Press the Save button to persist the changes");
                         }
                         // FREE FRAMES
                         else if (reader.getName().equals(qPolygon)) { 
@@ -454,7 +430,7 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                                             lastAddedASideEquipmentPhysical = device;
                                         }
                                     }
-                                    if(i== 0 && aSideEquipmentLogical != null && device.getId() == aSideEquipmentLogical.getId())
+                                    if (i == 0 && aSideEquipmentLogical != null && device.getId().equals(aSideEquipmentLogical.getId()))
                                         lastAddedASideEquipmentPhysical = device;
                                     
                                     if(connection == null){
@@ -515,11 +491,11 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                                     setEdgeTarget(physicalPath.get(1), physicalVlan);
 
                                     if(!logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty()){
-                                        if(lastAddedASideEquipmentPhysical != null && endpointVlan.getId() == lastAddedASideEquipmentPhysical.getId())
+                                        if(lastAddedASideEquipmentPhysical != null && endpointVlan.getId().equals(lastAddedASideEquipmentPhysical.getId()))
                                             setEdgeSource(physicalPath.get(1), lastAddedASideEquipmentPhysical);
                                     }
                                     else if(lastAddedASideEquipmentLogical != null){
-                                        if(endpointVlan.getId() == lastAddedASideEquipmentLogical.getId()){
+                                        if(endpointVlan.getId().equals(lastAddedASideEquipmentLogical.getId())) {
                                            setEdgeSource(physicalPath.get(1), lastAddedBSideEquipmentLogical);
                                         }
                                     }
@@ -551,7 +527,7 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                                             lastAddedBSideEquipmentPhysical = device;
                                         }
                                     }
-                                    if( i== 0 && bSideEquipmentLogical != null && device.getId() == bSideEquipmentLogical.getId())
+                                    if(i == 0 && bSideEquipmentLogical != null && device.getId().equals(bSideEquipmentLogical.getId()))
                                         lastAddedBSideEquipmentPhysical = device;
                                     
                                     if(connection == null){
@@ -611,11 +587,11 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                                     setEdgeTarget(physicalPath.get(1), physicalVlan);
 
                                     if(!logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty()){
-                                        if(lastAddedBSideEquipmentPhysical != null && endpointVlan.getId() == lastAddedBSideEquipmentPhysical.getId())
+                                        if(lastAddedBSideEquipmentPhysical != null && endpointVlan.getId().equals(lastAddedBSideEquipmentPhysical.getId()))
                                             setEdgeSource(physicalPath.get(1), lastAddedBSideEquipmentPhysical);
                                     }
                                     else if(lastAddedBSideEquipmentLogical != null){
-                                        if(endpointVlan.getId() == lastAddedBSideEquipmentLogical.getId())
+                                        if(endpointVlan.getId().equals(lastAddedBSideEquipmentLogical.getId()))
                                            setEdgeSource(physicalPath.get(1), lastAddedBSideEquipmentLogical);
                                     }
                                 }
@@ -623,9 +599,6 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                         }
                         
                     }
-                    
-                   
-                    
                     
                     //Physical Links
                     //We check if there are some physical links related with the service
@@ -669,7 +642,8 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                 }
             } catch (Exception ex) {
                 clear();
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
+                //NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
+                ex.printStackTrace();
             }
         }
     }

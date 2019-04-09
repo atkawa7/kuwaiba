@@ -173,12 +173,13 @@ public class TopologyViewTopComponent extends TopComponent implements
     
     @Override
     protected void componentOpened() {
+        //Renders the default view
+        scene.render(currentService);
+        
+        //Use the saved view, if any, to update the position of the elements
         if (currentView != null)
             scene.render(currentView.getStructure()); //Render the saved view, if any
         
-        //Renders the default anyway to synchronize the possible changes
-        //that might have appeared since the last time the view was opened
-        scene.render(currentService); 
         saved = true;
         scene.addChangeListener(this);
     }

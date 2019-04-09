@@ -19,6 +19,7 @@ package org.kuwaiba.management.services.views.topology;
 import java.awt.Point;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -65,7 +66,7 @@ import org.openide.util.Exceptions;
  */
 public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
     
-    protected static final String VIEW_CLASS = "ServiceTopologyView"; //NOI18N
+    protected static final String VIEW_CLASS = "TopologyView"; //NOI18N
     /**
      * A map that contains the expanded transport links and their container links, so they can be collapsed when the user needs it (see {@link #expandTransportLinks() } and {@link #collapseTransportLinks() })
      */
@@ -222,9 +223,9 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
     @Override
     public void render(byte[] structure) throws IllegalArgumentException {
         //<editor-fold defaultstate="collapsed" desc="Uncomment this for debugging purposes. This outputs the XML view as a file">
-//        try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_" + VIEW_CLASS + ".xml")) {
-//            fos.write(structure);
-//        } catch(Exception e) { }
+        try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/tview.xml")) {
+            fos.write(structure);
+        } catch(Exception e) { }
         //</editor-fold>
         try {
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -301,8 +302,9 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                                                     ObjectConnectionWidget expandedConnectionWidget = 
                                                             (ObjectConnectionWidget)findWidget(new LocalObjectLight(expandedLinkId, "", expandedLinkClass));
                                                     
-                                                    if (expandedConnectionWidget != null)
-                                                        System.out.println("I should be setting the control points now");
+                                                    if (expandedConnectionWidget != null) {
+                                                        //Set the control points here
+                                                    }
                                                 }
                                             } else 
                                                 break;
@@ -341,9 +343,10 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                     List<LocalObjectLight> physicalPorts = com.getChildrenOfClassLightRecursive(serviceResource.getId(), serviceResource.getClassName(), "GenericPhysicalPort");
                     if (physicalPorts == null) 
                         NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-
-                    for (LocalObjectLight physicalPort : physicalPorts)
-                        portsInDevice.put(physicalPort.getId(), serviceResource);
+                    else {
+                        for (LocalObjectLight physicalPort : physicalPorts)
+                            portsInDevice.put(physicalPort.getId(), serviceResource);
+                    }
                 }
             }
             

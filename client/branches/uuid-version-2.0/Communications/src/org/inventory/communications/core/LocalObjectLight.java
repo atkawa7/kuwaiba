@@ -159,20 +159,11 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+        if (obj == null || !(obj instanceof LocalObjectLight))
             return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final LocalObjectLight other = (LocalObjectLight) obj;
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        return true;
+        
+        return className.equals(((LocalObjectLight)obj).getClassName()) &&
+                id.equals(((LocalObjectLight)obj).getId());
     }
         
     //Transferable methods
