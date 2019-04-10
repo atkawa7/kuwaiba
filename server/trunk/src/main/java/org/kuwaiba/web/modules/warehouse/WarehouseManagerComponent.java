@@ -40,9 +40,8 @@ public class WarehouseManagerComponent extends AbstractTopComponent {
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         setStyleName("dashboards");
         MenuBar mnuMain = ((IndexUI)getUI()).getMainMenu();
-        //WarehouseManagerDashboard warehouseManagerDashboard = new WarehouseManagerDashboard(webserviceBean);
         SpareAndReservedDashboardWidget spareInventoryObjectsDashboardWidget = new SpareAndReservedDashboardWidget(webserviceBean);
-
+                        
         addComponent(mnuMain);
         addComponent(spareInventoryObjectsDashboardWidget);
         setSpacing(false);

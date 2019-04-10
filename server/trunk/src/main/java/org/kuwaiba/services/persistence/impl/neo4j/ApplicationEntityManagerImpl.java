@@ -4649,6 +4649,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             processInstanceNode.delete();
             
             tx.success();
+        } catch(Exception ex) {
+             throw new OperationNotPermittedException("Cannot delete process instance, because it still has relationships");
         }
     }
     

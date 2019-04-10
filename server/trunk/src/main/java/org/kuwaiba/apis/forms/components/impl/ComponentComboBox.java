@@ -33,6 +33,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ComponentComboBox extends GraphicalComponent {
+    private boolean sort = true;
     
     public ComponentComboBox() {
         super(new ComboBox());
@@ -47,6 +48,7 @@ public class ComponentComboBox extends GraphicalComponent {
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementComboBox) {
             ElementComboBox comboBox = (ElementComboBox) element;
+            sort = comboBox.getSort();
             
             getComponent().setItemCaptionGenerator(new ItemCaptionGenerator() {
                 
@@ -67,7 +69,8 @@ public class ComponentComboBox extends GraphicalComponent {
             });
                                     
             if (comboBox.getItems() != null) {
-                Collections.sort(comboBox.getItems());
+                if (sort)
+                    Collections.sort(comboBox.getItems());
                 getComponent().setItems(comboBox.getItems());
             }
             
@@ -113,7 +116,8 @@ public class ComponentComboBox extends GraphicalComponent {
                     for (Object obj : (List) event.getNewValue())
                         lst.add(obj);
                 }
-                Collections.sort(lst);
+                if (sort)
+                    Collections.sort(lst);
                 getComponent().setItems(lst);
             }
             else if (Constants.Property.VALUE.equals(event.getPropertyName())) {

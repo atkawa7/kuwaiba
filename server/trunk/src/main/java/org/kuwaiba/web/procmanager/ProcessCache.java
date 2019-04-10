@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -47,9 +48,7 @@ import org.openide.util.Exceptions;
  * Cache of Process Definitions, Process Instances and Form Definitions
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public final class ProcessCache {
-    public static long artifactCounter = 1;
-    
+public final class ProcessCache {    
     private final HashMap<Long, List<ActivityDefinition>> processActivityDefinitions = new HashMap();
     private final List<ProcessDefinition> processDefinitions = new ArrayList();
     private final HashMap<Long, ProcessInstance> processInstances = new HashMap();
@@ -113,7 +112,7 @@ public final class ProcessCache {
             }
         }
     }
-    
+        
     public void updateProcessDefinitions() {     
         String processEnginePath = String.valueOf(PersistenceService.getInstance().
                 getApplicationEntityManager().getConfiguration().get("processEnginePath")); //NOI18N
@@ -630,9 +629,9 @@ public final class ProcessCache {
                         }
                         
                         xmlew.add(xmlef.createStartElement(tagArtifact, null, null));
-                        xmlew.add(xmlef.createAttribute(new QName(ATTR_ID), Long.toString(artifact.getId())));
-                        xmlew.add(xmlef.createAttribute(new QName(ATTR_NAME), artifact.getName()));
-                        xmlew.add(xmlef.createAttribute(new QName(ATTR_CONTENT_TYPE), artifact.getContentType()));
+                        xmlew.add(xmlef.createAttribute(new QName(ATTR_ID), artifact.getId()));
+                        xmlew.add(xmlef.createAttribute(new QName(ATTR_NAME), artifact.getName() != null ? artifact.getName() : ""));
+                        xmlew.add(xmlef.createAttribute(new QName(ATTR_CONTENT_TYPE), artifact.getContentType() != null ? artifact.getContentType() : ""));
                         xmlew.add(xmlef.createAttribute(new QName(ATTR_ARTIFACT_DEFINTION_ID), Long.toString(activityDefinition.getArfifact().getId())));
                         xmlew.add(xmlef.createAttribute(new QName(ATTR_CREATION_DATE), Long.toString(artifact.getCreationDate())));
                         xmlew.add(xmlef.createAttribute(new QName(ATTR_COMMIT_DATE), Long.toString(artifact.getCommitDate())));
@@ -750,7 +749,7 @@ public final class ProcessCache {
                             }
                             reader.next();
                         }
-                        Artifact artifact = new Artifact(artifactCounter++, name, contentType, content, shares, creationDate, commitDate);
+                        Artifact artifact = new Artifact(UUID.randomUUID().toString(), name, contentType, content, shares, creationDate, commitDate);
                                                 
                         for (ActivityDefinition activityDef : activityDefs) {
                             

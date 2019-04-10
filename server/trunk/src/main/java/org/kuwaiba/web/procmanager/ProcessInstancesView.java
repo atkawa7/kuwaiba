@@ -448,7 +448,7 @@ public class ProcessInstancesView extends VerticalLayout {
                                 grid.setItems(beans);
 
                             } catch (ServerSideException ex) {
-                                Exceptions.printStackTrace(ex);
+                                Notifications.showError(ex.getMessage());
                             }
                         }
                     }

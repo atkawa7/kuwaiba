@@ -1836,7 +1836,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             Node customerNode = getInstanceOfClass(customerClassName, customerId);
             Node newContactNode = graphDb.createNode(contactsLabel, inventoryObjectLabel);
-            newContactNode.setProperty(Constants.PROPERTY_UUID, UUID.randomUUID());
+            newContactNode.setProperty(Constants.PROPERTY_UUID, UUID.randomUUID().toString());
             
             boolean hasName = false;
             

@@ -17,6 +17,7 @@ package org.kuwaiba.interfaces.ws.toserialize.application;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.util.StringPair;
@@ -31,7 +32,7 @@ public class RemoteArtifact implements Serializable {
     /**
      * Artifact id
      */
-    private long id;
+    private String id;
     /**
      * The name of the artifact
      */
@@ -61,7 +62,7 @@ public class RemoteArtifact implements Serializable {
 
     public RemoteArtifact() { }
     
-    public RemoteArtifact(long id, String name, String contentType, byte[] content, List<StringPair> sharedInformation, long creationDate, long commitDate) {
+    public RemoteArtifact(String id, String name, String contentType, byte[] content, List<StringPair> sharedInformation, long creationDate, long commitDate) {
         this.name = name;
         this.contentType = contentType;
         this.content = content;
@@ -71,11 +72,11 @@ public class RemoteArtifact implements Serializable {
         this.commitDate = commitDate;
     }
     
-    public long getId() {
+    public String getId() {
         return id;
     }
     
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -129,8 +130,8 @@ public class RemoteArtifact implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 37 * hash + (int) (this.id ^ (this.id >>> 32));
+        int hash = 3;
+        hash = 37 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
@@ -146,10 +147,9 @@ public class RemoteArtifact implements Serializable {
             return false;
         }
         final RemoteArtifact other = (RemoteArtifact) obj;
-        if (this.id != other.id) {
+        if (!Objects.equals(this.id, other.id)) {
             return false;
         }
         return true;
     }
-    
 }

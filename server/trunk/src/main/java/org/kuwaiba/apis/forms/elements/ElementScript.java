@@ -31,7 +31,7 @@ public class ElementScript implements Tag {
         functions = new HashMap();
     }
     
-    protected HashMap<String, Runner> getFunctions() {
+    public HashMap<String, Runner> getFunctions() {
         return functions;
     }
         

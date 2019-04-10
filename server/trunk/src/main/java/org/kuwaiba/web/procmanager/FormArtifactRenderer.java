@@ -16,7 +16,6 @@ package org.kuwaiba.web.procmanager;
 
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
-import java.util.Arrays;
 import java.util.List;
 import org.kuwaiba.apis.forms.FormInstanceCreator;
 import org.kuwaiba.apis.forms.FormInstanceLoader;
@@ -34,7 +33,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
 
 /**
- *
+ * Load the form artifact structure and draw it with components
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class FormArtifactRenderer extends ArtifactRenderer {
@@ -75,7 +74,7 @@ public class FormArtifactRenderer extends ArtifactRenderer {
                         
             if (artifact != null) {
                 
-                if (artifact.getContent() != null) {
+                if (artifact.getContent() != null && artifact.getContent().length > 0) {
                     
                     if (artifactDefinition.getDefinition() == null)
                         return new Label("The artifact definition is empty");

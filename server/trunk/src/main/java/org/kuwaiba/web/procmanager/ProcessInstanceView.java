@@ -43,19 +43,21 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
+import java.util.UUID;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.forms.FormRenderer;
 import org.kuwaiba.apis.forms.ScriptQueryExecutorImpl;
-import org.kuwaiba.apis.forms.components.impl.PrintWindow;
 import org.kuwaiba.apis.forms.elements.AbstractElement;
 import org.kuwaiba.apis.forms.elements.AbstractElementField;
 import org.kuwaiba.apis.forms.elements.ElementGrid;
 import org.kuwaiba.apis.forms.elements.ElementScript;
 import org.kuwaiba.apis.forms.elements.FormDefinitionLoader;
 import org.kuwaiba.apis.forms.elements.FunctionRunner;
+import org.kuwaiba.apis.forms.elements.Runner;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 import org.kuwaiba.apis.persistence.application.process.ParallelActivityDefinition;
@@ -104,7 +106,9 @@ public class ProcessInstanceView extends DynamicComponent {
     
     private Button buttonClicked;
     private Resource buttonClickedResource;
-        
+    
+    private final List<RemoteActivityDefinition> paths = new ArrayList();
+    
     public ProcessInstanceView(RemoteProcessInstance processInstance, RemoteProcessDefinition processDefinition, WebserviceBean wsBean, RemoteSession remoteSession) {
         
         debugMode = Boolean.valueOf(String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("debugMode")));
@@ -197,7 +201,7 @@ public class ProcessInstanceView extends DynamicComponent {
             }
 
             remoteArtifact = new RemoteArtifact(
-                ProcessCache.artifactCounter++, 
+                UUID.randomUUID().toString(), 
                 "", 
                 "", 
                 content, 
@@ -209,20 +213,6 @@ public class ProcessInstanceView extends DynamicComponent {
 
         try {
             if (eventBtn.equals(btnNext)) {
-                boolean performOperation = true;
-                
-                if (artifactDefinition.getPostconditionsScript() != null) {
-                    ScriptQueryExecutorImpl scriptQueryExecutorImpl = new ScriptQueryExecutorImpl(wsBean, remoteSession, processInstance);
-                    String script = new String(artifactDefinition.getPostconditionsScript());
-                    ElementScript elementScript = FormDefinitionLoader.loadExternalScripts(artifactDefinition.getExternalScripts());
-                    FunctionRunner functionRunner = new FunctionRunner("postconditions", null, script, elementScript);
-                    functionRunner.setScriptQueryExecutor(scriptQueryExecutorImpl);
-                    
-                    Object result = functionRunner.run(null);
-
-                    performOperation = result instanceof Boolean ? (Boolean) result : Boolean.valueOf(result.toString());
-                }
-                if (performOperation) {
                     wsBean.updateActivity(
                             processInstance.getId(),
                             currentActivity.getId(),
@@ -241,20 +231,72 @@ public class ProcessInstanceView extends DynamicComponent {
                         processInstance.getId(), 
                         Page.getCurrent().getWebBrowser().getAddress(),
                         remoteSession.getSessionId());
-                    updateActivities(-1);
-                } else {
-                    Notifications.showInfo("Can not move to the next activity while the postconditions haven't been met");
-                }
-            } else {
-                wsBean.updateActivity(
-                        processInstance.getId(),
-                        currentActivity.getId(),
-                        remoteArtifact,
-                        Page.getCurrent().getWebBrowser().getAddress(),
-                        remoteSession.getSessionId());
+                    
+                    if (artifactDefinition.getPostconditionsScript() != null) {
+                        ScriptQueryExecutorImpl scriptQueryExecutorImpl = new ScriptQueryExecutorImpl(wsBean, remoteSession, processInstance);
+                        String script = new String(artifactDefinition.getPostconditionsScript());
+                        ElementScript elementScript = FormDefinitionLoader.loadExternalScripts(artifactDefinition.getExternalScripts());
+                        FunctionRunner functionRunner = new FunctionRunner("postconditions", null, script, elementScript);
+                        if (elementScript != null) {
+                            for (Runner runner : elementScript.getFunctions().values())
+                                runner.setScriptQueryExecutor(scriptQueryExecutorImpl);
+                        }
+                        functionRunner.setScriptQueryExecutor(scriptQueryExecutorImpl);
+                        functionRunner.setParametersNames(Arrays.asList("processInstanceId", "activityDefinitionId", "nextActivityDefinitionId", "printableTemplateInstance"));
 
-                updateActivities(currentActivity.getId());
-                Notifications.showInfo("The activity was updated");
+                        byte[] printableTemplateInstance = null;
+                        if (artifactDefinition.isPrintable())
+                            printableTemplateInstance = getPrintableTemplateInstanceAsByteArray(artifactDefinition, artifactView);
+
+                        functionRunner.run(Arrays.asList(
+                                processInstance.getId(), 
+                                currentActivity.getId(), 
+                                currentActivity.getNextActivity() != null ? currentActivity.getNextActivity().getId() : null, 
+                                printableTemplateInstance));
+                    }
+                    updateActivities(-1);
+            } else {
+                if (paths.contains(currentActivity)) {
+                    wsBean.updateActivity(
+                            processInstance.getId(),
+                            currentActivity.getId(),
+                            remoteArtifact,
+                            Page.getCurrent().getWebBrowser().getAddress(),
+                            remoteSession.getSessionId());
+                    if (artifactDefinition.getPostconditionsScript() != null) {
+                        ScriptQueryExecutorImpl scriptQueryExecutorImpl = new ScriptQueryExecutorImpl(wsBean, remoteSession, processInstance);
+                        String script = new String(artifactDefinition.getPostconditionsScript());
+                        ElementScript elementScript = FormDefinitionLoader.loadExternalScripts(artifactDefinition.getExternalScripts());
+                        FunctionRunner functionRunner = new FunctionRunner("postconditions", null, script, elementScript);
+                        if (elementScript != null) {
+                            for (Runner runner : elementScript.getFunctions().values())
+                                runner.setScriptQueryExecutor(scriptQueryExecutorImpl);
+                        }
+                        functionRunner.setScriptQueryExecutor(scriptQueryExecutorImpl);
+                        functionRunner.setParametersNames(Arrays.asList("processInstanceId", "activityDefinitionId", "nextActivityDefinitionId", "printableTemplateInstance"));
+                        
+                        byte[] printableTemplateInstance = null;
+                        if (artifactDefinition.isPrintable())
+                            getPrintableTemplateInstanceAsByteArray(artifactDefinition, artifactView);
+                        
+                        functionRunner.run(Arrays.asList(
+                            processInstance.getId(), 
+                            currentActivity.getId(), 
+                            currentActivity.getNextActivity() != null ? currentActivity.getNextActivity().getId() : null, 
+                            printableTemplateInstance));
+                    }
+                    updateActivities(currentActivity.getId());
+                    Notifications.showInfo("The activity was updated");
+                } else {
+                    wsBean.updateActivity(
+                            processInstance.getId(),
+                            currentActivity.getId(),
+                            remoteArtifact,
+                            Page.getCurrent().getWebBrowser().getAddress(),
+                            remoteSession.getSessionId());
+                    updateActivities(currentActivity.getId());
+                    Notifications.showInfo("The activity was updated");
+                }
             }            
             processInstance = wsBean.getProcessInstance(
                 processInstance.getId(), 
@@ -264,7 +306,6 @@ public class ProcessInstanceView extends DynamicComponent {
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getMessage());
         }
-        
     }
         
     private void renderArtifact(RemoteActivityDefinition currentActivity) {
@@ -451,86 +492,7 @@ public class ProcessInstanceView extends DynamicComponent {
                     btnPrint.addClickListener(new ClickListener() {
                         @Override
                         public void buttonClick(Button.ClickEvent event) {
-                            String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath"));
-                            
-                            File file = new File(processEnginePath + "/form/templates/" + artifactDefinition.getPrintableTemplate());
-
-                            byte[] byteTemplate = PrintWindow.getFileAsByteArray(file);
-                            String stringTemplate = new String(byteTemplate);
-                                                        
-                            List<AbstractElement> elements = ((FormRenderer) artifactView.getContent()).getFormStructure().getElements();
-                                                        
-                            for (AbstractElement element : elements) {
-                                
-                                if (element instanceof ElementGrid) {
-                                    
-                                    ElementGrid elementGrid = (ElementGrid) element;
-                                    String id = elementGrid.getId();
-                                    
-                                    int columnsSize = elementGrid.getColums() != null ? elementGrid.getColums().size() : 0;
-                                    
-                                    if (elementGrid.getRows() != null) {
-                                        List<List<Object>> rows = elementGrid.getRows();
-                                        for (int i = 0; i < rows.size(); i++) {
-                                            List row = rows.get(i);
-                                                                                        
-                                            for (int j = 0; j < columnsSize; j++) {
-                                                String value = null;
-                                                
-                                                if (j < row.size()) {
-                                                    if (row.get(j) instanceof RemoteObjectLight)
-                                                        value = ((RemoteObjectLight) row.get(j)).getName();
-                                                    else
-                                                        value = row.get(j).toString();
-                                                }
-                                                stringTemplate = stringTemplate.replace("${" + id + i + j + "}", value != null ? value : "");
-                                            }
-                                        }
-                                    }
-                                    if (elementGrid.getRows() == null || 
-                                        (elementGrid.getRows() != null && elementGrid.getRows().isEmpty())) {
-                                        
-                                        for (int j = 0; j < columnsSize; j += 1)
-                                            stringTemplate = stringTemplate.replace("${" + id + "0" + j + "}", "");
-                                    }
-                                }
-                                else if (element instanceof AbstractElementField) {
-                                    AbstractElementField elementField = (AbstractElementField) element;
-
-                                    if (elementField.getId() != null) {
-                                        String id = element.getId();
-
-                                        String value = "";
-
-                                        if (elementField.getValue() != null) {
-                                            if (elementField.getValue() instanceof RemoteObjectLight) {
-
-                                                value = ((RemoteObjectLight) elementField.getValue()).getName();
-                                            }
-                                            else {
-
-                                                value = elementField.getValue().toString();
-                                            }
-                                        }
-                                        stringTemplate = stringTemplate.replace("${" + id + "}", value);
-                                    }
-                                }
-                            }
-                            
-                            final String TMP_FILE_PATH = processEnginePath + "/temp/processengine.tmp"; //NOI18N
-                            try {
-                                
-                                PrintWriter templateInstance;
-                                templateInstance = new PrintWriter(TMP_FILE_PATH);
-                                templateInstance.println(stringTemplate);
-                                templateInstance.close();
-                                
-                            } catch (FileNotFoundException ex) {
-                                Exceptions.printStackTrace(ex);
-                            }
-                            File tmpFile = new File(TMP_FILE_PATH);                            
-
-                            byte[] tmpByteTemplate = PrintWindow.getFileAsByteArray(tmpFile);
+                            byte[] tmpByteTemplate = getPrintableTemplateInstanceAsByteArray(artifactDefinition, artifactView);
                             
                             StreamResource fileStream = ResourceFactory.getFileStream(tmpByteTemplate, currentActivity.getName() + "_" + Calendar.getInstance().getTimeInMillis() + ".html");
                             fileStream.setMIMEType("text/html"); //NOI18N
@@ -592,6 +554,107 @@ public class ProcessInstanceView extends DynamicComponent {
         }
     }
     
+    public byte[] getPrintableTemplateInstanceAsByteArray(RemoteArtifactDefinition artifactDefinition, ArtifactView artifactView) {
+        String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath"));
+        File file = new File(processEnginePath + "/form/templates/" + artifactDefinition.getPrintableTemplate());
+        
+        byte[] byteTemplate = getFileAsByteArray(file);
+        String stringTemplate = new String(byteTemplate);
+
+        List<AbstractElement> elements = ((FormRenderer) artifactView.getContent()).getFormStructure().getElements();
+
+        for (AbstractElement element : elements) {
+
+            if (element instanceof ElementGrid) {
+
+                ElementGrid elementGrid = (ElementGrid) element;
+                String id = elementGrid.getId();
+
+                int columnsSize = elementGrid.getColums() != null ? elementGrid.getColums().size() : 0;
+
+                if (elementGrid.getRows() != null) {
+                    List<List<Object>> rows = elementGrid.getRows();
+                    for (int i = 0; i < rows.size(); i++) {
+                        List row = rows.get(i);
+
+                        for (int j = 0; j < columnsSize; j++) {
+                            String value = null;
+
+                            if (j < row.size()) {
+                                if (row.get(j) instanceof RemoteObjectLight)
+                                    value = ((RemoteObjectLight) row.get(j)).getName();
+                                else
+                                    value = row.get(j).toString();
+                            }
+                            stringTemplate = stringTemplate.replace("${" + id + i + j + "}", value != null ? value : "");
+                        }
+                    }
+                }
+                if (elementGrid.getRows() == null || 
+                    (elementGrid.getRows() != null && elementGrid.getRows().isEmpty())) {
+
+                    for (int j = 0; j < columnsSize; j += 1)
+                        stringTemplate = stringTemplate.replace("${" + id + "0" + j + "}", "");
+                }
+            }
+            else if (element instanceof AbstractElementField) {
+                AbstractElementField elementField = (AbstractElementField) element;
+
+                if (elementField.getId() != null) {
+                    String id = element.getId();
+
+                    String value = "";
+
+                    if (elementField.getValue() != null) {
+                        if (elementField.getValue() instanceof RemoteObjectLight) {
+
+                            value = ((RemoteObjectLight) elementField.getValue()).getName();
+                        }
+                        else {
+
+                            value = elementField.getValue().toString();
+                        }
+                    }
+                    stringTemplate = stringTemplate.replace("${" + id + "}", value);
+                }
+            }
+        }
+
+        final String TMP_FILE_PATH = processEnginePath + "/temp/processengine.tmp"; //NOI18N
+        try {
+            PrintWriter templateInstance;
+            templateInstance = new PrintWriter(TMP_FILE_PATH);
+            templateInstance.println(stringTemplate);
+            templateInstance.close();
+
+        } catch (FileNotFoundException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        File tmpFile = new File(TMP_FILE_PATH);                            
+        return getFileAsByteArray(tmpFile);
+    }
+    
+    private byte[] getFileAsByteArray(File file) {
+        try {
+            Scanner in = new Scanner(file);
+
+            String line = "";
+
+            while (in.hasNext())
+                line += in.nextLine();
+
+            byte [] structure = line.getBytes();
+
+            in.close();
+
+            return structure;
+
+        } catch (FileNotFoundException ex) {
+
+            return null;
+        }
+    }
+    
     public void initView() {
         VerticalLayout wrapper = new VerticalLayout();
         wrapper.setStyleName("activitylist");
@@ -631,8 +694,8 @@ public class ProcessInstanceView extends DynamicComponent {
             
             boolean isFork = false;
             boolean even = false;
-            List<RemoteActivityDefinition> paths = new ArrayList();
-                                                
+            paths.clear();
+                        
             for (int i = 0; i < lstActivities.size(); i += 1) {
                 RemoteActivityDefinition activity = lstActivities.get(i);
                 
@@ -858,8 +921,6 @@ public class ProcessInstanceView extends DynamicComponent {
                 activityId,
                 Page.getCurrent().getWebBrowser().getAddress(),
                 remoteSession.getSessionId());
-            
-            
             return remoteArtifact != null;
             
         } catch (ServerSideException ex) {

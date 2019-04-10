@@ -1239,7 +1239,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("getCommonParent", ipAddress, sessionId);
             BusinessObjectLight commonParent = bem.getCommonParent(aObjectClass, aOid, bObjectClass, bOid);
-            if (commonParent.getId() != null && !commonParent.getId().equals("-1")) // is not DummyRoot
+            if (commonParent != null && commonParent.getId() != null && !commonParent.getId().equals("-1")) // is not DummyRoot
                 return new RemoteObjectLight(commonParent.getClassName(), commonParent.getId(), commonParent.getName());
             else
                 return new RemoteObjectLight("", "-1" , "");

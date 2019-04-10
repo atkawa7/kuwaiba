@@ -16,6 +16,7 @@
 package org.kuwaiba.apis.persistence.application.process;
 
 import java.util.List;
+import java.util.Objects;
 import org.kuwaiba.apis.persistence.util.StringPair;
 
 /**
@@ -27,7 +28,7 @@ public class Artifact {
     /**
      * Artifact id
      */
-    private long id;
+    private String id;
     /**
      * The name of the artifact
      */
@@ -55,7 +56,7 @@ public class Artifact {
      */
     private long commitDate = 0;
 
-    public Artifact(long id, String name, String contentType, byte[] content, List<StringPair> sharedInformation, long creationDate, long commitDate) {
+    public Artifact(String id, String name, String contentType, byte[] content, List<StringPair> sharedInformation, long creationDate, long commitDate) {
         this.name = name;
         this.contentType = contentType;
         this.content = content;
@@ -89,11 +90,11 @@ public class Artifact {
         this.content = content;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
     
@@ -119,12 +120,12 @@ public class Artifact {
     
     public void setCommitDate(long commitDate) {
         this.commitDate = commitDate;
-    }    
+    }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 37 * hash + (int) (this.id ^ (this.id >>> 32));
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
@@ -140,10 +141,9 @@ public class Artifact {
             return false;
         }
         final Artifact other = (Artifact) obj;
-        if (this.id != other.id) {
+        if (!Objects.equals(this.id, other.id)) {
             return false;
         }
         return true;
     }
-            
 }

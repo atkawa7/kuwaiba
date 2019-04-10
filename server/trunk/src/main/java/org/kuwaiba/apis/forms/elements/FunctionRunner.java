@@ -86,7 +86,9 @@ public class FunctionRunner implements Runner {
                 binding.setVariable(parameterNames.get(i), parameters.get(i));
         }
         GroovyShell shell = new GroovyShell(FunctionRunner.class.getClassLoader(), binding);
-        //System.out.println(">>><<<" + getFunctionName());
+        
+////        System.out.println(String.format("[KUWAIBA] [%s] [PROCESS ENGINE] Executed Function %s", 
+////                    Calendar.getInstance().getTime(), getFunctionName()));
         return shell.evaluate(script);
     }
 
