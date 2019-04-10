@@ -140,21 +140,21 @@ public class SimpleMapDashboardWidget extends AbstractDashboardWidget {
         try {
             this.mapLatitude = (double)wsBean.getConfigurationVariableValue("widgets.simplemap.centerLatitude", Page.getCurrent().getWebBrowser().getAddress(), 
                         ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-        } catch (ServerSideException ex) {
+        } catch (ServerSideException | ClassCastException ex) {
             this.mapLatitude = OSPConstants.DEFAULT_CENTER_LATITUDE;
         }
         
         try {
             this.mapLongitude = (double)wsBean.getConfigurationVariableValue("widgets.simplemap.centerLongitude", Page.getCurrent().getWebBrowser().getAddress(), 
                         ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-        } catch (ServerSideException ex) {
+        } catch (ServerSideException | ClassCastException ex) {
             this.mapLongitude = OSPConstants.DEFAULT_CENTER_LONGITUDE;
         }
         
         try {
             this.mapZoom = (int)wsBean.getConfigurationVariableValue("widgets.simplemap.zoom", Page.getCurrent().getWebBrowser().getAddress(), 
                         ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-        } catch (ServerSideException ex) {
+        } catch (ServerSideException | ClassCastException ex) {
             this.mapZoom = OSPConstants.DEFAULT_ZOOM;
         }
     }

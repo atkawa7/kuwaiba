@@ -520,47 +520,47 @@ public class DefaultReports {
             //The connections diagram
             tributaryLinkUsageReportText += "<div class=\"container\">\n" +
 "        <div class=\"crossconnection\">\n" +
-"            <div id=\"43703\" class=\"connectable\"><div class=\"label\">TERACO    <span class=\"note\">South Africa</span></div></div>\n" +
-"            <div id=\"43690\" class=\"connectable important\"><div class=\"label\"><b>Cape Town</b>    <span class=\"note\">South Africa</span></div></div>\n" +
+"            <div id=\"6bb250d5-3ec5-4367-aa5e-92023a9ba054\" class=\"connectable\"><div class=\"label\">TERACO    <span class=\"note\">South Africa</span></div></div>\n" +
+"            <div id=\"17c9bfd1-ae94-4bff-abfe-88366b1fa578\" class=\"connectable important\"><div class=\"label\"><b>Cape Town</b>    <span class=\"note\">South Africa</span></div></div>\n" +
 "        </div>\n" +
 "        <div class=\"segment segment1\">\n" +
-"            <div id=\"43994\" class=\"connectable\"><div class=\"label\">Swakopmund     <span class=\"note\">Namibia</span></div></div>\n" +
-"            <div id=\"43655\" class=\"connectable\"><div class=\"label\">Luanda    <span class=\"note\">Angola</span></div></div>\n" +
-"            <div id=\"43721\" class=\"connectable\"><div class=\"label\">Muanda    <span class=\"note\">Congo DR</span></div></div>\n" +
+"            <div id=\"d92c10d3-bf1f-41af-bfa1-989f3b5880f7\" class=\"connectable\"><div class=\"label\">Swakopmund     <span class=\"note\">Namibia</span></div></div>\n" +
+"            <div id=\"6861314c-97fe-48c5-bc3b-920e24967920\" class=\"connectable\"><div class=\"label\">Luanda    <span class=\"note\">Angola</span></div></div>\n" +
+"            <div id=\"47a80055-20f0-42ea-8eb4-d0fe61008ae4\" class=\"connectable\"><div class=\"label\">Muanda    <span class=\"note\">Congo DR</span></div></div>\n" +
 "            <div class=\"segment-text\">Segment 4</div> \n" +
 "        </div>\n" +
 "        <div class=\"crossconnection\">\n" +
-"            <div id=\"44085\" class=\"connectable important\"><div class=\"label\"><b>São Tomé</b>    <span class=\"note\">Sao Tome and Principe</span></div></div>\n" +
+"            <div id=\"b3b04665-a3a6-4e2a-a81f-d93d7497d9e8\" class=\"connectable important\"><div class=\"label\"><b>São Tomé</b>    <span class=\"note\">Sao Tome and Principe</span></div></div>\n" +
 "        </div>\n" +
 "        <div class=\"segment segment2\">\n" +
-"            <div id=\"43796\" class=\"connectable\"><div class=\"label\">Libreville    <span class=\"note\">Gabon</span></div></div>\n" +
-"            <div id=\"43923\" class=\"connectable\"><div class=\"label\">Bata    <span class=\"note\">Equatorial Guinea</span></div></div>\n" +
-"            <div id=\"44008\" class=\"connectable\"><div class=\"label\">Lagos    <span class=\"note\">Nigeria</span></div></div>\n" +
-"            <div id=\"43671\" class=\"connectable\"><div class=\"label\">Porto Novo    <span class=\"note\">Benin</span></div></div>\n" +
-"            <div id=\"43873\" class=\"connectable\"><div class=\"label\">Accra    <span class=\"note\">Ghana</span></div></div>\n" +
+"            <div id=\"14887543-7a5d-4825-bc15-d611b26a05aa\" class=\"connectable\"><div class=\"label\">Libreville    <span class=\"note\">Gabon</span></div></div>\n" +
+"            <div id=\"5ef4c2c3-e335-4794-964f-9c90f501ff8b\" class=\"connectable\"><div class=\"label\">Bata    <span class=\"note\">Equatorial Guinea</span></div></div>\n" +
+"            <div id=\"ce2963e4-c797-4a75-a240-29a143a906be\" class=\"connectable\"><div class=\"label\">Lagos    <span class=\"note\">Nigeria</span></div></div>\n" +
+"            <div id=\"61efeab7-4b11-4f43-87a3-97709bcd6ff5\" class=\"connectable\"><div class=\"label\">Porto Novo    <span class=\"note\">Benin</span></div></div>\n" +
+"            <div id=\"061a2727-2bd4-4cd9-8d4a-eb8fdf35b8b6\" class=\"connectable\"><div class=\"label\">Accra    <span class=\"note\">Ghana</span></div></div>\n" +
 "            <div class=\"segment-text\">Segment 3</div> \n" +
 "        </div>\n" +
 "        <div class=\"crossconnection\">\n" +
-"            <div id=\"43938\" class=\"connectable important\"><div class=\"label\"><b>Abidjan</b>    <span class=\"note\">Côte D'Ivoire</span></div></div>\n" +
+"            <div id=\"41033f44-f0e1-4566-8353-5353c7a6f264\" class=\"connectable important\"><div class=\"label\"><b>Abidjan</b>    <span class=\"note\">Côte D'Ivoire</span></div></div>\n" +
 "        </div>\n" +
 "        <div class=\"segment segment3\">\n" +
-"            <div id=\"43951\" class=\"connectable\"><div class=\"label\">Monrovia    <span class=\"note\">Liberia</span></div></div>\n" +
-"            <div id=\"44052\" class=\"connectable\"><div class=\"label\">Freetown    <span class=\"note\">Sierra Leone</span></div></div>\n" +
-"            <div id=\"43888\" class=\"connectable\"><div class=\"label\">Conakry    <span class=\"note\">Guinea</span></div></div>\n" +
-"            <div class=\"padding\"><div id=\"43909\" class=\"connectable\"><div class=\"label\">Bissau    <span class=\"note\">Guinea Bissau</span></div></div></div>\n" +
-"            <div id=\"43811\" class=\"connectable\"><div class=\"label\">Banjul    <span class=\"note\">Gambia</span></div></div>\n" +
+"            <div id=\"4c9e49dd-c9ce-4908-aeda-1ab5cd2a1207\" class=\"connectable\"><div class=\"label\">Monrovia    <span class=\"note\">Liberia</span></div></div>\n" +
+"            <div id=\"a419df25-869c-46e2-b442-4ac567e52602\" class=\"connectable\"><div class=\"label\">Freetown    <span class=\"note\">Sierra Leone</span></div></div>\n" +
+"            <div id=\"b76c88e7-1ee5-435b-b3d9-4f6bd2daa539\" class=\"connectable\"><div class=\"label\">Conakry    <span class=\"note\">Guinea</span></div></div>\n" +
+"            <div class=\"padding\"><div id=\"5e952532-b1a5-4dde-9219-a089e62b1aa7\" class=\"connectable\"><div class=\"label\">Bissau    <span class=\"note\">Guinea Bissau</span></div></div></div>\n" +
+"            <div id=\"c85bbb56-0cb6-4b15-89d8-990bc4e905d7\" class=\"connectable\"><div class=\"label\">Banjul    <span class=\"note\">Gambia</span></div></div>\n" +
 "            <div class=\"segment-text\">Segment 2</div> \n" +
 "        </div>\n" +
 "        <div class=\"crossconnection\">\n" +
-"            <div id=\"43735\" class=\"connectable important\"><div class=\"label\"><b>Dakar</b>    <span class=\"note\">Senegal</span></div></div>\n" +
+"            <div id=\"6f78855a-98b7-4494-82ce-ce2eaafbf2c1\" class=\"connectable important\"><div class=\"label\"><b>Dakar</b>    <span class=\"note\">Senegal</span></div></div>\n" +
 "        </div>\n" +
 "        <div class=\"segment segment4\">\n" +
-"            <div id=\"43970\" class=\"connectable\"><div class=\"label\">Nouakchott    <span class=\"note\">Mauritania</span></div></div>\n" +
-"            <div id=\"44071\" class=\"connectable\"><div class=\"label\">Tenerife    <span class=\"note\">Spain</span></div></div>\n" +
-"            <div id=\"44025\" class=\"connectable\"><div class=\"label\">Carcavellos    <span class=\"note\">Portugal</span></div></div>\n" +
-"            <div class=\"padding\"><div id=\"44038\" class=\"connectable\"><div class=\"label\">ITConic/Telvent    <span class=\"note\">Portugal</span></div></div></div>\n" +
-"            <div id=\"43770\" class=\"connectable important\"><div class=\"label\"><b>Penmarch</b>    <span class=\"note\">France</span></div></div>\n" +
-"            <div id=\"43749\" class=\"connectable important\"><div class=\"label\">Paris TH2    <span class=\"note\">France</span></div></div>\n" +
+"            <div id=\"ed45be7d-fe4a-41ea-aa51-041cde23e583\" class=\"connectable\"><div class=\"label\">Nouakchott    <span class=\"note\">Mauritania</span></div></div>\n" +
+"            <div id=\"ef0b7cc4-2c09-449c-974e-81c4fc383cb4\" class=\"connectable\"><div class=\"label\">Tenerife    <span class=\"note\">Spain</span></div></div>\n" +
+"            <div id=\"1522ff49-d068-4a6f-9eb2-7d3ef8582d94\" class=\"connectable\"><div class=\"label\">Carcavellos    <span class=\"note\">Portugal</span></div></div>\n" +
+"            <div class=\"padding\"><div id=\"9b00b7c5-0fa4-46db-8fc1-1e04082d4f94\" class=\"connectable\"><div class=\"label\">ITConic/Telvent    <span class=\"note\">Portugal</span></div></div></div>\n" +
+"            <div id=\"8eccdf31-2be2-47ee-af95-25d3e421b042\" class=\"connectable important\"><div class=\"label\"><b>Penmarch</b>    <span class=\"note\">France</span></div></div>\n" +
+"            <div id=\"eecfdefb-e224-4552-8f05-a12d6f0ed9c2\" class=\"connectable important\"><div class=\"label\">Paris TH2    <span class=\"note\">France</span></div></div>\n" +
 "            <div class=\"segment-text\" style=\"left:0\">Segment 1</div> \n" +
 "        </div>\n" +
 "    </div>\n";
@@ -594,7 +594,7 @@ public class DefaultReports {
                 String transportLinksToBeHighlighted = "";
                 for (AnnotatedBusinessObjectLight transportLink : transportLinks) {
                     usedResources += "<tr><td class=\"generalInfoValue\">" + transportLink.getObject() + "</td></tr>";
-                    transportLinksToBeHighlighted += (transportLink.getObject().getId() + ",");
+                    transportLinksToBeHighlighted += ("'" + transportLink.getObject().getId() + "',");
                 }
                 usedResources += "</table>";
                 usedResources += "<script>\n"
@@ -619,27 +619,27 @@ public class DefaultReports {
 "            var transportLinksToBeHighlighted = [" + transportLinksToBeHighlighted + "];\n\n" +
 "            //The non express connections\n" +
 "            var nonExpressTriplets = [\n" +
-"                   44121,43938,43951,\n" +
-"                   44124,43938,43873,\n" +
-"                   44130,43951,44052,\n" +
-"                   44132,44052,43888,\n" +
-"                   44126,43796,43923,\n" +
-"                   44128,43873,43671,\n" +
-"                   44137,43811,43735,\n" +
-"                   44140,43671,44008,\n" +
-"                   44135,43888,43811,\n" +
-"                   44148,43735,43970,\n" +
-"                   44142,44008,43923,\n" +
-"                   44153,44071,44025,\n" +
-"                   44150,43970,44071,\n" +
-"                   44099,43703,43690,\n" +
-"                   44159,44025,43770,\n" +
-"                   44157,43770,43749,\n" +
-"                   44102,43690,43994,\n" +
-"                   44107,43994,43655,\n" +
-"                   44111,43721,44085,\n" +
-"                   44109,43655,43721,\n" +
-"                   44113,44085,43796\n" +
+"                   '6ad69dfc-c5e0-4691-be4f-17342b0b65c7','41033f44-f0e1-4566-8353-5353c7a6f264','4c9e49dd-c9ce-4908-aeda-1ab5cd2a1207',\n" +
+"                   '27cc23de-2257-4433-8e33-37b0339d6e7b','41033f44-f0e1-4566-8353-5353c7a6f264','061a2727-2bd4-4cd9-8d4a-eb8fdf35b8b6',\n" +
+"                   '5da7e887-5db3-4214-adde-d689cec7ecff','4c9e49dd-c9ce-4908-aeda-1ab5cd2a1207','a419df25-869c-46e2-b442-4ac567e52602',\n" +
+"                   '37d87077-f547-499c-9312-ead0bd5f5f86','a419df25-869c-46e2-b442-4ac567e52602','b76c88e7-1ee5-435b-b3d9-4f6bd2daa539',\n" +
+"                   'd7152bc0-1394-4f44-9f33-f0ab064e001f','14887543-7a5d-4825-bc15-d611b26a05aa','5ef4c2c3-e335-4794-964f-9c90f501ff8b',\n" +
+"                   '5c8a8cc1-8d93-4292-b32d-5a25a4e5401f','061a2727-2bd4-4cd9-8d4a-eb8fdf35b8b6','61efeab7-4b11-4f43-87a3-97709bcd6ff5',\n" +
+"                   '2e86153a-d118-477a-827e-7075d9bf7afe','c85bbb56-0cb6-4b15-89d8-990bc4e905d7','6f78855a-98b7-4494-82ce-ce2eaafbf2c1',\n" +
+"                   '99649c4a-224d-489f-8227-bf895dfd52d1','61efeab7-4b11-4f43-87a3-97709bcd6ff5','ce2963e4-c797-4a75-a240-29a143a906be',\n" +
+"                   'cc9e041f-fb17-49af-aa51-3e53f2551167','b76c88e7-1ee5-435b-b3d9-4f6bd2daa539','c85bbb56-0cb6-4b15-89d8-990bc4e905d7',\n" +
+"                   '16cd0cf4-0d36-428e-b71a-cda2375b6b4c','6f78855a-98b7-4494-82ce-ce2eaafbf2c1','ed45be7d-fe4a-41ea-aa51-041cde23e583',\n" +
+"                   'b22390e7-d663-4701-97dc-03113d4ea3b3','ce2963e4-c797-4a75-a240-29a143a906be','5ef4c2c3-e335-4794-964f-9c90f501ff8b',\n" +
+"                   '286e96d3-0932-4e89-a7e1-d85105981a93','ef0b7cc4-2c09-449c-974e-81c4fc383cb4','1522ff49-d068-4a6f-9eb2-7d3ef8582d94',\n" +
+"                   '63491e43-9adf-4624-8b3d-847189d0ed52','ed45be7d-fe4a-41ea-aa51-041cde23e583','ef0b7cc4-2c09-449c-974e-81c4fc383cb4',\n" +
+"                   '1f5878c5-edb3-4171-95b1-acfa725b6a5b','6bb250d5-3ec5-4367-aa5e-92023a9ba054','17c9bfd1-ae94-4bff-abfe-88366b1fa578',\n" +
+"                   '75ac751c-326e-4f55-b710-57e18810596d','1522ff49-d068-4a6f-9eb2-7d3ef8582d94','8eccdf31-2be2-47ee-af95-25d3e421b042',\n" +
+"                   'd48963fa-ec00-477f-b7ec-440d4fd994f6','8eccdf31-2be2-47ee-af95-25d3e421b042','eecfdefb-e224-4552-8f05-a12d6f0ed9c2',\n" +
+"                   '8092d637-7c8a-4375-b9a4-be127813c8d1','17c9bfd1-ae94-4bff-abfe-88366b1fa578','d92c10d3-bf1f-41af-bfa1-989f3b5880f7',\n" +
+"                   '25af29f1-2cd0-4283-9b77-31fcb9e00ab7','d92c10d3-bf1f-41af-bfa1-989f3b5880f7','6861314c-97fe-48c5-bc3b-920e24967920',\n" +
+"                   '220daeb9-6f5c-47a4-94df-b83ab53f02e2','47a80055-20f0-42ea-8eb4-d0fe61008ae4','b3b04665-a3a6-4e2a-a81f-d93d7497d9e8',\n" +
+"                   '450a2791-207b-430a-8637-d76d49320bec','6861314c-97fe-48c5-bc3b-920e24967920','47a80055-20f0-42ea-8eb4-d0fe61008ae4',\n" +
+"                   '4cf860dd-2432-43df-b97e-27ff3436b04b','b3b04665-a3a6-4e2a-a81f-d93d7497d9e8','14887543-7a5d-4825-bc15-d611b26a05aa'\n" +
 "            ];\n\n" +
 "            var nonExpressHighlighted = [];\n" +
 "            for (var i = 0; i < nonExpressTriplets.length; i = i + 3) {\n" +
@@ -660,10 +660,10 @@ public class DefaultReports {
 "            }\n" +
 "\n" +
 "            //The express connections\n" +
-"            var expressTriplets = [44104, 43690, 44085,\n" +
-"                                 44116, 44085, 43938, \n" +
-"                                 44119, 43938, 43735, \n" +
-"                                 44162, 43735, 43770];\n\n" +
+"            var expressTriplets = ['d788157e-dd57-4201-b2af-224c8d7944e5', '17c9bfd1-ae94-4bff-abfe-88366b1fa578', 'b3b04665-a3a6-4e2a-a81f-d93d7497d9e8',\n" +
+"                                 '31589b4f-30b4-4b2b-9ee0-f8644c00715e', 'b3b04665-a3a6-4e2a-a81f-d93d7497d9e8', '41033f44-f0e1-4566-8353-5353c7a6f264', \n" +
+"                                 '74d25ca4-12b8-4a44-a573-d468c3f8f66b', '41033f44-f0e1-4566-8353-5353c7a6f264', '6f78855a-98b7-4494-82ce-ce2eaafbf2c1', \n" +
+"                                 '930f9541-829d-4989-a7c9-e77967b4d8d8', '6f78855a-98b7-4494-82ce-ce2eaafbf2c1', '8eccdf31-2be2-47ee-af95-25d3e421b042'];\n\n" +
 "            var expressHighlighted = [];\n" +
 "            for (var i = 0; i < expressTriplets.length; i = i + 3) {\n" +
 "                if (transportLinksToBeHighlighted.indexOf(expressTriplets[i]) == -1)\n" +
@@ -683,8 +683,8 @@ public class DefaultReports {
 "            }\n" +
 "            \n" +
 "            //The non-express connections that connect the endpoints using the bottom anchors\n" +
-"            var nonExpressNonDirectTriplets = [44146,43735,43909,\n" +
-"                                             44155,44025,44038 ];\n" +
+"            var nonExpressNonDirectTriplets = ['de6e7126-c530-4789-95f9-c82b873f880e','6f78855a-98b7-4494-82ce-ce2eaafbf2c1','5e952532-b1a5-4dde-9219-a089e62b1aa7',\n" +
+"                                             '46db54dc-bdad-4930-baf3-1eb41f71832c','1522ff49-d068-4a6f-9eb2-7d3ef8582d94','9b00b7c5-0fa4-46db-8fc1-1e04082d4f94' ];\n" +
 "            var nonExpressNonDirectHighlighted = [];\n" +
 "            for (var i = 0; i < nonExpressNonDirectTriplets.length; i = i + 3) {\n" +
 "                if (transportLinksToBeHighlighted.indexOf(nonExpressNonDirectTriplets[i]) == -1)\n" +

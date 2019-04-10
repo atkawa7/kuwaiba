@@ -4658,7 +4658,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     //<editor-fold defaultstate="collapsed" desc="Configuration Values">
     @Override
-    public long createConfigurationVariable(String configVariablesPoolId, String name, String description, int type, boolean masked, String valueDefinition) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+    public long createConfigurationVariable(String configVariablesPoolId, String name, String description, int type, 
+            boolean masked, String valueDefinition) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         
         if (type > 5 || type < 0)
             throw new InvalidArgumentException(String.format("The specified type (%s) is not valid", type));
@@ -4667,6 +4668,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throw  new InvalidArgumentException("The name of the configuration variable can not be empty");
 
         try (Transaction tx = graphDb.beginTx()) {
+            if (graphDb.findNode(configurationVariables, Constants.PROPERTY_NAME, name) != null)
+                throw new InvalidArgumentException(String.format("There is already a configuration value named %s", name));
+            
             Node parentPoolNode = graphDb.findNode(configurationVariablesPools, Constants.PROPERTY_UUID, configVariablesPoolId);
             
             if (parentPoolNode == null)
