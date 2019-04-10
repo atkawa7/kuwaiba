@@ -4227,7 +4227,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public long createConfigurationVariable(long configVariablesPoolId, String name, 
+    public long createConfigurationVariable(String configVariablesPoolId, String name, 
             String description, int type, boolean masked, String valueDefinition, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -4303,14 +4303,14 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public List<RemoteConfigurationVariable> getConfigurationVariablesInPool(long parentPoolId, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteConfigurationVariable> getConfigurationVariablesInPool(String poolId, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
             
         try {
             aem.validateWebServiceCall("getConfigurationVariablesInPool", ipAddress, sessionId);
             List<RemoteConfigurationVariable> res = new ArrayList<>();
-            aem.getConfigurationVariablesInPool(parentPoolId).forEach((configVariable) -> {
+            aem.getConfigurationVariablesInPool(poolId).forEach((configVariable) -> {
                 res.add(new RemoteConfigurationVariable(configVariable.getId(), configVariable.getName(), 
                     configVariable.getDescription(), configVariable.getValueDefinition(), configVariable.isMasked(), configVariable.getType()));
             });
@@ -4341,13 +4341,13 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public long createConfigurationVariablesPool(String name, String description, String ipAddress, String sessionId) throws ServerSideException {
+    public String createConfigurationVariablesPool(String name, String description, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
         try {
             aem.validateWebServiceCall("createConfigurationVariablesPool", ipAddress, sessionId);
-            long res = aem.createConfigurationVariablesPool(name, description);
+            String res = aem.createConfigurationVariablesPool(name, description);
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, String.format("Configuration variables pool %s was created", name));
             return res;
@@ -4357,7 +4357,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public void updateConfigurationVariablesPool(long poolId, String propertyToUpdate, String value, String ipAddress, String sessionId) throws ServerSideException {
+    public void updateConfigurationVariablesPool(String poolId, String propertyToUpdate, String value, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -4372,7 +4372,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public void deleteConfigurationVariablesPool(long poolId, String ipAddress, String sessionId) throws ServerSideException {
+    public void deleteConfigurationVariablesPool(String poolId, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         

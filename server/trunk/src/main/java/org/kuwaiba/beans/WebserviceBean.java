@@ -730,16 +730,16 @@ public interface WebserviceBean {
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Configuration Values">
-    public long createConfigurationVariable(long configVariablesPoolId, String name, String description, int type, boolean masked, String valueDefinition, String ipAddress, String sessionId) throws ServerSideException;
+    public long createConfigurationVariable(String configVariablesPoolId, String name, String description, int type, boolean masked, String valueDefinition, String ipAddress, String sessionId) throws ServerSideException;
     public void updateConfigurationVariable(String name, String propertyToUpdate, String newValue, String ipAddress, String sessionId) throws ServerSideException;
     public void deleteConfigurationVariable(String name, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteConfigurationVariable getConfigurationVariable(String name, String ipAddress, String sessionId) throws ServerSideException;
     public Object getConfigurationVariableValue(String name, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteConfigurationVariable> getConfigurationVariablesInPool(long parentPoolId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteConfigurationVariable> getConfigurationVariablesInPool(String poolId, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemotePool> getConfigurationVariablesPools(String ipAddress, String sessionId) throws ServerSideException;
-    public long createConfigurationVariablesPool(String name, String description, String ipAddress, String sessionId) throws ServerSideException;
-    public void updateConfigurationVariablesPool(long poolId, String propertyToUpdate, String value, String ipAddress, String sessionId) throws ServerSideException;
-    public void deleteConfigurationVariablesPool(long poolId, String ipAddress, String sessionId) throws ServerSideException;
+    public String createConfigurationVariablesPool(String name, String description, String ipAddress, String sessionId) throws ServerSideException;
+    public void updateConfigurationVariablesPool(String poolId, String propertyToUpdate, String value, String ipAddress, String sessionId) throws ServerSideException;
+    public void deleteConfigurationVariablesPool(String poolId, String ipAddress, String sessionId) throws ServerSideException;
     //</editor-fold>
     //<editor-fold desc="Validators" defaultstate="collapsed">
     public long createValidatorDefinition(String name, String description, String classToBeApplied, String script, boolean enabled, String ipAddress, String sessionId) 

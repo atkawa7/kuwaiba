@@ -4656,7 +4656,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     //<editor-fold defaultstate="collapsed" desc="Configuration Values">
     @Override
-    public long createConfigurationVariable(long configVariablesPoolId, String name, String description, int type, boolean masked, String valueDefinition) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+    public long createConfigurationVariable(String configVariablesPoolId, String name, String description, int type, boolean masked, String valueDefinition) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         
         if (type > 5 || type < 0)
             throw new InvalidArgumentException(String.format("The specified type (%s) is not valid", type));
@@ -4665,9 +4665,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throw  new InvalidArgumentException("The name of the configuration variable can not be empty");
 
         try (Transaction tx = graphDb.beginTx()) {
-            Node parentPoolNode = graphDb.findNodes(configurationVariablesPools).stream().filter((configvariablesPoolNode) -> {
-                return configvariablesPoolNode.getId() == configVariablesPoolId; 
-            }).findFirst().get();
+            Node parentPoolNode = graphDb.findNode(configurationVariablesPools, Constants.PROPERTY_UUID, configVariablesPoolId);
             
             if (parentPoolNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Can not find a pool with id %s", configVariablesPoolId));
@@ -4812,14 +4810,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public List<ConfigurationVariable> getConfigurationVariablesInPool(long parentPoolId) throws ApplicationObjectNotFoundException {
+    public List<ConfigurationVariable> getConfigurationVariablesInPool(String poolId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
-            Node parentPoolNode = graphDb.findNodes(configurationVariablesPools).stream().filter((configvariablesPoolNode) -> {
-                return configvariablesPoolNode.getId() == parentPoolId; 
-            }).findFirst().get();
+            Node parentPoolNode = graphDb.findNode(configurationVariablesPools, Constants.PROPERTY_UUID, poolId);
             
             if (parentPoolNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("Can not find a pool with id %s", parentPoolId));
+                throw new ApplicationObjectNotFoundException(String.format("Can not find a pool with id %s", poolId));
             
             List<ConfigurationVariable> res = new ArrayList<>();
             
@@ -4848,11 +4844,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         try (Transaction tx = graphDb.beginTx()) {
             List<Pool> res = new ArrayList<>();
             graphDb.findNodes(configurationVariablesPools).stream().forEach((poolNode) -> {
-                String poolNodeUuid = poolNode.hasProperty(Constants.PROPERTY_UUID) ? (String) poolNode.getProperty(Constants.PROPERTY_UUID) : null;
-                if (poolNodeUuid != null) {
-                    res.add(new Pool(poolNodeUuid, (String)poolNode.getProperty(Constants.PROPERTY_NAME), (String)poolNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
-                            "Pool of Configuration Variables", POOL_TYPE_MODULE_ROOT));
-                }
+                if (!poolNode.hasProperty(Constants.PROPERTY_UUID))
+                    poolNode.setProperty(Constants.PROPERTY_UUID, UUID.randomUUID().toString());
+                res.add(new Pool((String)poolNode.getProperty(Constants.PROPERTY_UUID), (String)poolNode.getProperty(Constants.PROPERTY_NAME), (String)poolNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
+                        "Pool of Configuration Variables", POOL_TYPE_MODULE_ROOT));
             });
             
             tx.success();
@@ -4866,28 +4861,27 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public long createConfigurationVariablesPool(String name, String description) throws InvalidArgumentException {
+    public String createConfigurationVariablesPool(String name, String description) throws InvalidArgumentException {
         
         if (name == null || name.trim().isEmpty())
             throw  new InvalidArgumentException("The name of the configuration variables pool can not be empty");
         
         try (Transaction tx = graphDb.beginTx()) {
             Node newPoolNode = graphDb.createNode(configurationVariablesPools);
-            
+            String poolId = UUID.randomUUID().toString();
+            newPoolNode.setProperty(Constants.PROPERTY_UUID, poolId);
             newPoolNode.setProperty(Constants.PROPERTY_NAME, name);
             newPoolNode.setProperty(Constants.PROPERTY_DESCRIPTION, description == null ? "" : description);
             
             tx.success();
-            return newPoolNode.getId();
+            return poolId;
         }
     }
 
     @Override
-    public void updateConfigurationVariablesPool(long poolId, String propertyToUpdate, String value) throws InvalidArgumentException, ApplicationObjectNotFoundException {
+    public void updateConfigurationVariablesPool(String poolId, String propertyToUpdate, String value) throws InvalidArgumentException, ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
-            Node poolNode = graphDb.findNodes(configurationVariablesPools).stream().filter((configvariablesPoolNode) -> {
-                return configvariablesPoolNode.getId() == poolId; 
-            }).findFirst().get();
+            Node poolNode = graphDb.findNode(configurationVariablesPools, Constants.PROPERTY_UUID, poolId);
             
             if (poolNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Can not find a pool with id %s", poolId));
@@ -4911,11 +4905,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public void deleteConfigurationVariablesPool(long poolId) throws ApplicationObjectNotFoundException {
+    public void deleteConfigurationVariablesPool(String poolId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
-            Node poolNode = graphDb.findNodes(configurationVariablesPools).stream().filter((configvariablesPoolNode) -> {
-                return configvariablesPoolNode.getId() == poolId; 
-            }).findFirst().get();
+            Node poolNode = graphDb.findNode(configurationVariablesPools, Constants.PROPERTY_UUID, poolId);
             
             if (poolNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Can not find a pool with id %s", poolId));

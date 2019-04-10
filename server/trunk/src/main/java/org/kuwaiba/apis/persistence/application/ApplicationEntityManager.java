@@ -1639,7 +1639,7 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the parent pool could not be found
      * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the name is empty, the type is invalid, the value definition is empty
      */
-    public long createConfigurationVariable(long configVariablesPoolId, String name, String description, int type, boolean masked, String valueDefinition) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    public long createConfigurationVariable(String configVariablesPoolId, String name, String description, int type, boolean masked, String valueDefinition) throws ApplicationObjectNotFoundException, InvalidArgumentException;
     /**
      * Updates the value of a configuration variable. See #{@link #createConfigurationVariable(long, java.lang.String, java.lang.String, int, boolean, java.lang.String)  } for value definition syntax
      * @param name The current name of the variable that will be modified
@@ -1671,12 +1671,12 @@ public interface ApplicationEntityManager {
      */
     public Object getConfigurationVariableValue(String name) throws InvalidArgumentException, ApplicationObjectNotFoundException;
     /**
-     * Gets the config variables in a config variable pool
-     * @param parentPoolId The id pool to retrieve the variables from
+     * Gets the configuration variables in a configuration variable pool
+     * @param poolId The id pool to retrieve the variables from
      * @return The list of config variables in the given pool
      * @throws ApplicationObjectNotFoundException If the pool could not be found
      */
-    public List<ConfigurationVariable> getConfigurationVariablesInPool(long parentPoolId) throws ApplicationObjectNotFoundException;
+    public List<ConfigurationVariable> getConfigurationVariablesInPool(String poolId) throws ApplicationObjectNotFoundException;
     /**
      * Retrieves the list of pools of config variables
      * @return The available pools of configuration variables
@@ -1689,7 +1689,7 @@ public interface ApplicationEntityManager {
      * @return The id of the newly created pool
      * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the name provided is null or empty
      */
-    public long createConfigurationVariablesPool(String name, String description) throws InvalidArgumentException;
+    public String createConfigurationVariablesPool(String name, String description) throws InvalidArgumentException;
     /**
      * Updates an attribute of a given config variables pool
      * @param poolId The id of the pool to update
@@ -1698,13 +1698,13 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException If the property provided is not valid
      * @throws ApplicationObjectNotFoundException If the pool could not be found
      */
-    public void updateConfigurationVariablesPool(long poolId, String propertyToUpdate, String value) throws InvalidArgumentException, ApplicationObjectNotFoundException;
+    public void updateConfigurationVariablesPool(String poolId, String propertyToUpdate, String value) throws InvalidArgumentException, ApplicationObjectNotFoundException;
     /**
      * Deletes a configuration variables pool. Deleting a pool also deletes the config variables contained within
      * @param poolId The id of the pool to be deleted
      * @throws ApplicationObjectNotFoundException If the pool could not be found
      */
-    public void deleteConfigurationVariablesPool(long poolId) throws ApplicationObjectNotFoundException;
+    public void deleteConfigurationVariablesPool(String poolId) throws ApplicationObjectNotFoundException;
     //<editor-fold desc="Validators" defaultstate="collapsed">
     /**
      * Creates a validator definition. 

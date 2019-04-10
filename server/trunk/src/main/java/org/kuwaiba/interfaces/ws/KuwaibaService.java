@@ -32,7 +32,6 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
-import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.util.Constants;
@@ -2304,7 +2303,7 @@ public class KuwaibaService {
      * @throws ServerSideException If the parent pool could not be found or if the name is empty, the type is invalid, the value definition is empty
      */
     @WebMethod(operationName = "createConfigurationVariable")
-    public long createConfigurationVariable(@WebParam(name = "configVariablesPoolId")long configVariablesPoolId, @WebParam(name = "name")String name, 
+    public long createConfigurationVariable(@WebParam(name = "configVariablesPoolId")String configVariablesPoolId, @WebParam(name = "name")String name, 
             @WebParam(name = "description")String description, @WebParam(name = "type")int type, @WebParam(name = "masked")boolean masked, @WebParam(name = "valueDefinition")String valueDefinition, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
@@ -2385,16 +2384,16 @@ public class KuwaibaService {
     
     /**
      * Gets the config variables in a config variable pool
-     * @param parentPoolId The id pool to retrieve the variables from
+     * @param poolId The id pool to retrieve the variables from
      * @param sessionId The session token
      * @return The list of config variables in the given pool
      * @throws ServerSideException If the pool could not be found
      */
     @WebMethod(operationName = "getConfigurationVariablesInPool")
-    public List<RemoteConfigurationVariable> getConfigurationVariablesInPool(@WebParam(name = "parentPoolId")long parentPoolId, 
+    public List<RemoteConfigurationVariable> getConfigurationVariablesInPool(@WebParam(name = "poolId")String poolId, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
-            return wsBean.getConfigurationVariablesInPool(parentPoolId, getIPAddress(), sessionId);
+            return wsBean.getConfigurationVariablesInPool(poolId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -2406,9 +2405,10 @@ public class KuwaibaService {
     }
     
     /**
-     * Retrieves the list of pools of config variables
-     * @param sessionId The session token
-     * @return The available pools of configuration variables
+     * Retrieves the list of pools of config variables.
+     * @param sessionId The session token.
+     * @return The available pools of configuration variables.
+     * @throws org.kuwaiba.exceptions.ServerSideException If an unexpected error occurred.
      */
     @WebMethod(operationName = "getConfigurationVariablesPools")
     public List<RemotePool> getConfigurationVariablesPools(@WebParam(name = "sessionId")String sessionId) throws ServerSideException {
@@ -2425,15 +2425,15 @@ public class KuwaibaService {
     }
     
     /**
-     * Creates a pool of configuration variables
-     * @param name The name of the pool. Empty or null values are not allowed
-     * @param description The description of the pool
-     * @param sessionId The session token
-     * @return The id of the newly created pool
-     * @throws ServerSideException If the name provided is null or empty
+     * Creates a pool of configuration variables.
+     * @param name The name of the pool. Empty or null values are not allowed.
+     * @param description The description of the pool.
+     * @param sessionId The session token.
+     * @return The id of the newly created pool.
+     * @throws ServerSideException If the name provided is null or empty.
      */
     @WebMethod(operationName = "createConfigurationVariablesPool")
-    public long createConfigurationVariablesPool(@WebParam(name = "name")String name, @WebParam(name = "description")String description, 
+    public String createConfigurationVariablesPool(@WebParam(name = "name")String name, @WebParam(name = "description")String description, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.createConfigurationVariablesPool(name, description, getIPAddress(), sessionId);
@@ -2448,15 +2448,15 @@ public class KuwaibaService {
     }
     
     /**
-     * Updates an attribute of a given config variables pool
-     * @param poolId The id of the pool to update
-     * @param propertyToUpdate The property to update. The valid values are "name" and "description"
-     * @param value The value of the property to be updated
-     * @param sessionId The session token
-     * @throws ServerSideException If the pool could not be found or If the property provided is not valid
+     * Updates an attribute of a given configuration variables pool.
+     * @param poolId The id of the pool to update.
+     * @param propertyToUpdate The property to update. The valid values are "name" and "description".
+     * @param value The value of the property to be updated.
+     * @param sessionId The session token.
+     * @throws ServerSideException If the pool could not be found or If the property provided is not valid.
      */
     @WebMethod(operationName = "updateConfigurationVariablesPool")
-    public void updateConfigurationVariablesPool(@WebParam(name = "")long poolId, @WebParam(name = "propertyToUpdate")String propertyToUpdate, 
+    public void updateConfigurationVariablesPool(@WebParam(name = "poolId")String poolId, @WebParam(name = "propertyToUpdate")String propertyToUpdate, 
             @WebParam(name = "value")String value, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             wsBean.updateConfigurationVariablesPool(poolId, propertyToUpdate, value, getIPAddress(), sessionId);
@@ -2471,13 +2471,13 @@ public class KuwaibaService {
     }
     
     /**
-     * Deletes a configuration variables pool. Deleting a pool also deletes the config variables contained within
-     * @param poolId The id of the pool to be deleted
-     * @param sessionId The session token
-     * @throws ServerSideException If the pool could not be found
+     * Deletes a configuration variables pool. Deleting a pool also deletes the configuration variables contained within.
+     * @param poolId The id of the pool to be deleted.
+     * @param sessionId The session token.
+     * @throws ServerSideException If the pool could not be found.
      */
     @WebMethod(operationName = "deleteConfigurationVariablesPool")
-    public void deleteConfigurationVariablesPool(@WebParam(name = "poolId")long poolId, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+    public void deleteConfigurationVariablesPool(@WebParam(name = "poolId")String poolId, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             wsBean.deleteConfigurationVariablesPool(poolId, getIPAddress(), sessionId);
         } catch(Exception e){
