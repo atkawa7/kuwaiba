@@ -9,8 +9,8 @@ Created Sunday 31 March 2019
 //Right click on an object → Show → Object View//
 
 '''
-<view version="1.1"> <!-- The following format corresponds to version 1.1 of this document  -->
-         <class>PlainChildrenView</class> <!-- This value is fixed for all views of this type -->
+<view version="1.2"> <!-- The following format corresponds to version 1.2 of this document  -->
+         <class>ObjectView</class> <!-- This value is fixed for all views of this type -->
          <nodes> <!-- The list of nodes in the view -->
              <!-- "x" and "y" attributes are the cartesian coordinates in pixels of the top left corner of the node icon.
                   The attribute "class" is the class of the object represented by the node. The text inside the tag "node"
@@ -22,10 +22,10 @@ Created Sunday 31 March 2019
              <node x="200" y="0" class="Switch">6db0f65b-dd3e-4a1c-b94e-e77a6278f8c5</node>
         <edges> <!-- The list of connections in the view -->
              <!-- "id" is the id of the business object representing the connection. "class" it's is class, while
-                  "aside" and "bside" are the ids of the endpoints to this connection. Note that this endpoints are
+                  "asideid/class" and "bsideid/class" are the ids and classes of the endpoints to this connection. Note that this endpoints are
                   ports, so the rendering algorithm must figure out what node the endpoint belongs to.
              -->
-             <edge id="150c8f1d-dc85-4cd3-8e34-685e1fe9b2ad" class="OpticalLink" aside="bbea509c-8f28-41ea-abf3-18092e63f13d" bside="d87fb5d2-352a-45c0-b254-07074e186974">">
+             <edge id="150c8f1d-dc85-4cd3-8e34-685e1fe9b2ad" class="OpticalLink" asideid="bbea509c-8f28-41ea-abf3-18092e63f13d" asideclass="Router" bsideid="d87fb5d2-352a-45c0-b254-07074e186974" bsideclass="Router">">
                       <!-- Each point where the connection changes its direction -->
                       <controlpoint x="1259" y="25"></controlpoint>
                       <controlpoint x="1990" y="25"></controlpoint>
@@ -33,3 +33,35 @@ Created Sunday 31 March 2019
         </edges>
 </view>
 '''
+
+
+===== End to End View =====
+//Right click on an instance of a subclass of GenericService → Show → End to End View//
+	''<view version="1.2">''
+		''<class>EndToEndView</class>''
+''<nodes> <!-- The list of nodes in the view -->''
+''             <!-- "x" and "y" attributes are the cartesian coordinates in pixels of the top left corner of the node icon.''
+''                  The attribute "class" is the class of the object represented by the node. The text inside the tag "node"''
+''                  is the id (uuid, actually) of the business object behind the node.''
+''	     -->''
+''             <node x="0" y="0" class="Router">e47bef76-ba59-4c98-b896-f31d42291e63</node>''
+''             <node x="100" y="0" class="Router">0dc1103a-6f67-4b04-9a23-254d18c36298</node>''
+''             <!-- ... -->''
+''             <node x="200" y="0" class="Switch">6db0f65b-dd3e-4a1c-b94e-e77a6278f8c5</node>''
+''        <edges> <!-- The list of connections in the view -->''
+''             <!-- "id" is the id of the business object representing the connection. "class" it's is class, while''
+''                  "asideid/class" and "bsideid/class" are the ids and classes of the endpoints to this connection. Note that this endpoints are''
+''                  ports, so the rendering algorithm must figure out what node the endpoint belongs to.''
+''             -->''
+''             <edge id="150c8f1d-dc85-4cd3-8e34-685e1fe9b2ad" class="OpticalLink" aside="bbea509c-8f28-41ea-abf3-18092e63f13d" bside="d87fb5d2-352a-45c0-b254-07074e186974">">''
+''                      <!-- Each point where the connection changes its direction -->''
+''                      <controlpoint x="1259" y="25"></controlpoint>''
+''                      <controlpoint x="1990" y="25"></controlpoint>''
+''              </edge>''
+''        </edges>''
+		''<polygons></polygons>''
+	''</view>''
+
+
+===== SDH/MPLS/Topology Designer Views =====
+
