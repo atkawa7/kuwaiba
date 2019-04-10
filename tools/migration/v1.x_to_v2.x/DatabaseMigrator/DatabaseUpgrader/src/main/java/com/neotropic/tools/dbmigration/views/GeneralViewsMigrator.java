@@ -28,6 +28,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
@@ -36,50 +37,42 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
 /**
- * This class manages the migration of all End To End views.
+ * Migrates all the non object-specific views (as opposed to Object, Rack or E2E views), such as SDH, MPLS and Topology views.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class EndToEndViewMigrator {
+public class GeneralViewsMigrator {
     /**
      * Performs the actual migration
      * @param dbPathReference The reference to the database location.
      */
     public static void migrate(File dbPathReference) {
         GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(dbPathReference);
-        System.out.println(">>> Migrating End to End and Topology Views...");
+        System.out.println(">>> Migrating General Views...");
         
         try (Transaction tx = graphDb.beginTx()) {
-            graphDb.findNodes(Label.label("inventoryObjects")).stream().forEach((anObjectNode) -> {
-                if (anObjectNode.hasRelationship(ViewUtil.RELTYPE_HASVIEW)) {
-                    System.out.println(String.format("Processing views for %s (%s)", anObjectNode.getProperty("name"), anObjectNode.getId()));
-                    anObjectNode.getRelationships(ViewUtil.RELTYPE_HASVIEW).forEach((aHasViewRelationship) -> { 
-                        Node aViewNode = aHasViewRelationship.getEndNode();
-                        byte[] structure = (byte[])aViewNode.getProperty("structure");
-                        try {                            
-                            ViewUtil.ViewMap parsedView = parseView(structure);
-                            byte[] migratedStructure = migrateViewMap(parsedView, graphDb);
-                            aViewNode.setProperty("structure", migratedStructure);
-                            aViewNode.setProperty("className", parsedView.getViewClass());
-                            aViewNode.setProperty("name", parsedView.getViewClass());
-                            
-                            //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
+            graphDb.findNodes(Label.label("generalViews")).stream().forEach((aViewNode) -> {
+                System.out.println(String.format("Processing %s (%s)", aViewNode.getProperty("name"), aViewNode.getProperty("className")));
+                byte[] structure = (byte[])aViewNode.getProperty("structure");
+                try {                            
+                    ViewUtil.ViewMap parsedView = parseView(structure);
+                    byte[] migratedStructure = migrateViewMap(parsedView, graphDb);
+                    aViewNode.setProperty("structure", migratedStructure);
+                    aViewNode.setProperty("className", parsedView.getViewClass());
+
+                    //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
 //                             try {
 //                                 FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/e2eview_" + anObjectNode.getId() + ".xml");
 //                                 fos.write(migratedStructure);
 //                                 fos.close();
 //                             } catch(Exception e) {}
-                             //</editor-fold>
-                            
-                        } catch (XMLStreamException ex) {
-                            System.out.println(String.format("Unexpected error processing object view for %s (%s): %s.", 
-                                    anObjectNode.getProperty("name"), anObjectNode.getId(), ex.getMessage()));
-                        } catch (ViewUtil.OtherKinfOfViewException okovex) { //Ignore all the views that are not object views
-                            //System.out.println(okovex.getMessage());
-                        }
-                    });
+                     //</editor-fold>
+
+                } catch (XMLStreamException ex) {
+                    System.out.println(String.format("Unexpected error processing general view %s (%s): %s.", 
+                            aViewNode.getProperty("name"), aViewNode.getId(), ex.getMessage()));
                 }
             });
-            System.out.println(">>> End to End and Topology Views migration finished");
+            System.out.println(">>> General Views migration finished");
             tx.success();
         }
         graphDb.shutdown();
@@ -89,9 +82,9 @@ public class EndToEndViewMigrator {
      * Parses an existing view into a set of Java objects.
      * @param structure The byte array with the view contents.
      * @return A view as a Java object
-     * @throws Exception If there was a problem parsing the XML document.
+     * @throws XMLStreamException If there was a problem parsing the XML document.
      */
-    private static ViewUtil.ViewMap parseView(byte[] structure) throws XMLStreamException, ViewUtil.OtherKinfOfViewException {
+    private static ViewUtil.ViewMap parseView(byte[] structure) throws XMLStreamException {
         ViewUtil.ViewMap res = new ViewUtil.ViewMap();
         
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -108,19 +101,8 @@ public class EndToEndViewMigrator {
             int event = reader.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
                 if (reader.getName().equals(qClass)) {
-                    String viewClass = reader.getElementText();
-                    switch (viewClass) {
-                        case "ServiceSimpleView":
-                            res.setViewClass("EndToEndView"); //NOI18N
-                            System.out.println("End to End view detected...");
-                            break;
-                        case "ServiceTopologyView":
-                            res.setViewClass("TopologyView"); //NOI18N
-                            System.out.println("Topology view detected...");
-                            break;
-                        default:
-                            throw new ViewUtil.OtherKinfOfViewException(String.format("%s detected and ignored (it will be processed later on)", viewClass));
-                    }
+                    res.setViewClass(reader.getElementText());
+                    continue;
                 }
                 
                 if (reader.getName().equals(qNode)) {
@@ -232,8 +214,12 @@ public class EndToEndViewMigrator {
                 xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
                 xmlew.add(xmlef.createAttribute(new QName("id"), (String)anObjectNode.getProperty("_uuid"))); //NOI18N
                 xmlew.add(xmlef.createAttribute(new QName("class"), anEdge.getClassName())); //NOI18N
-                xmlew.add(xmlef.createAttribute(new QName("aside"), (String)aSideObjectNode.getProperty("_uuid"))); //NOI18N
-                xmlew.add(xmlef.createAttribute(new QName("bside"), (String)bSideObjectNode.getProperty("_uuid"))); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("asideid"), (String)aSideObjectNode.getProperty("_uuid"))); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("asideclass"), 
+                        (String)aSideObjectNode.getSingleRelationship(ViewUtil.RELTYPE_INSTANCEOF, Direction.OUTGOING).getEndNode().getProperty("name"))); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("bsideid"), (String)bSideObjectNode.getProperty("_uuid"))); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("bsideclass"), 
+                        (String)bSideObjectNode.getSingleRelationship(ViewUtil.RELTYPE_INSTANCEOF, Direction.OUTGOING).getEndNode().getProperty("name"))); //NOI18N
                 for (Point point : anEdge.getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint"); //NOI18N
                     xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));

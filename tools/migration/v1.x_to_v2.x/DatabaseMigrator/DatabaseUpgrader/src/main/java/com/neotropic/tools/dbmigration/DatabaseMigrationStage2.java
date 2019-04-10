@@ -15,7 +15,8 @@
  */
 package com.neotropic.tools.dbmigration;
 
-import com.neotropic.tools.dbmigration.views.EndToEndViewMigrator;
+import com.neotropic.tools.dbmigration.views.EndToEndAndTopologyViewMigrator;
+import com.neotropic.tools.dbmigration.views.GeneralViewsMigrator;
 import com.neotropic.tools.dbmigration.views.ObjectViewMigrator;
 import java.io.File;
 import java.util.Calendar;
@@ -88,13 +89,14 @@ public class DatabaseMigrationStage2 {
                     LabelUpgrader.getInstance().setUUIDAttributeToListTypeItems(dbPathReference);
                     LabelUpgrader.getInstance().setUUIDAttributeToPools(dbPathReference);
                     ObjectViewMigrator.migrate(dbPathReference);
-                    EndToEndViewMigrator.migrate(dbPathReference);
+                    EndToEndAndTopologyViewMigrator.migrate(dbPathReference);
+                    GeneralViewsMigrator.migrate(dbPathReference);
                 }
 
                 System.out.println(String.format("[%s] Database upgrade stage 2 ended successfully...", Calendar.getInstance().getTime()));
             } catch (Exception ex) {
-                //System.out.println(String.format("An unexpected error was found: %s", ex.getMessage()));
-                ex.printStackTrace();
+                System.out.println(String.format("An unexpected error was found: %s", ex.getMessage()));
+                //ex.printStackTrace();
             }
         } else 
             displayHelp();

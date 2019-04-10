@@ -33,6 +33,13 @@ public class ViewUtil {
                     }
                 };
     
+    public static final RelationshipType RELTYPE_INSTANCEOF = new RelationshipType() {
+                    @Override
+                    public String name() {
+                        return "INSTANCE_OF";
+                    }
+                };
+    
     /**
      * Class that represents the nodes and edges structure of the view as a Java object.
      */
@@ -78,7 +85,6 @@ public class ViewUtil {
         public void setViewClass(String viewClass) {
             this.viewClass = viewClass;
         }
-        
     }
     
     /**
