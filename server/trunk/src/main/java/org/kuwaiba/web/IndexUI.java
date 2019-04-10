@@ -184,7 +184,7 @@ public class IndexUI extends UI {
     }
     
     @WebServlet(value = "/*", asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = IndexUI.class, widgetset = "org.kuwaiba.KuwaibaWidgetSet")
+    @VaadinServletConfiguration(productionMode = true, ui = IndexUI.class, widgetset = "org.kuwaiba.KuwaibaWidgetSet")
     public static class Servlet extends VaadinCDIServlet {               
         @Override
         protected void writeStaticResourceResponse(HttpServletRequest request,
