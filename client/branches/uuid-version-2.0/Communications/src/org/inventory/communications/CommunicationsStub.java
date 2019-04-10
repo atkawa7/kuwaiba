@@ -1478,9 +1478,8 @@ public class CommunicationsStub {
                 //Warning, the null value is always cached
                 cache.addListCached(className, res);
             }
-            if (includeNullValue){
+            if (includeNullValue)
                 return res;
-            }
             else
                 return res.subList(1, res.size());
             
@@ -1493,14 +1492,14 @@ public class CommunicationsStub {
     public LocalObjectListItem getCustomShape(String customShapeId, boolean ignoreCache) {        
         if (!ignoreCache) {
             for (LocalObjectListItem customShape : cache.getCustomShapes()) {
-                if (customShape.getId() == customShapeId)
+                if (customShape.getId().equals(customShapeId))
                     return customShape;
             }
         }
         getCustomShapes(false);
         
         for (LocalObjectListItem customShape : cache.getCustomShapes()) {
-            if (customShape.getId() == customShapeId)
+            if (customShape.getId().equals(customShapeId))
                 return customShape;
         }
         return null;
@@ -1510,8 +1509,7 @@ public class CommunicationsStub {
         LocalObjectListItem customShape = getCustomShape(customShapeId, false);
         
         if (customShape != null) {
-            if (!ignoreCache) {
-                
+            if (!ignoreCache) {    
                 LocalObjectView layout = cache.getCustomShapeLayout(customShape);
 
                 if (layout != null)
@@ -1520,9 +1518,7 @@ public class CommunicationsStub {
             List<LocalObjectViewLight> views = getListTypeItemRelatedViews(customShape.getId(), Constants.CLASS_CUSTOMSHAPE);
 
             if (views != null) {
-
                 if (!views.isEmpty()) {
-
                     LocalObjectView view = getListTypeItemRelatedView(customShape.getId(), Constants.CLASS_CUSTOMSHAPE, views.get(0).getId());
 
                     if (view != null) {
@@ -3000,7 +2996,7 @@ public class CommunicationsStub {
             List<RemoteObjectLight> remoteList = service.getListTypeItems(className,this.session.getSessionId());
 
             for (RemoteObjectLight r : remoteList) {
-                if(r.getId() == id){
+                if(r.getId().equals(id)){
                     res.setOid(r.getId());
                     res.setName(r.getName());
                     res.setDisplayName(r.getName());

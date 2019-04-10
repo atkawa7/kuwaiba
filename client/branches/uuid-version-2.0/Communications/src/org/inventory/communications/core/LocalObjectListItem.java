@@ -28,8 +28,9 @@ public class LocalObjectListItem extends LocalObjectLight {
     public static final String NULL_ID = "0";
     private String displayName;
 
-    public LocalObjectListItem(){
-        this.id = null;
+    public LocalObjectListItem() {
+        this.id = NULL_ID;
+        this.className = "";
         this.name = "None";
     }
 
