@@ -35,7 +35,6 @@ import com.neotropic.inventory.modules.sync.LocalSyncProvider;
 import com.neotropic.inventory.modules.sync.LocalSyncResult;
 import java.util.HashMap;
 import javax.swing.JTabbedPane;
-import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.export.ExportTablePanel;
 import org.inventory.core.services.api.export.ExportableTable;
 import org.inventory.core.services.api.export.filters.CSVFilter;
@@ -64,7 +63,7 @@ public class SyncResultsFrame extends JFrame {
         setLayout(new BorderLayout());
         setSize(800, 650);
         setLocationRelativeTo(null);
-         JPanel pnlListOfResults = new JPanel();
+        JPanel pnlListOfResults = new JPanel();
         pnlListOfResults.setLayout(new GridLayout(1, 1));
         JButton btnExport = new JButton();
         btnExport.setText(I18N.gm("export")); // NOI18N

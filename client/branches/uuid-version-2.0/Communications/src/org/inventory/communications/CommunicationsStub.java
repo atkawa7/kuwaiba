@@ -53,8 +53,6 @@ import org.inventory.communications.core.LocalPool;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalReport;
 import org.inventory.communications.core.LocalReportLight;
-import org.inventory.communications.core.LocalScriptQuery;
-import org.inventory.communications.core.LocalScriptQueryResult;
 import com.neotropic.inventory.modules.sync.LocalSyncDataSourceConfiguration;
 import com.neotropic.inventory.modules.sync.LocalSyncFinding;
 import com.neotropic.inventory.modules.sync.LocalSyncGroup;
@@ -117,7 +115,6 @@ import org.inventory.communications.wsclient.RemoteReportLight;
 import org.inventory.communications.wsclient.RemoteResultMessage;
 import org.inventory.communications.wsclient.RemoteSDHContainerLinkDefinition;
 import org.inventory.communications.wsclient.RemoteSDHPosition;
-import org.inventory.communications.wsclient.RemoteScriptQuery;
 import org.inventory.communications.wsclient.RemoteSynchronizationConfiguration;
 import org.inventory.communications.wsclient.RemoteSynchronizationGroup;
 import org.inventory.communications.wsclient.RemoteTask;
@@ -2677,145 +2674,6 @@ public class CommunicationsStub {
             return new LocalQuery(service.getQuery(queryId, session.getSessionId()));
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-            return null;
-        }
-    }
-    
-    /**
-     * Creates a script query
-     * @param name The script query name
-     * @param description The script query description
-     * @param script The script query block of code
-     * @param countable Sets if the Script Query return a collection
-     * @param parameters Set of parameters to the script query
-     * @return The id of the new script query
-     */
-    public long createScriptQuery(String name, String description, String script, String countable, HashMap<String, String> parameters) {
-        try {
-            List<StringPair> params = new ArrayList<>();
-            
-            if (parameters != null) {
-                for (String parameter : parameters.keySet())
-                    params.add(new StringPair(parameter, parameters.get(parameter)));
-            }
-            return service.createScriptQuery(name, description, script, countable, params, session.getSessionId());
-        } catch (Exception ex) {
-            error = ex.getMessage();
-            return -1;
-        }
-    }
-    
-    /**
-     * Updates a script query properties
-     * @param scriptQueryId The script query id
-     * @param propertyName The script query property name
-     * @param propertyValue The script query property value
-     * @return True if update the properties
-     */
-    public boolean updateScriptQueryProperties(long scriptQueryId, String propertyName, String propertyValue) {
-        try {
-            service.updateScriptQueryProperties(scriptQueryId, propertyName, propertyValue, session.getSessionId());
-            return true;
-        } catch (Exception ex) {
-            error = ex.getMessage();
-            return false;
-        }
-    }
-    
-    /**
-     * Updates script query parameters
-     * @param scriptQueryId The script query id
-     * @param parameters The script query parameters
-     * @return False if the script query could not be found
-     */
-    public boolean updateScriptQueryParameters(long scriptQueryId, HashMap<String, String> parameters) {
-        try {
-            List<StringPair> params = new ArrayList<>();
-            
-            for (String parameter : parameters.keySet()) 
-                params.add(new StringPair(parameter, parameters.get(parameter)));
-
-            service.updateScriptQueryParameters(scriptQueryId, params, session.getSessionId());
-            return true;
-            
-        } catch (Exception ex) {
-            error = ex.getMessage();
-            return false;
-        }  
-    }
-    
-    /**
-     * Gets a script query
-     * @param scriptQueryId The script query id
-     * @return A script query or null
-     *         If the script query could not be found
-     */
-    public LocalScriptQuery getScriptQuery(long scriptQueryId)  {
-        try {
-            return new LocalScriptQuery(service.getScriptQuery(scriptQueryId, session.getSessionId()));
-        } catch (Exception ex) {
-            error = ex.getMessage();
-            return null;
-        }
-    }
-    
-    /**
-     * Gets a set of script queries
-     * @return Set of script queries
-     */
-    public List<LocalScriptQuery> getScriptQueries() {
-        try {
-            List<LocalScriptQuery> result = new ArrayList<>();
-            
-            for (RemoteScriptQuery remoteScriptQuery : service.getScriptQueries(session.getSessionId()))
-                result.add(new LocalScriptQuery(remoteScriptQuery));
-            
-            return result;
-        } catch (Exception ex) {
-            error = ex.getMessage();
-            return null;
-        }
-    }
-    
-    /**
-     * Deletes a script query
-     * @param scriptQueryId The script query id
-     * @return False if the script query can no be deleted
-     */
-    public boolean deleteScriptQuery(long scriptQueryId) {
-        try {
-            service.deleteScriptQuery(scriptQueryId, session.getSessionId());
-            return true;
-        } catch (Exception ex) {
-            error = ex.getMessage();
-            return false;
-        }        
-    }
-    
-    /**
-     * Executes a script query
-     * @param scriptQueryId The script query id
-     * @return The script query result or null
-     *         If the script query could not be found,
-     *         If the script property can not be found
-     */
-    public LocalScriptQueryResult executeScriptQuery(long scriptQueryId) {
-        try {
-            return new LocalScriptQueryResult(
-                service.executeScriptQuery(scriptQueryId, session.getSessionId()).getResult());
-        } catch (Exception ex) {
-            error = ex.getMessage();
-            return null;
-        }
-    }
-    
-    public LocalScriptQueryResult executeScriptQueryCollection(long scriptQueryId) {
-        try {
-            return new LocalScriptQueryResult(
-                service.executeScriptQueryCollection(scriptQueryId, session.getSessionId()).getResult());
-            
-        } catch (Exception ex) {
-            error = ex.getMessage();
             return null;
         }
     }

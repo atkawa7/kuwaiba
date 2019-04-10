@@ -207,6 +207,11 @@ public class Constants {
      * Class VirualWarehouse
      */
     public static final String CLASS_VIRTUALWAREHOUSE = "VirtualWarehouse";
+    
+    /**
+     * Class VirtualPort
+     */
+    public static final String CLASS_VIRTUALPORT = "VirtualPort";
     /**
      * Default type for a new attribute
      */
