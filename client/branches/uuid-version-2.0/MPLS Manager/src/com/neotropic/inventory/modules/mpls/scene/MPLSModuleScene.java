@@ -201,7 +201,7 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         List<LocalObjectLight> emptySides = new ArrayList<>();
 //      <editor-fold defaultstate="collapsed" desc="Uncomment this for debugging purposes. This outputs the XML view as a file">
-//        try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_ MPLS_VIEW .xml")) {
+//        try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_MPLS_VIEW.xml")) {
 //            fos.write(structure);
 //        } catch(Exception e) { }
 //      </editor-fold>
@@ -229,8 +229,9 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
                             Widget widget = addNode(lol);
                             widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
                         }
-                        else if(objectId.equals("-1")){// we create an empty side
-                            emptyObj = new LocalObjectLight(UUID.randomUUID().toString() + "-" + (objectId), null, null);
+                        else if(objectId == -1){// we create an empty side
+                            Random rand = new Random();
+                            emptyObj = new LocalObjectLight((rand.nextInt(90000) + 1), null, null);
                             emptySides.add(emptyObj);
                             Widget widget = addNode(emptyObj);
                             widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
@@ -407,7 +408,7 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
             newNode.getActions().addAction(ActionFactory.createPopupMenuAction(moduleActions.createMenuForNode()));
         }else{
             node.setName("unconnectedSide");
-            newNode = new EmptyNodeWidget(this , node, null);
+            newNode = new EmptyNodeWidget(this , node,  null);
             newNode.getActions().addAction(ActionFactory.createAcceptAction(new MPLSSceneAcceptProvider(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT)));
             
             newNode.getActions().addAction(ActionFactory.createHoverAction(new TwoStateHoverProvider() {
