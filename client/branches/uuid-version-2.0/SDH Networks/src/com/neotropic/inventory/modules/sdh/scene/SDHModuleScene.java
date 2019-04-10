@@ -24,7 +24,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.namespace.QName;
@@ -257,9 +256,9 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
     public void render(byte[] structure) throws IllegalArgumentException {
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         //<editor-fold defaultstate="collapsed" desc="Uncomment this for debugging purposes. This outputs the XML view as a file">
-        try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/sdhview.xml")) {
-            fos.write(structure);
-        } catch(Exception e) { }
+//        try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/sdhview.xml")) {
+//            fos.write(structure);
+//        } catch(Exception e) { }
         //</editor-fold>
         QName qNode = new QName("node"); //NOI18N
         QName qEdge = new QName("edge"); //NOI18N
