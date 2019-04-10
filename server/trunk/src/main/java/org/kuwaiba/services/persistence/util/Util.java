@@ -123,13 +123,13 @@ public class Util {
      * @param listTypeClassNode Node the list items are supposed to be instance of
      * @return The corresponding list type item nodes. The ones not found will be ignored
      */
-    public static List<Node> getListTypeItemNodes(Node listTypeClassNode, List<Long> listTypeIds) {
+    public static List<Node> getListTypeItemNodes(Node listTypeClassNode, List<String> listTypeIds) {
         Iterable<Relationship> listTypeItems = listTypeClassNode.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
         
         List<Node> res = new ArrayList<>();
         
         for (Relationship listTypeRelationship : listTypeItems) {
-            if (listTypeIds.contains(listTypeRelationship.getStartNode().getId()) )
+            if (listTypeIds.contains((String)listTypeRelationship.getStartNode().getProperty(Constants.PROPERTY_UUID)) )
                 res.add(listTypeRelationship.getStartNode());
         }
         

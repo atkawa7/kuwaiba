@@ -4,10 +4,7 @@
 // This file prefixes all rules with the theme name to avoid causing conflicts with other themes.
 // The actual styles should be defined in mytheme.scss
 $v-layout-margin: $v-layout-margin-top $v-layout-margin-right $v-layout-margin-bottom $v-layout-margin-left !default;
-@include v-font(ubuntu-r,
-            '../../../../nuqui/fonts/ubuntu-r');
-@include v-font(ubuntu-l,
-            '../../../../nuqui/fonts/ubuntu-l');
+
 .nuqui {
   @include nuqui;
   @include addons;

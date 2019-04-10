@@ -143,20 +143,20 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
      * this implementation (that is, call super.createCover()) and set a style afterwards. 
      */
     public void createCover() { 
-        VerticalLayout lytContactsWidgetCover = new VerticalLayout();
+        VerticalLayout lytDefaultWidgetCover = new VerticalLayout();
         Label lblText = new Label(title);
         lblText.setStyleName("text-bottomright");
-        lytContactsWidgetCover.addLayoutClickListener((event) -> {
+        lytDefaultWidgetCover.addLayoutClickListener((event) -> {
             if (event.getButton() == MouseEventDetails.MouseButton.LEFT) {
                 this.createContent();
                 launch();
             }
         });
         
-        lytContactsWidgetCover.addComponent(lblText);
-        lytContactsWidgetCover.setSizeFull();
+        lytDefaultWidgetCover.addComponent(lblText);
+        lytDefaultWidgetCover.setSizeFull();
         
-        this.coverComponent = lytContactsWidgetCover;
+        this.coverComponent = lytDefaultWidgetCover;
         addComponent(coverComponent);
     }
     public abstract void createContent();

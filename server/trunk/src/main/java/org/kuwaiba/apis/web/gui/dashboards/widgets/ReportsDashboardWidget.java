@@ -59,20 +59,20 @@ public class ReportsDashboardWidget extends AbstractDashboardWidget {
 
     @Override
     public void createCover() {
-        VerticalLayout lytContactsWidgetCover = new VerticalLayout();
+        VerticalLayout lytReportsWidgetCover = new VerticalLayout();
         Label lblText = new Label(title);
         lblText.setStyleName("text-bottomright");
-        lytContactsWidgetCover.addLayoutClickListener((event) -> {
+        lytReportsWidgetCover.addLayoutClickListener((event) -> {
             if (event.getButton() == MouseEventDetails.MouseButton.LEFT) {
                 this.createContent();
                 launch();
             }
         });
         
-        lytContactsWidgetCover.addComponent(lblText);
-        lytContactsWidgetCover.setSizeFull();
-        lytContactsWidgetCover.setStyleName("dashboard_cover_widget-darkgrey");
-        this.coverComponent = lytContactsWidgetCover;
+        lytReportsWidgetCover.addComponent(lblText);
+        lytReportsWidgetCover.setSizeFull();
+        lytReportsWidgetCover.setStyleName("dashboard_cover_widget-darkgrey");
+        this.coverComponent = lytReportsWidgetCover;
         addComponent(coverComponent);
     }
 

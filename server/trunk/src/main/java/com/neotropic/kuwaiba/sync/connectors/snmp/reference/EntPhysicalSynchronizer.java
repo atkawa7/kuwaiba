@@ -1552,7 +1552,7 @@ public class EntPhysicalSynchronizer {
                                     String.format("%s [%s], with parent: %s ", attributes.get(Constants.PROPERTY_NAME), createdClassName, currentInterface),    
                                     "Inventory object created"));
                             }
-                            else if(currrentvirtualInterface != null){
+                            else {
                                 createdClassName = Constants.CLASS_VIRTUALPORT;
                                 attributes.put(Constants.PROPERTY_NAME, ifName.split("\\.")[1]);
                                 bem.updateObject(currentInterface.getClassName(), currentInterface.getId(), attributes);

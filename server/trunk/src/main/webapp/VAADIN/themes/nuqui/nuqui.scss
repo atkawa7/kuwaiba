@@ -119,7 +119,7 @@ $v-field-background-color: #ccffe6;
         border: none !important;
     }
 
-    .h1{
+    .h1 {
         color: gold;
         font-size: 1em;
     }
@@ -230,13 +230,12 @@ $v-field-background-color: #ccffe6;
     }
     
     .v-Notification-gray {
-        background: #8A8A8A;
-        color: white;
+        background: #555555;
+        color: #EFEFEF;
     }
        
     .v-Notification .v-Notification-caption {
 	color: white;
-	font-size: 14px;
 	line-height: 1;
     }   
     
@@ -412,74 +411,146 @@ $v-field-background-color: #ccffe6;
     .dashboards {
         /*The following style are mostly used for cover components for dashboard windows using a dark theme*/
         .v-verticallayout-dashboard_cover_widget-darkblue {
-            background: #375187;
-            color: white;
-            font-size: medium;
+            //background: #375187;
+            background: #555555;
+            color: #EFEFEF;
             position: relative;
-            min-height: 100px;
+            min-height: 40px;
+            cursor: pointer;
+            padding-right: 10px;
+            vertical-align: middle;
+            text-align: right;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkblue:hover {
+            background: #EFEFEF;
+            color: #555555;
         }
         
         .v-verticallayout-dashboard_cover_widget-darkgreen {
-            background: #4D8459;
-            color: white;
-            font-size: medium;
+            //background: #4D8459;
+            background: #555555;
+            color: #EFEFEF;
             position: relative;
-            min-height: 100px;
+            min-height: 40px;
+            cursor: pointer;
+            padding-right: 10px;
+            vertical-align: middle;
+            text-align: right;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkgreen:hover {
+            background: #EFEFEF;
+            color: #555555;
         }
         
         .v-verticallayout-dashboard_cover_widget-darkred {
-            background: #944C4B;
-            color: white;
-            font-size: medium;
+            //background: #944C4B;
+            background: #555555;
+            color: #EFEFEF;
             position: relative;
-            min-height: 100px;
+            min-height: 40px;
+            cursor: pointer;
+            padding-right: 10px;
+            vertical-align: middle;
+            text-align: right;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkred:hover {
+            background: #EFEFEF;
+            color: #555555;
         }
         
         .v-verticallayout-dashboard_cover_widget-darkorange {
-            background: #DA9631;
-            color: white;
-            font-size: medium;
+            //background: #DA9631;
+            background: #555555;
+            color: #EFEFEF;
             position: relative;
-            min-height: 100px;
+            min-height: 40px;
+            cursor: pointer;
+            padding-right: 10px;
+            vertical-align: middle;
+            text-align: right;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkorange:hover {
+            background: #EFEFEF;
+            color: #555555;
         }
         
         .v-verticallayout-dashboard_cover_widget-darkpurple {
-            background: #AD2D90;
-            color: white;
-            font-size: medium;
+            //background: #AD2D90;
+            background: #555555;
+            color: #EFEFEF;
             position: relative;
-            min-height: 100px;
+            min-height: 40px;
+            cursor: pointer;
+            padding-right: 10px;
+            vertical-align: middle;
+            text-align: right;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkpurple:hover {
+            background: #EFEFEF;
+            color: #555555;
         }
         
         .v-verticallayout-dashboard_cover_widget-darkgrey {
-            background: #808080;
-            color: white;
-            font-size: medium;
+            //background: #808080;
+            background: #555555;
+            color: #EFEFEF;
             position: relative;
-            min-height: 100px;
+            min-height: 40px;
+            cursor: pointer;
+            padding-right: 10px;
+            vertical-align: middle;
+            text-align: right;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkgrey:hover {
+            background: #EFEFEF;
+            color: #555555;
         }
         
         .v-verticallayout-dashboard_cover_widget-darkpink {
-            background: #C74B98;
-            color: white;
-            font-size: medium;
+            //background: #C74B98;
+            background: #555555;
+            color: #EFEFEF;
             position: relative;
-            min-height: 100px;
+            min-height: 40px;
+            cursor: pointer;
+            padding-right: 10px;
+            vertical-align: middle;
+            text-align: right;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkpink:hover {
+            background: #EFEFEF;
+            color: #555555;
         }
         
         .v-verticallayout-dashboard_cover_widget-darkblue {
-            background: #2491CB;
-            color: white;
-            font-size: medium;
+            //background: #2491CB;
+            background: #555555;
+            color: #EFEFEF;
             position: relative;
-            min-height: 100px;
+            min-height: 40px;
+            cursor: pointer;
+            padding-right: 10px;
+            vertical-align: middle;
+            text-align: right;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkblue:hover {
+            background: #EFEFEF;
+            color: #555555;
         }
 
         .v-label-text-bottomright {
-            position: absolute;
+/*            position: absolute;
             bottom: 0;
             right: 0;
-            padding-right: 10px;
+            padding-right: 10px;*/
         }
         
         /*Used to confine an image within the limits of the "screen" part of tha TheaterLayout in a dashboard*/

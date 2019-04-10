@@ -122,7 +122,7 @@ public class ValidatorDefinition implements Comparable<ValidatorDefinition> {
      * @param objectId The id of the object to be evaluated.
      * @return The validator product of evaluating the definition condition
      */
-    public Validator run(String objectClass, long objectId) {
+    public Validator run(String objectClass, String objectId) {
         return null; //The default implemention
     }
 }

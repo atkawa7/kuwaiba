@@ -881,13 +881,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             for (Relationship childRel : classNode.getRelationships(RelTypes.INSTANCE_OF)) {
                 Node child = childRel.getStartNode();
-                String childUuid = child.hasProperty(Constants.PROPERTY_UUID) ? (String) child.getProperty(Constants.PROPERTY_UUID) : null;
-                if (childUuid == null)
-                    throw new InvalidArgumentException(String.format("The List Type Item with id %s does not have uuid", child.getId()));
-                                    
-                if (childUuid.equals(listTypeItemId)) { 
+                if (listTypeItemId.equals((String) child.getProperty(Constants.PROPERTY_UUID))) { 
                     tx.success();
-                    return new BusinessObjectLight(listTypeClassName, childUuid, (String) child.getProperty(Constants.PROPERTY_NAME));
+                    return new BusinessObjectLight(listTypeClassName, (String) child.getProperty(Constants.PROPERTY_UUID), 
+                            (String) child.getProperty(Constants.PROPERTY_NAME));
                 }
                 
             }

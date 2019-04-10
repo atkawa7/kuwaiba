@@ -1627,42 +1627,6 @@ div.v-layout.v-horizontal.v-widget {
 	vertical-align: top;
 }
 
-@font-face {
-	font-family: ubuntu-r;
-	font-weight: normal;
-	font-style: normal;
-	src: url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-r.eot);
-	src: url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-r.eot?#iefix) format("embedded-opentype"), url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-r.woff) format("woff"), url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-r.ttf) format("truetype"), url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-r.svg#ubuntu-r) format("svg");
-}
-
-.ubuntu-r {
-	font-family: ubuntu-r;
-	font-style: normal;
-	font-weight: normal;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	display: inline-block;
-	text-align: center;
-}
-
-@font-face {
-	font-family: ubuntu-l;
-	font-weight: normal;
-	font-style: normal;
-	src: url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-l.eot);
-	src: url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-l.eot?#iefix) format("embedded-opentype"), url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-l.woff) format("woff"), url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-l.ttf) format("truetype"), url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-l.svg#ubuntu-l) format("svg");
-}
-
-.ubuntu-l {
-	font-family: ubuntu-l;
-	font-style: normal;
-	font-weight: normal;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	display: inline-block;
-	text-align: center;
-}
-
 .nuqui.v-app, .nuqui.v-app-loading {
 	font: 400 13px/1.55 "Open Sans", sans-serif;
 	color: #464646;
@@ -15214,13 +15178,12 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-Notification-gray {
-	background: #8A8A8A;
-	color: white;
+	background: #555555;
+	color: #EFEFEF;
 }
 
 .nuqui .v-Notification .v-Notification-caption {
 	color: white;
-	font-size: 14px;
 	line-height: 1;
 }
 
@@ -15366,74 +15329,131 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkblue {
-	background: #375187;
-	color: white;
-	font-size: medium;
+	background: #555555;
+	color: #EFEFEF;
 	position: relative;
-	min-height: 100px;
+	min-height: 40px;
+	cursor: pointer;
+	padding-right: 10px;
+	vertical-align: middle;
+	text-align: right;
+}
+
+.nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkblue:hover {
+	background: #EFEFEF;
+	color: #555555;
 }
 
 .nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkgreen {
-	background: #4D8459;
-	color: white;
-	font-size: medium;
+	background: #555555;
+	color: #EFEFEF;
 	position: relative;
-	min-height: 100px;
+	min-height: 40px;
+	cursor: pointer;
+	padding-right: 10px;
+	vertical-align: middle;
+	text-align: right;
+}
+
+.nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkgreen:hover {
+	background: #EFEFEF;
+	color: #555555;
 }
 
 .nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkred {
-	background: #944C4B;
-	color: white;
-	font-size: medium;
+	background: #555555;
+	color: #EFEFEF;
 	position: relative;
-	min-height: 100px;
+	min-height: 40px;
+	cursor: pointer;
+	padding-right: 10px;
+	vertical-align: middle;
+	text-align: right;
+}
+
+.nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkred:hover {
+	background: #EFEFEF;
+	color: #555555;
 }
 
 .nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkorange {
-	background: #DA9631;
-	color: white;
-	font-size: medium;
+	background: #555555;
+	color: #EFEFEF;
 	position: relative;
-	min-height: 100px;
+	min-height: 40px;
+	cursor: pointer;
+	padding-right: 10px;
+	vertical-align: middle;
+	text-align: right;
+}
+
+.nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkorange:hover {
+	background: #EFEFEF;
+	color: #555555;
 }
 
 .nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkpurple {
-	background: #AD2D90;
-	color: white;
-	font-size: medium;
+	background: #555555;
+	color: #EFEFEF;
 	position: relative;
-	min-height: 100px;
+	min-height: 40px;
+	cursor: pointer;
+	padding-right: 10px;
+	vertical-align: middle;
+	text-align: right;
+}
+
+.nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkpurple:hover {
+	background: #EFEFEF;
+	color: #555555;
 }
 
 .nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkgrey {
-	background: #808080;
-	color: white;
-	font-size: medium;
+	background: #555555;
+	color: #EFEFEF;
 	position: relative;
-	min-height: 100px;
+	min-height: 40px;
+	cursor: pointer;
+	padding-right: 10px;
+	vertical-align: middle;
+	text-align: right;
+}
+
+.nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkgrey:hover {
+	background: #EFEFEF;
+	color: #555555;
 }
 
 .nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkpink {
-	background: #C74B98;
-	color: white;
-	font-size: medium;
+	background: #555555;
+	color: #EFEFEF;
 	position: relative;
-	min-height: 100px;
+	min-height: 40px;
+	cursor: pointer;
+	padding-right: 10px;
+	vertical-align: middle;
+	text-align: right;
+}
+
+.nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkpink:hover {
+	background: #EFEFEF;
+	color: #555555;
 }
 
 .nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkblue {
-	background: #2491CB;
-	color: white;
-	font-size: medium;
+	background: #555555;
+	color: #EFEFEF;
 	position: relative;
-	min-height: 100px;
+	min-height: 40px;
+	cursor: pointer;
+	padding-right: 10px;
+	vertical-align: middle;
+	text-align: right;
 }
 
-.nuqui .dashboards .v-label-text-bottomright {
-	position: absolute;
-	bottom: 0;
-	right: 0;
-	padding-right: 10px;
+.nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkblue:hover {
+	background: #EFEFEF;
+	color: #555555;
 }
 
 .nuqui .dashboards .v-image-theater-layout-screen-image {

@@ -2932,9 +2932,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     if (!mem.isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, attributeType))
                         throw new InvalidArgumentException(String.format("Type %s is not a primitive nor a list type", attributeName));
 
-                    List<Long> listTypeItemIds = new ArrayList<>();
+                    List<String> listTypeItemIds = new ArrayList<>();
                     for (String listTypeItemIdAsString : attributes.get(attributeName).split(";")) //If the attribute is multiple, the ids will be separated by ";", otherwise, it will be a single long value
-                        listTypeItemIds.add(Long.valueOf(listTypeItemIdAsString));
+                        listTypeItemIds.add(listTypeItemIdAsString);
 
                     Node listTypeClassNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, attributeType);
 
@@ -3001,7 +3001,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     //Release the previous relationship
                     oldValues += " "; //Two empty, separation spaces
                     for (Relationship rel : instance.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO)) {
-                        if (rel.getProperty(Constants.PROPERTY_NAME).equals(attributeName)){
+                        if (rel.getProperty(Constants.PROPERTY_NAME).equals(attributeName)) {
                             oldValues += rel.getEndNode().getProperty(Constants.PROPERTY_NAME) + " ";
                             rel.delete();
                         }
@@ -3012,9 +3012,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                                 throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set to null", attributeName));
                     } else {
                         try { //If the new value is different than null, then create the new relationships
-                            List<Long> listTypeItemIds = new ArrayList<>();
+                            List<String> listTypeItemIds = new ArrayList<>();
                             for (String listTypeItemIdAsString : attributes.get(attributeName).split(";")) //If the attribute is multiple, the ids will be separated by ";", otherwise, it will be a single long value
-                                listTypeItemIds.add(Long.valueOf(listTypeItemIdAsString));
+                                listTypeItemIds.add(listTypeItemIdAsString);
                             
                             Node listTypeNodeClass = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, classMetadata.getType(attributeName));
                             List<Node> listTypeItemNodes = Util.getListTypeItemNodes(listTypeNodeClass, listTypeItemIds);
@@ -3345,7 +3345,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                                 validatorDefinitions.add(validatorDefinitionInstance);
                             } catch (Exception ex) { //If there's an error parsing the script or instantiating the class, this validator definition will be ignored and the error logged
                                 System.out.println(String.format("[KUWAIBA]   %s", ex.getLocalizedMessage()));
-                                ex.printStackTrace();
+                                //ex.printStackTrace();
                             }
                         }
                     }
@@ -3365,7 +3365,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             try {
                 String script = aValidatorDefinition.getScript();
                 if (aValidatorDefinition.isEnabled()) {
-                    Validator validator = aValidatorDefinition.run(className, instance.getId());
+                    Validator validator = aValidatorDefinition.run(className, (String)instance.getProperty(Constants.PROPERTY_UUID));
                     if (validator != null) //It's possible that after evaluating the condition nothing should be done, so the method "run" could actually return null
                         validators.add(validator);
                 }
