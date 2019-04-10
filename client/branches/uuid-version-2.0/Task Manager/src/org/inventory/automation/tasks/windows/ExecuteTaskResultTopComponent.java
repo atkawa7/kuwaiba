@@ -118,22 +118,24 @@ public class ExecuteTaskResultTopComponent extends TopComponent {
         
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            setText(value.toString());
-            LocalTaskResultMessage cellContent = (LocalTaskResultMessage)value;
-            if (isSelected)
-                setBackground(UIManager.getColor("Button.focus"));
-            else {
-                switch (cellContent.getMessageType()) {
-                    case LocalTaskResultMessage.STATUS_ERROR:
-                        setBackground(Color.PINK);
-                        break;
-                    case LocalTaskResultMessage.STATUS_WARNING:
-                        setBackground(Color.YELLOW);
-                        break;
-                    default:
-                    case LocalTaskResultMessage.STATUS_SUCCESS:
-                        setBackground(Color.GREEN);
-                        break;
+            if (value != null) {
+                setText(value.toString());
+                LocalTaskResultMessage cellContent = (LocalTaskResultMessage)value;
+                if (isSelected)
+                    setBackground(UIManager.getColor("Button.focus"));
+                else {
+                    switch (cellContent.getMessageType()) {
+                        case LocalTaskResultMessage.STATUS_ERROR:
+                            setBackground(Color.PINK);
+                            break;
+                        case LocalTaskResultMessage.STATUS_WARNING:
+                            setBackground(Color.YELLOW);
+                            break;
+                        default:
+                        case LocalTaskResultMessage.STATUS_SUCCESS:
+                            setBackground(Color.GREEN);
+                            break;
+                    }
                 }
             }
             return this;
