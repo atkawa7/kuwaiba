@@ -40,8 +40,6 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteBusinessRule;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConfigurationVariable;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteContact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFavoritesFolder;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteForm;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFormInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteKpiResult;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObjectLight;
@@ -50,9 +48,6 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteQueryLight;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQuery;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResult;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResultCollection;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationConfiguration;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationGroup;
@@ -405,43 +400,6 @@ public interface WebserviceBean {
     
     public RemoteTaskResult executeTask(long taskId, String ipAddress, String sessionId) throws ServerSideException;
     
-    public long createForm(String name, String description, byte[] structure, String ipAddress, String sessionId) throws ServerSideException;
-    
-    public void updateForm(long formId, String name, String description, byte[] structure, String ipAddress, String sessionId) throws ServerSideException;
-    
-    public RemoteForm getForm(long formId, String ipAddress, String sessionId) throws ServerSideException;
-    
-    public List<RemoteForm> getForms(String ipAddress, String sessionId) throws ServerSideException;
-    
-    public void deleteForm(long formId, String ipAddress, String sessionId) throws ServerSideException;
-    
-    public long createFormInstance(long formId, String name, String description, byte[] structure, String ipAddress, String sessionId) throws ServerSideException;
-    
-    public void updateFormInstance(long formInstanceId, String name, String description, byte[] structure, String ipAddress, String sessionId) throws ServerSideException;
-    
-    public RemoteFormInstance getFormInstance(long formInstanceId, String ipAddress, String sessionId) throws ServerSideException;
-    
-    public List<RemoteFormInstance> getFormInstances(String ipAddress, String sessionId) throws ServerSideException;
-    
-    public void deleteFormInstance(long formInstanceId, String ipAddress, String sessionId) throws ServerSideException;
-                
-    public long createScriptQuery(String name, String description, String script, String countable, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException;
-    
-    public void updateScriptQueryProperties(long scriptQueryId, String propertyName, String propertyValue, String ipAddress, String sessionId) throws ServerSideException;
-    
-    public void updateScriptQueryParameters(long scriptQueryId, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException;
-    public void updateScriptQueryParameters(String scriptQueryName, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException;
-    
-    public RemoteScriptQuery getScriptQuery(long scriptQueryId, String ipAddress, String sessionId) throws ServerSideException;
-    
-    public List<RemoteScriptQuery> getScriptQueries(String ipAddress, String sessionId) throws ServerSideException;
-    
-    public void deleteScriptQuery(long scriptQueryId, String ipAddress, String sessionId) throws ServerSideException;
-    
-    public RemoteScriptQueryResult executeScriptQuery(long scriptQueryId, String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteScriptQueryResult executeScriptQuery(String scriptQueryName, String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteScriptQueryResultCollection executeScriptQueryCollection(long scriptQueryId, String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteScriptQueryResultCollection executeScriptQueryCollection(String scriptQueryName, String ipAddress, String sessionId) throws ServerSideException;
     public String createContact(String contactClass, List<StringPair> properties, String customerClassName, String customerId, String ipAddress, String sessionId) throws  ServerSideException;
     public void updateContact(String contactClass, String contactId, List<StringPair> properties, String ipAddress, String sessionId) throws  ServerSideException;
     public void deleteContact(String contactClass, String contactId, String ipAddress, String sessionId) throws  ServerSideException;
