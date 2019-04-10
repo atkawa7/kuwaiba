@@ -1,7 +1,7 @@
 /** 
  * Checks if a port has a physical connection attached to it. If so, make it render red, with a simple prefix.
  * Neotropic SAS - version 1.0
- * Applies to: GenericPort or its subclasses.
+ * Applies to: GenericService or its subclasses.
  */
 import java.util.Properties;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;

@@ -64,7 +64,7 @@ public class EmptyNodeWidget extends Widget{
      */
     private boolean highContrast;
     /**
-     * Extra info, keep tracks of grouped nodes
+     * Extra info
      */
     private String[] extraInfo;
     
@@ -115,31 +115,6 @@ public class EmptyNodeWidget extends Widget{
     public void setHighContrast(boolean highContrast) {
         this.highContrast = highContrast;
         notifyStateChanged(getState(), getState());
-    }
-
-    public String[] getExtraInfo() {
-        return extraInfo;
-    }
-        
-    public void showExtraInfo(){
-        final JFrame frame = new JFrame("Available Syncrhonization Providers");
-        frame.setLayout(new BorderLayout());
-        frame.setSize(400, 350);
-        frame.setLocationRelativeTo(null);
-        JLabel lblInstructions = new JLabel("Detail List of Peerings");
-        lblInstructions.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        
-        frame.add(lblInstructions, BorderLayout.NORTH);
-        frame.add(new JScrollPane(new JList<>(extraInfo)), BorderLayout.CENTER);
-        JButton btnClose = new JButton("Close");
-        btnClose.addActionListener((ActionEvent e) -> {
-            frame.dispose();
-        });
-        JPanel pnlButtons = new JPanel();
-        pnlButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
-        pnlButtons.add(btnClose);
-        frame.add(pnlButtons, BorderLayout.SOUTH);
-        frame.setVisible(true);
     }
     
     public void showExtraInfo(){
