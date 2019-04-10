@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="poolId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="propertyToUpdate" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -30,32 +30,40 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "updateConfigurationVariablesPool", propOrder = {
-    "arg0",
+    "poolId",
     "propertyToUpdate",
     "value",
     "sessionId"
 })
 public class UpdateConfigurationVariablesPool {
 
-    protected long arg0;
+    protected String poolId;
     protected String propertyToUpdate;
     protected String value;
     protected String sessionId;
 
     /**
-     * Gets the value of the arg0 property.
+     * Gets the value of the poolId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getArg0() {
-        return arg0;
+    public String getPoolId() {
+        return poolId;
     }
 
     /**
-     * Sets the value of the arg0 property.
+     * Sets the value of the poolId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setArg0(long value) {
-        this.arg0 = value;
+    public void setPoolId(String value) {
+        this.poolId = value;
     }
 
     /**

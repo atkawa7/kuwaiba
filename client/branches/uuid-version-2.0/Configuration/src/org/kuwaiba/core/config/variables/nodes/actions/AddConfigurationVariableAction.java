@@ -81,7 +81,7 @@ public class AddConfigurationVariableAction extends GenericInventoryAction {
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, "The name of the configuration variable can not be empty");
                 else {
                     if (CommunicationsStub.getInstance().createConfigurationVariable(
-                            Long.valueOf(selectedNode.getLookup().lookup(LocalPool.class).getId()), txtName.getText().trim(), txtDescription.getText(), 
+                            selectedNode.getLookup().lookup(LocalPool.class).getId(), txtName.getText().trim(), txtDescription.getText(), 
                             ((ConfigVariableType)cmbTypes.getSelectedItem()).getType(), chkMasked.isSelected(), txtValue.getText().trim()) != null) 
                         ((ConfigurationVariablesPoolNode.ConfigurationVariablesPoolNodeChildren)selectedNode.getChildren()).addNotify();
                     else

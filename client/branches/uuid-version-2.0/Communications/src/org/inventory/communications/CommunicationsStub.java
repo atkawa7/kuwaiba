@@ -5903,7 +5903,7 @@ public class CommunicationsStub {
      * Arrays: (value1,value2,value3,valueN), matrixes: [(row1col1, row1col2,... row1colN), (row2col1, row2col2,... row2colN), (rowNcol1, rowNcol2,... rowNcolN)]. The values will be interpreted as strings 
      * @return The newly created variable. Null if the parent pool could not be found or if the name is empty, the type is invalid, the value definition is empty
      */
-    public LocalConfigurationVariable createConfigurationVariable(long configVariablesPoolId, String name, String description, int type, boolean masked, String valueDefinition) {
+    public LocalConfigurationVariable createConfigurationVariable(String configVariablesPoolId, String name, String description, int type, boolean masked, String valueDefinition) {
         try {
             long newConfigurationVariableId = service.createConfigurationVariable(configVariablesPoolId, name, description, type, masked, valueDefinition, session.getSessionId());
             
@@ -5964,11 +5964,11 @@ public class CommunicationsStub {
         }
     }
     /**
-     * Gets the config variables in a config variable pool
-     * @param parentPoolId The id pool to retrieve the variables from
-     * @return The list of config variables in the given pool or null if the pool could not be found
+     * Gets the configuration variables in a config variable pool.
+     * @param parentPoolId The id pool to retrieve the variables from.
+     * @return The list of configuration variables in the given pool or null if the pool could not be found.
      */
-    public List<LocalConfigurationVariable> getConfigurationVariablesInPool(long parentPoolId) {
+    public List<LocalConfigurationVariable> getConfigurationVariablesInPool(String parentPoolId) {
         try {
             List<RemoteConfigurationVariable> configurationVariablesInPool = service.getConfigurationVariablesInPool(parentPoolId, session.getSessionId());
             List<LocalConfigurationVariable> res = new ArrayList<>();
@@ -5986,8 +5986,8 @@ public class CommunicationsStub {
         }
     }
     /**
-     * Retrieves the list of pools of config variables
-     * @return The available pools of configuration variables
+     * Retrieves the list of pools of configuration variables.
+     * @return The available pools of configuration variables.
      */
     public List<LocalPool> getConfigurationVariablesPools() {
         try {
@@ -6006,15 +6006,15 @@ public class CommunicationsStub {
         }
     }
     /**
-     * Creates a pool of configuration variables
-     * @param name The name of the pool. Empty or null values are not allowed
-     * @param description The description of the pool
-     * @return The newly created pool or null if the name provided is null or empty
+     * Creates a pool of configuration variables.
+     * @param name The name of the pool. Empty or null values are not allowed.
+     * @param description The description of the pool.
+     * @return The newly created pool or null if the name provided is null or empty.
      */
     public LocalPool createConfigurationVariablesPool(String name, String description) {
         try {
-            long newPoolId = service.createConfigurationVariablesPool(name, description, session.getSessionId());
-            return new LocalPool(String.valueOf(newPoolId), name, "Pool of Configuration Variables", description, LocalPool.POOL_TYPE_MODULE_ROOT);
+            String newPoolId = service.createConfigurationVariablesPool(name, description, session.getSessionId());
+            return new LocalPool(newPoolId, name, "Pool of Configuration Variables", description, LocalPool.POOL_TYPE_MODULE_ROOT);
             
         } catch (Exception ex) {
             this.error = ex.getMessage();
@@ -6022,13 +6022,13 @@ public class CommunicationsStub {
         }
     }
     /**
-     * Updates an attribute of a given config variables pool
-     * @param poolId The id of the pool to update
-     * @param propertyToUpdate The property to update. The valid values are "name" and "description"
-     * @param value The value of the property to be updated
-     * @return false if the property provided is not valid or if the pool could not be found. True otherwise
+     * Updates an attribute of a given configuration variables pool.
+     * @param poolId The id of the pool to update.
+     * @param propertyToUpdate The property to update. The valid values are "name" and "description".
+     * @param value The value of the property to be updated.
+     * @return false if the property provided is not valid or if the pool could not be found. True otherwise.
      */
-    public boolean updateConfigurationVariablesPool(long poolId, String propertyToUpdate, String value) {
+    public boolean updateConfigurationVariablesPool(String poolId, String propertyToUpdate, String value) {
         try {
             service.updateConfigurationVariablesPool(poolId, propertyToUpdate, value, session.getSessionId());
             return true;
@@ -6039,11 +6039,11 @@ public class CommunicationsStub {
         }
     }
     /**
-     * Deletes a configuration variables pool. Deleting a pool also deletes the config variables contained within
-     * @param poolId The id of the pool to be deleted
-     * @return False if the pool could not be found. True if the operation was successful
+     * Deletes a configuration variables pool. Deleting a pool also deletes the configuration variables contained within.
+     * @param poolId The id of the pool to be deleted.
+     * @return False if the pool could not be found. True if the operation was successful.
      */
-    public boolean deleteConfigurationVariablesPool(long poolId) {
+    public boolean deleteConfigurationVariablesPool(String poolId) {
         try {
             service.deleteConfigurationVariablesPool(poolId, session.getSessionId());
             return true;

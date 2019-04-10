@@ -72,7 +72,7 @@ public class ConfigurationVariablesPoolNode extends AbstractNode {
         @Override
         public void addNotify() {
             List<LocalConfigurationVariable> configurationVariablesInPool = 
-                    CommunicationsStub.getInstance().getConfigurationVariablesInPool(Long.valueOf(getNode().getLookup().lookup(LocalPool.class).getId()));
+                    CommunicationsStub.getInstance().getConfigurationVariablesInPool(getNode().getLookup().lookup(LocalPool.class).getId());
             if (configurationVariablesInPool == null)
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             else

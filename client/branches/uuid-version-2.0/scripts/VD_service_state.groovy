@@ -17,11 +17,11 @@ public class %s extends ValidatorDefinition {
         super(id, name, description, classToBeApplied, script, enabled);
     }
 
-    public Validator run(String objectClass, long objectId) {
+    public Validator run(String objectClass, String objectId) {
         BusinessEntityManager bem = PersistenceService.getInstance().getBusinessEntityManager();
         String state = bem.getAttributeValueAsString(objectClass, objectId, "state");
 
-        if (state == "Ceased") {
+        if ("Ceased".equals(state)) {
             //Here we will put the color and additional text properties.
             Properties properties = new Properties();
             properties.setProperty("color", "8632D9");

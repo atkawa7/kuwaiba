@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="configVariablesPoolId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="configVariablesPoolId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}int"/>
@@ -43,7 +43,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class CreateConfigurationVariable {
 
-    protected long configVariablesPoolId;
+    protected String configVariablesPoolId;
     protected String name;
     protected String description;
     protected int type;
@@ -54,16 +54,24 @@ public class CreateConfigurationVariable {
     /**
      * Gets the value of the configVariablesPoolId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getConfigVariablesPoolId() {
+    public String getConfigVariablesPoolId() {
         return configVariablesPoolId;
     }
 
     /**
      * Sets the value of the configVariablesPoolId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setConfigVariablesPoolId(long value) {
+    public void setConfigVariablesPoolId(String value) {
         this.configVariablesPoolId = value;
     }
 

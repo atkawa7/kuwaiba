@@ -15,7 +15,7 @@ public class %s extends ValidatorDefinition {
         super(id, name, description, classToBeApplied, script, enabled);
     }
 
-    public Validator run(String objectClass, long objectId) {
+    public Validator run(String objectClass, String objectId) {
         BusinessEntityManager bem = PersistenceService.getInstance().getBusinessEntityManager();
         
         if (!bem.getSpecialAttribute(objectClass, objectId, "endpointA").isEmpty() || !bem.getSpecialAttribute(objectClass, objectId, "endpointB").isEmpty()) {
