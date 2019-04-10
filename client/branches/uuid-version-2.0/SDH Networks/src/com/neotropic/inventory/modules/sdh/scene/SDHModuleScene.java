@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.namespace.QName;
@@ -211,11 +212,8 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                 xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(nodeWidget.getPreferredLocation().y)));
                 
                 LocalObjectLight nodeObject = (LocalObjectLight) findObject(nodeWidget);
-                
                 xmlew.add(xmlef.createAttribute(new QName("class"), nodeObject.getClassName()));
-                
                 xmlew.add(xmlef.createCharacters(nodeObject.getId()));
-                
                 xmlew.add(xmlef.createEndElement(qnameNode, null));
             }
             xmlew.add(xmlef.createEndElement(qnameNodes, null));
@@ -230,8 +228,10 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                 xmlew.add(xmlef.createAttribute(new QName("id"), edgeObject.getId()));
                 xmlew.add(xmlef.createAttribute(new QName("class"), edgeObject.getClassName()));
                 
-                xmlew.add(xmlef.createAttribute(new QName("aside"), getEdgeSource(edgeObject).getId()));
-                xmlew.add(xmlef.createAttribute(new QName("bside"), getEdgeTarget(edgeObject).getId()));
+                xmlew.add(xmlef.createAttribute(new QName("asideid"), getEdgeSource(edgeObject).getId()));
+                xmlew.add(xmlef.createAttribute(new QName("asideclass"), getEdgeSource(edgeObject).getClassName()));
+                xmlew.add(xmlef.createAttribute(new QName("bsideid"), getEdgeTarget(edgeObject).getId()));
+                xmlew.add(xmlef.createAttribute(new QName("bsideclass"), getEdgeTarget(edgeObject).getClassName()));
                 
                 for (Point point : ((ObjectConnectionWidget)edgeWidget).getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint");
@@ -256,7 +256,11 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
     @Override
     public void render(byte[] structure) throws IllegalArgumentException {
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-
+        //<editor-fold defaultstate="collapsed" desc="Uncomment this for debugging purposes. This outputs the XML view as a file">
+        try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/sdhview.xml")) {
+            fos.write(structure);
+        } catch(Exception e) { }
+        //</editor-fold>
         QName qNode = new QName("node"); //NOI18N
         QName qEdge = new QName("edge"); //NOI18N
         QName qControlPoint = new QName("controlpoint"); //NOI18N
@@ -288,16 +292,18 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                     }else {
                         if (reader.getName().equals(qEdge)){
                             String objectId = reader.getAttributeValue(null, "id");
-                            String aSide = reader.getAttributeValue(null, "aside");
-                            String bSide = reader.getAttributeValue(null, "bside");
+                            String aSideId = reader.getAttributeValue(null, "asideid");
+                            String aSideClass = reader.getAttributeValue(null, "asideclass");
+                            String bSideId = reader.getAttributeValue(null, "bsideid");
+                            String bSideClass = reader.getAttributeValue(null, "bsideclass");
 
                             String className = reader.getAttributeValue(null,"class");
                             LocalObjectLight container = CommunicationsStub.getInstance().getObjectInfoLight(className, objectId);
                             if (container != null) {
-                                LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
+                                LocalObjectLight aSideObject = new LocalObjectLight(aSideId, "" /*Not relevant for comparison purposes*/, aSideClass);
                                 Widget aSideWidget = findWidget(aSideObject);
 
-                                LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
+                                LocalObjectLight bSideObject = new LocalObjectLight(bSideId, "" /*Not relevant for comparison purposes*/, bSideClass);
                                 Widget bSideWidget = findWidget(bSideObject);
 
                                 if (aSideWidget == null || bSideWidget == null) {

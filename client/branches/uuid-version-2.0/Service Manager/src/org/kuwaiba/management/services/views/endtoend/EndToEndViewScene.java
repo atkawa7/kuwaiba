@@ -161,9 +161,10 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                 
                 xmlew.add(xmlef.createAttribute(new QName("id"), lolEdge.getId()));
                 xmlew.add(xmlef.createAttribute(new QName("class"), lolEdge.getClassName()));
-                
-                xmlew.add(xmlef.createAttribute(new QName("aside"), getEdgeSource(lolEdge).getId()));
-                xmlew.add(xmlef.createAttribute(new QName("bside"), getEdgeTarget(lolEdge).getId()));
+                xmlew.add(xmlef.createAttribute(new QName("asideid"), getEdgeSource(lolEdge).getId()));
+                xmlew.add(xmlef.createAttribute(new QName("asideclass"), getEdgeSource(lolEdge).getClassName()));
+                xmlew.add(xmlef.createAttribute(new QName("bsideid"), getEdgeTarget(lolEdge).getId()));
+                xmlew.add(xmlef.createAttribute(new QName("bsideclass"), getEdgeTarget(lolEdge).getClassName()));
                 
                 for (Point point : acwEdge.getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint");

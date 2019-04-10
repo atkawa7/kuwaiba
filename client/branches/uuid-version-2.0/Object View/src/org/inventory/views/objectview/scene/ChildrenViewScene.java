@@ -228,9 +228,12 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                 LocalObjectLight lolEdge = (LocalObjectLight) findObject(acwEdge);
                 xmlew.add(xmlef.createAttribute(new QName("id"), lolEdge.getId())); //NOI18N
                 xmlew.add(xmlef.createAttribute(new QName("class"), lolEdge.getClassName())); //NOI18N
-                
-                xmlew.add(xmlef.createAttribute(new QName("aside"), ((LocalObjectLight) findObject(acwEdge.getSourceAnchor().getRelatedWidget())).getId())); //NOI18N
-                xmlew.add(xmlef.createAttribute(new QName("bside"), ((LocalObjectLight) findObject(acwEdge.getTargetAnchor().getRelatedWidget())).getId())); //NOI18N
+                LocalObjectLight aSideObject = (LocalObjectLight) findObject(acwEdge.getSourceAnchor().getRelatedWidget());
+                xmlew.add(xmlef.createAttribute(new QName("asideid"), aSideObject.getId())); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("asideclass"), aSideObject.getClassName())); //NOI18N
+                LocalObjectLight bSideObject = (LocalObjectLight) findObject(acwEdge.getTargetAnchor().getRelatedWidget());
+                xmlew.add(xmlef.createAttribute(new QName("bsideId"), bSideObject.getId())); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("bsideclass"), bSideObject.getClassName())); //NOI18N
                 
                 for (Point point : acwEdge.getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint"); //NOI18N
@@ -321,10 +324,11 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                         } else {
                             if (reader.getName().equals(qEdge)) {
                                 String objectId = reader.getAttributeValue(null, "id"); //NOI18N
-
-                                String aSide = reader.getAttributeValue(null, "aside"); //NOI18N
-                                String bSide = reader.getAttributeValue(null, "bside"); //NOI18N
-
+                                String aSideId = reader.getAttributeValue(null, "asideid"); //NOI18N
+                                String aSideClass = reader.getAttributeValue(null, "asideclass"); //NOI18N
+                                String bSideId = reader.getAttributeValue(null, "bsideid"); //NOI18N
+                                String bSideClass = reader.getAttributeValue(null, "bsideclass"); //NOI18N
+                                /*Not relevant for comparison purposes*/
                                 String className = reader.getAttributeValue(null,"class"); //NOI18N
 
                                 LocalObjectLight container = com.getObjectInfoLight(className, objectId);
@@ -347,10 +351,10 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                                     if (endpointA != null && endpointB != null) {
                                         myConnections.remove(container);
 
-                                        LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
+                                        LocalObjectLight aSideObject = new LocalObjectLight(aSideId, "" /* Not relevant for comparison purposes */, aSideClass);
                                         ObjectNodeWidget aSideWidget = (ObjectNodeWidget) findWidget(aSideObject);
 
-                                        LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
+                                        LocalObjectLight bSideObject = new LocalObjectLight(bSideId, "" /* Not relevant for comparison purposes */, bSideClass);
                                         ObjectNodeWidget bSideWidget = (ObjectNodeWidget) findWidget(bSideObject);
 
                                         if (aSideWidget == null || bSideWidget == null)

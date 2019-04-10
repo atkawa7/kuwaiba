@@ -19,7 +19,6 @@ package org.kuwaiba.management.services.views.topology;
 import java.awt.Point;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -161,9 +160,10 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                 
                 xmlew.add(xmlef.createAttribute(new QName("id"), lolEdge.getId()));
                 xmlew.add(xmlef.createAttribute(new QName("class"), lolEdge.getClassName()));
-                
-                xmlew.add(xmlef.createAttribute(new QName("aside"), getEdgeSource(lolEdge).getId()));
-                xmlew.add(xmlef.createAttribute(new QName("bside"), getEdgeTarget(lolEdge).getId()));
+                xmlew.add(xmlef.createAttribute(new QName("asideid"), getEdgeSource(lolEdge).getId()));
+                xmlew.add(xmlef.createAttribute(new QName("asideclass"), getEdgeSource(lolEdge).getClassName()));
+                xmlew.add(xmlef.createAttribute(new QName("bsideid"), getEdgeTarget(lolEdge).getId()));
+                xmlew.add(xmlef.createAttribute(new QName("bsideclass"), getEdgeTarget(lolEdge).getClassName()));
                 
                 //Note that the edges will all be saved, whether they're STMX, physical connnections or ContainerLinks, 
                 //The expanded STMX will be marked as such, but when the view is rendered, they will be invisible by default, 
@@ -223,9 +223,9 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
     @Override
     public void render(byte[] structure) throws IllegalArgumentException {
         //<editor-fold defaultstate="collapsed" desc="Uncomment this for debugging purposes. This outputs the XML view as a file">
-        try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/tview.xml")) {
-            fos.write(structure);
-        } catch(Exception e) { }
+//        try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/tview.xml")) {
+//            fos.write(structure);
+//        } catch(Exception e) { }
         //</editor-fold>
         try {
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -287,8 +287,6 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                                 //If the current connection is an expanded STMX, make it invisible and trigger an expansion
                                 if (expanded != null && expanded.equals("true")) {
                                     expandTransportLinks(Arrays.asList(connectionWidget.getLookup().lookup(LocalObjectLight.class)));
-                                    
-                                    
                                     reader.nextTag();
                                     if (reader.getName().equals(qExtendedTLs)) {
                                         while(true) {

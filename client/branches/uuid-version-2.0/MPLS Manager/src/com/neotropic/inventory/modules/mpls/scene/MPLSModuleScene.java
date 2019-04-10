@@ -151,13 +151,9 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
                 xmlew.add(xmlef.createStartElement(qnameNode, null, null));
                 xmlew.add(xmlef.createAttribute(new QName("x"), Integer.toString(nodeWidget.getPreferredLocation().x)));
                 xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(nodeWidget.getPreferredLocation().y)));
-                
                 LocalObjectLight nodeObject = (LocalObjectLight) findObject(nodeWidget);
-                
                 xmlew.add(xmlef.createAttribute(new QName("class"), nodeObject.getId().contains("-*") ? "unknown" : nodeObject.getClassName()));
-
                 xmlew.add(xmlef.createCharacters(nodeObject.getId().contains("-*") ? "-1" : nodeObject.getId()));
-                
                 xmlew.add(xmlef.createEndElement(qnameNode, null));
             }
             xmlew.add(xmlef.createEndElement(qnameNodes, null));
@@ -171,9 +167,14 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
                 xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
                 xmlew.add(xmlef.createAttribute(new QName("id"), edgeObject.getId()));
                 xmlew.add(xmlef.createAttribute(new QName("class"), edgeObject.getClassName()));
-                
-                xmlew.add(xmlef.createAttribute(new QName("aside"), getEdgeSource(edgeObject).getId().contains("-*") ? "-1" : getEdgeSource(edgeObject).getId()));
-                xmlew.add(xmlef.createAttribute(new QName("bside"), getEdgeTarget(edgeObject).getId().contains("-*") ? "-1" : getEdgeTarget(edgeObject).getId()));
+                xmlew.add(xmlef.createAttribute(new QName("asideid"), getEdgeSource(edgeObject).getId().contains("-*") ? 
+                        "-1" : getEdgeSource(edgeObject).getId()));
+                xmlew.add(xmlef.createAttribute(new QName("asideclass"), getEdgeSource(edgeObject).getId().contains("-*") ? 
+                        "" : getEdgeSource(edgeObject).getClassName()));
+                xmlew.add(xmlef.createAttribute(new QName("bsideid"), getEdgeTarget(edgeObject).getId().contains("-*") ? 
+                        "-1" : getEdgeTarget(edgeObject).getId()));
+                xmlew.add(xmlef.createAttribute(new QName("bsideclass"), getEdgeTarget(edgeObject).getId().contains("-*") ? 
+                        "" : getEdgeTarget(edgeObject).getClassName()));
                 
                 for (Point point : ((ObjectConnectionWidget)edgeWidget).getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint");
@@ -262,7 +263,7 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
                                     if(entry.getKey().equals("mplsEndpointA")){
                                         endpoints[0] = entry.getValue()[0];
                                         LocalObjectLight parentA = CommunicationsStub.getInstance().getFirstParentOfClass(endpoints[0].getClassName(), endpoints[0].getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
-                                        if(parentA != null && parentA.getId() != aSide){
+                                        if(parentA != null && !parentA.getId().equals(aSide)){
                                             Widget widget = findWidget(aSideObject);
                                             detachNodeWidget(aSideObject, widget);
                                             aSideObject = parentA;
@@ -272,7 +273,7 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
                                     if(entry.getKey().equals("mplsEndpointB")){
                                         endpoints[1] = entry.getValue()[0];
                                         LocalObjectLight parentB = CommunicationsStub.getInstance().getFirstParentOfClass(endpoints[1].getClassName(), endpoints[1].getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);                                        
-                                        if(parentB != null && parentB.getId() != bSide){
+                                        if(parentB != null && !parentB.getId().equals(aSide)){
                                             Widget widget = findWidget(bSideObject);
                                             detachNodeWidget(bSideObject, widget);
                                             bSideObject = parentB;
@@ -331,7 +332,7 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
                 LocalObjectLight parentA = CommunicationsStub.getInstance().getFirstParentOfClass(
                         entry.getValue()[0].getClassName(), entry.getValue()[0].getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
                 
-                if(edgeSource.getId().contains("-*") && parentA != null && parentA.getId() != edgeTarget.getId()){
+                if(edgeSource.getId().contains("-*") && parentA != null && !parentA.getId().equals(edgeTarget.getId())){
                     isSideA = true;
                     Widget unconnectedSideWidget = findWidget(edgeSource);
                     detachNodeWidget(edgeSource, unconnectedSideWidget);
