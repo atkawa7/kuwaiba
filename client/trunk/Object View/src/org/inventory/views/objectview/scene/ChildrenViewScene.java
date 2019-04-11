@@ -262,11 +262,11 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         LocalObjectView currentView = (LocalObjectView) configObject.getProperty("currentView"); //NOI18N
         
        //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
-        try {
-            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_" + currentView.getId() + ".xml");
-            fos.write(currentView.getStructure());
-            fos.close();
-        } catch(Exception e) {}
+//        try {
+//            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_" + currentView.getId() + ".xml");
+//            fos.write(currentView.getStructure());
+//            fos.close();
+//        } catch(Exception e) {}
         //</editor-fold>
         
         List<LocalObjectLight> myNodes = com.getObjectChildren(object.getId(), com.getMetaForClass(object.getClassName(),false).getId());
