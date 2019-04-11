@@ -25,24 +25,21 @@ def destinationClassNode = classIndex.get(Constants.PROPERTY_NAME, scriptParamet
 if (destinationClassNode == null)
     return TaskResult.createErrorResult(String.format("Class %s does nor exist", scriptParameters.get("destinationClass")));
 
-objectIds.each { objectId ->
-    if (!objectId.isLong())
-        taskResult.getMessages().add(TaskResult.createErrorMessage(String.format("Id %s is not a number", objectId)));
+objectIds.each { objectId ->    
+    def objectNode = graphDb.findNode(Label.label("inventoryObjects"), "_uuid", objectId);
+    if (objectNode == null)
+        taskResult.getMessages().add(TaskResult.createErrorMessage(String.format("Object with id %s could not be found", objectId)));
     else {
-        def objectNode = objectIndex.get(Constants.PROPERTY_ID, Integer.valueOf(objectId)).getSingle();
-        if (objectNode == null)
-            taskResult.getMessages().add(TaskResult.createErrorMessage(String.format("Object with id %s could not be found", objectId)));
+        if(!objectNode.getRelationships(RelTypes.INSTANCE_OF).iterator().hasNext())
+            taskResult.getMessages().add(TaskResult.createErrorMessage(String.format("Object with id %s seems to be malformed. Check the INSTANCE_OF relationship", objectId)));
         else {
-            if(!objectNode.getRelationships(RelTypes.INSTANCE_OF).iterator().hasNext())
-                taskResult.getMessages().add(TaskResult.createErrorMessage(String.format("Object with id %s seems to be malformed. Check the INSTANCE_OF relationship", objectId)));
-            else {
-                objectNode.getRelationships(RelTypes.INSTANCE_OF).iterator().next().delete();
-                objectNode.createRelationshipTo(destinationClassNode, RelTypes.INSTANCE_OF);
-                taskResult.getMessages().add(TaskResult.createInformationMessage(String.format("Class for object %s changed to %s successfully", 
-                            objectNode.getProperty("name"), scriptParameters.get("destinationClass"))));
-            }
+            objectNode.getRelationships(RelTypes.INSTANCE_OF).iterator().next().delete();
+            objectNode.createRelationshipTo(destinationClassNode, RelTypes.INSTANCE_OF);
+            taskResult.getMessages().add(TaskResult.createInformationMessage(String.format("Class for object %s changed to %s successfully", 
+                        objectNode.getProperty("name"), scriptParameters.get("destinationClass"))));
         }
     }
+
 }
 
 //Return the task results

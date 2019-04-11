@@ -21,8 +21,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
@@ -217,7 +217,6 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
             xmlew.add(xmlef.createStartElement(qnameEdges, null, null));
             
             for (Widget edgeWidget : edgeLayer.getChildren()) {
-                
                 ObjectConnectionWidget acwEdge = (ObjectConnectionWidget) edgeWidget;
                 if (acwEdge.getSourceAnchor() == null || acwEdge.getTargetAnchor() == null) //This connection is malformed because one of the endpoints does not exist
                     continue;                                                               //probably, it was moved to another parent
@@ -263,169 +262,114 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         LocalObjectView currentView = (LocalObjectView) configObject.getProperty("currentView"); //NOI18N
         
        //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
-//        try {
-//            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_"+currentView.getId()+".xml");
-//            fos.write(currentView.getStructure());
-//            fos.close();
-//        } catch(Exception e) {}
+        try {
+            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_" + currentView.getId() + ".xml");
+            fos.write(currentView.getStructure());
+            fos.close();
+        } catch(Exception e) {}
         //</editor-fold>
         
-        List<LocalObjectLight> myChildren = com.getObjectChildren(object.getId(), com.getMetaForClass(object.getClassName(),false).getId());
-        if (myChildren == null)
+        List<LocalObjectLight> myNodes = com.getObjectChildren(object.getId(), com.getMetaForClass(object.getClassName(),false).getId());
+        if (myNodes == null)
             throw new IllegalArgumentException();
         
         List<LocalObjectLight> myConnections = com.getSpecialChildrenOfClassLight(object.getClassName(), object.getId(), Constants.CLASS_GENERICCONNECTION);
         if (myConnections == null)
             throw new IllegalArgumentException();
         
-        if (structure == null) 
-            renderDefaultView(object, myChildren, myConnections);
+        renderDefaultView(object, myNodes, myConnections);
         
-        else {
-            try {
-                XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-                QName qZoom = new QName("zoom"); //NOI18N
-                QName qCenter = new QName("center"); //NOI18N
-                QName qNode = new QName("node"); //NOI18N
-                QName qEdge = new QName("edge"); //NOI18N
-                QName qLabel = new QName("label"); //NOI18N
-                QName qControlPoint = new QName("controlpoint"); //NOI18N
+        try {
+            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+            QName qZoom = new QName("zoom"); //NOI18N
+            QName qCenter = new QName("center"); //NOI18N
+            QName qNode = new QName("node"); //NOI18N
+            QName qEdge = new QName("edge"); //NOI18N
+            QName qLabel = new QName("label"); //NOI18N
+            QName qControlPoint = new QName("controlpoint"); //NOI18N
 
-                ByteArrayInputStream bais = new ByteArrayInputStream(structure);
-                XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
+            ByteArrayInputStream bais = new ByteArrayInputStream(structure);
+            XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
 
-                while (reader.hasNext()) {
-                    int event = reader.next();
-                    if (event == XMLStreamConstants.START_ELEMENT) {
-                        if (reader.getName().equals(qNode)) {
-                            String objectClass = reader.getAttributeValue(null, "class"); //NOI18N
+            while (reader.hasNext()) {
+                int event = reader.next();
+                if (event == XMLStreamConstants.START_ELEMENT) {
+                    if (reader.getName().equals(qNode)) {
+                        int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue(); //NOI18N
+                        int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue(); //NOI18N
+                        String objectClass = reader.getAttributeValue(null, "class"); //NOI18N
+                        String objectId = reader.getElementText();
+                        
+                        Widget widget = findWidget(new LocalObjectLight(objectId, "" /* Not relevant for comparison purposes */, objectClass));
+                        
+                        if (widget != null) {
+                            widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
+                            widget.setBackground(com.getMetaForClass(objectClass, false).getColor());
+                            validate();
+                        } else //The node is no longer inside the current object, since it already exists on the database, probably it was moved somewhere else
+                            currentView.setDirty(true);
+                    } else {
+                        if (reader.getName().equals(qEdge)) {
+                            
+                            String aSideId = reader.getAttributeValue(null, "asideid"); //NOI18N
+                            String aSideClass = reader.getAttributeValue(null, "asideclass"); //NOI18N
+                            String bSideId = reader.getAttributeValue(null, "bsideid"); //NOI18N
+                            String bSideClass = reader.getAttributeValue(null, "bsideclass"); //NOI18N
+                            String objectId = reader.getAttributeValue(null, "id"); //NOI18N
+                            String className = reader.getAttributeValue(null,"class"); //NOI18N
 
-                            int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue(); //NOI18N
-                            int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue(); //NOI18N
-                            String objectId = reader.getElementText();
-
-                            LocalObjectLight lol = CommunicationsStub.getInstance().getObjectInfoLight(objectClass, objectId);
-                            if (lol != null) {
-                                if (getNodes().contains(lol))
-                                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
-                                else {
-                                    if (myChildren.contains(lol)) {
-                                        Widget widget = addNode(lol);
-                                        widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
-                                        widget.setBackground(com.getMetaForClass(objectClass, false).getColor());
-                                        validate();
-                                        myChildren.remove(lol);
-                                    } else //The node is no longer inside the current object, since it already exists on the database, probably it was moved somewhere else
-                                        currentView.setDirty(true);
-                                }
-                            }
-                            else //The nodel was not found in the database, probably it was deleted
-                                currentView.setDirty(true);
-                        } else {
-                            if (reader.getName().equals(qEdge)) {
-                                String objectId = reader.getAttributeValue(null, "id"); //NOI18N
-                                String aSideId = reader.getAttributeValue(null, "asideid"); //NOI18N
-                                String aSideClass = reader.getAttributeValue(null, "asideclass"); //NOI18N
-                                String bSideId = reader.getAttributeValue(null, "bsideid"); //NOI18N
-                                String bSideClass = reader.getAttributeValue(null, "bsideclass"); //NOI18N
-                                /*Not relevant for comparison purposes*/
-                                String className = reader.getAttributeValue(null,"class"); //NOI18N
-
-                                LocalObjectLight container = com.getObjectInfoLight(className, objectId);
-                                
-                                LocalObjectLight endpointA = null;
-                                LocalObjectLight endpointB = null;
-                                
-                                LocalObjectLight parent = com.getParent(className, objectId);
-                                if (parent != null && object.getId().equals(parent.getId())) {
-                                    if (container != null) { // if the connection exist
-                                        HashMap<String, LocalObjectLight[]> specialAttributes = com.getSpecialAttributes(className, objectId);
-
-                                        if (specialAttributes.containsKey("endpointA")) //NOI18N
-                                            endpointA = specialAttributes.get("endpointA")[0]; //NOI18N
-
-                                        if (specialAttributes.containsKey("endpointB")) //NOI18N
-                                            endpointB = specialAttributes.get("endpointB")[0]; //NOI18N
+                            ObjectConnectionWidget edgeWidget = (ObjectConnectionWidget)findWidget(new LocalObjectLight(objectId, "", className));
+                            
+                            if (edgeWidget != null) {
+                                List<Point> localControlPoints = new ArrayList<>();
+                                while(true) {
+                                    reader.nextTag();
+                                    if (reader.getName().equals(qControlPoint)) {
+                                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                                            localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
+                                    } else {
+                                        edgeWidget.setControlPoints(localControlPoints,false);
+                                        break;
                                     }
-
-                                    if (endpointA != null && endpointB != null) {
-                                        myConnections.remove(container);
-
-                                        LocalObjectLight aSideObject = new LocalObjectLight(aSideId, "" /* Not relevant for comparison purposes */, aSideClass);
-                                        ObjectNodeWidget aSideWidget = (ObjectNodeWidget) findWidget(aSideObject);
-
-                                        LocalObjectLight bSideObject = new LocalObjectLight(bSideId, "" /* Not relevant for comparison purposes */, bSideClass);
-                                        ObjectNodeWidget bSideWidget = (ObjectNodeWidget) findWidget(bSideObject);
-
-                                        if (aSideWidget == null || bSideWidget == null)
-                                            currentView.setDirty(true);
-                                        else {
-                                            if (getEdges().contains(container))
-                                                NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
-                                            else {
-                                                ObjectConnectionWidget newEdge = (ObjectConnectionWidget) addEdge(container);
-                                                newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget.getNodeWidget()));
-                                                newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget.getNodeWidget()));
-                                                List<Point> localControlPoints = new ArrayList<>();
-                                                while(true) {
-                                                    reader.nextTag();
-
-                                                    if (reader.getName().equals(qControlPoint)) {
-                                                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-                                                            localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
-                                                    } else {
-                                                        newEdge.setControlPoints(localControlPoints,false);
-                                                        break;
-                                                    }
-                                                }
-                                                validate();
-                                            }
-                                        }
-                                    } else
-                                        currentView.setDirty(true);
                                 }
+                                validate();
+                            } else
+                                    currentView.setDirty(true);
+                        } else {
+                            if (reader.getName().equals(qLabel)) {
+                                //Unavailable for now
                             } else {
-                                if (reader.getName().equals(qLabel)) {
-                                    //Unavailable for now
-                                } else {
-                                    if (reader.getName().equals(qZoom))
-                                        currentView.setZoom(Integer.valueOf(reader.getText()));
-                                    else {
-                                        if (reader.getName().equals(qCenter)) {
-                                            double x = Double.valueOf(reader.getAttributeValue(null, "x")); //NOI18N
-                                            double y = Double.valueOf(reader.getAttributeValue(null, "y")); //NOI18N
-                                            currentView.setCenter(new double[]{ x, y });
-                                        } else {
-                                            //Place more tags
-                                        }
+                                if (reader.getName().equals(qZoom))
+                                    currentView.setZoom(Integer.valueOf(reader.getText()));
+                                else {
+                                    if (reader.getName().equals(qCenter)) {
+                                        double x = Double.valueOf(reader.getAttributeValue(null, "x")); //NOI18N
+                                        double y = Double.valueOf(reader.getAttributeValue(null, "y")); //NOI18N
+                                        currentView.setCenter(new double[]{ x, y });
+                                    } else {
+                                        //Place more tags
                                     }
                                 }
                             }
                         }
                     }
                 }
-                reader.close();
-
-                //We check here if there are new elements but those in the save view
-                if (!myChildren.isEmpty() || !myConnections.isEmpty())
-                    currentView.setDirty(true);
-
-                renderDefaultView(object, myChildren, myConnections);
-
-                setBackgroundImage(currentView.getBackground());
-                
-                if (currentView.isDirty()) {
-                    fireChangeEvent(new ActionEvent(this, ChildrenViewScene.SCENE_CHANGEANDSAVE, "Removing old objects"));
-                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.WARNING_MESSAGE, "Some changes has been detected since the last time the view was saved. The view was updated accordingly");
-                    currentView.setDirty(false);
-                }
-            } catch (XMLStreamException ex) {
-                if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO)
-                    Exceptions.printStackTrace(ex);
             }
-            validate();
-            repaint();
+            reader.close();
+            setBackgroundImage(currentView.getBackground());
+
+            if (currentView.isDirty()) {
+                fireChangeEvent(new ActionEvent(this, ChildrenViewScene.SCENE_CHANGEANDSAVE, "Removing old objects"));
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.WARNING_MESSAGE, "Some changes has been detected since the last time the view was saved. The view was updated accordingly");
+                currentView.setDirty(false);
+            }
+        } catch (XMLStreamException ex) {
+            if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO)
+                Exceptions.printStackTrace(ex);
         }
+        validate();
+        repaint();
+        
     }
     
     private void renderDefaultView(LocalObjectLight currentObject, List<LocalObjectLight> children, List<LocalObjectLight> connections) {

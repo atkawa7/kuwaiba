@@ -100,7 +100,7 @@ public class GraphicalRepSpecialRelationshipService {
                             
                             if (inputRelationshipName.equals(relationshipName)) {
                                 LocalObjectLight sourceLol =  scene.getEdgeSource(inputEdge).getLocalObjectLightWrapped();
-                                if (sourceLol.getId() == specialRelatedObjNode.getId()) {
+                                if (sourceLol.getId().equals(specialRelatedObjNode.getId())) {
                                     relationshipExist = true;
                                     break;
                                 }

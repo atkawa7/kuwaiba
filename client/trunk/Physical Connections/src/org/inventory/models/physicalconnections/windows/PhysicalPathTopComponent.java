@@ -138,7 +138,7 @@ public class PhysicalPathTopComponent extends TopComponent implements ExplorerMa
         @Override
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             JLabel cell = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            if (((LocalObjectLight)value).getId() == port.getId())
+            if (((LocalObjectLight)value).getId().equals(port.getId()))
                 cell.setForeground(Color.RED);
             return cell;
         }

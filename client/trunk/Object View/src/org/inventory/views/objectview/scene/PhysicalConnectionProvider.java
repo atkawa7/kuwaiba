@@ -109,7 +109,7 @@ public class PhysicalConnectionProvider implements ConnectProvider {
             LocalObjectLight parent = CommunicationsStub.getInstance().getParent(newConnection.getClassName(), newConnection.getId());
             LocalObjectLight currentObject = (LocalObjectLight) configObject.getProperty("currentObject"); //NOI18N
             
-            if (parent.getId() == currentObject.getId()) {
+            if (parent.getId().equals(currentObject.getId())) {
                 ConnectionWidget line = (ConnectionWidget)scene.addEdge(newConnection);
 
                 line.setTargetAnchor(AnchorFactory.createCenterAnchor(targetWidget));
