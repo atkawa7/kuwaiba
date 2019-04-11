@@ -343,13 +343,13 @@ public class OutsidePlantView extends AbstractView<RemoteObjectLight> {
                 
         try {
             mapCenterLatitude = (double)aem.getConfigurationVariableValue("widgets.simplemap.centerLatitude");
-        } catch (InventoryException ex) {
+        } catch (InventoryException | NumberFormatException ex) {
             mapCenterLatitude = OSPConstants.DEFAULT_CENTER_LATITUDE;
         }
 
         try {
             mapCenterLongitude = (double)aem.getConfigurationVariableValue("widgets.simplemap.centerLongitude");
-        } catch (InventoryException ex) {
+        } catch (InventoryException | NumberFormatException ex) {
             mapCenterLongitude = OSPConstants.DEFAULT_CENTER_LONGITUDE;
         }
         
@@ -357,7 +357,7 @@ public class OutsidePlantView extends AbstractView<RemoteObjectLight> {
         
         try {
             this.viewMap.getProperties().put("zoom", aem.getConfigurationVariableValue("widgets.simplemap.zoom"));
-        } catch (InventoryException ex) {
+        } catch (InventoryException | NumberFormatException ex) {
             this.viewMap.getProperties().put("zoom", OSPConstants.DEFAULT_ZOOM);
         }
     }

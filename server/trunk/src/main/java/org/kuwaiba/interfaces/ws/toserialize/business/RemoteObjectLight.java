@@ -137,20 +137,14 @@ public class RemoteObjectLight implements Serializable, Comparable<RemoteObjectL
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+        if (obj == null)
             return false;
-        }
-        if (getClass() != obj.getClass()) {
+        
+        if (obj instanceof RemoteObjectLight) 
+            return className.equals(((RemoteObjectLight)obj).getClassName()) && 
+                    id.equals(((RemoteObjectLight)obj).getId());
+        else
             return false;
-        }
-        final RemoteObjectLight other = (RemoteObjectLight) obj;
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        return true;
     }
             
     @Override

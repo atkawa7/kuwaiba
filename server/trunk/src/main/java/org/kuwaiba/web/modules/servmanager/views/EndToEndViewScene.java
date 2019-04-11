@@ -170,13 +170,6 @@ public class EndToEndViewScene extends AbstractScene {
     
     @Override
     public void render(byte[] structure) throws IllegalArgumentException { 
-       //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
-//        try {
-//            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/end_to_end_view_.xml");
-//            fos.write(structure);
-//            fos.close();
-//        } catch(Exception e) {}
-        //</editor-fold>
         try {
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
             QName qNode = new QName("node"); //NOI18N
@@ -192,9 +185,9 @@ public class EndToEndViewScene extends AbstractScene {
                     if (reader.getName().equals(qNode)) {
                         int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
                         int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
-                        
-                        long nodeId = Long.valueOf(reader.getElementText());
-                        SrvNodeWidget aSavedNode = findNodeWidget(nodeId);
+                        String nodeClass = reader.getAttributeValue(null, "class");
+                        String nodeId = reader.getElementText();
+                        SrvNodeWidget aSavedNode = findNodeWidget(new RemoteObjectLight(nodeClass, nodeId, ""));
                         if (aSavedNode != null) { //If it's null, it means that the node wasn't added by the default rendering method, so the node no longer exists and shouldn't be rendered
                             aSavedNode.setX(xCoordinate / 2); //The position is scaled (in this case to a half the original size) so they diagram can fit in a single screen 
                             aSavedNode.setY(yCoordinate / 2);
@@ -202,8 +195,9 @@ public class EndToEndViewScene extends AbstractScene {
                         
                     } else {
                         if (reader.getName().equals(qEdge)) {
-                            long edgeId = Long.valueOf(reader.getAttributeValue(null, "id")); //NOI18N
-                            SrvEdgeWidget aSavedEdge = findEdgeWidget(edgeId);
+                            String edgeId = reader.getAttributeValue(null, "id"); //NOI18N
+                            String edgeClass = reader.getAttributeValue(null, "class"); //NOI18N
+                            SrvEdgeWidget aSavedEdge = findEdgeWidget(new RemoteObjectLight(edgeClass, edgeId, ""));
                             if (aSavedEdge != null) { //If it's null, it means that the node wasn't added by the default rendering method, so the node no longer exists and shouldn't be rendered
                                 List<Point> localControlPoints = new ArrayList<>();
                                 while(true) {

@@ -43,7 +43,6 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.web.modules.contacts.ContactManagerModule;
 import org.kuwaiba.web.modules.ipam.IPAddressManagerModule;
 import org.kuwaiba.web.modules.ltmanager.ListTypeManagerModule;
-import org.kuwaiba.web.modules.navtree.NavigationTreeComponent;
 import org.kuwaiba.web.modules.navtree.NavigationTreeModule;
 import org.kuwaiba.web.modules.osp.OutsidePlantModule;
 import org.kuwaiba.web.modules.servmanager.ServiceManagerModule;
@@ -175,7 +174,7 @@ public class IndexUI extends UI {
                 }
             });
             
-            this.getNavigator().navigateTo(NavigationTreeComponent.VIEW_NAME);
+            this.getNavigator().navigateTo(WelcomeComponent.VIEW_NAME);
             
         }
     }

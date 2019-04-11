@@ -85,7 +85,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
 
     @Override
     public void createCover() {
-        throw new UnsupportedOperationException("This widget supports only embedded mode"); 
+        throw new UnsupportedOperationException("This widget only supports embedded mode"); 
     }
     
     @Override
