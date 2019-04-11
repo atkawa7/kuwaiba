@@ -77,6 +77,7 @@ import com.neotropic.inventory.modules.sync.AbstractRunnableSyncFindingsManager;
 import com.neotropic.inventory.modules.sync.AbstractRunnableSyncResultsManager;
 import com.neotropic.inventory.modules.sync.LocalSyncAction;
 import org.inventory.communications.core.LocalConfigurationVariable;
+import org.inventory.communications.core.LocalMPLSConnectionDetails;
 import org.inventory.communications.core.LocalPhysicalConnectionDetails;
 import org.inventory.communications.core.LocalValidator;
 import org.inventory.communications.core.LocalValidatorDefinition;
@@ -104,6 +105,7 @@ import org.inventory.communications.wsclient.RemoteContact;
 import org.inventory.communications.wsclient.RemoteFileObject;
 import org.inventory.communications.wsclient.RemoteFileObjectLight;
 import org.inventory.communications.wsclient.RemoteLogicalConnectionDetails;
+import org.inventory.communications.wsclient.RemoteMPLSConnectionDetails;
 import org.inventory.communications.wsclient.RemoteObject;
 import org.inventory.communications.wsclient.RemoteObjectLight;
 import org.inventory.communications.wsclient.RemoteObjectLightList;
@@ -4391,6 +4393,54 @@ public class CommunicationsStub {
             return null;
         }
     }
+    
+    /**
+     * Deletes an SDH Transport Link
+     * @param transportLinkClass The class of the transport link
+     * @param transportLinkId The id of the transport link
+     * @return True of the operation was successful, false otherwise
+     */
+    public boolean deleteSDHTransportLink(String transportLinkClass, String transportLinkId) {
+        try {
+            service.deleteSDHTransportLink(transportLinkClass, transportLinkId, true, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Deletes an SDH Container link
+     * @param containerLinkClass Class of the container
+     * @param containerLinkId Id of the container
+     * @return True of the operation was successful, false otherwise
+     */
+    public boolean deleteSDHContainerLink(String containerLinkClass, String containerLinkId) {
+        try {
+            service.deleteSDHContainerLink(containerLinkClass, containerLinkId, true, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Deletes an SDH Tributary link
+     * @param tributaryLinkClass Class of the link
+     * @param tributaryLinkId Id of the link
+     * @return True if the operation was successful, false otherwise
+     */
+    public boolean deleteSDHTributaryLink(String tributaryLinkClass, String tributaryLinkId) {
+        try {
+            service.deleteSDHTributaryLink(tributaryLinkClass, tributaryLinkId, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
         // </editor-fold>
         // <editor-fold defaultstate="collapsed" desc="IPAM Module">
     public List<LocalPool> getSubnetPools(String parentId, String className){
@@ -4500,49 +4550,21 @@ public class CommunicationsStub {
         }
     }
     
-    /**
-     * Deletes an SDH Transport Link
-     * @param transportLinkClass The class of the transport link
-     * @param transportLinkId The id of the transport link
-     * @return True of the operation was successful, false otherwise
-     */
-    public boolean deleteSDHTransportLink(String transportLinkClass, String transportLinkId) {
-        try {
-            service.deleteSDHTransportLink(transportLinkClass, transportLinkId, true, session.getSessionId());
+    public boolean relatePortToInterface(String id, String className, String interfaceClassName, String interfaceId){
+        try{
+            service.relatePortToInterface(id, className, interfaceClassName, interfaceId, this.session.getSessionId());
             return true;
-        } catch (Exception ex) {
+        }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
         }
     }
     
-    /**
-     * Deletes an SDH Container link
-     * @param containerLinkClass Class of the container
-     * @param containerLinkId Id of the container
-     * @return True of the operation was successful, false otherwise
-     */
-    public boolean deleteSDHContainerLink(String containerLinkClass, String containerLinkId) {
-        try {
-            service.deleteSDHContainerLink(containerLinkClass, containerLinkId, true, session.getSessionId());
+    public boolean releasePortFromInterface(String interfaceClassName, String interfaceId, String id){
+        try{
+            service.releasePortFromInterface(interfaceClassName, interfaceId,  id, this.session.getSessionId());
             return true;
-        } catch (Exception ex) {
-            this.error = ex.getMessage();
-            return false;
-        }
-    }
-    
-    /**
-     * Deletes an SDH Tributary link
-     * @param tributaryLinkClass Class of the link
-     * @param tributaryLinkId Id of the link
-     * @return True if the operation was successful, false otherwise
-     */
-    public boolean deleteSDHTributaryLink(String tributaryLinkClass, String tributaryLinkId) {
-        try {
-            service.deleteSDHTributaryLink(tributaryLinkClass, tributaryLinkId, session.getSessionId());
-            return true;
-        } catch (Exception ex) {
+        }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
         }
@@ -4696,49 +4718,84 @@ public class CommunicationsStub {
         // </editor-fold>
     
         // <editor-fold defaultstate="collapsed" desc="MPLS Module">
-//    public LocalObjectLight createMPLSLink(LocalObjectLight endpointA, LocalObjectLight endpointB, String transportLinkType, String defaultName){
-//        try { 
-//            String newObjectId = service.createMPLSLink(endpointA.getClassName(),
-//                    endpointA.getId(), endpointB.getClassName(), endpointB.getId(), transportLinkType, defaultName, session.getSessionId());
-//            return new LocalObjectLight(newObjectId, defaultName, transportLinkType);
-//        } catch (Exception ex) {
-//            this.error = ex.getMessage();
-//            return null;
-//        }
-//    }
-    
-//    public boolean deleteMPLSLink(String linkClass, String linkId) {
-//        try {
-//            service.deleteMPLSLink(linkClass, linkId, true, session.getSessionId());
-//            return true;
-//        } catch (Exception ex) {
-//            this.error = ex.getMessage();
-//            return false;
-//        }
-//    }
-    
-    public boolean relatePortToInterface(String id, String className, String interfaceClassName, String interfaceId){
-        try{
-            service.relatePortToInterface(id, className, interfaceClassName, interfaceId, this.session.getSessionId());
-            return true;
-        }catch(Exception ex){
-            this.error = ex.getMessage();
-            return false;
+    public LocalObjectLight createMPLSLink(LocalObjectLight endpointA, LocalObjectLight endpointB, String mplsLinkName){
+            try { 
+                List<StringPair> attributesToBeSet =  new ArrayList<>();
+                attributesToBeSet.add(new StringPair(Constants.PROPERTY_NAME, mplsLinkName));
+                String newObjectId = service.createMPLSLink(endpointA.getClassName(), endpointA.getId(), 
+                        endpointB.getClassName(), endpointB.getId(), attributesToBeSet,  session.getSessionId());
+                
+                return new LocalObjectLight(newObjectId, mplsLinkName, Constants.CLASS_MPLSLINK);
+            } catch (Exception ex) {
+                this.error = ex.getMessage();
+                return null;
+            }
         }
-    }
     
-    public boolean releasePortFromInterface(String interfaceClassName, String interfaceId, String id){
-        try{
-            service.releasePortFromInterface(interfaceClassName, interfaceId,  id, this.session.getSessionId());
-            return true;
-        }catch(Exception ex){
-            this.error = ex.getMessage();
-            return false;
+        public boolean deleteMPLSLink(String linkId) {
+            try {
+                service.deleteMPLSLink(linkId, true, session.getSessionId());
+                return true;
+            } catch (Exception ex) {
+                this.error = ex.getMessage();
+                return false;
+            }
         }
-    }
-    
-    
-    
+        
+        /**
+        * Disconnects a side or both sides of a mpls link connection
+        * @param connectionId Id of the connection to be edited
+        * @param sideToDisconnect Side to disconnect. Use 1 to disconnect only the side a, 2 to disconnect only side b and 3 to disconnect both sides at once
+        * @return True if the operation was successful, false otherwise. Retrieve the details of the error using the getError method
+        */
+       public boolean disconnectMPLSLink(String connectionId, int sideToDisconnect) {
+           try {
+               service.disconnectMPLSLink(connectionId, sideToDisconnect, session.getSessionId());
+               return true;
+           }catch(Exception ex){
+               this.error =  ex.getMessage();
+               return false;
+           }
+        }
+        
+        public List<LocalMPLSConnectionDetails> getE2EMPLSConnections(String connectionId) {
+            try{
+                List<LocalMPLSConnectionDetails> res = new ArrayList<>();
+                List<RemoteMPLSConnectionDetails> e2EMPLSconnections = service.getE2EMPLSconnections(connectionId, session.getSessionId());
+                e2EMPLSconnections.forEach((mplsConnection) -> {
+                    res.add( new LocalMPLSConnectionDetails(mplsConnection));
+                });
+                
+                return res;
+            }catch(Exception ex){
+                this.error =  ex.getMessage();
+                return null;
+            }
+        }
+       
+        public LocalMPLSConnectionDetails getMPLSLinkEndpoints(String connectionId) {
+            try{
+                RemoteMPLSConnectionDetails mplsLinkEndpoints = service.getMPLSLinkEndpoints(connectionId, session.getSessionId());
+                
+                LocalMPLSConnectionDetails localMPLSConnectionDetails = new LocalMPLSConnectionDetails(mplsLinkEndpoints);
+                
+                return localMPLSConnectionDetails;
+            }catch(Exception ex){
+                this.error =  ex.getMessage();
+                return null;
+            }
+        }
+        
+        public boolean connectMplsLinks(List<String> sideAClassNames, List<String> sideAIds, 
+                List<String> linksIds, List<String> sideBClassNames, List<String> sideBIds) {
+            try {            
+                service.connectMplsLink(sideAClassNames, sideAIds, linksIds, sideBClassNames, sideBIds, session.getSessionId());
+                return true;
+            }catch(Exception ex){
+                this.error =  ex.getMessage();
+                return false;
+            }
+        }
         // </editor-fold>
     
         // <editor-fold defaultstate="collapsed" desc="Projects Module">
