@@ -40,6 +40,7 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.ObjectNotFoundException;
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
@@ -3769,24 +3770,35 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public SyncDataSourceConfiguration getSyncDataSourceConfiguration(String objectId) 
-            throws InvalidArgumentException, ApplicationObjectNotFoundException, 
-            OperationNotPermittedException, MetadataObjectNotFoundException, UnsupportedPropertyException {
+            throws InvalidArgumentException, ApplicationObjectNotFoundException, UnsupportedPropertyException {
         try (Transaction tx = graphDb.beginTx()) {
             Node inventoryObjectNode = graphDb.findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, objectId);
 
             Node syncDatasourceConfiguration = null;
             if(inventoryObjectNode != null){ 
                 if(!inventoryObjectNode.hasRelationship(RelTypes.HAS_CONFIGURATION))
-                   throw new OperationNotPermittedException(String.format("The object %s (%s) does not have a sync datasource configuration", 
+                   throw new UnsupportedPropertyException(String.format("The object %s (%s) does not have a sync datasource configuration", 
                            inventoryObjectNode.getProperty(Constants.PROPERTY_NAME), objectId));
                 
                 syncDatasourceConfiguration = inventoryObjectNode.getSingleRelationship(RelTypes.HAS_CONFIGURATION, Direction.INCOMING).getStartNode();
+                if(syncDatasourceConfiguration == null)
+                    throw new ApplicationObjectNotFoundException(String.format("The object with id %s has no data source configuration related", objectId));
             }
-            else { 
-//                syncDatasourceConfiguration = graphDb.getNodeBy(objectId);
-//                if(!syncDatasourceConfiguration.hasRelationship(RelTypes.HAS_CONFIGURATION))
-//                    throw new OperationNotPermittedException(String.format("The sync data source configuration with id: %s is not related with anything", objectId));
-            }
+
+            tx.success();
+            return Util.createSyncDataSourceConfigFromNode(syncDatasourceConfiguration);
+        }
+    }
+    
+    @Override
+    public SyncDataSourceConfiguration getSyncDataSourceConfigurationById(long objectId) 
+            throws InvalidArgumentException, ApplicationObjectNotFoundException, UnsupportedPropertyException {
+        try (Transaction tx = graphDb.beginTx()) {
+             
+            Node syncDatasourceConfiguration = graphDb.getNodeById(objectId);
+            if(syncDatasourceConfiguration == null)
+                throw new ApplicationObjectNotFoundException(String.format("The sync data source configuration with id: %s is not related with anything", objectId));
+            
             tx.success();
             return Util.createSyncDataSourceConfigFromNode(syncDatasourceConfiguration);
         }
@@ -3794,8 +3806,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public  List<SyncDataSourceConfiguration> getSyncDataSourceConfigurations(long syncGroupId) 
-            throws InvalidArgumentException, ApplicationObjectNotFoundException,
-            MetadataObjectNotFoundException, UnsupportedPropertyException{
+            throws InvalidArgumentException, ApplicationObjectNotFoundException, UnsupportedPropertyException{
         List<SyncDataSourceConfiguration> syncDataSourcesConfigurations = new ArrayList<>();
         
         try (Transaction tx = graphDb.beginTx()) {

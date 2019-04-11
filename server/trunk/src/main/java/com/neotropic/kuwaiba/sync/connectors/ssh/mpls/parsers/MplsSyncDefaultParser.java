@@ -47,9 +47,9 @@ public class MplsSyncDefaultParser {
         if(input != null){
             String[] lines = input.split("\n");
             ParsingState state = ParsingState.START;
-
             for (String line : lines) {
                 String[] lineTokens = line.trim().split("\\s{2,}");
+                
                 //check here if is necesary add the DOWN interfaces
                 if (lineTokens.length >= 5){ //NOI18N
                     state = ParsingState.READING_INTERFACES;
@@ -66,6 +66,7 @@ public class MplsSyncDefaultParser {
                 }//TODO the VFIs
             }//end for
             state = ParsingState.END;
+            
         }
         return mplsTransportLinks;
     }
@@ -80,28 +81,33 @@ public class MplsSyncDefaultParser {
         if(input != null){
             String[] lines = input.split("\n");
             ParsingState state = ParsingState.START;
-            
+           
             for (String line : lines) {
                 String[] lineTokens = line.trim().split("\\s+");
                 //check here if is necesary add the DOWN interfaces
                 if (state == ParsingState.START && line.toLowerCase().contains("local interface:")){ //NOI18N
                     //example line: Local interface: pwxxx xxx.xxx.xxx.xx [vcid] up
+                    
                     state = ParsingState.READING_LOCAL_INTERFACE_VCID_DETAIL;
-                    Matcher mtch = ptn.matcher(lineTokens[3].split("\\s")[0]);
+                    
+                    Matcher mtch = ptn.matcher( lineTokens[3].split("\\s")[0]);
                     String localIp = null;
                     if(mtch.find())
                         localIp = lineTokens[3];
                     entry.setLocalInterfaceIpDetail(localIp);
+
                 }
                 if (state == ParsingState.READING_LOCAL_INTERFACE_VCID_DETAIL && line.toLowerCase().contains("destination address:") && lineTokens.length == 9  &&  lineTokens[8].toLowerCase().equals("up")){ //NOI18N
                     //example line: Destination address: xxx.xxx.xxx.xx, VC ID: xxxx, VC status: up
                     //Whe two pseudowires are connected the vcid should replace with the one in the details not the got from the general list
+                    
                     state = ParsingState.READING_OUTPUT_INTERFACE_VCID_DETAIL;
                     entry.setVcId(lineTokens[5].replace(",", ""));
                     entry.setDestinationIpDetail(lineTokens[2].replace(",", ""));
                 }
                 if (state == ParsingState.READING_OUTPUT_INTERFACE_VCID_DETAIL && line.toLowerCase().contains("output interface:")){ //NOI18N
                     //Output interface: gix/x/x.yyy, imposed label stack {0 24}
+                    
                     entry.setOutputInterface(SyncUtil.normalizePortName(lineTokens[2].replace(",", "")));
                 }
             }//end for
@@ -118,7 +124,7 @@ public class MplsSyncDefaultParser {
     }
     
     /**
-     * Compares the local interface Pseudowire name
+     * Parses the raw input of pseudowires related
      * @param mplsLinks The raw input that corresponds to the output of the command
      * @return The list of bridge domains in the given router (and inside, the related interfaces -VFI, service instances and BDI-)
      */

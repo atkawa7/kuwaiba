@@ -230,7 +230,7 @@ public class SnmpCiscoVlansSyncProvider extends AbstractSyncProvider{
                 mibTables.add((TableData)value);
             });
             
-            CiscoVlansSinchronizer ciscoSync = new CiscoVlansSinchronizer(entrySet.getKey().getId(),
+            CiscoVlansSynchronizer ciscoSync = new CiscoVlansSynchronizer(entrySet.getKey().getId(),
                     new BusinessObjectLight(entrySet.getKey().getParameters().get("deviceClass"), 
                     entrySet.getKey().getParameters().get("deviceId"), ""), 
                     mibTables);

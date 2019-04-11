@@ -55,7 +55,7 @@ public class MplsSyncASR9001Parser {
             ParsingState state = ParsingState.START;
             String serviceName = "", serviceCustomerAccronym = "";
             MPLSLink currentMplsTransportLink = null;
-            
+            boolean isTest = false;
             for (String line : lines) {
                 String[] lineTokens = line.trim().split("\\s+");
                  //check here if is necesary add the DOWN interfaces
@@ -65,18 +65,23 @@ public class MplsSyncASR9001Parser {
                 }//TODO the VFIs
                 else if (lineTokens.length == 1 && state == ParsingState.READING_CUSTOMER_NAME){
                     state = ParsingState.READING_SERVICE_NAME;
+                    if(lineTokens[0].toLowerCase().contains("test"))
+                        isTest = true;
                     serviceName = lineTokens[0];
                 }//TODO the VFIs
                 //check here if is necesary add the DOWN interfaces
-                else if (lineTokens.length == 2){
+                else if (lineTokens.length == 2 && state == ParsingState.START){
                     state = ParsingState.READING_SERVICE_NAME;
+                    if(lineTokens[0].toLowerCase().contains("test"))
+                        isTest = true;
                     serviceName = lineTokens[1];
                     serviceCustomerAccronym = lineTokens[0];
                 }//TODO the VFIs
                 else if(lineTokens.length == 6 && lineTokens[0].equals("UP") && lineTokens[2].equals("UP") && lineTokens[5].equals("UP") && state == ParsingState.READING_SERVICE_NAME){
                     state = ParsingState.READING_INTERFACES;
                     currentMplsTransportLink = new MPLSLink(SyncUtil.normalizePortName(lineTokens[1]), lineTokens[4], lineTokens[3], serviceName, serviceCustomerAccronym);
-                    mplsTransportLinks.add(currentMplsTransportLink);
+                    if(!isTest)
+                        mplsTransportLinks.add(currentMplsTransportLink);
                     serviceName = ""; serviceCustomerAccronym = "";
                     state = ParsingState.START;
                 }       

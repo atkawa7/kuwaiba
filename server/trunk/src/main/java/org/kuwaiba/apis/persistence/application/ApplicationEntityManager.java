@@ -1240,18 +1240,28 @@ public interface ApplicationEntityManager {
      * Gets a data source configuration of the object (there is only one data source configuration per object)
      * @param objectId the object id (a GenericCommunicationElement) or the SyncDataSourceConfig id
      * @return a SyncDataSourceConfiguration
-     * @throws InvalidArgumentException If the the configurations is malformed in the database
+     * @throws InvalidArgumentException  If any of the configurations is malformed in the database
      * @throws ApplicationObjectNotFoundException If the sync data source configuration  could not be found
-     * @throws OperationNotPermittedException If the object has no sync data source configuration group could not be found
-     * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException
-     * @throws org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException
+     * @throws UnsupportedPropertyException if any property of the sync data source node is malformed or if there is an error with the relationship between the syncNode an it InventoryObjectNode
      */
-    public  SyncDataSourceConfiguration getSyncDataSourceConfiguration(String objectId) throws InvalidArgumentException, ApplicationObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, UnsupportedPropertyException;   /**
+    public  SyncDataSourceConfiguration getSyncDataSourceConfiguration(String objectId) throws InvalidArgumentException, ApplicationObjectNotFoundException, UnsupportedPropertyException;   
+    /**
+     * Gets a synchronization data source configuration by its id
+     * @param objectId SyncDataSourceConfigurationById the synDatasourceConfig id
+     * @return a SyncDatasourceConfiguration
+     * @throws InvalidArgumentException  If any of the configurations is malformed in the database
+     * @throws ApplicationObjectNotFoundException if the syncDatasource could not be found
+     * @throws UnsupportedPropertyException if any property of the sync data source node is malformed or if there is an error with the relationship between the syncNode an it InventoryObjectNode
+     */
+    public SyncDataSourceConfiguration getSyncDataSourceConfigurationById(long objectId) throws InvalidArgumentException, ApplicationObjectNotFoundException, UnsupportedPropertyException;
+    /**
      * Gets the data source configurations associated to a sync group. A data source configuration is a set of parameters to access a sync data source
      * @param syncGroupId The sync group the requested configurations belong to
      * @return A list of data source configurations
      * @throws ApplicationObjectNotFoundException If the sync group could not be found
      * @throws InvalidArgumentException If any of the configurations is malformed in the database
+     * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException
+     * @throws org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException
      */
     public List<SyncDataSourceConfiguration> getSyncDataSourceConfigurations(long syncGroupId) throws ApplicationObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException, UnsupportedPropertyException;
     /**

@@ -18,6 +18,7 @@ package org.kuwaiba.beans;
 
 import com.neotropic.kuwaiba.correlation.SimpleCorrelation;
 import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
+import com.neotropic.kuwaiba.modules.mpls.MPLSConnectionDefinition;
 import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
 import com.neotropic.kuwaiba.modules.projects.ProjectsModule;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
@@ -134,6 +135,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObject;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.AssetLevelCorrelatedInformation;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteLogicalConnectionDetails;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteMPLSConnectionDetails;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLinkObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
@@ -5076,18 +5078,32 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public RemoteObjectLight[] getMPLSLinkEndpoints(String connectionId, String ipAddress, String sessionId) throws ServerSideException{
+    public List<RemoteMPLSConnectionDetails> getE2EMPLSconnections(String connectionId, String ipAddress, String sessionId) throws ServerSideException{
+        try{
+            aem.validateWebServiceCall("getE2EMPLSconnections", ipAddress, sessionId);
+        
+            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
+            List<MPLSConnectionDefinition> mplsconnectionsMap = mplsModule.getE2EMPLSConnections(connectionId, new ArrayList<>());
+            List<RemoteMPLSConnectionDetails> e2eMPLsConnections = new ArrayList<>();
+            mplsconnectionsMap.forEach(connectionDetails -> { e2eMPLsConnections.add(new RemoteMPLSConnectionDetails(connectionDetails)); });
+            
+            return e2eMPLsConnections;
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemoteMPLSConnectionDetails getMPLSLinkEndpoints(String connectionId, String ipAddress, String sessionId) throws ServerSideException{
         try{
             aem.validateWebServiceCall("getMPLSLinkEndpoints", ipAddress, sessionId);
             MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
-            BusinessObjectLight [] endpoints = mplsModule.getMPLSLinkEndpoints(connectionId);
+            MPLSConnectionDefinition mplsLinkEndpoints = mplsModule.getMPLSLinkDetails(connectionId);
             
-            RemoteObjectLight[] res = new RemoteObjectLight[endpoints.length];
+            RemoteMPLSConnectionDetails remoteMPLSConnectionDetails = new RemoteMPLSConnectionDetails(mplsLinkEndpoints);
             
-            for (int i = 0; i < 10; i++) 
-                res[i] = new RemoteObjectLight(endpoints[i]);
-            
-            return res;
+            return remoteMPLSConnectionDetails;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -5098,7 +5114,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try{
             aem.validateWebServiceCall("relatePseudowires", ipAddress, sessionId);
             MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
-            mplsModule.relatePseudowires(pseudoWireId, interfaceClassName, interfaceId);
+            mplsModule.relatePseudowireWithInterface(pseudoWireId, interfaceClassName, interfaceId);
 
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -5117,11 +5133,11 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void disconnetMPLSLink(String connectionId, int sideToDisconnect, String ipAddress, String sessionId) throws ServerSideException{
+    public void disconnectMPLSLink(String connectionId, int sideToDisconnect, String ipAddress, String sessionId) throws ServerSideException{
         try{
-            aem.validateWebServiceCall("disconnetMPLSLink", ipAddress, sessionId);
+            aem.validateWebServiceCall("disconnectMPLSLink", ipAddress, sessionId);
             MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
-            mplsModule.disconnetMPLSLink(connectionId, sideToDisconnect);
+            mplsModule.disconnectMPLSLink(connectionId, sideToDisconnect);
         }catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

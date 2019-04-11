@@ -16,6 +16,7 @@
 package com.neotropic.kuwaiba.modules.mpls;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +34,6 @@ import org.kuwaiba.apis.persistence.exceptions.BusinessRuleException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -44,7 +44,6 @@ import org.kuwaiba.services.persistence.util.Constants;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class MPLSModule implements GenericCommercialModule {
-
     /**
      * The MetadataEntityManager instance
      */
@@ -69,11 +68,11 @@ public class MPLSModule implements GenericCommercialModule {
     /**
      * Relates a pseudowire and its output interface, the output interface is the endpoint of a MPLS link if is a port
      */
-    public static String RELATIONSHIP_MPLSPSEUDOWIREHASOUTPUTINTERFACE = "mplsHasOutputInterface";
+    public static String RELATIONSHIP_MPLS_PSEUDOWIRE_HASOUTPUTINTERFACE = "mplsPseudowireHasOutputInterface";
     /**
      * Relates two pseudowires that are logical linked inside a MPLS device
      */
-    public static String RELATIONSHIP_MPLSPSEUDOWIRE = "mplsRelatedPseudowire";
+    public static String RELATIONSHIP_MPLS_PW_ISRELATEDWITH_PW = "mplsPseudowireIsRelatedWithPseudowire";
     /**
      * Relates the MPLS link directly with the GenericNetworkElements parents of 
      * the end points of the MPLS link, it is used to explore the MPLS links in a 
@@ -210,48 +209,42 @@ public class MPLSModule implements GenericCommercialModule {
     
     /**
      * Deletes a MPLS Link
-     * 
-     * @param linkClass
-     * @param linkId
-     * @param forceDelete
-     * @throws ServerSideException
-     * @throws InventoryException If the object can not be found
-     *                            If either the object class or the attribute can not be found
-     *                            If the class could not be found
-     *                            If the object could not be deleted because there's some business rules that avoids it or it has incoming relationships.
-     * @throws NotAuthorizedException
+     * @param linkId the mplslink id
+     * @param forceDelete true deletes the mpls link even if have more relationships, false does not deletes the mpls link if have relationships
+     * @throws ServerSideException If the object can not be found
+     *                             If either the object class or the attribute can not be found
+     *                             If the class could not be found
+     *                             If the object could not be deleted because there's some business rules that avoids it or it has incoming relationships.
      */
-    public void deleteMPLSLink(String linkId, boolean forceDelete) 
-            throws ServerSideException, InventoryException, NotAuthorizedException {
+    public void deleteMPLSLink(String linkId, boolean forceDelete) throws ServerSideException{
         if (bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
-        
-        BusinessObjectLight mplsLink =  bem.getObjectLight(Constants.CLASS_MPLSLINK, linkId);
-        if (!mplsLink.getClassName().equals(Constants.CLASS_MPLSLINK)) //NOI18N
-                throw new ServerSideException(String.format("Only links of class MPLSLink can be deleted, class: %s can be deleted", mplsLink.getClassName()));
-        
-        bem.deleteObject(mplsLink.getClassName(), linkId, forceDelete);
-        aem.createGeneralActivityLogEntry("mplsModule", ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, String.format("%s deleted", mplsLink, Constants.CLASS_MPLSLINK));
+        try{
+            BusinessObjectLight mplsLink =  bem.getObjectLight(Constants.CLASS_MPLSLINK, linkId);
+            if (!mplsLink.getClassName().equals(Constants.CLASS_MPLSLINK)) //NOI18N
+                    throw new ServerSideException(String.format("Only links of class MPLSLink can be deleted, class: %s can be deleted", mplsLink.getClassName()));
+
+            bem.deleteObject(mplsLink.getClassName(), linkId, forceDelete);
+            aem.createGeneralActivityLogEntry("mplsModule", ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, String.format("%s deleted", mplsLink, Constants.CLASS_MPLSLINK));
+        }catch(Exception ex){
+            throw new ServerSideException(ex.getMessage());
+        }
     }
     
     /**
-     * Relates a given pseudowire with a pseudowire or relates the pseudowire 
-     * with an output interface (if is a GenericPhysicalPort or a VirtualPort)
+     * Relates a pseudowire with a interface, if the given interface is a pseudowire 
+     * the relationship between pseudowires that represent the logical link between them inside the device,
+     * if the given interface is a GenericPhysicalPort or a VirtualPort the relationship is created
+     * represents the logical link between the pseudowire an its output interface.
+     * 
      * @param pseudoWireId pseudowire id
      * @param interfaceClassName interface class name
      * @param interfaceId interface id
-     * @throws org.kuwaiba.exceptions.ServerSideException
-     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException
-     * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException
-     * @throws org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException
-     * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException
-     * @throws org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException
+     * @throws ServerSideException
      */
-    public void relatePseudowires(String pseudoWireId, String interfaceClassName, String interfaceId) throws 
-            ServerSideException, InvalidArgumentException, 
-            MetadataObjectNotFoundException, BusinessObjectNotFoundException, 
-            ApplicationObjectNotFoundException, OperationNotPermittedException{
-
+    public void relatePseudowireWithInterface(String pseudoWireId, String interfaceClassName, String interfaceId) throws 
+            ServerSideException{
+        try{
         if (bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
 
@@ -260,40 +253,167 @@ public class MPLSModule implements GenericCommercialModule {
             if(pseudowire != null){
                 if(interfaceClassName.equals(Constants.CLASS_PSEUDOWIRE)){
                     String relatedInterface = bem.getAttributeValueAsString(interfaceClassName, interfaceId, Constants.PROPERTY_NAME);
-                    bem.createSpecialRelationship(Constants.CLASS_PSEUDOWIRE, pseudoWireId, interfaceClassName, interfaceId, RELATIONSHIP_MPLSPSEUDOWIRE, true); //NOI18N
+                    bem.createSpecialRelationship(Constants.CLASS_PSEUDOWIRE, pseudoWireId, interfaceClassName, interfaceId, RELATIONSHIP_MPLS_PW_ISRELATEDWITH_PW, true); //NOI18N
                     aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - pseudowire - %s", pseudowire, relatedInterface));
                 }else if(mem.isSubclassOf(Constants.CLASS_GENERICPORT, interfaceClassName)){
                     String outputIntfName = bem.getAttributeValueAsString(interfaceClassName, interfaceId, Constants.PROPERTY_NAME);
-                    bem.createSpecialRelationship(pseudowire.getClassName(), pseudowire.getId(), interfaceClassName, interfaceId, RELATIONSHIP_MPLSPSEUDOWIREHASOUTPUTINTERFACE, true); //NOI18N
-                    aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - " + RELATIONSHIP_MPLSPSEUDOWIREHASOUTPUTINTERFACE + " - %s", pseudowire, outputIntfName));
+                    bem.createSpecialRelationship(pseudowire.getClassName(), pseudowire.getId(), interfaceClassName, interfaceId, RELATIONSHIP_MPLS_PSEUDOWIRE_HASOUTPUTINTERFACE, true); //NOI18N
+                    aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - " + RELATIONSHIP_MPLS_PSEUDOWIRE_HASOUTPUTINTERFACE + " - %s", pseudowire, outputIntfName));
                 }
             }
+        }
+        }catch(Exception ex){
+            throw new ServerSideException(ex.getMessage());
         }
     }
     
     /**
-     * Get the MPLS link endpoints
+     * Get a MPLS link connections
+     * @param connectionId MPLS link id
+     * @param e2eMplsConnections
+     * @return MPLS link endpoints
+     * @throws ServerSideException 
+     */
+    public List<MPLSConnectionDefinition> getE2EMPLSConnections(String connectionId, List<MPLSConnectionDefinition> e2eMplsConnections) throws ServerSideException {
+        if (bem == null || mem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try{
+            
+            boolean containConnectionId = false;
+            
+            for (MPLSConnectionDefinition e2eMplsConnection : e2eMplsConnections) {
+                if(e2eMplsConnection.getConnectionObject().getId().equals(connectionId)){
+                    containConnectionId = true;
+                    break;
+                }
+            }
+           
+            if(!containConnectionId){
+                MPLSConnectionDefinition mplsLinkEndpoints = getMPLSLinkDetails(connectionId);
+                e2eMplsConnections.add(mplsLinkEndpoints);
+                //side A
+                if(mplsLinkEndpoints.getPseudowireA() != null){
+                    BusinessObjectLight endpointA = mplsLinkEndpoints.getPseudowireA();
+                    //pw -- pw
+                    List<BusinessObjectLight> pws = bem.getSpecialAttribute(endpointA.getClassName(), endpointA.getId(), RELATIONSHIP_MPLS_PW_ISRELATEDWITH_PW);
+                    if(!pws.isEmpty() && pws.get(0).getClassName().equals(Constants.CLASS_PSEUDOWIRE)){
+                        List<BusinessObjectLight> pseudowireRelatedConnections = getPseudowireRelatedConnections(pws.get(0));
+
+                        for (BusinessObjectLight mplsConnections : pseudowireRelatedConnections)
+                            getE2EMPLSConnections(mplsConnections.getId(), e2eMplsConnections);
+                    }
+                }
+                //side B
+                if(mplsLinkEndpoints.getPseudowireB() != null){
+                    BusinessObjectLight endpointB = mplsLinkEndpoints.getPseudowireB();
+                    //pw -- pw
+                    List<BusinessObjectLight> pws = bem.getSpecialAttribute(endpointB.getClassName(), endpointB.getId(), RELATIONSHIP_MPLS_PW_ISRELATEDWITH_PW);
+                    if(!pws.isEmpty() && pws.get(0).getClassName().equals(Constants.CLASS_PSEUDOWIRE)){
+                        List<BusinessObjectLight> pseudowireRelatedConnections = getPseudowireRelatedConnections(pws.get(0));
+
+                        for (BusinessObjectLight mplsConnections : pseudowireRelatedConnections)
+                            getE2EMPLSConnections(mplsConnections.getId(), e2eMplsConnections);
+                    }
+                }
+            }
+            
+            return e2eMplsConnections;
+            
+        }catch(Exception ex){
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    /**
+     * Follows the continuity of a given pseudowire throw its relationships
+     * @param pseudowire a given pseudowire
+     * @return a list mpls links related to the pseudowire 
+     * @throws MetadataObjectNotFoundException class Pseudowire not found
+     * @throws BusinessObjectNotFoundException the object could not be found
+     * @throws InvalidArgumentException If the object id is null
+     */
+    private List<BusinessObjectLight> getPseudowireRelatedConnections(BusinessObjectLight pseudowire) 
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException
+    {
+        HashMap<String, List<BusinessObjectLight>> mplsConnetcions = bem.getSpecialAttributes(pseudowire.getClassName(), pseudowire.getId());
+        List<BusinessObjectLight> relatedMplsConnections = new ArrayList<>();
+        if(mplsConnetcions.containsKey(RELATIONSHIP_MPLSENDPOINTA)){
+            List<BusinessObjectLight> sideAConnections = mplsConnetcions.get(RELATIONSHIP_MPLSENDPOINTA);
+            if(!sideAConnections.isEmpty() && sideAConnections.get(0).getClassName().equals(Constants.CLASS_MPLSLINK))
+               relatedMplsConnections.add(sideAConnections.get(0));
+        }
+        if(mplsConnetcions.containsKey(RELATIONSHIP_MPLSENDPOINTB)){
+            List<BusinessObjectLight> sideBConnections = mplsConnetcions.get(RELATIONSHIP_MPLSENDPOINTB);
+            if(!sideBConnections.isEmpty() && sideBConnections.get(0).getClassName().equals(Constants.CLASS_MPLSLINK))
+                relatedMplsConnections.add(sideBConnections.get(0));
+        }
+        return relatedMplsConnections;
+    }
+    
+    /**
+     * Get the MPLS link details, its output interfaces, pseudowires, tunnels
      * @param connectionId MPLS link id
      * @return MPLS link endpoints
-     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException 
-     * @throws org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException 
-     * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException 
      * @throws org.kuwaiba.exceptions.ServerSideException 
      */
-    public BusinessObjectLight[] getMPLSLinkEndpoints(String connectionId) 
-            throws InvalidArgumentException, BusinessObjectNotFoundException, 
-            MetadataObjectNotFoundException, ServerSideException 
+    public MPLSConnectionDefinition getMPLSLinkDetails(String connectionId) 
+            throws ServerSideException 
     {
         if (bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
-        
-        String connectionClass = bem.getObject(Constants.CLASS_MPLSLINK, connectionId).getClassName();
-        if (!mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONNECTION, connectionClass)) //NOI18N
-                throw new InvalidArgumentException(String.format("Class %s is not MPLSLink connection", connectionClass));
+        try{
+            BusinessObject mplsLink = bem.getObject(Constants.CLASS_MPLSLINK, connectionId);
+           
+            List<BusinessObjectLight> endpointAs = bem.getSpecialAttribute(Constants.CLASS_MPLSLINK, connectionId, RELATIONSHIP_MPLSENDPOINTA);
+            List<BusinessObjectLight> endpointBs = bem.getSpecialAttribute(Constants.CLASS_MPLSLINK, connectionId, RELATIONSHIP_MPLSENDPOINTB);
+            MPLSConnectionDefinition mplsConnectionDefinition = new MPLSConnectionDefinition(mplsLink);
+            //side A
+            if(!endpointAs.isEmpty()){
+                BusinessObjectLight endpointA = endpointAs.get(0);
+                mplsConnectionDefinition.setEndpointA(endpointA);
+                BusinessObject deviceA = bem.getParentOfClass(endpointA.getClassName(), endpointA.getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+                mplsConnectionDefinition.setDeviceA(deviceA);
+                
+                if(endpointA.getClassName().equals(Constants.CLASS_PSEUDOWIRE)){
+                    mplsConnectionDefinition.setPseudowireA(endpointA);
+                    List<BusinessObjectLight> outputs = bem.getSpecialAttribute(endpointA.getClassName(), endpointA.getId(), RELATIONSHIP_MPLS_PSEUDOWIRE_HASOUTPUTINTERFACE);
+                    if(!outputs.isEmpty() && outputs.get(0).getClassName().equals(Constants.CLASS_MPLSTUNNEL))
+                        mplsConnectionDefinition.setTunnelA(outputs.get(0));
+                }
+                else if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALPORT, endpointA.getClassName()) || endpointA.getClassName().equals(Constants.CLASS_VIRTUALPORT)){
+                    //if is an outputinterface it should be related with a pseudowire
+                    List<BusinessObjectLight> pws = bem.getSpecialAttribute(endpointA.getClassName(), endpointA.getId(), RELATIONSHIP_MPLS_PSEUDOWIRE_HASOUTPUTINTERFACE);
+                    if(!pws.isEmpty())
+                        mplsConnectionDefinition.setPseudowireA(pws.get(0));
+                    mplsConnectionDefinition.setOutputInterfaceA(endpointA);
+                }
+            }//side B
+            if(!endpointBs.isEmpty()){
+                BusinessObjectLight endpointB = endpointBs.get(0);
+                mplsConnectionDefinition.setEndpointB(endpointB);
+                BusinessObject deviceB = bem.getParentOfClass(endpointB.getClassName(), endpointB.getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+                mplsConnectionDefinition.setDeviceB(deviceB);
+                
+                if(endpointB.getClassName().equals(Constants.CLASS_PSEUDOWIRE)){
+                    mplsConnectionDefinition.setPseudowireB(endpointB);
+                    List<BusinessObjectLight> outputs = bem.getSpecialAttribute(endpointB.getClassName(), endpointB.getId(), RELATIONSHIP_MPLS_PSEUDOWIRE_HASOUTPUTINTERFACE);
+                    if(!outputs.isEmpty() && outputs.get(0).getClassName().equals(Constants.CLASS_MPLSTUNNEL))
+                        mplsConnectionDefinition.setTunnelB(outputs.get(0));
+                }
+                else if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALPORT, endpointB.getClassName()) || endpointB.getClassName().equals(Constants.CLASS_VIRTUALPORT)){
+                    //if is an outputinterface it should be related with a pseudowire
+                    List<BusinessObjectLight> pws = bem.getSpecialAttribute(endpointB.getClassName(), endpointB.getId(), RELATIONSHIP_MPLS_PSEUDOWIRE_HASOUTPUTINTERFACE);
+                    if(!pws.isEmpty())
+                        mplsConnectionDefinition.setPseudowireB(pws.get(0));
+                    mplsConnectionDefinition.setOutputInterfaceB(endpointB);
+                }
+            }
+
+            return mplsConnectionDefinition;
             
-        List<BusinessObjectLight> endpointA = bem.getSpecialAttribute(Constants.CLASS_MPLSLINK, connectionId, RELATIONSHIP_MPLSENDPOINTA);
-        List<BusinessObjectLight> endpointB = bem.getSpecialAttribute(Constants.CLASS_MPLSLINK, connectionId, RELATIONSHIP_MPLSENDPOINTB);
-        return new BusinessObjectLight[] {endpointA.isEmpty() ? null : endpointA.get(0), endpointB.isEmpty() ? null : endpointB.get(0)};
+        }catch(Exception ex){
+            throw new ServerSideException(ex.getMessage());
+        }
     }
     
     /**
@@ -380,52 +500,47 @@ public class MPLSModule implements GenericCommercialModule {
      * Disconnect a mplsLink from its endpoints
      * @param connectionId MPLS link id
      * @param sideToDisconnect if is side A or side B or both sides
-     * @throws org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException 
-     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException 
-     * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException 
      * @throws org.kuwaiba.exceptions.ServerSideException 
-     * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException 
      */
-    public void disconnetMPLSLink(String connectionId, int sideToDisconnect) 
-            throws BusinessObjectNotFoundException, InvalidArgumentException, 
-            MetadataObjectNotFoundException, ApplicationObjectNotFoundException, 
-            ServerSideException
-    {
+    public void disconnectMPLSLink(String connectionId, int sideToDisconnect) throws ServerSideException{
         if (bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
-        
-        String  affectedProperties = "", oldValues = "";
-        switch (sideToDisconnect) {
-            case 1: //A side
-                BusinessObjectLight endpointA = bem.getSpecialAttribute(Constants.CLASS_MPLSLINK, connectionId, RELATIONSHIP_MPLSENDPOINTA).get(0); //NOI18N                    
-                bem.releaseRelationships(Constants.CLASS_MPLSLINK, connectionId, Arrays.asList(RELATIONSHIP_MPLSENDPOINTA)); //NOI18N
+        try{
+            String  affectedProperties = "", oldValues = "";
+            switch (sideToDisconnect) {
+                case 1: //A side
+                    BusinessObjectLight endpointA = bem.getSpecialAttribute(Constants.CLASS_MPLSLINK, connectionId, RELATIONSHIP_MPLSENDPOINTA).get(0); //NOI18N                    
+                    bem.releaseRelationships(Constants.CLASS_MPLSLINK, connectionId, Arrays.asList(RELATIONSHIP_MPLSENDPOINTA)); //NOI18N
 
-                affectedProperties += RELATIONSHIP_MPLSENDPOINTA + " "; //NOI18N
-                oldValues += endpointA.getId() + " ";
-                break;
-            case 2: //B side
-                BusinessObjectLight endpointB = bem.getSpecialAttribute(Constants.CLASS_MPLSLINK, connectionId, "endpointB").get(0); //NOI18N                    
-                bem.releaseRelationships(Constants.CLASS_MPLSLINK, connectionId, Arrays.asList("endpointB")); //NOI18N
+                    affectedProperties += RELATIONSHIP_MPLSENDPOINTA + " "; //NOI18N
+                    oldValues += endpointA.getId() + " ";
+                    break;
+                case 2: //B side
+                    BusinessObjectLight endpointB = bem.getSpecialAttribute(Constants.CLASS_MPLSLINK, connectionId, "endpointB").get(0); //NOI18N                    
+                    bem.releaseRelationships(Constants.CLASS_MPLSLINK, connectionId, Arrays.asList("endpointB")); //NOI18N
 
-                affectedProperties += "endpointB" + " "; //NOI18N
-                oldValues += endpointB.getId() + " ";
-                break;
-            case 3: //Both sides
-                endpointA = bem.getSpecialAttribute(Constants.CLASS_MPLSLINK, connectionId, RELATIONSHIP_MPLSENDPOINTA).get(0); //NOI18N
-                endpointB = bem.getSpecialAttribute(Constants.CLASS_MPLSLINK, connectionId, "endpointB").get(0); //NOI18N
-                bem.releaseRelationships(Constants.CLASS_MPLSLINK, connectionId, Arrays.asList(RELATIONSHIP_MPLSENDPOINTA, "endpointB")); //NOI18N
+                    affectedProperties += "endpointB" + " "; //NOI18N
+                    oldValues += endpointB.getId() + " ";
+                    break;
+                case 3: //Both sides
+                    endpointA = bem.getSpecialAttribute(Constants.CLASS_MPLSLINK, connectionId, RELATIONSHIP_MPLSENDPOINTA).get(0); //NOI18N
+                    endpointB = bem.getSpecialAttribute(Constants.CLASS_MPLSLINK, connectionId, "endpointB").get(0); //NOI18N
+                    bem.releaseRelationships(Constants.CLASS_MPLSLINK, connectionId, Arrays.asList(RELATIONSHIP_MPLSENDPOINTA, "endpointB")); //NOI18N
 
-                affectedProperties += RELATIONSHIP_MPLSENDPOINTA + " "; //NOI18N
-                oldValues += endpointA.getId() + " ";
+                    affectedProperties += RELATIONSHIP_MPLSENDPOINTA + " "; //NOI18N
+                    oldValues += endpointA.getId() + " ";
 
-                affectedProperties += "endpointB" + " "; //NOI18N
-                oldValues += endpointB.getId() + " ";
-                break;
-            default:
-                throw new InvalidArgumentException(String.format("Wrong side to disconnect option"));
+                    affectedProperties += "endpointB" + " "; //NOI18N
+                    oldValues += endpointB.getId() + " ";
+                    break;
+                default:
+                    throw new InvalidArgumentException(String.format("Wrong side to disconnect option"));
+            }
+            aem.createObjectActivityLogEntry("mplsModule", Constants.CLASS_MPLSLINK, connectionId, 
+                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                affectedProperties, oldValues, "", ""); //NOI18N
+        }catch(Exception ex){
+            throw new ServerSideException(ex.getMessage());
         }
-        aem.createObjectActivityLogEntry("mplsModule", Constants.CLASS_MPLSLINK, connectionId, 
-            ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
-            affectedProperties, oldValues, "", ""); //NOI18N
     }
 }

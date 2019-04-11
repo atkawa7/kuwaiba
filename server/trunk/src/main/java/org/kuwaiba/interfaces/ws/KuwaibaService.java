@@ -81,6 +81,7 @@ import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConfigurationVariable;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidator;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidatorDefinition;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteMPLSConnectionDetails;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLinkObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemotePhysicalConnectionDetails;
 
@@ -7466,7 +7467,32 @@ public class KuwaibaService {
     
     
     /**
-     * The endpoints of a given mpls link
+     * Get a continuity path of a given mpls link following the interfaces related with the given mpls link 
+     * @param connectionId the mpls link id
+     * @param sessionId Session token
+     * @return An array of two positions: the first is the A endpoint and the second is the B endpoint
+     * @throws ServerSideException f the given id class name is not MPLS Link
+     *                             If any of the requested objects can't be found
+     *                             If any of the classes provided can not be found
+     *                             If any of the objects involved can't be connected  
+     */
+    @WebMethod(operationName = "getE2EMPLSconnections")
+    public List<RemoteMPLSConnectionDetails> getE2EMPLSconnections(@WebParam(name = "connectionId") String connectionId, 
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getE2EMPLSconnections(connectionId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getE2EMPLSconnections: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * The details of a given mpls link
      * @param connectionId the mpls link id
      * @param sessionId Session token
      * @return An array of two positions: the first is the A endpoint and the second is the B endpoint
@@ -7476,7 +7502,7 @@ public class KuwaibaService {
      *                             If any of the objects involved can't be connected  
      */
     @WebMethod(operationName = "getMPLSLinkEndpoints")
-    public RemoteObjectLight[] getMPLSLinkEndpoints(@WebParam(name = "connectionId") String connectionId, 
+    public RemoteMPLSConnectionDetails getMPLSLinkEndpoints(@WebParam(name = "connectionId") String connectionId, 
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
             return wsBean.getMPLSLinkEndpoints(connectionId, getIPAddress(), sessionId);
@@ -7491,7 +7517,7 @@ public class KuwaibaService {
     }
     
     /**
-     * 
+     * Relates the Pseudowires with the need it interfaces in the creation of mpls link  
      * @param pseudoWireId the pseudowire id
      * @param interfaceClassName interface class name that will be related he given pseudowire
      * @param interfaceId interface id that will be related with the given pseudowire
@@ -7561,17 +7587,17 @@ public class KuwaibaService {
      *                             If any of the classes provided can not be found
      *                             If any of the objects involved can't be connected 
      */
-    @WebMethod(operationName = "disconnetMPLSLink")
-    public void disconnetMPLSLink(@WebParam(name = "connectionId") String connectionId,
+    @WebMethod(operationName = "disconnectMPLSLink")
+    public void disconnectMPLSLink(@WebParam(name = "connectionId") String connectionId,
             @WebParam(name = "sideToDisconnect") int sideToDisconnect,
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
-            wsBean.disconnetMPLSLink(connectionId, sideToDisconnect, getIPAddress(), sessionId);
+            wsBean.disconnectMPLSLink(connectionId, sideToDisconnect, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in disconnetMPLSLink: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in disconnectMPLSLink: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }

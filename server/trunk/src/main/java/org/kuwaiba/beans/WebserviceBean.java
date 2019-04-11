@@ -64,6 +64,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObject;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.AssetLevelCorrelatedInformation;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteLogicalConnectionDetails;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteMPLSConnectionDetails;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLinkObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
@@ -563,12 +564,13 @@ public interface WebserviceBean {
       
         // <editor-fold defaultstate="collapsed" desc="MPLS Networks Module">
          public String createMPLSLink(String classNameEndpointA, String idEndpointA, String classNameEndpointB, String idEndpointB, List<StringPair> attributesToBeSet, String ipAddress, String sessionId) throws ServerSideException;
-         public RemoteObjectLight[] getMPLSLinkEndpoints(String connectionId, String ipAddress, String sessionId) throws ServerSideException;
+         public RemoteMPLSConnectionDetails getMPLSLinkEndpoints(String connectionId, String ipAddress, String sessionId) throws ServerSideException;
+         public List<RemoteMPLSConnectionDetails> getE2EMPLSconnections(String connectionId, String ipAddress, String sessionId) throws ServerSideException;
          public void relatePseudowires(String pseudoWireId, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException;
          public void connectMplsLink(String[] sideAClassNames, String[] sideAIds, String[] linksIds, String[] sideBClassNames, String[] sideBIds, String ipAddress, String sessionId) throws ServerSideException;
-         public void disconnetMPLSLink(String connectionId, int sideToDisconnect, String ipAddress, String sessionId) throws ServerSideException;
+         public void disconnectMPLSLink(String connectionId, int sideToDisconnect, String ipAddress, String sessionId) throws ServerSideException;
          public void deleteMPLSLink(String linkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
-    // </editor-fold>
+        // </editor-fold>
          
         // <editor-fold defaultstate="collapsed" desc="Projects Module">
         public List<RemotePool> getProjectPools(String ipAddress, String sessionId) throws ServerSideException;

@@ -653,17 +653,16 @@ public class Util {
      * @param syncDataSourceConfigNode The source node
      * @return A SyncDataSourceConfiguration object built from the source node information
      * @throws InvalidArgumentException if the size of the list of paramNames and paramValues are not the same 
-     * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException if the node of the device has its relationship with the class node is malformed
-     * @throws org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException if node of the device has its class node is malformed
+     * @throws UnsupportedPropertyException if any property of the sync data source node is malformed or if there is an error with the relationship between the syncNode an it InventoryObjectNode
      */
-    public static SyncDataSourceConfiguration createSyncDataSourceConfigFromNode(Node syncDataSourceConfigNode) throws InvalidArgumentException, 
-            MetadataObjectNotFoundException, UnsupportedPropertyException{   
+    public static SyncDataSourceConfiguration createSyncDataSourceConfigFromNode(Node syncDataSourceConfigNode) throws UnsupportedPropertyException, InvalidArgumentException{   
         
         if (!syncDataSourceConfigNode.hasProperty(Constants.PROPERTY_NAME))
-            throw new InvalidArgumentException(String.format("The sync configuration with id %s is malformed. Check its properties", syncDataSourceConfigNode.getId()));
+            throw new UnsupportedPropertyException(String.format("The sync configuration with id %s is malformed. Check its properties", syncDataSourceConfigNode.getId()));
         
         if(!syncDataSourceConfigNode.hasRelationship(RelTypes.HAS_CONFIGURATION))
-            throw new InvalidArgumentException(String.format("The sync configuration with id %s is malformed. its not related with a inventory object", syncDataSourceConfigNode.getId()));
+            throw new UnsupportedPropertyException(String.format("The sync configuration with id %s is malformed. its not related with a inventory object", syncDataSourceConfigNode.getId()));
+        
         Node inventoryObjectNode = syncDataSourceConfigNode.getSingleRelationship(RelTypes.HAS_CONFIGURATION, Direction.OUTGOING).getEndNode();
 
         HashMap<String, String> parameters = new HashMap<>();
@@ -672,8 +671,8 @@ public class Util {
         for (String property : syncDataSourceConfigNode.getPropertyKeys()) {
             if (property.equals(Constants.PROPERTY_NAME))
                 configName = (String)syncDataSourceConfigNode.getProperty(property);
-            if(property.equals("deviceId") && (Long.valueOf((String)syncDataSourceConfigNode.getProperty(property))) != inventoryObjectNode.getId())
-                throw new InvalidArgumentException(String.format("The sync configuration with id %s is malformed. its not related with correct inventory object", inventoryObjectNode.getId()));   
+            if(property.equals("deviceId") && !((String)syncDataSourceConfigNode.getProperty(property)).equals(inventoryObjectNode.getId()))
+                throw new UnsupportedPropertyException(String.format("The sync configuration with id %s is malformed. its not related with correct inventory object", inventoryObjectNode.getId()));   
             else
                 parameters.put(property, (String)syncDataSourceConfigNode.getProperty(property));
         }

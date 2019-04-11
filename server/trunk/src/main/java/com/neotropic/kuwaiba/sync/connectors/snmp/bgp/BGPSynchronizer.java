@@ -230,7 +230,7 @@ public class BGPSynchronizer {
                             "Finding the local port related with the bgpPeerLocalAddr",
                             String.format("No port has been related with ipAddr: %s, try running ipAddress sync", bgpPeerLocalAddr.get(i))));
                 else if(!asnNumber.equals("0")){//we found the local port, so we can continue
-                    String asnName = checkPeeringDB(asnNumber, bgpPeerLocalAddr.get(i), bgpPeerRemoteAddr.get(i));
+                    String asnName = checkPeerDB(asnNumber, bgpPeerLocalAddr.get(i), bgpPeerRemoteAddr.get(i));
                     //We search the remote port with the remote addr
                     BusinessObjectLight remotePort = searchPortByIpAddrInIPAM(bgpPeerRemoteAddr.get(i));
                     BusinessObject remoteDevice = null;
@@ -287,38 +287,38 @@ public class BGPSynchronizer {
             //now we check what is ExternalEquipment(those with no ports related to an ipAddr) and what is Peering
             for (Map.Entry<BusinessObjectLight, List<BusinessObject>> entry : connectedThings.entrySet()) {
                 BusinessObjectLight localPort = entry.getKey();
-                List<BusinessObject> peerings = entry.getValue();
+                List<BusinessObject> bgpPeers = entry.getValue();
                 //this are ExternalEquipments
-                if(peerings.size() <= 3){ //create a syn-room, externalEquipments
-                    for (BusinessObject provider : peerings) {
-                        BusinessObjectLight remoteAddrIp = checkSubentsIps(provider.getAttributes().get("bgpPeerRemoteAddr"), "255.255.255.0");
+                if(bgpPeers.size() <= 3){ //create a syn-room, externalEquipments
+                    for (BusinessObject bgpPeer : bgpPeers) {
+                        BusinessObjectLight remoteAddrIp = checkSubentsIps(bgpPeer.getAttributes().get("bgpPeerRemoteAddr"), "255.255.255.0");
                         res.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, 
-                                    String.format("Possible ExternalEquipment found, with asnName: %s, asnNumber: %s", provider.getName(), provider.getAttributes().get("asnNumber")), 
+                                    String.format("Possible ExternalEquipment found, with asnName: %s, asnNumber: %s", bgpPeer.getName(), bgpPeer.getAttributes().get("asnNumber")), 
                                     String.format("Please create ExternalEquipment, with at least one OpticalPort an relate that port with the ipAddr: %s", remoteAddrIp)));
                     }
                 }else{
-                    for(BusinessObject peering : peerings) {
-                        BusinessObjectLight remotePeering = searchPeering(peering.getAttributes().get("asnNumber"), peering.getName(), 
-                                peering.getAttributes().get("bgpPeerRemoteAddr"));
+                    for(BusinessObject bgpPeer : bgpPeers) {
+                        BusinessObjectLight remotePeer = searchBGPPeer(bgpPeer.getAttributes().get("asnNumber"), bgpPeer.getName(), 
+                                bgpPeer.getAttributes().get("bgpPeerRemoteAddr"));
                         
                         BusinessObjectLight remotePort = null;
-                        if(remotePeering == null)
-                            remotePeering= createPeering(peering.getAttributes().get("asnNumber"), peering.getName(), 
-                                    peering.getAttributes().get("bgpPeerRemoteAddr"));
+                        if(remotePeer == null)
+                            remotePeer= createBGPPeer(bgpPeer.getAttributes().get("asnNumber"), bgpPeer.getName(), 
+                                    bgpPeer.getAttributes().get("bgpPeerRemoteAddr"));
                         
-                        if(remotePeering != null)
-                            remotePort = createRemotePeeringInterface(remotePeering, peering.getAttributes().get("bgpPeerRemoteAddr"), 
-                                    peering.getAttributes().get("bgpPeerRemotePort"));
+                        if(remotePeer != null)
+                            remotePort = createRemoteBGPPeerInterface(remotePeer, bgpPeer.getAttributes().get("bgpPeerRemoteAddr"), 
+                                    bgpPeer.getAttributes().get("bgpPeerRemotePort"));
                         
                         //we only create the BGPLink if we have both sides
-                        if(remotePort != null && remotePeering != null)
-                            createBGPLink(peering.getName(), 
-                                    peering.getAttributes().get("asnNumber"), 
+                        if(remotePort != null && remotePeer != null)
+                            createBGPLink(bgpPeer.getName(), 
+                                    bgpPeer.getAttributes().get("asnNumber"), 
                                     localPort, 
-                                    peering.getAttributes().get("bgpPeerLocalAddr"), 
-                                    remotePeering, remotePort, 
-                                    peering.getAttributes().get("bgpPeerRemoteAddr"), 
-                                    peering.getAttributes().get("bgpPeerIdentifier"));
+                                    bgpPeer.getAttributes().get("bgpPeerLocalAddr"), 
+                                    remotePeer, remotePort, 
+                                    bgpPeer.getAttributes().get("bgpPeerRemoteAddr"), 
+                                    bgpPeer.getAttributes().get("bgpPeerIdentifier"));
                     }
                 }
             }
@@ -380,10 +380,10 @@ public class BGPSynchronizer {
      * @param asnNumber ASN number form SNMP
      * @param asnName ASN name from peeringDB
      * @param bgpPeerRemoteAddr remote  IP address from SNMP
-     * @param bgpPeerIdentifier peering id from SNMP
+     * @param bgpPeerIdentifier peer id from SNMP
      * @return The newly created cloud.
      */
-    private BusinessObject searchPeering(String asnNumber, String asnName, String bgpPeerRemoteAddr){
+    private BusinessObject searchBGPPeer(String asnNumber, String asnName, String bgpPeerRemoteAddr){
         try{
             if(!asnName.isEmpty()){
                 BusinessObject location = bem.getParentOfClass(className, id, "City");
@@ -403,10 +403,10 @@ public class BGPSynchronizer {
                     else{
                         List<BusinessObjectLight> peers = bem.getObjectChildren(providersParent.getClassName(), providersParent.getId(), -1);
                         for (BusinessObjectLight peer : peers) {
-                            BusinessObject obj = bem.getObject(Constants.CLASS_PEER, peer.getId());
+                            BusinessObject obj = bem.getObject(Constants.CLASS_BGPPEER, peer.getId());
                             HashMap<String, String> attributes = obj.getAttributes();
                             if(peer.getName().equals(asnName) && attributes.get("asnNumber").equals(asnNumber)){
-                                //if we found the peering we must check the bgpPeerRemoteAddr
+                                //if we found the BGPPeer we must check the bgpPeerRemoteAddr
                                 String currentBgpPeerRemoteAddr = obj.getAttributes().get("bgpPeerRemoteAddr");
                                 if(currentBgpPeerRemoteAddr != null && !currentBgpPeerRemoteAddr.contains(bgpPeerRemoteAddr)){
                                     currentBgpPeerRemoteAddr += "; "+ bgpPeerRemoteAddr;
@@ -436,14 +436,13 @@ public class BGPSynchronizer {
     }
     
     /**
-     * Creates a provider(cloud) a port and relates thar port with the 
-     * remote  IP address port
+     * Creates a BGPPeer and a port and relates thar port with the remote IP address port
      * @param asnNumber ASN number form SNMP
      * @param asnName ASN name from peeringDB
      * @param bgpPeerRemoteAddr remote  IP address from SNMP
      * @return the created cloud
      */
-    private BusinessObjectLight createPeering(String asnNumber, String asnName, String bgpPeerRemoteAddr){
+    private BusinessObjectLight createBGPPeer(String asnNumber, String asnName, String bgpPeerRemoteAddr){
         try{
             if(!asnName.isEmpty()){
                 BusinessObject location = bem.getParentOfClass(className, id, "City");
@@ -472,20 +471,20 @@ public class BGPSynchronizer {
                     attributes.put("bgpPeerRemoteAddr", bgpPeerRemoteAddr);
                     attributes.put(Constants.PROPERTY_NAME, asnName);
 
-                    String createdPeeringId = bem.createObject("Peering", providersParent.getClassName(), providersParent.getId(), attributes, -1);
-                    BusinessObjectLight createdPeering = new BusinessObjectLight("Peering", createdPeeringId, asnName);
+                    String createdBGPPeerId = bem.createObject(Constants.CLASS_BGPPEER, providersParent.getClassName(), providersParent.getId(), attributes, -1);
+                    BusinessObjectLight createdBGPPeer = new BusinessObjectLight(Constants.CLASS_BGPPEER, createdBGPPeerId, asnName);
                     //AuditTrail
                     aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
-                                String.format("%s (%s)", createdPeering, createdPeering.getId()));
+                                String.format("%s (%s)", createdBGPPeer, createdBGPPeer.getId()));
                     
-                    res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Peer Creation",
+                    res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "BGPPeer Creation",
                         String.format("Since no port was related to the remote IP address %s, a Peer instance with asnName %s (asnNumber: %s) was created in: %s", bgpPeerRemoteAddr, asnName, asnNumber, location)));
 
-                    return createdPeering;
+                    return createdBGPPeer;
                 }
             }
         } catch (OperationNotPermittedException | ApplicationObjectNotFoundException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
-            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Peer Creation", 
+            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "BGPPeer Creation", 
                     String.format("No provider was created for asnNumber %s with IP address %s because %s", 
                             asnNumber, bgpPeerRemoteAddr, ex.getLocalizedMessage())));
         }
@@ -499,7 +498,7 @@ public class BGPSynchronizer {
      * @param bgpPeerRemotePort use it for the port name
      * @return remote port
      */
-    private BusinessObjectLight createRemotePeeringInterface(BusinessObjectLight remoteDevice, String bgpPeerRemoteAddr, String bgpPeerRemotePort) {
+    private BusinessObjectLight createRemoteBGPPeerInterface(BusinessObjectLight remoteDevice, String bgpPeerRemoteAddr, String bgpPeerRemotePort) {
         try {
             HashMap<String, String> attributes = new HashMap<>();
             attributes.put(Constants.PROPERTY_NAME, bgpPeerRemotePort);
@@ -652,9 +651,8 @@ public class BGPSynchronizer {
                             String.format("in %s - %s, related with ip: %s, for ASN %s(%s), bgpPeerIdentifier: %s", remoteDevice, remotePort, bgpPeerRemoteAddr, asnName, asnNumber, bgpPeerIdentifier)));
             }
             else
-                res.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, "BGPLink exists", 
-                   String.format("ASN %s(%s) has endpoints %s to %s in device %s", 
-                           localPort, asnName, asnNumber, remoteDevice, remotePort)));
+                res.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, String.format("BGPLink exists with ASN %s(%s)", asnName, asnNumber), 
+                   String.format("Has local endpoint in: %s and remote endpoint: %s in device %s", localPort, remotePort, remoteDevice)));
 
         } catch (ApplicationObjectNotFoundException | InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException |OperationNotPermittedException ex) {
                 res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "New BGP Link", 
@@ -692,7 +690,7 @@ public class BGPSynchronizer {
      * @param bgpPeerRemoteAddr the remote ip, use it only for exception message
      * @return ASN name, or an empty String if can not find the asn
      */
-    private String checkPeeringDB(String asn, String bgpPeerLocalAddr, String bgpPeerRemoteAddr){
+    private String checkPeerDB(String asn, String bgpPeerLocalAddr, String bgpPeerRemoteAddr){
         String asnName = asnCache.get(asn);
         if(asnName == null){
             try {

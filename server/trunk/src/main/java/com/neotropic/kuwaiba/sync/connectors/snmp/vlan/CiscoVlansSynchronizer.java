@@ -40,15 +40,14 @@ import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.services.persistence.util.Constants;
 
 /**
- * Synchronize VLANs data
+ * Synchronize the VLANs data, creates the VLANs as special children of the 
+ * device that is being sync, for every created VLAN it also created 
+ * relationships with its interfaces(GeneriPorts)
+ * 
+ * The OID required, read it from SNMP is vmMembershipTable(1.3.6.1.4.1.9.9.68.1.2.2.1.2)
  * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
-public class CiscoVlansSinchronizer {
-    
-    /**
-     * Prefix for vlans
-     */
-    //private static final String VLAN_PREFIX = "vlan";
+public class CiscoVlansSynchronizer {
     /**
      * Relationship to associate a port with vlans
      */
@@ -102,7 +101,7 @@ public class CiscoVlansSinchronizer {
      */
     private List<SyncResult> results = new ArrayList<>();
 
-    public CiscoVlansSinchronizer(long dsConfigId, BusinessObjectLight obj, List<TableData> data) {
+    public CiscoVlansSynchronizer(long dsConfigId, BusinessObjectLight obj, List<TableData> data) {
         try {
             PersistenceService persistenceService = PersistenceService.getInstance();
             bem = persistenceService.getBusinessEntityManager();

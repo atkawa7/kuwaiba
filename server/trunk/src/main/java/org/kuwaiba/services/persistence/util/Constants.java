@@ -385,7 +385,7 @@ public class Constants {
     /**
      * Class Peer
      */
-    public static final String CLASS_PEER = "Peer";
+    public static final String CLASS_BGPPEER = "BGPPeer";
     /**
      * Class Generic Communications Equipment
      */
