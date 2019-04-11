@@ -20,6 +20,7 @@ The process engine allow define multiple process flows using activities that has
 					* Troubleshooting
 			* Conditionals
 			* Attachments
+			* Read only Form Artifacts
 		* KPIs Threshold
 	* KPIs Actions
 	* Troubleshooting

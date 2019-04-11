@@ -5,3 +5,136 @@ Creation-Date: 2019-04-04T19:59:15-05:00
 ====== Forms ======
 Created Thursday 04 April 2019
 
+===== Form Artifact Definition =====
+
+Form Artifact Definition describes the structure of a Form in the Process Engine
+
+==== Simple Form ====
+<root>
+	<form/>
+	<script/>
+</root>
+
+===== Tag Form =====
+The tag form has a set of element fields and element containers
+
+==== Element Fields ====
+* CheckBox
+* ComboBox
+items
+* DateField
+* Image
+* Label
+* ListSelectFilter
+* TextArea
+* TextField
+* Tree
+
+=== • Upload ===
+
+== Upload Events ==
+onuploadsucceeded
+
+=== Field Attributes ===
+value
+mandatory
+datatype Date/String/Boolean/RemoteObjectLight
+shared true/false
+
+==== Element Containers ====
+* GridLayout
+columns
+rows
+* HorizontalLayout
+* Panel
+* Subform
+* VerticalLayout
+
+=== Container Attributes ===
+repaint true/false
+
+=== Methods ===
+getChild childId
+
+==== Element Attributes ====
+id
+area
+styleName bold/title/buttonPrimary/buttonPlusCircleIconOnly
+enabled true/false
+width px/%
+height px/%
+hidden true/false
+save true/false
+alignment middleCenter/topCenter/bottomCenter
+propertychangelistener
+validate
+
+==== Element Grid ====
+column
+usePagination true/false
+selectionMode single/multi/none
+rows
+selectedRow
+
+==== Element Button ====
+The tag button has the next attributes
+* caption
+
+=== Button Events ===
+onclick close/clean/propertyChange/open
+
+==== Element Mini Application ====
+The tag miniApplication has next attributes:
+* id
+* mode embedded/detached
+* package
+* classname
+* inputParameters
+* outputParameters //Not supported yet//
+
+==== Events ====
+onpropertychange
+onload
+onlazyload
+
+==== Functions ====
+* propertyChange.id.property.function
+* shared.activityId.sharedId
+* repaint
+
+=== Global Variables ===
+* idle
+* processInstanceId
+
+=== Deprecated Functions ===
+* addgridrows
+* deletegridrow
+
+===== Tag Script =====
+Tag //script// with attribute src and a set of elements //function// which has the attributes type*, name* and parameternames
+<![CDATA[
+]]>
+
+==== Util imports ====
+import org.kuwaiba.apis.persistence.PersistenceService;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
+import org.kuwaiba.apis.persistence.util.StringPair;
+import java.util.Properties;
+import java.time.LocalDate;
+
+==== Util Definitions ====
+def bem = PersistenceService.getInstance().getBusinessEntityManager();
+def aem = PersistenceService.getInstance().getApplicationEntityManager();
+def mem = PersistenceService.getInstance().getMetadataEntityManager();
+
+==== Util Functions ====
+println("");
+ UUID.randomUUID();
+scriptQueryExecutor.execute("notifications"
+scriptQueryExecutor.execute("shared",  Arrays.asList("processInstanceId"),  Arrays.asList("processInstanceId"));
+as String
+elementScript
+scriptQueryExecutor
+new RemoteObjectLight(
+RemoteObjectLight.toRemoteObjectLightArray(listTypeItems);     
