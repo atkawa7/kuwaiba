@@ -239,21 +239,24 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
                         if (reader.getName().equals(qEdge)){
                             String mplsLinkId = reader.getAttributeValue(null, "id");
                             
-                            String aSide = reader.getAttributeValue(null, "aside");
-                            String bSide = reader.getAttributeValue(null, "bside");
+                            String aSideId = reader.getAttributeValue(null, "asideid");
+                            String aSideClass = reader.getAttributeValue(null, "asideclass");
+                            String bSideId = reader.getAttributeValue(null, "bsideid");
+                            String bSideClass = reader.getAttributeValue(null, "bsideclass");
+                            
 
                             String className = reader.getAttributeValue(null, "class");
                             LocalObjectLight mplsLink = CommunicationsStub.getInstance().getObjectInfoLight(className, mplsLinkId);
                             if (mplsLink != null) {
                                 LocalObjectLight aSideObject, bSideObject;
-                                if(!aSide.equals("-1"))
-                                    aSideObject = new LocalObjectLight(aSide, null, null);
+                                if(!aSideId.equals("-1"))
+                                    aSideObject = new LocalObjectLight(aSideId, null, aSideClass);
                                 else{
                                     aSideObject = emptySides.remove(0);
                                     endpoints[0] = aSideObject;
                                 }
-                                if(!bSide.equals("-1"))
-                                    bSideObject = new LocalObjectLight(bSide, null, null);
+                                if(!bSideId.equals("-1"))
+                                    bSideObject = new LocalObjectLight(bSideId, null, bSideClass);
                                 else{
                                     bSideObject = emptySides.remove(0);
                                     endpoints[1] = bSideObject;
@@ -263,7 +266,7 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
                                     if(entry.getKey().equals("mplsEndpointA")){
                                         endpoints[0] = entry.getValue()[0];
                                         LocalObjectLight parentA = CommunicationsStub.getInstance().getFirstParentOfClass(endpoints[0].getClassName(), endpoints[0].getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
-                                        if(parentA != null && !parentA.getId().equals(aSide)){
+                                        if(parentA != null && !parentA.getId().equals(aSideId)){
                                             Widget widget = findWidget(aSideObject);
                                             detachNodeWidget(aSideObject, widget);
                                             aSideObject = parentA;
@@ -273,7 +276,7 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
                                     if(entry.getKey().equals("mplsEndpointB")){
                                         endpoints[1] = entry.getValue()[0];
                                         LocalObjectLight parentB = CommunicationsStub.getInstance().getFirstParentOfClass(endpoints[1].getClassName(), endpoints[1].getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);                                        
-                                        if(parentB != null && !parentB.getId().equals(aSide)){
+                                        if(parentB != null && !parentB.getId().equals(bSideId)){
                                             Widget widget = findWidget(bSideObject);
                                             detachNodeWidget(bSideObject, widget);
                                             bSideObject = parentB;

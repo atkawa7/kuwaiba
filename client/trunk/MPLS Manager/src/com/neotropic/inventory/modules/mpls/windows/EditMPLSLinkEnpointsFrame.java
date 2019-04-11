@@ -30,6 +30,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalMPLSConnectionDetails;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -202,32 +203,32 @@ public class EditMPLSLinkEnpointsFrame extends JFrame {
             return;
         }
         
-        LocalObjectLight[] connectionEndpoints = null;//com.getLogicalConnectionEndpoints(centerSelectedObject.getClassName(), centerSelectedObject.getId());
-        if (connectionEndpoints == null)
+        LocalMPLSConnectionDetails mplsLinkEndpoints = com.getMPLSLinkEndpoints(centerSelectedObject.getId());
+        if (mplsLinkEndpoints == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
-            if (connectionEndpoints[0] == null) { //A side is disconnected
+            if (mplsLinkEndpoints.getEndpointA() == null) { //A side is disconnected
                 lblASide.setText("<html><b>Disconnected</b></html>");
                 btnASideDisconnect.setEnabled(false);
             } else {
-                List<LocalObjectLight> aSideParents = com.getParents(connectionEndpoints[0].getClassName(), connectionEndpoints[0].getId());
+                List<LocalObjectLight> aSideParents = com.getParents(mplsLinkEndpoints.getEndpointA().getClassName(), mplsLinkEndpoints.getEndpointA().getId());
                 if (aSideParents == null)
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                 else {
-                    lblASide.setText("<html><b>" + connectionEndpoints[0] + "</b> / " +  Utils.formatObjectList(aSideParents, false, 4) + "</html>");
+                    lblASide.setText("<html><b>" + mplsLinkEndpoints.getEndpointA() + "</b> / " +  Utils.formatObjectList(aSideParents, false, 4) + "</html>");
                     lblASide.setToolTipText(lblASide.getText());
                     btnASideDisconnect.setEnabled(true);
                 }
             }
-            if (connectionEndpoints[1] == null) { //B side is disconnected
+            if (mplsLinkEndpoints.getEndpointB() == null) { //B side is disconnected
                 lblBSide.setText("<html><b>Disconnected</b></html>");
                 btnBSideDisconnect.setEnabled(false);
             } else {
-                List<LocalObjectLight> bSideParents = com.getParents(connectionEndpoints[1].getClassName(), connectionEndpoints[1].getId());
+                List<LocalObjectLight> bSideParents = com.getParents(mplsLinkEndpoints.getEndpointB().getClassName(), mplsLinkEndpoints.getEndpointB().getId());
                 if (bSideParents == null)
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                 else {
-                    lblBSide.setText("<html><b>" + connectionEndpoints[1] + "</b> / " +  Utils.formatObjectList(bSideParents, false, 4) + "</html>");
+                    lblBSide.setText("<html><b>" + mplsLinkEndpoints.getEndpointB() + "</b> / " +  Utils.formatObjectList(bSideParents, false, 4) + "</html>");
                     lblBSide.setToolTipText(lblBSide.getText());
                     btnBSideDisconnect.setEnabled(true);
                 }
@@ -246,17 +247,16 @@ public class EditMPLSLinkEnpointsFrame extends JFrame {
                 JOptionPane.showMessageDialog(null, "Choose a single connection (link or container) from the central panel", "Error", JOptionPane.ERROR_MESSAGE);
             else {
                 if (centerSelectedObject.getClassName().equals("MPLSLink")) {
-//                    if (com.connectLogicalLinks(Arrays.asList(aSelectedObject == null ? null :aSelectedObject.getClassName()),
-//                                Arrays.asList(aSelectedObject == null ? null : aSelectedObject.getId()),
-//                                Arrays.asList(centerSelectedObject.getClassName()),
-//                                Arrays.asList(centerSelectedObject.getId()),
-//                                Arrays.asList(bSelectedObject == null ? null :bSelectedObject.getClassName()), 
-//                                Arrays.asList(bSelectedObject == null ? null : bSelectedObject.getId()))) {
-//                        JOptionPane.showMessageDialog(null, aSelectedObject != null && bSelectedObject != null ? 
-//                                "Endpoints connected sucessfully" : "Endpoint connected sucessfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-//                        updateConnectionDetails();
-//                    } else
-//                        JOptionPane.showMessageDialog(null, com.getError(), "Error", JOptionPane.ERROR_MESSAGE);
+                    if (com.connectMplsLinks(Arrays.asList(aSelectedObject == null ? null :aSelectedObject.getClassName()),
+                                Arrays.asList(aSelectedObject == null ? null : aSelectedObject.getId()),
+                                Arrays.asList(centerSelectedObject.getId()),
+                                Arrays.asList(bSelectedObject == null ? null :bSelectedObject.getClassName()), 
+                                Arrays.asList(bSelectedObject == null ? null : bSelectedObject.getId()))) {
+                        JOptionPane.showMessageDialog(null, aSelectedObject != null && bSelectedObject != null ? 
+                                "Endpoints connected sucessfully" : "Endpoint connected sucessfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        updateConnectionDetails();
+                    } else
+                        JOptionPane.showMessageDialog(null, com.getError(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
@@ -272,12 +272,12 @@ public class EditMPLSLinkEnpointsFrame extends JFrame {
             if (selectedConnections.length != 1)
                 JOptionPane.showMessageDialog(null, "Choose a single connection (link or container) from the central panel", "Error", JOptionPane.ERROR_MESSAGE);
             else {
-                if (com.disconnectLogicalConnection(centerSelectedObject.getClassName(), centerSelectedObject.getId(), 3)) {
+                if (com.disconnectMPLSLink(centerSelectedObject.getId(), 3)) {
                     JOptionPane.showMessageDialog(null, "Endpoint disconnected successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
                     updateConnectionDetails();
                 }
                 else
-                    JOptionPane.showMessageDialog(null, "The object selected in the central panel is not a link or a container", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "The object selected in the central panel is not a mpls link", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -286,7 +286,7 @@ public class EditMPLSLinkEnpointsFrame extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(com.disconnectLogicalConnection(centerSelectedObject.getClassName(), centerSelectedObject.getId(), 1)) { // "1" means release only aSide
+            if(com.disconnectMPLSLink(centerSelectedObject.getId(), 1)) { // "1" means release only aSide
                 JOptionPane.showMessageDialog(null, "Endpoint released sucessfully", "Success", JOptionPane.INFORMATION_MESSAGE);
                 updateConnectionDetails();
             } else
@@ -298,7 +298,7 @@ public class EditMPLSLinkEnpointsFrame extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(com.disconnectLogicalConnection(centerSelectedObject.getClassName(), centerSelectedObject.getId(), 2)) { // "1" means release only aSide
+            if(com.disconnectMPLSLink(centerSelectedObject.getId(), 2)) { // "1" means release only aSide
                 JOptionPane.showMessageDialog(null, "Endpoint released sucessfully", "Success", JOptionPane.INFORMATION_MESSAGE);
                 updateConnectionDetails();
             } else

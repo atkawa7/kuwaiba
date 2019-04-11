@@ -30,7 +30,6 @@ import org.openide.util.Lookup;
 import org.openide.util.Utilities;
 import org.openide.util.actions.SystemAction;
 
-
 /**
  * All the actions used by the nodes of an MPLSModuleScene
  * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
