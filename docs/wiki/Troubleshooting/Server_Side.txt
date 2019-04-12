@@ -3,6 +3,18 @@ Wiki-Format: zim 0.4
 Creation-Date: 2019-02-14T04:13:26-05:00
 
 ====== Server Side ======
-Created Thursday 14 February 2019
+^{Created Thursday 14 February 2019 @author Charles Bedon}
 
-=== Glassfish 5 Compatibility ===
+===== Glassfish/Payara 5 Compatibility =====
+* //java.lang.NoClassDefFoundError: sun/security/ssl/SupportedEllipticCurvesExtension//
+Glassfish 5.0 uses a Grizzly version that is not quite compatible with Java versions above 8u152 (see [[https://github.com/payara/Payara/issues/2344|here]]). So you either downgrade your JDK version or try GF 5.0.1 [[https://download.oracle.com/glassfish/5.0.1/nightly|nightly builds]].
+
+* //java.util.concurrent.RejectedExecutionException: Task java.util.concurrent.FutureTask//
+This bug in Glassfish 5 occurs when the deployment package is too big (100MB+) and it fails to process the whole default-sized thread pool queue. 
+→  For old Payara 5 versions (prior u191) [1]:
+ asadmin set-payara-executor-service-configuration --threadpoolexecutorqueuesize 1000
+→  u191 should work out-of-the-box, however, if a "//Could not find or load main class server\payara5\glassfish.lib.grizzly-npn-bootstrap.jar//" appears (due to conflicts with the Payara Tools for Eclipse component), you should edit the ''domain.xml'' file to modify the Xbootclasspath parameter as described in [2]. 
+
+===== References =====
+[1] https://github.com/payara/Payara/issues/3495
+[2] https://stackoverflow.com/questions/50835355/starting-a-payara-5-has-encountered
