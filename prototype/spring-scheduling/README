@@ -1,0 +1,5 @@
+This demo uses Spring-boot scheduling capabilities to demonstrate tthe different 
+ways  to program task in a Spring application. Please note the @EnableScheduling 
+annotation in the application entry point SampleSchedulingApplication to  enable 
+scheduling. The use of the SchedulingConfigurer  interface  to create  a  custom 
+thread pool is out the scope of this prototype.
