@@ -641,18 +641,19 @@ public interface WebserviceBean {
         public List<RemoteLogicalConnectionDetails> getBGPMap(List<String> mappedBGPLinksIds, String ipAddress, String sessionId) throws ServerSideException;
         //</editor-fold>
         
-        //<editor-fold defaultstate="collapsed" desc="OLTs I need to change this name">
-//        public String getEVlans(, String ipAddress, String sessionId) throws ServerSideException;
-//        public String createEVlan(, String ipAddress, String sessionId) throws ServerSideException;
-//        public String deleteEVlan(, String ipAddress, String sessionId) throws ServerSideException;
-//        public String relateEVlan(, String ipAddress, String sessionId) throws ServerSideException;
-//        public String releaseEVlan(, String ipAddress, String sessionId) throws ServerSideException;
-//        public String getEVlanByState(, String ipAddress, String sessionId) throws ServerSideException;
-//        public String getCVlans(, String ipAddress, String sessionId) throws ServerSideException;
-//        public String createCVlan(, String ipAddress, String sessionId) throws ServerSideException;
-//        public String deleteCVlan(, String ipAddress, String sessionId) throws ServerSideException;
-//        public String relateCVlan(, String ipAddress, String sessionId) throws ServerSideException;
-//        public String releaseCVlan(String x, String ipAddress, String sessionId) throws ServerSideException;
+        //<editor-fold defaultstate="collapsed" desc="CPE Manager QinQ">
+            public void createEVlan(String objectId, String objectClassName, HashMap<String, String> attributesToBeSet, String ipAddress, String sessionId) throws ServerSideException;
+            public List<RemoteObjectLight> getEVlans(String objectId, String objectClassName, String ipAddress, String sessionId) throws ServerSideException;
+            public List<RemoteObjectLight> getEVlansByType(String objectId, String objectClassName, String typeToFilter, String ipAddress, String sessionId) throws ServerSideException;
+            public void relateEVlanWithInterface(String evlanId, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException;
+            public void releaseEVlanFromInterface(String evlanId, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException;
+            public void deleteEVlans(String[] eVlanIds, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
+            public String createCVlan(String eVlanId, HashMap<String, String> attributesToBeSe, String ipAddress, String sessionId) throws ServerSideException;
+            public List<RemoteObjectLight> getCVlans(String eVlanId, String ipAddress, String sessionId) throws ServerSideException;
+            public List<RemoteObjectLight> getCVlansByState(String eVlanId, String stateToFilter, String ipAddress, String sessionId) throws ServerSideException;
+            public void deleteCVlans(String[] cVlanIds, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
+            public void relateCVlanToOntInterface(String cVlanId, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException;
+            public void releaseCVlanFromOntInterface(String cVlanId, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException;
         //</editor-fold> 
     
     // Bookmarks

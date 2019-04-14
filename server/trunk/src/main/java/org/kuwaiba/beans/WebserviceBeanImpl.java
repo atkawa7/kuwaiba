@@ -17,6 +17,7 @@
 package org.kuwaiba.beans;
 
 import com.neotropic.kuwaiba.correlation.SimpleCorrelation;
+import com.neotropic.kuwaiba.modules.cpemanager.QinQModule;
 import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
 import com.neotropic.kuwaiba.modules.mpls.MPLSConnectionDefinition;
 import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
@@ -1477,7 +1478,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException("Array sizes do not match");
         try {
             aem.validateWebServiceCall("deleteObjects", ipAddress, sessionId);
-            HashMap<String,List<String>> objects = new HashMap<>();
+            HashMap<String, List<String>> objects = new HashMap<>();
             for (int i = 0; i< classNames.length;i++) {
                 List<String> existingObjects = objects.get(classNames[i]);
                 if (existingObjects == null){
@@ -6497,6 +6498,177 @@ public class WebserviceBeanImpl implements WebserviceBean {
             }
         }
         // </editor-fold>
+        // <editor-fold defaultstate="collapsed" desc="CPE Manager and QinQ">
+            @Override
+            public void createEVlan(String objectId, String objectClassName, HashMap<String, String> attributesToBeSet, String ipAddress, String sessionId) throws ServerSideException{
+                if (bem == null || aem == null)
+                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+                try {
+                    aem.validateWebServiceCall("createEVlan", ipAddress, sessionId);
+                    
+                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
+                    qinQModule.createEVlan(objectId, objectClassName, attributesToBeSet);
+                    
+                } catch (InventoryException ex) {
+                    throw new ServerSideException(ex.getMessage());
+                }
+            }
+
+            @Override
+            public List<RemoteObjectLight> getEVlans(String objectId, String objectClassName, String ipAddress, String sessionId) throws ServerSideException{
+                if (bem == null || aem == null)
+                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+                try {
+                    aem.validateWebServiceCall("getEVlans", ipAddress, sessionId);
+                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
+                    List<BusinessObjectLight> eVlans = qinQModule.getEVlans(objectId, objectClassName);
+                    
+                    return RemoteObjectLight.toRemoteObjectLightArray(eVlans);
+                    
+                } catch (InventoryException ex) {
+                    throw new ServerSideException(ex.getMessage());
+                }
+            }
+            
+            @Override
+            public List<RemoteObjectLight> getEVlansByType(String objectId, String objectClassName, String typeToFilter, String ipAddress, String sessionId) throws ServerSideException{
+                if (bem == null || aem == null)
+                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+                try {
+                    aem.validateWebServiceCall("getEVlanByType", ipAddress, sessionId);
+                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
+                    List<BusinessObjectLight> eVlans = qinQModule.getEVlansByType(objectId, objectClassName, typeToFilter);
+                    
+                    return RemoteObjectLight.toRemoteObjectLightArray(eVlans);
+                } catch (InventoryException ex) {
+                    throw new ServerSideException(ex.getMessage());
+                }
+            }
+            
+            @Override
+            public void relateEVlanWithInterface(String evlanId, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException{
+                if (bem == null || aem == null)
+                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+                try {
+                    aem.validateWebServiceCall("relateEVlanWithInterface", ipAddress, sessionId);
+                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
+                    qinQModule.relateEVlanWithInterface(evlanId, interfaceClassName, interfaceId);
+                    
+                } catch (InventoryException ex) {
+                    throw new ServerSideException(ex.getMessage());
+                }
+            }
+            
+            @Override
+            public void releaseEVlanFromInterface(String evlanId, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException{
+                if (bem == null || aem == null)
+                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+                try {
+                    aem.validateWebServiceCall("releaseEVlanFromInterface", ipAddress, sessionId);
+                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
+                    qinQModule.releaseEVlanFromInterface(evlanId, interfaceClassName, interfaceId);
+                } catch (InventoryException ex) {
+                    throw new ServerSideException(ex.getMessage());
+                }
+            }
+            
+            @Override
+            public void deleteEVlans(String[] eVlanIds, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException{
+                if (bem == null || aem == null)
+                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+                try {
+                    aem.validateWebServiceCall("deleteEVlans", ipAddress, sessionId);
+                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
+                    qinQModule.deleteEVlans(eVlanIds, forceDelete);
+                } catch (InventoryException ex) {
+                    throw new ServerSideException(ex.getMessage());
+                }
+            }
+            
+            @Override
+            public String createCVlan(String eVlanId, HashMap<String, String> attributesToBeSe, String ipAddress, String sessionId) throws ServerSideException{
+                if (bem == null || aem == null)
+                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+                try {
+                    aem.validateWebServiceCall("createCVlan", ipAddress, sessionId);
+                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
+                    return qinQModule.createCVlan(eVlanId, attributesToBeSe);
+                    
+                } catch (InventoryException ex) {
+                    throw new ServerSideException(ex.getMessage());
+                }
+            }
+            @Override
+            public List<RemoteObjectLight> getCVlans(String eVlanId, String ipAddress, String sessionId) throws ServerSideException{
+                if (bem == null || aem == null)
+                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+                try {
+                    aem.validateWebServiceCall("getCVlans", ipAddress, sessionId);
+                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
+                    List<BusinessObjectLight> cVlans = qinQModule.getCVlans(eVlanId);
+                    
+                    return RemoteObjectLight.toRemoteObjectLightArray(cVlans);
+                    
+                } catch (InventoryException ex) {
+                    throw new ServerSideException(ex.getMessage());
+                }
+            }
+            
+            @Override
+            public List<RemoteObjectLight> getCVlansByState(String eVlanId, String stateToFilter, String ipAddress, String sessionId) throws ServerSideException{
+                if (bem == null || aem == null)
+                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+                try {
+                    aem.validateWebServiceCall("getCVlansByState", ipAddress, sessionId);
+                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
+                    List<BusinessObjectLight> cVlans = qinQModule.getCVlansByState(eVlanId, stateToFilter);
+                   
+                    return RemoteObjectLight.toRemoteObjectLightArray(cVlans);
+                    
+                } catch (InventoryException ex) {
+                    throw new ServerSideException(ex.getMessage());
+                }
+            }
+            
+            @Override
+            public void deleteCVlans(String[] cVlanIds, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException{
+                if (bem == null || aem == null)
+                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+                try {
+                    aem.validateWebServiceCall("deleteCVlans", ipAddress, sessionId);
+                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
+                    qinQModule.deleteCVlans(cVlanIds, forceDelete);
+                } catch (InventoryException ex) {
+                    throw new ServerSideException(ex.getMessage());
+                }
+            }
+            
+            @Override
+            public void relateCVlanToOntInterface(String cVlanId, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException{
+                if (bem == null || aem == null)
+                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+                try {
+                    aem.validateWebServiceCall("relateCVlanToOntInterface", ipAddress, sessionId);
+                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
+                    qinQModule.relateCVlanToOntInterface(cVlanId, interfaceClassName, interfaceId);
+                } catch (InventoryException ex) {
+                    throw new ServerSideException(ex.getMessage());
+                }
+            }
+            
+            @Override
+            public void releaseCVlanFromOntInterface(String cVlanId, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException{
+                if (bem == null || aem == null)
+                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+                try {
+                    aem.validateWebServiceCall("releaseCVlanFromOntInterface", ipAddress, sessionId);
+                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
+                    qinQModule.releaseCVlanFromOntInterface(cVlanId, interfaceClassName, interfaceId);
+                } catch (InventoryException ex) {
+                    throw new ServerSideException(ex.getMessage());
+                }
+            }
+            // </editor-fold>
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">
     protected final void connect() {
