@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ejb-jar xmlns = "http://java.sun.com/xml/ns/javaee" 
+         version = "3.1"
+         xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation = "http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd">
+<enterprise-beans>
+    <session>
+        <ejb-name>StartupBean</ejb-name>
+        <!-- Persistence -->
+        <env-entry>
+           <description>Database user name, if applicable</description>
+           <env-entry-name>dbUsername</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>admin</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Database password, if applicable</description>
+           <env-entry-name>dbPassword</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>admin</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Database path</description>
+           <env-entry-name>dbPath</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>/data/db/kuwaiba.db</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Database host, if applicable. The reference implementation uses the Neo4Js Bolt protocol</description>
+           <env-entry-name>dbHost</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>localhost</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Database port, if applicable. The reference implementation uses the Neo4Js Bolt protocol</description>
+           <env-entry-name>dbPort</env-entry-name>
+           <env-entry-type>java.lang.Integer</env-entry-type>
+           <env-entry-value>7070</env-entry-value>
+        </env-entry>
+
+        <!-- Business rules -->
+        <env-entry>
+           <description>Check defined business rules before performing any action</description>
+           <env-entry-name>enforceBusinessRules</env-entry-name>
+           <env-entry-type>java.lang.Boolean</env-entry-type>
+           <env-entry-value>false</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Max number of routes to be return by the findRoutesThroughSpecialRelationships method</description>
+           <env-entry-name>maxRoutes</env-entry-name>
+           <env-entry-type>java.lang.Integer</env-entry-type>
+           <env-entry-value>1000</env-entry-value>
+        </env-entry>
+
+        <!-- Other -->
+        <env-entry>
+           <description>Path of the folder where background images are saved</description>
+           <env-entry-name>backgroundsPath</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>/data/img/backgrounds</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Path of the folder where files attached to inventory objects are stored</description>
+           <env-entry-name>attachmentsPath</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>/data/files/attachments</env-entry-value>
+        </env-entry>
+        <env-entry>
+            <description>Process Engine Files Path</description>
+            <env-entry-name>processEnginePath</env-entry-name>
+            <env-entry-type>java.lang.String</env-entry-type>
+            <env-entry-value>/data/processEngine</env-entry-value>            
+        </env-entry>
+        <env-entry>
+            <description>Path of the folder where files attached to process instances are stored</description>
+            <env-entry-name>processesPath</env-entry-name>
+            <env-entry-type>java.lang.String</env-entry-type>
+            <env-entry-value>/data/files/processes</env-entry-value>            
+        </env-entry>
+        <env-entry>
+           <description>Max number size in MB of the attachments</description>
+           <env-entry-name>maxAttachmentSize</env-entry-name>
+           <env-entry-type>java.lang.Float</env-entry-type>
+           <env-entry-value>10</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Corporate Logo</description>
+           <env-entry-name>corporateLogo</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>http://neotropic.co/img/logo_small.png</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Company Name</description>
+           <env-entry-name>companyName</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>Neotropic SAS</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Global locale. Use a hifen to separate the language from the region. E.g. en-US, es-CO, pt-BR</description>
+           <env-entry-name>locale</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>en-US</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Enable the default security manager</description>
+           <env-entry-name>enableSecurityManager</env-entry-name>
+           <env-entry-type>java.lang.Boolean</env-entry-type>
+           <env-entry-value>false</env-entry-value>
+        </env-entry>
+        <!-- Debug mode -->
+        <env-entry>
+           <description>Enable debug mode</description>
+           <env-entry-name>debugMode</env-entry-name>
+           <env-entry-type>java.lang.Boolean</env-entry-type>
+           <env-entry-value>false</env-entry-value>
+        </env-entry>
+     </session>
+</enterprise-beans>
+</ejb-jar>
