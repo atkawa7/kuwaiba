@@ -150,7 +150,7 @@ public class CypherParser {
         String operator = getOperator(condition);
 
         if (attributeName.equals("id")) {//is small view
-            return "ID (listType_".concat(joinName.concat(")=")).concat(attributeValue);
+            return " listType_".concat(joinName.concat("._uuid =")).concat("'").concat(attributeValue).concat("'");
         }
         else{
             if (!attibuteType.equals("String") && condition == ExtendedQuery.EQUAL)

@@ -5020,7 +5020,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             Node attachmentNode = aHasAttachmentRelationship.getEndNode();
             aHasAttachmentRelationship.delete();
             
-            String fileName = instance.getId() + "_" + attachmentNode.getId(); //NOI18N
+            String fileName = instance.getProperty(Constants.PROPERTY_UUID) + "_" + attachmentNode.getId(); //NOI18N
             try {
                 Files.deleteIfExists(Paths.get(fileName));
                 File fileToBeDeleted = new File(fileName);

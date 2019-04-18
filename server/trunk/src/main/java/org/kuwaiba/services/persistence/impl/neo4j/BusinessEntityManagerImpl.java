@@ -1991,7 +1991,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Relationship hasAttachmentRelationship = objectNode.createRelationshipTo(fileObjectNode, RelTypes.HAS_ATTACHMENT);
             hasAttachmentRelationship.setProperty(Constants.PROPERTY_NAME, "attachments");
             
-            String fileName = objectNode.getId() + "_" + fileObjectNode.getId();
+            String fileName = objectNode.getProperty(Constants.PROPERTY_UUID) + "_" + fileObjectNode.getId();
                     Util.saveFile((String)configuration.get("attachmentsPath"), fileName, file);
             
             tx.success();
@@ -2024,7 +2024,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
             for (Relationship fileObjectRelationship : objectNode.getRelationships(RelTypes.HAS_ATTACHMENT, Direction.OUTGOING)) {
                 if (fileObjectRelationship.getEndNode().getId() == fileObjectId) {
-                    String fileName = objectNode.getId() + "_" + fileObjectId;
+                    String fileName = objectNode.getProperty(Constants.PROPERTY_UUID) + "_" + fileObjectId;
                     try {
                         byte[] background = Util.readBytesFromFile(configuration.getProperty("attachmentsPath", DEFAULT_ATTACHMENTS_PATH) + "/" + fileName);
                         return new FileObject(fileObjectId, (String)fileObjectRelationship.getEndNode().getProperty(Constants.PROPERTY_NAME), 
@@ -2053,7 +2053,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     fileObjectRelationship.getEndNode().delete();
                     
                     try {
-                        String fileName = objectNode.getId() + "_" + fileObjectId;
+                        String fileName = objectNode.getProperty(Constants.PROPERTY_UUID) + "_" + fileObjectId;
                         new File(configuration.getProperty("attachmentsPath", DEFAULT_ATTACHMENTS_PATH) + File.separator + fileName).delete();
                     } catch(Exception ex){
                         throw new InvalidArgumentException(String.format("File with id %s could not be retrieved: %s", fileObjectId, ex.getMessage()));
