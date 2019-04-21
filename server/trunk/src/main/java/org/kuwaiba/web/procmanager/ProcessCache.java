@@ -266,24 +266,20 @@ public final class ProcessCache {
             throw new ApplicationObjectNotFoundException("Conditional artifact can not be found");
         
         try {
-            byte[] content = artifact.getContent();
-            
+            byte[] content = artifact.getContent();            
             XMLInputFactory xif = XMLInputFactory.newInstance();
             ByteArrayInputStream bais = new ByteArrayInputStream(content);
             XMLStreamReader reader = xif.createXMLStreamReader(bais);
-            
             QName tagValue = new QName("value"); //NOI18N
             
             while (reader.hasNext()) {
-                
                 int event = reader.next();
-                
                 if (event == XMLStreamConstants.START_ELEMENT) {
-                    
                     if (reader.getName().equals(tagValue))
                         return Boolean.valueOf(reader.getElementText());
                 }
             }
+            
             reader.close();
             
         } catch (Exception ex) {

@@ -20,6 +20,7 @@ import com.vaadin.ui.AbstractComponent;
 import java.util.Properties;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 
 /**
@@ -96,8 +97,9 @@ public abstract class AbstractView<T> {
     /**
      * Gets an embeddable  Vaadin component that can be rendered in a dashboard. It most likely will have to be called after calling {@link #build() } or {@link  #build(java.lang.Object) }.
      * @return An embeddable component (Panel, VerticalLayout, etc)
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the component could not be created for some reason (most likely, misconfiguration).
      */
-    public abstract AbstractComponent getAsComponent();
+    public abstract AbstractComponent getAsComponent() throws InvalidArgumentException;
     /**
      * Exports the view as a ViewMap (a representation of the view as a set of Java objects related each other). It most likely will have to be called after calling {@link #build() } or {@link  #build(java.lang.Object) }.
      * @return The view map of the view.

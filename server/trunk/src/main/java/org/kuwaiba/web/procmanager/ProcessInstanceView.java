@@ -117,7 +117,6 @@ public class ProcessInstanceView extends DynamicComponent {
         setSizeFull();
         this.wsBean = wsBean;
         this.remoteSession = remoteSession;
-        
         this.processDefinition = processDefinition;
         this.processInstance = processInstance;
         activities = new HashMap();
@@ -184,6 +183,13 @@ public class ProcessInstanceView extends DynamicComponent {
                 remoteSession.getSessionId());
 
             try {
+                //<editor-fold defaultstate="collapsed" desc="Uncomment this for debugging purposes, write the XML artifact to a file">
+//        try {
+//            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/artifact" + artifactView.getId() + ".xml");
+//            fos.write(artifactView.getArtifactRenderer().getContent());
+//            fos.close();
+//        } catch(Exception e) {}
+        //</editor-fold>
                 remoteArtifact.setContent(artifactView.getArtifactRenderer().getContent());
             } catch (Exception ex) {
                 Notifications.showError(ex.getMessage());
@@ -384,7 +390,7 @@ public class ProcessInstanceView extends DynamicComponent {
                 btnNext.setEnabled(false);                    
             }
             
-            Button.ClickListener clickListener = new Button.ClickListener() {
+            Button.ClickListener saveOrNextClickListener = new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent event) {
                     Button eventBtn = event.getButton();
@@ -409,8 +415,8 @@ public class ProcessInstanceView extends DynamicComponent {
                         setArtifact(currentActivity, btnNext, eventBtn);
                 }
             };    
-            btnSave.addClickListener(clickListener);
-            btnNext.addClickListener(clickListener);
+            btnSave.addClickListener(saveOrNextClickListener);
+            btnNext.addClickListener(saveOrNextClickListener);
                                     
             Button btnViewProcessInstance = new Button(I18N.gm("view"));
             btnViewProcessInstance.setDescription("View Process Instance");

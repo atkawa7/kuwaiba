@@ -25,13 +25,8 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.VerticalLayout;
-import eu.maxschuster.vaadin.autocompletetextfield.AutocompleteQuery;
-import eu.maxschuster.vaadin.autocompletetextfield.AutocompleteSuggestion;
-import eu.maxschuster.vaadin.autocompletetextfield.AutocompleteSuggestionProvider;
 import eu.maxschuster.vaadin.autocompletetextfield.AutocompleteTextField;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import javax.inject.Inject;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
@@ -45,6 +40,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.apis.web.gui.navigation.trees.BasicTree;
 import org.kuwaiba.apis.web.gui.navigation.nodes.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.navigation.BasicIconGenerator;
+import org.kuwaiba.apis.web.gui.navigation.ObjectsAndClassesSuggestionProvider;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.web.IndexUI;
@@ -105,33 +101,10 @@ public class NavigationTreeComponent extends AbstractTopComponent {
         this.txtFilter.setPlaceholder("Type a class or object name...");
         this.txtFilter.setMinChars(3);
         this.txtFilter.setDelay(500);
-        this.txtFilter.setSuggestionProvider(new AutocompleteSuggestionProvider() {
-            @Override
-            public Collection<AutocompleteSuggestion> querySuggestions(AutocompleteQuery query) {
-                try {
-                    
-                    List<RemoteObjectLight> suggestedObjects = wsBean.getSuggestedObjectsWithFilter(query.getTerm(), 15, Page.getCurrent().getWebBrowser().getAddress(),
-                            session.getSessionId());
-                    
-                    List<AutocompleteSuggestion> suggestions = new ArrayList<>();
-                    
-                    for (RemoteObjectLight aSuggestedObject : suggestedObjects) {
-                        AutocompleteSuggestion suggestion = new AutocompleteSuggestion(aSuggestedObject.getName(), "<b>" + aSuggestedObject.getClassName() + "</b>");
-                        suggestion.setData(aSuggestedObject);
-                        suggestions.add(suggestion);
-                    }
-                    return suggestions;
-                    
-                } catch (ServerSideException ex) {
-                    return Arrays.asList(new AutocompleteSuggestion(ex.getLocalizedMessage()));
-                }
-            }
-        });
-        
+        this.txtFilter.setSuggestionProvider(new ObjectsAndClassesSuggestionProvider(wsBean, session.getSessionId()));
         this.txtFilter.addSelectListener((e) -> {
             this.tree.resetTo(new InventoryObjectNode((RemoteObjectLight)e.getSuggestion().getData()));
         });
-        
         
         Button btnSearch = new Button(VaadinIcons.SEARCH, (e) -> {
             

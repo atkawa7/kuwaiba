@@ -22,7 +22,10 @@ import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
- * The definition of the Warehouse Manager Module. This module allows to see all the devices with the operational state spare
+ * The definition of the Warehouse Manager Module. This module will allow managing 
+ * the devices and parts stored in warehouses and it is intended to work with the 
+ * Process Manager to handle work flows associated to purchases, decommissions and 
+ * repairs.
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class WarehouseManagerModule extends AbstractModule {
@@ -40,12 +43,12 @@ public class WarehouseManagerModule extends AbstractModule {
 
     @Override
     public String getDescription() {
-        return "Manage warehouses and resources in store or reserved to be used.";
+        return "This module will allow managing the devices and parts stored in warehouses.";
     }
 
     @Override
     public String getVersion() {
-        return "1.0";
+        return "1.1";
     }
 
     @Override
@@ -55,7 +58,7 @@ public class WarehouseManagerModule extends AbstractModule {
 
     @Override
     public int getType() {
-        return MODULE_TYPE_FREE_CORE;
+        return MODULE_TYPE_COMMERCIAL;
     }
 
     @Override
@@ -81,5 +84,4 @@ public class WarehouseManagerModule extends AbstractModule {
     public void close() {
         warehouseManagerComponent.unregisterComponents();
     }
-    
 }

@@ -36,6 +36,7 @@ import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
@@ -177,7 +178,7 @@ public class OutsidePlantView extends AbstractView<RemoteObjectLight> {
     }
 
     @Override
-    public AbstractComponent getAsComponent() {
+    public AbstractComponent getAsComponent() throws InvalidArgumentException {
         try {
             Properties mapProperties = new Properties();
             mapProperties.put("center", this.viewMap.getProperties().get("center"));
@@ -190,7 +191,6 @@ public class OutsidePlantView extends AbstractView<RemoteObjectLight> {
                     try {
                         mapProperties.put("apiKey", aem.getConfigurationVariableValue("general.maps.apiKey"));
                     } catch (InventoryException ex) {
-                        mapProperties.put("apiKey", null);
                         Notifications.showWarning("The configuration variable general.maps.apiKey has not been set. The default map will be used");
                     }
 

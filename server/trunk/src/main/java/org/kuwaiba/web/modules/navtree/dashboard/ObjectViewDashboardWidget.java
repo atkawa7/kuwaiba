@@ -20,6 +20,7 @@ import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import org.kuwaiba.apis.persistence.PersistenceService;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
@@ -73,7 +74,7 @@ public class ObjectViewDashboardWidget extends AbstractDashboardWidget {
             AbstractView objectViewInstance = PersistenceService.getInstance().getViewFactory().createViewInstance("org.kuwaiba.web.modules.navtree.views.ObjectView"); //NOI18N
             objectViewInstance.buildWithBusinessObject(selectedObject);
             lytContent.addComponent(objectViewInstance.getAsComponent());
-        } catch (InstantiationException ex) {
+        } catch (InstantiationException | InvalidArgumentException ex) {
             Notifications.showError(String.format("Object view could not be launched: %s", ex.getLocalizedMessage()));
         }
         

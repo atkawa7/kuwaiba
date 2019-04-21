@@ -82,7 +82,7 @@ public class FunctionRunner implements Runner {
                 
         if (parameterNames != null && parameters != null && parameterNames.size() == parameters.size()) {
             
-            for (int i = 0; i < parameters.size(); i += 1)
+            for (int i = 0; i < parameters.size(); i++)
                 binding.setVariable(parameterNames.get(i), parameters.get(i));
         }
         GroovyShell shell = new GroovyShell(FunctionRunner.class.getClassLoader(), binding);

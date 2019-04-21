@@ -24,12 +24,12 @@ import org.kuwaiba.web.IndexUI;
 import org.kuwaiba.web.modules.warehouse.dashboard.SpareAndReservedDashboardWidget;
 
 /**
- * Main content of the Warehouse Manager Module
+ * Main content of the Warehouse Manager Module.
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-@CDIView("warehousemanager")
+@CDIView("whmanager")
 public class WarehouseManagerComponent extends AbstractTopComponent {
-    public static String VIEW_NAME = "warehousemanager";
+    public static String VIEW_NAME = "whmanager";
     /**
      * The backend bean
      */

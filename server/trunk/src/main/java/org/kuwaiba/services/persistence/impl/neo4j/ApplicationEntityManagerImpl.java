@@ -40,7 +40,6 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.ObjectNotFoundException;
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
@@ -81,6 +80,7 @@ import org.kuwaiba.apis.persistence.application.process.Artifact;
 import org.kuwaiba.apis.persistence.application.process.ArtifactDefinition;
 import org.kuwaiba.apis.persistence.application.process.ProcessDefinition;
 import org.kuwaiba.apis.persistence.application.process.ProcessInstance;
+import org.kuwaiba.apis.persistence.application.queries.WarehouseManagerSearchQuery;
 import org.kuwaiba.apis.persistence.business.BusinessObject;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessObjectList;
@@ -231,7 +231,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         inventoryObjectLabel = Label.label(Constants.LABEL_INVENTORY_OBJECTS);
         classLabel = Label.label(Constants.LABEL_CLASS);
         groupLabel = Label.label(Constants.LABEL_GROUP);
-        listTypeItemLabel = Label.label(Constants.LABEL_LIST_TYPE_ITEM);
+        listTypeItemLabel = Label.label(Constants.LABEL_LIST_TYPE_ITEMS);
         poolLabel = Label.label(Constants.LABEL_POOL);
         specialNodeLabel = Label.label(Constants.LABEL_SPECIAL_NODE);
         queryLabel = Label.label(Constants.LABEL_QUERIES);
@@ -3196,6 +3196,16 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 tx.success();
                 return null;
             }
+        }
+    }
+    
+    @Override
+    public List<Properties> executeCustomScriptedQuery(String queryName, Properties parameters) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        switch (queryName) {
+            case "whSuggestions":
+                return new WarehouseManagerSearchQuery().execute(parameters);
+            default:
+                throw new ApplicationObjectNotFoundException(String.format("Scripted query %s could not be found", queryName));
         }
     }
     

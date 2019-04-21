@@ -102,7 +102,6 @@ public class CypherQueryBuilder {
      * @param query
      */
     public void readJoins(String listTypeName, String listTypeName2, ExtendedQuery query) {
-        
         if(query == null)
             where = where.concat(cp.createNoneWhere(listTypeName));
         else{

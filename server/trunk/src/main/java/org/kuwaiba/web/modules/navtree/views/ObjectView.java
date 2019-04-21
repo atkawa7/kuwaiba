@@ -95,7 +95,7 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
     }
 
     @Override
-    public AbstractComponent getAsComponent() {
+    public AbstractComponent getAsComponent() throws InvalidArgumentException {
         VerticalLayout lytObjectView = new VerticalLayout();
         
         if (viewMap != null) {

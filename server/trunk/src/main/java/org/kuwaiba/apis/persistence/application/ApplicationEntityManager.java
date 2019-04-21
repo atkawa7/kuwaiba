@@ -396,7 +396,8 @@ public interface ApplicationEntityManager {
      * @param className object class
      * @return The structure of the device layout
      * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException In case that any of the devices contained within the main one
-     * has a malformed <b>model</b> attribute
+     * has a malformed <b>model</b> attribute.
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the structure is somehow malformed.
      */
     public byte[] getDeviceLayoutStructure(String oid, String className) throws ApplicationObjectNotFoundException, InvalidArgumentException;
         
@@ -796,6 +797,18 @@ public interface ApplicationEntityManager {
      * @deprecated Don't use it, instead, create a method in the corresponding entity manager instead of running code directly on the database
      */
     public HashMap<String, BusinessObjectList> executeCustomDbCode(String dbCode, boolean needReturn) throws NotAuthorizedException;
+    /**
+     * This method is the evolution of the deprecated {@link #executeCustomDbCode(java.lang.String, boolean) }. It allows the user to execute 
+     * scripts that usually perform queries to the data base using the native query language and then pre-process the result before returning 
+     * anything. 
+     * @param queryName The (unique) name of the query.
+     * @param parameters The parameters as entries in a Properties object. The consumer of the script must be aware of the format of the parameters. They could 
+     * be provided as simple strings, or in their former types.
+     * @return A list of results as {@link Properties } instances instances. As a way of speaking, every Properties instances is like a row in a table of results. 
+     * @throws ApplicationObjectNotFoundException If the scripted query with the name provided could not be found.
+     * @throws InvalidArgumentException If any of the parameters is invalid or if an unexpected error occurred during the execution of the script.
+     */
+    public List<Properties> executeCustomScriptedQuery(String queryName, Properties parameters) throws ApplicationObjectNotFoundException, InvalidArgumentException;
     
     /**
      * Registers a commercial module. Replaces an existing one if the name of provided one is already registered

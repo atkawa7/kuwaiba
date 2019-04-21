@@ -95,7 +95,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                     createViewInstance("org.kuwaiba.web.modules.osp.OutsidePlantView"); //NOI18N
             theOspView.buildEmptyView();
             AbstractComponent mapComponent = theOspView.getAsComponent();
-
+            
             //Enable the component as a drop target
             DropTargetExtension<AbstractComponent> dropTarget = new DropTargetExtension<>(mapComponent);
             dropTarget.setDropEffect(DropEffect.MOVE);
@@ -135,7 +135,11 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
 
             mnuMain.addItem("New", VaadinIcons.FOLDER_ADD, (selectedItem) -> {
                 theOspView.buildEmptyView();
-                theOspView.getAsComponent(); //This will not create a new map, it will only refresh it, and since the new viewMap is empty, it will clean up the actual map
+                try {
+                    theOspView.getAsComponent(); //This will not create a new map, it will only refresh it, and since the new viewMap is empty, it will clean up the actual map
+                } catch (Exception ex) {
+                    //Should not happen
+                }
             });
 
             mnuMain.addItem("Open", VaadinIcons.FOLDER_OPEN, (selectedItem) -> {
@@ -173,7 +177,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                                     theOspView.getAsComponent();
                                     
                                     wdwOpen.close();
-                                } catch (ServerSideException ex) {
+                                } catch (Exception ex) {
                                     Notifications.showError(ex.getLocalizedMessage());
                                     wdwOpen.close();
                                 }
@@ -199,7 +203,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                         wdwOpen.setModal(true);
                         UI.getCurrent().addWindow(wdwOpen);
                     }
-                } catch (ServerSideException ex) {
+                } catch (Exception ex) {
                     Notifications.showError(ex.getLocalizedMessage());
                 }
             });

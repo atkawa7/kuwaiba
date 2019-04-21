@@ -1992,7 +1992,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             hasAttachmentRelationship.setProperty(Constants.PROPERTY_NAME, "attachments");
             
             String fileName = objectNode.getProperty(Constants.PROPERTY_UUID) + "_" + fileObjectNode.getId();
-                    Util.saveFile((String)configuration.get("attachmentsPath"), fileName, file);
+            Util.saveFile((String)configuration.get("attachmentsPath"), fileName, file);
             
             tx.success();
             return fileObjectNode.getId();

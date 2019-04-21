@@ -116,7 +116,7 @@ public class Constants {
     /**
      * Name of the label for list type items
      */
-    public static final String LABEL_LIST_TYPE_ITEM = "listTypeItems"; //NOI18N
+    public static final String LABEL_LIST_TYPE_ITEMS = "listTypeItems"; //NOI18N
     /**
      * Name of the label for pools
      */

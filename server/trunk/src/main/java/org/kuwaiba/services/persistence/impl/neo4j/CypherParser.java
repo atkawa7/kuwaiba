@@ -60,11 +60,11 @@ public class CypherParser {
      */
     public String createListypeMatch(String listTypeName, String listTypeName2){
         if(listTypeName2.isEmpty())
-            return ", (instance)-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->(listType_"+listTypeName+")";
+            return ", (instance)-[r_"+listTypeName+":" + RelTypes.RELATED_TO + "]->(listType_" + listTypeName+")";
         if(listTypeName2.equalsIgnoreCase("parent"))
-            return ", ("+listTypeName2+")-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->(listType_"+listTypeName+")";
+            return ", (" + listTypeName2 + ")-[r_" + listTypeName + ":" + RelTypes.RELATED_TO + "]->(listType_" + listTypeName+")";
         else
-            return ", (listType_"+listTypeName2+")-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->(listType_"+listTypeName+")";
+            return ", (listType_" + listTypeName2 + ")-[r_" + listTypeName + ":" + RelTypes.RELATED_TO + "]->(listType_" + listTypeName + ")";
     }
     
     /**
@@ -73,7 +73,7 @@ public class CypherParser {
      * @return 
      */
     public String createNoneWhere(String listTypeName){
-        return " NOT instance-[:RELATED_TO {name:\""+listTypeName+"\"}]->()    ";
+        return " NOT (instance)-[:RELATED_TO {name:\""+listTypeName+"\"}]->()    ";
     }
     
     /**
@@ -82,11 +82,11 @@ public class CypherParser {
      * @param listTypeName2
      * @return 
      */
-    public String createListypeParentMatch(String listTypeName, String listTypeName2){
+    public String createListypeParentMatch(String listTypeName, String listTypeName2) {
         if(listTypeName2.isEmpty())
-            return ", parent-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
+            return ", (parent)-[r_"+listTypeName+":" + RelTypes.RELATED_TO+"]->listType_" + listTypeName;
         else
-            return ", listType_"+listTypeName2+"-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
+            return ", listType_" + listTypeName2 + "-[r_" + listTypeName+":" + RelTypes.RELATED_TO + "]->listType_" + listTypeName;
     }
 
     /**
@@ -132,9 +132,9 @@ public class CypherParser {
      */
     public String createJoinRelation(String joinName){
         if(joinName.contains("_P"))
-            return "r_"+joinName+".name=\""+joinName.substring(0,joinName.length()-2)+"\" AND ";
+            return "r_" + joinName+".name = \"" + joinName.substring(0, joinName.length() - 2) + "\" AND ";
         else
-            return "r_"+joinName+".name=\""+joinName+"\" AND ";
+            return "r_" + joinName+".name = \"" + joinName+"\" AND ";
     }
 
     /**
@@ -149,10 +149,10 @@ public class CypherParser {
     public String createJoinWhere(int condition, String joinName, String attributeName, String attributeValue, String attibuteType){
         String operator = getOperator(condition);
 
-        if (attributeName.equals("id")) {//is small view
-            return " listType_".concat(joinName.concat("._uuid =")).concat("'").concat(attributeValue).concat("'");
-        }
-        else{
+        if (attributeName.equals("id")) //It is a compact view-base comparison
+            return " listType_" + joinName + "._uuid = '" + attributeValue +"'";
+        
+        else {
             if (!attibuteType.equals("String") && condition == ExtendedQuery.EQUAL)
                 operator = operator.substring(0, operator.length() - 1);
             if (attibuteType.equals("Date")){
@@ -160,7 +160,7 @@ public class CypherParser {
                 try {
                     attributeValue = Long.toString(dateFormat.parse(attributeValue).getTime());
                 } catch (ParseException ex) {
-                    System.out.println("wrong date format should be " + Constants.DATE_FORMAT);//NOI18N
+                    System.out.println("Wrong date format. It is expected " + Constants.DATE_FORMAT);//NOI18N
                 }
             }
             if(attibuteType.equals("String")){
@@ -170,7 +170,7 @@ public class CypherParser {
                     attributeValue = "\"(?i)".concat(attributeValue).concat("\"");
             }
         }
-        return "listType_"+joinName+"."+attributeName+operator+attributeValue;
+        return "listType_" + joinName + "." + attributeName + operator + attributeValue;
     }
 
     /**
