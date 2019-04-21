@@ -23,6 +23,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalValidator;
+import org.inventory.communications.util.Constants;
 
 /**
  * Shows the database id of the selected object. Useful for troubleshooting purposes. It will also show the object's complete containment structure.
@@ -57,9 +58,12 @@ public final class ShowMoreInformationAction extends GenericObjectNodeAction {
     public void actionPerformed(ActionEvent ev) {
         List<LocalObjectLight> parents = CommunicationsStub.getInstance().getParents(className, id);
         String msg = "";
-        if (parents != null){
+        if (parents != null) {
             for (LocalObjectLight parent : parents)
-                msg +=  ":" +parent;
+                if (!parent.getName().equals(Constants.DUMMYROOT))
+                    msg +=  ":" +parent;
+                else
+                    msg +=  ":Navigation Root";
         }
         JOptionPane.showMessageDialog(null, 
                 new SelectableLabel("<strong>id:</strong> " + id + "<br/><strong>Class: </strong>"+ className +"<br/><strong>Containment Path: </strong>" + msg), //NOI18N

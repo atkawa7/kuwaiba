@@ -405,7 +405,6 @@ public final class ObjectViewTopComponent extends TopComponent
         toggleButtons(true);
         configObject.setProperty("saved", true);
         setHtmlDisplayName(getDisplayName());
-        
     }
 
     @Override

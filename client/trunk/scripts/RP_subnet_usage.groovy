@@ -1,6 +1,6 @@
 /**
  * Subnet Usage report that shows information about related ip addresses and subnets
- * Neotropic SAS - version 1.2
+ * Neotropic SAS - version 1.3
  * Parameters: None
  */
 import org.kuwaiba.apis.persistence.PersistenceService;
@@ -20,7 +20,7 @@ import com.neotropic.kuwaiba.modules.reporting.defaults.Util;
 import org.kuwaiba.services.persistence.util.Constants;
 import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
 
-def report = new HTMLReport("Subnet Usage", "Neotropic SAS", "1.2");
+def report = new HTMLReport("Subnet Usage", "Neotropic SAS", "1.3");
 
 report.setEmbeddedStyleSheet(HTMLReport.getDefaultStyleSheet());
 
@@ -34,18 +34,18 @@ def bem = PersistenceService.getInstance().getBusinessEntityManager();
 
 // Place the company logo
 def corporateLogo = aem.getConfiguration().getProperty("corporateLogo");
-if (corporateLogo == null) {
+if (corporateLogo == null)
     corporateLogo = "logo.jpg"
-} else {
+else
     corporateLogo = aem.getConfiguration().getProperty("corporateLogo");
-}
+
 // Get the current subnet object
 def subnet = bem.getObject(objectClassName, objectId);
 
 def subnetChildren = bem.getObjectSpecialChildren(objectClassName, objectId);
 
 def subnetAttributes = subnet.getAttributes();
-def hosts = Integer.parseInt(subnetAttributes.get("hosts").get(0));
+def hosts = Integer.parseInt(subnetAttributes.get("hosts"));
 def usedIps = 0;
 
 def ips = [];
@@ -57,7 +57,7 @@ ips.each {ip ->
     if (ipDevices.size() > isEmpty())
         usedIps++;
 }
-// There are not host but the
+// There are no hosts but the
 // gateway and the broadcast
 // are in use
 if (hosts == 0 && usedIps == 0) {
@@ -82,14 +82,14 @@ def vrfs = bem.getSpecialAttribute(objectClassName, objectId, IPAMModule.RELATIO
 def services = bem.getSpecialAttribute(objectClassName, objectId, "uses");
         
 if(!vlans.isEmpty())
-    vlan = "<b>" + vlans.get(0).getName() + " ["+ vlans.get(0).getClassName()+ "]</b> |"+
+    vlan = "<b>" + vlans.get(0) + "</b> |"+
     Util.formatLocation(bem.getParents(vlans.get(0).getClassName(), vlans.get(0).getId()));
         
 if(!vrfs.isEmpty())
-    vrf = "<b>" + vrfs.get(0).getName() + " ["+ vrfs.get(0).getClassName()+ "]</b>";
+    vrf = "<b>" + vrfs.get(0) + "</b>";
 
 if(!services.isEmpty())
-    service = services.get(0).getName() + " ["+ services.get(0).getClassName()+ "]";
+    service = services.get(0).toString();
 
 
 def tblInfo = new HTMLTable(null);
@@ -102,8 +102,8 @@ if (subnet == null) {
     report.getComponents().add(tblInfo);
     
     HTMLTable tblSubnets = new HTMLTable(null);
-    HTMLColumn columnLabelIP = new HTMLColumn("", "generalInfoLabel", "Network IP Addres");
-    HTMLColumn columnIP = new HTMLColumn("<b>" + subnetAttributes.get("networkIp").get(0) + "</b>");
+    HTMLColumn columnLabelIP = new HTMLColumn("", "generalInfoLabel", "Network IP Address");
+    HTMLColumn columnIP = new HTMLColumn("<b>" + subnetAttributes.get("networkIp") + "</b>");
 
     def dataTable = new DataTable([DataType.STRING, DataType.NUMBER] as DataType[], ["IP", "Usage %"] as String[]);
     dataTable.addRow(["Used", "" + usedIps] as String[]);
@@ -115,10 +115,10 @@ if (subnet == null) {
 
     tblSubnets.getRows().add(new HTMLRow([columnLabelIP, columnIP, columnChart] as HTMLColumn[]));
 
-    tblSubnets.getRows().add(new HTMLRow([new HTMLColumn("", "generalInfoLabel", "Broadcast IP Address"), new HTMLColumn("<b>" + subnetAttributes.get("broadcastIp").get(0) + "</b>")] as HTMLColumn[]));
-    tblSubnets.getRows().add(new HTMLRow([new HTMLColumn("", "generalInfoLabel", "Description"), new HTMLColumn(subnetAttributes.get("description").get(0))] as HTMLColumn[]));
+    tblSubnets.getRows().add(new HTMLRow([new HTMLColumn("", "generalInfoLabel", "Broadcast IP Address"), new HTMLColumn("<b>" + subnetAttributes.get("broadcastIp") + "</b>")] as HTMLColumn[]));
+    tblSubnets.getRows().add(new HTMLRow([new HTMLColumn("", "generalInfoLabel", "Description"), new HTMLColumn(subnetAttributes.get("description") == null ? "" : subnetAttributes.get("description"))] as HTMLColumn[]));
     tblSubnets.getRows().add(new HTMLRow([new HTMLColumn("", "generalInfoLabel", "Number of hosts"), new HTMLColumn(hosts)] as HTMLColumn[]));
-    tblSubnets.getRows().add(new HTMLRow([new HTMLColumn("", "generalInfoLabel", "IPs Related to some port"), new HTMLColumn("<b>" + (usedIps*100)/hosts + "%</b> (" + usedIps + ")")] as HTMLColumn[]));
+    tblSubnets.getRows().add(new HTMLRow([new HTMLColumn("", "generalInfoLabel", "IP addresses assigned to an interface"), new HTMLColumn("<b>" + (usedIps*100)/hosts + "%</b> (" + usedIps + ")")] as HTMLColumn[]));
     tblSubnets.getRows().add(new HTMLRow([new HTMLColumn("", "generalInfoLabel", "Free IPs"), new HTMLColumn("<b>" + (freeIps*100)/hosts + "%</b> (" + freeIps + ")")] as HTMLColumn[]));
     tblSubnets.getRows().add(new HTMLRow([new HTMLColumn("", "generalInfoLabel", "VLAN"), new HTMLColumn(vlan)] as HTMLColumn[]));
     tblSubnets.getRows().add(new HTMLRow([new HTMLColumn("", "generalInfoLabel", "VRF"), new HTMLColumn(vrf)] as HTMLColumn[]));
@@ -137,26 +137,26 @@ subnetChildren.each { subnetChild ->
 def i = 0;
 // Table for Subnets
 def tblSubnets= new HTMLTable(["Subnet", "Description", "Service"] as String[]);
-if (subnets.isEmpty()) {
-    report.getComponents().add(new HTMLDiv("", "error", "", "There are no Subnets nested"));
-} else {
+if (subnets.isEmpty())
+    report.getComponents().add(new HTMLDiv("", "error", "", "There are no nested subnets"));
+else {
     subnets.each { subnetElement ->
         service = "";
         def subnetServices = bem.getSpecialAttribute(subnetElement.getClassName(), subnetElement.getId(), "uses");
         if(subnetServices.size() > 0) {
-            service = subnetServices.get(0).getName() + "[" +  subnetServices.get(0).getClassName() + "]";
+            service = subnetServices.get(0).toString();
         }
         def subnetObj = bem.getObject(objectClassName, subnetElement.getId());
         def attributes = subnetObj.getAttributes();
 
         def subnetSubnet = new HTMLColumn(subnetElement.getName());
-        def subnetDescription = new HTMLColumn(attributes.get("description").getAt(0));
+        def subnetDescription = new HTMLColumn(attributes.get("description") == null ? "N/A" : attributes.get("description"));
         def subnetElementService = new HTMLColumn(service);
 
         def row = new HTMLRow(i % 2 == 0 ? "even" :"odd", [subnetSubnet, subnetDescription, subnetElementService] as HTMLColumn[]);
         tblSubnets.getRows().add(row);
 
-        i += 1;
+        i++;
     }
     //Assemble the components
     report.getComponents().add(new HTMLBR());
@@ -164,32 +164,31 @@ if (subnets.isEmpty()) {
     report.getComponents().add(tblSubnets);
 }
 // Table for IP Addresses
-def tblIPAddresses= new HTMLTable(["IP Address", "Description", "Port", "Location", "Service"] as String[]);
+def tblIPAddresses= new HTMLTable(["IP Address", "Description", "Interface", "Device", "Service"] as String[]);
 if (ips.isEmpty()) {
-    report.getComponents().add(new HTMLDiv("", "error", "", "There are no IPs Addresses in use"));
+    report.getComponents().add(new HTMLDiv("", "error", "", "There are no IP Addresses in use"));
 } else {
     i = 0;
     ips.each { ip -> 
         service = "";
-        def device = "";
+        def theInterface = "";
 
         def ipDevices = bem.getSpecialAttribute(Constants.CLASS_IP_ADDRESS, ip.getId(), IPAMModule.RELATIONSHIP_IPAMHASADDRESS);
-        def location = "";
+        def device = "";
         if (ipDevices.size() > 0) {
-            device = ipDevices.get(0).getName() + " [" + ipDevices.get(0).getClassName()+"]";
-            def parents = bem.getParents(ipDevices.get(0).getClassName(), ipDevices.get(0).getId());
-            location =  Util.formatLocation(parents);
+            theInterface = ipDevices.get(0).toString();
+            device = bem.getFirstParentOfClass(ipDevices.get(0).getClassName(), ipDevices.get(0).getId(), "GenericCommunicationsElement");
         }
         def ipServices = bem.getSpecialAttribute(Constants.CLASS_IP_ADDRESS, ip.getId(), "uses");
         if(ipServices.size() > 0)
-            service = ipServices.get(0).getName() + "[" +  ipServices.get(0).getClassName() + "]";
+            service = ipServices.get(0).toString();
         def ipObject = bem.getObject(Constants.CLASS_IP_ADDRESS, ip.getId());
         def attributes = ipObject.getAttributes();
 
         def ipAddress = new HTMLColumn(ip.getName());
-        def ipDescription = new HTMLColumn(attributes.get("description").getAt(0));
-        def ipPort = new HTMLColumn(device);
-        def ipLocation = new HTMLColumn(location);
+        def ipDescription = new HTMLColumn(attributes.get("description") ==  null ? "N/A" : attributes.get("description"));
+        def ipPort = new HTMLColumn(theInterface);
+        def ipLocation = new HTMLColumn(device);
         def ipService = new HTMLColumn(service);
 
         def row = new HTMLRow(i % 2 == 0 ? "even" :"odd", [ipAddress, ipDescription, ipPort, ipLocation, ipService] as HTMLColumn[]);
