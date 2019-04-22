@@ -1259,9 +1259,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
             String cypherQuery = String.format(
                 "MATCH (classNode)<-[:%s]-(objectNode)<-[:%s]-(objChildNode) "
-              + "WHERE objectNode._uuid={id} AND classNode.name={className}"
-              + "RETURN objChildNode AS %s "
-              + "ORDER BY objChildNode.name ASC "
+              + "WHERE objectNode._uuid = {id} AND classNode.name = {className}"
+              + "RETURN objChildNode AS %s"
               , RelTypes.INSTANCE_OF, RelTypes.CHILD_OF, columnName);
 
             HashMap<String, Object> queryParameters = new HashMap<>();
@@ -1279,122 +1278,58 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     private void addDeviceNodeAsXML(Node deviceNode, String parentId, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException, ApplicationObjectNotFoundException, InvalidArgumentException {
         QName tagDevice = new QName("device"); // NOI18N
         
-        long id = deviceNode.getId();
-        String deviceNodeUuid = deviceNode.hasProperty(Constants.PROPERTY_UUID) ? (String) deviceNode.getProperty(Constants.PROPERTY_UUID) : null;
-        if (deviceNodeUuid == null)
-            throw new InvalidArgumentException(String.format("The object with id %s does not have uuid", deviceNode.getId()));
-        
+        String deviceId = (String) deviceNode.getProperty(Constants.PROPERTY_UUID);
         String className = Util.getClassName(deviceNode);
 
         xmlew.add(xmlef.createStartElement(tagDevice, null, null));
-        
-        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), Long.toString(id)));
+        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), deviceId));
         xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_NAME), deviceNode.getProperty(Constants.PROPERTY_NAME).toString()));
         xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASS_NAME), className));
         xmlew.add(xmlef.createAttribute(new QName("parentId"), parentId)); //NOI18N     
         
-        addDeviceModelAsXML(deviceNodeUuid, xmlew, xmlef);
+        addDeviceModelAsXML(deviceId, xmlew, xmlef);
         
         xmlew.add(xmlef.createEndElement(tagDevice, null));
         
-        addDeviceNodeChildrenAsXml(deviceNodeUuid, className, xmlew, xmlef);
+        addDeviceNodeChildrenAsXml(deviceId, className, xmlew, xmlef);
     }
     
     private void addDeviceModelAsXML(String id, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException, ApplicationObjectNotFoundException, InvalidArgumentException {
-        String cypherQuery = String.format(
-            "MATCH (objectNode)-[r1:%s]->(modelNode) "
-          + "WHERE objectNode._uuid = '%s' "
-          + "AND r1.name = 'model' "
-          + "RETURN modelNode;",
-            RelTypes.RELATED_TO, id);
-
         try (Transaction tx = graphDb.beginTx()) {
-            Result result = graphDb.execute(cypherQuery);
-
-            Iterator<Node> column = result.columnAs("modelNode");
-
-            if (column.hasNext()) {
-                Node modelNode = column.next();
-
-                long modelId = modelNode.getId();
-                String modelUuid = modelNode.hasProperty(Constants.PROPERTY_UUID) ? (String) modelNode.getProperty(Constants.PROPERTY_UUID) : null;
-                if (modelUuid == null)
-                    throw new InvalidArgumentException(String.format("The list type item with id %s does not have uuid", modelNode.getId()));
-                                                        
-                String modelName = modelNode.getProperty(Constants.PROPERTY_NAME) != null ? (String) modelNode.getProperty(Constants.PROPERTY_NAME) : null;
-
-                cypherQuery = String.format(""
-                    + "MATCH (modelNode)-[:%s]->(classNode) "
-                    + "WHERE id(modelNode) = %s "
-                    + "RETURN classNode;",
-                    RelTypes.INSTANCE_OF, modelId);
-
-                result = graphDb.execute(cypherQuery);
-                column = result.columnAs("classNode");
-
-                String modelClassName = null;
-
-                if (column.hasNext()) {
-                    Node classNode = column.next();
-                    modelClassName = classNode.getProperty(Constants.PROPERTY_NAME) != null ? (String) classNode.getProperty(Constants.PROPERTY_NAME) : null;
-                }   
-
-                cypherQuery = String.format(""
-                    + "MATCH (modelNode)-[:%s]->(viewNode) "
-                    + "WHERE id(modelNode) = %s "
-                    + "RETURN viewNode;", 
-                    RelTypes.HAS_VIEW, modelId);
-
-                result = graphDb.execute(cypherQuery);
-                column = result.columnAs("viewNode");
-
-                if (column.hasNext()) {
-                    Node viewNode = column.next();
-                    long modelViewId = viewNode.getId();
-
-                    try {
-                        ViewObject modeViewObj = getListTypeItemRelatedView(modelUuid, modelClassName, modelViewId);
-
-                        QName tagModel = new QName("model");
-
-                        xmlew.add(xmlef.createStartElement(tagModel, null, null));
-
-                        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), Long.toString(modelId)));
-                        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASS_NAME), modelClassName));
-                        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_NAME), modelName));
-
-                        QName tagView = new QName("view");
-                        
-                        xmlew.add(xmlef.createStartElement(tagView, null, null));
-                        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), Long.toString(modelViewId)));
-                        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASS_NAME), modeViewObj.getViewClassName()));
-                        
-                        if (modeViewObj.getName() != null)
-                            xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_NAME), modeViewObj.getName()));
-                        
-                        if (modeViewObj.getDescription() != null)
-                            xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_DESCRIPTION), modeViewObj.getDescription()));                        
-                        
-                        QName tagStructure = new QName("structure");
-                        xmlew.add(xmlef.createStartElement(tagStructure, null, null));
-                        if (modeViewObj.getStructure() != null)
-                            xmlew.add(xmlef.createCharacters(DatatypeConverter.printBase64Binary(modeViewObj.getStructure())));
-                        xmlew.add(xmlef.createEndElement(tagStructure, null));
-                        
-                        QName tagBackground = new QName("background");
-                        xmlew.add(xmlef.createStartElement(tagBackground, null, null));
-                        if (modeViewObj.getBackground() != null)
-                            xmlew.add(xmlef.createCharacters(DatatypeConverter.printBase64Binary(modeViewObj.getBackground())));                            
-                        xmlew.add(xmlef.createEndElement(tagBackground, null));
-                        
-                        xmlew.add(xmlef.createEndElement(tagView, null));  
-
-                        xmlew.add(xmlef.createEndElement(tagModel, null));  
-
-                    } catch (MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
-                        Logger.getLogger(ApplicationEntityManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+            Node objectNode = graphDb.findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, id);
+            
+            Node modelNode = null;
+            
+            for (Relationship aListTypeAttributeRelationship : objectNode.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO)) {
+                if (aListTypeAttributeRelationship.getProperty(Constants.PROPERTY_NAME).equals("model")) {
+                    modelNode = aListTypeAttributeRelationship.getEndNode();
+                    break;
                 }
+            }
+            
+            if (modelNode != null && modelNode.hasRelationship(RelTypes.HAS_VIEW, Direction.OUTGOING)) {
+                Node layoutNode = modelNode.getSingleRelationship(RelTypes.HAS_VIEW, Direction.OUTGOING).getEndNode();
+                QName tagModel = new QName("model");
+
+                xmlew.add(xmlef.createStartElement(tagModel, null, null));
+                xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), (String)modelNode.getProperty(Constants.PROPERTY_UUID)));
+                xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASS_NAME), 
+                        (String)modelNode.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME)));
+                xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_NAME), (String)modelNode.getProperty(Constants.PROPERTY_NAME)));
+
+                QName tagView = new QName("view");
+
+                xmlew.add(xmlef.createStartElement(tagView, null, null));
+                xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), Long.toString(layoutNode.getId())));
+                xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASS_NAME), (String)layoutNode.getProperty(Constants.PROPERTY_CLASS_NAME)));
+
+                QName tagStructure = new QName("structure");
+                xmlew.add(xmlef.createStartElement(tagStructure, null, null));
+                if (layoutNode.hasProperty(Constants.PROPERTY_STRUCTURE))
+                    xmlew.add(xmlef.createCharacters(DatatypeConverter.printBase64Binary((byte[])layoutNode.getProperty(Constants.PROPERTY_STRUCTURE))));
+                xmlew.add(xmlef.createEndElement(tagStructure, null));
+                xmlew.add(xmlef.createEndElement(tagView, null));  
+                xmlew.add(xmlef.createEndElement(tagModel, null));  
             }
         }
     }
