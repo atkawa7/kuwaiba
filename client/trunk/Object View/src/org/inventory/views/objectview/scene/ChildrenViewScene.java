@@ -359,16 +359,17 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
 
             if (currentView.isDirty()) {
                 fireChangeEvent(new ActionEvent(this, ChildrenViewScene.SCENE_CHANGEANDSAVE, "Removing old objects"));
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.WARNING_MESSAGE, "Some changes has been detected since the last time the view was saved. The view was updated accordingly");
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.WARNING_MESSAGE, "Some changes have been detected since the last time the view was saved. The view was updated accordingly");
                 currentView.setDirty(false);
             }
         } catch (XMLStreamException ex) {
             if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO)
                 Exceptions.printStackTrace(ex);
         }
-        validate();
-        repaint();
         
+        //revalidate() -> validate() was the only combination that allows the correct rendering of the connections in the scene.
+        revalidate();
+        validate();
     }
     
     private void renderDefaultView(LocalObjectLight currentObject, List<LocalObjectLight> children, List<LocalObjectLight> connections) {

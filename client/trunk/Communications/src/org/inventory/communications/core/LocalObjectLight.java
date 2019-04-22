@@ -84,6 +84,10 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
     public String getClassName() {
         return className;
     }
+    
+    public void setClassName(String className) {
+        this.className = className;
+    }
 
     public String getId() {
         return id;

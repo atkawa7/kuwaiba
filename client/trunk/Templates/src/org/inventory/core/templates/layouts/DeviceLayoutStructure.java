@@ -34,7 +34,7 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 
 /**
- * Class used to storage device information like the device layout, hierarchy 
+ * Class used to represent device information like the device layout, hierarchy 
  * and nested devices layouts
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
@@ -56,6 +56,15 @@ public class DeviceLayoutStructure {
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return;
         }
+        
+          //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
+//                             try {
+//                                 FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/device_structure" + device.getId() + ".xml");
+//                                 fos.write(structure);
+//                                 fos.close();
+//                             } catch(Exception e) {}
+                     //</editor-fold>
+        
         try {
             HashMap<LocalObjectLight, String> devices = new HashMap();
             
@@ -74,7 +83,7 @@ public class DeviceLayoutStructure {
                     if (xmlsr.getName().equals(tagDevice)) {
                         String id = xmlsr.getAttributeValue(null, Constants.PROPERTY_ID);
                         
-                        if (id.equals(device.getId())) {
+                        if (!id.equals(device.getId())) {
                             String className = xmlsr.getAttributeValue(null, Constants.PROPERTY_CLASSNAME);
                             String name = xmlsr.getAttributeValue(null, Constants.PROPERTY_NAME);
                             String parentId = xmlsr.getAttributeValue(null, "parentId"); //NOI18N
@@ -104,9 +113,7 @@ public class DeviceLayoutStructure {
                                                     if (event == XMLStreamConstants.START_ELEMENT) {
                                                         if (xmlsr.getName().equals(tagStructure)) {
                                                             byte [] modelStructure = DatatypeConverter.parseBase64Binary(xmlsr.getElementText());                                                            
-                                                                                                                    
                                                             LocalObjectView lov = new LocalObjectView(Long.valueOf(id), className, null, null, modelStructure, null);
-                                                            
                                                             layouts.put(modelObj, lov);
                                                         }
                                                     }                                                    
@@ -131,7 +138,10 @@ public class DeviceLayoutStructure {
             for (LocalObjectLight child : devices.keySet()) {
                 dummyParent.setOid(devices.get(child));
                 
-                hierarchy.get(dummyParent).add(child);
+                for (LocalObjectLight aParent : hierarchy.keySet()) {
+                    if (aParent.getId().equals(dummyParent.getId()))
+                        hierarchy.get(aParent).add(child);
+                }
             }
             
             xmlsr.close();
