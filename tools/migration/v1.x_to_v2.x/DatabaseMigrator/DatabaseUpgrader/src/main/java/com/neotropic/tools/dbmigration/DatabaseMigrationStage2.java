@@ -17,6 +17,7 @@ package com.neotropic.tools.dbmigration;
 
 import com.neotropic.tools.dbmigration.views.EndToEndAndTopologyViewMigrator;
 import com.neotropic.tools.dbmigration.views.GeneralViewsMigrator;
+import com.neotropic.tools.dbmigration.views.LayoutMigrator;
 import com.neotropic.tools.dbmigration.views.ObjectViewMigrator;
 import java.io.File;
 import java.util.Calendar;
@@ -91,6 +92,7 @@ public class DatabaseMigrationStage2 {
                     ObjectViewMigrator.migrate(dbPathReference);
                     EndToEndAndTopologyViewMigrator.migrate(dbPathReference);
                     GeneralViewsMigrator.migrate(dbPathReference);
+                    LayoutMigrator.migrate(dbPathReference);
                 }
 
                 System.out.println(String.format("[%s] Database upgrade stage 2 ended successfully...", Calendar.getInstance().getTime()));
