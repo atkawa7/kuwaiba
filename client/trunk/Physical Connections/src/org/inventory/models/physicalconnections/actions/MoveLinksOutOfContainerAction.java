@@ -53,13 +53,8 @@ public class MoveLinksOutOfContainerAction extends GenericObjectNodeAction{
         }
             
         List<LocalObjectLight> objectSpecialChildren = com.getObjectSpecialChildren(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getId());
+        List<LocalObjectLight> physicalLinks = getPhysicalLinksInContainer(new ArrayList<>(), objectSpecialChildren);
         
-        List<LocalObjectLight> physicalLinks = new ArrayList<>();
-        for (LocalObjectLight specialChild : objectSpecialChildren) {
-            if(com.isSubclassOf(specialChild.getClassName(), Constants.CLASS_GENERICPHYSICALLINK))
-                physicalLinks.add(specialChild);
-        }
-         
         HashMap<String, LocalObjectLight[]> specialAttributes = CommunicationsStub.getInstance().getSpecialAttributes(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getId());
         
         if (specialAttributes == null ) {
@@ -107,5 +102,21 @@ public class MoveLinksOutOfContainerAction extends GenericObjectNodeAction{
     @Override
     public int numberOfNodes() {
         return 1;
+    }
+    
+    /**
+     * Recursivly 
+     * @param physicalLinks
+     * @param objectSpecialChildren
+     * @return 
+     */
+    private List<LocalObjectLight> getPhysicalLinksInContainer(List<LocalObjectLight> physicalLinks, List<LocalObjectLight> objectSpecialChildren){
+        for (LocalObjectLight specialChild : objectSpecialChildren) {
+            if(com.isSubclassOf(specialChild.getClassName(), Constants.CLASS_GENERICPHYSICALLINK))
+                physicalLinks.add(specialChild);
+            else if(com.isSubclassOf(specialChild.getClassName(), Constants.CLASS_GENERICPHYSICALCONTAINER))
+                getPhysicalLinksInContainer(physicalLinks, com.getObjectSpecialChildren(specialChild.getClassName(), specialChild.getId()));
+        }
+        return physicalLinks;
     }
 }

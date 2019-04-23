@@ -114,9 +114,8 @@ public class MovePhysicalLinkToContainerFrame  extends JFrame {
         public void actionPerformed(ActionEvent e) {
             List<Refreshable> topComponents = new ArrayList<>();
             
-            
             LocalObjectLight parent = com.getParent(linksToMove.get(0).getClassName(), linksToMove.get(0).getId());
-            TopComponent topComponent = WindowManager.getDefault().findTopComponent("ObjectViewTopComponent_" + parent.getId());
+            TopComponent topComponent = WindowManager.getDefault().findTopComponent("ObjectViewTopComponent_" + parent.getId().split("-")[0]);
 
             if (topComponent instanceof Refreshable)
                 topComponents.add((Refreshable) topComponent);
@@ -125,10 +124,11 @@ public class MovePhysicalLinkToContainerFrame  extends JFrame {
                     selectedContainer.getId(), 
                     linksToMove)) {
                 
-                topComponents.get(0).refresh();
-                
                 JOptionPane.showMessageDialog(null, I18N.gm("links_moved_successfully"), I18N.gm("success"), JOptionPane.INFORMATION_MESSAGE);
                 dispose();
+                
+                for (Refreshable tc : topComponents)
+                    tc.refresh();
             } else
                 JOptionPane.showMessageDialog(null, com.getError(), I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
         }

@@ -42,10 +42,10 @@ public class NewContainerVisualPanel1 extends javax.swing.JPanel {
         
         if (!containerClasses.isEmpty()) {
             List<LocalObjectLight> containerTemplates = CommunicationsStub.getInstance().getTemplatesForClass(((LocalClassMetadataLight)cmbContainerClass.getItemAt(0)).getClassName(), false);
-            cmbContainerTemplate.setModel(new DefaultComboBoxModel(containerTemplates.toArray(new LocalObjectLight[0])));
-            chkNoTemplate.setSelected(containerTemplates.isEmpty());
-            chkNoTemplate.setEnabled(!containerTemplates.isEmpty());
-            cmbContainerTemplate.setEnabled(!containerTemplates.isEmpty());
+                cmbContainerTemplate.setModel(new DefaultComboBoxModel(containerTemplates.toArray(new LocalObjectLight[0])));
+                chkNoTemplate.setSelected(containerTemplates.isEmpty());
+                chkNoTemplate.setEnabled(!containerTemplates.isEmpty());
+                cmbContainerTemplate.setEnabled(!containerTemplates.isEmpty());
         } else {
             cmbContainerTemplate.setModel(new DefaultComboBoxModel());
             chkNoTemplate.setSelected(true);

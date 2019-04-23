@@ -44,19 +44,19 @@ import org.openide.windows.WindowManager;
  */
 public class MovePhysicalLinkOutOfContainerFrame extends JFrame{
 
-    private ExplorablePanel pnlexistingWireContainers;
-    private BeanTreeView treeWireContainers;
-    private JButton btnMoveLinks;
+    private final ExplorablePanel pnlexistingWireContainers;
+    private final BeanTreeView treeWireContainers;
+    private final JButton btnMoveLinks;
 
     private List<LocalObjectLight> selectedLinks;
-    private LocalObjectLight containerParent;
+    private final LocalObjectLight containerParent;
     private final CommunicationsStub com = CommunicationsStub.getInstance();
     
     public MovePhysicalLinkOutOfContainerFrame(List<LocalObjectLight> existingPhysicalLinks, LocalObjectLight containerParent) {
         this.containerParent = containerParent;
         
         setLayout(new BorderLayout());
-        setTitle(I18N.gm("move_links_into_container"));
+        setTitle(I18N.gm("move_links_out_of_container"));
         setBounds(80, 80, 450, 550);
         
         JLabel lblInstructions = new JLabel(I18N.gm("instructions_to_move_links_out_of_container"));
@@ -104,7 +104,7 @@ public class MovePhysicalLinkOutOfContainerFrame extends JFrame{
         public void actionPerformed(ActionEvent e) {
             List<Refreshable> topComponents = new ArrayList<>();
             
-            TopComponent topComponent = WindowManager.getDefault().findTopComponent("ObjectViewTopComponent_" + containerParent.getId());
+            TopComponent topComponent = WindowManager.getDefault().findTopComponent("ObjectViewTopComponent_" + containerParent.getId().split("-")[0]);
             if (topComponent instanceof Refreshable)
                 topComponents.add((Refreshable) topComponent);    
             
@@ -112,11 +112,11 @@ public class MovePhysicalLinkOutOfContainerFrame extends JFrame{
                     containerParent.getId(), 
                     selectedLinks)) {
                 
-                for (Refreshable tc : topComponents)
-                    tc.refresh();
-                
                 JOptionPane.showMessageDialog(null, "The links were moved sucessfully", I18N.gm("success"), JOptionPane.INFORMATION_MESSAGE);
                 dispose();
+                
+                for (Refreshable tc : topComponents)
+                    tc.refresh();
             } else
                 JOptionPane.showMessageDialog(null, com.getError(), I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
         }
