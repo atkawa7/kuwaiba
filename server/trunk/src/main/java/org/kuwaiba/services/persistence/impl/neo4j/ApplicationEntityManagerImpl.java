@@ -108,6 +108,7 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.NotFoundException;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Result;
@@ -156,6 +157,18 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      * Pools label 
      */
     private Label poolLabel;
+    /**
+     * Device layouts label 
+     */
+    private Label layoutLabel;
+    /**
+     * Templates label 
+     */
+    private Label templateLabel;
+    /**
+     * Template elements label 
+     */
+    private Label templateElementLabel;
     /**
      * Label for special nodes(like group root node)
      */
@@ -232,7 +245,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         classLabel = Label.label(Constants.LABEL_CLASS);
         groupLabel = Label.label(Constants.LABEL_GROUP);
         listTypeItemLabel = Label.label(Constants.LABEL_LIST_TYPE_ITEMS);
-        poolLabel = Label.label(Constants.LABEL_POOL);
+        poolLabel = Label.label(Constants.LABEL_POOLS);
+        layoutLabel = Label.label(Constants.LABEL_LAYOUTS);
+        templateLabel = Label.label(Constants.LABEL_TEMPLATES);
+        templateElementLabel = Label.label(Constants.LABEL_TEMPLATE_ELEMENTS);
         specialNodeLabel = Label.label(Constants.LABEL_SPECIAL_NODE);
         queryLabel = Label.label(Constants.LABEL_QUERIES);
         taskLabel = Label.label(Constants.LABEL_TASKS);
@@ -966,25 +982,29 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public long createListTypeItemRelatedView(String listTypeItemId, String listTypeItemClassName, String viewClassName, String name, String description, byte [] structure, byte [] background) 
-        throws MetadataObjectNotFoundException, InvalidArgumentException {
+    public long createListTypeItemRelatedView(String listTypeItemId, String listTypeItemClassName, 
+            String viewClassName, String name, String description, byte [] structure, byte [] background) throws MetadataObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             Node listTypeItemNode = getListTypeItemNode(listTypeItemId, listTypeItemClassName);
             if (listTypeItemNode == null)
                 throw new InvalidArgumentException(String.format("Can not find the list type item with id %s", listTypeItemId));
             
-            Node viewNode = graphDb.createNode();
+            Node viewNode = graphDb.createNode(layoutLabel); // This is temporary. In the future, not all list type item related views will be device layouts
             viewNode.setProperty(Constants.PROPERTY_CLASS_NAME, viewClassName);
             listTypeItemNode.createRelationshipTo(viewNode, RelTypes.HAS_VIEW);
             
-            if (name != null)
+            if (name != null && !name.isEmpty())
                 viewNode.setProperty(Constants.PROPERTY_NAME, name);
+            else
+                throw new InvalidArgumentException("The name of the view can not be null or empty");
             
             if (description != null)
                 viewNode.setProperty(Constants.PROPERTY_DESCRIPTION, description);
             
             if (structure != null)
                 viewNode.setProperty(Constants.PROPERTY_STRUCTURE, structure);
+            else
+                viewNode.setProperty(Constants.PROPERTY_STRUCTURE, new byte[0]);
             
             if (background != null) {
                 try {
@@ -1249,88 +1269,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         } catch (XMLStreamException ex) {
             Logger.getLogger(ApplicationEntityManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
             return null;            
-        }
-    }
-    
-    private void addDeviceNodeChildrenAsXml(String id, String className, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException, ApplicationObjectNotFoundException, InvalidArgumentException {
-        try (Transaction tx = graphDb.beginTx()) {
-            
-            String columnName = "childNode"; //NOI18N
-
-            String cypherQuery = String.format(
-                "MATCH (classNode)<-[:%s]-(objectNode)<-[:%s]-(objChildNode) "
-              + "WHERE objectNode._uuid = {id} AND classNode.name = {className}"
-              + "RETURN objChildNode AS %s"
-              , RelTypes.INSTANCE_OF, RelTypes.CHILD_OF, columnName);
-
-            HashMap<String, Object> queryParameters = new HashMap<>();
-            queryParameters.put("id", id); //NOI18N
-            queryParameters.put("className", className); //NOI18N
-            
-            Result result = graphDb.execute(cypherQuery, queryParameters);
-            Iterator<Node> column = result.columnAs(columnName);
-
-            for (Node deviceNode : Iterators.asIterable(column))
-                addDeviceNodeAsXML(deviceNode, id, xmlew, xmlef);
-        }
-    }
-    
-    private void addDeviceNodeAsXML(Node deviceNode, String parentId, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException, ApplicationObjectNotFoundException, InvalidArgumentException {
-        QName tagDevice = new QName("device"); // NOI18N
-        
-        String deviceId = (String) deviceNode.getProperty(Constants.PROPERTY_UUID);
-        String className = Util.getClassName(deviceNode);
-
-        xmlew.add(xmlef.createStartElement(tagDevice, null, null));
-        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), deviceId));
-        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_NAME), deviceNode.getProperty(Constants.PROPERTY_NAME).toString()));
-        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASS_NAME), className));
-        xmlew.add(xmlef.createAttribute(new QName("parentId"), parentId)); //NOI18N     
-        
-        addDeviceModelAsXML(deviceId, xmlew, xmlef);
-        
-        xmlew.add(xmlef.createEndElement(tagDevice, null));
-        
-        addDeviceNodeChildrenAsXml(deviceId, className, xmlew, xmlef);
-    }
-    
-    private void addDeviceModelAsXML(String id, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException, ApplicationObjectNotFoundException, InvalidArgumentException {
-        try (Transaction tx = graphDb.beginTx()) {
-            Node objectNode = graphDb.findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, id);
-            
-            Node modelNode = null;
-            
-            for (Relationship aListTypeAttributeRelationship : objectNode.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO)) {
-                if (aListTypeAttributeRelationship.getProperty(Constants.PROPERTY_NAME).equals("model")) {
-                    modelNode = aListTypeAttributeRelationship.getEndNode();
-                    break;
-                }
-            }
-            
-            if (modelNode != null && modelNode.hasRelationship(RelTypes.HAS_VIEW, Direction.OUTGOING)) {
-                Node layoutNode = modelNode.getSingleRelationship(RelTypes.HAS_VIEW, Direction.OUTGOING).getEndNode();
-                QName tagModel = new QName("model");
-
-                xmlew.add(xmlef.createStartElement(tagModel, null, null));
-                xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), (String)modelNode.getProperty(Constants.PROPERTY_UUID)));
-                xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASS_NAME), 
-                        (String)modelNode.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME)));
-                xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_NAME), (String)modelNode.getProperty(Constants.PROPERTY_NAME)));
-
-                QName tagView = new QName("view");
-
-                xmlew.add(xmlef.createStartElement(tagView, null, null));
-                xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), Long.toString(layoutNode.getId())));
-                xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASS_NAME), (String)layoutNode.getProperty(Constants.PROPERTY_CLASS_NAME)));
-
-                QName tagStructure = new QName("structure");
-                xmlew.add(xmlef.createStartElement(tagStructure, null, null));
-                if (layoutNode.hasProperty(Constants.PROPERTY_STRUCTURE))
-                    xmlew.add(xmlef.createCharacters(DatatypeConverter.printBase64Binary((byte[])layoutNode.getProperty(Constants.PROPERTY_STRUCTURE))));
-                xmlew.add(xmlef.createEndElement(tagStructure, null));
-                xmlew.add(xmlef.createEndElement(tagView, null));  
-                xmlew.add(xmlef.createEndElement(tagModel, null));  
-            }
         }
     }
             
@@ -2589,7 +2527,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     //Templates
     @Override
-    public long createTemplate(String templateClass, String templateName) throws MetadataObjectNotFoundException, OperationNotPermittedException {  
+    public String createTemplate(String templateClass, String templateName) throws MetadataObjectNotFoundException, OperationNotPermittedException {  
         try (Transaction tx = graphDb.beginTx()) {
             
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, templateClass);
@@ -2600,21 +2538,22 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (classNode.hasProperty(Constants.PROPERTY_ABSTRACT) && (boolean)classNode.getProperty(Constants.PROPERTY_ABSTRACT))
                 throw new OperationNotPermittedException(String.format("Abstract class %s can not have templates", templateClass));
             
-            Node templateNode = graphDb.createNode();
+            String uuid = UUID.randomUUID().toString();
+            Node templateNode = graphDb.createNode(templateLabel);
             templateNode.setProperty(Constants.PROPERTY_NAME, templateName == null ? "" : templateName);
+            templateNode.setProperty(Constants.PROPERTY_UUID, uuid);
                         
             classNode.createRelationshipTo(templateNode, RelTypes.HAS_TEMPLATE);
             Relationship specialInstanceRelationship = templateNode.createRelationshipTo(classNode, RelTypes.INSTANCE_OF_SPECIAL);
             specialInstanceRelationship.setProperty(Constants.PROPERTY_NAME, "template"); //NOI18N
-
             
             tx.success();
-            return templateNode.getId();
+            return uuid;
         }
     }
 
     @Override
-    public long createTemplateElement(String templateElementClass, String templateElementParentClassName, long templateElementParentId, String templateElementName) throws 
+    public String createTemplateElement(String templateElementClass, String templateElementParentClassName, String templateElementParentId, String templateElementName) throws 
         MetadataObjectNotFoundException, ApplicationObjectNotFoundException, OperationNotPermittedException {
         
         boolean isPossibleChildren = false;
@@ -2643,7 +2582,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             Node parentNode = null;
             
             for(Relationship instanceOfSpecialRelationship : parentClassNode.getRelationships(Direction.INCOMING, RelTypes.INSTANCE_OF_SPECIAL)) {
-                if (instanceOfSpecialRelationship.getStartNode().getId() == templateElementParentId) {
+                if (templateElementParentId.equals(instanceOfSpecialRelationship.getStartNode().getProperty(Constants.PROPERTY_UUID))) {
                     parentNode = instanceOfSpecialRelationship.getStartNode();
                     break;
                 }
@@ -2652,8 +2591,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (parentNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Parent object %s of class %s not found", templateElementParentId, templateElementParentClassName));
             
-            Node templateObjectNode = graphDb.createNode();
+            String uuid = UUID.randomUUID().toString();
+            Node templateObjectNode = graphDb.createNode(templateElementLabel);
             templateObjectNode.setProperty(Constants.PROPERTY_NAME, templateElementName == null ? "" : templateElementName);
+            templateObjectNode.setProperty(Constants.PROPERTY_UUID, uuid);
             
             templateObjectNode.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
             
@@ -2661,12 +2602,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             specialInstanceRelationship.setProperty(Constants.PROPERTY_NAME, "template"); //NOI18N 
             
             tx.success();
-            return templateObjectNode.getId();
+            return uuid;
         }
     }
     
     @Override    
-    public long createTemplateSpecialElement(String tsElementClass, String tsElementParentClassName, long tsElementParentId, String tsElementName) 
+    public String createTemplateSpecialElement(String tsElementClass, String tsElementParentClassName, String tsElementParentId, String tsElementName) 
         throws OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException {
         
         boolean isPossibleSpecialChildren = false;
@@ -2695,7 +2636,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             Node parentNode = null;
             
             for(Relationship instanceOfSpecialRelationship : parentClassNode.getRelationships(Direction.INCOMING, RelTypes.INSTANCE_OF_SPECIAL)) {
-                if (instanceOfSpecialRelationship.getStartNode().getId() == tsElementParentId) {
+                if (tsElementParentId.equals(instanceOfSpecialRelationship.getStartNode().getProperty(Constants.PROPERTY_UUID))) {
                     parentNode = instanceOfSpecialRelationship.getStartNode();
                     break;
                 }
@@ -2704,8 +2645,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (parentNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Parent object %s of class %s not found", tsElementParentId, tsElementParentClassName));
             
-            Node templateObjectNode = graphDb.createNode();
+            String uuid = UUID.randomUUID().toString();
+            Node templateObjectNode = graphDb.createNode(templateElementLabel);
             templateObjectNode.setProperty(Constants.PROPERTY_NAME, tsElementName == null ? "" : tsElementName);
+            templateObjectNode.setProperty(Constants.PROPERTY_UUID, uuid);
             
             templateObjectNode.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
             
@@ -2713,12 +2656,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             specialInstanceRelationship.setProperty(Constants.PROPERTY_NAME, "template"); //NOI18N 
             
             tx.success();
-            return templateObjectNode.getId();
+            return uuid;
         }
     }
     
     @Override
-    public long[] createBulkTemplateElement(String templateElementClassName, String templateElementParentClassName, long templateElementParentId, int numberOfTemplateElements, String templateElementNamePattern) 
+    public String[] createBulkTemplateElement(String templateElementClassName, String templateElementParentClassName, 
+            String templateElementParentId, int numberOfTemplateElements, String templateElementNamePattern) 
         throws MetadataObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException, InvalidArgumentException {
         
         boolean isPossibleChildren = false;
@@ -2747,7 +2691,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             Node parentNode = null;
             
             for(Relationship instanceOfSpecialRelationship : parentClassNode.getRelationships(Direction.INCOMING, RelTypes.INSTANCE_OF_SPECIAL)) {
-                if (instanceOfSpecialRelationship.getStartNode().getId() == templateElementParentId) {
+                if (templateElementParentId.equals(instanceOfSpecialRelationship.getStartNode().getProperty(Constants.PROPERTY_UUID))) {
                     parentNode = instanceOfSpecialRelationship.getStartNode();
                     break;
                 }
@@ -2756,24 +2700,26 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new ApplicationObjectNotFoundException(String.format("Parent object %s of class %s not found", templateElementParentId, templateElementParentClassName));
             
             DynamicName dynamicName = new DynamicName(templateElementNamePattern);
-            if (dynamicName.getNumberOfDynamicNames() < numberOfTemplateElements) {
+            if (dynamicName.getNumberOfDynamicNames() < numberOfTemplateElements) 
                 throw new InvalidArgumentException("The given pattern to generate the name has "
-                        + "less possibilities that the number of objects to be created");
-            }            
-            long res[] = new long[numberOfTemplateElements];
+                        + "less possibilities than the number of objects to be created");
             
-            for (int i = 0; i < numberOfTemplateElements; i += 1) {
+            String res[] = new String[numberOfTemplateElements];
+            
+            for (int i = 0; i < numberOfTemplateElements; i++) {
                 String templateElementName = dynamicName.getDynamicNames().get(i);
                 
-                Node templateObjectNode = graphDb.createNode();
+                String uuid = UUID.randomUUID().toString();
+                Node templateObjectNode = graphDb.createNode(templateElementLabel);
                 templateObjectNode.setProperty(Constants.PROPERTY_NAME, templateElementName == null ? "" : templateElementName);
+                templateObjectNode.setProperty(Constants.PROPERTY_UUID, UUID.randomUUID().toString());
 
                 templateObjectNode.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
 
                 Relationship specialInstanceRelationship = templateObjectNode.createRelationshipTo(classNode, RelTypes.INSTANCE_OF_SPECIAL);
                 specialInstanceRelationship.setProperty(Constants.PROPERTY_NAME, "template"); //NOI18N 
                 
-                res[i] = templateObjectNode.getId();
+                res[i] = uuid;
             }            
             tx.success();
             return res;
@@ -2781,7 +2727,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
         
     @Override
-    public long[] createBulkSpecialTemplateElement(String stElementClass, String stElementParentClassName, long stElementParentId, int numberOfTemplateElements, String stElementNamePattern) 
+    public String[] createBulkSpecialTemplateElement(String stElementClass, String stElementParentClassName, String stElementParentId, int numberOfTemplateElements, String stElementNamePattern) 
         throws OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
         
         boolean isPossibleSpecialChildren = false;
@@ -2795,7 +2741,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throw new OperationNotPermittedException(String.format("An instance of class %s can't be created as special child of %s", stElementClass, stElementParentClassName == null ? Constants.NODE_DUMMYROOT : stElementParentClassName));
             
         try (Transaction tx = graphDb.beginTx()) {
-            
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, stElementClass);
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", stElementClass));
@@ -2810,7 +2755,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             Node parentNode = null;
             
             for(Relationship instanceOfSpecialRelationship : parentClassNode.getRelationships(Direction.INCOMING, RelTypes.INSTANCE_OF_SPECIAL)) {
-                if (instanceOfSpecialRelationship.getStartNode().getId() == stElementParentId) {
+                if (stElementParentId.equals(instanceOfSpecialRelationship.getStartNode().getProperty(Constants.PROPERTY_UUID))) {
                     parentNode = instanceOfSpecialRelationship.getStartNode();
                     break;
                 }
@@ -2820,24 +2765,26 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new ApplicationObjectNotFoundException(String.format("Parent object %s of class %s not found", stElementParentId, stElementParentClassName));
             
             DynamicName dynamicName = new DynamicName(stElementNamePattern);
-            if (dynamicName.getNumberOfDynamicNames() < numberOfTemplateElements) {
+            if (dynamicName.getNumberOfDynamicNames() < numberOfTemplateElements) 
                 throw new InvalidArgumentException("The given pattern to generate the name has "
                         + "less possibilities that the number of objects to be created");
-            }            
-            long res[] = new long[numberOfTemplateElements];
+                   
+            String res[] = new String[numberOfTemplateElements];
             
-            for (int i = 0; i < numberOfTemplateElements; i += 1) {
+            for (int i = 0; i < numberOfTemplateElements; i++) {
                 String stElementName = dynamicName.getDynamicNames().get(i);
 
-                Node templateObjectNode = graphDb.createNode();
+                String uuid = UUID.randomUUID().toString();
+                Node templateObjectNode = graphDb.createNode(templateElementLabel);
                 templateObjectNode.setProperty(Constants.PROPERTY_NAME, stElementName == null ? "" : stElementName);
+                templateObjectNode.setProperty(Constants.PROPERTY_UUID, UUID.randomUUID().toString());
 
                 templateObjectNode.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
 
                 Relationship specialInstanceRelationship = templateObjectNode.createRelationshipTo(classNode, RelTypes.INSTANCE_OF_SPECIAL);
                 specialInstanceRelationship.setProperty(Constants.PROPERTY_NAME, "template"); //NOI18N 
                 
-                res[i] = templateObjectNode.getId();
+                res[i] = uuid;
             }
             tx.success();
             return res;
@@ -2845,109 +2792,88 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
         
     @Override
-    public ChangeDescriptor updateTemplateElement(String templateElementClass, long templateElementId, String[] attributeNames, 
+    public ChangeDescriptor updateTemplateElement(String templateElementClass, String templateElementId, String[] attributeNames, 
             String[] attributeValues) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
-        
         if (attributeNames.length != attributeValues.length)
             throw new InvalidArgumentException("Attribute names and values must have the same length");
         
         try (Transaction tx = graphDb.beginTx()) {
-            
-            Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, templateElementClass);
-            
-            if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", templateElementClass));
-            
-            Node objectNode = null;
-            for (Relationship instanceOfSpecialRelationship : classNode.getRelationships(Direction.INCOMING, RelTypes.INSTANCE_OF_SPECIAL)) {
-                Node specialInstanceNode = instanceOfSpecialRelationship.getStartNode();
-                if (specialInstanceNode.getId() == templateElementId) {
-                    objectNode = specialInstanceNode;
-                    break;
-                }
-            }
-            
-            if (objectNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("Template object %s of class %s could not be found", templateElementId, templateElementClass));
-            
-            String affectedProperties = "", oldValues = "", newValues = "", notes = "";
-            ClassMetadata classMetadata = cm.getClass(templateElementClass);
-            
-            for (int i = 0; i < attributeNames.length; i++) {
-                if (!classMetadata.hasAttribute(attributeNames[i]))
-                    throw new MetadataObjectNotFoundException(String.format("Class %s does not have any attribute named %s", templateElementClass, attributeNames[i]));
+            try {
+                Node objectNode = graphDb.findNode(templateElementLabel, Constants.PROPERTY_UUID, templateElementId);
                 
-                affectedProperties += " " + attributeNames[i];
+                if (!objectNode.hasRelationship(Direction.OUTGOING, RelTypes.INSTANCE_OF_SPECIAL) ||
+                        !objectNode.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME).equals(templateElementClass))
+                    throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", templateElementClass));
                 
-                String attributeType = classMetadata.getType(attributeNames[i]);
-                if (AttributeMetadata.isPrimitive(attributeType)) {
-                    oldValues += " " + (objectNode.hasProperty(attributeNames[i]) ? objectNode.getProperty(attributeNames[i]) : "null");
-                    
-                    if (attributeValues[i] == null) {
-                        if (objectNode.hasProperty(attributeNames[i]))
-                            objectNode.removeProperty(attributeNames[i]);
-                    } else {                        
-                        objectNode.setProperty(attributeNames[i], Util.getRealValue(attributeValues[i], attributeType));
-                        newValues += " " + objectNode.getProperty(attributeNames[i]);
-                    }
-                } else { //It's a list type
-                    for (Relationship relatedToRelationship : objectNode.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO)) {
-                        if (relatedToRelationship.hasProperty(Constants.PROPERTY_NAME) && relatedToRelationship.getProperty(Constants.PROPERTY_NAME).equals(attributeNames[i])) {
-                            oldValues += " " + (relatedToRelationship.getEndNode().hasProperty(Constants.PROPERTY_NAME) ? relatedToRelationship.getEndNode().getProperty(Constants.PROPERTY_NAME) : "null");
-                            relatedToRelationship.delete();
-                            break;
-                        }
-                    }
-                    
-                    if (attributeValues[i] != null && !attributeValues[i].equals("0") ) { //NOI18N 
-                        
-                        Node listTypeItemNode = graphDb.findNode(listTypeItemLabel, Constants.PROPERTY_UUID, attributeValues[i]);
+                String affectedProperties = "", oldValues = "", newValues = "";
+                ClassMetadata classMetadata = cm.getClass(templateElementClass);
 
-                        if (listTypeItemNode == null)
-                            throw new ApplicationObjectNotFoundException(String.format("A list type %s with id %s could not be found", attributeType, attributeValues[i]));
-                        
-                        Relationship relatedToRelationship = objectNode.createRelationshipTo(listTypeItemNode, RelTypes.RELATED_TO);
-                        relatedToRelationship.setProperty(Constants.PROPERTY_NAME, attributeNames[i]);
-                        
-                        newValues += " " + (listTypeItemNode.hasProperty(Constants.PROPERTY_NAME) ? listTypeItemNode.getProperty(Constants.PROPERTY_NAME) : "null");
-                    } 
+                for (int i = 0; i < attributeNames.length; i++) {
+                    if (!classMetadata.hasAttribute(attributeNames[i]))
+                        throw new MetadataObjectNotFoundException(String.format("Class %s does not have any attribute named %s", templateElementClass, attributeNames[i]));
+
+                    affectedProperties += " " + attributeNames[i];
+
+                    String attributeType = classMetadata.getType(attributeNames[i]);
+                    if (AttributeMetadata.isPrimitive(attributeType)) {
+                        oldValues += " " + (objectNode.hasProperty(attributeNames[i]) ? objectNode.getProperty(attributeNames[i]) : "null");
+
+                        if (attributeValues[i] == null) {
+                            if (objectNode.hasProperty(attributeNames[i]))
+                                objectNode.removeProperty(attributeNames[i]);
+                        } else {                        
+                            objectNode.setProperty(attributeNames[i], Util.getRealValue(attributeValues[i], attributeType));
+                            newValues += " " + objectNode.getProperty(attributeNames[i]);
+                        }
+                    } else { //It's a list type
+                        for (Relationship relatedToRelationship : objectNode.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO)) {
+                            if (relatedToRelationship.hasProperty(Constants.PROPERTY_NAME) && relatedToRelationship.getProperty(Constants.PROPERTY_NAME).equals(attributeNames[i])) {
+                                oldValues += " " + (relatedToRelationship.getEndNode().hasProperty(Constants.PROPERTY_NAME) ? relatedToRelationship.getEndNode().getProperty(Constants.PROPERTY_NAME) : "null");
+                                relatedToRelationship.delete();
+                                break;
+                            }
+                        }
+
+                        if (attributeValues[i] != null && !attributeValues[i].equals("0") ) { //NOI18N 
+                            Node listTypeItemNode = graphDb.findNode(listTypeItemLabel, Constants.PROPERTY_UUID, attributeValues[i]);
+
+                            if (listTypeItemNode == null)
+                                throw new ApplicationObjectNotFoundException(String.format("A list type %s with id %s could not be found", attributeType, attributeValues[i]));
+
+                            Relationship relatedToRelationship = objectNode.createRelationshipTo(listTypeItemNode, RelTypes.RELATED_TO);
+                            relatedToRelationship.setProperty(Constants.PROPERTY_NAME, attributeNames[i]);
+
+                            newValues += " " + (listTypeItemNode.hasProperty(Constants.PROPERTY_NAME) ? listTypeItemNode.getProperty(Constants.PROPERTY_NAME) : "null");
+                        } 
+                    }
                 }
+                String templateElementName = objectNode.hasProperty(Constants.PROPERTY_NAME) ? (String) objectNode.getProperty(Constants.PROPERTY_NAME) : "null";
+                tx.success();
+                return new ChangeDescriptor(affectedProperties, oldValues, newValues, String.format("Updated template element %s [%s]", templateElementName, templateElementClass));
+            } catch (NotFoundException ex) {
+                throw new ApplicationObjectNotFoundException(String.format("Template object %s of class %s could not be found", templateElementId, templateElementClass));
             }
-            String templateElementName = objectNode.hasProperty(Constants.PROPERTY_NAME) ? (String) objectNode.getProperty(Constants.PROPERTY_NAME) : "null";
-            tx.success();
-            return new ChangeDescriptor(affectedProperties, oldValues, newValues, String.format("Updated template element %s [%s]", templateElementName, templateElementClass));
         }
     }
 
     @Override
-    public ChangeDescriptor deleteTemplateElement(String templateElementClass, long templateElementId) 
+    public ChangeDescriptor deleteTemplateElement(String templateElementClass, String templateElementId) 
             throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
-            
-            Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, templateElementClass);
-            
-            if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", templateElementClass));
-            
-            Node templateObjectNode = null;
-            
-            for (Relationship instanceOfSpecialRelationship : classNode.getRelationships(Direction.INCOMING, RelTypes.INSTANCE_OF_SPECIAL)) {
-                Node startNode = instanceOfSpecialRelationship.getStartNode();
-                if (startNode.getId() == templateElementId) {
-                    templateObjectNode = startNode;
-                    break;
-                }
-            }
-            
-            if (templateObjectNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("Template object %s of class %s could not be found", templateElementId, templateElementClass));
-            
+            Node templateObjectNode = graphDb.findNode(templateElementLabel, Constants.PROPERTY_UUID, templateElementId);
+                
+            if (!templateObjectNode.hasRelationship(Direction.OUTGOING, RelTypes.INSTANCE_OF_SPECIAL) ||
+                    !templateObjectNode.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME).equals(templateElementClass))
+                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", templateElementClass));
+             
             String templateObjectName = templateObjectNode.hasProperty(Constants.PROPERTY_NAME) ? (String) templateObjectNode.getProperty(Constants.PROPERTY_NAME) : "null";
             //Delete the template element recursively
             Util.deleteTemplateObject(templateObjectNode);
             
             tx.success();
             return new ChangeDescriptor("", "", "", String.format("Deleted template element %s [%s]", templateObjectName, templateElementClass));
+        } catch (NotFoundException ex) {
+            throw new ApplicationObjectNotFoundException(String.format("Template object %s of class %s could not be found", templateElementId, templateElementClass));
         }
     }
 
@@ -2963,19 +2889,20 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             while (queryResult.hasNext()) {
                 Node templateNode = queryResult.next();
-                templates.add(new TemplateObjectLight(className, templateNode.getId(), (String)templateNode.getProperty(Constants.PROPERTY_NAME)));
+                templates.add(new TemplateObjectLight(className, (String)templateNode.getProperty(Constants.PROPERTY_UUID), 
+                        (String)templateNode.getProperty(Constants.PROPERTY_NAME)));
             }
             return templates;
         }
     }
     
     @Override
-    public List<TemplateObjectLight> getTemplateElementChildren(String templateElementClass, long templateElementId)  {
+    public List<TemplateObjectLight> getTemplateElementChildren(String templateElementClass, String templateElementId)  {
         try (Transaction tx = graphDb.beginTx()) {
             
             String query = "MATCH (classNode)<-[:" + RelTypes.INSTANCE_OF_SPECIAL + 
                     "]-(templateElement)<-[:" + RelTypes.CHILD_OF + "]-(templateElementChild) "
-                    + "WHERE classNode.name={templateElementClass} AND id(templateElement) = {templateElementId} "
+                    + "WHERE classNode.name={templateElementClass} AND templateElement._uuid = {templateElementId} "
                     + "RETURN templateElementChild ORDER BY templateElementChild.name ASC"; //NOI18N
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put("templateElementClass", templateElementClass); //NOI18N
@@ -2986,7 +2913,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             while (queryResult.hasNext()) {
                 Node templateChildNode = queryResult.next();
                 templateElementChildren.add(new TemplateObjectLight((String)templateChildNode.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME), 
-                        templateChildNode.getId(), (String)templateChildNode.getProperty(Constants.PROPERTY_NAME)));
+                        (String)templateChildNode.getProperty(Constants.PROPERTY_UUID), (String)templateChildNode.getProperty(Constants.PROPERTY_NAME)));
             }
             
             return templateElementChildren; 
@@ -2994,13 +2921,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public List<TemplateObjectLight> getTemplateSpecialElementChildren(String tsElementClass, long tsElementId) {
+    public List<TemplateObjectLight> getTemplateSpecialElementChildren(String tsElementClass, String tsElementId) {
         try (Transaction tx = graphDb.beginTx()) {
-            
-            
             String query = "MATCH (classNode)<-[:" + RelTypes.INSTANCE_OF_SPECIAL + 
                     "]-(templateElement)<-[:" + RelTypes.CHILD_OF_SPECIAL + "]-(templateElementChild) "
-                    + "WHERE classNode.name={templateElementClass} AND id(templateElement) = {templateElementId} "
+                    + "WHERE classNode.name={templateElementClass} AND templateElement._uuid = {templateElementId} "
                     + "RETURN templateElementChild ORDER BY templateElementChild.name ASC"; //NOI18N
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put("templateElementClass", tsElementClass); //NOI18N
@@ -3011,7 +2936,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             while (queryResult.hasNext()) {
                 Node templateChildNode = queryResult.next();
                 templateElementChildren.add(new TemplateObjectLight((String)templateChildNode.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME), 
-                        templateChildNode.getId(), (String)templateChildNode.getProperty(Constants.PROPERTY_NAME)));
+                        (String)templateChildNode.getProperty(Constants.PROPERTY_UUID), (String)templateChildNode.getProperty(Constants.PROPERTY_NAME)));
             }
             
             return templateElementChildren; 
@@ -3019,7 +2944,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public TemplateObject getTemplateElement(String templateElementClass, long templateElementId)
+    public TemplateObject getTemplateElement(String templateElementClass, String templateElementId)
         throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             
@@ -3032,7 +2957,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             for (Relationship instanceOfSpecialRelationship : classNode.getRelationships(Direction.INCOMING, RelTypes.INSTANCE_OF_SPECIAL)) {
                 Node startNode = instanceOfSpecialRelationship.getStartNode();
-                if (startNode.getId() == templateElementId) {
+                if (templateElementId.equals(startNode.getProperty(Constants.PROPERTY_UUID))) {
                     templateObjectNode = startNode;
                     break;
                 }
@@ -3046,13 +2971,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public long[] copyTemplateElements(String[] sourceObjectsClassNames, long[] sourceObjectsIds, String newParentClassName, 
-            long newParentId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, ArraySizeMismatchException {
+    public String[] copyTemplateElements(String[] sourceObjectsClassNames, String[] sourceObjectsIds, String newParentClassName, 
+            String newParentId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, ArraySizeMismatchException {
         
         if (sourceObjectsClassNames.length != sourceObjectsIds.length)
             throw new ArraySizeMismatchException("The sourceObjectsClassNames and sourceObjectsIds arrays have different sizes");
         try (Transaction tx = graphDb.beginTx()) {
-            long[] newTemplateElements = new long[sourceObjectsClassNames.length];
+            String[] newTemplateElements = new String[sourceObjectsClassNames.length];
             
             Node newParentNode = getTemplateElementInstance(newParentClassName, newParentId);
             
@@ -3060,7 +2985,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 Node templateObjectNode = getTemplateElementInstance(sourceObjectsClassNames[i], sourceObjectsIds[i]);
                 Node newTemplateElementInstance = copyTemplateElement(templateObjectNode, true);
                 newTemplateElementInstance.createRelationshipTo(newParentNode, RelTypes.CHILD_OF);
-                newTemplateElements[i] = newTemplateElementInstance.getId();
+                newTemplateElements[i] = (String)newTemplateElementInstance.getProperty(Constants.PROPERTY_UUID);
             }
             tx.success();
             return newTemplateElements;
@@ -3068,20 +2993,20 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public long [] copyTemplateSpecialElement(String[] sourceObjectsClassNames, long [] sourceObjectsIds, String newParentClassName, long newParentId) 
+    public String[] copyTemplateSpecialElement(String[] sourceObjectsClassNames, String[] sourceObjectsIds, String newParentClassName, String newParentId) 
      throws ArraySizeMismatchException, ApplicationObjectNotFoundException, MetadataObjectNotFoundException {
         if(sourceObjectsClassNames.length != sourceObjectsIds.length)
             throw new ArraySizeMismatchException("The sourceObjectsClassNames and sourceObjectsIds arrays have different sizes");
         try (Transaction tx = graphDb.beginTx()) {
-            long [] newTemplateSpecialElements = new long[sourceObjectsClassNames.length];
+            String[] newTemplateSpecialElements = new String[sourceObjectsClassNames.length];
             
             Node newParentNode = getTemplateElementInstance(newParentClassName, newParentId);
             
-            for (int i = 0; i < sourceObjectsClassNames.length; i += 1) {
+            for (int i = 0; i < sourceObjectsClassNames.length; i++) {
                 Node templateObjectNode = getTemplateElementInstance(sourceObjectsClassNames[i], sourceObjectsIds[i]);
                 Node newTemplateSpecialElementInstance = copyTemplateElement(templateObjectNode, true);
                 newTemplateSpecialElementInstance.createRelationshipTo(newParentNode, RelTypes.CHILD_OF_SPECIAL);
-                newTemplateSpecialElements[i] = newTemplateSpecialElementInstance.getId();
+                newTemplateSpecialElements[i] = (String)newTemplateSpecialElementInstance.getProperty(Constants.PROPERTY_UUID);
             }
             tx.success();
             return newTemplateSpecialElements;
@@ -3303,7 +3228,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             poolNode.delete();
     }
     
-    private Node getTemplateElementInstance(String templateElementClassName, long templateElementId) throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException {
+    private Node getTemplateElementInstance(String templateElementClassName, String templateElementId) throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException {
         Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, templateElementClassName);
             
         if (classNode == null)
@@ -3313,7 +3238,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
         for (Relationship instanceOfSpecialRelationship : classNode.getRelationships(Direction.INCOMING, RelTypes.INSTANCE_OF_SPECIAL)) {
             Node startNode = instanceOfSpecialRelationship.getStartNode();
-            if (startNode.getId() == templateElementId) {
+            if (templateElementId.equals(startNode.getProperty(Constants.PROPERTY_UUID))) {
                 templateElementNode = startNode;
                 break;
             }
@@ -3327,7 +3252,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     private Node copyTemplateElement(Node templateObject, boolean recursive) {
         
-        Node newTemplateElementInstance = graphDb.createNode();
+        Node newTemplateElementInstance = graphDb.createNode(templateElementLabel);
+        newTemplateElementInstance.setProperty(Constants.PROPERTY_UUID, UUID.randomUUID().toString());
+        
         for (String property : templateObject.getPropertyKeys())
             newTemplateElementInstance.setProperty(property, templateObject.getProperty(property));
         
@@ -4814,12 +4741,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     attributes.put(relationshipName, String.valueOf(aRelatedToRelationship.getEndNode().getId()));
             } else //This verification will help us find potential inconsistencies with list types
                                   //What this does is to verify if is there is a RELATED_TO relationship that shouldn't exist because its name is not an attribute of the class
-                throw new InvalidArgumentException(String.format("The object with %s (%s) is related to list type %s (%s), but that is not consistent with the data model", 
+                throw new InvalidArgumentException(String.format("The object %s (%s) is related to list type %s (%s), but that is not consistent with the data model", 
                             templateInstanceNode.getProperty(Constants.PROPERTY_NAME), templateInstanceNode.getId(), aRelatedToRelationship.getEndNode().getProperty(Constants.PROPERTY_NAME), 
                             aRelatedToRelationship.getEndNode().getId()));
         } 
 
-        return new TemplateObject(classMetadata.getName(), templateInstanceNode.getId(), name, attributes);
+        return new TemplateObject(classMetadata.getName(), (String)templateInstanceNode.getProperty(Constants.PROPERTY_UUID), name, attributes);
     }
    
     /**
@@ -4981,5 +4908,87 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             rel.delete();
 
         instance.delete();
+    }
+    
+    private void addDeviceNodeChildrenAsXml(String id, String className, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException, ApplicationObjectNotFoundException, InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            String columnName = "childNode"; //NOI18N
+
+            String cypherQuery = String.format(
+                "MATCH (classNode)<-[:%s]-(objectNode)<-[:%s]-(objChildNode) "
+              + "WHERE objectNode._uuid = {id} AND classNode.name = {className}"
+              + "RETURN objChildNode AS %s"
+              , RelTypes.INSTANCE_OF, RelTypes.CHILD_OF, columnName);
+
+            HashMap<String, Object> queryParameters = new HashMap<>();
+            queryParameters.put("id", id); //NOI18N
+            queryParameters.put("className", className); //NOI18N
+            
+            Result result = graphDb.execute(cypherQuery, queryParameters);
+            Iterator<Node> column = result.columnAs(columnName);
+
+            for (Node deviceNode : Iterators.asIterable(column))
+                addDeviceNodeAsXML(deviceNode, id, xmlew, xmlef);
+        }
+    }
+    
+    private void addDeviceNodeAsXML(Node deviceNode, String parentId, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException, ApplicationObjectNotFoundException, InvalidArgumentException {
+        QName tagDevice = new QName("device"); // NOI18N
+        
+        String deviceId = (String) deviceNode.getProperty(Constants.PROPERTY_UUID);
+        String className = Util.getClassName(deviceNode);
+
+        xmlew.add(xmlef.createStartElement(tagDevice, null, null));
+        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), deviceId));
+        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_NAME), deviceNode.getProperty(Constants.PROPERTY_NAME).toString()));
+        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASS_NAME), className));
+        xmlew.add(xmlef.createAttribute(new QName("parentId"), parentId)); //NOI18N     
+        
+        addDeviceModelAsXML(deviceId, xmlew, xmlef);
+        
+        xmlew.add(xmlef.createEndElement(tagDevice, null));
+        
+        addDeviceNodeChildrenAsXml(deviceId, className, xmlew, xmlef);
+    }
+    
+    private void addDeviceModelAsXML(String id, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException, ApplicationObjectNotFoundException, InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node objectNode = graphDb.findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, id);
+            
+            Node modelNode = null;
+            
+            for (Relationship aListTypeAttributeRelationship : objectNode.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO)) {
+                if (aListTypeAttributeRelationship.getProperty(Constants.PROPERTY_NAME).equals("model")) {
+                    modelNode = aListTypeAttributeRelationship.getEndNode();
+                    break;
+                }
+            }
+            
+            if (modelNode != null && modelNode.hasRelationship(RelTypes.HAS_VIEW, Direction.OUTGOING)) {
+                Node layoutNode = modelNode.getSingleRelationship(RelTypes.HAS_VIEW, Direction.OUTGOING).getEndNode();
+                QName tagModel = new QName("model");
+
+                xmlew.add(xmlef.createStartElement(tagModel, null, null));
+                xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), (String)modelNode.getProperty(Constants.PROPERTY_UUID)));
+                xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASS_NAME), 
+                        (String)modelNode.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME)));
+                xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_NAME), (String)modelNode.getProperty(Constants.PROPERTY_NAME)));
+
+                QName tagView = new QName("view");
+
+                xmlew.add(xmlef.createStartElement(tagView, null, null));
+                xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), Long.toString(layoutNode.getId())));
+                xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASS_NAME), (String)layoutNode.getProperty(Constants.PROPERTY_CLASS_NAME)));
+
+                QName tagStructure = new QName("structure");
+                xmlew.add(xmlef.createStartElement(tagStructure, null, null));
+                if (layoutNode.hasProperty(Constants.PROPERTY_STRUCTURE))
+                    xmlew.add(xmlef.createCharacters(DatatypeConverter.printBase64Binary((byte[])layoutNode.getProperty(Constants.PROPERTY_STRUCTURE))));
+                xmlew.add(xmlef.createEndElement(tagStructure, null));
+                xmlew.add(xmlef.createEndElement(tagView, null));  
+                xmlew.add(xmlef.createEndElement(tagModel, null));  
+            }
+        }
     }
 }

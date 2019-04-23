@@ -71,7 +71,7 @@ public class AddServiceWindow extends Window {
                         Notifications.showError("You must select a service type");
                     else {
                         wsBean.createPoolItem(servicePool.getId(), cmbServiceTypes.getSelectedItem().get().getClassName(), 
-                                new String[] { "name" }, new String[] { txtName.getValue() }, -1, Page.getCurrent().getWebBrowser().getAddress(), 
+                                new String[] { "name" }, new String[] { txtName.getValue() }, null, Page.getCurrent().getWebBrowser().getAddress(), 
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
                         listener.doIt();
                         close();
@@ -160,7 +160,7 @@ public class AddServiceWindow extends Window {
                         Notifications.showError("You must fill-in all the fields");
                     else {
                         wsBean.createPoolItem(cmbServicePools.getSelectedItem().get().getId(), cmbServiceTypes.getSelectedItem().get().getClassName(), 
-                                new String[] { "name" }, new String[] { txtName.getValue()}, -1, Page.getCurrent().getWebBrowser().getAddress(), 
+                                new String[] { "name" }, new String[] { txtName.getValue()}, null, Page.getCurrent().getWebBrowser().getAddress(), 
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
                         listener.doIt();
                         close();

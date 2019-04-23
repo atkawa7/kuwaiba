@@ -256,7 +256,8 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                     if (matchingBridgeDomain == null) {
                         HashMap<String, String> defaultAttributes = new HashMap<>();
                         defaultAttributes.put(Constants.PROPERTY_NAME, bridgeDomainInDevice.getName());
-                        String newBridgeDomain = bem.createSpecialObject("BridgeDomain", relatedOject.getClassName(), relatedOject.getId(), defaultAttributes, -1);
+                        String newBridgeDomain = bem.createSpecialObject("BridgeDomain", relatedOject.getClassName(), 
+                                relatedOject.getId(), defaultAttributes, null);
                         aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [BridgeDomain] (id:%s)", bridgeDomainInDevice.getName(), newBridgeDomain));
                         res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("Check if Bridge Domain %s exists within %s", bridgeDomainInDevice.getName(), relatedOject), 
                                     "The Bridge Domain did not exist and was created successfully"));
@@ -291,7 +292,8 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                             if (matchingBridgeDomainInterface == null) {
                                 HashMap<String, String> defaultAttributes = new HashMap<>();
                                 defaultAttributes.put(Constants.PROPERTY_NAME, networkInterface.getName());
-                                String newBridgeDomainInterface = bem.createSpecialObject("BridgeDomainInterface", "BridgeDomain", matchingBridgeDomain.getId(), defaultAttributes, -1);
+                                String newBridgeDomainInterface = bem.createSpecialObject("BridgeDomainInterface", "BridgeDomain", 
+                                        matchingBridgeDomain.getId(), defaultAttributes, null);
                                 bem.createSpecialRelationship(relatedOject.getClassName(), relatedOject.getId(),"BridgeDomain", matchingBridgeDomain.getId(), "networkBridgeInterface", false);
                                 bem.createSpecialRelationship(relatedOject.getClassName(), relatedOject.getId(),"BridgeDomain", matchingBridgeDomain.getId(), "networkBridgeInterface", false);
                                 res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
@@ -339,7 +341,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                                     HashMap<String, String> defaultAttributes = new HashMap<>();
                                     defaultAttributes.put(Constants.PROPERTY_NAME, interfaceNameTokens[interfaceNameTokens.length - 1]);
                                     String newServiceInstance = bem.createObject(Constants.CLASS_SERVICE_INSTANCE, matchingPhysicalInterface.getClassName(), matchingPhysicalInterface.getId(), 
-                                            defaultAttributes, -1);
+                                            defaultAttributes, null);
                                     
                                     res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
                                         String.format("Service Instance %s did not exist and was created.", networkInterface.getName())));
@@ -409,7 +411,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                                     HashMap<String, String> defaultAttributes = new HashMap<>();
                                     defaultAttributes.put(Constants.PROPERTY_NAME, interfaceNameTokens[interfaceNameTokens.length - 1]);
                                     String newVirtualPort = bem.createObject(Constants.CLASS_VIRTUALPORT, matchingPhysicalInterface.getClassName(), matchingPhysicalInterface.getId(), 
-                                            defaultAttributes, -1);
+                                            defaultAttributes, null);
                                     
                                     res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
                                         String.format("Subinterface %s did not exist and was created.", networkInterface)));

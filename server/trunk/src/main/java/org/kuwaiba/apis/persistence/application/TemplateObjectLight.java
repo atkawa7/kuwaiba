@@ -29,7 +29,7 @@ public class TemplateObjectLight implements Comparable<TemplateObjectLight> {
     /**
      * The id of the template object
      */
-    private long id;
+    private String id;
     /**
      * The name of the template object
      */
@@ -45,17 +45,17 @@ public class TemplateObjectLight implements Comparable<TemplateObjectLight> {
      * @param name The name of the template object
      * @param className The class the object is instance of
      */
-    public TemplateObjectLight(String className, long id, String name) {
+    public TemplateObjectLight(String className, String id, String name) {
         this.id = id;
         this.name = name;
         this.className = className;
     } 
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

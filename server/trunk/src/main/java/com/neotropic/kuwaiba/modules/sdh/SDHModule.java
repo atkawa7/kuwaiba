@@ -186,7 +186,7 @@ public class SDHModule implements GenericCommercialModule {
             if (communicationsEquipmentB == null)
                 throw new ServerSideException(String.format("The specified port (%s : %s) doesn't seem to be located in a communications equipment", classNameEndpointB, idEndpointB));
             
-            newConnectionId = bem.createSpecialObject(linkType, null, "-1", attributesToBeSet, -1);                      
+            newConnectionId = bem.createSpecialObject(linkType, null, "-1", attributesToBeSet, null);                      
                        
             bem.createSpecialRelationship(linkType, newConnectionId, classNameEndpointA, idEndpointA, RELATIONSHIP_SDHTLENDPOINTA, true);
             bem.createSpecialRelationship(linkType, newConnectionId, classNameEndpointB, idEndpointB, RELATIONSHIP_SDHTLENDPOINTB, true);
@@ -246,7 +246,7 @@ public class SDHModule implements GenericCommercialModule {
             attributesToBeSet.put(Constants.PROPERTY_NAME, defaultName == null ? "" : defaultName );
             
             
-            newConnectionId = bem.createSpecialObject(linkType, null, "-1", attributesToBeSet, -1);                      
+            newConnectionId = bem.createSpecialObject(linkType, null, "-1", attributesToBeSet, null);                      
             
             //We add a relationship between the shelves so we can easily find a route between two equipment when creatin low order connections
             //based on ContainerLink paths           
@@ -310,10 +310,10 @@ public class SDHModule implements GenericCommercialModule {
             
             //All tributary links must be delivered using a container link
             String containerLinkType = linkType.replace("TributaryLink", ""); //The name of the corresponding container link is the same as the tributary link without the suffix "TributaryLink"
-            newContainerLinkId = bem.createSpecialObject(containerLinkType, null, "-1", attributesToBeSet, -1);
+            newContainerLinkId = bem.createSpecialObject(containerLinkType, null, "-1", attributesToBeSet, null);
             
             //The new tributary link
-            newTributaryLinkId = bem.createSpecialObject(linkType, null, "-1", attributesToBeSet, -1);
+            newTributaryLinkId = bem.createSpecialObject(linkType, null, "-1", attributesToBeSet, null);
             
             //Relate the new tributary link to the endpoints (ports)
             bem.createSpecialRelationship(linkType, newTributaryLinkId, classNameEndpointA, idEndpointA, RELATIONSHIP_SDHTTLENDPOINTA, true);

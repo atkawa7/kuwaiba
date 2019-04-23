@@ -1426,7 +1426,7 @@ public class KuwaibaService {
             @WebParam(name = "className")String className,
             @WebParam(name = "attributeNames")String[] attributeNames,
             @WebParam(name = "attributeValues")String[] attributeValues,
-            @WebParam(name = "templateId")long templateId,
+            @WebParam(name = "templateId")String templateId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.createPoolItem(poolId, className, attributeNames, attributeValues, templateId, getIPAddress(), sessionId);
@@ -3040,7 +3040,7 @@ public class KuwaibaService {
             @WebParam(name = "parentOid")String parentOid,
             @WebParam(name = "attributeNames")String[] attributeNames,
             @WebParam(name = "attributeValues")String[] attributeValues,
-            @WebParam(name = "templateId")long templateId,
+            @WebParam(name = "templateId")String templateId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.createObject(className,parentObjectClassName, parentOid,attributeNames, attributeValues, templateId, getIPAddress(), sessionId);
@@ -3078,7 +3078,7 @@ public class KuwaibaService {
             @WebParam(name = "parentOid")String parentOid,
             @WebParam(name = "attributeNames")String[] attributeNames,
             @WebParam(name = "attributeValues")String[] attributeValues,
-            @WebParam(name = "templateId")long templateId,
+            @WebParam(name = "templateId")String templateId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.createSpecialObject(className,parentObjectClassName, parentOid,attributeNames, attributeValues, templateId, getIPAddress(), sessionId);
@@ -3551,7 +3551,7 @@ public class KuwaibaService {
             @WebParam(name = "parentId")String parentId,
             @WebParam(name = "name")String name,
             @WebParam(name = "connectionClass") String connectionClass,
-            @WebParam(name = "templateId") long templateId,
+            @WebParam(name = "templateId") String templateId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.createPhysicalConnection(aObjectClass, aObjectId,bObjectClass, bObjectId,
@@ -5360,7 +5360,7 @@ public class KuwaibaService {
      *                             If the template class is abstract.
      */
     @WebMethod(operationName = "createTemplate")
-    public long createTemplate(@WebParam(name = "templateClass")String templateClass, 
+    public String createTemplate(@WebParam(name = "templateClass")String templateClass, 
             @WebParam(name = "templateName")String templateName, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
@@ -5389,9 +5389,9 @@ public class KuwaibaService {
      *                             If the class provided to create the new element from is abstract.
      */
     @WebMethod(operationName = "createTemplateElement")
-    public long createTemplateElement(@WebParam(name = "templateElementClass")String templateElementClass, 
+    public String createTemplateElement(@WebParam(name = "templateElementClass")String templateElementClass, 
             @WebParam(name = "templateElementParentClassName")String templateElementParentClassName,
-            @WebParam(name = "templateElementParentId")long templateElementParentId,
+            @WebParam(name = "templateElementParentId")String templateElementParentId,
             @WebParam(name = "templateElementName")String templateElementName,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
@@ -5422,10 +5422,10 @@ public class KuwaibaService {
      *                             If the element parent can no be found
      */
     @WebMethod(operationName = "createTemplateSpecialElement")
-    public long createTemplateSpecialElement(
+    public String createTemplateSpecialElement(
             @WebParam(name = "templateElementClass")String tsElementClass, 
             @WebParam(name = "tsElementParentClassName")String tsElementParentClassName,
-            @WebParam(name = "tsElementParentId")long tsElementParentId,
+            @WebParam(name = "tsElementParentId")String tsElementParentId,
             @WebParam(name = "tsElementName")String tsElementName,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
@@ -5456,10 +5456,10 @@ public class KuwaibaService {
      *                             If the given pattern to generate the name has less possibilities that the number of template elements to be created
      */
     @WebMethod(operationName = "createBulkTemplateElement")
-    public long[] createBulkTemplateElement(
+    public String[] createBulkTemplateElement(
         @WebParam(name = "templateElementClass") String templateElementClassName, 
         @WebParam(name = "templateElementParentClassName") String templateElementParentClassName, 
-        @WebParam(name = "templateElementParentId") long templateElementParentId, 
+        @WebParam(name = "templateElementParentId") String templateElementParentId, 
         @WebParam(name = "numberOfTemplateElements") int numberOfTemplateElements, 
         @WebParam(name = "templateElementNamePattern") String templateElementNamePattern, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
@@ -5491,10 +5491,10 @@ public class KuwaibaService {
      *                             If the given pattern to generate the name has less possibilities that the number of special template elements to be created
      */
     @WebMethod(operationName = "createBulkSpecialTemplateElement")
-    public long[] createBulkSpecialTemplateElement(
+    public String[] createBulkSpecialTemplateElement(
         @WebParam(name = "stElementClass") String stElementClass, 
         @WebParam(name = "stElementParentClassName") String stElementParentClassName, 
-        @WebParam(name = "stElementParentId") long stElementParentId, 
+        @WebParam(name = "stElementParentId") String stElementParentId, 
         @WebParam(name = "numberOfTemplateElements") int numberOfTemplateElements, 
         @WebParam(name = "stElementNamePattern") String stElementNamePattern, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
@@ -5526,7 +5526,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "updateTemplateElement")
     public void updateTemplateElement(@WebParam(name = "templateElementClass")String templateElementClass, 
-            @WebParam(name = "templateElementId")long templateElementId,
+            @WebParam(name = "templateElementId")String templateElementId,
             @WebParam(name = "attributeNames")String[] attributeNames,
             @WebParam(name = "attributeValues")String[] attributeValues,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
@@ -5554,7 +5554,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "deleteTemplateElement")
     public void deleteTemplateElement(@WebParam(name = "templateElementClass")String templateElementClass, 
-            @WebParam(name = "templateElementId")long templateElementId,
+            @WebParam(name = "templateElementId")String templateElementId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             wsBean.deleteTemplateElement(templateElementClass, templateElementId, getIPAddress(), sessionId);
@@ -5606,10 +5606,10 @@ public class KuwaibaService {
      *                             If the arrays provided as arguments have different sizes.
      */
     @WebMethod(operationName = "copyTemplateElements")
-    public long[] copyTemplateElements(@WebParam(name = "sourceObjectsClassNames")String[] sourceObjectsClassNames, 
-                                       @WebParam(name = "sourceObjectsIds")long[] sourceObjectsIds, 
+    public String[] copyTemplateElements(@WebParam(name = "sourceObjectsClassNames")String[] sourceObjectsClassNames, 
+                                       @WebParam(name = "sourceObjectsIds")String[] sourceObjectsIds, 
                                        @WebParam(name = "newParentClassName")String newParentClassName,
-                                       @WebParam(name = "newParentId")long newParentId, 
+                                       @WebParam(name = "newParentId")String newParentId, 
                                        @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.copyTemplateElements(sourceObjectsClassNames, sourceObjectsIds, newParentClassName, newParentId, getIPAddress(), sessionId);
@@ -5638,11 +5638,11 @@ public class KuwaibaService {
      *                             If any of the source template elements could not be found.
      */
     @WebMethod(operationName = "copyTemplateSpecialElements")
-    public long[] copyTemplateSpecialElements(
+    public String[] copyTemplateSpecialElements(
         @WebParam(name = "sourceObjectsClassNames")String[] sourceObjectsClassNames, 
-        @WebParam(name = "sourceObjectsIds")long[] sourceObjectsIds, 
+        @WebParam(name = "sourceObjectsIds")String[] sourceObjectsIds, 
         @WebParam(name = "newParentClassName")String newParentClassName,
-        @WebParam(name = "newParentId")long newParentId, 
+        @WebParam(name = "newParentId")String newParentId, 
         @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         
         try {
@@ -5668,7 +5668,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "getTemplateElementChildren")
     public List<RemoteObjectLight> getTemplateElementChildren(
         @WebParam(name = "templateElementClass")String templateElementClass, 
-        @WebParam(name = "templateElementId")long templateElementId, 
+        @WebParam(name = "templateElementId")String templateElementId, 
         @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         
         try {
@@ -5694,7 +5694,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "getTemplateSpecialElementChildren")
     public List<RemoteObjectLight> getTemplateSpecialElementChildren(
         @WebParam(name = "tsElementClass")String tsElementClass, 
-        @WebParam(name = "tsElementId")long tsElementId, 
+        @WebParam(name = "tsElementId")String tsElementId, 
         @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         
         try {
@@ -5722,7 +5722,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getTemplateElement")
     public RemoteObject getTemplateElement(@WebParam(name = "templateElementClass")String templateElementClass, 
-            @WebParam(name = "templateElementId")long templateElementId, 
+            @WebParam(name = "templateElementId")String templateElementId, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.getTemplateElement(templateElementClass, templateElementId, getIPAddress(), sessionId);

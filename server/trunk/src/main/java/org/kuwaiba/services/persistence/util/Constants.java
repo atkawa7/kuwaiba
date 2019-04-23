@@ -120,7 +120,19 @@ public class Constants {
     /**
      * Name of the label for pools
      */
-    public static final String LABEL_POOL = "pools"; //NOI18N
+    public static final String LABEL_POOLS = "pools"; //NOI18N
+    /**
+     * Name of the label for device layouts.
+     */
+    public static final String LABEL_LAYOUTS = "layouts"; //NOI18N
+    /**
+     * Name of the label for templates.
+     */
+    public static final String LABEL_TEMPLATES = "templates"; //NOI18N
+    /**
+     * Name of the label for template elements.
+     */
+    public static final String LABEL_TEMPLATE_ELEMENTS = "templateElements"; //NOI18N
     /**
      * Label used for the special nodes
      */

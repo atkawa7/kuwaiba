@@ -71,7 +71,7 @@ public class AddCustomerWindow extends Window {
                         Notifications.showError("You must select a customer type");
                     else {
                         wsBean.createPoolItem(customerPool.getId(), cmbCustomerTypes.getSelectedItem().get().getClassName(), 
-                                new String[] { "name" }, new String[] { txtName.getValue() }, -1, Page.getCurrent().getWebBrowser().getAddress(), 
+                                new String[] { "name" }, new String[] { txtName.getValue() }, null, Page.getCurrent().getWebBrowser().getAddress(), 
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
                         listener.doIt();
                         close();
@@ -144,7 +144,7 @@ public class AddCustomerWindow extends Window {
                         Notifications.showError("You must fill-in all the fields");
                     else {
                         wsBean.createPoolItem(cmbCustomerPools.getSelectedItem().get().getId(), cmbCustomerTypes.getSelectedItem().get().getClassName(), 
-                                new String[] { "name" }, new String[] { txtName.getValue()}, -1, Page.getCurrent().getWebBrowser().getAddress(), 
+                                new String[] { "name" }, new String[] { txtName.getValue()}, null, Page.getCurrent().getWebBrowser().getAddress(), 
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
                         listener.doIt();
                         close();

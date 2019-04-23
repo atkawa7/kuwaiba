@@ -72,6 +72,7 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.NotFoundException;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Result;
@@ -111,6 +112,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * Pools Label.
      */
     private final Label poolLabel;
+    /**
+     * Templates label 
+     */
+    private Label templateLabel;
     /**
      * Special nodes Label.
      */
@@ -152,7 +157,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         
         this.inventoryObjectLabel = Label.label(Constants.LABEL_INVENTORY_OBJECTS);
         this.classLabel = Label.label(Constants.LABEL_CLASS);
-        this.poolLabel = Label.label(Constants.LABEL_POOL);
+        this.poolLabel = Label.label(Constants.LABEL_POOLS);
+        this.templateLabel = Label.label(Constants.LABEL_TEMPLATES);
         this.specialNodeLabel = Label.label(Constants.LABEL_SPECIAL_NODE);
         this.reportsLabel = Label.label(Constants.LABEL_REPORTS);
         this.contactsLabel = Label.label(Constants.LABEL_CONTACTS);
@@ -165,7 +171,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public String createObject(String className, String parentClassName, String parentOid, HashMap<String, String> attributes, long template)
+    public String createObject(String className, String parentClassName, String parentOid, HashMap<String, String> attributes, String templateId)
             throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
         
         if (parentOid == null)
@@ -207,32 +213,33 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 parentNode = graphDb.findNode(specialNodeLabel, Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
             
             Node newObject;
-            if (template == -1)
+            if (templateId == null || templateId.isEmpty())
                 newObject = createObject(classNode, myClass, attributes);
             else {
-                Node templateNode = null;
-                for (Relationship hasTemplateRelationship : classNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_TEMPLATE)) {
-                    Node endNode = hasTemplateRelationship.getEndNode();
-                    if (endNode.getId() == template){
-                        templateNode = endNode;
-                        break;
-                    }
+                try {
+                    Node templateNode = graphDb.findNode(templateLabel, Constants.PROPERTY_UUID, templateId);
+                    if (templateNode.hasRelationship(Direction.INCOMING, RelTypes.HAS_TEMPLATE)) {
+                        if (className.equals(templateNode.getSingleRelationship(RelTypes.HAS_TEMPLATE, Direction.INCOMING).
+                                getStartNode().getProperty(Constants.PROPERTY_NAME)))
+                            newObject = copyTemplateElement(templateNode, myClass, true);
+                        else
+                            throw new InvalidArgumentException(String.format("The template with id %s is not applicable to instances of class %s", templateId, className));
+                    } else 
+                        throw new InvalidArgumentException(String.format("The template with id %s is malformed", templateId));
+                    
+                } catch (NotFoundException ex) {
+                    throw new ApplicationObjectNotFoundException(String.format("No template with id %s was found for class %s", templateId, className));
                 }
-                
-                if (templateNode == null)
-                    throw new ApplicationObjectNotFoundException(String.format("No template with id %s was found for class %s", template, className));
-                
-                newObject = copyTemplateElement(templateNode, myClass, true);
             }
             newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);            
             tx.success();
-            return newObject.hasProperty(Constants.PROPERTY_UUID) ? newObject.getProperty(Constants.PROPERTY_UUID).toString() : null;
+            return (String)newObject.getProperty(Constants.PROPERTY_UUID);
         }
     }
     
     //TODO: Rewrite this!
     @Override
-    public String createObject(String className, String parentClassName, HashMap<String, String> attributes, long template, String criteria)
+    public String createObject(String className, String parentClassName, HashMap<String, String> attributes, String templateId, String criteria)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, ApplicationObjectNotFoundException {
         
         ClassMetadata objectClass = mem.getClass(className);
@@ -256,7 +263,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throw new InvalidArgumentException("The criteria is not valid, two components expected (attributeName:attributeValue)");
 
         if (splitCriteria[0].equals(Constants.PROPERTY_OID)) //The user is providing the id of te parent node explicitely
-            return createObject(className, parentClassName, splitCriteria[1], attributes, template);
+            return createObject(className, parentClassName, splitCriteria[1], attributes, templateId);
 
         ClassMetadata parentClass = mem.getClass(parentClassName);
         if (parentClass == null)
@@ -301,22 +308,23 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
 
             Node newObject;
-            if (template <= 0)
+            if (templateId == null || templateId.isEmpty())
                 newObject = createObject(classNode, objectClass, attributes);
             else {
-                Node templateNode = null;
-                for (Relationship hasTemplateRelationship : classNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_TEMPLATE)) {
-                    Node endNode = hasTemplateRelationship.getEndNode();
-                    if (endNode.getId() == template){
-                        templateNode = endNode;
-                        break;
-                    }
+                try {
+                    Node templateNode = graphDb.findNode(templateLabel, Constants.PROPERTY_UUID, templateId);
+                    if (templateNode.hasRelationship(Direction.INCOMING, RelTypes.HAS_TEMPLATE)) {
+                        if (objectClass.equals(templateNode.getSingleRelationship(RelTypes.HAS_TEMPLATE, Direction.INCOMING).
+                                getStartNode().getProperty(Constants.PROPERTY_NAME)))
+                            newObject = copyTemplateElement(templateNode, objectClass, true);
+                        else
+                            throw new InvalidArgumentException(String.format("The template with id %s is not applicable to instances of class %s", templateId, objectClass));
+                    } else 
+                        throw new InvalidArgumentException(String.format("The template with id %s is malformed", templateId));
+                    
+                } catch (NotFoundException ex) {
+                    throw new ApplicationObjectNotFoundException(String.format("No template with id %s was found for class %s", templateId, className));
                 }
-                
-                if (templateNode == null)
-                    throw new ApplicationObjectNotFoundException(String.format("No template with id %s was found for class %s", template, className));
-                
-                newObject = copyTemplateElement(templateNode, objectClass, true);
             }
             
             newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
@@ -327,7 +335,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public String createSpecialObject(String className, String parentClassName, String parentOid, HashMap<String,String> attributes, long template)
+    public String createSpecialObject(String className, String parentClassName, String parentOid, HashMap<String,String> attributes, String templateId)
             throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
         
         if (parentOid == null)
@@ -365,24 +373,26 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         
             Node newObject;
             
-            if (template == -1) 
+            if (templateId == null || templateId.isEmpty()) 
                 newObject = createObject(classNode, classMetadata, attributes);
                 
             else {
-                Node templateNode = null;
-                for (Relationship hasTemplateRelationship : classNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_TEMPLATE)) {
-                    Node endNode = hasTemplateRelationship.getEndNode();
-                    if (endNode.getId() == template){
-                        templateNode = endNode;
-                        break;
-                    }
+                try {
+                    Node templateNode = graphDb.findNode(templateLabel, Constants.PROPERTY_UUID, templateId);
+                    if (templateNode.hasRelationship(Direction.INCOMING, RelTypes.HAS_TEMPLATE)) {
+                        if (className.equals(templateNode.getSingleRelationship(RelTypes.HAS_TEMPLATE, Direction.INCOMING).
+                                getStartNode().getProperty(Constants.PROPERTY_NAME))) {
+                            newObject = copyTemplateElement(templateNode, classMetadata, true);
+                            updateObject(newObject, classMetadata, attributes); //Override the template values with those provided, if any
+                        }
+                        else
+                            throw new InvalidArgumentException(String.format("The template with id %s is not applicable to instances of class %s", templateId, className));
+                    } else 
+                        throw new InvalidArgumentException(String.format("The template with id %s is malformed", templateId));
+                    
+                } catch (NotFoundException ex) {
+                    throw new ApplicationObjectNotFoundException(String.format("No template with id %s was found for class %s", templateId, className));
                 }
-                
-                if (templateNode == null)
-                    throw new ApplicationObjectNotFoundException(String.format("No template with id %s was found for class %s", template, className));
-                
-                newObject = copyTemplateElement(templateNode, classMetadata, true);
-                updateObject(newObject, classMetadata, attributes); //Override the template values with those provided, if any
             }
             if (parentNode !=null)
                 newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
@@ -393,8 +403,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public String createPoolItem(String poolId, String className, String[] attributeNames, 
-    String[] attributeValues, long templateId) 
+    public String createPoolItem(String poolId, String className, String[] attributeNames, String[] attributeValues, String templateId) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException, 
             ArraySizeMismatchException, MetadataObjectNotFoundException {
         
@@ -412,7 +421,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             if (!pool.hasProperty(Constants.PROPERTY_CLASS_NAME))
                 throw new InvalidArgumentException("This pool has not set his class name attribute");
             if(className == null)
-                throw new InvalidArgumentException("classname cannot be null");
+                throw new InvalidArgumentException("The class namme  can not be null");
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
@@ -423,7 +432,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 throw new InvalidArgumentException(String.format("Class %s is not subclass of %s", className, (String)pool.getProperty(Constants.PROPERTY_CLASS_NAME)));
             
             HashMap<String, String> attributes = new HashMap<>();
-            if (attributeNames != null && attributeValues != null){
+            if (attributeNames != null && attributeValues != null) {
                 for (int i = 0; i < attributeNames.length; i++)
                     attributes.put(attributeNames[i], attributeValues[i]);
             }
@@ -437,7 +446,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public String [] createBulkObjects(String className, String parentClassName, String parentOid, int numberOfObjects, String namePattern) 
+    public String[] createBulkObjects(String className, String parentClassName, String parentOid, int numberOfObjects, String namePattern) 
         throws MetadataObjectNotFoundException, OperationNotPermittedException, BusinessObjectNotFoundException, InvalidArgumentException {
         
         if (parentOid == null)
@@ -3079,22 +3088,22 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     private Node copyTemplateElement(Node templateObject, ClassMetadata classToMap, boolean recursive) throws InvalidArgumentException {
         
         Node newInstance = graphDb.createNode(inventoryObjectLabel);
-                
-        String uuid = UUID.randomUUID().toString();
-        newInstance.setProperty(Constants.PROPERTY_UUID, uuid);
-        
-        for (String property : templateObject.getPropertyKeys()){
-            if(classToMap.isMandatory(property) && ((String)templateObject.getProperty(property)).isEmpty())
-                throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set null or empty", property));
-            
-            newInstance.setProperty(property, templateObject.getProperty(property));
+       
+        for (String property : templateObject.getPropertyKeys()) {
+            if (!property.equals(Constants.PROPERTY_UUID)) {
+                if(classToMap.isMandatory(property) && ((String)templateObject.getProperty(property)).isEmpty())
+                    throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set null or empty", property));
+
+                newInstance.setProperty(property, templateObject.getProperty(property));
+            }
         }
+        
         for (Relationship rel : templateObject.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING))
             newInstance.createRelationshipTo(rel.getEndNode(), RelTypes.RELATED_TO).setProperty(Constants.PROPERTY_NAME, rel.getProperty(Constants.PROPERTY_NAME));
         
         newInstance.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
-        
-        newInstance.createRelationshipTo(templateObject.getRelationships(RelTypes.INSTANCE_OF_SPECIAL).iterator().next().getEndNode(), RelTypes.INSTANCE_OF);
+        newInstance.createRelationshipTo(templateObject.getRelationships(RelTypes.INSTANCE_OF_SPECIAL).iterator().next().getEndNode(), 
+                RelTypes.INSTANCE_OF);
 
         if (recursive) {
             for (Relationship rel : templateObject.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING)) {
@@ -3108,6 +3117,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 newChild.createRelationshipTo(newInstance, RelTypes.CHILD_OF_SPECIAL);
             }
         }
+
+        newInstance.setProperty(Constants.PROPERTY_UUID, UUID.randomUUID().toString());
         return newInstance;
     }
 

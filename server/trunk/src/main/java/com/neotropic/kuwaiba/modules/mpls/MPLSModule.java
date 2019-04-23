@@ -28,7 +28,6 @@ import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessObject;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
-import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.BusinessRuleException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -148,7 +147,7 @@ public class MPLSModule implements GenericCommercialModule {
             BusinessObject communicationsEquipmentA, communicationsEquipmentB;
             //at least one side should be not null to create the MPLS link
             if(endpointAClassName != null && endpointAId != null || endpointBClassName != null && endpointBId != null){
-                newConnectionId = bem.createSpecialObject(Constants.CLASS_MPLSLINK, null, "-1", attributesToBeSet, -1);
+                newConnectionId = bem.createSpecialObject(Constants.CLASS_MPLSLINK, null, "-1", attributesToBeSet, null);
                 aem.createGeneralActivityLogEntry("mplsModule", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s [%s] created", attributesToBeSet.get(Constants.PROPERTY_NAME), Constants.CLASS_MPLSLINK));
             }
             //Side A

@@ -168,10 +168,10 @@ public class IPSynchronizer {
         BusinessObject createdIp = null;
         HashMap<String, String> ipAttributes = new HashMap<>();
         ipAttributes.put(Constants.PROPERTY_NAME, ipAddr);
-        ipAttributes.put(Constants.PROPERTY_DESCRIPTION, "Created by the IP sync sync provider");
+        ipAttributes.put(Constants.PROPERTY_DESCRIPTION, "Created by the IP Sync Provider");
         ipAttributes.put(Constants.PROPERTY_MASK, syncMask); //TODO set the list types attributes
         try { 
-            String newIpId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, subnet.getClassName(), subnet.getId(), ipAttributes, -1);
+            String newIpId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, subnet.getClassName(), subnet.getId(), ipAttributes, null);
             createdIp = bem.getObject(Constants.CLASS_IP_ADDRESS, newIpId);
             ips.get(subnet).add(createdIp);
             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Add IP to Subnet", String.format("%s was successfully added to %s", ipAddr, subnet)));
@@ -193,7 +193,8 @@ public class IPSynchronizer {
         String [] attributeNames = {"name", "description", "networkIp", "broadcastIp", "hosts"};
         String [] attributeValues = {newSubnet + ".0/24", "created with sync", newSubnet + ".0", newSubnet + ".255", "254"};
         try {
-            currentSubnet = bem.getObject(Constants.CLASS_SUBNET_IPV4, bem.createPoolItem(ipv4Root.getId(), ipv4Root.getClassName(), attributeNames, attributeValues, 0));
+            currentSubnet = bem.getObject(Constants.CLASS_SUBNET_IPV4, bem.createPoolItem(ipv4Root.getId(), 
+                    ipv4Root.getClassName(), attributeNames, attributeValues, null));
         } catch (ApplicationObjectNotFoundException | ArraySizeMismatchException | BusinessObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException ex) {
             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                     String.format("%s [Subnet] can't be created", newSubnet + ".0/24"), 

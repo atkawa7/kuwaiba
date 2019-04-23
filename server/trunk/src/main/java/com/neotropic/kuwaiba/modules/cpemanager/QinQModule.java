@@ -26,7 +26,6 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.services.persistence.util.Constants;
-import org.omg.PortableServer.POAPackage.ObjectNotActive;
 
 /**
  * This class implements the functionality corresponding to manage QinQ technology
@@ -105,7 +104,7 @@ public class QinQModule implements GenericCommercialModule {
             int MAX_CVLANS = 4096; //by default every EVLAN has 4096 CVLANs
             int RESERVERD_CVLANS = MAX_CVLANS - 5; //and 5 of those 4096 CVLANs are created as reserved by default
             
-            String newVlanId = bem.createSpecialObject(Constants.CLASS_EVLAN, objectClassName, objectId, attributesToBeSet, -1);
+            String newVlanId = bem.createSpecialObject(Constants.CLASS_EVLAN, objectClassName, objectId, attributesToBeSet, null);
             
             List<BusinessObjectLight> listTypeItems = aem.getListTypeItems("CVLANState");
             String reservedStateListTypeId = null;
@@ -244,7 +243,7 @@ public class QinQModule implements GenericCommercialModule {
      */
     public String createCVlan(String eVlanId, HashMap<String, String> attributesToBeSet) throws ServerSideException {
         try{
-            return bem.createSpecialObject(Constants.CLASS_CVLAN, Constants.CLASS_EVLAN, eVlanId, attributesToBeSet, -1);
+            return bem.createSpecialObject(Constants.CLASS_CVLAN, Constants.CLASS_EVLAN, eVlanId, attributesToBeSet, null);
         }catch(Exception ex){
             throw new ServerSideException(ex.getMessage());
         }

@@ -175,7 +175,7 @@ public class CiscoVlansSynchronizer {
 
                 String newVlanId;
                 try {
-                    newVlanId = bem.createSpecialObject(Constants.CLASS_VLAN, className, id, attributes, -1);
+                    newVlanId = bem.createSpecialObject(Constants.CLASS_VLAN, className, id, attributes, null);
                     BusinessObject newVlan = bem.getObject(Constants.CLASS_VLAN, newVlanId);
                     currentVlans.add(newVlan);
                     results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "", 

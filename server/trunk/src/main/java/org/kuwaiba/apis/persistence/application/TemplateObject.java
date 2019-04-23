@@ -33,12 +33,12 @@ public class TemplateObject extends TemplateObjectLight {
      */
     private HashMap <String, String> attributes;
     
-    public TemplateObject(String className, long id, String name) {
+    public TemplateObject(String className, String id, String name) {
         super(className, id, name);
         this.attributes = new HashMap<>();
     }
     
-    public TemplateObject(String className, long id, String name, HashMap<String, String> attributes) {
+    public TemplateObject(String className, String id, String name, HashMap<String, String> attributes) {
         super(className, id, name);
         this.attributes = attributes;
     }

@@ -1395,7 +1395,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     @Override
     public String createObject(String className, String parentClassName, String parentOid, String[] attributeNames,
-            String[] attributeValues, long template, String ipAddress, String sessionId) throws ServerSideException{
+            String[] attributeValues, String template, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         if (attributeNames.length != attributeValues.length)
@@ -1419,7 +1419,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
 
     @Override
     public String createSpecialObject(String className, String parentClassName, String parentOid, String[] attributeNames,
-            String[] attributeValues, long template, String ipAddress, String sessionId) throws ServerSideException{
+            String[] attributeValues, String template, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         if (attributeNames.length != attributeValues.length)
@@ -1833,7 +1833,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     @Override
     public String createPhysicalConnection(String aObjectClass, String aObjectId,
             String bObjectClass, String bObjectId, String parentClass, String parentId,
-            String name, String connectionClass, long templateId, String ipAddress, String sessionId) throws ServerSideException {
+            String name, String connectionClass, String templateId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -3351,7 +3351,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public String createPoolItem(String poolId, String className, String attributeNames[], String attributeValues[], long templateId, String ipAddress, String sessionId) throws ServerSideException{
+    public String createPoolItem(String poolId, String className, String attributeNames[], String attributeValues[], 
+            String templateId, String ipAddress, String sessionId) throws ServerSideException{
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -4088,12 +4089,12 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     //<editor-fold desc="Templates" defaultstate="collapsed">
     @Override
-    public long createTemplate(String templateClass, String templateName, String ipAddress, String sessionId) throws ServerSideException {
+    public String createTemplate(String templateClass, String templateName, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("createTemplate", ipAddress, sessionId);
-            long templateId = aem.createTemplate(templateClass, templateName);
+            String templateId = aem.createTemplate(templateClass, templateName);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
@@ -4105,13 +4106,13 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public long createTemplateElement(String templateElementClass, String templateElementParentClassName, 
-            long templateElementParentId, String templateElementName, String ipAddress, String sessionId) throws ServerSideException {
+    public String createTemplateElement(String templateElementClass, String templateElementParentClassName, 
+            String templateElementParentId, String templateElementName, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("createTemplateElement", ipAddress, sessionId);
-            long templateElementId = aem.createTemplateElement(templateElementClass, templateElementParentClassName, 
+            String templateElementId = aem.createTemplateElement(templateElementClass, templateElementParentClassName, 
                     templateElementParentId, templateElementName);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
@@ -4124,14 +4125,14 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public long createTemplateSpecialElement(String tsElementClass, String tsElementParentClassName, 
-        long tsElementParentId, String tsElementName, String ipAddress, String sessionId) throws ServerSideException {
+    public String createTemplateSpecialElement(String tsElementClass, String tsElementParentClassName, 
+        String tsElementParentId, String tsElementName, String ipAddress, String sessionId) throws ServerSideException {
         
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("createTemplateElement", ipAddress, sessionId);
-            long templateSpecialElementId = aem.createTemplateSpecialElement(tsElementClass, tsElementParentClassName, 
+            String templateSpecialElementId = aem.createTemplateSpecialElement(tsElementClass, tsElementParentClassName, 
                     tsElementParentId, tsElementName);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
@@ -4144,12 +4145,13 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public long[] createBulkTemplateElement(String templateElementClassName, String templateElementParentClassName, long templateElementParentId, int numberOfTemplateElements, String templateElementNamePattern, String ipAddress, String sessionId) throws ServerSideException {
+    public String[] createBulkTemplateElement(String templateElementClassName, String templateElementParentClassName, 
+            String templateElementParentId, int numberOfTemplateElements, String templateElementNamePattern, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("createBulkTemplateElement", ipAddress, sessionId);
-            long[] ids = aem.createBulkTemplateElement(templateElementClassName, templateElementParentClassName, 
+            String[] ids = aem.createBulkTemplateElement(templateElementClassName, templateElementParentClassName, 
                     templateElementParentId, numberOfTemplateElements, templateElementNamePattern);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
@@ -4162,12 +4164,13 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public long[] createBulkSpecialTemplateElement(String stElementClass, String stElementParentClassName, long stElementParentId, int numberOfTemplateElements, String stElementNamePattern, String ipAddress, String sessionId) throws ServerSideException {
+    public String[] createBulkSpecialTemplateElement(String stElementClass, String stElementParentClassName, 
+            String stElementParentId, int numberOfTemplateElements, String stElementNamePattern, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("createBulkSpecialTemplateElement", ipAddress, sessionId);
-            long[] ids = aem.createBulkSpecialTemplateElement(stElementClass, stElementParentClassName, 
+            String[] ids = aem.createBulkSpecialTemplateElement(stElementClass, stElementParentClassName, 
                     stElementParentId, numberOfTemplateElements, stElementNamePattern);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
@@ -4180,7 +4183,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public void updateTemplateElement(String templateElementClass, long templateElementId, String[] attributeNames, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException {
+    public void updateTemplateElement(String templateElementClass, String templateElementId, String[] attributeNames, 
+            String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -4196,7 +4200,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public void deleteTemplateElement(String templateElementClass, long templateElementId, String ipAddress, String sessionId) throws ServerSideException {
+    public void deleteTemplateElement(String templateElementClass, String templateElementId, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -4221,7 +4225,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             List<RemoteObjectLight> remoteTemplates = new ArrayList<>();
             
             for (TemplateObjectLight template : templates)
-                remoteTemplates.add(new RemoteObjectLight(template.getClassName(), String.valueOf(template.getId()), template.getName()));
+                remoteTemplates.add(new RemoteObjectLight(template.getClassName(), template.getId(), template.getName()));
                         
             return remoteTemplates;
         } catch (InventoryException ex) {
@@ -4231,7 +4235,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     @Override
     public List<RemoteObjectLight> getTemplateElementChildren(String templateElementClass, 
-            long templateElementId, String ipAddress, String sessionId) throws ServerSideException {
+            String templateElementId, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -4241,7 +4245,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             for (TemplateObjectLight templateElementChild : templateElementChildren)
                 remoteTemplateElementChildren.add(new RemoteObjectLight(templateElementChild.getClassName(), 
-                    String.valueOf(templateElementChild.getId()), templateElementChild.getName()));
+                    templateElementChild.getId(), templateElementChild.getName()));
             
             return remoteTemplateElementChildren;
         } catch (InventoryException ex) {
@@ -4251,7 +4255,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     @Override
     public List<RemoteObjectLight> getTemplateSpecialElementChildren(String tsElementClass, 
-            long tsElementId, String ipAddress, String sessionId) throws ServerSideException {
+            String tsElementId, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -4261,7 +4265,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             for (TemplateObjectLight templateElementChild : templateElementChildren)
                 remoteTemplateElementChildren.add(new RemoteObjectLight(templateElementChild.getClassName(), 
-                    String.valueOf(templateElementChild.getId()), templateElementChild.getName()));
+                    templateElementChild.getId(), templateElementChild.getName()));
             
             return remoteTemplateElementChildren;
         } catch (InventoryException ex) {
@@ -4270,7 +4274,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public RemoteObject getTemplateElement(String templateElementClass, long templateElementId, 
+    public RemoteObject getTemplateElement(String templateElementClass, String templateElementId, 
             String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -4283,13 +4287,13 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public long[] copyTemplateElements(String[] sourceObjectsClassNames, long[] sourceObjectsIds, 
-            String newParentClassName,long newParentId, String ipAddress, String sessionId) throws ServerSideException {
+    public String[] copyTemplateElements(String[] sourceObjectsClassNames, String[] sourceObjectsIds, 
+            String newParentClassName, String newParentId, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("copyTemplateElements", ipAddress, sessionId);
-            long [] templateElementsIds = aem.copyTemplateElements(sourceObjectsClassNames, sourceObjectsIds, newParentClassName, newParentId);
+            String [] templateElementsIds = aem.copyTemplateElements(sourceObjectsClassNames, sourceObjectsIds, newParentClassName, newParentId);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT,
@@ -4301,14 +4305,14 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public long[] copyTemplateSpecialElements(String[] sourceObjectsClassNames, long[] sourceObjectsIds, 
-        String newParentClassName, long newParentId, String ipAddress, String sessionId) throws ServerSideException {
+    public String[] copyTemplateSpecialElements(String[] sourceObjectsClassNames, String[] sourceObjectsIds, 
+        String newParentClassName, String newParentId, String ipAddress, String sessionId) throws ServerSideException {
         
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("copyTemplateSpecialElements", ipAddress, sessionId);
-            long [] templateSpecialElements = aem.copyTemplateSpecialElement(sourceObjectsClassNames, sourceObjectsIds, newParentClassName, newParentId);
+            String[] templateSpecialElements = aem.copyTemplateSpecialElement(sourceObjectsClassNames, sourceObjectsIds, newParentClassName, newParentId);
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT,
                 String.format("Copied %s template special elements", templateSpecialElements.length));

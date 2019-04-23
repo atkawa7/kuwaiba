@@ -514,7 +514,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
                                                                                             parent.getId(), 
                                                                                             new String[] {"name"}, //NOI18N
                                                                                             new String[] {txtPortName.getValue()}, 
-                                                                                            -1, 
+                                                                                            null, 
                                                                                             remoteSession.getIpAddress(), 
                                                                                             remoteSession.getSessionId());
 

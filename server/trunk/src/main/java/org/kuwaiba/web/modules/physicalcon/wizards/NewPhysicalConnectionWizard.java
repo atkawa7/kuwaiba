@@ -152,7 +152,7 @@ public class NewPhysicalConnectionWizard extends Wizard {
             properties.put("name", txtName.getValue());
             properties.put("class", cmbConnectionClass.getSelectedItem().get().getClassName());
             
-            properties.put("templateId", chkHasTemplate.getValue() ? cmbTemplates.getSelectedItem().get().getId() : -1);
+            properties.put("templateId", chkHasTemplate.getValue() ? cmbTemplates.getSelectedItem().get().getId() : "");
             
             if (cmbConnectionType.getSelectedItem().get().type == 1)
                 return new SelectContainerEndpointsStep(properties, wsBean);
@@ -306,7 +306,7 @@ public class NewPhysicalConnectionWizard extends Wizard {
                     
                     String newConnection = wsBean.createPhysicalConnection(selectedASide.getClassName(), selectedASide.getId(), selectedBSide.getClassName(), 
                             selectedBSide.getId(), commonParent.getClassName(), commonParent.getId(), properties.getProperty("name"), 
-                            properties.getProperty("class"), (long)properties.get("templateId"),  Page.getCurrent().getWebBrowser().getAddress(),
+                            properties.getProperty("class"), (String)properties.get("templateId"),  Page.getCurrent().getWebBrowser().getAddress(),
                                 session.getSessionId());
                     
                     properties.put("connection", new RemoteObjectLight(properties.getProperty("class"), newConnection, properties.getProperty("name")));
@@ -440,7 +440,7 @@ public class NewPhysicalConnectionWizard extends Wizard {
                     
                     String newConnection = wsBean.createPhysicalConnection(selectedASide.getClassName(), selectedASide.getId(), selectedBSide.getClassName(), 
                             selectedBSide.getId(), commonParent.getClassName(), commonParent.getId(), properties.getProperty("name"), 
-                            properties.getProperty("class"), (long)properties.get("templateId"),  Page.getCurrent().getWebBrowser().getAddress(),
+                            properties.getProperty("class"), (String)properties.get("templateId"),  Page.getCurrent().getWebBrowser().getAddress(),
                                 session.getSessionId());
                     
                     properties.put("connection", new RemoteObjectLight(properties.getProperty("class"), newConnection, properties.getProperty("name")));

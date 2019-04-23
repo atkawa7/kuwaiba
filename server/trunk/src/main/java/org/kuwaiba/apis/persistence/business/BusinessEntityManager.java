@@ -50,8 +50,8 @@ public interface BusinessEntityManager {
      * @param parentOid Parent's oid. If -1, the parent will be the DummyRoot node
      * @param attributes Attributes to be set by default in the new object. It's a HashMap where the keys are the attribute names and the values, the values for such attributes.
      * Note that binary type attributes can't be set here.
-     * @param template Template id to be used to create the current object. Template values can be
-     * overridden if "attributeValues" is not empty, -1 if do not use a Template
+     * @param templateId Template id to be used to create the current object. Template values can be
+     * overridden if "attributeValues" is not empty. Use an empty string or null to not use a Template.
      * @return The object's id
      * @throws MetadataObjectNotFoundException Thrown if the object's class can't be found
      * @throws BusinessObjectNotFoundException Thrown if the parent id is not found
@@ -60,7 +60,7 @@ public interface BusinessEntityManager {
      * @throws ApplicationObjectNotFoundException If the specified template could not be found
      */
     public String createObject(String className, String parentClassName, String parentOid,
-            HashMap<String, String> attributes,long template)
+            HashMap<String, String> attributes, String templateId)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, 
                 OperationNotPermittedException, ApplicationObjectNotFoundException;
     
@@ -70,7 +70,7 @@ public interface BusinessEntityManager {
      * @param parentClassName Class of the parent the object will be instance of. Use <b>root</b> for the navigation tree
      * @param criteria Criteria to search for the parent. This is a string with two parts: One is the name of the attribute and the other its value, both separated by a fixed colon <b>:</b>. Example: name:Colombia
      * @param attributes Dictionary with the names and the values of the attributes to be set.
-     * @param template Reserved for future uses
+     * @param templateId The id of the template to be used to create this object. This id was probably retrieved by {@link ApplicationEntityManager.getTemplatesForClass(String)} before. Use a null or empty string to not use a template.
      * @return The id of the new object.
      * @throws MetadataObjectNotFoundException Thrown if the object's class can't be found
      * @throws BusinessObjectNotFoundException Thrown if the parent id is not found
@@ -78,7 +78,7 @@ public interface BusinessEntityManager {
      * @throws OperationNotPermittedException If there's a business constraint that doesn't allow to create the object.
      * @throws ApplicationObjectNotFoundException If the specified template could not be found.
      */
-    public String createObject(String className, String parentClassName, HashMap<String,String> attributes, long template, String criteria)
+    public String createObject(String className, String parentClassName, HashMap<String,String> attributes, String templateId, String criteria)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, ApplicationObjectNotFoundException;
     /**
      * Creates a new inventory object for a domain specific model (where the standard containment rules don't apply)
@@ -87,8 +87,7 @@ public interface BusinessEntityManager {
      * @param parentOid Parent's oid
      * @param attributes Attributes to be set by default in the new object. It's a HashMap where the keys are the attribute names and the values, the values for such attributes.
      * Note that binary type attributes can't be set here.
-     * @param template Template id to be used to create the current object. Template values can be
-     * overridden if "attributeValues" is not empty
+     * @param templateId The id of the template to be used to create this object. This id was probably retrieved by {@link ApplicationEntityManager.getTemplatesForClass(String)} before. Use a null or empty string to not use a template.
      * @return The id of the new object.
      * @throws MetadataObjectNotFoundException Thrown if the object's class can't be found
      * @throws BusinessObjectNotFoundException Thrown if the parent id is not found
@@ -97,7 +96,7 @@ public interface BusinessEntityManager {
      * @throws ApplicationObjectNotFoundException If the specified template could not be found.
      */
     public String createSpecialObject(String className, String parentClassName, String parentOid,
-            HashMap<String,String> attributes,long template)
+            HashMap<String,String> attributes, String templateId)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, ApplicationObjectNotFoundException;
     
     /**
@@ -106,14 +105,14 @@ public interface BusinessEntityManager {
      * @param className Class this object is going to be instance of
      * @param attributeNames Attributes to be set
      * @param attributeValues Attribute values to be set
-     * @param templateId Template used to create the object, if applicable. -1 for none
+     * @param templateId The id of the template to be used to create this object. This id was probably retrieved by {@link ApplicationEntityManager.getTemplatesForClass(String)} before. Use a null or empty string to not use a template.
      * @throws ApplicationObjectNotFoundException If the parent pool can't be found
      * @throws InvalidArgumentException If any of the attributes or its type is invalid
      * @return the id of the newly created object
      * @throws ArraySizeMismatchException If attributeNames and attributeValues have different sizes.
      * @throws MetadataObjectNotFoundException If the class name could not be found 
      */
-    public String createPoolItem(String poolId, String className, String[] attributeNames, String[] attributeValues, long templateId) 
+    public String createPoolItem(String poolId, String className, String[] attributeNames, String[] attributeValues, String templateId) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, MetadataObjectNotFoundException;
     /**
      * Creates multiple objects using a given name pattern
@@ -130,7 +129,7 @@ public interface BusinessEntityManager {
      *                                        If the className is not in design or are abstract.
      *                                        If the className is not an InventoryObject.
      */
-    public String [] createBulkObjects(String className, String parentClassName, String parentOid, int numberOfObjects, String namePattern) 
+    public String[] createBulkObjects(String className, String parentClassName, String parentOid, int numberOfObjects, String namePattern) 
         throws MetadataObjectNotFoundException, OperationNotPermittedException, BusinessObjectNotFoundException, InvalidArgumentException;
     /**
      * Creates multiple special objects using a given name pattern

@@ -35,7 +35,6 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import java.util.Collections;
-import java.util.Collections;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
@@ -214,7 +213,7 @@ public class ComponentRackSelector extends VerticalLayout {
                             String name = txtNewBuildingName.getValue();
                                                         
                             try {
-                                webserviceBean.createObject("Building", rol.getClassName(), rol.getId(), new String[] {"name"}, new String[] {name}, -1, 
+                                webserviceBean.createObject("Building", rol.getClassName(), rol.getId(), new String[] {"name"}, new String[] {name}, null, 
                                     Page.getCurrent().getWebBrowser().getAddress(), 
                                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
                             } catch (ServerSideException ex) {
@@ -312,7 +311,7 @@ public class ComponentRackSelector extends VerticalLayout {
                             String rackUnits = txtRackNameUnits.getValue();
                             
                             try {
-                                webserviceBean.createObject("Rack", rol.getClassName(), rol.getId(), new String[] {"name", "rackUnits"}, new String[] {name, rackUnits}, -1, 
+                                webserviceBean.createObject("Rack", rol.getClassName(), rol.getId(), new String[] {"name", "rackUnits"}, new String[] {name, rackUnits}, null, 
                                     Page.getCurrent().getWebBrowser().getAddress(), 
                                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
                             } catch (ServerSideException ex) {

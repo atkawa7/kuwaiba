@@ -93,6 +93,7 @@ public class ProjectsModule implements GenericCommercialModule {
     /**
      * Gets the project pools
      * @return The list of project pools
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If any of the required data model components necessary to process the request could not be found.
      */
     public List<RemotePool> getProjectPools() throws InvalidArgumentException {
         List<Pool> projectPools = bem.getRootPools(Constants.CLASS_GENERICPROJECT, ApplicationEntityManager.POOL_TYPE_MODULE_COMPONENT, true);
@@ -132,7 +133,7 @@ public class ProjectsModule implements GenericCommercialModule {
         ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, MetadataObjectNotFoundException  {
 
         bem.getPool(parentId);
-        return bem.createPoolItem(parentId, className, attributeNames, attributeValues, 0);
+        return bem.createPoolItem(parentId, className, attributeNames, attributeValues, null);
     }
         
     /**
@@ -182,7 +183,7 @@ public class ProjectsModule implements GenericCommercialModule {
             for (int i = 0; i < attributeNames.length; i++)
                 attributes.put(attributeNames[i], attributeValues[i]);
         }
-        return bem.createSpecialObject(className, parentClassName, parentId, attributes, -1);
+        return bem.createSpecialObject(className, parentClassName, parentId, attributes, null);
     }
     
     /**

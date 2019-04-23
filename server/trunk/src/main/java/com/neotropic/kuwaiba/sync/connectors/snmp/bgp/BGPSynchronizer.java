@@ -459,7 +459,7 @@ public class BGPSynchronizer {
                     }
                     if(providersParent == null){
                         attributes.put(Constants.PROPERTY_NAME, "Providers");
-                        String parentCreatedProvidersId = bem.createObject("Provider", "City", location.getId(), attributes, -1);
+                        String parentCreatedProvidersId = bem.createObject("Provider", "City", location.getId(), attributes, null);
                         providersParent = new BusinessObjectLight("Provider", parentCreatedProvidersId, "Providers");
                         res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Peer Creation",
                             String.format("An object to group the peers was created in %s", location)));
@@ -471,7 +471,7 @@ public class BGPSynchronizer {
                     attributes.put("bgpPeerRemoteAddr", bgpPeerRemoteAddr);
                     attributes.put(Constants.PROPERTY_NAME, asnName);
 
-                    String createdBGPPeerId = bem.createObject(Constants.CLASS_BGPPEER, providersParent.getClassName(), providersParent.getId(), attributes, -1);
+                    String createdBGPPeerId = bem.createObject(Constants.CLASS_BGPPEER, providersParent.getClassName(), providersParent.getId(), attributes, null);
                     BusinessObjectLight createdBGPPeer = new BusinessObjectLight(Constants.CLASS_BGPPEER, createdBGPPeerId, asnName);
                     //AuditTrail
                     aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
@@ -502,7 +502,7 @@ public class BGPSynchronizer {
         try {
             HashMap<String, String> attributes = new HashMap<>();
             attributes.put(Constants.PROPERTY_NAME, bgpPeerRemotePort);
-            String newPortId = bem.createObject("VirtualPort", remoteDevice.getClassName(), remoteDevice.getId(), attributes, -1);
+            String newPortId = bem.createObject("VirtualPort", remoteDevice.getClassName(), remoteDevice.getId(), attributes, null);
             BusinessObjectLight remotePort = new BusinessObjectLight("VirtualPort", newPortId, bgpPeerRemotePort);
             //AuditTrail
             aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
@@ -624,7 +624,7 @@ public class BGPSynchronizer {
                 attributesToBeSet.put(Constants.PROPERTY_NAME, asnName);
                 attributesToBeSet.put("bgpPeerIdentifier", bgpPeerIdentifier);
                 
-                String bgpLinkId = bem.createSpecialObject(BGPLINK, null, "-1", attributesToBeSet, -1);
+                String bgpLinkId = bem.createSpecialObject(BGPLINK, null, "-1", attributesToBeSet, null);
                 bgpLink = new BusinessObject(BGPLINK, bgpLinkId, asnNumber);
                 //AuditTrail
                 aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
@@ -911,7 +911,8 @@ public class BGPSynchronizer {
         String [] attributeValues = {newSubnet + ".0/24", "created with sync", newSubnet + ".0", newSubnet + ".255", "254"};
         try {
             //TODO change this for create subnet of the IPAM module
-            currentSubnet = bem.getObject(Constants.CLASS_SUBNET_IPV4, bem.createPoolItem(ipv4Root.getId(), ipv4Root.getClassName(), attributeNames, attributeValues, 0));
+            currentSubnet = bem.getObject(Constants.CLASS_SUBNET_IPV4, 
+                    bem.createPoolItem(ipv4Root.getId(), ipv4Root.getClassName(), attributeNames, attributeValues, null));
             //AuditTrail
             aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s (id:%s)", currentSubnet.toString(), currentSubnet.getId()));
             
@@ -939,7 +940,7 @@ public class BGPSynchronizer {
         ipAttributes.put(Constants.PROPERTY_DESCRIPTION, "Created by the BGP sync provider");
         ipAttributes.put(Constants.PROPERTY_MASK, syncMask); //TODO set the list types attributes
         try { 
-            String newIpAddrId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, subnet.getClassName(), subnet.getId(), ipAttributes, -1);
+            String newIpAddrId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, subnet.getClassName(), subnet.getId(), ipAttributes, null);
             //AuditTrail
             aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [IPAddress] (%s)", ipAddr, newIpAddrId));
             

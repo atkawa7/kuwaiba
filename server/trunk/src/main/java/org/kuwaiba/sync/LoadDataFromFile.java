@@ -211,24 +211,16 @@ public final class LoadDataFromFile {
                         }
                     }
 
-                    long template = -1; //TODO Support for templates
-
-                    if (parentClass.equals(ROOT)){ //The parent is the navigation tree root
+                    if (parentClass.equals(ROOT)) //The parent is the navigation tree root
                         bem.createObject(className, null, "-1", 
                                 attributes, 
-                                template);
-                    }
-                    else{
-                        
-                        
-                        
-                        
+                                null); //No template
+                    else
                          bem.createObject(className, 
                                 parentClass, 
                                 parentFilter[0] + ":"  + parentFilter[1], 
                                 attributes, 
-                                template);
-                    }
+                                null); //No template
                 }catch(Exception ex){
                     errorsMsgs += String.format("ERROR\t%s\tUnexpected error: %s.\n", currentLine, ex.getMessage());
                     hasErrors = true;

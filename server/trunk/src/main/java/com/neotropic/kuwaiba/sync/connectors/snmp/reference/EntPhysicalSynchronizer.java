@@ -1001,7 +1001,8 @@ public class EntPhysicalSynchronizer {
                         String parentClassName = businessObject.getAttributes().remove("parentClassName");
                         businessObject.getAttributes().remove("deviceParentId");
                         
-                        String createdObjectId = bem.createObject(businessObject.getClassName(), parentClassName, parentId, businessObject.getAttributes(), -1);
+                        String createdObjectId = bem.createObject(businessObject.getClassName(), parentClassName, parentId, 
+                                businessObject.getAttributes(), null);
                         createdIdsToMap.put(businessObject.getId(), createdObjectId);
                         results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,
                                 String.format("%s [%s]", businessObject.getName(), businessObject.getClassName()), 
@@ -1189,7 +1190,7 @@ public class EntPhysicalSynchronizer {
                 
                 try {
                     
-                    parentId = bem.createObject(newPort.getClassName(), parentClassName, parentId, newPort.getAttributes(), -1);
+                    parentId = bem.createObject(newPort.getClassName(), parentClassName, parentId, newPort.getAttributes(), null);
                     results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,
                                 String.format("%s" , newPort),
                                 "Port created"));
@@ -1207,7 +1208,7 @@ public class EntPhysicalSynchronizer {
                             extraBranch.get(i).getAttributes().remove("parentName");
 
                             parentId = bem.createObject(extraBranch.get(i).getClassName(), 
-                                    parentClassName, parentId, extraBranch.get(i).getAttributes(), -1);
+                                    parentClassName, parentId, extraBranch.get(i).getAttributes(), null);
 
                             createdIdsToMap.put(extraBranch.get(i).getId(), parentId);
                             results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,
@@ -1547,7 +1548,7 @@ public class EntPhysicalSynchronizer {
                             if(currrentvirtualInterface == null && ifName.split("\\.").length == 3 && ifName.toLowerCase().contains(".si")) //the virtual port is al ready created with onli the literal.
                                 currentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName.split("\\.")[2]), ifName, 1);
                             if(currrentvirtualInterface == null){
-                                createdId = bem.createObject(createdClassName, currentInterface.getClassName(), currentInterface.getId(), attributes, -1);
+                                createdId = bem.createObject(createdClassName, currentInterface.getClassName(), currentInterface.getId(), attributes, null);
                                 results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  
                                     String.format("%s [%s], with parent: %s ", attributes.get(Constants.PROPERTY_NAME), createdClassName, currentInterface),    
                                     "Inventory object created"));
@@ -1561,14 +1562,14 @@ public class EntPhysicalSynchronizer {
                     }//We create the Mngmnt port
                     else if(currentInterface == null && ifName.toLowerCase().equals("gi0")){ 
                         createdClassName = Constants.CLASS_ELECTRICALPORT;
-                        createdId = bem.createObject(createdClassName, className, id, attributes, -1);
+                        createdId = bem.createObject(createdClassName, className, id, attributes, null);
                         results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  
                                     String.format("%s [%s]", attributes.get(Constants.PROPERTY_NAME), createdClassName),    
                                     "Inventory object created"));
                     }//MPLS Tunnel
                     else if(currentInterface == null && ifName.toLowerCase().contains("tu")){
                         createdClassName = Constants.CLASS_MPLSTUNNEL;
-                        createdId = bem.createSpecialObject(createdClassName, className, id, attributes, -1); 
+                        createdId = bem.createSpecialObject(createdClassName, className, id, attributes, null); 
                         //currentMplsTunnels.add(new BusinessObject(Constants.CLASS_MPLSTUNNEL, createdId, ifName));
                         results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  
                                     String.format("%s [%s]", attributes.get(Constants.PROPERTY_NAME), createdClassName),    
@@ -1577,7 +1578,7 @@ public class EntPhysicalSynchronizer {
                     }//LoopBacks
                     else if(currentInterface == null && ifName.toLowerCase().contains("lo")){
                         createdClassName = Constants.CLASS_VIRTUALPORT;
-                        createdId = bem.createSpecialObject(createdClassName, className, id, attributes, -1);
+                        createdId = bem.createSpecialObject(createdClassName, className, id, attributes, null);
                         //currentVirtualPorts.add(new BusinessObject(createdClassName, createdId, ifName));
                         results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  
                                     String.format("%s [%s]", attributes.get(Constants.PROPERTY_NAME), createdClassName),    
@@ -1585,7 +1586,7 @@ public class EntPhysicalSynchronizer {
                         
                     }else if (currentInterface == null && ifName.toLowerCase().contains("se")){
                         createdClassName = Constants.CLASS_SERIALPORT;
-                        createdId = bem.createObject(createdClassName, className, id, attributes, -1);
+                        createdId = bem.createObject(createdClassName, className, id, attributes, null);
                         results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  
                                     String.format("%s [%s]", attributes.get(Constants.PROPERTY_NAME), createdClassName),    
                                     "Inventory object created"));

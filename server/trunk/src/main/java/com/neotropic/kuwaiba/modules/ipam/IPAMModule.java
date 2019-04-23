@@ -270,14 +270,14 @@ public class IPAMModule implements GenericCommercialModule{
             BusinessObjectNotFoundException, ApplicationObjectNotFoundException
     {
         try {
-            return bem.createPoolItem(parentId, className, attributeNames, attributeValues, 0);
+            return bem.createPoolItem(parentId, className, attributeNames, attributeValues, null);
         } catch (ApplicationObjectNotFoundException ex) {
             
             HashMap<String, String> attributes = new HashMap<>();
             for (int i = 0; i < attributeNames.length; i++)
                 attributes.put(attributeNames[i], attributeValues[i]);
             
-            return bem.createSpecialObject(className, className, parentId, attributes, -1);
+            return bem.createSpecialObject(className, className, parentId, attributes, null);
         }
     }
     
@@ -332,7 +332,7 @@ public class IPAMModule implements GenericCommercialModule{
             ArraySizeMismatchException, NotAuthorizedException, MetadataObjectNotFoundException, 
             BusinessObjectNotFoundException, OperationNotPermittedException
     {
-        return bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, parentSubnetClassName, parentSubnetId, ipAttributes, -1);
+        return bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, parentSubnetClassName, parentSubnetId, ipAttributes, null);
     }
 
     /**

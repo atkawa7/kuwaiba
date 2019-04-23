@@ -941,7 +941,7 @@ public interface ApplicationEntityManager {
      * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the provided class does not exist
      * @throws org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException If the template class is abstract.
      */
-    public long createTemplate(String templateClass, String templateName) throws MetadataObjectNotFoundException, OperationNotPermittedException;
+    public String createTemplate(String templateClass, String templateName) throws MetadataObjectNotFoundException, OperationNotPermittedException;
     /**
      * Creates an object inside a template.
      * @param templateElementClass Class of the object you want to create.
@@ -953,8 +953,8 @@ public interface ApplicationEntityManager {
      * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException If the parent object could not be found
      * @throws org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException If the class provided to create the new element from is abstract.
      */
-    public long createTemplateElement(String templateElementClass, String templateElementParentClassName, 
-        long templateElementParentId, String templateElementName) 
+    public String createTemplateElement(String templateElementClass, String templateElementParentClassName, 
+        String templateElementParentId, String templateElementName) 
         throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, OperationNotPermittedException;
     
     /**
@@ -969,7 +969,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException If the element class or element parent class can not be found
      * @throws ApplicationObjectNotFoundException If the element parent can no be found
      */
-    public long createTemplateSpecialElement(String tsElementClass, String tsElementParentClassName, long tsElementParentId, String tsElementName) 
+    public String createTemplateSpecialElement(String tsElementClass, String tsElementParentClassName, String tsElementParentId, String tsElementName) 
         throws OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException;
     
     /**
@@ -985,7 +985,8 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the parent class name cannot be found
      * @throws InvalidArgumentException If the given pattern to generate the name has less possibilities that the number of template elements to be created
      */
-    public long[] createBulkTemplateElement(String templateElementClassName, String templateElementParentClassName, long templateElementParentId, int numberOfTemplateElements, String templateElementNamePattern)
+    public String[] createBulkTemplateElement(String templateElementClassName, String templateElementParentClassName, 
+            String templateElementParentId, int numberOfTemplateElements, String templateElementNamePattern)
         throws MetadataObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException, InvalidArgumentException;
     
     /**
@@ -1001,7 +1002,8 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the parent class name cannot be found
      * @throws InvalidArgumentException If the given pattern to generate the name has less possibilities that the number of special template elements to be created
      */
-    public long[] createBulkSpecialTemplateElement(String stElementClass, String stElementParentClassName, long stElementParentId, int numberOfTemplateElements, String stElementNamePattern) 
+    public String[] createBulkSpecialTemplateElement(String stElementClass, String stElementParentClassName, 
+            String stElementParentId, int numberOfTemplateElements, String stElementNamePattern) 
         throws OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
     /**
      * Updates the value of an attribute of a template element.
@@ -1014,7 +1016,7 @@ public interface ApplicationEntityManager {
      * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException If the template element could not be found
      * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the arrays attributeNames and attributeValues have different sizes
      */
-    public ChangeDescriptor updateTemplateElement(String templateElementClass, long templateElementId, 
+    public ChangeDescriptor updateTemplateElement(String templateElementClass, String templateElementId, 
             String[] attributeNames, String[] attributeValues) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
     /**
      * Deletes an element within a template or a template itself.
@@ -1024,7 +1026,7 @@ public interface ApplicationEntityManager {
      * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the element's class could not be found.
      * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException If the element could not be found.
      */
-    public ChangeDescriptor deleteTemplateElement(String templateElementClass, long templateElementId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException;
+    public ChangeDescriptor deleteTemplateElement(String templateElementClass, String templateElementId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException;
     /**
      * Gets the templates available for a given class
      * @param className Class whose templates we need
@@ -1038,14 +1040,14 @@ public interface ApplicationEntityManager {
      * @param templateElementId Template element id.
      * @return The template element's children as a list of RemoteBusinessObjectLight instances.
      */
-    public List<TemplateObjectLight> getTemplateElementChildren(String templateElementClass, long templateElementId);
+    public List<TemplateObjectLight> getTemplateElementChildren(String templateElementClass, String templateElementId);
     /**
      * Retrieves the children of a given template special element.
      * @param tsElementClass Template special element class.
      * @param tsElementId Template special element id.
      * @return The template element's children as a list of RemoteBusinessObjectLight instances.
      */
-    public List<TemplateObjectLight> getTemplateSpecialElementChildren(String tsElementClass, long tsElementId);
+    public List<TemplateObjectLight> getTemplateSpecialElementChildren(String tsElementClass, String tsElementId);
     /**
      * Retrives all the information of a given template element.
      * @param templateElementClass Template element class.
@@ -1055,7 +1057,7 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the template element could not be found.
      * @throws InvalidArgumentException If an attribute value can't be mapped into value.
      */
-    public TemplateObject getTemplateElement(String templateElementClass, long templateElementId)
+    public TemplateObject getTemplateElement(String templateElementClass, String templateElementId)
         throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
     
     /**
@@ -1069,8 +1071,8 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If any of the source template elements could not be found.
      * @throws ArraySizeMismatchException If the arrays provided as arguments have different sizes.
      */
-    public long[] copyTemplateElements(String[] sourceObjectsClassNames, long[] sourceObjectsIds, 
-            String newParentClassName, long newParentId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, ArraySizeMismatchException;
+    public String[] copyTemplateElements(String[] sourceObjectsClassNames, String[] sourceObjectsIds, 
+            String newParentClassName, String newParentId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, ArraySizeMismatchException;
     
     /**
      * Copy template special elements within templates,
@@ -1083,7 +1085,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException If any of the classes could not be found.
      * @throws ApplicationObjectNotFoundException If any of the source template elements could not be found.
      */
-    public long [] copyTemplateSpecialElement(String[] sourceObjectsClassNames, long [] sourceObjectsIds, String newParentClassName, long newParentId) 
+    public String[] copyTemplateSpecialElement(String[] sourceObjectsClassNames, String[] sourceObjectsIds, String newParentClassName, String newParentId) 
         throws ArraySizeMismatchException, ApplicationObjectNotFoundException, MetadataObjectNotFoundException;
     // Favorites
     /**

@@ -337,7 +337,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
                         else if(matchingLocalInterface == null && localInterfaceNameFromSync.startsWith("pw")) {
                             HashMap<String, String> defaultAttributes = new HashMap<>();
                             defaultAttributes.put(Constants.PROPERTY_NAME, localInterfaceNameFromSync);
-                            String newPwId = bem.createObject("Pseudowire", relatedOject.getClassName(), relatedOject.getId(), defaultAttributes, -1);
+                            String newPwId = bem.createObject("Pseudowire", relatedOject.getClassName(), relatedOject.getId(), defaultAttributes, null);
                             //The new pseudowire
                             matchingLocalInterface = new BusinessObjectLight("Pseudowire", newPwId, localInterfaceNameFromSync);
                             //we add the new pw to the current interfaces
@@ -363,7 +363,8 @@ public class MplsSyncProvider extends AbstractSyncProvider {
                                 if(relatedInterfaceInDetail == null){ 
                                     HashMap<String, String> defaultAttributes = new HashMap<>();
                                     defaultAttributes.put(Constants.PROPERTY_NAME, localInterfaceDetailFromSync);
-                                    String newPwId = bem.createObject(Constants.CLASS_PSEUDOWIRE, relatedOject.getClassName(), relatedOject.getId(), defaultAttributes, -1);
+                                    String newPwId = bem.createObject(Constants.CLASS_PSEUDOWIRE, relatedOject.getClassName(), 
+                                            relatedOject.getId(), defaultAttributes, null);
                                     relatedInterfaceInDetail = new BusinessObjectLight(Constants.CLASS_PSEUDOWIRE, newPwId, localInterfaceDetailFromSync);
 
                                     aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [Pseudowire] (id:%s)", localInterfaceNameFromSync, newPwId));
@@ -422,7 +423,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
                                 HashMap<String, String> attributesToBeSet = new HashMap<>();
                                 attributesToBeSet.put(Constants.PROPERTY_NAME, "VC " + vcIdFromSync);
                                 //First we create the mpls link, the name is the vcId
-                                String newMplsLinkId = bem.createSpecialObject("MPLSLink", null, "-1", attributesToBeSet, -1); //NOI18N
+                                String newMplsLinkId = bem.createSpecialObject("MPLSLink", null, "-1", attributesToBeSet, null); //NOI18N
                                 BusinessObjectLight newMplsLink = new BusinessObjectLight("MPLSLink", newMplsLinkId, vcIdFromSync); //NOI18N
                                 bem.createSpecialRelationship(relatedOject.getClassName(), relatedOject.getId(), "MPLSLink", newMplsLinkId, RELATIONSHIP_MPLSLINK, false); //NOI18N
                                 //the RelatedObject need to be relat4ed with the mpls link anyway
@@ -735,7 +736,8 @@ public class MplsSyncProvider extends AbstractSyncProvider {
         String [] attributeNames = {"name", "description", "networkIp", "broadcastIp", "hosts"};
         String [] attributeValues = {newSubnet + ".0/24", "created with sync", newSubnet + ".0", newSubnet + ".255", "254"};
         try {
-            currentSubnet = bem.getObject(Constants.CLASS_SUBNET_IPV4, bem.createPoolItem(ipv4Root.getId(), ipv4Root.getClassName(), attributeNames, attributeValues, 0));
+            currentSubnet = bem.getObject(Constants.CLASS_SUBNET_IPV4, bem.createPoolItem(ipv4Root.getId(), 
+                    ipv4Root.getClassName(), attributeNames, attributeValues, null));
             //AuditTrail
             aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s (id:%s)", currentSubnet.toString(), currentSubnet.getId()));
             
@@ -763,7 +765,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
         ipAttributes.put(Constants.PROPERTY_DESCRIPTION, "Created with sync");
         ipAttributes.put(Constants.PROPERTY_MASK, syncMask); //TODO set the list types attributes
         try { 
-            String newIpAddrId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, subnet.getClassName(), subnet.getId(), ipAttributes, -1);
+            String newIpAddrId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, subnet.getClassName(), subnet.getId(), ipAttributes, null);
             //AuditTrail
             aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [IPAddress] (%s)", ipAddr, newIpAddrId));
             

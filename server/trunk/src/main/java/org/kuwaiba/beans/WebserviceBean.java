@@ -192,8 +192,8 @@ public interface WebserviceBean {
 
     public void updateObject(String className, String oid, List<StringPair> attributesToBeUpdated, String ipAddress, String sessionId) throws ServerSideException;
 
-    public String createObject(String className, String parentClassName, String parentOid, String[] attributeNames, String[] attributeValues, long templateId, String ipAddress, String sessionId) throws ServerSideException;
-    public String createSpecialObject(String className, String parentObjectClassName, String parentOid, String[] attributeNames, String[] attributeValues, long templateId, String ipAddress, String sessionId) throws ServerSideException;
+    public String createObject(String className, String parentClassName, String parentOid, String[] attributeNames, String[] attributeValues, String templateId, String ipAddress, String sessionId) throws ServerSideException;
+    public String createSpecialObject(String className, String parentObjectClassName, String parentOid, String[] attributeNames, String[] attributeValues, String templateId, String ipAddress, String sessionId) throws ServerSideException;
     
     public String createListTypeItem(String className, String name, String displayName, String ipAddress, String sessionId) throws ServerSideException;
 
@@ -224,7 +224,7 @@ public interface WebserviceBean {
     //Physical connections
     public void connectMirrorPort(String[] aObjectClass, String[] aObjectId, String[] bObjectClass, String[] bObjectId, String ipAddress, String sessionId) throws ServerSideException;
     public void releaseMirrorPort(String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException;
-    public String createPhysicalConnection(String aObjectClass, String aObjectId, String bObjectClass, String bObjectId, String parentClass, String parentId, String name, String connectionClass, long templateId, String ipAddress, String sessionId) throws ServerSideException;
+    public String createPhysicalConnection(String aObjectClass, String aObjectId, String bObjectClass, String bObjectId, String parentClass, String parentId, String name, String connectionClass, String templateId, String ipAddress, String sessionId) throws ServerSideException;
     public void deletePhysicalConnection(String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteObjectLight[] getPhysicalConnectionEndpoints(String connectionClass, String connectionId, String ipAddress, String sessionId) throws ServerSideException;
     
@@ -346,7 +346,7 @@ public interface WebserviceBean {
     public String createPoolInPool(String parentId, String name, String description, String instancesOfClass, int type, String ipAddress, String sessionId) 
             throws ServerSideException;
     
-    public String createPoolItem(String poolId, String className, String[] attributeNames, String[] attributeValues, long templateId, String ipAddress, String sessionId) throws ServerSideException;
+    public String createPoolItem(String poolId, String className, String[] attributeNames, String[] attributeValues, String templateId, String ipAddress, String sessionId) throws ServerSideException;
     
     public void deletePools(String[] ids, String ipAddress, String sessionId) throws ServerSideException;
     public void setPoolProperties(String poolId, String name, String description, String ipAddress, String sessionId) throws ServerSideException;
@@ -434,36 +434,36 @@ public interface WebserviceBean {
     // </editor-fold>
     
     //<editor-fold desc="Templates" defaultstate="collapsed">
-    public long createTemplate(String templateClass, String templateName, String ipAddress, String sessionId) throws ServerSideException;
+    public String createTemplate(String templateClass, String templateName, String ipAddress, String sessionId) throws ServerSideException;
 
-    public long createTemplateElement(String templateElementClass, String templateElementParentClassName, long templateElementParentId, String templateElementName, String ipAddress, String sessionId) throws ServerSideException;
+    public String createTemplateElement(String templateElementClass, String templateElementParentClassName, String templateElementParentId, String templateElementName, String ipAddress, String sessionId) throws ServerSideException;
     
-    public long createTemplateSpecialElement(String tsElementClass, String tsElementParentClassName, long tsElementParentId, String tsElementName, String ipAddress, String sessionId) throws ServerSideException;
+    public String createTemplateSpecialElement(String tsElementClass, String tsElementParentClassName, String tsElementParentId, String tsElementName, String ipAddress, String sessionId) throws ServerSideException;
     
-    public long[] createBulkTemplateElement(String templateElementClassName, String templateElementParentClassName, long templateElementParentId, int numberOfTemplateElements, String templateElementNamePattern, String ipAddress, String sessionId) throws ServerSideException;
+    public String[] createBulkTemplateElement(String templateElementClassName, String templateElementParentClassName, String templateElementParentId, int numberOfTemplateElements, String templateElementNamePattern, String ipAddress, String sessionId) throws ServerSideException;
     
-    public long[] createBulkSpecialTemplateElement(String stElementClass, String stElementParentClassName, long stElementParentId, int numberOfTemplateElements, String stElementNamePattern, String ipAddress, String sessionId) throws ServerSideException;
+    public String[] createBulkSpecialTemplateElement(String stElementClass, String stElementParentClassName, String stElementParentId, int numberOfTemplateElements, String stElementNamePattern, String ipAddress, String sessionId) throws ServerSideException;
 
-    public void updateTemplateElement(String templateElementClass, long templateElementId, String[] attributeNames, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException;
+    public void updateTemplateElement(String templateElementClass, String templateElementId, String[] attributeNames, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException;
 
-    public void deleteTemplateElement(String templateElementClass, long templateElementId, String ipAddress, String sessionId) throws ServerSideException;
+    public void deleteTemplateElement(String templateElementClass, String templateElementId, String ipAddress, String sessionId) throws ServerSideException;
 
     public List<RemoteObjectLight> getTemplatesForClass(String className, String ipAddress, String sessionId) throws ServerSideException;
     
     public List<RemoteObjectLight> getTemplateElementChildren(String templateElementClass, 
-            long templateElementId, String ipAddress, String sessionId) throws ServerSideException;
+            String templateElementId, String ipAddress, String sessionId) throws ServerSideException;
     
     public List<RemoteObjectLight> getTemplateSpecialElementChildren(String tsElementClass, 
-            long tsElementId, String ipAddress, String sessionId) throws ServerSideException;
+            String tsElementId, String ipAddress, String sessionId) throws ServerSideException;
     
-    public RemoteObject getTemplateElement(String templateElementClass, long templateElementId, 
+    public RemoteObject getTemplateElement(String templateElementClass, String templateElementId, 
             String ipAddress, String sessionId) throws ServerSideException;
     
-    public long[] copyTemplateElements(String[] sourceObjectsClassNames, long[] sourceObjectsIds, 
-            String newParentClassName,long newParentId, String ipAddress, String sessionId) throws ServerSideException;
+    public String[] copyTemplateElements(String[] sourceObjectsClassNames, String[] sourceObjectsIds, 
+            String newParentClassName, String newParentId, String ipAddress, String sessionId) throws ServerSideException;
     
-    public long[] copyTemplateSpecialElements(String[] sourceObjectsClassNames, long[] sourceObjectsIds, 
-        String newParentClassName, long newParentId, String ipAddress, String sessionId) throws ServerSideException;
+    public String[] copyTemplateSpecialElements(String[] sourceObjectsClassNames, String[] sourceObjectsIds, 
+        String newParentClassName, String newParentId, String ipAddress, String sessionId) throws ServerSideException;
     
     public List<RemoteObjectLight> getDeviceLayouts(String ipAddress, String sessionId) throws ServerSideException;
         
