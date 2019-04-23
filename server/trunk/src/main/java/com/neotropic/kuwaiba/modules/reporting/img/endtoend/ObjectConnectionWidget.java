@@ -15,30 +15,40 @@
  */
 package com.neotropic.kuwaiba.modules.reporting.img.endtoend;
 
-import java.awt.BasicStroke;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.Scene;
-import org.openide.util.Lookup;
-import org.openide.util.lookup.Lookups;
 
 /**
  * A connection widget representing a link or a container
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>} modified by Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ObjectConnectionWidget extends ConnectionWidget {
-    /**
+     /**
      * Is this widget in high-contrast mode?
      */
     private boolean highContrast;
+    /**
+     * style for the line, dot line
+     */
+    public static final int DOT_LINE = 2;
+    /**
+     * line dot style
+     */
+    public static final int LINE = 1;
+    /**
+     * Label widget
+     */
     protected LabelWidget labelWidget;
-    private Lookup lookup;
-    
-    public ObjectConnectionWidget(Scene scene, RemoteObjectLight businessObject) {
+        
+    public ObjectConnectionWidget(Scene scene, RemoteObjectLight businessObject, int lineStyle) {
         super(scene);
+        if(lineStyle == DOT_LINE)
+            this.setStroke(new DotLineStroke(1));
+        
         setToolTipText(businessObject.toString());
 
         labelWidget = new LabelWidget(scene, businessObject.toString());
@@ -53,10 +63,6 @@ public class ObjectConnectionWidget extends ConnectionWidget {
         setState(ObjectState.createNormal());
         
         highContrast = false;
-        if(businessObject.getClassName().equals("RadioLink"))
-            this.setStroke(new DotLineStroke(1));
-        
-        lookup = Lookups.fixed(businessObject);
     }
     
     public LabelWidget getLabelWidget() {
@@ -68,34 +74,4 @@ public class ObjectConnectionWidget extends ConnectionWidget {
         this.labelWidget.setOpaque(highContrast);
         notifyStateChanged(getState(), getState());
     }
-    
-    /**
-     * Implements the widget-state specific look of the widget.
-     * @param previousState the previous state
-     * @param state the new state
-     */
-    @Override
-    public void notifyStateChanged (ObjectState previousState, ObjectState state) {
-        super.notifyStateChanged(previousState, state);
-
-        if (state.isSelected())
-            setStroke((getStroke() instanceof DotLineStroke) ? new DotLineStroke(4) : new BasicStroke(4));
-        else if (previousState.isSelected())
-            setStroke((getStroke() instanceof DotLineStroke) ? new DotLineStroke(3) : new BasicStroke(3));
-        
-        if (!highContrast) {
-            labelWidget.setForeground (getScene().getLookFeel().getForeground (state));
-            labelWidget.setBackground(getScene().getLookFeel().getBackground(state));
-            labelWidget.setBorder(getScene().getLookFeel().getBorder (state));
-        } else {
-            labelWidget.setForeground (HighContrastLookAndFeel.getInstance().getForeground (state));
-            labelWidget.setBackground(HighContrastLookAndFeel.getInstance().getBackground(state));
-            labelWidget.setBorder(HighContrastLookAndFeel.getInstance().getBorder (state));
-        }
-    }  
-    
-    @Override
-    public Lookup getLookup() {
-        return lookup;
-    }   
 }
