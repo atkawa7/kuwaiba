@@ -18,9 +18,11 @@ package com.neotropic.tools.dbmigration;
 import java.io.File;
 import java.util.HashMap;
 import java.util.UUID;
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.ResourceIterable;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
@@ -164,10 +166,13 @@ public class LabelUpgrader {
     private static final String INVENTORY_OBJECTS = "inventoryObjects";
     private static final String LIST_TYPE_ITEMS = "listTypeItems";
     private static final String POOLS = "pools";
+    private static final String TEMPLATES = "templates";
+    private static final String TEMPLATE_ELEMENTS = "templateElements";
+    private static final String CLASSES = "classes";
     private static final String PROPERTY_UUID = "_uuid";
     
     public void setUUIDAttributeToInventoryObjects(File storeDir) {
-        System.out.println(String.format("Start: Set UUID Attribute to Inventory Objects"));
+        System.out.println(String.format(">>> Migrating Inventory Objects"));
         GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(storeDir);
         Label labelInventoryObjects = Label.label(INVENTORY_OBJECTS);
         
@@ -183,11 +188,11 @@ public class LabelUpgrader {
             tx.success();
         }
         graphDb.shutdown();
-        System.out.println(String.format("End: Set UUID Attribute to Inventory Objects"));
+        System.out.println(String.format(">>> Inventory Object migration finished"));
     }
     
     public void setUUIDAttributeToListTypeItems(File storeDir) {
-        System.out.println(String.format("Start: Set UUID Attribute to List Type Items"));
+        System.out.println(String.format(">>> Migrating List Type Items"));
         GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(storeDir);
         Label labelListTypeItems = Label.label(LIST_TYPE_ITEMS);
         
@@ -203,11 +208,11 @@ public class LabelUpgrader {
             tx.success();
         }
         graphDb.shutdown();
-        System.out.println(String.format("End: Set UUID Attribute to List Type Items"));
+        System.out.println(String.format(">>> List Type Item migration finished"));
     }
     
     public void setUUIDAttributeToPools(File storeDir) {
-        System.out.println(String.format("Start: Set UUID Attribute to Pools"));
+        System.out.println(String.format(">>> Migrating Pools..."));
         GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(storeDir);
         Label labelPools = Label.label(POOLS);
         
@@ -223,6 +228,61 @@ public class LabelUpgrader {
             tx.success();
         }
         graphDb.shutdown();
-        System.out.println(String.format("End: Set UUID Attribute to Pools"));
+        System.out.println(String.format(">>> Pool migration finished"));
+    }
+
+    /**
+     * Create UUIDs for template elements.
+     * @param dbPathReference Reference to the database manager.
+     */
+    void setUUIDAttributeToTemplates(File dbPathReference) {
+        System.out.println(String.format(">>> Migrating Templates..."));
+        GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(dbPathReference);
+        
+        RelationshipType hasTemplate = new RelationshipType() {
+            @Override
+            public String name() {
+                return "HAS_TEMPLATE";
+            }
+        };
+        
+        RelationshipType instanceOfSpecial = new RelationshipType() {
+            @Override
+            public String name() {
+                return "INSTANCE_OF_SPECIAL";
+            }
+        };
+        
+        Label labelTemplates = Label.label(TEMPLATES);
+        Label labelTemplateElements = Label.label(TEMPLATE_ELEMENTS);
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            //First we migrate the templates.
+            graphDb.findNodes(Label.label(CLASSES)).forEachRemaining((aClassNode) -> {
+                System.out.println("Processing templates for class " + aClassNode.getProperty("name"));
+                aClassNode.getRelationships(Direction.OUTGOING, hasTemplate).forEach((aTemplateRelationship) -> {
+                    Node templateNode = aTemplateRelationship.getEndNode();
+                    System.out.println("Migrating " + templateNode.getProperty("name"));
+                    templateNode.addLabel(labelTemplates);
+                    templateNode.setProperty(PROPERTY_UUID, UUID.randomUUID().toString());
+                });
+                
+                //Then the template elements. That is, the children of template objects
+                System.out.println("Processing template elements for class " + aClassNode.getProperty("name"));
+                aClassNode.getRelationships(Direction.INCOMING, instanceOfSpecial).forEach((aTemplateElementRelationship) -> {
+                    if (aTemplateElementRelationship.hasProperty("name") && 
+                            aTemplateElementRelationship.getProperty("name").equals("template")) {
+                        Node templateElementNode = aTemplateElementRelationship.getStartNode();
+                        System.out.println("Migrating " + templateElementNode.getProperty("name"));
+                        templateElementNode.addLabel(labelTemplateElements);
+                        templateElementNode.setProperty(PROPERTY_UUID, UUID.randomUUID().toString());
+                    }
+                    
+                });
+            });
+            tx.success();
+        }
+        graphDb.shutdown();
+        System.out.println(String.format(">>> Template migration finished"));
     }
 }

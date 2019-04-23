@@ -88,6 +88,7 @@ public class DatabaseMigrationStage2 {
                     LabelUpgrader.getInstance().replaceLabel(dbPathReference, "inventory_objects", "inventoryObjects");
                     LabelUpgrader.getInstance().setUUIDAttributeToInventoryObjects(dbPathReference);
                     LabelUpgrader.getInstance().setUUIDAttributeToListTypeItems(dbPathReference);
+                    LabelUpgrader.getInstance().setUUIDAttributeToTemplates(dbPathReference);
                     LabelUpgrader.getInstance().setUUIDAttributeToPools(dbPathReference);
                     ObjectViewMigrator.migrate(dbPathReference);
                     EndToEndAndTopologyViewMigrator.migrate(dbPathReference);
