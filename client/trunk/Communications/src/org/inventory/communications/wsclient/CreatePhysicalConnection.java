@@ -20,8 +20,6 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="aObjectId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="bObjectClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="bObjectId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="parentClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="parentId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="connectionClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="templateId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -40,8 +38,6 @@ import javax.xml.bind.annotation.XmlType;
     "aObjectId",
     "bObjectClass",
     "bObjectId",
-    "parentClass",
-    "parentId",
     "name",
     "connectionClass",
     "templateId",
@@ -53,8 +49,6 @@ public class CreatePhysicalConnection {
     protected String aObjectId;
     protected String bObjectClass;
     protected String bObjectId;
-    protected String parentClass;
-    protected String parentId;
     protected String name;
     protected String connectionClass;
     protected String templateId;
@@ -154,54 +148,6 @@ public class CreatePhysicalConnection {
      */
     public void setBObjectId(String value) {
         this.bObjectId = value;
-    }
-
-    /**
-     * Gets the value of the parentClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getParentClass() {
-        return parentClass;
-    }
-
-    /**
-     * Sets the value of the parentClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setParentClass(String value) {
-        this.parentClass = value;
-    }
-
-    /**
-     * Gets the value of the parentId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getParentId() {
-        return parentId;
-    }
-
-    /**
-     * Sets the value of the parentId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setParentId(String value) {
-        this.parentId = value;
     }
 
     /**

@@ -278,6 +278,9 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         
         renderDefaultView(object, myNodes, myConnections);
         
+        if (structure == null) //There is no a saved view
+            return;
+        
         try {
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
             QName qZoom = new QName("zoom"); //NOI18N

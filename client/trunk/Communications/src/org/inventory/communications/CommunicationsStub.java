@@ -2231,18 +2231,16 @@ public class CommunicationsStub {
      * @param endpointAId source object oid
      * @param endpointBClass target object class name
      * @param endpointBId target object oid
-     * @param parentClass connection's parent class
-     * @param parentId connection's parent id
      * @param name Name of the new connection. Leave empty if you want to use the name in the template
      * @param connectionClass Class for the corresponding connection to be created
      * @param templateId Id of the template for the connectionClass. Use -1 to create a connection without template
      * @return A local object light representing the new connection
      */
     public LocalObjectLight createPhysicalConnection(String endpointAClass, String endpointAId,
-            String endpointBClass, String endpointBId, String parentClass, String parentId, String name, String connectionClass, String templateId) {
+            String endpointBClass, String endpointBId, String name, String connectionClass, String templateId) {
         try {
             String myObjectId = service.createPhysicalConnection(endpointAClass, endpointAId,
-                    endpointBClass, endpointBId, parentClass, parentId, name, connectionClass, templateId, this.session.getSessionId());
+                    endpointBClass, endpointBId, name, connectionClass, templateId, this.session.getSessionId());
             return new LocalObjectLight(myObjectId, name, connectionClass);
         }catch(Exception ex){
             this.error =  ex.getMessage();

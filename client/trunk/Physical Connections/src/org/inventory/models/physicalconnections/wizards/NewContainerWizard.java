@@ -69,8 +69,8 @@ public final class NewContainerWizard {
             LocalObjectLight selectedAEndpoint = panel2.getComponent().getSelectedAEndpoint();
             LocalObjectLight selectedBEndpoint = panel2.getComponent().getSelectedBEndpoint();
             
-            newConnection = CommunicationsStub.getInstance().createPhysicalConnection(selectedAEndpoint.getClassName(), selectedAEndpoint.getId(),
-                    selectedBEndpoint.getClassName(), selectedBEndpoint.getId(), parent.getClassName(), parent.getId(),
+            newConnection = CommunicationsStub.getInstance().createPhysicalConnection(selectedAEndpoint.getClassName(), 
+                    selectedAEndpoint.getId(), selectedBEndpoint.getClassName(), selectedBEndpoint.getId(), 
                     panel1.getComponent().getContainerName(), panel1.getComponent().getContainerClass().getClassName(),
                     panel1.getComponent().dontUseTemplate() || panel1.getComponent().getContainerTemplate() == null ? 
                             null : panel1.getComponent().getContainerTemplate().getId()); //If "No Template" is selected, the id will be null (or an empty string)

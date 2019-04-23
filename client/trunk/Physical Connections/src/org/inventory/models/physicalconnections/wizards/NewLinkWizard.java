@@ -72,6 +72,7 @@ public final class NewLinkWizard {
                 jc.putClientProperty(WizardDescriptor.PROP_CONTENT_NUMBERED, true);
             }
         }
+        
         WizardDescriptor wiz = new WizardDescriptor(new WizardDescriptor.ArrayIterator<>(panels));
         // {0} will be replaced by WizardDesriptor.Panel.getComponent().getName()
         wiz.setTitleFormat(new MessageFormat("{0}"));
@@ -79,16 +80,9 @@ public final class NewLinkWizard {
         if (DialogDisplayer.getDefault().notify(wiz) == WizardDescriptor.FINISH_OPTION) {
             LocalObjectLight selectedAEndpoint = panel2.getComponent().getSelectedAEndpoint();
             LocalObjectLight selectedBEndpoint = panel2.getComponent().getSelectedBEndpoint();
-            LocalObjectLight selectedContainer = null;
-            if(panel0 != null){
-                if(!panel0.getComponent().noContainer()){
-                    selectedContainer = panel0.getComponent().getSelectedContainer();
-                }
-            }
+            
             newConnection = CommunicationsStub.getInstance().createPhysicalConnection(selectedAEndpoint.getClassName(), selectedAEndpoint.getId(),
                     selectedBEndpoint.getClassName(), selectedBEndpoint.getId(), 
-                    selectedContainer != null ? selectedContainer.getClassName() : parent.getClassName(), 
-                    selectedContainer != null ? selectedContainer.getId() : parent.getId(),
                     panel1.getComponent().getLinkName(), panel1.getComponent().getLinkClass().getClassName(),
                     panel1.getComponent().dontUseTemplate() || panel1.getComponent().getLinkTemplate() == null 
                             ? null : panel1.getComponent().getLinkTemplate().getId());
