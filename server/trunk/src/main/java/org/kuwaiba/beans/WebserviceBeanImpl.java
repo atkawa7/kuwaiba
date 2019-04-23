@@ -174,7 +174,6 @@ public class WebserviceBeanImpl implements WebserviceBean {
      * Sync/load data reference
      */
     private final SyncManager sync;
-
     
     public WebserviceBeanImpl() {
         super();
@@ -2485,7 +2484,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("getLogicalConnectionsInObject", ipAddress, sessionId); //NOI18N
             List<RemoteObjectLight> res = new ArrayList<>();
-            
+                        
             List<BusinessObjectLight> allCommunicationsPorts = bem.getChildrenOfClassLightRecursive(objectId, objectClass, "GenericCommunicationsPort", -1);
             
             for (BusinessObjectLight aCommunicationsPort : allCommunicationsPorts) {

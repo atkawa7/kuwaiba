@@ -671,7 +671,7 @@ public class Util {
         for (String property : syncDataSourceConfigNode.getPropertyKeys()) {
             if (property.equals(Constants.PROPERTY_NAME))
                 configName = (String)syncDataSourceConfigNode.getProperty(property);
-            if(property.equals("deviceId") && !((String)syncDataSourceConfigNode.getProperty(property)).equals(inventoryObjectNode.getId()))
+            if(property.equals("deviceId") && !((String)syncDataSourceConfigNode.getProperty(property)).equals(inventoryObjectNode.getProperty(Constants.PROPERTY_UUID)))
                 throw new UnsupportedPropertyException(String.format("The sync configuration with id %s is malformed. its not related with correct inventory object", inventoryObjectNode.getId()));   
             else
                 parameters.put(property, (String)syncDataSourceConfigNode.getProperty(property));
