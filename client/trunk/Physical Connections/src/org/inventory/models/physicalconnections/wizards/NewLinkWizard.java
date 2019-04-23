@@ -90,7 +90,8 @@ public final class NewLinkWizard {
                     selectedContainer != null ? selectedContainer.getClassName() : parent.getClassName(), 
                     selectedContainer != null ? selectedContainer.getId() : parent.getId(),
                     panel1.getComponent().getLinkName(), panel1.getComponent().getLinkClass().getClassName(),
-                    panel1.getComponent().dontUseTemplate() || panel1.getComponent().getLinkTemplate() == null ? -1 : Long.valueOf(panel1.getComponent().getLinkTemplate().getId()));
+                    panel1.getComponent().dontUseTemplate() || panel1.getComponent().getLinkTemplate() == null 
+                            ? null : panel1.getComponent().getLinkTemplate().getId());
             
             if (newConnection == null)
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

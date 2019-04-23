@@ -20,9 +20,9 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="sourceObjectsClassNames" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="sourceObjectsIds" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="sourceObjectsIds" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="newParentClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="newParentId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="newParentId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -45,9 +45,9 @@ public class CopyTemplateElements {
     @XmlElement(nillable = true)
     protected List<String> sourceObjectsClassNames;
     @XmlElement(nillable = true)
-    protected List<Long> sourceObjectsIds;
+    protected List<String> sourceObjectsIds;
     protected String newParentClassName;
-    protected long newParentId;
+    protected String newParentId;
     protected String sessionId;
 
     /**
@@ -97,13 +97,13 @@ public class CopyTemplateElements {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Long }
+     * {@link String }
      * 
      * 
      */
-    public List<Long> getSourceObjectsIds() {
+    public List<String> getSourceObjectsIds() {
         if (sourceObjectsIds == null) {
-            sourceObjectsIds = new ArrayList<Long>();
+            sourceObjectsIds = new ArrayList<String>();
         }
         return this.sourceObjectsIds;
     }
@@ -135,16 +135,24 @@ public class CopyTemplateElements {
     /**
      * Gets the value of the newParentId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getNewParentId() {
+    public String getNewParentId() {
         return newParentId;
     }
 
     /**
      * Sets the value of the newParentId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setNewParentId(long value) {
+    public void setNewParentId(String value) {
         this.newParentId = value;
     }
 

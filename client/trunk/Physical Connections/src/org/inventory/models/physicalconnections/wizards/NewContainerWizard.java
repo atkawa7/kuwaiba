@@ -72,7 +72,8 @@ public final class NewContainerWizard {
             newConnection = CommunicationsStub.getInstance().createPhysicalConnection(selectedAEndpoint.getClassName(), selectedAEndpoint.getId(),
                     selectedBEndpoint.getClassName(), selectedBEndpoint.getId(), parent.getClassName(), parent.getId(),
                     panel1.getComponent().getContainerName(), panel1.getComponent().getContainerClass().getClassName(),
-                    panel1.getComponent().dontUseTemplate() || panel1.getComponent().getContainerTemplate() == null ? -1 : Long.valueOf(panel1.getComponent().getContainerTemplate().getId())); //If "No Template" is selected, the id will be -1
+                    panel1.getComponent().dontUseTemplate() || panel1.getComponent().getContainerTemplate() == null ? 
+                            null : panel1.getComponent().getContainerTemplate().getId()); //If "No Template" is selected, the id will be null (or an empty string)
             
             if (newConnection == null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="stElementClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="stElementParentClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="stElementParentId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="stElementParentId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="numberOfTemplateElements" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="stElementNamePattern" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -43,7 +43,7 @@ public class CreateBulkSpecialTemplateElement {
 
     protected String stElementClass;
     protected String stElementParentClassName;
-    protected long stElementParentId;
+    protected String stElementParentId;
     protected int numberOfTemplateElements;
     protected String stElementNamePattern;
     protected String sessionId;
@@ -99,16 +99,24 @@ public class CreateBulkSpecialTemplateElement {
     /**
      * Gets the value of the stElementParentId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getStElementParentId() {
+    public String getStElementParentId() {
         return stElementParentId;
     }
 
     /**
      * Sets the value of the stElementParentId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setStElementParentId(long value) {
+    public void setStElementParentId(String value) {
         this.stElementParentId = value;
     }
 

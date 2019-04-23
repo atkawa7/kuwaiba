@@ -59,11 +59,9 @@ import org.openide.util.lookup.Lookups;
  */
 public class TemplateElementNode extends AbstractNode implements PropertyChangeListener {
 
-    private static final Image defaultIcon = Utils.createRectangleIcon(Utils.DEFAULT_ICON_COLOR, 
+    private static final Image DEFAULT_ICON = Utils.createRectangleIcon(Utils.DEFAULT_ICON_COLOR, 
             Utils.DEFAULT_ICON_WIDTH, Utils.DEFAULT_ICON_HEIGHT);
-    
-    protected Image icon = defaultIcon;
-    
+      
     private final CommunicationsStub com = CommunicationsStub.getInstance();
     
     public TemplateElementNode(LocalObjectLight object) {
@@ -88,12 +86,12 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
     
     @Override
     public Image getOpenedIcon(int type) {
-        return icon;
+        return DEFAULT_ICON;
     }
 
     @Override
     public Image getIcon(int type) {
-        return icon;
+        return DEFAULT_ICON;
     }
 
     @Override
@@ -105,7 +103,7 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
         if (classmetadata == null) 
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
-            LocalObject templateElement = com.getTemplateElement(currentObject.getClassName(), Long.valueOf(currentObject.getId()));
+            LocalObject templateElement = com.getTemplateElement(currentObject.getClassName(), currentObject.getId());
             if (templateElement == null) 
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             else {
@@ -248,13 +246,13 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
                     
                         if (canMoveSpecialElement) {
                             List<String> classNames = new ArrayList<>();
-                            List<Long> ids = new ArrayList<>();
+                            List<String> ids = new ArrayList<>();
 
                             classNames.add(incomingObject.getClassName());
-                            ids.add(Long.valueOf(incomingObject.getId()));
+                            ids.add(incomingObject.getId());
 
                             List<LocalObjectLight> copiedNodes = CommunicationsStub.getInstance().
-                                    copyTemplateSpecialElements(classNames, ids, currentObject.getClassName(), Long.valueOf(currentObject.getId()));
+                                    copyTemplateSpecialElements(classNames, ids, currentObject.getClassName(), currentObject.getId());
 
                             if (copiedNodes != null) {
                                 if (getChildren() instanceof AbstractChildren)
@@ -264,9 +262,8 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
 
                         } else 
                             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,
-                                String.format("An special child instance of %s can't be moved into a %s %sinstance", 
-                                    incomingObject.getClassName(), currentObject.getClassName(), 
-                                    currentNode instanceof TemplateSpecialElementNode ? " special child " : ""));
+                                String.format("A special child instance of %s can not be moved into a %s instance", 
+                                    incomingObject.getClassName(), currentObject.getClassName()));
                     } else {
                         boolean canMoveElement = false;
                         //Check if the current object can contain the drop node
@@ -281,13 +278,13 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
                     
                         if (canMoveElement) {
                             List<String> classNames = new ArrayList<>();
-                            List<Long> ids = new ArrayList<>();
+                            List<String> ids = new ArrayList<>();
 
                             classNames.add(incomingObject.getClassName());
-                            ids.add(Long.valueOf(incomingObject.getId()));
+                            ids.add(incomingObject.getId());
 
                             List<LocalObjectLight> copiedNodes = CommunicationsStub.getInstance().
-                                    copyTemplateElements(classNames, ids, currentObject.getClassName(), Long.valueOf(currentObject.getId()));
+                                    copyTemplateElements(classNames, ids, currentObject.getClassName(), currentObject.getId());
 
                             if (copiedNodes != null) {
                                 if (getChildren() instanceof AbstractChildren)
@@ -297,8 +294,7 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
 
                         } else 
                             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,
-                                    String.format("An instance of %s can't be moved into a %s %sinstance",incomingObject.getClassName(), currentObject.getClassName(), 
-                                        currentNode instanceof TemplateSpecialElementNode ? " special child " : ""));
+                                    String.format("An instance of %s can not be moved into a %s instance",incomingObject.getClassName(), currentObject.getClassName()));
                     }
                 } catch (Exception ex) {
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
@@ -311,7 +307,7 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         LocalObjectLight affectedObject = (LocalObjectLight)evt.getSource();
-        if (!com.updateTemplateElement(affectedObject.getClassName(), Long.valueOf(affectedObject.getId()),
+        if (!com.updateTemplateElement(affectedObject.getClassName(), affectedObject.getId(),
             new String[] {evt.getPropertyName()}, 
             new String[] {evt.getNewValue() == null ? null : (evt.getNewValue() instanceof LocalObjectListItem ? String.valueOf(((LocalObjectListItem)evt.getNewValue()).getId()) : String.valueOf(evt.getNewValue())) }))
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
@@ -328,10 +324,10 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
         public void addNotify() {
             LocalObjectLight templateElement = getNode().getLookup().lookup(LocalObjectLight.class);
             List<LocalObjectLight> templateElementChildren = CommunicationsStub.getInstance().
-                    getTemplateElementChildren(templateElement.getClassName(), Long.valueOf(templateElement.getId()));
+                    getTemplateElementChildren(templateElement.getClassName(), templateElement.getId());
             
             templateElementSpecialChildren = CommunicationsStub.getInstance().
-                    getTemplateSpecialElementChildren(templateElement.getClassName(), Long.valueOf(templateElement.getId()));
+                    getTemplateSpecialElementChildren(templateElement.getClassName(), templateElement.getId());
             
             if (templateElementChildren == null && templateElementSpecialChildren == null) {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

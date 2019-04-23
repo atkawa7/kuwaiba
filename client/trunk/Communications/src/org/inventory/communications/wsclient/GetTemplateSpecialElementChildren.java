@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="tsElementClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="tsElementId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="tsElementId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlType;
 public class GetTemplateSpecialElementChildren {
 
     protected String tsElementClass;
-    protected long tsElementId;
+    protected String tsElementId;
     protected String sessionId;
 
     /**
@@ -66,16 +66,24 @@ public class GetTemplateSpecialElementChildren {
     /**
      * Gets the value of the tsElementId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getTsElementId() {
+    public String getTsElementId() {
         return tsElementId;
     }
 
     /**
      * Sets the value of the tsElementId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setTsElementId(long value) {
+    public void setTsElementId(String value) {
         this.tsElementId = value;
     }
 

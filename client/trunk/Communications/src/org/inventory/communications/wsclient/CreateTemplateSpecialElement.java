@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="templateElementClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="tsElementParentClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="tsElementParentId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="tsElementParentId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="tsElementName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -41,7 +41,7 @@ public class CreateTemplateSpecialElement {
 
     protected String templateElementClass;
     protected String tsElementParentClassName;
-    protected long tsElementParentId;
+    protected String tsElementParentId;
     protected String tsElementName;
     protected String sessionId;
 
@@ -96,16 +96,24 @@ public class CreateTemplateSpecialElement {
     /**
      * Gets the value of the tsElementParentId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getTsElementParentId() {
+    public String getTsElementParentId() {
         return tsElementParentId;
     }
 
     /**
      * Sets the value of the tsElementParentId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setTsElementParentId(long value) {
+    public void setTsElementParentId(String value) {
         this.tsElementParentId = value;
     }
 

@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="templateElementClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="templateElementParentClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="templateElementParentId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="templateElementParentId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="numberOfTemplateElements" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="templateElementNamePattern" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -43,7 +43,7 @@ public class CreateBulkTemplateElement {
 
     protected String templateElementClass;
     protected String templateElementParentClassName;
-    protected long templateElementParentId;
+    protected String templateElementParentId;
     protected int numberOfTemplateElements;
     protected String templateElementNamePattern;
     protected String sessionId;
@@ -99,16 +99,24 @@ public class CreateBulkTemplateElement {
     /**
      * Gets the value of the templateElementParentId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getTemplateElementParentId() {
+    public String getTemplateElementParentId() {
         return templateElementParentId;
     }
 
     /**
      * Sets the value of the templateElementParentId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setTemplateElementParentId(long value) {
+    public void setTemplateElementParentId(String value) {
         this.templateElementParentId = value;
     }
 

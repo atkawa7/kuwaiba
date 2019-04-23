@@ -76,7 +76,7 @@ public class EditLayoutAction extends GenericInventoryAction {
         TemplateElementNode selectedNode = Utilities.actionsGlobalContext().lookup(TemplateElementNode.class);
         LocalObjectLight selectedObject = selectedNode.getLookup().lookup(LocalObjectLight.class);
                 
-        LocalObject templateElement = CommunicationsStub.getInstance().getTemplateElement(selectedObject.getClassName(), Long.valueOf(selectedObject.getId()));
+        LocalObject templateElement = CommunicationsStub.getInstance().getTemplateElement(selectedObject.getClassName(), selectedObject.getId());
         if (templateElement == null) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

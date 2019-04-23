@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="templateElementClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="templateElementId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="templateElementId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="attributeNames" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="attributeValues" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -43,7 +43,7 @@ import javax.xml.bind.annotation.XmlType;
 public class UpdateTemplateElement {
 
     protected String templateElementClass;
-    protected long templateElementId;
+    protected String templateElementId;
     @XmlElement(nillable = true)
     protected List<String> attributeNames;
     @XmlElement(nillable = true)
@@ -77,16 +77,24 @@ public class UpdateTemplateElement {
     /**
      * Gets the value of the templateElementId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getTemplateElementId() {
+    public String getTemplateElementId() {
         return templateElementId;
     }
 
     /**
      * Sets the value of the templateElementId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setTemplateElementId(long value) {
+    public void setTemplateElementId(String value) {
         this.templateElementId = value;
     }
 

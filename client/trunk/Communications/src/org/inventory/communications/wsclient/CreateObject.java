@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="parentOid" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="attributeNames" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="attributeValues" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="templateId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="templateId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -53,7 +53,7 @@ public class CreateObject {
     protected List<String> attributeNames;
     @XmlElement(nillable = true)
     protected List<String> attributeValues;
-    protected long templateId;
+    protected String templateId;
     protected String sessionId;
 
     /**
@@ -189,16 +189,24 @@ public class CreateObject {
     /**
      * Gets the value of the templateId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public long getTemplateId() {
+    public String getTemplateId() {
         return templateId;
     }
 
     /**
      * Sets the value of the templateId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setTemplateId(long value) {
+    public void setTemplateId(String value) {
         this.templateId = value;
     }
 

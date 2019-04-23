@@ -1818,11 +1818,11 @@ public class CommunicationsStub {
      * @param parentClass
      * @param parentOid
      * @param attributes
-     * @param template
+     * @param templateId
      * @return 
      */
     public LocalObjectLight createObject(String objectClass, String parentClass, 
-            String parentOid, HashMap<String, Object> attributes, long template)
+            String parentOid, HashMap<String, Object> attributes, String templateId)
     {
         try {
             List<String> attributeNames = new ArrayList<>();
@@ -1846,7 +1846,7 @@ public class CommunicationsStub {
             String objectId  = service.createObject(objectClass, parentClass, 
                     parentOid, attributeNames,
                     attributeValues,
-                    template, this.session.getSessionId());
+                    templateId, this.session.getSessionId());
             return new LocalObjectLight(objectId, null, objectClass);
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -1855,7 +1855,7 @@ public class CommunicationsStub {
     }
     
     public LocalObjectLight createSpecialObject(String className, String parentClassName, 
-            String parentOid, HashMap<String, Object> attributes, long templateId) {
+            String parentOid, HashMap<String, Object> attributes, String templateId) {
         try{
             List<String> attributeNames = new ArrayList<>();
             List<String> attributeValues = new ArrayList<>();
@@ -2239,7 +2239,7 @@ public class CommunicationsStub {
      * @return A local object light representing the new connection
      */
     public LocalObjectLight createPhysicalConnection(String endpointAClass, String endpointAId,
-            String endpointBClass, String endpointBId, String parentClass, String parentId, String name, String connectionClass, long templateId) {
+            String endpointBClass, String endpointBId, String parentClass, String parentId, String name, String connectionClass, String templateId) {
         try {
             String myObjectId = service.createPhysicalConnection(endpointAClass, endpointAId,
                     endpointBClass, endpointBId, parentClass, parentId, name, connectionClass, templateId, this.session.getSessionId());
@@ -3645,7 +3645,7 @@ public class CommunicationsStub {
      */
     public LocalObjectLight createPoolItem (String poolId, String className){
         try {
-            String objectId  = service.createPoolItem(poolId, className, null, null, -1,session.getSessionId());
+            String objectId  = service.createPoolItem(poolId, className, null, null, null, session.getSessionId());
             return new LocalObjectLight(objectId, null, className);
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -3977,8 +3977,8 @@ public class CommunicationsStub {
     public LocalObjectLight createTemplateElement(String templateElementClass, 
             String templateElementParentClassName, String templateElementParentId, String templateElementName) {
             try {
-            return new LocalObjectLight(String.valueOf(service.createTemplateElement(templateElementClass, templateElementParentClassName, 
-                    Long.valueOf(templateElementParentId), templateElementName, session.getSessionId())), templateElementName, templateElementClass);
+            return new LocalObjectLight(service.createTemplateElement(templateElementClass, templateElementParentClassName, 
+                    templateElementParentId, templateElementName, session.getSessionId()), templateElementName, templateElementClass);
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
@@ -3994,8 +3994,8 @@ public class CommunicationsStub {
      */
     public LocalObjectLight createTemplateSpecialElement(String tsElementClass, String tsElementParentClassName, String tsElementParentId, String tsElementName) {
         try {
-            return new LocalObjectLight(String.valueOf(service.createTemplateSpecialElement(tsElementClass, tsElementParentClassName, 
-                    Long.valueOf(tsElementParentId), tsElementName, session.getSessionId())), tsElementName, tsElementClass);
+            return new LocalObjectLight(service.createTemplateSpecialElement(tsElementClass, tsElementParentClassName, 
+                    tsElementParentId, tsElementName, session.getSessionId()), tsElementName, tsElementClass);
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
@@ -4014,12 +4014,16 @@ public class CommunicationsStub {
      *         If the parent class name cannot be found
      *         If the given pattern to generate the name has less possibilities that the number of template elements to be created
      */
-    public List<LocalObjectLight> createBulkTemplateElement(String templateElementClassName, String templateElementParentClassName, long templateElementParentId, int numberOfTemplateElements, String templateElementNamePattern) {
+    public List<LocalObjectLight> createBulkTemplateElement(String templateElementClassName, 
+            String templateElementParentClassName, String templateElementParentId, int numberOfTemplateElements, String templateElementNamePattern) {
         try {
             List<LocalObjectLight> result = new ArrayList<>();
-            List<Long> ids = service.createBulkTemplateElement(templateElementClassName, templateElementParentClassName, templateElementParentId, numberOfTemplateElements, templateElementNamePattern, session.getSessionId());
-            
-            for (Long id : ids) {
+            List<String> ids = service.createBulkTemplateElement(templateElementClassName, templateElementParentClassName, templateElementParentId, numberOfTemplateElements, templateElementNamePattern, session.getSessionId());
+            /*
+            TODO: createBulkTemplateElement should return RemoteObjectLight instances instead of merely ids, so we can save so many calls to 
+            getTemplateElement
+            */
+            for (String id : ids) {
                 LocalObject templateElement = getTemplateElement(templateElementClassName, id);
                 if (templateElement == null)
                     throw new Exception();
@@ -4045,12 +4049,16 @@ public class CommunicationsStub {
      *         If the parent class name cannot be found
      *         If the given pattern to generate the name has less possibilities that the number of special template elements to be created
      */
-    public List<LocalObjectLight> createBulkSpecialTemplateElement(String stElementClass, String stElementParentClassName, long stElementParentId, int numberOfTemplateElements, String stElementNamePattern) {
+    public List<LocalObjectLight> createBulkSpecialTemplateElement(String stElementClass, String stElementParentClassName, 
+            String stElementParentId, int numberOfTemplateElements, String stElementNamePattern) {
         try {
             List<LocalObjectLight> result = new ArrayList<>();
-            List<Long> ids = service.createBulkSpecialTemplateElement(stElementClass, stElementParentClassName, stElementParentId, numberOfTemplateElements, stElementNamePattern, session.getSessionId());
-            
-            for (Long id : ids) {
+            List<String> ids = service.createBulkSpecialTemplateElement(stElementClass, stElementParentClassName, stElementParentId, numberOfTemplateElements, stElementNamePattern, session.getSessionId());
+            /*
+            TODO: createBulkSpecialTemplateElement should return RemoteObjectLight instances instead of merely ids, so we can save so many calls to 
+            getTemplateElement
+            */
+            for (String id : ids) {
                 LocalObject specialTemplateElement = getTemplateElement(stElementClass, id);
                 if (specialTemplateElement == null)
                     throw new Exception();
@@ -4071,7 +4079,7 @@ public class CommunicationsStub {
      * @param attributeValues The values of the attributes you want to upfate. For list types, it's the id of the related type
      * @return <code>true</code> if the update was successful, <code>false</code> otherwise.
      */
-    public boolean updateTemplateElement(String templateElementClass, long templateElementId, 
+    public boolean updateTemplateElement(String templateElementClass, String templateElementId, 
             String[] attributeNames, String[] attributeValues) {
         try {
             service.updateTemplateElement(templateElementClass, templateElementId, 
@@ -4088,7 +4096,7 @@ public class CommunicationsStub {
      * @param templateElementId The template element id.
      * @return <code>true</code> if the update was successful, <code>false</code> otherwise.
      */
-    public boolean deleteTemplateElement(String templateElementClass, long templateElementId) {
+    public boolean deleteTemplateElement(String templateElementClass, String templateElementId) {
         try {
             service.deleteTemplateElement(templateElementClass, templateElementId, session.getSessionId());
             return true;
@@ -4133,7 +4141,7 @@ public class CommunicationsStub {
      * @param templateElementId Template element id.
      * @return The template element's children as a list of LocalObjectLight instances. It will return null if something went wrong.
      */
-    public List<LocalObjectLight> getTemplateElementChildren(String templateElementClass, long templateElementId) {
+    public List<LocalObjectLight> getTemplateElementChildren(String templateElementClass, String templateElementId) {
         try {
             List<LocalObjectLight> localTemplateElementChildren = new ArrayList<>();
             List<RemoteObjectLight> remoteTemplateElementChildren = service.getTemplateElementChildren(templateElementClass, templateElementId, session.getSessionId());
@@ -4152,7 +4160,7 @@ public class CommunicationsStub {
      * @param tsElementId Template special element id.
      * @return The template element's children as a list of LocalObjectLight instances. It will return null if something went wrong.
      */
-    public List<LocalObjectLight> getTemplateSpecialElementChildren(String tsElementClass, long tsElementId) {
+    public List<LocalObjectLight> getTemplateSpecialElementChildren(String tsElementClass, String tsElementId) {
         try {
             List<LocalObjectLight> localTemplateElementChildren = new ArrayList<>();
             List<RemoteObjectLight> remoteTemplateSpecialElementChildren = service.getTemplateSpecialElementChildren(tsElementClass, tsElementId, session.getSessionId());
@@ -4171,7 +4179,7 @@ public class CommunicationsStub {
      * @param templateElementId Template element id.
      * @return The template element information. It will return null if something went wrong.
      */
-    public LocalObject getTemplateElement(String templateElementClass, long templateElementId) {
+    public LocalObject getTemplateElement(String templateElementClass, String templateElementId) {
         try {
             RemoteObject remoteTemplateElement = service.getTemplateElement(templateElementClass, templateElementId, session.getSessionId());
             LocalClassMetadata classMetadata = getMetaForClass(templateElementClass, false);
@@ -4192,16 +4200,19 @@ public class CommunicationsStub {
      * @param newParentId Id of the parent of the copied objects.
      * @return An array with the ids of the newly created elements in the same order they were provided. Null in case of error.
      */
-    public List<LocalObjectLight> copyTemplateElements(List<String> sourceObjectsClassNames, List<Long> sourceObjectsIds, 
-            String newParentClassName, long newParentId) {
+    public List<LocalObjectLight> copyTemplateElements(List<String> sourceObjectsClassNames, List<String> sourceObjectsIds, 
+            String newParentClassName, String newParentId) {
         try {
-            List<Long> remoteTemplateElements = service.copyTemplateElements(sourceObjectsClassNames, 
+            List<String> remoteTemplateElements = service.copyTemplateElements(sourceObjectsClassNames, 
                     sourceObjectsIds, newParentClassName, newParentId, session.getSessionId());
             
             List<LocalObjectLight> localTemplateElements = new ArrayList<>();
-            
+            /*
+            TODO: copyTemplateElements should return RemoteObjectLight instances instead of merely ids, because this method is 
+            not safe.
+            */
             for (int i = 0; i < sourceObjectsClassNames.size(); i++) 
-                localTemplateElements.add(new LocalObjectLight(String.valueOf(sourceObjectsIds.get(i)), "", sourceObjectsClassNames.get(i)));
+                localTemplateElements.add(new LocalObjectLight(remoteTemplateElements.get(i), "", sourceObjectsClassNames.get(i)));
             
             return localTemplateElements;
         } catch (Exception ex) {
@@ -4210,16 +4221,19 @@ public class CommunicationsStub {
         }
     }
     
-    public List<LocalObjectLight> copyTemplateSpecialElements(List<String> sourceObjectsClassNames, List<Long> sourceObjectsIds,
-        String newParentClassName, long newParentId) {
+    public List<LocalObjectLight> copyTemplateSpecialElements(List<String> sourceObjectsClassNames, List<String> sourceObjectsIds,
+        String newParentClassName, String newParentId) {
         try {
-            service.copyTemplateSpecialElements(sourceObjectsClassNames, 
-                sourceObjectsIds, newParentClassName, newParentId, session.getSessionId());
+            List<String> remoteTemplateSpecialElements = service.copyTemplateSpecialElements(sourceObjectsClassNames, 
+                    sourceObjectsIds, newParentClassName, newParentId, session.getSessionId());
             
             List<LocalObjectLight> localTemplateSpecialElements = new ArrayList<>();
-            
-            for (int i = 0; i < sourceObjectsClassNames.size(); i += 1)
-                localTemplateSpecialElements.add(new LocalObjectLight(String.valueOf(sourceObjectsIds.get(i)), "", sourceObjectsClassNames.get(i)));
+            /*
+            TODO: copyTemplateElements should return RemoteObjectLight instances instead of merely ids, because this method is 
+            not safe.
+            */
+            for (int i = 0; i < sourceObjectsClassNames.size(); i++)
+                localTemplateSpecialElements.add(new LocalObjectLight(remoteTemplateSpecialElements.get(i), "", sourceObjectsClassNames.get(i)));
             
             return localTemplateSpecialElements;
         } catch (Exception ex) {

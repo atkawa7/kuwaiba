@@ -24,6 +24,7 @@ import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.i18n.I18N;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.special.attachments.nodes.AttachmentsRootNode;
 import org.inventory.navigation.special.children.nodes.SpecialChildren;
 import org.netbeans.api.settings.ConvertAsProperties;
@@ -72,7 +73,7 @@ public class AttachmentsTopComponent extends TopComponent
     private JButton btnRefresh;
     //Singleton
     private static AttachmentsTopComponent self;
-    private Lookup.Result<LocalObjectLight> lookupResult;
+    private Lookup.Result<ObjectNode> lookupResult;
     private boolean open = false;
     
     private AttachmentsTopComponent() {
@@ -115,7 +116,7 @@ public class AttachmentsTopComponent extends TopComponent
     @Override
     public void componentOpened() {
         this.open = true;
-        this.lookupResult = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
+        this.lookupResult = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class);
         this.lookupResult.addLookupListener(this);
         this.resultChanged(null);
     }
@@ -140,7 +141,7 @@ public class AttachmentsTopComponent extends TopComponent
     @Override
     public void resultChanged(LookupEvent ev) {
         if(lookupResult.allInstances().size() == 1) {
-            LocalObjectLight inventoryObject = (LocalObjectLight)lookupResult.allInstances().iterator().next();
+            LocalObjectLight inventoryObject = ((ObjectNode)lookupResult.allInstances().iterator().next()).getObject();
             em.setRootContext(new AttachmentsRootNode(inventoryObject));
             this.btnRefresh.setEnabled(true);
         } else
