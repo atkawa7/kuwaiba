@@ -3547,15 +3547,13 @@ public class KuwaibaService {
             @WebParam(name = "aObjectId")String aObjectId,
             @WebParam(name = "bObjectClass")String bObjectClass,
             @WebParam(name = "bObjectId")String bObjectId,
-            @WebParam(name = "parentClass")String parentClass,
-            @WebParam(name = "parentId")String parentId,
             @WebParam(name = "name")String name,
             @WebParam(name = "connectionClass") String connectionClass,
             @WebParam(name = "templateId") String templateId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.createPhysicalConnection(aObjectClass, aObjectId,bObjectClass, bObjectId,
-                   parentClass, parentId, name, connectionClass, templateId, getIPAddress(), sessionId);
+                   name, connectionClass, templateId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;

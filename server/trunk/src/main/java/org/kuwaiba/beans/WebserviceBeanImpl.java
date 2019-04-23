@@ -1832,8 +1832,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     @Override
     public String createPhysicalConnection(String aObjectClass, String aObjectId,
-            String bObjectClass, String bObjectId, String parentClass, String parentId,
-            String name, String connectionClass, String templateId, String ipAddress, String sessionId) throws ServerSideException {
+            String bObjectClass, String bObjectId, String name, String connectionClass, 
+            String templateId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -1844,7 +1844,13 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             if (!mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONNECTION, connectionClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not subclass of GenericPhysicalConnection", connectionClass)); //NOI18N
-
+            
+            //The connection (either link or container, will be created in the closest common parent between the endpoints)
+            BusinessObjectLight commonParent = bem.getCommonParent(aObjectClass, aObjectId, bObjectClass, bObjectId);
+            
+            if (commonParent == null || commonParent.getName().equals(Constants.DUMMY_ROOT))
+                throw new ServerSideException("The objects provided does not have a common parent, or it is the navigation root. The connection can not be created");
+            
             boolean isLink = false;
             
             //Check if the endpoints are already connected, but only if the connection is a link (the endpoints are ports)
@@ -1870,7 +1876,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             attributes.put(Constants.PROPERTY_NAME, name);
             
-            newConnectionId = bem.createSpecialObject(connectionClass, parentClass, parentId, attributes, templateId);
+            newConnectionId = bem.createSpecialObject(connectionClass, commonParent.getClassName(), commonParent.getId(), attributes, templateId);
             
             if (isLink) { //Check connector mappings only if it's a link
                 aem.checkRelationshipByAttributeValueBusinessRules(connectionClass, newConnectionId, aObjectClass, aObjectId);

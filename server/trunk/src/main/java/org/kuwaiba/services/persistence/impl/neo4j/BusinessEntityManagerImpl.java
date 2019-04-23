@@ -771,36 +771,26 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     @Override
     public BusinessObjectLight getCommonParent(String aObjectClass, String aOid, String bObjectClass, String bOid)
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
-        // while we will find a better way to do the query, we use this way
-        BusinessObjectLight aParent = getParent(aObjectClass, aOid);
-        BusinessObjectLight bParent = getParent(bObjectClass, bOid);
+        String cypherQuery = "MATCH (objectA:inventoryObjects)-[:CHILD_OF|CHILD_OF_SPECIAL*]->(parentNode)<-[:CHILD_OF|CHILD_OF_SPECIAL*]-(objectB:inventoryObjects) "
+                + "WHERE objectA._uuid = {objectAId} AND objectB._uuid = {objectBId} RETURN parentNode";
         
-        if (aParent.getId() != null && bParent.getId() != null && aParent.getId().equals(bParent.getId()))
-            return aParent;
-        
-        List<BusinessObjectLight> aParents = new ArrayList();
-        List<BusinessObjectLight> bParents = new ArrayList();
-        
-        aParents.add(aParent);
-        while (aParent.getId() != null && !aParent.getId().equals("-1")) {
-            aParent = getParent(aParent.getClassName(), aParent.getId());
-            aParents.add(aParent);
+        try(Transaction tx = graphDb.beginTx()) {
+            HashMap<String, Object> parameters = new HashMap<>();
+            parameters.put("objectAId", aOid);
+            parameters.put("objectBId", bOid);
+            Result queryResult = graphDb.execute(cypherQuery, parameters);
+            
+            if (!queryResult.hasNext()) //There is no common parent
+                return null;
+            
+            Node commonParent = (Node)queryResult.next().get("parentNode");
+            if (Constants.DUMMY_ROOT.equals(commonParent.getProperty(Constants.PROPERTY_NAME)))
+                return new BusinessObjectLight(Constants.DUMMY_ROOT, "", Constants.DUMMY_ROOT);
+            else
+                return new BusinessObjectLight((String)commonParent.getSingleRelationship(RelTypes.INSTANCE_OF, 
+                        Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME), (String)commonParent.getProperty(Constants.PROPERTY_UUID), 
+                        (String)commonParent.getProperty(Constants.PROPERTY_NAME));
         }
-        
-        bParents.add(bParent);
-        while (bParent.getId() != null && bParent.getId().equals("-1")) {
-            bParent = getParent(bParent.getClassName(), bParent.getId());
-            bParents.add(bParent);
-        }
-        
-        for (int i = 0; i < aParents.size(); i++) {
-            for (int j = 0; j < bParents.size(); j++) {
-                if (aParents.get(i).getId() != null && bParents.get(j).getId() != null && aParents.get(i).getId().equals(bParents.get(j).getId()))
-                    return aParents.get(i);                                
-            }
-        }
-                        
-        return null;
     }
     
     @Override

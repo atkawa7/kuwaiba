@@ -256,15 +256,15 @@ public interface BusinessEntityManager {
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException;
     
     /**
-     * Gets the common parent between an a object and b object
-     * @param aObjectClass Object a class name
-     * @param aOid Object a id
-     * @param bObjectClass Object b class name
-     * @param bOid Object a id
-     * @return The common parent
-     * @throws BusinessObjectNotFoundException If the requested object can't be found
-     * @throws MetadataObjectNotFoundException If any of the class nodes involved is malformed
-     * @throws InvalidArgumentException If the database object could not be properly mapped into a serializable java object.
+     * Finds the common parent between two objects.
+     * @param aObjectClass Object A class name.
+     * @param aOid Object A id.
+     * @param bObjectClass Object B class name.
+     * @param bOid Object B id.
+     * @return The common parent or null if none.
+     * @throws BusinessObjectNotFoundException If any of the objects could not be found.
+     * @throws MetadataObjectNotFoundException If any of the classes provided could not be found.
+     * @throws InvalidArgumentException If the database object could not be properly mapped into a serializable Java object.
      */
     public BusinessObjectLight getCommonParent(String aObjectClass, String aOid, String bObjectClass, String bOid)
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;

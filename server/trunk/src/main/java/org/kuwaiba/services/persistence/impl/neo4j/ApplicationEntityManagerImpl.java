@@ -2712,7 +2712,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 String uuid = UUID.randomUUID().toString();
                 Node templateObjectNode = graphDb.createNode(templateElementLabel);
                 templateObjectNode.setProperty(Constants.PROPERTY_NAME, templateElementName == null ? "" : templateElementName);
-                templateObjectNode.setProperty(Constants.PROPERTY_UUID, UUID.randomUUID().toString());
+                templateObjectNode.setProperty(Constants.PROPERTY_UUID, uuid);
 
                 templateObjectNode.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
 
@@ -2777,7 +2777,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 String uuid = UUID.randomUUID().toString();
                 Node templateObjectNode = graphDb.createNode(templateElementLabel);
                 templateObjectNode.setProperty(Constants.PROPERTY_NAME, stElementName == null ? "" : stElementName);
-                templateObjectNode.setProperty(Constants.PROPERTY_UUID, UUID.randomUUID().toString());
+                templateObjectNode.setProperty(Constants.PROPERTY_UUID, uuid);
 
                 templateObjectNode.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
 
