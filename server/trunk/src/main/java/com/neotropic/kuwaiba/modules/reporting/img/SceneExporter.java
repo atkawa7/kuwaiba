@@ -50,7 +50,7 @@ import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Exceptions;
 
 /**
- *
+ * Exports views created with a scene of Netbeans platform into an image
  * @author Adrian Martinez {@literal <adrian.martinez@kuwaiba.org>}, Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class SceneExporter {
@@ -59,6 +59,7 @@ public class SceneExporter {
     private static BusinessEntityManager bem;
     private static MetadataEntityManager mem;
     private static SceneExporter sceneExporter = null;
+    
 
     private SceneExporter() {}
     
@@ -104,11 +105,12 @@ public class SceneExporter {
             }
             if (currentView != null)
                 scene.render(currentView.getStructure());
-            scene.render(rol);
+            else
+                scene.render(rol);
                         
             try {
                 org.netbeans.api.visual.export.SceneExporter.createImage(scene,
-                        new File(PATH + serviceClassName + "_" + serviceId +".png"),
+                        new File("/home/adrian/" + serviceClassName + "_" + serviceId +".png"),
                         org.netbeans.api.visual.export.SceneExporter.ImageType.PNG,
                         org.netbeans.api.visual.export.SceneExporter.ZoomType.ACTUAL_SIZE,
                         false, false, 100,
@@ -116,7 +118,7 @@ public class SceneExporter {
                         0); //Not used
                 return serviceClassName + "_" + serviceId +".png";
             } catch (Exception ex) {
-////                Notifications.showError(ex.getMessage());
+                Notifications.showError(ex.getMessage());
             }
         }
         return null;        
