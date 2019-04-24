@@ -47,6 +47,7 @@ import org.openide.explorer.ExplorerManager;
 import org.openide.windows.TopComponent;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
+import org.openide.windows.WindowManager;
 
 /**
  * This component renders the views associated to an currentObject
@@ -79,7 +80,7 @@ public final class ObjectViewTopComponent extends TopComponent
 
     @Override
     protected String preferredID() {
-        return "ObjectViewTopComponent_" + currentObject.getId(); //NOI18N
+        return "ObjectViewTopComponent_" + currentObject.getId().split("-")[0] ; //NOI18N
     }
 
     @Override
@@ -88,6 +89,8 @@ public final class ObjectViewTopComponent extends TopComponent
     }
     
     public final void initCustomComponents(){
+        
+        
         configObject = new ObjectViewConfigurationObject();
         configObject.setProperty("saved", true);
         configObject.setProperty("currentObject", currentObject);
