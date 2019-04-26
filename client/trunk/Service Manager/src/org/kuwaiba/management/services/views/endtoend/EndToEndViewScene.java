@@ -410,59 +410,54 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                             List<LocalObjectLight> path = logicalCircuitDetails.getPhysicalPathForEndpointA();
                             LocalObjectLight connection = null;
                             LocalObjectLight device = null;
-                            LocalObjectLight tempDevice = null;
-                            LocalObjectLight tempEndPoint = null;
+                            LocalObjectLight nextDevice = null;
+
                             for(int i = 0; i < path.size(); i++){
+                                if(path.get(i).getClassName().equals("VirtualPort"))
+                                    continue;
                                 if(com.isSubclassOf(path.get(i).getClassName(), Constants.CLASS_GENERICPHYSICALLINK))
                                     connection = path.get(i);
                                 else if(path.get(i).getClassName().equals("Pseudowire"))
                                     device = com.getParent(path.get(i).getClassName(), path.get(i).getId());
                                 else{
-                                    //when two ports are followed the parent could be a GenericDistributionFrame(e.g. an ODF)
-                                    if(com.isSubclassOf(path.get(i).getClassName(), "GenericPhysicalPort") && i+1 < path.size() && com.isSubclassOf(path.get(i+1).getClassName(), "GenericPhysicalPort")){
-                                        device = com.getFirstParentOfClass(path.get(i).getClassName(), path.get(i).getId(), Constants.CLASS_GENERICDISTRIBUTIONFRAME);
-                                        i++;
-                                    }//if the parent could not be found it should be aGenericCommunications element(e.g. Router, Cloud, MPLSRouter, etc)
-                                    if(device == null){
+                                    if(com.isSubclassOf(path.get(i).getClassName(), "GenericPhysicalPort"))
                                         device = com.getFirstParentOfClass(path.get(i).getClassName(), path.get(i).getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
-                                        if(path.get(i).getClassName().equals("VirtualPort") && i+1 < path.size()){
-                                            i++;
-                                            lastAddedASideEquipmentPhysical = device;
-                                        }
-                                    }
-                                    if (i == 0 && aSideEquipmentLogical != null && device.getId().equals(aSideEquipmentLogical.getId()))
+                                    //if the parent is still null, it should be an ODF
+                                    if(device == null)
+                                        device = com.getFirstParentOfClass(path.get(i).getClassName(), path.get(i).getId(), Constants.CLASS_GENERICDISTRIBUTIONFRAME);
+                                        
+                                    if(aSideEquipmentLogical != null && device.equals(aSideEquipmentLogical) || device != null && lastAddedASideEquipmentPhysical.equals(device))
                                         lastAddedASideEquipmentPhysical = device;
+                                    else if(nextDevice != device)
+                                        nextDevice = device;
+                                    //is a mirror port
+                                    if(lastAddedASideEquipmentPhysical.equals(device))
+                                        continue;
+                                }   
+                                //if enters here it means that we have enough information to create the structure RemoteObjectLinkObject 
+                                if(connection != null && nextDevice != null){
+                                    //first we add the link
+                                    if (findWidget(connection) == null){ 
+                                        ObjectConnectionWidget physicalLinkWidget = (ObjectConnectionWidget) addEdge(connection);
+                                         
+                                        physicalLinkWidget.getLabelWidget().setLabel(
+                                                lastAddedASideEquipmentPhysical.getName() + ":" + lastAddedASideEquipmentPhysical.getName() + " ** " +
+                                            nextDevice.getName() + ":" + connection.getName());
+                                    }
+                                    //the we check if exist the last added noded and create if exists we create the source of the connection
+                                    if(findWidget(lastAddedASideEquipmentPhysical) != null)
+                                        setEdgeSource(connection, lastAddedASideEquipmentPhysical);
+                                    //the we check if exist the next node if doen't exists we add the node and create the target of the connection
+                                    if(findWidget(nextDevice) == null){
+                                        addNode(nextDevice);
+                                        setEdgeTarget(connection, nextDevice);
+                                    }
                                     
-                                    if(connection == null){
-                                        tempEndPoint = path.get(i);
-                                        tempDevice = device;
-                                        device = null;
-                                    }else{ //if enters here it means that we have enough information to create the structure RemoteObjectLinkObject 
-                                        if(findWidget(device) == null)
-                                            addNode(device);
-                                        //We add the physical link, we must check if the physical path has more than the end point
-                                        if (findWidget(connection) == null){ 
-                                            ObjectConnectionWidget physicalLinkWidgetA = (ObjectConnectionWidget) findWidget(connection);
-                                            //the link not yet added
-                                            if(physicalLinkWidgetA == null)
-                                                physicalLinkWidgetA = (ObjectConnectionWidget) addEdge(connection);
-
-                                            physicalLinkWidgetA.getLabelWidget().setLabel(
-                                                    lastAddedASideEquipmentPhysical.getName() + ":" + tempEndPoint.getName() + " ** " +
-                                                device.getName() + ":" + connection.getName());
-
-                                            setEdgeSource(connection, lastAddedASideEquipmentPhysical);
-                                            setEdgeTarget(connection, device);
-                                        }
-
-                                        connection = null;
-                                        tempEndPoint = path.get(i);
-                                        tempDevice = device;
-                                        lastAddedASideEquipmentPhysical = device;
-                                        device = null;                                        
-                                    }
+                                    connection = null;
+                                    lastAddedASideEquipmentPhysical = nextDevice;
+                                    nextDevice = null; 
                                 }
-                            }
+                            }//end for
                         }
                         //VLANs
                         //we must check if there is something to show with vlans
@@ -507,59 +502,51 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                             List<LocalObjectLight> path = logicalCircuitDetails.getPhysicalPathForEndpointB();
                             LocalObjectLight connection = null;
                             LocalObjectLight device = null;
-                            LocalObjectLight tempDevice = null;
-                            LocalObjectLight tempEndPoint = null;
+                            LocalObjectLight nextDevice = null;
                             
                             for(int i = 0; i < path.size(); i++){
+                                if(path.get(i).getClassName().equals("VirtualPort"))
+                                    continue;
                                 if(com.isSubclassOf(path.get(i).getClassName(), Constants.CLASS_GENERICPHYSICALLINK))
                                     connection = path.get(i);
                                 else if(path.get(i).getClassName().equals("Pseudowire"))
                                     device = com.getParent(path.get(i).getClassName(), path.get(i).getId());
-                                else{//when two ports are followed the parent could be a GenericDistributionFrame(e.g. an ODF)
-                                    if(com.isSubclassOf(path.get(i).getClassName(), "GenericPhysicalPort") && i+1 < path.size() && com.isSubclassOf(path.get(i+1).getClassName(), "GenericPhysicalPort")){
-                                        device = com.getFirstParentOfClass(path.get(i).getClassName(), path.get(i).getId(), Constants.CLASS_GENERICDISTRIBUTIONFRAME);
-                                        i++;
-                                    }//if the parent could not be found it should be aGenericCommunications element(e.g. Router, Cloud, MPLSRouter, etc)
-                                    if(device == null){
+                                else{
+                                    if(com.isSubclassOf(path.get(i).getClassName(), "GenericPhysicalPort"))
                                         device = com.getFirstParentOfClass(path.get(i).getClassName(), path.get(i).getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
-                                        if(path.get(i).getClassName().equals("VirtualPort") && i+1 < path.size()){
-                                            i++;
-                                            lastAddedBSideEquipmentPhysical = device;
-                                        }
-                                    }
-                                    if(i == 0 && bSideEquipmentLogical != null && device.getId().equals(bSideEquipmentLogical.getId()))
+                                    //if the parent is still null, it should be an ODF
+                                    if(device == null)
+                                        device = com.getFirstParentOfClass(path.get(i).getClassName(), path.get(i).getId(), Constants.CLASS_GENERICDISTRIBUTIONFRAME);
+                                        
+                                    if(bSideEquipmentLogical != null && device.equals(bSideEquipmentLogical) || device != null && lastAddedBSideEquipmentPhysical.equals(device))
                                         lastAddedBSideEquipmentPhysical = device;
+                                    else if(nextDevice != device)
+                                        nextDevice = device;
+                                }   
+                                //if enters here it means that we have enough information to create the structure RemoteObjectLinkObject 
+                                if(connection != null && nextDevice != null){
+                                    //first we add the link
+                                    if (findWidget(connection) == null){ 
+                                        ObjectConnectionWidget physicalLinkWidget = (ObjectConnectionWidget) addEdge(connection);
+                                         
+                                        physicalLinkWidget.getLabelWidget().setLabel(
+                                                lastAddedBSideEquipmentPhysical.getName() + ":" + lastAddedBSideEquipmentPhysical.getName() + " ** " +
+                                            nextDevice.getName() + ":" + connection.getName());
+                                    }
+                                    //the we check if exist the last added noded and create if exists we create the source of the connection
+                                    if(findWidget(lastAddedBSideEquipmentPhysical) != null)
+                                        setEdgeSource(connection, lastAddedBSideEquipmentPhysical);
+                                    //the we check if exist the next node if doen't exists we add the node and create the target of the connection
+                                    if(findWidget(nextDevice) == null){
+                                        addNode(nextDevice);
+                                        setEdgeTarget(connection, nextDevice);
+                                    }
                                     
-                                    if(connection == null){
-                                        tempEndPoint = path.get(i);
-                                        tempDevice = device;
-                                        device = null;
-                                    }else{ //if enters here it means that we have enough information to create the structure RemoteObjectLinkObject 
-                                        if(findWidget(device) == null)
-                                            addNode(device);
-                                        //We add the physical link, we must check if the physical path has more than the end point
-                                        if (findWidget(connection) == null){ 
-                                            ObjectConnectionWidget physicalLinkWidgetA = (ObjectConnectionWidget) findWidget(connection);
-                                            //the link not yet added
-                                            if(physicalLinkWidgetA == null)
-                                                physicalLinkWidgetA = (ObjectConnectionWidget) addEdge(connection);
-
-                                            physicalLinkWidgetA.getLabelWidget().setLabel(
-                                                    lastAddedBSideEquipmentPhysical.getName() + ":" + tempEndPoint.getName() + " ** " +
-                                                device.getName() + ":" + connection.getName());
-
-                                            setEdgeSource(connection, lastAddedBSideEquipmentPhysical);
-                                            setEdgeTarget(connection, device);
-                                        }
-
-                                        connection = null;
-                                        tempEndPoint = path.get(i);
-                                        tempDevice = device;
-                                        lastAddedBSideEquipmentPhysical = device;
-                                        device = null;         
-                                    }
+                                    connection = null;
+                                    lastAddedBSideEquipmentPhysical = nextDevice;
+                                    nextDevice = null; 
                                 }
-                            }
+                            }//end for
                         }//we must check if there is something to show with vlans
                         if(logicalCircuitDetails.getPhysicalPathForVlansEndpointB() != null && !logicalCircuitDetails.getPhysicalPathForVlansEndpointB().isEmpty()){
                             for (Map.Entry<LocalObjectLight, List<LocalObjectLight>> en : logicalCircuitDetails.getPhysicalPathForVlansEndpointB().entrySet()) {
