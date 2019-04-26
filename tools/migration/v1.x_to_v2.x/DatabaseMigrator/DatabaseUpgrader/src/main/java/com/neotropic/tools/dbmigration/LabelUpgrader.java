@@ -264,6 +264,7 @@ public class LabelUpgrader {
                     Node templateNode = aTemplateRelationship.getEndNode();
                     System.out.println("Migrating " + templateNode.getProperty("name"));
                     templateNode.addLabel(labelTemplates);
+                    templateNode.addLabel(labelTemplateElements);
                     templateNode.setProperty(PROPERTY_UUID, UUID.randomUUID().toString());
                 });
                 
