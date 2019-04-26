@@ -329,7 +329,7 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
             templateElementSpecialChildren = CommunicationsStub.getInstance().
                     getTemplateSpecialElementChildren(templateElement.getClassName(), templateElement.getId());
             
-            if (templateElementChildren == null && templateElementSpecialChildren == null) {
+            if (templateElementChildren == null || templateElementSpecialChildren == null) {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 setKeys(Collections.EMPTY_SET);
             } else {                
