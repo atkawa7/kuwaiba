@@ -42,7 +42,7 @@ public abstract class AbstractView<T> {
      */
     protected BusinessEntityManager bem;
     /**
-     * The default view map. This view map must be created when the any either {@link  #build()} or {@link  #build(java.lang.Object)} is called.
+     * The default view map. This view map must be created when either {@link  #buildEmptyView()} or {@link  #buildWithBusinessObject(java.lang.Object)} is called.
      */
     protected ViewMap viewMap;
     /**

@@ -2539,7 +2539,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new OperationNotPermittedException(String.format("Abstract class %s can not have templates", templateClass));
             
             String uuid = UUID.randomUUID().toString();
-            Node templateNode = graphDb.createNode(templateLabel);
+            Node templateNode = graphDb.createNode(templateLabel, templateElementLabel); // The template root object is also a template element
             templateNode.setProperty(Constants.PROPERTY_NAME, templateName == null ? "" : templateName);
             templateNode.setProperty(Constants.PROPERTY_UUID, uuid);
                         
@@ -2947,26 +2947,17 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public TemplateObject getTemplateElement(String templateElementClass, String templateElementId)
         throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
-            
-            Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, templateElementClass);
-            
-            if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", templateElementClass));
-            
-            Node templateObjectNode = null;
-            
-            for (Relationship instanceOfSpecialRelationship : classNode.getRelationships(Direction.INCOMING, RelTypes.INSTANCE_OF_SPECIAL)) {
-                Node startNode = instanceOfSpecialRelationship.getStartNode();
-                if (templateElementId.equals(startNode.getProperty(Constants.PROPERTY_UUID))) {
-                    templateObjectNode = startNode;
-                    break;
-                }
-            }
-            
-            if (templateObjectNode == null)
+            try {
+                //First we find the object, then we check if the class is the same as specified
+                Node templateObjectNode = graphDb.findNode(templateElementLabel, Constants.PROPERTY_UUID, templateElementId);
+                if (!templateObjectNode.hasRelationship(RelTypes.INSTANCE_OF_SPECIAL) ||
+                        !templateObjectNode.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getEndNode().
+                                getProperty(Constants.PROPERTY_NAME).equals(templateElementClass))
+                    throw new MetadataObjectNotFoundException(String.format("Class %s could not be found or the object is not its instance", templateElementClass));
+                return createTemplateElementFromNode(templateObjectNode, templateElementClass);
+            } catch (NotFoundException ex) {
                 throw new ApplicationObjectNotFoundException(String.format("Template object %s of class %s could not be found", templateElementId, templateElementClass));
-            
-            return createTemplateElementFromNode(templateObjectNode, templateElementClass);
+            }
         }
     }
 
@@ -4736,9 +4727,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             if (classMetadata.hasAttribute(relationshipName)) { 
                 if (attributes.containsKey(relationshipName))
-                    attributes.put(relationshipName, attributes.get(relationshipName) + ";" + aRelatedToRelationship.getEndNode().getId());
+                    attributes.put(relationshipName, attributes.containsKey(relationshipName) ? "" : attributes.get(relationshipName) + ";" + aRelatedToRelationship.getEndNode().getId());
                 else
-                    attributes.put(relationshipName, String.valueOf(aRelatedToRelationship.getEndNode().getId()));
+                    attributes.put(relationshipName, (String)aRelatedToRelationship.getEndNode().getProperty(Constants.PROPERTY_UUID));
             } else //This verification will help us find potential inconsistencies with list types
                                   //What this does is to verify if is there is a RELATED_TO relationship that shouldn't exist because its name is not an attribute of the class
                 throw new InvalidArgumentException(String.format("The object %s (%s) is related to list type %s (%s), but that is not consistent with the data model", 
@@ -4868,7 +4859,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     private void deleteObject(Node instance, boolean unsafeDeletion) throws OperationNotPermittedException {
         if(!unsafeDeletion && instance.hasRelationship(RelTypes.RELATED_TO, RelTypes.RELATED_TO_SPECIAL, RelTypes.HAS_PROCESS_INSTANCE)) 
             throw new OperationNotPermittedException(String.format("The object with %s (%s) can not be deleted since it has relationships", 
-                    instance.getProperty(Constants.PROPERTY_NAME), instance.getId()));
+                    instance.getProperty(Constants.PROPERTY_NAME), instance.getProperty(Constants.PROPERTY_UUID)));
         
         for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF, RelTypes.CHILD_OF_SPECIAL))
             deleteObject(rel.getStartNode(), unsafeDeletion);

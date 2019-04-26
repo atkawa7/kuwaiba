@@ -3460,7 +3460,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     private void deleteObject(Node instance, boolean unsafeDeletion) throws OperationNotPermittedException {
         if(!unsafeDeletion && !canDeleteObject(instance)) 
             throw new OperationNotPermittedException(String.format("The object with %s (%s) can not be deleted since it has relationships", 
-                    instance.getProperty(Constants.PROPERTY_NAME), instance.getId()));
+                    instance.getProperty(Constants.PROPERTY_NAME), instance.getProperty(Constants.PROPERTY_UUID)));
         
         for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF, RelTypes.CHILD_OF_SPECIAL))
             deleteObject(rel.getStartNode(), unsafeDeletion);
@@ -3499,6 +3499,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             attachmentNode.delete();
         }
         
+        //Remove the remaining relationships without deleting the other end of the relationship, 
+        //because we don't know what's there (a list type, another element of the model that should not be delete along, etc)
         for (Relationship rel : instance.getRelationships())
             rel.delete();
 
@@ -3511,6 +3513,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * @return true if the object is safe to be deleted, false otherwise.
      */
     private boolean canDeleteObject(Node instance) {
-        return !instance.hasRelationship(RelTypes.RELATED_TO, RelTypes.RELATED_TO_SPECIAL, RelTypes.HAS_PROCESS_INSTANCE);        
+        return !instance.hasRelationship(RelTypes.RELATED_TO_SPECIAL, RelTypes.HAS_PROCESS_INSTANCE);        
     }
 }

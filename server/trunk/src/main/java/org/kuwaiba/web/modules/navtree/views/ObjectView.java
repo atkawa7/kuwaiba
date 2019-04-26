@@ -149,7 +149,7 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
             List<ViewObjectLight> objectViews = aem.getObjectRelatedViews(businessObject.getId(), businessObject.getClassName(), -1);
 
             if (!objectViews.isEmpty()) 
-                buildWithSavedView(aem.getObjectRelatedView(businessObject.getId(), 
+                this.buildWithSavedView(aem.getObjectRelatedView(businessObject.getId(), 
                         businessObject.getClassName(), objectViews.get(0).getId()).getStructure()); 
             
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | ApplicationObjectNotFoundException | InvalidArgumentException ex) {

@@ -71,7 +71,8 @@ public class ObjectViewDashboardWidget extends AbstractDashboardWidget {
     public void createContent() {
         VerticalLayout lytContent = new VerticalLayout();
         try {
-            AbstractView objectViewInstance = PersistenceService.getInstance().getViewFactory().createViewInstance("org.kuwaiba.web.modules.navtree.views.ObjectView"); //NOI18N
+            AbstractView objectViewInstance = PersistenceService.getInstance().getViewFactory().
+                    createViewInstance("org.kuwaiba.web.modules.navtree.views.ObjectView"); //NOI18N
             objectViewInstance.buildWithBusinessObject(selectedObject);
             lytContent.addComponent(objectViewInstance.getAsComponent());
         } catch (InstantiationException | InvalidArgumentException ex) {
