@@ -19,6 +19,7 @@ import com.neotropic.tools.dbmigration.views.EndToEndAndTopologyViewMigrator;
 import com.neotropic.tools.dbmigration.views.GeneralViewsMigrator;
 import com.neotropic.tools.dbmigration.views.LayoutMigrator;
 import com.neotropic.tools.dbmigration.views.ObjectViewMigrator;
+import com.neotropic.tools.dbmigration.views.SyncDataSourceMigrator;
 import java.io.File;
 import java.util.Calendar;
 
@@ -93,6 +94,7 @@ public class DatabaseMigrationStage2 {
                     ObjectViewMigrator.migrate(dbPathReference);
                     EndToEndAndTopologyViewMigrator.migrate(dbPathReference);
                     GeneralViewsMigrator.migrate(dbPathReference);
+                    SyncDataSourceMigrator.migrate(dbPathReference);
                     LayoutMigrator.migrate(dbPathReference);
                 }
 
