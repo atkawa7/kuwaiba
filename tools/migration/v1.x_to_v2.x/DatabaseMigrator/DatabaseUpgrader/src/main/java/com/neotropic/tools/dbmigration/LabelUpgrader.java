@@ -271,13 +271,11 @@ public class LabelUpgrader {
                 //Then the template elements. That is, the children of template objects
                 System.out.println("Processing template elements for class " + aClassNode.getProperty("name"));
                 aClassNode.getRelationships(Direction.INCOMING, instanceOfSpecial).forEach((aTemplateElementRelationship) -> {
-                    if (aTemplateElementRelationship.hasProperty("name") && 
-                            aTemplateElementRelationship.getProperty("name").equals("template")) {
-                        Node templateElementNode = aTemplateElementRelationship.getStartNode();
-                        System.out.println("Migrating " + templateElementNode.getProperty("name"));
-                        templateElementNode.addLabel(labelTemplateElements);
-                        templateElementNode.setProperty(PROPERTY_UUID, UUID.randomUUID().toString());
-                    }
+                    
+                    Node templateElementNode = aTemplateElementRelationship.getStartNode();
+                    System.out.println("Migrating " + templateElementNode.getProperty("name"));
+                    templateElementNode.addLabel(labelTemplateElements);
+                    templateElementNode.setProperty(PROPERTY_UUID, UUID.randomUUID().toString());
                     
                 });
             });
