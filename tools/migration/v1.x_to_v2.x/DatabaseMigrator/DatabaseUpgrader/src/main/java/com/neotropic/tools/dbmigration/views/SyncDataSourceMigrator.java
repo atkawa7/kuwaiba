@@ -71,12 +71,11 @@ public class SyncDataSourceMigrator {
                         else if(isNumeric(propertyDeviceId)){ //we need to update the deviceId from long to uuid
                             Node inventoryObjNode = graphDb.getNodeById(Long.valueOf(propertyDeviceId));
                             dsConfigNode.setProperty("deviceId", (String)inventoryObjNode.getProperty("_uui"));
-                            System.out.println(String.format("deviceId property updated from long %s to uuid in dsConfig %s",
+                            System.out.println(String.format("Property deviceId updated from long %s to uuid in dsConfig %s",
 						propertyDeviceId, dsConfigNode.getProperty("deviceId"), dsConfigNode.getProperty("name")));
 			}
                     }
                 }
-                
             }
             System.out.println(">>> Synchronization datsources migration finished");
             tx.success();
@@ -111,9 +110,6 @@ public class SyncDataSourceMigrator {
             }
         };
     
-}
-    
-    
-    
+    }
 }
 

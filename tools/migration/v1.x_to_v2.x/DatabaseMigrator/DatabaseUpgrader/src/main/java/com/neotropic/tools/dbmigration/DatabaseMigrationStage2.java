@@ -94,8 +94,8 @@ public class DatabaseMigrationStage2 {
                     ObjectViewMigrator.migrate(dbPathReference);
                     EndToEndAndTopologyViewMigrator.migrate(dbPathReference);
                     GeneralViewsMigrator.migrate(dbPathReference);
-                    SyncDataSourceMigrator.migrate(dbPathReference);
                     LayoutMigrator.migrate(dbPathReference);
+                    SyncDataSourceMigrator.migrate(dbPathReference);
                 }
 
                 System.out.println(String.format("[%s] Database upgrade stage 2 ended successfully...", Calendar.getInstance().getTime()));

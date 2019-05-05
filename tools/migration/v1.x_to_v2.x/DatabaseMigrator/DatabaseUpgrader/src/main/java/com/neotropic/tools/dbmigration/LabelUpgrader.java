@@ -263,19 +263,23 @@ public class LabelUpgrader {
                 aClassNode.getRelationships(Direction.OUTGOING, hasTemplate).forEach((aTemplateRelationship) -> {
                     Node templateNode = aTemplateRelationship.getEndNode();
                     System.out.println("Migrating " + templateNode.getProperty("name"));
-                    templateNode.addLabel(labelTemplates);
-                    templateNode.addLabel(labelTemplateElements);
-                    templateNode.setProperty(PROPERTY_UUID, UUID.randomUUID().toString());
+                    if(!templateNode.hasLabel(labelTemplates))
+                        templateNode.addLabel(labelTemplates);
+                    if(!templateNode.hasLabel(labelTemplateElements))
+                        templateNode.addLabel(labelTemplateElements);
+                    if (!templateNode.hasProperty(PROPERTY_UUID))
+                        templateNode.setProperty(PROPERTY_UUID, UUID.randomUUID().toString());
                 });
                 
                 //Then the template elements. That is, the children of template objects
                 System.out.println("Processing template elements for class " + aClassNode.getProperty("name"));
                 aClassNode.getRelationships(Direction.INCOMING, instanceOfSpecial).forEach((aTemplateElementRelationship) -> {
-                    
                     Node templateElementNode = aTemplateElementRelationship.getStartNode();
                     System.out.println("Migrating " + templateElementNode.getProperty("name"));
-                    templateElementNode.addLabel(labelTemplateElements);
-                    templateElementNode.setProperty(PROPERTY_UUID, UUID.randomUUID().toString());
+                    if (!templateElementNode.hasLabel(labelTemplateElements))
+                        templateElementNode.addLabel(labelTemplateElements);
+                    if (!templateElementNode.hasProperty(PROPERTY_UUID))
+                        templateElementNode.setProperty(PROPERTY_UUID, UUID.randomUUID().toString());
                     
                 });
             });
