@@ -5,3 +5,103 @@ Creation-Date: 2019-02-13T23:16:30-05:00
 ====== Installation ======
 Created Wednesday 13 February 2019
 
+===== Setup https (Glassfish with nginx as reverse proxy) =====
+
+1) After installing glassfish, go into the admin console,
+	[[localhost:4848]]
+(it tis possible that you need to create a tunnel in order to access to that port in the server)
+	//ssh user@yourdomain.com|or_ip_address -L 4848:localhost:4848 -p [port number] -N//
+
+After loign into de admin console, in the left panel go to:
+	Configurations>server-config>Network Config>Network Listeners>http-listener-1
+
+	The **port**: 8080, should be enable and 
+	The **Address**: shoulbe set from: 0.0.0.0 to 127.0.0.1
+
+2) Install nginx: //apt-get install nginx//
+2.1) Once Nginx is installed, create the following configuration file in **/etc/nginx/sites-available/glassfish.conf**:
+	//nano /etc/nginx/sites-available/glassfish.conf//
+
+	   edit and save the file with:
+
+		upstream glassfish {
+		  server 127.0.0.1:8080 weight=100 max_fails=5 fail_timeout=5;
+		}
+		server {
+		  listen          80;
+		  server_name     localhost;
+		  location / {
+				proxy_set_header X-Forwarded-Host $host;
+				proxy_set_header X-Forwarded-Server $host;
+				proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+				proxy_pass http://glassfish;
+		  }
+		}
+		
+2.3) Next, navigate to **/etc/nginx/sites-enabled** and create a symbolic link to the **glassfish.conf** configuration file you just created:
+	
+	//cd /etc/nginx/sites-enabled//
+	//ln -s /etc/nginx/sites-available/glassfish.conf//
+	
+Now, check if Nginx configuration syntax is OK by running:
+	
+	//nginx -t//
+and restart and enable Nginx on your virtual server startup using:
+	
+	//service nginx restart//
+	//update-rc.d -f nginx enable//
+	
+2.4) Test, now it should be possible reach the domain in your glassfihs server with **yourdomain.com**
+
+3) Generate the SSL certificate, befoere start please check: https://letsencrypt.org/getting-started/
+3.1) Install **Cerbot**, firtst enable the Stretch backports repo
+add to your source list: '//deb http://deb.debian.org/debian stretch-backports main//'
+then, //apt-get update,// and install **cerbot** 
+	'//sudo apt-get install certbot python-certbot-nginx -t stretch-backports//'
+
+3.3) generating the certificates:
+	'//sudo certbot --nginx certonly'//
+Output: 
+	--
+	Plugins selected: Authenticator nginx, Installer nginx
+	Enter email address (used for urgent renewal and security notices) (Enter 'c' to
+	cancel): **your@email.com**
+	
+	---
+	No names were found in your configuration files. Please enter in your domain 
+	name(s) (comma and/or space separated)  (Enter 'c' to cancel): **yoursite.com**
+	---
+	
+	IMPORTANT NOTES:
+	 - Congratulations! Your certificate and chain have been saved at
+	   /etc/letsencrypt/live/**yoursite.com**/fullchain.pem. Your cert will
+	   expire on 2017-08-21. To obtain a new or tweaked version of this
+	   certificate in the future, simply run certbot again. To
+	   non-interactively renew *all* of your certificates, run "certbot
+	   renew"
+	---
+	
+4.2) Enable the ssl the path to the certificates should be added to the file
+	///etc/nginx/sites-available/glassfish.confglassfish.conf// 
+
+	upstream glassfish {
+	  server 127.0.0.1:8080 weight=100 max_fails=5 fail_timeout=5;
+	}
+	**server {**
+	**        listen 80;**
+	**        return 301 https://$host$request_uri;**
+	**}**
+	server {
+	  **listen          443 ssl;**
+	  server_name     localhost;
+	
+	  **ssl_certificate /etc/letsencrypt/live/kuwaiba.afr-ix.com/fullchain.pem;**
+	**  ssl_certificate_key /etc/letsencrypt/live/kuwaiba.afr-ix.com/privkey.pem;**
+	
+	  location / {
+			proxy_set_header X-Forwarded-Host $host;
+			proxy_set_header X-Forwarded-Server $host;
+			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+			proxy_pass http://glassfish/;
+	  }
+	}

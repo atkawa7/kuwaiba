@@ -7,7 +7,7 @@ Creation-Date: 2019-02-26T10:00:29-05:00
 
 Demo example is outdated, for this reason it will not work. The correct way to configure the dependencies is:
 1. Change inside pom.xml 
-		 ''<parent>''
+		''<parent>''
 		''<groupId>org.springframework.boot</groupId>''
 		''<artifactId>spring-boot-starter-parent</artifactId>''
 		''<version>2.1.3.RELEASE</version>''
