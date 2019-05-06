@@ -212,7 +212,7 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
             boolean sideAIsPeering = false, sideBIsPeering = false;
             if(endpointA != null && !physicalPathForEndpointA.isEmpty() && physicalPathForEndpointA.get(0) != null){
                 //we add one side if has not been added
-                if(!physicalPathForEndpointA.get(0).getClassName().equals("Peering")){
+                if(!physicalPathForEndpointA.get(0).getClassName().equals("BGPPeer")){
                     if(findWidget(physicalPathForEndpointA.get(0)) == null)
                         addNode(physicalPathForEndpointA.get(0));
                     validate();
@@ -227,7 +227,7 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                       
             if(endpointB != null && !physicalPathForEndpointB.isEmpty() && physicalPathForEndpointB.get(0) != null){ 
                 //we add one side if has not been added
-                if(!physicalPathForEndpointB.get(0).getClassName().equals("Peering")){
+                if(!physicalPathForEndpointB.get(0).getClassName().equals("BGPPeer")){
                     if(findWidget(physicalPathForEndpointB.get(0)) == null)
                         addNode(physicalPathForEndpointB.get(0));
                     validate();
@@ -254,18 +254,18 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
             List<LocalObjectLight> destinations = entry.getValue();
             LocalObjectLight source = portParent.get(port);
             
-            if(source.getClassName().equals("Peering") && destinations.size() == 1 && !destinations.get(0).getClassName().equals("Peering")){
+            if(source.getClassName().equals("BGPPeer") && destinations.size() == 1 && !destinations.get(0).getClassName().equals("BGPPeer")){
                 if(devicePeerings.get(destinations.get(0)) == null)
                     devicePeerings.put(destinations.get(0), new ArrayList<>());
                 
                 devicePeerings.get(destinations.get(0)).add(source);
             }
-            else if(!source.getClassName().equals("Peering")){
+            else if(!source.getClassName().equals("BGPPeer")){
                 if(devicePeerings.get(source) == null)
                     devicePeerings.put(source, new ArrayList<>());
                 
                 for(LocalObjectLight destiny : destinations){
-                    if(!destiny.getClassName().equals("Peering"))
+                    if(!destiny.getClassName().equals("BGPPeer"))
                         devicePeerings.get(source).add(destiny);
                 }
             }
@@ -280,7 +280,7 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
             for(LocalObjectLight peering : peerings)
               peeringsNames += peering.getName() + "~";
             
-            LocalObjectLight peering = new LocalObjectLight(UUID.randomUUID().toString(), peeringsNames, "Peering");
+            LocalObjectLight peering = new LocalObjectLight(UUID.randomUUID().toString(), peeringsNames, "BGPPeer");
             addNode(peering);
             validate();
             LocalObjectLight tempE = new LocalObjectLight(UUID.randomUUID().toString(), "", "");
@@ -316,7 +316,7 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
     @Override
     protected Widget attachNodeWidget(LocalObjectLight node) {
         Widget newNode;
-        if(node.getClassName().equals("Peering")){
+        if(node.getClassName().equals("BGPPeer")){
             String[] pearringsList = node.getName().split("~");
             node.setName("ix");
             newNode = new EmptyNodeWidget(this, node, pearringsList);
