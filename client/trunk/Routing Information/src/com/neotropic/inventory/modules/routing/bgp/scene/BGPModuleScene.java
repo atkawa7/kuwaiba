@@ -44,14 +44,17 @@ import org.inventory.core.visual.actions.providers.CustomSelectProvider;
 import org.inventory.core.visual.actions.providers.SceneConnectProvider;
 import org.inventory.core.visual.scene.AbstractScene;
 import static org.inventory.core.visual.scene.AbstractScene.ACTION_SELECT;
+import org.inventory.core.visual.scene.EmptyNodeWidget;
 import org.inventory.core.visual.scene.ObjectConnectionWidget;
 import org.inventory.core.visual.scene.ObjectNodeWidget;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
+import org.netbeans.api.visual.action.EditProvider;
 import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.router.RouterFactory;
+import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Exceptions;
@@ -192,101 +195,101 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
     }
 
     public void createBGPView(List<LocalLogicalConnectionDetails> bgpMap){
-        this.clear();
-        this.bgpMap = bgpMap;
+         // To keep tack of the device an its peerings
+        Map<LocalObjectLight, List<LocalObjectLight>> devicePeerings = new HashMap<>();
+        //To keep tack of the port and its destiny devices
         Map<LocalObjectLight, List<LocalObjectLight>> portDevices = new HashMap<>();
+        //To keep track of the port/parent, to avoid a server call 
         Map<LocalObjectLight, LocalObjectLight> portParent = new HashMap<>();
-        Map<LocalObjectLight, List<LocalObjectLight>> bgpLinkPorts = new HashMap<>();
-       
+        
         for (LocalLogicalConnectionDetails logicalConnectionDetail : bgpMap) {
             LocalObjectLight endpointA = logicalConnectionDetail.getEndpointA();
             LocalObjectLight endpointB = logicalConnectionDetail.getEndpointB();
             
             List<LocalObjectLight> physicalPathForEndpointA = logicalConnectionDetail.getPhysicalPathForEndpointA();
             List<LocalObjectLight> physicalPathForEndpointB = logicalConnectionDetail.getPhysicalPathForEndpointB();
-            List<LocalObjectLight> bgpLink = new ArrayList<>();
             
-            if(endpointA != null){ 
-                if(portDevices.get(endpointA) == null)
-                    portDevices.put(endpointA, new ArrayList<>());
-            
-                portParent.put(endpointA, physicalPathForEndpointA.get(0));
-                if(!physicalPathForEndpointB.isEmpty() && 
-                        physicalPathForEndpointB.get(0) != null){
+            boolean sideAIsPeering = false, sideBIsPeering = false;
+            if(endpointA != null && !physicalPathForEndpointA.isEmpty() && physicalPathForEndpointA.get(0) != null){
+                //we add one side if has not been added
+                if(!physicalPathForEndpointA.get(0).getClassName().equals("Peering")){
+                    if(findWidget(physicalPathForEndpointA.get(0)) == null)
+                        addNode(physicalPathForEndpointA.get(0));
+                    validate();
+                }else{
+                    sideAIsPeering = true;
+                    if(portDevices.get(endpointA) == null)
+                        portDevices.put(endpointA, new ArrayList<>());
                     portDevices.get(endpointA).add(physicalPathForEndpointB.get(0));
-                    bgpLink.add(physicalPathForEndpointA.get(0));
                 }
+                portParent.put(endpointA, physicalPathForEndpointA.get(0));
             }
                       
-            if(endpointB != null){ 
-//                if(portDevices.get(endpointB) == null)
-//                    portDevices.put(endpointB, new ArrayList<LocalObjectLight>());
-            
-                portParent.put(endpointB, physicalPathForEndpointB.get(0));
-                if(!physicalPathForEndpointA.isEmpty() && 
-                        physicalPathForEndpointA.get(0) != null){
-//                    portDevices.get(endpointB).add(physicalPathForEndpointA.get(0));                
-                    bgpLink.add(physicalPathForEndpointB.get(0));
+            if(endpointB != null && !physicalPathForEndpointB.isEmpty() && physicalPathForEndpointB.get(0) != null){ 
+                //we add one side if has not been added
+                if(!physicalPathForEndpointB.get(0).getClassName().equals("Peering")){
+                    if(findWidget(physicalPathForEndpointB.get(0)) == null)
+                        addNode(physicalPathForEndpointB.get(0));
+                    validate();
+                }else{
+                    sideBIsPeering = true;
+                    if(portDevices.get(endpointB) == null)
+                        portDevices.put(endpointB, new ArrayList<>());
+                    portDevices.get(endpointB).add(physicalPathForEndpointA.get(0));
                 }
+                portParent.put(endpointB, physicalPathForEndpointB.get(0));
             }
             
-            bgpLinkPorts.put(logicalConnectionDetail.getConnectionObject(), bgpLink);
+            if(!sideAIsPeering && !sideBIsPeering && findWidget(logicalConnectionDetail.getConnectionObject()) == null){
+                addEdge(logicalConnectionDetail.getConnectionObject());
+                validate();
+                setEdgeSource(logicalConnectionDetail.getConnectionObject(), physicalPathForEndpointA.get(0));
+                setEdgeTarget(logicalConnectionDetail.getConnectionObject(), physicalPathForEndpointB.get(0)); 
+            }
         }
-        
-        Random r = new Random(35660);
+        validate();
+        //now we deal with the peerigns 
         for (Map.Entry<LocalObjectLight, List<LocalObjectLight>> entry : portDevices.entrySet()) {
             LocalObjectLight port = entry.getKey();
             List<LocalObjectLight> destinations = entry.getValue();
             LocalObjectLight source = portParent.get(port);
-
-            if(findWidget(source) == null)
-                addNode(source);
-            if(!destinations.isEmpty()){
-                if(destinations.size() == 1){
-                    //addNode(destinations.get(0));
-                    //validate();
-                    //LocalObjectLight tempE = new LocalObjectLight(r.nextLong(), port.getName() + " IX ", "BGPLink");
-                    //addEdge(tempE);
-                    //validate();
-                    //setEdgeSource(tempE, source);
-                    validate();
-                   // setEdgeTarget(tempE, destinations.get(0)); 
-                    //validate();
-                }
-                else{
-                    int ix=0;
-                    int notIx=0;
-                    for(LocalObjectLight device : destinations){
-                        if(!device.getClassName().equals("Cloud")){
-                            if(findWidget(device) == null)
-                                addNode(device);
-                            notIx ++;
-                            validate();
-                            LocalObjectLight tempE = new LocalObjectLight(UUID.randomUUID().toString(), port.getName() + " IX ", "BGPLink");
-                            addEdge(tempE);
-                            validate();
-                            setEdgeSource(tempE, source);
-                            validate();
-                            setEdgeTarget(tempE, device); 
-                            validate();
-                        }
-                        ix++;
-                    }
-                    if(destinations.size() - notIx != 0){
-                        LocalObjectLight temp = new LocalObjectLight("50373", "IX", "Cloud");
-                        if(findWidget(temp) == null)
-                               addNode(temp);
-                        validate();
-                        LocalObjectLight tempE = new LocalObjectLight(UUID.randomUUID().toString(), port.getName() + " IX ", "BGPLink");
-                        addEdge(tempE);
-                        validate();
-                        setEdgeSource(tempE, source);
-                        validate();
-                        setEdgeTarget(tempE, temp); 
-                        validate();
-                    }
+            
+            if(source.getClassName().equals("Peering") && destinations.size() == 1 && !destinations.get(0).getClassName().equals("Peering")){
+                if(devicePeerings.get(destinations.get(0)) == null)
+                    devicePeerings.put(destinations.get(0), new ArrayList<>());
+                
+                devicePeerings.get(destinations.get(0)).add(source);
+            }
+            else if(!source.getClassName().equals("Peering")){
+                if(devicePeerings.get(source) == null)
+                    devicePeerings.put(source, new ArrayList<>());
+                
+                for(LocalObjectLight destiny : destinations){
+                    if(!destiny.getClassName().equals("Peering"))
+                        devicePeerings.get(source).add(destiny);
                 }
             }
+        }
+        validate();
+        
+        for (Map.Entry<LocalObjectLight, List<LocalObjectLight>> entry : devicePeerings.entrySet()) {
+            LocalObjectLight source = entry.getKey();
+            List<LocalObjectLight> peerings = entry.getValue();
+            String peeringsNames = "";
+            
+            for(LocalObjectLight peering : peerings)
+              peeringsNames += peering.getName() + "~";
+            
+            LocalObjectLight peering = new LocalObjectLight(UUID.randomUUID().toString(), peeringsNames, "Peering");
+            addNode(peering);
+            validate();
+            LocalObjectLight tempE = new LocalObjectLight(UUID.randomUUID().toString(), "", "");
+            addEdge(tempE);
+            validate();
+            setEdgeSource(tempE, source);
+            validate();
+            setEdgeTarget(tempE, peering); 
+            validate();
         }
         validate();
         repaint();
@@ -312,28 +315,51 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
 
     @Override
     protected Widget attachNodeWidget(LocalObjectLight node) {
-        LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(node.getClassName(), false);
-        ObjectNodeWidget newNode;
-        if (classMetadata == null) //Should not happen, but this check should always be done
-            newNode = new ObjectNodeWidget(this, node);
-        else
-            newNode = new ObjectNodeWidget(this, node, classMetadata.getIcon());
-        
+        Widget newNode;
+        if(node.getClassName().equals("Peering")){
+            String[] pearringsList = node.getName().split("~");
+            node.setName("ix");
+            newNode = new EmptyNodeWidget(this, node, pearringsList);
+            newNode.getActions().addAction(ActionFactory.createEditAction(new EditProvider() {
+                @Override
+                public void edit(Widget widget) {
+                    ((EmptyNodeWidget)widget).showExtraInfo();
+                }
+            }));
+        }
+        else{
+            LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(node.getClassName(), false);
+
+            if (classMetadata == null) //Should not happen, but this check should always be done
+                newNode = new ObjectNodeWidget(this, node);
+            else
+                newNode = new ObjectNodeWidget(this, node, classMetadata.getIcon());
+             
+            ((ObjectNodeWidget)newNode).setHighContrast(true);
+            
+        }
         nodeLayer.addChild(newNode);
         newNode.getActions(ACTION_SELECT).addAction(selectAction);
         newNode.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction(moveProvider, moveProvider));
         newNode.setPreferredLocation(new Point(nodeLayer.getChildren().size() * 200, (nodeLayer.getChildren().size() % 2) * 200 ));       
-        //newNode.getActions(ACTION_CONNECT).addAction(selectAction);
-        //newNode.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, connectProvider));
-        
-        newNode.setHighContrast(true);
-        
+
         return newNode;
     }
 
     @Override
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
-        ObjectConnectionWidget newEdge = new ObjectConnectionWidget(this, edge, ObjectConnectionWidget.LINE);
+       ConnectionWidget newEdge;
+        if(edge.getName().isEmpty())
+            newEdge = new ConnectionWidget(this);
+        else{
+            newEdge = new ObjectConnectionWidget(this, edge, ObjectConnectionWidget.LINE);
+            newEdge.setToolTipText(edge.toString());
+            LocalClassMetadata connectionClassMetadata = CommunicationsStub.getInstance().getMetaForClass(edge.getClassName(), false);
+            if (connectionClassMetadata == null || connectionClassMetadata.getColor() == null)
+                newEdge.setLineColor(Color.BLACK);
+            else
+                newEdge.setLineColor(connectionClassMetadata.getColor());
+        }
         newEdge.getActions().addAction(selectAction);
         newEdge.getActions().addAction(addRemoveControlPointAction);
         newEdge.getActions().addAction(moveControlPointAction);
@@ -342,12 +368,6 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         newEdge.setControlPointShape(PointShape.SQUARE_FILLED_BIG);
         newEdge.setEndPointShape(PointShape.SQUARE_FILLED_BIG);
         newEdge.setRouter(RouterFactory.createFreeRouter());
-        newEdge.setToolTipText(edge.toString());
-        LocalClassMetadata connectionClassMetadata = CommunicationsStub.getInstance().getMetaForClass(edge.getClassName(), false);
-        if (connectionClassMetadata == null || connectionClassMetadata.getColor() == null)
-            newEdge.setLineColor(Color.BLACK);
-        else
-            newEdge.setLineColor(connectionClassMetadata.getColor());
         
         edgeLayer.addChild(newEdge);
         return newEdge;
