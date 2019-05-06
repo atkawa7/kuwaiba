@@ -233,7 +233,12 @@ public class CommunicationsStub {
             ((BindingProvider)service).getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS,
                 Collections.singletonMap("Accept-Encoding",Collections.singletonList("gzip"))); //NOI18N
             
-            this.session = new LocalSession(this.service.createSession(user, password, 1 /*A desktop session*/));
+            //Overrides the schema location in the WSDL. Most of the times this is not necessary, but when the server is behind
+            //a proxy, there will be a mismatch in the URI, which will be corrected here.
+            ((BindingProvider)service).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                serverURL.toString().replace("wsdl", "xsd=1")); //NOI18N
+            
+            this.session = new LocalSession(this.service.createSession(user, password, LocalSession.TYPE_DESKTOP));
             return true;
         }catch(Exception ex) { 
             this.error =  ex.getMessage();

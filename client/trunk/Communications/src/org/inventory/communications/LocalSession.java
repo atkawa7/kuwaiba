@@ -24,8 +24,32 @@ import org.inventory.communications.wsclient.RemoteSession;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class LocalSession {
+    /**
+     * When creating a session, a session type is required. This is the value if 
+     * the session is opened from a desktop client.
+     */
+    public static final int TYPE_DESKTOP = 1;
+    /**
+     * When creating a session, a session type is required. This is the value if 
+     * the session is opened from the web client.
+     */
+    public static final int TYPE_WEB = 2;
+    /**
+     * When creating a session, a session type is required. This is the value if 
+     * the session is opened from an automated web service client.
+     */
+    public static final int TYPE_WEBSERVICE = 3;
+    /**
+     * The id of the session.
+     */
     private String sessionId;
+    /**
+     * The current user name
+     */
     private String username;
+    /**
+     * The id of the user
+     */
     private Long userId;
 
     public LocalSession(RemoteSession session) {
