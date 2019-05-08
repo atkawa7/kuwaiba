@@ -262,47 +262,36 @@ public class ProcessInstanceView extends DynamicComponent {
                     }
                     updateActivities(-1);
             } else {
-                if (paths.contains(currentActivity)) {
-                    wsBean.updateActivity(
-                            processInstance.getId(),
-                            currentActivity.getId(),
-                            remoteArtifact,
-                            Page.getCurrent().getWebBrowser().getAddress(),
-                            remoteSession.getSessionId());
-                    if (artifactDefinition.getPostconditionsScript() != null) {
-                        ScriptQueryExecutorImpl scriptQueryExecutorImpl = new ScriptQueryExecutorImpl(wsBean, remoteSession, processInstance);
-                        String script = new String(artifactDefinition.getPostconditionsScript());
-                        ElementScript elementScript = FormDefinitionLoader.loadExternalScripts(artifactDefinition.getExternalScripts());
-                        FunctionRunner functionRunner = new FunctionRunner("postconditions", null, script, elementScript);
-                        if (elementScript != null) {
-                            for (Runner runner : elementScript.getFunctions().values())
-                                runner.setScriptQueryExecutor(scriptQueryExecutorImpl);
-                        }
-                        functionRunner.setScriptQueryExecutor(scriptQueryExecutorImpl);
-                        functionRunner.setParametersNames(Arrays.asList("processInstanceId", "activityDefinitionId", "nextActivityDefinitionId", "printableTemplateInstance"));
-                        
-                        byte[] printableTemplateInstance = null;
-                        if (artifactDefinition.isPrintable())
-                            getPrintableTemplateInstanceAsByteArray(artifactDefinition, artifactView);
-                        
-                        functionRunner.run(Arrays.asList(
-                            processInstance.getId(), 
-                            currentActivity.getId(), 
-                            currentActivity.getNextActivity() != null ? currentActivity.getNextActivity().getId() : null, 
-                            printableTemplateInstance));
+                wsBean.updateActivity(
+                        processInstance.getId(),
+                        currentActivity.getId(),
+                        remoteArtifact,
+                        Page.getCurrent().getWebBrowser().getAddress(),
+                        remoteSession.getSessionId());
+                if (artifactDefinition.getPostconditionsScript() != null) {
+                    ScriptQueryExecutorImpl scriptQueryExecutorImpl = new ScriptQueryExecutorImpl(wsBean, remoteSession, processInstance);
+                    String script = new String(artifactDefinition.getPostconditionsScript());
+                    ElementScript elementScript = FormDefinitionLoader.loadExternalScripts(artifactDefinition.getExternalScripts());
+                    FunctionRunner functionRunner = new FunctionRunner("postconditions", null, script, elementScript);
+                    if (elementScript != null) {
+                        for (Runner runner : elementScript.getFunctions().values())
+                            runner.setScriptQueryExecutor(scriptQueryExecutorImpl);
                     }
-                    updateActivities(currentActivity.getId());
-                    Notifications.showInfo("The activity was updated");
-                } else {
-                    wsBean.updateActivity(
-                            processInstance.getId(),
-                            currentActivity.getId(),
-                            remoteArtifact,
-                            Page.getCurrent().getWebBrowser().getAddress(),
-                            remoteSession.getSessionId());
-                    updateActivities(currentActivity.getId());
-                    Notifications.showInfo("The activity was updated");
+                    functionRunner.setScriptQueryExecutor(scriptQueryExecutorImpl);
+                    functionRunner.setParametersNames(Arrays.asList("processInstanceId", "activityDefinitionId", "nextActivityDefinitionId", "printableTemplateInstance"));
+
+                    byte[] printableTemplateInstance = null;
+                    if (artifactDefinition.isPrintable())
+                        getPrintableTemplateInstanceAsByteArray(artifactDefinition, artifactView);
+
+                    functionRunner.run(Arrays.asList(
+                        processInstance.getId(), 
+                        currentActivity.getId(), 
+                        currentActivity.getNextActivity() != null ? currentActivity.getNextActivity().getId() : null, 
+                        printableTemplateInstance));
                 }
+                updateActivities(currentActivity.getId());
+                Notifications.showInfo("The activity was updated");
             }            
             processInstance = wsBean.getProcessInstance(
                 processInstance.getId(), 

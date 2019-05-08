@@ -123,7 +123,7 @@ public class ProcessInstancesView extends VerticalLayout {
         return grid;
     }
     
-    public static void setActionComponent(Component component, ProcessInstancesView processInstancesView) {
+    public static void setActionComponent(Component component, ProcessInstancesView processInstancesView, RemoteProcessDefinition remoteProcessDefinition, WebserviceBean webserviceBean, RemoteSession remoteSession) {
         UI ui = UI.getCurrent().getUI();
         
         MenuBar mainMenu = ((IndexUI) ui).getMainMenu();
@@ -137,90 +137,90 @@ public class ProcessInstancesView extends VerticalLayout {
         verticalLayout.setSizeFull();
         verticalLayout.setSpacing(false);
         verticalLayout.setMargin(false);
-        
-        if (processInstancesView != null) {
+        if (!(component instanceof ProcessInstancesView)) {
             Button btnBack = new Button();
             btnBack.addStyleName(ValoTheme.BUTTON_BORDERLESS);
             btnBack.setIcon(VaadinIcons.ARROW_BACKWARD);
             btnBack.addClickListener(new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent event) {
-                    setActionComponent(
-                        new ProcessInstancesView(processInstancesView.getRemoteProcessDefinition(), processInstancesView.getWebserviceBean(), processInstancesView.getRemoteSession()), 
-                            null);
+                    setActionComponent(new ProcessInstancesView(remoteProcessDefinition, webserviceBean, remoteSession), null, remoteProcessDefinition, webserviceBean, remoteSession);
                 }
             });
-            
-            String processInstanceinfo = null;
-            
-            if (processInstancesView.getGrid() != null && processInstancesView.getGrid().getSelectedItems() != null) {
-                if (processInstancesView.getGrid().getSelectedItems().iterator() != null && 
-                    processInstancesView.getGrid().getSelectedItems().iterator().hasNext()) {
-                    Object item = processInstancesView.getGrid().getSelectedItems().iterator().next();
-                    if (item instanceof ProcessInstanceBean)
-                        processInstanceinfo = ((ProcessInstanceBean) item).getProcessInstanceInfo();
-                }
-            }
-            if (processInstanceinfo != null) {
-                UI.getCurrent().getPage().getStyles().add(""
-                    + ".v-horizontal-information { "
-                    + "    background: #bbdefb; "
-                    + "    border: 1px solid #42a5f5; "
-                    + "}"
-                    + ".nuqui .processmanager .v-label-information { "
-                    + "    padding: 0px;"
-                    + "}");
-                
-                HorizontalLayout hlyInformation = new HorizontalLayout();
-                hlyInformation.setStyleName("v-horizontal-information");
-                hlyInformation.setWidth(90, Unit.PERCENTAGE);
-                hlyInformation.setHeight(90, Unit.PERCENTAGE);
-                hlyInformation.setSpacing(false);
+            if (processInstancesView != null) {
+                String processInstanceinfo = null;
 
-                Image imageInfo = new Image();
-                imageInfo.setSource(new ThemeResource("icons/icon_info.png"));
-                                            
-                Label lblInfo = new Label();
-                lblInfo.setStyleName("information");
-                lblInfo.addStyleName(ValoTheme.LABEL_LARGE);
-                lblInfo.setContentMode(ContentMode.HTML);
-                lblInfo.setValue(processInstanceinfo);            
-
-                Button btnClose = new Button(VaadinIcons.CLOSE_CIRCLE);
-                btnClose.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-                btnClose.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-                btnClose.addStyleName(ValoTheme.BUTTON_LARGE);
-                btnClose.addStyleName(ValoTheme.BUTTON_DANGER);
-
-                hlyInformation.addComponent(imageInfo);
-                hlyInformation.addComponent(lblInfo);
-                hlyInformation.addComponent(btnClose);
-
-                hlyInformation.setExpandRatio(imageInfo, 0.5f);
-                hlyInformation.setExpandRatio(lblInfo, 9f);
-                hlyInformation.setExpandRatio(btnClose, 0.5f);
-                hlyInformation.setComponentAlignment(imageInfo, Alignment.MIDDLE_CENTER);
-                hlyInformation.setComponentAlignment(lblInfo, Alignment.MIDDLE_LEFT);
-                hlyInformation.setComponentAlignment(btnClose, Alignment.MIDDLE_RIGHT);
-
-                HorizontalLayout horizontalLayout = new HorizontalLayout();
-                horizontalLayout.setSpacing(false);
-                horizontalLayout.addComponent(btnBack);
-                horizontalLayout.addComponent(hlyInformation);
-                horizontalLayout.setSizeFull();
-
-                horizontalLayout.setExpandRatio(btnBack, 0.3f);
-                horizontalLayout.setExpandRatio(hlyInformation, 9.7f);
-                horizontalLayout.setComponentAlignment(hlyInformation, Alignment.MIDDLE_CENTER);
-
-                btnClose.addClickListener(new ClickListener() {
-                    @Override
-                    public void buttonClick(Button.ClickEvent event) {
-                        horizontalLayout.removeComponent(hlyInformation);
+                if (processInstancesView.getGrid() != null && processInstancesView.getGrid().getSelectedItems() != null) {
+                    if (processInstancesView.getGrid().getSelectedItems().iterator() != null && 
+                        processInstancesView.getGrid().getSelectedItems().iterator().hasNext()) {
+                        Object item = processInstancesView.getGrid().getSelectedItems().iterator().next();
+                        if (item instanceof ProcessInstanceBean)
+                            processInstanceinfo = ((ProcessInstanceBean) item).getProcessInstanceInfo();
                     }
-                });
-                verticalLayout.addComponent(horizontalLayout);
-                verticalLayout.setExpandRatio(horizontalLayout, 0.5f);
+                }
+                if (processInstanceinfo != null) {
+                    UI.getCurrent().getPage().getStyles().add(""
+                        + ".v-horizontal-information { "
+                        + "    background: #bbdefb; "
+                        + "    border: 1px solid #42a5f5; "
+                        + "}"
+                        + ".nuqui .processmanager .v-label-information { "
+                        + "    padding: 0px;"
+                        + "}");
+
+                    HorizontalLayout hlyInformation = new HorizontalLayout();
+                    hlyInformation.setStyleName("v-horizontal-information");
+                    hlyInformation.setWidth(90, Unit.PERCENTAGE);
+                    hlyInformation.setHeight(90, Unit.PERCENTAGE);
+                    hlyInformation.setSpacing(false);
+
+                    Image imageInfo = new Image();
+                    imageInfo.setSource(new ThemeResource("icons/icon_info.png"));
+
+                    Label lblInfo = new Label();
+                    lblInfo.setStyleName("information");
+                    lblInfo.addStyleName(ValoTheme.LABEL_LARGE);
+                    lblInfo.setContentMode(ContentMode.HTML);
+                    lblInfo.setValue(processInstanceinfo);            
+
+                    Button btnClose = new Button(VaadinIcons.CLOSE_CIRCLE);
+                    btnClose.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+                    btnClose.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+                    btnClose.addStyleName(ValoTheme.BUTTON_LARGE);
+                    btnClose.addStyleName(ValoTheme.BUTTON_DANGER);
+
+                    hlyInformation.addComponent(imageInfo);
+                    hlyInformation.addComponent(lblInfo);
+                    hlyInformation.addComponent(btnClose);
+
+                    hlyInformation.setExpandRatio(imageInfo, 0.5f);
+                    hlyInformation.setExpandRatio(lblInfo, 9f);
+                    hlyInformation.setExpandRatio(btnClose, 0.5f);
+                    hlyInformation.setComponentAlignment(imageInfo, Alignment.MIDDLE_CENTER);
+                    hlyInformation.setComponentAlignment(lblInfo, Alignment.MIDDLE_LEFT);
+                    hlyInformation.setComponentAlignment(btnClose, Alignment.MIDDLE_RIGHT);
+
+                    HorizontalLayout horizontalLayout = new HorizontalLayout();
+                    horizontalLayout.setSpacing(false);
+                    horizontalLayout.addComponent(btnBack);
+                    horizontalLayout.addComponent(hlyInformation);
+                    horizontalLayout.setSizeFull();
+
+                    horizontalLayout.setExpandRatio(btnBack, 0.3f);
+                    horizontalLayout.setExpandRatio(hlyInformation, 9.7f);
+                    horizontalLayout.setComponentAlignment(hlyInformation, Alignment.MIDDLE_CENTER);
+
+                    btnClose.addClickListener(new ClickListener() {
+                        @Override
+                        public void buttonClick(Button.ClickEvent event) {
+                            horizontalLayout.removeComponent(hlyInformation);
+                        }
+                    });
+                    verticalLayout.addComponent(horizontalLayout);
+                    verticalLayout.setExpandRatio(horizontalLayout, 0.5f);
+                }
+                else
+                    verticalLayout.addComponent(btnBack);
             }
             else
                 verticalLayout.addComponent(btnBack);
@@ -245,7 +245,7 @@ public class ProcessInstancesView extends VerticalLayout {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 
-                createProcessInstance(ProcessInstancesView.this, processDefinition, wsBean, session);
+                createProcessInstance(processDefinition, ProcessInstancesView.this, wsBean, session);
             }
         });
                 
@@ -341,7 +341,7 @@ public class ProcessInstancesView extends VerticalLayout {
                     wsBean, 
                     session);
                 
-                setActionComponent(processInstanceView, ProcessInstancesView.this);
+                setActionComponent(processInstanceView, ProcessInstancesView.this, processInstanceBean.getProcessDefinition(), wsBean, session);
             }
         });
         buttonContinuar.setHtmlContentAllowed(true);
@@ -356,7 +356,7 @@ public class ProcessInstancesView extends VerticalLayout {
                     wsBean, 
                     session);
                 
-                setActionComponent(processGraph, ProcessInstancesView.this);
+                setActionComponent(processGraph, ProcessInstancesView.this, processInstanceBean.getProcessDefinition(), wsBean, session);
             }
         });
         buttonView.setHtmlContentAllowed(true);
@@ -369,7 +369,7 @@ public class ProcessInstancesView extends VerticalLayout {
                     wsBean,
                     session);
                 
-                setActionComponent(timelineView, ProcessInstancesView.this);
+                setActionComponent(timelineView, ProcessInstancesView.this, processInstanceBean.getProcessDefinition(), wsBean, session);
             }
         });      
         btnTimeline.setHtmlContentAllowed(true);
@@ -405,7 +405,7 @@ public class ProcessInstancesView extends VerticalLayout {
                         wsBean, 
                         session);
 
-                    setActionComponent(processInstanceToolsView, ProcessInstancesView.this);
+                    setActionComponent(processInstanceToolsView, ProcessInstancesView.this, processInstanceBean.getProcessDefinition(), wsBean, session);
                 }
             }
         });
@@ -552,7 +552,7 @@ public class ProcessInstancesView extends VerticalLayout {
 ////        }
 ////    }
         
-    public static void createProcessInstance(ProcessInstancesView processInstancesView, RemoteProcessDefinition processDef, WebserviceBean webserviceBean, RemoteSession remoteSession) {
+    public static void createProcessInstance(RemoteProcessDefinition processDef, ProcessInstancesView processInstancesView, WebserviceBean webserviceBean, RemoteSession remoteSession) {
         if (processDef == null || webserviceBean == null || remoteSession == null) {
             Notifications.showError("Can not create a process instance");
             return;
@@ -591,8 +591,13 @@ public class ProcessInstancesView extends VerticalLayout {
                                 Page.getCurrent().getWebBrowser().getAddress(),
                                 remoteSession.getSessionId());
                                                                         
-                        ProcessInstanceView processInstanceView = new ProcessInstanceView(processInstance, processDef, webserviceBean,remoteSession);
-                        setActionComponent(processInstanceView, processInstancesView);
+                        ProcessInstanceToolsView processInstanceToolsView = new ProcessInstanceToolsView(
+                            processDef,
+                            processInstance, 
+                            webserviceBean, 
+                            remoteSession);
+
+                        setActionComponent(processInstanceToolsView, processInstancesView, processDef, webserviceBean, remoteSession);
                         
                     } catch (ServerSideException ex) {
                         Exceptions.printStackTrace(ex);

@@ -113,12 +113,6 @@
             <artifactId>vaadin-themes</artifactId>
             <version>${vaadin.version}</version>
         </dependency>
-        <!-- Support for server-side initiated notifications -->
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-push</artifactId>
-            <version>${vaadin.version}</version>
-        </dependency>
         <!-- Dependency injection support -->
         <dependency>
            <groupId>com.vaadin</groupId>

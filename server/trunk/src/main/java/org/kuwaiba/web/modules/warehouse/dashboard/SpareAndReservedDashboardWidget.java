@@ -38,8 +38,9 @@ import com.vaadin.ui.renderers.ClickableRenderer;
 import com.vaadin.ui.renderers.ClickableRenderer.RendererClickListener;
 import com.vaadin.ui.themes.ValoTheme;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
@@ -118,218 +119,235 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
         Label lblCounter = new Label(); // Show the number of devices in the table
         lblCounter.addStyleName(ValoTheme.LABEL_HUGE);
         
-        List<RemoteObjectLight> spareAndReservedObjects = getSpareAndReservedObjects();
-        
-        if (spareAndReservedObjects != null && !spareAndReservedObjects.isEmpty()) {
+        final String columnName = "name"; //NOI18N
+        final String columnVendor = "vendor"; //NOI18N
+        final String columnState = "state"; //NOI18N
+        final String columnPosition = "position"; //NOI18N
+        final String columnRack = "rack"; //NOI18N
+        final String columnWarehouse = "warehouse"; //NOI18N
+        final String columnRoom = "room"; //NOI18N
+        final String columnBuilding = "building"; //NOI18N
+        final String columnCity = "city"; //NOI18N
+        final String columnCountry = "country"; //NOI18N
             
-            List<ObjectBean> objectBeans = new ArrayList();
-            
-            for (RemoteObjectLight spareAndReservedObject : spareAndReservedObjects) {
-                objectBeans.add(new ObjectBean(spareAndReservedObject, webserviceBean));
+        ButtonRenderer buttonRenderer = new ButtonRenderer(new RendererClickListener<ObjectBean>() {
+
+            @Override
+            public void click(ClickableRenderer.RendererClickEvent<ObjectBean> event) {
+                ObjectBean processInstanceBean = (ObjectBean) event.getItem();
+
+                try {
+                    Properties inputParameters = new Properties();
+                    inputParameters.setProperty("id", String.valueOf(processInstanceBean.getRackObject().getId())); //NOI18N
+                    inputParameters.setProperty("className", processInstanceBean.getRackObject().getClassName()); //NOI18N
+
+                    MiniAppRackView miniAppRackView = new MiniAppRackView(inputParameters);
+                    miniAppRackView.setWebserviceBean(webserviceBean);
+
+                    Window window = new Window();
+                    window.setWidth(80, Unit.PERCENTAGE);
+                    window.setHeight(80, Unit.PERCENTAGE);
+                    window.setModal(true);
+                    window.setContent(miniAppRackView.launchDetached());
+
+                    UI.getCurrent().addWindow(window);
+                } catch(Exception ex) {
+                    Notification.show("The rack view can not be generated", Notification.Type.ERROR_MESSAGE);
+                }
             }
-            final String columnName = "name"; //NOI18N
-            final String columnVendor = "vendor"; //NOI18N
-            final String columnState = "state"; //NOI18N
-            final String columnPosition = "position"; //NOI18N
-            final String columnRack = "rack"; //NOI18N
-            final String columnWarehouse = "warehouse"; //NOI18N
-            final String columnRoom = "room"; //NOI18N
-            final String columnBuilding = "building"; //NOI18N
-            final String columnCity = "city"; //NOI18N
-            final String columnCountry = "country"; //NOI18N
-            
-            ButtonRenderer buttonRenderer = new ButtonRenderer(new RendererClickListener<ObjectBean>() {
+        });
+        buttonRenderer.setHtmlContentAllowed(true);
 
-                @Override
-                public void click(ClickableRenderer.RendererClickEvent<ObjectBean> event) {
-                    ObjectBean processInstanceBean = (ObjectBean) event.getItem();
-                    
-                    try {
-                        Properties inputParameters = new Properties();
-                        inputParameters.setProperty("id", String.valueOf(processInstanceBean.getRackObject().getId())); //NOI18N
-                        inputParameters.setProperty("className", processInstanceBean.getRackObject().getClassName()); //NOI18N
+        Grid<ObjectBean> grid = new Grid();
+        grid.setWidth(95, Unit.PERCENTAGE);
+        grid.setHeight(600, Unit.PIXELS);            
 
-                        MiniAppRackView miniAppRackView = new MiniAppRackView(inputParameters);
-                        miniAppRackView.setWebserviceBean(webserviceBean);
-                        
-                        Window window = new Window();
-                        window.setWidth(80, Unit.PERCENTAGE);
-                        window.setHeight(80, Unit.PERCENTAGE);
-                        window.setModal(true);
-                        window.setContent(miniAppRackView.launchDetached());
+        grid.addColumn(ObjectBean::getName).setCaption("Name").setId(columnName);
+        grid.addColumn(ObjectBean::getVendor).setCaption("Vendor").setId(columnVendor);
+        grid.addColumn(ObjectBean::getState).setWidth(80).setCaption("State").setId(columnState);
+        grid.addColumn(ObjectBean::getPosition).setWidth(80).setCaption("Position").setId(columnPosition);
+        grid.addColumn(ObjectBean::getRackName).setWidth(120).setCaption("Rack").setId(columnRack);
+        grid.addColumn(ObjectBean::getRackViewButtonCaption, buttonRenderer).
+            setMinimumWidth(50f).
+            setMaximumWidth(50f).
+            setDescriptionGenerator(e -> "<b>Rack View</b>", ContentMode.HTML);
+        grid.addColumn(ObjectBean::getWarehouseName).setCaption("Warehouse").setId(columnWarehouse);
+        grid.addColumn(ObjectBean::getRoomName).setCaption("Room").setId(columnRoom);
+        grid.addColumn(ObjectBean::getBuildingName).setCaption("Building").setId(columnBuilding);
+        grid.addColumn(ObjectBean::getCityName).setCaption("City").setId(columnCity);
+        grid.addColumn(ObjectBean::getCountryName).setCaption("Country").setId(columnCountry);
 
-                        UI.getCurrent().addWindow(window);
-                    } catch(Exception ex) {
-                        Notification.show("The rack view can not be generated", Notification.Type.ERROR_MESSAGE);
-                    }
+        TextField txtName = new TextField();
+        TextField txtVendor = new TextField();
+        TextField txtState = new TextField();
+        TextField txtPosition = new TextField();
+        txtPosition.setWidth("40px");
+        TextField txtRack = new TextField();
+        txtRack.setWidth("60px");
+        TextField txtWarehouse = new TextField();
+        TextField txtRoom = new TextField();
+        TextField txtBuilding = new TextField();
+        TextField txtCity = new TextField();
+        TextField txtCountry = new TextField();
+
+        HeaderRow headerRow = grid.appendHeaderRow();
+
+        headerRow.getCell(columnName).setComponent(txtName);
+        headerRow.getCell(columnVendor).setComponent(txtVendor);
+        headerRow.getCell(columnState).setComponent(txtState);
+        headerRow.getCell(columnPosition).setComponent(txtPosition);
+        headerRow.getCell(columnRack).setComponent(txtRack);            
+        headerRow.getCell(columnWarehouse).setComponent(txtWarehouse);
+        headerRow.getCell(columnRoom).setComponent(txtRoom);
+        headerRow.getCell(columnBuilding).setComponent(txtBuilding);
+        headerRow.getCell(columnCity).setComponent(txtCity);
+        headerRow.getCell(columnCountry).setComponent(txtCountry);
+
+        final VerticalLayout controls = new VerticalLayout();
+
+        lblCounter.setValue(0 + " results");
+
+        final Button btnFirst = new Button();
+        btnFirst.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        btnFirst.setDescription("First");
+        btnFirst.setIcon(VaadinIcons.ANGLE_DOUBLE_LEFT, "First");
+
+        final Button btnPrevious = new Button();
+        btnPrevious.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        btnPrevious.setDescription("Previous");
+        btnPrevious.setIcon(VaadinIcons.ANGLE_LEFT, "Previous");
+
+        final Button btnNext = new Button();
+        btnNext.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        btnNext.setDescription("Next");
+        btnNext.setIcon(VaadinIcons.ANGLE_RIGHT, "Next");
+
+        final Button btnLast = new Button();
+        btnLast.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        btnLast.setDescription("Last");
+        btnLast.setIcon(VaadinIcons.ANGLE_DOUBLE_RIGHT, "Last");
+
+        ValueChangeListener<String> valueChangeListener = new ValueChangeListener<String>() {
+            @Override
+            public void valueChange(HasValue.ValueChangeEvent<String> event) {
+                List<ObjectBean> objBeans = getSpareBeans(
+                                            txtName.getValue(), 
+                                            txtVendor.getValue(), 
+                                            txtState.getValue(), 
+                                            txtPosition.getValue(), 
+                                            txtRack.getValue(), 
+                                            txtWarehouse.getValue(),
+                                            txtRoom.getValue(),
+                                            txtBuilding.getValue(), 
+                                            txtCity.getValue(),
+                                            txtCountry.getValue());
+
+
+                lblCounter.setValue(objBeans.size() + " results");
+                if (!objBeans.isEmpty()) {
+                    PagedDataProvider<ObjectBean, SerializablePredicate<ObjectBean>> dataProvider = new PagedDataProvider<>(
+                                DataProvider.ofCollection(objBeans));
+                    grid.setDataProvider(dataProvider);
+                    PagingControls pagingControls = dataProvider.getPagingControls();
+                    pagingControls.setPageLength(15);
+
+                    btnFirst.addClickListener(e -> pagingControls.setPageNumber(0));
+                    btnPrevious.addClickListener(e -> pagingControls.previousPage());
+                    btnNext.addClickListener(e -> pagingControls.nextPage());
+                    btnLast.addClickListener(e -> pagingControls.setPageNumber(pagingControls.getPageCount() - 1));
                 }
-            });
-            buttonRenderer.setHtmlContentAllowed(true);
-                        
-            Grid<ObjectBean> grid = new Grid();
-            grid.setWidth(95, Unit.PERCENTAGE);
-            grid.setHeight(600, Unit.PIXELS);            
-            
-            grid.addColumn(ObjectBean::getName).setCaption("Name").setId(columnName);
-            grid.addColumn(ObjectBean::getVendor).setCaption("Vendor").setId(columnVendor);
-            grid.addColumn(ObjectBean::getState).setWidth(80).setCaption("State").setId(columnState);
-            grid.addColumn(ObjectBean::getPosition).setWidth(80).setCaption("Position").setId(columnPosition);
-            grid.addColumn(ObjectBean::getRackName).setWidth(120).setCaption("Rack").setId(columnRack);
-            grid.addColumn(ObjectBean::getRackViewButtonCaption, buttonRenderer).
-                setMinimumWidth(50f).
-                setMaximumWidth(50f).
-                setDescriptionGenerator(e -> "<b>Rack View</b>", ContentMode.HTML);
-            grid.addColumn(ObjectBean::getWarehouseName).setCaption("Warehouse").setId(columnWarehouse);
-            grid.addColumn(ObjectBean::getRoomName).setCaption("Room").setId(columnRoom);
-            grid.addColumn(ObjectBean::getBuildingName).setCaption("Building").setId(columnBuilding);
-            grid.addColumn(ObjectBean::getCityName).setCaption("City").setId(columnCity);
-            grid.addColumn(ObjectBean::getCountryName).setCaption("Country").setId(columnCountry);
-            
-            TextField txtName = new TextField();
-            TextField txtVendor = new TextField();
-            TextField txtState = new TextField();
-            TextField txtPosition = new TextField();
-            txtPosition.setWidth("40px");
-            TextField txtRack = new TextField();
-            txtRack.setWidth("60px");
-            TextField txtWarehouse = new TextField();
-            TextField txtRoom = new TextField();
-            TextField txtBuilding = new TextField();
-            TextField txtCity = new TextField();
-            TextField txtCountry = new TextField();
-            
-            HeaderRow headerRow = grid.appendHeaderRow();
-            
-            headerRow.getCell(columnName).setComponent(txtName);
-            headerRow.getCell(columnVendor).setComponent(txtVendor);
-            headerRow.getCell(columnState).setComponent(txtState);
-            headerRow.getCell(columnPosition).setComponent(txtPosition);
-            headerRow.getCell(columnRack).setComponent(txtRack);            
-            headerRow.getCell(columnWarehouse).setComponent(txtWarehouse);
-            headerRow.getCell(columnRoom).setComponent(txtRoom);
-            headerRow.getCell(columnBuilding).setComponent(txtBuilding);
-            headerRow.getCell(columnCity).setComponent(txtCity);
-            headerRow.getCell(columnCountry).setComponent(txtCountry);
-            
-            final VerticalLayout controls = new VerticalLayout();
-            
-            List<ObjectBean> objBeans = getSpareBeans(objectBeans.iterator(), 
-                txtName.getValue(), 
-                txtVendor.getValue(), 
-                txtState.getValue(), 
-                txtPosition.getValue(), 
-                txtRack.getValue(), 
-                txtWarehouse.getValue(),
-                txtRoom.getValue(),
-                txtBuilding.getValue(), 
-                txtCity.getValue(),
-                txtCountry.getValue());
-            
-            lblCounter.setValue(objBeans.size() + " results");
-            
-            PagedDataProvider<ObjectBean, SerializablePredicate<ObjectBean>> dataProvider = new PagedDataProvider<>(
-                        DataProvider.ofCollection(objBeans));
-            grid.setDataProvider(dataProvider);
-            PagingControls pagingControls = dataProvider.getPagingControls();
-            pagingControls.setPageLength(15);
-            
-            final Button btnFirst = new Button();
-            btnFirst.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-            btnFirst.setDescription("First");
-            btnFirst.setIcon(VaadinIcons.ANGLE_DOUBLE_LEFT, "First");
-            btnFirst.addClickListener(e -> pagingControls.setPageNumber(0));
-            
-            final Button btnPrevious = new Button();
-            btnPrevious.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-            btnPrevious.setDescription("Previous");
-            btnPrevious.setIcon(VaadinIcons.ANGLE_LEFT, "Previous");
-            btnPrevious.addClickListener(e -> pagingControls.previousPage());
-            
-            final Button btnNext = new Button();
-            btnNext.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-            btnNext.setDescription("Next");
-            btnNext.setIcon(VaadinIcons.ANGLE_RIGHT, "Next");
-            btnNext.addClickListener(e -> pagingControls.nextPage());
-            
-            final Button btnLast = new Button();
-            btnLast.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-            btnLast.setDescription("Last");
-            btnLast.setIcon(VaadinIcons.ANGLE_DOUBLE_RIGHT, "Last");
-            btnLast.addClickListener(e -> pagingControls.setPageNumber(pagingControls.getPageCount() - 1));
-            
-            ValueChangeListener<String> valueChangeListener = new ValueChangeListener<String>() {
-                @Override
-                public void valueChange(HasValue.ValueChangeEvent<String> event) {
+            }
+        };
+        txtName.addValueChangeListener(valueChangeListener);
+        txtVendor.addValueChangeListener(valueChangeListener);
+        txtState.addValueChangeListener(valueChangeListener);
+        txtPosition.addValueChangeListener(valueChangeListener);
+        txtRack.addValueChangeListener(valueChangeListener);
+        txtWarehouse.addValueChangeListener(valueChangeListener);
+        txtRoom.addValueChangeListener(valueChangeListener);
+        txtBuilding.addValueChangeListener(valueChangeListener);
+        txtCity.addValueChangeListener(valueChangeListener);
+        txtCountry.addValueChangeListener(valueChangeListener);
 
-                    if (objectBeans != null) {
-                        List<ObjectBean> objBeans = getSpareBeans(objectBeans.iterator(), 
-                            txtName.getValue(), 
-                            txtVendor.getValue(), 
-                            txtState.getValue(), 
-                            txtPosition.getValue(), 
-                            txtRack.getValue(), 
-                            txtWarehouse.getValue(),
-                            txtRoom.getValue(),
-                            txtBuilding.getValue(), 
-                            txtCity.getValue(),
-                            txtCountry.getValue());
-                        
-                        lblCounter.setValue(objBeans.size() + " results");
-                        
-                        PagedDataProvider<ObjectBean, SerializablePredicate<ObjectBean>> dataProvider = new PagedDataProvider<>(
-                                    DataProvider.ofCollection(objBeans));
-                        grid.setDataProvider(dataProvider);
-                        PagingControls pagingControls = dataProvider.getPagingControls();
-                        pagingControls.setPageLength(15);
-                        
-                        btnFirst.addClickListener(e -> pagingControls.setPageNumber(0));
-                        btnPrevious.addClickListener(e -> pagingControls.previousPage());
-                        btnNext.addClickListener(e -> pagingControls.nextPage());
-                        btnLast.addClickListener(e -> pagingControls.setPageNumber(pagingControls.getPageCount() - 1));
-                    }
-                }
-            };
-            txtName.addValueChangeListener(valueChangeListener);
-            txtVendor.addValueChangeListener(valueChangeListener);
-            txtState.addValueChangeListener(valueChangeListener);
-            txtPosition.addValueChangeListener(valueChangeListener);
-            txtRack.addValueChangeListener(valueChangeListener);
-            txtWarehouse.addValueChangeListener(valueChangeListener);
-            txtRoom.addValueChangeListener(valueChangeListener);
-            txtBuilding.addValueChangeListener(valueChangeListener);
-            txtCity.addValueChangeListener(valueChangeListener);
-            txtCountry.addValueChangeListener(valueChangeListener);
-            
-            HorizontalLayout pages = new HorizontalLayout();
-            pages.addComponent(btnFirst);
-            pages.addComponent(btnPrevious);
-            pages.addComponent(btnNext);
-            pages.addComponent(btnLast);
-            
-            controls.addComponents(pages);
-            controls.setComponentAlignment(pages, Alignment.MIDDLE_CENTER);
-            controls.setSizeFull();
-            
-            VerticalLayout vly = new VerticalLayout();
-            vly.addComponent(lblCounter);
-            vly.setComponentAlignment(lblCounter, Alignment.MIDDLE_CENTER);
-            vly.setSizeFull();
-            
-            verticalLayout.addComponent(vly);
-            verticalLayout.addComponent(grid);
-            verticalLayout.addComponent(controls);
-            verticalLayout.setComponentAlignment(grid, Alignment.MIDDLE_CENTER);
-            verticalLayout.setComponentAlignment(controls, Alignment.MIDDLE_CENTER);
-            verticalLayout.setExpandRatio(vly, 0.2f);
-            verticalLayout.setExpandRatio(grid, 0.7f);
-            verticalLayout.setExpandRatio(controls, 0.1f);
-        }
+        HorizontalLayout pages = new HorizontalLayout();
+        pages.addComponent(btnFirst);
+        pages.addComponent(btnPrevious);
+        pages.addComponent(btnNext);
+        pages.addComponent(btnLast);
+
+        controls.addComponents(pages);
+        controls.setComponentAlignment(pages, Alignment.MIDDLE_CENTER);
+        controls.setSizeFull();
+
+        VerticalLayout vly = new VerticalLayout();
+        vly.addComponent(lblCounter);
+        vly.setComponentAlignment(lblCounter, Alignment.MIDDLE_CENTER);
+        vly.setSizeFull();
+
+        verticalLayout.addComponent(vly);
+        verticalLayout.addComponent(grid);
+        verticalLayout.addComponent(controls);
+        verticalLayout.setComponentAlignment(grid, Alignment.MIDDLE_CENTER);
+        verticalLayout.setComponentAlignment(controls, Alignment.MIDDLE_CENTER);
+        verticalLayout.setExpandRatio(vly, 0.2f);
+        verticalLayout.setExpandRatio(grid, 0.7f);
+        verticalLayout.setExpandRatio(controls, 0.1f);
+        
         addComponent(verticalLayout);
-                        
+        
         this.contentComponent = verticalLayout;
     }
+            
+    private void filterRemoteObjectsByAttribute(String attrName, String filter, List<RemoteObjectLight> remoteObjects, List<ObjectBean> remoteObjectBeans) {
+        RemoteSession remoteSession = (RemoteSession) UI.getCurrent().getSession().getAttribute("session");
+        
+        if (filter != null && !filter.isEmpty()) {
+            for (RemoteObjectLight remoteObject : remoteObjects) {
+                try {
+                    String state = webserviceBean.getAttributeValueAsString(remoteObject.getClassName(), remoteObject.getId(), attrName, remoteSession.getIpAddress(), remoteSession.getSessionId());
+                    if (state != null) {
+                        if (state.toUpperCase().contains(filter != null ? filter.toUpperCase() : "")) {
+                            if (!contains(remoteObjectBeans, remoteObject)) {
+                                remoteObjectBeans.add(new ObjectBean(remoteObject, webserviceBean));
+                            }
+                        }
+                    }
+                } catch (ServerSideException ex) {
+                    Notifications.showError(ex.getMessage());
+                }
+            }
+        }
+    }
     
-    private List<ObjectBean> getSpareBeans(Iterator<ObjectBean> iterator, 
+    private void filterRemoteObjectsByParent(String parentClassName, String filter, List<RemoteObjectLight> remoteObjects, List<ObjectBean> remoteObjectBeans) {
+        RemoteSession remoteSession = (RemoteSession) UI.getCurrent().getSession().getAttribute("session");
+        
+        if (filter != null && !filter.isEmpty()) {
+            for (RemoteObjectLight remoteObject : remoteObjects) {
+                try {
+                    RemoteObjectLight city = webserviceBean.getFirstParentOfClass(remoteObject.getClassName(), remoteObject.getId(), parentClassName, remoteSession.getIpAddress(), remoteSession.getSessionId());
+
+                    if (city == null) {
+                        RemoteObjectLight physicalNode = webserviceBean.getPhysicalNodeToObjectInWarehouse(remoteObject.getClassName(), remoteObject.getId(), remoteSession.getIpAddress(), remoteSession.getSessionId());
+                        if (physicalNode != null && !physicalNode.getClassName().equals(parentClassName))
+                            city = webserviceBean.getFirstParentOfClass(physicalNode.getClassName(), physicalNode.getId(), parentClassName, remoteSession.getIpAddress(), remoteSession.getSessionId());
+                        else
+                            city = physicalNode;
+                    }
+                    if (city != null && city.getName() != null && city.getName().toUpperCase().contains(filter != null ? filter.toUpperCase() : "")) {
+                        if (!contains(remoteObjectBeans, remoteObject)) {
+                            remoteObjectBeans.add(new ObjectBean(remoteObject, webserviceBean));
+                        }
+                    }
+
+                } catch (ServerSideException ex) {
+                    Notifications.showError(ex.getMessage());
+                }
+            }
+        }
+    }
+    
+    private List<ObjectBean> getSpareBeans(
         String filterName, 
         String filterVendor, 
         String filterState, 
@@ -342,27 +360,33 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
         String filterCountry) {                
         
         List<ObjectBean> filteredItems = new ArrayList();
-
-        while (iterator.hasNext()) {
-            ObjectBean spereBean = iterator.next();
-            
-            boolean flagName = spereBean.getName().toUpperCase().contains(filterName != null ? filterName.toUpperCase() : "");
-            boolean flagVendor = spereBean.getVendor().toUpperCase().contains(filterVendor != null ? filterVendor.toUpperCase() : "");
-            boolean flagState = spereBean.getState().toUpperCase().contains(filterState != null ? filterState.toUpperCase() : "");
-            boolean flagPosition = spereBean.getPosition().toUpperCase().contains(filterPosition != null ? filterPosition.toUpperCase() : "");
-            boolean flagRack = spereBean.getRackName().toUpperCase().contains(filterRack != null ? filterRack.toUpperCase() : "");
-            boolean flagWarehouse = spereBean.getWarehouseName().toUpperCase().contains(filterWarehouse != null ? filterWarehouse.toUpperCase() : "");
-            boolean flagRoom = spereBean.getRoomName().toUpperCase().contains(filterRoom != null ? filterRoom.toUpperCase() : "");
-            boolean flagBuilding = spereBean.getBuildingName().toUpperCase().contains(filterBuilding != null ? filterBuilding.toUpperCase() : "");
-            boolean flagCity = spereBean.getCityName().toUpperCase().contains(filterCity != null ? filterCity.toUpperCase() : "");
-            boolean flagCountry = spereBean.getCountryName().toUpperCase().contains(filterCountry != null ? filterCountry.toUpperCase() : "");
-            
-            if (flagName && flagVendor && flagState && flagPosition && flagRack && flagWarehouse && flagRoom && flagBuilding && flagCity && flagCountry)
-                filteredItems.add(spereBean);
-        }
+        
+        List<RemoteObjectLight> remoteObjects = getSpareAndReservedObjects();
+        
+        filterRemoteObjectsByAttribute("name", filterName, remoteObjects, filteredItems); //NOI18N
+        filterRemoteObjectsByAttribute("vendor", filterVendor, remoteObjects, filteredItems); //NOI18N
+        filterRemoteObjectsByAttribute("state", filterState, remoteObjects, filteredItems); //NOI18N
+        filterRemoteObjectsByAttribute("position", filterPosition, remoteObjects, filteredItems); //NOI18N
+        
+        filterRemoteObjectsByParent("Rack", filterRack, remoteObjects, filteredItems); //NOI18N
+        filterRemoteObjectsByParent("Warehouse", filterWarehouse, remoteObjects, filteredItems); //NOI18N
+        filterRemoteObjectsByParent("VirtualWarehouse", filterWarehouse, remoteObjects, filteredItems); //NOI18N
+        filterRemoteObjectsByParent("Room", filterRoom, remoteObjects, filteredItems); //NOI18N
+        filterRemoteObjectsByParent("Building", filterBuilding, remoteObjects, filteredItems); //NOI18N
+        filterRemoteObjectsByParent("City", filterCity, remoteObjects, filteredItems); //NOI18N
+        filterRemoteObjectsByParent("Country", filterCountry, remoteObjects, filteredItems); //NOI18N
+        
         return filteredItems;
     }
-        
+    
+    private boolean contains(List<ObjectBean> objectBeanList, RemoteObjectLight remoteObject) {
+        for (ObjectBean objectBean : objectBeanList) {
+            if (objectBean.getSpareObject().getId().equals(remoteObject.getId()))
+                return true;
+        }
+        return false;
+    }
+            
     private List<RemoteObjectLight> getSpareAndReservedObjects() {
         RemoteSession remoteSession = ((RemoteSession) UI.getCurrent().getSession().getAttribute("session"));
         List<RemoteObjectLight> result = new ArrayList();
@@ -439,7 +463,6 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
     }
     
     private class ObjectBean {
-        private final WebserviceBean webserviceBean;
         private final RemoteObjectLight spareObject;
         private RemoteObjectLight rackObject;
         private RemoteObjectLight warehouseObject;
@@ -447,98 +470,107 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
         private RemoteObjectLight buildingObject;
         private RemoteObjectLight cityObject;
         private RemoteObjectLight countryObject;
+        
+        private HashMap<String, String> attrValues;
                         
         public ObjectBean(RemoteObjectLight spareObject, WebserviceBean webserviceBean) {
             this.spareObject = spareObject;
-            this.webserviceBean = webserviceBean;
-            
+                        
             if (spareObject != null && webserviceBean != null) {
+                RemoteSession remoteSession = (RemoteSession) UI.getCurrent().getSession().getAttribute("session");
                 
                 try {
                     List<RemoteObjectLight> parents = webserviceBean.getParentsUntilFirstOfClass(
                             spareObject.getClassName(),
                             spareObject.getId(),
                             "Country", //NOI18N
-                            Page.getCurrent().getWebBrowser().getAddress(),
-                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
+                            remoteSession.getIpAddress(),
+                            remoteSession.getSessionId()); //NOI18N
+                    if (parents != null && !parents.isEmpty() && parents.get(parents.size() - 1).getClassName().equals("Country")) {
+                        for (RemoteObjectLight parent : parents) {
 
-                    for (RemoteObjectLight parent : parents) {
-
-                        switch(parent.getClassName()) {
-                            case "Rack": //NOI18N
-                                rackObject = parent;
-                            break;
-                            case "Room": //NOI18N
-                                roomObject = parent;                                
-                            break;
-                            case "Building": //NOI18N
-                                buildingObject = parent;
-                            break;
-                            case "City": //NOI18N
-                                cityObject = parent;                     
-                            break;    
-                            case "Country": //NOI18N
-                                countryObject = parent;
-                            break;
+                            switch(parent.getClassName()) {
+                                case "Rack": //NOI18N
+                                    rackObject = parent;
+                                break;
+                                case "Room": //NOI18N
+                                    roomObject = parent;                                
+                                break;
+                                case "Building": //NOI18N
+                                    buildingObject = parent;
+                                break;
+                                case "City": //NOI18N
+                                    cityObject = parent;                     
+                                break;    
+                                case "Country": //NOI18N
+                                    countryObject = parent;
+                                break;
+                            }
                         }
                     }
-                } catch (Exception exception) {
-                }
-                try {
-                    warehouseObject = webserviceBean.getWarehouseToObject(
-                            spareObject.getClassName(), 
-                            spareObject.getId(), 
-                            Page.getCurrent().getWebBrowser().getAddress(),
-                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-
-                    if (warehouseObject != null) {
-
-                        RemoteObjectLight physicalNode = webserviceBean.getPhysicalNodeToObjectInWarehouse(
-                                spareObject.getClassName(), 
-                                spareObject.getId(), 
-                                Page.getCurrent().getWebBrowser().getAddress(),
-                                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-
-                        if (physicalNode != null) {
-
-                            List<RemoteObjectLight> parents = webserviceBean.getParentsUntilFirstOfClass(
-                                    physicalNode.getClassName(),
-                                    physicalNode.getId(),
-                                    "Country", //NOI18N
-                                    Page.getCurrent().getWebBrowser().getAddress(),
-                                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-                            // A Building can be a physical Node then this is include to get a building
-                            parents.add(physicalNode);
-
-                            for (RemoteObjectLight parent : parents) {
-
-                                switch(parent.getClassName()) {
-                                    case "Rack": //NOI18N
-                                        rackObject = parent;
-                                    break;
-                                    case "Room": //NOI18N
-                                        roomObject = parent;                                
-                                    break;
-                                    case "Building": //NOI18N
-                                        buildingObject = parent;
-                                    break;
-                                    case "City": //NOI18N
-                                        cityObject = parent;                     
-                                    break;
-                                    case "Country": //NOI18N
-                                        countryObject = parent;
-                                    break;
-                                }
+                    else {
+                        for (RemoteObjectLight parent : parents) {
+                            if (parent.getClassName().equals("Warehouse") || 
+                                parent.getClassName().equals("VirtualWarehouse")) {
+                                
+                                warehouseObject = parent;
                             }
-                        }                       
+                        }
+                        if (warehouseObject != null) {
+
+                            RemoteObjectLight physicalNode = webserviceBean.getPhysicalNodeToObjectInWarehouse(
+                                    spareObject.getClassName(), 
+                                    spareObject.getId(), 
+                                    remoteSession.getIpAddress(),
+                                    remoteSession.getSessionId()); //NOI18N
+
+                            if (physicalNode != null) {
+
+                                parents = webserviceBean.getParentsUntilFirstOfClass(
+                                        physicalNode.getClassName(),
+                                        physicalNode.getId(),
+                                        "Country", //NOI18N
+                                        remoteSession.getIpAddress(),
+                                        remoteSession.getSessionId()); //NOI18N
+                                // A Building can be a physical Node then this is include to get a building
+                                parents.add(physicalNode);
+
+                                for (RemoteObjectLight parent : parents) {
+
+                                    switch(parent.getClassName()) {
+                                        case "Rack": //NOI18N
+                                            rackObject = parent;
+                                        break;
+                                        case "Room": //NOI18N
+                                            roomObject = parent;                                
+                                        break;
+                                        case "Building": //NOI18N
+                                            buildingObject = parent;
+                                        break;
+                                        case "City": //NOI18N
+                                            cityObject = parent;                     
+                                        break;
+                                        case "Country": //NOI18N
+                                            countryObject = parent;
+                                        break;
+                                    }
+                                }
+                            }                       
+                        }
                     }
+                    attrValues = webserviceBean.getAttributeValuesAsString(
+                        spareObject.getClassName(), spareObject.getId(), 
+                        remoteSession.getIpAddress(), remoteSession.getSessionId());
                 } catch (ServerSideException ex) {
-                    //Catch another unexpected exception and notify
-                    Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+                    Notifications.showError(ex.getMessage());
                 }
             }
         }
         
+        public RemoteObjectLight getSpareObject() {
+            return spareObject;
+        }
+                
         public RemoteObjectLight getRackObject() {
             return rackObject;
         }
@@ -548,53 +580,25 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
         }
         
         public String getVendor() {
-            if (spareObject != null) {
-                try {
-                    String vendor = webserviceBean.getAttributeValueAsString(
-                        spareObject.getClassName(), 
-                        spareObject.getId(), 
-                        "vendor", //NOI18N
-                        Page.getCurrent().getWebBrowser().getAddress(),
-                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-                    
-                    return vendor != null ? vendor : "";
-                } catch (ServerSideException ex) {
-
-                }
+            if (spareObject != null && attrValues != null) {
+                String vendor = attrValues.get("vendor"); //NOI18N
+                return vendor != null ? vendor : "";
             }
             return "";
         }
         
         public String getState() {
-            if (spareObject != null) {
-                try {
-                    String state = webserviceBean.getAttributeValueAsString(
-                        spareObject.getClassName(), 
-                        spareObject.getId(), "state", //NOI18N
-                        Page.getCurrent().getWebBrowser().getAddress(),
-                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-                    
-                    return state != null ? state : "";
-                } catch (ServerSideException ex) {
-                }
+            if (spareObject != null && attrValues != null) {
+                String state = attrValues.get("state"); //NOI18N
+                return state != null ? state : "";
             }
             return "";
         }
         
         public String getPosition() {
-            if (spareObject != null) {
-                try {
-                    String position = webserviceBean.getAttributeValueAsString(
-                            spareObject.getClassName(), 
-                            spareObject.getId(), 
-                            "position", //NOI18N
-                            Page.getCurrent().getWebBrowser().getAddress(),
-                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-                    
-                    return position != null ? position : "";
-                } catch (ServerSideException ex) {
-
-                }
+            if (spareObject != null && attrValues != null) {
+                String position = attrValues.get("position"); //NOI18N
+                return position != null ? position : "";
             }
             return "";
         }
@@ -629,6 +633,29 @@ public class SpareAndReservedDashboardWidget extends AbstractDashboardWidget {
             + "\">&#x" //NOI18N
             + Integer.toHexString(VaadinIcons.SERVER.getCodepoint())
             + ";</span>"; //NOI18N
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(this.spareObject);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final ObjectBean other = (ObjectBean) obj;
+            if (!Objects.equals(this.spareObject, other.spareObject)) {
+                return false;
+            }
+            return true;
         }
     }
     

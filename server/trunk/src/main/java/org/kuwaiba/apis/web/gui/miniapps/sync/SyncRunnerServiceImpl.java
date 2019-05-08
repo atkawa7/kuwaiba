@@ -59,7 +59,6 @@ public class SyncRunnerServiceImpl implements SyncRunnerService {
         launchNextAdHocAutomatedSynchronizationTask(ui, webserviceBean, remoteSession, syncProviders, syncConfig);
     }
     
-////    @Asynchronous
     private void launchNextAdHocAutomatedSynchronizationTask(UI ui, WebserviceBean webserviceBean, RemoteSession remoteSession, List<SyncProvider> syncProviders, RemoteSynchronizationConfiguration syncConfig) {
         if (!syncProviders.isEmpty()) {
             
@@ -114,25 +113,14 @@ public class SyncRunnerServiceImpl implements SyncRunnerService {
                                 
                 tabSheet.addTab(vly, syncProvider.getValue());
                 
-                ui.access(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (!window.isAttached())
-                            ui.addWindow(window);
-                    }
-                });
-                
-                System.out.println(">>>" + syncProvider.getValue());
+                if (!window.isAttached())
+                    ui.addWindow(window);
+////                System.out.println(">>>" + syncProvider.getValue());
                 syncProviders.remove(0);
                 launchAdHocAutomatedSynchronizationTask(ui, webserviceBean, remoteSession, syncProviders, syncConfig);
                 
             } catch (ServerSideException | RuntimeException ex) {
-                ui.access(new Runnable() {
-                    @Override
-                    public void run() {
-                        Notifications.showError(ex.getMessage());
-                    }
-                });
+                Notifications.showError(ex.getMessage());
             }
                         
         }
