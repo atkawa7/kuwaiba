@@ -54,32 +54,37 @@ public class LayoutMigrator {
         
         try (Transaction tx = graphDb.beginTx()) {
             graphDb.findNodes(Label.label("listTypeItems")).stream().forEach((aListTypeItemNode) -> {
-                System.out.println(String.format("Processing List Type Item %s [%s] (%s)", aListTypeItemNode.getProperty("name"), 
-                        aListTypeItemNode.getSingleRelationship(ViewUtil.RELTYPE_INSTANCEOF, Direction.OUTGOING).getEndNode().getProperty("name"), 
-                        aListTypeItemNode.getId()));
-                
-                aListTypeItemNode.getRelationships(Direction.OUTGOING, ViewUtil.RELTYPE_HASVIEW).forEach((aLayoutRelationship) -> {
-                    Node layoutNode = aLayoutRelationship.getEndNode();
-                    System.out.println("Processing layout " + layoutNode.getId());
-                    try {
-                        LayoutUtil.LayoutMap parsedLayout = parseLayout((byte[])layoutNode.getProperty("structure"));
-                        byte[] migratedStructure = migrateLayoutMap(parsedLayout, graphDb);
-                        //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
-//                             try {
-//                                 FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/layout_migrated" + layoutNode.getId() + ".xml");
-//                                 fos.write(migratedStructure);
-//                                 fos.close();
-//                             } catch(Exception e) {}
-             //</editor-fold>
-                        layoutNode.setProperty("structure", migratedStructure);
-                        layoutNode.addLabel(Label.label("layouts"));
-                    } catch (XMLStreamException ex) {
-                        System.out.println(String.format("Unexpected error processing layout with id %s: %s", 
-                            layoutNode.getProperty("name"), layoutNode.getId(), ex.getMessage()));
-                    }
-                    
-                    
-                });
+                if (aListTypeItemNode.hasProperty("name")) {
+                    System.out.println(String.format("Processing List Type Item %s [%s] (%s)", aListTypeItemNode.getProperty("name"), 
+                            aListTypeItemNode.getSingleRelationship(ViewUtil.RELTYPE_INSTANCEOF, Direction.OUTGOING).getEndNode().getProperty("name"), 
+                            aListTypeItemNode.getId()));
+
+                    aListTypeItemNode.getRelationships(Direction.OUTGOING, ViewUtil.RELTYPE_HASVIEW).forEach((aLayoutRelationship) -> {
+                        Node layoutNode = aLayoutRelationship.getEndNode();
+                        System.out.println("Processing layout " + layoutNode.getId());
+                        try {
+                            LayoutUtil.LayoutMap parsedLayout = parseLayout((byte[])layoutNode.getProperty("structure"));
+                            byte[] migratedStructure = migrateLayoutMap(parsedLayout, graphDb);
+                            //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
+    //                             try {
+    //                                 FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/layout_migrated" + layoutNode.getId() + ".xml");
+    //                                 fos.write(migratedStructure);
+    //                                 fos.close();
+    //                             } catch(Exception e) {}
+                 //</editor-fold>
+                            layoutNode.setProperty("structure", migratedStructure);
+                            layoutNode.addLabel(Label.label("layouts"));
+                        } catch (Exception ex) {
+                            System.out.println(String.format("Unexpected error processing layout with id %s: %s", 
+                                layoutNode.hasProperty("name") ? layoutNode.getProperty("name") : "<Not Set>", layoutNode.getId(), ex.getMessage()));
+                        }
+
+
+                    });
+                }
+                else {
+                    System.out.println(String.format("Processing List Type Item... %s", aListTypeItemNode.getId()));
+                }
             });
             System.out.println(">>> Layout migration finished");
             tx.success();
@@ -95,7 +100,6 @@ public class LayoutMigrator {
      */
     private static LayoutUtil.LayoutMap parseLayout(byte[] structure) throws XMLStreamException {
         LayoutUtil.LayoutMap res = new LayoutUtil.LayoutMap();
-        
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         QName qView = new QName("view"); //NOI18N
         QName qLayout = new QName("layout"); //NOI18N
@@ -139,11 +143,20 @@ public class LayoutMigrator {
                                     new Dimension(width, height), opaque, isEquipment, name, color, borderColor, isSlot));
                             break;
                         }
+                        case LayoutUtil.Polygon.TYPE: {
+                            int color = Integer.valueOf(reader.getAttributeValue(null, "color")); //NOI18N
+                            int borderColor = Integer.valueOf(reader.getAttributeValue(null, "borderColor")); //NOI18N
+                            res.getShapes().add(new LayoutUtil.Polygon(new Point(xCoordinate, yCoordinate), 
+                                    new Dimension(width, height), opaque, isEquipment, name, color, borderColor));
+                            break;
+                        }
                         case LayoutUtil.Ellipse.TYPE: {
                             int color = Integer.valueOf(reader.getAttributeValue(null, "color")); //NOI18N
                             int borderColor = Integer.valueOf(reader.getAttributeValue(null, "borderColor")); //NOI18N
-                            int ellipseColor = Integer.valueOf(reader.getAttributeValue(null, "ellipseColor")); //NOI18N
-                            int ovalColor = Integer.valueOf(reader.getAttributeValue(null, "ovalColor")); //NOI18N
+                            String strEllipseColor = reader.getAttributeValue(null, "ellipseColor"); //NOI18N
+                            int ellipseColor = Integer.valueOf(strEllipseColor != null ? strEllipseColor : "-1"); 
+                            String strOvalColor = reader.getAttributeValue(null, "ovalColor"); //NOI18N
+                            int ovalColor = Integer.valueOf(strOvalColor != null ? strOvalColor : "-1"); //NOI18N                            
                             res.getShapes().add(new LayoutUtil.Ellipse(new Point(xCoordinate, yCoordinate), 
                                     new Dimension(width, height), opaque, isEquipment, name, color, borderColor, ellipseColor, ovalColor));
                             break;
@@ -221,6 +234,10 @@ public class LayoutMigrator {
                     xmlew.add(xmlef.createAttribute(new QName("color"), String.valueOf(aShape.color))); //NOI18N
                     xmlew.add(xmlef.createAttribute(new QName("borderColor"), String.valueOf(aShape.borderColor))); //NOI18N
                     xmlew.add(xmlef.createAttribute(new QName("isSlot"), String.valueOf(((LayoutUtil.Rectangle)aShape).isSlot))); //NOI18N
+                    break;
+                case LayoutUtil.Polygon.TYPE:
+                    xmlew.add(xmlef.createAttribute(new QName("color"), String.valueOf(aShape.color))); //NOI18N
+                    xmlew.add(xmlef.createAttribute(new QName("borderColor"), String.valueOf(aShape.borderColor))); //NOI18N
                     break;
                 case LayoutUtil.Ellipse.TYPE:
                     xmlew.add(xmlef.createAttribute(new QName("color"), String.valueOf(aShape.color))); //NOI18N

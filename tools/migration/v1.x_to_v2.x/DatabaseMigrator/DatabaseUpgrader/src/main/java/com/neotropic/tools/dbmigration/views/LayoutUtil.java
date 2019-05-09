@@ -204,6 +204,23 @@ public class LayoutUtil {
         }
     }
     
+    public static class Polygon extends Shape {
+        /**
+         * Shape type.
+         */
+        public static final String TYPE = "polygon";
+        
+        public Polygon(Point coordinates, Dimension dimensions, boolean opaque, boolean isEquipment, 
+                String name, int color, int borderColor) {
+            super(coordinates, dimensions, opaque, isEquipment, name, color, borderColor);
+        }               
+        
+        @Override
+        public String getType() {
+            return TYPE;
+        }
+    }
+    
     public static class Ellipse extends Shape {
         /**
          * Shape type.
