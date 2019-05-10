@@ -403,6 +403,47 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
+    public String createHeadlessObject(String className, HashMap<String, String> attributes, String templateId)
+            throws OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
+        
+        ClassMetadata myClass= mem.getClass(className);
+        
+        try (Transaction tx = graphDb.beginTx()) {        
+            Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
+
+            if (myClass.isInDesign())
+                throw new OperationNotPermittedException("Can not create instances of classes marked as inDesign");
+
+            if (myClass.isAbstract())
+                throw new OperationNotPermittedException(String.format("Abstract class %s can not be instantiated", className));
+
+            Node newObject;
+            if (templateId == null || templateId.isEmpty())
+                newObject = createObject(classNode, myClass, attributes);
+            else {
+                try {
+                    Node templateNode = graphDb.findNode(templateLabel, Constants.PROPERTY_UUID, templateId);
+                    if (templateNode.hasRelationship(Direction.INCOMING, RelTypes.HAS_TEMPLATE)) {
+                        if (className.equals(templateNode.getSingleRelationship(RelTypes.HAS_TEMPLATE, Direction.INCOMING).
+                                getStartNode().getProperty(Constants.PROPERTY_NAME)))
+                            newObject = copyTemplateElement(templateNode, myClass, true);
+                        else
+                            throw new InvalidArgumentException(String.format("The template with id %s is not applicable to instances of class %s", templateId, className));
+                    } else 
+                        throw new InvalidArgumentException(String.format("The template with id %s is malformed", templateId));
+                    
+                } catch (NotFoundException ex) {
+                    throw new ApplicationObjectNotFoundException(String.format("No template with id %s was found for class %s", templateId, className));
+                }
+            }
+            tx.success();
+            return (String)newObject.getProperty(Constants.PROPERTY_UUID);
+        }
+    }
+    
+    @Override
     public String createPoolItem(String poolId, String className, String[] attributeNames, String[] attributeValues, String templateId) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException, 
             ArraySizeMismatchException, MetadataObjectNotFoundException {

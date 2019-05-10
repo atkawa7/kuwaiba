@@ -100,6 +100,21 @@ public interface BusinessEntityManager {
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, ApplicationObjectNotFoundException;
     
     /**
+     * Creates an object without parent. This might be particularly useful for complex models. Use it carefully to avoid leaving orphan objects. 
+     * Always provide custom methods to delete 
+     * @param className The class name of the object to be created.
+     * @param attributes The initial set of attributes (as pairs attribute name - value) to be set. These values will override those in the template used (if any).
+     * @param templateId The id of the template to be used to create the object. Use null or an empty string to not use any template.
+     * @return The id of the newly created object.
+     * @throws MetadataObjectNotFoundException If the class provided does not exist.
+     * @throws InvalidArgumentException If the format of any of the default attributes provided is incorrect.
+     * @throws org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException If the class provided is marked as <i>in design</i> or it is abstract.
+     * @throws ApplicationObjectNotFoundException If the template provided does not exist.
+     */
+    public String createHeadlessObject(String className, HashMap<String,String> attributes, String templateId)
+            throws MetadataObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, ApplicationObjectNotFoundException;
+    
+    /**
      * Creates an object inside a pool
      * @param poolId Parent pool id
      * @param className Class this object is going to be instance of
