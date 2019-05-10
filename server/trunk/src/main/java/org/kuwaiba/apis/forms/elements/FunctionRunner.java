@@ -18,7 +18,6 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -88,8 +87,8 @@ public class FunctionRunner implements Runner {
         }
         GroovyShell shell = new GroovyShell(FunctionRunner.class.getClassLoader(), binding);
         
-        System.out.println(String.format("[KUWAIBA] [%s] [PROCESS ENGINE] Executed Function %s", 
-                    Calendar.getInstance().getTime(), getFunctionName()));
+////        System.out.println(String.format("[KUWAIBA] [%s] [PROCESS ENGINE] Executed Function %s", 
+////                    Calendar.getInstance().getTime(), getFunctionName()));
         return shell.evaluate(script);
     }
 

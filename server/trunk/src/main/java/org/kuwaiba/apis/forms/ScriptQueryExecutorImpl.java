@@ -233,7 +233,7 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
             }
         }
         else {
-            Notifications.showError(scriptQueryName + " does not exist");            
+            Notifications.showError("[PROCESS ENGINE] Function " + scriptQueryName + " does not exist");            
         }
         return null;
     }
