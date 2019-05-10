@@ -16,8 +16,8 @@
     <label value="Devices" styleName="title"/>
 
     <gridLayout columns="2" rows="1" alignment="middleCenter">
-      <button caption="Add device" onclick="open.frmReserveMaterial" width="150px"/>
-      <button caption="Remove device" onclick="propertyChange.frmCancelReserveMaterial.enabled.isSelectedAnyRow.gridEquipmentOrder open.frmCancelReserveMaterial" width="150px"/>
+      <button caption="Add Device" onclick="open.frmReserveMaterial" width="150px"/>
+      <button caption="Remove Device" onclick="propertyChange.frmCancelReserveMaterial.enabled.isSelectedAnyRow.gridEquipmentOrder open.frmCancelReserveMaterial" width="150px"/>
     </gridLayout>
 
     <grid id="gridEquipmentOrder" shared="true" height="250px" width="1300px" alignment="middleCenter">
@@ -65,42 +65,7 @@
         grid.getSelectedRow() != -1;
       ]]>
     </function>
-    <function type="function" name="hasAttribute" parameternames="aField attributeName" >
-      def paramNames = new ArrayList();
-      def paramValues = new ArrayList();
-
-      paramNames.add("className");
-      paramNames.add("attributeName");
-
-      paramValues.add(aField.getValue().getClassName());
-      paramValues.add(attributeName);
-
-      !scriptQueryExecutor.execute("hasAttribute", paramNames, paramValues);
-    </function>
-
-    <function type="function" name="getAttributeValue" parameternames="cmbSource attrName">
-      def paramNames = new ArrayList();
-      def paramValues = new ArrayList();
-
-      paramNames.add("objectClassName");
-      paramNames.add("objectId");
-      paramNames.add("attributeName");
-
-      paramValues.add(cmbSource.getValue().getClassName());
-      paramValues.add(String.valueOf(cmbSource.getValue().getOid()));
-      paramValues.add(attrName);
-
-      scriptQueryExecutor.execute("getAttributeValue", paramNames, paramValues);
-    </function>
-
-    <function type="function" name="repaint">
-        true;
-    </function>
-
-    <function type="function" name="getEnabled">
-      false;
-    </function>
-
+    
     <function type="function" name="getElements1" parameternames="cmbId" return="Matriz">
       <![CDATA[
       import org.kuwaiba.apis.persistence.PersistenceService;
@@ -117,7 +82,7 @@
       classsInstances.each { instance ->
           def equipmentStatusId = instance.getAttributes().get("state");
           if(equipmentStatusId != null){
-            def equipmentStatus = aem.getListTypeItem("OperationalState", equipmentStatusId as long);
+            def equipmentStatus = aem.getListTypeItem("OperationalState", equipmentStatusId);
             if(equipmentStatus != null && equipmentStatus.getName() == "Spare"){
               def row = new ArrayList();
               row.add(new RemoteObjectLight(instance));

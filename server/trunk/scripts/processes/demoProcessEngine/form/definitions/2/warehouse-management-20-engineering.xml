@@ -108,9 +108,8 @@ Date
       </gridLayout>
 
       <horizontalLayout alignment="bottomCenter">
-        <!--<button caption="Edit Shipment Process" styleName="buttonPrimary" onclick="addgridrows.gridShipmentTrack.getMaterialRowSend.gridEquipmentOrder.gridShipmentTrack deletegridrow.gridEquipmentOrder close.frmSendEquipment"/>-->
-        <button caption="Edit Shipment Process" styleName="buttonPrimary" onclick="propertyChange.gridShipmentTrack.rows.addShipmentRow.gridEquipmentOrder.gridShipmentTrack deletegridrow.gridEquipmentOrder close.frmSendEquipment"/>
-        <button caption="Cancel" onclick="close.frmSendEquipment clean.frmSendEquipment"/>
+        <button caption="Edit Shipment Process" width="150px" styleName="buttonPrimary" onclick="propertyChange.gridShipmentTrack.rows.addShipmentRow.gridEquipmentOrder.gridShipmentTrack deletegridrow.gridEquipmentOrder close.frmSendEquipment"/>
+        <button caption="Cancel" width="150px" onclick="close.frmSendEquipment clean.frmSendEquipment"/>
       </horizontalLayout>
     </subform>
 
@@ -132,18 +131,10 @@ Date
         <dateField id="dtfShipDate" datatype="Date" onload="value.getSelectedRowGridDataValue.gridShipmentTrack.7"/>
         <label value="Arrival Date"/>
         <dateField id="dtfShipArrival" datatype="Date" onload="value.getSelectedRowGridDataValue.gridShipmentTrack.8"/>
-        <!--
-        <label value="Shipment Receipt"/>
-        <upload id="uplShpReciept" datatype="String" />
-        <label value="Arrival Receipt"/>
-        <upload id="uplArrReciept" datatype="String" />
-        -->
         <textField id="txtInTransitState" hidden="true" onload="getIntransitState"/>
       </gridLayout>
 
       <horizontalLayout alignment="bottomCenter">
-        <!--<button caption="Start Shipment Process" styleName="buttonPrimary" onclick="editgridrow.gridShipmentTrack.cmbMaterialSelected.cmbMaterialSelected2.cmbMaterialSelected3.cmbDestinationCity.cmbDestinationWarehouse.txtCarrier.dtfShipDate.dtfShipArrival.uplShpReciept.uplArrReciept.InTransit clean.frmEditShipment close.frmEditShipment"/>-->
-        <!--<button caption="Edit" width="50px" styleName="buttonPrimary" onclick="editgridrow.gridShipmentTrack.cmbMaterialSelected.cmbMaterialSelected2.cmbMaterialSelected3.cmbMaterialSelected4.cmbDestinationCity.cmbDestinationWarehouse.txtCarrier.dtfShipDate.dtfShipArrival.InTransit clean.frmEditShipment close.frmEditShipment"/>-->
         <button caption="Edit" width="50px" styleName="buttonPrimary" onclick="propertyChange.gridShipmentTrack.rows.editShipment.gridShipmentTrack.frmEditShipment clean.frmEditShipment close.frmEditShipment"/>
         <button caption="Cancel" width="50px" onclick="close.frmEditShipment clean.frmEditShipment"/>
       </horizontalLayout>
@@ -222,7 +213,7 @@ Date
               objects.get(purchaseMaterial.getClassName()).add(purchaseMaterial.getId());
             };
             for (String className : objects.keySet()) {
-              long [] ids = new long[objects.get(className).size()];
+              String [] ids = new String[objects.get(className).size()];
               for (int i = 0; i < ids.length; i += 1) {
                 ids[i] = objects.get(className).get(i);
               };
@@ -231,7 +222,7 @@ Date
             bem.moveObjectsToPool(transitPool.getClassName(), transitPool.getId(), objects);
             state = "Transit";
 
-            def itemTransit = aem.getListTypeItem("OperationalState", "Transit");
+            def itemTransit = aem.getListTypeItemWithName("OperationalState", "Transit");
             HashMap<String, String> attrs = new HashMap();
             attrs.put("state", String.valueOf(itemTransit.getId()));
 
@@ -257,7 +248,7 @@ Date
                 objects.get(purchaseMaterial.getClassName()).add(purchaseMaterial.getId());
               };
               for (String className : objects.keySet()) {
-                long [] ids = new long[objects.get(className).size()];
+                String [] ids = new String[objects.get(className).size()];
                 for (int i = 0; i < ids.length; i += 1) {
                   ids[i] = objects.get(className).get(i);
                 };
@@ -266,7 +257,7 @@ Date
               bem.moveObjectsToPool(destinationPool.getClassName(), destinationPool.getId(), objects);
 
               state = "Spare";
-              def itemTransit = aem.getListTypeItem("OperationalState", "Spare");
+              def itemTransit = aem.getListTypeItemWithName("OperationalState", "Spare");
               HashMap<String, String> attrs = new HashMap();
               attrs.put("state", String.valueOf(itemTransit.getId()));
 
@@ -305,45 +296,12 @@ Date
         import org.kuwaiba.apis.persistence.PersistenceService;
 
         def aem = PersistenceService.getInstance().getApplicationEntityManager();
-        def intransitOpState = aem.getListTypeItem("OperationalState", "In transit");
+        def intransitOpState = aem.getListTypeItemWithName("OperationalState", "In transit");
 
         intransitOpState;
       ]]>
     </function>
 
-    <!--
-        description: Returns the selected row of a grid to be aded to another grid
-        parameter srcGrid: the grid that contains the element to add to the other grid
-        parameter targetGrid: the grid that will add the row from srcGrid
-    -->
-    <function type="function" name="getMaterialRowSend" parameternames="srcGrid targetGrid">
-    <![CDATA[
-
-      def newFields = new ArrayList();
-      def list = targetGrid.getRows();
-      if(list == null)
-        list = new ArrayList();
-      if (srcGrid != null && srcGrid.getSelectedRow() != -1L) {
-        def flag = true;
-        list.each { row ->
-          if (row.get(3).equals(srcGrid.getRow().get(3))) {
-            flag = false;
-            return;
-          }
-        };
-        if (flag) {
-          srcGrid.getRow().each{ field ->
-            newFields.add(field);
-          };
-          list.add(srcGrid.getRow());
-        };
-      };
-      list;
-
-    ]]>
-    </function>
-
-    <!-- Metodos de Johny -->
     <function type="function" name="getWarehousesInCity" parameternames="cmbCity">
       <![CDATA[
         import org.kuwaiba.apis.persistence.PersistenceService;
@@ -364,120 +322,6 @@ Date
           };
         };
         res;
-      ]]>
-    </function>
-    <function type="function" name="getMaterialSelected" parameternames="activityId sharedGridId fGetSharedGrid">
-      <![CDATA[
-        def res = new ArrayList();
-
-        if (fGetSharedGrid != null) {
-          def paramValues = new ArrayList();
-
-          paramValues.add(activityId);
-          paramValues.add(sharedGridId);
-
-          def gridData = fGetSharedGrid.run(paramValues);
-
-          if (gridData != null) {
-            for (int i = 0; i < gridData.size(); i += 1) {
-              res.add(gridData.get(i).get(0));
-            };
-          };
-        };
-        res;
-      ]]>
-    </function>
-    <!--
-      @parameter activityId
-      @parameter sharedGridId
-      @return A List<List>
-    -->
-    <function type="function" name="getSharedGrid" parameternames="activityId sharedGridId">
-      <![CDATA[
-
-        import org.kuwaiba.apis.persistence.PersistenceService;
-        import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-
-        def ROWS_COUNT = "rowscount";
-        def COLUMNS_COUNT = "columnscount";
-        def DATA_TYPE = "datatype";
-        def REMOTE_OBJECT_LIGHT = "RemoteObjectLight";
-        def FUNCTION_SHARED = "shared";
-        def OBJECT_ID = "objectId";
-        def CLASS_NAME = "classname";
-
-        def bem = PersistenceService.getInstance().getBusinessEntityManager();
-
-        def res = new ArrayList();
-
-        def paramNames = new ArrayList();
-        def paramValues = new ArrayList();
-
-        paramNames.add("activityId");
-        paramNames.add("sharedId");
-
-        paramValues.add(activityId);
-        paramValues.add(sharedGridId + ROWS_COUNT);
-
-        String stringRowsCount = scriptQueryExecutor.execute(FUNCTION_SHARED, paramNames, paramValues);
-        /* Clean parameter values to do a new script query execution */
-        paramValues.clear();
-
-        paramValues.add(activityId);
-        paramValues.add(sharedGridId + COLUMNS_COUNT);
-
-        String stringColumnsCount = scriptQueryExecutor.execute(FUNCTION_SHARED, paramNames, paramValues);
-
-        /* Clean parameter values to do a new script query execution */
-        paramValues.clear();
-
-        if (stringRowsCount != null && stringColumnsCount != null) {
-          int rowsCount = Integer.valueOf(stringRowsCount);
-          int columnsCount = Integer.valueOf(stringColumnsCount);
-          for (int i = 0; i < rowsCount; i++) {
-
-            def row = new ArrayList();
-            for (int j = 0; j < columnsCount; j++) {
-              /* Clean parameter values to do a new script query execution */
-              paramValues.clear();
-
-              paramValues.add(activityId);
-              paramValues.add(sharedGridId + i + j + DATA_TYPE);
-
-              def dataType = scriptQueryExecutor.execute(FUNCTION_SHARED, paramNames, paramValues);
-
-              if (REMOTE_OBJECT_LIGHT.equals(dataType)) {
-                /* Clean parameter values to do a new script query execution */
-                paramValues.clear();
-                paramValues.add(activityId);
-                paramValues.add(sharedGridId + i + j + OBJECT_ID);
-
-                def objectId = scriptQueryExecutor.execute(FUNCTION_SHARED, paramNames, paramValues);
-
-                /* Clean parameter values to do a new script query execution */
-                paramValues.clear();
-                paramValues.add(activityId);
-                paramValues.add(sharedGridId + i + j + CLASS_NAME);
-
-                def objectClass = scriptQueryExecutor.execute(FUNCTION_SHARED, paramNames, paramValues);
-
-                row.add(new RemoteObjectLight(bem.getObjectLight(objectClass, Long.valueOf(objectId))));
-              }
-              else {
-                /* Clean parameter values to do a new script query execution */
-                paramValues.clear();
-
-                paramValues.add(activityId);
-                paramValues.add(sharedGridId + i + j);
-
-                def cell = scriptQueryExecutor.execute(FUNCTION_SHARED, paramNames, paramValues);
-                row.add(cell);
-              };
-            };
-            res.add(row);
-          };
-        };
-        return res;
       ]]>
     </function>
   </script>

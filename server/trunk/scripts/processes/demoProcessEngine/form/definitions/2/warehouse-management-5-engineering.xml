@@ -12,8 +12,7 @@ Date
   <form id="formSpareElementsViewer" title="Spare Elements Viewer">
 
     <label value="Material Purchase" styleName="title" />
-    <!--<label onload="value.getPurchaseCode" />-->
-
+    
     <button caption="Add Material to Purchase" onclick="open.frmEquipmentAdd"/>
 
     <grid id="gridEquipmentPurchased" save="true" shared="true" height="250px" width="1300px">
@@ -40,8 +39,8 @@ Date
           </gridLayout>
           <label id="lblPurchaseCode" hidden="true"/>
           <horizontalLayout alignment="bottomCenter">
-            <button caption="Buy Equipment" styleName="buttonPrimary" onclick="propertyChange.lblPurchaseCode.value.getPurchaseCode addgridrow.gridEquipmentPurchased.cmbEquipmentType.cmbVendorType.txtEquipmentQuantity.lblPurchaseCode purchaseEquipment.cmbEquipmentType.cmbVendorType.txtEquipmentQuantity.lblPurchaseCode clean.frmEquipmentAdd close.frmEquipmentAdd "/>
-            <button caption="Cancel" onclick="close.frmEquipmentAdd clean.frmEquipmentAdd"/>
+            <button caption="Buy Equipment" width="120px" styleName="buttonPrimary" onclick="propertyChange.lblPurchaseCode.value.getPurchaseCode addgridrow.gridEquipmentPurchased.cmbEquipmentType.cmbVendorType.txtEquipmentQuantity.lblPurchaseCode purchaseEquipment.cmbEquipmentType.cmbVendorType.txtEquipmentQuantity.lblPurchaseCode clean.frmEquipmentAdd close.frmEquipmentAdd "/>
+            <button caption="Cancel" width="120px" onclick="close.frmEquipmentAdd clean.frmEquipmentAdd"/>
           </horizontalLayout>
         </subform>
 
@@ -89,149 +88,6 @@ Date
         def processInstanceId = scriptQueryExecutor.execute("shared", paramNames, paramValues);
 
         processInstanceId + "-" + UUID.randomUUID();
-      ]]>
-    </function>
-
-    <!-- This function change a grid's rows for the ones it gets from the function
-         param gridToChange: the grid to swap rows
-         param fillerFunction: the funtion that retrieves the new rows
-         param cmbMaterialType: a comboBox holding the type of material to look for
-         param cmbChosenColumn: a comboBox holding a Column name, parameter of fillerFunction
-         param txtSearchTyped: a textfield with the text the user wants to search
-    -->
-    <function type="function" name="rowsChange" parameternames="gridToChange basicElementsFunction fillerFunction cmbMaterialType cmbChosenColumn txtSearchTyped" return="RemoteObjectLight">
-      <![CDATA[
-        import org.kuwaiba.apis.persistence.PersistenceService;
-
-        def rows = new ArrayList();
-        if (gridToChange != null && basicElementsFunction != null && fillerFunction != null && cmbMaterialType.getValue() != null && cmbChosenColumn.getValue() != null && txtSearchTyped.getValue() != null) {
-          def params = new ArrayList();
-          params.add(basicElementsFunction);
-          params.add(cmbMaterialType);
-          params.add(cmbChosenColumn.getValue());
-          params.add(txtSearchTyped.getValue());
-          println("antes de invocar");
-          rows = fillerFunction.run(params);
-        };
-        //println("lo que quedo de resultado: "+rows.get(0).get(0).getName());
-        rows;
-      ]]>
-    </function>
-
-    <!-- This function creates a set of rows depending on user's search parameters
-         param basicElementsFunction: the function that gets all the elements in Spare state of type cmbMaterialType
-         param cmbMaterialType: the type of element to be retrieved
-         param cmbChosenColumn: a Column name
-         param txtSearchTyped: the text the user wants to search
-    -->
-    <function type="function" name="getMaterialsBySearch" parameternames="basicElementsFunction cmbMaterialType cmbChosenColumn txtSearchTyped" return="RemoteObjectLight">
-      <![CDATA[
-      import org.kuwaiba.apis.persistence.PersistenceService;
-
-      def results = new ArrayList();
-      println("va aca");
-      if (cmbMaterialType != null && cmbChosenColumn != null && txtSearchTyped != null) {
-
-        def params = new ArrayList();
-        println("despues de invocar");
-        params.add(cmbMaterialType);
-        def basicElements = basicElementsFunction.run(params);
-        println("tamanio de basicElements: "+basicElements.size());
-
-        basicElements.each{ element ->
-
-          switch(cmbChosenColumn){
-            case "Name":
-              if(element.get(0).getName().contains(txtSearchTyped)){
-                results.add(element);
-              };
-              break;
-
-            case "Vendor":
-              if(element.get(1).contains(txtSearchTyped)){
-                results.add(element);
-              };
-              break;
-
-            case "Rack":
-              if(element.get(3).contains(txtSearchTyped)){
-                results.add(element);
-              };
-              break;
-
-            case "Building":
-              if(element.get(4).contains(txtSearchTyped)){
-                results.add(element);
-              };
-              break;
-
-            case "City":
-              if(element.get(5).contains(txtSearchTyped)){
-                results.add(element);
-              };
-              break;
-
-            default:
-              println("no cayo en ninguna opcion");
-              break;
-
-          };
-        };
-      };
-      results;
-      ]]>
-    </function>
-
-    <function type="function" name="updateObject" parameternames="src state" return="RemoteObjectLight">
-      <![CDATA[
-      import org.kuwaiba.apis.persistence.PersistenceService;
-        if (src.getValue() != null) {
-          def bem = PersistenceService.getInstance().getBusinessEntityManager();
-          HashMap<String, String> attrs = new HashMap();
-          attrs.put("state", String.valueOf(state.getValue().getId()));
-          bem.updateObject(src.getValue().getClassName(), src.getValue().getId(), attrs);
-        };
-        src.getValue();
-      ]]>
-    </function>
-
-    <function type="function" name="getElementTypes" queryname="getElementTypes">
-      <![CDATA[
-      def elementTypes = ['GenericCommunicationsElement'];
-      /*
-      def elementTypes = ['GenericCommunicationsElement', 'GenericBoard', 'GenericDistributionFrame',
-      'Transceiver'];
-      */
-      elementTypes;
-      ]]>
-    </function>
-
-    <function type="function" name="getColumns" queryname="getColumns">
-      <![CDATA[
-      def columns = ['Name', 'Vendor', 'Rack', 'Building', 'City'];
-      columns;
-      ]]>
-    </function>
-
-    <function type="function" name="getInputParameters" parameternames="txtNameInput" return="Properties">
-      <![CDATA[
-      import org.kuwaiba.apis.persistence.PersistenceService;
-      import java.util.Properties;
-
-      Properties inputParameters = new Properties();
-
-      if (txtNameInput.getValue() != null) {
-
-        def bem = PersistenceService.getInstance().getBusinessEntityManager();
-
-        def rack = bem.getFirstParentOfClass(txtNameInput.getValue().getClassName(), txtNameInput.getValue().getId(), "Rack");
-
-        if (rack != null) {
-          inputParameters.setProperty("id", String.valueOf(rack.getId()));
-          inputParameters.setProperty("className", rack.getClassName());
-        };
-      };
-      return inputParameters;
       ]]>
     </function>
   </script>

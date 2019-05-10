@@ -21,44 +21,6 @@
       Date
           20180619tue
       */
-      /*
-      import org.kuwaiba.apis.persistence.PersistenceService;
-      import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-      import org.neo4j.graphdb.Direction;
-      import org.neo4j.graphdb.GraphDatabaseService;
-      import org.neo4j.graphdb.Label;
-      import org.neo4j.graphdb.Node;
-      import org.neo4j.graphdb.Relationship;
-      import org.neo4j.graphdb.ResourceIterator;
-      import org.neo4j.graphdb.Result;
-      import org.neo4j.graphdb.Transaction;
-
-      def bem = PersistenceService.getInstance().getBusinessEntityManager();
-      GraphDatabaseService graphDb;
-
-      def instances = new ArrayList();
-
-      def cypherQuery = "match (class:classes)<-[:EXTENDS*]-(subclass:classes)<-[:INSTANCE_OF]-(instance:inventory_objects) where class.name=\"" + className + "\" return instance;";
-
-      def result = graphDb.execute(cypherQuery);
-
-      def instanceColumn = result.columnAs("instance");
-
-      def lstInstanceColumm = Iterators.asList(instanceColumn);
-
-      lstInstanceColumm.each { instanceNode ->
-
-          cypherQuery = "match (class:classes)<-[:INSTANCE_OF]-(instance:inventory_objects) where id(instance)=" + instanceNode.getId() + " return class;";
-          result = graphDb.execute(cypherQuery);
-
-          def classNode = Iterators.asList(result.columnAs("class")).get(0);
-          def currentClassName = classNode.getProperty(Constants.PROPERTY_NAME);
-
-          instances.add(new RemoteObjectLight(bem.getObjectLight(currentClassName, instanceNode.getId())));
-      };
-
-      instances;
-      */
       import org.kuwaiba.apis.persistence.PersistenceService;            
       import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
@@ -100,39 +62,6 @@
       return RemoteObjectLight.toRemoteObjectLightArray(listTypeItems);
     ]]>
   </function>
-
-  <function type="function" name="getSpecialAttribute" parameternames="objectClassName objectId attributeName" return="List">
-    <![CDATA[
-      /*
-      Name
-          getSpecialAttribute
-      Description
-          getSpecialAttribute
-      Countable
-          true
-      Parameters
-          objectClassName
-          objectId
-          attributeName
-      Author
-          Johny Andrés Ortega Ruiz <johny.ortega@kuwaiba.org>
-      Date
-          20180619tue
-      */
-      import org.kuwaiba.apis.persistence.PersistenceService;
-      import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-
-      def bem = PersistenceService.getInstance().getBusinessEntityManager();
-      def specialAttribute = bem.getSpecialAttribute(objectClassName, objectId, attributeName);
-      def res = new ArrayList();
-      
-      specialAttribute.each { objLight ->
-        res.add(new RemoteObjectLight(bem.getObject(objLight.getClassName(), objLight.getId())));
-      };
-      res;
-    ]]>
-  </function>
-  <!-- -->
   <!-- Validator Section -->
   <function type="validator" name="emailValidator" parameternames="aField" message="The value must be a email">
     <![CDATA[
@@ -159,51 +88,7 @@
       null;
     ]]>
   </function>
-
-  <function type="function" name="getGridDataParentName" parameternames="grid rowId colId className" return="RemoteObjectLight">
-    <![CDATA[
-      def row = Integer.valueOf(rowId);
-      def col = Integer.valueOf(colId);
-      def data = grid.getData(row, col);
-
-      if (data != null) {
-            def paramNames = new ArrayList();
-            def paramValues = new ArrayList();
-
-            paramNames.add("objClass");
-            paramNames.add("objId");
-            paramNames.add("objParentClass");
-
-            paramValues.add(data.getClassName());
-            paramValues.add(String.valueOf(data.getId()));
-            paramValues.add(className);
-
-            return scriptQueryExecutor.execute("getParentName", paramNames, paramValues);
-      };
-      null;
-    ]]>
-  </function>
-
-  <function type="function" name="getParentName" parameternames="node className" return="RemoteObjectLight">
-    <![CDATA[
-      if (node.getValue() != null) {
-            def paramNames = new ArrayList();
-            def paramValues = new ArrayList();
-
-            paramNames.add("objClass");
-            paramNames.add("objId");
-            paramNames.add("objParentClass");
-
-            paramValues.add(node.getValue().getClassName());
-            paramValues.add(String.valueOf(node.getValue().getId()));
-            paramValues.add(className);
-
-            return scriptQueryExecutor.execute("getParentName", paramNames, paramValues);
-      };
-      null;
-    ]]>
-  </function>
-
+  
   <function type="function" name="getSelectedRowGridDataValue" parameternames="grid colId">
     <![CDATA[
       if (grid != null && colId != null && grid.getSelectedRow() != -1L) {
@@ -217,456 +102,7 @@
       null;
     ]]>
   </function>
-
-  <function type="function" name="getSelecteRowGridDataCaptionValue" parameternames="grid colId">
-    <![CDATA[
-      if (grid != null && colId != null && grid.getSelectedRow() != -1L) {
-
-        def row = Integer.valueOf(String.valueOf(grid.getSelectedRow()));
-        def col = Integer.valueOf(colId);
-        def data = grid.getData(row, col);
-
-        if (data != null) {
-          return data.getName();
-        };
-      };
-      null;
-    ]]>
-  </function>
-
-  <function type="function" name="getSelecteRowGridDataPathValue" parameternames="grid colId">
-    <![CDATA[
-      if (grid != null && colId != null && grid.getSelectedRow() != -1L) {
-
-        def row = Integer.valueOf(String.valueOf(grid.getSelectedRow()));
-        def col = Integer.valueOf(colId);
-        def data = grid.getData(row, col);
-
-        if (data != null) {
-          return data.getPath();
-        };
-      };
-      null;
-    ]]>
-  </function>
-
-  <function type="function" name="getGridDataValue" parameternames="grid rowId colId" return="String">
-    <![CDATA[
-      def row = Integer.valueOf(rowId);
-      def col = Integer.valueOf(colId);
-      def data = grid.getData(row, col);
-
-      def result = "";
-
-      if (data != null)
-        result = data.toString();
-
-      result;
-    ]]>
-  </function>
-
-  <function type="function" name="getGridDataAttributeValue" parameternames="grid rowId colId attrName" return="RemoteObjectLight">
-    <![CDATA[
-      def row = Integer.valueOf(rowId);
-      def col = Integer.valueOf(colId);
-      def data = grid.getData(row, col);
-
-      if (data != null) {
-            def paramNames = new ArrayList();
-            def paramValues = new ArrayList();
-
-            paramNames.add("objectClassName");
-            paramNames.add("objectId");
-            paramNames.add("attributeName");
-
-            paramValues.add(data.getClassName());
-            paramValues.add(String.valueOf(data.getId()));
-            paramValues.add(attrName);
-
-            return scriptQueryExecutor.execute("getAttributeValue", paramNames, paramValues);
-      };
-      null;
-    ]]>
-  </function>
-
-  <function type="function" name="getAttributeValue" parameternames="node attrName" return="RemoteObjectLight">
-    <![CDATA[
-      if (node.getValue() != null) {
-            def paramNames = new ArrayList();
-            def paramValues = new ArrayList();
-
-            paramNames.add("objectClassName");
-            paramNames.add("objectId");
-            paramNames.add("attributeName");
-
-            paramValues.add(node.getValue().getClassName());
-            paramValues.add(String.valueOf(node.getValue().getId()));
-            paramValues.add(attrName);
-
-            return scriptQueryExecutor.execute("getAttributeValue", paramNames, paramValues);
-      };
-      null;
-    ]]>
-  </function>
-  <!-- -->
-  <function type="function" name="getNewGridHardwareRow" parameternames="srcGrid trgGrid fieldModel modelClassName fieldVendor vendorClassName srcClm">
-    <![CDATA[
-      def oldRows = new ArrayList();
-
-      if (trgGrid != null && trgGrid.getRows() != null) {
-        oldRows = trgGrid.getRows();
-      };
-      def data = null;
-
-      def state = null;
-      def model = null;
-      def vendor = null;
-
-      if (srcGrid != null && srcGrid.getSelectedRow() != -1L) {
-        def row = Integer.valueOf(String.valueOf(srcGrid.getSelectedRow()));
-        def clm =  Integer.valueOf(srcClm);
-
-        data = srcGrid.getData(row, clm);
-
-        def attributes = data.getAttributes();
-
-        if (attributes != null && !attributes.isEmpty()) {
-
-          state = attributes.get(0).get(attributes, "state");
-          model = attributes.get(0).get(attributes, "model");
-          vendor = attributes.get(0).get(attributes, "vendor");
-
-          def paramNames = new ArrayList();
-
-          paramNames.add("objectClassName");
-          paramNames.add("objectId");
-
-          def paramValues = new ArrayList();
-
-          if (state != null) {
-
-            paramValues.add("OperationalState");
-            paramValues.add(state);
-
-            state = scriptQueryExecutor.execute("getObjectLight", paramNames, paramValues);
-          };
-          if (model != null) {
-
-            paramValues.clear();
-
-            paramValues.add(modelClassName);
-            paramValues.add(model);
-
-            model = scriptQueryExecutor.execute("getObjectLight", paramNames, paramValues);
-          };
-          if (vendor != null) {
-
-            paramValues.clear();
-
-            paramValues.add(vendorClassName);
-            paramValues.add(vendor);
-
-            vendor = scriptQueryExecutor.execute("getObjectLight", paramNames, paramValues);
-          };
-        };
-      };
-
-      if (data != null) {
-
-        def newRow = new ArrayList();
-
-        newRow.add(model != null ? model : "<Not Set>");
-        newRow.add(vendor != null ? vendor : "<Not Set>");
-        newRow.add(data != null ? data : "<Not Set>");
-        newRow.add(state != null ? state : "<Not Set>");
-
-        oldRows.add(newRow);
-      } else {
-
-        model = fieldModel.getValue();
-        vendor = fieldVendor.getValue();
-
-        if (model != null && vendor != null) {
-          data = "";
-          state = "To Buy";
-
-          def newRow = new ArrayList();
-
-          newRow.add(model);
-          newRow.add(vendor);
-          newRow.add(data);
-          newRow.add(state);
-
-          oldRows.add(newRow);
-        };
-      };
-      oldRows;
-    ]]>
-  </function>
-
-  <function type="function" name="filterHardware" parameternames="filterClassName fieldModel fieldVendor fieldState">
-    <![CDATA[
-      def paramNames = new ArrayList();
-      def paramValues = new ArrayList();
-
-      paramNames.add("className");
-      paramValues.add(filterClassName);
-
-      def elements = scriptQueryExecutor.execute("getObjectsOfClass", paramNames, paramValues);
-
-      def filteredList = new ArrayList();
-
-      def selectedModel = fieldModel.getValue();
-      def selectedVendor = fieldVendor.getValue();
-      def selectedState = fieldState.getValue();
-
-      elements.each { element ->
-
-        def filterVendor = false;
-        def filterModel = false;
-        def filterState = false;
-
-        def attributes = element.getAttributes();
-
-        if (attributes != null && !attributes.isEmpty()) {
-
-          def model = attributes.get(0).get(attributes, "model");
-          def vendor = attributes.get(0).get(attributes, "vendor");
-          def state = attributes.get(0).get(attributes, "state");
-
-          if (model != null) {
-            if (selectedModel != null && model.equals(String.valueOf(selectedModel.getId()))) {
-              filterModel = true;
-            };
-          };
-          if (vendor != null) {
-            if (selectedVendor != null && vendor.equals(String.valueOf(selectedVendor.getId()))) {
-              filterVendor = true;
-            };
-          };
-          if (state != null) {
-            if (selectedState != null && state.equals(String.valueOf(selectedState.getId()))) {
-              filterState = true;
-            };
-          };
-        };
-
-        if ((selectedModel == null ? true : filterModel) &&
-            (selectedVendor == null ? true : filterVendor) &&
-            (selectedState == null ? true : filterState)) {
-
-          def filteredElement = new ArrayList();
-          filteredElement.add(element);
-          filteredList.add(filteredElement);
-        };
-      };
-      filteredList;
-    ]]>
-  </function>
-
-  <function type="function" name="detailedFilterHardware" parameternames="filterClassName fieldModel fieldVendor fieldState">
-    <![CDATA[
-      def paramNames = new ArrayList();
-      def paramValues = new ArrayList();
-
-      paramNames.add("className");
-      paramValues.add(filterClassName);
-
-      def elements = scriptQueryExecutor.execute("getObjectsOfClass", paramNames, paramValues);
-
-      def filteredList = new ArrayList();
-
-      def selectedModel = fieldModel.getValue();
-      def selectedVendor = fieldVendor.getValue();
-      def selectedState = fieldState.getValue();
-
-      elements.each { element ->
-
-        def filterVendor = false;
-        def filterModel = false;
-        def filterState = false;
-
-        def attributes = element.getAttributes();
-
-        if (attributes != null && !attributes.isEmpty()) {
-
-          def model = attributes.get(0).get(attributes, "model");
-          def vendor = attributes.get(0).get(attributes, "vendor");
-          def state = attributes.get(0).get(attributes, "state");
-
-          if (model != null) {
-            if (selectedModel != null && model.equals(String.valueOf(selectedModel.getId()))) {
-              filterModel = true;
-            };
-          };
-          if (vendor != null) {
-            if (selectedVendor != null && vendor.equals(String.valueOf(selectedVendor.getId()))) {
-              filterVendor = true;
-            };
-          };
-          if (state != null) {
-            if (selectedState != null && state.equals(String.valueOf(selectedState.getId()))) {
-              filterState = true;
-            };
-          };
-        };
-
-        if ((selectedModel == null ? true : filterModel) &&
-            (selectedVendor == null ? true : filterVendor) &&
-            (selectedState == null ? true : filterState)) {
-
-          def filteredElement = new ArrayList();
-          filteredElement.add(element);
-
-          def paramNames1 = new ArrayList();
-          def paramValues1 = new ArrayList();
-
-          paramNames1.add("objClass");
-          paramNames1.add("objId");
-          paramNames1.add("objParentClass");
-          /*
-          paramValues1.add(element.getClassName());
-          paramValues1.add(String.valueOf(element.getId()));
-          paramValues1.add("Building");
-
-          def building = scriptQueryExecutor.execute("getParentName", paramNames1, paramValues1);
-          filteredElement.add(building);
-
-          paramNames1.clear();
-          paramValues1.clear();
-
-          paramNames1.add("objClass");
-          paramNames1.add("objId");
-          paramNames1.add("objParentClass");
-          */
-          paramValues1.add(element.getClassName());
-          paramValues1.add(String.valueOf(element.getId()));
-          paramValues1.add("City");
-
-          def city = scriptQueryExecutor.execute("getParentName", paramNames1, paramValues1);
-          filteredElement.add(city);
-
-          filteredList.add(filteredElement);
-        };
-      };
-      filteredList;
-    ]]>
-  </function>
-  <!--
-  <function type="function" name="getSelectedRowGridDataValue" parameternames="grid colId">
-    <![CDATA[
-      if (grid != null && colId != null && grid.getSelectedRow() != -1L) {
-
-        def row = Integer.valueOf(String.valueOf(grid.getSelectedRow()));
-        def col = Integer.valueOf(colId);
-        def data = grid.getData(row, col);
-
-        return data;
-      };
-      null;
-    ]]>
-  </function>
-  -->
-  <function type="function" name="getRows" parameternames="activityId sharedGridId">
-    <![CDATA[
-
-      def paramNames = new ArrayList();
-
-      paramNames.add("activityId");
-      paramNames.add("sharedId");
-
-      def paramValues = new ArrayList();
-
-      paramValues.add(activityId);
-      paramValues.add(sharedGridId + "rowscount");
-
-      def strRowsCount = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-      paramValues.clear();
-
-      paramValues.add(activityId);
-      paramValues.add(sharedGridId + "columnscount");
-
-      def strColumnsCount = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-      def res = new ArrayList();
-
-      if (strRowsCount != null && strColumnsCount != null) {
-
-        def rowscount = Integer.valueOf(strRowsCount);
-        def columnscount = Integer.valueOf(strColumnsCount);
-
-        for (int i = 0; i < rowscount; i++) {
-          def lst = new ArrayList();
-
-          for (int j = 0; j < columnscount; j++) {
-            paramValues.clear();
-
-            paramValues.add(activityId);
-            paramValues.add(sharedGridId + i + j);
-
-            def dataGrid = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-            paramValues.clear();
-
-            paramValues.add(activityId);
-            paramValues.add(sharedGridId + i + j + "datatype");
-
-            def dataType = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-            if ("RemoteObjectLight".equals(dataType)) {
-
-              paramNames.clear();
-
-              paramNames.add("activityId");
-              paramNames.add("sharedId");
-
-              paramValues.clear();
-
-              paramValues.add(activityId);
-              paramValues.add(sharedGridId + i + j + "objectname");
-
-              def objectname = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-              paramValues.clear();
-
-              paramValues.add(activityId);
-              paramValues.add(sharedGridId + i + j + "objectId");
-
-              def objectId = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-              paramValues.clear();
-
-              paramValues.add(activityId);
-              paramValues.add(sharedGridId + i + j + "classid");
-
-              def classid = scriptQueryExecutor.execute("shared", paramNames, paramValues);
-
-              paramNames.clear();
-
-              paramNames.add("classId");
-              paramNames.add("objectId");
-
-              paramValues.clear();
-
-              paramValues.add(classid);
-              paramValues.add(objectId);
-              /*
-              def rol = scriptQueryExecutor.execute("getObjectLightUsingClassId", paramNames, paramValues);
-              */
-              def rol = elementScript.getFunctionByName("getObjectLightUsingClassId").run(paramValues);
-
-              lst.add(rol);
-            } else {
-              lst.add(dataGrid);
-            };
-          };
-          res.add(lst);
-        };
-      };
-      res;
-    ]]>
-  </function>
+    
   <function type="function" name="getRowsInGridSaved" parameternames="activityId sharedGridId aGrid">
     <![CDATA[
       if (aGrid != null && aGrid.getRows() != null && !aGrid.getRows().isEmpty()) {
@@ -753,9 +189,7 @@
 
               paramValues.add(classid);
               paramValues.add(objectId);
-              /*
-              def rol = scriptQueryExecutor.execute("getObjectLightUsingClassId", paramNames, paramValues);
-              */
+
               def rol = elementScript.getFunctionByName("getObjectLightUsingClassId").run(paramValues);
 
               lst.add(rol);
@@ -769,28 +203,7 @@
       res;
     ]]>
   </function>
-  <!--
-  <function type="function" name="getObjectChildrenRecursive" parameternames="src childClassName" return="RemoteObjectLight">
-    <![CDATA[
-      if (src.getValue() != null) {
-        def paramNames = new ArrayList();
-        def paramValues = new ArrayList();
-
-        paramNames.add("parentClassName");
-        paramNames.add("parentId");
-        paramNames.add("childClassName");
-
-        paramValues.add(src.getValue().getClassName());
-        paramValues.add(String.valueOf(src.getValue().getId()));
-        paramValues.add(childClassName);
-
-        return scriptQueryExecutor.execute("getObjectChildrenRecursive", paramNames, paramValues);
-      };
-      null;
-    ]]>
-  </function>
-  -->
-
+  
   <function type="function" name="getFieldContacts" parameternames="customerField contactClass" return="RemoteObjectLight">
     <![CDATA[
       import org.kuwaiba.apis.persistence.PersistenceService;
@@ -808,22 +221,11 @@
         paramNames.add("attributeName");
 
         paramValues.add(customerField.getValue().getClassName());
-        paramValues.add(String.valueOf(customerField.getValue().getId()));
+        paramValues.add(customerField.getValue().getId());
         paramValues.add("contacts");
-        /* def contacts = scriptQueryExecutor.execute("getSpecialAttribute", paramNames, paramValues); */
-        def contacts = bem.getSpecialAttribute(customerField.getValue().getClassName(), Long.valueOf(customerField.getValue().getId()), "contacts");
-
-
+        def contacts = bem.getSpecialAttribute(customerField.getValue().getClassName(), customerField.getValue().getId(), "contacts");
+        
         if (contacts != null) {
-          /*
-          def res = new ArrayList();
-
-          contacts.each { contact ->
-            if (contact.getClassName().equals(contactClass)) {
-              res.add(contact);
-            };
-          };
-          */
           return RemoteObjectLight.toRemoteObjectLightArray(contacts);
         };
       };
@@ -831,15 +233,6 @@
     ]]>
   </function>
   <!--Useful Functions-->
-  <function type="function" name="getYesNoItems">
-    <![CDATA[
-      def items = new ArrayList();
-      items.add("Yes");
-      items.add("No");
-      return items;
-    ]]>
-  </function>
-
   <function type="function" name="getValue" parameternames="aField" return="String">
     <![CDATA[
       def result = "";
@@ -862,12 +255,7 @@
     paramValues.add(provider.getValue().getClassName());
     paramValues.add(provider.getValue().getId());
     paramValues.add("contacts");
-    /*
-    def contacts = scriptQueryExecutor.execute("getSpecialAttribute", paramNames, paramValues);
-    */
-    /*
-    def contacts = elementScript.getFunctionByName("getSpecialAttribute").run(paramValues);
-    */
+
     def contacts = bem.getSpecialAttribute(customerField.getValue().getClassName(), Long.valueOf(customerField.getValue().getId()), "contacts");
 
     def result = null;
@@ -904,33 +292,8 @@
       ]]>
     </function>
 
-    <!-- Edits an existing contact -->
-    <function type="function" name="editContact" parameternames="contact provider role name email cellphone availability language">
-      <![CDATA[
-      import org.kuwaiba.apis.persistence.PersistenceService;
-      import org.kuwaiba.apis.persistence.util.StringPair;
-      import java.util.ArrayList;
-
-      def bem = PersistenceService.getInstance().getBusinessEntityManager();
-      def properties = new ArrayList();
-      if(name.getValue() != null)
-        properties.add(new StringPair("name", name.getValue()));
-      if(role.getValue() != null)
-        properties.add(new StringPair("role", role.getValue()));
-      if(email.getValue() != null)
-        properties.add(new StringPair("email1", email.getValue()));
-      if(cellphone.getValue() != null)
-        properties.add(new StringPair("telephone1", cellphone.getValue()));
-      if(availability.getValue() != null)
-        properties.add(new StringPair("availability", availability.getValue()));
-      if(language.getValue() != null)
-        properties.add(new StringPair("language", String.valueOf(language.getValue().getId())));
-      bem.updateContact(contact.getValue().getClassName(), contact.getValue().getId(), properties);
-
-      ]]>
-    </function>
     <!-- Retrieve the Contact Types available -->
-    <function type="function" name="getContactTypes" queryname="getContactTypes">
+    <function type="function" name="getContactTypes">
         <![CDATA[
         def contactTypes = ['BillingContact', 'CommercialContact', 'TechnicalContact'];
         contactTypes;
@@ -944,21 +307,7 @@
         object;
         ]]>
     </function>
-    <!-- Returns an object from an objectId, usefull when a ListType Object is needed outside the context -->
-    <function type="function" name="getListTypeFromId" parameternames="className paramObjectId" return="Object">
-    <![CDATA[
-      import org.kuwaiba.apis.persistence.PersistenceService;
-
-      if(paramObjectId.getValue()== null)
-        return null;
-
-      def aem = PersistenceService.getInstance().getApplicationEntityManager();
-      def object = aem.getListTypeItem(className, Long.valueOf(paramObjectId.getValue()));
-
-      object;
-    ]]>
-  </function>
-
+    
   <!-- Updates the data related to a comboBox in order to see visually the effects of an edition task  -->
   <function type="function" name="updateCmbRelatedData" parameternames="comboBox">
       <![CDATA[
@@ -995,8 +344,6 @@
       import org.kuwaiba.apis.persistence.PersistenceService;
       import org.kuwaiba.services.persistence.util.Util;
       /* Loading parameters */
-      def customerId = Long.valueOf(customerId);
-      def itemServiceId = Long.valueOf(itemServiceId);
       def processInstanceId = Long.valueOf(processInstanceId);
 
       def bem = PersistenceService.getInstance().getBusinessEntityManager();
@@ -1014,7 +361,7 @@
 
       servicePools.each { servicePool ->
         if (servicePool.getName().equals(itemService.getName())) {
-          def newPoolItemId = bem.createPoolItem(servicePool.getId(), classToMap, attributeNames, attributeValues, -1);
+          def newPoolItemId = bem.createPoolItem(servicePool.getId(), classToMap, attributeNames, attributeValues, null);
           flag = true;
           return;
         };
@@ -1022,7 +369,7 @@
 
       if (!flag) {
         def newPoolId = aem.createPoolInObject(customerClassName, customerId, itemService.getName(), itemService.getName(), "GenericService", 3);
-        def newPoolItemId = bem.createPoolItem(newPoolId, classToMap, attributeNames, attributeValues, -1);
+        def newPoolItemId = bem.createPoolItem(newPoolId, classToMap, attributeNames, attributeValues, null);
       };
       "true";
     ]]>
@@ -1048,8 +395,7 @@
       import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
       def classId = Long.valueOf(classId);
-      def objectId = Long.valueOf(objectId);
-
+      
       def bem = PersistenceService.getInstance().getBusinessEntityManager();
       def mem = PersistenceService.getInstance().getMetadataEntityManager();
 
@@ -1141,7 +487,7 @@
       classsInstances.each { instance ->
           def equipmentStatusId = instance.getAttributes().get("state");
           if(equipmentStatusId != null){
-            def equipmentStatus = aem.getListTypeItem("OperationalState", equipmentStatusId as long);
+            def equipmentStatus = aem.getListTypeItem("OperationalState", equipmentStatusId);
             if(equipmentStatus != null && equipmentStatus.getName() == "Spare"){
               def row = new ArrayList();
               row.add(new RemoteObjectLight(instance));
@@ -1282,9 +628,7 @@
 
               paramValues.add(classid);
               paramValues.add(objectId);
-              /*
-              def rol = scriptQueryExecutor.execute("getObjectLightUsingClassId", paramNames, paramValues);
-              */
+
               def rol = elementScript.getFunctionByName("getObjectLightUsingClassId").run(paramValues);
 
               lst.add(rol);
@@ -1328,7 +672,7 @@
         if (srcGrid != null && srcGrid.getSelectedRow() != -1L) {
           def bem = PersistenceService.getInstance().getBusinessEntityManager();
           def aem = PersistenceService.getInstance().getApplicationEntityManager();
-          def reservedOpState = aem.getListTypeItem("OperationalState", "Reserved");
+          def reservedOpState = aem.getListTypeItemWithName("OperationalState", "Reserved");
           HashMap<String, String> attrs = new HashMap();
           def objectList = srcGrid.getRow();
 
@@ -1352,7 +696,7 @@
         if (srcMaterial.getValue() != null) {
           def bem = PersistenceService.getInstance().getBusinessEntityManager();
           def aem = PersistenceService.getInstance().getApplicationEntityManager();
-          def spareOpState = aem.getListTypeItem("OperationalState", "Spare");
+          def spareOpState = aem.getListTypeItemWithName("OperationalState", "Spare");
           HashMap<String, String> attrs = new HashMap();
           attrs.put("state", String.valueOf(spareOpState.getId()));
           bem.updateObject(srcMaterial.getValue().getClassName(), srcMaterial.getValue().getId(), attrs);
@@ -1540,7 +884,7 @@
               def date = System.currentTimeMillis() + i;
               attributeValues = [equipmentClass + "_"+ date, String.valueOf(pendingShipmentStateId)] as String[];
             };
-            bem.createPoolItem(purchasePool.getId(), equipmentClass, attributeNames, attributeValues, 0);
+            bem.createPoolItem(purchasePool.getId(), equipmentClass, attributeNames, attributeValues, null);
           }
         };
         ]]>

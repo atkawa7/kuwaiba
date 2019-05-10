@@ -23,7 +23,7 @@
 
   </form>
   <script src="scripts.xml">
-    <function type="function" name="getRackParameters" queryname="getRackParameters" parameternames="srcGrid">
+    <function type="function" name="getRackParameters" parameternames="srcGrid">
         <![CDATA[
         import org.kuwaiba.apis.persistence.PersistenceService;
 

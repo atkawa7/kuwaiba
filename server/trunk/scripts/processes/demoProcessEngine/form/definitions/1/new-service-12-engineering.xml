@@ -13,11 +13,11 @@
 
     </gridLayout>
 
-    <label value="Material configuration Status" styleName="title"/>
+    <label value="Material Configuration Status" styleName="title"/>
 
     <gridLayout columns="2" rows="1" alignment="middleCenter">
-      <button caption="Confirm configuration" width="250px" onclick="propertyChange.frmConfirmPreconfiguration.enabled.isSelectedAnyRow.gridSharedEquipmentOrder open.frmConfirmPreconfiguration"/>
-      <button caption="Not configured yet" width="250px" onclick="propertyChange.frmNotConfigured.enabled.isSelectedAnyRow.gridSharedEquipmentOrder open.frmNotConfigured"/>
+      <button caption="Confirm Configuration" width="250px" onclick="propertyChange.frmConfirmPreconfiguration.enabled.isSelectedAnyRow.gridSharedEquipmentOrder open.frmConfirmPreconfiguration"/>
+      <button caption="Not Configured Yet" width="250px" onclick="propertyChange.frmNotConfigured.enabled.isSelectedAnyRow.gridSharedEquipmentOrder open.frmNotConfigured"/>
     </gridLayout>
     <grid alignment="middleCenter" id="gridSharedEquipmentOrder" save="false" datatype="Remote" onload="rows.getMaterialPreconfigurationStatus.5.gridEquipmentOrder" height="250px" width="1300px">
         <column caption="Device"/>
@@ -61,8 +61,6 @@
         <button caption="Cancel" width="200px" onclick="close.frmNotConfigured clean.frmNotConfigured"/>
       </horizontalLayout>
     </subform>
-
-    <!-- Ends Subforms Section -->
   </form>
   <script src="scripts.xml">
     <function type="function" name="isSelectedAnyRow" parameternames="grid">

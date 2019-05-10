@@ -12,9 +12,9 @@
       <textField enabled="false" onload="value.shared.2.txtServiceName"/>
     </gridLayout>
 
-    <label value="Devices to Synchronization" styleName="title"/>
+    <label value="Devices to Synchronize" styleName="title"/>
     <horizontalLayout>
-      <label value="Select a row and click button 'Create Synchronization Group'"/>
+      <label value="Select a Row and Click Button 'Create Synchronization Group'"/>
       <button caption="Create Synchronization Group" onclick="propertyChange.mnaSync.inputParameters.getInputParameters.gridSharedEquipmentOrder.0 open.mnaSync"/>
     </horizontalLayout>
 
@@ -27,15 +27,8 @@
     </grid>
 
     <miniApplication id="mnaSync" mode="detached" package="org.kuwaiba.web.modules.sync.miniapps" classname="ConfigureSyncGroupMiniApp"/>
-    <!--
-    -->
   </form>
   <script src="scripts.xml">
-    <function type="function" name="isSelectedAnyRow" parameternames="grid">
-      <![CDATA[
-        grid.getSelectedRow() != -1;
-      ]]>
-    </function>
     <function type="function" name="getInputParameters" parameternames="grid colId" return="Properties">
       <![CDATA[
       import java.util.Properties;
@@ -54,33 +47,5 @@
       return inputParameters;
       ]]>
     </function>
-    <!--
-    <function type="query" name="syncGroupsDisplayNames" queryname="syncGroupsDisplayNames"/>
-
-    <function type="function" name="createSyncGroup" parameternames="grid serviceCode syncGroupDisplayName">
-      <![CDATA[
-        import org.kuwaiba.apis.persistence.PersistenceService;
-        import org.kuwaiba.apis.persistence.util.StringPair;
-
-        if (grid != null && grid.getSelectedRow() != -1L && serviceCode != null && serviceCode.getValue() != null && syncGroupDisplayName != null && syncGroupDisplayName.getValue() != null) {
-          def aem = PersistenceService.getInstance().getApplicationEntityManager();
-
-          def syncGroupId = scriptQueryExecutor.execute("syncGroupId", Arrays.asList("displayName"), Arrays.asList(syncGroupDisplayName.getValue()));
-
-          def row = Integer.valueOf(String.valueOf(grid.getSelectedRow()));
-          def col = 2;
-          def data = grid.getData(row, col);
-
-          def parameters = new ArrayList();
-          parameters.add(new StringPair("deviceClass", data.getClassName()));
-          parameters.add(new StringPair("deviceId", String.valueOf(data.getId())));
-
-          def syncGroupNodeId = aem.createSyncGroup("[" + serviceCode.getValue() + "-SYNC] " + data.getName(), syncGroupId);
-          aem.createSyncDataSourceConfig(syncGroupNodeId, data.getName(), parameters);
-        };
-        null;
-      ]]>
-    </function>
-    -->
   </script>
 </root>
