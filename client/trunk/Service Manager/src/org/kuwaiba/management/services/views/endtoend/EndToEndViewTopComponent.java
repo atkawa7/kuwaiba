@@ -19,6 +19,7 @@ package org.kuwaiba.management.services.views.endtoend;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -56,85 +57,93 @@ public class EndToEndViewTopComponent extends TopComponent implements
     private boolean saved = true;
     
     public EndToEndViewTopComponent(final LocalObjectLight currentService, final AbstractScene scene) {
-        
         this.currentService = currentService;
         List<LocalObjectViewLight> serviceViews = com.getObjectRelatedViews(this.currentService.getId(), this.currentService.getClassName());
+        List<LocalObjectLight> serviceResources = com.getServiceResources(currentService.getClassName(), currentService.getId());
         
-        if (serviceViews == null) {
-            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
-            setEnabled(false);
-        }
-        else {
+        List<String> classes = new ArrayList<>();
+        List<String> ids = new ArrayList<>();
+        
+        serviceResources.forEach(resource -> {
+            classes.add(resource.getClassName());
+            ids.add(resource.getId());
+        });
+        //if we have a saved e2e view
+        if(serviceViews != null && !serviceViews.isEmpty()){
             for (LocalObjectViewLight serviceView : serviceViews) {
                 if (EndToEndViewScene.VIEW_CLASS.equals(serviceView.getClassName())) {
                     currentView = com.getObjectRelatedView(currentService.getId(), currentService.getClassName(), serviceView.getId());
-                    if (currentView == null) {
-                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
-                        setEnabled(false);
-                        return;
-                    }  
+                    currentView = com.validateSavedE2EView(classes, ids, currentView);
+                    
                     break;
                 }
             }
-            setLayout(new BorderLayout());
-            this.scene = scene;
+        } else//it will be generated from scrtach
+            currentView = com.getE2EView(classes, ids);
+        
+        if (currentView == null) {
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
+            setEnabled(false);
+            return;
+        } 
+        setLayout(new BorderLayout());
+        this.scene = scene;
 
-            JScrollPane pnlScrollMain = new JScrollPane(scene.createView());
-            add(pnlScrollMain);
-            add(scene.createSatelliteView(), BorderLayout.SOUTH);
-            setDisplayName(String.format("End-to-end view for service %s", currentService));
+        JScrollPane pnlScrollMain = new JScrollPane(scene.createView());
+        add(pnlScrollMain);
+        add(scene.createSatelliteView(), BorderLayout.SOUTH);
+        setDisplayName(String.format("End-to-end view for service %s", currentService));
 
-            // <editor-fold defaultstate="collapsed" desc="Tool Bar Definition">
-            JToolBar barMainToolBar = new JToolBar();
-            JButton btnSave = new JButton(new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/save.png")));
-            btnSave.setToolTipText("Save the current view");
-            btnSave.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    saveView();
-                }
-            });
+        // <editor-fold defaultstate="collapsed" desc="Tool Bar Definition">
+        JToolBar barMainToolBar = new JToolBar();
+        JButton btnSave = new JButton(new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/save.png")));
+        btnSave.setToolTipText("Save the current view");
+        btnSave.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveView();
+            }
+        });
 
-            JButton btnFrame = new JButton(new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/frame.png")));
-            btnFrame.setToolTipText("Add a Frame");
-            btnFrame.addActionListener(new ActionListener() {
+        //            JButton btnFrame = new JButton(new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/frame.png")));
+        //            btnFrame.setToolTipText("Add a Frame");
+        //            btnFrame.addActionListener(new ActionListener() {
+        //
+        //                @Override
+        //                public void actionPerformed(ActionEvent e) {
+        //                    ((EndToEndViewScene)scene).addFreeFrame();
+        //                }
+        //            });
 
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    ((EndToEndViewScene)scene).addFreeFrame();
-                }
-            });
+        JButton btnExport = new JButton(new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/export.png")));
+        btnExport.setToolTipText("Export to popular image formats");
+        btnExport.addActionListener(new ActionListener() {
 
-            JButton btnExport = new JButton(new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/export.png")));
-            btnExport.setToolTipText("Export to popular image formats");
-            btnExport.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ExportScenePanel exportPanel = new ExportScenePanel(
+                        new SceneExportFilter[]{ ImageFilter.getInstance() }, scene, currentService.toString());
+            DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export Options",true, exportPanel);
+            DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
+            }
+        });
+        JButton btnRefresh = new JButton(new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/refresh.png")));
+        btnRefresh.setToolTipText("Refresh the current view");
+        btnRefresh.addActionListener(new ActionListener() {
 
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    ExportScenePanel exportPanel = new ExportScenePanel(
-                            new SceneExportFilter[]{ ImageFilter.getInstance() }, scene, currentService.toString());
-                DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export Options",true, exportPanel);
-                DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
-                }
-            });
-            JButton btnRefresh = new JButton(new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/refresh.png")));
-            btnRefresh.setToolTipText("Refresh the current view");
-            btnRefresh.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    componentClosed();
-                    componentOpened();
-                }
-            });
-            barMainToolBar.add(btnSave);
-            barMainToolBar.add(btnExport);
-            barMainToolBar.add(btnRefresh);
-            barMainToolBar.add(btnFrame);
-            // </editor-fold>  
-            add(barMainToolBar, BorderLayout.NORTH);
-            associateLookup(scene.getLookup());
-        }
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                componentClosed();
+                componentOpened();
+            }
+        });
+        barMainToolBar.add(btnSave);
+        barMainToolBar.add(btnExport);
+        barMainToolBar.add(btnRefresh);
+        //            barMainToolBar.add(btnFrame);
+        // </editor-fold>  
+        add(barMainToolBar, BorderLayout.NORTH);
+        associateLookup(scene.getLookup());
     }
     
      @Override
@@ -151,7 +160,7 @@ public class EndToEndViewTopComponent extends TopComponent implements
     }
 
     private void saveView() {   
-        if (currentView == null) { //The service does not have a saved view associated yet, so create a new one
+        if (currentView.getId() == -1) { //The service does not have a saved view associated yet, so create a new one
             long newViewId = com.createObjectRelatedView(currentService.getId(), currentService.getClassName(), EndToEndViewScene.VIEW_CLASS, 
                     null, EndToEndViewScene.VIEW_CLASS, scene.getAsXML(), null);
             
@@ -163,7 +172,7 @@ public class EndToEndViewTopComponent extends TopComponent implements
             } else
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
         }
-        else { //Update the existing view
+        else {//Update the existing view
             if (com.updateObjectRelatedView(currentService.getId(), currentService.getClassName(), 
                     currentView.getId(), null, null, scene.getAsXML(), scene.getBackgroundImage())) {
                 saved = true;
@@ -176,8 +185,6 @@ public class EndToEndViewTopComponent extends TopComponent implements
     @Override
     protected void componentOpened() {
         //Renders the default view
-        scene.render(currentService); 
-        
         //Use the saved view, if any, to update the position of the elements
         if (currentView != null)
             scene.render(currentView.getStructure()); //Render the saved view, if any
