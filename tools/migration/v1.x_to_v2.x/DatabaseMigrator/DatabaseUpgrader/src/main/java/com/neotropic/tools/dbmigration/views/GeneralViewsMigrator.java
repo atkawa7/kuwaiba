@@ -115,7 +115,8 @@ public class GeneralViewsMigrator {
                     
                 } else {
                     if (reader.getName().equals(qEdge)) {
-                        long objectId = Long.valueOf(reader.getAttributeValue(null, "id")); //NOI18N
+                        String rawObjectId = reader.getAttributeValue(null, "id");
+                        long objectId = rawObjectId.isEmpty() ? -1 : Long.valueOf(rawObjectId);
                         long aSide = Long.valueOf(reader.getAttributeValue(null, "aside")); //NOI18N
                         long bSide = Long.valueOf(reader.getAttributeValue(null, "bside")); //NOI18N
                         String objectClass = reader.getAttributeValue(null,"class"); //NOI18N
@@ -126,8 +127,8 @@ public class GeneralViewsMigrator {
                             reader.nextTag();
                             if (reader.getName().equals(qControlPoint)) {
                                 if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-                                    newEdge.getControlPoints().add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), 
-                                            Integer.valueOf(reader.getAttributeValue(null,"y"))));
+                                    newEdge.getControlPoints().add(new Point(Float.valueOf(reader.getAttributeValue(null,"x")).intValue(), 
+                                            Float.valueOf(reader.getAttributeValue(null,"y")).intValue()));
                             } else 
                                 break;
                         }

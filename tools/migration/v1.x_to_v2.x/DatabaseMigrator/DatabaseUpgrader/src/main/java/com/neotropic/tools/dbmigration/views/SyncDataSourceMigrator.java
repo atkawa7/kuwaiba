@@ -57,7 +57,7 @@ public class SyncDataSourceMigrator {
                                 if(inventoryObjNode != null && !inventoryObjNode.hasRelationship(RelTypes.HAS_CONFIGURATION)){
                                     dsConfigNode.setProperty("deviceId", (String)inventoryObjNode.getProperty("_uuid"));
                                     dsConfigNode.createRelationshipTo(inventoryObjNode, RelTypes.HAS_CONFIGURATION);
-                                    System.out.println(String.format("SyncDsConfig %s realted with inventory object %s",
+                                    System.out.println(String.format("Synchronization Data Source Configuration %s related to inventory object %s",
                                                     dsConfigNode.getProperty("name"), inventoryObjNode.getProperty("name")));
                                 } else{//we remove the ds config from all the groups, deleting its belongs groups relationships
                                     for(Relationship rel_ : dsConfigNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP))
