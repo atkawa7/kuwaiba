@@ -485,8 +485,6 @@ public class Constants {
      * Generic classes
      */
     public static final String CLASS_GENERICPHYSICALCONNECTION="GenericPhysicalConnection";
-
-
     //Misc versions
     /**
      * Version for the XML document to save views (see http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_Save_Object_Views for details)
@@ -496,5 +494,4 @@ public class Constants {
       * Version of the current Topology View XML document
       */
      public static final String TOPOLOGYVIEW_FORMAT_VERSION = "1.2";
-    
 }

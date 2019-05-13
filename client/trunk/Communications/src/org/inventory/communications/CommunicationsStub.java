@@ -76,9 +76,9 @@ import org.inventory.communications.core.views.LocalObjectViewLight;
 import com.neotropic.inventory.modules.sync.AbstractRunnableSyncFindingsManager;
 import com.neotropic.inventory.modules.sync.AbstractRunnableSyncResultsManager;
 import com.neotropic.inventory.modules.sync.LocalSyncAction;
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import org.inventory.communications.core.LocalConfigurationVariable;
 import org.inventory.communications.core.LocalMPLSConnectionDetails;
-import org.inventory.communications.core.LocalPhysicalConnectionDetails;
 import org.inventory.communications.core.LocalValidator;
 import org.inventory.communications.core.LocalValidatorDefinition;
 import org.inventory.communications.util.Constants;
@@ -1993,7 +1993,7 @@ public class CommunicationsStub {
      */
     public boolean deleteObjects(List<String> classNames, List<String> oids){
         try {
-            service.deleteObjects(classNames, oids, false, this.session.getSessionId());
+            service.deleteObjects(classNames, oids, true, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -2267,15 +2267,63 @@ public class CommunicationsStub {
         }
     }
     
-//    public LocalObjectLight[] getLogicalConnectionEndpoints(String connectionClass, String connectionId) {
-//        try{
-//            List<RemoteObjectLight> endpoints = service.getLogicalConnectionEndpoints(connectionClass, connectionId, session.getSessionId());
-//            LocalObjectLight[] res = new LocalObjectLight[]{endpoints.get(0) == null ? 
-//                    null : new LocalObjectLight(endpoints.get(0).getId(), endpoints.get(0).getName(), endpoints.get(0).getClassName()),
-//                    endpoints.get(1) == null ? 
-//                    null : new LocalObjectLight(endpoints.get(1).getId(), endpoints.get(1).getName(), endpoints.get(1).getClassName())};
-//            return res;
-//        }catch(Exception ex){
+    
+    public LocalObjectView validateSavedE2EView(List<String> linkClasses, List<String> linkIds, LocalObjectView savedView) { 
+        try {
+            RemoteViewObject remoteSavedObjectView = new RemoteViewObject();
+            
+            remoteSavedObjectView.setId(savedView.getId());
+            remoteSavedObjectView.setName(savedView.getName());
+            remoteSavedObjectView.setName(savedView.getName());
+            remoteSavedObjectView.setClassName(savedView.getClassName());
+            remoteSavedObjectView.setDescription(savedView.getDescription());
+            remoteSavedObjectView.setStructure(savedView.getStructure());
+            
+            remoteSavedObjectView.setName(savedView.getName());
+            RemoteViewObject updatedView = service.validateSavedE2EView(linkClasses, linkIds, remoteSavedObjectView, session.getSessionId());
+            return new LocalObjectView(savedView.getId(),
+                                        savedView.getName(),
+                                        savedView.getClassName(),
+                                        savedView.getDescription(), updatedView.getStructure(), null);
+        }catch(Exception ex) {
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Returns the end to end view staring from connections
+     * Provides the endpoints and the next ports connected to such endpoints using a physical connection
+     * also returns the continuity of VLANs and BDIs at the edge of those physical paths. 
+     * @param linkClasses The classes of the connection to be evaluated
+     * @param linkIds The ids of the connection to be evaluated
+     * @return An object with the details of the connection and the physical resources associated to it. Null in case of error
+     */
+    public LocalObjectView getE2EView(List<String> linkClasses, List<String> linkIds) { 
+        try {
+
+            RemoteViewObject e2EView = service.getE2EView(linkClasses, linkIds, true, true, session.getSessionId());
+            return new LocalObjectView(e2EView.getId(), e2EView.getClassName(),
+                    e2EView.getName(), e2EView.getDescription(), e2EView.getStructure(), null);
+            
+        }catch(Exception ex) {
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+      
+    /**
+     * Returns the structure of a logical connection. The current implementation is quite simple and the return object 
+     * simply provides the endpoints and the next ports connected to such endpoints using a physical connection
+     * @param linkClass The class of the connection to be evaluated
+     * @param linkId The id of the connection to be evaluated
+     * @return An object with the details of the connection and the physical resources associated to it. Null in case of error
+     */
+//    public LocalLogicalConnectionDetails getLogicalLinkDetails(String linkClass, String linkId) { 
+//        try {
+//            
+//            return new LocalLogicalConnectionDetails(service.getLogicalLinkDetails(linkClass, linkId, session.getSessionId()));
+//        }catch(Exception ex) {
 //            this.error =  ex.getMessage();
 //            return null;
 //        }
@@ -2288,31 +2336,14 @@ public class CommunicationsStub {
      * @param linkId The id of the connection to be evaluated
      * @return An object with the details of the connection and the physical resources associated to it. Null in case of error
      */
-    public LocalLogicalConnectionDetails getLogicalLinkDetails(String linkClass, String linkId) { 
-        try {
-            
-            return new LocalLogicalConnectionDetails(service.getLogicalLinkDetails(linkClass, linkId, session.getSessionId()));
-        }catch(Exception ex) {
-            this.error =  ex.getMessage();
-            return null;
-        }
-    }
-    
-    /**
-     * Returns the structure of a logical connection. The current implementation is quite simple and the return object 
-     * simply provides the endpoints and the next ports connected to such endpoints using a physical connection
-     * @param linkClass The class of the connection to be evaluated
-     * @param linkId The id of the connection to be evaluated
-     * @return An object with the details of the connection and the physical resources associated to it. Null in case of error
-     */
-    public LocalPhysicalConnectionDetails getPhysicalLinkDetails(String linkClass, String linkId) { 
-        try {
-            return new LocalPhysicalConnectionDetails(service.getPhysicalLinkDetails(linkClass, linkId, session.getSessionId()));
-        }catch(Exception ex) {
-            this.error =  ex.getMessage();
-            return null;
-        }
-    }
+//    public LocalPhysicalConnectionDetails getPhysicalLinkDetails(String linkClass, String linkId) { 
+//        try {
+//            return new LocalPhysicalConnectionDetails(service.getPhysicalLinkDetails(linkClass, linkId, session.getSessionId()));
+//        }catch(Exception ex) {
+//            this.error =  ex.getMessage();
+//            return null;
+//        }
+//    }
     
     public LocalObjectLight[] getPhysicalPath(String objectClass, String objectId) {
         try{
