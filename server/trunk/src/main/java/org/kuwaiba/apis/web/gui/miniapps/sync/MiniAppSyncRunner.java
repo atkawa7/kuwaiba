@@ -33,8 +33,6 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationConfiguration;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.web.IndexUI;
-import org.kuwaiba.web.procmanager.ProcessManagerComponent;
 
 /**
  *
@@ -91,6 +89,7 @@ public class MiniAppSyncRunner extends AbstractMiniApplication<Component, Compon
             gly.setRows(2);
 
             List<SyncProvider> syncProviders = new ArrayList();
+            
             syncProviders.add(new SyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.reference.ReferenceSnmpSyncProvider", "Physical / Virtual Interfaces"));
             syncProviders.add(new SyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.mpls.SnmpMplsSyncProvider", "General MPLS Information"));
             syncProviders.add(new SyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.ip.IPAddressesSyncProvider", "IP Addresses"));
@@ -116,17 +115,9 @@ public class MiniAppSyncRunner extends AbstractMiniApplication<Component, Compon
                     List<SyncProvider> selectedsyncProviders = new ArrayList();
                     for (SyncProvider syncProvider : grdProviders.getSelectedItems())
                         selectedsyncProviders.add(syncProvider);
-                    
-                    window.close();
-                    
-                    final UI ui = UI.getCurrent();
-                    if (!selectedsyncProviders.isEmpty()) {
-                        Component component = ((IndexUI) ui).getMainMenu().getParent();
-                        if (component instanceof ProcessManagerComponent) {
-                            SyncRunnerService syncRunnerService = ((ProcessManagerComponent) component).getSyncRunnerService();
-                            syncRunnerService.launchAdHocAutomatedSynchronizationTask(ui, wsBean, remoteSession, selectedsyncProviders, syncConfig);
-                        }
-                    }
+                                        
+                    if (!selectedsyncProviders.isEmpty())
+                        new SyncRunnerService().launchAdHocAutomatedSynchronizationTask(window, wsBean, remoteSession, selectedsyncProviders, syncConfig);
                 }
             });
 

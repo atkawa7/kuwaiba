@@ -200,6 +200,14 @@ public class ComponentConnectionCreator extends VerticalLayout {
                     if (createConnection(endpointsA, links, endpointsB)) {
                         grdLinks.setItems(getLinks(linksListLight));
                         gridLog.setItems(getLinkBeans(linksListLight));
+                        
+                        BasicTreeLayout simpleTreeA = (BasicTreeLayout) ((Panel) ((TabSheet.Tab) ((TabSheet) verticalLayoutEndpointsA.getComponent(0)).getTab(0)).getComponent()).getContent();
+                        if (simpleTreeA.getSelectedItems() != null)
+                            simpleTreeA.clearSelectedItems();
+                                                                        
+                        BasicTreeLayout simpleTreeB = (BasicTreeLayout) ((Panel) ((TabSheet.Tab) ((TabSheet) verticalLayoutEndpointsB.getComponent(0)).getTab(0)).getComponent()).getContent();
+                        if (simpleTreeB.getSelectedItems() != null)
+                            simpleTreeB.clearSelectedItems();
                     }
                 }
                 else {

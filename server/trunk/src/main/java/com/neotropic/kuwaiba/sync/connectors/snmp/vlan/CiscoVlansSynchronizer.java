@@ -304,7 +304,7 @@ public class CiscoVlansSynchronizer {
                                     if(assosiatedVlan.getId() != null && currentVlan.getId() != null && assosiatedVlan.getId().equals(currentVlan.getId())){ //The port and the vlan has a relation
                                         isAlreadyAssociated = true;
                                         results.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, "",
-                                            String.format("%s and %s are related", currentPort, assosiatedVlan)));
+                                            String.format("%s and %s were related", currentPort, assosiatedVlan)));
                                         break;
                                     }
                                 }
@@ -361,7 +361,7 @@ public class CiscoVlansSynchronizer {
                             if(assosiatedVlan.getId() != null && currentVlan.getId() != null && assosiatedVlan.getId().equals(currentVlan.getId())){ //The port and the vlan has a relation
                                 isAlreadyAssociated = true;
                                 results.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, "",
-                                    String.format("%s and %s are related", currentPort, assosiatedVlan)));
+                                    String.format("%s and %s were related", currentPort, assosiatedVlan)));
                                 break;
                             }
                         }

@@ -18,7 +18,6 @@ import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.MenuBar;
 import javax.inject.Inject;
-import org.kuwaiba.apis.web.gui.miniapps.sync.SyncRunnerService;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -37,13 +36,6 @@ public class ProcessManagerComponent extends AbstractTopComponent {
     @Inject
     private WebserviceBean wsBean;
     
-    @Inject
-    private SyncRunnerService syncRunnerService;
-    
-    public SyncRunnerService getSyncRunnerService() {
-        return syncRunnerService;
-    }
-            
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         setStyleName("processmanager");

@@ -292,7 +292,7 @@ public class IPSynchronizer {
                                     if(currentRelatedIPAddress.getName().equals(currentIpAddress.getName())){ 
                                         alreadyRelated = true;
                                         res.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, "Relate interface - IP address",
-                                            String.format("%s and %s are related", currentRelatedIPAddress, currentPort)));
+                                            String.format("%s and %s were related", currentRelatedIPAddress, currentPort)));
                                         break;
                                     }
                                 }//If not related, we related interface with the ip

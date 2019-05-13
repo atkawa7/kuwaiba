@@ -190,6 +190,19 @@ public class TreeLayout<T> extends VerticalLayout implements LayoutEvents.Layout
         return dropListener;
     }
     
+    public void clearSelectedItems() {
+        for (ItemLayout itemLayout : items.values()) {
+            Component component = itemLayout.getComponent(0);
+            if (component instanceof ItemHorizontalLayout) {
+                String styleName = "458bdc";
+                if (component.getStyleName() != null && component.getStyleName().contains(styleName))
+                    component.removeStyleName(styleName);
+            }
+        }
+        selectedItems.clear();
+    }
+    
+    
     @Override
     public void layoutClick(LayoutEvents.LayoutClickEvent event) {
         Component component = event.getComponent();
