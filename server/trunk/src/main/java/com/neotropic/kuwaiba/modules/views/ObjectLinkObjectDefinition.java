@@ -13,7 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.interfaces.ws.toserialize.business;
+package com.neotropic.kuwaiba.modules.views;
+
+import org.kuwaiba.apis.persistence.business.BusinessObject;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
+import org.kuwaiba.interfaces.ws.toserialize.business.*;
+
 
 /**
  * Instances of this class represent a structure object-(endpoint)-link-(endpoint)-object
@@ -29,44 +34,44 @@ package org.kuwaiba.interfaces.ws.toserialize.business;
  * 
  * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
-public class RemoteObjectLinkObject {
+public class ObjectLinkObjectDefinition {
     
     /**
      * The complete information of the connection (that is, all its attributes)
      */
-    private RemoteObject connectionObject;
+    private BusinessObject connectionObject;
     /**
      * One endpoint of the connection (a physical port)
      */
-    private RemoteObjectLight physicalEndpointObjectA;
+    private BusinessObjectLight physicalEndpointObjectA;
     /**
      * One endpoint of the connection (a physical port)
      */
-    private RemoteObjectLight physicalEndpointObjectB;
+    private BusinessObjectLight physicalEndpointObjectB;
     /**
      * One endpoint of the connection (a virtual port)
      */
-    private RemoteObjectLight logicalEndpointObjectA;
+    private BusinessObjectLight logicalEndpointObjectA;
     /**
      * One endpoint of the connection (a virtual port)
      */
-    private RemoteObjectLight logicalEndpointObjectB;
+    private BusinessObjectLight logicalEndpointObjectB;
     /**
      * The complete information of the connection (that is, all its attributes)
      */
-    private RemoteObjectLight deviceA;
+    private BusinessObjectLight deviceA;
      /**
      * The complete information of the connection (that is, all its attributes)
      */
-    private RemoteObjectLight deviceB;
+    private BusinessObjectLight deviceB;
 
-    public RemoteObjectLinkObject() { }
+    public ObjectLinkObjectDefinition() { }
    
-    public RemoteObjectLinkObject(RemoteObjectLight deviceA, 
-            RemoteObjectLight physicalEndpointObjectA,
-            RemoteObject connectionObject,
-            RemoteObjectLight physicalEndpointObjectB, 
-            RemoteObjectLight deviceB){
+    public ObjectLinkObjectDefinition(BusinessObjectLight deviceA, 
+            BusinessObjectLight physicalEndpointObjectA,
+            BusinessObject connectionObject,
+            BusinessObjectLight physicalEndpointObjectB, 
+            BusinessObjectLight deviceB){
         this.connectionObject = connectionObject;
         this.physicalEndpointObjectA = physicalEndpointObjectA;
         this.physicalEndpointObjectB = physicalEndpointObjectB;
@@ -74,11 +79,11 @@ public class RemoteObjectLinkObject {
         this.deviceB = deviceB;
     }
     
-    public RemoteObjectLinkObject(RemoteObjectLight deviceA, 
-            RemoteObjectLight physicalEndpointObjectA, RemoteObjectLight logicalEndpointObjectA,
-            RemoteObject connectionObject, RemoteObjectLight logicalEndpointObjectB,
-            RemoteObjectLight physicalEndpointObjectB, 
-            RemoteObjectLight deviceB){
+    public ObjectLinkObjectDefinition(BusinessObjectLight deviceA, 
+            BusinessObjectLight physicalEndpointObjectA, BusinessObjectLight logicalEndpointObjectA,
+            BusinessObject connectionObject, BusinessObjectLight logicalEndpointObjectB,
+            BusinessObjectLight physicalEndpointObjectB, 
+            BusinessObjectLight deviceB){
         this.connectionObject = connectionObject;
         this.physicalEndpointObjectA = physicalEndpointObjectA;
         this.logicalEndpointObjectA = logicalEndpointObjectA;
@@ -88,60 +93,62 @@ public class RemoteObjectLinkObject {
         this.deviceB = deviceB;
     }
 
-    public RemoteObject getConnectionObject() {
+    public BusinessObject getConnectionObject() {
         return connectionObject;
     }
 
-    public void setConnectionObject(RemoteObject connectionObject) {
+    public void setConnectionObject(BusinessObject connectionObject) {
         this.connectionObject = connectionObject;
     }
 
-    public RemoteObjectLight getPhysicalEndpointObjectA() {
+    public BusinessObjectLight getPhysicalEndpointObjectA() {
         return physicalEndpointObjectA;
     }
 
-    public void setPhysicalEndpointObjectA(RemoteObjectLight physicalEndpointObjectA) {
+    public void setPhysicalEndpointObjectA(BusinessObjectLight physicalEndpointObjectA) {
         this.physicalEndpointObjectA = physicalEndpointObjectA;
     }
 
-    public RemoteObjectLight getPhysicalEndpointObjectB() {
+    public BusinessObjectLight getPhysicalEndpointObjectB() {
         return physicalEndpointObjectB;
     }
 
-    public void setPhysicalEndpointObjectB(RemoteObjectLight physicalEndpointObjectB) {
+    public void setPhysicalEndpointObjectB(BusinessObjectLight physicalEndpointObjectB) {
         this.physicalEndpointObjectB = physicalEndpointObjectB;
     }
 
-    public RemoteObjectLight getLogicalEndpointObjectA() {
+    public BusinessObjectLight getLogicalEndpointObjectA() {
         return logicalEndpointObjectA;
     }
 
-    public void setLogicalEndpointObjectA(RemoteObjectLight logicalEndpointObjectA) {
+    public void setLogicalEndpointObjectA(BusinessObjectLight logicalEndpointObjectA) {
         this.logicalEndpointObjectA = logicalEndpointObjectA;
     }
 
-    public RemoteObjectLight getLogicalEndpointObjectB() {
+    public BusinessObjectLight getLogicalEndpointObjectB() {
         return logicalEndpointObjectB;
     }
 
-    public void setLogicalEndpointObjectB(RemoteObjectLight logicalEndpointObjectB) {
+    public void setLogicalEndpointObjectB(BusinessObjectLight logicalEndpointObjectB) {
         this.logicalEndpointObjectB = logicalEndpointObjectB;
     }
 
-    public RemoteObjectLight getDeviceA() {
+    public BusinessObjectLight getDeviceA() {
         return deviceA;
     }
 
-    public void setDeviceA(RemoteObjectLight deviceA) {
+    public void setDeviceA(BusinessObjectLight deviceA) {
         this.deviceA = deviceA;
     }
 
-    public RemoteObjectLight getDeviceB() {
+    public BusinessObjectLight getDeviceB() {
         return deviceB;
     }
 
-    public void setDeviceB(RemoteObjectLight deviceB) {
+    public void setDeviceB(BusinessObjectLight deviceB) {
         this.deviceB = deviceB;
     }
+
+    
     
 }

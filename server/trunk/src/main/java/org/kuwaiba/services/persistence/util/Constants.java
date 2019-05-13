@@ -594,4 +594,8 @@ public class Constants {
      * The dummy root of the navigation tree
      */
     public static final String DUMMY_ROOT = "DummyRoot";
+    /**
+     * Version for the XML document to save views (see http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_Save_Object_Views for details)
+     */
+     public static final String VIEW_FORMAT_VERSION = "1.2";
 }

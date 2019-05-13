@@ -24,6 +24,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.PersistenceService;
@@ -74,8 +75,16 @@ public class SceneExporter {
     
     public String buildEndToEndView(String ipAddress, RemoteSession remoteSession, WebserviceBean webserviceBean, String serviceClassName, String serviceId) {
         RemoteObjectLight rol;
+        List<String> classes = new ArrayList<>();
+        List<String> ids = new ArrayList<>();
         try {
             rol = webserviceBean.getObjectLight(serviceClassName, serviceId, remoteSession.getIpAddress(), remoteSession.getSessionId());
+            List<RemoteObjectLight> serviceResources = webserviceBean.getServiceResources(serviceClassName, serviceId, ipAddress, serviceId);
+            
+            for(RemoteObjectLight resource : serviceResources){
+                classes.add(resource.getClassName());
+                ids.add(resource.getId());
+            }
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getMessage());
             return null;
@@ -105,9 +114,13 @@ public class SceneExporter {
             }
             if (currentView != null)
                 scene.render(currentView.getStructure());
-            else
-                scene.render(rol);
-                        
+            else{
+                try {
+                    scene.render(webserviceBean.getE2EMap(classes, ids, true, true, true, true, true, ipAddress, serviceId).getStructure());
+                } catch (ServerSideException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }       
             try {
                 org.netbeans.api.visual.export.SceneExporter.createImage(scene,
                         new File("/home/adrian/" + serviceClassName + "_" + serviceId +".png"),

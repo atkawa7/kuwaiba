@@ -37,6 +37,7 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.NoCommercialModuleFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
@@ -821,8 +822,9 @@ public interface ApplicationEntityManager {
      * @param moduleName The module name
      * @return The module. Null if the name could not be found
      * @throws NotAuthorizedException If the user is not authorized to access a particular commercial module
+     * @throws NoCommercialModuleFoundException the commercial module can not be found
      */
-    public GenericCommercialModule getCommercialModule(String moduleName) throws NotAuthorizedException;
+    public GenericCommercialModule getCommercialModule(String moduleName) throws NotAuthorizedException, NoCommercialModuleFoundException;
     /**
      * Gets a commercial module based on its name
      * @return The module instance

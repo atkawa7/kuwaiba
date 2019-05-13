@@ -25,9 +25,9 @@ import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.web.modules.servmanager.views.EndToEndView;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.web.modules.servmanager.views.EndToEndView;
 import org.openide.util.Exceptions;
 
 /**
@@ -38,15 +38,15 @@ public class EndToEndViewDashboardWidget extends AbstractDashboardWidget {
     /**
      * The service we want the resources from
      */
-    private RemoteObjectLight service;
+    private RemoteObjectLight selectedObject;
     /**
      * Web service bean reference
      */
     private WebserviceBean wsBean;
     
-    public EndToEndViewDashboardWidget(AbstractDashboard rootComponent, RemoteObjectLight service, WebserviceBean wsBean) {
+    public EndToEndViewDashboardWidget(AbstractDashboard rootComponent, RemoteObjectLight selectedObject, WebserviceBean wsBean) {
         super("End to End View", rootComponent);
-        this.service = service;
+        this.selectedObject = selectedObject;
         this.wsBean = wsBean;
         this.createCover();
     }
@@ -74,28 +74,28 @@ public class EndToEndViewDashboardWidget extends AbstractDashboardWidget {
     public void createContent() {
         VerticalLayout lytContent = new VerticalLayout();
         try {
-             String status = wsBean.getAttributeValueAsString(service.getClassName(), service.getId(), "Status", 
+             String status = wsBean.getAttributeValueAsString(selectedObject.getClassName(), selectedObject.getId(), "Status", 
+                    Page.getCurrent().getWebBrowser().getAddress(),
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+
+            String bandwidth = wsBean.getAttributeValueAsString(selectedObject.getClassName(), selectedObject.getId(), "Bandwidth", 
                     Page.getCurrent().getWebBrowser().getAddress(),
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
             
-            String bandwidth = wsBean.getAttributeValueAsString(service.getClassName(), service.getId(), "Bandwidth", 
-                    Page.getCurrent().getWebBrowser().getAddress(),
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-            
-            Label lblTitle = new Label(service.getName());
+            Label lblTitle = new Label(selectedObject.getName());
             lblTitle.addStyleNames("header", "title");
         
             Label info = new Label(String.format("Status: %s - Bandwidth: %s" , status != null ? status : "<Not Set>", bandwidth != null ? bandwidth : "<Not Set>"));
             
             lytContent.addComponent(new HorizontalLayout(lblTitle, info));
       
-            lytContent.addComponent(new EndToEndView(service, wsBean));
+            lytContent.addComponent(new EndToEndView(selectedObject, wsBean));
             
             lytContent.setSizeFull();
             
-            this.contentComponent = lytContent;
+        this.contentComponent = lytContent;
         } catch (ServerSideException ex) {
             Exceptions.printStackTrace(ex);
-        }
     }
+}
 }

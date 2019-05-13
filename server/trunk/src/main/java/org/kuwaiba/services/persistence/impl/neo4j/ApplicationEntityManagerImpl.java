@@ -87,6 +87,7 @@ import org.kuwaiba.apis.persistence.business.BusinessObjectList;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.BusinessRuleException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
+import org.kuwaiba.apis.persistence.exceptions.NoCommercialModuleFoundException;
 import org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
@@ -3010,8 +3011,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public GenericCommercialModule getCommercialModule(String moduleName) throws NotAuthorizedException {
-        return commercialModules.get(moduleName);
+    public GenericCommercialModule getCommercialModule(String moduleName) throws NotAuthorizedException, NoCommercialModuleFoundException {
+        GenericCommercialModule commercialModule = commercialModules.get(moduleName);
+        if(commercialModule == null)
+            throw new NoCommercialModuleFoundException(String.format("the module %s could not be found", moduleName));
+        else
+            return commercialModule;
     }
 
     @Override
@@ -3654,13 +3659,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public SyncDataSourceConfiguration getSyncDataSourceConfigurationById(long objectId) 
+    public SyncDataSourceConfiguration getSyncDataSourceConfigurationById(long syncDatasourceId) 
             throws InvalidArgumentException, ApplicationObjectNotFoundException, UnsupportedPropertyException {
         try (Transaction tx = graphDb.beginTx()) {
              
-            Node syncDatasourceConfiguration = graphDb.getNodeById(objectId);
+            Node syncDatasourceConfiguration = graphDb.getNodeById(syncDatasourceId);
             if(syncDatasourceConfiguration == null)
-                throw new ApplicationObjectNotFoundException(String.format("The sync data source configuration with id: %s is not related with anything", objectId));
+                throw new ApplicationObjectNotFoundException(String.format("The sync data source configuration with id: %s is not related with anything", syncDatasourceId));
             
             tx.success();
             return Util.createSyncDataSourceConfigFromNode(syncDatasourceConfiguration);

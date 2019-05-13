@@ -214,24 +214,6 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                 Exceptions.printStackTrace(ex);
             }
         }        
-        else if("getE2EMap".equals(scriptQueryName) && //NOI18N
-            parameterNames != null &&
-            parameterValues != null &&
-            parameterNames.size() == parameterValues.size()) {
-            
-            List<String> linkIds = new ArrayList<>();
-            
-            for (String parameterValue : parameterValues) {
-                    linkIds.add(parameterValue);
-            }
-            try {          
-                return wsBean.getE2EMap(parameterNames, linkIds, true, true, true, 
-                    session.getIpAddress(), 
-                    session.getSessionId());
-            } catch (Exception ex) {
-                Exceptions.printStackTrace(ex);
-            }
-        }
         else {
             Notifications.showError("[PROCESS ENGINE] Function " + scriptQueryName + " does not exist");            
         }

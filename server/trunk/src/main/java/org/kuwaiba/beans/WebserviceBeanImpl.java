@@ -17,7 +17,6 @@
 package org.kuwaiba.beans;
 
 import com.neotropic.kuwaiba.correlation.SimpleCorrelation;
-import com.neotropic.kuwaiba.modules.cpemanager.QinQModule;
 import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
 import com.neotropic.kuwaiba.modules.mpls.MPLSConnectionDefinition;
 import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
@@ -27,6 +26,8 @@ import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
+import com.neotropic.kuwaiba.modules.views.ObjectLinkObjectDefinition;
+import com.neotropic.kuwaiba.modules.views.ViewModule;
 import com.neotropic.kuwaiba.modules.warehouse.WarehouseModule;
 import com.neotropic.kuwaiba.scheduling.BackgroundJob;
 import com.neotropic.kuwaiba.scheduling.JobManager;
@@ -2143,7 +2144,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(ex.getMessage());
         }
     }
-    
+     
+    @Deprecated
     @Override
     public RemoteLogicalConnectionDetails getLogicalLinkDetails(String linkClass, 
             String linkId, String ipAddress, String sessionId) throws ServerSideException {
@@ -2185,11 +2187,11 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 physicalPathForVlansEndpointA = getPhysicalPathVlans(endpointA);
             
             HashMap<BusinessObjectLight, List<BusinessObjectLight>> physicalPathForBDisEndpointA = new HashMap<>();    
-            if(physicalPathA != null && !physicalPathA.isEmpty())
-                physicalPathForBDisEndpointA = getEndPointContinuity("networkBridgeInterface", physicalPathA.get(physicalPathA.size() -1));
-            
-            else if(endpointA != null)
-                physicalPathForBDisEndpointA = getEndPointContinuity("networkBridgeInterface", endpointA);
+//            if(physicalPathA != null && !physicalPathA.isEmpty())
+//                physicalPathForBDisEndpointA = getEndPointContinuity("networkBridgeInterface", physicalPathA.get(physicalPathA.size() -1));
+//            
+//            else if(endpointA != null)
+//                physicalPathForBDisEndpointA = getEndPointContinuity("networkBridgeInterface", endpointA);
 
             List<BusinessObjectLight> endpointBRelationship = bem.getSpecialAttribute(linkClass, linkId, endpointBRelationshipName);
             if (!endpointBRelationship.isEmpty()) {
@@ -2205,11 +2207,11 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 physicalPathForVlansEndpointB = getPhysicalPathVlans(endpointB);
             
             HashMap<BusinessObjectLight, List<BusinessObjectLight>> physicalPathForBDisEndpointB = new HashMap<>();    
-            if(physicalPathB != null && !physicalPathB.isEmpty())
-                physicalPathForBDisEndpointB = getEndPointContinuity("networkBridgeInterface", physicalPathB.get(physicalPathB.size() -1));
-            
-            else if(endpointB != null)
-                physicalPathForBDisEndpointB =  getEndPointContinuity("networkBridgeInterface", endpointB);
+//            if(physicalPathB != null && !physicalPathB.isEmpty())
+//                physicalPathForBDisEndpointB = getEndPointContinuity("networkBridgeInterface", physicalPathB.get(physicalPathB.size() -1));
+//            
+//            else if(endpointB != null)
+//                physicalPathForBDisEndpointB =  getEndPointContinuity("networkBridgeInterface", endpointB);
 
             return new RemoteLogicalConnectionDetails(linkObject, endpointA, endpointB, 
                     physicalPathA == null ? new ArrayList<>() : physicalPathA, 
@@ -2222,124 +2224,6 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
     }
     
-    @Override
-    public RemotePhysicalConnectionDetails getPhysicalLinkDetails(String linkClass, 
-            String linkId, String ipAddress, String sessionId) throws ServerSideException {
-        if (bem == null)
-            throw new ServerSideException(I18N.gm("cannot_reach_backend")); //NOI18N
-        try {
-             aem.validateWebServiceCall("getPhysicalLinkDetails", ipAddress, sessionId); //NOI18N
-            
-            BusinessObject linkObject = bem.getObject(linkClass, linkId);
-            
-            BusinessObjectLight endpointA, endpointB;
-            
-            List<BusinessObjectLight> physicalPathA = null, physicalPathB = null;
-            String endpointARelationshipName, endpointBRelationshipName;
-            
-            if (mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALLINK, linkClass)) { //NOI18N
-                endpointARelationshipName = "endpointA"; //NOI18N
-                endpointBRelationshipName = "endpointB"; //NOI18N
-            }else 
-                throw new ServerSideException(String.format("Class %s is not a supported physical link", linkClass)); //NOI18N
-            
-            List<BusinessObjectLight> endpointARelationship = bem.getSpecialAttribute(linkClass, linkId, endpointARelationshipName); //NOI18N
-            if (!endpointARelationship.isEmpty()) {
-                endpointA = endpointARelationship.get(0);
-                physicalPathA = bem.getParents(endpointA.getClassName(), endpointA.getId());
-            }
-                       
-            List<BusinessObjectLight> endpointBRelationship = bem.getSpecialAttribute(linkClass, linkId, endpointBRelationshipName); //NOI18N
-            if (!endpointBRelationship.isEmpty()) {
-                endpointB = endpointBRelationship.get(0);
-                physicalPathB = bem.getParents(endpointB.getClassName(), endpointB.getId());
-            }
-                        
-            return new RemotePhysicalConnectionDetails(linkObject,  
-                    physicalPathA, physicalPathB);
-            
-        } catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    @Override
-    public List<RemoteObjectLinkObject> getE2EMap(List<String> linkClasses, 
-            List<String> linkIds, boolean includePhyscalPaths, boolean includeVlans, 
-            boolean includePhyscialLinks, String ipAddress, String sessionId) 
-            throws ServerSideException
-    {
-        if (bem == null)
-            throw new ServerSideException(I18N.gm("cannot_reach_backend")); //NOI18N
-        try {
-            aem.validateWebServiceCall("getE2EMap", ipAddress, sessionId); //NOI18N
-            List<RemoteObjectLinkObject> e2eMap = new ArrayList<>();
-            
-            for(int x=0 ; x < linkIds.size(); x++){
-                RemoteLogicalConnectionDetails logicalCircuitDetails = getLogicalLinkDetails(linkClasses.get(x), linkIds.get(x), ipAddress, sessionId);
-                RemoteObjectLight physicalEndpointA = null, logicalEndpointA = null, physicalEndpointB = null, logicalEndpointB = null, deviceA = null, deviceB = null;
-                //start logical part         
-                if(logicalCircuitDetails.getEndpointA() != null){
-                    List<BusinessObjectLight> parentsUntilFirstComEquipmentA = bem.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
-                            getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericCommunicationsElement");
-                    //Side A, we must check if the logical link starts in a physical port
-                    if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALPORT, logicalCircuitDetails.getEndpointA().getClassName()))
-                        physicalEndpointA = logicalCircuitDetails.getEndpointA();
-                    //if starts starts in a virtual port
-                    else if(parentsUntilFirstComEquipmentA.size() > 2 && mem.isSubclassOf(Constants.CLASS_GENERICLOGICALPORT, logicalCircuitDetails.getEndpointA().getClassName())){
-                        logicalEndpointA = logicalCircuitDetails.getEndpointA();
-                        physicalEndpointA = new RemoteObjectLight(parentsUntilFirstComEquipmentA.get(0)); //the physical port
-                    }//a logical port thas is direct child of the GenericCommunicationsElement (maybe a pseudowire)
-                    else if(parentsUntilFirstComEquipmentA.size() == 1 && mem.isSubclassOf(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, parentsUntilFirstComEquipmentA.get(parentsUntilFirstComEquipmentA.size() - 1).getClassName()))
-                        logicalEndpointA = logicalCircuitDetails.getEndpointA(); 
-                    //we set de device  
-                    if(!parentsUntilFirstComEquipmentA.isEmpty() &&  mem.isSubclassOf(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, parentsUntilFirstComEquipmentA.get(parentsUntilFirstComEquipmentA.size() - 1).getClassName()))
-                        deviceA = new RemoteObjectLight(parentsUntilFirstComEquipmentA.get(parentsUntilFirstComEquipmentA.size() - 1)); //GenericCommunicationsElement
-                }//Side B   
-                if(logicalCircuitDetails.getEndpointB() != null){
-                    List<BusinessObjectLight> parentsUntilFirstComEquipmentB = bem.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointB().
-                            getClassName(), logicalCircuitDetails.getEndpointB().getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
-                    //Side A, we must check if the logical link starts in a physical port
-                    if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALPORT, logicalCircuitDetails.getEndpointB().getClassName()))
-                        physicalEndpointB = logicalCircuitDetails.getEndpointB();
-                    //if starts starts in a virtual port
-                    else if(parentsUntilFirstComEquipmentB.size() > 2 && mem.isSubclassOf(Constants.CLASS_GENERICLOGICALPORT, logicalCircuitDetails.getEndpointB().getClassName())){
-                        logicalEndpointB = logicalCircuitDetails.getEndpointA();
-                        physicalEndpointB = new RemoteObjectLight(parentsUntilFirstComEquipmentB.get(0)); //the physical port
-                    }//a logical port thas is direct child of the GenericCommunicationsElement (maybe a pseudowire)
-                    else if(parentsUntilFirstComEquipmentB.size() == 1)
-                        logicalEndpointB = logicalCircuitDetails.getEndpointB(); 
-                    //we set de device
-                    if(!parentsUntilFirstComEquipmentB.isEmpty() &&  mem.isSubclassOf(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, parentsUntilFirstComEquipmentB.get(parentsUntilFirstComEquipmentB.size() - 1).getClassName()))
-                        deviceB = new RemoteObjectLight(parentsUntilFirstComEquipmentB.get(parentsUntilFirstComEquipmentB.size() - 1)); //GenericCommunicationsElement
-                }
-                e2eMap.add(new RemoteObjectLinkObject(deviceA, physicalEndpointA, logicalEndpointA, 
-                        logicalCircuitDetails.getConnectionObject(), logicalEndpointB, physicalEndpointB, deviceB));
-                //physical part, side A
-                if (!logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty()) 
-                    e2eMap.addAll(getpPhysicalPathMap(logicalCircuitDetails.getPhysicalPathForEndpointA()));
-                //physical part, side B
-                if (!logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty()) 
-                    e2eMap.addAll(getpPhysicalPathMap(logicalCircuitDetails.getPhysicalPathForEndpointB()));
-                //VLANs side A
-//                HashMap<RemoteObjectLight, List<RemoteObjectLight>> physicalPathForVlansEndpointA = new HashMap<>(); 
-//                if(logicalCircuitDetails.getEndpointA() != null && !logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty())
-//                    physicalPathForVlansEndpointA = getPhysicalPathVlans(logicalCircuitDetails.getPhysicalPathForEndpointA().get(logicalCircuitDetails.getPhysicalPathForEndpointA().size() -1));
-//                else
-//                    physicalPathForVlansEndpointA = getPhysicalPathVlans(physicalEndpointA == null ? logicalCircuitDetails.getEndpointA() : physicalEndpointA);
-//                //side B
-//                HashMap<RemoteObjectLight, List<RemoteObjectLight>> physicalPathForVlansEndpointB = new HashMap<>();    
-//                if(logicalCircuitDetails.getEndpointB() != null && !logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty())
-//                    physicalPathForVlansEndpointB = getPhysicalPathVlans(logicalCircuitDetails.getPhysicalPathForEndpointB().get(logicalCircuitDetails.getPhysicalPathForEndpointB().size() -1));
-//                else if(logicalCircuitDetails.getEndpointB() != null)
-//                    physicalPathForVlansEndpointB = getPhysicalPathVlans(physicalEndpointB == null ? logicalCircuitDetails.getEndpointB() : physicalEndpointB);
-            }//end for
-            return e2eMap;
-        } catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-        
-    }
     /**
      * Checks the continuity throw ports that belongs to the same VLAN
      * @param endpoint a given port to check if belong to a vlan
@@ -2370,30 +2254,40 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
     }
     
-    /**
-     * Given an endPoint and a relationship with other logical interfaces it retrieves 
-     * a path of continuity.
-     * @param endpoint a given port to check if belong to a set of other interfaces
-     * @param relationshipName a relationship that groups interfaces.
-     * @return a map with key: port, value: physical path of that port
-     * @throws ServerSideException 
-     */
-    private HashMap<BusinessObjectLight, List<BusinessObjectLight>> getEndPointContinuity(String relationshipName, BusinessObjectLight endpoint) 
-            throws ServerSideException{
+    
+    
+    @Override
+    public RemoteViewObject validateSavedE2EView(List<String> linkClasses, List<String> linkIds, RemoteViewObject savedView, String ipAddress, String sessionId) throws ServerSideException
+    {
+        if (bem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend")); //NOI18N
         try {
-            HashMap<BusinessObjectLight, List<BusinessObjectLight>> portsPhysicalPath = new HashMap<>();
-            if(endpoint != null){
-                //we get the the vlans to which the port belongs
-                List<BusinessObjectLight> ports = bem.getSpecialAttribute(endpoint.getClassName(), endpoint.getId(), relationshipName);
-                for (BusinessObjectLight port : ports) { //We get all the port of related with this relationship
-                    if(port.getId() != null && endpoint.getId() != null && !port.getId().equals(endpoint.getId())){//we get the physical path for every port of the vlan except of the given endpoint 
-                        List<BusinessObjectLight> portPhysicalPath = bem.getPhysicalPath(port.getClassName(), port.getId());
-                        if(!portPhysicalPath.isEmpty())
-                            portsPhysicalPath.put(port, portPhysicalPath);
-                    }
-                }
-            }
-            return portsPhysicalPath;
+            aem.validateWebServiceCall("validateSavedE2EView", ipAddress, sessionId); //NOI18N
+            ViewModule viewModule = (ViewModule)aem.getCommercialModule("E2E Views Module"); //NOI18N
+            ViewObject viewObject = new ViewObject(savedView.getId(), savedView.getName(), savedView.getDescription(), savedView.getViewClassName());
+            viewObject.setStructure(savedView.getStructure());
+            
+            return new RemoteViewObject(viewModule.validateSavedE2EView(linkClasses, linkIds, viewObject));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemoteViewObject getE2EMap(List<String> linkClasses, 
+            List<String> linkIds, boolean includePhyscialLinks,
+            boolean includPhyscalPaths, boolean includeLogicalPaths,
+            boolean includeVlans, boolean includeBDIs, String ipAddress, String sessionId) 
+            throws ServerSideException
+    {
+        if (bem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend")); //NOI18N
+        try {
+            aem.validateWebServiceCall("getE2EMap", ipAddress, sessionId); //NOI18N
+            ViewModule viewModule = (ViewModule)aem.getCommercialModule("E2E Views Module"); //NOI18N
+            viewModule.createE2EView(linkClasses, linkIds, includPhyscalPaths, includeVlans, includePhyscialLinks, includeBDIs);
+            return new RemoteViewObject(viewModule.getAsXML());
+            
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -5073,7 +4967,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("createMPLSLink", ipAddress, sessionId);
             
-            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
+            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N MPLS Networks Module
             HashMap<String, String> attributes = new HashMap<>();
             
             for (StringPair attribute : attributesToBeSet)
@@ -6507,177 +6401,6 @@ public class WebserviceBeanImpl implements WebserviceBean {
             }
         }
         // </editor-fold>
-        // <editor-fold defaultstate="collapsed" desc="CPE Manager and QinQ">
-            @Override
-            public void createEVlan(String objectId, String objectClassName, HashMap<String, String> attributesToBeSet, String ipAddress, String sessionId) throws ServerSideException{
-                if (bem == null || aem == null)
-                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-                try {
-                    aem.validateWebServiceCall("createEVlan", ipAddress, sessionId);
-                    
-                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
-                    qinQModule.createEVlan(objectId, objectClassName, attributesToBeSet);
-                    
-                } catch (InventoryException ex) {
-                    throw new ServerSideException(ex.getMessage());
-                }
-            }
-
-            @Override
-            public List<RemoteObjectLight> getEVlans(String objectId, String objectClassName, String ipAddress, String sessionId) throws ServerSideException{
-                if (bem == null || aem == null)
-                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-                try {
-                    aem.validateWebServiceCall("getEVlans", ipAddress, sessionId);
-                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
-                    List<BusinessObjectLight> eVlans = qinQModule.getEVlans(objectId, objectClassName);
-                    
-                    return RemoteObjectLight.toRemoteObjectLightArray(eVlans);
-                    
-                } catch (InventoryException ex) {
-                    throw new ServerSideException(ex.getMessage());
-                }
-            }
-            
-            @Override
-            public List<RemoteObjectLight> getEVlansByType(String objectId, String objectClassName, String typeToFilter, String ipAddress, String sessionId) throws ServerSideException{
-                if (bem == null || aem == null)
-                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-                try {
-                    aem.validateWebServiceCall("getEVlanByType", ipAddress, sessionId);
-                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
-                    List<BusinessObjectLight> eVlans = qinQModule.getEVlansByType(objectId, objectClassName, typeToFilter);
-                    
-                    return RemoteObjectLight.toRemoteObjectLightArray(eVlans);
-                } catch (InventoryException ex) {
-                    throw new ServerSideException(ex.getMessage());
-                }
-            }
-            
-            @Override
-            public void relateEVlanWithInterface(String evlanId, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException{
-                if (bem == null || aem == null)
-                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-                try {
-                    aem.validateWebServiceCall("relateEVlanWithInterface", ipAddress, sessionId);
-                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
-                    qinQModule.relateEVlanWithInterface(evlanId, interfaceClassName, interfaceId);
-                    
-                } catch (InventoryException ex) {
-                    throw new ServerSideException(ex.getMessage());
-                }
-            }
-            
-            @Override
-            public void releaseEVlanFromInterface(String evlanId, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException{
-                if (bem == null || aem == null)
-                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-                try {
-                    aem.validateWebServiceCall("releaseEVlanFromInterface", ipAddress, sessionId);
-                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
-                    qinQModule.releaseEVlanFromInterface(evlanId, interfaceClassName, interfaceId);
-                } catch (InventoryException ex) {
-                    throw new ServerSideException(ex.getMessage());
-                }
-            }
-            
-            @Override
-            public void deleteEVlans(String[] eVlanIds, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException{
-                if (bem == null || aem == null)
-                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-                try {
-                    aem.validateWebServiceCall("deleteEVlans", ipAddress, sessionId);
-                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
-                    qinQModule.deleteEVlans(eVlanIds, forceDelete);
-                } catch (InventoryException ex) {
-                    throw new ServerSideException(ex.getMessage());
-                }
-            }
-            
-            @Override
-            public String createCVlan(String eVlanId, HashMap<String, String> attributesToBeSe, String ipAddress, String sessionId) throws ServerSideException{
-                if (bem == null || aem == null)
-                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-                try {
-                    aem.validateWebServiceCall("createCVlan", ipAddress, sessionId);
-                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
-                    return qinQModule.createCVlan(eVlanId, attributesToBeSe);
-                    
-                } catch (InventoryException ex) {
-                    throw new ServerSideException(ex.getMessage());
-                }
-            }
-            @Override
-            public List<RemoteObjectLight> getCVlans(String eVlanId, String ipAddress, String sessionId) throws ServerSideException{
-                if (bem == null || aem == null)
-                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-                try {
-                    aem.validateWebServiceCall("getCVlans", ipAddress, sessionId);
-                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
-                    List<BusinessObjectLight> cVlans = qinQModule.getCVlans(eVlanId);
-                    
-                    return RemoteObjectLight.toRemoteObjectLightArray(cVlans);
-                    
-                } catch (InventoryException ex) {
-                    throw new ServerSideException(ex.getMessage());
-                }
-            }
-            
-            @Override
-            public List<RemoteObjectLight> getCVlansByState(String eVlanId, String stateToFilter, String ipAddress, String sessionId) throws ServerSideException{
-                if (bem == null || aem == null)
-                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-                try {
-                    aem.validateWebServiceCall("getCVlansByState", ipAddress, sessionId);
-                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
-                    List<BusinessObjectLight> cVlans = qinQModule.getCVlansByState(eVlanId, stateToFilter);
-                   
-                    return RemoteObjectLight.toRemoteObjectLightArray(cVlans);
-                    
-                } catch (InventoryException ex) {
-                    throw new ServerSideException(ex.getMessage());
-                }
-            }
-            
-            @Override
-            public void deleteCVlans(String[] cVlanIds, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException{
-                if (bem == null || aem == null)
-                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-                try {
-                    aem.validateWebServiceCall("deleteCVlans", ipAddress, sessionId);
-                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
-                    qinQModule.deleteCVlans(cVlanIds, forceDelete);
-                } catch (InventoryException ex) {
-                    throw new ServerSideException(ex.getMessage());
-                }
-            }
-            
-            @Override
-            public void relateCVlanToOntInterface(String cVlanId, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException{
-                if (bem == null || aem == null)
-                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-                try {
-                    aem.validateWebServiceCall("relateCVlanToOntInterface", ipAddress, sessionId);
-                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
-                    qinQModule.relateCVlanToOntInterface(cVlanId, interfaceClassName, interfaceId);
-                } catch (InventoryException ex) {
-                    throw new ServerSideException(ex.getMessage());
-                }
-            }
-            
-            @Override
-            public void releaseCVlanFromOntInterface(String cVlanId, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException{
-                if (bem == null || aem == null)
-                    throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-                try {
-                    aem.validateWebServiceCall("releaseCVlanFromOntInterface", ipAddress, sessionId);
-                    QinQModule qinQModule = (QinQModule)aem.getCommercialModule("CPE Manager Module"); //NOI18N
-                    qinQModule.releaseCVlanFromOntInterface(cVlanId, interfaceClassName, interfaceId);
-                } catch (InventoryException ex) {
-                    throw new ServerSideException(ex.getMessage());
-                }
-            }
-            // </editor-fold>
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">
     protected final void connect() {

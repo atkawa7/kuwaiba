@@ -3589,7 +3589,7 @@ public class KuwaibaService {
             }
         }
     }
-     
+    
     /**
      * Returns the structure of a logical connection. The current implementation is quite simple and the return object 
      * simply provides the endpoints and the next ports connected to such endpoints using a physical connection
@@ -3600,6 +3600,7 @@ public class KuwaibaService {
      * @throws ServerSideException If the user is not allowed to invoke the method
      *                             If the provided connection could not be found
      */
+    @Deprecated
     @WebMethod(operationName = "getLogicalLinkDetails")
     public RemoteLogicalConnectionDetails getLogicalLinkDetails(@WebParam(name = "linkClass")String linkClass, 
                                         @WebParam(name = "linkId")String linkId,
@@ -3616,24 +3617,27 @@ public class KuwaibaService {
         }
     }
     
+   
     /**
-     * Returns the structure of a logical connection. The current implementation is quite simple and the return object 
-     * simply provides the endpoints and the next ports connected to such endpoints using a physical connection
-     * @param linkClass
+     * Validates a saved structure of a end to end view. The current implementation
+     * provides the endpoints and the next ports connected to such endpoints using a physical connection
+     * also adds continuity if a VLAN or a BridgeDomain is found
      * @param linkClasses The class of the connection to be evaluated
      * @param linkIds The id of the connection to be evaluated
+     * @param savedView a given saved view to validate
      * @param sessionId Session token
      * @return An object with the details of the connection and the physical resources associated to it
      * @throws ServerSideException If the user is not allowed to invoke the method
      *                             If the provided connection could not be found
      */
-    @WebMethod(operationName = "getE2EMap")
-    public List<RemoteObjectLinkObject> getE2EMap(@WebParam(name = "linkClass")String linkClass, 
+    @WebMethod(operationName = "ValidateSavedE2EView")
+    public RemoteViewObject ValidateSavedE2EView( 
             @WebParam(name = "linkClasses")List<String> linkClasses,
             @WebParam(name = "linkIds")List<String> linkIds,
+            @WebParam(name = "savedView") RemoteViewObject savedView,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
-            return wsBean.getE2EMap(linkClasses, linkIds, true, true, true, getIPAddress(), sessionId);
+            return wsBean.validateSavedE2EView(linkClasses, linkIds, savedView, getIPAddress(), sessionId);
         } catch(Exception e) {
             if (e instanceof ServerSideException)
                 throw e;
@@ -3645,31 +3649,36 @@ public class KuwaibaService {
     }
     
     /**
-     * Returns the structure of a physical connection. The current implementation is quite simple and the return object 
-     * simply provides the endpoints and its physical paths
-     * @param linkClass The class of the connection to be evaluated
-     * @param linkId The id of the connection to be evaluated
+     * Returns the structure of a logical connection. The current implementation is quite simple and the return object 
+     * simply provides the endpoints and the next ports connected to such endpoints using a physical connection
+     * @param linkClasses The class of the connection to be evaluated
+     * @param linkIds The id of the connection to be evaluated
+     * @param includeVLANs true to include the bridge domains continuity
+     * @param includeBDIs true to include the bridge domains continuity
      * @param sessionId Session token
      * @return An object with the details of the connection and the physical resources associated to it
      * @throws ServerSideException If the user is not allowed to invoke the method
      *                             If the provided connection could not be found
      */
-    @WebMethod(operationName = "getPhysicalLinkDetails")
-    public RemotePhysicalConnectionDetails getPhysicalLinkDetails(@WebParam(name = "linkClass") String linkClass, 
-                                        @WebParam(name = "linkId")String linkId,
-                                        @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+    @WebMethod(operationName = "getE2EView")
+    public RemoteViewObject getE2View( 
+            @WebParam(name = "linkClasses")List<String> linkClasses,
+            @WebParam(name = "linkIds")List<String> linkIds,
+            @WebParam(name = "includeVLANs")boolean includeVLANs,
+            @WebParam(name = "includeBDIs")boolean includeBDIs,
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
-            return wsBean.getPhysicalLinkDetails(linkClass, linkId, getIPAddress(), sessionId);
+            return wsBean.getE2EMap(linkClasses, linkIds, true, true, true, includeVLANs, includeBDIs, getIPAddress(), sessionId);
         } catch(Exception e) {
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getPhysicalLinkDetails: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in getLogicalLinkDetails: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
     }
-    
+   
     /**
      * Retrieves the existing containers between two given nodes. 
      * @param objectAClass The class of the object A.

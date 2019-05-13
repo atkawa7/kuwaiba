@@ -16,12 +16,13 @@
 package org.kuwaiba.apis.persistence.exceptions;
 
 /**
- * Raised when an user is not allowed to perform an operation 
- * @author Adrián Fernando Martínez Molina {@literal <adrian.martinez@kuwaiba.org>}
+ * Raised when a commercial module can not be found 
+ *  @author Adrián Fernando Martínez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
-public class NotAuthorizedException extends InventoryException{
-    
-    public NotAuthorizedException(String msg) {
+public class NoCommercialModuleFoundException  extends InventoryException{
+
+    public NoCommercialModuleFoundException(String msg) {
         super(msg);
     }
+    
 }

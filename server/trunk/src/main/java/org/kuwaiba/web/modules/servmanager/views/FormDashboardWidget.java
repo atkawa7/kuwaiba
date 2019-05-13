@@ -117,6 +117,7 @@ public class FormDashboardWidget extends AbstractDashboardWidget{
      * @return the final layout
      */
     private void readEndToEndView(){
+    //ToDo find a way to draw the tables
         try {
             serviceResources = wsBean.getServiceResources(service.getClassName(), service.getId(), ipAddress, sessionId);
             tables = new LinkedList<>();

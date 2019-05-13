@@ -20,6 +20,7 @@ import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
 import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
 import com.neotropic.kuwaiba.modules.projects.ProjectsModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
+import com.neotropic.kuwaiba.modules.views.ViewModule;
 import com.neotropic.kuwaiba.modules.warehouse.WarehouseModule;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
@@ -115,6 +116,7 @@ public class PersistenceService {
             aem.registerCommercialModule(new MPLSModule());
             aem.registerCommercialModule(new ProjectsModule());
             aem.registerCommercialModule(new WarehouseModule());
+            aem.registerCommercialModule(new ViewModule());
             
             for (GenericCommercialModule aModule : aem.getCommercialModules()) {
                 System.out.println(String.format("[KUWAIBA]   [%s]  %s %s by %s", Calendar.getInstance().getTime(), aModule.getName(), aModule.getVersion(), aModule.getVendor()));

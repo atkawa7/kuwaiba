@@ -235,10 +235,10 @@ public interface WebserviceBean {
     public void disconnectPhysicalConnection(String connectionClass, String connectionId, int sideToDisconnect, String ipAddress, String sessionId) throws ServerSideException;
     
     public List<RemoteObjectLight> getPhysicalPath(String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException;
-    
-    public RemotePhysicalConnectionDetails getPhysicalLinkDetails(String linkClass, String linkId, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteObjectLinkObject> getE2EMap(List<String> linkClasses, List<String> linkIds, boolean includePhyscalPaths, boolean includeVlans, boolean includePhyscialLinks,String ipAddress, String sessionId) throws ServerSideException;
+    @Deprecated
     public RemoteLogicalConnectionDetails getLogicalLinkDetails(String linkClass, String linkId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteViewObject validateSavedE2EView(List<String> linkClasses, List<String> linkIds, RemoteViewObject savedView, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteViewObject getE2EMap(List<String> linkClasses, List<String> linkIds, boolean includePhyscialLinks, boolean includPhysicalPaths, boolean includeLogicalPaths, boolean includeVlans, boolean includeBDIs, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteObjectLight> getContainersBetweenObjects(String objectAClassName, String objectAId, String objectBClassName, String objectBId, String containerClassName, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteObjectLightList> getPhysicalConnectionsInObject(String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteObjectLight> getLogicalConnectionsInObject(String objectClass, String objectId, 
@@ -641,21 +641,6 @@ public interface WebserviceBean {
         public List<RemoteLogicalConnectionDetails> getBGPMap(List<String> mappedBGPLinksIds, String ipAddress, String sessionId) throws ServerSideException;
         //</editor-fold>
         
-        //<editor-fold defaultstate="collapsed" desc="CPE Manager QinQ">
-            public void createEVlan(String objectId, String objectClassName, HashMap<String, String> attributesToBeSet, String ipAddress, String sessionId) throws ServerSideException;
-            public List<RemoteObjectLight> getEVlans(String objectId, String objectClassName, String ipAddress, String sessionId) throws ServerSideException;
-            public List<RemoteObjectLight> getEVlansByType(String objectId, String objectClassName, String typeToFilter, String ipAddress, String sessionId) throws ServerSideException;
-            public void relateEVlanWithInterface(String evlanId, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException;
-            public void releaseEVlanFromInterface(String evlanId, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException;
-            public void deleteEVlans(String[] eVlanIds, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
-            public String createCVlan(String eVlanId, HashMap<String, String> attributesToBeSe, String ipAddress, String sessionId) throws ServerSideException;
-            public List<RemoteObjectLight> getCVlans(String eVlanId, String ipAddress, String sessionId) throws ServerSideException;
-            public List<RemoteObjectLight> getCVlansByState(String eVlanId, String stateToFilter, String ipAddress, String sessionId) throws ServerSideException;
-            public void deleteCVlans(String[] cVlanIds, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
-            public void relateCVlanToOntInterface(String cVlanId, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException;
-            public void releaseCVlanFromOntInterface(String cVlanId, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException;
-        //</editor-fold> 
-    
     // Bookmarks
     public long createFavoritesFolderForUser(String favoritesFolderName, long userId, String ipAddress, String sessionId) throws ServerSideException;
     public void deleteFavoritesFolders (long[] favoritesFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;

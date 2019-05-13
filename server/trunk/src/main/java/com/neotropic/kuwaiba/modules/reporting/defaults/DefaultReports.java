@@ -35,6 +35,7 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.NoCommercialModuleFoundException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
@@ -229,7 +230,7 @@ public class DefaultReports {
         return new RawReport("Distribution Frame Detail", "Neotropic SAS","1.1", frameUsageReportText);
     }
 
-    public RawReport buildTransportLinkUsageReport (String transportLinkClass, String transportLinkId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport buildTransportLinkUsageReport (String transportLinkClass, String transportLinkId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException, NoCommercialModuleFoundException {
         String query = String.format("MATCH (transportLink)-[relation:%s]-(port)-[:%s*]->(equipment)-[:%s]->(class)-[:%s*]->(superClass) "
                     + "WHERE transportLink._uuid = \"%s\" AND superClass.name = \"%s\" AND (relation.name = \"%s\" OR relation.name = \"%s\")"
                     + "RETURN transportLink, equipment, port",  RelTypes.RELATED_TO_SPECIAL, RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, 

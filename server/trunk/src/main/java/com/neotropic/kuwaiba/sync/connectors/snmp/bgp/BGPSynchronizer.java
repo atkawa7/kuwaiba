@@ -440,7 +440,7 @@ public class BGPSynchronizer {
      * @param asnNumber ASN number form SNMP
      * @param asnName ASN name from peeringDB
      * @param bgpPeerRemoteAddr remote  IP address from SNMP
-     * @return the created cloud
+     * @return the created BGPPeer
      */
     private BusinessObjectLight createBGPPeer(String asnNumber, String asnName, String bgpPeerRemoteAddr){
         try{
