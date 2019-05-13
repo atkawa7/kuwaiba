@@ -23,14 +23,13 @@ import org.kuwaiba.apis.persistence.ConnectionManager;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-import org.neo4j.graphdb.factory.GraphDatabaseSettings;
+import org.neo4j.kernel.configuration.BoltConnector;
 
 /**
  * ConnectionManager reference implementation using Neo4J as DBMS
  * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseService>{
-
     /**
      * Default db path
      */
@@ -92,14 +91,14 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
             File dbFile = new File(dbPathString);
             if (!dbFile.exists() || !dbFile.canWrite())
                 throw new Exception(String.format("Path %s does not exist or is not writeable", dbFile.getAbsolutePath()));
-            GraphDatabaseSettings.BoltConnector bolt = GraphDatabaseSettings.boltConnector( "0" ); //Enables Bolt protocol support
+            BoltConnector bolt = new BoltConnector();
             graphDb = new GraphDatabaseFactory()
                         .newEmbeddedDatabaseBuilder(dbFile)
-                        .setConfig( bolt.type, "BOLT" )
-                        .setConfig( bolt.enabled, "true" )
-                        .setConfig( bolt.address,  dbHost + ":" + dbPort )
+                        .setConfig(bolt.type, "BOLT")
+                        .setConfig(bolt.enabled, "true")
+                        .setConfig(bolt.address,  dbHost + ":" + dbPort)
                         .newGraphDatabase();
-        }catch(Exception e) {e.printStackTrace();
+        }catch(Exception e) {
             throw new ConnectionException(e.getMessage());
         }
     }
