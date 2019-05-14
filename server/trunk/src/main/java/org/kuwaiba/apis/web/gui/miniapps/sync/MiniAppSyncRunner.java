@@ -32,6 +32,7 @@ import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationConfiguration;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationProvider;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
@@ -87,21 +88,19 @@ public class MiniAppSyncRunner extends AbstractMiniApplication<Component, Compon
             gly.setSpacing(true);
             gly.setColumns(2);
             gly.setRows(2);
-
-            List<SyncProvider> syncProviders = new ArrayList();
             
-            syncProviders.add(new SyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.reference.ReferenceSnmpSyncProvider", "Physical / Virtual Interfaces"));
-            syncProviders.add(new SyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.mpls.SnmpMplsSyncProvider", "General MPLS Information"));
-            syncProviders.add(new SyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.ip.IPAddressesSyncProvider", "IP Addresses"));
-            syncProviders.add(new SyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.vlan.SnmpCiscoVlansSyncProvider", "VLANs"));
-            syncProviders.add(new SyncProvider("com.neotropic.kuwaiba.sync.connectors.ssh.bdi.BridgeDomainSyncProvider", "Bridge Domains"));
-            syncProviders.add(new SyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.bgp.BgpSyncProvider", "Border Gateway Protocol"));
-
-            Grid<SyncProvider> grdProviders = new Grid();                
-            grdProviders.setItems(syncProviders);
+            List<RemoteSynchronizationProvider> syncProviders = wsBean.getSynchronizationProviders(remoteSession.getIpAddress(), remoteSession.getSessionId());
+            
+            List<RemoteSynchronizationProvider> automated = new ArrayList();
+            for (RemoteSynchronizationProvider syncProvider : syncProviders) {
+                if (syncProvider.isAutomated())
+                    automated.add(syncProvider);
+            }
+            Grid<RemoteSynchronizationProvider> grdProviders = new Grid();                
+            grdProviders.setItems(automated);
             grdProviders.setSelectionMode(Grid.SelectionMode.MULTI);
             
-            grdProviders.addColumn(SyncProvider::getValue).setCaption("Providers");
+            grdProviders.addColumn(RemoteSynchronizationProvider::getDisplayName).setCaption("Providers");
 
             Button btnRun = new Button("Run");
             btnRun.setWidth(70, Unit.PIXELS);
@@ -112,8 +111,8 @@ public class MiniAppSyncRunner extends AbstractMiniApplication<Component, Compon
             btnRun.addClickListener(new ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent event) {
-                    List<SyncProvider> selectedsyncProviders = new ArrayList();
-                    for (SyncProvider syncProvider : grdProviders.getSelectedItems())
+                    List<RemoteSynchronizationProvider> selectedsyncProviders = new ArrayList();
+                    for (RemoteSynchronizationProvider syncProvider : grdProviders.getSelectedItems())
                         selectedsyncProviders.add(syncProvider);
                                         
                     if (!selectedsyncProviders.isEmpty())

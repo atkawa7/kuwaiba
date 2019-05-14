@@ -51,6 +51,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteQueryLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationConfiguration;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationGroup;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationProvider;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteTask;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteTaskResult;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidator;
@@ -589,6 +590,7 @@ public interface WebserviceBean {
         // </editor-fold>
         
         //<editor-fold desc="Synchronization API" defaultstate="collapsed">
+        public List<RemoteSynchronizationProvider> getSynchronizationProviders(String ipAddress, String sessionId)throws ServerSideException;
         public long createSynchronizationGroup(String name, String ipAddress, String sessionId)throws ServerSideException;
         public void updateSynchronizationGroup(long syncGroupId, List<StringPair> syncGroupProperties, String ipAddress, String sessionId)throws ServerSideException;
         

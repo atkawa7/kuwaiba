@@ -124,6 +124,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationConfiguration;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationGroup;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationProvider;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteTask;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteTaskResult;
 import org.kuwaiba.interfaces.ws.toserialize.application.ResultRecord;
@@ -5293,6 +5294,35 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
         // </editor-fold>    
         //<editor-fold desc="Synchronization API" defaultstate="collapsed">
+    @Override
+    public List<RemoteSynchronizationProvider> getSynchronizationProviders(String ipAddress, String sessionId)throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getSynchronizationProviders", ipAddress, sessionId); //NOI18N
+            List<Pool> configVariablesPools = aem.getConfigurationVariablesPools();
+            
+            List<RemoteSynchronizationProvider> syncProviders = new ArrayList();
+            
+            for (Pool configVariablesPool : configVariablesPools) {
+                if ("Sync Providers".equals(configVariablesPool.getName())) { //NOI18N
+                    List<ConfigurationVariable> configVariables = aem.getConfigurationVariablesInPool(configVariablesPool.getId());
+                    
+                    for (ConfigurationVariable configVariable : configVariables) {
+                        Object configVariableValue = aem.getConfigurationVariableValue(configVariable.getName());
+                        if (configVariableValue instanceof String[] && ((String[]) configVariableValue).length == 3) {
+                            syncProviders.add(new RemoteSynchronizationProvider(((String[]) configVariableValue)[0], ((String[]) configVariableValue)[1], Boolean.valueOf(((String[]) configVariableValue)[2])));
+                        }
+                    }
+                    break;
+                }
+            }
+            return syncProviders;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
     @Override
     public long createSynchronizationDataSourceConfig(String objectId, long syngGroupId, String name, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException{
         if (aem == null)

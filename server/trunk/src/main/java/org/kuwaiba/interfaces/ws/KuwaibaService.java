@@ -79,6 +79,7 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConfigurationVariable;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationProvider;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidator;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidatorDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteMPLSConnectionDetails;
@@ -8109,6 +8110,29 @@ public class KuwaibaService {
         //</editor-fold>
     
         //<editor-fold desc="Inventory Synchronization" defaultstate="collapsed">
+        /**
+         * Get the set of sync providers defined in the configuration variables pool called -Sync Providers-
+         * @param sessionId Session token
+         * @return The set of sync providers defined in the configuration variables pool called -Sync Providers-
+         * @throws ServerSideException If the pool could not be found
+         * If the value of the variable could not be successfully translated into a java type variable
+         * If no configuration variable with that name could be found
+         */
+        @WebMethod(operationName = "getSynchronizationProviders")
+        public List<RemoteSynchronizationProvider> getSynchronizationProviders(
+            @WebParam(name="sessionId") String sessionId)throws ServerSideException {
+            try {
+                return wsBean.getSynchronizationProviders(getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in getSynchronizationProviders: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            } 
+        }
+    
         /**
          * Creates a Synchronization Data Source Configuration. A Sync data source configuration is a set of parameters 
          * used to connect to a sync data source (usually IPs, paths, etc)

@@ -31,6 +31,7 @@ import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationConfiguration;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationProvider;
 
 /**
  * Run the device sync in the web client
@@ -45,22 +46,22 @@ public class SyncRunnerService {
         tabSheet.setSizeFull();
     }
         
-    public void launchAdHocAutomatedSynchronizationTask(Window window, WebserviceBean webserviceBean, RemoteSession remoteSession, List<SyncProvider> syncProviders, RemoteSynchronizationConfiguration syncConfig) {
+    public void launchAdHocAutomatedSynchronizationTask(Window window, WebserviceBean webserviceBean, RemoteSession remoteSession, List<RemoteSynchronizationProvider> syncProviders, RemoteSynchronizationConfiguration syncConfig) {
         this.window = window;
         this.window.setContent(tabSheet);
         tabSheet.removeAllComponents();
         launchNextAdHocAutomatedSynchronizationTask(webserviceBean, remoteSession, syncProviders, syncConfig);
     }
     
-    private void launchNextAdHocAutomatedSynchronizationTask(WebserviceBean webserviceBean, RemoteSession remoteSession, List<SyncProvider> syncProviders, RemoteSynchronizationConfiguration syncConfig) {
+    private void launchNextAdHocAutomatedSynchronizationTask(WebserviceBean webserviceBean, RemoteSession remoteSession, List<RemoteSynchronizationProvider> syncProviders, RemoteSynchronizationConfiguration syncConfig) {
         if (!syncProviders.isEmpty()) {
             
             try {
-                SyncProvider syncProvider = syncProviders.get(0);
+                RemoteSynchronizationProvider syncProvider = syncProviders.get(0);
                 
                 BackgroundJob managedJob = webserviceBean.launchAdHocAutomatedSynchronizationTask(
                     new long[] {syncConfig.getId()},
-                    syncProvider.getName(),
+                    syncProvider.getId(),
                     remoteSession.getIpAddress(),  
                     remoteSession.getSessionId());
                 int retries = 0;
@@ -105,7 +106,7 @@ public class SyncRunnerService {
                 vly.addComponent(grdSyncResult);
                 vly.setComponentAlignment(grdSyncResult, Alignment.MIDDLE_CENTER);
                                 
-                tabSheet.addTab(vly, syncProvider.getValue());
+                tabSheet.addTab(vly, syncProvider.getDisplayName());
 ////                System.out.println(">>>" + syncProvider.getValue());
                 syncProviders.remove(0);
                 launchNextAdHocAutomatedSynchronizationTask(webserviceBean, remoteSession, syncProviders, syncConfig);

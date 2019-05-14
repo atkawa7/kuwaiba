@@ -4319,6 +4319,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     realConfigVariableValue = Boolean.valueOf(rawConfigVariableValue);
                     break;
                 case ConfigurationVariable.TYPE_ARRAY: //Not implemented yet
+                    return rawConfigVariableValue.split(",");
                 case ConfigurationVariable.TYPE_MATRIX:
                     return new ArrayList<>();
                 default:
