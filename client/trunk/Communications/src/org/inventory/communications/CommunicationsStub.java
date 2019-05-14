@@ -76,6 +76,7 @@ import org.inventory.communications.core.views.LocalObjectViewLight;
 import com.neotropic.inventory.modules.sync.AbstractRunnableSyncFindingsManager;
 import com.neotropic.inventory.modules.sync.AbstractRunnableSyncResultsManager;
 import com.neotropic.inventory.modules.sync.LocalSyncAction;
+import com.neotropic.inventory.modules.sync.LocalSyncProvider;
 import com.sun.javafx.scene.control.skin.VirtualFlow;
 import org.inventory.communications.core.LocalConfigurationVariable;
 import org.inventory.communications.core.LocalMPLSConnectionDetails;
@@ -119,6 +120,7 @@ import org.inventory.communications.wsclient.RemoteSDHContainerLinkDefinition;
 import org.inventory.communications.wsclient.RemoteSDHPosition;
 import org.inventory.communications.wsclient.RemoteSynchronizationConfiguration;
 import org.inventory.communications.wsclient.RemoteSynchronizationGroup;
+import org.inventory.communications.wsclient.RemoteSynchronizationProvider;
 import org.inventory.communications.wsclient.RemoteTask;
 import org.inventory.communications.wsclient.RemoteTaskResult;
 import org.inventory.communications.wsclient.RemoteValidator;
@@ -5395,6 +5397,22 @@ public class CommunicationsStub {
     //</editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Synchronization methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Get the set of sync providers defined in the configuration variables pool called -Sync Providers-
+     * @return The set of sync providers defined in the configuration variables pool called -Sync Providers-
+     */
+    public List<LocalSyncProvider> getSynchronizationProviders() {
+        try {
+            List<RemoteSynchronizationProvider> remoteSyncProviders = service.getSynchronizationProviders(session.getSessionId());
+            List<LocalSyncProvider> syncProviders = new ArrayList();
+            for (RemoteSynchronizationProvider remoteSyncProvider : remoteSyncProviders)
+                syncProviders.add(new LocalSyncProvider(remoteSyncProvider.getId(), remoteSyncProvider.getDisplayName(), remoteSyncProvider.isAutomated()));
+            return syncProviders;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
     /**
      * Create a Sync Group
      * @param syncGroupName The name of the Sync group

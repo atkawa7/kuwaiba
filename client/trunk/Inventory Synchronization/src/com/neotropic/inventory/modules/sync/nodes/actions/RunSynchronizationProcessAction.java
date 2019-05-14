@@ -95,9 +95,13 @@ public class RunSynchronizationProcessAction extends GenericObjectNodeAction imp
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        
-        LocalSyncProvider[] availableProviders = {
-            new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.reference.ReferenceSnmpSyncProvider", "Hardware Via SNMP", true)};
+        List<LocalSyncProvider> syncProviders = CommunicationsStub.getInstance().getSynchronizationProviders();
+        if (syncProviders == null) {
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            return;
+        }
+        LocalSyncProvider[] availableProviders = syncProviders.toArray(new LocalSyncProvider[0]);
          
         Iterator<? extends AbstractNode> selectedNodes = Utilities.actionsGlobalContext()
             .lookupResult(AbstractNode.class).allInstances().iterator();
