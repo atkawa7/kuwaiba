@@ -1,0 +1,72 @@
+<root>
+  <form>
+    <label value="Service Information" styleName="title"/>
+    <gridLayout columns="2" rows="4">
+      <label value="Customer"/>
+      <textField enabled="false" onload="value.shared.2.cbmCustomer"/>
+
+      <label value="Service Type"/>
+      <textField enabled="false" onload="value.shared.2.cmbService"/>
+
+      <label value="Service Name"/>
+      <textField enabled="false" onload="value.shared.2.txtServiceName"/>
+
+    </gridLayout>
+
+    <label value="Material Configuration Status" styleName="title"/>
+
+    <gridLayout columns="2" rows="1" alignment="middleCenter">
+      <button caption="Confirm Configuration" width="250px" onclick="propertyChange.frmConfirmPreconfiguration.enabled.isSelectedAnyRow.gridSharedEquipmentOrder open.frmConfirmPreconfiguration"/>
+      <button caption="Not Configured Yet" width="250px" onclick="propertyChange.frmNotConfigured.enabled.isSelectedAnyRow.gridSharedEquipmentOrder open.frmNotConfigured"/>
+    </gridLayout>
+    <grid alignment="middleCenter" id="gridSharedEquipmentOrder" save="false" datatype="Remote" onload="rows.getMaterialPreconfigurationStatus.5.gridEquipmentOrder" height="250px" width="1300px">
+        <column caption="Device"/>
+        <column caption="Configured"/>
+        <column caption="Position"/>
+        <column caption="Rack"/>
+        <column caption="Building"/>
+        <column caption="City"/>
+    </grid>
+
+    <subform id="frmConfirmPreconfiguration">
+
+      <gridLayout columns="2" rows="1" alignment="topCenter">
+        <label value="Confirm configuration of "/>
+        <textField id="txtOrderedMaterialName" datatype="String" width="300px" onload="value.getSelectedRowGridDataValue.gridSharedEquipmentOrder.0"/>
+        <textField id="txtOrderedMaterialPosition" hidden="true" datatype="String" onload="value.getSelectedRowGridDataValue.gridSharedEquipmentOrder.2"/>
+        <textField id="txtOrderedMaterialRack" hidden="true" datatype="String" onload="value.getSelectedRowGridDataValue.gridSharedEquipmentOrder.3"/>
+        <textField id="txtOrderedMaterialBuilding" hidden="true" datatype="String" onload="value.getSelectedRowGridDataValue.gridSharedEquipmentOrder.4"/>
+        <textField id="txtOrderedMaterialCity" hidden="true" datatype="String" onload="value.getSelectedRowGridDataValue.gridSharedEquipmentOrder.5"/>
+      </gridLayout>
+
+      <horizontalLayout alignment="bottomCenter">
+        <button caption="Yes" width="50px" styleName="buttonPrimary" onclick="editgridrow.gridSharedEquipmentOrder.txtOrderedMaterialName.YES.txtOrderedMaterialPosition.txtOrderedMaterialRack.txtOrderedMaterialBuilding.txtOrderedMaterialCity close.frmConfirmPreconfiguration"/>
+        <button caption="Cancel" width="50px" onclick="close.frmConfirmPreconfiguration clean.frmConfirmPreconfiguration"/>
+      </horizontalLayout>
+    </subform>
+
+    <subform id="frmNotConfigured">
+
+      <gridLayout columns="2" rows="1" alignment="topCenter">
+        <label value="Is the material not configured yet "/>
+        <textField id="txtOrderedMaterialName2" datatype="String" width="300px" onload="value.getSelectedRowGridDataValue.gridSharedEquipmentOrder.0"/>
+        <textField id="txtOrderedMaterialPosition2" hidden="true" datatype="String" onload="value.getSelectedRowGridDataValue.gridSharedEquipmentOrder.2"/>
+        <textField id="txtOrderedMaterialRack2" hidden="true" datatype="String" onload="value.getSelectedRowGridDataValue.gridSharedEquipmentOrder.3"/>
+        <textField id="txtOrderedMaterialBuilding2" hidden="true" datatype="String" onload="value.getSelectedRowGridDataValue.gridSharedEquipmentOrder.4"/>
+        <textField id="txtOrderedMaterialCity2" hidden="true" datatype="String" onload="value.getSelectedRowGridDataValue.gridSharedEquipmentOrder.5"/>
+      </gridLayout>
+
+      <horizontalLayout alignment="bottomCenter">
+        <button caption="No, it's not configured yet" width="200px" styleName="buttonPrimary" onclick="editgridrow.gridSharedEquipmentOrder.txtOrderedMaterialName2.NO.txtOrderedMaterialPosition2.txtOrderedMaterialRack2.txtOrderedMaterialBuilding2.txtOrderedMaterialCity2 close.frmNotConfigured"/>
+        <button caption="Cancel" width="200px" onclick="close.frmNotConfigured clean.frmNotConfigured"/>
+      </horizontalLayout>
+    </subform>
+  </form>
+  <script src="scripts.xml">
+    <function type="function" name="isSelectedAnyRow" parameternames="grid">
+      <![CDATA[
+        grid.getSelectedRow() != -1;
+      ]]>
+    </function>
+  </script>
+</root>
