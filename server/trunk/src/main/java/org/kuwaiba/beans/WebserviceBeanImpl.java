@@ -26,7 +26,6 @@ import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
-import com.neotropic.kuwaiba.modules.views.ObjectLinkObjectDefinition;
 import com.neotropic.kuwaiba.modules.views.ViewModule;
 import com.neotropic.kuwaiba.modules.warehouse.WarehouseModule;
 import com.neotropic.kuwaiba.scheduling.BackgroundJob;
@@ -39,6 +38,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -144,7 +144,6 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLinkObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLightList;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemotePhysicalConnectionDetails;
 import org.kuwaiba.interfaces.ws.toserialize.business.ServiceLevelCorrelatedInformation;
 import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHContainerLinkDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHPosition;
@@ -5301,22 +5300,29 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("getSynchronizationProviders", ipAddress, sessionId); //NOI18N
             List<Pool> configVariablesPools = aem.getConfigurationVariablesPools();
-            
-            List<RemoteSynchronizationProvider> syncProviders = new ArrayList();
-            
+                        
+            HashMap<Integer, RemoteSynchronizationProvider> map = new HashMap();
+                        
             for (Pool configVariablesPool : configVariablesPools) {
                 if ("Sync Providers".equals(configVariablesPool.getName())) { //NOI18N
                     List<ConfigurationVariable> configVariables = aem.getConfigurationVariablesInPool(configVariablesPool.getId());
                     
                     for (ConfigurationVariable configVariable : configVariables) {
                         Object configVariableValue = aem.getConfigurationVariableValue(configVariable.getName());
-                        if (configVariableValue instanceof String[] && ((String[]) configVariableValue).length == 3) {
-                            syncProviders.add(new RemoteSynchronizationProvider(((String[]) configVariableValue)[0], ((String[]) configVariableValue)[1], Boolean.valueOf(((String[]) configVariableValue)[2])));
-                        }
+                        if (configVariableValue instanceof String[] && ((String[]) configVariableValue).length == 4)
+                            map.put(Integer.valueOf(((String[]) configVariableValue)[0]), new RemoteSynchronizationProvider(((String[]) configVariableValue)[1], ((String[]) configVariableValue)[2], Boolean.valueOf(((String[]) configVariableValue)[3])));
                     }
                     break;
                 }
             }
+            List<Integer> positions = new ArrayList();
+            positions.addAll(map.keySet());
+            Collections.sort(positions);
+            
+            List<RemoteSynchronizationProvider> syncProviders = new ArrayList();
+            for (int position : positions)
+                syncProviders.add(map.get(position));
+            
             return syncProviders;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
