@@ -64,7 +64,7 @@ public class MPLSConnectionWizard {
             LocalObjectLight sourcePort = (LocalObjectLight)wizardDescriptor.getProperty("sourcePort");
             LocalObjectLight targetPort = (LocalObjectLight)wizardDescriptor.getProperty("targetPort");
             String connectionName = (String)wizardDescriptor.getProperty("connectionName");
-            LocalObjectLight newTransportLink = null;//com.createMPLSLink(sourcePort, targetPort, "MPLSLink", connectionName);
+            LocalObjectLight newTransportLink = com.createMPLSLink(sourcePort, targetPort, connectionName);
             if (newTransportLink == null) {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                 return null;

@@ -373,8 +373,7 @@ public class MplsLinkEndpointsViewScene extends AbstractScene<LocalObjectLight, 
         newWidget.getActions().addAction(moveAction);
         newWidget.setPreferredLocation(new Point(nodeLayer.getChildren().size() * 200, (nodeLayer.getChildren().size() % 2) * 200 ));
         nodeLayer.addChild(newWidget);
-        
-        validate();
+
         return newWidget;
     }
 
@@ -393,7 +392,6 @@ public class MplsLinkEndpointsViewScene extends AbstractScene<LocalObjectLight, 
             newWidget.setLineColor(classMetadata.getColor());
         
         edgeLayer.addChild(newWidget);
-        validate();
         return newWidget;
     }
 }

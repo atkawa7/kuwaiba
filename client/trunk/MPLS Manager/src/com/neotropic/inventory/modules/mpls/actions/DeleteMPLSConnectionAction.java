@@ -53,12 +53,12 @@ public class DeleteMPLSConnectionAction extends GenericObjectNodeAction /*implem
         if (JOptionPane.showConfirmDialog(null, 
                 "Are you sure you want to do this?", 
                 "Delete MPLS Link", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
-//            for (LocalObjectLight selectedObject : selectedObjects) {
-//                if (CommunicationsStub.getInstance().deleteMPLSLink(selectedObject.getClassName(), selectedObject.getId())) 
-//                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, String.format("%s deleted sucessfully", selectedObject));
-//                else 
-//                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-//            }
+            for (LocalObjectLight selectedObject : selectedObjects) {
+                if (CommunicationsStub.getInstance().deleteMPLSLink(selectedObject.getId())) 
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, String.format("%s deleted sucessfully", selectedObject));
+                else 
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            }
         }
     }
 
