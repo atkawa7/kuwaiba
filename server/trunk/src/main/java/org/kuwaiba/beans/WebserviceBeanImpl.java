@@ -5304,7 +5304,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             HashMap<Integer, RemoteSynchronizationProvider> map = new HashMap();
                         
             for (Pool configVariablesPool : configVariablesPools) {
-                if ("Sync Providers".equals(configVariablesPool.getName())) { //NOI18N
+                if ("com.neotropic.kuwaiba.sync.providers".equals(configVariablesPool.getName())) { //NOI18N
                     List<ConfigurationVariable> configVariables = aem.getConfigurationVariablesInPool(configVariablesPool.getId());
                     
                     for (ConfigurationVariable configVariable : configVariables) {
@@ -5314,6 +5314,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
                     }
                     break;
                 }
+                else
+                    throw new ServerSideException("The configuration variable com.neotropic.kuwaiba.sync.providers was not found");
             }
             List<Integer> positions = new ArrayList();
             positions.addAll(map.keySet());

@@ -3631,8 +3631,8 @@ public class KuwaibaService {
      * @throws ServerSideException If the user is not allowed to invoke the method
      *                             If the provided connection could not be found
      */
-    @WebMethod(operationName = "ValidateSavedE2EView")
-    public RemoteViewObject ValidateSavedE2EView( 
+    @WebMethod(operationName = "validateSavedE2EView")
+    public RemoteViewObject validateSavedE2EView( 
             @WebParam(name = "linkClasses")List<String> linkClasses,
             @WebParam(name = "linkIds")List<String> linkIds,
             @WebParam(name = "savedView") RemoteViewObject savedView,
@@ -3643,7 +3643,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getLogicalLinkDetails: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in validateSavedE2EView: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -3674,7 +3674,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getLogicalLinkDetails: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in getE2EView: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
