@@ -47,7 +47,8 @@ import org.snmp4j.smi.OID;
 public class BgpSyncProvider extends AbstractSyncProvider{
     @Override
     public String getDisplayName() {
-        return "BGP Map";
+        //BGP Map
+        return "Border Gateway Protocol";
     }
 
     @Override

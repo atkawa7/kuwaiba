@@ -1553,6 +1553,12 @@ public interface ApplicationEntityManager {
      */
     public List<ConfigurationVariable> getConfigurationVariablesInPool(String poolId) throws ApplicationObjectNotFoundException;
     /**
+     * Gets the configuration variables with a given prefix
+     * @param prefix The prefix of the variables name
+     * @return The list of config variables with the given prefix
+     */    
+    public List<ConfigurationVariable> getConfigurationVariablesWithPrefix(String prefix);
+    /**
      * Retrieves the list of pools of config variables
      * @return The available pools of configuration variables
      */

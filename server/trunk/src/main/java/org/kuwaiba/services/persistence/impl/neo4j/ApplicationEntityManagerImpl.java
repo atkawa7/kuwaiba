@@ -4360,6 +4360,37 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             return res;
         }
     }
+    
+    @Override
+    public List<ConfigurationVariable> getConfigurationVariablesWithPrefix(String prefix) {
+        if (prefix == null)
+            return new ArrayList();
+        if (prefix.isEmpty())
+            return new ArrayList();
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            ResourceIterator<Node> configVariableNodes = graphDb.findNodes(configurationVariables);
+            
+            List<ConfigurationVariable> res = new ArrayList<>();
+            
+            while (configVariableNodes.hasNext()) {
+                Node configVariableNode = configVariableNodes.next();
+                
+                String name = (String) configVariableNode.getProperty(Constants.PROPERTY_NAME);
+                
+                if (name != null && name.startsWith(prefix)) {
+                    ConfigurationVariable configurationVariable = new ConfigurationVariable(configVariableNode.getId(), (String)configVariableNode.getProperty(Constants.PROPERTY_NAME), 
+                                                (String)configVariableNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
+                                                (String)configVariableNode.getProperty(Constants.PROPERTY_VALUE), 
+                                                (boolean)configVariableNode.getProperty(Constants.PROPERTY_MASKED), 
+                                                 (int)configVariableNode.getProperty(Constants.PROPERTY_TYPE));
+                    
+                    res.add(configurationVariable);
+                }
+            }
+            return res;            
+        }
+    }
 
     @Override
     public List<Pool> getConfigurationVariablesPools() {

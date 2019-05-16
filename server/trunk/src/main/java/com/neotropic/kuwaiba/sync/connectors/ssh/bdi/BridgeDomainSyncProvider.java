@@ -61,7 +61,8 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
 
     @Override
     public String getDisplayName() {
-        return "Bridge Domains and Bridge Domain Interfaces Sync Provider";
+        //Bridge Domains and Bridge Domain Interfaces Sync Provider
+        return "Bridge Domains";
     }
 
     @Override

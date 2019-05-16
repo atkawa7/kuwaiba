@@ -30,6 +30,7 @@ import com.neotropic.kuwaiba.modules.views.ViewModule;
 import com.neotropic.kuwaiba.modules.warehouse.WarehouseModule;
 import com.neotropic.kuwaiba.scheduling.BackgroundJob;
 import com.neotropic.kuwaiba.scheduling.JobManager;
+import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
 import com.neotropic.kuwaiba.sync.model.SyncAction;
 import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
@@ -5299,30 +5300,30 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getSynchronizationProviders", ipAddress, sessionId); //NOI18N
-            List<Pool> configVariablesPools = aem.getConfigurationVariablesPools();
+            HashMap<String, RemoteSynchronizationProvider> map = new HashMap();
                         
-            HashMap<Integer, RemoteSynchronizationProvider> map = new HashMap();
-                        
-            for (Pool configVariablesPool : configVariablesPools) {
-                if ("com.neotropic.kuwaiba.sync.providers".equals(configVariablesPool.getName())) { //NOI18N
-                    List<ConfigurationVariable> configVariables = aem.getConfigurationVariablesInPool(configVariablesPool.getId());
-                    
-                    for (ConfigurationVariable configVariable : configVariables) {
-                        Object configVariableValue = aem.getConfigurationVariableValue(configVariable.getName());
-                        if (configVariableValue instanceof String[] && ((String[]) configVariableValue).length == 4)
-                            map.put(Integer.valueOf(((String[]) configVariableValue)[0]), new RemoteSynchronizationProvider(((String[]) configVariableValue)[1], ((String[]) configVariableValue)[2], Boolean.valueOf(((String[]) configVariableValue)[3])));
+            List<ConfigurationVariable> configVariables = aem.getConfigurationVariablesWithPrefix("sync.providers.enabled.provider");
+
+            for (ConfigurationVariable configVariable : configVariables) {
+                Object configVariableValue = aem.getConfigurationVariableValue(configVariable.getName());
+                if (configVariableValue instanceof String) {
+                    try {
+                        Class providerClass = Class.forName((String) configVariableValue);
+                        if (AbstractSyncProvider.class.isAssignableFrom(providerClass)) {
+                            AbstractSyncProvider syncProvider = (AbstractSyncProvider)providerClass.newInstance();
+                            map.put(configVariable.getName(), new RemoteSynchronizationProvider(syncProvider.getId(), syncProvider.getDisplayName(), syncProvider.isAutomated()));
+                        }
+                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+                        throw new InvalidArgumentException(String.format("The configuration variable %s has an invalid value", configVariable.getName()));
                     }
-                    break;
                 }
-                else
-                    throw new ServerSideException("The configuration variable com.neotropic.kuwaiba.sync.providers was not found");
             }
-            List<Integer> positions = new ArrayList();
+            List<String> positions = new ArrayList();
             positions.addAll(map.keySet());
             Collections.sort(positions);
             
             List<RemoteSynchronizationProvider> syncProviders = new ArrayList();
-            for (int position : positions)
+            for (String position : positions)
                 syncProviders.add(map.get(position));
             
             return syncProviders;

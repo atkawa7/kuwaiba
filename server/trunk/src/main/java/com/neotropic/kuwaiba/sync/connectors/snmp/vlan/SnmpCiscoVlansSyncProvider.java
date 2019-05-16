@@ -48,7 +48,8 @@ public class SnmpCiscoVlansSyncProvider extends AbstractSyncProvider{
     
     @Override
     public String getDisplayName() {
-        return "Cisco - vlanTrunkPortTable SNMP Synchronization Provider";
+        //Cisco - vlanTrunkPortTable SNMP Synchronization Provider
+        return "VLANs";
     }
 
     @Override

@@ -49,7 +49,8 @@ public class IPAddressesSyncProvider extends AbstractSyncProvider {
 
     @Override
     public String getDisplayName() {
-        return "IP Addresses, subnets and Interfaces";
+        //IP Addresses, subnets and Interfaces
+        return "IP Addresses";
     }
 
     @Override

@@ -58,7 +58,8 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
         
     @Override
     public String getDisplayName() {
-        return "Reference SNMP Synchronization Provider";
+        //Reference SNMP Synchronization Provider
+        return "Physical / Virtual Interfaces";
     }
 
     @Override
