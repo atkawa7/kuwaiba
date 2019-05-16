@@ -124,11 +124,17 @@ public class RunSynchronizationProcessAction extends GenericObjectNodeAction imp
                 syncDataSources.add(child.getLookup().lookup(LocalSyncDataSourceConfiguration.class));
             
             localSyncGroup.setDataSourceConfig(syncDataSources);
-        }
+        }//The sync process has been launch from a group of objects
         else if(nodes.size() == 1 &&  nodes.get(0) instanceof ObjectNode){
             LocalSyncDataSourceConfiguration syncDataSourceConfiguration = CommunicationsStub.getInstance().getSyncDataSourceConfiguration(((ObjectNode)nodes.get(0)).getObject().getId());
+
+            if(syncDataSourceConfiguration == null)
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                                        NotificationUtil.ERROR_MESSAGE, I18N.gm("sync_error_no_config"));
+            
             syncDataSources.add(syncDataSourceConfiguration);
             localSyncGroup = new LocalSyncGroup(-1, "adhocSyncGroup", syncDataSources);
+            
         }
         else{//The sync process has been launch from individual syn data source configuration files
             for(AbstractNode selectedNode : nodes){
@@ -138,71 +144,84 @@ public class RunSynchronizationProcessAction extends GenericObjectNodeAction imp
             localSyncGroup = new LocalSyncGroup(-1, "adhocSyncGroup", syncDataSources);
         }        
 
-        final JList<LocalSyncProvider> lstProvidres = new JList<>(availableProviders);
-        
-        final JFrame frame = new JFrame("Available Syncrhonization Providers");
-        frame.setLayout(new BorderLayout());
-        frame.setSize(400, 350);
-        frame.setLocationRelativeTo(null);
-        JLabel lblInstructions = new JLabel("Select the providers (click + crtl for multiple selection)");
-        lblInstructions.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        frame.add(lblInstructions, BorderLayout.NORTH);
-        frame.add(lstProvidres, BorderLayout.CENTER);
-        JPanel pnlButtons = new JPanel();
-        pnlButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
-        JButton btnRelate = new JButton("Run Synchronization");
-        pnlButtons.add(btnRelate);
-        
-        btnRelate.addActionListener(new ActionListener(){
-        
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (localSyncGroup.getDataSourceConfig().isEmpty()) 
-                    JOptionPane.showMessageDialog(null, I18N.gm("sync_no_configs"), I18N.gm("error"), JOptionPane.WARNING_MESSAGE);
-                else{
-                    //we check every single datasource configuration
-                    for (LocalSyncDataSourceConfiguration dsConfig : localSyncGroup.getDataSourceConfig()) {
-                        if (dsConfig != null) {
-                            HashMap<String, String> parameters = dsConfig.getParameters();
-                            String deviceId = parameters.containsKey("deviceId") ? parameters.get("deviceId") : null;
-                            String deviceClass = parameters.containsKey("deviceClass") ? parameters.get("deviceClass") : null;
-                            if (deviceClass != null && deviceId != null) {
-                                LocalObjectLight deviceObj = CommunicationsStub.getInstance().getObjectInfoLight(deviceClass, deviceId);
-                                if (deviceObj == null) {
+        if (localSyncGroup.getDataSourceConfig() == null || localSyncGroup.getDataSourceConfig().isEmpty())
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                NotificationUtil.INFO_MESSAGE, String.format(I18N.gm("sync_error_no_config"), ((ObjectNode)nodes.get(0)).getObject()));
+        else{
+
+            final JList<LocalSyncProvider> lstProvidres = new JList<>(availableProviders);
+
+            final JFrame frame = new JFrame("Available Syncrhonization Providers");
+            frame.setLayout(new BorderLayout());
+            frame.setSize(400, 350);
+            frame.setLocationRelativeTo(null);
+            JLabel lblInstructions = new JLabel("Select the providers (click + crtl for multiple selection)");
+            lblInstructions.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            frame.add(lblInstructions, BorderLayout.NORTH);
+            frame.add(lstProvidres, BorderLayout.CENTER);
+            JPanel pnlButtons = new JPanel();
+            pnlButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
+            JButton btnSelectProvider = new JButton("Run Synchronization");
+            pnlButtons.add(btnSelectProvider);
+
+            btnSelectProvider.addActionListener(new ActionListener(){
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if(lstProvidres.getSelectedValuesList().isEmpty())
+                        JOptionPane.showMessageDialog(null, "select one provider", I18N.gm("error"), JOptionPane.WARNING_MESSAGE);
+                    else{
+                        //we check every single datasource configuration
+                        for (LocalSyncDataSourceConfiguration dsConfig : localSyncGroup.getDataSourceConfig()) {
+                            if (dsConfig != null) {
+                                HashMap<String, String> parameters = dsConfig.getParameters();
+                                String deviceId = parameters.containsKey("deviceId") ? parameters.get("deviceId") : null;
+                                String deviceClass = parameters.containsKey("deviceClass") ? parameters.get("deviceClass") : null;
+                                if (deviceClass != null && deviceId != null) {
+                                    LocalObjectLight deviceObj = CommunicationsStub.getInstance().getObjectInfoLight(deviceClass, deviceId);
+                                    if (deviceObj == null) {
+                                        JOptionPane.showMessageDialog(null,
+                                            String.format("The inventory synchronization cannot be run because the device for the data source configuration %s is not assigned or was removed", dsConfig.toString()), 
+                                            I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
+                                        frame.dispose();
+                                        return;
+                                    }
+                                } else {
                                     JOptionPane.showMessageDialog(null,
                                         String.format("The inventory synchronization cannot be run because the device for the data source configuration %s is not assigned or was removed", dsConfig.toString()), 
                                         I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
+                                    frame.dispose();
                                     return;
                                 }
-                            } else {
-                                JOptionPane.showMessageDialog(null,
-                                    String.format("The inventory synchronization cannot be run because the device for the data source configuration %s is not assigned or was removed", dsConfig.toString()), 
-                                    I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
+                            }
+                            else{
+                                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                                        NotificationUtil.ERROR_MESSAGE, I18N.gm("sync_error_no_config"));
+                                frame.dispose();
                                 return;
                             }
                         }
-                    }
-                    
-                    frame.dispose();
-                    DefaultSyncResultsManager dsfm = new DefaultSyncResultsManager(localSyncGroup, lstProvidres.getSelectedValuesList());
-                    dsfm.runFirst();
-                    dsfm.getProgressHandle().start(lstProvidres.getSelectedValuesList().size());
-                    dsfm.getProgressHandle().progress(lstProvidres.getSelectedValuesList().get(0).getDisplayName(), 0);
-                }
-            }
-        });
-        JButton btnClose = new JButton("Close");
-        btnClose.addActionListener(new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose();
-            }
-        });
-        pnlButtons.add(btnClose);
-        frame.add(pnlButtons, BorderLayout.SOUTH);
-        frame.setVisible(true);
-        
+                        frame.dispose();
+                        DefaultSyncResultsManager dsfm = new DefaultSyncResultsManager(localSyncGroup, lstProvidres.getSelectedValuesList());
+                        dsfm.runFirst();
+                        dsfm.getProgressHandle().start(lstProvidres.getSelectedValuesList().size());
+                        dsfm.getProgressHandle().progress(lstProvidres.getSelectedValuesList().get(0).getDisplayName(), 0);
+                    }
+                }
+            });
+            JButton btnClose = new JButton("Close");
+            btnClose.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    frame.dispose();
+                }
+            });
+            pnlButtons.add(btnClose);
+            frame.add(pnlButtons, BorderLayout.SOUTH);
+            frame.setVisible(true);
+        }
     }
 
     @Override
