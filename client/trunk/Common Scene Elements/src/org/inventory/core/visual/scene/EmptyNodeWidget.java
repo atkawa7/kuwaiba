@@ -117,12 +117,16 @@ public class EmptyNodeWidget extends Widget{
         notifyStateChanged(getState(), getState());
     }
     
-    public void showExtraInfo(){
-        final JFrame frame = new JFrame("Available Syncrhonization Providers");
+    public String[] getExtraInfo() {
+        return extraInfo;
+    }
+        
+    public void showExtraInfo(String frameTittle, String instructions){
+        final JFrame frame = new JFrame(frameTittle);
         frame.setLayout(new BorderLayout());
         frame.setSize(400, 350);
         frame.setLocationRelativeTo(null);
-        JLabel lblInstructions = new JLabel("Detail List of Peerings");
+        JLabel lblInstructions = new JLabel(instructions);
         lblInstructions.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         
         frame.add(lblInstructions, BorderLayout.NORTH);
@@ -137,8 +141,6 @@ public class EmptyNodeWidget extends Widget{
         frame.add(pnlButtons, BorderLayout.SOUTH);
         frame.setVisible(true);
     }
-    
-    
     
     /**
      * Implements the widget-state specific look of the widget.
