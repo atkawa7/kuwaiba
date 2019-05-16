@@ -142,7 +142,6 @@ public class IndexUI extends UI {
             
             this.getSession().addRequestHandler((mySession, myRequest, myResponse) -> {
                 if ("/icons".equals(myRequest.getPathInfo())) { //NOI18N
-
                     RemoteSession session = (RemoteSession) this.getSession().getAttribute("session"); //NOI18N
                     if (session == null) {
                         myResponse.setContentType("text/plain"); //NOI18N
@@ -157,13 +156,18 @@ public class IndexUI extends UI {
                     } else {
                         myResponse.setContentType("image/png"); //NOI18N
                         try {
+                            String color = myRequest.getParameter("color");
                             RemoteClassMetadata aClass = wsBean.getClass(className, 
                                     session.getIpAddress(), 
                                     session.getSessionId());
-                            myResponse.getOutputStream().write(aClass.getIcon().length == 0 ? 
-                                    ResourceFactory.createRectangleIcon(Color.BLACK, 32, 32) : aClass.getIcon());
+                            
+                            if (color != null && color.equals("true"))
+                                myResponse.getOutputStream().write(ResourceFactory.createRectangleIcon(new Color(aClass.getColor()), 16, 16));
+                            else
+                                myResponse.getOutputStream().write(aClass.getIcon().length == 0 ? 
+                                       ResourceFactory.createRectangleIcon(Color.BLACK, 16, 16) : aClass.getIcon());
                         } catch (ServerSideException ex) {
-                            myResponse.getOutputStream().write(ResourceFactory.createRectangleIcon(Color.BLACK, 24, 24));
+                            myResponse.getOutputStream().write(ResourceFactory.createRectangleIcon(Color.BLACK, 16, 16));
                         }
                     }
                     return true;

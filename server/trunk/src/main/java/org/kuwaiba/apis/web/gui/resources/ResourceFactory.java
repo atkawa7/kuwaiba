@@ -221,7 +221,7 @@ public class ResourceFactory {
     }
     
     /**
-     * Creates a colored squared icon as a byte array
+     * Creates a colored square icon as a byte array
      * @param color The color to be applied to the icon
      * @param width The icon width
      * @param height The icon height
@@ -233,6 +233,29 @@ public class ResourceFactory {
             Graphics2D graphics = image.createGraphics();
             graphics.setColor(color == null ? DEFAULT_ICON_COLOR : color);
             graphics.fillRect(0, 0, width, height);
+                        
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", baos);
+            
+            return baos.toByteArray();
+        } catch (IOException ex) {
+            return null;
+        }
+    }
+    
+    /**
+     * Creates a colored square icon as a byte array
+     * @param color The color to be applied to the icon
+     * @param width The icon width
+     * @param height The icon height
+     * @return The icon as a byte array
+     */
+    public static byte[] createCircleIcon(Color color, int width, int height) {
+        try {
+            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            Graphics2D graphics = image.createGraphics();
+            graphics.setColor(color == null ? DEFAULT_ICON_COLOR : color);
+            graphics.fillOval(0, 0, width, height);
                         
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(image, "png", baos);

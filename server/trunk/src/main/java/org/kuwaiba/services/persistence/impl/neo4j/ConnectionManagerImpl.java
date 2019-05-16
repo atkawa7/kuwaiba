@@ -119,7 +119,7 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
     }
     
     @Override
-    public GraphDatabaseService getConnectionHandler(){
+    public GraphDatabaseService getConnectionHandler() {
         return graphDb;
     }
 

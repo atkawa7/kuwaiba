@@ -20,7 +20,9 @@ import org.kuwaiba.web.modules.osp.OSPConstants;
 import com.vaadin.server.Page;
 import com.vaadin.tapio.googlemaps.GoogleMapsComponent;
 import com.vaadin.tapio.googlemaps.client.LatLon;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import java.util.List;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -97,9 +99,6 @@ public class SimpleMapDashboardWidget extends AbstractDashboardWidget {
 
         GoogleMapsComponent<RemoteObjectLight, RemoteObjectLight> mapMain = new GoogleMapsComponent(apiKey, null, language);
 
-        mapMain.setSizeFull();
-        mapMain.showMarkerLabels(true);
-
         try {
             List<RemoteObjectLight> allPhysicalLocations = wsBean.getObjectsOfClassLight(Constants.CLASS_GENERICLOCATION, -1, Page.getCurrent().getWebBrowser().getAddress(), 
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
@@ -116,8 +115,9 @@ public class SimpleMapDashboardWidget extends AbstractDashboardWidget {
                                 ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
 
                             if (latitude != null)
-                                mapMain.addMarker(aPhysicalLocation, aPhysicalLocation.toString(), new LatLon(
-                                    Float.valueOf(latitude), Float.valueOf(longitude)), false, "/kuwaiba/icons?class=" + aPhysicalLocation.getClassName());
+                                mapMain.addMarker(aPhysicalLocation, aPhysicalLocation.getName(), new LatLon(
+                                    Float.valueOf(latitude), Float.valueOf(longitude)), false, 
+                                    "/kuwaiba/icons?class=" + aPhysicalLocation.getClassName() + "&color=true");
                         }
 
                     } catch (ServerSideException ex) {
@@ -128,10 +128,33 @@ public class SimpleMapDashboardWidget extends AbstractDashboardWidget {
             Notifications.showError(ex.getLocalizedMessage());
         }
 
+        mapMain.setSizeFull();
         mapMain.setCenter(new LatLon(mapLatitude, mapLongitude));
         mapMain.setZoom(mapZoom);
-
-        addComponent(mapMain);
+        //mapMain.showMarkerLabels(false);
+        
+        Panel pnlOptions = new Panel();
+        pnlOptions.setWidth(100, Unit.PERCENTAGE);
+        Button btnToggleLabels = new Button("Show Labels");
+        //Since there is not a ToggleButton implementation, we will make our very simple own 
+        btnToggleLabels.setData(false);
+        btnToggleLabels.setWidth(100, Unit.PIXELS);
+        btnToggleLabels.addClickListener((event) -> {
+            if ((boolean)btnToggleLabels.getData()) {
+                btnToggleLabels.setData(false);
+                btnToggleLabels.setCaption("Show Labels");
+                mapMain.showMarkerLabels(false);
+            } else {
+                btnToggleLabels.setData(true);
+                btnToggleLabels.setCaption("Hide Labels");
+                mapMain.showMarkerLabels(true);
+            }
+        });
+        pnlOptions.setContent(btnToggleLabels);
+        
+        addComponents(pnlOptions, mapMain);
+        setExpandRatio(pnlOptions, 3);
+        setExpandRatio(mapMain, 97);
     }
 
     
