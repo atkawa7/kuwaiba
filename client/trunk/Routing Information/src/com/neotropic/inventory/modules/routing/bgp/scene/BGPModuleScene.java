@@ -18,24 +18,29 @@ package com.neotropic.inventory.modules.routing.bgp.scene;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalLogicalConnectionDetails;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.actions.CustomAddRemoveControlPointAction;
 import org.inventory.core.visual.actions.CustomMoveControlPointAction;
 import org.inventory.core.visual.actions.providers.CustomAcceptActionProvider;
@@ -88,8 +93,8 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
      * Custom select provider
      */
     private final WidgetAction selectAction;
-    private List<LocalLogicalConnectionDetails> bgpMap;
-    private List<Long> bgpLinksIds;
+    //private List<LocalLogicalConnectionDetails> bgpMap;
+    //private List<Long> bgpLinksIds;
 
     public BGPModuleScene() {
         getActions().addAction(ActionFactory.createAcceptAction(new CustomAcceptActionProvider(this, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT)));
@@ -99,8 +104,8 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         interactionLayer = new LayerWidget(this);
         backgroundLayer = new LayerWidget(this);
         
-        bgpMap = new ArrayList<>();
-        bgpLinksIds = new ArrayList<>();
+        //bgpMap = new ArrayList<>();
+        //bgpLinksIds = new ArrayList<>();
         
         addChild(backgroundLayer);
         addChild(interactionLayer);
@@ -124,6 +129,7 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
     @Override
     public byte[] getAsXML() {
         try {
+            
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
             XMLEventWriter xmlew = xmlof.createXMLEventWriter(baos);
@@ -135,7 +141,7 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
             
             QName qnameClass = new QName("class");
             xmlew.add(xmlef.createStartElement(qnameClass, null, null));
-            xmlew.add(xmlef.createCharacters("BGPModuleView"));
+            xmlew.add(xmlef.createCharacters("BGPModuleView")); // NOI18N
             xmlew.add(xmlef.createEndElement(qnameClass, null));
             
             QName qnameNodes = new QName("nodes");
@@ -147,6 +153,8 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                 xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(nodeWidget.getPreferredLocation().y)));
                 
                 LocalObjectLight nodeObject = (LocalObjectLight) findObject(nodeWidget);
+                if(nodeObject.getClassName().equals("BGPPeer"))
+                    xmlew.add(xmlef.createAttribute(new QName("bgppeers"), String.join("~", ((EmptyNodeWidget)nodeWidget).getExtraInfo())));
                 
                 xmlew.add(xmlef.createAttribute(new QName("class"), nodeObject.getClassName()));
                 
@@ -166,10 +174,12 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                 xmlew.add(xmlef.createAttribute(new QName("id"), edgeObject.getId()));
                 xmlew.add(xmlef.createAttribute(new QName("class"), edgeObject.getClassName()));
                 
-                xmlew.add(xmlef.createAttribute(new QName("aside"), getEdgeSource(edgeObject).getId()));
-                xmlew.add(xmlef.createAttribute(new QName("bside"), getEdgeTarget(edgeObject).getId()));
+                xmlew.add(xmlef.createAttribute(new QName("asideid"), getEdgeSource(edgeObject).getId()));
+                xmlew.add(xmlef.createAttribute(new QName("asideclassname"), getEdgeSource(edgeObject).getClassName()));
+                xmlew.add(xmlef.createAttribute(new QName("bsideid"), getEdgeTarget(edgeObject).getId()));
+                xmlew.add(xmlef.createAttribute(new QName("bsideclassname"), getEdgeSource(edgeObject).getClassName()));
                 
-                for (Point point : ((ObjectConnectionWidget)edgeWidget).getControlPoints()) {
+                for (Point point : ((ConnectionWidget)edgeWidget).getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint");
                     xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
                     xmlew.add(xmlef.createAttribute(new QName("x"), Integer.toString(point.x)));
@@ -191,7 +201,110 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
 
     @Override
     public void render(byte[] structure) throws IllegalArgumentException {
+//<editor-fold defaultstate="collapsed" desc="Uncomment this for debugging purposes. This outputs the XML view as a file">
+//        try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_ MPLS_VIEW .xml")) {
+//            fos.write(structure);
+//        } catch(Exception e) { }
+//</editor-fold>
         
+        XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+
+        QName qNode = new QName("node"); //NOI18N
+        QName qEdge = new QName("edge"); //NOI18N
+        QName qControlPoint = new QName("controlpoint"); //NOI18N
+        try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(structure);
+            XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
+
+            while (reader.hasNext()) {
+                int event = reader.next();
+                if (event == XMLStreamConstants.START_ELEMENT){
+                    if (reader.getName().equals(qNode)){
+                        
+                        int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
+                        int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
+                        String bgpPeer = reader.getAttributeValue(null, "bgppeers");
+                        String objectClass = reader.getAttributeValue(null, "class");
+                        String objectId = reader.getElementText();
+                        
+                        LocalObjectLight lol;
+                        
+                        if(objectClass.equals("BGPPeers"))
+                            lol = new LocalObjectLight(objectId, bgpPeer, objectClass);
+                        else
+                            lol = CommunicationsStub.getInstance().getObjectInfoLight(objectClass, objectId);
+
+                        if (lol != null){
+                            Widget widget = addNode(lol);
+                            widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
+                        }else {
+                            NotificationUtil.getInstance().showSimplePopup("Load View", 
+                                    NotificationUtil.INFO_MESSAGE, String.format("Equipment of class %s and id %s could not be found and was removed from the view", 
+                                    objectClass, objectId));
+                            fireChangeEvent(new ActionEvent(this, SCENE_CHANGE, "nodeAutomaticallyRemoved")); //NOI18N
+                        }
+                    }else {
+                        if (reader.getName().equals(qEdge)){
+                            String objectId = reader.getAttributeValue(null, "id");
+                            String aSideId = reader.getAttributeValue(null, "asideid");
+                            String aSideClassName = reader.getAttributeValue(null, "asideclassname");
+                            String bSideId = reader.getAttributeValue(null, "bsideid");
+                            String bSideClassName = reader.getAttributeValue(null, "bsideclassname");
+
+                            String className = reader.getAttributeValue(null,"class");
+                            LocalObjectLight bgpLink;
+                            if(className.isEmpty())
+                                bgpLink = new LocalObjectLight(objectId, "", "");
+                            else
+                                bgpLink = CommunicationsStub.getInstance().getObjectInfoLight(className, objectId);
+                            if (bgpLink != null) {
+                                LocalObjectLight aSideObject = new LocalObjectLight(aSideId, null, aSideClassName);
+                                Widget aSideWidget = findWidget(aSideObject);
+
+                                LocalObjectLight bSideObject = new LocalObjectLight(bSideId, null, bSideClassName);
+                                Widget bSideWidget = findWidget(bSideObject);
+
+                                if (aSideWidget == null || bSideWidget == null) {
+                                    NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, 
+                                            String.format("One or both of the endpoints of the connection of class %s and id %s could not be found. The connection was removed from the view", className, objectId));
+                                    fireChangeEvent(new ActionEvent(this, SCENE_CHANGE, "connectionAutomaticallyRemoved")); //NOI18N
+                                }
+                                else {
+                                    ConnectionWidget newEdge = (ConnectionWidget)addEdge(bgpLink);
+                                    setEdgeSource(bgpLink, aSideObject);
+                                    setEdgeTarget(bgpLink, bSideObject);
+                                    List<Point> localControlPoints = new ArrayList<>();
+                                    while(true){
+                                        reader.nextTag();
+
+                                        if (reader.getName().equals(qControlPoint)){
+                                            if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                                                localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
+                                        }else{
+                                            newEdge.setControlPoints(localControlPoints,false);
+                                            break;
+                                        }
+                                    }
+                                }
+                            } else {
+                                fireChangeEvent(new ActionEvent(this, SCENE_CHANGE, "connectionAutomaticallyRemoved")); //NOI18N
+                                NotificationUtil.getInstance().showSimplePopup("Load view", 
+                                        NotificationUtil.INFO_MESSAGE, String.format("Connection of class %s and id %s could not be found and was removed from the view", className, objectId));
+                            }
+                        }
+                    }
+                }
+            }
+            reader.close();
+            validate();
+            repaint();
+            
+        } catch (NumberFormatException | XMLStreamException ex) {
+            NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.ERROR_MESSAGE, "The view seems corrupted and could not be loaded");
+            clear();
+            if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
+                Exceptions.printStackTrace(ex);
+        }
     }
 
     public void createBGPView(List<LocalLogicalConnectionDetails> bgpMap){
@@ -323,7 +436,7 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
             newNode.getActions().addAction(ActionFactory.createEditAction(new EditProvider() {
                 @Override
                 public void edit(Widget widget) {
-                    ((EmptyNodeWidget)widget).showExtraInfo();
+                    ((EmptyNodeWidget)widget).showExtraInfo("Available Syncrhonization Providers", "Detail List of BGPPeers");
                 }
             }));
         }

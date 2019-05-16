@@ -23,6 +23,7 @@ import org.inventory.communications.core.LocalLogicalConnectionDetails;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.openide.util.Lookup;
 
 /**
  * The service associated to this module
@@ -72,33 +73,41 @@ public class BGPModuleService {
         return views.get(0);
     }
     
-    public LocalObjectView loadView() {
-        List<LocalObjectViewLight> theView = com.getGeneralViews(CLASS_VIEW);
-        if (theView == null)
-            NotificationUtil.getInstance().showSimplePopup("Load view", NotificationUtil.ERROR_MESSAGE, com.getError());
-        else if(theView.isEmpty()){
-            List<LocalLogicalConnectionDetails> bgpMap = com.getBGPMap(new ArrayList<>());
-            scene.createBGPView(bgpMap);
+    public void loadView(){
+        List<LocalObjectViewLight> views = com.getGeneralViews(CLASS_VIEW);
+        if (views == null)
+            NotificationUtil.getInstance().showSimplePopup("Loading BGP view", NotificationUtil.ERROR_MESSAGE, com.getError());
+        else if(views.isEmpty())
+           reloadBGPView();
+        else{
+            view = com.getGeneralView(views.get(0).getId());
+            scene.render(view.getStructure());
         }
-        return null;
     }
     
+    public void reloadBGPView(){
+        List<LocalLogicalConnectionDetails> bgpMap = com.getBGPMap(new ArrayList<>());
+        scene.createBGPView(bgpMap);
+    }
+        
     public boolean saveCurrentView() {
         if (view == null || view.getId() == -1) {//New view
-            long newViewId = com.createGeneralView(CLASS_VIEW, view.getName(), view.getDescription(), scene.getAsXML(), scene.getBackgroundImage());
+            long newViewId = com.createGeneralView(CLASS_VIEW, "BGPMap", "BGPMap Generated Automatically", scene.getAsXML(), scene.getBackgroundImage());
             if (newViewId == -1) {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                 return false;
             }
             else {
-                view = new LocalObjectView(newViewId, CLASS_VIEW, view.getName(), view.getDescription(), scene.getAsXML(), scene.getBackgroundImage());
-                //configObject.setProperty("saved", true);
+                view = new LocalObjectView(newViewId, CLASS_VIEW, "BGPMap", "BGPMap Generated Automatically", scene.getAsXML(), scene.getBackgroundImage());
+                BGPConfigurationObject configObject = Lookup.getDefault().lookup(BGPConfigurationObject.class);
+                configObject.setProperty("saved", true);
                 return true;
             }
         }
         else {
             if (com.updateGeneralView(view.getId(), view.getName(), view.getDescription(), scene.getAsXML(), scene.getBackgroundImage())) {
-                //configObject.setProperty("saved", true);
+                BGPConfigurationObject configObject = Lookup.getDefault().lookup(BGPConfigurationObject.class);
+                configObject.setProperty("saved", true);
                 return true;
             } else {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());

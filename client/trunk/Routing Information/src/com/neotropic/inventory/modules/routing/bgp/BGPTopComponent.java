@@ -25,6 +25,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.inventory.communications.util.Utils;
+import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.export.ExportScenePanel;
@@ -39,6 +40,7 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.explorer.ExplorerManager;
 import org.openide.util.ImageUtilities;
+import org.openide.util.Lookup;
 import org.openide.windows.TopComponent;
 
 /**
@@ -61,10 +63,9 @@ import org.openide.windows.TopComponent;
         preferredID = "BGPTopComponent"
 )
 
-public final class BGPTopComponent extends TopComponent {
+public final class BGPTopComponent extends TopComponent implements Refreshable{
 
     private static final String ICON_PATH = "com/neotropic/inventory/modules/routing/res/icon.png";
-    private ExplorerManager em;
     private BGPModuleScene scene;
     private BGPModuleService service;
     private BGPConfigurationObject configObject;
@@ -78,10 +79,13 @@ public final class BGPTopComponent extends TopComponent {
     }
     
     public void initCustomComponents() {
-        em = new ExplorerManager();
+        //em = new ExplorerManager();
         scene = new BGPModuleScene();
         service = new BGPModuleService(scene);
         associateLookup(scene.getLookup());
+        
+        configObject = Lookup.getDefault().lookup(BGPConfigurationObject.class);
+        configObject.setProperty("saved", true);
         
         scene.setActiveTool(BGPModuleScene.ACTION_SELECT);
         pnlScrollMain.setViewportView(scene.createView());
@@ -274,5 +278,11 @@ public final class BGPTopComponent extends TopComponent {
     void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
+    }
+
+    @Override
+    public void refresh() {
+        scene.clear();
+        service.reloadBGPView();
     }
 }
