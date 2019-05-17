@@ -389,7 +389,7 @@ public class BGPSynchronizer {
                 BusinessObject location = bem.getParentOfClass(className, id, "City");
                 if(location == null)
                     res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Searching device location",
-                            "The sync device has no parent subclass of City"));
+                            "The device to be synchronized does not have a parent subclass of City"));
                 else{
                     BusinessObjectLight providersParent = null;
                     List<BusinessObjectLight> children = bem.getObjectChildren(location.getClassName(), location.getId(), 10);
@@ -398,8 +398,8 @@ public class BGPSynchronizer {
                             providersParent = child;
                     }
                     if(providersParent == null)                        
-                        res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Searching providers location",
-                            "To sync BGP information, it is necesary to create an object of class: Provider as child of the City"));
+                        res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Searching provider location",
+                            "To sync BGP information, it is necessary to create an object of class Provider as child of the specified City"));
                     else{
                         List<BusinessObjectLight> peers = bem.getObjectChildren(providersParent.getClassName(), providersParent.getId(), -1);
                         for (BusinessObjectLight peer : peers) {
@@ -414,7 +414,7 @@ public class BGPSynchronizer {
                                     try {
                                         bem.updateObject(obj.getClassName(), obj.getId(), obj.getAttributes());
                                         res.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, "Grouping Peers",
-                                            String.format("A new IP address %s was added to the peer: %s", bgpPeerRemoteAddr, obj.toString())));
+                                            String.format("A new IP address %s was added to the peer %s", bgpPeerRemoteAddr, obj.toString())));
                                     } catch (OperationNotPermittedException ex) {
                                         res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Grouping Peers",
                                                ex.getLocalizedMessage()));
@@ -428,7 +428,7 @@ public class BGPSynchronizer {
                 }
             }
         } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
-            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Creating Provider", 
+            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Creating provider", 
                     String.format("No provider was created for ASN %s with IP address %s because %s", 
                             asnNumber, bgpPeerRemoteAddr, ex.getLocalizedMessage())));
         }

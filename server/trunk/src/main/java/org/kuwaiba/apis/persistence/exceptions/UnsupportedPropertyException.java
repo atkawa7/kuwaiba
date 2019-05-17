@@ -17,16 +17,25 @@
 package org.kuwaiba.apis.persistence.exceptions;
 
 /**
- * Thrown when a certain property is not known or currently supported
+ * Thrown when a certain property (usually an attribute of an application or inventory object) is not known or currently supported.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class UnsupportedPropertyException extends InventoryException{
 
+    /**
+     * Use this constructor when referring to an attribute of an inventory object.
+     * @param propertyName The attribute/property name.
+     * @param className The class the property is supposed to belong to.
+     */
     public UnsupportedPropertyException(String propertyName, String className) {
         super(String.format("Unsupported property %s in %s", propertyName, className));
     }
 
+    /**
+     * Use this constructor when referring to an attribute of an application object.
+     * @param propertyName The property that should be supported or known, but it is not.
+     */
     public UnsupportedPropertyException(String propertyName) {
-        super(String.format("Usupported property %s", propertyName));
+        super(String.format("Unsupported property %s", propertyName));
     }
 }
