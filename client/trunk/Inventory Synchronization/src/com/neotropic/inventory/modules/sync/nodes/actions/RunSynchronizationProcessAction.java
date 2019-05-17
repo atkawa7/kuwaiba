@@ -155,7 +155,7 @@ public class RunSynchronizationProcessAction extends GenericObjectNodeAction imp
             frame.setLayout(new BorderLayout());
             frame.setSize(400, 350);
             frame.setLocationRelativeTo(null);
-            JLabel lblInstructions = new JLabel("Select the providers (click + crtl for multiple selection)");
+            JLabel lblInstructions = new JLabel("Select the providers (click + CTRL for multiple selection)");
             lblInstructions.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             frame.add(lblInstructions, BorderLayout.NORTH);
             frame.add(lstProvidres, BorderLayout.CENTER);
@@ -169,7 +169,7 @@ public class RunSynchronizationProcessAction extends GenericObjectNodeAction imp
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if(lstProvidres.getSelectedValuesList().isEmpty())
-                        JOptionPane.showMessageDialog(null, "select one provider", I18N.gm("error"), JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Select at least one provider", I18N.gm("error"), JOptionPane.WARNING_MESSAGE);
                     else{
                         //we check every single datasource configuration
                         for (LocalSyncDataSourceConfiguration dsConfig : localSyncGroup.getDataSourceConfig()) {
@@ -181,7 +181,7 @@ public class RunSynchronizationProcessAction extends GenericObjectNodeAction imp
                                     LocalObjectLight deviceObj = CommunicationsStub.getInstance().getObjectInfoLight(deviceClass, deviceId);
                                     if (deviceObj == null) {
                                         JOptionPane.showMessageDialog(null,
-                                            String.format("The inventory synchronization cannot be run because the device for the data source configuration %s is not assigned or was removed", dsConfig.toString()), 
+                                            String.format("The inventory synchronization can not be run because the device for the data source configuration %s is not assigned or was removed", dsConfig.toString()), 
                                             I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
                                         frame.dispose();
                                         return;
@@ -246,7 +246,6 @@ public class RunSynchronizationProcessAction extends GenericObjectNodeAction imp
 
     @Override
     public void finalActionPerformed(ActionEvent e) {
-        return;
     }
 
     /**

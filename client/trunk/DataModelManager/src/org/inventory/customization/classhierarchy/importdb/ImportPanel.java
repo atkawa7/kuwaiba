@@ -103,7 +103,7 @@ public class ImportPanel extends javax.swing.JPanel implements ActionListener {
 
         //file chooser properties
         XMLExportFilter xMLExportFilter = XMLExportFilter.getInstance();
-        fChooser.setDialogTitle("Select one file");
+        fChooser.setDialogTitle("Select a file");
         fChooser.setAcceptAllFileFilterUsed(false);
         fChooser.addChoosableFileFilter(new FileNameExtensionFilter(xMLExportFilter.getDisplayName(), xMLExportFilter.getExtensionFileChooser()));
 

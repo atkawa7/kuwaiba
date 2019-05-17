@@ -9,12 +9,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for ValidateSavedE2EView complex type.
+ * <p>Java class for validateSavedE2EView complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ValidateSavedE2EView">
+ * &lt;complexType name="validateSavedE2EView">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ValidateSavedE2EView", propOrder = {
+@XmlType(name = "validateSavedE2EView", propOrder = {
     "linkClasses",
     "linkIds",
     "savedView",

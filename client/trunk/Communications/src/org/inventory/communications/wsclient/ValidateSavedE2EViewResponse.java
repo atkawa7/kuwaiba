@@ -8,12 +8,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for ValidateSavedE2EViewResponse complex type.
+ * <p>Java class for validateSavedE2EViewResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ValidateSavedE2EViewResponse">
+ * &lt;complexType name="validateSavedE2EViewResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ValidateSavedE2EViewResponse", propOrder = {
+@XmlType(name = "validateSavedE2EViewResponse", propOrder = {
     "_return"
 })
 public class ValidateSavedE2EViewResponse {

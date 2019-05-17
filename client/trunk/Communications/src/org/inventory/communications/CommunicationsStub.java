@@ -77,7 +77,6 @@ import com.neotropic.inventory.modules.sync.AbstractRunnableSyncFindingsManager;
 import com.neotropic.inventory.modules.sync.AbstractRunnableSyncResultsManager;
 import com.neotropic.inventory.modules.sync.LocalSyncAction;
 import com.neotropic.inventory.modules.sync.LocalSyncProvider;
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import org.inventory.communications.core.LocalConfigurationVariable;
 import org.inventory.communications.core.LocalMPLSConnectionDetails;
 import org.inventory.communications.core.LocalValidator;
