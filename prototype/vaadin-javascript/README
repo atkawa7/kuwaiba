@@ -1,0 +1,4 @@
+This project shows how to integrate a third party JS library into a Vaadin-Sping application. 
+The library used in this example is dhtmlxGantt (GPLv3)
+
+Visit the dhtmlxGantt page for licensing details: https://dhtmlx.com/docs/products/dhtmlxGantt/
