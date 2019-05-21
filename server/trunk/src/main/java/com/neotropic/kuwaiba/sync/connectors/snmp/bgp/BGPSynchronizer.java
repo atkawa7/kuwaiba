@@ -239,7 +239,7 @@ public class BGPSynchronizer {
                     
                     if(asnNumber.equals(LOCAL_ASN)){// if the remote device has the local ASN we can create the BGPLink
                         if(remotePort == null || remoteDevice == null)
-                            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, 
+                            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_WARNING, 
                                     String.format("BGPLink will not be created for ASN %s(%s)", asnName, asnNumber), 
                                     String.format("Only local endpoint: <%s> was found, no destination port was found related with ipAddr: %s", localPort, bgpPeerRemoteAddr.get(i))));
                         else
@@ -289,7 +289,7 @@ public class BGPSynchronizer {
                 BusinessObjectLight localPort = entry.getKey();
                 List<BusinessObject> bgpPeers = entry.getValue();
                 //this are ExternalEquipments
-                if(bgpPeers.size() <= 3){ //create a syn-room, externalEquipments
+                if(bgpPeers.size() <= 3){//create a sync-room, externalEquipments
                     for (BusinessObject bgpPeer : bgpPeers) {
                         BusinessObjectLight remoteAddrIp = checkSubentsIps(bgpPeer.getAttributes().get("bgpPeerRemoteAddr"), "255.255.255.0");
                         res.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, 
@@ -730,6 +730,10 @@ public class BGPSynchronizer {
                                 String.format("The ASN: %s, localAddr: %s - remoteAddr: %s, was NOT found due to: %s", asn, bgpPeerLocalAddr, bgpPeerRemoteAddr, ex.getLocalizedMessage())));
             }
         }
+        
+        if(asnName == null)
+            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_WARNING, "Searching ASN in PeeringDB", String.format("The ASN: %s, was NOT found", asn)));
+        
         return asnName;
     }
     
