@@ -80,6 +80,10 @@ public class EntPhysicalSynchronizer {
     /**
      * To load the structure of the actual device
      */
+    private final List<BusinessObjectLight> currentServiceInstances;
+    /**
+     * To load the structure of the actual device
+     */
     private final List<BusinessObjectLight> foundVirtualPorts;
     /**
      * The current first level children of the actual device
@@ -195,6 +199,7 @@ public class EntPhysicalSynchronizer {
         currentFirstLevelChildren = new ArrayList<>();
         currentVirtualPorts = new ArrayList<>();
         currentMplsTunnels = new ArrayList<>();
+        currentServiceInstances = new ArrayList<>();
         createdIdsToMap = new HashMap<>();
         newCreatedPortsToCreate = new HashMap<>();
         nameOfCreatedPorts = new ArrayList<>();
@@ -922,8 +927,10 @@ public class EntPhysicalSynchronizer {
         for (BusinessObjectLight child : children) {
             if (child.getClassName().equals(Constants.CLASS_MPLSTUNNEL))
                 currentMplsTunnels.add(child);
-            else if (child.getClassName().equals(Constants.CLASS_VIRTUALPORT) || child.getClassName().equals("ServiceInstance"))
+            else if (child.getClassName().equals(Constants.CLASS_VIRTUALPORT))
                 currentVirtualPorts.add(child);
+            else if (child.getClassName().equals("ServiceInstance"))
+                currentServiceInstances.add(child);
             readCurrentSpecialStructure(bem.getObjectSpecialChildren(child.getClassName(), child.getId()));
         }
     }
@@ -1503,7 +1510,7 @@ public class EntPhysicalSynchronizer {
             String createdClassName = "";
             String createdId = null; 
             boolean isAttributeUpdated = false;
-            attributes.put(Constants.PROPERTY_NAME, SyncUtil.wrapPortName(ifName));
+            attributes.put(Constants.PROPERTY_NAME, SyncUtil.normalizePortName(ifName));
             attributes.put("highSpeed", portSpeed);  
             if(!ifAlias.isEmpty())
                 attributes.put("ifAlias", ifAlias);
@@ -1514,8 +1521,10 @@ public class EntPhysicalSynchronizer {
                 BusinessObjectLight currentInterface = null;
                 //First we search if the port is the current virtual ports
                 if(ifName.contains(".")){
-                    currentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), ifName, 2);
-                    if(currentInterface == null)
+                    currentInterface = searchInCurrentStructure(SyncUtil.normalizePortName(ifName), ifName, 2);
+                    if(currentInterface == null && ifName.toLowerCase().contains(".si."))
+                        currentInterface = searchInCurrentStructure(ifName.split("\\.")[2], ifName, 4);
+                    else
                         currentInterface = searchInCurrentStructure(ifName.split("\\.")[1], ifName, 2);
                 }
                 else if(ifName.toLowerCase().contains("lo")) //NOI18N
@@ -1546,8 +1555,8 @@ public class EntPhysicalSynchronizer {
                             if(currrentvirtualInterface == null) //the virtual port is already created, but the name has not been standardiced
                                currrentvirtualInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), ifName, 2);
                             if(currrentvirtualInterface == null && ifName.split("\\.").length == 3 && ifName.toLowerCase().contains(".si")) //the virtual port is al ready created with onli the literal.
-                                currentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName.split("\\.")[2]), ifName, 1);
-                            if(currrentvirtualInterface == null){
+                                currrentvirtualInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName.split("\\.")[2]), ifName, 1);
+                            if(currrentvirtualInterface == null && currentInterface != null){
                                 createdId = bem.createObject(createdClassName, currentInterface.getClassName(), currentInterface.getId(), attributes, null);
                                 results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  
                                     String.format("%s [%s], with parent: %s ", attributes.get(Constants.PROPERTY_NAME), createdClassName, currentInterface),    
@@ -1824,20 +1833,26 @@ public class EntPhysicalSynchronizer {
         switch(type){
             case 1:
                 for(BusinessObjectLight currentPort: currentPorts){
-                    if(currentPort.getName().toLowerCase().equals(wrappedIfName.toLowerCase()) || currentPort.getName().toLowerCase().equals(ifName))
+                    if(currentPort.getName().equals(wrappedIfName) || currentPort.getName().equals(ifName))
                         return currentPort;
                 }
                 break;
             case 2:
                 for(BusinessObjectLight currentVirtualPort: currentVirtualPorts){
-                    if(currentVirtualPort.getName().toLowerCase().equals(wrappedIfName.toLowerCase()) || currentVirtualPort.getName().toLowerCase().equals(ifName))
+                    if(currentVirtualPort.getName().equals(wrappedIfName) || currentVirtualPort.getName().equals(ifName))
                         return currentVirtualPort;
                 }
                 break;
             case 3:
                 for(BusinessObjectLight currentMPLSTunnel: currentMplsTunnels){
-                    if(currentMPLSTunnel.getName().toLowerCase().equals(wrappedIfName.toLowerCase()) || currentMPLSTunnel.getName().toLowerCase().equals(ifName))
+                    if(currentMPLSTunnel.getName().equals(wrappedIfName) || currentMPLSTunnel.getName().equals(ifName))
                         return currentMPLSTunnel;
+                }
+                break;
+            case 4:
+                for(BusinessObjectLight currentVirtualPort: currentServiceInstances){
+                    if(currentVirtualPort.getName().equals(wrappedIfName) || currentVirtualPort.getName().equals(ifName))
+                        return currentVirtualPort;
                 }
                 break;
         }

@@ -64,7 +64,7 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
 
     @Override
     public String getId() {
-        return "ReferenceSnmpSyncProvider"; //NOI18N
+        return ReferenceSnmpSyncProvider.class.getName();
     }
     
     @Override
