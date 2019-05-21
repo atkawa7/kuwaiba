@@ -16,8 +16,13 @@
 
 package org.kuwaiba.web.modules.osp.dashboard;
 
+import com.vaadin.server.ExternalResource;
 import org.kuwaiba.web.modules.osp.OSPConstants;
 import com.vaadin.server.Page;
+import com.vaadin.server.Resource;
+import com.vaadin.server.ResourceReference;
+import com.vaadin.server.ThemeResource;
+import com.vaadin.server.VaadinService;
 import com.vaadin.tapio.googlemaps.GoogleMapsComponent;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.ui.Button;
@@ -113,11 +118,11 @@ public class SimpleMapDashboardWidget extends AbstractDashboardWidget {
                             String latitude = wsBean.getAttributeValueAsString(aPhysicalLocation.getClassName(), 
                                 aPhysicalLocation.getId(), "latitude", Page.getCurrent().getWebBrowser().getAddress(), 
                                 ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-
+                                                        
                             if (latitude != null)
                                 mapMain.addMarker(aPhysicalLocation, aPhysicalLocation.getName(), new LatLon(
                                     Float.valueOf(latitude), Float.valueOf(longitude)), false, 
-                                    "/kuwaiba/icons?class=" + aPhysicalLocation.getClassName() + "&color=true");
+                                    new ExternalResource("/img/default-map-marker.png").getURL());
                         }
 
                     } catch (ServerSideException ex) {
