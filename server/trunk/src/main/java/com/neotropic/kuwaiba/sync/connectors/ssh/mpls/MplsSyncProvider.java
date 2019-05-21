@@ -106,7 +106,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
 
     @Override
     public String getId() {
-        return "MplsSyncProvider";
+        return MplsSyncProvider.class.getName();
     }
 
     @Override
@@ -405,19 +405,41 @@ public class MplsSyncProvider extends AbstractSyncProvider {
                                 res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_ERROR, "Searching outputInterface",
                                         String.format("No output interface was found", outputInterfaceFromSync)));
                             
-                            //VC-IDS we search for the current vcIds created and related within the device that we are sync 
-                            List<BusinessObjectLight> currentMplsLinksRelated = bem.getSpecialAttribute(relatedOject.getClassName(), relatedOject.getId(), MPLSModule.RELATIONSHIP_MPLSLINK);
+                        //VC-IDS 
+                            //All vcid in inventory
+                            List<BusinessObject> currentMplsLinks = bem.getObjectsOfClass(Constants.CLASS_MPLSLINK, -1);
                             BusinessObjectLight currentVcId = null;
-                            for(BusinessObjectLight currentMplsLink : currentMplsLinksRelated){
+                            for(BusinessObjectLight currentMplsLink : currentMplsLinks){
                                 if(currentMplsLink.getName().toLowerCase().equals("vc " + vcIdFromSync) || currentMplsLink.getName().contains(vcIdFromSync)){
                                     currentVcId = currentMplsLink;
                                     break;
                                 }
                             }
+                            //we search for the current vcIds created and related within the device that we are sync 
+                            List<BusinessObjectLight> currentMplsLinksRelated = bem.getSpecialAttribute(relatedOject.getClassName(), relatedOject.getId(), MPLSModule.RELATIONSHIP_MPLSLINK);
+                            BusinessObjectLight currentVcIdRelated = null;
+                            for(BusinessObjectLight currentMplsLinkRelated : currentMplsLinksRelated){
+                                if(currentMplsLinkRelated.getName().toLowerCase().equals("vc " + vcIdFromSync) || currentMplsLinkRelated.getName().contains(vcIdFromSync)){
+                                    currentVcIdRelated = currentMplsLinkRelated;
+                                    break;
+                                }
+                            }
+                            
                             //now the vc id and its connections
                             String relSide = null;
                             BusinessObjectLight endpointA = null, endpointB = null;
                             boolean sideA = false, sideB = false; //used to check wich side of the link needs to be connected to the destiny pseudowire
+                            //we found a VCid in a different device
+                            
+                            
+//                            if(currentVcId != null && currentVcRelatedId != null && currentVcId.getId().equals(currentVcRelatedId.getId())){
+//                                
+//                            
+//                            
+//                            }
+
+
+
                             //we check if the localinterface has already relationships with interface in detail or the output interface 
                             if(currentVcId == null){ //We must create the MPLSLink, if doesn't exists
                                 HashMap<String, String> attributesToBeSet = new HashMap<>();
@@ -447,49 +469,72 @@ public class MplsSyncProvider extends AbstractSyncProvider {
                                 if(serviceNameFromSync != null)
                                     checkServices(serviceNameFromSync, newMplsLinkId, vcIdFromSync, dataSourceConfiguration.getId()); 
                             }//end if vcid is null
-                            else{//the vcid exists
-                                List<BusinessObjectLight> endpointARelationship = bem.getSpecialAttribute(currentVcId.getClassName(), currentVcId.getId(), "mplsEndpointA");
-                                if (!endpointARelationship.isEmpty()) 
-                                    endpointA = endpointARelationship.get(0);
-                                List<BusinessObjectLight> endpointBRelationship = bem.getSpecialAttribute(currentVcId.getClassName(), currentVcId.getId(), "mplsEndpointB");
-                                if (!endpointBRelationship.isEmpty()) 
-                                    endpointB = endpointBRelationship.get(0);
-
-                                if(endpointA != null && endpointA.getId().equals(matchingLocalInterface.getId()) || endpointA != null && outputInterface != null && endpointA.getId().equals(outputInterface.getId())){
-                                    res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_INFORMATION, "Checking MPLSLink endpoints",
-                                       String.format("%s exists and one of its sides is connected with %s", currentVcId, matchingLocalInterface)));
-                                    sideA = true;
-                                }
-                                else if(endpointB != null && endpointB.getId().equals(matchingLocalInterface.getId()) || endpointB != null && outputInterface != null && endpointB.getId().equals(outputInterface.getId())){
-                                    res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_INFORMATION, "Checking MPLSLink endpoints",
-                                       String.format("%s exists and one of it sides is connected with %s", currentVcId, matchingLocalInterface)));
-                                    sideB = true;
-                                }
-
-                                if(!sideA && !sideB && endpointA != null)//no side of the mpls has th right relationships so by default we release and connect the sideA
-                                    res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_WARNING, "Checking MPLSLink connections",
-                                       String.format("%s exists but non of its endpoints are connected with %s", currentVcId, matchingLocalInterface)));
-
-                                if(endpointA == null && !sideB)//something connected but belongs to other object, so we connect the sideB that is free
-                                    relSide = RELATIONSHIP_MPLSENDPOINTA;
-                                else if(endpointB == null && !sideA) //something connected but belongs to other object, so we connect the sideB that is free
-                                    relSide = RELATIONSHIP_MPLSENDPOINTB;
-
-                                if(relSide != null){
-                                    if(matchingLocalInterface.getClassName().equals(Constants.CLASS_PSEUDOWIRE) && outputInterface != null && !outputInterface.getClassName().equals("MPLSTunnel")){
-                                            //second relationship between the output interface and the mplsLink, because is a new mplslink we always connect the endpointA
-                                            bem.createSpecialRelationship(currentVcId.getName(), currentVcId.getId(), outputInterface.getClassName(), outputInterface.getId(), relSide, true); //NOI18N
-                                            aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s endpointA connected with %s", currentVcId, outputInterface));
-                                            res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, "Connecting MPLSLink with local interface", 
-                                                                String.format("The %s was connected to: %s", currentVcId, outputInterface))); 
-                                    }//end dealing with pseudowires
-                                    else if(mem.isSubclassOf(Constants.CLASS_GENERICPORT, matchingLocalInterface.getClassName())){
-                                        bem.createSpecialRelationship(currentVcId.getClassName(), currentVcId.getId(), matchingLocalInterface.getClassName(), matchingLocalInterface.getId(), relSide, true); //NOI18N
-                                        aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - %s", currentVcId, matchingLocalInterface));
-                                        res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, "Connecting MPLSLink with local interface", 
-                                                                String.format("The %s was connected to: %s", currentVcId, matchingLocalInterface))); 
+                            else{ //the vcid exists
+                                boolean isVcidUnique = true;
+                                boolean hasRelationWithVcId = false;
+                                List<BusinessObjectLight> relatedObjects = bem.getSpecialAttribute(currentVcId.getClassName(), currentVcId.getId(), MPLSModule.RELATIONSHIP_MPLSLINK);
+                                for(BusinessObjectLight objs : relatedObjects){
+                                    if(objs.getId().equals(relatedOject.getId())){
+                                       hasRelationWithVcId = true;
+                                       break;
                                     }
                                 }
+                                if(currentVcIdRelated != null && currentVcIdRelated.getName().equals(currentVcId.getName()) && 
+                                        !currentVcId.getId().equals(currentVcIdRelated.getId())){
+                                    res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_ERROR, 
+                                                String.format("Two MPLSLin has the same name VC %s", vcIdFromSync),
+                                                String.format("MPLS sync can not be done in MPLSLinks with repeated names")));
+                                        isVcidUnique = false;
+                                }
+                                
+                                if(isVcidUnique){
+                                    //if the vcid is created but not related we need to create the rel with the device
+                                    if(!hasRelationWithVcId)
+                                        bem.createSpecialRelationship(relatedOject.getClassName(), relatedOject.getId(), currentVcId.getClassName(), currentVcId.getId(), RELATIONSHIP_MPLSLINK, false); //NOI18N
+                                    
+                                    List<BusinessObjectLight> endpointARelationship = bem.getSpecialAttribute(currentVcId.getClassName(), currentVcId.getId(), "mplsEndpointA");
+                                    if (!endpointARelationship.isEmpty()) 
+                                        endpointA = endpointARelationship.get(0);
+                                    List<BusinessObjectLight> endpointBRelationship = bem.getSpecialAttribute(currentVcId.getClassName(), currentVcId.getId(), "mplsEndpointB");
+                                    if (!endpointBRelationship.isEmpty()) 
+                                        endpointB = endpointBRelationship.get(0);
+
+                                    if(endpointA != null && endpointA.getId().equals(matchingLocalInterface.getId()) || endpointA != null && outputInterface != null && endpointA.getId().equals(outputInterface.getId())){
+                                        res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_INFORMATION, "Checking MPLSLink endpoints",
+                                           String.format("%s exists and one of its sides is connected with %s", currentVcId, matchingLocalInterface)));
+                                        sideA = true;
+                                    }
+                                    else if(endpointB != null && endpointB.getId().equals(matchingLocalInterface.getId()) || endpointB != null && outputInterface != null && endpointB.getId().equals(outputInterface.getId())){
+                                        res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_INFORMATION, "Checking MPLSLink endpoints",
+                                           String.format("%s exists and one of it sides is connected with %s", currentVcId, matchingLocalInterface)));
+                                        sideB = true;
+                                    }
+
+                                    if(!sideA && !sideB && endpointA != null)//no side of the mpls has the right relationships so nothing can be done
+                                        res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_WARNING, String.format("%s exists but non of its endpoints are connected with %s", currentVcId, matchingLocalInterface),
+                                           String.format("%s not of its endpoints will be modify, please release at least one endpoint, o related manually with %s", currentVcId, matchingLocalInterface)));
+
+                                    if(endpointA == null && !sideB)//something connected but belongs to other object, so we connect the sideB that is free
+                                        relSide = RELATIONSHIP_MPLSENDPOINTA;
+                                    else if(endpointB == null && !sideA) //something connected but belongs to other object, so we connect the sideB that is free
+                                        relSide = RELATIONSHIP_MPLSENDPOINTB;
+
+                                    if(relSide != null){
+                                        if(matchingLocalInterface.getClassName().equals(Constants.CLASS_PSEUDOWIRE) && outputInterface != null && !outputInterface.getClassName().equals("MPLSTunnel")){
+                                                //second relationship between the output interface and the mplsLink, because is a new mplslink we always connect the endpointA
+                                                bem.createSpecialRelationship(currentVcId.getName(), currentVcId.getId(), outputInterface.getClassName(), outputInterface.getId(), relSide, true); //NOI18N
+                                                aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s endpointA connected with %s", currentVcId, outputInterface));
+                                                res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, "Connecting MPLSLink with local interface", 
+                                                                    String.format("The %s was connected to: %s", currentVcId, outputInterface))); 
+                                        }//end dealing with pseudowires
+                                        else if(mem.isSubclassOf(Constants.CLASS_GENERICPORT, matchingLocalInterface.getClassName())){
+                                            bem.createSpecialRelationship(currentVcId.getClassName(), currentVcId.getId(), matchingLocalInterface.getClassName(), matchingLocalInterface.getId(), relSide, true); //NOI18N
+                                            aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - %s", currentVcId, matchingLocalInterface));
+                                            res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, "Connecting MPLSLink with local interface", 
+                                                                    String.format("The %s was connected to: %s", currentVcId, matchingLocalInterface))); 
+                                        }
+                                    }
+                                }//end for vc id unique
                                 if(serviceNameFromSync != null)
                                     checkServices(serviceNameFromSync, currentVcId.getId(), currentVcId.getName(), dataSourceConfiguration.getId()); 
                             }//end if interface is not null
@@ -608,7 +653,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
         return null;
     }
 
-     /**
+    /**
     * Reads the current folders in the IPAM 
     * @param ifName a given name for port, virtual port or MPLS Tunnel
     * @return the object, null doesn't exists in the current structure
