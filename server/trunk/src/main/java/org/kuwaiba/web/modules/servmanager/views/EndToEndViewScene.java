@@ -199,7 +199,7 @@ public class EndToEndViewScene extends AbstractScene {
                             aSavedNode = attachNodeWidget(rol);
                             aSavedNode.setX(xCoordinate / 2); //The position is scaled (in this case to a half the original size) so they diagram can fit in a single screen 
                             aSavedNode.setY(yCoordinate / 2);
-                        } else if (aSavedNode != null) { //If it's null, it means that the node wasn't added by the default rendering method, so the node no longer exists and shouldn't be rendered
+                        } else { //If it's null, it means that the node wasn't added by the default rendering method, so the node no longer exists and shouldn't be rendered
                             aSavedNode.setX(xCoordinate / 2); //The position is scaled (in this case to a half the original size) so they diagram can fit in a single screen 
                             aSavedNode.setY(yCoordinate / 2);
                         }
@@ -250,8 +250,8 @@ public class EndToEndViewScene extends AbstractScene {
             
             for (RemoteObjectLight object : nodes.keySet()) {       
                 SrvNodeWidget node = nodes.get(object);
-                node.setWidth(ResourceFactory.DEFAULT_ICON_WIDTH + 8);
-                node.setHeight(ResourceFactory.DEFAULT_ICON_HEIGHT + 8);
+                node.setWidth(ResourceFactory.DEFAULT_ICON_WIDTH);
+                node.setHeight(ResourceFactory.DEFAULT_ICON_HEIGHT);
                 lienzoComponent.addNodeWidget(object, node);
             }
 
@@ -270,165 +270,7 @@ public class EndToEndViewScene extends AbstractScene {
     }
 
     @Override
-    public void render() {
-//        try {
-//            List<RemoteObjectLight> serviceResources = wsBean.getServiceResources(service.getClassName(), 
-//                    service.getId(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-//            if (serviceResources.isEmpty())
-//                addComponent(new Label(String.format("%s does not have any resources associated to it", service)));
-//            else {
-//                for (RemoteObjectLight serviceResource : serviceResources) {
-//                    if (wsBean.isSubclassOf(serviceResource.getClassName(), "GenericLogicalConnection", 
-//                            Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId())) {
-//                        RemoteLogicalConnectionDetails logicalCircuitDetails = wsBean.getLogicalLinkDetails(
-//                                serviceResource.getClassName(), serviceResource.getId(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-//                        
-//                        SrvNodeWidget aSideEquipmentLogicalWidget = null, bSideEquipmentLogicalWidget = null;
-//                        RemoteObjectLight aSideEquipmentLogical = null, bSideEquipmentLogical = null;
-//                        //Let's create the nodes corresponding to the endpoint A of the logical circuit
-//                        if(logicalCircuitDetails.getEndpointA() !=null){
-//                            List<RemoteObjectLight> parentsUntilFirstComEquipmentA; 
-//                            if(wsBean.isSubclassOf(logicalCircuitDetails.getEndpointA().getClassName(), Constants.CLASS_GENERICLOGICALPORT, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId())){
-//                                List<RemoteObjectLight> parentsUntilFirstPhysicalPortA = wsBean.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
-//                                    getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericPhysicalPort", Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-//
-//                                //This is only for pseudowire and will be removed once the MPLS sync has been finished, because vc ends in the device not a port
-//                                if(wsBean.isSubclassOf(parentsUntilFirstPhysicalPortA.get(0).getClassName(), "GenericCommunicationsElement", Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId()))
-//                                    parentsUntilFirstComEquipmentA = Arrays.asList(parentsUntilFirstPhysicalPortA.get(0));
-//                                else
-//                                    parentsUntilFirstComEquipmentA = wsBean.getParentsUntilFirstOfClass(parentsUntilFirstPhysicalPortA.get(0).
-//                                        getClassName(), parentsUntilFirstPhysicalPortA.get(0).getId(), "GenericCommunicationsElement", Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-//    }
-//                            else
-//                                parentsUntilFirstComEquipmentA = wsBean.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
-//                                    getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericCommunicationsElement", Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-//    
-//                            aSideEquipmentLogical = parentsUntilFirstComEquipmentA.get(parentsUntilFirstComEquipmentA.size() - 1);
-//                            aSideEquipmentLogicalWidget = findNodeWidget(aSideEquipmentLogical);
-//                            if(aSideEquipmentLogicalWidget == null)
-//                                aSideEquipmentLogicalWidget = attachNodeWidget(aSideEquipmentLogical);
-//                        }
-//                        //Now the other side
-//                        if(logicalCircuitDetails.getEndpointB() !=null){
-//                            List<RemoteObjectLight> parentsUntilFirstComEquipmentB;
-//                            if(wsBean.isSubclassOf(logicalCircuitDetails.getEndpointB().getClassName(), Constants.CLASS_GENERICLOGICALPORT, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId())){
-//                                 List<RemoteObjectLight> parentsUntilFirstPhysicalPortB = wsBean.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointB().
-//                                    getClassName(), logicalCircuitDetails.getEndpointB().getId(), "GenericPhysicalPort", Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-//                                //This is only for pseudowire and will be removed once the MPLS sync has been finished, because vc ends in the device not a port
-//                                if(wsBean.isSubclassOf(parentsUntilFirstPhysicalPortB.get(0).getClassName(), "GenericCommunicationsElement", Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId()))
-//                                    parentsUntilFirstComEquipmentB = Arrays.asList(parentsUntilFirstPhysicalPortB.get(0)); 
-//                                else 
-//                                    parentsUntilFirstComEquipmentB = wsBean.getParentsUntilFirstOfClass(parentsUntilFirstPhysicalPortB.get(0).
-//                                        getClassName(), parentsUntilFirstPhysicalPortB.get(0).getId(), "GenericCommunicationsElement", Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-//                            }
-//                            else
-//                                parentsUntilFirstComEquipmentB = wsBean.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointB().
-//                                    getClassName(), logicalCircuitDetails.getEndpointB().getId(), "GenericCommunicationsElement", Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-//
-//                            bSideEquipmentLogical = parentsUntilFirstComEquipmentB.get(parentsUntilFirstComEquipmentB.size() - 1);
-//                            bSideEquipmentLogicalWidget = findNodeWidget(bSideEquipmentLogical);
-//                            if(bSideEquipmentLogicalWidget == null)
-//                                bSideEquipmentLogicalWidget = attachNodeWidget(bSideEquipmentLogical);
-//                        }
-//                        
-//                        if(aSideEquipmentLogicalWidget != null && aSideEquipmentLogical != null && bSideEquipmentLogicalWidget != null && bSideEquipmentLogical != null){
-//                            //Now the logical link
-//                            SrvEdgeWidget logicalLinkWidget = attachEdgeWidget(logicalCircuitDetails.getConnectionObject(), 
-//                                    aSideEquipmentLogicalWidget, 
-//                                    bSideEquipmentLogicalWidget);
-//
-//                            logicalLinkWidget.setCaption(aSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointA().getName() + " ** " +
-//                                    bSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointB().getName());
-//                        }
-//                        //Now we render the physical part
-//                        //We start with the A side
-//                        if (!logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty()) {
-//                            int i = 2;
-//                            RemoteObjectLight lastAddedASidePhysicalEquipment = null;
-//                            if (wsBean.isSubclassOf(logicalCircuitDetails.getPhysicalPathForEndpointA().get(0).getClassName(), 
-//                                    Constants.CLASS_GENERICLOGICALPORT, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId()))
-//                                i = 3;
-//                            
-//                            for(int index = i; index < logicalCircuitDetails.getPhysicalPathForEndpointA().size(); index += 3){
-//                                RemoteObjectLight nextPhysicalHop = logicalCircuitDetails.getPhysicalPathForEndpointA().get(index);
-//                                //If the physical equipment is not a subclass of GenericCommunicationsElement, nothing will be shown.
-//                                RemoteObjectLight aSidePhysicalEquipment = wsBean.getFirstParentOfClass(nextPhysicalHop.getClassName(), 
-//                                        nextPhysicalHop.getId(), "ConfigurationItem", Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-//                                
-//                                if(aSidePhysicalEquipment != null && !aSidePhysicalEquipment.getClassName().equals("ODF"))
-//                                    aSidePhysicalEquipment = wsBean.getFirstParentOfClass(nextPhysicalHop.getClassName(), 
-//                                            nextPhysicalHop.getId(), "GenericCommunicationsElement", Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-//
-//                                if(aSidePhysicalEquipment == null)
-//                                    Notifications.showError("No communications equipment was found for this endpoint");
-//                                else {
-//                                    SrvNodeWidget aSideEquipmentPhysicalWidget = attachNodeWidget(aSidePhysicalEquipment);
-//
-//                                    SrvEdgeWidget physicalLinkWidgetA = attachEdgeWidget( logicalCircuitDetails.getPhysicalPathForEndpointA().get(index - 1),
-//                                            findNodeWidget(index <= 3 ? aSideEquipmentLogical : lastAddedASidePhysicalEquipment), 
-//                                            aSideEquipmentPhysicalWidget
-//                                    );
-//                                    physicalLinkWidgetA.setCaption(aSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointA().getName() + " ** " +
-//                                        aSidePhysicalEquipment.getName() + ":" + nextPhysicalHop.getName());
-//
-//
-//                                    lastAddedASidePhysicalEquipment = aSidePhysicalEquipment;
-//                                }
-//                            }
-//                        }
-//
-//                        //Now the b side
-//                        if (!logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty()) {
-//                            int i = 2;
-//                            RemoteObjectLight lastAddedBSideEquipmentPhysical = null;
-//                            if (wsBean.isSubclassOf(logicalCircuitDetails.getPhysicalPathForEndpointB().get(0).getClassName(), 
-//                                    Constants.CLASS_GENERICLOGICALPORT, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId()))
-//                                i = 3;
-//                            for(int index = i; index < logicalCircuitDetails.getPhysicalPathForEndpointB().size(); index += 3){
-//                                RemoteObjectLight nextPhysicalHop = logicalCircuitDetails.getPhysicalPathForEndpointB().get(index);
-//                                RemoteObjectLight bSideEquipmentPhysical = wsBean.getFirstParentOfClass(nextPhysicalHop.getClassName(), 
-//                                        nextPhysicalHop.getId(), "ConfigurationItem", Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-//                                if(bSideEquipmentPhysical != null && !bSideEquipmentPhysical.getClassName().equals("ODF"))
-//                                    bSideEquipmentPhysical = wsBean.getFirstParentOfClass(nextPhysicalHop.getClassName(), nextPhysicalHop.getId(), 
-//                                            "GenericCommunicationsElement", Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-//                                //If the equipemt physical is not a subclass of GenericCommunicationsElement, nothing will be shown.
-//                                if(bSideEquipmentPhysical == null)
-//                                    Notifications.showError("No communications equipment was found for this endpoint");
-//
-//                                else {
-//                                    SrvNodeWidget bSideEquipmentPhysicalWidget = attachNodeWidget(bSideEquipmentPhysical);
-//                                     
-//                                    SrvEdgeWidget physicalLinkWidgetB = attachEdgeWidget(logicalCircuitDetails.getPhysicalPathForEndpointB().get(index - 1),
-//                                            findNodeWidget(index <=3 ? bSideEquipmentLogical : lastAddedBSideEquipmentPhysical),
-//                                            bSideEquipmentPhysicalWidget
-//                                    );
-//
-//                                    physicalLinkWidgetB.setCaption(bSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointB().getName() + " ** " +
-//                                        bSideEquipmentPhysical.getName() + ":" + nextPhysicalHop.getName());
-//                                    
-//                                    lastAddedBSideEquipmentPhysical = bSideEquipmentPhysical;
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//                for (RemoteObjectLight object : nodes.keySet()) {       
-//                    SrvNodeWidget node = nodes.get(object);
-//                    node.setWidth(ResourceFactory.DEFAULT_ICON_WIDTH + 8);
-//                    node.setHeight(ResourceFactory.DEFAULT_ICON_HEIGHT + 8);
-//                    lienzoComponent.addNodeWidget(object, node);
-//                }
-//                
-//                for (RemoteObjectLight edgeObjects : edges.keySet()) {
-//                    SrvEdgeWidget edge = edges.get(edgeObjects);
-//                    lienzoComponent.addEdgeWidget(edgeObjects, edge);
-//                }
-//                addComponent(lienzoComponent);
-//            }
-//        } catch (ServerSideException ex) {
-//            clear();
-//            Notifications.showError(ex.getMessage());
-//        }
+    public void render() {//no longer need it
     }
     
     public void clear() {
@@ -458,7 +300,6 @@ public class EndToEndViewScene extends AbstractScene {
             newEdge.setColor(UtilHtml.toHexString(new Color(classMetadata.getColor())));
             newEdge.setCaption(edge.toString());
             edges.put(edge, newEdge);
-            //lienzoComponent.addEdgeWidget(newEdge);
             return newEdge; 
         } catch (ServerSideException ex) {
             SrvEdgeWidget srvEdgeWidget = new SrvEdgeWidget();
