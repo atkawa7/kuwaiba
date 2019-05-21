@@ -209,10 +209,10 @@ public class ViewModule  implements GenericCommercialModule {
             edgeSource = new HashMap<>();
             edgeTarget = new HashMap<>();
             for(int x=0 ; x < linkIds.size(); x++){
-                
-                if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONNECTION, linkClasses.get(x))){
+                if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONNECTION, linkClasses.get(x)))
                     e2eMap.add(getPhysicalLinkDetail(linkClasses.get(x), linkIds.get(x)));
-                } else if(mem.isSubclassOf(Constants.CLASS_GENERICLOGICALCONNECTION, linkClasses.get(x))){
+                
+                else if(mem.isSubclassOf(Constants.CLASS_GENERICLOGICALCONNECTION, linkClasses.get(x))){
                     //firts we get the logical link details
                     GenericConnectionDefinition logicalCircuitDetails = getLogicalLinkDetail(linkClasses.get(x), linkIds.get(x));
                     BusinessObjectLight physicalEndpointA = null, logicalEndpointA = null, physicalEndpointB = null, logicalEndpointB = null, deviceA = null, deviceB = null;
@@ -272,6 +272,10 @@ public class ViewModule  implements GenericCommercialModule {
                         else
                             physicalPathForVlansEndpointA = getVLANContinuity(physicalEndpointA == null ? logicalCircuitDetails.getEndpointA() : physicalEndpointA);
                         
+                        for (Map.Entry<BusinessObjectLight, List<BusinessObjectLight>> entry : physicalPathForVlansEndpointA.entrySet())
+                            e2eMap.addAll(physicalPathReader(entry.getValue()));
+                        
+                        
                         //VLANs side B
                         HashMap<BusinessObjectLight, List<BusinessObjectLight>> physicalPathForVlansEndpointB = new HashMap<>();    
                         if(logicalCircuitDetails.getEndpointB() != null && !logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty())
@@ -279,22 +283,25 @@ public class ViewModule  implements GenericCommercialModule {
                         else if(logicalCircuitDetails.getEndpointB() != null)
                             physicalPathForVlansEndpointB = getVLANContinuity(physicalEndpointB == null ? logicalCircuitDetails.getEndpointB() : physicalEndpointB);
                         
-                        for (Map.Entry<BusinessObjectLight, List<BusinessObjectLight>> entry : physicalPathForVlansEndpointB.entrySet()) {
-                            BusinessObjectLight key = entry.getKey();
+                        for (Map.Entry<BusinessObjectLight, List<BusinessObjectLight>> entry : physicalPathForVlansEndpointB.entrySet()) 
                             e2eMap.addAll(physicalPathReader(entry.getValue()));
-                        }
+                        
                     }
                     //if(includeBDis){//TODO include the BDIs logic}
                 }//end if is logical link
             }//end for
             
             e2eMap.forEach(def -> {
-                nodes.add(new E2ENode(def.getDeviceA()));
-                nodes.add(new E2ENode(def.getDeviceB()));
-                edges.add(new E2EEdge(def.getConnectionObject()));
-
-                edgeSource.put(new E2EEdge(def.getConnectionObject()), new E2ENode(def.getDeviceA()));
-                edgeTarget.put(new E2EEdge(def.getConnectionObject()), new E2ENode(def.getDeviceB()));
+                if(def.getDeviceA() != null)
+                    nodes.add(new E2ENode(def.getDeviceA()));
+                if(def.getDeviceB() != null)
+                    nodes.add(new E2ENode(def.getDeviceB()));
+                if(def.getConnectionObject() != null)
+                    edges.add(new E2EEdge(def.getConnectionObject()));
+                if(def.getConnectionObject() != null && def.getDeviceA() != null)
+                    edgeSource.put(new E2EEdge(def.getConnectionObject()), new E2ENode(def.getDeviceA()));
+                if(def.getConnectionObject() != null && def.getDeviceB() != null)
+                    edgeTarget.put(new E2EEdge(def.getConnectionObject()), new E2ENode(def.getDeviceB()));
             });
                    
         } catch (Exception ex) {
