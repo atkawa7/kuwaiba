@@ -19,6 +19,7 @@ package org.kuwaiba.management.services.views.endtoend;
 import java.awt.Point;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.namespace.QName;
@@ -159,11 +160,11 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
     @Override
     public void render(byte[] structure) throws IllegalArgumentException { 
 //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
-//        try {
-//            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/end2end_in_render.xml");
-//            fos.write(structure);
-//            fos.close();
-//        } catch(Exception e) {}
+        try {
+            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/end2end_in_render.xml");
+            fos.write(structure);
+            fos.close();
+        } catch(Exception e) {}
 //</editor-fold>
         try{
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -189,9 +190,7 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
 
                         LocalObjectLight lol = CommunicationsStub.getInstance().getObjectInfoLight(objectClass, objectId);
                         if (lol != null) {
-                            if (getNodes().contains(lol))
-                                NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
-                            else {
+                            if(findWidget(lol) == null){
                                 Widget widget = addNode(lol);
                                 widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
                                 widget.setBackground(com.getMetaForClass(objectClass, false).getColor());
@@ -289,7 +288,7 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
         LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(node.getClassName(), false);
 
         Widget newWidget = classMetadata != null ? new ObjectNodeWidget(this, node, classMetadata.getIcon()) : new ObjectNodeWidget(this, node);
-
+        
         newWidget.getActions().addAction(createSelectAction());
         newWidget.getActions().addAction(moveAction);
         nodeLayer.addChild(newWidget);
