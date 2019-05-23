@@ -463,7 +463,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
                                     //Because is a new mplslink we always connect the endpointA
                                     bem.createSpecialRelationship("MPLSLink", newMplsLinkId, matchingLocalInterface.getClassName(), matchingLocalInterface.getId(), RELATIONSHIP_MPLSENDPOINTA, true); //NOI18N
                                     aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s endpointA connected with %s", newMplsLink, matchingLocalInterface));
-                                    res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_ERROR, "Connecting MPLSLink with local interface", 
+                                    res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, "Connecting MPLSLink with local interface", 
                                                         String.format("The  endpointA of %s was connected to: %s", newMplsLink, matchingLocalInterface))); 
                                 }
                                 if(serviceNameFromSync != null)
