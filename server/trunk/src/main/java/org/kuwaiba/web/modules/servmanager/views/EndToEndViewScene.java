@@ -197,11 +197,11 @@ public class EndToEndViewScene extends AbstractScene {
                         SrvNodeWidget aSavedNode = findNodeWidget(rol);
                         if(aSavedNode == null){
                             aSavedNode = attachNodeWidget(rol);
-                            aSavedNode.setX(xCoordinate / 2); //The position is scaled (in this case to a half the original size) so they diagram can fit in a single screen 
-                            aSavedNode.setY(yCoordinate / 2);
+                            aSavedNode.setX(100 + (xCoordinate)); //The position is scaled (in this case to a half the original size) so they diagram can fit in a single screen 
+                            aSavedNode.setY(50+(yCoordinate));
                         } else { //If it's null, it means that the node wasn't added by the default rendering method, so the node no longer exists and shouldn't be rendered
-                            aSavedNode.setX(xCoordinate / 2); //The position is scaled (in this case to a half the original size) so they diagram can fit in a single screen 
-                            aSavedNode.setY(yCoordinate / 2);
+                            aSavedNode.setX(100 + (xCoordinate)); //The position is scaled (in this case to a half the original size) so they diagram can fit in a single screen 
+                            aSavedNode.setY(50 + (yCoordinate));
                         }
                         
                     } else {
@@ -279,13 +279,8 @@ public class EndToEndViewScene extends AbstractScene {
 
     protected SrvNodeWidget attachNodeWidget(RemoteObjectLight node) {
         SrvNodeWidget newNode = new SrvNodeWidget();
-        
-            
         newNode.setUrlIcon("/icons/" + node.getClassName() + ".png");
-
         newNode.setCaption(node.toString());
-        newNode.setX(nodes.size() * 200);
-        newNode.setY((nodes.size() % 2) * 200 );
         nodes.put(node, newNode);
         return newNode;
     }
