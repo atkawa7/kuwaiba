@@ -292,9 +292,9 @@ public class ViewModule  implements GenericCommercialModule {
             }//end for
             
             e2eMap.forEach(def -> {
-                if(def.getDeviceA() != null)
+                if(def.getDeviceA() != null && !nodes.contains(new E2ENode(def.getDeviceA())))
                     nodes.add(new E2ENode(def.getDeviceA()));
-                if(def.getDeviceB() != null)
+                if(def.getDeviceB() != null && !nodes.contains(new E2ENode(def.getDeviceB())))
                     nodes.add(new E2ENode(def.getDeviceB()));
                 if(def.getConnectionObject() != null)
                     edges.add(new E2EEdge(def.getConnectionObject()));
@@ -331,22 +331,23 @@ public class ViewModule  implements GenericCommercialModule {
             
             QName qnameNodes = new QName("nodes");
             xmlew.add(xmlef.createStartElement(qnameNodes, null, null));
-            int x = 5, y = 80;
+            int x = 15, y = 180, i = 2;
             for(E2ENode node : nodes){
-                y *= -1;
+                
                 QName qnameNode = new QName("node");
                 xmlew.add(xmlef.createStartElement(qnameNode, null, null));
                 
                 xmlew.add(xmlef.createAttribute(new QName("x"), node.getProperties().get("x") != null ?
                         (String)node.getProperties().get("x") : Integer.toString(x)));
-                
+                //we do this with the y in order to set the node one up an one down in the end to end view
+                y += (i % 2 != 0) ? 175 + i * 2 : (-145);
                 xmlew.add(xmlef.createAttribute(new QName("y"), node.getProperties().get("y") != null ? 
                         (String)node.getProperties().get("y") : Integer.toString(y)));
                 
                 xmlew.add(xmlef.createAttribute(new QName("class"), node.getBussinesObject().getClassName()));
                 xmlew.add(xmlef.createCharacters(node.getBussinesObject().getId()));
                 xmlew.add(xmlef.createEndElement(qnameNode, null));
-                x += 65; y += 85 ; 
+                x += 115; i++;
             }
             xmlew.add(xmlef.createEndElement(qnameNodes, null));
             
@@ -355,7 +356,7 @@ public class ViewModule  implements GenericCommercialModule {
             
             for (E2EEdge edge : edges) {
                 if (!edgeSource.containsKey(edge) || !edgeTarget.containsKey(edge)) //This connection is malformed because one of the endpoints does not exist
-                    continue;                                                               //probably, it was moved to another parent
+                    continue;                                                       //probably, it was moved to another parent
 
                 QName qnameEdge = new QName("edge");
                 xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
