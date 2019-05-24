@@ -79,7 +79,7 @@ public class SceneExporter {
         List<String> ids = new ArrayList<>();
         try {
             rol = webserviceBean.getObjectLight(serviceClassName, serviceId, remoteSession.getIpAddress(), remoteSession.getSessionId());
-            List<RemoteObjectLight> serviceResources = webserviceBean.getServiceResources(serviceClassName, serviceId, ipAddress, serviceId);
+            List<RemoteObjectLight> serviceResources = webserviceBean.getServiceResources(serviceClassName, serviceId, ipAddress, remoteSession.getSessionId());
             
             for(RemoteObjectLight resource : serviceResources){
                 classes.add(resource.getClassName());
@@ -123,7 +123,7 @@ public class SceneExporter {
             }       
             try {
                 org.netbeans.api.visual.export.SceneExporter.createImage(scene,
-                        new File("/home/adrian/" + serviceClassName + "_" + serviceId +".png"),
+                        new File(PATH + serviceClassName + "_" + serviceId +".png"),
                         org.netbeans.api.visual.export.SceneExporter.ImageType.PNG,
                         org.netbeans.api.visual.export.SceneExporter.ZoomType.ACTUAL_SIZE,
                         false, false, 100,
