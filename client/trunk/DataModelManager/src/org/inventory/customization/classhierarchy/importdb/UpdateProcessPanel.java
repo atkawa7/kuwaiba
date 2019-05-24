@@ -136,9 +136,8 @@ public class UpdateProcessPanel extends javax.swing.JPanel implements ActionList
                 } else if (!isCancelled() && getErrors() != null) {
                     pbUpload.setIndeterminate(false);
                     pbUpload.setValue(0);
-                    System.out.println("errore "+getErrors());
                     JOptionPane.showMessageDialog(null,
-                            "Process have error!", "Message",
+                            "The process ended with errors", "Message",
                             JOptionPane.ERROR_MESSAGE);
                      
                     addDataErrorTable(getErrors());
@@ -169,12 +168,12 @@ public class UpdateProcessPanel extends javax.swing.JPanel implements ActionList
             protected void done() {
                 if (!isCancelled() && getErrors() == null) {
                     JOptionPane.showMessageDialog(null,
-                            "Process end successfully!", "Message",
+                            "The process was completed successfully", "Message",
                             JOptionPane.INFORMATION_MESSAGE);
 
                 } else if (!isCancelled() && getErrors() != null) {
                     JOptionPane.showMessageDialog(null,
-                            "Process have error!", "Message",
+                            "The process ended with errors", "Message",
                             JOptionPane.ERROR_MESSAGE);                   
                     addDataErrorTable(getErrors());
                 }
@@ -211,7 +210,7 @@ public class UpdateProcessPanel extends javax.swing.JPanel implements ActionList
     }
 
     /**
-     * Just take the father behavior and close the window
+     * Just take the parent's behavior and close the window
      *
      * @param ae
      */
