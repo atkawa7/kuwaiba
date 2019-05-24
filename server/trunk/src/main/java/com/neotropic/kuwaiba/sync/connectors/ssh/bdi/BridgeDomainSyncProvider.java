@@ -159,7 +159,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
 
                 String modelString = currentObject.getName().split("-")[0];
                 
-                switch (modelString) { //The model of the device is taken from its name. Alternatively, this could be taken from its actual "model" attribute.
+                switch (modelString) { //The model of the device is identified from its name. Alternatively, this could be taken from its actual "model" attribute, but this implementation takes the quickest approach.
                     case "ASR920": {
                         channel.setCommand("sh bridge-domain"); //NOI18N
                         channel.connect();
