@@ -482,7 +482,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
                                 if(currentVcIdRelated != null && currentVcIdRelated.getName().equals(currentVcId.getName()) && 
                                         !currentVcId.getId().equals(currentVcIdRelated.getId())){
                                     res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_ERROR, 
-                                                String.format("Two MPLSLin has the same name VC %s", vcIdFromSync),
+                                                String.format("Two MPLSLink has the same name VC %s", vcIdFromSync),
                                                 String.format("MPLS sync can not be done in MPLSLinks with repeated names")));
                                         isVcidUnique = false;
                                 }

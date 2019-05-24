@@ -69,6 +69,15 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                 return false;
             }
         }
+        if ("activityHasArtifact".equals(scriptQueryName) && parameterValues != null && parameterValues.size() == 1) { //NOI18N
+            try {
+                String paramValue0 = parameterValues.get(0);
+                RemoteArtifact artifact = wsBean.getArtifactForActivity(processInstance.getId(), Long.valueOf(paramValue0), session.getIpAddress(), session.getSessionId());
+                return artifact != null;
+            } catch (ServerSideException ex) {
+                return false;
+            }
+        }
         // The Keyword "shared" is used as Function Name to get to the execution 
         // of a Script Query the Artifacts shared values
         if ("shared".equals(scriptQueryName) && parameterValues != null && parameterValues.size() >= 1) { //NOI18N
@@ -76,7 +85,7 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
             String paramValue0 = parameterValues.get(0);
             
             if (paramValue0.equals("__processInstanceId__")) //NOI18N
-                return String.valueOf(processInstance.getId());
+                return String.valueOf(processInstance.getId());                        
             if (paramValue0.equals("__userName__") && session != null) //NOI18N
                 return session.getUsername();
             

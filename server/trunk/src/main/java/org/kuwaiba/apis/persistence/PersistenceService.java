@@ -80,7 +80,7 @@ public class PersistenceService {
          
             connectionConfiguration.put("dbPath", configuration.get("dbPath"));
             connectionConfiguration.put("dbHost", configuration.get("dbHost"));
-            connectionConfiguration.put("dbPort", configuration.get("dbPort"));
+            connectionConfiguration.put("dbPort", String.valueOf(configuration.get("dbPort")));
             connectionManager.setConfiguration(connectionConfiguration); //NOI18N
             System.out.println(String.format("[KUWAIBA] [%s] Establishing connection to the database...", Calendar.getInstance().getTime()));
             connectionManager.openConnection();
