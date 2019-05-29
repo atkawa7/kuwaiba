@@ -341,6 +341,7 @@ public class MplsLinkEndpointsViewScene extends AbstractScene<LocalObjectLight, 
             
             if(findWidget(mplsLinkDetail.getConnectionObject()) == null){
                 addEdge(mplsLinkDetail.getConnectionObject());
+                validate();
                 if(mplsLinkDetail.getDeviceA() != null)
                     setEdgeSource(mplsLinkDetail.getConnectionObject(), mplsLinkDetail.getDeviceA());
                 if(mplsLinkDetail.getDeviceB() !=null)
@@ -380,6 +381,7 @@ public class MplsLinkEndpointsViewScene extends AbstractScene<LocalObjectLight, 
     @Override
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
         ObjectConnectionWidget newWidget = new ObjectConnectionWidget(this, edge, ObjectConnectionWidget.LINE);
+        
         newWidget.getActions().addAction(createSelectAction());
         newWidget.getActions().addAction(moveControlPointAction);
         newWidget.getActions().addAction(addRemoveControlPointAction);
