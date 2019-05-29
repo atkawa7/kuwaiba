@@ -157,62 +157,68 @@ public class FormDashboardWidget extends AbstractDashboardWidget{
                                 stm = wsBean.getSpecialAttribute(container.getClassName(), container.getId(), "sdhTransports", ipAddress, sessionId).get(0);
                             }
                         }
-                        //Let's create the nodes corresponding to the endpoint A of the logical circuit
-                        List<RemoteObjectLight> parentsUntilFirstComEquipmentA; 
-                        if(wsBean.isSubclassOf(logicalCircuitDetails.getEndpointA().getClassName(), Constants.CLASS_GENERICLOGICALPORT, ipAddress, sessionId)){
-                            List<RemoteObjectLight> parentsUntilFirstPhysicalPortA = wsBean.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
-                                getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericPhysicalPort", ipAddress, sessionId);
+                        RemoteObjectLight aSideEquipmentLogical =  null;
+                        if(logicalCircuitDetails.getEndpointA() != null){                       
+                            //Let's create the nodes corresponding to the endpoint A of the logical circuit
+                            List<RemoteObjectLight> parentsUntilFirstComEquipmentA; 
+                            if(wsBean.isSubclassOf(logicalCircuitDetails.getEndpointA().getClassName(), Constants.CLASS_GENERICLOGICALPORT, ipAddress, sessionId)){
+                                List<RemoteObjectLight> parentsUntilFirstPhysicalPortA = wsBean.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
+                                    getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericPhysicalPort", ipAddress, sessionId);
 
-                            //This is only for pseudowire and will be removed once the MPLS sync has been finished, because vc ends in the device not a port
-                            if(wsBean.isSubclassOf(parentsUntilFirstPhysicalPortA.get(0).getClassName(), "GenericCommunicationsElement", ipAddress, sessionId))
-                                parentsUntilFirstComEquipmentA = Arrays.asList(parentsUntilFirstPhysicalPortA.get(0));
+                                //This is only for pseudowire and will be removed once the MPLS sync has been finished, because vc ends in the device not a port
+                                if(wsBean.isSubclassOf(parentsUntilFirstPhysicalPortA.get(0).getClassName(), "GenericCommunicationsElement", ipAddress, sessionId))
+                                    parentsUntilFirstComEquipmentA = Arrays.asList(parentsUntilFirstPhysicalPortA.get(0));
+                                else
+                                    parentsUntilFirstComEquipmentA = wsBean.getParentsUntilFirstOfClass(parentsUntilFirstPhysicalPortA.get(0).
+                                    getClassName(), parentsUntilFirstPhysicalPortA.get(0).getId(), "GenericCommunicationsElement", ipAddress, sessionId);
+                            }
                             else
-                                parentsUntilFirstComEquipmentA = wsBean.getParentsUntilFirstOfClass(parentsUntilFirstPhysicalPortA.get(0).
-                                getClassName(), parentsUntilFirstPhysicalPortA.get(0).getId(), "GenericCommunicationsElement", ipAddress, sessionId);
+                                parentsUntilFirstComEquipmentA = wsBean.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
+                                    getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericCommunicationsElement", ipAddress, sessionId);
+
+                            aSideEquipmentLogical = parentsUntilFirstComEquipmentA.get(parentsUntilFirstComEquipmentA.size() - 1);
+                            RemoteObjectLight stmEndPointA = null;
+
+                            if(stm != null)
+                                stmEndPointA = wsBean.getSpecialAttribute(stm.getClassName(), stm.getId(), "sdhTLEndpointA", ipAddress, sessionId).get(0);
+                            Component logicalA = createDeviceTable(aSideEquipmentLogical, 
+                                    logicalCircuitDetails.getEndpointA(), stmEndPointA);
+                            logicalA.setId(aSideEquipmentLogical.getId());
+                            tempForm.setLogicalPartA(logicalA);                        
+                            //This only applies if there is a peering, the peering should always be in side B
+                            if(aSideEquipmentLogical.getClassName().toLowerCase().contains("cloud"))
+                                isSideAPeering = true;
                         }
-                        else
-                            parentsUntilFirstComEquipmentA = wsBean.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
-                                getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericCommunicationsElement", ipAddress, sessionId);
-
-                        RemoteObjectLight aSideEquipmentLogical = parentsUntilFirstComEquipmentA.get(parentsUntilFirstComEquipmentA.size() - 1);
-                        RemoteObjectLight stmEndPointA = null;
-                        if(stm != null)
-                            stmEndPointA = wsBean.getSpecialAttribute(stm.getClassName(), stm.getId(), "sdhTLEndpointA", ipAddress, sessionId).get(0);
-                        Component logicalA = createDeviceTable(aSideEquipmentLogical, 
-                                logicalCircuitDetails.getEndpointA(), stmEndPointA);
-                        logicalA.setId(aSideEquipmentLogical.getId());
-                        tempForm.setLogicalPartA(logicalA);                        
-                        //This only applies if there is a peering, the peering should always be in side B
-                        if(aSideEquipmentLogical.getClassName().toLowerCase().contains("cloud"))
-                            isSideAPeering = true;
-                        
                         //Now the other side of the logical circuit
-                        List<RemoteObjectLight> parentsUntilFirstComEquipmentB;
-                        if(wsBean.isSubclassOf(logicalCircuitDetails.getEndpointB().getClassName(), Constants.CLASS_GENERICLOGICALPORT, ipAddress, sessionId)){
-                             List<RemoteObjectLight> parentsUntilFirstPhysicalPortB = wsBean.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointB().
-                                getClassName(), logicalCircuitDetails.getEndpointB().getId(), "GenericPhysicalPort", ipAddress, sessionId);
-                              //This is only for pseudowire and will be removed once the MPLS sync has been finished, because vc ends in the device not a port
-                            if(wsBean.isSubclassOf(parentsUntilFirstPhysicalPortB.get(0).getClassName(), "GenericCommunicationsElement", ipAddress, sessionId))
-                                parentsUntilFirstComEquipmentB = Arrays.asList(parentsUntilFirstPhysicalPortB.get(0)); 
-                            else 
-                                parentsUntilFirstComEquipmentB = wsBean.getParentsUntilFirstOfClass(parentsUntilFirstPhysicalPortB.get(0).
-                                getClassName(), parentsUntilFirstPhysicalPortB.get(0).getId(), "GenericCommunicationsElement", ipAddress, sessionId);
-                        }else
-                            parentsUntilFirstComEquipmentB = wsBean.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointB().
-                                getClassName(), logicalCircuitDetails.getEndpointB().getId(), "GenericCommunicationsElement", ipAddress, sessionId);
+                        if(logicalCircuitDetails.getEndpointB() != null){
+                            List<RemoteObjectLight> parentsUntilFirstComEquipmentB = null;
+                            if(wsBean.isSubclassOf(logicalCircuitDetails.getEndpointB().getClassName(), Constants.CLASS_GENERICLOGICALPORT, ipAddress, sessionId)){
+                                 List<RemoteObjectLight> parentsUntilFirstPhysicalPortB = wsBean.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointB().
+                                    getClassName(), logicalCircuitDetails.getEndpointB().getId(), "GenericPhysicalPort", ipAddress, sessionId);
+                                  //This is only for pseudowire and will be removed once the MPLS sync has been finished, because vc ends in the device not a port
+                                if(wsBean.isSubclassOf(parentsUntilFirstPhysicalPortB.get(0).getClassName(), "GenericCommunicationsElement", ipAddress, sessionId))
+                                    parentsUntilFirstComEquipmentB = Arrays.asList(parentsUntilFirstPhysicalPortB.get(0)); 
+                                else 
+                                    parentsUntilFirstComEquipmentB = wsBean.getParentsUntilFirstOfClass(parentsUntilFirstPhysicalPortB.get(0).
+                                    getClassName(), parentsUntilFirstPhysicalPortB.get(0).getId(), "GenericCommunicationsElement", ipAddress, sessionId);
+                            }else
+                                parentsUntilFirstComEquipmentB = wsBean.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointB().
+                                    getClassName(), logicalCircuitDetails.getEndpointB().getId(), "GenericCommunicationsElement", ipAddress, sessionId);
 
-                        RemoteObjectLight bSideEquipmentLogical = parentsUntilFirstComEquipmentB.get(parentsUntilFirstComEquipmentB.size() - 1);
-                        //We must do this becuase we need the end points of the snmp
-                        RemoteObjectLight stmEndPointB = null;
-                        if(stm != null)
-                            stmEndPointB = wsBean.getSpecialAttribute(stm.getClassName(), stm.getId(), "sdhTLEndpointB", ipAddress, sessionId).get(0);
-                        
-                        Component logicalB = createDeviceTable(bSideEquipmentLogical, 
-                                logicalCircuitDetails.getEndpointB(), stmEndPointB);
-                        logicalB.setId(bSideEquipmentLogical.getId());
-                        tempForm.setLogicalPartB(logicalB);
+
+                            RemoteObjectLight bSideEquipmentLogical = parentsUntilFirstComEquipmentB.get(parentsUntilFirstComEquipmentB.size() - 1);
+                            //We must do this becuase we need the end points of the snmp
+                            RemoteObjectLight stmEndPointB = null;
+                            if(stm != null)
+                                stmEndPointB = wsBean.getSpecialAttribute(stm.getClassName(), stm.getId(), "sdhTLEndpointB", ipAddress, sessionId).get(0);
+
+                            Component logicalB = createDeviceTable(bSideEquipmentLogical, 
+                                    logicalCircuitDetails.getEndpointB(), stmEndPointB);
+                            logicalB.setId(bSideEquipmentLogical.getId());
+                            tempForm.setLogicalPartB(logicalB);
+                        }
                         //This only applies if there is a peering, the peering should always be in side B
-                        if(aSideEquipmentLogical.getClassName().toLowerCase().contains("cloud"))
+                        if(aSideEquipmentLogical != null && aSideEquipmentLogical.getClassName().toLowerCase().contains("cloud"))
                             isSideAPeering = true;
                         //Now we render the physical part
                         //We start with the A side
@@ -408,14 +414,14 @@ public class FormDashboardWidget extends AbstractDashboardWidget{
      * @param id
      * @return 
      */
-    private int[] search(long id){
+    private int[] search(String id){
         int[] result = new int[2];
         for(int i=1; i< tables.size(); i++){
-            if(tables.get(i).getLogicalPartA() != null && tables.get(i).getLogicalPartA().getId().equals(Long.toString(id))){
+            if(tables.get(i).getLogicalPartA() != null && tables.get(i).getLogicalPartA().getId().equals(id)){
                 result[0] = SIDE_A;
                 result[1] = i;
             }
-            else if(tables.get(i).getLogicalPartB() != null && tables.get(i).getLogicalPartB().getId().equals(Long.toString(id)))
+            else if(tables.get(i).getLogicalPartB() != null && tables.get(i).getLogicalPartB().getId().equals(id))
                 result[0] = SIDE_B;
                 result[1] = i;
         }
@@ -435,7 +441,7 @@ public class FormDashboardWidget extends AbstractDashboardWidget{
         while(i < tables.size()){
             location[0] = 0; location[1] = -1;
             if(tables.get(i).getLogicalPartA() != null && !isSideAChecked){
-                location = search(Long.valueOf(tables.get(i).getLogicalPartA().getId()));
+                location = search(tables.get(i).getLogicalPartA().getId());
                 if(location[0] != 0 && location[1] != -1)
                     moveRouter(SIDE_A, i, location[0], location[1]);
                 else if(location[0] == 0 && location[1] == -1)
@@ -445,7 +451,7 @@ public class FormDashboardWidget extends AbstractDashboardWidget{
                 isSideAChecked = true;
             
             if(tables.get(i).getLogicalPartB() != null && isSideAChecked && !isSideBChecked){
-                location = search(Long.valueOf(tables.get(i).getLogicalPartB().getId()));
+                location = search(tables.get(i).getLogicalPartB().getId());
                 if(location[0] != 0 && location[1] != -1)
                     moveRouter(SIDE_B, i, location[0], location[1]);
                 else if(location[0] == 0 && location[1] == -1)

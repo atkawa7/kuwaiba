@@ -176,7 +176,7 @@ public class TableCreator {
      * @return a string with the path to the img
      */
     private Component createIcon(String icon){
-        Image image = new Image("", new ExternalResource("/report-icons/" + icon + "_100.png"));
+        Image image = new Image("", new ExternalResource("/report-icons/" + icon + ".png"));
         image.setWidth("90px");
         return image;
     }
