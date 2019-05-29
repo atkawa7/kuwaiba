@@ -45,7 +45,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalValidator;
-import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
@@ -128,13 +127,14 @@ public class RunSynchronizationProcessAction extends GenericObjectNodeAction imp
         else if(nodes.size() == 1 &&  nodes.get(0) instanceof ObjectNode){
             LocalSyncDataSourceConfiguration syncDataSourceConfiguration = CommunicationsStub.getInstance().getSyncDataSourceConfiguration(((ObjectNode)nodes.get(0)).getObject().getId());
 
-            if(syncDataSourceConfiguration == null)
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                                        NotificationUtil.ERROR_MESSAGE, I18N.gm("sync_error_no_config"));
-            
-            syncDataSources.add(syncDataSourceConfiguration);
-            localSyncGroup = new LocalSyncGroup(-1, "adhocSyncGroup", syncDataSources);
-            
+            if(syncDataSourceConfiguration == null){
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, I18N.gm("sync_error_no_config"));
+                localSyncGroup = null;
+            }
+            else{
+                syncDataSources.add(syncDataSourceConfiguration);
+                localSyncGroup = new LocalSyncGroup(-1, "adhocSyncGroup", syncDataSources);
+            }
         }
         else{//The sync process has been launch from individual syn data source configuration files
             for(AbstractNode selectedNode : nodes){
@@ -144,7 +144,7 @@ public class RunSynchronizationProcessAction extends GenericObjectNodeAction imp
             localSyncGroup = new LocalSyncGroup(-1, "adhocSyncGroup", syncDataSources);
         }        
 
-        if (localSyncGroup.getDataSourceConfig() == null || localSyncGroup.getDataSourceConfig().isEmpty())
+        if (localSyncGroup == null || localSyncGroup.getDataSourceConfig().isEmpty())
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                 NotificationUtil.INFO_MESSAGE, String.format(I18N.gm("sync_error_no_config"), ((ObjectNode)nodes.get(0)).getObject()));
         else{
@@ -236,7 +236,7 @@ public class RunSynchronizationProcessAction extends GenericObjectNodeAction imp
 
     @Override
     public String[] appliesTo() {
-        return new String[] {Constants.CLASS_GENERICCOMMUNICATIONSELEMENT};
+        return new String[] {"Router", "MPLSRouter", "Switch", "MPLSSwitch"};
     }
 
     @Override

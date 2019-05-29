@@ -18,6 +18,7 @@ package com.neotropic.inventory.modules.sync.nodes.actions;
 import com.neotropic.inventory.modules.sync.LocalSyncDataSourceConfiguration;
 import com.neotropic.inventory.modules.sync.LocalSyncGroup;
 import com.neotropic.inventory.modules.sync.nodes.SyncDataSourceConfigurationNode;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +34,12 @@ import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.navigation.navigationtree.windows.ObjectEditorTopComponent;
+import org.openide.explorer.propertysheet.PropertySheetView;
+import org.openide.nodes.Node;
 import org.openide.util.lookup.ServiceProvider;
+import org.openide.windows.Mode;
+import org.openide.windows.TopComponent;
+import org.openide.windows.WindowManager;
 
 /**
  * Creates/edits the data source configuration of the object
@@ -87,7 +93,7 @@ public class ConfigSyncDatasourceAction extends GenericObjectNodeAction implemen
                 } else {
                     syncDataSourceConfigurationNode = new SyncDataSourceConfigurationNode(syncDataSourceConfiguration);
                     
-                    ObjectEditorTopComponent component = new ObjectEditorTopComponent(syncDataSourceConfigurationNode);
+                    SyncDatasourceConfigEditorTopComponent component = new SyncDatasourceConfigEditorTopComponent(syncDataSourceConfigurationNode);
                     component.open();
                     component.requestActive();
                 }
@@ -129,5 +135,33 @@ public class ConfigSyncDatasourceAction extends GenericObjectNodeAction implemen
     @Override
     public LocalValidator[] getValidators() {
         return null;
+    }
+    
+    public class SyncDatasourceConfigEditorTopComponent extends TopComponent {
+
+        private PropertySheetView editor;
+        private Node node;
+
+        public SyncDatasourceConfigEditorTopComponent(Node node) {
+            editor = new PropertySheetView();
+            this.node = node;
+            this.setDisplayName(node.getDisplayName());
+            setLayout(new BorderLayout());
+            add(editor);
+            //This requires that CoreUI to be enable in the project
+            Mode myMode = WindowManager.getDefault().findMode("properties");
+            myMode.dockInto(this);
+        }
+
+        @Override
+        public int getPersistenceType() {
+            return TopComponent.PERSISTENCE_NEVER;
+        }
+
+        @Override
+        public void componentOpened() {
+            //This is important. If setNodes is called in the constructor, it won't work!
+            editor.setNodes(new Node[]{ node });
+        }
     }
 }
