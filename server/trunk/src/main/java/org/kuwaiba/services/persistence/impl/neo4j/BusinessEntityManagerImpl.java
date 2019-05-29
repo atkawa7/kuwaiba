@@ -2001,9 +2001,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             while (contactNodes.hasNext()) {
                 Node contactNode = contactNodes.next();
-                Node customerNode = contactNode.getRelationships(RelTypes.RELATED_TO_SPECIAL, Direction.INCOMING).iterator().next().getStartNode();
-                
-                res.add(new Contact(createObjectFromNode(contactNode), createObjectLightFromNode(customerNode)));
+                if(contactNode.hasRelationship(RelTypes.RELATED_TO_SPECIAL, Direction.INCOMING)){
+                    Node customerNode = contactNode.getRelationships(RelTypes.RELATED_TO_SPECIAL, Direction.INCOMING).iterator().next().getStartNode();
+
+                    res.add(new Contact(createObjectFromNode(contactNode), createObjectLightFromNode(customerNode)));
+                }
             }
             
             return res;
