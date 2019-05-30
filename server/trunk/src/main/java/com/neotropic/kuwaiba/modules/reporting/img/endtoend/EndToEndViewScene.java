@@ -71,7 +71,6 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
     public final static String VIEW_CLASS = "EndToEndView"; 
         
     private final LayerWidget imagesLayer;
-    private final LayerWidget framesLayer;
     protected LayerWidget labelsLayer;
     
     private final LayerWidget nodeLayer;
@@ -85,9 +84,7 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
         nodeLayer = new LayerWidget(this);
         edgeLayer = new LayerWidget(this);
         imagesLayer = new LayerWidget(this);
-        framesLayer = new LayerWidget(this);
-        
-        addChild(framesLayer);
+
         addChild(imagesLayer);
         addChild(edgeLayer);
         addChild(nodeLayer);
@@ -164,7 +161,6 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
     }
     
     public void render(byte[] structure) throws IllegalArgumentException { 
-        HashMap<String, String> classIdOfSides =  new HashMap<>();
 //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
 //        try {
 //            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_.xml");
@@ -193,15 +189,13 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
                         int yCoordinate = Integer.valueOf(reader.getAttributeValue(null,"y"));
                         String objectId = reader.getElementText();
                         try {
-                            RemoteObjectLight rol = webserviceBean.getObjectLight(className, objectId, ipAddress, remoteSession.getSessionId());
-                            if (rol != null) {
-                                classIdOfSides.put(objectId, className);
-                                if (getNodes().contains(rol))
-                                    Notifications.showWarning("The view seems to be corrupted. Self-healing measures were taken");
-                                else {
-                                    Widget widget = addNode(rol);
+                            RemoteObjectLight lol = webserviceBean.getObjectLight(className, objectId, ipAddress, remoteSession.getSessionId());
+                            if (lol != null) {
+                                if(findWidget(lol) == null){
+                                    Widget widget = addNode(lol);
                                     widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
                                     widget.setBackground(new Color(webserviceBean.getClass(className, ipAddress, remoteSession.getSessionId()).getColor()));
+                                    this.notifyNodeAdded(lol, widget);
                                     validate();
                                 }
                             }
@@ -233,13 +227,14 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
 
                                 if (aSideWidget != null && bSideWidget != null) {//If one of the endpoints is missing, don't render the connection
 
-                                    if (getEdges().contains(container))
-                                        Notifications.showWarning("The view seems to be corrupted. Self-healing measures were taken");
-                                    else {
+                                    if (!getEdges().contains(container)){
+                                        Widget source = findWidget(aSideObject);
+                                        Widget target = findWidget(bSideObject);
                                         ObjectConnectionWidget newEdge = (ObjectConnectionWidget) addEdge(container);
-                                        setEdgeSource(container, aSideWidget.getLookup().lookup(RemoteObjectLight.class));
-                                        setEdgeTarget(container, bSideWidget.getLookup().lookup(RemoteObjectLight.class));
+                                        setEdgeSource(container, aSideObject);
+                                        setEdgeTarget(container, bSideObject);
                                         validate();
+                                       
                                         List<Point> localControlPoints = new ArrayList<>();
                                         while(true) {
                                             reader.nextTag();
@@ -247,10 +242,16 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
                                             if (reader.getName().equals(qControlPoint)) {
                                                 if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
                                                     localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
-                                            } else {
+                                            } else{
                                                 newEdge.setControlPoints(localControlPoints,false);
                                                 break;
                                             }
+                                        }
+                                        if(newEdge.getControlPoints().isEmpty() && localControlPoints.isEmpty()){
+                                            localControlPoints.add(newEdge.convertLocalToScene(new Point(source.getPreferredLocation())));
+                                            localControlPoints.add(newEdge.convertLocalToScene(new Point(target.getPreferredLocation())));
+                                            newEdge.setControlPoints(localControlPoints,false);
+                                            validate();
                                         }
                                     }
                                 }
@@ -279,6 +280,8 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
         } catch (XMLStreamException ex) {
             Exceptions.printStackTrace(ex);
         }
+        edgeLayer.revalidate();
+        edgeLayer.repaint();
         validate();
         repaint();
     }
@@ -315,9 +318,9 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
             } catch (IOException ex) {
                 newWidget = new ObjectNodeWidget(this, node);
             }
-        } else
+        } else{
             newWidget = new ObjectNodeWidget(this, node);
-
+        }
         
         nodeLayer.addChild(newWidget);
         return newWidget;
@@ -328,6 +331,7 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
         ObjectConnectionWidget newWidget = new ObjectConnectionWidget(this, edge, 
         edge.getClassName().equals("RadioLink") ? ObjectConnectionWidget.DOT_LINE : ObjectConnectionWidget.LINE);
         
+        newWidget.getActions().addAction(createSelectAction());
         newWidget.setRouter(RouterFactory.createFreeRouter());
         newWidget.setControlPointShape(PointShape.SQUARE_FILLED_BIG);
         newWidget.setEndPointShape(PointShape.SQUARE_FILLED_BIG);
@@ -340,7 +344,8 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
         }
         if (classMetadata != null)
             newWidget.setLineColor(new Color(classMetadata.getColor()));
-                
+          
+        newWidget.getActions().addAction(createSelectAction());
         edgeLayer.addChild(newWidget);
         return newWidget;
     }
