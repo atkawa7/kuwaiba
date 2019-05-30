@@ -51,10 +51,12 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.forms.FormRenderer;
 import org.kuwaiba.apis.forms.ScriptQueryExecutorImpl;
+import org.kuwaiba.apis.forms.components.impl.ComponentUpload;
 import org.kuwaiba.apis.forms.elements.AbstractElement;
 import org.kuwaiba.apis.forms.elements.AbstractElementField;
 import org.kuwaiba.apis.forms.elements.ElementGrid;
 import org.kuwaiba.apis.forms.elements.ElementScript;
+import org.kuwaiba.apis.forms.elements.ElementUpload;
 import org.kuwaiba.apis.forms.elements.FormDefinitionLoader;
 import org.kuwaiba.apis.forms.elements.FunctionRunner;
 import org.kuwaiba.apis.forms.elements.Runner;
@@ -596,21 +598,31 @@ public class ProcessInstanceView extends DynamicComponent {
                 AbstractElementField elementField = (AbstractElementField) element;
 
                 if (elementField.getId() != null) {
-                    String id = element.getId();
-
-                    String value = "";
-
-                    if (elementField.getValue() != null) {
-                        if (elementField.getValue() instanceof RemoteObjectLight) {
-
-                            value = ((RemoteObjectLight) elementField.getValue()).getName();
+                    if (elementField instanceof ElementUpload) {
+                        ElementUpload elementUpload = (ElementUpload) elementField;
+                        if (elementUpload.getElementEventListener() instanceof ComponentUpload) {
+                            ComponentUpload componentUpload = (ComponentUpload) elementUpload.getElementEventListener();
+                            stringTemplate = stringTemplate.replace(
+                                "${" + element.getId() + "}", 
+                                componentUpload.getUploadUrl());
                         }
-                        else {
+                    } else {
+                        String id = element.getId();
 
-                            value = elementField.getValue().toString();
+                        String value = "";
+
+                        if (elementField.getValue() != null) {
+                            if (elementField.getValue() instanceof RemoteObjectLight) {
+
+                                value = ((RemoteObjectLight) elementField.getValue()).getName();
+                            }
+                            else {
+
+                                value = elementField.getValue().toString();
+                            }
                         }
+                        stringTemplate = stringTemplate.replace("${" + id + "}", value);
                     }
-                    stringTemplate = stringTemplate.replace("${" + id + "}", value);
                 }
             }
         }

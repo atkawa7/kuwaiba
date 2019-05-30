@@ -173,7 +173,15 @@ public class ComponentUpload extends GraphicalComponent {
         }
     }
     
-    String getResourceURL(AbstractClientConnector connector,StreamResource resource){
+    public String getUploadUrl() {
+        try {
+            return getResourceURL(link, (StreamResource) link.getResource());
+        } catch(Exception ex) {
+            return "";
+        }
+    }
+    
+    private String getResourceURL(AbstractClientConnector connector,StreamResource resource){
         String path = UI.getCurrent().getPage().getLocation().getPath();
         String protocol = UI.getCurrent().getPage().getLocation().getScheme();
         String currentUrl = UI.getCurrent().getPage().getLocation().getAuthority();
