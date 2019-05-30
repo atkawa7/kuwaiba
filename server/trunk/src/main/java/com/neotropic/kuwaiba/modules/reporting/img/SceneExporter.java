@@ -116,7 +116,7 @@ public class SceneExporter {
                 scene.render(currentView.getStructure());
             else{
                 try {
-                    scene.render(webserviceBean.getE2EMap(classes, ids, true, true, true, true, true, ipAddress, serviceId).getStructure());
+                    scene.render(webserviceBean.getE2EMap(classes, ids, true, true, true, true, true, remoteSession.getIpAddress(), remoteSession.getSessionId()).getStructure());
                 } catch (ServerSideException ex) {
                     Exceptions.printStackTrace(ex);
                 }
