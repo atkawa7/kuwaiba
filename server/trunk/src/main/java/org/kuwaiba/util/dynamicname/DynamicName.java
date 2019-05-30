@@ -57,7 +57,7 @@ public class DynamicName {
         
         String section = "";
         boolean squareBracketOpen = false;
-        
+        expressionForTheName = expressionForTheName.replace(" ", "");
         for (int i = 0; i < expressionForTheName.length(); i += 1) {
             if (expressionForTheName.charAt(i) == '[' && squareBracketOpen)
                 throw new InvalidArgumentException("A left square bracket \"[\" was open but never closed");
