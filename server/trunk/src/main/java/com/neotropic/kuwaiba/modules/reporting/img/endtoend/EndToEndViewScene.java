@@ -231,10 +231,12 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
                                         Widget source = findWidget(aSideObject);
                                         Widget target = findWidget(bSideObject);
                                         ObjectConnectionWidget newEdge = (ObjectConnectionWidget) addEdge(container);
-                                        setEdgeSource(container, aSideObject);
-                                        setEdgeTarget(container, bSideObject);
-                                        validate();
+//                                        setEdgeSource(container, aSideObject);
+//                                        setEdgeTarget(container, bSideObject);
                                        
+                                        newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(target));
+                                        newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(source));
+                                        
                                         List<Point> localControlPoints = new ArrayList<>();
                                         while(true) {
                                             reader.nextTag();
@@ -321,7 +323,8 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
         } else{
             newWidget = new ObjectNodeWidget(this, node);
         }
-        
+        newWidget.repaint();
+        newWidget.revalidate();
         nodeLayer.addChild(newWidget);
         return newWidget;
     }
