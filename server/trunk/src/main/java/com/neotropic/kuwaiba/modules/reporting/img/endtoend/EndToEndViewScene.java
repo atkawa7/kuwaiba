@@ -219,43 +219,49 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
                             }
                             
                             if (container != null) { // if the connection exists
-                                RemoteObjectLight aSideObject = new RemoteObjectLight(aSideClassName, aSideid, null);
-                                ObjectNodeWidget aSideWidget = (ObjectNodeWidget) findWidget(aSideObject);
+                                try {
+                                    RemoteObjectLight aSideObject = webserviceBean.getObjectLight(aSideClassName, aSideid, ipAddress, remoteSession.getSessionId());
+                                    ObjectNodeWidget aSideWidget = (ObjectNodeWidget) findWidget(aSideObject);
 
-                                RemoteObjectLight bSideObject = new RemoteObjectLight(bSideClassName, bSideid, null);
-                                ObjectNodeWidget bSideWidget = (ObjectNodeWidget) findWidget(bSideObject);
+                                    RemoteObjectLight bSideObject = webserviceBean.getObjectLight(bSideClassName, bSideid, ipAddress, remoteSession.getSessionId());
+                                    ObjectNodeWidget bSideWidget = (ObjectNodeWidget) findWidget(bSideObject);
 
-                                if (aSideWidget != null && bSideWidget != null) {//If one of the endpoints is missing, don't render the connection
+                                    if (aSideWidget != null && bSideWidget != null) {//If one of the endpoints is missing, don't render the connection
 
-                                    if (!getEdges().contains(container)){
-                                        Widget source = findWidget(aSideObject);
-                                        Widget target = findWidget(bSideObject);
-                                        ObjectConnectionWidget newEdge = (ObjectConnectionWidget) addEdge(container);
-//                                        setEdgeSource(container, aSideObject);
-//                                        setEdgeTarget(container, bSideObject);
-                                       
-                                        newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(target));
-                                        newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(source));
-                                        
-                                        List<Point> localControlPoints = new ArrayList<>();
-                                        while(true) {
-                                            reader.nextTag();
+                                        if (!getEdges().contains(container)){
+                                            Widget source = findWidget(aSideObject);
+                                            Widget target = findWidget(bSideObject);
+                                            ObjectConnectionWidget newEdge = (ObjectConnectionWidget) addEdge(container);
+                                            setEdgeSource(container, aSideObject);
+                                            setEdgeTarget(container, bSideObject);
+                                            
+                                            List<Point> localControlPoints = new ArrayList<>();
+                                            while(true) {
+                                                reader.nextTag();
 
-                                            if (reader.getName().equals(qControlPoint)) {
-                                                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-                                                    localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
-                                            } else{
-                                                newEdge.setControlPoints(localControlPoints,false);
-                                                break;
+                                                if (reader.getName().equals(qControlPoint)) {
+                                                    if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                                                        localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
+                                                } else{
+                                                    newEdge.setControlPoints(localControlPoints,false);
+                                                    break;
+                                                }
                                             }
-                                        }
-                                        if(newEdge.getControlPoints().isEmpty() && localControlPoints.isEmpty()){
-                                            localControlPoints.add(newEdge.convertLocalToScene(new Point(source.getPreferredLocation())));
-                                            localControlPoints.add(newEdge.convertLocalToScene(new Point(target.getPreferredLocation())));
-                                            newEdge.setControlPoints(localControlPoints,false);
-                                            validate();
+                                            if(newEdge.getControlPoints().isEmpty() && localControlPoints.isEmpty()){
+                                                String aName = aSideObject.getName();
+                                                String bName = bSideObject.getName();
+                                                int aNameLength = aName != null && !aName.isEmpty() ? aName.length() : 1;
+                                                int bNameLength = bName != null && !bName.isEmpty() ? bName.length() : 1;
+                                                localControlPoints.add(newEdge.convertLocalToScene(new Point(source.getPreferredLocation().x + aNameLength * 7, source.getPreferredLocation().y + 16)));
+                                                localControlPoints.add(newEdge.convertLocalToScene(new Point(target.getPreferredLocation().x + bNameLength * 7, target.getPreferredLocation().y + 16)));
+                                                newEdge.setControlPoints(localControlPoints,false);
+                                                validate();
+                                            }
+
                                         }
                                     }
+                                } catch(Exception ex) {
+                                    Exceptions.printStackTrace(ex);                                    
                                 }
                             }
                         }
