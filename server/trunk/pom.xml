@@ -122,9 +122,9 @@
 
         <!-- Visual API for reporting purposes -->
         <dependency>
-            <groupId>org.codeartisans.thirdparties.swing</groupId>
+            <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-api-visual</artifactId>
-            <version>2.23.1</version>
+            <version>RELEASE82</version>
         </dependency>
 
         <!-- Neo4J, Groovy, SNMP and JSON support -->
@@ -312,6 +312,14 @@
             </releases>
             <snapshots>
                 <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>netbeans</id>
+            <name>Repository hosting NetBeans modules</name>
+            <url>http://bits.netbeans.org/nexus/content/groups/netbeans</url>
+            <snapshots>
+                <enabled>false</enabled>
             </snapshots>
         </repository>
     </repositories>
