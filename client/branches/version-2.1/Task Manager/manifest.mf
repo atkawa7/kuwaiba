@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: true
+OpenIDE-Module: org.inventory.automation.tasks/1
+OpenIDE-Module-Implementation-Version: 1
+OpenIDE-Module-Localizing-Bundle: org/inventory/automation/tasks/Bundle.properties
+OpenIDE-Module-Requires: org.openide.windows.WindowManager
+

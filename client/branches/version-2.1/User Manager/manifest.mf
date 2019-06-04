@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.inventory.core.usermanager/1
+OpenIDE-Module-Implementation-Version: 1
+OpenIDE-Module-Localizing-Bundle: org/inventory/core/usermanager/Bundle.properties
+OpenIDE-Module-Requires: org.openide.windows.WindowManager
+
