@@ -25,10 +25,8 @@ import java.awt.Point;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLInputFactory;
 import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamConstants;
@@ -84,7 +82,7 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
         nodeLayer = new LayerWidget(this);
         edgeLayer = new LayerWidget(this);
         imagesLayer = new LayerWidget(this);
-
+        setBackground(Color.WHITE);
         addChild(imagesLayer);
         addChild(edgeLayer);
         addChild(nodeLayer);

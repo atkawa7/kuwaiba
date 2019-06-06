@@ -52,7 +52,7 @@ public class ObjectConnectionWidget extends ConnectionWidget {
         setToolTipText(businessObject.toString());
 
         labelWidget = new LabelWidget(scene, businessObject.toString());
-        labelWidget.setOpaque(true);
+        labelWidget.setOpaque(false);
         labelWidget.setBorder(getScene().getLookFeel().getBorder(getState()));
         
         addChild(labelWidget);
