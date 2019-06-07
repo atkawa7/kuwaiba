@@ -207,7 +207,18 @@ public class Constants {
      * Class VirualWarehouse
      */
     public static final String CLASS_VIRTUALWAREHOUSE = "VirtualWarehouse";
-    
+    /**
+     * Class EVLAN
+     */
+    public static final String CLASS_EVLAN = "EVLAN";
+    /**
+     * Class EGVLAN
+     */
+    public static final String CLASS_EGVLAN = "EGVLAN";
+    /**
+     * Class CVLAN
+     */
+    public static final String CLASS_CVLAN = "CVLAN";
     /**
      * Class VirtualPort
      */

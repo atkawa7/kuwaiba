@@ -53,6 +53,7 @@ public class LocalPrivilege {
     public static final String PRIVILEGE_CONFIG_VARIABLES = "config-variables";
     public static final String PRIVILEGE_VALIDATORS = "validators";
     public static final String PRIVILEGE_WAREHOUSES = "warehouses";
+    public static final String PRIVILEGE_CPE_MANAGER = "cpe-manager";
     
     /**
      * For now, these privileges will be hard-coded, however in the near future, every module will provide its own set of tokens
