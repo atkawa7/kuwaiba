@@ -67,7 +67,7 @@ public class MPLSModule implements GenericCommercialModule {
     /**
      * Relates a pseudowire and its output interface, the output interface is the endpoint of a MPLS link if is a port
      */
-    public static String RELATIONSHIP_MPLS_PSEUDOWIRE_HASOUTPUTINTERFACE = "mplsPseudowireHasOutputInterface";
+    public static String RELATIONSHIP_MPLS_PW_ISRELATEDWITH_VFI = "mplsPseudowireIsRelatedWithVFI";
     /**
      * Relates two pseudowires that are logical linked inside a MPLS device
      */
@@ -231,125 +231,6 @@ public class MPLSModule implements GenericCommercialModule {
     }
     
     /**
-     * Relates a pseudowire with a interface, if the given interface is a pseudowire 
-     * the relationship between pseudowires that represent the logical link between them inside the device,
-     * if the given interface is a GenericPhysicalPort or a VirtualPort the relationship is created
-     * represents the logical link between the pseudowire an its output interface.
-     * 
-     * @param pseudoWireId pseudowire id
-     * @param interfaceClassName interface class name
-     * @param interfaceId interface id
-     * @throws ServerSideException
-     */
-    public void relatePseudowireWithInterface(String pseudoWireId, String interfaceClassName, String interfaceId) throws 
-            ServerSideException{
-        try{
-        if (bem == null || mem == null)
-            throw new ServerSideException("Can't reach the backend. Contact your administrator");
-
-        if(pseudoWireId != null){
-            BusinessObjectLight pseudowire = bem.getObjectLight(Constants.CLASS_PSEUDOWIRE, pseudoWireId);
-            if(pseudowire != null){
-                if(interfaceClassName.equals(Constants.CLASS_PSEUDOWIRE)){
-                    String relatedInterface = bem.getAttributeValueAsString(interfaceClassName, interfaceId, Constants.PROPERTY_NAME);
-                    bem.createSpecialRelationship(Constants.CLASS_PSEUDOWIRE, pseudoWireId, interfaceClassName, interfaceId, RELATIONSHIP_MPLS_PW_ISRELATEDWITH_PW, true); //NOI18N
-                    aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - pseudowire - %s", pseudowire, relatedInterface));
-                }else if(mem.isSubclassOf(Constants.CLASS_GENERICPORT, interfaceClassName)){
-                    String outputIntfName = bem.getAttributeValueAsString(interfaceClassName, interfaceId, Constants.PROPERTY_NAME);
-                    bem.createSpecialRelationship(pseudowire.getClassName(), pseudowire.getId(), interfaceClassName, interfaceId, RELATIONSHIP_MPLS_PSEUDOWIRE_HASOUTPUTINTERFACE, true); //NOI18N
-                    aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - " + RELATIONSHIP_MPLS_PSEUDOWIRE_HASOUTPUTINTERFACE + " - %s", pseudowire, outputIntfName));
-                }
-            }
-        }
-        }catch(Exception ex){
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    /**
-     * Get a MPLS link connections
-     * @param connectionId MPLS link id
-     * @param e2eMplsConnections
-     * @return MPLS link endpoints
-     * @throws ServerSideException 
-     */
-    public List<MPLSConnectionDefinition> getE2EMPLSConnections(String connectionId, List<MPLSConnectionDefinition> e2eMplsConnections) throws ServerSideException {
-        if (bem == null || mem == null)
-            throw new ServerSideException("Can't reach the backend. Contact your administrator");
-        try{
-            
-            boolean containConnectionId = false;
-            
-            for (MPLSConnectionDefinition e2eMplsConnection : e2eMplsConnections) {
-                if(e2eMplsConnection.getConnectionObject().getId().equals(connectionId)){
-                    containConnectionId = true;
-                    break;
-                }
-            }
-           
-            if(!containConnectionId){
-                MPLSConnectionDefinition mplsLinkEndpoints = getMPLSLinkDetails(connectionId);
-                e2eMplsConnections.add(mplsLinkEndpoints);
-                //side A
-                if(mplsLinkEndpoints.getPseudowireA() != null){
-                    BusinessObjectLight endpointA = mplsLinkEndpoints.getPseudowireA();
-                    //pw -- pw
-                    List<BusinessObjectLight> pws = bem.getSpecialAttribute(endpointA.getClassName(), endpointA.getId(), RELATIONSHIP_MPLS_PW_ISRELATEDWITH_PW);
-                    if(!pws.isEmpty() && pws.get(0).getClassName().equals(Constants.CLASS_PSEUDOWIRE)){
-                        List<BusinessObjectLight> pseudowireRelatedConnections = getPseudowireRelatedConnections(pws.get(0));
-
-                        for (BusinessObjectLight mplsConnections : pseudowireRelatedConnections)
-                            getE2EMPLSConnections(mplsConnections.getId(), e2eMplsConnections);
-                    }
-                }
-                //side B
-                if(mplsLinkEndpoints.getPseudowireB() != null){
-                    BusinessObjectLight endpointB = mplsLinkEndpoints.getPseudowireB();
-                    //pw -- pw
-                    List<BusinessObjectLight> pws = bem.getSpecialAttribute(endpointB.getClassName(), endpointB.getId(), RELATIONSHIP_MPLS_PW_ISRELATEDWITH_PW);
-                    if(!pws.isEmpty() && pws.get(0).getClassName().equals(Constants.CLASS_PSEUDOWIRE)){
-                        List<BusinessObjectLight> pseudowireRelatedConnections = getPseudowireRelatedConnections(pws.get(0));
-
-                        for (BusinessObjectLight mplsConnections : pseudowireRelatedConnections)
-                            getE2EMPLSConnections(mplsConnections.getId(), e2eMplsConnections);
-                    }
-                }
-            }
-            
-            return e2eMplsConnections;
-            
-        }catch(Exception ex){
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    /**
-     * Follows the continuity of a given pseudowire throw its relationships
-     * @param pseudowire a given pseudowire
-     * @return a list mpls links related to the pseudowire 
-     * @throws MetadataObjectNotFoundException class Pseudowire not found
-     * @throws BusinessObjectNotFoundException the object could not be found
-     * @throws InvalidArgumentException If the object id is null
-     */
-    private List<BusinessObjectLight> getPseudowireRelatedConnections(BusinessObjectLight pseudowire) 
-            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException
-    {
-        HashMap<String, List<BusinessObjectLight>> mplsConnetcions = bem.getSpecialAttributes(pseudowire.getClassName(), pseudowire.getId());
-        List<BusinessObjectLight> relatedMplsConnections = new ArrayList<>();
-        if(mplsConnetcions.containsKey(RELATIONSHIP_MPLSENDPOINTA)){
-            List<BusinessObjectLight> sideAConnections = mplsConnetcions.get(RELATIONSHIP_MPLSENDPOINTA);
-            if(!sideAConnections.isEmpty() && sideAConnections.get(0).getClassName().equals(Constants.CLASS_MPLSLINK))
-               relatedMplsConnections.add(sideAConnections.get(0));
-        }
-        if(mplsConnetcions.containsKey(RELATIONSHIP_MPLSENDPOINTB)){
-            List<BusinessObjectLight> sideBConnections = mplsConnetcions.get(RELATIONSHIP_MPLSENDPOINTB);
-            if(!sideBConnections.isEmpty() && sideBConnections.get(0).getClassName().equals(Constants.CLASS_MPLSLINK))
-                relatedMplsConnections.add(sideBConnections.get(0));
-        }
-        return relatedMplsConnections;
-    }
-    
-    /**
      * Get the MPLS link details, its output interfaces, pseudowires, tunnels
      * @param connectionId MPLS link id
      * @return MPLS link endpoints
@@ -374,17 +255,9 @@ public class MPLSModule implements GenericCommercialModule {
                 mplsConnectionDefinition.setDeviceA(deviceA);
                 
                 if(endpointA.getClassName().equals(Constants.CLASS_PSEUDOWIRE)){
-                    mplsConnectionDefinition.setPseudowireA(endpointA);
-                    List<BusinessObjectLight> outputs = bem.getSpecialAttribute(endpointA.getClassName(), endpointA.getId(), RELATIONSHIP_MPLS_PSEUDOWIRE_HASOUTPUTINTERFACE);
-                    if(!outputs.isEmpty() && outputs.get(0).getClassName().equals(Constants.CLASS_MPLSTUNNEL))
-                        mplsConnectionDefinition.setTunnelA(outputs.get(0));
-                }
-                else if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALPORT, endpointA.getClassName()) || endpointA.getClassName().equals(Constants.CLASS_VIRTUALPORT)){
-                    //if is an outputinterface it should be related with a pseudowire
-                    List<BusinessObjectLight> pws = bem.getSpecialAttribute(endpointA.getClassName(), endpointA.getId(), RELATIONSHIP_MPLS_PSEUDOWIRE_HASOUTPUTINTERFACE);
-                    if(!pws.isEmpty())
-                        mplsConnectionDefinition.setPseudowireA(pws.get(0));
-                    mplsConnectionDefinition.setOutputInterfaceA(endpointA);
+                    List<BusinessObjectLight> vfis = bem.getSpecialAttribute(endpointA.getClassName(), endpointA.getId(), RELATIONSHIP_MPLS_PW_ISRELATEDWITH_VFI);
+                    if(!vfis.isEmpty())
+                        mplsConnectionDefinition.setVfiA(vfis.get(0));
                 }
             }//side B
             if(!endpointBs.isEmpty()){
@@ -394,17 +267,9 @@ public class MPLSModule implements GenericCommercialModule {
                 mplsConnectionDefinition.setDeviceB(deviceB);
                 
                 if(endpointB.getClassName().equals(Constants.CLASS_PSEUDOWIRE)){
-                    mplsConnectionDefinition.setPseudowireB(endpointB);
-                    List<BusinessObjectLight> outputs = bem.getSpecialAttribute(endpointB.getClassName(), endpointB.getId(), RELATIONSHIP_MPLS_PSEUDOWIRE_HASOUTPUTINTERFACE);
-                    if(!outputs.isEmpty() && outputs.get(0).getClassName().equals(Constants.CLASS_MPLSTUNNEL))
-                        mplsConnectionDefinition.setTunnelB(outputs.get(0));
-                }
-                else if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALPORT, endpointB.getClassName()) || endpointB.getClassName().equals(Constants.CLASS_VIRTUALPORT)){
-                    //if is an outputinterface it should be related with a pseudowire
-                    List<BusinessObjectLight> pws = bem.getSpecialAttribute(endpointB.getClassName(), endpointB.getId(), RELATIONSHIP_MPLS_PSEUDOWIRE_HASOUTPUTINTERFACE);
-                    if(!pws.isEmpty())
-                        mplsConnectionDefinition.setPseudowireB(pws.get(0));
-                    mplsConnectionDefinition.setOutputInterfaceB(endpointB);
+                    List<BusinessObjectLight> vfis = bem.getSpecialAttribute(endpointB.getClassName(), endpointB.getId(), RELATIONSHIP_MPLS_PW_ISRELATEDWITH_VFI);
+                    if(!vfis.isEmpty())
+                        mplsConnectionDefinition.setVfiB(vfis.get(0));
                 }
             }
 
