@@ -4863,9 +4863,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             for (AttributeMetadata myAtt : classMetadata.getAttributes()) {
                 if (myAtt.getName().equals(relationshipName)) {
                     if (attributes.containsKey(relationshipName))
-                        attributes.put(relationshipName, attributes.get(relationshipName) + ";" + String.valueOf(relationship.getEndNode().getId())); //A multiple selection list type
+                        attributes.put(relationshipName, attributes.get(relationshipName) + ";" + (String)relationship.getEndNode().getProperty(Constants.PROPERTY_UUID)); //A multiple selection list type
                     else    
-                        attributes.put(relationshipName, String.valueOf(relationship.getEndNode().getId()));
+                        attributes.put(relationshipName, (String)relationship.getEndNode().getProperty(Constants.PROPERTY_UUID));
                     hasRelationship = true;
                     break;
                 }                  
