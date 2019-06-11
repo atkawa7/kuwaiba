@@ -67,7 +67,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
 
     @Override
     public String getId() {
-        return "BridgeDomainSyncProvider";
+        return BridgeDomainSyncProvider.class.getName();
     }
 
     @Override
@@ -263,6 +263,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                         res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("Check if Bridge Domain %s exists within %s", bridgeDomainInDevice.getName(), relatedOject), 
                                     "The Bridge Domain did not exist and was created successfully"));
                         matchingBridgeDomain = new BusinessObjectLight("BridgeDomain", newBridgeDomain, bridgeDomainInDevice.getName());
+                        existingBridgeDomains.add(matchingBridgeDomain);
                         bridgeDomainInterfaces = new ArrayList<>();
                     }
                     
@@ -293,6 +294,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                                 defaultAttributes.put(Constants.PROPERTY_NAME, networkInterface.getName());
                                 String newBridgeDomainInterface = bem.createHeadlessObject("BridgeDomainInterface", defaultAttributes, null);
                                 bem.createSpecialRelationship(relatedOject.getClassName(), relatedOject.getId(),"BridgeDomain", matchingBridgeDomain.getId(), "networkHasBridgeInterface", false);
+                                bridgeDomainInterfaces.add(new BusinessObjectLight("BridgeDomain", newBridgeDomainInterface, networkInterface.getName()));
                                 res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
                                         String.format("The BDI %s did not exist and was created.", networkInterface.getName())));
                                 aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
