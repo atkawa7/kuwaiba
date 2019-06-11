@@ -35,6 +35,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
 import org.kuwaiba.web.procmanager.MiniAppPhysicalPath;
+import org.kuwaiba.web.procmanager.MiniAppRackView;
 
 /**
  * Creates info tables from an inventory objects like Router, Switch, TributaryLink, etc 
@@ -205,6 +206,26 @@ public class TableCreator {
         
         String mmr = wsBean.getAttributeValueAsString(port.getClassName(), port.getId(), "meetmeroom", ipAddress, sessionId);
         String rmmr = wsBean.getAttributeValueAsString(port.getClassName(), port.getId(), "remotemeetmeroom", ipAddress, sessionId);
+        
+        Button rackBtn = new Button("Rack View");
+        RemoteObjectLight rack = wsBean.getFirstParentOfClass(objLight.getClassName(), objLight.getId(), "Rack",  Page.getCurrent().getWebBrowser().getAddress(),
+                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+        
+        if(rack != null){
+            Properties properties = new Properties();
+            properties.put("id", rack.getId());
+            properties.put("className", "Rack");
+
+            MiniAppRackView rackView = new MiniAppRackView(properties);
+            rackBtn.addClickListener(event -> {
+                Window formWindow = new Window(" ");
+                Component launchEmbedded = rackView.launchEmbedded();
+                formWindow.setContent(launchEmbedded);
+                formWindow.center();
+                UI.getCurrent().addWindow(formWindow);
+            });
+        }
+        
         String rackUnits = networkDevice.getAttribute("rackUnits");
         String rackPosition = networkDevice.getAttribute("position");
         String moreInformation = networkDevice.getAttribute("moreinformation");
@@ -260,6 +281,9 @@ public class TableCreator {
         
         if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0)
             lytData.addComponent(createTitleValueRow("RACK UNITS", (String)rackUnits));
+        
+        if(rack != null)
+            lytData.addComponent(createTitleValueRow("RACK VIEW", rackBtn));
 
         if(mmr != null && !mmr.isEmpty())
             lytData.addComponent(createTitleValueRow("MMR", mmr));
