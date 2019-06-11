@@ -49,50 +49,22 @@ public class RemoteMPLSConnectionDetails {
      */
     private RemoteObjectLight deviceB;
     /**
-     * a possible logical endpoint of a mpls link
+     * the real endpoint of the mpls link, it could be a PhysicalPort or a VirtualPort
      */
-    private RemoteObjectLight pseudowireA;
-    /**
-     * a possible logical endpoint of a mpls link
-     */
-    private RemoteObjectLight pseudowireB;
+    private RemoteObjectLight vfiA;
     /**
      * the real endpoint of the mpls link, it could be a PhysicalPort or a VirtualPort
      */
-    private RemoteObjectLight outputInterfaceA;
-    /**
-     * the real endpoint of the mpls link, it could be a PhysicalPort or a VirtualPort
-     */
-    private RemoteObjectLight outputInterfaceB;
-    /**
-     * At this moment this two fields are just for information, they are not 
-     * useful to show continuity for now
-     */
-    private RemoteObjectLight tunnelA;
-    private RemoteObjectLight tunnelB;
-
-    public RemoteMPLSConnectionDetails(RemoteObject connectionObject, RemoteObjectLight pseudowireA, RemoteObjectLight pseudowireB, RemoteObjectLight outputInterfaceA, RemoteObjectLight outputInterfaceB, RemoteObjectLight tunnelA, RemoteObjectLight tunnelB) {
-        this.connectionObject = connectionObject;
-        this.pseudowireA = pseudowireA;
-        this.pseudowireB = pseudowireB;
-        this.outputInterfaceA = outputInterfaceA;
-        this.outputInterfaceB = outputInterfaceB;
-        this.tunnelA = tunnelA;
-        this.tunnelB = tunnelB;
-    }
+    private RemoteObjectLight vfiB;
 
     public RemoteMPLSConnectionDetails(MPLSConnectionDefinition mplsLinkEndpoints) {
         this.connectionObject = mplsLinkEndpoints.getConnectionObject() != null ? new RemoteObject(mplsLinkEndpoints.getConnectionObject()) : null;
-        this.pseudowireA = mplsLinkEndpoints.getPseudowireA() != null ? new RemoteObjectLight(mplsLinkEndpoints.getPseudowireA()) : null;
-        this.pseudowireB = mplsLinkEndpoints.getPseudowireB() != null ? new RemoteObjectLight(mplsLinkEndpoints.getPseudowireB()) : null;
-        this.outputInterfaceA = mplsLinkEndpoints.getOutputInterfaceA() != null ? new RemoteObjectLight(mplsLinkEndpoints.getOutputInterfaceA()) : null;
-        this.outputInterfaceB = mplsLinkEndpoints.getOutputInterfaceB() != null ? new RemoteObjectLight(mplsLinkEndpoints.getOutputInterfaceB()) : null;
-        this.tunnelA =  mplsLinkEndpoints.getTunnelA() != null ? new RemoteObjectLight(mplsLinkEndpoints.getTunnelA()) : null;
-        this.tunnelB =  mplsLinkEndpoints.getTunnelB() != null ? new RemoteObjectLight(mplsLinkEndpoints.getTunnelB()) : null;
         this.endpointA = mplsLinkEndpoints.getEndpointA() != null ? new RemoteObjectLight(mplsLinkEndpoints.getEndpointA()) : null;
         this.endpointB = mplsLinkEndpoints.getEndpointB() != null ? new RemoteObjectLight(mplsLinkEndpoints.getEndpointB()) : null;
         this.deviceA = mplsLinkEndpoints.getDeviceA() != null ? new RemoteObjectLight(mplsLinkEndpoints.getDeviceA()) : null;
         this.deviceB = mplsLinkEndpoints.getDeviceB() != null ? new RemoteObjectLight(mplsLinkEndpoints.getDeviceB()) : null;
+        this.vfiA = mplsLinkEndpoints.getVfiA() != null ? new RemoteObjectLight(mplsLinkEndpoints.getVfiA()) : null;
+        this.vfiB = mplsLinkEndpoints.getVfiB() != null ? new RemoteObjectLight(mplsLinkEndpoints.getVfiB()) : null;
     }
 
     public RemoteObject getConnectionObject() {
@@ -103,54 +75,22 @@ public class RemoteMPLSConnectionDetails {
         this.connectionObject = connectionObject;
     }
 
-    public RemoteObjectLight getPseudowireA() {
-        return pseudowireA;
+    public RemoteObjectLight getVfiA() {
+        return vfiA;
     }
 
-    public void setPseudowireA(RemoteObjectLight pseudowireA) {
-        this.pseudowireA = pseudowireA;
+    public void setVfiA(RemoteObjectLight vfiA) {
+        this.vfiA = vfiA;
     }
 
-    public RemoteObjectLight getPseudowireB() {
-        return pseudowireB;
+    public RemoteObjectLight getVfiB() {
+        return vfiB;
     }
 
-    public void setPseudowireB(RemoteObjectLight pseudowireB) {
-        this.pseudowireB = pseudowireB;
+    public void setVfiB(RemoteObjectLight vfiB) {
+        this.vfiB = vfiB;
     }
-
-    public RemoteObjectLight getOutputInterfaceA() {
-        return outputInterfaceA;
-    }
-
-    public void setOutputInterfaceA(RemoteObjectLight outputInterfaceA) {
-        this.outputInterfaceA = outputInterfaceA;
-    }
-
-    public RemoteObjectLight getOutputInterfaceB() {
-        return outputInterfaceB;
-    }
-
-    public void setOutputInterfaceB(RemoteObjectLight outputInterfaceB) {
-        this.outputInterfaceB = outputInterfaceB;
-    }
-
-    public RemoteObjectLight getTunnelA() {
-        return tunnelA;
-    }
-
-    public void setTunnelA(RemoteObjectLight tunnelA) {
-        this.tunnelA = tunnelA;
-    }
-
-    public RemoteObjectLight getTunnelB() {
-        return tunnelB;
-    }
-
-    public void setTunnelB(RemoteObjectLight tunnelB) {
-        this.tunnelB = tunnelB;
-    }
-
+   
     public RemoteObjectLight getEndpointA() {
         return endpointA;
     }

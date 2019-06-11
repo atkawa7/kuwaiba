@@ -532,7 +532,7 @@ public class IPAMModule implements GenericCommercialModule{
     {
         bem.releaseSpecialRelationship(interfaceClassName, interfaceId, portId, RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE);
     }
-    
+   
     /**
      * Checks if the new subnet overlaps with in the created subnets
      * @param networkIp

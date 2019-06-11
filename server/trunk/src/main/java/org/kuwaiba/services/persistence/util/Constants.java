@@ -423,6 +423,11 @@ public class Constants {
      */
     public static final String CLASS_GENERICPORT = "GenericPort";
     /**
+     * Class GenericVirtualPort possible children of a physical port
+     */
+    public static final String CLASS_GENERICVIRTUALPORT = "GenericVirtualPort";
+    
+    /**
      * Class SFPPort 
      */
     public static final String CLASS_SFPPORT = "SFPPort";

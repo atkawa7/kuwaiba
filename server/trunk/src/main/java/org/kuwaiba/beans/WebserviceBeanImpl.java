@@ -4983,23 +4983,6 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<RemoteMPLSConnectionDetails> getE2EMPLSconnections(String connectionId, String ipAddress, String sessionId) throws ServerSideException{
-        try{
-            aem.validateWebServiceCall("getE2EMPLSconnections", ipAddress, sessionId);
-        
-            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
-            List<MPLSConnectionDefinition> mplsconnectionsMap = mplsModule.getE2EMPLSConnections(connectionId, new ArrayList<>());
-            List<RemoteMPLSConnectionDetails> e2eMPLsConnections = new ArrayList<>();
-            mplsconnectionsMap.forEach(connectionDetails -> { e2eMPLsConnections.add(new RemoteMPLSConnectionDetails(connectionDetails)); });
-            
-            return e2eMPLsConnections;
-            
-        } catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    @Override
     public RemoteMPLSConnectionDetails getMPLSLinkEndpoints(String connectionId, String ipAddress, String sessionId) throws ServerSideException{
         try{
             aem.validateWebServiceCall("getMPLSLinkEndpoints", ipAddress, sessionId);
@@ -5009,18 +4992,6 @@ public class WebserviceBeanImpl implements WebserviceBean {
             RemoteMPLSConnectionDetails remoteMPLSConnectionDetails = new RemoteMPLSConnectionDetails(mplsLinkEndpoints);
             
             return remoteMPLSConnectionDetails;
-        } catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
-        }
-    }
-    
-    @Override
-    public void relatePseudowires(String pseudoWireId, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException{
-        try{
-            aem.validateWebServiceCall("relatePseudowires", ipAddress, sessionId);
-            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
-            mplsModule.relatePseudowireWithInterface(pseudoWireId, interfaceClassName, interfaceId);
-
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

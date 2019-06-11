@@ -32,7 +32,7 @@ public class MPLSLink extends AbstractDataEntity {
      */
     private String localInterfaceDetail;
     /**
-     * The output interface where the  mplslink is connected
+     * The output interface where the  MPLSLink is connected
      */
     private String outputInterface;
     /**
@@ -63,7 +63,9 @@ public class MPLSLink extends AbstractDataEntity {
      * The an acronym for the customer's name
      */
     private String serviceAccronym;
-    
+
+    public MPLSLink() {
+    }
             
     public MPLSLink(String localInterface, 
             String localInterfaceIp, String vcId, String destinationIp) {

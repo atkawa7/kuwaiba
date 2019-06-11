@@ -566,8 +566,6 @@ public interface WebserviceBean {
         // <editor-fold defaultstate="collapsed" desc="MPLS Networks Module">
          public String createMPLSLink(String classNameEndpointA, String idEndpointA, String classNameEndpointB, String idEndpointB, List<StringPair> attributesToBeSet, String ipAddress, String sessionId) throws ServerSideException;
          public RemoteMPLSConnectionDetails getMPLSLinkEndpoints(String connectionId, String ipAddress, String sessionId) throws ServerSideException;
-         public List<RemoteMPLSConnectionDetails> getE2EMPLSconnections(String connectionId, String ipAddress, String sessionId) throws ServerSideException;
-         public void relatePseudowires(String pseudoWireId, String interfaceClassName, String interfaceId, String ipAddress, String sessionId) throws ServerSideException;
          public void connectMplsLink(String[] sideAClassNames, String[] sideAIds, String[] linksIds, String[] sideBClassNames, String[] sideBIds, String ipAddress, String sessionId) throws ServerSideException;
          public void disconnectMPLSLink(String connectionId, int sideToDisconnect, String ipAddress, String sessionId) throws ServerSideException;
          public void deleteMPLSLink(String linkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;

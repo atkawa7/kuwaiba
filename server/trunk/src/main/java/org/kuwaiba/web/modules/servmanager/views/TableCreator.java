@@ -17,6 +17,7 @@ package org.kuwaiba.web.modules.servmanager.views;
 
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.Page;
+import com.vaadin.server.Sizeable;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -208,6 +209,7 @@ public class TableCreator {
         String rmmr = wsBean.getAttributeValueAsString(port.getClassName(), port.getId(), "remotemeetmeroom", ipAddress, sessionId);
         
         Button rackBtn = new Button("Rack View");
+        rackBtn.addStyleNames("v-button-link", "button-in-cell");
         RemoteObjectLight rack = wsBean.getFirstParentOfClass(objLight.getClassName(), objLight.getId(), "Rack",  Page.getCurrent().getWebBrowser().getAddress(),
                 ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
         
@@ -217,11 +219,15 @@ public class TableCreator {
             properties.put("className", "Rack");
 
             MiniAppRackView rackView = new MiniAppRackView(properties);
+            rackView.setWebserviceBean(wsBean);
             rackBtn.addClickListener(event -> {
                 Window formWindow = new Window(" ");
+                
                 Component launchEmbedded = rackView.launchEmbedded();
                 formWindow.setContent(launchEmbedded);
                 formWindow.center();
+                formWindow.setHeight(70, Sizeable.Unit.PERCENTAGE);
+                formWindow.setWidth(70, Sizeable.Unit.PERCENTAGE);
                 UI.getCurrent().addWindow(formWindow);
             });
         }
@@ -470,6 +476,31 @@ public class TableCreator {
         
         RemoteObjectSpecialRelationships specialAttributes = wsBean.getSpecialAttributes(port.getClassName(), port.getId(), ipAddress, sessionId);
         List<String> relationships = specialAttributes.getRelationships();
+        
+        Button rackBtn = new Button("Rack View");
+        rackBtn.addStyleNames("v-button-link", "button-in-cell");
+        RemoteObjectLight rack = wsBean.getFirstParentOfClass(objLight.getClassName(), objLight.getId(), "Rack",  Page.getCurrent().getWebBrowser().getAddress(),
+                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+        
+        if(rack != null){
+            Properties properties = new Properties();
+            properties.put("id", rack.getId());
+            properties.put("className", "Rack");
+
+            MiniAppRackView rackView = new MiniAppRackView(properties);
+            rackView.setWebserviceBean(wsBean);
+            rackBtn.addClickListener(event -> {
+                Window formWindow = new Window(" ");
+                
+                Component launchEmbedded = rackView.launchEmbedded();
+                formWindow.setContent(launchEmbedded);
+                formWindow.center();
+                formWindow.setHeight(70, Sizeable.Unit.PERCENTAGE);
+                formWindow.setWidth(70, Sizeable.Unit.PERCENTAGE);
+                UI.getCurrent().addWindow(formWindow);
+            });
+        }
+
         //the X cross conection
         for(int i=0; i<relationships.size(); i++){
             if(relationships.get(i).equals("endpointA") || relationships.get(i).equals("endpointB")){
@@ -599,7 +630,9 @@ public class TableCreator {
         //row
         if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0)
             lytData.addComponent(createTitleValueRow("RACK UNITS", (String)rackUnits));
-        
+         
+        if(rack != null)
+            lytData.addComponent(createTitleValueRow("RACK VIEW", rackBtn));
         //ODF Icon
         VerticalLayout lytIcon =  new VerticalLayout(createIcon(objLight.getClassName()));
         lytIcon.addStyleName("device-icon-container");
@@ -625,6 +658,30 @@ public class TableCreator {
         String rackPostion = odf.getAttribute("position");
         String rackUnits = odf.getAttribute("rackUnits");
         
+        Button rackBtn = new Button("Rack View");
+        rackBtn.addStyleNames("v-button-link", "button-in-cell");
+        RemoteObjectLight rack = wsBean.getFirstParentOfClass(objLight.getClassName(), objLight.getId(), "Rack",  Page.getCurrent().getWebBrowser().getAddress(),
+                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+        
+        if(rack != null){
+            Properties properties = new Properties();
+            properties.put("id", rack.getId());
+            properties.put("className", "Rack");
+
+            MiniAppRackView rackView = new MiniAppRackView(properties);
+            rackView.setWebserviceBean(wsBean);
+            rackBtn.addClickListener(event -> {
+                Window formWindow = new Window(" ");
+                
+                Component launchEmbedded = rackView.launchEmbedded();
+                formWindow.setContent(launchEmbedded);
+                formWindow.center();
+                formWindow.setHeight(70, Sizeable.Unit.PERCENTAGE);
+                formWindow.setWidth(70, Sizeable.Unit.PERCENTAGE);
+                UI.getCurrent().addWindow(formWindow);
+            });
+        }
+        
         VerticalLayout lytData = new VerticalLayout();
         lytData.setSpacing(false);
         lytData.addStyleName("report-data-container");
@@ -641,6 +698,8 @@ public class TableCreator {
         //row
         if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0)
             lytData.addComponent(createTitleValueRow("RACK UNITS", (String)rackUnits));
+        if(rack != null)
+            lytData.addComponent(createTitleValueRow("RACK VIEW", rackBtn));
         //row
         lytData.addComponent(createTitleValueRow(""));
         //row
@@ -846,6 +905,31 @@ public class TableCreator {
         
         String rackPostion = switch_.getAttribute("position");
         String rackUnits = switch_.getAttribute("rackUnits");
+        
+        Button rackBtn = new Button("Rack View");
+        rackBtn.addStyleNames("v-button-link", "button-in-cell");
+        RemoteObjectLight rack = wsBean.getFirstParentOfClass(objLight.getClassName(), objLight.getId(), "Rack",  Page.getCurrent().getWebBrowser().getAddress(),
+                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+        
+        if(rack != null){
+            Properties properties = new Properties();
+            properties.put("id", rack.getId());
+            properties.put("className", "Rack");
+
+            MiniAppRackView rackView = new MiniAppRackView(properties);
+            rackView.setWebserviceBean(wsBean);
+            rackBtn.addClickListener(event -> {
+                Window formWindow = new Window(" ");
+                
+                Component launchEmbedded = rackView.launchEmbedded();
+                formWindow.setContent(launchEmbedded);
+                formWindow.center();
+                formWindow.setHeight(70, Sizeable.Unit.PERCENTAGE);
+                formWindow.setWidth(70, Sizeable.Unit.PERCENTAGE);
+                UI.getCurrent().addWindow(formWindow);
+            });
+        }
+
         //Card
         List<RemoteObjectLight> parents = wsBean.getParentsUntilFirstOfClass(port.getClassName(), port.getId(), "GenericBoard", 
                 Page.getCurrent().getWebBrowser().getAddress(),
@@ -905,6 +989,9 @@ public class TableCreator {
         //row
         if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0)
             lytData.addComponent(createTitleValueRow("RACK UNNITS" , (String)rackUnits));
+         
+        if(rack != null)
+            lytData.addComponent(createTitleValueRow("RACK VIEW", rackBtn));
         //row
         if(mmr != null && !mmr.isEmpty())
             lytData.addComponent(createTitleValueRow("MMR", mmr));

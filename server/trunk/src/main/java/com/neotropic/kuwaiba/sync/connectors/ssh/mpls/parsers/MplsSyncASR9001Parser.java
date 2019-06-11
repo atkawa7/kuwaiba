@@ -16,6 +16,7 @@
 package com.neotropic.kuwaiba.sync.connectors.ssh.mpls.parsers;
 
 import com.neotropic.kuwaiba.sync.connectors.ssh.mpls.entities.MPLSLink;
+import com.neotropic.kuwaiba.sync.connectors.ssh.mpls.entities.MPLSLinkNew;
 import com.neotropic.kuwaiba.sync.model.AbstractDataEntity;
 import com.neotropic.kuwaiba.sync.model.SyncUtil;
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class MplsSyncASR9001Parser {
             String[] lines = input.split("\n");
             ParsingState state = ParsingState.START;
             String serviceName = "", serviceCustomerAccronym = "";
-            MPLSLink currentMplsTransportLink = null;
+            MPLSLinkNew currentMplsTransportLink = null;
             boolean isTest = false;
             for (String line : lines) {
                 String[] lineTokens = line.trim().split("\\s+");
@@ -79,7 +80,20 @@ public class MplsSyncASR9001Parser {
                 }//TODO the VFIs
                 else if(lineTokens.length == 6 && lineTokens[0].equals("UP") && lineTokens[2].equals("UP") && lineTokens[5].equals("UP") && state == ParsingState.READING_SERVICE_NAME){
                     state = ParsingState.READING_INTERFACES;
-                    currentMplsTransportLink = new MPLSLink(SyncUtil.normalizePortName(lineTokens[1]), lineTokens[4], lineTokens[3], serviceName, serviceCustomerAccronym);
+                    currentMplsTransportLink = new MPLSLinkNew();
+                    if(lineTokens[1].contains(".")){
+                        currentMplsTransportLink.setLocalPhysicalInterface(lineTokens[1].split("\\.")[0]);
+                        currentMplsTransportLink.setLocalVirtualInterface(lineTokens[1].split("\\.")[1]);
+                    }
+                    else if(lineTokens[1].contains(":")){
+                        currentMplsTransportLink.setLocalPhysicalInterface(lineTokens[1].split(":")[0]);
+                        currentMplsTransportLink.setLocalVirtualInterface(lineTokens[1].split(":")[1]);
+                    }
+                    currentMplsTransportLink.setVcidA(lineTokens[4]); //vcid
+                    currentMplsTransportLink.setServiceName(serviceName);
+                    currentMplsTransportLink.setDestinyIPAddress(lineTokens[3]);
+                    currentMplsTransportLink.setServiceCustomerGroup(serviceCustomerAccronym);
+                    
                     if(!isTest)
                         mplsTransportLinks.add(currentMplsTransportLink);
                     serviceName = ""; serviceCustomerAccronym = "";

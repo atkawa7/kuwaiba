@@ -7472,33 +7472,7 @@ public class KuwaibaService {
             }
         }
     }
-    
-    
-    /**
-     * Get a continuity path of a given mpls link following the interfaces related with the given mpls link 
-     * @param connectionId the mpls link id
-     * @param sessionId Session token
-     * @return An array of two positions: the first is the A endpoint and the second is the B endpoint
-     * @throws ServerSideException f the given id class name is not MPLS Link
-     *                             If any of the requested objects can't be found
-     *                             If any of the classes provided can not be found
-     *                             If any of the objects involved can't be connected  
-     */
-    @WebMethod(operationName = "getE2EMPLSconnections")
-    public List<RemoteMPLSConnectionDetails> getE2EMPLSconnections(@WebParam(name = "connectionId") String connectionId, 
-            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
-        try {
-            return wsBean.getE2EMPLSconnections(connectionId, getIPAddress(), sessionId);
-        } catch(Exception e){
-            if (e instanceof ServerSideException)
-                throw e;
-            else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getE2EMPLSconnections: " + e.getMessage());
-                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-            }
-        }
-    }
-    
+                
     /**
      * The details of a given mpls link
      * @param connectionId the mpls link id
@@ -7523,35 +7497,7 @@ public class KuwaibaService {
             }
         }
     }
-    
-    /**
-     * Relates the Pseudowires with the need it interfaces in the creation of mpls link  
-     * @param pseudoWireId the pseudowire id
-     * @param interfaceClassName interface class name that will be related he given pseudowire
-     * @param interfaceId interface id that will be related with the given pseudowire
-     * @param sessionId session token
-     * @throws ServerSideException if the given pseudowire id class name is not Pseudowire class
-     *                             If any of the requested objects can't be found
-     *                             If any of the classes provided can not be found
-     *                             If any of the objects involved can't be connected  
-     */
-    @WebMethod(operationName = "relatePseudowires")
-    public void relatePseudowires(@WebParam(name = "pseudoWireId") String pseudoWireId,
-            @WebParam(name = "interfaceClassName") String interfaceClassName,
-            @WebParam(name = "interfaceId") String interfaceId,
-            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
-        try {
-            wsBean.relatePseudowires(pseudoWireId, interfaceClassName, interfaceId, getIPAddress(), sessionId);
-        } catch(Exception e){
-            if (e instanceof ServerSideException)
-                throw e;
-            else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in relatePseudowires: " + e.getMessage());
-                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-            }
-        }
-    }
-    
+        
     /**
      * Connect a given mpls links with a given ports for every side
      * @param sideAClassNames end point side A class names
