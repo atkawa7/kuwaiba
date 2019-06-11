@@ -16,6 +16,7 @@
 package com.neotropic.kuwaiba.modules.views;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
+import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
 import java.awt.Point;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -36,6 +38,7 @@ import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessObject;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
+import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -128,9 +131,9 @@ public class ViewModule  implements GenericCommercialModule {
      */
     public ViewObject validateSavedE2EView(List<String> linkClasses, List<String> linkIds, ViewObject savedView){
         try{
-            this.savedView = savedView;
             //first we create the current view
             createE2EView(linkClasses, linkIds, true, true, true, true);
+            this.savedView = savedView;
             //the we load the saved view to compare
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
             QName qNode = new QName("node"); //NOI18N
@@ -203,6 +206,7 @@ public class ViewModule  implements GenericCommercialModule {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend")); //NOI18N
         try {
+            savedView = null;
             List<ObjectLinkObjectDefinition> e2eMap = new ArrayList<>();
             nodes = new ArrayList<>();
             edges = new ArrayList<>();
@@ -219,6 +223,7 @@ public class ViewModule  implements GenericCommercialModule {
                     //start logical part         
                     if(logicalCircuitDetails.getEndpointA() != null){
                         //Side A, first we must check the endpoint if is physical or logical
+                        
                         if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALPORT, logicalCircuitDetails.getEndpointA().getClassName()))
                             physicalEndpointA = logicalCircuitDetails.getEndpointA();
                         
@@ -235,15 +240,27 @@ public class ViewModule  implements GenericCommercialModule {
                         //now we found the device
                         if(parentEquipmentA != null &&  mem.isSubclassOf(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, parentEquipmentA.getClassName()))
                             deviceA = parentEquipmentA; //GenericCommunicationsElement
+                        
+                        //we must check the pseudowire-pseudowire, pseudowire-VFI and ServiceInstance continuity 
+                        if (Constants.CLASS_PSEUDOWIRE.equals(logicalCircuitDetails.getEndpointA().getClassName())){
+                            ObjectLinkObjectDefinition pw = getLogicalInterfaceContinuity(logicalCircuitDetails.getConnectionObject(), deviceA, logicalCircuitDetails.getEndpointA());
+                            if(pw != null)
+                                e2eMap.add(pw);
+                        }
+                        if(Constants.CLASS_SERVICE_INSTANCE.equals(logicalCircuitDetails.getEndpointA().getClassName())){
+                            HashMap<BusinessObjectLight, List<BusinessObjectLight>> bdisPaths = getEndPointPhysicalContinuityByLogicalRels(logicalCircuitDetails.getEndpointA(), "networkHasBridgeInterface");
+                            for (Map.Entry<BusinessObjectLight, List<BusinessObjectLight>> entry : bdisPaths.entrySet())
+                                e2eMap.addAll(physicalPathReader(entry.getValue()));
+                        }
                     }//logical part side B   
                     if(logicalCircuitDetails.getEndpointB() != null){
                         if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALPORT, logicalCircuitDetails.getEndpointB().getClassName()))
-                            physicalEndpointB = logicalCircuitDetails.getEndpointA();
+                            physicalEndpointB = logicalCircuitDetails.getEndpointB();
                         
                         else if(mem.isSubclassOf(Constants.CLASS_GENERICLOGICALPORT, logicalCircuitDetails.getEndpointB().getClassName())){
-                            logicalEndpointB = logicalCircuitDetails.getEndpointA();
+                            logicalEndpointB = logicalCircuitDetails.getEndpointB();
                             
-                            if(!logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty() && mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALPORT, logicalCircuitDetails.getPhysicalPathForEndpointB().get(0).getClassName()))
+                            if(!logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty() && mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALPORT, logicalCircuitDetails.getPhysicalPathForEndpointB().get(0).getClassName()))
                                 physicalEndpointB = logicalCircuitDetails.getPhysicalPathForEndpointB().get(0);
                         }
                         //we must found the parent device of the end point
@@ -253,6 +270,19 @@ public class ViewModule  implements GenericCommercialModule {
                         //the parent will be the last found in te list of parents
                         if(parentEquipmentB != null &&  mem.isSubclassOf(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, parentEquipmentB.getClassName()))
                             deviceB = parentEquipmentB; //GenericCommunicationsElement
+                        
+                        //we must check the pseudowire-pseudowire, pseudowire-VFI and ServiceInstance continuity 
+                        if (Constants.CLASS_PSEUDOWIRE.equals(logicalCircuitDetails.getEndpointB().getClassName())){
+                            ObjectLinkObjectDefinition pw = getLogicalInterfaceContinuity(logicalCircuitDetails.getConnectionObject(), deviceB, logicalCircuitDetails.getEndpointB());
+                            if(pw != null)
+                                e2eMap.add(pw);
+                        }
+                        
+                        if(Constants.CLASS_SERVICE_INSTANCE.equals(logicalCircuitDetails.getEndpointB().getClassName())){
+                            HashMap<BusinessObjectLight, List<BusinessObjectLight>> bdisPaths = getEndPointPhysicalContinuityByLogicalRels(logicalCircuitDetails.getEndpointB(), "networkHasBridgeInterface");
+                            for (Map.Entry<BusinessObjectLight, List<BusinessObjectLight>> entry : bdisPaths.entrySet())
+                                e2eMap.addAll(physicalPathReader(entry.getValue()));
+                        }   
                     }
                     //here we have have the first part of the logical connection [deviceA -- logical link -- deviceB]
                     e2eMap.add(new ObjectLinkObjectDefinition(deviceA, physicalEndpointA, logicalEndpointA, 
@@ -268,9 +298,9 @@ public class ViewModule  implements GenericCommercialModule {
                         //VLANs side A
                         HashMap<BusinessObjectLight, List<BusinessObjectLight>> physicalPathForVlansEndpointA = new HashMap<>(); 
                         if(logicalCircuitDetails.getEndpointA() != null && !logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty())
-                            physicalPathForVlansEndpointA = getVLANContinuity(logicalCircuitDetails.getPhysicalPathForEndpointA().get(logicalCircuitDetails.getPhysicalPathForEndpointA().size() -1));
+                            physicalPathForVlansEndpointA = getEndPointPhysicalContinuityByLogicalRels(logicalCircuitDetails.getPhysicalPathForEndpointA().get(logicalCircuitDetails.getPhysicalPathForEndpointA().size() -1), "portBelongsToVlan");
                         else
-                            physicalPathForVlansEndpointA = getVLANContinuity(physicalEndpointA == null ? logicalCircuitDetails.getEndpointA() : physicalEndpointA);
+                            physicalPathForVlansEndpointA = getEndPointPhysicalContinuityByLogicalRels(physicalEndpointA == null ? logicalCircuitDetails.getEndpointA() : physicalEndpointA, "portBelongsToVlan");
                         
                         for (Map.Entry<BusinessObjectLight, List<BusinessObjectLight>> entry : physicalPathForVlansEndpointA.entrySet())
                             e2eMap.addAll(physicalPathReader(entry.getValue()));
@@ -279,9 +309,9 @@ public class ViewModule  implements GenericCommercialModule {
                         //VLANs side B
                         HashMap<BusinessObjectLight, List<BusinessObjectLight>> physicalPathForVlansEndpointB = new HashMap<>();    
                         if(logicalCircuitDetails.getEndpointB() != null && !logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty())
-                            physicalPathForVlansEndpointB = getVLANContinuity(logicalCircuitDetails.getPhysicalPathForEndpointB().get(logicalCircuitDetails.getPhysicalPathForEndpointB().size() -1));
+                            physicalPathForVlansEndpointB = getEndPointPhysicalContinuityByLogicalRels(logicalCircuitDetails.getPhysicalPathForEndpointB().get(logicalCircuitDetails.getPhysicalPathForEndpointB().size() -1), "portBelongsToVlan");
                         else if(logicalCircuitDetails.getEndpointB() != null)
-                            physicalPathForVlansEndpointB = getVLANContinuity(physicalEndpointB == null ? logicalCircuitDetails.getEndpointB() : physicalEndpointB);
+                            physicalPathForVlansEndpointB = getEndPointPhysicalContinuityByLogicalRels(physicalEndpointB == null ? logicalCircuitDetails.getEndpointB() : physicalEndpointB, "portBelongsToVlan");
                         
                         for (Map.Entry<BusinessObjectLight, List<BusinessObjectLight>> entry : physicalPathForVlansEndpointB.entrySet()) 
                             e2eMap.addAll(physicalPathReader(entry.getValue()));
@@ -399,6 +429,65 @@ public class ViewModule  implements GenericCommercialModule {
         return null; 
     }
         
+    
+    private ObjectLinkObjectDefinition getLogicalInterfaceContinuity(BusinessObjectLight currentConnection, BusinessObjectLight device, BusinessObjectLight logicalInterface) 
+           throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException{
+
+        //Pseudowire has to kins of relationships:
+        //other Pseudowire
+        //a VFI, th VFI could be related with a BridgeDomain, (to be confirmed)
+        if(logicalInterface.getClassName().equals(Constants.CLASS_PSEUDOWIRE)){
+            HashMap<String, List<BusinessObjectLight>> rels = bem.getSpecialAttributes(logicalInterface.getClassName(), logicalInterface.getId());
+
+            for (Map.Entry<String, List<BusinessObjectLight>> entry : rels.entrySet()) {
+                String rel = entry.getKey();
+                List<BusinessObjectLight> objs = entry.getValue();
+                //the related VFIs 
+                if(rel.equals(MPLSModule.RELATIONSHIP_MPLS_PW_ISRELATEDWITH_VFI)){
+                    for (BusinessObjectLight obj : objs) {
+                        return new ObjectLinkObjectDefinition(
+                                device, logicalInterface, 
+                                new BusinessObject("VFI", "@" + UUID.randomUUID().toString(), logicalInterface.getName() + ":" + obj.getName()),
+                                null, obj);
+                    }
+                }
+
+                if(rel.equals(MPLSModule.RELATIONSHIP_MPLS_PW_ISRELATEDWITH_PW)){
+                    //we get the related pws
+                    for (BusinessObjectLight siblingPw : objs) {
+                        //we must check if the related pw has MPLS connections ongoig
+                        HashMap<String, List<BusinessObjectLight>> siblingPwRels = bem.getSpecialAttributes(siblingPw.getClassName(), siblingPw.getId());
+                        for (Map.Entry<String, List<BusinessObjectLight>> pwEntry : siblingPwRels.entrySet()) {
+                            String siblingPwRel = pwEntry.getKey();
+                            List<BusinessObjectLight> mplsLinks = pwEntry.getValue();
+                            if(siblingPwRel.equals(MPLSModule.RELATIONSHIP_MPLSENDPOINTA) || siblingPwRel.equals(MPLSModule.RELATIONSHIP_MPLSENDPOINTB)){
+                                for(BusinessObjectLight mplsLink : mplsLinks){
+                                    if(!mplsLink.getId().equals(currentConnection.getId())){ //not the mplslink that we are evaluating
+                                        //we need the device parent of the pw of the other side of the connection
+                                        List<BusinessObjectLight> endPoints = bem.getSpecialAttribute(mplsLink.getClassName(), mplsLink.getId(), siblingPwRel.equals(MPLSModule.RELATIONSHIP_MPLSENDPOINTA) ? MPLSModule.RELATIONSHIP_MPLSENDPOINTB : MPLSModule.RELATIONSHIP_MPLSENDPOINTA);
+                                        if(!endPoints.isEmpty()){
+                                            BusinessObjectLight otherSideDevice = bem.getFirstParentOfClass(endPoints.get(0).getClassName(), endPoints.get(0).getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+                                            //to ensure that we really found the other side
+                                            if(!device.getId().equals(otherSideDevice.getId()) && !siblingPw.getId().equals(endPoints.get(0).getId())){
+                                                return new ObjectLinkObjectDefinition(
+                                                    device, siblingPw, 
+                                                    mplsLink,
+                                                    endPoints.get(0), otherSideDevice);
+                                                
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }//end for related pw
+                }
+            }//end for
+        }//en pseudowire
+        return null;
+    }
+        
+    
     /**
      * Gets the details of logical connection (SDHTributaryLink or MPLSLink)
      * it gets the endpoints of the logical connections and the physical path 
@@ -434,7 +523,7 @@ public class ViewModule  implements GenericCommercialModule {
                 endpointA = endpointARelationship.get(0);
                 //if the port is a GenericlogicalPort we need its physical parent port
                 if(endpointA != null && mem.isSubclassOf(Constants.CLASS_GENERICLOGICALPORT, endpointA.getClassName())){
-                    BusinessObjectLight physicalPort = bem.getParent(endpointA.getClassName(), endpointA.getId());
+                    BusinessObjectLight physicalPort = bem.getFirstParentOfClass(endpointA.getClassName(), endpointA.getId(), Constants.CLASS_GENERICPHYSICALPORT);
                     if(physicalPort != null)
                         physicalPathA = bem.getPhysicalPath(physicalPort.getClassName(), physicalPort.getId());
                 }
@@ -447,7 +536,7 @@ public class ViewModule  implements GenericCommercialModule {
                 endpointB = endpointBRelationship.get(0);
                 //if the port is a GenericlogicalPort we need its physical parent port
                 if(endpointB != null && mem.isSubclassOf(Constants.CLASS_GENERICLOGICALPORT, endpointB.getClassName())){
-                    BusinessObjectLight physicalPort = bem.getParent(endpointB.getClassName(), endpointB.getId());
+                    BusinessObjectLight physicalPort = bem.getFirstParentOfClass(endpointB.getClassName(), endpointB.getId(), Constants.CLASS_GENERICPHYSICALPORT);
                     if(physicalPort != null)
                         physicalPathB = bem.getPhysicalPath(physicalPort.getClassName(), physicalPort.getId());
                 }
@@ -493,18 +582,18 @@ public class ViewModule  implements GenericCommercialModule {
             BusinessObjectLight deviceA = null;
             if (!endpointARelationship.isEmpty()){ 
                 endpointA = endpointARelationship.get(0);
-                deviceA = bem.getParentOfClass(endpointA.getClassName(), endpointA.getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+                deviceA = bem.getFirstParentOfClass(endpointA.getClassName(), endpointA.getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
                 if(deviceA == null)
-                    deviceA = bem.getParentOfClass(endpointA.getClassName(), endpointA.getId(), Constants.CLASS_GENERICDISTRIBUTIONFRAME);
+                    deviceA = bem.getFirstParentOfClass(endpointA.getClassName(), endpointA.getId(), Constants.CLASS_GENERICDISTRIBUTIONFRAME);
             }
 
             List<BusinessObjectLight> endpointBRelationship = bem.getSpecialAttribute(linkClass, linkId, endpointBRelationshipName); //NOI18N
             BusinessObjectLight deviceB = null;
             if (!endpointBRelationship.isEmpty()) {
                 endpointB = endpointBRelationship.get(0);
-                deviceB = bem.getParentOfClass(endpointB.getClassName(), endpointB.getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+                deviceB = bem.getFirstParentOfClass(endpointB.getClassName(), endpointB.getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
                 if(deviceB == null)
-                    deviceB = bem.getParentOfClass(endpointB.getClassName(), endpointB.getId(), Constants.CLASS_GENERICDISTRIBUTIONFRAME);
+                    deviceB = bem.getFirstParentOfClass(endpointB.getClassName(), endpointB.getId(), Constants.CLASS_GENERICDISTRIBUTIONFRAME);
             
             }
             return new ObjectLinkObjectDefinition(deviceA, endpointA, linkObject, endpointB, deviceB);
@@ -531,7 +620,14 @@ public class ViewModule  implements GenericCommercialModule {
                     List<BusinessObjectLight> vlanPorts = bem.getSpecialAttribute(vlan.getClassName(), vlan.getId(), "portBelongsToVlan");
                     for (BusinessObjectLight vlanPort : vlanPorts) {
                         if(vlanPort.getId() != null && endpoint.getId() != null && !vlanPort.getId().equals(endpoint.getId())){//we get the physical path for every port of the vlan except of the given endpoint 
-                            List<BusinessObjectLight> vlanPhysicalPath = bem.getPhysicalPath(vlanPort.getClassName(), vlanPort.getId());
+                            
+                            List<BusinessObjectLight> vlanPhysicalPath;
+                            if(!mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALPORT, vlanPort.getClassName())){
+                                BusinessObjectLight physicalPort = bem.getFirstParentOfClass(vlanPort.getClassName(), vlanPort.getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+                                vlanPhysicalPath = bem.getPhysicalPath(physicalPort.getClassName(), physicalPort.getId());
+                            }
+                            else 
+                                vlanPhysicalPath = bem.getPhysicalPath(vlanPort.getClassName(), vlanPort.getId());
                             if(!vlanPhysicalPath.isEmpty())
                                 vlansPhysicalPath.put(vlanPort, vlanPhysicalPath);
                         }
@@ -546,31 +642,46 @@ public class ViewModule  implements GenericCommercialModule {
     }
     
     /**
-     * Given an endPoint and a relationship with other logical interfaces it retrieves 
-     * a path of continuity.
+     * Given an endpoint and a relationship name,  it finds the other side of 
+     * that relationship, that other side is a logical entity that groups interfaces
+     * (e.g. VLANs, BridgeDomains)
+     * This set of interfaces represents a logical continuity. 
+     * Those interfaces could be logical or physical ports, endpoints of some 
+     * connections, so we need to iterate over every interface and retrieve its 
+     * physical path in a HashMap: interface -> PhysicalPath
+     * 
      * @param endpoint a given port to check if belong to a set of other interfaces
      * @param relationshipName a relationship that groups interfaces.
      * @return a map with key: port, value: physical path of that port
      * @throws ServerSideException 
      */
-    private HashMap<BusinessObjectLight, List<BusinessObjectLight>> getEndPointContinuity(BusinessObjectLight endpoint, String relationshipName) throws ServerSideException{
+    private HashMap<BusinessObjectLight, List<BusinessObjectLight>> getEndPointPhysicalContinuityByLogicalRels(BusinessObjectLight endpoint, String relationshipName) throws ServerSideException{
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend")); //NOI18N
         try {
             HashMap<BusinessObjectLight, List<BusinessObjectLight>> portsPhysicalPath = new HashMap<>();
             if(endpoint != null){
-                //we get the the parents to which the port belongs
-                List<BusinessObjectLight> logicalInterfaces = bem.getSpecialAttribute(endpoint.getClassName(), endpoint.getId(), relationshipName);
-                for (BusinessObjectLight interface_ : logicalInterfaces) { //We get all the port of related with this relationship
-                    List<BusinessObjectLight> parentsOfinterfaces = bem.getSpecialAttribute(interface_.getClassName(), interface_.getId(), relationshipName);
-                    for (BusinessObjectLight parentsOfinterface : parentsOfinterfaces) {
+                //we get all the parents to which the endpoint belongs
+                List<BusinessObjectLight> groupsOfLogicalInterfaces = bem.getSpecialAttribute(endpoint.getClassName(), endpoint.getId(), relationshipName);
+                //e.g if relationshipName is networkHasBridgeInterface here we have the BridgeDomains where the endpoint (the BridgeDomainInterface a serviceInstance) belongs to
+                //e.g if relationshipName is portBelongsToVlan here we have all the VLANs where the endpoint (GenericPort) belongs to
+                for (BusinessObjectLight groupOfInterface : groupsOfLogicalInterfaces) { 
+                    //now we get the other interfaces in that parent, siblings of the given endpoint
+                    List<BusinessObjectLight> groupedInterfaces = bem.getSpecialAttribute(groupOfInterface.getClassName(), groupOfInterface.getId(), relationshipName);
+                    for (BusinessObjectLight interface_ : groupedInterfaces) {
                         if(interface_.getId() != null && endpoint.getId() != null && !interface_.getId().equals(endpoint.getId())){//we get the physical path for every port of the vlan except of the given endpoint 
-                            List<BusinessObjectLight> portPhysicalPath = bem.getPhysicalPath(interface_.getClassName(), interface_.getId());
-                            if(!portPhysicalPath.isEmpty())
-                                portsPhysicalPath.put(interface_, portPhysicalPath);
+                            
+                            List<BusinessObjectLight> interfacePhysicalPath;
+                            if(!mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALPORT, interface_.getClassName())){
+                                BusinessObjectLight physicalPort = bem.getFirstParentOfClass(interface_.getClassName(), interface_.getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+                                interfacePhysicalPath = bem.getPhysicalPath(physicalPort.getClassName(), physicalPort.getId());
+                            }
+                            else 
+                                interfacePhysicalPath = bem.getPhysicalPath(interface_.getClassName(), interface_.getId());
+                            if(!interfacePhysicalPath.isEmpty())
+                                portsPhysicalPath.put(interface_, interfacePhysicalPath);
                         }
                     }
-                    
                 }
             }
             return portsPhysicalPath;
@@ -595,23 +706,23 @@ public class ViewModule  implements GenericCommercialModule {
      */
     private List<ObjectLinkObjectDefinition> physicalPathReader(List<BusinessObjectLight> path) 
             throws MetadataObjectNotFoundException, MetadataObjectNotFoundException, 
-            BusinessObjectNotFoundException, InvalidArgumentException
+            BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException
     {
         BusinessObject connection  = null;
-        BusinessObject device = null;
+        BusinessObjectLight device = null;
         BusinessObjectLight endpoint = null;
 
-        BusinessObject sourceDevice = null;
+        BusinessObjectLight sourceDevice = null;
         List<ObjectLinkObjectDefinition> connectionsMap = new ArrayList<>();
         //with this for we are rearing the path 3 at a time, endpoint - connection -endpoint (ignoring the mirror ports)
         for (BusinessObjectLight obj : path) {
             if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALLINK, obj.getClassName()))
                 connection = bem.getObject(obj.getClassName(), obj.getId());
             else if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALPORT, obj.getClassName())) {
-                    device = bem.getParentOfClass(obj.getClassName(), obj.getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+                    device = bem.getFirstParentOfClass(obj.getClassName(), obj.getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
                 //if the parent could not be found it should be aGenericCommunications element(e.g. Router, Cloud, MPLSRouter, etc)
                 if(device == null)
-                    device = bem.getParentOfClass(obj.getClassName(), obj.getId(), Constants.CLASS_GENERICDISTRIBUTIONFRAME);
+                    device = bem.getFirstParentOfClass(obj.getClassName(), obj.getId(), Constants.CLASS_GENERICDISTRIBUTIONFRAME);
             }
             if(sourceDevice == null){
                 sourceDevice = device;

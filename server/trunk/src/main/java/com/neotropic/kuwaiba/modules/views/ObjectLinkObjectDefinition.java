@@ -17,7 +17,6 @@ package com.neotropic.kuwaiba.modules.views;
 
 import org.kuwaiba.apis.persistence.business.BusinessObject;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
-import org.kuwaiba.interfaces.ws.toserialize.business.*;
 
 
 /**
@@ -39,7 +38,7 @@ public class ObjectLinkObjectDefinition {
     /**
      * The complete information of the connection (that is, all its attributes)
      */
-    private BusinessObject connectionObject;
+    private BusinessObjectLight connectionObject;
     /**
      * One endpoint of the connection (a physical port)
      */
@@ -69,7 +68,7 @@ public class ObjectLinkObjectDefinition {
    
     public ObjectLinkObjectDefinition(BusinessObjectLight deviceA, 
             BusinessObjectLight physicalEndpointObjectA,
-            BusinessObject connectionObject,
+            BusinessObjectLight connectionObject,
             BusinessObjectLight physicalEndpointObjectB, 
             BusinessObjectLight deviceB){
         this.connectionObject = connectionObject;
@@ -81,7 +80,7 @@ public class ObjectLinkObjectDefinition {
     
     public ObjectLinkObjectDefinition(BusinessObjectLight deviceA, 
             BusinessObjectLight physicalEndpointObjectA, BusinessObjectLight logicalEndpointObjectA,
-            BusinessObject connectionObject, BusinessObjectLight logicalEndpointObjectB,
+            BusinessObjectLight connectionObject, BusinessObjectLight logicalEndpointObjectB,
             BusinessObjectLight physicalEndpointObjectB, 
             BusinessObjectLight deviceB){
         this.connectionObject = connectionObject;
@@ -93,11 +92,11 @@ public class ObjectLinkObjectDefinition {
         this.deviceB = deviceB;
     }
 
-    public BusinessObject getConnectionObject() {
+    public BusinessObjectLight getConnectionObject() {
         return connectionObject;
     }
 
-    public void setConnectionObject(BusinessObject connectionObject) {
+    public void setConnectionObject(BusinessObjectLight connectionObject) {
         this.connectionObject = connectionObject;
     }
 
