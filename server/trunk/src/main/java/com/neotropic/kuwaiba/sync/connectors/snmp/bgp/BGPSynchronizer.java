@@ -322,18 +322,6 @@ public class BGPSynchronizer {
                     }
                 }
             }
-//          <editor-fold desc="To Generete the ASN, ASN name, ip file" defaultstate="collapsed">
-//            try {
-//                BusinessObject syncDevice = bem.getObject(id);
-//                Writer output = null;
-//                output = new BufferedWriter(new FileWriter("/opt/glassfish4/glassfish/domains/staging/kuwaiba/" + syncDevice.getName() + "_bgp-sync.csv"));
-//                output.write(foreignersDevicesList);
-//                output.close();
-//                
-//            } catch (Exception ex) {
-//                Exceptions.printStackTrace(ex);
-//            }
-//           </editor-fold>
         }
         else
             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "reading bgpLocalAs from mib", "the value is empty"));
