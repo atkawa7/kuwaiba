@@ -48,8 +48,7 @@
             <dependency>
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-lumo-theme</artifactId>
-                <version>1.4.4</version>
-                
+                <version>1.4.4</version> 
             </dependency>
         </dependencies>
     </dependencyManagement>
