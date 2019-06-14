@@ -16,7 +16,6 @@
 package org.kuwaiba.apis.persistence;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
-import com.neotropic.kuwaiba.modules.cpemanager.QinQModule;
 import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
 import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
 import com.neotropic.kuwaiba.modules.projects.ProjectsModule;
@@ -118,8 +117,7 @@ public class PersistenceService {
             aem.registerCommercialModule(new ProjectsModule());
             aem.registerCommercialModule(new WarehouseModule());
             aem.registerCommercialModule(new ViewModule());
-            aem.registerCommercialModule(new QinQModule());
-            
+                        
             for (GenericCommercialModule aModule : aem.getCommercialModules()) {
                 System.out.println(String.format("[KUWAIBA]   [%s]  %s %s by %s", Calendar.getInstance().getTime(), aModule.getName(), aModule.getVersion(), aModule.getVendor()));
                 aModule.configureModule(aem, mem, bem);

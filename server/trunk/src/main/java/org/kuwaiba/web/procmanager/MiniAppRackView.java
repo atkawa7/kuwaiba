@@ -23,6 +23,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import java.io.File;
 import java.util.Properties;
+import javax.naming.InitialContext;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.web.gui.miniapps.AbstractMiniApplication;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
@@ -57,12 +58,27 @@ public class MiniAppRackView extends AbstractMiniApplication<Component, Componen
             
             if (id != null && !id.equals("-1") && className != null) {
                 
+                String oldPath = SceneExporter.PATH;                    
+                String newPath = (String) new InitialContext().lookup("java:comp/env/attachmentsPath"); //NOI18N
+                SceneExporter.PATH = newPath;
+                File file = new File(SceneExporter.PATH + "/tmpRackView_" + id + ".png");
+                SceneExporter.PATH = oldPath;
+                if (file.exists()) {
+                    FileResource resource = new FileResource(file);                    
+                    Image image = new Image();
+                    image.setSource(resource);
+                    image.setWidth("100%");
+                    image.setHeightUndefined();
+                    panel.setSizeFull();
+                    panel.setContent(image);
+                    return panel;
+                }
                 SceneExporter sceneExporter = SceneExporter.getInstance();
                 
-                String oldPath = SceneExporter.PATH;
+                oldPath = SceneExporter.PATH;
                 
                 String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath"));
-                String newPath = processEnginePath + "/temp/"; //NOI18N
+                newPath = processEnginePath + "/temp/"; //NOI18N
 
                 SceneExporter.PATH = newPath;
 
@@ -86,9 +102,8 @@ public class MiniAppRackView extends AbstractMiniApplication<Component, Componen
                 panel.setSizeFull();
                 panel.setContent(image);
             }
-        }
-        catch(Exception exception) {
-            Notifications.showError("The rack view can not be displayed");
+        } catch(Exception exception) {
+            Notifications.showError("The rack view can not be displayed " + exception.getMessage());
         }
         return panel;
     }
