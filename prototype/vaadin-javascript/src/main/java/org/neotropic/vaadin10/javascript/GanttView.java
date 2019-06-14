@@ -48,13 +48,13 @@ public class GanttView extends VerticalLayout{
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
         setSizeFull();
-        add(new GanttChart());
+        add(new GanttChartDiv());
         attachEvent.getUI().getPage().executeJavaScript(service.createProject());
     }
     
     @Tag("div")
-    public static class GanttChart extends Component {
-        public GanttChart() {
+    public static class GanttChartDiv extends Component {
+        public GanttChartDiv() {
             getElement().setProperty("id", "gantt");
             getElement().setProperty("style", "width:100%;height:100%");
         }
