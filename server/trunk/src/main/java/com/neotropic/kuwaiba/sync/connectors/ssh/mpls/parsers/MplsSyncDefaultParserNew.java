@@ -164,7 +164,7 @@ public class MplsSyncDefaultParserNew {
                 //end saving mplslink
             }//end for
         }
-        System.out.println(mplsTransportLinks);
+        System.out.println(">>> " + mplsTransportLinks);
         return mplsTransportLinks;
     }
     

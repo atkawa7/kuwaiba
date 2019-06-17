@@ -16,7 +16,6 @@
 package com.neotropic.kuwaiba.modules.mpls;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

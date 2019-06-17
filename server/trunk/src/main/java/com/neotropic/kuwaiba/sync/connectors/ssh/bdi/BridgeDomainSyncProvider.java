@@ -239,6 +239,8 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                         relatedOject.getClassName(), "BridgeDomain", -1);
                 //The bridge domains found in the real device
                 List<AbstractDataEntity> bridgeDomainsInDevice = pollResult.getResult().get(dataSourceConfiguration);
+                //The VFIs found the device
+                List<BusinessObjectLight> currentVFIs = bem.getChildrenOfClassLight(relatedOject.getId(), relatedOject.getClassName(), "VFI", 0);
                 
                 for (AbstractDataEntity bridgeDomainInDevice : bridgeDomainsInDevice) { //First we check if the bridge domains exists within the device. If they do not, they will be created, if they do, we will check the interfaces
                     BusinessObjectLight matchingBridgeDomain = null;
@@ -262,6 +264,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                         aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [BridgeDomain] (%s)", bridgeDomainInDevice.getName(), newBridgeDomain));
                         res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("Check if Bridge Domain %s exists within %s", bridgeDomainInDevice.getName(), relatedOject), 
                                     "The Bridge Domain did not exist and was created successfully"));
+                        
                         matchingBridgeDomain = new BusinessObjectLight("BridgeDomain", newBridgeDomain, bridgeDomainInDevice.getName());
                         existingBridgeDomains.add(matchingBridgeDomain);
                         bridgeDomainInterfaces = new ArrayList<>();
@@ -270,8 +273,39 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                     //Now we check if the network interfaces exist and relate them if necessary
                     for (NetworkInterface networkInterface : ((BridgeDomain)bridgeDomainInDevice).getNetworkInterfaces()) {
                         if (networkInterface.getNetworkInterfaceType() == NetworkInterface.TYPE_VFI) { //The VFI are not created automatically in this provider
-                            res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_WARNING, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
-                                    String.format("VFI %s was ignored", networkInterface.getName())));
+                            BusinessObjectLight matchingVFI = null;
+                            if(networkInterface.getName() != null){
+                                for (BusinessObjectLight vfi : currentVFIs) {
+                                    if(vfi.getName().equals(networkInterface.getName())){
+                                        matchingVFI = vfi;
+                                        break;
+                                    }
+                                }
+                                //The VFI doesn't exists so it must be created
+                                if(matchingVFI == null){
+                                    HashMap<String, String> defaultAttributes = new HashMap<>();
+                                    defaultAttributes.put(Constants.PROPERTY_NAME, networkInterface.getName());
+                                    String newVfiId =  bem.createSpecialObject("VFI", relatedOject.getClassName(), relatedOject.getId(), defaultAttributes, null);
+                                    matchingVFI = new BusinessObjectLight("VFI", newVfiId, networkInterface.getName());
+                                    currentVFIs.add(matchingVFI);
+                                    aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [VFI] (%s)", networkInterface.getName(), matchingVFI.getId()));
+                                    
+                                    res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, 
+                                            String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
+                                        String.format("The VFI %s did not exist and was created.", networkInterface.getName())));
+                                }
+                                //maybe it was creadted it MPLS sync, now with must create the relationship if doen't exists.
+                                List<BusinessObjectLight> relatedBDs = bem.getSpecialAttribute(matchingVFI.getId(), matchingVFI.getClassName(), "networkHasBridgeInterface");
+                                
+                                if(!relatedBDs.contains(matchingBridgeDomain)){
+                                    bem.createSpecialRelationship("BridgeDomain", matchingBridgeDomain.getId(), "VFI", matchingVFI.getId(), "networkHasBridgeInterface", false);
+                                   
+                                    res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
+                                        String.format("The VFI %s was related it with the Bridge Domain.", networkInterface.getName())));
+                                    aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                                        String.format("%s [BridgeDomainInterface] (%s)", networkInterface.getName(), matchingVFI.getId()));
+                                }
+                            }
                             continue;
                         }
                         
@@ -292,13 +326,15 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                             if (matchingBridgeDomainInterface == null) {
                                 HashMap<String, String> defaultAttributes = new HashMap<>();
                                 defaultAttributes.put(Constants.PROPERTY_NAME, networkInterface.getName());
-                                String newBridgeDomainInterface = bem.createHeadlessObject("BridgeDomainInterface", defaultAttributes, null);
-                                bem.createSpecialRelationship(relatedOject.getClassName(), relatedOject.getId(),"BridgeDomain", matchingBridgeDomain.getId(), "networkHasBridgeInterface", false);
-                                bridgeDomainInterfaces.add(new BusinessObjectLight("BridgeDomain", newBridgeDomainInterface, networkInterface.getName()));
+                                String newBridgeDomainInterfaceId = bem.createHeadlessObject("BridgeDomainInterface", defaultAttributes, null);
+                                bem.createSpecialRelationship(relatedOject.getClassName(), relatedOject.getId(), "BridgeDomain", matchingBridgeDomain.getId(), "networkHasBridgeInterface", false);
+                                
+                                bridgeDomainInterfaces.add(new BusinessObjectLight("BridgeDomainInterface", newBridgeDomainInterfaceId, networkInterface.getName()));
+                                
                                 res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
                                         String.format("The BDI %s did not exist and was created.", networkInterface.getName())));
                                 aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
-                                        String.format("%s [BridgeDomainInterface] (%s)", networkInterface.getName(), newBridgeDomainInterface));
+                                        String.format("%s [BridgeDomainInterface] (%s)", networkInterface.getName(), newBridgeDomainInterfaceId));
                             }
                             continue;
                         }

@@ -20,13 +20,15 @@ import com.neotropic.vaadin.lienzo.client.core.shape.SrvEdgeWidget;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvNodeWidget;
 import com.neotropic.vaadin.lienzo.client.events.EdgeWidgetClickListener;
 import com.neotropic.vaadin.lienzo.client.events.NodeWidgetClickListener;
+import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
 import com.vaadin.ui.Window;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -215,7 +217,12 @@ public class EndToEndViewScene extends AbstractScene {
                             
                             RemoteObjectLight sideA = new RemoteObjectLight(aSideClassName, aSideid, "");
                             RemoteObjectLight sideB = new RemoteObjectLight(bSideClassName, bSideid, "");
-                            RemoteObjectLight edge = wsBean.getObject(edgeClass, edgeId, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+                            
+                            RemoteObjectLight edge = null;
+                            if(edgeId.startsWith("@"))
+                                edge = new RemoteObjectLight(edgeId, "", edgeClass);
+                            else
+                                edge = wsBean.getObject(edgeClass, edgeId, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
                             
                             SrvNodeWidget sideANodeWidget = findNodeWidget(sideA);
                             SrvNodeWidget sideBNodeWidget = findNodeWidget(sideB);
@@ -279,7 +286,15 @@ public class EndToEndViewScene extends AbstractScene {
 
     protected SrvNodeWidget attachNodeWidget(RemoteObjectLight node) {
         SrvNodeWidget newNode = new SrvNodeWidget();
-        newNode.setUrlIcon("/icons/" + node.getClassName() + ".png");
+        
+        // Image as a file resource
+        FileResource resource = new FileResource(new File("/icons/" + node.getClassName() + ".png"));
+        if(resource.getSourceFile().exists())
+            newNode.setUrlIcon("/icons/" + node.getClassName() + ".png");
+        else
+            newNode.setUrlIcon("/icons/default.png");
+        newNode.getUrlIcon();
+        
         newNode.setCaption(node.toString());
         nodes.put(node, newNode);
         return newNode;

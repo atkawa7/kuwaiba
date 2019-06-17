@@ -199,33 +199,26 @@ public class MplsSyncProvider extends AbstractSyncProvider {
                 session.connect(6000); //Connection timeout
                 channel = (ChannelExec) session.openChannel("exec");
 
-                String modelString = currentObject.getName().split("-")[0];
-                
-                switch (modelString) { //The model of the device is taken from its name. Alternatively, this could be taken from its actual "model" attribute.
-                    case "ASR1002":
-                    case "ASR1006":
-                    case "ASR920": 
-                    case "ME3600":{
-                        channel.setCommand("sh show\\ l2vpn\\ service\\ all"); //NOI18N
-                        channel.connect();
-                        System.out.println("1.");
-                        MplsSyncDefaultParserNew parser = new MplsSyncDefaultParserNew();       
-                        String data = readCommandExecutionResult(channel);
+                String modelString = bem.getAttributeValueAsString(currentObject.getClassName(), currentObject.getId(), "model");//currentObject.getName().split("-")[0];
+                System.out.println(modelString);
+                //The model of the device is taken from its name. Alternatively, this could be taken from its actual "model" attribute.
+                if(modelString != null && (modelString.toLowerCase().contains("asr1002" )|| modelString.toLowerCase().contains("asr1006") || modelString.toLowerCase().contains("asr920") || modelString.toLowerCase().contains("me3600"))) { 
+                    
+                    channel.setCommand("sh show l2vpn service all"); //NOI18N
+                    channel.connect();
+                    MplsSyncDefaultParserNew parser = new MplsSyncDefaultParserNew();       
+                    String data = readCommandExecutionResult(channel);
 
-                        res.getResult().put(dataSourceConfiguration, parser.parse(data));                            
-                        break;
-                    }
-                    case "ASR9001": {
-                        channel.setCommand("sh l2vpn xconnect"); //NOI18N
-                        channel.connect();
-                                                
-                        MplsSyncASR9001Parser parser = new MplsSyncASR9001Parser();        
-                        res.getResult().put(dataSourceConfiguration, parser.parseVcIds(readCommandExecutionResult(channel)));
-                        break;
-                    }
-                    default:
-                        res.getExceptions().put(dataSourceConfiguration, Arrays.asList(new InvalidArgumentException(String.format("Model %s is not supported. Check your naming conventions [ASR920-XXX, ASR1002-XXX, ASR9001-XXX, ME3600-XXX]", modelString))));
-                }
+                    res.getResult().put(dataSourceConfiguration, parser.parse(data));  
+                        
+                }else if(modelString != null && modelString.toLowerCase().contains("asr9001" )){
+                    channel.setCommand("sh l2vpn xconnect"); //NOI18N
+                    channel.connect();
+
+                    MplsSyncASR9001Parser parser = new MplsSyncASR9001Parser();        
+                    res.getResult().put(dataSourceConfiguration, parser.parseVcIds(readCommandExecutionResult(channel)));
+                }else
+                    res.getExceptions().put(dataSourceConfiguration, Arrays.asList(new InvalidArgumentException(String.format("Model %s is not supported. Check your naming conventions [ASR920-XXX, ASR1002-XXX, ASR9001-XXX, ME3600-XXX]", modelString))));
             } catch (Exception ex) {
                 res.getExceptions().put(dataSourceConfiguration, Arrays.asList(ex));
             } finally {
@@ -459,14 +452,16 @@ public class MplsSyncProvider extends AbstractSyncProvider {
                                     aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [VFI] (id:%s)", vfiNameFromSync, newVfiId));
                                     res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, String.format("Creating VFI: %s within %s", vfiNameFromSync, relatedOject), 
                                                 "The VFI was created successfully"));
-                                }//the VFI is related with the first line pwA
-                                if(matchingPwA != null && destinyIPAddresBFromSync == null){
+                                }
+                                List<BusinessObjectLight> relatedPws = bem.getSpecialAttribute(matchingVFI.getId(), matchingVFI.getClassName(), MPLSModule.RELATIONSHIP_MPLS_PW_ISRELATEDWITH_VFI);
+                                //the VFI is related with the first line pwA
+                                if(matchingPwA != null && destinyIPAddresBFromSync == null && !relatedPws.contains(matchingPwA)){
                                     bem.createSpecialRelationship("VFI", matchingVFI.getId(), matchingPwA.getClassName(), matchingPwA.getId(), MPLSModule.RELATIONSHIP_MPLS_PW_ISRELATEDWITH_VFI, false);
                                     aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - VFI - %s", matchingPwA, vfiNameFromSync));
                                     res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, "Creating pesudowire - VFI relationship",
                                                         String.format("Creating pesudowire - VFI relationship between %s - %s", matchingPwA, vfiNameFromSync)));
                                 //the VFI is related with the second line pwB    
-                                }else if(matchingPwB != null && destinyIPAddresAFromSync == null){
+                                }else if(matchingPwB != null && destinyIPAddresAFromSync == null && !relatedPws.contains(matchingPwB)){
                                     bem.createSpecialRelationship("VFI", matchingVFI.getId(), matchingPwB.getClassName(), matchingPwB.getId(), MPLSModule.RELATIONSHIP_MPLS_PW_ISRELATEDWITH_VFI, false);
                                     aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - VFI - %s", matchingPwB, vfiNameFromSync));
                                     res.add(new SyncResult(dataSourceConfiguration.getId(), SyncResult.TYPE_SUCCESS, "Creating pesudowire relationship",
