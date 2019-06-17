@@ -330,26 +330,26 @@ public class MplsLinkEndpointsViewScene extends AbstractScene<LocalObjectLight, 
 
     @Override
     public void render(LocalObjectLight mplsLink) {
-        List<LocalMPLSConnectionDetails> e2EMPLSConnections = com.getE2EMPLSConnections(mplsLink.getId());
+        LocalMPLSConnectionDetails e2EMPLSConnections = com.getMPLSLinkEndpoints(mplsLink.getId());
         
-        for (LocalMPLSConnectionDetails mplsLinkDetail : e2EMPLSConnections) {
-            if(mplsLinkDetail.getDeviceA() != null && findWidget(mplsLinkDetail.getDeviceA()) == null)
-                addNode(mplsLinkDetail.getDeviceA());
-            
-            if(mplsLinkDetail.getDeviceB() != null && findWidget(mplsLinkDetail.getDeviceB()) == null)
-                addNode(mplsLinkDetail.getDeviceB());
-            
-            if(findWidget(mplsLinkDetail.getConnectionObject()) == null){
-                addEdge(mplsLinkDetail.getConnectionObject());
-                validate();
-                if(mplsLinkDetail.getDeviceA() != null)
-                    setEdgeSource(mplsLinkDetail.getConnectionObject(), mplsLinkDetail.getDeviceA());
-                if(mplsLinkDetail.getDeviceB() !=null)
-                    setEdgeTarget(mplsLinkDetail.getConnectionObject(), mplsLinkDetail.getDeviceB());
-            }
-            validate();
-            repaint();
-        }
+//        for (LocalMPLSConnectionDetails mplsLinkDetail : e2EMPLSConnections) {
+//            if(mplsLinkDetail.getDeviceA() != null && findWidget(mplsLinkDetail.getDeviceA()) == null)
+//                addNode(mplsLinkDetail.getDeviceA());
+//            
+//            if(mplsLinkDetail.getDeviceB() != null && findWidget(mplsLinkDetail.getDeviceB()) == null)
+//                addNode(mplsLinkDetail.getDeviceB());
+//            
+//            if(findWidget(mplsLinkDetail.getConnectionObject()) == null){
+//                addEdge(mplsLinkDetail.getConnectionObject());
+//                validate();
+//                if(mplsLinkDetail.getDeviceA() != null)
+//                    setEdgeSource(mplsLinkDetail.getConnectionObject(), mplsLinkDetail.getDeviceA());
+//                if(mplsLinkDetail.getDeviceB() !=null)
+//                    setEdgeTarget(mplsLinkDetail.getConnectionObject(), mplsLinkDetail.getDeviceB());
+//            }
+//            validate();
+//            repaint();
+//        }
     }
 
     @Override
