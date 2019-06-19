@@ -823,8 +823,17 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
             Node listTypeItemNode = getInstanceOfClass(className, oid);
             
-            for (Relationship aRelatedToRelationship : listTypeItemNode.getRelationships(RelTypes.RELATED_TO)) 
-                aRelatedToRelationship.delete();
+            Iterator<Relationship> relationShipsIterator = listTypeItemNode.getRelationships(RelTypes.RELATED_TO).iterator();
+            if (relationShipsIterator.hasNext()) {
+                if (realeaseRelationships) {
+                    for (Relationship aRelatedToRelationship : listTypeItemNode.getRelationships(RelTypes.RELATED_TO)) 
+                        aRelatedToRelationship.delete();
+                }
+                else
+                    throw new OperationNotPermittedException(String.format("The list type item with class %s and id %s can not be deleted because is related to inventory objects or another list types", className, oid));
+            }
+            if (listTypeItemNode.hasRelationship(Direction.OUTGOING, RelTypes.INSTANCE_OF))
+                listTypeItemNode.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).delete();
             
             listTypeItemNode.delete();
             tx.success();
