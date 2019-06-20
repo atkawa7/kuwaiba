@@ -148,8 +148,11 @@ public class RackWidget extends SelectableRackViewWidget {
         RemoteObject rack = (RemoteObject) getLookupReplace();//getLookup().lookup(LocalObject.class);
         
         if (rack != null) {
-            //NOI18N
-            rackUnits = Integer.valueOf(rack.getAttribute("rackUnits"));
+            try {            
+                rackUnits = Integer.valueOf(rack.getAttribute("rackUnits")); //NOI18N
+            } catch (NumberFormatException  numberFormatException) {
+                return;                                
+            }
             ascending = rack.getAttribute("rackUnitsNumberingDescending") != null ? 
                 !Boolean.valueOf(rack.getAttribute("rackUnitsNumberingDescending")) : true;
             
@@ -227,9 +230,9 @@ public class RackWidget extends SelectableRackViewWidget {
                 rackUnitsLayer.addChild(mapRackUnits.get(rackUnit));                
                 rackUnit = ascending ? rackUnit + 1 : rackUnit - 1;
             }
-                                    
-            for (int i = 0; i < equipments.size(); i++) {
-                addEquipment(equipments.get(i));
+            if (equipments != null) {
+                for (int i = 0; i < equipments.size(); i++)
+                    addEquipment(equipments.get(i));
             }
             
             edgeLayer = new LayerWidget(getRackViewScene());

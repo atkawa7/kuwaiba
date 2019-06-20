@@ -170,7 +170,11 @@ public class RackViewImage {
         if (rack == null) {
             
         } else {
-            Integer rackUnits = Integer.valueOf(rack.getAttribute("rackUnits")); //NOI18N
+            Integer rackUnits = null;
+            try {
+                rackUnits = Integer.valueOf(rack.getAttribute("rackUnits")); //NOI18N
+            } catch(NumberFormatException numberFormatException) {
+            }
             if (rackUnits == null || rackUnits == 0) {
                 message += String.format("Attribute %s in rack %s does not exist or is not set correctly\n", "rackUnits", rack); //NOI18N                                                        
             } else {
@@ -250,19 +254,23 @@ public class RackViewImage {
                         HashMap<Integer, RemoteObjectLight> rackUnitsMap = new HashMap();
                         
                         for (RemoteObject device : devices) {
-                            int devicePosition = Integer.valueOf(device.getAttribute("position"));
-                            int deviceRackUnits = Integer.valueOf(device.getAttribute("rackUnits"));
-                            
-                            for (int i = devicePosition; i < devicePosition + deviceRackUnits; i += 1) {
-                                
-                                if (!rackUnitsMap.containsKey(devicePosition))
-                                    rackUnitsMap.put(i, device);
-                                else {
-                                    RemoteObjectLight lol = rackUnitsMap.get(devicePosition);
-                                    
-                                    if (!lol.equals(device))
-                                        message += String.format("The Position %s set in %s is used by the %s\n", i, device, lol);
+                            try {
+                                int devicePosition = Integer.valueOf(device.getAttribute("position"));
+                                int deviceRackUnits = Integer.valueOf(device.getAttribute("rackUnits"));
+
+                                for (int i = devicePosition; i < devicePosition + deviceRackUnits; i += 1) {
+
+                                    if (!rackUnitsMap.containsKey(devicePosition))
+                                        rackUnitsMap.put(i, device);
+                                    else {
+                                        RemoteObjectLight lol = rackUnitsMap.get(devicePosition);
+
+                                        if (!lol.equals(device))
+                                            message += String.format("The Position %s set in %s is used by the %s\n", i, device, lol);
+                                    }
                                 }
+                            } catch(NumberFormatException ex) {
+                                message += String.format("Device %s [%s] position or rackUnits not set", device.getName(), device.getId());
                             }
                         }
                     }
