@@ -18,11 +18,10 @@ package com.neotropic.inventory.modules.cpe.nodes.actions;
 import com.neotropic.inventory.modules.cpe.nodes.EvlanPoolNode;
 import com.neotropic.inventory.modules.cpe.nodes.EvlanPoolNode.EvlanPoolChildren;
 import java.awt.event.ActionEvent;
-import java.util.HashMap;
+import java.util.ArrayList;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
-import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
@@ -48,21 +47,14 @@ public class CreateEvlanAction extends GenericInventoryAction {
         EvlanPoolNode evlanPoolNode = Utilities.actionsGlobalContext().lookup(EvlanPoolNode.class);
         if (evlanPoolNode == null)
             return;
-        LocalObjectLight poolItem = CommunicationsStub.getInstance().createPoolItem(evlanPoolNode.getPool().getId(), Constants.CLASS_EVLAN);
+        LocalObjectLight poolItem = CommunicationsStub.getInstance().createEvlan(evlanPoolNode.getPool().getId(), new ArrayList(), new ArrayList());
         if (poolItem != null) {
-            LocalObjectLight egvlan = CommunicationsStub.getInstance().createObject(Constants.CLASS_EGVLAN, poolItem.getClassName(), poolItem.getId(), new HashMap(), "462502cf-c492-4b42-b9a4-4cec3c1c24af");
-            if (egvlan != null) {
-                ((EvlanPoolChildren) evlanPoolNode.getChildren()).addNotify();
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
-                    NotificationUtil.INFO_MESSAGE, CommunicationsStub.getInstance().getError());
-            }
-            else {
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-            }
+            ((EvlanPoolChildren) evlanPoolNode.getChildren()).addNotify();
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), //NOI18N
+                NotificationUtil.INFO_MESSAGE, CommunicationsStub.getInstance().getError());
         }
         else {
-            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), //NOI18N
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
     }

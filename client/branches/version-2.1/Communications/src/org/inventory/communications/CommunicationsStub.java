@@ -6209,4 +6209,77 @@ public class CommunicationsStub {
         return null;
     }
     //</editor-fold>
+    
+    public LocalObjectLight createEvlan(String evlansPoolId, List<String> evlanAttrNames, List<String> evlanAttrValues) {
+        try {
+            String evlanId = service.createEvlan(evlansPoolId, evlanAttrNames, evlanAttrValues, session.getSessionId());
+            return getObjectInfoLight("EVLAN", evlanId); //NOI18N
+        } catch(Exception ex) {
+            this.error = ex.getMessage();
+        }
+        return null;
+    }
+    
+    public boolean associateObjectsToEvlan(String[] objectClasses, String[] objectIds, String evlanClass, String evlanId) {
+        try {
+            service.associateObjectsToEvlan(Arrays.asList(objectClasses), Arrays.asList(objectIds), evlanClass, evlanId, session.getSessionId());
+            return true;
+        } catch(Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+        
+    public boolean releaseObjectFromEvlan(String objectClass, String objectId, String evlanClass, String evlanId) {
+        try {
+            service.releaseObjectFromEvlan(objectClass, objectId, evlanClass, evlanId, session.getSessionId());
+            return true;
+        } catch(Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    public boolean associateObjectsToCvlan(String[] objectClasses, String[] objectIds, String cvlanClass, String cvlanId) {
+        try {
+            service.associateObjectsToCvlan(Arrays.asList(objectClasses), Arrays.asList(objectIds), cvlanClass, cvlanId, session.getSessionId());
+            return true;
+        } catch(Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    public boolean releaseObjectFromCvlan(String objectClass, String objectId, String cvlanClass, String cvlanId) {
+        try {
+            service.releaseObjectFromCvlan(objectClass, objectId, cvlanClass, cvlanId, session.getSessionId());
+            return true;
+        } catch(Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    public String createWorkOrder(String workOrderClass, List<StringPair> properties, String customerClass, String customerId, String ipAddress, String sessionId) {
+        return null;
+    }
+    
+    public void updateWorkOrder(String workOrderClass, String workOrderId, List<StringPair> properties, String ipAddress, String sessionId) {
+                        
+    }
+    
+    public void deleteWorkOrder(String workOrderClass, String workOrderId, String ipAddress, String sessionId) {
+    }
+    
+    public RemoteObjectLight getWorkOrder(String workOrderClass, String workOrderId, String ipAddress, String sessionId) {
+        return null;
+    }
+    
+    public List<RemoteObjectLight> getWorkOrdersForCustomer(String customerClass, String customerId, List<StringPair> search, int skip, int limit, String ipAddress, String sessionId) {
+        return null;
+    }
+    
+    public List<RemoteObjectLight> getWorkOrders(List<StringPair> search, int skip, int limit, String ipAddress, String sessionId) {
+        return null;
+    }
 }

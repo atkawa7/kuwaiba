@@ -15,11 +15,17 @@
  */
 package com.neotropic.inventory.modules.cpe.nodes.actions;
 
+import com.neotropic.inventory.modules.cpe.nodes.EvlanNode;
+import com.neotropic.inventory.modules.cpe.nodes.EvlanPoolNode;
 import java.awt.event.ActionEvent;
 import static javax.swing.Action.NAME;
+import javax.swing.JOptionPane;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
+import org.openide.util.Utilities;
 
 /**
  *
@@ -28,7 +34,7 @@ import org.inventory.core.services.i18n.I18N;
 public class DeleteEvlanAction extends GenericInventoryAction {
     
     public DeleteEvlanAction() {
-        putValue(NAME, I18N.gm("modules.cpe.nodes.actions.DeleteEvlanAction"));
+        putValue(NAME, I18N.gm("modules.cpe.nodes.actions.DeleteEvlanAction.name"));
     }
     
     @Override
@@ -38,5 +44,19 @@ public class DeleteEvlanAction extends GenericInventoryAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        
+        if (JOptionPane.showConfirmDialog(null, I18N.gm("modules.cpe.nodes.actions.DeleteEvlanAction.toDelete"), 
+            I18N.gm("warning"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+            
+            EvlanNode evlanNode = Utilities.actionsGlobalContext().lookup(EvlanNode.class);
+            if (evlanNode == null)
+                return;
+            if (CommunicationsStub.getInstance().deleteObject(evlanNode.getObject().getClassName(), evlanNode.getObject().getId(), false)) {
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, I18N.gm("modules.cpe.nodes.actions.DeleteEvlanAction.deleted"));
+                ((EvlanPoolNode.EvlanPoolChildren) evlanNode.getParentNode().getChildren()).addNotify();
+            }
+            else
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.INFO_MESSAGE, CommunicationsStub.getInstance().getError());
+        }
     }
 }

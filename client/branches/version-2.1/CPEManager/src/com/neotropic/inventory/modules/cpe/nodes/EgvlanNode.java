@@ -34,6 +34,7 @@ public class EgvlanNode extends ObjectNode {
     
     public EgvlanNode(LocalObjectLight egvlan) {
         super(egvlan);
+        setChildren(new EgvlanChildren());
     }
     
     @Override
@@ -41,12 +42,12 @@ public class EgvlanNode extends ObjectNode {
         return new Action[] {};
     }
     
-    public static class EvlanChildren extends Children.Keys<LocalObjectLight> {
+    public static class EgvlanChildren extends Children.Keys<LocalObjectLight> {
         
         @Override
         public void addNotify() {
             EgvlanNode egvlanNode = (EgvlanNode) getNode();
-            List<LocalObjectLight> cvlans = CommunicationsStub.getInstance().getObjectChildren(egvlanNode.getObject().getId(), egvlanNode.getObject().getClassName());
+            List<LocalObjectLight> cvlans = CommunicationsStub.getInstance().getObjectSpecialChildren(egvlanNode.getObject().getClassName(), egvlanNode.getObject().getId());
             if (cvlans != null) {
                 Collections.sort(cvlans);
                 setKeys(cvlans);

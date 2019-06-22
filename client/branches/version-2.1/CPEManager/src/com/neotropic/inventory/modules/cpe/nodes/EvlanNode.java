@@ -34,6 +34,7 @@ import org.openide.nodes.Node;
 public class EvlanNode extends ObjectNode {
     public EvlanNode(LocalObjectLight evlan) {
         super(evlan);
+        setChildren(new EvlanChildren());
     }
     
     @Override
@@ -46,7 +47,7 @@ public class EvlanNode extends ObjectNode {
         @Override
         public void addNotify() {
             EvlanNode evlanNode = (EvlanNode) getNode();
-            List<LocalObjectLight> egvlans = CommunicationsStub.getInstance().getObjectChildren(evlanNode.getObject().getId(), evlanNode.getObject().getClassName());
+            List<LocalObjectLight> egvlans = CommunicationsStub.getInstance().getObjectSpecialChildren(evlanNode.getObject().getClassName(), evlanNode.getObject().getId());
             if (egvlans != null) {
                 Collections.sort(egvlans);
                 setKeys(egvlans);

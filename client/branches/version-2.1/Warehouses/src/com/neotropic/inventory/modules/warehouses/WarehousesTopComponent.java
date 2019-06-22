@@ -16,8 +16,7 @@
 package com.neotropic.inventory.modules.warehouses;
 
 import com.neotropic.inventory.modules.warehouses.nodes.WarehouseRootNode;
-import javax.security.auth.RefreshFailedException;
-import javax.security.auth.Refreshable;
+import org.inventory.core.services.api.behaviors.Refreshable;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -109,14 +108,9 @@ public final class WarehousesTopComponent extends TopComponent implements Explor
         beanTreeView.setRootVisible(false);
         add(beanTreeView);
     }
-
+    
     @Override
-    public boolean isCurrent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void refresh() throws RefreshFailedException {
+    public void refresh() {
         componentClosed();
         componentOpened();
     }
