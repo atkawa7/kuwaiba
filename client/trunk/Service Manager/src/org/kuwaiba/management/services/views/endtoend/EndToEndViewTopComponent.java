@@ -105,16 +105,6 @@ public class EndToEndViewTopComponent extends TopComponent implements
             }
         });
 
-        //            JButton btnFrame = new JButton(new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/frame.png")));
-        //            btnFrame.setToolTipText("Add a Frame");
-        //            btnFrame.addActionListener(new ActionListener() {
-        //
-        //                @Override
-        //                public void actionPerformed(ActionEvent e) {
-        //                    ((EndToEndViewScene)scene).addFreeFrame();
-        //                }
-        //            });
-
         JButton btnExport = new JButton(new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/export.png")));
         btnExport.setToolTipText("Export to popular image formats");
         btnExport.addActionListener(new ActionListener() {
@@ -133,8 +123,7 @@ public class EndToEndViewTopComponent extends TopComponent implements
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                componentClosed();
-                componentOpened();
+                refresh();
             }
         });
         barMainToolBar.add(btnSave);
@@ -187,7 +176,7 @@ public class EndToEndViewTopComponent extends TopComponent implements
         //Renders the default view
         //Use the saved view, if any, to update the position of the elements
         if (currentView != null)
-            scene.render(currentView.getStructure()); //Render the saved view, if any
+            scene.render(currentView.getStructure()); //Render the view, if any
         
         saved = true;
         scene.addChangeListener(this);
@@ -202,7 +191,17 @@ public class EndToEndViewTopComponent extends TopComponent implements
     public void refresh() {
         if (checkForUnsavedView(true)) {
             scene.clear();
-            scene.render(currentService);
+            List<LocalObjectLight> serviceResources = com.getServiceResources(currentService.getClassName(), currentService.getId());
+        
+            List<String> classes = new ArrayList<>();
+            List<String> ids = new ArrayList<>();
+
+            serviceResources.forEach(resource -> {
+                classes.add(resource.getClassName());
+                ids.add(resource.getId());
+            });
+            currentView = com.getE2EView(classes, ids);
+            scene.render(currentView.getStructure());
         }
     }
     
@@ -249,4 +248,4 @@ public class EndToEndViewTopComponent extends TopComponent implements
                     NotificationUtil.INFO_MESSAGE, "An external change was detected. The view has been saved automatically");
         }
     }
-}
+                }

@@ -45,6 +45,7 @@ import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.router.RouterFactory;
+import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Exceptions;
@@ -123,7 +124,7 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
             
             for (Widget edgeWidget : edgeLayer.getChildren()) {
                 LocalObjectLight lolEdge = (LocalObjectLight) findObject(edgeWidget);
-                ObjectConnectionWidget acwEdge = (ObjectConnectionWidget) edgeWidget;
+                ConnectionWidget acwEdge = (ConnectionWidget) edgeWidget;
                 if (acwEdge.getSourceAnchor() == null || acwEdge.getTargetAnchor() == null) //This connection is malformed because one of the endpoints does not exist
                     continue;                                                               //probably, it was moved to another parent
                 
@@ -160,11 +161,11 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
     @Override
     public void render(byte[] structure) throws IllegalArgumentException { 
 //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
-        try {
-            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/end2end_in_render.xml");
-            fos.write(structure);
-            fos.close();
-        } catch(Exception e) {}
+//        try {
+//            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/end2end_in_render.xml");
+//            fos.write(structure);
+//            fos.close();
+//        } catch(Exception e) {}
 //</editor-fold>
         try{
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -205,9 +206,13 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                             String aSideClassName = reader.getAttributeValue(null, "asideclass"); //NOI18N
                             String bSideid = reader.getAttributeValue(null, "bsideid"); //NOI18N
                             String bSideClassName = reader.getAttributeValue(null, "bsideclass"); //NOI18N
-                             
-                            LocalObjectLight container = com.getObjectInfoLight(className, objectId);
-
+                            
+                            LocalObjectLight container = null;
+                            if(objectId.startsWith("@"))
+                                container = new LocalObjectLight(objectId, "", className);
+                            else
+                                container = com.getObjectInfoLight(className, objectId);
+                           
                             if (container != null) { // if the connection exists
                                 LocalObjectLight aSideObject = new LocalObjectLight(aSideid, null, aSideClassName);
                                 ObjectNodeWidget aSideWidget = (ObjectNodeWidget) findWidget(aSideObject);
@@ -220,8 +225,10 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                                     if (getEdges().contains(container))
                                         NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
                                     else {
-                                        ObjectConnectionWidget newEdge = (ObjectConnectionWidget) addEdge(container);
+                                        ConnectionWidget newEdge = (ConnectionWidget) addEdge(container);
+                                        validate();
                                         setEdgeSource(container, aSideWidget.getLookup().lookup(LocalObjectLight.class));
+                                        validate();
                                         setEdgeTarget(container, bSideWidget.getLookup().lookup(LocalObjectLight.class));
                                         validate();
                                         List<Point> localControlPoints = new ArrayList<>();
@@ -298,8 +305,17 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
 
     @Override
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
-        ObjectConnectionWidget newWidget = new ObjectConnectionWidget(this, edge, 
-        edge.getClassName().equals("RadioLink") ? ObjectConnectionWidget.DOT_LINE : ObjectConnectionWidget.LINE);
+        ConnectionWidget newWidget;
+        if(edge.getName().isEmpty())
+            newWidget = new ConnectionWidget(this);
+        else{
+            newWidget = new ObjectConnectionWidget(this, edge, 
+            edge.getClassName().equals("RadioLink") ? ObjectConnectionWidget.DOT_LINE : ObjectConnectionWidget.LINE);
+
+            LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(edge.getClassName(), false);
+            if (classMetadata != null)
+                newWidget.setLineColor(classMetadata.getColor());
+        }
         
         newWidget.getActions().addAction(createSelectAction());
         newWidget.getActions().addAction(moveControlPointAction);
@@ -307,11 +323,7 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
         newWidget.setRouter(RouterFactory.createFreeRouter());
         newWidget.setControlPointShape(PointShape.SQUARE_FILLED_BIG);
         newWidget.setEndPointShape(PointShape.SQUARE_FILLED_BIG);
-        
-        LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(edge.getClassName(), false);
-        if (classMetadata != null)
-            newWidget.setLineColor(classMetadata.getColor());
-        
+
         edgeLayer.addChild(newWidget);
         
         return newWidget;
