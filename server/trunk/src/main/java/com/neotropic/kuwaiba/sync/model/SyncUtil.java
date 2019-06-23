@@ -130,6 +130,15 @@ public class SyncUtil {
     }
         
     /**
+     * Cleans de VFI names removes de (VFI)
+     * @param rawVfi name raw vfi name
+     * @return normalized vfi name 
+     */
+    public static String normalizeVfiName(String rawVfi){
+        return rawVfi.contains("(") ? rawVfi.substring(0, rawVfi.indexOf("(")) : rawVfi;
+    }
+    
+    /**
      * Wraps the port name into a standardized port name gi, te, fa, pos
      * @param interfaceName raw port name
      * @return normalized port name 

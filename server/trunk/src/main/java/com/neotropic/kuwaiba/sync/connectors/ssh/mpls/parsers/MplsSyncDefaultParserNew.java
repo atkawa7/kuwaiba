@@ -149,8 +149,7 @@ public class MplsSyncDefaultParserNew {
                             mplsLink.setPseudowireA(lineTokens[0]);
                             state = ParsingState.READING_EXTERNALEQUIPMENT;
                         }
-                        mplsLink.setVfiName(lineTokens[1]);
-                        
+                        mplsLink.setVfiName(SyncUtil.normalizeVfiName(lineTokens[1]));
                     }
                 }//end if enough line tokens
                 
@@ -164,7 +163,7 @@ public class MplsSyncDefaultParserNew {
                 //end saving mplslink
             }//end for
         }
-        System.out.println(">>> " + mplsTransportLinks);
+        System.out.println(">>> mpls sync entries: " + mplsTransportLinks.size());
         return mplsTransportLinks;
     }
     

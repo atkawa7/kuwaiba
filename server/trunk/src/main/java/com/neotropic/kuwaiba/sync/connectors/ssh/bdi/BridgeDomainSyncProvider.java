@@ -295,7 +295,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                                         String.format("The VFI %s did not exist and was created.", networkInterface.getName())));
                                 }
                                 //maybe it was creadted it MPLS sync, now with must create the relationship if doen't exists.
-                                List<BusinessObjectLight> relatedBDs = bem.getSpecialAttribute(matchingVFI.getId(), matchingVFI.getClassName(), "networkHasBridgeInterface");
+                                List<BusinessObjectLight> relatedBDs = bem.getSpecialAttribute(matchingVFI.getClassName(), matchingVFI.getId(), "networkHasBridgeInterface");
                                 
                                 if(!relatedBDs.contains(matchingBridgeDomain)){
                                     bem.createSpecialRelationship("BridgeDomain", matchingBridgeDomain.getId(), "VFI", matchingVFI.getId(), "networkHasBridgeInterface", false);

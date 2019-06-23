@@ -23,6 +23,7 @@ import com.vaadin.cdi.CDIViewProvider;
 import com.vaadin.cdi.server.VaadinCDIServlet;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.ExternalResource;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
@@ -80,7 +81,7 @@ public class IndexUI extends UI {
             this.mnuMain.setStyleName("misc-main");
             this.mnuMain.setWidth("100%");
             
-            this.mnuMain.addItem("", new ExternalResource("/img/company_logo_micro.png"), (selectedItem) -> {
+            this.mnuMain.addItem("", new ThemeResource("img/company_logo_micro.png"), (selectedItem) -> {
                 getUI().getNavigator().navigateTo(WelcomeComponent.VIEW_NAME);
             });
             

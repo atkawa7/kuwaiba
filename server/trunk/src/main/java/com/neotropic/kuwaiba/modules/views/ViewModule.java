@@ -359,25 +359,31 @@ public class ViewModule  implements GenericCommercialModule {
             xmlew.add(xmlef.createCharacters(VIEW_CLASS));
             xmlew.add(xmlef.createEndElement(qnameClass, null));
             
+            if(savedView == null)
+                orderNodes();
+            
             QName qnameNodes = new QName("nodes");
             xmlew.add(xmlef.createStartElement(qnameNodes, null, null));
-            int x = 15, y = 180, i = 2;
+            //int x = 15, y = 180, i = 2;
             for(E2ENode node : nodes){
                 
                 QName qnameNode = new QName("node");
                 xmlew.add(xmlef.createStartElement(qnameNode, null, null));
                 
-                xmlew.add(xmlef.createAttribute(new QName("x"), node.getProperties().get("x") != null ?
-                        (String)node.getProperties().get("x") : Integer.toString(x)));
+                xmlew.add(xmlef.createAttribute(new QName("x"), (String)node.getProperties().get("x")));
+//                xmlew.add(xmlef.createAttribute(new QName("x"), node.getProperties().get("x") != null ?
+//                        (String)node.getProperties().get("x") : Integer.toString(x)));
                 //we do this with the y in order to set the node one up an one down in the end to end view
-                y += (i % 2 != 0) ? 175 + i * 2 : (-145);
-                xmlew.add(xmlef.createAttribute(new QName("y"), node.getProperties().get("y") != null ? 
-                        (String)node.getProperties().get("y") : Integer.toString(y)));
+                //y += (i % 2 != 0) ? 175 + i * 2 : (-145);
+                
+//                xmlew.add(xmlef.createAttribute(new QName("y"), node.getProperties().get("y") != null ? 
+//                        (String)node.getProperties().get("y") : Integer.toString(y)));
+                xmlew.add(xmlef.createAttribute(new QName("y"), (String)node.getProperties().get("y")));
                 
                 xmlew.add(xmlef.createAttribute(new QName("class"), node.getBussinesObject().getClassName()));
                 xmlew.add(xmlef.createCharacters(node.getBussinesObject().getId()));
                 xmlew.add(xmlef.createEndElement(qnameNode, null));
-                x += 115; i++;
+                //x += 115; i++;
             }
             xmlew.add(xmlef.createEndElement(qnameNodes, null));
             
@@ -741,5 +747,102 @@ public class ViewModule  implements GenericCommercialModule {
         }//end for
         
         return connectionsMap;
+    }
+    private void orderNodes(){
+        //initial coordinates, and a counter
+        int x = 100, y = 0, fixer = 2;
+        int direction = 0;
+        int lastDirection = 0;
+        int lastAddedNameLength = 0;
+        int nodeDistanceX = 150, nodeDistanceY = 80;
+        //number of rels of a node
+        HashMap <E2ENode, Integer> rels = new HashMap<>();
+        //initial coordinates
+        List<E2ENode> addedNodes = new ArrayList<>();
+        BusinessObjectLight lastAddedRel = null;
+        BusinessObjectLight lastAddedObj = null;
+                
+        for (Map.Entry<E2EEdge, E2ENode> entry : edgeSource.entrySet()) {
+            E2EEdge edge = entry.getKey();
+            E2ENode sourceNode = entry.getValue();
+            E2ENode targetNode = edgeTarget.get(edge);
+            
+            if(addedNodes.contains(sourceNode))
+                rels.put(sourceNode, (rels.get(sourceNode) + 1));
+            else{
+                addedNodes.add(sourceNode);
+                rels.put(sourceNode, 1);
+            }
+            if(sourceNode != null){
+                //we must check if directions must be changed
+                if ((lastAddedRel != null && lastAddedRel.getClassName().equals(edge.getEdge().getClassName()))
+                        && (lastAddedObj != null && lastAddedObj.getClassName().equals(targetNode.getBussinesObject().getClassName())))
+                    direction = 0;
+                else
+                    direction = 1;
+                //if is first time it is always horizontal.
+                if(lastAddedObj != null && lastAddedRel != null){
+                    if(direction == 0)
+                        x += nodeDistanceX + edge.getEdge().toString().length() * 5;
+                    else if(direction == 1){
+                        if(targetNode.getBussinesObject().toString().length() < lastAddedNameLength)
+                            x += (targetNode.getBussinesObject().toString().length() * fixer) + 5;
+                        else
+                            x -= (targetNode.getBussinesObject().toString().length() * fixer) - 5;
+                        y += nodeDistanceY;
+                    }
+                }
+                //source
+                if(nodes.get(nodes.indexOf(sourceNode)).getProperties().getProperty("x") == null)
+                    nodes.get(nodes.indexOf(sourceNode)).getProperties().setProperty("x", Integer.toString(x));
+
+                if(nodes.get(nodes.indexOf(sourceNode)).getProperties().getProperty("y") == null)
+                    nodes.get(nodes.indexOf(sourceNode)).getProperties().setProperty("y", Integer.toString(y));
+
+                if(direction == 0)
+                    x -= edge.getEdge().toString().length() * 5;
+                
+                lastAddedObj = sourceNode.getBussinesObject();
+                lastAddedRel = edge.getEdge();
+                lastDirection = direction;
+                lastAddedNameLength = sourceNode.getBussinesObject().toString().length();
+            }
+            
+            if(targetNode != null){
+                
+                if((lastAddedRel != null && lastAddedRel.getClassName().equals(edge.getEdge().getClassName()))
+                        && (lastAddedObj != null && lastAddedObj.getClassName().equals(targetNode.getBussinesObject().getClassName())))
+                    direction = 0;
+                else
+                    direction = 1;
+                
+                //we must change the direction
+                if(lastDirection == direction && direction == 1)          
+                    direction = 0;
+                
+                if(direction == 0)
+                    x += nodeDistanceX + edge.getEdge().toString().length() * 5;
+                else if(direction == 1){
+                    if(targetNode.getBussinesObject().toString().length() < lastAddedNameLength)
+                        x += (targetNode.getBussinesObject().toString().length() * fixer) + 5;
+                    else
+                        x -= (targetNode.getBussinesObject().toString().length() * fixer) - 5;
+                    
+                    y += nodeDistanceY;
+                }
+                
+                if(nodes.get(nodes.indexOf(targetNode)).getProperties().getProperty("x") == null)
+                    nodes.get(nodes.indexOf(targetNode)).getProperties().setProperty("x", Integer.toString(x));
+                if(nodes.get(nodes.indexOf(targetNode)).getProperties().getProperty("y") == null)
+                    nodes.get(nodes.indexOf(targetNode)).getProperties().setProperty("y", Integer.toString(y));
+
+                if(direction == 0)
+                    x -= edge.getEdge().toString().length() * 5;
+                
+                lastAddedObj = targetNode.getBussinesObject();
+                lastAddedRel = edge.getEdge();
+                lastAddedNameLength = targetNode.getBussinesObject().toString().length();
+            }
+        }//end for
     }
 }

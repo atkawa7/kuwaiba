@@ -20,23 +20,31 @@ import com.neotropic.vaadin.lienzo.client.core.shape.SrvEdgeWidget;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvNodeWidget;
 import com.neotropic.vaadin.lienzo.client.events.EdgeWidgetClickListener;
 import com.neotropic.vaadin.lienzo.client.events.NodeWidgetClickListener;
+import com.vaadin.server.ExternalResource;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import javax.imageio.ImageIO;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import org.codehaus.groovy.control.io.URLReaderSource;
 import org.kuwaiba.apis.web.gui.navigation.views.AbstractScene;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.apis.web.gui.resources.ResourceFactory;
@@ -286,15 +294,7 @@ public class EndToEndViewScene extends AbstractScene {
 
     protected SrvNodeWidget attachNodeWidget(RemoteObjectLight node) {
         SrvNodeWidget newNode = new SrvNodeWidget();
-        
-        // Image as a file resource
-        FileResource resource = new FileResource(new File("/icons/" + node.getClassName() + ".png"));
-        if(resource.getSourceFile().exists())
-            newNode.setUrlIcon("/icons/" + node.getClassName() + ".png");
-        else
-            newNode.setUrlIcon("/icons/default.png");
-        newNode.getUrlIcon();
-        
+        newNode.setUrlIcon("/kuwaiba/icons?class=" + node.getClassName());
         newNode.setCaption(node.toString());
         nodes.put(node, newNode);
         return newNode;

@@ -598,6 +598,10 @@ $v-field-background-color: #ccffe6;
 	color: white;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
     }
+    .v-window{
+        min-height: 100px !important;
+        min-width: 75px !important;
+    }
     
     .v-menubar > .v-menubar-menuitem-selected {
 	color: white;

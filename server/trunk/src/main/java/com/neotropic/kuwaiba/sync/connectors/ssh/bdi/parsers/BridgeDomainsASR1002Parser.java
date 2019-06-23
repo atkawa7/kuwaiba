@@ -19,6 +19,7 @@ package com.neotropic.kuwaiba.sync.connectors.ssh.bdi.parsers;
 import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.entities.BridgeDomain;
 import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.entities.NetworkInterface;
 import com.neotropic.kuwaiba.sync.model.AbstractDataEntity;
+import com.neotropic.kuwaiba.sync.model.SyncUtil;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +65,7 @@ public class BridgeDomainsASR1002Parser {
                             currentBridgeDomain.getNetworkInterfaces().add(new NetworkInterface(lineTokens[0], NetworkInterface.TYPE_BDI));
                         
                         else if (lineTokens[0].startsWith("vfi")) 
-                            currentBridgeDomain.getNetworkInterfaces().add(new NetworkInterface(lineTokens[1], NetworkInterface.TYPE_VFI));
+                            currentBridgeDomain.getNetworkInterfaces().add(new NetworkInterface(SyncUtil.normalizeVfiName(lineTokens[1]), NetworkInterface.TYPE_VFI));
                         
                         else if (line.contains("service instance")) 
                             currentBridgeDomain.getNetworkInterfaces().add(new NetworkInterface(lineTokens[0] + " " + lineTokens[1] + " " + 

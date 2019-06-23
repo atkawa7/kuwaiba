@@ -15493,6 +15493,11 @@ div.v-layout.v-horizontal.v-widget {
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
 }
 
+.nuqui .v-window {
+	min-height: 100px !important;
+	min-width: 75px !important;
+}
+
 .nuqui .v-menubar > .v-menubar-menuitem-selected {
 	color: white;
 	border-radius: 0;

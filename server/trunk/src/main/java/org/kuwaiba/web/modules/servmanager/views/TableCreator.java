@@ -27,16 +27,22 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import org.kuwaiba.apis.persistence.PersistenceService;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
+import org.kuwaiba.apis.web.gui.views.AbstractView;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
+import org.kuwaiba.web.modules.navtree.dashboard.ObjectViewDashboardWidget;
 import org.kuwaiba.web.procmanager.MiniAppPhysicalPath;
 import org.kuwaiba.web.procmanager.MiniAppRackView;
+import org.openide.util.Exceptions;
 
 /**
  * Creates info tables from an inventory objects like Router, Switch, TributaryLink, etc 
@@ -208,10 +214,15 @@ public class TableCreator {
         String mmr = wsBean.getAttributeValueAsString(port.getClassName(), port.getId(), "meetmeroom", ipAddress, sessionId);
         String rmmr = wsBean.getAttributeValueAsString(port.getClassName(), port.getId(), "remotemeetmeroom", ipAddress, sessionId);
         
-        Button rackBtn = new Button("Rack View");
-        rackBtn.addStyleNames("v-button-link", "button-in-cell");
         RemoteObjectLight rack = wsBean.getFirstParentOfClass(objLight.getClassName(), objLight.getId(), "Rack",  Page.getCurrent().getWebBrowser().getAddress(),
                 ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+        
+        Button btnObjView = new Button("Object View");
+        btnObjView.addStyleNames("v-button-link", "button-in-cell");
+        
+        Button rackBtn = new Button("Rack View");
+        rackBtn.addStyleNames("v-button-link", "button-in-cell");
+        
         
         if(rack != null){
             Properties properties = new Properties();
@@ -229,6 +240,26 @@ public class TableCreator {
                 formWindow.setHeight(70, Sizeable.Unit.PERCENTAGE);
                 formWindow.setWidth(70, Sizeable.Unit.PERCENTAGE);
                 UI.getCurrent().addWindow(formWindow);
+            });
+            
+            
+            btnObjView.addClickListener(event -> {
+                AbstractView objectViewInstance;
+                try {
+                    objectViewInstance = PersistenceService.getInstance().getViewFactory().
+                            createViewInstance("org.kuwaiba.web.modules.navtree.views.ObjectView"); //NOI18N
+                    objectViewInstance.buildWithBusinessObject(rack);
+                    Window formWindow = new Window(" ");
+
+                    Component launchEmbedded = rackView.launchEmbedded();
+                    formWindow.setContent(objectViewInstance.getAsComponent());
+                    formWindow.center();
+                    formWindow.setHeight(70, Sizeable.Unit.PERCENTAGE);
+                    formWindow.setWidth(70, Sizeable.Unit.PERCENTAGE);
+                    UI.getCurrent().addWindow(formWindow);
+                } catch (InstantiationException | InvalidArgumentException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
             });
         }
         
@@ -278,8 +309,8 @@ public class TableCreator {
         String he = getHandE(networkDevice);
         if(he != null && !he.isEmpty())
             lytData.addComponent(createTitleValueRow("DEVICE H&E", he));
-            
-        lytData.addComponent(createMergedCellsRow("DEVICE LOCATION", getLocation(objLight)));
+
+        lytData.addComponent(createMergedCellsRow2(getLocation(rack, objLight)));
         lytData.addComponent(createTitleValueRow(""));
         
         if(rackPosition != null && isNumeric(rackPosition) && Integer.valueOf(rackPosition) > 0)
@@ -288,9 +319,6 @@ public class TableCreator {
         if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0)
             lytData.addComponent(createTitleValueRow("RACK UNITS", (String)rackUnits));
         
-        if(rack != null)
-            lytData.addComponent(createTitleValueRow("RACK VIEW", rackBtn));
-
         if(mmr != null && !mmr.isEmpty())
             lytData.addComponent(createTitleValueRow("MMR", mmr));
         
@@ -324,6 +352,27 @@ public class TableCreator {
                 }
                 lytRow.addComponent(label);
             }
+        }
+        return lytRow;
+    }
+    
+     private Component createMergedCellsRow2(List<Object> values){
+        VerticalLayout lytRow = new VerticalLayout();
+        lytRow.addStyleName("row");
+        lytRow.setSpacing(false);
+        boolean title = true;
+        
+        for(Object value : values){
+            if(value instanceof String){
+                Label label = new Label(("&nbsp;&nbsp;&nbsp;&nbsp;" + (String)value).replace("\n", "<br>"), ContentMode.HTML);
+                if(title){
+                    label.addStyleNames("cell-with-bold-text");
+                    title = false;
+                }
+                lytRow.addComponent(label);
+            }
+            else if(value instanceof Button)
+                lytRow.addComponent((Button) value);
         }
         return lytRow;
     }
@@ -622,7 +671,7 @@ public class TableCreator {
         if(he != null && !he.isEmpty())
             lytData.addComponent(createTitleValueRow("DEVICE H&E", he));
         //row
-        lytData.addComponent(createMergedCellsRow("DEVICE LOCATION", getLocation(objLight)));
+        lytData.addComponent(createMergedCellsRow(getLocation(rack, objLight)));
         lytData.addComponent(createTitleValueRow(""));
         //row
         if(rackPosition != null && isNumeric(rackPosition) && Integer.valueOf(rackPosition) > 0)
@@ -630,9 +679,6 @@ public class TableCreator {
         //row
         if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0)
             lytData.addComponent(createTitleValueRow("RACK UNITS", (String)rackUnits));
-         
-        if(rack != null)
-            lytData.addComponent(createTitleValueRow("RACK VIEW", rackBtn));
         //ODF Icon
         VerticalLayout lytIcon =  new VerticalLayout(createIcon(objLight.getClassName()));
         lytIcon.addStyleName("device-icon-container");
@@ -698,12 +744,10 @@ public class TableCreator {
         //row
         if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0)
             lytData.addComponent(createTitleValueRow("RACK UNITS", (String)rackUnits));
-        if(rack != null)
-            lytData.addComponent(createTitleValueRow("RACK VIEW", rackBtn));
         //row
         lytData.addComponent(createTitleValueRow(""));
         //row
-        lytData.addComponent(createMergedCellsRow("DEVICE LOCATION", getLocation(objLight)));
+        lytData.addComponent(createMergedCellsRow2(getLocation(rack, objLight)));
         //ODF Icon
         VerticalLayout lytIcon =  new VerticalLayout(createIcon(objLight.getClassName()));
         lytIcon.addStyleName("device-icon-container");
@@ -989,14 +1033,12 @@ public class TableCreator {
         //row
         if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0)
             lytData.addComponent(createTitleValueRow("RACK UNNITS" , (String)rackUnits));
-         
-        if(rack != null)
-            lytData.addComponent(createTitleValueRow("RACK VIEW", rackBtn));
+
         //row
         if(mmr != null && !mmr.isEmpty())
             lytData.addComponent(createTitleValueRow("MMR", mmr));
         //row
-        lytData.addComponent(createMergedCellsRow("DEVICE LOCATION", getLocation(objLight)));
+        lytData.addComponent(createMergedCellsRow(getLocation(rack, objLight)));
         //Provider Icon
         VerticalLayout lytIcon =  new VerticalLayout(createIcon(objLight.getClassName()));
         lytIcon.addStyleName("device-icon-container");
@@ -1019,7 +1061,11 @@ public class TableCreator {
         lytData.setSpacing(false);
         lytData.addStyleName("report-data-container");
         lytData.addComponent(createTitle(objLight.getName(), EXTERNAL_EQUIPMENT));
-        Component deviceLocationRow = createMergedCellsRow("DEVICE LOCATION", getLocation(objLight));
+        
+        RemoteObjectLight rack = wsBean.getFirstParentOfClass(objLight.getClassName(), objLight.getId(), "Rack",  Page.getCurrent().getWebBrowser().getAddress(),
+                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+         
+        Component deviceLocationRow = createMergedCellsRow(getLocation(rack, objLight));
         deviceLocationRow.addStyleName("cell-with-border-top");
         //first Row
         lytData.addComponent(deviceLocationRow);
@@ -1042,14 +1088,78 @@ public class TableCreator {
      * @return a string with the location
      * @throws ServerSideException if the parents could no be calculated
      */
-    private String getLocation(RemoteObjectLight objLight) throws ServerSideException{
-        String location = "";
+    private List<Object> getLocation(RemoteObjectLight rack, RemoteObjectLight objLight) throws ServerSideException{
         List<RemoteObjectLight> parents = wsBean.getParentsUntilFirstOfClass(objLight.getClassName(), objLight.getId(), "City",
                 Page.getCurrent().getWebBrowser().getAddress(),
                 ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
         String x = ">";
+        List<Object> location = new ArrayList<>();
+        location.add("DEVICE LOCATION");
+        
+        HorizontalLayout chooseView = new HorizontalLayout();
+        chooseView.setSpacing(true);
+        chooseView.setMargin(true);
+        chooseView.setSizeFull();
+        if(rack != null){
+            //rack view
+            Button btnRackView = new Button("rack view");
+            Properties properties = new Properties();
+             properties.put("id", rack.getId());
+            properties.put("className", "Rack");
+            MiniAppRackView rackView = new MiniAppRackView(properties);
+            rackView.setWebserviceBean(wsBean);
+
+            btnRackView.addClickListener(event -> {
+                    Window formWindow = new Window(" ");
+
+                    Component launchEmbedded = rackView.launchEmbedded();
+                    formWindow.setContent(launchEmbedded);
+                    formWindow.center();
+                    formWindow.setHeight(70, Sizeable.Unit.PERCENTAGE);
+                    formWindow.setWidth(70, Sizeable.Unit.PERCENTAGE);
+                    UI.getCurrent().addWindow(formWindow);
+                });
+            Button btnObjView = new Button("object view");
+            btnObjView.addClickListener(event -> {
+                AbstractView objectViewInstance;
+                try {
+                    objectViewInstance = PersistenceService.getInstance().getViewFactory().
+                            createViewInstance("org.kuwaiba.web.modules.navtree.views.ObjectView"); //NOI18N
+                    objectViewInstance.buildWithBusinessObject(rack);
+                    Window formWindow = new Window(" ");
+
+                    Component launchEmbedded = rackView.launchEmbedded();
+                    formWindow.setContent(objectViewInstance.getAsComponent());
+                    formWindow.center();
+                    formWindow.setHeight(70, Sizeable.Unit.PERCENTAGE);
+                    formWindow.setWidth(70, Sizeable.Unit.PERCENTAGE);
+                    UI.getCurrent().addWindow(formWindow);
+                } catch (InstantiationException | InvalidArgumentException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            });
+            chooseView.addComponents(btnRackView , btnObjView);
+        }
+        boolean viewsAdded = false;
+        
         for (RemoteObjectLight parent : parents){
-            location +=  x + parent.getName() + "<br>";
+            if(rack != null && !viewsAdded){
+                Button chooseViewBtn = new Button(x + parent.getName());
+                chooseViewBtn.addStyleNames("v-button-link", "button-in-cell");
+                chooseViewBtn.addClickListener(event -> {
+                    Window formWindow = new Window("Choose a view");
+                    formWindow.addStyleName("v-window");
+                    formWindow.setContent(chooseView);
+                    formWindow.center();
+                    
+                    formWindow.setHeight(10, Sizeable.Unit.PERCENTAGE);
+                    formWindow.setWidth(20, Sizeable.Unit.PERCENTAGE);
+                    UI.getCurrent().addWindow(formWindow);
+                });
+                viewsAdded = true;
+                location.add(chooseViewBtn);
+            }else
+                location.add(x + parent.getName() + "<br>");
             x += ">";
         }
         return location;
