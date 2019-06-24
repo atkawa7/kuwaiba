@@ -20,6 +20,8 @@ import java.awt.Point;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.util.HashMap;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -41,6 +43,7 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class EndToEndAndTopologyViewMigrator {
+    private static HashMap<String, Long> uuidToIdMap;
     /**
      * Performs the actual migration
      * @param dbPathReference The reference to the database location.
@@ -48,14 +51,28 @@ public class EndToEndAndTopologyViewMigrator {
     public static void migrate(File dbPathReference) {
         GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(dbPathReference);
         System.out.println(">>> Migrating End to End and Topology Views...");
+        uuidToIdMap = new HashMap<>();
         
         try (Transaction tx = graphDb.beginTx()) {
+            graphDb.findNodes(Label.label("inventoryObjects")).stream().forEach((anObjectNode) -> {
+                if (anObjectNode.hasProperty("_uuid"))
+                    uuidToIdMap.put((String)anObjectNode.getProperty("_uuid"), anObjectNode.getId());
+            });
+            
             graphDb.findNodes(Label.label("inventoryObjects")).stream().forEach((anObjectNode) -> {
                 if (anObjectNode.hasRelationship(ViewUtil.RELTYPE_HASVIEW)) {
                     System.out.println(String.format("Processing views for %s (%s)", anObjectNode.getProperty("name"), anObjectNode.getId()));
                     anObjectNode.getRelationships(ViewUtil.RELTYPE_HASVIEW).forEach((aHasViewRelationship) -> { 
                         Node aViewNode = aHasViewRelationship.getEndNode();
+
                         byte[] structure = (byte[])aViewNode.getProperty("structure");
+                        
+                        try {
+                            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/e2eview-"+anObjectNode.getProperty("name")+"_before.xml");
+                            fos.write(structure);
+                            fos.close();
+                        } catch(Exception e) {}
+                        
                         try {                            
                             ViewUtil.ViewMap parsedView = parseView(structure);
                             byte[] migratedStructure = migrateViewMap(parsedView, graphDb);
@@ -64,11 +81,11 @@ public class EndToEndAndTopologyViewMigrator {
                             aViewNode.setProperty("name", parsedView.getViewClass());
                             
                             //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
-//                             try {
-//                                 FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/e2eview_" + anObjectNode.getId() + ".xml");
-//                                 fos.write(migratedStructure);
-//                                 fos.close();
-//                             } catch(Exception e) {}
+                             try {
+                                 FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/e2eview_" + anObjectNode.getId() + ".xml");
+                                 fos.write(migratedStructure);
+                                 fos.close();
+                             } catch(Exception e) {}
                              //</editor-fold>
                             
                         } catch (XMLStreamException ex) {
@@ -105,13 +122,15 @@ public class EndToEndAndTopologyViewMigrator {
         ByteArrayInputStream bais = new ByteArrayInputStream(structure);
         XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
 
+        
+
         while (reader.hasNext()) {
             int event = reader.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
                 if (reader.getName().equals(qClass)) {
                     String viewClass = reader.getElementText();
                     switch (viewClass) {
-                        case "ServiceSimpleView":
+                        case "EndToEndView":
                             res.setViewClass("EndToEndView"); //NOI18N
                             System.out.println("End to End view detected...");
                             break;
@@ -128,19 +147,35 @@ public class EndToEndAndTopologyViewMigrator {
                     String objectClass = reader.getAttributeValue(null, "class"); //NOI18N
                     int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue(); //NOI18N
                     int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue(); //NOI18N
-                    long objectId = Long.valueOf(reader.getElementText());
+                    String textElement = reader.getElementText();
+                    ViewUtil.ViewNode viewNode;
+                    if(ViewUtil.isNumeric(textElement)) {  
+                        long objectId = Long.valueOf(reader.getElementText());
+                        viewNode = new ViewUtil.ViewNode(objectId, objectClass, new Point(xCoordinate, yCoordinate));
+                    } else//to create a node with id for new migrations
+                        viewNode = new ViewUtil.ViewNode(textElement, objectClass, new Point(xCoordinate, yCoordinate));
                     
-                    res.getNodes().add(new ViewUtil.ViewNode(objectId, objectClass, new Point(xCoordinate, yCoordinate)));
-                    
+                    res.getNodes().add(viewNode);
                 } else {
                     if (reader.getName().equals(qEdge)) {
-                        long objectId = Long.valueOf(reader.getAttributeValue(null, "id")); //NOI18N
-                        long aSide = Long.valueOf(reader.getAttributeValue(null, "aside")); //NOI18N
-                        long bSide = Long.valueOf(reader.getAttributeValue(null, "bside")); //NOI18N
                         String objectClass = reader.getAttributeValue(null,"class"); //NOI18N
+                        String id = reader.getAttributeValue(null, "id");
+                        ViewUtil.ViewEdge newEdge;    
                         
-                        ViewUtil.ViewEdge newEdge = new ViewUtil.ViewEdge(objectId, objectClass, aSide, bSide);
-
+                       if(ViewUtil.isNumeric(id)){  
+                            long objectId = Long.valueOf(id); //NOI18N
+                            long aSide = Long.valueOf(reader.getAttributeValue(null, "aside")); //NOI18N
+                            long bSide = Long.valueOf(reader.getAttributeValue(null, "bside")); //NOI18N
+                            newEdge = new ViewUtil.ViewEdge(objectId, objectClass, aSide, bSide);
+                            
+                        } else{  
+                            String uuid = id; //NOI18N
+                            String aSide = reader.getAttributeValue(null, "aside"); //NOI18N
+                            String bSide = reader.getAttributeValue(null, "bside"); //NOI18N
+                            //to create a node with id for new migrations
+                            newEdge = new ViewUtil.ViewEdge(uuid, objectClass, aSide, bSide);
+                        } 
+                         
                         while(true) {
                             reader.nextTag();
                             if (reader.getName().equals(qControlPoint)) {
@@ -189,18 +224,23 @@ public class EndToEndAndTopologyViewMigrator {
 
         for (ViewUtil.ViewNode aNode : viewMap.getNodes()) {
             try {
-                Node anObjectNode = graphDb.getNodeById(aNode.getId());
-                if (!anObjectNode.hasProperty("_uuid"))
-                    throw new ViewUtil.NodeIdReusedException(String.format("The node with id %s is reusing an id formerly used by another inventory object. This node will be ignored.", 
-                        anObjectNode.getId()));
-                
-                QName qnameNode = new QName("node"); //NOI18N
-                xmlew.add(xmlef.createStartElement(qnameNode, null, null));
-                xmlew.add(xmlef.createAttribute(new QName("x"), String.valueOf(aNode.getPosition().x))); //NOI18N
-                xmlew.add(xmlef.createAttribute(new QName("y"), String.valueOf(aNode.getPosition().y))); //NOI18N
-                xmlew.add(xmlef.createAttribute(new QName("class"), aNode.getClassName())); //NOI18N
-                xmlew.add(xmlef.createCharacters((String)anObjectNode.getProperty("_uuid")));
-                xmlew.add(xmlef.createEndElement(qnameNode, null));
+                    QName qnameNode = new QName("node"); //NOI18N
+                    xmlew.add(xmlef.createStartElement(qnameNode, null, null));
+                    xmlew.add(xmlef.createAttribute(new QName("x"), String.valueOf(aNode.getPosition().x))); //NOI18N
+                    xmlew.add(xmlef.createAttribute(new QName("y"), String.valueOf(aNode.getPosition().y))); //NOI18N
+                    xmlew.add(xmlef.createAttribute(new QName("class"), aNode.getClassName())); //NOI18N
+                    
+                    if(aNode.getId() > 0 && aNode.getUuid() == null){
+                        Node anObjectNode = graphDb.getNodeById(aNode.getId());
+                        if (!anObjectNode.hasProperty("_uuid"))
+                            throw new ViewUtil.NodeIdReusedException(String.format("The node with id %s is reusing an id formerly used by another inventory object. This node will be ignored.", 
+                                anObjectNode.getId()));
+
+                        xmlew.add(xmlef.createCharacters((String)anObjectNode.getProperty("_uuid")));
+                    } else
+                        xmlew.add(xmlef.createCharacters(aNode.getUuid()));
+                    
+                    xmlew.add(xmlef.createEndElement(qnameNode, null));
             } catch (NotFoundException ex) {
                 System.out.println(String.format("The object of class %s and id %s could not be found and will not be added to the view.", 
                         aNode.getClassName(), aNode.getId()));
@@ -215,30 +255,49 @@ public class EndToEndAndTopologyViewMigrator {
 
         for (ViewUtil.ViewEdge anEdge : viewMap.getEdges()) {
             try {
-                Node anObjectNode = graphDb.getNodeById(anEdge.getId());
-                Node aSideObjectNode = graphDb.getNodeById(anEdge.getaSide());
-                Node bSideObjectNode = graphDb.getNodeById(anEdge.getbSide());
-                
-                if (!anObjectNode.hasProperty("_uuid"))
-                    throw new ViewUtil.NodeIdReusedException(String.format("The node with id %s is reusing an id formerly used by another inventory object. This edge will be ignored.", 
-                        anObjectNode.getId()));
-                if (!aSideObjectNode.hasProperty("_uuid"))
-                    throw new ViewUtil.NodeIdReusedException(String.format("The node with id %s is reusing an id formerly used by another inventory object. This edge will be ignored.", 
-                        aSideObjectNode.getId()));
-                if (!bSideObjectNode.hasProperty("_uuid"))
-                    throw new ViewUtil.NodeIdReusedException(String.format("The node with id %s is reusing an id formerly used by another inventory object. This edge will be ignored.", 
-                        bSideObjectNode.getId()));
-                
                 QName qnameEdge = new QName("edge"); //NOI18N
-                xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
-                xmlew.add(xmlef.createAttribute(new QName("id"), (String)anObjectNode.getProperty("_uuid"))); //NOI18N
-                xmlew.add(xmlef.createAttribute(new QName("class"), anEdge.getClassName())); //NOI18N
-                xmlew.add(xmlef.createAttribute(new QName("asideid"), (String)aSideObjectNode.getProperty("_uuid"))); //NOI18N
-                xmlew.add(xmlef.createAttribute(new QName("asideclass"), 
-                        (String)aSideObjectNode.getSingleRelationship(ViewUtil.RELTYPE_INSTANCEOF, Direction.OUTGOING).getEndNode().getProperty("name"))); //NOI18N
-                xmlew.add(xmlef.createAttribute(new QName("bsideid"), (String)bSideObjectNode.getProperty("_uuid"))); //NOI18N
-                xmlew.add(xmlef.createAttribute(new QName("bsideclass"), 
-                        (String)bSideObjectNode.getSingleRelationship(ViewUtil.RELTYPE_INSTANCEOF, Direction.OUTGOING).getEndNode().getProperty("name"))); //NOI18N
+                
+                if(anEdge.getId() > 0 && anEdge.getUuid() == null){
+                    Node anObjectNode = graphDb.getNodeById(anEdge.getId());
+                    Node aSideObjectNode = graphDb.getNodeById(anEdge.getaSide());
+                    Node bSideObjectNode = graphDb.getNodeById(anEdge.getbSide());
+                    
+                    if (!anObjectNode.hasProperty("_uuid"))
+                        throw new ViewUtil.NodeIdReusedException(String.format("The node with id %s is reusing an id formerly used by another inventory object. This edge will be ignored.", 
+                            anObjectNode.getId()));
+                    if (!aSideObjectNode.hasProperty("_uuid"))
+                        throw new ViewUtil.NodeIdReusedException(String.format("The node with id %s is reusing an id formerly used by another inventory object. This edge will be ignored.", 
+                            aSideObjectNode.getId()));
+                    if (!bSideObjectNode.hasProperty("_uuid"))
+                        throw new ViewUtil.NodeIdReusedException(String.format("The node with id %s is reusing an id formerly used by another inventory object. This edge will be ignored.", 
+                            bSideObjectNode.getId()));
+
+                    xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
+                    xmlew.add(xmlef.createAttribute(new QName("id"), (String)anObjectNode.getProperty("_uuid"))); //NOI18N
+                    xmlew.add(xmlef.createAttribute(new QName("class"), anEdge.getClassName())); //NOI18N
+                    xmlew.add(xmlef.createAttribute(new QName("asideid"), (String)aSideObjectNode.getProperty("_uuid"))); //NOI18N
+                    xmlew.add(xmlef.createAttribute(new QName("asideclass"), 
+                            (String)aSideObjectNode.getSingleRelationship(ViewUtil.RELTYPE_INSTANCEOF, Direction.OUTGOING).getEndNode().getProperty("name"))); //NOI18N
+                    xmlew.add(xmlef.createAttribute(new QName("bsideid"), (String)bSideObjectNode.getProperty("_uuid"))); //NOI18N
+                    xmlew.add(xmlef.createAttribute(new QName("bsideclass"), 
+                            (String)bSideObjectNode.getSingleRelationship(ViewUtil.RELTYPE_INSTANCEOF, Direction.OUTGOING).getEndNode().getProperty("name"))); //NOI18N
+                }
+                else if(uuidToIdMap.containsKey(anEdge.getaSideUuid()) && uuidToIdMap.containsKey(anEdge.getbSideUuid())){
+                   
+                    Node aSideObjectNode = graphDb.getNodeById(uuidToIdMap.get(anEdge.getaSideUuid()));
+                    Node bSideObjectNode = graphDb.getNodeById(uuidToIdMap.get(anEdge.getbSideUuid()));    
+                    
+                    xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
+                    xmlew.add(xmlef.createAttribute(new QName("id"), anEdge.getUuid())); //NOI18N
+                    xmlew.add(xmlef.createAttribute(new QName("class"), anEdge.getClassName())); //NOI18N
+                    xmlew.add(xmlef.createAttribute(new QName("asideid"), anEdge.getaSideUuid())); //NOI18N
+                    xmlew.add(xmlef.createAttribute(new QName("asideclass"), 
+                            (String)aSideObjectNode.getSingleRelationship(ViewUtil.RELTYPE_INSTANCEOF, Direction.OUTGOING).getEndNode().getProperty("name"))); //NOI18N
+                    xmlew.add(xmlef.createAttribute(new QName("bsideid"), anEdge.getaSideUuid())); //NOI18N
+                    xmlew.add(xmlef.createAttribute(new QName("bsideclass"), 
+                            (String)bSideObjectNode.getSingleRelationship(ViewUtil.RELTYPE_INSTANCEOF, Direction.OUTGOING).getEndNode().getProperty("name"))); //NOI18N
+                }
+                    
                 for (Point point : anEdge.getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint"); //NOI18N
                     xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
@@ -260,4 +319,6 @@ public class EndToEndAndTopologyViewMigrator {
         xmlew.close();
         return baos.toByteArray();
     }
+    
+    
 }

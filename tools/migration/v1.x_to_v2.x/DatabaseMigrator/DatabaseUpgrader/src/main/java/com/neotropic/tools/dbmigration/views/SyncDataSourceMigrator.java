@@ -70,7 +70,7 @@ public class SyncDataSourceMigrator {
                         }//end if doesn't have devide relationship
                         else if(isNumeric(propertyDeviceId)){ //we need to update the deviceId from long to uuid
                             Node inventoryObjNode = graphDb.getNodeById(Long.valueOf(propertyDeviceId));
-                            dsConfigNode.setProperty("deviceId", (String)inventoryObjNode.getProperty("_uui"));
+                            dsConfigNode.setProperty("deviceId", (String)inventoryObjNode.getProperty("_uuid"));
                             System.out.println(String.format("Property deviceId updated from long %s to uuid in dsConfig %s",
 						propertyDeviceId, dsConfigNode.getProperty("deviceId"), dsConfigNode.getProperty("name")));
 			}

@@ -96,6 +96,10 @@ public class ViewUtil {
          */
         private long id;
         /**
+         * business object uuid.
+         */
+        private String uuid;
+        /**
          * Business object class.
          */
         private String className;
@@ -106,6 +110,12 @@ public class ViewUtil {
 
         public ViewNode(long id, String className, Point position) {
             this.id = id;
+            this.className = className;
+            this.position = position;
+        }
+
+        public ViewNode(String uuid, String className, Point position) {
+            this.uuid = uuid;
             this.className = className;
             this.position = position;
         }
@@ -133,6 +143,14 @@ public class ViewUtil {
         public void setPosition(Point position) {
             this.position = position;
         }
+
+        public String getUuid() {
+            return uuid;
+        }
+
+        public void setUuid(String uuid) {
+            this.uuid = uuid;
+        }
     }
     
     /**
@@ -143,6 +161,10 @@ public class ViewUtil {
          * Legacy business object id.
          */
         private long id;
+        /**
+         * business object uuid.
+         */
+        private String uuid;
         /**
          * Business object class.
          */
@@ -159,12 +181,28 @@ public class ViewUtil {
          * The legacy id of the other end of the connection.
          */
         private long bSide;
+        /**
+         * uuid of one end of the connection.
+         */
+        private String aSideUuid;
+        /**
+         * uuid of the other end of the connection.
+         */
+        private String bSideUuid;
 
         public ViewEdge(long id, String className, long aSide, long bSide) {
             this.id = id;
             this.className = className;
             this.aSide = aSide;
             this.bSide = bSide;
+            this.controlPoints = new ArrayList<>();
+        }
+
+        public ViewEdge(String uuid, String className, String aSideUuid, String bSideUuid) {
+            this.uuid = uuid;
+            this.className = className;
+            this.aSideUuid = aSideUuid;
+            this.bSideUuid = bSideUuid;
             this.controlPoints = new ArrayList<>();
         }
 
@@ -207,8 +245,32 @@ public class ViewUtil {
         public void setbSide(long bSide) {
             this.bSide = bSide;
         }
+
+        public String getUuid() {
+            return uuid;
+        }
+
+        public void setUuid(String uuid) {
+            this.uuid = uuid;
+        }
+
+        public String getaSideUuid() {
+            return aSideUuid;
+        }
+
+        public void setaSideUuid(String aSideUuid) {
+            this.aSideUuid = aSideUuid;
+        }
+
+        public String getbSideUuid() {
+            return bSideUuid;
+        }
+
+        public void setbSideUuid(String bSideUuid) {
+            this.bSideUuid = bSideUuid;
+        }
     }
-    
+
     /**
      * Dummy exception that is thrown when a view that is not an Object View is detected.
      */
@@ -229,5 +291,14 @@ public class ViewUtil {
             super(msg);
         }
         
+    }
+    
+    public static boolean isNumeric(String str) {
+        try {
+            Double.parseDouble(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 }
