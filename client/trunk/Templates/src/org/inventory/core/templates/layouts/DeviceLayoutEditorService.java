@@ -70,7 +70,7 @@ public class DeviceLayoutEditorService {
         byte[] structure = scene.getAsXML();
         if (deviceLayoutView == null) {
             long viewId = CommunicationsStub.getInstance().createListTypeItemRelatedView(
-                model.getId(), model.getClassName(), "DeviceLayoutView", null, null, structure, scene.getBackgroundImage()); //NOI18N
+                model.getId(), model.getClassName(), "DeviceLayoutView", " ", null, structure, scene.getBackgroundImage()); //NOI18N
             
             if (viewId != -1) { //Success
                 deviceLayoutView = new LocalObjectView(viewId, "DeviceLayoutView", null, null, structure, scene.getBackgroundImage()); //NOI18N
