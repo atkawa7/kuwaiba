@@ -80,7 +80,6 @@ public class DatabaseMigrationStage2 {
                 if (doMigrateFromV1ToV2) {
                     Upgrader.getInstance().upgrade(dbPathReference);
                     LabelUpgrader.getInstance().createLabels(dbPathReference);
-                    IndexUpgrader.getInstance().upgrade(dbPathReference);
                     LabelUpgrader.getInstance().deleteIndexes(dbPathReference);
                     LabelUpgrader.getInstance().deleteUnusedLabels(dbPathReference);
                 }
