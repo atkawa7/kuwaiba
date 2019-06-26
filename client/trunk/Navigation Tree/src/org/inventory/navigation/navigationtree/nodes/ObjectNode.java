@@ -117,7 +117,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
 
     @Override
     public String getHtmlDisplayName() {
-        return "<font color='" + (color == null ? "FFFFFF" : color) + "'>" + getObject() + "</font>"; // NOI18N
+        return "<font color='" + (color == null ? "FFFFFF" : color) + "'>" + escapeHTML(getObject().toString()) + "</font>"; // NOI18N
     }
     
     /**
@@ -521,4 +521,19 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     public int hashCode() {
         return super.hashCode();
     }
+    
+    private static String escapeHTML(String s) {
+    StringBuilder out = new StringBuilder(Math.max(16, s.length()));
+    for (int i = 0; i < s.length(); i++) {
+        char c = s.charAt(i);
+        if (c > 127 || c == '"' || c == '<' || c == '>' || c == '&') {
+            out.append("&#");
+            out.append((int) c);
+            out.append(';');
+        } else {
+            out.append(c);
+        }
+    }
+    return out.toString();
+}
 }
