@@ -22,6 +22,7 @@ import com.jcraft.jsch.Session;
 import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.entities.BridgeDomain;
 import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.entities.NetworkInterface;
 import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.parsers.BridgeDomainsASR1002Parser;
+import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.parsers.BridgeDomainsASR1006Parser;
 import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.parsers.BridgeDomainsASR9001Parser;
 import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.parsers.BridgeDomainsASR920Parser;
 import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.parsers.BridgeDomainsME3600Parser;
@@ -174,6 +175,16 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                         channel.connect();
                         
                         BridgeDomainsASR1002Parser parser = new BridgeDomainsASR1002Parser();               
+
+                        res.getResult().put(dataSourceConfiguration, 
+                                parser.parse(readCommandExecutionResult(channel)));
+                        break;
+                    }
+                    case "ASR1006": {
+                        channel.setCommand("sh bridge-domain"); //NOI18N
+                        channel.connect();
+                        
+                        BridgeDomainsASR1006Parser parser = new BridgeDomainsASR1006Parser();               
 
                         res.getResult().put(dataSourceConfiguration, 
                                 parser.parse(readCommandExecutionResult(channel)));

@@ -3634,7 +3634,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         
         try (Transaction tx = graphDb.beginTx()) {
             ResourceIterator<Node> syncGroupsNodes = graphDb.findNodes(syncGroupsLabel);
-            
+
             while (syncGroupsNodes.hasNext()) {
                 Node syncGroup = syncGroupsNodes.next();
                 synchronizationGroups.add(Util.createSyncGroupFromNode(syncGroup));            
@@ -3650,7 +3650,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throws InvalidArgumentException, ApplicationObjectNotFoundException, UnsupportedPropertyException {
         try (Transaction tx = graphDb.beginTx()) {
             Node inventoryObjectNode = graphDb.findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, objectId);
-
+            
             Node syncDatasourceConfiguration = null;
             if(inventoryObjectNode != null){ 
                 if(!inventoryObjectNode.hasRelationship(RelTypes.HAS_CONFIGURATION))

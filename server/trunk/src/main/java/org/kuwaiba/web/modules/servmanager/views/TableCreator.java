@@ -1102,7 +1102,7 @@ public class TableCreator {
         chooseView.setSizeFull();
         if(rack != null){
             //rack view
-            Button btnRackView = new Button("rack view");
+            Button btnRackView = new Button("Rack View");
             Properties properties = new Properties();
              properties.put("id", rack.getId());
             properties.put("className", "Rack");
@@ -1119,7 +1119,7 @@ public class TableCreator {
                     formWindow.setWidth(70, Sizeable.Unit.PERCENTAGE);
                     UI.getCurrent().addWindow(formWindow);
                 });
-            Button btnObjView = new Button("object view");
+            Button btnObjView = new Button("Object View");
             btnObjView.addClickListener(event -> {
                 AbstractView objectViewInstance;
                 try {
@@ -1128,7 +1128,6 @@ public class TableCreator {
                     objectViewInstance.buildWithBusinessObject(rack);
                     Window formWindow = new Window(" ");
 
-                    Component launchEmbedded = rackView.launchEmbedded();
                     formWindow.setContent(objectViewInstance.getAsComponent());
                     formWindow.center();
                     formWindow.setHeight(70, Sizeable.Unit.PERCENTAGE);
@@ -1147,7 +1146,7 @@ public class TableCreator {
                 Button chooseViewBtn = new Button(x + parent.getName());
                 chooseViewBtn.addStyleNames("v-button-link", "button-in-cell");
                 chooseViewBtn.addClickListener(event -> {
-                    Window formWindow = new Window("Choose a view");
+                    Window formWindow = new Window("Choose a View");
                     formWindow.addStyleName("v-window");
                     formWindow.setContent(chooseView);
                     formWindow.center();

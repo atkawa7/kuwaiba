@@ -105,8 +105,8 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
                 SrvNodeWidget nodeWidget = new SrvNodeWidget();
                 nodeWidget.setWidth(32); //Use 32x32 px icons
                 nodeWidget.setCaption(aNode.getIdentifier().toString());
-                nodeWidget.setX((int)aNode.getProperties().get("x"));
-                nodeWidget.setY((int)aNode.getProperties().get("y"));
+                nodeWidget.setX((int)aNode.getProperties().get("x") / 2);
+                nodeWidget.setY((int)aNode.getProperties().get("y") / 2);
                 
                 nodeWidget.setUrlIcon("/kuwaiba/icons?class=" + ((BusinessObjectLight)aNode.getIdentifier()).getClassName()); //NOI18N
                 lienzoComponent.addNodeWidget((BusinessObjectLight) aNode.getIdentifier(), nodeWidget);
