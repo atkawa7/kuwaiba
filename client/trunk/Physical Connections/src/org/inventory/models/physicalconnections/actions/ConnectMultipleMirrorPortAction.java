@@ -30,7 +30,9 @@ import org.inventory.core.services.i18n.I18N;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * This action allows to connect directly two ports
+ * This action allows to connect directly all the possible mirror ports by its 
+ * names in order to connect 
+ * in a GenericDistribution Frame (an ODF or DDF)
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
@@ -65,7 +67,7 @@ public class ConnectMultipleMirrorPortAction extends GenericObjectNodeAction {
                 if(endPointA != null){
                     for (int j=i+1; j < endPoints.size(); j++) {
                         LocalObjectLight endPointB = endPoints.get(j);
-                        if(endPointB != null && endPointB.getId() != endPointA.getId()){
+                        if(endPointB != null && !endPointB.getId().equals(endPointA.getId())){
                             if(endPointA.getClassName().equals(endPointB.getClassName()) && matchMirrorPortsNames(endPointA.getName(), endPointB.getName())){
                                 endPointsA.add(endPointA);
                                 endPointsB.add(endPoints.get(j));
@@ -91,7 +93,7 @@ public class ConnectMultipleMirrorPortAction extends GenericObjectNodeAction {
                 if (CommunicationsStub.getInstance().connectMirrorPort(aObjectsClasses, aObjectsIds, bObjectsClasses, bObjectsIds))
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, aObjectsIds.size() + I18N.gm("port_mirrored_successfully"));
                 else
-                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE,CommunicationsStub.getInstance().getError());
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             }
         }
         else
