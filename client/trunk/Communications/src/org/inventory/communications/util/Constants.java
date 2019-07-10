@@ -139,6 +139,18 @@ public class Constants {
      * Name for class VLAN this constant is used in the IPAM  module
      */
     public static final String CLASS_VLAN = "VLAN";
+     /**
+     * Class EVLAN
+     */
+    public static final String CLASS_EVLAN = "EVLAN";
+    /**
+     * Class EGVLAN
+     */
+    public static final String CLASS_EGVLAN = "EGVLAN";
+    /**
+     * Class CVLAN
+     */
+    public static final String CLASS_CVLAN = "CVLAN";
     /**
      * Name for class GenericContract
      */

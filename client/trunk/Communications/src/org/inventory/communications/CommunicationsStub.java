@@ -154,6 +154,7 @@ public class CommunicationsStub {
                                                                     "VC4", "VC4-04", "VC4-16", "VC4-07", "VC4-64", "VC4TributaryLink", "VC12TributaryLink", "VC3TributaryLink",
                                                                     "STM1", "STM4", "STM16", "STM64", "STM256",
                                                                     "WireContainer", "WirelessContainer",
+                                                                    "Provider","BGPPeer", "VFI",
                                                                     "CorporateCustomer", "TelecomOperator", "Provider", "HomeCustomer",
                                                                     "Subnet", "BillingContact", "TechnicalContact", "CommercialContact", "BridgeDomain" };
     
@@ -4807,21 +4808,7 @@ public class CommunicationsStub {
            }
         }
         
-        public List<LocalMPLSConnectionDetails> getE2EMPLSConnections(String connectionId) {
-            try{
-                List<LocalMPLSConnectionDetails> res = new ArrayList<>();
-                List<RemoteMPLSConnectionDetails> e2EMPLSconnections = service.getE2EMPLSconnections(connectionId, session.getSessionId());
-                e2EMPLSconnections.forEach((mplsConnection) -> {
-                    res.add( new LocalMPLSConnectionDetails(mplsConnection));
-                });
-                
-                return res;
-            }catch(Exception ex){
-                this.error =  ex.getMessage();
-                return null;
-            }
-        }
-       
+      
         public LocalMPLSConnectionDetails getMPLSLinkEndpoints(String connectionId) {
             try{
                 RemoteMPLSConnectionDetails mplsLinkEndpoints = service.getMPLSLinkEndpoints(connectionId, session.getSessionId());
@@ -6208,5 +6195,36 @@ public class CommunicationsStub {
         }
         return null;
     }
+    
+    /**
+     * Deletes the provider node created with BGP sync
+     * @param id id of object of class providers
+     * @return true if can delete
+     */
+    public boolean deleteProvider(String id){
+        try {
+            service.deleteObject("Provider", id, false, this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Deletes the BGPPeer created with BGP sync
+     * @param id BGPPeer id
+     * @return true if can be delete
+     */
+    public boolean deleteBgpPeer(String id){
+        try {
+            service.deleteObject("BGPPeer", id, true, this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
     //</editor-fold>
 }

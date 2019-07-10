@@ -21,12 +21,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="deviceA" type="{http://ws.interfaces.kuwaiba.org/}remoteObjectLight" minOccurs="0"/>
  *         &lt;element name="endpointB" type="{http://ws.interfaces.kuwaiba.org/}remoteObjectLight" minOccurs="0"/>
  *         &lt;element name="deviceB" type="{http://ws.interfaces.kuwaiba.org/}remoteObjectLight" minOccurs="0"/>
- *         &lt;element name="pseudowireA" type="{http://ws.interfaces.kuwaiba.org/}remoteObjectLight" minOccurs="0"/>
- *         &lt;element name="pseudowireB" type="{http://ws.interfaces.kuwaiba.org/}remoteObjectLight" minOccurs="0"/>
- *         &lt;element name="outputInterfaceA" type="{http://ws.interfaces.kuwaiba.org/}remoteObjectLight" minOccurs="0"/>
- *         &lt;element name="outputInterfaceB" type="{http://ws.interfaces.kuwaiba.org/}remoteObjectLight" minOccurs="0"/>
- *         &lt;element name="tunnelA" type="{http://ws.interfaces.kuwaiba.org/}remoteObjectLight" minOccurs="0"/>
- *         &lt;element name="tunnelB" type="{http://ws.interfaces.kuwaiba.org/}remoteObjectLight" minOccurs="0"/>
+ *         &lt;element name="vfiA" type="{http://ws.interfaces.kuwaiba.org/}remoteObjectLight" minOccurs="0"/>
+ *         &lt;element name="vfiB" type="{http://ws.interfaces.kuwaiba.org/}remoteObjectLight" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -42,12 +38,8 @@ import javax.xml.bind.annotation.XmlType;
     "deviceA",
     "endpointB",
     "deviceB",
-    "pseudowireA",
-    "pseudowireB",
-    "outputInterfaceA",
-    "outputInterfaceB",
-    "tunnelA",
-    "tunnelB"
+    "vfiA",
+    "vfiB"
 })
 public class RemoteMPLSConnectionDetails {
 
@@ -56,12 +48,8 @@ public class RemoteMPLSConnectionDetails {
     protected RemoteObjectLight deviceA;
     protected RemoteObjectLight endpointB;
     protected RemoteObjectLight deviceB;
-    protected RemoteObjectLight pseudowireA;
-    protected RemoteObjectLight pseudowireB;
-    protected RemoteObjectLight outputInterfaceA;
-    protected RemoteObjectLight outputInterfaceB;
-    protected RemoteObjectLight tunnelA;
-    protected RemoteObjectLight tunnelB;
+    protected RemoteObjectLight vfiA;
+    protected RemoteObjectLight vfiB;
 
     /**
      * Gets the value of the connectionObject property.
@@ -184,147 +172,51 @@ public class RemoteMPLSConnectionDetails {
     }
 
     /**
-     * Gets the value of the pseudowireA property.
+     * Gets the value of the vfiA property.
      * 
      * @return
      *     possible object is
      *     {@link RemoteObjectLight }
      *     
      */
-    public RemoteObjectLight getPseudowireA() {
-        return pseudowireA;
+    public RemoteObjectLight getVfiA() {
+        return vfiA;
     }
 
     /**
-     * Sets the value of the pseudowireA property.
+     * Sets the value of the vfiA property.
      * 
      * @param value
      *     allowed object is
      *     {@link RemoteObjectLight }
      *     
      */
-    public void setPseudowireA(RemoteObjectLight value) {
-        this.pseudowireA = value;
+    public void setVfiA(RemoteObjectLight value) {
+        this.vfiA = value;
     }
 
     /**
-     * Gets the value of the pseudowireB property.
+     * Gets the value of the vfiB property.
      * 
      * @return
      *     possible object is
      *     {@link RemoteObjectLight }
      *     
      */
-    public RemoteObjectLight getPseudowireB() {
-        return pseudowireB;
+    public RemoteObjectLight getVfiB() {
+        return vfiB;
     }
 
     /**
-     * Sets the value of the pseudowireB property.
+     * Sets the value of the vfiB property.
      * 
      * @param value
      *     allowed object is
      *     {@link RemoteObjectLight }
      *     
      */
-    public void setPseudowireB(RemoteObjectLight value) {
-        this.pseudowireB = value;
-    }
-
-    /**
-     * Gets the value of the outputInterfaceA property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link RemoteObjectLight }
-     *     
-     */
-    public RemoteObjectLight getOutputInterfaceA() {
-        return outputInterfaceA;
-    }
-
-    /**
-     * Sets the value of the outputInterfaceA property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link RemoteObjectLight }
-     *     
-     */
-    public void setOutputInterfaceA(RemoteObjectLight value) {
-        this.outputInterfaceA = value;
-    }
-
-    /**
-     * Gets the value of the outputInterfaceB property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link RemoteObjectLight }
-     *     
-     */
-    public RemoteObjectLight getOutputInterfaceB() {
-        return outputInterfaceB;
-    }
-
-    /**
-     * Sets the value of the outputInterfaceB property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link RemoteObjectLight }
-     *     
-     */
-    public void setOutputInterfaceB(RemoteObjectLight value) {
-        this.outputInterfaceB = value;
-    }
-
-    /**
-     * Gets the value of the tunnelA property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link RemoteObjectLight }
-     *     
-     */
-    public RemoteObjectLight getTunnelA() {
-        return tunnelA;
-    }
-
-    /**
-     * Sets the value of the tunnelA property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link RemoteObjectLight }
-     *     
-     */
-    public void setTunnelA(RemoteObjectLight value) {
-        this.tunnelA = value;
-    }
-
-    /**
-     * Gets the value of the tunnelB property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link RemoteObjectLight }
-     *     
-     */
-    public RemoteObjectLight getTunnelB() {
-        return tunnelB;
-    }
-
-    /**
-     * Sets the value of the tunnelB property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link RemoteObjectLight }
-     *     
-     */
-    public void setTunnelB(RemoteObjectLight value) {
-        this.tunnelB = value;
+    public void setVfiB(RemoteObjectLight value) {
+        this.vfiB = value;
     }
 
 }

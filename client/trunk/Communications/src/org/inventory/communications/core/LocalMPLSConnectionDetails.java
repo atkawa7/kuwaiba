@@ -52,31 +52,15 @@ public class LocalMPLSConnectionDetails {
      */
     private LocalObjectLight pseudowireB;
     /**
-     * the real endpoint of the mpls link, it could be a PhysicalPort or a VirtualPort
+     * vfi related with PseudowireA
      */
-    private LocalObjectLight outputInterfaceA;
+    private LocalObjectLight vfiA;
     /**
-     * the real endpoint of the mpls link, it could be a PhysicalPort or a VirtualPort
+     * vfi related with PseudowireB
      */
-    private LocalObjectLight outputInterfaceB;
-    /**
-     * At this moment this two fields are just for information, they are not 
-     * useful to show continuity for now
-     */
-    private LocalObjectLight tunnelA;
-    private LocalObjectLight tunnelB;
-
+    private LocalObjectLight vfiB;
+    
     public LocalMPLSConnectionDetails() {
-    }
-
-    public LocalMPLSConnectionDetails(LocalObject connectionObject, LocalObjectLight pseudowireA, LocalObjectLight pseudowireB, LocalObjectLight outputInterfaceA, LocalObjectLight outputInterfaceB, LocalObjectLight tunnelA, LocalObjectLight tunnelB) {
-        this.connectionObject = connectionObject;
-        this.pseudowireA = pseudowireA;
-        this.pseudowireB = pseudowireB;
-        this.outputInterfaceA = outputInterfaceA;
-        this.outputInterfaceB = outputInterfaceB;
-        this.tunnelA = tunnelA;
-        this.tunnelB = tunnelB;
     }
 
     public LocalMPLSConnectionDetails(RemoteMPLSConnectionDetails mplsLinkEndpoints) {
@@ -86,12 +70,8 @@ public class LocalMPLSConnectionDetails {
         }
         else
             this.connectionObject = null;
-        this.pseudowireA = mplsLinkEndpoints.getPseudowireA() != null ? new LocalObjectLight(mplsLinkEndpoints.getPseudowireA().getId(), mplsLinkEndpoints.getPseudowireA().getName(), mplsLinkEndpoints.getPseudowireA().getClassName()) : null;
-        this.pseudowireB = mplsLinkEndpoints.getPseudowireB() != null ? new LocalObjectLight(mplsLinkEndpoints.getPseudowireB().getId(), mplsLinkEndpoints.getPseudowireB().getName(), mplsLinkEndpoints.getPseudowireB().getClassName()) : null;
-        this.outputInterfaceA = mplsLinkEndpoints.getOutputInterfaceA() != null ? new LocalObjectLight(mplsLinkEndpoints.getOutputInterfaceA().getId(), mplsLinkEndpoints.getOutputInterfaceA().getName(), mplsLinkEndpoints.getOutputInterfaceA().getClassName()) : null;
-        this.outputInterfaceB = mplsLinkEndpoints.getOutputInterfaceB() != null ? new LocalObjectLight(mplsLinkEndpoints.getOutputInterfaceB().getId(), mplsLinkEndpoints.getOutputInterfaceB().getName(), mplsLinkEndpoints.getOutputInterfaceB().getClassName()) : null;
-        this.tunnelA = mplsLinkEndpoints.getTunnelA() != null ? new LocalObjectLight(mplsLinkEndpoints.getTunnelA().getId(), mplsLinkEndpoints.getTunnelA().getName(), mplsLinkEndpoints.getTunnelA().getClassName()) : null;
-        this.tunnelB = mplsLinkEndpoints.getTunnelB() != null ? new LocalObjectLight(mplsLinkEndpoints.getTunnelB().getId(), mplsLinkEndpoints.getTunnelB().getName(), mplsLinkEndpoints.getTunnelB().getClassName()) : null;
+        this.vfiA = mplsLinkEndpoints.getVfiA()!= null ? new LocalObjectLight(mplsLinkEndpoints.getVfiA().getId(), mplsLinkEndpoints.getVfiA().getName(), mplsLinkEndpoints.getVfiA().getClassName()) : null;
+        this.vfiB = mplsLinkEndpoints.getVfiB() != null ? new LocalObjectLight(mplsLinkEndpoints.getVfiB().getId(), mplsLinkEndpoints.getVfiB().getName(), mplsLinkEndpoints.getVfiB().getClassName()) : null;
         this.endpointA = mplsLinkEndpoints.getEndpointA() != null ? new LocalObjectLight(mplsLinkEndpoints.getEndpointA().getId(), mplsLinkEndpoints.getEndpointA().getName(), mplsLinkEndpoints.getEndpointA().getClassName()) : null;
         this.endpointB = mplsLinkEndpoints.getEndpointB() != null ? new LocalObjectLight(mplsLinkEndpoints.getEndpointB().getId(), mplsLinkEndpoints.getEndpointB().getName(), mplsLinkEndpoints.getEndpointB().getClassName()) : null;
         this.deviceA = mplsLinkEndpoints.getDeviceA() != null ? new LocalObjectLight(mplsLinkEndpoints.getDeviceA().getId(), mplsLinkEndpoints.getDeviceA().getName(), mplsLinkEndpoints.getDeviceA().getClassName()) : null;
@@ -120,38 +100,6 @@ public class LocalMPLSConnectionDetails {
 
     public void setPseudowireB(LocalObjectLight pseudowireB) {
         this.pseudowireB = pseudowireB;
-    }
-
-    public LocalObjectLight getOutputInterfaceA() {
-        return outputInterfaceA;
-    }
-
-    public void setOutputInterfaceA(LocalObjectLight outputInterfaceA) {
-        this.outputInterfaceA = outputInterfaceA;
-    }
-
-    public LocalObjectLight getOutputInterfaceB() {
-        return outputInterfaceB;
-    }
-
-    public void setOutputInterfaceB(LocalObjectLight outputInterfaceB) {
-        this.outputInterfaceB = outputInterfaceB;
-    }
-
-    public LocalObjectLight getTunnelA() {
-        return tunnelA;
-    }
-
-    public void setTunnelA(LocalObjectLight tunnelA) {
-        this.tunnelA = tunnelA;
-    }
-
-    public LocalObjectLight getTunnelB() {
-        return tunnelB;
-    }
-
-    public void setTunnelB(LocalObjectLight tunnelB) {
-        this.tunnelB = tunnelB;
     }
 
     public LocalObjectLight getEndpointA() {
@@ -185,6 +133,5 @@ public class LocalMPLSConnectionDetails {
     public void setDeviceB(LocalObjectLight deviceB) {
         this.deviceB = deviceB;
     }
-    
-    
+
 }
