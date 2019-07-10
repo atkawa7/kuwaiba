@@ -50,7 +50,6 @@ public class MplsSyncDefaultParserNew {
     public List<AbstractDataEntity> parse(String input) {
                 List<AbstractDataEntity> mplsTransportLinks = new ArrayList<>();
         if(input != null){
-            System.out.println("Entering Parser");
             String[] lines = input.split("\n");
             ParsingState state = ParsingState.START;
             MPLSLinkNew mplsLink = new MPLSLinkNew();
@@ -163,7 +162,6 @@ public class MplsSyncDefaultParserNew {
                 //end saving mplslink
             }//end for
         }
-        System.out.println(">>> mpls sync entries: " + mplsTransportLinks.size());
         return mplsTransportLinks;
     }
     

@@ -304,8 +304,6 @@ public class ViewModule  implements GenericCommercialModule {
                         
                         for (Map.Entry<BusinessObjectLight, List<BusinessObjectLight>> entry : physicalPathForVlansEndpointA.entrySet())
                             e2eMap.addAll(physicalPathReader(entry.getValue()));
-                        
-                        
                         //VLANs side B
                         HashMap<BusinessObjectLight, List<BusinessObjectLight>> physicalPathForVlansEndpointB = new HashMap<>();    
                         if(logicalCircuitDetails.getEndpointB() != null && !logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty())
@@ -315,7 +313,6 @@ public class ViewModule  implements GenericCommercialModule {
                         
                         for (Map.Entry<BusinessObjectLight, List<BusinessObjectLight>> entry : physicalPathForVlansEndpointB.entrySet()) 
                             e2eMap.addAll(physicalPathReader(entry.getValue()));
-                        
                     }
                     //if(includeBDis){//TODO include the BDIs logic}
                 }//end if is logical link
@@ -438,7 +435,6 @@ public class ViewModule  implements GenericCommercialModule {
     
     private ObjectLinkObjectDefinition getLogicalInterfaceContinuity(BusinessObjectLight currentConnection, BusinessObjectLight device, BusinessObjectLight logicalInterface) 
            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException{
-
         //Pseudowire has to kins of relationships:
         //other Pseudowire
         //a VFI, th VFI could be related with a BridgeDomain, (to be confirmed)

@@ -61,11 +61,11 @@ public final class LoadDataFromFile {
     /**
      * Path to upload file
      */
-    private static final String PATH_DATA_LOAD_FILES = "../kuwaiba/upload-files/";
+    private static final String PATH_DATA_LOAD_FILES = "/data/files/import";
     /**
      * Path to log file after a bulk upload
      */
-    private static final String PATH_DATA_LOAD_LOGS = "../kuwaiba/logs/";
+    private static final String PATH_DATA_LOAD_LOGS = "data/logs/";
     /**
      * Minimum fields required in a csv file to load objects
      */

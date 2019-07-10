@@ -124,7 +124,6 @@ public class MplsSyncProvider extends AbstractSyncProvider {
 
     @Override
     public PollResult mappedPoll(SynchronizationGroup syncGroup) {
-        System.out.println(">>> entering mpls provider");
         List<SyncDataSourceConfiguration> syncDataSourceConfigurations = syncGroup.getSyncDataSourceConfigurations();
         
         PollResult res = new PollResult();
