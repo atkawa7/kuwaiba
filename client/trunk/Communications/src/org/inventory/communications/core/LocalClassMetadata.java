@@ -233,8 +233,6 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
             return Constants.MAPPING_TIMESTAMP;
         if (type.equals("Date"))
             return Constants.MAPPING_DATE;
-        if (type.equals("Binary"))
-            return Constants.MAPPING_BINARY;
         return multiple ? Constants.MAPPING_MANYTOMANY : Constants.MAPPING_MANYTOONE;
     }
 }

@@ -16,15 +16,16 @@
  */
 package org.inventory.core.templates.layouts;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import javax.xml.bind.DatatypeConverter;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalFileObject;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
-import org.inventory.communications.util.Binary;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
@@ -73,13 +74,10 @@ public class DeviceLayoutExporter {
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return null;
             }
-            Binary binaryIcon = (Binary) customShapeObj.getAttribute("icon");
-            if (binaryIcon != null) {
-                byte[] byteIcon = binaryIcon.getByteArray();
-                
-                if (byteIcon.length > 0)
-                    result += "<icon>" + binaryIcon.getFileName() + ";/;" + binaryIcon.getFileExtension() + ";/;" + DatatypeConverter.printBase64Binary(byteIcon) + "</icon>";
-            }
+            LocalFileObject localFileObject = new LocalFileObject(0l, "-", new Date().getTime(), "", new byte[0]);
+            byte[] byteIcon = localFileObject.getFile();
+            if (byteIcon.length > 0)
+                result += "<icon>" + localFileObject.getName() + ";/;" + "-" + ";/;" + DatatypeConverter.printBase64Binary(byteIcon) + "</icon>";
             String customShapeStrStructure = customShapes.get(customShape);
             
             if (!customShapeStrStructure.equals(""))

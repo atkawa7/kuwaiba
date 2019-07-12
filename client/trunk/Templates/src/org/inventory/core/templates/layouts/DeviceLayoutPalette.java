@@ -27,7 +27,6 @@ import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectListItem;
-import org.inventory.communications.util.Binary;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -98,13 +97,7 @@ public class DeviceLayoutPalette {
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return new Shape[0];
             }
-            Binary binaryIcon = (Binary) object.getAttribute("icon"); //NOI18N
-            
-            if (binaryIcon == null)
-                continue;
-            
-            Image icon = Utils.getIconFromByteArray(binaryIcon.getByteArray(), Color.BLACK, 30, 30);
-            
+            Image icon = Utils.getIconFromByteArray(null, Color.BLACK, 30, 30);
             CustomShape customShape = new CustomShape(item, icon);
             customShape.setName(item.getDisplayName() != null ? item.getDisplayName() : item.getName());
             items.add(customShape);

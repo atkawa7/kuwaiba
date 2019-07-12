@@ -156,7 +156,6 @@ public class Utils {
                 case Constants.MAPPING_PRIMITIVE:
                 case Constants.MAPPING_DATE:
                 case Constants.MAPPING_TIMESTAMP:
-                case Constants.MAPPING_BINARY:
                     if (type.equals("Boolean"))
                         return Boolean.valueOf(valueAsString);
 
@@ -178,9 +177,6 @@ public class Utils {
                     if (type.equals("Timestamp"))
                         return Timestamp.valueOf(valueAsString);
                     
-                    if (type.equals("Binary"))
-                        return new Binary(valueAsString);
-
                     //In any other case we rise an IllegalArgumentException
                     throw new IllegalArgumentException(String.format("The type %s has a wrong mapping and will be ignored", type));
                 case Constants.MAPPING_MANYTOMANY:

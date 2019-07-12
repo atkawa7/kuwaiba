@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -35,11 +36,11 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalFileObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
-import org.inventory.communications.util.Binary;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
@@ -56,7 +57,7 @@ public class DeviceLayoutImporter {
     private final byte[] structure;
     private final List<String> layouts;
     private final List<LocalObjectLight> objects;
-    private final List<Binary> icons;
+    private final List<LocalFileObject> icons;
     private final HashMap<LocalObjectLight, LocalObjectListItem> localMap;
     private final LocalObjectListItem deviceModel;
     private final DeviceLayoutScene scene;
@@ -262,8 +263,8 @@ public class DeviceLayoutImporter {
                 getLocalCustomShape(customShape);
             }
             int customShapeIdx = objects.indexOf(customShape);
-            Binary customShapeIcon = icons.get(customShapeIdx);            
-            String customShapeIconEncode = customShapeIcon.getFileName() + ";/;" + customShapeIcon.getFileExtension() + ";/;" + DatatypeConverter.printBase64Binary(customShapeIcon.getByteArray());
+            LocalFileObject customShapeIcon = icons.get(customShapeIdx);            
+            String customShapeIconEncode = customShapeIcon.getName() + ";/;" + "-" + ";/;" + DatatypeConverter.printBase64Binary(customShapeIcon.getFile());
                         
             HashMap<String, Object> attributesToUpdate = new HashMap<>();
             attributesToUpdate.put(Constants.PROPERTY_NAME, customShape.getName());
@@ -371,7 +372,7 @@ public class DeviceLayoutImporter {
                     }
                     if (reader.getName().equals(tagIcon)) {
                         String strIcon = reader.getElementText();
-                        icons.add(new Binary(strIcon));
+                        icons.add(new LocalFileObject(0l, "-", new Date().getTime(), "", new byte[0]));
                     }
                     if (reader.getName().equals(tagDevice)) {
                         String id = reader.getAttributeValue(null, Constants.PROPERTY_ID);

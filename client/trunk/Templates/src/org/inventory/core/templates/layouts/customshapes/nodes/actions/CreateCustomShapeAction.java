@@ -67,16 +67,16 @@ public class CreateCustomShapeAction extends GenericInventoryAction {
                 byte[] byteArray = Utils.getByteArrayFromImage(Utils.createRectangleIcon(Color.BLACK, 33, 33), null);
                 
                 String byteArrayEncode = DatatypeConverter.printBase64Binary(byteArray);                
-                String iconAttributeValue = "defaultIcon" + ";/;" +  "png" + ";/;" + byteArrayEncode; //NOI18N
-
-                HashMap<String, Object> attributesToUpdate = new HashMap<>();
-                attributesToUpdate.put(Constants.PROPERTY_ICON, iconAttributeValue);
-
-                if(!CommunicationsStub.getInstance().updateObject(loli.getClassName(), loli.getId(), attributesToUpdate)) {
-                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                        NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                    return;
-                }
+////                String iconAttributeValue = "defaultIcon" + ";/;" +  "png" + ";/;" + byteArrayEncode; //NOI18N
+////
+////                HashMap<String, Object> attributesToUpdate = new HashMap<>();
+////                attributesToUpdate.put(Constants.PROPERTY_ICON, iconAttributeValue);
+////
+////                if(!CommunicationsStub.getInstance().updateObject(loli.getClassName(), loli.getId(), attributesToUpdate)) {
+////                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+////                        NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+////                    return;
+////                }
             } catch (IOException ex) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, "The default icon could not be created");

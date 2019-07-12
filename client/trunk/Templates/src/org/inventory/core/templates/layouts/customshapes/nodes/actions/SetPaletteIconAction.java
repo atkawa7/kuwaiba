@@ -105,19 +105,19 @@ public class SetPaletteIconAction extends GenericInventoryAction {
 
                         String byteArrayEncode = DatatypeConverter.printBase64Binary(byteArray);
 
-                        String iconAttributeValue = fileName + ";/;" +  fileExtension + ";/;" + byteArrayEncode;
-
-                        HashMap<String, Object> attributesToUpdate = new HashMap<>();
-                        attributesToUpdate.put(Constants.PROPERTY_ICON, iconAttributeValue);
-
-                        if(!CommunicationsStub.getInstance().updateObject(customShape.getClassName(), 
-                                customShape.getId(), attributesToUpdate)) {
-                            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                        } else {
-                            NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
-                                NotificationUtil.INFO_MESSAGE, "The icon was set successfully");
-                        }                     
+////                        String iconAttributeValue = fileName + ";/;" +  fileExtension + ";/;" + byteArrayEncode;
+////
+////                        HashMap<String, Object> attributesToUpdate = new HashMap<>();
+////                        attributesToUpdate.put(Constants.PROPERTY_ICON, iconAttributeValue);
+////
+//                        if(!CommunicationsStub.getInstance().updateObject(customShape.getClassName(), 
+//                                customShape.getId(), attributesToUpdate)) {
+//                            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+//                                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+//                        } else {
+//                            NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
+//                                NotificationUtil.INFO_MESSAGE, "The icon was set successfully");
+//                        }                     
                     } catch (IOException ex) {
                         Exceptions.printStackTrace(ex);
                     }

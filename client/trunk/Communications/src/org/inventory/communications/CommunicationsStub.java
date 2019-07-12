@@ -1141,6 +1141,9 @@ public class CommunicationsStub {
             for (LocalClassMetadataLight subclass : subclasses)
                 cache.addLightMeta(new LocalClassMetadataLight[]{subclass});
         }
+        allegedParentClass = cache.getLightMetaForClass(allegedParentClassName);        
+        if (allegedParentClass == null) // The class name can not be found
+            return false;
         
         LocalClassMetadataLight currentClass = cache.getLightMetaForClass(className);
         

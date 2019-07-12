@@ -241,10 +241,6 @@ public class Constants {
      */
     public static final int MAPPING_TIMESTAMP = 3;
     /**
-     * Binary
-     */
-    public static final int MAPPING_BINARY = 4;
-    /**
      * Many to one relationship (such as types)
      */
     public static final int MAPPING_MANYTOONE = 5;
@@ -276,8 +272,7 @@ public class Constants {
     /**
      * Possible attributes types
      */
-    public static final String [] ATTRIBUTE_TYPES = new String[]{"String", "Integer", "Long", "Float", "Boolean", "Date", "Timestamp", 
-        /*"Binary" //TODO: This attribute type will be supported in a future release. The current use of this attribute type are in the CustomShape class*/};
+    public static final String [] ATTRIBUTE_TYPES = new String[]{"String", "Integer", "Long", "Float", "Boolean", "Date", "Timestamp"};
     public static final String ATTRIBUTE_MODEL = "model";
     /**
      * Property name

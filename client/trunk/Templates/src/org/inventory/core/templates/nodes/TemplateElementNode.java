@@ -132,7 +132,7 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
                                             attributeMetadata.getDescription(), list, templateElement);
                                 break;
                             default:
-                                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.WARNING_MESSAGE, "Unique and binary attributes are ignored to avoid redundancies");
+                                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.WARNING_MESSAGE, "Unique attributes are ignored to avoid redundancies");
                         } 
                         if (property != null) //Should not happen
                             generalSet.put(property);
