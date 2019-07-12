@@ -1060,13 +1060,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             return changes;
         }
     }
-
-    @Override
-    public boolean setBinaryAttributes(String className, long oid, List<String> attributeNames, List<byte[]> attributeValues)
-            throws BusinessObjectNotFoundException, OperationNotPermittedException, ArraySizeMismatchException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
+    
     @Override
     public void createSpecialRelationship(String aObjectClass, String aObjectId, String bObjectClass, String bObjectId, String name, boolean unique)
             throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException {
@@ -3450,14 +3444,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             //Neo4J, so a null value is actually a non-existing relationship/value
             if (instance.hasProperty(myAtt.getName())){
                if (AttributeMetadata.isPrimitive(myAtt.getType())) {
-                    if (!myAtt.getType().equals("Binary")) {
-                        String value = String.valueOf(instance.getProperty(myAtt.getName()));
-                        
-                        if (Constants.PROPERTY_NAME.equals(myAtt.getName()))
-                            name = value;
-                        
-                        attributes.put(myAtt.getName(),value);
-                    }
+                    String value = String.valueOf(instance.getProperty(myAtt.getName()));
+
+                    if (Constants.PROPERTY_NAME.equals(myAtt.getName()))
+                        name = value;
+
+                    attributes.put(myAtt.getName(),value);
                 }
             }
         }

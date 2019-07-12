@@ -103,8 +103,6 @@ public class Util {
                 case "Date":
                 case "Timestamp":
                     return Long.valueOf(value);
-                case "Binary":                    
-                    return value.getBytes();
                 default:
                     throw new InvalidArgumentException(String.format("Type %s not found", type));
             }

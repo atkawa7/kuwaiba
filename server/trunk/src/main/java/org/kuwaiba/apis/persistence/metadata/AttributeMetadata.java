@@ -36,10 +36,6 @@ public class AttributeMetadata implements Serializable, Comparable<AttributeMeta
      */
     public static final int MAPPING_TIMESTAMP = 3;
     /**
-     * Binary
-     */
-    public static final int MAPPING_BINARY = 4;
-    /**
      * Many to one relationship (such as list types, single selection)
      */
     public static final int MAPPING_MANYTOONE = 5;
@@ -259,7 +255,7 @@ public class AttributeMetadata implements Serializable, Comparable<AttributeMeta
     public static boolean isPrimitive(String type) {
         return type.equals("String") || type.equals("Integer") || type.equals("Float") //NOI18N
                 || type.equals("Long") || type.equals("Boolean") || type.equals("Date") //NOI18N
-                || type.equals("Timestamp") || type.equals("Binary"); //NOI18N
+                || type.equals("Timestamp"); //NOI18N
     }
     
     @Override

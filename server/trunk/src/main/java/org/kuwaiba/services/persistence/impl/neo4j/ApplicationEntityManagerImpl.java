@@ -4842,17 +4842,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             //Neo4J, so a null value is actually a non-existing relationship/value
             if (instance.hasProperty(myAtt.getName())){
                if (AttributeMetadata.isPrimitive(myAtt.getType())) {
-                    if (!myAtt.getType().equals("Binary")) {
-                        String value = String.valueOf(instance.getProperty(myAtt.getName()));
-                        
-                        if (Constants.PROPERTY_NAME.equals(myAtt.getName()))
-                            name = value;
-                        
-                        attributes.put(myAtt.getName(),value);
-                    } else if (myAtt.getType().equals("Binary")) {
-                        byte [] byteArray = (byte []) instance.getProperty(myAtt.getName());
-                        attributes.put(myAtt.getName(), new String(byteArray));
-                    }
+                    String value = String.valueOf(instance.getProperty(myAtt.getName()));
+
+                    if (Constants.PROPERTY_NAME.equals(myAtt.getName()))
+                        name = value;
+
+                    attributes.put(myAtt.getName(),value);
                 }
             }
         }

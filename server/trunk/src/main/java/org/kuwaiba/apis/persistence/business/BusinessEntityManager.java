@@ -403,20 +403,6 @@ public interface BusinessEntityManager {
      */
     public ChangeDescriptor updateObject(String className, String oid, HashMap<String, String> attributes)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException;
-    /**
-     * Updates an object binary attributes.
-     * @param className Object's class name
-     * @param oid Object's oid
-     * @param attributeNames The attributes to be updated
-     * @param attributeValues The attribute values
-     * @return Success or failure
-     * @throws MetadataObjectNotFoundException If the object class can't be found
-     * @throws BusinessObjectNotFoundException If the object can't be found
-     * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
-     * @throws ArraySizeMismatchException If the arrays attributeNames and attributeValues have different lengths
-     */
-    public boolean setBinaryAttributes(String className, long oid, List<String> attributeNames, List<byte[]> attributeValues)
-            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException, ArraySizeMismatchException;
     
     /**
      * Move a list of objects to a new parent: this methods ignores those who can't be moved and raises
