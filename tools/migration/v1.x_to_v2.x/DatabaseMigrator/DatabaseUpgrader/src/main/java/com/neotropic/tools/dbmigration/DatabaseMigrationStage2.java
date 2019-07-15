@@ -94,6 +94,7 @@ public class DatabaseMigrationStage2 {
                     EndToEndAndTopologyViewMigrator.migrate(dbPathReference);
                     GeneralViewsMigrator.migrate(dbPathReference);
                     LayoutMigrator.migrate(dbPathReference);
+                    LayoutMigrator.updateCustomShapeIcons(dbPathReference);
                     SyncDataSourceMigrator.migrate(dbPathReference);
                 }
 

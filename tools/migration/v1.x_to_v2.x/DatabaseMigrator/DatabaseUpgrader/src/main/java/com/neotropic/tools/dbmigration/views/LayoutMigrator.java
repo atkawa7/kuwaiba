@@ -21,6 +21,14 @@ import java.awt.Point;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.util.Calendar;
+import java.util.Iterator;
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -34,6 +42,9 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.NotFoundException;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.RelationshipType;
+import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
@@ -44,6 +55,87 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class LayoutMigrator {
+    
+    public static void saveFile(String directory, String fileName, byte[] content) throws FileNotFoundException, IOException {
+        java.nio.file.Path directoryPath = FileSystems.getDefault().getPath(directory);
+        if (!Files.exists(directoryPath) || !Files.isWritable(directoryPath))
+            throw new FileNotFoundException(String.format("Path %s does not exist or is not writeable", directoryPath.toAbsolutePath()));
+
+        try (FileOutputStream fos = new FileOutputStream(directory + "/" + fileName)) { //NOI18N
+            fos.write(content);
+        }
+    }
+    
+    public static void updateCustomShapeIcons(File storeDir) {
+        final String PROPERTY_NAME = "name"; //NOI18N
+        final String PROPERTY_TAGS = "tags"; //NOI18N
+        final String PROPERTY_UUID = "_uuid"; //NOI18N
+        final String PROPERTY_ICON = "icon"; //NOI18N
+        final String PROPERTY_CREATION_DATE = "creationDate"; //NOI18N
+        final String PATH_ATTACHMENTS = "/data/files/attachments"; //NOI18N
+        final String LABEL_ATTACHMENTS = "attachments"; //NOI18N
+        RelationshipType rltHasAttachment = RelationshipType.withName("HAS_ATTACHMENT");
+        
+        GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(storeDir);
+        System.out.println(">>> Updating Custom Shape Icons");
+        try (Transaction tx = graphDb.beginTx()) {
+            String query = "MATCH (customShape:listTypeItems)-[:INSTANCE_OF]->(class:classes) "
+                         + "WHERE class.name = 'CustomShape' "
+                         + "RETURN customShape;";
+            Result result = graphDb.execute(query);
+            Iterator<Node> customShapeNodes = result.columnAs("customShape");
+            while (customShapeNodes.hasNext()) {
+                Node customShapeNode = customShapeNodes.next();
+                if (customShapeNode.hasProperty(PROPERTY_ICON)) {
+                    Object propertyIcon = customShapeNode.getProperty(PROPERTY_ICON);
+                    if (propertyIcon instanceof byte[]) {
+                        byte[] byteArrayIcon = (byte []) propertyIcon;
+                        String stringIcon = new String(byteArrayIcon);
+                        String[] stringArrayIcon = stringIcon.split(";/;");
+                        if (stringArrayIcon.length == 3) {
+                            String fileName = stringArrayIcon[0];
+                            String fileExtension = stringArrayIcon[1];
+                            String fileContent = stringArrayIcon[2];
+                            byte [] byteArray = DatatypeConverter.parseBase64Binary(fileContent);
+                            
+                            Node attachmentNode = graphDb.createNode(Label.label(LABEL_ATTACHMENTS));
+                            attachmentNode.setProperty(PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+                            attachmentNode.setProperty(PROPERTY_NAME, fileName + "." + fileExtension);
+                            attachmentNode.setProperty(PROPERTY_TAGS, "");
+                            
+                            Relationship hasAttachmentRelationship = customShapeNode.createRelationshipTo(attachmentNode, rltHasAttachment);
+                            hasAttachmentRelationship.setProperty(PROPERTY_NAME, "_icon");
+                            
+                            String attachmentName = customShapeNode.getProperty(PROPERTY_UUID) + "_" + attachmentNode.getId();
+                            saveFile(PATH_ATTACHMENTS, attachmentName, byteArray);
+                        }
+                    }
+                }
+            }
+            tx.success();
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            String query = "MATCH (customShape:listTypeItems)-[:INSTANCE_OF]->(class:classes) "
+                         + "WHERE class.name = 'CustomShape' "
+                         + "SET customShape.icon = NULL "
+                         + "RETURN customShape";
+            graphDb.execute(query);
+            tx.success();
+        }
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            String query = "MATCH (class:classes{name:'CustomShape'})-[:HAS_ATTRIBUTE]->(attribute:attributes{name:'icon'}) "
+                         + "DETACH DELETE attribute "
+                         + "RETURN class, attribute;";
+            graphDb.execute(query);
+            tx.success();
+        }
+        System.out.println(">>> Updated Custom Shape Icons");
+        graphDb.shutdown();
+    }
     /**
      * Performs the actual migration
      * @param dbPathReference The reference to the database location.
