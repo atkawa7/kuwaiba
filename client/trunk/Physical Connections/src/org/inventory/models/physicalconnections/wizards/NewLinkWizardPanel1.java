@@ -73,6 +73,8 @@ public class NewLinkWizardPanel1 implements WizardDescriptor.Panel<WizardDescrip
     public void validate() throws WizardValidationException {
         if (component.getLinkName().trim().isEmpty())
             throw new WizardValidationException(component, "The name of the connection can not be empty", "The name of the connection can not be empty");
+        if (component.getLinkClass() == null)
+            throw new WizardValidationException(component, "The connection class can not be empty", "The connection class can not be empty");
     }  
 
 }

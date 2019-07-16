@@ -53,7 +53,7 @@ public class DeleteProviderAction extends GenericObjectNodeAction implements Pre
 
     @Override
     public String[] appliesTo() {
-        return new String[] {"Provider"};
+        return new String[] { "Provider" };
     }
 
     @Override

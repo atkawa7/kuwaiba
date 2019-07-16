@@ -24,6 +24,8 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 
 /**
  * GUI components of the first step of the New Link wizard
@@ -38,39 +40,45 @@ public final class NewLinkVisualPanel1 extends JPanel {
         List<LocalClassMetadataLight> linkClasses = CommunicationsStub.getInstance().
                 getLightSubclasses(Constants.CLASS_GENERICPHYSICALLINK, false, false);
         
-        cmbLinkClass.setModel(linkClasses == null ? new DefaultComboBoxModel() : new DefaultComboBoxModel(linkClasses.toArray()));
-        
-        if (!linkClasses.isEmpty()) {
-            List<LocalObjectLight> linkTemplates = CommunicationsStub.getInstance().getTemplatesForClass(((LocalClassMetadataLight)cmbLinkClass.getItemAt(0)).getClassName(), false);
-            cmbLinkTemplate.setModel(new DefaultComboBoxModel(linkTemplates.toArray(new LocalObjectLight[0])));
-            
-            chkNoTemplate.setSelected(linkTemplates.isEmpty());
-            chkNoTemplate.setEnabled(!linkTemplates.isEmpty());
-            cmbLinkTemplate.setEnabled(!linkTemplates.isEmpty());
-        } else {
-            cmbLinkTemplate.setModel(new DefaultComboBoxModel());
-            chkNoTemplate.setSelected(true);
-            chkNoTemplate.setEnabled(false);
-            cmbLinkTemplate.setEnabled(false);
+        if (linkClasses == null) {
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            cmbLinkClass.setModel(new DefaultComboBoxModel());
         }
+        else {
+            cmbLinkClass.setModel(new DefaultComboBoxModel(linkClasses.toArray()));
         
-        cmbLinkClass.addItemListener(new ItemListener() {
+            if (!linkClasses.isEmpty()) {
+                List<LocalObjectLight> linkTemplates = CommunicationsStub.getInstance().getTemplatesForClass(((LocalClassMetadataLight)cmbLinkClass.getItemAt(0)).getClassName(), false);
+                cmbLinkTemplate.setModel(new DefaultComboBoxModel(linkTemplates.toArray(new LocalObjectLight[0])));
 
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    LocalClassMetadataLight selectedClass = (LocalClassMetadataLight)cmbLinkClass.getSelectedItem();
-                    List<LocalObjectLight> linkTemplates = CommunicationsStub.getInstance().getTemplatesForClass(selectedClass.getClassName(), false);
-                    ((DefaultComboBoxModel)cmbLinkTemplate.getModel()).removeAllElements();
-                    if (linkTemplates != null) {
-                        cmbLinkTemplate.setModel(new DefaultComboBoxModel(linkTemplates.toArray(new LocalObjectLight[0])));
-                        chkNoTemplate.setSelected(linkTemplates.isEmpty());
-                        chkNoTemplate.setEnabled(!linkTemplates.isEmpty());
-                        cmbLinkTemplate.setEnabled(!linkTemplates.isEmpty());
+                chkNoTemplate.setSelected(linkTemplates.isEmpty());
+                chkNoTemplate.setEnabled(!linkTemplates.isEmpty());
+                cmbLinkTemplate.setEnabled(!linkTemplates.isEmpty());
+            } else {
+                cmbLinkTemplate.setModel(new DefaultComboBoxModel());
+                chkNoTemplate.setSelected(true);
+                chkNoTemplate.setEnabled(false);
+                cmbLinkTemplate.setEnabled(false);
+            }
+
+            cmbLinkClass.addItemListener(new ItemListener() {
+
+                @Override
+                public void itemStateChanged(ItemEvent e) {
+                    if (e.getStateChange() == ItemEvent.SELECTED) {
+                        LocalClassMetadataLight selectedClass = (LocalClassMetadataLight)cmbLinkClass.getSelectedItem();
+                        List<LocalObjectLight> linkTemplates = CommunicationsStub.getInstance().getTemplatesForClass(selectedClass.getClassName(), false);
+                        ((DefaultComboBoxModel)cmbLinkTemplate.getModel()).removeAllElements();
+                        if (linkTemplates != null) {
+                            cmbLinkTemplate.setModel(new DefaultComboBoxModel(linkTemplates.toArray(new LocalObjectLight[0])));
+                            chkNoTemplate.setSelected(linkTemplates.isEmpty());
+                            chkNoTemplate.setEnabled(!linkTemplates.isEmpty());
+                            cmbLinkTemplate.setEnabled(!linkTemplates.isEmpty());
+                        }
                     }
                 }
-            }
-        });    
+            });
+        }
     }
 
     public String getLinkName() {

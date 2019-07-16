@@ -20,6 +20,8 @@ import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.nodes.TemplatesModuleClassNode;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
@@ -39,16 +41,20 @@ public class TemplatesService  {
     
     public void setRoot() {
         final List<LocalClassMetadataLight> allClasses = com.getLightSubclasses(Constants.CLASS_INVENTORYOBJECT, false, false);
-        topComponent.getExplorerManager().setRootContext(new AbstractNode(new Children.Keys<LocalClassMetadataLight>() {
-            
-            {
-                setKeys(allClasses);
-            }
-                        
-            @Override
-            protected Node[] createNodes(LocalClassMetadataLight t) {
-                return new Node[] {new TemplatesModuleClassNode(t)};
-            }
-        }));
+        
+        if (allClasses == null) 
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
+        else 
+            topComponent.getExplorerManager().setRootContext(new AbstractNode(new Children.Keys<LocalClassMetadataLight>() {
+
+                {
+                    setKeys(allClasses);
+                }
+
+                @Override
+                protected Node[] createNodes(LocalClassMetadataLight t) {
+                    return new Node[] {new TemplatesModuleClassNode(t)};
+                }
+            }));
     }
 }

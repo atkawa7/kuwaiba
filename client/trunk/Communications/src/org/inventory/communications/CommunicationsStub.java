@@ -1395,7 +1395,7 @@ public class CommunicationsStub {
     public byte[] getClassHierarchy(boolean showAll) {
         try{
             return service.getClassHierarchy(showAll, session.getSessionId());
-        }catch(Exception ex){
+        } catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName() + ": " + ex.getMessage();
             return null;
         }
@@ -1406,9 +1406,7 @@ public class CommunicationsStub {
             List<RemoteClassMetadataLight> subClasses = service.getSubClassesLight(className, includeAbstractSubClasses, includeSelf, session.getSessionId());
             List<LocalClassMetadataLight> res = new ArrayList<>();
 
-            int i = 0;
-            for (RemoteClassMetadataLight cil : subClasses){
-                    
+            for (RemoteClassMetadataLight cil : subClasses)
                 res.add(new LocalClassMetadataLight(cil.getId(),
                                 cil.getClassName(),
                                 cil.getDisplayName(),
@@ -1416,12 +1414,10 @@ public class CommunicationsStub {
                                 cil.isAbstract(),cil.isViewable(), cil.isListType(),
                                 cil.isCustom(), cil.isInDesign(),
                                 cil.getSmallIcon(), cil.getColor()));
-                i++;
-            }
             return res;
-        }catch(Exception ex){
+        } catch(Exception ex){
             this.error =  ex.getMessage();
-            return new ArrayList<>();
+            return null;
         }
     }
     

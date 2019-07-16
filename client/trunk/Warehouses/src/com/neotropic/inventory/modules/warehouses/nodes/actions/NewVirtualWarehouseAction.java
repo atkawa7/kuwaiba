@@ -51,16 +51,19 @@ public class NewVirtualWarehouseAction extends GenericInventoryAction implements
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
             ((AbstractChildren)poolNode.getChildren()).addNotify();
-            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Vitual Warehouse created successfully");
+            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Virtual Warehouse created successfully");
         }
     }
     
     @Override
     public JMenuItem getPopupPresenter() {
-        JMenu mnuPossibleChildren = new JMenu("New Vitual Warehouse");
-
+        JMenu mnuPossibleChildren = new JMenu("New Virtual Warehouse");
         List<LocalClassMetadataLight> items = com.getLightSubclasses(poolNode.getPool().getClassName(), false, true);
 
+        if (items == null) {
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+            mnuPossibleChildren.setEnabled(false);
+        } else {
             if (items.isEmpty())
                 mnuPossibleChildren.setEnabled(false);
             else
@@ -71,7 +74,8 @@ public class NewVirtualWarehouseAction extends GenericInventoryAction implements
                         mnuPossibleChildren.add(smiChildren);
                 }
 
-        MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
+            MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
+        }
 		
         return mnuPossibleChildren;
     }

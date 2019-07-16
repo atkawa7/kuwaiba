@@ -31,6 +31,7 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.openide.util.Utilities;
 
@@ -64,10 +65,10 @@ public class CreateProjectPoolAction extends GenericInventoryAction {
         
         List<LocalClassMetadataLight> possibleProjectClasses = CommunicationsStub
             .getInstance().getLightSubclasses(Constants.CLASS_GENERICPROJECT, true, true);
-        if (possibleProjectClasses == null) {
-            NotificationUtil.getInstance().showSimplePopup(bundle.getString("LBL_ERROR"), 
+        if (possibleProjectClasses == null) 
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-        } else {
+        else {
             JTextField txtProjPoolName = new JTextField();
             txtProjPoolName.setName("txtProjPoolName");
             txtProjPoolName.setColumns(10);

@@ -59,20 +59,24 @@ public class NewWarehoseAction extends GenericInventoryAction implements Present
     @Override
     public JMenuItem getPopupPresenter() {
         JMenu mnuPossibleChildren = new JMenu("New Warehouse");
-
         List<LocalClassMetadataLight> items = com.getLightSubclasses(poolNode.getPool().getClassName(), false, true);
-
+        
+        if (items == null) {
+            mnuPossibleChildren.setEnabled(false);
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+        } else {
             if (items.isEmpty())
                 mnuPossibleChildren.setEnabled(false);
-            else
+            else {
                 for(LocalClassMetadataLight item: items){
                         JMenuItem smiChildren = new JMenuItem(item.getClassName());
                         smiChildren.setName(item.getClassName());
                         smiChildren.addActionListener(this);
                         mnuPossibleChildren.add(smiChildren);
                 }
-
-        MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
+                MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
+            }
+        }
 		
         return mnuPossibleChildren;
     }

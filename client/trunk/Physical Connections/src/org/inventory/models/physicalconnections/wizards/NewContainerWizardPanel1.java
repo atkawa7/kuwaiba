@@ -62,6 +62,9 @@ public class NewContainerWizardPanel1 implements WizardDescriptor.Panel<WizardDe
     public void validate() throws WizardValidationException {
         if (component.getContainerName().trim().isEmpty())
             throw new WizardValidationException(component, "The name of the connection can not be empty", "The name of the connection can not be empty");
+        
+        if (component.getContainerClass() == null)
+            throw new WizardValidationException(component, "The connection class can not be empty", "The connection class can not be empty");
     }    
 
     @Override

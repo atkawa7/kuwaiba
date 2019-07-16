@@ -101,20 +101,24 @@ public class NewWarehousePoolAction extends GenericInventoryAction implements Pr
     @Override
     public JMenuItem getPopupPresenter() {
         JMenu mnuPossibleChildren = new JMenu("New Warehouse Pool");
-
         List<LocalClassMetadataLight> items = CommunicationsStub.getInstance().getLightSubclasses(Constants.CLASS_INVENTORYOBJECT, true, true);
 
+        if (items == null) {
+            mnuPossibleChildren.setEnabled(false);
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        } else {
             if (items.isEmpty())
                 mnuPossibleChildren.setEnabled(false);
-            else
+            else {
                 for(LocalClassMetadataLight item: items){
                         JMenuItem smiChildren = new JMenuItem(item.getClassName());
                         smiChildren.setName(item.getClassName());
                         smiChildren.addActionListener(this);
                         mnuPossibleChildren.add(smiChildren);
                 }
-
-        MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
+                MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
+            }
+        }
 		
         return mnuPossibleChildren;
     }

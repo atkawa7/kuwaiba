@@ -27,6 +27,7 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.kuwaiba.management.services.nodes.ServicePoolNode;
 import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
@@ -68,11 +69,16 @@ class CreateServiceAction extends GenericInventoryAction implements Presenter.Po
                 getLightSubclasses(Constants.CLASS_GENERICSERVICE, false, false);
         JMenuItem menu = new JMenu(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_SERVICE"));
         
-        for (LocalClassMetadataLight serviceClass : serviceClasses){
-            JMenuItem customerEntry = new JMenuItem(serviceClass.getClassName());
-            customerEntry.setName(serviceClass.getClassName());
-            customerEntry.addActionListener(this);
-            menu.add(customerEntry);
+        if (serviceClasses == null) {
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            menu.setEnabled(false);
+        } else {
+            for (LocalClassMetadataLight serviceClass : serviceClasses){
+                JMenuItem customerEntry = new JMenuItem(serviceClass.getClassName());
+                customerEntry.setName(serviceClass.getClassName());
+                customerEntry.addActionListener(this);
+                menu.add(customerEntry);
+            }
         }
         return menu;
     }

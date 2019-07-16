@@ -25,6 +25,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.inventory.navigation.pools.nodes.PoolNode;
@@ -61,17 +62,22 @@ public class NewPoolItemAction extends GenericInventoryAction implements Present
 
         List<LocalClassMetadataLight> items = com.getLightSubclasses(poolNode.getPool().getClassName(), false, true);
 
+        if (items == null) {
+            mnuPossibleChildren.setEnabled(false);
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
+        } else {
             if (items.isEmpty())
                 mnuPossibleChildren.setEnabled(false);
-            else
+            else {
                 for(LocalClassMetadataLight item: items){
                         JMenuItem smiChildren = new JMenuItem(item.getClassName());
                         smiChildren.setName(item.getClassName());
                         smiChildren.addActionListener(this);
                         mnuPossibleChildren.add(smiChildren);
                 }
-
-        MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
+            }
+            MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
+        }
 		
         return mnuPossibleChildren;
     }

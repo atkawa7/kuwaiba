@@ -27,6 +27,7 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.kuwaiba.management.services.nodes.CustomerPoolNode;
 import org.openide.nodes.Node;
 import org.openide.util.Utilities;
@@ -65,15 +66,23 @@ public class CreateCustomerAction extends GenericInventoryAction implements Pres
   
     @Override
     public JMenuItem getPopupPresenter() {
+        JMenuItem menu = new JMenu(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_CUSTOMER"));
         List<LocalClassMetadataLight> customerClasses = CommunicationsStub.getInstance().
                 getLightSubclasses(Constants.CLASS_GENERICCUSTOMER, false, false);
-        JMenuItem menu = new JMenu(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_CUSTOMER"));
-        for (LocalClassMetadataLight customerClass : customerClasses){
-            JMenuItem customerEntry = new JMenuItem(customerClass.getClassName());
-            customerEntry.setName(customerClass.getClassName());
-            customerEntry.addActionListener(this);
-            menu.add(customerEntry);
+        
+        if (customerClasses == null) {
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            menu.setEnabled(false);
+        } else {
+            for (LocalClassMetadataLight customerClass : customerClasses){
+                JMenuItem customerEntry = new JMenuItem(customerClass.getClassName());
+                customerEntry.setName(customerClass.getClassName());
+                customerEntry.addActionListener(this);
+                menu.add(customerEntry);
+            }
         }
+        
         return menu;
     }
 
