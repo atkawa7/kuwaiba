@@ -154,8 +154,8 @@ public class SimpleMapDashboardWidget extends AbstractDashboardWidget {
         pnlOptions.setContent(btnToggleLabels);
         
         addComponents(/*pnlOptions,*/ mapMain);
-        setExpandRatio(pnlOptions, 3);
-        setExpandRatio(mapMain, 97);
+        //setExpandRatio(pnlOptions, 3);
+        //setExpandRatio(mapMain, 97);
     }
 
     
