@@ -198,7 +198,8 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                         lytContent.setWidth(100, Unit.PERCENTAGE);
 
                         wdwOpen.setContent(lytContent);
-
+                        wdwOpen.setWidth(30, Unit.PERCENTAGE);
+                        
                         wdwOpen.center();
                         wdwOpen.setModal(true);
                         UI.getCurrent().addWindow(wdwOpen);
@@ -214,7 +215,6 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                 else {
                     VerticalLayout lytContent = new VerticalLayout();
                     Window wdwSave = new Window("Save OSP View");
-                    wdwSave.setWidth(300, Unit.PIXELS);
 
                     TextField txtName = new TextField("Name");
                     txtName.setValue(theOspView.getProperties().getProperty(Constants.PROPERTY_NAME)== null ? "" : 
@@ -247,7 +247,6 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                                 wdwSave.close();
                             }
                         }
-
                     });
 
                     Button btnCancel = new Button("Cancel", (event) -> {
@@ -260,13 +259,14 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                     HorizontalLayout lytButtons = new HorizontalLayout(btnOk, btnCancel);
 
                     lytContent.addComponents(lytProperties, lytButtons);
-                    lytContent.setExpandRatio(lytProperties, 9);
-                    lytContent.setExpandRatio(lytButtons, 1);
+                    lytContent.setExpandRatio(lytProperties, 8);
+                    lytContent.setExpandRatio(lytButtons, 2);
                     lytContent.setComponentAlignment(lytButtons, Alignment.MIDDLE_RIGHT);
+                    lytContent.setMargin(true);
                     lytContent.setSizeFull();
 
-                    wdwSave.setHeight(20, Unit.PERCENTAGE);
-                    wdwSave.setWidth(25, Unit.PERCENTAGE);
+                    wdwSave.setHeight(30, Unit.PERCENTAGE);
+                    wdwSave.setWidth(35, Unit.PERCENTAGE);
                     wdwSave.setContent(lytContent);
 
                     wdwSave.center();
