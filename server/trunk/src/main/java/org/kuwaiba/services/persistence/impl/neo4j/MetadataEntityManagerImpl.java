@@ -1778,7 +1778,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 cm.putPossibleChild(className, (String) relationship.getEndNode().getProperty(Constants.PROPERTY_NAME));
                 possibleChildren.add(Util.createClassMetadataLightFromNode(relationship.getEndNode()));
            }
-       } 
+       }
        return possibleChildren;
     }
     

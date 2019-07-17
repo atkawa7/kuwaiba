@@ -226,8 +226,12 @@ public class CacheManager {
      */
     public void putPossibleChild(String parent, String child){
         List<String> myList = possibleChildrenIndex.get(parent);
-        if (myList != null)
+        if (myList != null) {
             myList.add(child);
+            myList.sort((classNameA, classNameB) -> { //Sorts the list everytime a new entry is added
+                return classNameA.compareTo(classNameB);
+            });
+        }
     }
     
     /**
@@ -237,8 +241,12 @@ public class CacheManager {
      */
     public void putPossibleSpecialChild(String parent, String child){
         List<String> myList = possibleSpecialChildrenIndex.get(parent);
-        if (myList != null)
+        if (myList != null) {
             myList.add(child);
+            myList.sort((classNameA, classNameB) -> { //Sorts the list everytime a new entry is added
+                return classNameA.compareTo(classNameB);
+            });
+        }
     }
 
     public List<String> getPossibleChildren(String parent){

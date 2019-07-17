@@ -21,7 +21,7 @@ import com.vaadin.ui.Label;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 
 /**
- * A simple dashboard widget with no cover that displays a custom title and subtitle
+ * A simple dashboard widget with no cover that displays a custom title and subtitle.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class SimpleLabelDashboardWidget extends AbstractDashboardWidget {

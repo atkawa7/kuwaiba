@@ -24,7 +24,6 @@ import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
 import static com.neotropic.kuwaiba.modules.mpls.MPLSModule.RELATIONSHIP_MPLSENDPOINTA;
 import static com.neotropic.kuwaiba.modules.mpls.MPLSModule.RELATIONSHIP_MPLSENDPOINTB;
 import static com.neotropic.kuwaiba.modules.mpls.MPLSModule.RELATIONSHIP_MPLSLINK;
-
 import com.neotropic.kuwaiba.sync.connectors.ssh.mpls.entities.MPLSLinkNew;
 import com.neotropic.kuwaiba.sync.connectors.ssh.mpls.parsers.MplsSyncASR9001Parser;
 import com.neotropic.kuwaiba.sync.connectors.ssh.mpls.parsers.MplsSyncDefaultParserNew;
@@ -37,7 +36,6 @@ import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
 import com.neotropic.kuwaiba.sync.model.SyncUtil;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
-import com.sun.javafx.font.PrismFontFile;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
