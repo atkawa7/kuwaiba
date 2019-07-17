@@ -18,33 +18,21 @@ package org.kuwaiba.web.modules.servmanager.views;
 import com.neotropic.vaadin.lienzo.client.core.shape.Point;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvEdgeWidget;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvNodeWidget;
-import com.neotropic.vaadin.lienzo.client.events.EdgeWidgetClickListener;
 import com.neotropic.vaadin.lienzo.client.events.NodeWidgetClickListener;
-import com.vaadin.server.ExternalResource;
-import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 import java.awt.Color;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import javax.imageio.ImageIO;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import org.codehaus.groovy.control.io.URLReaderSource;
 import org.kuwaiba.apis.web.gui.navigation.views.AbstractScene;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.apis.web.gui.resources.ResourceFactory;
@@ -76,38 +64,9 @@ public class EndToEndViewScene extends AbstractScene {
     public EndToEndViewScene(RemoteObjectLight service, WebserviceBean wsBean, RemoteSession session) {
         super (wsBean, session);
         this.service = service;
-        
         lienzoComponent.addNodeWidgetClickListener(nodeWidgetClickListener);
-        lienzoComponent.addEdgeWidgetClickListener(edgeWidgetClickListener);
-        
         setSizeUndefined();
     }
-    
-    EdgeWidgetClickListener edgeWidgetClickListener = new EdgeWidgetClickListener() {
-
-        @Override
-        public void edgeWidgetClicked(String id) {
-            SrvEdgeWidget srvEdge = lienzoComponent.getEdge(lienzoComponent.getEdgeObject(id));
-            Window tableInfo = new Window(" ");
-            tableInfo.addStyleName("v-window-center");
-//            try {
-//                FormDashboardWidget formView = new FormDashboardWidget(service, wsBean, 
-//                        Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-//
-//                for (RemoteObjectLight edge : edges.keySet()) {
-//                    if(edge.getId() == id && edge.getClassName().equals(Constants.CLASS_MPLSTUNNEL)){
-//                        Component x = formView.createVC(edge);
-//                        tableInfo.setContent(x);
-//                        closeWindows();
-//                        getUI().addWindow(tableInfo);
-//                    }
-//                }
-//            lienzoComponent.updateEdgeWidget(srvEdge.getId());
-//            } catch (ServerSideException ex) {
-//                Exceptions.printStackTrace(ex);
-//            }
-        }
-    };
     
     NodeWidgetClickListener nodeWidgetClickListener = new NodeWidgetClickListener() {
 

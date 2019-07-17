@@ -92,7 +92,7 @@ public class AddServiceWindow extends Window {
             });
 
             setModal(true);
-            setWidth(10, Unit.PERCENTAGE);
+            setWidth(40, Unit.PERCENTAGE);
             center();
 
             FormLayout lytTextFields = new FormLayout(cmbServiceTypes, txtName);
@@ -180,7 +180,7 @@ public class AddServiceWindow extends Window {
             });
 
             setModal(true);
-            setWidth(10, Unit.PERCENTAGE);
+            setWidth(40, Unit.PERCENTAGE);
             center();
 
             FormLayout lytTextFields = new FormLayout(cmbCustomers, cmbServicePools, cmbServiceTypes, txtName);

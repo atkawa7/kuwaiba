@@ -198,7 +198,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                         lytContent.setWidth(100, Unit.PERCENTAGE);
 
                         wdwOpen.setContent(lytContent);
-                        wdwOpen.setWidth(30, Unit.PERCENTAGE);
+                        wdwOpen.setWidth(40, Unit.PERCENTAGE);
                         
                         wdwOpen.center();
                         wdwOpen.setModal(true);

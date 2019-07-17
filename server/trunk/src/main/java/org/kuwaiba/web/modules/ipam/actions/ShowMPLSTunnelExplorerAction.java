@@ -156,6 +156,7 @@ public class ShowMPLSTunnelExplorerAction extends AbstractAction {
         lytContent.setWidth(100, Sizeable.Unit.PERCENTAGE);
         
         wdwTunnelExplorer.setContent(lytContent);
+        wdwTunnelExplorer.setWidth(40, Sizeable.Unit.PERCENTAGE);
         wdwTunnelExplorer.center();
         
         UI.getCurrent().addWindow(wdwTunnelExplorer);

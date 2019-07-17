@@ -110,11 +110,12 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
      */
     public void launch() {
         if (contentComponent != null) {
-            Window wnwContent = new Window(title);
-            wnwContent.setModal(true);
-            wnwContent.setContent(contentComponent);
-            wnwContent.center();
-            UI.getCurrent().addWindow(wnwContent);
+            Window wdwContent = new Window(title);
+            wdwContent.setModal(true);
+            wdwContent.setWidth(40, Unit.PERCENTAGE);
+            wdwContent.setContent(contentComponent);
+            wdwContent.center();
+            UI.getCurrent().addWindow(wdwContent);
         } else Notifications.showError("The content component has not been set. Please check your createContent method");
     }
 

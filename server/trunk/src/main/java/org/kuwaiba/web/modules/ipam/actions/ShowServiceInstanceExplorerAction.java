@@ -156,6 +156,7 @@ public class ShowServiceInstanceExplorerAction extends AbstractAction {
         lytContent.setWidth(100, Sizeable.Unit.PERCENTAGE);
         
         wdwServiceInstanceExplorer.setContent(lytContent);
+        wdwServiceInstanceExplorer.setWidth(40, Sizeable.Unit.PERCENTAGE);
         wdwServiceInstanceExplorer.center();
         
         UI.getCurrent().addWindow(wdwServiceInstanceExplorer);

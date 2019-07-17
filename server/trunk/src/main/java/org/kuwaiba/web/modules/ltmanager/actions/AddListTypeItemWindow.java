@@ -80,7 +80,7 @@ public class AddListTypeItemWindow extends Window {
         });
 
         setModal(true);
-        setWidth(10, Unit.PERCENTAGE);
+        setWidth(40, Unit.PERCENTAGE);
         center();
 
         FormLayout lytTextFields = new FormLayout(txtName, txtDisplayName);
@@ -141,7 +141,7 @@ public class AddListTypeItemWindow extends Window {
             });
 
             setModal(true);
-            setWidth(10, Unit.PERCENTAGE);
+            setWidth(40, Unit.PERCENTAGE);
             center();
 
             FormLayout lytTextFields = new FormLayout(cmbListTypes, txtName, txtDisplayName);

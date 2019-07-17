@@ -92,7 +92,7 @@ public class AddCustomerWindow extends Window {
             });
 
             setModal(true);
-            setWidth(10, Unit.PERCENTAGE);
+            setWidth(40, Unit.PERCENTAGE);
             center();
 
             FormLayout lytTextFields = new FormLayout(cmbCustomerTypes, txtName);
@@ -164,7 +164,7 @@ public class AddCustomerWindow extends Window {
             });
 
             setModal(true);
-            setWidth(10, Unit.PERCENTAGE);
+            setWidth(40, Unit.PERCENTAGE);
             center();
 
             FormLayout lytTextFields = new FormLayout(cmbCustomerPools, cmbCustomerTypes, txtName);

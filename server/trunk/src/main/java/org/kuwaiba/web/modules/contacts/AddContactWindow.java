@@ -97,7 +97,7 @@ public class AddContactWindow extends Window {
             });
 
             setModal(true);
-            setWidth(10, Unit.PERCENTAGE);
+            setWidth(40, Unit.PERCENTAGE);
             center();
 
             FormLayout lytTextFields = new FormLayout(cmbContactTypes, txtName);
@@ -143,8 +143,8 @@ public class AddContactWindow extends Window {
 
             Button btnOK = new Button("OK", (e) -> {
                 try {
-                    if (!cmbContactTypes.getSelectedItem().isPresent())
-                        Notifications.showError("You must select a contact type");
+                    if (!cmbContactTypes.getSelectedItem().isPresent() || !cmbCustomers.getSelectedItem().isPresent())
+                        Notifications.showError("You must provide a valid contact type and customer");
                     else {
                         
                         List<StringPair> contactProperties = new ArrayList<>();
@@ -171,7 +171,7 @@ public class AddContactWindow extends Window {
             });
 
             setModal(true);
-            setWidth(10, Unit.PERCENTAGE);
+            setWidth(40, Unit.PERCENTAGE);
             center();
 
             FormLayout lytTextFields = new FormLayout(cmbCustomers, cmbContactTypes, txtName);

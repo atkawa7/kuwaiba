@@ -156,6 +156,7 @@ public class ShowVLANExplorerAction extends AbstractAction {
         lytContent.setWidth(100, Sizeable.Unit.PERCENTAGE);
         
         wdwVLANExplorer.setContent(lytContent);
+        wdwVLANExplorer.setWidth(40, Sizeable.Unit.PERCENTAGE);
         wdwVLANExplorer.center();
         
         UI.getCurrent().addWindow(wdwVLANExplorer);

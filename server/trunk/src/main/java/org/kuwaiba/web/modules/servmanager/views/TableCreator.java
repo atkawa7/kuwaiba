@@ -39,7 +39,6 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
-import org.kuwaiba.web.modules.navtree.dashboard.ObjectViewDashboardWidget;
 import org.kuwaiba.web.procmanager.MiniAppPhysicalPath;
 import org.kuwaiba.web.procmanager.MiniAppRackView;
 import org.openide.util.Exceptions;
