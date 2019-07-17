@@ -762,12 +762,12 @@ public class CommunicationsStub {
      * @return allPosible children
      */
     public List<LocalClassMetadataLight> getPossibleChildren(String className, boolean ignoreCache) {
-        try{            
+        try {            
             List<LocalClassMetadataLight> resAsLocal = null;
             if (!ignoreCache)
                 resAsLocal = cache.getPossibleChildrenCached(className);
             
-            if (resAsLocal == null){
+            if (resAsLocal == null) {
                 resAsLocal = new ArrayList<>();
                 List<RemoteClassMetadataLight> resAsRemote = service.getPossibleChildren(className,this.session.getSessionId());
 
@@ -783,6 +783,7 @@ public class CommunicationsStub {
                 
                 cache.addPossibleChildrenCached(className, resAsLocal);
             }
+            
             return resAsLocal;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -1900,11 +1901,11 @@ public class CommunicationsStub {
      * @return True if the possible children was added
      */
     public boolean addPossibleChildren(long parentClassId, long[] possibleChildren){
-        try{
+        try {
             List<Long> pChildren = new ArrayList<>();
-            for (long pChild : possibleChildren){
+            for (long pChild : possibleChildren)
                 pChildren.add(pChild);
-            }
+            
             service.addPossibleChildrenForClassWithId(parentClassId, pChildren,this.session.getSessionId());
             return true;
         }catch(Exception ex){
@@ -2732,7 +2733,7 @@ public class CommunicationsStub {
     public void refreshCache(boolean refreshMeta, boolean refreshLightMeta,
             boolean refreshList, boolean refreshPossibleChildren, boolean refreshPossibleSpecialChildren){
         try {
-            if (refreshMeta){
+            if (refreshMeta) {
                 for (LocalClassMetadata lcm : cache.getMetadataIndex()){
                     RemoteClassMetadata cm = service.getClass(lcm.getClassName(),this.session.getSessionId());
             
@@ -2756,10 +2757,9 @@ public class CommunicationsStub {
                     cache.addMeta(new LocalClassMetadata[]{myLocal});
                 }
             }
-            if (refreshLightMeta) {
+            if (refreshLightMeta) 
                 getAllLightMeta(true);
-            }
-
+            
             if (refreshList){
                 HashMap<String, List<LocalObjectListItem>> myLocalList = cache.getAllListTypes();
                 for (String key : myLocalList.keySet()){
@@ -2767,24 +2767,12 @@ public class CommunicationsStub {
                     getList(key,false,true);
                 }
             }
-            if (refreshPossibleChildren) {
-                HashMap<String, List<LocalClassMetadataLight>> myLocalPossibleChildren
-                        = cache.getAllPossibleChildren();
-                for (String key : myLocalPossibleChildren.keySet()){
-                    myLocalPossibleChildren.remove(key);
-                    getPossibleChildren(key, true);
-                }
-                cache.resetPossibleChildrenCached();
-            }
-            if (refreshPossibleSpecialChildren) {
-                HashMap<String, List<LocalClassMetadataLight>> myLocalPossibleSpecialChildren
-                        = cache.getAllPossibleSpecialChildren();
-                for (String key : myLocalPossibleSpecialChildren.keySet()){
-                    myLocalPossibleSpecialChildren.remove(key);
-                    getPossibleSpecialChildren(key, true);
-                }
-                cache.resetPossibleSpecialChildrenCached();
-            }
+            if (refreshPossibleChildren)
+                cache.getAllPossibleChildren().clear();
+            
+            if (refreshPossibleSpecialChildren) 
+                cache.getAllPossibleSpecialChildren().clear();
+                
         }catch(Exception ex){
             this.error = ex.getMessage();
         }

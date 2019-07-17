@@ -124,7 +124,7 @@ public class Cache{
         List<LocalClassMetadataLight> toBeAdded = new ArrayList<>();
         for (LocalClassMetadataLight lcml : children){
             LocalClassMetadataLight myLocal = lightMetadataIndex.get(lcml.getClassName());
-            if (myLocal==null){
+            if (myLocal == null){
                 lightMetadataIndex.put(lcml.getClassName(), lcml);
                 toBeAdded.add(lcml);
             }
