@@ -40,7 +40,7 @@ public class DatabaseMigrationStage2 {
      * --toDeprecatedVersion2 (takes a database version 1 and migrates it to version 2, but keeps the deprecated long type ids). 
      * The second argument is the database path.
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) {                    
         if (args.length == 2) {
             String migrationType = args[0];
             String dbPath = args[1];
@@ -50,7 +50,7 @@ public class DatabaseMigrationStage2 {
                 System.out.println(String.format("The specified database path (%s) does not exist", dbPathReference.getAbsolutePath()));
                 return;
             }
-            
+                        
             try {
                 if (!dbPathReference.exists())
                     throw new RuntimeException(String.format("Database path %s not found", args[1]));
@@ -96,6 +96,7 @@ public class DatabaseMigrationStage2 {
                     LayoutMigrator.migrate(dbPathReference);
                     LayoutMigrator.updateCustomShapeIcons(dbPathReference);
                     SyncDataSourceMigrator.migrate(dbPathReference);
+                    ClassesUpdater.getInstance().updateClasses(dbPathReference);
                 }
 
                 System.out.println(String.format("[%s] Database upgrade stage 2 ended successfully...", Calendar.getInstance().getTime()));
