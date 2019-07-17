@@ -56,7 +56,21 @@ public class ClassesUpdater {
     public static ClassesUpdater getInstance() {
         return instance != null ? instance : (instance = new ClassesUpdater());
     }
-    
+    public void setLabelAttributes(File storeDir) {
+        System.out.println(">>> Start Set Label Attributes");
+        GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(storeDir);
+        try (Transaction tx = graphDb.beginTx()) {
+            String query = "" +
+                "MATCH (class)-[:HAS_ATTRIBUTE]->(attribute)\n" +
+                "WHERE NOT (class)-[:HAS_ATTRIBUTE]->(attribute:attributes)\n" +
+                "SET attribute:attributes\n" +
+                "RETURN class, attribute;";
+            graphDb.execute(query);
+            tx.success();
+        }
+        graphDb.shutdown();
+        System.out.println(">>> End Set Label Attributes");
+    }    
     public void updateClasses(File storeDir) {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("kuwaibaClasses.json");
         String json = getInputStreamAsString(inputStream);

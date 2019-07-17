@@ -96,6 +96,7 @@ public class DatabaseMigrationStage2 {
                     LayoutMigrator.migrate(dbPathReference);
                     LayoutMigrator.updateCustomShapeIcons(dbPathReference);
                     SyncDataSourceMigrator.migrate(dbPathReference);
+                    ClassesUpdater.getInstance().setLabelAttributes(dbPathReference);
                     ClassesUpdater.getInstance().updateClasses(dbPathReference);
                 }
 
