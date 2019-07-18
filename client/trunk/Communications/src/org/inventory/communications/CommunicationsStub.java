@@ -1998,7 +1998,7 @@ public class CommunicationsStub {
      */
     public boolean deleteObjects(List<String> classNames, List<String> oids){
         try {
-            service.deleteObjects(classNames, oids, true, this.session.getSessionId());
+            service.deleteObjects(classNames, oids, false, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
