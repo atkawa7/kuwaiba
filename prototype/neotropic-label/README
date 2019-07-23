@@ -1,0 +1,10 @@
+Simple Vaadin 10 Component
+
+The component creates a web component <neotropic-label> which is an autonomous custom element which shows text with yellow highlight
+
+The project has two modules: the vaadin 10 component, and a demo application
+Inside the Vaadin 10 component project there is a folder called web-component which contains the web component implementation using only HTML/CSS/js that is imported to Vaadin
+
+Notes
+
+The current implementation only works with Chrome, in Firefox the neotropic-label tag is no show
