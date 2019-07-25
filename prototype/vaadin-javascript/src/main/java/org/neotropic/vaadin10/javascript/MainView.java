@@ -1,3 +1,18 @@
+/*
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.neotropic.vaadin10.javascript;
 
 import com.vaadin.flow.component.button.Button;
@@ -8,7 +23,8 @@ import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 
 /**
- * The root view
+ * The root view. From here you will be able to launch two different demos: One 
+ * that wraps the DHTMLX Gantt library and other the JQuery-based Smart Menus.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Route("")
@@ -16,14 +32,26 @@ import com.vaadin.flow.theme.lumo.Lumo;
 public class MainView extends VerticalLayout {
 
     public MainView() {
-        //We will add a button and a link. They both do the same. It's just to demonstrate how to navigate between views.
-        Button btnHello = new Button("Click me to see a nice Gantt Chart");
         setAlignItems(Alignment.CENTER);
-        add(btnHello);
-        btnHello.addClickListener((anEvent) -> {
-            btnHello.getUI().ifPresent(ui -> ui.navigate("gantt"));
+        //We will add a button and a link. They both do the same. It's just to demonstrate how to navigate between views.
+        //First the Gantt chart library wrapper
+        Button btnChart = new Button("Click me to see a nice Gantt Chart");
+        
+        add(btnChart);
+        btnChart.addClickListener((anEvent) -> {
+            btnChart.getUI().ifPresent(ui -> ui.navigate("gantt"));
         });
         
         add(new RouterLink("You can also click here if you don't like buttons!", GanttView.class));
+        
+        //Then the Smart Menus chart library wrapper
+        Button btnMenu = new Button("Click me to see a nice Navigation Menu");
+        
+        add(btnMenu);
+        btnMenu.addClickListener((anEvent) -> {
+            btnMenu.getUI().ifPresent(ui -> ui.navigate("menu"));
+        });
+        
+        add(new RouterLink("You can also click here if you don't like buttons!", SmartMenusView.class));
     }
 }

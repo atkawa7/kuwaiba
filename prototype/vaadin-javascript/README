@@ -1,4 +1,7 @@
-This project shows how to integrate a third party JS library into a Vaadin-Sping application. 
-The library used in this example is dhtmlxGantt (GPLv3)
+This project shows how to integrate a third party JS library into a Vaadin 10-Spring application. 
+This examples use dhtmlxGantt (GPLv3) a Smart Menus (MIT), the latter also rely on JQuery.
 
 Visit the dhtmlxGantt page for licensing details: https://dhtmlx.com/docs/products/dhtmlxGantt/
+Visit the Smart Menus page for licensing details: https://www.smartmenus.org/
+
+The example itself is licensed both GPLv3 and MIT.
