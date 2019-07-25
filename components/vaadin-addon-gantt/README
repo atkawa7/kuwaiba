@@ -1,0 +1,19 @@
+Vaadin Add-on Gantt
+
+The Add-on wraps the DHTMLX Gantt JS library 
+Visit the dhtmlxGantt page for licensing details: https://dhtmlx.com/docs/products/dhtmlxGantt/
+
+Vaadin Version 10.0.16
+
+Demos
+
+The projects demo are the same, the only difference is in the stack technology 
+used to develop a Vaadin application, for example to a simple application uses 
+the servlet base demo and to enterprise label application use spring base demo.
+
+servlet-vaadin-gantt-demo Ready to use Vaadin application using Plain Java Servlet.
+cdi-vaadin-gantt-demo Ready to use Vaadin application using CDI and Java EE.
+spring-vaadin-gantt-demo Ready to use Vaadin application using Sprint Boot.
+
+The three different tech stack can be found in the new projects to start with vaadin 
+https://vaadin.com/start/lts
