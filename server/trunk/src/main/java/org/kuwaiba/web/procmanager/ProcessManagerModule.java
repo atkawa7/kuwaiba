@@ -108,20 +108,6 @@ public class ProcessManagerModule extends AbstractModule {
                     }
                 });
             }
-            
-            MenuItem menuItemOptions = menuProcessManager.addItem(I18N.gm("options"), null);
-            menuItemOptions.addItem(I18N.gm("reload"), null, new MenuBar.Command() {
-                @Override
-                public void menuSelected(MenuBar.MenuItem selectedItem) {
-                    try {
-                        wsBean.reloadProcessDefinitions(
-                                Page.getCurrent().getWebBrowser().getAddress(),
-                                session.getSessionId());
-                    } catch (ServerSideException ex) {
-                        Notifications.showError(ex.getMessage());
-                    }
-                }
-            });
         }
         else {
             menuProcessManager.addItem(I18N.gm("procmanager.no_processes_found"), null).setEnabled(false);            

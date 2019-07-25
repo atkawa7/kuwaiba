@@ -22,7 +22,6 @@ import com.vaadin.cdi.CDIUI;
 import com.vaadin.cdi.CDIViewProvider;
 import com.vaadin.cdi.server.VaadinCDIServlet;
 import com.vaadin.navigator.Navigator;
-import com.vaadin.server.ExternalResource;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.MenuBar;
@@ -40,6 +39,8 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
+import org.kuwaiba.web.menucommand.ProcessDefinitionReloader;
+import org.kuwaiba.web.menucommand.RackViewUpdater;
 import org.kuwaiba.web.modules.contacts.ContactManagerModule;
 import org.kuwaiba.web.modules.ipam.IPAddressManagerModule;
 import org.kuwaiba.web.modules.ltmanager.ListTypeManagerModule;
@@ -124,6 +125,12 @@ public class IndexUI extends UI {
             ContactManagerModule cmModule = new ContactManagerModule(wsBean, 
                         (RemoteSession) getSession().getAttribute("session"));
             cmModule.attachToMenu(mnuMain);
+            
+            MenuBar.MenuItem optionsMenuItem = this.mnuMain.addItem("Options", null);
+            optionsMenuItem.addItem("Update Rack Views", 
+                new RackViewUpdater(wsBean, (RemoteSession) getSession().getAttribute("session")));
+            optionsMenuItem.addItem("Reload Process Definitions", 
+                new ProcessDefinitionReloader(wsBean, (RemoteSession) getSession().getAttribute("session")));
 
             this.mnuMain.addItem("Log Out", new MenuBar.Command() {
                 @Override
@@ -205,6 +212,8 @@ public class IndexUI extends UI {
             super.writeStaticResourceResponse(request, response, resourceUrl);
         }
     }
+    
+
     
 //    private class KuwaibaSessionDestroyHandler implements SessionDestroyListener {
 //
