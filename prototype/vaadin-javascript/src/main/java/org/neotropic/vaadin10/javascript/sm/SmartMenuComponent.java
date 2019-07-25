@@ -59,7 +59,8 @@ public class SmartMenuComponent extends Div {
         this.tagMenuNav = new Tags.MenuNavigationTag(this.htmlClass);
         this.tagMenuRow = new Tags.MenuRowTag(this.htmlId, "sm","sm-blue");
         this.tagMenuNav.add(this.tagMenuRow);
-        add(this.tagMenuNav);
+        this.add(this.tagMenuNav);
+        this.setWidth("100%");
     }
 
     /**
