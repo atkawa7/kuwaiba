@@ -9,7 +9,7 @@ Demos
 
 The projects demo are the same, the only difference is in the stack technology 
 used to develop a Vaadin application, for example to a simple application uses 
-the servlet base demo and to enterprise label application use spring base demo.
+the servlet base demo and to enterprise level application use spring base demo.
 
 servlet-vaadin-gantt-demo Ready to use Vaadin application using Plain Java Servlet.
 cdi-vaadin-gantt-demo Ready to use Vaadin application using CDI and Java EE.
