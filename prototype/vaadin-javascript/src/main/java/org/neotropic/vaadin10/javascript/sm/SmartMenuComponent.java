@@ -65,16 +65,22 @@ public class SmartMenuComponent extends Div {
     /**
      * Adds a new root entry to the menu model.
      * @param mnuItem The menu item.
-     * @return 
      */
     public void addRootMenuItem(MenuItem mnuItem) {
         this.rootItems.add(mnuItem);
     }
 
+    /**
+     * Generates the HTML elements necessary for the original JS library (optional, because not all libraries require an HTML part).
+     */
     public void buildHtml() {
         getRootItems().stream().forEach(anItem -> this.tagMenuRow.add(anItem));
     }
     
+    /**
+     * Generates the JS code ready to be executed by the page to add or start the component.
+     * @return A string containing the JS code ready to be executed using Page.executeJavascript(String)
+     */
     public String buildJs() {
         String jsString =
                 "$(function() {\n" +
