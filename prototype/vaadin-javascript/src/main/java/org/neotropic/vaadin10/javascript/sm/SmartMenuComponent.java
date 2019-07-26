@@ -84,13 +84,14 @@ public class SmartMenuComponent extends Div {
      */
     public String buildJs() {
         String jsString =
-                "$(function() {\n" +
+                "if (typeof $ !== 'undefined') {" + //In certain race conditions, the Smart Menus library might not be loaded
+                "$(function() {\n" +                //when thios code is executed, so we check if $ is defined before.
                 "  $('#" + getHtmlId() + "').smartmenus({\n" +
                 "    subMenusSubOffsetX: 1,\n" +
                 "    subMenusSubOffsetY: -8\n" +
                 "  });\n" +
                 "});\n" +
-                "\n";
+                "}\n";
         return jsString;
     }    
 
