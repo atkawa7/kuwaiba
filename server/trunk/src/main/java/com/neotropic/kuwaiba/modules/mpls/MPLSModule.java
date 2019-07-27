@@ -127,6 +127,7 @@ public class MPLSModule implements GenericCommercialModule {
      * @param endpointBClassName className of the endpoint side B
      * @param endpointBId ind of the endpoint side B
      * @param attributesToBeSet attributes for the new MPLS link
+     * @param userName the user name who is executing the method, to update the activity log
      * @return the id of the new MPLS link
      * @throws ServerSideException If the given linkType is no subclass of GenericLogicalConnection
      *                              If any of the requested objects can't be found
@@ -135,7 +136,7 @@ public class MPLSModule implements GenericCommercialModule {
      */
     public String createMPLSLink(String endpointAClassName, String endpointAId, 
             String endpointBClassName, String endpointBId, 
-            HashMap<String, String> attributesToBeSet) throws ServerSideException {
+            HashMap<String, String> attributesToBeSet, String userName) throws ServerSideException {
         if (bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         String newConnectionId = null;
@@ -147,7 +148,7 @@ public class MPLSModule implements GenericCommercialModule {
             //at least one side should be not null to create the MPLS link
             if(endpointAClassName != null && endpointAId != null || endpointBClassName != null && endpointBId != null){
                 newConnectionId = bem.createSpecialObject(Constants.CLASS_MPLSLINK, null, "-1", attributesToBeSet, null);
-                aem.createGeneralActivityLogEntry("mplsModule", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s [%s] created", attributesToBeSet.get(Constants.PROPERTY_NAME), Constants.CLASS_MPLSLINK));
+                aem.createGeneralActivityLogEntry(userName, ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s [%s] created", attributesToBeSet.get(Constants.PROPERTY_NAME), Constants.CLASS_MPLSLINK));
             }
             //Side A
             if(endpointAClassName != null && endpointAId != null){
@@ -159,14 +160,14 @@ public class MPLSModule implements GenericCommercialModule {
                 if(mem.isSubclassOf(Constants.CLASS_GENERICPORT, endpointAClassName)){
                     String endPointName = bem.getAttributeValueAsString(endpointAClassName, endpointAId, Constants.PROPERTY_NAME);
                     bem.createSpecialRelationship(Constants.CLASS_MPLSLINK, newConnectionId, endpointAClassName, endpointAId, RELATIONSHIP_MPLSENDPOINTA, true);
-                    aem.createGeneralActivityLogEntry("mplsModule", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s[%s] - %s - %s", attributesToBeSet.get(Constants.PROPERTY_NAME), RELATIONSHIP_MPLSLINK, RELATIONSHIP_MPLSENDPOINTB, endPointName));
+                    aem.createGeneralActivityLogEntry(userName, ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s[%s] - %s - %s", attributesToBeSet.get(Constants.PROPERTY_NAME), RELATIONSHIP_MPLSLINK, RELATIONSHIP_MPLSENDPOINTB, endPointName));
                 }
                 else 
                     throw new ServerSideException(String.format("%s is not subClass of GenericPort, can not be endpoint of a mplsLink", endpointAClassName));
                 //besides the reletionship of the MPLS link with its endpoints, we create a direct relatioship between the mplsLink and the device 
                 //this relationships helps to easily check the mplsLink in a device and to creates a simple MPLS map
                 bem.createSpecialRelationship(communicationsEquipmentA.getClassName(), communicationsEquipmentA.getId(), Constants.CLASS_MPLSLINK, newConnectionId, RELATIONSHIP_MPLSLINK, false);
-                aem.createGeneralActivityLogEntry("mplsModule", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - %s - %s", communicationsEquipmentA.getName(), RELATIONSHIP_MPLSLINK, attributesToBeSet.get(Constants.PROPERTY_NAME)));
+                aem.createGeneralActivityLogEntry(userName, ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - %s - %s", communicationsEquipmentA.getName(), RELATIONSHIP_MPLSLINK, attributesToBeSet.get(Constants.PROPERTY_NAME)));
             }
             //Side B
             if(endpointBClassName != null && endpointBId != null){
@@ -178,13 +179,13 @@ public class MPLSModule implements GenericCommercialModule {
                 if(mem.isSubclassOf(Constants.CLASS_GENERICPORT, endpointBClassName)){
                     String endPointName = bem.getAttributeValueAsString(endpointBClassName, endpointBId, Constants.PROPERTY_NAME);
                     bem.createSpecialRelationship(Constants.CLASS_MPLSLINK, newConnectionId, endpointBClassName, endpointBId, RELATIONSHIP_MPLSENDPOINTB, true);
-                    aem.createGeneralActivityLogEntry("mplsModule", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s[%s] - %s - %s", attributesToBeSet.get(Constants.PROPERTY_NAME), RELATIONSHIP_MPLSLINK, RELATIONSHIP_MPLSENDPOINTB, endPointName));
+                    aem.createGeneralActivityLogEntry(userName, ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s[%s] - %s - %s", attributesToBeSet.get(Constants.PROPERTY_NAME), RELATIONSHIP_MPLSLINK, RELATIONSHIP_MPLSENDPOINTB, endPointName));
                 }
                 else 
                     throw new ServerSideException(String.format("%s is not subClass of GenericPort, can not be endpoint of a mplsLink", endpointBClassName));
                 //Direct relationship with the device
                 bem.createSpecialRelationship(Constants.CLASS_MPLSLINK, newConnectionId, communicationsEquipmentB.getClassName(), communicationsEquipmentB.getId(), RELATIONSHIP_MPLSLINK, false);
-                aem.createGeneralActivityLogEntry("mplsModule", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - %s - %s", communicationsEquipmentB.getName(), RELATIONSHIP_MPLSLINK, attributesToBeSet.get(Constants.PROPERTY_NAME)));
+                aem.createGeneralActivityLogEntry(userName, ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - %s - %s", communicationsEquipmentB.getName(), RELATIONSHIP_MPLSLINK, attributesToBeSet.get(Constants.PROPERTY_NAME)));
             }
 
             return newConnectionId;
@@ -209,12 +210,13 @@ public class MPLSModule implements GenericCommercialModule {
      * Deletes a MPLS Link
      * @param linkId the mplslink id
      * @param forceDelete true deletes the mpls link even if have more relationships, false does not deletes the mpls link if have relationships
+     * @param userName the user name who is executing the method, to update the activity log
      * @throws ServerSideException If the object can not be found
      *                             If either the object class or the attribute can not be found
      *                             If the class could not be found
      *                             If the object could not be deleted because there's some business rules that avoids it or it has incoming relationships.
      */
-    public void deleteMPLSLink(String linkId, boolean forceDelete) throws ServerSideException{
+    public void deleteMPLSLink(String linkId, boolean forceDelete, String userName) throws ServerSideException{
         if (bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try{
@@ -223,7 +225,7 @@ public class MPLSModule implements GenericCommercialModule {
                     throw new ServerSideException(String.format("Only links of class MPLSLink can be deleted, class: %s can be deleted", mplsLink.getClassName()));
 
             bem.deleteObject(mplsLink.getClassName(), linkId, forceDelete);
-            aem.createGeneralActivityLogEntry("mplsModule", ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, String.format("%s deleted", mplsLink, Constants.CLASS_MPLSLINK));
+            aem.createGeneralActivityLogEntry(userName, ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, String.format("%s deleted", mplsLink, Constants.CLASS_MPLSLINK));
         }catch(Exception ex){
             throw new ServerSideException(ex.getMessage());
         }
@@ -286,6 +288,7 @@ public class MPLSModule implements GenericCommercialModule {
      * @param linksIds MPLS links ids
      * @param sideBClassNames endpoint side B class names
      * @param sideBIds endpoint side B ids
+     * @param userName the user who executes this method in order to update the activity log
      * @throws ServerSideException 
      * @throws MetadataObjectNotFoundException 
      * @throws BusinessObjectNotFoundException 
@@ -294,7 +297,7 @@ public class MPLSModule implements GenericCommercialModule {
      * @throws OperationNotPermittedException 
      */
     public void connectMplsLink(String[] sideAClassNames, String[] sideAIds, 
-            String[] linksIds, String[] sideBClassNames, String[] sideBIds)
+            String[] linksIds, String[] sideBClassNames, String[] sideBIds, String userName)
             throws ServerSideException, MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, BusinessRuleException, OperationNotPermittedException
     { 
         try{
@@ -335,6 +338,8 @@ public class MPLSModule implements GenericCommercialModule {
                         if (aEndpointList.isEmpty()) {
                             aem.checkRelationshipByAttributeValueBusinessRules(mplsLink.getClassName(), mplsLink.getId(), sideAClassNames[i], sideAIds[i]);
                             bem.createSpecialRelationship(mplsLink.getClassName(), mplsLink.getId(), sideAClassNames[i], sideAIds[i], endpointAName, true); //NOI18N
+                            
+                            aem.createGeneralActivityLogEntry(userName, ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - %s",  sideAIds[i], mplsLink.getName()));
                         }
                         else
                             throw new ServerSideException(String.format("Link %s already has an endpoint A", bem.getObjectLight(mplsLink.getClassName(), mplsLink.getId())));
@@ -347,6 +352,8 @@ public class MPLSModule implements GenericCommercialModule {
                         if (bEndpointList.isEmpty()) {
                             aem.checkRelationshipByAttributeValueBusinessRules(mplsLink.getClassName(), mplsLink.getId(), sideBClassNames[i], sideBIds[i]);
                             bem.createSpecialRelationship(mplsLink.getClassName(), mplsLink.getId(), sideBClassNames[i], sideBIds[i], endpointBName, true); //NOI18N
+                            
+                            aem.createGeneralActivityLogEntry(userName, ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format(" %s - %s", mplsLink.getName(), sideBIds[i]));
                         }
                         else
                             throw new ServerSideException(String.format("Link %s already has an endpoint B", bem.getObjectLight(mplsLink.getClassName(), mplsLink.getId())));
@@ -363,9 +370,10 @@ public class MPLSModule implements GenericCommercialModule {
      * Disconnect a mplsLink from its endpoints
      * @param connectionId MPLS link id
      * @param sideToDisconnect if is side A or side B or both sides
+     * @param userName the user name who is executing the method, to update the activity log
      * @throws org.kuwaiba.exceptions.ServerSideException 
      */
-    public void disconnectMPLSLink(String connectionId, int sideToDisconnect) throws ServerSideException{
+    public void disconnectMPLSLink(String connectionId, int sideToDisconnect, String userName) throws ServerSideException{
         if (bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try{
@@ -379,27 +387,27 @@ public class MPLSModule implements GenericCommercialModule {
                     oldValues += endpointA.getId() + " ";
                     break;
                 case 2: //B side
-                    BusinessObjectLight endpointB = bem.getSpecialAttribute(Constants.CLASS_MPLSLINK, connectionId, "endpointB").get(0); //NOI18N                    
-                    bem.releaseRelationships(Constants.CLASS_MPLSLINK, connectionId, Arrays.asList("endpointB")); //NOI18N
+                    BusinessObjectLight endpointB = bem.getSpecialAttribute(Constants.CLASS_MPLSLINK, connectionId, RELATIONSHIP_MPLSENDPOINTB).get(0); //NOI18N                    
+                    bem.releaseRelationships(Constants.CLASS_MPLSLINK, connectionId, Arrays.asList(RELATIONSHIP_MPLSENDPOINTB)); //NOI18N
 
-                    affectedProperties += "endpointB" + " "; //NOI18N
+                    affectedProperties += RELATIONSHIP_MPLSENDPOINTB + " "; //NOI18N
                     oldValues += endpointB.getId() + " ";
                     break;
                 case 3: //Both sides
                     endpointA = bem.getSpecialAttribute(Constants.CLASS_MPLSLINK, connectionId, RELATIONSHIP_MPLSENDPOINTA).get(0); //NOI18N
-                    endpointB = bem.getSpecialAttribute(Constants.CLASS_MPLSLINK, connectionId, "endpointB").get(0); //NOI18N
-                    bem.releaseRelationships(Constants.CLASS_MPLSLINK, connectionId, Arrays.asList(RELATIONSHIP_MPLSENDPOINTA, "endpointB")); //NOI18N
+                    endpointB = bem.getSpecialAttribute(Constants.CLASS_MPLSLINK, connectionId, RELATIONSHIP_MPLSENDPOINTB).get(0); //NOI18N
+                    bem.releaseRelationships(Constants.CLASS_MPLSLINK, connectionId, Arrays.asList(RELATIONSHIP_MPLSENDPOINTA, RELATIONSHIP_MPLSENDPOINTB)); //NOI18N
 
                     affectedProperties += RELATIONSHIP_MPLSENDPOINTA + " "; //NOI18N
                     oldValues += endpointA.getId() + " ";
 
-                    affectedProperties += "endpointB" + " "; //NOI18N
+                    affectedProperties += RELATIONSHIP_MPLSENDPOINTB + " "; //NOI18N
                     oldValues += endpointB.getId() + " ";
                     break;
                 default:
                     throw new InvalidArgumentException(String.format("Wrong side to disconnect option"));
             }
-            aem.createObjectActivityLogEntry("mplsModule", Constants.CLASS_MPLSLINK, connectionId, 
+            aem.createObjectActivityLogEntry(userName, Constants.CLASS_MPLSLINK, connectionId, 
                 ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
                 affectedProperties, oldValues, "", ""); //NOI18N
         }catch(Exception ex){

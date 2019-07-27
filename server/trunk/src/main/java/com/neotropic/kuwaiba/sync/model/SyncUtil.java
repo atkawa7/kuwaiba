@@ -64,6 +64,7 @@ public class SyncUtil {
         //ignorar eo, cpp, span, dwdm
         return ifName.toLowerCase().equals("gi0") || 
                 ifName.toLowerCase().substring(0, 2).equals("lo") ||
+                ifName.startsWith("Po") ||
                 (ifName.toLowerCase().contains("po") && ifName.contains("/")) || 
                 ifName.toLowerCase().substring(0, 2).equals("se") || 
                 ifName.toLowerCase().substring(0, 2).equals("tu") ||
@@ -144,59 +145,63 @@ public class SyncUtil {
      * @return normalized port name 
      */
     public static String normalizePortName(String interfaceName){
-        interfaceName = interfaceName.toLowerCase();
-        interfaceName = interfaceName.replace("_", "/"); //could happend in some mibs
-        //Pseudowires
-        if(interfaceName.contains("pw"))
-            return interfaceName.replace("\\s", "");
-        //mpls tunnel
-        if(interfaceName.contains("tunnel-te"))
-            return interfaceName.replace("tunnel-te", "tu");
-        
-        if(interfaceName.contains(".si"))  //is a service instance
-            interfaceName = interfaceName.split("\\.")[2];
-        else if (interfaceName.toLowerCase().contains(".") && interfaceName.split("\\.").length == 2) //is a virtualPort        
-            interfaceName = interfaceName.split("\\.")[1];
-        
-        if(interfaceName.toLowerCase().startsWith("lo") && interfaceName.length() < 6) //is a loopback
-            return interfaceName.replace("lo", "loopback");
+        //the port channel always have a capital P and lower o
+        if(!interfaceName.startsWith("Po")){
+            interfaceName = interfaceName.toLowerCase();
+            interfaceName = interfaceName.replace("_", "/"); //could happend in some mibs
+            //Pseudowires
+            if(interfaceName.contains("pw"))
+                return interfaceName.replace("\\s", "");
+            //mpls tunnel
+            if(interfaceName.contains("tunnel-te"))
+                return interfaceName.replace("tunnel-te", "tu");
 
-        //Fastethernet
-        if(interfaceName.contains("fastethernet"))
-            return interfaceName.replace("fastethernet", "fa");
-        //Te
-        if(interfaceName.contains("tengigabitethernet"))
-            return interfaceName.replace("tengigabitethernet", "te");  
-        if(interfaceName.contains("tengige"))
-            return interfaceName.replace("tengige", "te");
-        if(interfaceName.contains("tentigt"))
-            return interfaceName.replace("tentigt", "te");
-        if(interfaceName.contains("tengig"))
-            return interfaceName.replace("tengig", "te");
-        if(interfaceName.contains("tengi"))
-            return interfaceName.replace("tengi", "te");   
-         
-        //POS and PO
-        if(interfaceName.contains("pos"))
-            return interfaceName;
-        if(interfaceName.contains("po"))
-            return interfaceName.replace("po", "pos");
-        //Gi Ge Gigabitethernet
-        if(interfaceName.contains("gigabitethernet"))
-            return interfaceName.replace("gigabitethernet", "gi");
-        if(interfaceName.contains("gi"))
-            return interfaceName.replace("gi", "gi");
-        if(interfaceName.startsWith("ge "))
-            return interfaceName.toLowerCase().replace("ge ", "gi");
-        if(interfaceName.startsWith("ge"))
-            return interfaceName.toLowerCase().replace("ge", "gi");
-        if(interfaceName.startsWith("g"))
-            return interfaceName.toLowerCase().replace("g", "gi");
-        //Serial Port
-        if(interfaceName.contains("se"))
-            return interfaceName;
+            if(interfaceName.contains(".si"))  //is a service instance
+                interfaceName = interfaceName.split("\\.")[2];
+            else if (interfaceName.toLowerCase().contains(".") && interfaceName.split("\\.").length == 2) //is a virtualPort        
+                interfaceName = interfaceName.split("\\.")[1];
+
+            if(interfaceName.toLowerCase().startsWith("lo") && interfaceName.length() < 6) //is a loopback
+                return interfaceName.replace("lo", "loopback");
+
+            //Fastethernet
+            if(interfaceName.contains("fastethernet"))
+                return interfaceName.replace("fastethernet", "fa");
+            //Te
+            if(interfaceName.contains("tengigabitethernet"))
+                return interfaceName.replace("tengigabitethernet", "te");  
+            if(interfaceName.contains("tengige"))
+                return interfaceName.replace("tengige", "te");
+            if(interfaceName.contains("tentigt"))
+                return interfaceName.replace("tentigt", "te");
+            if(interfaceName.contains("tengig"))
+                return interfaceName.replace("tengig", "te");
+            if(interfaceName.contains("tengi"))
+                return interfaceName.replace("tengi", "te");   
+
+            //POS and PO
+            if(interfaceName.contains("pos"))
+                return interfaceName;
+            if(interfaceName.contains("po"))
+                return interfaceName.replace("po", "pos");
+            //Gi Ge Gigabitethernet
+            if(interfaceName.contains("gigabitethernet"))
+                return interfaceName.replace("gigabitethernet", "gi");
+            if(interfaceName.contains("gi"))
+                return interfaceName.replace("gi", "gi");
+            if(interfaceName.startsWith("ge "))
+                return interfaceName.toLowerCase().replace("ge ", "gi");
+            if(interfaceName.startsWith("ge"))
+                return interfaceName.toLowerCase().replace("ge", "gi");
+            if(interfaceName.startsWith("g"))
+                return interfaceName.toLowerCase().replace("g", "gi");
+            //Serial Port
+            if(interfaceName.contains("se"))
+                return interfaceName;
+        }
         
         return interfaceName;
+        
     }
     
     /**

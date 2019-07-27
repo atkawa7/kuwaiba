@@ -4974,7 +4974,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             for (StringPair attribute : attributesToBeSet)
                 attributes.put(attribute.getKey(), attribute.getValue());
             
-            String MPLSLinkId = mplsModule.createMPLSLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, attributes);
+            String MPLSLinkId = mplsModule.createMPLSLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, attributes, getUserNameFromSession(sessionId));
             return MPLSLinkId;
             
         } catch (InventoryException ex) {
@@ -5002,7 +5002,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try{
             aem.validateWebServiceCall("connectMplsLink", ipAddress, sessionId);
             MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
-            mplsModule.connectMplsLink(sideAClassNames, sideAIds, linksIds, sideBClassNames, sideBIds);
+            mplsModule.connectMplsLink(sideAClassNames, sideAIds, linksIds, sideBClassNames, sideBIds, getUserNameFromSession(sessionId));
         }catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -5013,7 +5013,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try{
             aem.validateWebServiceCall("disconnectMPLSLink", ipAddress, sessionId);
             MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
-            mplsModule.disconnectMPLSLink(connectionId, sideToDisconnect);
+            mplsModule.disconnectMPLSLink(connectionId, sideToDisconnect, getUserNameFromSession(sessionId));
         }catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -5024,7 +5024,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("deleteMPLSLink", ipAddress, sessionId);
             MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
-            mplsModule.deleteMPLSLink(linkId, forceDelete);
+            mplsModule.deleteMPLSLink(linkId, forceDelete, getUserNameFromSession(sessionId));
             
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());

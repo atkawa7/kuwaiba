@@ -74,9 +74,9 @@ public class EndToEndViewScene extends AbstractScene {
         public void nodeWidgetClicked(String id) {
             RemoteObjectLight nodeObject = (RemoteObjectLight) lienzoComponent.getNodeObject(id);
             SrvNodeWidget srvNode = lienzoComponent.getNodeWidget(nodeObject);
-            Window tableInfo = new Window(" ");
-            tableInfo.setId("report-forms-container");
-            tableInfo.addStyleName("report-forms");
+            Window wdwTableInfo = new Window(" ");
+            wdwTableInfo.setId("report-forms-container");
+            wdwTableInfo.addStyleName("report-forms");
             try {
                 Component x = null;
                 for (RemoteObjectLight device : nodes.keySet()) {
@@ -109,16 +109,16 @@ public class EndToEndViewScene extends AbstractScene {
                                                 x = formView.createExternalEquipment(device);
                                             else if(device.getClassName().equals("Cloud"))
                                                 x = formView.createPeering(device);
-                                            tableInfo.setCaption(device.toString());
-                                            tableInfo.center();
+                                            wdwTableInfo.setCaption(device.toString());
+                                            wdwTableInfo.center();
                                             HorizontalLayout lytContent = new HorizontalLayout();
                                             lytContent.setSpacing(true);
                                             lytContent.setId("report-forms-content");
                                             lytContent.addComponent(x);
-                                            tableInfo.setContent(lytContent);
+                                            wdwTableInfo.setContent(lytContent);
                                             //We close if there are any open window
                                             closeWindows();
-                                            getUI().addWindow(tableInfo);
+                                            getUI().addWindow(wdwTableInfo);
                                         }
                                     }
                                 }

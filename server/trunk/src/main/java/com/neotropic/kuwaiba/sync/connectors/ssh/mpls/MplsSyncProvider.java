@@ -203,7 +203,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
                 //The model of the device is taken from its name. Alternatively, this could be taken from its actual "model" attribute.
                 if(modelString != null && (modelString.toLowerCase().contains("asr1002" )|| modelString.toLowerCase().contains("asr1006") || modelString.toLowerCase().contains("asr920") || modelString.toLowerCase().contains("me3600"))) { 
                     
-                    channel.setCommand("show l2vpn service all"); //NOI18N
+                    channel.setCommand("sh show\\ l2vpn\\ service\\ all"); //NOI18N
                     channel.connect();
                     MplsSyncDefaultParserNew parser = new MplsSyncDefaultParserNew();       
                     String data = readCommandExecutionResult(channel);
@@ -558,7 +558,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
                 aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s endpointA connected with %s", newMplsLink, matchingInterface));
                 res.add(new SyncResult(dsId, SyncResult.TYPE_SUCCESS, String.format("Connecting VCid %s endpointA with local interface %s", newMplsLink, 
                         //in case of a virtual port or a service instance
-                        !matchingLocalPhysicalInterface.equals(matchingInterface) ? matchingLocalPhysicalInterface.getName() + ":" + matchingInterface.toString() : matchingInterface),
+                        matchingLocalPhysicalInterface == null ? "" : (!matchingLocalPhysicalInterface.equals(matchingInterface) ? matchingLocalPhysicalInterface.getName() + ":" + matchingInterface.toString() : matchingInterface)),
                         "VCid endpointA was related successfully"));  
 
             }//end if vcid is null
@@ -616,7 +616,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
                             res.add(new SyncResult(dsId, SyncResult.TYPE_WARNING, String.format("Releasing VCid %s endpointA from %s, because this interface belongs to the device but is not the right endpointA", vcid, endpointA), 
                                 String.format("The endpointA of %s was realese from: %s and reconected to: %s successfully", vcid, endpointA, 
                                         //in case of a virtual port or a service instance
-                                        !matchingLocalPhysicalInterface.equals(matchingInterface) ? matchingLocalPhysicalInterface.getName() + ":" + matchingInterface.toString() : matchingInterface)));  
+                                        matchingLocalPhysicalInterface == null ? "" : (!matchingLocalPhysicalInterface.equals(matchingInterface) ? matchingLocalPhysicalInterface.getName() + ":" + matchingInterface.toString() : matchingInterface))));  
                         }
                         else
                             res.add(new SyncResult(dsId, SyncResult.TYPE_ERROR, String.format("%s exists but non of its endpoints is: %s belongs to this device", vcid, matchingInterface),
@@ -635,7 +635,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
                             res.add(new SyncResult(dsId, SyncResult.TYPE_WARNING, String.format("Releasing VCid %s endpointA from %s, because this interface belongs to the device but is not the right endpointB", vcid, endpointB), 
                                 String.format("The endpointB of %s was realese from: %s and reconected to: %s successfully", vcid, endpointB, 
                                         //in case of a virtual port or a service instance
-                                        !matchingLocalPhysicalInterface.equals(matchingInterface) ? matchingLocalPhysicalInterface.getName() + ":" + matchingInterface.toString() : matchingInterface)));  
+                                         matchingLocalPhysicalInterface == null ? "" : (!matchingLocalPhysicalInterface.equals(matchingInterface) ? matchingLocalPhysicalInterface.getName() + ":" + matchingInterface.toString() : matchingInterface))));  
                         }
                         else
                             res.add(new SyncResult(dsId, SyncResult.TYPE_ERROR, String.format("%s exists but non of its endpoints is: %s belongs to this device", vcid, matchingInterface),
@@ -653,7 +653,7 @@ public class MplsSyncProvider extends AbstractSyncProvider {
                         res.add(new SyncResult(dsId, SyncResult.TYPE_SUCCESS, "Connecting MPLSLink with local interface", 
                                                     String.format("The %s was connected to: %s", vcid, 
                                                             //if is a virtual port or a service instance we need to add the physical interface
-                                                            !matchingLocalPhysicalInterface.equals(matchingInterface) ? matchingLocalPhysicalInterface.getName() + ":" + matchingInterface.toString() : matchingInterface))); 
+                                                             matchingLocalPhysicalInterface == null ? "" : (!matchingLocalPhysicalInterface.equals(matchingInterface) ? matchingLocalPhysicalInterface.getName() + ":" + matchingInterface.toString() : matchingInterface))));  
                     }
                 }//end for vc id unique
             }//end if vcid is not null

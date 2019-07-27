@@ -236,7 +236,7 @@ public class IPSynchronizer {
                     try {//we must check the mask if the IP already exists and if its attributes are updated
                         BusinessObject currentIp = bem.getObject(Constants.CLASS_IP_ADDRESS, currentIpLight.getId());
                         String oldMask = currentIp.getAttributes().get(Constants.PROPERTY_MASK);
-                        if(!oldMask.equals(syncMask)){
+                        if(oldMask == null || !oldMask.equals(syncMask)){
                             currentIp.getAttributes().put(Constants.PROPERTY_MASK, syncMask);
                             bem.updateObject(currentIp.getClassName(), currentIp.getId(), currentIp.getAttributes());
                             res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, 
@@ -291,8 +291,8 @@ public class IPSynchronizer {
                                 for (BusinessObjectLight currentRelatedIPAddress : currentRelatedIPAddresses) {
                                     if(currentRelatedIPAddress.getName().equals(currentIpAddress.getName())){ 
                                         alreadyRelated = true;
-                                        res.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, "Relate interface - IP address",
-                                            String.format("%s and %s were related", currentRelatedIPAddress, currentPort)));
+                                        res.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, "Relating interface with IP address",
+                                            String.format("%s and %s already related", currentRelatedIPAddress, currentPort)));
                                         break;
                                     }
                                 }//If not related, we related interface with the ip
@@ -300,7 +300,7 @@ public class IPSynchronizer {
                                     bem.createSpecialRelationship(currentPort.getClassName(),currentPort.getId(),
                                                 currentIpAddress.getClassName(), currentIpAddress.getId(), RELATIONSHIP_IPAMHASADDRESS, true);
                                     
-                                    res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Relate interface - IP address",
+                                    res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Relating interface with IP address",
                                             String.format("%s and %s were related successfully ", currentIpAddress, currentPort)));
                                 }
                                 
