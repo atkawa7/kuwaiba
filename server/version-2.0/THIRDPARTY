@@ -1,0 +1,22 @@
+This software makes use of the following third-party components and neither of them was modified, only linked:
+
+* Neo4J, Enterprise-grade graph database (GPLv3) http://www.neo4j.org
+* Groovy, Scripting language running on top of the JVM (APL) http://www.groovy-lang.org/
+* JBcrypt, Java implementation of the BCrypt algorithm (ISC/BSD) http://www.mindrot.org/projects/jBCrypt/
+* JSR 374, Java API for processing JSON (CDDL) http://opensource.org/licenses/CDDL-1.0) https://javaee.github.io/jsonp
+* Vaadin, Web framework to build awesome Rich Internet Applications (APL2) https://vaadin.com/
+* Vaadin Gantt Add-on, used by the Process Engine to present a time line of the current activities in a project (APL2) https://github.com/tltv/gantt
+* Vaadin Graphviz Component Add-on, used to create flowchart for the Process Engine (APL2) https://github.com/pontusbostrom/VaadinGraphvizComponent
+* Vaadin Context Menu Add-on, used in navigation trees and views (APL2) https://github.com/vaadin/context-menu
+* Vaadin Auto-complete Add-on, used in navigation trees and dashboards (APL2) https://github.com/maxschuster/Vaadin-AutocompleteTextField
+* Vaadin Grid Extension Pack Add-on, used to add pagination support for standard Vaadin's grids (APL2) https://github.com/tsuoanttila/GridExtensionPack
+
+Guava
+
+Also, Kuwaiba uses a customized version of the Google Maps plugin for Vaadin by Team Parttio:
+Original project:https://vaadin.com/directory/component/googlemaps-add-on (APL2)
+Modified sources: https://sourceforge.net/p/kuwaiba/code/HEAD/tree/third-party/GoogleMapsVaadin8/
+
+We want to thank all people that made possible this software to be available.
+
+All copyrights and trademarks associated to these third party components correspond to their owners. We don't claim any ownership of any of them.
