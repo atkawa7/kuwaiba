@@ -1,0 +1,140 @@
+<root>
+  <form id="formequipmentselector" title="Equipment Selector">
+    <label value="Service Information" styleName="title"/>
+    <gridLayout columns="2" rows="4">
+      <label value="Customer"/>
+      <textField enabled="false" onload="value.shared.2.cbmCustomer"/>
+
+      <label value="Service Type"/>
+      <textField enabled="false" onload="value.shared.2.cmbService"/>
+
+      <label value="Service Name"/>
+      <textField enabled="false" onload="value.shared.2.txtServiceName"/>
+
+    </gridLayout>
+
+    <label value="Devices" styleName="title"/>
+
+    <gridLayout columns="2" rows="1" alignment="middleCenter">
+      <button caption="Add Device" onclick="open.frmReserveMaterial" width="150px"/>
+      <button caption="Remove Device" onclick="propertyChange.frmCancelReserveMaterial.enabled.isSelectedAnyRow.gridEquipmentOrder open.frmCancelReserveMaterial" width="150px"/>
+    </gridLayout>
+
+    <grid id="gridEquipmentOrder" shared="true" height="250px" width="1300px" alignment="middleCenter">
+        <column caption="Device"/>
+        <column caption="Position"/>
+        <column caption="Rack"/>
+        <column caption="Building"/>
+        <column caption="City"/>
+    </grid>
+
+    <subform id="frmReserveMaterial">
+      <label value="Select a row in the list of devices with spare state to reserve it for this service"/>
+      <grid id="gridCommunicationsElement" shared="true" height="250px" width="1300px" onload="rows.getElements1.GenericCommunicationsElement">
+        <column caption="Name"/>
+        <column caption="Position"/>
+        <column caption="Rack"/>
+        <column caption="Building"/>
+        <column caption="City"/>
+      </grid>
+
+      <horizontalLayout alignment="middleCenter">
+        <button caption="Reserve Device" width="150px" onclick="addgridrows.gridEquipmentOrder.getMaterialRow.gridCommunicationsElement.gridEquipmentOrder reserveMaterial.gridCommunicationsElement close.frmReserveMaterial"/>
+        <button caption="Cancel" width="150px" onclick="close.frmReserveMaterial clean.frmReserveMaterial"/>
+      </horizontalLayout>
+    </subform>
+
+    <subform id="frmCancelReserveMaterial">
+
+      <gridLayout columns="2" rows="1" alignment="middleCenter">
+        <label value="Cancel de reservation of"/>
+        <textField width="300px" enabled="false" id="txtReservedMaterialName" datatype="String" onload="value.getSelectedRowGridDataValue.gridEquipmentOrder.0"/>
+      </gridLayout>
+
+      <horizontalLayout alignment="middleCenter">
+        <button caption="Cancel Device Reservation" width="200px" onclick="deletegridrow.gridEquipmentOrder cancelReserveMaterial.txtReservedMaterialName close.frmCancelReserveMaterial"/>
+        <button caption="Cancel" width="200px" onclick="close.frmCancelReserveMaterial clean.frmCancelReserveMaterial"/>
+      </horizontalLayout>
+    </subform>
+
+  </form>
+
+  <script src="scripts.xml">
+    <function type="function" name="isSelectedAnyRow" parameternames="grid">
+      <![CDATA[
+        grid.getSelectedRow() != -1;
+      ]]>
+    </function>
+    
+    <function type="function" name="getElements1" parameternames="cmbId" return="Matriz">
+      <![CDATA[
+      import org.kuwaiba.apis.persistence.PersistenceService;
+      import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+
+      def aem = PersistenceService.getInstance().getApplicationEntityManager();
+      def bem = PersistenceService.getInstance().getBusinessEntityManager();
+
+      def classsInstances = bem.getObjectsOfClass(cmbId, -1);
+
+      def classSpare = new ArrayList();
+      def locationsArray = new ArrayList();
+
+      classsInstances.each { instance ->
+          def equipmentStatusId = instance.getAttributes().get("state");
+          if(equipmentStatusId != null){
+            def equipmentStatus = aem.getListTypeItem("OperationalState", equipmentStatusId);
+            if(equipmentStatus != null && equipmentStatus.getName() == "Spare"){
+              def row = new ArrayList();
+              row.add(new RemoteObjectLight(instance));
+              locationsArray = new ArrayList();
+              try {
+              locationsArray = bem.getParentsUntilFirstOfClass(instance.getClassName(), instance.getId(), "City");
+              }
+              catch(Exception ex) {
+
+              };
+              def position = 0;
+              def fieldObject = bem.getObject(instance.getClassName(), instance.getId());
+              def positionRecieved = fieldObject.getAttributes().get("position");
+              if(positionRecieved != null)
+                position = positionRecieved;
+              row.add(position);
+
+              def rack = null;
+              def city = "";
+              def building = "";
+              locationsArray.each { location ->
+                switch(location.getClassName()){
+                case "Rack":
+                  rack = new RemoteObjectLight(location);
+                  break;
+
+                case "Building":
+                  building = location.getName();
+                  break;
+
+                case "City":
+                  city = location.getName();
+                  break;
+                default:
+                  break;
+                };
+              };
+              if(rack != null)
+                row.add(rack);
+              else
+                row.add("");
+              row.add(building);
+              row.add(city);
+
+              classSpare.add(row);
+              locationsArray.clear();
+            }
+          }
+      };
+
+      classSpare;
+      ]]>
+    </function>
+  </script>
+</root>
