@@ -1,5 +1,5 @@
 /**
- *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -30,9 +30,11 @@ import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.util.i18n.I18N;
+import org.openide.util.Exceptions;
 
 /**
- * Class used to storage device information like the device layout, hierarchy 
+ * Class used to represent device information like the device layout, hierarchy 
  * and nested devices layouts
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
@@ -46,24 +48,29 @@ public class DeviceLayoutStructure {
         initDeviceLayoutStructure(device);
     }
     
-    public final void initDeviceLayoutStructure(RemoteObjectLight device) {
-        byte[] structure = null;
-                
+    public void initDeviceLayoutStructure(RemoteObjectLight device) {
+        byte[] structure;
         try {
-            structure = RackViewImage.getInstance().getWebserviceBean().getDeviceLayoutStructure(
-                device.getId(), 
-                device.getClassName(), 
-                RackViewImage.getInstance().getIpAddress(), 
-                RackViewImage.getInstance().getRemoteSession().getSessionId());
+            structure = RackViewImage.getInstance().getWebserviceBean().getDeviceLayoutStructure(device.getId(), device.getClassName(),
+                    RackViewImage.getInstance().getIpAddress(),
+                    RackViewImage.getInstance().getRemoteSession().getSessionId());
         } catch (ServerSideException ex) {
             Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
             return;
-            //Exceptions.printStackTrace(ex);
         }
         
         if (structure == null) {
             return;
         }
+        
+          //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
+//                             try {
+//                                 FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/device_structure" + device.getId() + ".xml");
+//                                 fos.write(structure);
+//                                 fos.close();
+//                             } catch(Exception e) {}
+                     //</editor-fold>
+        
         try {
             HashMap<RemoteObjectLight, String> devices = new HashMap();
             
@@ -82,7 +89,7 @@ public class DeviceLayoutStructure {
                     if (xmlsr.getName().equals(tagDevice)) {
                         String id = xmlsr.getAttributeValue(null, "id"); //NOI18N
                         
-                        if (id != null && device.getId() != null && id.equals(device.getId())) {
+                        if (!id.equals(device.getId())) {
                             String className = xmlsr.getAttributeValue(null, "className"); //NOI18N
                             String name = xmlsr.getAttributeValue(null, "name"); //NOI18N
                             String parentId = xmlsr.getAttributeValue(null, "parentId"); //NOI18N
@@ -105,19 +112,17 @@ public class DeviceLayoutStructure {
                                         if (event == XMLStreamConstants.START_ELEMENT) {
                                             if (xmlsr.getName().equals(tagView)) {
                                                 long _id = Long.valueOf(xmlsr.getAttributeValue(null, "id"));
-                                                className = xmlsr.getAttributeValue(null, "className");//NOI18N
+                                                className = xmlsr.getAttributeValue(null, "className"); //NOI18N
                                                 
                                                 if (xmlsr.hasNext()) {
                                                     event = xmlsr.next();
                                                     if (event == XMLStreamConstants.START_ELEMENT) {
                                                         if (xmlsr.getName().equals(tagStructure)) {
                                                             byte [] modelStructure = DatatypeConverter.parseBase64Binary(xmlsr.getElementText());                                                            
-                                                            // (long id, String name, String description, String viewClassName)
-                                                            ViewObject viewObject = new ViewObject(_id, className, null, null);
+                                                            ViewObject viewObject = new ViewObject(_id, null, null, className);
                                                             viewObject.setStructure(modelStructure);
                                                                                                                                                                                     
                                                             RemoteViewObject remoteViewObject = new RemoteViewObject(viewObject);
-                                                                                                                        
                                                             layouts.put(modelObj, remoteViewObject);
                                                         }
                                                     }                                                    
@@ -137,7 +142,6 @@ public class DeviceLayoutStructure {
             for (RemoteObjectLight child : devices.keySet())
                 hierarchy.put(child, new ArrayList());
             //
-            
             for (RemoteObjectLight child : devices.keySet()) {
                 
                 String parentId = devices.get(child);                
@@ -174,4 +178,3 @@ public class DeviceLayoutStructure {
         return hierarchy;
     }
 }
-
