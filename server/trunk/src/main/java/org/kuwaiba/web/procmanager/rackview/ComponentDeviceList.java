@@ -67,6 +67,9 @@ public class ComponentDeviceList extends VerticalLayout {
             try {
                 if (!webserviceBean.hasAttribute(device.getClassName(), "rackUnits", Page.getCurrent().getWebBrowser().getAddress(), remoteSession.getSessionId()) ||
                     !webserviceBean.hasAttribute(device.getClassName(), "position", Page.getCurrent().getWebBrowser().getAddress(), remoteSession.getSessionId())) {
+                    
+                    Notifications.showError(String.format("The class %s does not have the attributes rackUnits or position", device.getClassName()));
+                    
                     continue;
                 }
             } catch (ServerSideException ex) {
