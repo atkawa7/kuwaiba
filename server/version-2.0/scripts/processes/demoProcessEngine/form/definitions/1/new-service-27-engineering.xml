@@ -1,0 +1,51 @@
+<root>
+  <form>
+    <label value="Service Information" styleName="title"/>
+    <gridLayout columns="2" rows="4">
+      <label value="Customer"/>
+      <textField enabled="false" onload="value.shared.2.cbmCustomer"/>
+
+      <label value="Service Type"/>
+      <textField enabled="false" onload="value.shared.2.cmbService"/>
+
+      <label value="Service Name"/>
+      <textField enabled="false" onload="value.shared.2.txtServiceName"/>
+    </gridLayout>
+
+    <label value="Devices to Synchronize" styleName="title"/>
+    <horizontalLayout>
+      <label value="Select a Row and Click Button 'Create Synchronization Group'"/>
+      <button caption="Create Synchronization Group" onclick="propertyChange.mnaSync.inputParameters.getInputParameters.gridSharedEquipmentOrder.0 open.mnaSync"/>
+    </horizontalLayout>
+
+    <grid id="gridSharedEquipmentOrder" save="false" onload="rows.getRowsInGridSaved.5.gridEquipmentOrder.gridSharedEquipmentOrder" height="250px" width="1300px">
+        <column caption="Device"/>
+        <column caption="Position"/>
+        <column caption="Rack"/>
+        <column caption="Building"/>
+        <column caption="City"/>
+    </grid>
+
+    <miniApplication id="mnaSync" mode="detached" package="org.kuwaiba.web.modules.sync.miniapps" classname="ConfigureSyncGroupMiniApp"/>
+  </form>
+  <script src="scripts.xml">
+    <function type="function" name="getInputParameters" parameternames="grid colId" return="Properties">
+      <![CDATA[
+      import java.util.Properties;
+
+      Properties inputParameters = new Properties();
+
+      if (grid != null && colId != null && grid.getSelectedRow() != -1L) {
+
+        def row = Integer.valueOf(String.valueOf(grid.getSelectedRow()));
+        def col = Integer.valueOf(colId);
+        def data = grid.getData(row, col);
+
+        inputParameters.setProperty("deviceClass", data.getClassName());
+        inputParameters.setProperty("deviceId", String.valueOf(data.getId()));
+      };
+      return inputParameters;
+      ]]>
+    </function>
+  </script>
+</root>
