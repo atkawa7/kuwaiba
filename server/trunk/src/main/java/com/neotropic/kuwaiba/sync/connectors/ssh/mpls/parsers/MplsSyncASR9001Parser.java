@@ -15,10 +15,8 @@
  */
 package com.neotropic.kuwaiba.sync.connectors.ssh.mpls.parsers;
 
-import com.neotropic.kuwaiba.sync.connectors.ssh.mpls.entities.MPLSLink;
 import com.neotropic.kuwaiba.sync.connectors.ssh.mpls.entities.MPLSLinkNew;
 import com.neotropic.kuwaiba.sync.model.AbstractDataEntity;
-import com.neotropic.kuwaiba.sync.model.SyncUtil;
 import java.util.ArrayList;
 import java.util.List;
 

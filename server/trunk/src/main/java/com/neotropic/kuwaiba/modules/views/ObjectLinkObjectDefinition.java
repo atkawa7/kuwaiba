@@ -15,7 +15,6 @@
  */
 package com.neotropic.kuwaiba.modules.views;
 
-import org.kuwaiba.apis.persistence.business.BusinessObject;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 
 
@@ -147,7 +146,4 @@ public class ObjectLinkObjectDefinition {
     public void setDeviceB(BusinessObjectLight deviceB) {
         this.deviceB = deviceB;
     }
-
-    
-    
 }

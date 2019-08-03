@@ -282,5 +282,4 @@ public class EndToEndViewScene extends AbstractScene {
             getUI().removeWindow(currentOpenWindow);
         });
     }
-  
 }

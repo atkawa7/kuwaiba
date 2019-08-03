@@ -203,14 +203,14 @@ public class MplsSyncProvider extends AbstractSyncProvider {
                 //The model of the device is taken from its name. Alternatively, this could be taken from its actual "model" attribute.
                 if(modelString != null && (modelString.toLowerCase().contains("asr1002" )|| modelString.toLowerCase().contains("asr1006") || modelString.toLowerCase().contains("asr920") || modelString.toLowerCase().contains("me3600"))) { 
                     
-                    channel.setCommand("sh show\\ l2vpn\\ service\\ all"); //NOI18N
+                    channel.setCommand("show l2vpn service all"); //NOI18N
                     channel.connect();
                     MplsSyncDefaultParserNew parser = new MplsSyncDefaultParserNew();       
                     String data = readCommandExecutionResult(channel);
 
                     res.getResult().put(dataSourceConfiguration, parser.parse(data));  
                         
-                }else if(modelString != null && modelString.toLowerCase().contains("asr9001" )){
+                }else if(modelString != null && modelString.toLowerCase().contains("asr9001")){
                     channel.setCommand("sh l2vpn xconnect"); //NOI18N
                     channel.connect();
 

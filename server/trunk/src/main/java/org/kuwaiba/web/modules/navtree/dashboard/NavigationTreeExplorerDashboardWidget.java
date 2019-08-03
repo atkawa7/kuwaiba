@@ -17,7 +17,6 @@
 package org.kuwaiba.web.modules.navtree.dashboard;
 
 import com.vaadin.server.Page;
-import com.vaadin.server.Sizeable;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
