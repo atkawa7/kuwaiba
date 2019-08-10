@@ -1102,6 +1102,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         Util.deleteAttributeIfPrimitive(classNode, attributeName);
                     else
                         Util.deleteAttributeIfListType(classNode, attributeName);
+                    
+                    refreshCacheOn(classNode);
                     tx.success();
                     return;
                 }//end for
@@ -1124,13 +1126,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
             for (Relationship relationship : classNode.getRelationships(RelTypes.HAS_ATTRIBUTE)) {
                 Node attrNode = relationship.getEndNode();
-                if (String.valueOf(attrNode.getProperty(Constants.PROPERTY_NAME)).equals(attributeName)){
-                        if (AttributeMetadata.isPrimitive((String)attrNode.getProperty(Constants.PROPERTY_TYPE)))
-                            Util.deleteAttributeIfPrimitive(classNode, attributeName);
-                        else
-                            Util.deleteAttributeIfListType(classNode, attributeName);
-                        tx.success();
-                        return;
+                if (String.valueOf(attrNode.getProperty(Constants.PROPERTY_NAME)).equals(attributeName)) {
+                    if (AttributeMetadata.isPrimitive((String)attrNode.getProperty(Constants.PROPERTY_TYPE)))
+                        Util.deleteAttributeIfPrimitive(classNode, attributeName);
+                    else
+                        Util.deleteAttributeIfListType(classNode, attributeName);
+                    
+                    refreshCacheOn(classNode);
+                    tx.success();
+                    return;
                 }
             }//end for
         } 
