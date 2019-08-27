@@ -22,7 +22,6 @@ import com.neotropic.kuwaiba.sync.model.TableData;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.Json;
@@ -49,7 +48,6 @@ import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.util.i18n.I18N;
-import org.openide.util.Exceptions;
 
 /**
  * Loads data from a SNMP file to replace/update an existing element in the
@@ -948,14 +946,14 @@ public class EntPhysicalSynchronizer {
         for (BusinessObjectLight object : objects) {
             if (!mem.isSubclassOf("GenericLogicalPort", object.getClassName()) && !mem.isSubclassOf("Pseudowire", object.getClassName())){ 
                 //We standarized the port names
-                object = SyncUtil.wrapPortName(object);
+                //object = SyncUtil.wrapPortName(object);
                 tempAuxOldBranch.add(object);
             }
             
-            if (object.getClassName().contains("Port") && !object.getClassName().contains("Virtual") && !object.getClassName().contains("Power")) 
+            if (object.getClassName().contains("Port") && !object.getClassName().contains("Channel") && !object.getClassName().contains("Virtual") && !object.getClassName().contains("Power")) 
                 currentPorts.add(object);
             
-            else if (object.getClassName().contains("Virtual")) 
+            else if (object.getClassName().contains("Virtual") || object.getClassName().equals(Constants.CLASS_PORTCHANNEL)) 
                 currentVirtualPorts.add(object);
             
             List<BusinessObjectLight> children = bem.getObjectChildren(object.getClassName(), object.getId(), -1);
@@ -1115,8 +1113,9 @@ public class EntPhysicalSynchronizer {
     
     public void checkDataToBeDeleted() throws MetadataObjectNotFoundException, InvalidArgumentException {
         for (BusinessObjectLight currentChildFirstLevel : currentFirstLevelChildren) {
-            if (!mem.isSubclassOf("Pseudowire", currentChildFirstLevel.getClassName()) 
-                    && !currentChildFirstLevel.getName().toLowerCase().equals("gi0")) 
+            if (!mem.isSubclassOf("Pseudowire", currentChildFirstLevel.getClassName()) &&
+                    !currentChildFirstLevel.getName().toLowerCase().equals("gi0") &&
+                    !currentChildFirstLevel.getClassName().equals(Constants.CLASS_PORTCHANNEL)) 
             {
                 try {
                     bem.deleteObject(currentChildFirstLevel.getClassName(), currentChildFirstLevel.getId(), false);
@@ -1517,18 +1516,21 @@ public class EntPhysicalSynchronizer {
             try{
             //We must create the Mngmnt Port, virtualPorts, tunnels and Loopbacks
                 if(SyncUtil.isSynchronizable(ifName)){
-                    BusinessObjectLight currentPhysicalInterface = null;
+                    BusinessObjectLight currentInterface = null;
                     BusinessObjectLight currentLogicalInterface = null;
                     //First we search the interfaces in the current structure
                     //We must add the s when we look for po ports because posx/x/x ports has no s in the if mib
-                    currentPhysicalInterface = searchInCurrentStructure(SyncUtil.normalizePortName(ifName), 1);
+                    currentInterface = searchInCurrentStructure(SyncUtil.normalizePortName(ifName), 1);
+                    if(currentInterface == null && !ifName.contains("."))//maybe it is a PortChannel a virtual port with no . in the name just a Po1
+                        currentInterface = searchInCurrentStructure(SyncUtil.normalizePortName(ifName), 2);
+                    
                     //Virtual Ports
                     if(ifName.contains(".") && !ifName.toLowerCase().contains(".si.")){
-                        currentPhysicalInterface = searchInCurrentStructure(SyncUtil.normalizePortName(ifName.split("\\.")[0]), 1);
+                        currentInterface = searchInCurrentStructure(SyncUtil.normalizePortName(ifName.split("\\.")[0]), 1);
                         //it is possible than the service instance was created with the whole name, not only the numeric part 
                         currentLogicalInterface = searchInCurrentStructure(ifName, 4);
-                        if(currentPhysicalInterface != null && currentLogicalInterface == null){
-                            List<BusinessObjectLight> virtualPorts = bem.getObjectChildren(currentPhysicalInterface.getClassName(), currentPhysicalInterface.getId(), -1);
+                        if(currentInterface != null && currentLogicalInterface == null){
+                            List<BusinessObjectLight> virtualPorts = bem.getObjectChildren(currentInterface.getClassName(), currentInterface.getId(), -1);
                             for (BusinessObjectLight virtualPort : virtualPorts) {
                                 if(virtualPort.getName().equals(SyncUtil.normalizePortName(ifName.split("\\.")[1]))){
                                     currentLogicalInterface = virtualPort;
@@ -1538,11 +1540,13 @@ public class EntPhysicalSynchronizer {
                         }
                     }//Service Instances
                     else if(ifName.contains(".") && ifName.toLowerCase().contains(".si.")){
-                        currentPhysicalInterface = searchInCurrentStructure(SyncUtil.normalizePortName(ifName.split("\\.")[0]), 1);
+                        currentInterface = searchInCurrentStructure(SyncUtil.normalizePortName(ifName.split("\\.")[0]), 1);
+                        if(currentInterface == null)//for port channels
+                            currentInterface = searchInCurrentStructure(SyncUtil.normalizePortName(ifName.split("\\.")[0]), 2);
                         //it is possible than the virtual port was created with the whole name, not only the numeric part 
                         currentLogicalInterface = searchInCurrentStructure(ifName, 4);
-                        if(currentPhysicalInterface != null && currentLogicalInterface == null){
-                            List<BusinessObjectLight> virtualPorts = bem.getObjectChildren(currentPhysicalInterface.getClassName(), currentPhysicalInterface.getId(), -1);
+                        if(currentInterface != null && currentLogicalInterface == null){
+                            List<BusinessObjectLight> virtualPorts = bem.getObjectChildren(currentInterface.getClassName(), currentInterface.getId(), -1);
                             for (BusinessObjectLight virtualPort : virtualPorts) {
                                 if(virtualPort.getName().equals(SyncUtil.normalizePortName(ifName.split("\\.")[2]))){
                                     currentLogicalInterface = virtualPort;
@@ -1557,21 +1561,23 @@ public class EntPhysicalSynchronizer {
                     else if(ifName.toLowerCase().contains("tu")) //NOI18N
                         currentLogicalInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), 3);
 
-                    if(currentPhysicalInterface == null && (ifName.toLowerCase().equals("gi0") || ifName.startsWith("Po") || ifName.toLowerCase().contains("se"))){
+                    if(currentInterface == null && (ifName.toLowerCase().equals("gi0") || ifName.startsWith("Po") || ifName.toLowerCase().contains("se"))){
                         if(ifName.toLowerCase().equals("gi0")){ 
                             createdId = bem.createObject(Constants.CLASS_ELECTRICALPORT, className, id, attributes, null);
                             results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  
                                         String.format("%s [%s]", attributes.get(Constants.PROPERTY_NAME), Constants.CLASS_ELECTRICALPORT),    
                                         "Inventory object created"));
                             checkServices(ifAlias, ifName, createdId, Constants.CLASS_ELECTRICALPORT);
+                            currentPorts.add(new BusinessObjectLight(Constants.CLASS_ELECTRICALPORT, createdId, attributes.get(Constants.PROPERTY_NAME)));
                         }  
-                        else if(ifName.startsWith("Po")){ //port channel
+                        else if(ifName.startsWith("Po") && ifName.length() < 4){ //port channel
                             attributes.put(Constants.PROPERTY_NAME, ifName.split("\\.")[0]);
                             createdId = bem.createObject("PortChannel", className, id, attributes, null);
                             results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  
                                     String.format("%s [%s]", attributes.get(Constants.PROPERTY_NAME), "PortChannel"),    
                                     "Inventory object created"));
                             checkServices(ifAlias, ifName.split("\\.")[0], createdId, "PortChannel");
+                            currentVirtualPorts.add(new BusinessObjectLight("PortChannel", createdId, attributes.get(Constants.PROPERTY_NAME)));
                         }
                         else if (ifName.toLowerCase().contains("se")){
                             createdId = bem.createObject(Constants.CLASS_SERIALPORT, className, id, attributes, null);
@@ -1579,6 +1585,7 @@ public class EntPhysicalSynchronizer {
                                         String.format("%s [%s]", attributes.get(Constants.PROPERTY_NAME), Constants.CLASS_SERIALPORT),    
                                         "Inventory object created"));
                             checkServices(ifAlias, ifName, createdId, Constants.CLASS_SERIALPORT);            
+                            currentPorts.add(new BusinessObjectLight(Constants.CLASS_SERIALPORT, createdId, attributes.get(Constants.PROPERTY_NAME)));
                         }
                     }//logical interfaces special children of the device
                     if(currentLogicalInterface == null && (ifName.toLowerCase().contains("tu") || (ifName.toLowerCase().contains("lo")))){
@@ -1600,28 +1607,30 @@ public class EntPhysicalSynchronizer {
                         }
                     }
                     //logical interfaces virtual ports and service instances with physical port as parent
-                    if(currentPhysicalInterface != null && currentLogicalInterface == null){
+                    if(currentInterface != null && currentLogicalInterface == null){
                         if(ifName.toLowerCase().contains(".si")){
                             attributes.put(Constants.PROPERTY_NAME, ifName.split("\\.")[2]);
-                            createdId = bem.createObject(Constants.CLASS_SERVICE_INSTANCE, currentPhysicalInterface.getClassName(), currentPhysicalInterface.getId(), attributes, null);
+                            createdId = bem.createObject(Constants.CLASS_SERVICE_INSTANCE, currentInterface.getClassName(), currentInterface.getId(), attributes, null);
                             results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  
-                                String.format("%s [%s], with parent: %s ", attributes.get(Constants.PROPERTY_NAME), Constants.CLASS_SERVICE_INSTANCE, currentPhysicalInterface),    
+                                String.format("%s [%s], with parent: %s ", attributes.get(Constants.PROPERTY_NAME), Constants.CLASS_SERVICE_INSTANCE, currentInterface),    
                                 "Inventory object created"));
                             checkServices(ifAlias, ifName, createdId, Constants.CLASS_SERVICE_INSTANCE);
+                            currentServiceInstances.add(new BusinessObject(Constants.CLASS_SERVICE_INSTANCE, createdId, attributes.get(Constants.PROPERTY_NAME)));
                         }else if(ifName.toLowerCase().contains(".")){
                             attributes.put(Constants.PROPERTY_NAME, ifName.split("\\.")[1]);
-                            createdId = bem.createObject(Constants.CLASS_VIRTUALPORT, currentPhysicalInterface.getClassName(), currentPhysicalInterface.getId(), attributes, null);
+                            createdId = bem.createObject(Constants.CLASS_VIRTUALPORT, currentInterface.getClassName(), currentInterface.getId(), attributes, null);
                                 results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,  
-                                    String.format("%s [%s], with parent: %s ", attributes.get(Constants.PROPERTY_NAME), Constants.CLASS_VIRTUALPORT, currentPhysicalInterface),    
+                                    String.format("%s [%s], with parent: %s ", attributes.get(Constants.PROPERTY_NAME), Constants.CLASS_VIRTUALPORT, currentInterface),    
                                     "Inventory object created"));
                             checkServices(ifAlias, ifName, createdId, Constants.CLASS_VIRTUALPORT);
+                            currentServiceInstances.add(new BusinessObject(Constants.CLASS_VIRTUALPORT, createdId, attributes.get(Constants.PROPERTY_NAME)));
                         }
                     }
                     //we Update attributes, for now only high speed
-                    if(currentPhysicalInterface != null || ((ifName.contains("\\.") && currentLogicalInterface != null && currentPhysicalInterface != null) || (currentPhysicalInterface == null && (ifName.toLowerCase().contains("tu") || ifName.toLowerCase().contains("lo"))))){ 
+                    if(currentInterface != null || ((ifName.contains("\\.") && currentLogicalInterface != null && currentInterface != null) || (currentInterface == null && (ifName.toLowerCase().contains("tu") || ifName.toLowerCase().contains("lo"))))){ 
                         BusinessObjectLight interfaceToUpdate;
-                        if(currentPhysicalInterface != null && !ifName.contains("."))
-                            interfaceToUpdate = currentPhysicalInterface;
+                        if(currentInterface != null && !ifName.contains("."))
+                            interfaceToUpdate = currentInterface;
                         else
                             interfaceToUpdate = currentLogicalInterface;
                         //we save the virtual ports and tunnels in order to  double check what should be deleted
@@ -1649,6 +1658,8 @@ public class EntPhysicalSynchronizer {
                                     String.format("ifAlias updated in interface: %s", interfaceToUpdate)));
                             }
                             bem.updateObject(interfaceToUpdate.getClassName(), interfaceToUpdate.getId(), attributes);
+                            if(!ifAlias.isEmpty())
+                                checkServices(ifAlias, ifName, interfaceToUpdate.getId(), interfaceToUpdate.getClassName());
                             //we update the name for taking only the numeric part
                             //for virtual ports
                             if(currentLogicalInterface != null && ifName.contains(".") && currentLogicalInterface.getName().contains(".")){
@@ -1695,15 +1706,17 @@ public class EntPhysicalSynchronizer {
             currentMplsTunnels.remove(foundVMplsTunnel);
 
         for (BusinessObjectLight currentVirtualPort : currentVirtualPorts) {
-            try {
-                bem.deleteObject(currentVirtualPort.getClassName(), currentVirtualPort.getId(), false);
-                results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
-                        String.format("Deleting interface %s", currentVirtualPort),
-                        "The interface was deleted because no math was found"));
-            } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | InvalidArgumentException ex) {
-                results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
-                    String.format("Deleting virtual interface %s", currentVirtualPort),
-                    ex.getLocalizedMessage()));
+            if(!currentVirtualPort.getClassName().equals(Constants.CLASS_PORTCHANNEL)){
+                try {
+                    bem.deleteObject(currentVirtualPort.getClassName(), currentVirtualPort.getId(), false);
+                    results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
+                            String.format("Deleting interface %s", currentVirtualPort),
+                            "The interface was deleted because no math was found"));
+                } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | InvalidArgumentException ex) {
+                    results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
+                        String.format("Deleting virtual interface %s", currentVirtualPort),
+                        ex.getLocalizedMessage()));
+                }
             }
         }
 
