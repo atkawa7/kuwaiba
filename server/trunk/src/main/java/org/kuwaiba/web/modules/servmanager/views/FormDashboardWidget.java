@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
@@ -37,6 +38,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteLogicalConnectionDetails;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.openide.util.Exceptions;
 
@@ -121,14 +123,16 @@ public class FormDashboardWidget extends AbstractDashboardWidget{
         try {
             serviceResources = wsBean.getServiceResources(service.getClassName(), service.getId(), ipAddress, sessionId);
             tables = new LinkedList<>();
+            FormStructure tempForm = null;
             if (!serviceResources.isEmpty()) {
                 for (RemoteObjectLight serviceResource : serviceResources) {
-                    FormStructure tempForm = new FormStructure();
+                     
                     List<Component> listTempODFsA = new ArrayList<>();
                     List<Component> listTempODFsB = new ArrayList<>();
                     boolean isSideAPeering = false;
                     boolean isSideBPeering = false;
                     if (wsBean.isSubclassOf(serviceResource.getClassName(), "GenericLogicalConnection", ipAddress, sessionId)) {
+                        tempForm = new FormStructure();
                         RemoteLogicalConnectionDetails logicalCircuitDetails = wsBean.getLogicalLinkDetails(
                                 serviceResource.getClassName(), serviceResource.getId(), ipAddress, sessionId);
                         RemoteObjectLight stm = null;
@@ -153,8 +157,21 @@ public class FormDashboardWidget extends AbstractDashboardWidget{
                                     tempForm.getLogicalConnctions().add(tableCreator.createProviderTable(hop2Name, providerId, legalOwner));
                                 if(tributaryLink.getAttribute("hop1Name") != null)
                                     tempForm.getLogicalConnctions().add(tableCreator.createProviderTableS(tributaryLink));
-                                RemoteObjectLight container = wsBean.getSpecialAttribute(tributaryLink.getClassName(), tributaryLink.getId(), "sdhDelivers", ipAddress, sessionId).get(0);
-                                stm = wsBean.getSpecialAttribute(container.getClassName(), container.getId(), "sdhTransports", ipAddress, sessionId).get(0);
+                                
+                                RemoteObjectSpecialRelationships specialAttributes = wsBean.getSpecialAttributes(tributaryLink.getClassName(), tributaryLink.getId(), ipAddress, sessionId);
+                                if(specialAttributes.getRelationships().contains("sdhDelivers")){
+                                    RemoteObjectLight container = wsBean.getSpecialAttribute(tributaryLink.getClassName(), tributaryLink.getId(), "sdhDelivers", ipAddress, sessionId).get(0);
+                                    specialAttributes = wsBean.getSpecialAttributes(container.getClassName(), container.getId(), ipAddress, sessionId);
+
+                                    if(specialAttributes.getRelationships().contains("sdhTransports"))
+                                        stm = wsBean.getSpecialAttribute(container.getClassName(), container.getId(), "sdhTransports", ipAddress, sessionId).get(0);
+                                    else
+                                        Notifications.showWarning(String.format("The resource: %s, is TributaryLink but has no relationship sdhTransport, could be malformed, can not be render", 
+                                            container));
+                                }
+                                else
+                                    Notifications.showWarning(String.format("The resource: %s, is TributaryLink but has no relationship sdhDelivers, could be malformed, can not be render", 
+                                        tributaryLink));
                             }
                         }
                         RemoteObjectLight aSideEquipmentLogical =  null;
@@ -269,24 +286,27 @@ public class FormDashboardWidget extends AbstractDashboardWidget{
                             }
                         }
                     }
-                    tempForm.setOdfsA(listTempODFsA);
-                    tempForm.setOdfsB(listTempODFsB);
-                    //This is only for peering, we must reorder an set the peering always in side B
-                    if(isSideAPeering && !isSideBPeering){
-                        
-                        Component tempComponent = tempForm.getLogicalPartB();
-                        tempForm.setLogicalPartB(tempForm.getLogicalPartA());
-                        tempForm.setLogicalPartA(tempComponent);
-                        //ODFs
-                        List<Component> tempODFs = tempForm.getOdfsB();
-                        tempForm.setOdfsB(tempForm.getOdfsA());
-                        tempForm.setOdfsA(tempODFs);
-                        List<Component> listTempComponent = tempForm.getPhysicalPartB();
-                        tempForm.setPhysicalPartB(tempForm.getPhysicalPartA());
-                        tempForm.setPhysicalPartA(listTempComponent);
-                    }
                     
-                    tables.addFirst(tempForm);
+                    if(tempForm != null){
+                        tempForm.setOdfsA(listTempODFsA);
+                        tempForm.setOdfsB(listTempODFsB);
+                        //This is only for peering, we must reorder an set the peering always in side B
+                        if(isSideAPeering && !isSideBPeering){
+
+                            Component tempComponent = tempForm.getLogicalPartB();
+                            tempForm.setLogicalPartB(tempForm.getLogicalPartA());
+                            tempForm.setLogicalPartA(tempComponent);
+                            //ODFs
+                            List<Component> tempODFs = tempForm.getOdfsB();
+                            tempForm.setOdfsB(tempForm.getOdfsA());
+                            tempForm.setOdfsA(tempODFs);
+                            List<Component> listTempComponent = tempForm.getPhysicalPartB();
+                            tempForm.setPhysicalPartB(tempForm.getPhysicalPartA());
+                            tempForm.setPhysicalPartA(listTempComponent);
+                        }
+
+                        tables.addFirst(tempForm);
+                    }
                 }//end for
             }
         } catch (ServerSideException ex) {
