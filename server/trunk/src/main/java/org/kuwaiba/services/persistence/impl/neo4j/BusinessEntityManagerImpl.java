@@ -3495,7 +3495,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      */
     private void deleteObject(Node instance, boolean unsafeDeletion) throws OperationNotPermittedException {
         if(!unsafeDeletion && !canDeleteObject(instance)) 
-            throw new OperationNotPermittedException(String.format("The object with %s (%s) can not be deleted since it has relationships", 
+            throw new OperationNotPermittedException(String.format("The object %s (%s) can not be deleted since it has relationships", 
                     instance.getProperty(Constants.PROPERTY_NAME), instance.getProperty(Constants.PROPERTY_UUID)));
         
         for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF, RelTypes.CHILD_OF_SPECIAL))
