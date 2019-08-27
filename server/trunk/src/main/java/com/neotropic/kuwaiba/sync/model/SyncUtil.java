@@ -62,15 +62,16 @@ public class SyncUtil {
      */
     public static boolean isSynchronizable(String ifName){
         //ignorar eo, cpp, span, dwdm
-        return ifName.toLowerCase().equals("gi0") || 
-                ifName.toLowerCase().substring(0, 2).equals("lo") ||
-                ifName.startsWith("Po") ||
-                (ifName.toLowerCase().contains("po") && ifName.contains("/")) || 
-                ifName.toLowerCase().substring(0, 2).equals("se") || 
-                ifName.toLowerCase().substring(0, 2).equals("tu") ||
-                ifName.toLowerCase().substring(0, 2).equals("vl") ||
-                ifName.toLowerCase().substring(0, 2).equals("br") ||
-                ifName.toLowerCase().substring(0, 2).equals("bd") ||
+        return ifName.matches("\\d+") ||
+               ifName.toLowerCase().equals("gi0") || 
+               ifName.toLowerCase().startsWith("lo") ||
+               ifName.startsWith("Po") ||
+               (ifName.toLowerCase().contains("po") && ifName.contains("/")) || 
+                ifName.toLowerCase().startsWith("se") || 
+                ifName.toLowerCase().startsWith("tu") ||
+                ifName.toLowerCase().startsWith("vl") ||
+                ifName.toLowerCase().startsWith("br") ||
+                ifName.toLowerCase().startsWith("bd") ||
                 ifName.toLowerCase().contains("vlan") ||
                 ifName.contains("/");
     }
