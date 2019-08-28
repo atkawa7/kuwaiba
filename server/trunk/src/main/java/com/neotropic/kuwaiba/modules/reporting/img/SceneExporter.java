@@ -61,7 +61,6 @@ public class SceneExporter {
     private static MetadataEntityManager mem;
     private static SceneExporter sceneExporter = null;
     
-
     private SceneExporter() {}
     
     public static SceneExporter getInstance(/*BusinessEntityManager bem, MetadataEntityManager mem*/) {
@@ -73,13 +72,11 @@ public class SceneExporter {
         return sceneExporter;
     }
     
-    public String buildEndToEndView(String ipAddress, RemoteSession remoteSession, WebserviceBean webserviceBean, String serviceClassName, String serviceId) {
-        RemoteObjectLight rol;
+    public String buildEndToEndView(RemoteSession remoteSession, WebserviceBean webserviceBean, String serviceClassName, String serviceId){
         List<String> classes = new ArrayList<>();
         List<String> ids = new ArrayList<>();
         try {
-            rol = webserviceBean.getObjectLight(serviceClassName, serviceId, remoteSession.getIpAddress(), remoteSession.getSessionId());
-            List<RemoteObjectLight> serviceResources = webserviceBean.getServiceResources(serviceClassName, serviceId, ipAddress, remoteSession.getSessionId());
+            List<RemoteObjectLight> serviceResources = webserviceBean.getServiceResources(serviceClassName, serviceId, remoteSession.getIpAddress(), remoteSession.getSessionId());
             
             for(RemoteObjectLight resource : serviceResources){
                 classes.add(resource.getClassName());
@@ -94,45 +91,36 @@ public class SceneExporter {
         List<RemoteViewObjectLight> serviceViews = null;
         try {
             serviceViews = webserviceBean.getObjectRelatedViews(serviceId, serviceClassName, -1, 10, remoteSession.getIpAddress(), remoteSession.getSessionId());
+            if (serviceViews != null) {
+                RemoteViewObject currentView = null;
+                for (RemoteViewObjectLight serviceView : serviceViews) {
+                    if (EndToEndViewScene.VIEW_CLASS.equals(serviceView.getViewClassName())) {
+                        currentView = webserviceBean.getObjectRelatedView(serviceId, serviceClassName, serviceView.getId(), remoteSession.getIpAddress(), remoteSession.getSessionId());
+                        if (currentView != null){
+                            RemoteViewObject validatedSavedE2EView = webserviceBean.validateSavedE2EView(classes, ids, currentView, remoteSession.getIpAddress(), remoteSession.getSessionId());
+                            if(validatedSavedE2EView != null)
+                                scene.render(validatedSavedE2EView.getStructure());
+                        }
+                        break;
+                    }
+                }
+                if(currentView == null)
+                    scene.render(webserviceBean.getE2EMap(classes, ids, true, true, true, true, true, remoteSession.getIpAddress(), remoteSession.getSessionId()).getStructure());
+            }   
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getMessage());
-        }
-        
-        if (serviceViews != null) {
-            RemoteViewObject currentView = null;
-            
-            for (RemoteViewObjectLight serviceView : serviceViews) {
-                if (EndToEndViewScene.VIEW_CLASS.equals(serviceView.getViewClassName())) {
-                    try {
-                        currentView = webserviceBean.getObjectRelatedView(serviceId, serviceClassName, serviceView.getId(), remoteSession.getIpAddress(), remoteSession.getSessionId());
-                    } catch (ServerSideException ex) {
-                        Notifications.showError(ex.getMessage());
-                        return null;
-                    }
-                    break;
-                }
-            }
-            if (currentView != null)
-                scene.render(currentView.getStructure());
-            else{
-                try {
-                    scene.render(webserviceBean.getE2EMap(classes, ids, true, true, true, true, true, remoteSession.getIpAddress(), remoteSession.getSessionId()).getStructure());
-                } catch (ServerSideException ex) {
-                    Exceptions.printStackTrace(ex);
-                }
-            }       
-            try {
-                org.netbeans.api.visual.export.SceneExporter.createImage(scene,
-                        new File(PATH + serviceClassName + "_" + serviceId +".png"),
-                        org.netbeans.api.visual.export.SceneExporter.ImageType.PNG,
-                        org.netbeans.api.visual.export.SceneExporter.ZoomType.ACTUAL_SIZE,
-                        false, false, 100,
-                        0,  //Not used
-                        0); //Not used
-                return serviceClassName + "_" + serviceId +".png";
-            } catch (Exception ex) {
-                Notifications.showError(ex.getMessage());
-            }
+        }  
+        try {
+            org.netbeans.api.visual.export.SceneExporter.createImage(scene,
+                    new File(PATH + serviceClassName + "_" + serviceId +".png"),
+                    org.netbeans.api.visual.export.SceneExporter.ImageType.PNG,
+                    org.netbeans.api.visual.export.SceneExporter.ZoomType.ACTUAL_SIZE,
+                    false, false, 100,
+                    0,  //Not used
+                    0); //Not used
+            return serviceClassName + "_" + serviceId +".png";
+        } catch (Exception ex) {
+            Notifications.showError(ex.getMessage());
         }
         return null;        
     }
