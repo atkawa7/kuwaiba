@@ -209,7 +209,6 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
             String oldPath = SceneExporter.PATH;
             SceneExporter.PATH = newPath;
             String pathEndToEndView = SceneExporter.getInstance().buildEndToEndView(
-                session.getIpAddress(),
                 session, 
                 wsBean, 
                 parameterValues.get(0), 
