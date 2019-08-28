@@ -145,7 +145,7 @@ public class EndToEndViewScene extends AbstractScene {
             ByteArrayInputStream bais = new ByteArrayInputStream(structure);
             XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
 
-//<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
+            //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
 //        try {
 //            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/end2end_web_in_render.xml");
 //            fos.write(structure);
@@ -215,8 +215,7 @@ public class EndToEndViewScene extends AbstractScene {
                                         break;
                                     }
                                 }
-                            }
-                            //lienzoComponent.updateEdgeWidget(edgeId);
+                            }//lienzoComponent.updateEdgeWidget(edgeId);
                         }
                     }
                 }
@@ -240,7 +239,6 @@ public class EndToEndViewScene extends AbstractScene {
         } catch (ServerSideException ex) {
             Exceptions.printStackTrace(ex);
         }
-
     }
 
     @Override
