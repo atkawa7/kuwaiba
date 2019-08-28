@@ -25,6 +25,7 @@ import java.awt.Point;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLInputFactory;
 import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -161,7 +162,7 @@ public class EndToEndViewScene extends GraphScene<RemoteObjectLight, RemoteObjec
     public void render(byte[] structure) throws IllegalArgumentException { 
 //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
 //        try {
-//            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_.xml");
+//            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/e2eviewExporter_.xml");
 //            fos.write(structure);
 //            fos.close();
 //        } catch(Exception e) {}
