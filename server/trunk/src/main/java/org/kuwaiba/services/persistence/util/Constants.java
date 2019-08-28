@@ -466,6 +466,10 @@ public class Constants {
     /**
      * Class GenericLogicalPort 
      */
+    public static final String CLASS_PORTCHANNEL = "PortChannel";
+    /**
+     * Class GenericLogicalPort 
+     */
     public static final String CLASS_SERIALPORT = "SerialPort";
     /**
      * Class GenericPhysicalPort 
