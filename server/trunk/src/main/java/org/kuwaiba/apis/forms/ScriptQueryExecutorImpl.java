@@ -44,7 +44,7 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
     private final WebserviceBean wsBean;
     private final RemoteSession session;
     private final RemoteProcessInstance processInstance;
-    private boolean debug = true;
+    private boolean debug = false;
         
     public ScriptQueryExecutorImpl(WebserviceBean wsBean, RemoteSession session, RemoteProcessInstance processInstance) {
         this.wsBean = wsBean;
@@ -89,17 +89,20 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
             if (paramValue0.equals("__userName__") && session != null) //NOI18N
                 return session.getUsername();
             
-            if (parameterValues.size() == 2) {
-                                                
+            if (parameterValues.size() == 2 || parameterValues.size() == 3) {
                 long activityId = Long.valueOf(paramValue0);
                 String sharedId = parameterValues.get(1);
-                                
+                long processInstanceId = processInstance.getId();
+                
+                if (parameterValues.size() == 3)
+                    processInstanceId = Long.valueOf(parameterValues.get(2));
+                                                
                 RemoteArtifact remoteArtifact = null;
                 
                 try {
                     
                     List<RemoteActivityDefinition> path = wsBean.getProcessInstanceActivitiesPath(
-                        processInstance.getId(), 
+                        processInstanceId, 
                         session.getIpAddress(), 
                         session.getSessionId());
 
@@ -108,7 +111,7 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                         if (activity.getId() == activityId) {
 
                             remoteArtifact = wsBean.getArtifactForActivity(
-                                processInstance.getId(), 
+                                processInstanceId, 
                                 activity.getId(), 
                                 session.getIpAddress(), 
                                 session.getSessionId());

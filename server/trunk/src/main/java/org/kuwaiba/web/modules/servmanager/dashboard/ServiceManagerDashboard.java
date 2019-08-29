@@ -26,6 +26,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidator;
 import org.kuwaiba.web.modules.navtree.dashboard.RelationshipsDashboardWidget;
 import org.kuwaiba.web.modules.reports.dashboard.ReportShortcutWidget;
 import org.kuwaiba.web.modules.servmanager.views.FormDashboardWidget;
@@ -37,10 +38,15 @@ import org.kuwaiba.web.modules.servmanager.views.FormDashboardWidget;
 public class ServiceManagerDashboard extends AbstractDashboard {
     
     public ServiceManagerDashboard(RemoteObjectLight customer, RemoteObjectLight service, WebserviceBean wsBean) {
-        
         super(service.toString(), new TheaterDashboardLayout(3, 3));
+        String prefix = "";
+        for (RemoteValidator validator : service.getValidators()) {
+            String prefixProperty = validator.getProperty("prefix");
+            if (prefixProperty != null)
+                prefix += prefixProperty + " ";
+        }
         //((TheaterDashboardLayout)getDashboardLayout()).setScreenWidget(new ZabbixGraphDashboardWidget(service, wsBean));
-        ((TheaterDashboardLayout)getDashboardLayout()).setScreenWidget(new SimpleLabelDashboardWidget(service.getName(), service.getClassName()));
+        ((TheaterDashboardLayout)getDashboardLayout()).setScreenWidget(new SimpleLabelDashboardWidget(String.format("%s%s", prefix, service.getName()), service.getClassName()));
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(0, 0, new ResourcesDashboardWidget(service, wsBean));
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(1, 0, new TopologyViewDashboardWidget(this, service, wsBean));
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(2, 0, new EndToEndViewDashboardWidget(this, service, wsBean));

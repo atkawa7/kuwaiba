@@ -138,7 +138,15 @@ public class ServiceManagerComponent extends AbstractTopComponent {
             txtServiceFilter.setSizeFull();
             
             tblServices = new Grid<>();
-            tblServices.addColumn(RemoteObjectLight::getName).setCaption("Name").setStyleGenerator((aServiceNode) -> {
+            tblServices.addColumn((remoteObjectLight) -> { 
+                String prefix = "";
+                for (RemoteValidator validator : remoteObjectLight.getValidators()) {
+                    String prefixProperty = validator.getProperty("prefix");
+                    if (prefixProperty != null)
+                        prefix += prefixProperty + " ";
+                }
+                return String.format("%s%s", prefix, remoteObjectLight.getName());
+            }).setCaption("Name").setStyleGenerator((aServiceNode) -> {
 
                 String definitiveColor = null;
                 
