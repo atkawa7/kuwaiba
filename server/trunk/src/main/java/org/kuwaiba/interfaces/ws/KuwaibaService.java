@@ -83,8 +83,6 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationPr
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidator;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidatorDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteMPLSConnectionDetails;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLinkObject;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemotePhysicalConnectionDetails;
 
 /**
  * Main web service
@@ -2512,7 +2510,7 @@ public class KuwaibaService {
             @WebParam(name="childrenClass")String childrenClass,
             @WebParam(name="maxResults")int maxResults,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
-        try{
+        try {
             List<RemoteObject> res = wsBean.getChildrenOfClass(parentOid,parentClass,childrenClass, maxResults, getIPAddress(), sessionId);
             return res;
         } catch(Exception e){
