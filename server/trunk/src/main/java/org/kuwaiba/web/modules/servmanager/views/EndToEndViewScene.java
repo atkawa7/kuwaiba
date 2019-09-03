@@ -25,6 +25,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Window;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -145,12 +146,12 @@ public class EndToEndViewScene extends AbstractScene {
             ByteArrayInputStream bais = new ByteArrayInputStream(structure);
             XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
 
-            //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
-//        try {
-//            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/end2end_web_in_render.xml");
-//            fos.write(structure);
-//            fos.close();
-//        } catch(Exception e) {}
+//<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
+        try {
+            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/end2end_web_in_render.xml");
+            fos.write(structure);
+            fos.close();
+        } catch(Exception e) {}
 //</editor-fold>
             
             while (reader.hasNext()) {
@@ -185,7 +186,7 @@ public class EndToEndViewScene extends AbstractScene {
                             RemoteObjectLight sideA = new RemoteObjectLight(aSideClassName, aSideid, "");
                             RemoteObjectLight sideB = new RemoteObjectLight(bSideClassName, bSideid, "");
                             
-                            RemoteObjectLight edge = null;
+                            RemoteObjectLight edge;
                             if(edgeId.startsWith("@"))
                                 edge = new RemoteObjectLight(edgeId, "", edgeClass);
                             else
@@ -196,26 +197,26 @@ public class EndToEndViewScene extends AbstractScene {
                             
                             SrvEdgeWidget aSavedEdge = findEdgeWidget(edge);
                             
+                            //controlpoints
+                            List<Point> localControlPoints = new ArrayList<>();
+                            while(true) {
+                                reader.nextTag();
+                                if (reader.getName().equals(qControlPoint)) {
+                                    if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                                        localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")) / 2, Integer.valueOf(reader.getAttributeValue(null,"y")) / 2));
+                                } else 
+                                    break;
+                            }
+                            
                             if(sideANodeWidget != null && sideBNodeWidget != null && aSavedEdge == null){
                                 attachEdgeWidget(edge, sideANodeWidget, sideBNodeWidget);
-                                
                                 edges.get(edge).setCaption(edge.getName());
+                                edges.get(edge).setControlPoints(localControlPoints);
                             }
 
                             else if (aSavedEdge != null) { //If it's null, it means that the node wasn't added by the default rendering method, so the node no longer exists and shouldn't be rendered
-                                List<Point> localControlPoints = new ArrayList<>();
-                                while(true) {
-                                    reader.nextTag();
-
-                                    if (reader.getName().equals(qControlPoint)) {
-                                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-                                            localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")) / 2, Integer.valueOf(reader.getAttributeValue(null,"y")) / 2));
-                                    } else {
-                                        aSavedEdge.setControlPoints(localControlPoints);
-                                        break;
-                                    }
-                                }
-                            }//lienzoComponent.updateEdgeWidget(edgeId);
+                                aSavedEdge.setControlPoints(localControlPoints);
+                            }
                         }
                     }
                 }
@@ -231,6 +232,7 @@ public class EndToEndViewScene extends AbstractScene {
             for (RemoteObjectLight edgeObjects : edges.keySet()) {
                 SrvEdgeWidget edge = edges.get(edgeObjects);
                 lienzoComponent.addEdgeWidget(edgeObjects, edge);
+                lienzoComponent.updateEdgeWidget(edgeObjects);
             }
             addComponent(lienzoComponent);
             
