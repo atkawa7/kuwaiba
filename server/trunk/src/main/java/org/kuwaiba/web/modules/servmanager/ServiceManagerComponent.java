@@ -139,13 +139,7 @@ public class ServiceManagerComponent extends AbstractTopComponent {
             
             tblServices = new Grid<>();
             tblServices.addColumn((remoteObjectLight) -> { 
-                String prefix = "";
-                for (RemoteValidator validator : remoteObjectLight.getValidators()) {
-                    String prefixProperty = validator.getProperty("prefix");
-                    if (prefixProperty != null)
-                        prefix += prefixProperty + " ";
-                }
-                return String.format("%s%s", prefix, remoteObjectLight.getName());
+                return remoteObjectLight.toString();
             }).setCaption("Name").setStyleGenerator((aServiceNode) -> {
 
                 String definitiveColor = null;
