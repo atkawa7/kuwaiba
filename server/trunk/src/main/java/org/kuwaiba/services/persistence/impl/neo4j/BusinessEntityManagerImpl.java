@@ -1661,6 +1661,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         break;
                 }
             }
+            tx.success();
             return res;
         }
     }
