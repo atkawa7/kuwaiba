@@ -1,7 +1,0 @@
-Country~t~root~t~name~c~root~t~name~c~United States~t~acronym~c~US
-Building~t~Country~t~name~c~United States~t~name~c~Empire State~t~owner~c~John Doe
-Router~t~Building~t~name~c~Empire State~t~serialNumber~c~123456
-Building~t~Country~t~name~c~United States~t~name~c~One World Trade Center~t~owner~c~George Aldrin
-Building~t~Country~t~name~c~United States~t~name~c~Sears Tower
-Building~t~Country~t~name~c~United States~t~name~c~Two Prudential Plaza~t~owner~c~George Aldrin
-Router~t~Building~t~name~c~Empire State~t~serialNumber~c~123456
