@@ -1,0 +1,49 @@
+<root>
+  <form>
+    <label value="Before install the material in a rack, configure the attribute rackUnits"/>
+    <horizontalLayout>
+      <label value="Select a row from the table below and click button Edit Install Material in a Rack"/>
+      <button caption="Install Material in a Rack" onclick="propertyChange.ma.inputParameters.getRackParameters.gridSharedShipmentTrack open.ma"/>
+    </horizontalLayout>
+
+    <grid id="gridSharedShipmentTrack" save="false" height="250px" width="1300px" onload="rows.getRowsInGridSaved.20.gridShipmentTrack.gridSharedShipmentTrack">
+        <column caption="Name"/>
+        <column caption="Vendor"/>
+        <column caption="Quantity"/>
+        <column caption="Purchase Code"/>
+        <column caption="Destination City"/>
+        <column caption="Destination Warehouse"/>
+        <column caption="Courier"/>
+        <column caption="Shipment Date"/>
+        <column caption="Arrival Date"/>
+        <column caption="State"/>
+    </grid>
+
+    <miniApplication mode="detached" id="ma" package="org.kuwaiba.web.procmanager" classname="MiniAppRackSelector"/>
+
+  </form>
+  <script src="scripts.xml">
+    <function type="function" name="getRackParameters" parameternames="srcGrid">
+        <![CDATA[
+        import org.kuwaiba.apis.persistence.PersistenceService;
+
+        Properties inputParameters = new Properties();
+
+        if (srcGrid != null && srcGrid.getSelectedRow() != -1L) {
+          if ("Spare".equals(srcGrid.getRow().get(9))) {
+            def bem = PersistenceService.getInstance().getBusinessEntityManager();
+
+            def purchaseCode = srcGrid.getRow().get(3);
+            def purchaseMaterials = bem.getObjectsWithFilterLight("ConfigurationItem", "purchaseCode", purchaseCode);
+
+            purchaseMaterials.each { purchaseMaterial ->
+              inputParameters.setProperty(String.valueOf(purchaseMaterial.getId()), purchaseMaterial.getClassName());
+            };
+          };
+        };
+
+        inputParameters;
+        ]]>
+    </function>
+  </script>
+</root>

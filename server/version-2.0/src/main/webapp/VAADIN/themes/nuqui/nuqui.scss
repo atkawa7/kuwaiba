@@ -1,0 +1,848 @@
+// If you edit this file you need to compile the theme. See README.md for details.
+
+// Global variable overrides. Must be declared before importing Valo.
+
+// Defines the plaintext font size, weight and family. Font size affects general component sizing.
+$v-font-size: 13px !default;
+//$v-font-weight: 300;
+// Defines the border used by all components.
+//$v-border: 1px solid (v-shade 0.7);
+//$v-border-radius: 4px;
+
+// Affects the color of some component elements, e.g Button, Panel title, etc
+//$v-background-color: hsl(210, 0%, 98%);
+// Affects the color of content areas, e.g  Panel and Window content, TextField input etc
+//$v-app-background-color: $v-background-color;
+
+// Affects the visual appearance of all components
+//$v-gradient: v-linear 8%;
+//$v-bevel-depth: 30%;
+//$v-shadow-opacity: 5%;
+
+// Defines colors for indicating status (focus, success, failure)
+//$v-focus-color: valo-focus-color(); // Calculates a suitable color automatically
+//$v-friendly-color: #2c9720;
+//$v-error-indicator-color: #ed473b;
+
+// For more information, see: https://vaadin.com/book/-/page/themes.valo.html
+// Example variants can be copy/pasted from https://vaadin.com/wiki/-/wiki/Main/Valo+Examples
+
+$v-focus-style: none;
+
+$foot-login-padding: 10px !default;
+
+$v-luminance-threshold: 180 !default;
+
+$editor-background-color: #3b3f42 !default;
+$valo-menu-background-color: $editor-background-color !default;
+
+$v-focus-color: rgb(96, 160, 234) !default;
+$v-error-indicator-color: #eb2977 !default;
+$v-friendly-color: rgb(54, 185, 85);
+
+//$v-font-size: 15px !default;
+$v-font-weight: 400 !default;
+$v-unit-size: 32px !default;
+
+$login-info-width: 300px !default;
+$login-info-opacity: 0.7 !default;
+$login-background-color: $editor-background-color !default;
+// Get more background images from unsplash.com (remember to optimize the filesize)
+$login-background-image: "img/archetype-login-bg.jpg" !default;
+
+$editor-shadow: 0 0 10px 10px rgba(0,0,0,.1) !default;
+$editor-embed-background-color: darken($editor-background-color, 5%) !default;
+$editor-raised-background-color: lighten($editor-background-color, 10%) !default;
+$editor-caption-font-color: valo-font-color($editor-background-color, 0.5) !default;
+
+$v-layout-margin-top: round($v-unit-size / 1.5) !default;
+$v-layout-margin-right: $v-layout-margin-top !default;
+$v-layout-margin-bottom: $v-layout-margin-top !default;
+$v-layout-margin-left: $v-layout-margin-top !default;
+$v-layout-spacing-vertical: round($v-unit-size / 1.8) !default;
+$v-layout-spacing-horizontal: round($v-unit-size / 1.8) !default;
+
+$v-field-background-color: #ccffe6;
+
+@import "../valo/valo.scss";
+
+@mixin nuqui {
+    @include valo;
+    
+    .v-window {
+        min-height: 50% !important;
+        min-width: 50% !important;
+    }
+    
+    .blueicon .v-icon {
+        color: #57afff;
+        font-size: 20px;
+    }
+
+    .v-button-link{
+        text-decoration: underline;
+        border: none !important;
+    }
+    
+    .v-button-link:after {
+	border: none !important;
+    }
+
+    .v-button-link:focus:after {
+	border: none !important;
+    }
+    
+    .v-button-link:hover:after {
+        background: transparent;
+        border: none !important;
+    }
+
+    .v-button-link:active {
+        opacity: 0.7;
+        filter: alpha(opacity=70) ;
+        border: none !important;
+    }
+
+    .v-button-link:active:after {
+        background: transparent;
+        border: none !important;
+    }
+
+    .v-button-link:hover {
+        color: #8dbbf0;
+        border: none !important;
+    }
+
+    .v-button-link.v-disabled {
+        opacity: 0.5;
+        filter: alpha(opacity=50) ;
+        border: none !important;
+    }
+
+    .h1 {
+        color: gold;
+        font-size: 1em;
+    }
+    
+    .v-tree-node-bold {
+        font-weight: bold;
+        color: #eb2977
+    }
+    
+    .v-table-cell-content-disable {
+        background-color: gainsboro;
+        color: graytext;
+        font-style: italic;
+    }
+    
+    .v-tree-node-caption-disabled {
+        background-color: gainsboro;
+        color: graytext;
+        font-style: italic;
+    }
+    
+    // make
+    .main-area {
+        position: relative;
+    }
+    
+    .work-area{
+        position: absolute;
+    }
+    
+    .right-area {
+      z-index:9999;
+      position: absolute;
+      right: 0;
+      height: 100%;
+      min-width: 30%;
+      background: #f0f0f0;
+      @include transition(all 300ms);
+      @include transform(translatex(100%));
+    }
+
+    //for back button
+    .v-button-borderless:after{
+      display: none;
+      width: 10%;
+    }
+    
+    .v-button-borderless-back{
+        font-size: 1.8em;
+        color: cornflowerblue;
+    }
+    
+    //Content
+    .widget-content{
+        padding: 10px;
+    }
+    
+    // Enables animation for opening rigth panel 
+    .visible-right {
+        @include transform(none);
+        @include box-shadow($editor-shadow);
+    }
+  
+    .left-area {
+      z-index:9999;
+      position: absolute;
+      left: 0;
+      height: 100%;
+      min-width: 30%;
+      background: #f0f0f0;
+      @include transition(all 300ms);
+      @include transform(translatex(-100%));
+    }
+    
+    // Enables animation for opening left panel 
+    .visible-left {
+      @include transform(none);
+      @include box-shadow($editor-shadow);
+    }
+  
+    .top-area {
+      top: 0;
+      background: chartreuse;
+      @include transition(all 300ms);
+      @include transform(translatey(-100%));
+    }
+  
+    // Enables animation for opening top panel 
+    .visible-top {
+      @include transform(none);
+      @include box-shadow($editor-shadow);
+    }
+  
+    .bottom-area {
+      bottom: 0;
+      background: #eb2977;
+      @include transition(all 300ms);
+      @include transform(translatey(100%));
+    }
+    // Enables animation for opening rigth panel 
+    .visible-bottom {
+      @include transform(none);
+      @include box-shadow($editor-shadow);
+    }
+    
+    .v-button-selected {
+        background: #999999;
+    }
+    
+    .v-Notification-gray {
+        background: #555555;
+        color: #EFEFEF;
+    }
+       
+    .v-Notification .v-Notification-caption {
+	color: white;
+	line-height: 1;
+    }   
+    
+    // PROCESS MANAGER STYLE DEFINITION
+    .v-layout {
+        padding: 0 0 0 0;      
+    }
+    
+    .processmanager {
+        .v-layout {
+            /*font-size: 24px;*/
+            padding: 0 0 0 0;
+        }       
+        
+        .v-button-activity {
+            border-radius: 0px;
+            /*font-size: 17px;*/
+            text-align: left;
+            /*font-weight: bold;*/
+            background: transparent;
+            box-shadow: 0px 0px 0px 0px;
+            
+            background-color: Transparent;
+            background-repeat:no-repeat;
+            border: none;
+            cursor:pointer;
+            overflow: hidden;
+            outline:none;
+        }
+        
+        .v-button-activity-current {
+            background: #d1e7cd;                        
+        }
+                        
+        .v-menubar { 
+            /*font-size: 21px;*/
+        }
+            .v-menubar-submenu { 
+                                
+            }
+                .v-menubar-menuitem { 
+                    border-radius: 0px;
+                }
+                
+        .v-label {
+            /*font-size: 24pt;*/
+            line-height: 24pt;
+            padding: 5px;
+        }
+        
+        .v-nativebutton {
+            background:none!important;
+            color:inherit;
+            border:none; 
+            padding:0!important;
+            font: inherit;   
+            text-decoration:underline;
+            cursor:pointer;
+        }
+    }
+    
+    .activitylist {
+        .v-layout {
+        }
+    }
+    
+    .formmanager {
+        .v-vertical {
+            font-size: 14px;            
+        }
+        
+        .v-label.empty {
+            border-radius: 0px;
+            border: 0px solid white;
+        }
+
+        .v-label {
+            font-size: 11pt;
+            line-height: 11pt;
+            padding: 5px 5px 5px 5px; 
+            padding-bottom: 15px;
+            margin: 5px 5px 5px 5px; 
+        }
+
+        .v-label.bold {
+            font-weight: bold;        
+        }
+
+        .v-label.title {
+            color: green;
+            font-size: 24pt;
+        }
+
+        .v-label.subtitle {
+            color: green;
+        }
+
+        .v-verticallayout, .v-horizontallayout, .v-gridlayout {
+            padding: 1px 1px 1px 1px;
+            margin: 1px 1px 1px 1px;
+        }
+
+        .v-button {
+            border: 2px solid lightgray;
+            font-size: 11pt;
+            line-height: 11pt;
+            padding: 5px 5px 5px 5px; 
+            padding-bottom: 15px;
+            margin: 5px 5px 5px 5px; 
+            height: 30px;
+        }
+
+        .v-textfield, .v-datefield, .v-filterselect { 
+            font-size: 11pt;
+            line-height: 11pt;
+
+            height: 40px;
+            width: 250px;
+            padding: 1px 1px 1px 1px;
+            padding-bottom: 10px;
+            background-color: $v-field-background-color;
+            margin: 1px 1px 1px 1px; 
+        }
+
+        .v-filterselect-input, .v-filterselect-button, .v-datefield-textfield, .v-datefield-button {
+            background-color: $v-field-background-color;        
+        }
+
+        .v-grid-cell {
+            background-color: $v-field-background-color;
+
+        }
+
+        .v-image {
+            padding-left: 30px;        
+            padding-bottom: 30px;
+            margin: 5px 5px 5px 5px; 
+        }
+    }
+        
+    /*Login window*/
+    .login {
+        .v-verticallayout-main {
+            background-image: url("/img/background_login.png");
+            background-size: cover;
+            background: #008080;
+        }
+        
+        .v-verticallayout-dark {
+            color: white;
+        }
+    }
+        
+    .login-form {
+        padding: $v-layout-margin;  
+        @include valo-animate-in-fade($duration: 1s);
+        
+        & .h1{
+            font-size: 2.4em;
+            color: white;
+            font-weight: 300;
+        }
+       
+    }//end login-form   
+    
+    //start-grid
+    .warehouse-grid{
+        height: 100%;
+    }
+    //end-grid
+    
+    /* Dashboards */
+    .dashboards {
+        /*The following style are mostly used for cover components for dashboard windows using a dark theme*/
+        .v-verticallayout-dashboard_cover_widget-darkblue {
+            //background: #375187;
+            background: #555555;
+            color: #EFEFEF;
+            position: relative;
+            min-height: 40px;
+            cursor: pointer;
+            padding-right: 10px;
+            vertical-align: middle;
+            text-align: right;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkblue:hover {
+            background: #EFEFEF;
+            color: #555555;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkgreen {
+            //background: #4D8459;
+            background: #555555;
+            color: #EFEFEF;
+            position: relative;
+            min-height: 40px;
+            cursor: pointer;
+            padding-right: 10px;
+            vertical-align: middle;
+            text-align: right;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkgreen:hover {
+            background: #EFEFEF;
+            color: #555555;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkred {
+            //background: #944C4B;
+            background: #555555;
+            color: #EFEFEF;
+            position: relative;
+            min-height: 40px;
+            cursor: pointer;
+            padding-right: 10px;
+            vertical-align: middle;
+            text-align: right;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkred:hover {
+            background: #EFEFEF;
+            color: #555555;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkorange {
+            //background: #DA9631;
+            background: #555555;
+            color: #EFEFEF;
+            position: relative;
+            min-height: 40px;
+            cursor: pointer;
+            padding-right: 10px;
+            vertical-align: middle;
+            text-align: right;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkorange:hover {
+            background: #EFEFEF;
+            color: #555555;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkpurple {
+            //background: #AD2D90;
+            background: #555555;
+            color: #EFEFEF;
+            position: relative;
+            min-height: 40px;
+            cursor: pointer;
+            padding-right: 10px;
+            vertical-align: middle;
+            text-align: right;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkpurple:hover {
+            background: #EFEFEF;
+            color: #555555;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkgrey {
+            //background: #808080;
+            background: #555555;
+            color: #EFEFEF;
+            position: relative;
+            min-height: 40px;
+            cursor: pointer;
+            padding-right: 10px;
+            vertical-align: middle;
+            text-align: right;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkgrey:hover {
+            background: #EFEFEF;
+            color: #555555;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkpink {
+            //background: #C74B98;
+            background: #555555;
+            color: #EFEFEF;
+            position: relative;
+            min-height: 40px;
+            cursor: pointer;
+            padding-right: 10px;
+            vertical-align: middle;
+            text-align: right;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkpink:hover {
+            background: #EFEFEF;
+            color: #555555;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkblue {
+            //background: #2491CB;
+            background: #555555;
+            color: #EFEFEF;
+            position: relative;
+            min-height: 40px;
+            cursor: pointer;
+            padding-right: 10px;
+            vertical-align: middle;
+            text-align: right;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkblue:hover {
+            background: #EFEFEF;
+            color: #555555;
+        }
+
+        .v-label-text-bottomright {
+/*            position: absolute;
+            bottom: 0;
+            right: 0;
+            padding-right: 10px;*/
+        }
+        
+        /*Used to confine an image within the limits of the "screen" part of tha TheaterLayout in a dashboard*/
+        .v-image-theater-layout-screen-image {
+            max-height: 150px;
+        }
+    }
+    
+    .navtree {
+        .v-tree8 {
+            background: white;
+        }
+    }
+    
+    /*IP Address Manager*/
+    .ipam {
+        .v-grid-cell.assigned {
+            color: darkorange;
+        }
+
+        .v-grid-cell.used {
+            color: darkblue;
+        }
+
+        .v-grid-cell.management {
+            color: purple;
+        }
+
+        .v-grid-cell.free {
+            color: green;
+        }
+    }
+            
+    .misc {
+        .v-menubar-misc-main {
+            background: #008080;
+            color: white;
+        }
+    }
+    
+    .v-menubar-popup .v-menubar-menuitem-selected {
+	background-color: #008080;
+	background-image: -webkit-linear-gradient(top, #008081 2%, #008070 98%);
+	background-image: linear-gradient(to bottom,#008081 2%, #008070 98%);
+	color: white;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
+    }
+    .v-window{
+        min-height: 100px !important;
+        min-width: 75px !important;
+    }
+    
+    .v-menubar > .v-menubar-menuitem-selected {
+	color: white;
+	border-radius: 0;
+	border: 1px solid #4b7eb8;
+	border-top-color: #5183b9;
+	border-bottom-color: #4272af;
+	background-color: #008080;
+	background-image: -webkit-linear-gradient(top, #008081 2%, #008070 98%);
+	background-image: linear-gradient(to bottom,#008081 2%, #008070 98%);
+	-webkit-box-shadow: inset 0 1px 0 #93bbed, inset 0 -1px 0 #008060;
+	box-shadow: inset 0 1px 0 #34A2A3, inset 0 -1px 0 #008060;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
+	border-top-width: 0;
+	border-left-width: 0;
+	border-bottom-width: 0;
+	z-index: 2;
+    }
+    //START of end to end view forms
+    //To include the padding, marging, border inside the div size  
+    *{ box-sizing: border-box; }
+
+    #report-forms-header{ text-align: left;}
+    #report-forms-title{ font-size: 1.8em; color: #548235; }
+    #report-forms-properties{ font-size: 1.4em; }
+    
+    #report-forms-content{
+        text-align: center;
+        width: 100%;
+        min-height: 550px;
+        overflow-y: auto;
+        padding-top: 20px;
+    }
+    
+    #report-forms-container:after{
+        content: url("/img/company_logo.png");
+        filter:alpha(opacity=10);
+        filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0.1);
+        opacity:.10;
+        z-index: 9999;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+
+        -webkit-pointer-events: none;
+        -moz-pointer-events: none;
+        -ms-pointer-events: none;
+        -o-pointer-events: none;
+        pointer-events: none;
+
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -o-user-select: no
+    }
+    
+    .report-data-container{
+        min-height: 400px;
+        border-left: solid 1px black;
+        border-right: solid 1px black;
+        min-width: 250px;
+    }
+    
+    .row{ 
+        border-bottom: 1px solid black; 
+        width: 100%;
+    }
+    
+    .empty-row{height: 3px; background: #d1d1d1;}
+    
+    .v-slot-empty-row{height: 3px;}
+
+    .cell{
+        text-align: left !important;
+        padding: 0 2px 0 2px;
+    }
+    
+    .cell-normal{
+        width: 50%;
+        min-width: 120px;
+    }
+    
+    .v-slot-cell-short{
+        min-width: 35px;
+    }
+    
+    .cell-large{
+        width: 80%;
+        min-width: 130px;
+    }
+        
+    //bottom of the tables in a form
+    .device-icon-container{
+        height: 140px;
+        width: 100%;
+        text-align: center;
+        border-left: 1px solid black;
+        border-right: 1px solid black; 
+        border-bottom: 1px solid black;
+        padding-bottom: 5px;
+    }
+       
+    .report-forms{
+        .device-title{
+            border-top-right-radius: 8px; 
+            border-top-left-radius: 8px; 
+            border-bottom-right-radius: 8px; 
+            border-bottom-left-radius: 8px;
+            color: #ffffff; 
+            top:-10px; 
+            position: relative;
+            z-index:6;
+            font-size: 16px;
+            text-align: center;
+            width: 100%;
+            padding: 0;
+            height: 50px;
+            line-height: 50px; 
+        }
+
+        .peering{ background: #00cc99; }
+        .router{ background: #66ff66; }
+        .switch{ background: #8080ff; }
+        .adm{ background: #33cc33; }
+        .odf{ background: #aae600; }
+        .provider{ background: #008000; }
+        .external_equipment{ background: #a6a6a6; }
+        .vc{ background: #ffcc00; }
+
+        .v-window-center{ text-align: center; }
+           
+        .cell-with-border-bottom{ border-bottom: solid 1px black;}
+        .cell-with-border-right{ border-right: solid 1px black;}
+        .cell-with-border-top{border-top: solid 1px black;}
+        .cell-with-border-left{border-left: solid 1px black;}
+        .cell-with-bold-text{font-weight: bolder;}
+       
+        .v-slot-foot {
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+        }
+
+        .button-in-cell{
+            height: auto !important;
+        }
+    }
+    
+    //END of end to end View forms
+    //Start Rack View
+    .selector {
+        .v-verticallayout-deviceeven {
+            background: seashell;
+        }
+        
+        .v-verticallayout-selected {
+            background: lightsteelblue;
+        }
+    }
+    
+    .rackview {
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+        
+        .v-verticallayout {
+            background: lightsteelblue;
+        }
+                
+        .v-verticallayout-rackunit {
+            background: silver;
+            border-style: solid;
+            border-width: thin;
+            border-color:#000000;
+            border-bottom: 0px;
+        }
+
+        .v-horizontallayout {
+        }
+
+        .v-image {
+            background: silver;
+            border-style: solid;
+            border-width: thin;
+            border-color:#000000;
+            border-bottom: 0px;
+        }
+
+        .v-label {
+            display: block;
+            vertical-align:middle;
+            text-align: center ! important;
+        }
+    }
+    //End Rack View
+    //Start Dynamic Component
+    .dynamiccomponent {
+      * {
+          margin: 0px;
+          padding: 0px;
+      }
+
+      .left {
+          background: whitesmoke;
+      }
+    }
+    //End Dynamic Component
+    .subformpopup  {
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+        
+        .v-verticallayout {
+            margin: auto;
+            padding: 5px;
+        }
+                
+        .v-datefield .v-filterselect, .v-label, .v-textfield, .v-button {
+            margin: 5px;
+            padding: 5px;
+        }
+    }
+    
+    .indicatortable {
+        .normal {
+            background: darkseagreen;            
+        }
+        .warning {
+            background: darkkhaki;
+        }
+        .critical {
+            background: darksalmon;
+        }
+    }  
+}
