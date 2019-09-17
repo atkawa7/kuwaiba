@@ -94,6 +94,8 @@ public class ZabbixGraphDashboardWidget extends AbstractDashboardWidget {
      */
     private Panel pnlZabbixGraphs;    
     
+    private HashMap<String, String> graphsMap;
+    
     public ZabbixGraphDashboardWidget(RemoteObjectLight service, WebserviceBean wsBean) {
         super(String.format("Zabbix Graphs for %s", service));
         addStyleName("dashboard");
