@@ -1,0 +1,2 @@
+This application creates, updates, fetches and deletes business objects on and from a Neo4J database using the driver available at github.com/neo4j/neo4j-java-driver.
+The driver is licensed APL v2
