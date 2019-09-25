@@ -131,6 +131,13 @@ public class ViewModule  implements GenericCommercialModule {
      */
     public ViewObject validateSavedE2EView(List<String> linkClasses, List<String> linkIds, ViewObject savedView){
         try{
+//<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
+//        try {
+//            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/end2end_validate_view.xml");
+//            fos.write(savedView.getStructure());
+//            fos.close();
+//        } catch(Exception e) {}
+//</editor-fold>
             //first we create the current view
             createE2EView(linkClasses, linkIds, true, true, true, true);
             this.savedView = savedView;
@@ -323,7 +330,7 @@ public class ViewModule  implements GenericCommercialModule {
                     nodes.add(new E2ENode(def.getDeviceA()));
                 if(def.getDeviceB() != null && !nodes.contains(new E2ENode(def.getDeviceB())))
                     nodes.add(new E2ENode(def.getDeviceB()));
-                if(def.getConnectionObject() != null)
+                if(def.getConnectionObject() != null && !edges.contains(new E2EEdge(def.getConnectionObject())))
                     edges.add(new E2EEdge(def.getConnectionObject()));
                 if(def.getConnectionObject() != null && def.getDeviceA() != null)
                     edgeSource.put(new E2EEdge(def.getConnectionObject()), new E2ENode(def.getDeviceA()));
@@ -361,26 +368,26 @@ public class ViewModule  implements GenericCommercialModule {
             
             QName qnameNodes = new QName("nodes");
             xmlew.add(xmlef.createStartElement(qnameNodes, null, null));
-            //int x = 15, y = 180, i = 2;
+            int x = 15, y = 180, i = 2;
             for(E2ENode node : nodes){
                 
                 QName qnameNode = new QName("node");
                 xmlew.add(xmlef.createStartElement(qnameNode, null, null));
                 
-                xmlew.add(xmlef.createAttribute(new QName("x"), (String)node.getProperties().get("x")));
+                xmlew.add(xmlef.createAttribute(new QName("x"), node.getProperties().get("x") != null ? (String)node.getProperties().get("x") : Integer.toString(x)));
 //                xmlew.add(xmlef.createAttribute(new QName("x"), node.getProperties().get("x") != null ?
 //                        (String)node.getProperties().get("x") : Integer.toString(x)));
                 //we do this with the y in order to set the node one up an one down in the end to end view
-                //y += (i % 2 != 0) ? 175 + i * 2 : (-145);
+                y += (i % 2 != 0) ? 175 + i * 2 : (-145);
                 
 //                xmlew.add(xmlef.createAttribute(new QName("y"), node.getProperties().get("y") != null ? 
 //                        (String)node.getProperties().get("y") : Integer.toString(y)));
-                xmlew.add(xmlef.createAttribute(new QName("y"), (String)node.getProperties().get("y")));
+                xmlew.add(xmlef.createAttribute(new QName("y"),  node.getProperties().get("y") != null ? (String)node.getProperties().get("y") : Integer.toString(y)));
                 
                 xmlew.add(xmlef.createAttribute(new QName("class"), node.getBussinesObject().getClassName()));
                 xmlew.add(xmlef.createCharacters(node.getBussinesObject().getId()));
                 xmlew.add(xmlef.createEndElement(qnameNode, null));
-                //x += 115; i++;
+                x += 115; i++;
             }
             xmlew.add(xmlef.createEndElement(qnameNodes, null));
             
@@ -424,7 +431,16 @@ public class ViewModule  implements GenericCommercialModule {
                     savedView != null ? savedView.getViewClassName() : "EndToEndView"); //TODO the ViewClassName should be managed
             
             updatedViewObject.setStructure(baos.toByteArray());
-            return updatedViewObject;
+//<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
+//        try {
+//            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/end2end_created_view_in_module.xml");
+//            fos.write(savedView.getStructure());
+//            fos.close();
+//        } catch(Exception e) {}
+//</editor-fold>
+        return updatedViewObject;
+            
+            
             
         } catch (XMLStreamException ex) {
             Exceptions.printStackTrace(ex);
