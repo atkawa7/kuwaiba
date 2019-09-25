@@ -116,6 +116,7 @@ import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.helpers.collection.Iterators;
 import org.openide.util.Exceptions;
+import scala.collection.convert.Wrappers;
 
 /**
  * Application Entity Manager reference implementation
@@ -1250,36 +1251,140 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             return templateElements;
         }
     }
-    
+          
     @Override
     public byte[] getDeviceLayoutStructure(String oid, String className) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        final String columnName = "name"; //NOI18N
+        final String columnId = "id"; //NOI18N
+        final String columnClassName = "className"; //NOI18N
+        final String columnModelId = "modelId"; //NOI18N
+        final String columnModelName = "modelName"; //NOI18N
+        final String columnModelClassName = "modelClassName"; //NOI18N
+        final String columnViewId = "viewId"; //NOI18N
+        final String columnViewClassName = "viewClassName"; //NOI18N
+        final String columnViewStructure = "viewStructure"; //NOI18N
+        final String columnParentId = "parentId"; //NOI18N
+        
+        HashMap<String, HashMap<String, Object>> devicesWithLayout = new HashMap();
+                
+        try (Transaction tx = graphDb.beginTx()) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("MATCH (deviceClass:classes)<-[:INSTANCE_OF]-(device:inventoryObjects)<-[:CHILD_OF*]-(deviceChild:inventoryObjects)").append(" ");
+            stringBuilder.append("WHERE deviceClass.name = {className} AND device._uuid = {id}").append(" ");
+            stringBuilder.append("WITH [deviceChild, device] AS deviceChild1").append(" ");
+            stringBuilder.append("UNWIND deviceChild1 AS deviceChild2").append(" ");
+            stringBuilder.append("MATCH (deviceChildClass:classes)<-[:INSTANCE_OF]-(deviceChild2:inventoryObjects)-[:RELATED_TO{name:'model'}]->(model:listTypeItems)-[:HAS_VIEW]->(layout:layouts), (deviceChild2)-[:CHILD_OF]->(deviceParent), (model)-[:INSTANCE_OF]->(modelClass:classes)").append(" ");
+            stringBuilder.append("RETURN DISTINCT deviceChild2.name AS name, deviceChild2._uuid AS id, deviceChildClass.name AS className, model._uuid as modelId, model.name as modelName, modelClass.name as modelClassName, id(layout) as viewId, layout.className as viewClassName, layout.structure as viewStructure, deviceParent._uuid as parentId;");
+
+            String cypherQuery = stringBuilder.toString();
+
+            HashMap<String, Object> queryParameters = new HashMap<>();
+            queryParameters.put("id", oid); //NOI18N
+            queryParameters.put("className", className); //NOI18N
+
+            Result result = graphDb.execute(cypherQuery, queryParameters);
+            
+            while (result.hasNext()) {
+                Wrappers.MapWrapper next = (Wrappers.MapWrapper) result.next();
+                
+                HashMap<String, Object> properties = new HashMap();
+                properties.put(columnName, next.get(columnName));
+                properties.put(columnId, next.get(columnId));
+                properties.put(columnClassName, next.get(columnClassName));
+                properties.put(columnModelId, next.get(columnModelId));
+                properties.put(columnModelName, next.get(columnModelName));
+                properties.put(columnModelClassName, next.get(columnModelClassName));
+                properties.put(columnViewId, next.get(columnViewId));
+                properties.put(columnViewClassName, next.get(columnViewClassName));
+                properties.put(columnViewStructure, next.get(columnViewStructure));
+                properties.put(columnParentId, next.get(columnParentId));                
+                
+                devicesWithLayout.put((String) next.get(columnId), properties);
+            }
+            tx.success();
+        }
+        HashMap<String, HashMap<String, Object>> devices = new HashMap();
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            StringBuilder stringBuilder = new StringBuilder();        
+            stringBuilder.append("MATCH (deviceClass:classes)<-[:INSTANCE_OF]-(device:inventoryObjects)<-[:CHILD_OF*]-(deviceChild:inventoryObjects)").append(" ");
+            stringBuilder.append("WHERE deviceClass.name = {className} AND device._uuid = {id}").append(" ");
+            stringBuilder.append("WITH deviceChild AS deviceChild1").append(" ");
+            stringBuilder.append("MATCH (deviceChild1)-[:INSTANCE_OF]->(deviceChildClass), (deviceChild1)-[:CHILD_OF]->(deviceChildParent)").append(" ");
+            stringBuilder.append("RETURN deviceChild1.name AS name, deviceChild1._uuid AS id, deviceChildClass.name AS className, deviceChildParent._uuid AS parentId;");
+            
+            String cypherQuery = stringBuilder.toString();
+            
+            HashMap<String, Object> queryParameters = new HashMap<>();
+            queryParameters.put("id", oid); //NOI18N
+            queryParameters.put("className", className); //NOI18N
+
+            Result result = graphDb.execute(cypherQuery, queryParameters);
+            
+            while(result.hasNext()) {
+                Wrappers.MapWrapper next = (Wrappers.MapWrapper) result.next();
+                                
+                HashMap<String, Object> properties = new HashMap();
+                properties.put(columnName, next.get(columnName));
+                properties.put(columnId, next.get(columnId));
+                properties.put(columnClassName, next.get(columnClassName));
+                properties.put(columnParentId, next.get(columnParentId));
+                
+                devices.put((String) next.get(columnId), properties);
+            }
+            tx.success();
+        }
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
             XMLEventWriter xmlew = xmlof.createXMLEventWriter(baos);
             XMLEventFactory xmlef = XMLEventFactory.newInstance();
             
-            QName tagStructure = new QName("deviceLayoutStructure");
-            xmlew.add(xmlef.createStartElement(tagStructure, null, null));
+            QName tagDeviceLayoutStructure = new QName("deviceLayoutStructure"); //NOI18N
+            QName tagDevice = new QName("device"); //NOI18N
+            QName tagModel = new QName("model"); //NOI18N
+            QName tagView = new QName("view"); //NOI18N
+            QName tagStructure = new QName("structure"); //NOI18N
+            QName attrId = new QName("id"); //NOI18N
+            QName attrName = new QName("name"); //NOI18N
+            QName attrClassName = new QName("className"); //NOI18N
+            QName attrParentId = new QName("parentId"); //NOI18N
             
-            QName tagDevice = new QName("device"); // NOI18N
-            xmlew.add(xmlef.createStartElement(tagDevice, null, null));
-            xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), oid));
-            xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASS_NAME), className));
-            addDeviceModelAsXML(oid, xmlew, xmlef);
-            xmlew.add(xmlef.createEndElement(tagDevice, null));
-            
-            addDeviceNodeChildrenAsXml(oid, className, xmlew, xmlef);
-            
-            xmlew.add(xmlef.createEndElement(tagStructure, null));          
-            
+            xmlew.add(xmlef.createStartElement(tagDeviceLayoutStructure, null, null));
+            for (String deviceId : devices.keySet()) {
+                xmlew.add(xmlef.createStartElement(tagDevice, null, null));
+                xmlew.add(xmlef.createAttribute(attrId, String.valueOf(devices.get(deviceId).get("id")))); //NOI18N
+                xmlew.add(xmlef.createAttribute(attrName, String.valueOf(devices.get(deviceId).get("name")))); //NOI18N
+                xmlew.add(xmlef.createAttribute(attrClassName, String.valueOf(devices.get(deviceId).get("className")))); //NOI18N
+                if (!oid.equals(deviceId))
+                    xmlew.add(xmlef.createAttribute(attrParentId, String.valueOf(devices.get(deviceId).get("parentId")))); //NOI18N
+                if (devicesWithLayout.containsKey(deviceId)) {
+                    xmlew.add(xmlef.createStartElement(tagModel, null, null));
+                    xmlew.add(xmlef.createAttribute(attrId, String.valueOf(devicesWithLayout.get(deviceId).get("modelId")))); //NOI18N
+                    xmlew.add(xmlef.createAttribute(attrClassName, String.valueOf(devicesWithLayout.get(deviceId).get("modelClassName")))); //NOI18N
+                    xmlew.add(xmlef.createAttribute(attrName, String.valueOf(devicesWithLayout.get(deviceId).get("modelName")))); //NOI18N
+                    
+                    xmlew.add(xmlef.createStartElement(tagView, null, null));
+                    xmlew.add(xmlef.createAttribute(attrId, String.valueOf(devicesWithLayout.get(deviceId).get("viewId")))); //NOI18N
+                    xmlew.add(xmlef.createAttribute(attrClassName, String.valueOf(devicesWithLayout.get(deviceId).get("viewClassName")))); //NOI18N
+                                        
+                    xmlew.add(xmlef.createStartElement(tagStructure, null, null));
+                    xmlew.add(xmlef.createCharacters(DatatypeConverter.printBase64Binary((byte[]) devicesWithLayout.get(deviceId).get("viewStructure")))); //NOI18N
+                    
+                    xmlew.add(xmlef.createEndElement(tagStructure, null));
+                    xmlew.add(xmlef.createEndElement(tagView, null));
+                    xmlew.add(xmlef.createEndElement(tagModel, null));
+                }
+                xmlew.add(xmlef.createEndElement(tagDevice, null));
+            }
+            xmlew.add(xmlef.createEndElement(tagDeviceLayoutStructure, null));
             xmlew.close();
             
             return baos.toByteArray();
         } catch (XMLStreamException ex) {
-            Logger.getLogger(ApplicationEntityManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
-            return null;            
-        }
+            ex.printStackTrace();
+            return null;
+        }                
     }
             
     @Override
@@ -4940,87 +5045,5 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             rel.delete();
 
         instance.delete();
-    }
-    
-    private void addDeviceNodeChildrenAsXml(String id, String className, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException, ApplicationObjectNotFoundException, InvalidArgumentException {
-        try (Transaction tx = graphDb.beginTx()) {
-            
-            String columnName = "childNode"; //NOI18N
-
-            String cypherQuery = String.format(
-                "MATCH (classNode)<-[:%s]-(objectNode)<-[:%s]-(objChildNode) "
-              + "WHERE objectNode._uuid = {id} AND classNode.name = {className}"
-              + "RETURN objChildNode AS %s"
-              , RelTypes.INSTANCE_OF, RelTypes.CHILD_OF, columnName);
-
-            HashMap<String, Object> queryParameters = new HashMap<>();
-            queryParameters.put("id", id); //NOI18N
-            queryParameters.put("className", className); //NOI18N
-            
-            Result result = graphDb.execute(cypherQuery, queryParameters);
-            Iterator<Node> column = result.columnAs(columnName);
-
-            for (Node deviceNode : Iterators.asIterable(column))
-                addDeviceNodeAsXML(deviceNode, id, xmlew, xmlef);
-        }
-    }
-    
-    private void addDeviceNodeAsXML(Node deviceNode, String parentId, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException, ApplicationObjectNotFoundException, InvalidArgumentException {
-        QName tagDevice = new QName("device"); // NOI18N
-        
-        String deviceId = (String) deviceNode.getProperty(Constants.PROPERTY_UUID);
-        String className = Util.getClassName(deviceNode);
-
-        xmlew.add(xmlef.createStartElement(tagDevice, null, null));
-        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), deviceId));
-        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_NAME), deviceNode.getProperty(Constants.PROPERTY_NAME).toString()));
-        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASS_NAME), className));
-        xmlew.add(xmlef.createAttribute(new QName("parentId"), parentId)); //NOI18N     
-        
-        addDeviceModelAsXML(deviceId, xmlew, xmlef);
-        
-        xmlew.add(xmlef.createEndElement(tagDevice, null));
-        
-        addDeviceNodeChildrenAsXml(deviceId, className, xmlew, xmlef);
-    }
-    
-    private void addDeviceModelAsXML(String id, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException, ApplicationObjectNotFoundException, InvalidArgumentException {
-        try (Transaction tx = graphDb.beginTx()) {
-            Node objectNode = graphDb.findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, id);
-            
-            Node modelNode = null;
-            
-            for (Relationship aListTypeAttributeRelationship : objectNode.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO)) {
-                if (aListTypeAttributeRelationship.getProperty(Constants.PROPERTY_NAME).equals("model")) {
-                    modelNode = aListTypeAttributeRelationship.getEndNode();
-                    break;
-                }
-            }
-            
-            if (modelNode != null && modelNode.hasRelationship(RelTypes.HAS_VIEW, Direction.OUTGOING)) {
-                Node layoutNode = modelNode.getSingleRelationship(RelTypes.HAS_VIEW, Direction.OUTGOING).getEndNode();
-                QName tagModel = new QName("model");
-
-                xmlew.add(xmlef.createStartElement(tagModel, null, null));
-                xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), (String)modelNode.getProperty(Constants.PROPERTY_UUID)));
-                xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASS_NAME), 
-                        (String)modelNode.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME)));
-                xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_NAME), (String)modelNode.getProperty(Constants.PROPERTY_NAME)));
-
-                QName tagView = new QName("view");
-
-                xmlew.add(xmlef.createStartElement(tagView, null, null));
-                xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), Long.toString(layoutNode.getId())));
-                xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASS_NAME), (String)layoutNode.getProperty(Constants.PROPERTY_CLASS_NAME)));
-
-                QName tagStructure = new QName("structure");
-                xmlew.add(xmlef.createStartElement(tagStructure, null, null));
-                if (layoutNode.hasProperty(Constants.PROPERTY_STRUCTURE))
-                    xmlew.add(xmlef.createCharacters(DatatypeConverter.printBase64Binary((byte[])layoutNode.getProperty(Constants.PROPERTY_STRUCTURE))));
-                xmlew.add(xmlef.createEndElement(tagStructure, null));
-                xmlew.add(xmlef.createEndElement(tagView, null));  
-                xmlew.add(xmlef.createEndElement(tagModel, null));  
-            }
-        }
     }
 }

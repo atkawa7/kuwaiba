@@ -390,9 +390,44 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException If any template does not have uuid
      */
     public List<BusinessObjectLight> getDeviceLayouts() throws InvalidArgumentException;
-    
+        
     /**
-     * Gets the device layout structure as an XML file
+     * Gets the device layout structure.
+     * <pre>
+     * {@code
+     *  <deviceLayoutStructure>
+     *      <device id="" className="" name=""/>
+     *      ...
+     *      .
+     *      .
+     *      <device id="" className="" name="" parentId="">
+     *          <model id="" className="" name="">
+     *              <view id="" className="">
+     *                  <structure>
+     *                      Base64                      
+     *                  </structure>
+     *              </view>
+     *          </model>
+     *      </device>
+     *      ...
+     *      .
+     *      .
+     *      <device id="" className="" name="" parentId=""/>
+     *      ...
+     *      .
+     *      .
+     *      <device id="" className="" name="" parentId="">
+     *          <model id="" className="" name="">
+     *              <view id="" className="">
+     *                  <structure>
+     *                      Base64                      
+     *                  </structure>
+     *              </view>
+     *          </model>
+     *      </device>
+     *  </deviceLayoutStructure>
+     * }
+     * </pre>
      * @param oid object id
      * @param className object class
      * @return The structure of the device layout

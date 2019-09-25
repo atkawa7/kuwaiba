@@ -127,8 +127,8 @@ public class IndexUI extends UI {
             cmModule.attachToMenu(mnuMain);
             
             MenuBar.MenuItem optionsMenuItem = this.mnuMain.addItem("Options", null);
-            optionsMenuItem.addItem("Update Rack Views", 
-                new RackViewUpdater(wsBean, (RemoteSession) getSession().getAttribute("session")));
+//            optionsMenuItem.addItem("Update Rack Views", 
+//                new RackViewUpdater(wsBean, (RemoteSession) getSession().getAttribute("session")));
             optionsMenuItem.addItem("Reload Process Definitions", 
                 new ProcessDefinitionReloader(wsBean, (RemoteSession) getSession().getAttribute("session")));
 

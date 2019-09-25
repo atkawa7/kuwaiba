@@ -58,27 +58,27 @@ public class MiniAppRackView extends AbstractMiniApplication<Component, Componen
             
             if (id != null && !id.equals("-1") && className != null) {
                 
-                String oldPath = SceneExporter.PATH;                    
-                String newPath = (String) new InitialContext().lookup("java:comp/env/attachmentsPath"); //NOI18N
-                SceneExporter.PATH = newPath;
-                File file = new File(SceneExporter.PATH + "/tmpRackView_" + id + ".png");
-                SceneExporter.PATH = oldPath;
-                if (file.exists()) {
-                    FileResource resource = new FileResource(file);                    
-                    Image image = new Image();
-                    image.setSource(resource);
-                    image.setWidth("100%");
-                    image.setHeightUndefined();
-                    panel.setSizeFull();
-                    panel.setContent(image);
-                    return panel;
-                }
+//                String oldPath = SceneExporter.PATH;                    
+//                String newPath = (String) new InitialContext().lookup("java:comp/env/attachmentsPath"); //NOI18N
+//                SceneExporter.PATH = newPath;
+//                File file = new File(SceneExporter.PATH + "/tmpRackView_" + id + ".png");
+//                SceneExporter.PATH = oldPath;
+//                if (file.exists()) {
+//                    FileResource resource = new FileResource(file);                    
+//                    Image image = new Image();
+//                    image.setSource(resource);
+//                    image.setWidth("100%");
+//                    image.setHeightUndefined();
+//                    panel.setSizeFull();
+//                    panel.setContent(image);
+//                    return panel;
+//                }
                 SceneExporter sceneExporter = SceneExporter.getInstance();
                 
-                oldPath = SceneExporter.PATH;
+                String oldPath = SceneExporter.PATH;
                 
                 String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath"));
-                newPath = processEnginePath + "/temp/"; //NOI18N
+                String newPath = processEnginePath + "/temp/"; //NOI18N
 
                 SceneExporter.PATH = newPath;
 
