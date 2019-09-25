@@ -415,7 +415,7 @@ public class IPSynchronizer {
      */
     private BusinessObjectLight searchInCurrentStructure(String ifName){
         for(BusinessObjectLight currentPort: currentPorts){
-            if(currentPort.getName().toLowerCase().equals(SyncUtil.wrapPortName(ifName.toLowerCase())))
+            if(currentPort.getName().toLowerCase().equals(SyncUtil.normalizePortName(ifName)))
                 return currentPort;
         }
         
@@ -426,7 +426,7 @@ public class IPSynchronizer {
             else if (ifName.toLowerCase().contains(".") && ifName.split("\\.").length == 2)        
                 portName = ifName.split("\\.")[1];
             else
-                portName = SyncUtil.wrapPortName(ifName.toLowerCase());
+                portName = SyncUtil.normalizePortName(ifName);
             
             if(currentVirtualPort.getName().toLowerCase().equals(portName))
                 return currentVirtualPort;

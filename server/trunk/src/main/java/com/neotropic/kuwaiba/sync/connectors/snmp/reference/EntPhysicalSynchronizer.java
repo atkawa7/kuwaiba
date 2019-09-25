@@ -390,13 +390,13 @@ public class EntPhysicalSynchronizer {
             if (!descr.contains("Disk")) //NOI18N
                 return "Slot";//NOI18N
             
-        } else if (classId == 6 && name.toLowerCase().contains("power") && !name.toLowerCase().contains("module") || classId == 6 && descr.toLowerCase().contains("power")) 
+        } else if (classId == 6 && name.toLowerCase().contains("power") && !name.toLowerCase().contains("module") || classId == 6 && descr.toLowerCase().contains("power") || classId == 6 && descr.toLowerCase().contains("psu")) 
             return "PowerPort";//NOI18N
         else if (classId == 6 && name.contains("Module")) //NOI18N
             return "HybridBoard"; //NOI18N
         else if (classId == 9) { //module
             //In Routers ASR9001 the Transceivers, some times have an empty desc
-            if ((name.split("/").length > 3 || name.toLowerCase().contains("transceiver") || descr.toLowerCase().contains("transceiver") || (descr.toLowerCase().contains("sfp") 
+            if ((name.split("/").length > 3 || name.toLowerCase().contains("transceiver") || descr.toLowerCase().contains("transceiver") || ((descr.toLowerCase().contains("sfp") && !name.toLowerCase().contains("card"))
                     || descr.toLowerCase().contains("xfp") || descr.toLowerCase().contains("cpak") || descr.toLowerCase().equals("ge t"))) && !name.toLowerCase().contains("spa") && !descr.toLowerCase().contains("spa"))
                 return "Transceiver"; //NOI18N
 
@@ -530,7 +530,7 @@ public class EntPhysicalSynchronizer {
                         objectName, entityData.get("entPhysicalDescr").get(i)); //NOI18N
                 //We standarized the port names
                 if(!className.equals(mappedClass) && SyncUtil.isSynchronizable(objectName) && mappedClass.toLowerCase().contains("port") && !objectName.contains("Power") && !mappedClass.contains("Power"))
-                    objectName = SyncUtil.wrapPortName(objectName);
+                    objectName = SyncUtil.normalizePortName(objectName);
                                 
                 if(mappedClass == null) //it was impossible to parse the SNMP class into kuwaiba's class
                     results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR,
@@ -571,7 +571,7 @@ public class EntPhysicalSynchronizer {
 
                     //End of a branch
                     if (((mapOfFile.get(childId) == null) || mappedClass.contains("Port")) && !branch.isEmpty()) {
-                        //The is first time is tryng to sync from SNMP
+                        //The is first time is trying to sync from SNMP
                         if (!isBranchAlreadyCreated(branch)) {
                             //Loaded from snmp first time
                            createBranch(branch);
@@ -599,6 +599,22 @@ public class EntPhysicalSynchronizer {
     private boolean isBranchAlreadyCreated(List<BusinessObject> newBranchToEvalueate) throws InvalidArgumentException, 
             MetadataObjectNotFoundException, BusinessObjectNotFoundException 
     {
+        //This is a temporal fix for switches
+//        if(className.contains("Switch") && newBranchToEvalueate.size() == 1 && 
+//                newBranchToEvalueate.get(0).getClassName().equals("Slot") &&  
+//                newBranchToEvalueate.get(0).getName().isEmpty())
+//            return true;
+//        
+//        boolean isSlot = true;
+//        for (int w = newBranchToEvalueate.size(); w < 0; w--) {
+//            if(!newBranchToEvalueate.get(w).getClassName().equals("Slot") && !newBranchToEvalueate.get(w).getName().isEmpty())
+//                isSlot = false;
+//        }
+//        
+//        if (!isSlot) {
+//            return true;
+//        }
+        
         List<List<BusinessObjectLight>> oldBranchesWithMatches = searchInOldStructure(newBranchToEvalueate);
         if(oldBranchesWithMatches == null)//we found the branch in the current structure, nothing else to do
             return true;
@@ -1028,7 +1044,7 @@ public class EntPhysicalSynchronizer {
         try {
             bem.updateObject(deviceClassName, deviceId, newAttributes);
             
-            results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR,
+            results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,
                     String.format("This %s attributes were updated in the chassis", newAttributes),
                     "The attributes were updated"));
         
@@ -1055,7 +1071,7 @@ public class EntPhysicalSynchronizer {
         String objectName = entityData.get("entPhysicalName").get(index);//NOI18N
         //We standarized the port names
         if(!className.equals(mappedClass) && SyncUtil.isSynchronizable(objectName) && mappedClass.toLowerCase().contains("port") && !objectName.contains("Power") && !mappedClass.contains("Power"))
-            objectName = SyncUtil.wrapPortName(objectName);
+            objectName = SyncUtil.normalizePortName(objectName);
         
         attributes.put("name", objectName);//NOI18N
         String description = entityData.get("entPhysicalDescr").get(index).trim();
@@ -1104,7 +1120,6 @@ public class EntPhysicalSynchronizer {
                                             .add("attributeName", attributeName).build().toString()));
     }
     
-
     //Things to be deleted
     public void removeObjectFromDelete(BusinessObjectLight obj) {
         for (long branchId : currentObjectStructure.keySet()) 
@@ -1556,10 +1571,10 @@ public class EntPhysicalSynchronizer {
                         }
                     }//Loopback
                     else if(ifName.toLowerCase().contains("lo")) //NOI18N
-                        currentLogicalInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), 2);
+                        currentLogicalInterface = searchInCurrentStructure(SyncUtil.normalizePortName(ifName), 2);
                     //MPLS Tunnel
                     else if(ifName.toLowerCase().contains("tu")) //NOI18N
-                        currentLogicalInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), 3);
+                        currentLogicalInterface = searchInCurrentStructure(SyncUtil.normalizePortName(ifName), 3);
 
                     if(currentInterface == null && (ifName.toLowerCase().equals("gi0") || ifName.startsWith("Po") || ifName.toLowerCase().contains("se"))){
                         if(ifName.toLowerCase().equals("gi0")){ 

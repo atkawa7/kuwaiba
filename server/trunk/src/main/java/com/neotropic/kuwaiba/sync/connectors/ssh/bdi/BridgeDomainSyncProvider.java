@@ -358,7 +358,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                                         relatedOject.getClassName(), "GenericCommunicationsPort", -1);
                             
                             BusinessObjectLight matchingPhysicalInterface = null;
-                            String standardName = SyncUtil.wrapPortName(interfaceNameTokens[0]);
+                            String standardName = SyncUtil.normalizePortName(interfaceNameTokens[0]);
                             for (BusinessObjectLight physicalInterface : physicalInterfaces) {
                                 if (physicalInterface.getName().equals(standardName)) { //Checks for the extended and the condensed interface name formats (GigabitEthernetXXX vs GiXXXX)
                                     matchingPhysicalInterface = physicalInterface;
@@ -427,7 +427,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                                         relatedOject.getClassName(), "GenericCommunicationsPort", -1);
                             
                             BusinessObjectLight matchingPhysicalInterface = null;
-                            String standardName = SyncUtil.wrapPortName(interfaceNameTokens[0]);
+                            String standardName = SyncUtil.normalizePortName(interfaceNameTokens[0]);
                             for (BusinessObjectLight physicalInterface : physicalInterfaces) {
                                 if (physicalInterface.getName().equals(standardName)) { //Checks for the extended and the condensed interface name formats (GigabitEthernetXXX vs GiXXXX)
                                     matchingPhysicalInterface = physicalInterface;

@@ -775,7 +775,7 @@ public class TableCreator {
         providerRow.addStyleName("cell-with-border-top");
         lytData.addComponent(providerRow);
         
-        if(!legalOwner.isEmpty())
+        if(legalOwner != null && !legalOwner.isEmpty())
             lytData.addComponent(createTitleValueRow("LEGAL OWNER", legalOwner));
         //Provider Icon
         VerticalLayout lytIcon =  new VerticalLayout(createIcon(providerName.toLowerCase()));

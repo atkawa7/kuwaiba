@@ -112,7 +112,7 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
         if (contentComponent != null) {
             Window wdwContent = new Window(title);
             wdwContent.setModal(true);
-            wdwContent.setWidth(40, Unit.PERCENTAGE);
+            wdwContent.setWidth(90, Unit.PERCENTAGE);
             wdwContent.setContent(contentComponent);
             wdwContent.center();
             UI.getCurrent().addWindow(wdwContent);

@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
@@ -41,7 +40,6 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import org.kuwaiba.apis.persistence.business.BusinessObject;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
-import org.kuwaiba.services.persistence.util.Constants;
 import org.openide.util.Exceptions;
 import org.snmp4j.smi.OID;
 
@@ -61,7 +59,7 @@ public class SyncUtil {
      * @return boolean if should be synchronized false if not
      */
     public static boolean isSynchronizable(String ifName){
-        //ignorar eo, cpp, span, dwdm
+        //avoids eo, cpp, span, dwdm
         return ifName.matches("\\d+") ||
                ifName.toLowerCase().equals("gi0") || 
                ifName.toLowerCase().startsWith("lo") ||
@@ -75,30 +73,7 @@ public class SyncUtil {
                 ifName.toLowerCase().contains("vlan") ||
                 ifName.contains("/");
     }
-    
-    /**
-     * Searches for the attributes field in the json object then it finds 
-     * the port's name and wrap it into a standardized name
-     * @param port port json object 
-     * @return json object with the port name wrapped
-     */
-    public static JsonObject wrapPortName(JsonObject port){
-        JsonObject jsAttrs = port.getJsonObject("attributes"); //NOI18N
-        JsonObject newJsntAttrs = null;
-        if(jsAttrs != null){
-            Set<String> keySet = jsAttrs.keySet();
-            Iterator<String> keys = keySet.iterator();
-            while(keys.hasNext() ) {
-                String key = (String)keys.next();
-                if(!key.equals(Constants.PROPERTY_NAME))
-                    newJsntAttrs = SyncUtil.joBuilder(jsAttrs).add(Constants.PROPERTY_NAME, wrapPortName(jsAttrs.getString(Constants.PROPERTY_NAME))).build();
-                else
-                    newJsntAttrs = SyncUtil.joBuilder(jsAttrs).add(key, jsAttrs.getString(key)).build();
-            }      
-        }
-        return SyncUtil.joBuilder(port).add("attributes", newJsntAttrs).build();
-    }
-    
+   
     /**
      * Checks if the object is a port an wraps the name into a 
      * standardized name
@@ -110,7 +85,7 @@ public class SyncUtil {
                 obj.getClassName().toLowerCase().contains("port") && 
                 !obj.getName().contains("Power") && 
                 !obj.getClassName().contains("Power"))
-            obj.setName(wrapPortName(obj.getName()));
+            obj.setName(normalizePortName(obj.getName()));
        
         return obj;
     }
@@ -126,7 +101,7 @@ public class SyncUtil {
                 obj.getClassName().toLowerCase().contains("port") && 
                 !obj.getName().contains("Power") && 
                 !obj.getClassName().contains("Power"))
-            obj.setName(wrapPortName(obj.getName()));
+            obj.setName(normalizePortName(obj.getName()));
        
         return obj;
     }
@@ -146,10 +121,16 @@ public class SyncUtil {
      * @return normalized port name 
      */
     public static String normalizePortName(String interfaceName){
+        
+
+
         //the port channel always have a capital P and lower o
         if(!interfaceName.startsWith("Po")){
             interfaceName = interfaceName.toLowerCase();
             interfaceName = interfaceName.replace("_", "/"); //could happend in some mibs
+            //0/RP0-GigabitEthernet0/0/0/0 we remove the uneccesary part of the por name
+            if(interfaceName.startsWith("0/rp0-"))
+                interfaceName = interfaceName.substring(interfaceName.indexOf("-")+1);
             //Pseudowires
             if(interfaceName.contains("pw"))
                 return interfaceName.replace("\\s", "");
@@ -203,55 +184,6 @@ public class SyncUtil {
         
         return interfaceName;
         
-    }
-    
-    /**
-     * Wraps the port name into a standardized port name gi, te, fa, pos
-     * @param currentPortName raw port name
-     * @return standardized port name 
-     */
-    public static String wrapPortName(String currentPortName){
-        currentPortName = currentPortName.toLowerCase().replace("_", "/");
-        if(currentPortName.toLowerCase().startsWith("lo") && currentPortName.length() < 6)
-            return currentPortName.toLowerCase().replace("lo", "loopback");
-        if(currentPortName.toLowerCase().startsWith("bvi") || currentPortName.toLowerCase().startsWith("bvi"))
-            return currentPortName.toLowerCase().replace("bvi", "bv");
-        //Fastethernet
-        if(currentPortName.toLowerCase().contains("fastethernet"))
-            return currentPortName.toLowerCase().replace("fastethernet", "fa");
-        //Te
-        if(currentPortName.toLowerCase().contains("tengigabitethernet"))
-            return currentPortName.toLowerCase().replace("tengigabitethernet", "te");  
-        if(currentPortName.toLowerCase().contains("tengige"))
-            return currentPortName.toLowerCase().replace("tengige", "te");
-        if(currentPortName.toLowerCase().contains("tentigt"))
-            return currentPortName.toLowerCase().replace("tentigt", "te");
-        if(currentPortName.toLowerCase().contains("tengig"))
-            return currentPortName.toLowerCase().replace("tengig", "te");
-        if(currentPortName.toLowerCase().contains("tengi"))
-            return currentPortName.toLowerCase().replace("tengi", "te");   
-         
-        //POS and PO
-        if(currentPortName.toLowerCase().contains("pos"))
-            return currentPortName.toLowerCase().replace("pos", "pos");
-        if(currentPortName.toLowerCase().contains("po"))
-            return currentPortName.toLowerCase().replace("po", "pos");
-        //Gi Ge Gigabitethernet
-        if(currentPortName.toLowerCase().contains("gigabitethernet"))
-            return currentPortName.toLowerCase().replace("gigabitethernet", "gi");
-        if(currentPortName.toLowerCase().contains("gi"))
-            return currentPortName.toLowerCase().replace("gi", "gi");
-        if(currentPortName.toLowerCase().startsWith("ge "))
-            return currentPortName.toLowerCase().replace("ge ", "gi");
-        if(currentPortName.toLowerCase().startsWith("ge"))
-            return currentPortName.toLowerCase().replace("ge", "gi");
-        if(currentPortName.startsWith("G"))
-            return currentPortName.toLowerCase().replace("g", "gi");
-        //Serial Port
-        if(currentPortName.toLowerCase().contains("se"))
-            return currentPortName.toLowerCase().replace("se", "se");
-        
-        return currentPortName.toLowerCase();
     }
     
     /**

@@ -25,7 +25,6 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Window;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -147,19 +146,19 @@ public class EndToEndViewScene extends AbstractScene {
             XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
 
 //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
-        try {
-            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/end2end_web_in_render.xml");
-            fos.write(structure);
-            fos.close();
-        } catch(Exception e) {}
+//        try {
+//            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/end2end_web_in_render.xml");
+//            fos.write(structure);
+//            fos.close();
+//        } catch(Exception e) {}
 //</editor-fold>
             
             while (reader.hasNext()) {
                 int event = reader.next();
                 if (event == XMLStreamConstants.START_ELEMENT) {
                     if (reader.getName().equals(qNode)) {
-                        int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
-                        int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
+                        int xCoordinate = Integer.valueOf(reader.getAttributeValue(null,"x"));
+                        int yCoordinate = Integer.valueOf(reader.getAttributeValue(null,"y"));
                         String nodeClass = reader.getAttributeValue(null, "class");
                         String nodeId = reader.getElementText();
                         RemoteObjectLight rol = wsBean.getObject(nodeClass, nodeId, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
@@ -167,13 +166,12 @@ public class EndToEndViewScene extends AbstractScene {
                         SrvNodeWidget aSavedNode = findNodeWidget(rol);
                         if(aSavedNode == null){
                             aSavedNode = attachNodeWidget(rol);
-                            aSavedNode.setX(100 + (xCoordinate)); //The position is scaled (in this case to a half the original size) so they diagram can fit in a single screen 
-                            aSavedNode.setY(50+(yCoordinate));
+                            aSavedNode.setX(100 + xCoordinate); //The position is scaled (in this case to a half the original size) so they diagram can fit in a single screen 
+                            aSavedNode.setY(50 + yCoordinate);
                         } else { //If it's null, it means that the node wasn't added by the default rendering method, so the node no longer exists and shouldn't be rendered
-                            aSavedNode.setX(100 + (xCoordinate)); //The position is scaled (in this case to a half the original size) so they diagram can fit in a single screen 
-                            aSavedNode.setY(50 + (yCoordinate));
+                            aSavedNode.setX(100 + xCoordinate); //The position is scaled (in this case to a half the original size) so they diagram can fit in a single screen 
+                            aSavedNode.setY(50 + yCoordinate);
                         }
-                        
                     } else {
                         if (reader.getName().equals(qEdge)) {
                             String edgeId = reader.getAttributeValue(null, "id"); //NOI18N
@@ -196,27 +194,23 @@ public class EndToEndViewScene extends AbstractScene {
                             SrvNodeWidget sideBNodeWidget = findNodeWidget(sideB);
                             
                             SrvEdgeWidget aSavedEdge = findEdgeWidget(edge);
-                            
                             //controlpoints
                             List<Point> localControlPoints = new ArrayList<>();
                             while(true) {
                                 reader.nextTag();
                                 if (reader.getName().equals(qControlPoint)) {
                                     if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-                                        localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")) / 2, Integer.valueOf(reader.getAttributeValue(null,"y")) / 2));
+                                        localControlPoints.add(new Point((Integer.valueOf(reader.getAttributeValue(null,"x"))+100), Integer.valueOf(reader.getAttributeValue(null,"y"))+50));
                                 } else 
                                     break;
                             }
-                            
                             if(sideANodeWidget != null && sideBNodeWidget != null && aSavedEdge == null){
                                 attachEdgeWidget(edge, sideANodeWidget, sideBNodeWidget);
                                 edges.get(edge).setCaption(edge.getName());
                                 edges.get(edge).setControlPoints(localControlPoints);
                             }
-
-                            else if (aSavedEdge != null) { //If it's null, it means that the node wasn't added by the default rendering method, so the node no longer exists and shouldn't be rendered
+                            else if (aSavedEdge != null)
                                 aSavedEdge.setControlPoints(localControlPoints);
-                            }
                         }
                     }
                 }
@@ -244,12 +238,9 @@ public class EndToEndViewScene extends AbstractScene {
     }
 
     @Override
-    public void render() {//no longer need it
-    }
+    public void render() {/*no longer need it*/}
     
-    public void clear() {
-        //this.lienzoComponent.remove
-    }
+    public void clear() {/*this.lienzoComponent.remove*/}
 
     protected SrvNodeWidget attachNodeWidget(RemoteObjectLight node) {
         SrvNodeWidget newNode = new SrvNodeWidget();

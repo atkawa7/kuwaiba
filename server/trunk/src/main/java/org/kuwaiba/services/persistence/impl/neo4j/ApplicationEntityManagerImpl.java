@@ -3764,7 +3764,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 
                 syncDatasourceConfiguration = inventoryObjectNode.getSingleRelationship(RelTypes.HAS_CONFIGURATION, Direction.INCOMING).getStartNode();
                 if(syncDatasourceConfiguration == null)
-                    throw new ApplicationObjectNotFoundException(String.format("The object with id %s has no data source configuration related", objectId));
+                    throw new ApplicationObjectNotFoundException(String.format("The object with id %s has a malformed data source configuration related", objectId));
             }
 
             tx.success();

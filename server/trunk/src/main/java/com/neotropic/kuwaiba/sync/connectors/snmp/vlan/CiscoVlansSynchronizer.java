@@ -269,11 +269,11 @@ public class CiscoVlansSynchronizer {
                 List<Long> allVlans = vlansPortMap.get(portId);
                 if(!allVlans.isEmpty()){
                     //Then we search for the port in the current kuwaiba's structure
-                    BusinessObjectLight currentPort = searchInCurrentStructure(SyncUtil.wrapPortName(portName));
+                    BusinessObjectLight currentPort = searchInCurrentStructure(SyncUtil.normalizePortName(portName));
                     if(currentPort == null)
                         results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                             "Search in the current structure",
-                            String.format("%s not found", SyncUtil.wrapPortName(portName))));
+                            String.format("%s not found", SyncUtil.normalizePortName(portName))));
                     else{
                         //We filter to get only the vlans that exits in the ifXTable
                         List<Long> candidateVlans = new ArrayList<>();
@@ -347,7 +347,7 @@ public class CiscoVlansSynchronizer {
                     if(currentPort == null)
                         results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                                     "Search in the current structure",
-                                    String.format("%s not found", SyncUtil.wrapPortName(instancesNames.get(indexOf)))));
+                                    String.format("%s not found", SyncUtil.normalizePortName(instancesNames.get(indexOf)))));
                     else{
                         List<BusinessObjectLight> assosiatedVlans = new ArrayList<>();
                             try {
@@ -520,7 +520,7 @@ public class CiscoVlansSynchronizer {
      */
     private BusinessObjectLight searchInCurrentStructure(String instance){
         for(BusinessObjectLight currentPort: currentPorts){
-            if(SyncUtil.wrapPortName(currentPort.getName()).equals(SyncUtil.wrapPortName(instance.toLowerCase())))
+            if(SyncUtil.normalizePortName(currentPort.getName()).equals(SyncUtil.normalizePortName(instance)))
                 return currentPort;
         }
         for(BusinessObjectLight currentVlan: currentVlans){

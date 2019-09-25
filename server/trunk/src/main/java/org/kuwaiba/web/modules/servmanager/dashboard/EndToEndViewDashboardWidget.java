@@ -74,6 +74,14 @@ public class EndToEndViewDashboardWidget extends AbstractDashboardWidget {
     public void createContent() {
         VerticalLayout lytContent = new VerticalLayout();
         try {
+//<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
+//            SceneExporter sceneExporter = SceneExporter.getInstance();
+//            String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath"));
+//            String newPath = processEnginePath + "/temp/"; //NOI18N
+//            SceneExporter.PATH = newPath;
+//            String img = sceneExporter.buildEndToEndView((RemoteSession) UI.getCurrent().getSession().getAttribute("session"),
+//                    wsBean, selectedObject.getClassName(), selectedObject.getId());
+//</editor-fold>            
              String status = wsBean.getAttributeValueAsString(selectedObject.getClassName(), selectedObject.getId(), "Status", 
                     Page.getCurrent().getWebBrowser().getAddress(),
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());

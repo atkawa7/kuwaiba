@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
@@ -166,11 +165,11 @@ public class FormDashboardWidget extends AbstractDashboardWidget{
                                     if(specialAttributes.getRelationships().contains("sdhTransports"))
                                         stm = wsBean.getSpecialAttribute(container.getClassName(), container.getId(), "sdhTransports", ipAddress, sessionId).get(0);
                                     else
-                                        Notifications.showWarning(String.format("The resource: %s, is TributaryLink but has no relationship sdhTransport, could be malformed, can not be render", 
+                                        Notifications.showWarning(String.format("The resource: %s, is TributaryLink but has no relationship sdhTransport, could be malformed, this form cannot be rendered correctly", 
                                             container));
                                 }
                                 else
-                                    Notifications.showWarning(String.format("The resource: %s, is TributaryLink but has no relationship sdhDelivers, could be malformed, can not be render", 
+                                    Notifications.showWarning(String.format("The resource: %s, is TributaryLink but has no relationship sdhDelivers, could be malformed, this form cannot be rendered correctly", 
                                         tributaryLink));
                             }
                         }
@@ -221,7 +220,6 @@ public class FormDashboardWidget extends AbstractDashboardWidget{
                             }else
                                 parentsUntilFirstComEquipmentB = wsBean.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointB().
                                     getClassName(), logicalCircuitDetails.getEndpointB().getId(), "GenericCommunicationsElement", ipAddress, sessionId);
-
 
                             RemoteObjectLight bSideEquipmentLogical = parentsUntilFirstComEquipmentB.get(parentsUntilFirstComEquipmentB.size() - 1);
                             //We must do this becuase we need the end points of the snmp
