@@ -1027,8 +1027,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                             
                             if(canAttributeBeUnique(classNode, currentAttributeName))
                                 Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
-                        else
-                             throw new InvalidArgumentException(String.format("There are duplicated values of attribute \"%s\" among the existing instances of class %s or its subclasses", currentAttributeName, className));
+                            else
+                                throw new InvalidArgumentException(String.format("There are duplicated values of attribute \"%s\" among the existing instances of class %s or its subclasses", currentAttributeName, className));
                         }
                         else
                             Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
@@ -1895,20 +1895,28 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         return everyObjectHasValue;
     }
      
+    
+    /**
+     * Checks if the attribute can be unique 
+     * @param classNode node of the class to which the unique attribute will be set
+     * @param attributeName name of the attribute that will be set as unique
+     * @return false if there are not unique values in the attribute of the objects created
+     * true if the attribute i s empty or are unique
+     */
     private boolean canAttributeBeUnique(Node classNode, String attributeName) {
         String className = (String)classNode.getProperty(Constants.PROPERTY_NAME);
         
         if (classNode.hasRelationship(Direction.INCOMING, RelTypes.EXTENDS)) {
             //First we check the instances of the subclasses 
-            String cypherQuery = String.format("MATCH (subclassInstance)-[:INSTANCE_OF]->(subclass)-[:EXTENDS*]->(class:classes) WHERE class.name='%s' WITH subclassInstance.%s as attributeValue, collect(subclassInstance) as matchingNodes where size(matchingNodes) > 1 RETURN matchingNodes", className, attributeName);
+            String cypherQuery = String.format("MATCH (subclassInstance)-[:INSTANCE_OF]->(subclass)-[:EXTENDS*]->(class:classes) WHERE class.name='%s'AND EXISTS(instance.%s) WITH subclassInstance.%s as attributeValue, collect(subclassInstance) as matchingNodes WHERE SIZE(matchingNodes) > 1 RETURN matchingNodes", className, attributeName, attributeName);
             if (graphDb.execute(cypherQuery).hasNext())
                 return false;
             
             //Then the class itself
-            cypherQuery = String.format("MATCH (instance)-[:INSTANCE_OF]->(class:classes) WHERE class.name='%s' WITH instance.%s as attributeValue, collect(instance) as matchingNodes where size(matchingNodes) > 1 RETURN matchingNodes", className, attributeName);
+            cypherQuery = String.format("MATCH (instance)-[:INSTANCE_OF]->(class:classes) WHERE class.name='%s' AND EXISTS(instance.%s) WITH instance.%s as attributeValue, collect(instance) as matchingNodes WHERE SIZE(matchingNodes) > 1 RETURN matchingNodes", className, attributeName, attributeName);
             return !graphDb.execute(cypherQuery).hasNext();
         } else {
-            String cypherQuery = String.format("MATCH (instance)-[:INSTANCE_OF]->(class:classes) WHERE class.name='%s' WITH instance.%s as attributeValue, collect(instance) as matchingNodes where size(matchingNodes) > 1 RETURN matchingNodes", className, attributeName);
+            String cypherQuery = String.format("MATCH (instance)-[:INSTANCE_OF]->(class:classes) WHERE class.name='%s' AND EXISTS(instance.%s) WITH instance.%s as attributeValue, collect(instance) as matchingNodes WHERE SIZE(matchingNodes) > 1 RETURN matchingNodes", className, attributeName, attributeName);
             return !graphDb.execute(cypherQuery).hasNext();
         }        
         
