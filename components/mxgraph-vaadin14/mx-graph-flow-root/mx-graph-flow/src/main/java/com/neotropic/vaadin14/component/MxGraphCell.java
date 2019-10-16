@@ -25,12 +25,12 @@ import com.vaadin.flow.shared.Registration;
  * 
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-@Tag("mx-graph")
-@JsModule("./mx-graph/mx-graph.js")
-public class MxGraph extends Component {
+@Tag("mx-graph-cell")
+@JsModule("./mx-graph/mx-graph-cell.js")
+public class MxGraphCell extends Component {
     private static final String PROPERTY_PROP1 = "prop1";
     
-    public MxGraph() {
+    public MxGraphCell() {
     }
     
     public String getProp1() {
@@ -43,9 +43,5 @@ public class MxGraph extends Component {
     
     public Registration addClickEdgeListener(ComponentEventListener<MxGraphClickEdgeEvent> clickEdgeListener) {
         return super.addListener(MxGraphClickEdgeEvent.class, clickEdgeListener);
-    }
-    
-    public void addCell(MxGraphCell mxGraphCell) {
-        getElement().appendChild(mxGraphCell.getElement());     
     }
 }
