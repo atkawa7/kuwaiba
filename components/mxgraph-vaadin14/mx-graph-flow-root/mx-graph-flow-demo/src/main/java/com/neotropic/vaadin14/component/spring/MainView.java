@@ -1,6 +1,7 @@
 package com.neotropic.vaadin14.component.spring;
 
 import com.neotropic.vaadin14.component.MxGraph;
+import com.neotropic.vaadin14.component.MxGraphCell;
 import com.neotropic.vaadin14.component.MxGraphClickEdgeEvent;
 import com.neotropic.vaadin14.component.PaperSlider;
 import com.neotropic.vaadin14.component.PaperSliderValueChangeEvent;
@@ -41,7 +42,18 @@ public class MainView extends VerticalLayout {
                 Notification.show("mxgraph click edge");
             }
         });
+        
+        Button addButton = new Button("Add Cell"); // (3)
+
+        addButton.addClickListener(click -> {
+     // (1)
+     MxGraphCell mxGraphCell = new MxGraphCell();
+     
+     myElement.addCell(mxGraphCell);
+     }
+  );
         add(myElement);
+        add(addButton);
     }
 
 }
