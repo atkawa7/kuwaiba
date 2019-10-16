@@ -17,6 +17,7 @@ limitations under the License.
 
 import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
 import {mxGraphApi, mxClient, mxUtils, mxGraph, mxRubberband, mxEvent} from './mx-graph-api.js';
+import {  } from "./mx-graph-cell";
 /**
  * `my-element`
  * my-element
@@ -46,6 +47,16 @@ class MxGraph extends PolymerElement {
         type: String,
         value: 'mx-graph',
       },
+
+      graph: {
+        type: Object,
+         value: null
+      } ,
+
+      cells: {
+        type: Array,
+        value: function() { return []; }   
+      }
     };
   }
 
@@ -54,6 +65,9 @@ class MxGraph extends PolymerElement {
   ready() {
     super.ready();
     new mxGraphApi().load().then(() => {this.initMxGraph()})
+    console.log("adding Observer")
+    this._cellObserver = new MutationObserver(this.addCell.bind(this));
+    this._cellObserver.observe(this, { childList: true});
   }
 
   initMxGraph() {
@@ -70,35 +84,24 @@ class MxGraph extends PolymerElement {
           mxEvent.disableContextMenu(this.$.graphContainer);
           
           // Creates the graph inside the given container
-          var graph = new mxGraph(this.$.graphContainer);
+          this.graph = new mxGraph(this.$.graphContainer);
           // Enables rubberband selection
-          new mxRubberband(graph);
-          
+          new mxRubberband(this.graph);
+          this.graph.setConnectable(true);
           // Gets the default parent for inserting new cells. This
           // is normally the first child of the root (ie. layer 0).
-          var parent = graph.getDefaultParent();
+       
                   
           // Adds cells to the model in a single step
-          graph.getModel().beginUpdate();
-          try
-          {
-            var v1 = graph.insertVertex(parent, null, 'Hello,', 20, 20, 80, 30);
-            var v2 = graph.insertVertex(parent, null, 'World!', 200, 150, 80, 30);
-            var e1 = graph.insertEdge(parent, null, '', v1, v2);
-          }
-          finally
-          {
-            // Updates the display
-            graph.getModel().endUpdate();
-          }
+          
           
           var _this = this
-          graph.addListener(mxEvent.CLICK, function (sender, evt) {
+          this.graph.addListener(mxEvent.CLICK, function (sender, evt) {
 					var cell = evt.getProperty('cell');
 					console.log("CLICK")
 					console.log(evt)
 
-					if (cell != null && graph.getModel().isEdge(cell)) {
+					if (cell != null && _this.graph.getModel().isEdge(cell)) {
                                                 _this.fireClickEdge();
 						console.log("CLICK on EDGE")
 						/*
@@ -115,6 +118,25 @@ class MxGraph extends PolymerElement {
         }
   }
   
+  addCell(mutations){
+    console.log("addcell Method")
+   
+    mutations.forEach(function(mutation) {
+    console.log("MUTATION TYPE" + mutation.type);
+    var node  = mutation.addedNodes[0];
+    if(node) {
+        if (node.localName === "mx-graph-cell") {
+              node.graph = this.graph;
+              this.push('cells', node); 
+              
+//                  this.push('markers', {name: "marker "+this.markers.length});
+
+         }
+     }
+    }, this); 
+     
+}
+
   fireClickEdge(){
     this.dispatchEvent(new CustomEvent('click-edge', {detail: {kicked: true}}));
   }
