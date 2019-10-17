@@ -1,5 +1,6 @@
 package com.neotropic.vaadin14.component.spring;
 
+import com.neotropic.vaadin14.component.DhtmlxGantt;
 import com.neotropic.vaadin14.component.MyElement;
 import com.neotropic.vaadin14.component.PaperSlider;
 import com.neotropic.vaadin14.component.PaperSliderValueChangeEvent;
@@ -35,6 +36,9 @@ public class MainView extends VerticalLayout {
         MyElement myElement = new MyElement();
         myElement.setProp1("from Vaadin");
         add(myElement);
+        
+        DhtmlxGantt dhtmlxGantt = new DhtmlxGantt();
+        add(dhtmlxGantt);
     }
 
 }

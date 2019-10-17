@@ -2,8 +2,12 @@
   "name": "my-element",
   "description": "my-element",
   "main": "my-element.js",
+  "scripts": {
+    "frontend": "echo Start copy frontend files... && cp my-element.js ../my-element-flow-root/my-element-flow/src/main/resources/META-INF/resources/frontend/ && cp dhtmlx-gantt.js ../my-element-flow-root/my-element-flow/src/main/resources/META-INF/resources/frontend/ && cp demo/dhtmlxgantt.css ../my-element-flow-root/my-element-flow/src/main/resources/META-INF/resources/ && echo End copy frontend files"
+  },
   "dependencies": {
-    "@polymer/polymer": "^3.0.0"
+    "@polymer/polymer": "^3.0.0",
+    "dhtmlx-gantt": "^6.2.7"
   },
   "devDependencies": {
     "@polymer/iron-demo-helpers": "^3.1.0",
