@@ -28,19 +28,37 @@ import com.vaadin.flow.shared.Registration;
 @Tag("mx-graph")
 @JsModule("./mx-graph/mx-graph.js")
 public class MxGraph extends Component {
-    private static final String PROPERTY_PROP1 = "prop1";
+    private static final String PROPERTY_GRID = "grid";
+    private static final String PROPERTY_WIDTH = "width";
+    private static final String PROPERTY_HEIGHT = "height";
     
     public MxGraph() {
     }
     
-    public String getProp1() {
-        return getElement().getProperty(PROPERTY_PROP1);
+     public String getGrid() {
+        return getElement().getProperty(PROPERTY_GRID);
     }
         
-    public void setProp1(String prop1) {
-        getElement().setProperty(PROPERTY_PROP1, prop1);
+    public void setGrid(String grid) {
+        getElement().setProperty(PROPERTY_GRID, grid);
     }
     
+    public String getWidth() {
+        return getElement().getProperty(PROPERTY_WIDTH);
+    }
+        
+    public void setWidth(String prop) {
+        getElement().setProperty(PROPERTY_WIDTH, prop);
+    }
+    
+    public String getHeight() {
+        return getElement().getProperty(PROPERTY_HEIGHT);
+    }
+        
+    public void setHeight(String prop) {
+        getElement().setProperty(PROPERTY_HEIGHT, prop);
+    }
+       
     public Registration addClickEdgeListener(ComponentEventListener<MxGraphClickEdgeEvent> clickEdgeListener) {
         return super.addListener(MxGraphClickEdgeEvent.class, clickEdgeListener);
     }

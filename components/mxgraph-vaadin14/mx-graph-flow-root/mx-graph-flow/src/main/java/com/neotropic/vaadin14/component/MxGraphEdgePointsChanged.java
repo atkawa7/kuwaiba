@@ -1,4 +1,5 @@
 /*
+/*
  *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  *  
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -22,10 +23,10 @@ import com.vaadin.flow.component.DomEvent;
  * 
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-@DomEvent("click-edge")
-public class MxGraphClickEdgeEvent extends ComponentEvent<MxGraphCell> {
+@DomEvent("edge-points-changed")
+public class MxGraphEdgePointsChanged extends ComponentEvent<MxGraphCell> {
     
-    public MxGraphClickEdgeEvent(MxGraphCell source, boolean fromClient) {
+    public MxGraphEdgePointsChanged(MxGraphCell source, boolean fromClient) {
         super(source, fromClient);
     }
     

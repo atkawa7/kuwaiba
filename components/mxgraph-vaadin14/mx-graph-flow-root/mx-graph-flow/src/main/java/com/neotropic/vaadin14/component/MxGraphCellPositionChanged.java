@@ -22,10 +22,10 @@ import com.vaadin.flow.component.DomEvent;
  * 
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-@DomEvent("click-edge")
-public class MxGraphClickEdgeEvent extends ComponentEvent<MxGraphCell> {
+@DomEvent("cell-position-changed")
+public class MxGraphCellPositionChanged extends ComponentEvent<MxGraphCell> {
     
-    public MxGraphClickEdgeEvent(MxGraphCell source, boolean fromClient) {
+    public MxGraphCellPositionChanged(MxGraphCell source, boolean fromClient) {
         super(source, fromClient);
     }
     

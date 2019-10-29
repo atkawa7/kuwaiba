@@ -1,8 +1,15 @@
+
+
 export var mxClient;
 export var mxUtils;
 export var mxGraph;
 export var mxRubberband;
 export var mxEvent;
+export var mxCell;
+export var mxPoint;
+export var mxGeometry;
+export var mxEdgeHandler;
+
 
 class mxGraphApi {
     
@@ -18,6 +25,10 @@ class mxGraphApi {
                     mxGraph = module.mxGraph;
                     mxRubberband = module.mxRubberband;
                     mxEvent = module.mxEvent;
+                    mxCell = module.mxCell;
+                    mxPoint = module.mxPoint;
+                    mxGeometry = module.mxGeometry;
+                    mxEdgeHandler = module.mxEdgeHandler;
                     this.resolve();
                 });
             });
