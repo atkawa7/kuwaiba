@@ -16,8 +16,8 @@ limitations under the License.
 */
 
 import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
-import {mxGraphApi, mxClient, mxUtils, mxGraph, mxRubberband, mxEvent} from './mx-graph-api.js';
-import {  } from "./mx-graph-cell";
+import {mxGraphApi, mxClient, mxUtils, mxGraph, mxRubberband, mxEvent, mxEdgeHandler} from './mx-graph-api.js';
+
 /**
  * `my-element`
  * my-element
@@ -36,40 +36,59 @@ class MxGraph extends PolymerElement {
       </style>
       <h2>Hello [[prop1]]!</h2>
       <div id="graphContainer" 
-      style="overflow:hidden;width:321px;height:241px;background:url('editors/images/grid.gif')">
+      style="overflow:hidden;width:[[width]];height:[[height]];background:url([[grid]])">
       </div>
+      <slot></slot>
     `;
   }
   
   static get properties() {
     return {
-      prop1: {
-        type: String,
-        value: 'mx-graph',
-      },
-
+        // mxGraph object 
       graph: {
         type: Object,
          value: null
       } ,
-
+      //array of polymer objects of type mx-graph-cell
       cells: {
         type: Array,
         value: function() { return []; }   
+      },
+      // background image path
+      grid: {
+        type: String
+      } ,
+      width: {
+        type: String,
+        value: '400px',
+      },
+      height: {
+        type: String,
+        value: '400px',
       }
-    };
+    }
+  }
+
+  constructor() {
+    super();
+  
   }
 
   _attachDom(dom) { this.appendChild(dom); }
 
-  ready() {
-    super.ready();
+  connectedCallback() {
+    super.connectedCallback();
+    // …
+    console.log("CONECTEDCALLBACK")
     new mxGraphApi().load().then(() => {this.initMxGraph()})
-    console.log("adding Observer")
-    this._cellObserver = new MutationObserver(this.addCell.bind(this));
-    this._cellObserver.observe(this, { childList: true});
   }
 
+
+  ready() {
+    super.ready();   
+  }
+
+ //called then the mxGraph library has been loaded and initialize the grap object
   initMxGraph() {
         // Checks if the browser is supported
         //console.log('sadasd' + mxClient);
@@ -87,37 +106,216 @@ class MxGraph extends PolymerElement {
           this.graph = new mxGraph(this.$.graphContainer);
           // Enables rubberband selection
           new mxRubberband(this.graph);
-          this.graph.setConnectable(true);
-          // Gets the default parent for inserting new cells. This
-          // is normally the first child of the root (ie. layer 0).
-       
-                  
-          // Adds cells to the model in a single step
-          
-          
-          var _this = this
-          this.graph.addListener(mxEvent.CLICK, function (sender, evt) {
-					var cell = evt.getProperty('cell');
-					console.log("CLICK")
-					console.log(evt)
+          //this.graph.setConnectable(true);
+          this.graph.setAllowDanglingEdges(false);
 
-					if (cell != null && _this.graph.getModel().isEdge(cell)) {
-                                                _this.fireClickEdge();
-						console.log("CLICK on EDGE")
-						/*
-						graph.getModel().beginUpdate();
-						var sourceLabel = new mxCell('LABEL PRUEBA', new mxGeometry(-0.7, 0, 0, 0), 'resizable=0;editable=1;labelBackgroundColor=white;fontSize=10;strokeColor=#69b630;strokeWidth=3;');
-						sourceLabel.geometry.relative = true;
-						sourceLabel.setConnectable(false);
-						sourceLabel.vertex = true;
-						cell.insert(sourceLabel);
-						graph.getModel().endUpdate();*/
-						
-					}
-				});
+
+          //enable adding and removing control points. 
+          mxEdgeHandler.prototype.addEnabled = true;
+	  mxEdgeHandler.prototype.removeEnabled = true;
+          
+          
+          var _this = this;
+          // here add handles for general click events in the graph
+          this.graph.addListener(mxEvent.CLICK, function (sender, evt) {
+              var cell = evt.getProperty('cell');
+              console.log("CLICK")
+              console.log(evt)
+
+              if (cell != null && _this.graph.getModel().isEdge(cell)) {
+
+                var cellObject = _this.getCellObjectById(cell.id);
+                cellObject.fireClickEdge();
+                console.log("CLICK on EDGE")					
+              } 
+          });
+
+          // Called when any cell is moved
+          this.graph.addListener(mxEvent.CELLS_MOVED, function (sender, evt) {
+            var cellsMoved = evt.getProperty('cells');
+            var dx = evt.getProperty('dx');
+            var dy = evt.getProperty('dy');
+            console.log("CELLS_MOVED")
+            console.log(evt)
+
+            if(cellsMoved) {
+
+              cellsMoved.forEach(function(cellMoved) {
+                if (_this.graph.getModel().isVertex(cellMoved)) {
+
+                   var cellObject = _this.getCellObjectById(cellMoved.id);
+               
+                   if (cellObject) {
+                      
+                      cellObject.x += dx; 
+                      cellObject.y += dy;                    
+                      
+                    }
+      
+                  console.log("VERTEX WITH ID " + cellMoved.id + " MOVED")	
+                  
+                } else if (_this.graph.getModel().isEdge(cellMoved)) {
+                    
+                    var cellObject = _this.getCellObjectById(cellMoved.id);
+                    
+                    if (cellObject) {
+                
+                    cellObject.points = JSON.stringify(cellMoved.geometry.points);
+                
+                    }
+                }
+              });
+
+            }           
+        });
+
+        //allow editing in edges labels
+        mxGraph.prototype.isCellEditable = function(	cell	){
+          return true;
         }
-  }
+        //Handler for labelChanged events fired when some label was edited.
+        var labelChanged = mxGraph.prototype.labelChanged;
+            mxGraph.prototype.labelChanged = function (cell, value, evt) {
+                labelChanged.apply(this, arguments);
+                // if the cell is an edge label
+                if (_this.graph.getModel().isEdge(cell.parent)) {
+                    
+                    var cellObject = _this.getCellObjectById(cell.parent.id);
+                    
+                    if (cellObject) {
+
+                       if(cell.id == cellObject.cellSourceLabel.id) {
+                          cellObject.sourceLabel = value; 
+                       }
+                       if(cell.id == cellObject.cellTargetLabel.id) {
+                          cellObject.targetLabel = value; 
+                       }
+
+                    }
+
+                } else {  // the cell is a vertex or an edge
+                    var cellObject = _this.getCellObjectById(cell.id);
+
+                    if (cellObject) {
+
+                        cellObject.label = value;
+
+                    }
+
+                }
+                console.log("LABELCHANGED");
+//                console.log(cell);
+//                console.log(value);
+            }
+
+        // The method  isAddPointEvent is overwritten, to perform some previous action by adding a control point
+        mxEdgeHandler.prototype.isAddPointEvent = function (evt) {
+          console.log("ADD CONTROL POINT EVENT")
+//          console.log(evt)
+          if (evt.shiftKey) {
+            return true
+          }
+          return false;
+        }
+         // The method  isRemovePointEvent is overwritten, to perform some previous action by removing a control point
+        mxEdgeHandler.prototype.isRemovePointEvent = function (evt) {
+          console.log("REMOVE CONTROL POINT EVENT")
+//          console.log(evt)
+          if (evt.shiftKey) {
+            return true
+          }
+          return false;
+        }
+        // The method  isRemovePointEvent is overwritten, to update the points in the respective PolymerElement object.
+        var mxChangePoints = mxEdgeHandler.prototype.changePoints;
+        mxEdgeHandler.prototype.changePoints = function( edge, points, clone){
+          console.log("CHANGEPOINTS EVENT")
+          console.log(edge)
+          console.log(points)
+          console.log(clone)
+          if(edge && _this.graph.getModel().isEdge(edge)) {
+            
+             var cellObject = _this.getCellObjectById(edge.id);
+               
+                if (cellObject) {
+                
+                cellObject.points = JSON.stringify(points);
+                
+              }
+
+          }
+          mxChangePoints.apply(this,arguments);
+        }
+
+        // The method  isRemovePointEvent is addPointAt, to update the points in the respective PolymerElement object, when a point is added,
+
+        var addPointAt = mxEdgeHandler.prototype.addPointAt;
+          mxEdgeHandler.prototype.addPointAt = function (state, x, y) {
+            addPointAt.apply(this, arguments);
+
+            var cell = state.cell;
+            console.log("addPointAt EVENT")
+//            console.log(state)
+//            console.log(x)
+//            console.log(y)
+
+            if (cell) {
+
+               var cellObject = _this.getCellObjectById(cell.id);
+               
+                if (cellObject) {
+
+                  cellObject.points = JSON.stringify(cell.geometry.points);
+                  
+                }
+
+            }
+          }
+
+          // The method  removePoint is addPointAt, to update the points in the respective PolymerElement object, when a point is removed,
+
+          var removePoint = mxEdgeHandler.prototype.removePoint;
+          mxEdgeHandler.prototype.removePoint = function (state, index) {
+            removePoint.apply(this, arguments);
+            
+            var cell = state.cell;
+            console.log("removePoint EVENT")
+//            console.log(state)
+//            console.log(index)
+       
+            if (cell) {
+
+              var cellObject = _this.getCellObjectById(cell.id);
+                if (cellObject) {
+
+                  cellObject.points = JSON.stringify(cell.geometry.points);
+                  
+                }
+
+            }
+          }
+        
+//        console.log("adding Observer")
+          this._cellObserver = new MutationObserver(this.addCell.bind(this));
+          this._cellObserver.observe(this, { childList: true});
+        }
+  };
   
+   // Get the polymer object that represents the cell with the porvided idCell. 
+    getCellObjectById(idCell) {
+        var cell;
+        this.cells.forEach(function (cellObject) {
+            if (cellObject.cell.id == idCell) {
+
+                cell = cellObject;
+                             
+            }
+
+        },this);
+        return cell;
+    };
+  
+  // fired when some children tag is added.
   addCell(mutations){
     console.log("addcell Method")
    
@@ -126,10 +324,9 @@ class MxGraph extends PolymerElement {
     var node  = mutation.addedNodes[0];
     if(node) {
         if (node.localName === "mx-graph-cell") {
-              node.graph = this.graph;
-              this.push('cells', node); 
-              
-//                  this.push('markers', {name: "marker "+this.markers.length});
+              node.parent = this;   // add reference to the parent PolymerObject
+              node.graph = this.graph; // add the mxGraph object
+              this.push('cells', node);            
 
          }
      }
@@ -140,6 +337,8 @@ class MxGraph extends PolymerElement {
   fireClickEdge(){
     this.dispatchEvent(new CustomEvent('click-edge', {detail: {kicked: true}}));
   }
+
+  
 }
 
 window.customElements.define('mx-graph', MxGraph);

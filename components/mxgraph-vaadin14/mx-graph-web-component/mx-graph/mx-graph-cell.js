@@ -16,7 +16,7 @@ limitations under the License.
 */
 
 import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
-import { mxGraphApi, mxClient, mxUtils, mxGraph, mxRubberband, mxEvent } from './mx-graph-api.js';
+import { mxGraphApi, mxClient, mxUtils, mxGraph, mxRubberband, mxEvent, mxCell, mxGeometry, mxPoint } from './mx-graph-api.js';
 /**
  * `my-element`
  * my-element
@@ -27,54 +27,134 @@ import { mxGraphApi, mxClient, mxUtils, mxGraph, mxRubberband, mxEvent } from '.
  */
 class MxGraphCell extends PolymerElement {
   static get template() {
-    return html`
-      <style>
-        :host {
-          display: block;
-        }
-      </style>
-      
-    `;
+    return html``;
   }
 
   static get properties() {
     return {
-      prop1: {
+      uuid: {
         type: String,
-        value: 'mx-graph',
+        value: '0'
       },
-      cell: {
+      cell: {           // reference to the cell that represents the Polymer Object MxGraphCell
+        type: Object,
+        notify: true
+      },
+       cellSourceLabel: {   // reference to the source cell label
+        type: Object,
+        notify: true
+      },
+       cellTargetLabel: {  // reference to the target cell label
         type: Object,
         notify: true
       },
 
-      graph: {
+      graph: {          //reference to the graph object container(mxGraph)
         type: Object,
-        observer: '_graphChanged'
+        observer: '_graphChanged'    // listener called when the value is changed
       },
-      edge: {
-        type: integer,
-        value: 0
+      edge: {           // specify if it is an edge
+        type: Boolean,
+        value: false
       },
-      vertex: {
-        type: integer,
-        value: 0
+      vertex: {         
+        type: Boolean,  // specify if it is a vertex
+        value: false
       },
-      source: {
-        type: Object,
+      source: {       // uuid of the source vertex
+        type: String,
         value: null
       },
-      target: {
-        type: Object,
+      sourceLabel: {
+        type: String,
+        value: null,
+        notify: true
+      },
+      target: {       // uuid of the target vertex
+        type: String,
         value: null
+      },
+      targetLabel: {
+        type: String,
+        value: null,
+        notify: true
+      },
+      parent: {           //reference to the parent PolymerObject(MxGraph)
+        type : Object,
+        value : null
+      },
+      points: {
+        type: Array,
+        value: function() { return []; },
+        notify: true,
+        observer: 'fireEdgePointsChanged'   // listener called when the value is changed
+      },
+      image: {
+        type: String
+      },
+      label: {
+        type: String,
+        value: '',
+        notify: true,
+        observer: 'fireCellLabelChanged'  // listener called when the value is changed
+      },
+      width: {
+        type: Number,
+        value: 80
+      },
+      height: {
+        type: Number,
+        value: 30
+      },
+      x: {         // position on the x axis.
+        type: Number,
+        value: 0,
+        notify: true,    // notifty for changes in the property
+        observer: 'fireCellPositionChanged'   // listener called when the value is changed
+      },
+      y: {       //position on the y axis.
+        type: Number,
+        value: 0,
+        notify: true,
+        observer: 'fireCellPositionChanged'    // listener called when the value is changed
+      },
+      strokeWidth: {
+        type: Number,
+        value: 80
+      },
+      labelBackgroundColor: {
+        type: Number,
+        value: ''
+      },
+      perimeterSpacing: {
+        type: Number,
+        value: '1'
+      },
+      strokeColor: {
+        type: String,
+        value: 'black'
+      },
+      fontColor : {
+        type: String
       }
+      
+      
     };
   }
 
-//  _attachDom(dom) { this.appendChild(dom); }
+  _attachDom(dom) { this.appendChild(dom); }
+
+  constructor() {
+    super();
+    console.log("Constructor: mxgraphCell")
+  }
 
   ready() {
     super.ready();
+    console.log("Ready: mxgraphCell")
+//    console.log("adding Observer")
+    //this._pointObserver = new MutationObserver(this.addPoint.bind(this));
+    //this._pointObserver.observe(this, { childList: true});
   }
 
   initMxGraph() {
@@ -83,14 +163,14 @@ class MxGraphCell extends PolymerElement {
   }
 
   attached() {
-    // If element is added back to DOM, put it back on the map.
+    
     if (this.cell) {
      // this.cell.setMap(this.map);
     }
               console.log("ATTACHED");
 
   }
-
+  // called when the graph property changes.
   _graphChanged() {
     console.log("FUNCTION _graphChanged");
     // Marker will be rebuilt, so disconnect existing one from old map and listeners.
@@ -101,25 +181,143 @@ class MxGraphCell extends PolymerElement {
 
 
   }
-
+ //  the cell is initialized with the initial parameters
   _graphReady() {
     console.log("FUNCTION _graphReady");
     var parent = this.graph.getDefaultParent();
     this.graph.getModel().beginUpdate();
     try {
-      this.cell = this.graph.insertVertex(parent, null, 'Hello,', 20, 20, 80, 30);
+      if (this.vertex) {  //if the cell is a vertex then...
+        console.log("CREATIN VERTEX")
+        this.cell = this.graph.insertVertex(parent, null, this.label, this.x, this.y, this.width, this.height,
+              'verticalLabelPosition=bottom;verticalAlign=top;shape=image;image='+ this.image +
+             ';fontStyle=1;labelPadding=5' +
+            ';labelBackgroundColor=' + this.labelBackgroundColor +                
+            ';fontColor=' + this.fontColor);
+      
+        
+
+      } else if (this.edge) {  //if the cell is an edge then create it.
+        console.log("CREATIN EDGE")
+        if(this.source && this.target) {
+                  
+          var vertexs = this.parent.cells;
+          var sourceNode;
+          var targetNode;
+          vertexs.forEach(function(node) {
+            if (node.uuid == this.source) {
+              sourceNode = node.cell;
+            }
+            if (node.uuid == this.target) {
+              targetNode = node.cell;
+            }
+          },this);
+          
+          // create the edge and assign the reference
+          this.cell = this.graph.insertEdge(parent, null, this.label, sourceNode, targetNode,
+          'fontStyle=1;labelPadding=5\
+            ;perimeterSpacing=' + this.perimeterSpacing +
+            ';strokeWidth=' + this.strokeWidth + 
+            ';labelBackgroundColor=' + this.labelBackgroundColor +
+            ';strokeColor=' + this.strokeColor  +           
+            ';fontColor=' + this.fontColor );
+
+        
+           // if there are control points, add them to the edge
+          if(this.points) {
+            var arrayPoints = JSON.parse(this.points); 
+            if (! this.cell.geometry.points ) {
+              this.cell.geometry.points = [];
+            } 
+            arrayPoints.forEach(function(point)  {
+                        
+              this.cell.geometry.points.push(new mxPoint(point.x,point.y));
+                     
+            },this)
+            
+
+          }    
+
+          var _this = this
+ 
+          // if there are labels, add them to the edge
+          if(this.sourceLabel) {
+            this.cellSourceLabel = new mxCell(this.sourceLabel, new mxGeometry(-0.9, 0, 0, 0), 
+            'resizable=0;editable=1;fontStyle=1;labelPadding=5' +
+            ';labelBackgroundColor=' + this.labelBackgroundColor +                
+            ';fontColor=' + this.fontColor );
+                    
+             this.cellSourceLabel.geometry.relative = true;
+             this.cellSourceLabel.setConnectable(false);
+             this.cellSourceLabel.vertex = true;
+             this.cellSourceLabel.id = this.cell.id + "-source";
+             this.cell.insert(this.cellSourceLabel);
+          }
+          if(this.targetLabel) {
+            this.cellTargetLabel = new mxCell(this.targetLabel, new mxGeometry(0.9, 0, 0, 0),
+             'resizable=0;editable=1;'+
+            'fontStyle=1;labelPadding=5' +
+            ';labelBackgroundColor=' + this.labelBackgroundColor +                
+            ';fontColor=' + this.fontColor);
+            this.cellTargetLabel.geometry.relative = true;
+	    this.cellTargetLabel.setConnectable(false);
+            this.cellTargetLabel.vertex = true;
+            this.cellTargetLabel.id = this.cell.id + "-target"
+	    this.cell.insert(this.cellTargetLabel);
+          }
+          
+        }
+      }
+     
     }
     finally {
       // Updates the display
     this.graph.getModel().endUpdate();
+    this.graph.refresh();
     }
-    //this.setupDragHandler_();
-    //this._forwardEvent('click');
 
   }
 
+// fired when some children tag is added.
+  addPoint(mutations){
+    console.log("addPoint Method")
+   
+    mutations.forEach(function(mutation) {
+    console.log("MUTATION TYPE" + mutation.type);
+    var node  = mutation.addedNodes[0];
+    if(node) {
+        if (node.localName === "mx-graph-point") {
+              node.parent = this;   // add reference to the parent PolymerObject
+              node.cell = this.cell;  // add the mxGraphCell object reference
+              this.push('points', node);             
+
+         }
+     }
+    }, this); 
+     
+}
+
+// Custom Events
+
   fireClickEdge() {
     this.dispatchEvent(new CustomEvent('click-edge', { detail: { kicked: true } }));
+    console.log("click-edge fired");
+  }
+
+  fireCellPositionChanged(){
+    this.dispatchEvent(new CustomEvent('cell-position-changed', {detail: {kicked: true}}));
+    console.log("cell-position-changed fired");
+
+  }
+  
+  fireEdgePointsChanged() {
+    this.dispatchEvent(new CustomEvent('edge-points-changed', {detail: {kicked: true}}));
+    console.log("edge-points-changed fired");
+  }
+  
+  fireCellLabelChanged() {
+    this.dispatchEvent(new CustomEvent('cell-label-changed', {detail: {kicked: true}}));
+    console.log("Cell Label Changed fired");
   }
 
 
