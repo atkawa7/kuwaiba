@@ -15,7 +15,6 @@
  */
 package com.neotropic.kuwaiba.modules.reporting.img.rackview;
 
-import com.vaadin.ui.Notification;
 import java.awt.Color;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
@@ -67,7 +66,7 @@ public class EquipmentWidget extends NestedDeviceWidget {
                 
                 setBackground(new Color(remoteClassMetadata.getColor()));
             } catch (ServerSideException ex) {
-                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
             }
             setOpaque(true);
             setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.CENTER, 0));

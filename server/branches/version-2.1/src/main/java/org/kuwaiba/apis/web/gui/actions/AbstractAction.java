@@ -15,42 +15,43 @@
  */
 package org.kuwaiba.apis.web.gui.actions;
 
-import com.vaadin.event.Action;
-import com.vaadin.server.Resource;
+//import com.vaadin.event.Action;
+//import com.vaadin.server.Resource;
 import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Root of all actions in the system
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public abstract class AbstractAction extends Action {
-    /**
-     * Reference to the backend bean
-     */
-    protected WebserviceBean wsBean;
-    
-    public AbstractAction(String caption, WebserviceBean wsBean) {
-        super(caption);
-        this.wsBean = wsBean;
-    }
-    
-    public AbstractAction(String caption, Resource icon) {
-        super(caption, icon);
-    }
-    
-    /**
-     * What to do when the action is triggered 
-     * @param sourceComponent The parent component that contains the object related to the action
-     * @param targetObject The object related to the action (usually a node)
-     */
-    public abstract void actionPerformed (Object sourceComponent, Object targetObject);
-    /**
-     * What to do when the action has no context
-     */
-    public abstract void actionPerformed ();
-    
-    @Override
-    public String toString() {
-        return getCaption();
-    }
-}
+public abstract class AbstractAction{}
+//public abstract class AbstractAction{/* extends Action {
+//    /**
+//     * Reference to the backend bean
+//     */
+//    protected WebserviceBean wsBean;
+//    
+//    public AbstractAction(String caption, WebserviceBean wsBean) {
+//        super(caption);
+//        this.wsBean = wsBean;
+//    }
+//    
+//    public AbstractAction(String caption, Resource icon) {
+//        super(caption, icon);
+//    }
+//    
+//    /**
+//     * What to do when the action is triggered 
+//     * @param sourceComponent The parent component that contains the object related to the action
+//     * @param targetObject The object related to the action (usually a node)
+//     */
+//    public abstract void actionPerformed (Object sourceComponent, Object targetObject);
+//    /**
+//     * What to do when the action has no context
+//     */
+//    public abstract void actionPerformed ();
+//    
+//    @Override
+//    public String toString() {
+//        return getCaption();
+//    }
+//}

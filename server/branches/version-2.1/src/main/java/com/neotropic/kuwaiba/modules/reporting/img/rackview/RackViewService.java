@@ -15,7 +15,6 @@
  */
 package com.neotropic.kuwaiba.modules.reporting.img.rackview;
 
-import com.vaadin.ui.Notification;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,11 +46,11 @@ public class RackViewService {
     public void shownRack() {
         
         if (rack == null) {
-            Notification.show("Empty Rack", Notification.Type.ERROR_MESSAGE);
+//            Notification.show("Empty Rack", Notification.Type.ERROR_MESSAGE);
         } else {
             Boolean ascending = Boolean.valueOf(rack.getAttribute("rackUnitsNumberingDescending")); // NOI18N
             if (ascending == null) {
-                Notification.show("The rack unit sorting has not been set. Ascending is assumed", Notification.Type.WARNING_MESSAGE);
+//                Notification.show("The rack unit sorting has not been set. Ascending is assumed", Notification.Type.WARNING_MESSAGE);
             }
             scene.render(rack);
             
@@ -73,7 +72,7 @@ public class RackViewService {
                             RackViewImage.getInstance().getRemoteSession().getSessionId());
                         
                     } catch (ServerSideException ex) {
-                        Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//                        Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
                         Exceptions.printStackTrace(ex);
                     }
                     
@@ -189,11 +188,11 @@ public class RackViewService {
                 continue;
             
             if (endpointsA.length == 0) {
-                Notification.show(String.format("The endpointA was removed in the link %s", connection.toString()), Notification.Type.WARNING_MESSAGE);
+//                Notification.show(String.format("The endpointA was removed in the link %s", connection.toString()), Notification.Type.WARNING_MESSAGE);
                 continue;
             }
             if (endpointsB.length == 0) {
-                Notification.show(String.format("The Endpoint B was removed in the link %s", connection.toString()), Notification.Type.WARNING_MESSAGE);
+//                Notification.show(String.format("The Endpoint B was removed in the link %s", connection.toString()), Notification.Type.WARNING_MESSAGE);
                 continue;
             }
             RemoteObjectLight aSide = endpointsA[0];
@@ -221,7 +220,7 @@ public class RackViewService {
             } catch (ServerSideException ex) {
             }
             if (!isSubclassOf) {
-                Notification.show(String.format("The endpointB in link %s is not a %s", connection.toString(), "GenericPort"), Notification.Type.WARNING_MESSAGE); //NOI18N
+//                Notification.show(String.format("The endpointB in link %s is not a %s", connection.toString(), "GenericPort"), Notification.Type.WARNING_MESSAGE); //NOI18N
                 continue;
             }
             

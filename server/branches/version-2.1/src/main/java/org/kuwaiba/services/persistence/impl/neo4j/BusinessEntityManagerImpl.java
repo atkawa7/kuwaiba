@@ -18,7 +18,7 @@ package org.kuwaiba.services.persistence.impl.neo4j;
 
 import com.neotropic.kuwaiba.modules.reporting.defaults.DefaultReports;
 import com.neotropic.kuwaiba.modules.reporting.InventoryReport;
-import com.neotropic.kuwaiba.modules.reporting.img.SceneExporter;
+//import com.neotropic.kuwaiba.modules.reporting.img.SceneExporter;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import groovy.lang.Binding;
@@ -2618,7 +2618,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             environmentParameters.setVariable("classLabel", classLabel); //NOI18N
             environmentParameters.setVariable("defaultReports", defaultReports); //NOI18N
             
-            environmentParameters.setVariable("sceneExporter", SceneExporter.getInstance(/*this, mem*/));
+//            environmentParameters.setVariable("sceneExporter", SceneExporter.getInstance(/*this, mem*/));
             
             //To keep backwards compatibility
             environmentParameters.setVariable("objectClassName", objectClassName); //NOI18N

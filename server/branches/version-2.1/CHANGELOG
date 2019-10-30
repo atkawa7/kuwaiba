@@ -141,3 +141,8 @@
 * Migration to Java 8, Neo4J 3.x and Vaadin 8.x
 * Added a preliminary Outside Plant module version
 * Service Manager partly ported to the web interface
+
+2.0.1
+
+2.1 (Initial Commit 30-10-2019)
+* Update from Vaadin 8 to Vaadin 14

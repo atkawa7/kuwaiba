@@ -15,7 +15,6 @@
  */
 package com.neotropic.kuwaiba.modules.reporting.img.rackview;
 
-import com.vaadin.ui.Notification;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -162,8 +161,8 @@ public class RackViewImage {
         }
         
         if (classCustomShape == null) {
-            Notification.show("This database seems outdated. Contact your administrator to apply the necessary patches to add the CustomShape class", 
-                Notification.Type.ERROR_MESSAGE);
+//            Notification.show("This database seems outdated. Contact your administrator to apply the necessary patches to add the CustomShape class", 
+//                Notification.Type.ERROR_MESSAGE);
             return null;
         }
                 
@@ -182,7 +181,7 @@ public class RackViewImage {
                 try {
                     devicesLight = getWebserviceBean().getObjectChildren(rack.getClassName(), rack.getId(), 0, getIpAddress(), getRemoteSession().getSessionId());
                 } catch (ServerSideException ex) {
-                    Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//                    Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
                     //Exceptions.printStackTrace(ex);
                 }
                 if (devicesLight != null) {
@@ -193,7 +192,7 @@ public class RackViewImage {
                         try {
                             device = getWebserviceBean().getObject(deviceLight.getClassName(), deviceLight.getId(), getIpAddress(), getRemoteSession().getSessionId());
                         } catch (ServerSideException ex) {
-                            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//                            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
                             //Exceptions.printStackTrace(ex);
                         }
                         
@@ -202,7 +201,7 @@ public class RackViewImage {
                             try {
                                 lcm = getWebserviceBean().getClass(deviceLight.getClassName(), getIpAddress(), getRemoteSession().getSessionId());
                             } catch (ServerSideException ex) {
-                                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//                                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
                                 //Exceptions.printStackTrace(ex);
                             }
                             
@@ -282,7 +281,7 @@ public class RackViewImage {
                 }
             }
         }
-        Notification.show(message, Notification.Type.ERROR_MESSAGE);
+//        Notification.show(message, Notification.Type.ERROR_MESSAGE);
         return null;
     }
 }

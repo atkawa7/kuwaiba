@@ -15,7 +15,6 @@
  */
 package com.neotropic.kuwaiba.modules.reporting.img.rackview;
 
-import com.vaadin.ui.Notification;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -161,7 +160,7 @@ public class DeviceLayoutRenderer {
         try {
             PersistenceService.getInstance().getMetadataEntityManager().getClass("CustomShape"); //NOI18N
         } catch (MetadataObjectNotFoundException ex) {
-            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
             Exceptions.printStackTrace(ex);
             return null;
         }
@@ -234,7 +233,7 @@ public class DeviceLayoutRenderer {
             } catch (ServerSideException ex) {
                 Exceptions.printStackTrace(ex);
                 
-                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
             }
             
             if (deviceClass == null) {
@@ -323,7 +322,7 @@ public class DeviceLayoutRenderer {
                                     RackViewImage.getInstance().getRemoteSession().getSessionId());
                         } catch (ServerSideException ex) {
                             Exceptions.printStackTrace(ex);
-                            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//                            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
                         }
                         //CommunicationsStub.getInstance().getMetaForClass(port.getClassName(), false);
                         if (portClass == null) {
@@ -466,7 +465,7 @@ public class DeviceLayoutRenderer {
                                     
                                 } catch (ServerSideException ex) {
                                     Exceptions.printStackTrace(ex);
-                                    Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//                                    Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
                                 }
                                 
                                 if (lol == null) {
@@ -610,7 +609,7 @@ public class DeviceLayoutRenderer {
             }
             reader.close();
         } catch (XMLStreamException ex) {
-            Notification.show("The view seems corrupted and could not be loaded", Notification.Type.ERROR_MESSAGE);
+//            Notification.show("The view seems corrupted and could not be loaded", Notification.Type.ERROR_MESSAGE);
         }
     }
     
@@ -831,7 +830,7 @@ public class DeviceLayoutRenderer {
                     return true;
                 
             } catch (ServerSideException ex) {
-                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
                 Exceptions.printStackTrace(ex);
                 return false;
             }
@@ -852,7 +851,7 @@ public class DeviceLayoutRenderer {
                     return true;
                                 
             } catch (ServerSideException ex) {
-                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
                 Exceptions.printStackTrace(ex);
                 return false;
             }

@@ -15,7 +15,7 @@
  */
 package org.kuwaiba.apis.web.gui.actions;
 
-import com.vaadin.server.Resource;
+//import com.vaadin.server.Resource;
 import java.util.List;
 import org.kuwaiba.beans.WebserviceBean;
 
@@ -23,31 +23,32 @@ import org.kuwaiba.beans.WebserviceBean;
  * An contextual action that has a submenu
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public abstract class AbstractComposedAction extends AbstractAction {
-    
-    public AbstractComposedAction(String caption, WebserviceBean wsBean) {
-        super(caption, wsBean);
-    }
-    
-    public AbstractComposedAction(String caption, Resource icon) {
-        super(caption, icon);
-    }
-    
-    /**
-     * Shows a popup with the options. Handle the existence of items in the calling method (most probably actionPerformed) to customize the error message
-     * @param sourceComponent The visual component this action is attached to.
-     * @param targetObject The object related to the action (usually a node)
-     * @param subMenuOptions The options in the submenu
-     */
-    public void showSubMenu(Object sourceComponent, Object targetObject, List<?> subMenuOptions) {
-    }
-    
-    /**
-     * This method will be called after selecting an option in the window that replaces the submenu
-     * @param sourceComponent The component that triggered the action.
-     * @param targetObject The subcomponent that triggered the action.
-     * @param selectedOption The option selected from the sub menu list.
-     */
-    public abstract void finalActionPerformed(Object sourceComponent, Object targetObject, 
-            Object selectedOption);
-}
+public abstract class AbstractComposedAction {}
+//public abstract class AbstractComposedAction extends AbstractAction {
+//    
+//    public AbstractComposedAction(String caption, WebserviceBean wsBean) {
+//        super(caption, wsBean);
+//    }
+//    
+//    public AbstractComposedAction(String caption, Resource icon) {
+//        super(caption, icon);
+//    }
+//    
+//    /**
+//     * Shows a popup with the options. Handle the existence of items in the calling method (most probably actionPerformed) to customize the error message
+//     * @param sourceComponent The visual component this action is attached to.
+//     * @param targetObject The object related to the action (usually a node)
+//     * @param subMenuOptions The options in the submenu
+//     */
+//    public void showSubMenu(Object sourceComponent, Object targetObject, List<?> subMenuOptions) {
+//    }
+//    
+//    /**
+//     * This method will be called after selecting an option in the window that replaces the submenu
+//     * @param sourceComponent The component that triggered the action.
+//     * @param targetObject The subcomponent that triggered the action.
+//     * @param selectedOption The option selected from the sub menu list.
+//     */
+//    public abstract void finalActionPerformed(Object sourceComponent, Object targetObject, 
+//            Object selectedOption);
+//}

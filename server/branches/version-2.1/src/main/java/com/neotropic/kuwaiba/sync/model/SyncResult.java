@@ -15,7 +15,7 @@
 
 package com.neotropic.kuwaiba.sync.model;
 
-import com.vaadin.icons.VaadinIcons;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -85,32 +85,37 @@ public class SyncResult {
     }
     
     public String getTypeAsIcon() {
-        VaadinIcons vaadinIcons = VaadinIcons.CLOSE_CIRCLE;
+        VaadinIcon vaadinIcons = VaadinIcon.CLOSE_CIRCLE;
         String color = "#d40000"; //NOI18N
         switch (type) {
             case 0: // TYPE_ERROR
-                vaadinIcons = VaadinIcons.CLOSE_CIRCLE;
+                vaadinIcons = VaadinIcon.CLOSE_CIRCLE;
                 color = "#d40000"; //NOI18N
                 break;
             case 1: // TYPE_SUCCESS
-                vaadinIcons = VaadinIcons.CHECK_CIRCLE;
+                vaadinIcons = VaadinIcon.CHECK_CIRCLE;
                 color = "#aad400"; //NOI18N
                 break;
             case 2: // TYPE_WARNING
-                vaadinIcons = VaadinIcons.EXCLAMATION_CIRCLE;
+                vaadinIcons = VaadinIcon.EXCLAMATION_CIRCLE;
                 color = "#ffcc00"; //NOI18N
                 break;
             case 3: // TYPE_INFORMATION
-                vaadinIcons = VaadinIcons.INFO_CIRCLE;
+                vaadinIcons = VaadinIcon.INFO_CIRCLE;
                 color = "#0066ff"; //NOI18N
                 break;
         }
-        return "<span class=\"v-icon\" style=\"font-family: " //NOI18N
-            + vaadinIcons.getFontFamily() 
+//        return "<span class=\"v-icon\" style=\"font-family: " //NOI18N
+//            + vaadinIcons.getFontFamily() 
+//            + "; color:" 
+//            + color 
+//            +";\">&#x" //NOI18N
+//            + Integer.toHexString(vaadinIcons.getCodepoint())
+//            + ";</span>"; //NOI18N
+        return "<span class=\"v-icon\" style=\""
             + "; color:" 
             + color 
             +";\">&#x" //NOI18N
-            + Integer.toHexString(vaadinIcons.getCodepoint())
             + ";</span>"; //NOI18N
     }
     

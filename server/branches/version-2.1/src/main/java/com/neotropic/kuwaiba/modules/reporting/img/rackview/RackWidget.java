@@ -15,7 +15,6 @@
  */
 package com.neotropic.kuwaiba.modules.reporting.img.rackview;
 
-import com.vaadin.ui.Notification;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -277,11 +276,11 @@ public class RackWidget extends SelectableRackViewWidget {
         String[] attributeTypes = equipmentClass.getAttributesTypes();
                         
         if (!RackViewImage.stringArrayhasValue(attributesNames, "position")) {
-            Notification.show(String.format("%s: The %s attribute does not exist", equipment.toString(), "position"), Notification.Type.WARNING_MESSAGE);
+//            Notification.show(String.format("%s: The %s attribute does not exist", equipment.toString(), "position"), Notification.Type.WARNING_MESSAGE);
             return false;
         }
         if (!RackViewImage.stringArrayhasValue(attributesNames, "rackUnits")) {
-            Notification.show(String.format("%s: The %s attribute does not exist", equipment.toString(), "rackUnits"), Notification.Type.WARNING_MESSAGE);
+//            Notification.show(String.format("%s: The %s attribute does not exist", equipment.toString(), "rackUnits"), Notification.Type.WARNING_MESSAGE);
             return false;
         }
         
@@ -289,26 +288,26 @@ public class RackWidget extends SelectableRackViewWidget {
         int index = RackViewImage.stringArrayIndexOfValue(attributesNames, "position");
         
         if (index != -1 && !"Integer".equals(attributeTypes[index])) { //NOI18N
-            Notification.show(String.format("%s: The %s attribute must be an Integer", equipment.toString(), "position"), Notification.Type.WARNING_MESSAGE);
+//            Notification.show(String.format("%s: The %s attribute must be an Integer", equipment.toString(), "position"), Notification.Type.WARNING_MESSAGE);
             return false;
         }
         
         index = RackViewImage.stringArrayIndexOfValue(attributesNames, "rackUnits");
         
         if (index != -1 && !"Integer".equals(attributeTypes[index])) {
-            Notification.show(String.format("%s: The %s attribute must be an Integer", equipment.toString(), "rackUnits"), Notification.Type.WARNING_MESSAGE);
+//            Notification.show(String.format("%s: The %s attribute must be an Integer", equipment.toString(), "rackUnits"), Notification.Type.WARNING_MESSAGE);
             return false;
         }
         
         int equipmentPosition = position == -1 ? (equipment.getAttribute("position") != null ? Integer.valueOf(equipment.getAttribute("position")) : -1) : position;
         
         if (!(equipmentPosition >= 0)) {
-            Notification.show(String.format("%s: The position must be greater than or equal to zero", equipment.toString()), Notification.Type.WARNING_MESSAGE);
+//            Notification.show(String.format("%s: The position must be greater than or equal to zero", equipment.toString()), Notification.Type.WARNING_MESSAGE);
             return false;
         }
         
         if (equipmentPosition > rackUnits) {
-            Notification.show(String.format("%s: The position is greater than the number of rack units", equipment.toString()), Notification.Type.WARNING_MESSAGE);
+//            Notification.show(String.format("%s: The position is greater than the number of rack units", equipment.toString()), Notification.Type.WARNING_MESSAGE);
             return false;
         }
         
@@ -317,7 +316,7 @@ public class RackWidget extends SelectableRackViewWidget {
         
         int equipmentRackUnits = equipment.getAttribute("rackUnits") != null ? Integer.valueOf(equipment.getAttribute("rackUnits")) : -1;
         if (!(equipmentRackUnits >= 0)) {
-            Notification.show(String.format("%s: The number of rack units must be greater than or equal to zero", equipment.toString()), Notification.Type.WARNING_MESSAGE);
+//            Notification.show(String.format("%s: The number of rack units must be greater than or equal to zero", equipment.toString()), Notification.Type.WARNING_MESSAGE);
             return false;
         }
         
@@ -327,11 +326,11 @@ public class RackWidget extends SelectableRackViewWidget {
         for (int i = 0; i < equipmentRackUnits; i += 1) {
             int idx = equipmentPosition + i;
             if (idx > rackUnits) {
-                Notification.show(String.format("%s: The equipment can not be located in the given %s position", equipment.toString(), equipmentPosition), Notification.Type.WARNING_MESSAGE);
+//                Notification.show(String.format("%s: The equipment can not be located in the given %s position", equipment.toString(), equipmentPosition), Notification.Type.WARNING_MESSAGE);
                 return false;
             }
             if (!mapRackUnits.get(idx).isAvailable()) {
-                Notification.show(String.format("%s: The rack unit %s is not available", equipment.toString(), idx), Notification.Type.WARNING_MESSAGE);
+//                Notification.show(String.format("%s: The rack unit %s is not available", equipment.toString(), idx), Notification.Type.WARNING_MESSAGE);
                 return false;
             }            
         }

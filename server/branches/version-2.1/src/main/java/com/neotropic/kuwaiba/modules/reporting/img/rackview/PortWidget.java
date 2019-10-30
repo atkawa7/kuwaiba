@@ -15,7 +15,6 @@
  */
 package com.neotropic.kuwaiba.modules.reporting.img.rackview;
 
-import com.vaadin.ui.Notification;
 import java.awt.Color;
 import java.awt.Dimension;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -55,7 +54,7 @@ public class PortWidget extends SelectableRackViewWidget implements NestedDevice
                     RackViewImage.getInstance().getRemoteSession().getSessionId());
         } catch (ServerSideException ex) {
             Exceptions.printStackTrace(ex);
-            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
         }        
         free = true; 
         if (isNested) {

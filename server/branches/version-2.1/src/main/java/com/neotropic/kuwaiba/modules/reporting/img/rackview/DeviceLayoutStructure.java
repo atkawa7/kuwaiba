@@ -15,7 +15,6 @@
  */
 package com.neotropic.kuwaiba.modules.reporting.img.rackview;
 
-import com.vaadin.ui.Notification;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,7 +54,7 @@ public class DeviceLayoutStructure {
                     RackViewImage.getInstance().getIpAddress(),
                     RackViewImage.getInstance().getRemoteSession().getSessionId());
         } catch (ServerSideException ex) {
-            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
             return;
         }
         
@@ -166,7 +165,7 @@ public class DeviceLayoutStructure {
             
             xmlsr.close();
         } catch (XMLStreamException ex) {
-            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
         }
     }
     
