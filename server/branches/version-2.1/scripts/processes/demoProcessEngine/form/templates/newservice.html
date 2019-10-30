@@ -1,0 +1,225 @@
+<html>
+<head>
+  <title>Hand-Over</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <style>
+    * {
+      margin: 0px;
+      padding: 0px;
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+    }
+
+    .paperA4 {
+      width: 297mm;
+      height: 210mm;
+      min-height: 297mm;
+      min-width: 210mm;
+      max-height: 297mm;
+      max-width: 210mm;
+      background: white;
+      padding: 1.0in 1.0in 1.0in 1.0in;
+    }
+
+    body {
+      background: rgb(204,204,204);
+    }
+
+    page[size="A4"] {
+      background: white;
+      width: 21cm;
+      height: 29.7cm;
+      display: block;
+      margin: 0 auto;
+      margin-bottom: 0.5cm;
+      box-shadow: 0, 0, 0, 0;
+    }
+
+    @page {
+      size: A4;
+      margin: 0;
+      box-shadow: 0, 0, 0, 0;
+    }
+
+    @media print {
+
+      body, page[size="A4"] {
+        width: 210mm;
+        height: 297mm;
+        margin: 0;
+        box-shadow: 0, 0, 0, 0;
+      }
+    }
+  </style>
+</head>
+  <body>
+    <page size="A4">
+      <div class="paperA4">
+        <div style="
+          display: block;
+          margin-left: auto;
+          margin-right: auto;
+          width: 100%;
+          height: 660pt;">
+
+          <img src="http://www.kuwaiba.org/img/logo_kuwaiba1.png" alt="Italian Trulli"
+            style="
+              position:relative;
+              left:0;
+              text-align:left;
+              margin-left:11.7pt;
+              margin-top:111.25pt;
+              width:425.25pt;
+              height:178.5pt;
+              z-index:251658240;
+              visibility:visible;
+              "
+          />
+        </div>
+        <p><span>&nbsp;</span></p>
+        <p><span>&nbsp;</span></p>
+        <p><span>&nbsp;</span></p>
+        <p><span>&nbsp;</span></p>
+        <!-- Footer -->
+        <hr size="1" align="left" style='color:gray'>
+        <table border=0 cellspacing=0 cellpadding=0 width="98%"
+          style='
+            width:98.78%;
+            border-collapse:collapse;'>
+          <tr style='height:4.0pt'>
+            <td width="42%" valign=bottom style='width:42.4%;padding:0in 5.4pt 0in 5.4pt; height:4.0pt'>
+              <p align=left style='text-align:left'><b><span style='font-size:6.0pt; color:gray;'>&nbsp;</span></b></p>
+            </td>
+            <td width="23%" valign=top style='width:23.04%;padding:0in 5.4pt 0in 5.4pt; height:4.0pt'>
+              <p align=center style='text-align:center'><b><span style='font-size:6.0pt; color:gray;'></span></b></p>
+            </td>
+            <td width="34%" valign=top style='width:34.56%;padding:0in 5.4pt 0in 5.4pt; height:4.0pt'>
+              <p align=right style='text-align:right'><b>
+                <span style='font-size:6.0pt; font-family:"Verdana",sans-serif; color:gray'>1-2</span>
+              </b></p>
+          </td>
+         </tr>
+        </table>
+      </div>
+    </page>
+    <page size="A4">
+      <div class="paperA4">
+        <div style="
+          display: block;
+          margin-left: auto;
+          margin-right: auto;
+          width: 100%;
+          height: 660pt;">
+
+          <img src="http://www.kuwaiba.org/img/logo_kuwaiba1.png" alt="Italian Trulli"
+            style="
+              position:relative;
+              left:0;
+              text-align:left;
+              margin-left:11.7pt;
+              margin-top:11.25pt;
+              width:425.25pt;
+              height:178.5pt;
+              z-index:251658240;
+              visibility:visible;
+              "
+          />
+
+          <h2><span>New Service Summary</span></h2>
+          <table>
+            <tr>
+              <td>
+                <p><span>&nbsp;</span></p>
+                <p style="width:100%;">
+                  <span style='padding-right:4em'><b>Customer</b></span>
+                </p>
+              </td>
+              <td>
+                <p style="width:100%;">
+                  <span style='
+                    font-size:11.0pt;
+                    font-family:"Calibri",sans-serif;'>
+                    ${cbmCustomer}
+                  </span>
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p style="width:100%;">
+                  <span style='padding-right:4em'><b>Service Type</b></span>
+                </p>
+              </td>
+              <td>
+                <p style="width:100%;">
+                  <span style='
+                    font-size:11.0pt;
+                    font-family:"Calibri",sans-serif;'>
+                    ${cmbService}
+                  </span>
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p style="width:100%;">
+                  <span style='padding-right:4em'><b>Service Name</b></span>
+                </p>
+              </td>
+              <td>
+                <p style="width:100%;">
+                  <span style='
+                    font-size:11.0pt;
+                    font-family:"Calibri",sans-serif;'>
+                    ${txtServiceName}
+                  </span>
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p style="width:100%;">
+                  <span style='padding-right:4em'><b>Contact</b></span>
+                </p>
+              </td>
+              <td>
+                <p style="width:100%;">
+                  <span style='
+                    font-size:11.0pt;
+                    font-family:"Calibri",sans-serif;'>
+                    ${cmbCommercialContact}
+                  </span>
+                </p>
+              </td>
+            </tr>
+          </table>
+          <p><span>&nbsp;</span></p>
+        </div>
+        <p><span>&nbsp;</span></p>
+        <p><span>&nbsp;</span></p>
+        <p><span>&nbsp;</span></p>
+        <p><span>&nbsp;</span></p>
+        <!-- Footer -->
+        <hr size="1" align="left" style='color:gray'>
+        <table border=0 cellspacing=0 cellpadding=0 width="98%"
+          style='
+            width:98.78%;
+            border-collapse:collapse;'>
+          <tr style='height:4.0pt'>
+            <td width="42%" valign=bottom style='width:42.4%;padding:0in 5.4pt 0in 5.4pt; height:4.0pt'>
+              <p align=left style='text-align:left'><b><span style='font-size:6.0pt; color:gray;'>&nbsp;</span></b></p>
+            </td>
+            <td width="23%" valign=top style='width:23.04%;padding:0in 5.4pt 0in 5.4pt; height:4.0pt'>
+              <p align=center style='text-align:center'><b><span style='font-size:6.0pt; color:gray;'></span></b></p>
+            </td>
+            <td width="34%" valign=top style='width:34.56%;padding:0in 5.4pt 0in 5.4pt; height:4.0pt'>
+              <p align=right style='text-align:right'><b>
+                <span style='font-size:6.0pt; font-family:"Verdana",sans-serif; color:gray'>2-2</span>
+              </b></p>
+          </td>
+         </tr>
+        </table>
+      </div>
+    </page>
+  </body>
+</html>
