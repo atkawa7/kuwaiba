@@ -141,7 +141,7 @@ public class LoginViewFlow extends VerticalLayout {
      }
     
     private VerticalLayout buildLoginFooter() {
-        Image imgLogo = new Image("./img/neotropic_logo.png", "Kuwaiba Logo");
+        Image imgLogo = new Image("img/neotropic_logo.png", "Kuwaiba Logo");
         
         Div lblCopyright = new Div(new Html("Copyright 2010-2019 <a style=\"color:black\" target=\"blank\" href=\"http://www.neotropic.co\">Neotropic SAS</a>"));
         

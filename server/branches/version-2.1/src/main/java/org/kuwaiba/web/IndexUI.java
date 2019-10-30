@@ -8,7 +8,7 @@ import com.vaadin.flow.server.PWA;
 import javax.inject.Inject;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.web.authentication.AccessControl;
-import org.kuwaiba.web.modules.welcome.WelcomeComponentFlow;
+import org.kuwaiba.web.modules.welcome.WelcomeComponent;
 
 
 /**
@@ -37,7 +37,7 @@ public class IndexUI extends VerticalLayout  implements BeforeEnterObserver {
             event.forwardTo(LoginViewFlow.class);
         } else if (getAccessControl() != null && getAccessControl().isUserSignedIn()) {
             //reroute to Welcome screen
-            event.forwardTo(WelcomeComponentFlow.class);
+            event.forwardTo(WelcomeComponent.class);
         }
     }
 

@@ -14,67 +14,147 @@
  *  limitations under the License.
  */
 package org.kuwaiba.web.modules.welcome;
-public class WelcomeComponent{}
-//import com.vaadin.cdi.CDIView;
-//import com.vaadin.navigator.View;
-//import com.vaadin.navigator.ViewChangeListener;
-//import com.vaadin.server.Page;
-//import com.vaadin.ui.MenuBar;
-//import com.vaadin.ui.VerticalLayout;
-//import javax.inject.Inject;
-//import org.kuwaiba.beans.WebserviceBean;
-//import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-//import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
-//import org.kuwaiba.web.IndexUI;
-//import org.kuwaiba.web.LoginView;
-//import org.kuwaiba.web.modules.osp.dashboard.SimpleMapDashboardWidget;
-//
-///**
-// * The welcome screen
-// * @author Charles Edward Bedon Cortazar{@literal <charles.bedon@kuwaiba.org>}
-// * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
-// */
-//@CDIView("welcome")
-//public class WelcomeComponent extends AbstractTopComponent implements View {
-//    /**
-//     * View identifier
-//     */
-//    public static String VIEW_NAME = "welcome";
-//    
-//    @Inject
-//    private WebserviceBean wsBean;
-//    
-//    @Override
-//    public void enter(ViewChangeListener.ViewChangeEvent event) {
-//        
-//        final RemoteSession session = (RemoteSession)getSession().getAttribute("session");
-//        
-//        if (session == null) 
-//             getUI().getNavigator().navigateTo(LoginView.VIEW_NAME);
-//        else {
-//            Page.getCurrent().setTitle(String.format("Kuwaiba Open Network Inventory - [%s]", session.getUsername()));
-//            
-//            VerticalLayout lytContent = new VerticalLayout();
-//            SimpleMapDashboardWidget wdtMap = new SimpleMapDashboardWidget("Geolocated Buildings", wsBean);
-//            lytContent.addComponent(wdtMap);
-//            lytContent.setSizeFull();
-//            
-//            MenuBar mnuMain = ((IndexUI)getUI()).getMainMenu();
-//            
-//            this.addComponents(mnuMain, lytContent);
-//            this.setExpandRatio(mnuMain, 0.2f);
-//            this.setExpandRatio(lytContent, 9.7f);
-//            this.setSizeFull();
-//        }
-//    }
-//
-//    @Override
-//    public void registerComponents() {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-//
-//    @Override
-//    public void unregisterComponents() {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-//}
+
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.contextmenu.MenuItem;
+import com.vaadin.flow.component.contextmenu.SubMenu;
+import com.vaadin.flow.component.menubar.MenuBar;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.Route;
+import javax.inject.Inject;
+import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.web.authentication.AccessControl;
+import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
+import org.kuwaiba.web.modules.osp.OutsidePlantModule;
+/**
+ * The welcome screen
+ * @author Charles Edward Bedon Cortazar{@literal <charles.bedon@kuwaiba.org>}
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
+ */
+@PageTitle("Welcome")
+@Route(value = "welcome")
+public class WelcomeComponent extends AbstractTopComponent implements BeforeEnterObserver {
+    /**
+     * View identifier
+     */
+    public static String VIEW_NAME = "welcome";
+    
+    @Inject
+    private WebserviceBean wsBean;
+    //contains valid user logged inside application
+    private static AccessControl accessControl;
+    /**
+     * This will hold the navigation links
+     */
+    private MenuBar menuBar;
+
+    /**
+     * Default Constructor
+     */
+    public WelcomeComponent(){
+        initResources();
+    }
+    
+    /**
+     * 
+     * @param event 
+     */
+    @Override
+    public void beforeEnter(BeforeEnterEvent event) {
+        getUI().ifPresent(ui -> { 
+                RemoteSession logedSession = null;
+                logedSession = ui.getSession().getAttribute(RemoteSession.class);
+                if(logedSession == null){
+                    // Session not found
+                    ui.navigate("login");
+                }
+                else{
+                    // Session found
+                    initResources();
+                    add(new Button("Boton de revision"));
+                }
+             });
+    }
+
+    public static AccessControl getAccessControl() {
+        return accessControl;
+    }
+
+    public static void setAccessControl(AccessControl accessControl) {
+        WelcomeComponent.accessControl = accessControl;
+    }
+    
+    public void initResources() {        
+//        VerticalLayout lytContent = new VerticalLayout();
+//        SimpleMapDashboardWidget wdtMap = new SimpleMapDashboardWidget("Geolocated Buildings", wsBean);
+//        lytContent.addComponent(wdtMap);
+//        lytContent.setSizeFull();
+        RemoteSession remoteSession = UI.getCurrent().getSession().getAttribute(RemoteSession.class);
+        
+        setMenuBar(new MenuBar());
+        getMenuBar().setOpenOnHover(true);
+        
+        MenuItem navigationTreeMItem = getMenuBar().addItem("Navigation Tree");
+        MenuItem servicesMItem = getMenuBar().addItem("Services");
+        MenuItem listTypesMItem = getMenuBar().addItem("List Types");
+        MenuItem ipAddressManagerMItem = getMenuBar().addItem("IP Address Manager");
+        
+        OutsidePlantModule outsidePlantModule = new OutsidePlantModule(wsBean, remoteSession);
+        outsidePlantModule.attachToMenu(getMenuBar());
+        
+        MenuItem warehouseManagerMItem = getMenuBar().addItem("Warehouse Manager");
+        MenuItem processManagerMItem = getMenuBar().addItem("Process Manager");
+        MenuItem contactsMItem = getMenuBar().addItem("Contacts");
+        MenuItem optionsMItem = getMenuBar().addItem("Options");
+        MenuItem logoutMItem = getMenuBar().addItem("Log Out", event ->{
+            getUI().ifPresent(ui -> { 
+                System.out.println("Entro al evento del click Logout");
+                ui.getSession().setAttribute(RemoteSession.class, null);
+                ui.navigate("Login");
+             });
+        });
+        
+        SubMenu servicesSubMenu = servicesMItem.getSubMenu();
+        MenuItem serviceManagerSMItem = servicesSubMenu.addItem("Service Manager");
+        MenuItem addCustomerSMItem = servicesSubMenu.addItem("Add Customer");
+        MenuItem addServiceSMItem = servicesSubMenu.addItem("Add Service");
+        
+        SubMenu listTypesSubMenu = listTypesMItem.getSubMenu();
+        MenuItem listTypeManagerSMItem = listTypesSubMenu.addItem("List Type Manager");
+        MenuItem addListTypeItemSMItem = listTypesSubMenu.addItem("Add List Type Item");
+        
+        SubMenu processManagerSubMenu = processManagerMItem.getSubMenu();
+        MenuItem startNewProcessSMItem = processManagerSubMenu.addItem("Start New Process");
+        MenuItem exploreProcessesMItem = processManagerSubMenu.addItem("Explore Processes");
+        
+        SubMenu contactsSubMenu = contactsMItem.getSubMenu();
+        MenuItem addContactSMItem = contactsSubMenu.addItem("Add Contact");
+        
+        SubMenu optionsSubMenu = optionsMItem.getSubMenu();
+        MenuItem reloadProcessDefinitionsSMItem = optionsSubMenu.addItem("Reload Process Definitions");
+        
+        add(getMenuBar());        
+    }
+
+    public MenuBar getMenuBar() {
+        return menuBar;
+    }
+
+    public void setMenuBar(MenuBar menuBar) {
+        this.menuBar = menuBar;
+    }
+
+    @Override
+    public void registerComponents() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void unregisterComponents() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+}
