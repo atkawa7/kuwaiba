@@ -21,13 +21,15 @@ import com.vaadin.flow.router.Route;
 import javax.inject.Inject;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.web.KuwaibaConst;
+import org.kuwaiba.web.MainLayout;
 
 /**
  * Main window of the Outside Plant module
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-@PageTitle("OSP")
-@Route(value = "osp")
+@Route(value = KuwaibaConst.PAGE_OSP, layout = MainLayout.class)
+@PageTitle(KuwaibaConst.TITLE_OSP)
 public class OutsidePlantComponent extends AbstractTopComponent {
     /**
      * The name of the view

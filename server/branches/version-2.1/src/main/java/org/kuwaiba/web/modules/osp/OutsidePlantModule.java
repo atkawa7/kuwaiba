@@ -18,7 +18,11 @@ package org.kuwaiba.web.modules.osp;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.contextmenu.MenuItem;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.menubar.MenuBar;
+import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.router.RouterLink;
 import org.kuwaiba.apis.web.gui.modules.AbstractModule;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -57,7 +61,7 @@ public class OutsidePlantModule extends AbstractModule {
     public int getType() {
         return MODULE_TYPE_COMMERCIAL;
     }
-
+    @Deprecated
     @Override
     public void attachToMenu(MenuBar menuBar) {
         MenuItem outsidePlantMItem = menuBar.addItem("Outside Plant", event -> {
@@ -74,5 +78,12 @@ public class OutsidePlantModule extends AbstractModule {
     public void close() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
+    @Override
+    public void attachToMenu(Tabs tabs) {
+        RouterLink routerLink = new RouterLink(null, OutsidePlantComponent.class);
+        routerLink.add(VaadinIcon.MAP_MARKER.create());
+        routerLink.add(getName());
+        tabs.add(new Tab(routerLink));
+    }    
 }

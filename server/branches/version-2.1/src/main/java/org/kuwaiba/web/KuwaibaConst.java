@@ -12,23 +12,19 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.kuwaiba.web.modules.welcome;
-
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
-import org.kuwaiba.web.KuwaibaConst;
-import org.kuwaiba.web.MainLayout;
+package org.kuwaiba.web;
 
 /**
- * The welcome screen
+ * Set of Kuwaiba Web Client Application Constants
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-@Route(value = KuwaibaConst.PAGE_WELCOME, layout = MainLayout.class)
-@PageTitle(KuwaibaConst.TITLE_WELCOME)
-public class WelcomeComponent extends VerticalLayout {
-    public WelcomeComponent() {
-        add(new Label(">>> Welcome"));
-    }    
+public class KuwaibaConst {
+    public static final String PAGE_ROOT = "";
+    public static final String PAGE_WELCOME = "welcome";
+    public static final String PAGE_OSP = "osp";
+    
+    public static final String TITLE_WELCOME = "Welcome";
+    public static final String TITLE_OSP = "OSP";
+    
+    public static final String META_VIEW_PORT = "width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes";
 }

@@ -17,6 +17,7 @@ package org.kuwaiba.apis.web.gui.modules;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.menubar.MenuBar;
+import com.vaadin.flow.component.tabs.Tabs;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
@@ -89,7 +90,10 @@ public abstract class AbstractModule {
      * Attaches a menu option to an existing menu
      * @param menuBar
      */
+    @Deprecated
     public abstract void attachToMenu(MenuBar menuBar);
+    
+    public abstract void attachToMenu(Tabs tabs);
     /**
      * Gets the icon used in menus and buttons.
      * @return The icon.
