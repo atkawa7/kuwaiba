@@ -52,6 +52,7 @@ public class MainLayout extends AppLayout {
         addToNavbar(btnSyncManager);
         
         setPrimarySection(AppLayout.Section.DRAWER);
+        RemoteSession remoteSession = UI.getCurrent().getSession().getAttribute(RemoteSession.class);
         
         Tabs tabs = new Tabs();
         tabs.setOrientation(Tabs.Orientation.VERTICAL);
@@ -67,7 +68,6 @@ public class MainLayout extends AppLayout {
         Tab tabIPAddressManager = new Tab("IP Address Manager");
         tabs.add(tabIPAddressManager);
         
-        RemoteSession remoteSession = UI.getCurrent().getSession().getAttribute(RemoteSession.class);
         OutsidePlantModule outsidePlantModule = new OutsidePlantModule(webserviceBean, remoteSession);
         outsidePlantModule.attachToMenu(tabs);
         
