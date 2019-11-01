@@ -23,7 +23,7 @@ import com.vaadin.flow.shared.Registration;
 
 /**
  * 
- * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
+ * @author Orlando Paz Duarte {@literal <orlando.paz@kuwaiba.org>}
  */
 @Tag("mx-graph-point")
 @JsModule("./mx-graph/mx-graph-point.js")

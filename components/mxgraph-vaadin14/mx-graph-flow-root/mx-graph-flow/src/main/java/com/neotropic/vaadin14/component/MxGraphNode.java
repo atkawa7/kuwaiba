@@ -15,18 +15,18 @@
  */
 package com.neotropic.vaadin14.component;
 
-import com.vaadin.flow.component.ComponentEvent;
-import com.vaadin.flow.component.DomEvent;
 
 /**
  * 
  * @author Orlando Paz Duarte {@literal <orlando.paz@kuwaiba.org>}
  */
-@DomEvent("click-edge")
-public class MxGraphClickEdgeEvent extends ComponentEvent<MxGraphCell> {
+public class MxGraphNode extends MxGraphCell {
+
+    public MxGraphNode() {
+        super();
+        setIsVertex(true);
+    }  
     
-    public MxGraphClickEdgeEvent(MxGraphCell source, boolean fromClient) {
-        super(source, fromClient);
-    }
     
 }
+

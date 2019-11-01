@@ -24,7 +24,7 @@ import com.vaadin.flow.shared.Registration;
 
 /**
  * 
- * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
+ * @author Orlando Paz Duarte {@literal <orlando.paz@kuwaiba.org>}
  */
 @Tag("mx-graph-cell")
 @JsModule("./mx-graph/mx-graph-cell.js")

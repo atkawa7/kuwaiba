@@ -66,4 +66,12 @@ public class MxGraph extends Component {
     public void addCell(MxGraphCell mxGraphCell) {
         getElement().appendChild(mxGraphCell.getElement());     
     }
+   
+    public void addNode(MxGraphNode graphNode) {
+        getElement().appendChild(graphNode.getElement());     
+    }
+    
+    public void addEdge(MxGraphEdge graphEdge) {
+        getElement().appendChild(graphEdge.getElement());     
+    }
 }

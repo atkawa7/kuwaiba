@@ -13,40 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.neotropic.vaadin14.component;
+
 
 /**
  *
  * @author Orlando Paz Duarte {@literal <orlando.paz@kuwaiba.org>}
  */
-public class Point {
-    
-    private int x;
-    private int y;
+public class MxGraphEdge extends MxGraphCell{
 
-    public Point() {
-    }
-    
-    public Point(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }   
-
-    public int getX() {
-        return x;
+    public MxGraphEdge() {
+        super();
+        setIsEdge(true);
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-    
-    
 }

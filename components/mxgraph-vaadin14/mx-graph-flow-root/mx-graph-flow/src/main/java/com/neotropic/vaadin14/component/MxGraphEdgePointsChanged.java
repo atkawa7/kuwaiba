@@ -21,7 +21,7 @@ import com.vaadin.flow.component.DomEvent;
 
 /**
  * 
- * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
+ * @author Orlando Paz Duarte {@literal <orlando.paz@kuwaiba.org>}
  */
 @DomEvent("edge-points-changed")
 public class MxGraphEdgePointsChanged extends ComponentEvent<MxGraphCell> {

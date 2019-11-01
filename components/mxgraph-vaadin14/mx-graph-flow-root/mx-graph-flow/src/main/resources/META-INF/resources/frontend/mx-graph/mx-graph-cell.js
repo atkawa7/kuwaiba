@@ -90,7 +90,8 @@ class MxGraphCell extends PolymerElement {
         observer: 'fireEdgePointsChanged'   // listener called when the value is changed
       },
       image: {
-        type: String
+        type: String,
+        value: null
       },
       label: {
         type: String,
@@ -120,11 +121,11 @@ class MxGraphCell extends PolymerElement {
       },
       strokeWidth: {
         type: Number,
-        value: 80
+        value: 1
       },
       labelBackgroundColor: {
         type: Number,
-        value: ''
+        value: 'white'
       },
       perimeterSpacing: {
         type: Number,
@@ -135,7 +136,8 @@ class MxGraphCell extends PolymerElement {
         value: 'black'
       },
       fontColor : {
-        type: String
+        type: String,
+        value: 'black'
       }
       
       
@@ -177,7 +179,7 @@ class MxGraphCell extends PolymerElement {
 
     if (this.graph && this.graph instanceof mxGraph) {
       this._graphReady();
-    }
+    } 
 
 
   }
@@ -188,9 +190,10 @@ class MxGraphCell extends PolymerElement {
     this.graph.getModel().beginUpdate();
     try {
       if (this.vertex) {  //if the cell is a vertex then...
-        console.log("CREATIN VERTEX")
+        console.log("CREATIN VERTEX");
+        var imageStyle = this.image ? ';shape=image;verticalLabelPosition=bottom;image='.concat(this.image) : '';
         this.cell = this.graph.insertVertex(parent, null, this.label, this.x, this.y, this.width, this.height,
-              'verticalLabelPosition=bottom;verticalAlign=top;shape=image;image='+ this.image +
+              'verticalAlign=top' + imageStyle +
              ';fontStyle=1;labelPadding=5' +
             ';labelBackgroundColor=' + this.labelBackgroundColor +                
             ';fontColor=' + this.fontColor);
@@ -215,7 +218,7 @@ class MxGraphCell extends PolymerElement {
           
           // create the edge and assign the reference
           this.cell = this.graph.insertEdge(parent, null, this.label, sourceNode, targetNode,
-          'fontStyle=1;labelPadding=5\
+          'fontStyle=1;endArrow=none;orthogonalLoop=1;labelPadding=5\
             ;perimeterSpacing=' + this.perimeterSpacing +
             ';strokeWidth=' + this.strokeWidth + 
             ';labelBackgroundColor=' + this.labelBackgroundColor +
@@ -224,7 +227,7 @@ class MxGraphCell extends PolymerElement {
 
         
            // if there are control points, add them to the edge
-          if(this.points) {
+          if(this.points && this.points.length > 0) {
             var arrayPoints = JSON.parse(this.points); 
             if (! this.cell.geometry.points ) {
               this.cell.geometry.points = [];
@@ -242,7 +245,7 @@ class MxGraphCell extends PolymerElement {
  
           // if there are labels, add them to the edge
           if(this.sourceLabel) {
-            this.cellSourceLabel = new mxCell(this.sourceLabel, new mxGeometry(-0.9, 0, 0, 0), 
+            this.cellSourceLabel = new mxCell(this.sourceLabel, new mxGeometry(-0.8, 0, 0, 0), 
             'resizable=0;editable=1;fontStyle=1;labelPadding=5' +
             ';labelBackgroundColor=' + this.labelBackgroundColor +                
             ';fontColor=' + this.fontColor );
@@ -254,7 +257,7 @@ class MxGraphCell extends PolymerElement {
              this.cell.insert(this.cellSourceLabel);
           }
           if(this.targetLabel) {
-            this.cellTargetLabel = new mxCell(this.targetLabel, new mxGeometry(0.9, 0, 0, 0),
+            this.cellTargetLabel = new mxCell(this.targetLabel, new mxGeometry(0.8, 0, 0, 0),
              'resizable=0;editable=1;'+
             'fontStyle=1;labelPadding=5' +
             ';labelBackgroundColor=' + this.labelBackgroundColor +                
