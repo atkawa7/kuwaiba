@@ -71,6 +71,9 @@ class MxGraph extends PolymerElement {
 
   constructor() {
     super();
+    //        console.log("adding Observer")
+          this._cellObserver = new MutationObserver(this.tagAdded.bind(this));
+          this._cellObserver.observe(this, { childList: true});
   
   }
 
@@ -91,7 +94,7 @@ class MxGraph extends PolymerElement {
  //called then the mxGraph library has been loaded and initialize the grap object
   initMxGraph() {
         // Checks if the browser is supported
-        //console.log('sadasd' + mxClient);
+
         if (!mxClient.isBrowserSupported())
         {
           // Displays an error message if the browser is not supported.
@@ -295,9 +298,7 @@ class MxGraph extends PolymerElement {
             }
           }
         
-//        console.log("adding Observer")
-          this._cellObserver = new MutationObserver(this.addCell.bind(this));
-          this._cellObserver.observe(this, { childList: true});
+
         }
   };
   
@@ -316,22 +317,35 @@ class MxGraph extends PolymerElement {
     };
   
   // fired when some children tag is added.
-  addCell(mutations){
-    console.log("addcell Method")
-   
-    mutations.forEach(function(mutation) {
-    console.log("MUTATION TYPE" + mutation.type);
-    var node  = mutation.addedNodes[0];
-    if(node) {
-        if (node.localName === "mx-graph-cell") {
-              node.parent = this;   // add reference to the parent PolymerObject
-              node.graph = this.graph; // add the mxGraph object
-              this.push('cells', node);            
+  tagAdded(mutations){
+      
+    console.log("tagAdded Method")
 
-         }
-     }
-    }, this); 
+    if (this.graph) {
+        this.updateCells(mutations);
+    } else {
+        setTimeout(() => {
+        
+        this.updateCells(mutations);
+       
+        }, 2000);  
+    }
      
+}
+
+updateCells(mutations) {
+
+    mutations.forEach(function(mutation) {
+      console.log("MUTATION TYPE" + mutation.type);
+      var node  = mutation.addedNodes[0];
+      if(node) {
+          if (node.localName === "mx-graph-cell") {
+                node.parent = this;   // add reference to the parent PolymerObject
+                node.graph = this.graph; // add the mxGraph object
+                this.push('cells', node);             
+           }
+       }
+      }, this); 
 }
 
   fireClickEdge(){
