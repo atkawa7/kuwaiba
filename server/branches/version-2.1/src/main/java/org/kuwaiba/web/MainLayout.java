@@ -30,6 +30,8 @@ import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import static org.kuwaiba.web.KuwaibaConst.META_VIEW_PORT;
 import org.kuwaiba.web.modules.osp.OutsidePlantModule;
+import org.kuwaiba.web.modules.servmanager.ServiceManagerModule;
+import org.kuwaiba.web.procmanager.ProcessManagerModule;
 
 /**
  * The Kuwaiba Web Client Layout
@@ -59,8 +61,10 @@ public class MainLayout extends AppLayout {
         Tab tabNavigationTree = new Tab("Navigation Tree");
         tabs.add(tabNavigationTree);
         
-        Tab tabServiceManager = new Tab("Service Manager");
-        tabs.add(tabServiceManager);
+        ServiceManagerModule serviceManagerModule = new ServiceManagerModule(webserviceBean, remoteSession);
+        serviceManagerModule.attachToMenu(tabs);
+//        Tab tabServiceManager = new Tab("Service Manager");
+//        tabs.add(tabServiceManager);
         
         Tab tabListTypeManager = new Tab("List Type Manager");
         tabs.add(tabListTypeManager);
@@ -74,8 +78,10 @@ public class MainLayout extends AppLayout {
         Tab tabWarehouseManager = new Tab("Warehouse Manager");
         tabs.add(tabWarehouseManager);
         
-        Tab tabProcessManager = new Tab("Process Manager");
-        tabs.add(tabProcessManager);
+        ProcessManagerModule processManagerModule = new ProcessManagerModule(webserviceBean, remoteSession);
+        processManagerModule.attachToMenu(tabs);
+//        Tab tabProcessManager = new Tab("Process Manager");
+//        tabs.add(tabProcessManager);
         
         Tab tabContactManager = new Tab("Contact Manager");
         tabs.add(tabContactManager);
