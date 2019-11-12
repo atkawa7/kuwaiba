@@ -16,26 +16,26 @@
 
 package org.kuwaiba.apis.web.gui.dashboards.widgets;
 
-//import com.vaadin.flow.component.Html;
-//import com.vaadin.shared.ui.ContentMode;
-//import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
+import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.html.Label;
+import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 
 /**
  * A simple dashboard widget with no cover that displays a custom title and subtitle.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class SimpleLabelDashboardWidget {}
-//public class SimpleLabelDashboardWidget extends AbstractDashboardWidget {
-//
-//    public SimpleLabelDashboardWidget(String title, String subtitle) {
-//        super(title);
-//        add(new Html(String.format("<h2>%s</h2>", title)),
-//                new Label(subtitle));
-//    }
-//
-//    @Override
-//    public void createCover() { }
-//
-//    @Override
-//    public void createContent() { }
-//}
+//public class SimpleLabelDashboardWidget {}
+public class SimpleLabelDashboardWidget extends AbstractDashboardWidget {
+
+    public SimpleLabelDashboardWidget(String title, String subtitle) {
+        super(title);
+        add(new Html(String.format("<h2>%s</h2>", title)),
+                new Label(subtitle));
+    }
+
+    @Override
+    public void createCover() { }
+
+    @Override
+    public void createContent() { }
+}

@@ -15,11 +15,8 @@
  */
 package org.kuwaiba.apis.web.gui.dashboards;
 
-//import com.vaadin.ui.AbstractOrderedLayout;
-//import com.vaadin.ui.MenuBar;
-//import com.vaadin.ui.Panel;
-//import com.vaadin.ui.VerticalLayout;
 import com.vaadin.flow.component.menubar.MenuBar;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 
 /**
@@ -29,39 +26,39 @@ import org.kuwaiba.apis.web.gui.actions.AbstractAction;
  * with widgets displaying detailed information (charts, lists, etc)
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class AbstractDashboard{}
-//public class AbstractDashboard extends Panel {
-//    /**
-//     * The layout used by the panel. See some sample layouts in 
-//     * the package org.kuwaiba.apis.web.gui.dashboards.layouts
-//     */
-//    private AbstractOrderedLayout dashboardLayout;
-//    
-//    /**
-//     * Default constructor
-//     * @param title The title of the dashboard
-//     * @param dashboardLayout The layout to be used. See some sample layouts in 
-//     * the package org.kuwaiba.apis.web.gui.dashboards.layouts
-//     */
-//    public AbstractDashboard(String title, AbstractOrderedLayout dashboardLayout) {
-//        this.dashboardLayout = dashboardLayout;
-//        //this.addComponent(dashboardLayout);
-//        setContent(dashboardLayout);
-//        this.setSizeFull();
-//    }
-//
-//    /**
-//     * Alternate constructor
-//     * @param title The title of the dashboard
-//     * @param dashboardLayout The layout to be used. See some sample layouts in 
-//     * the package org.kuwaiba.apis.web.gui.dashboards.layouts
-//     * @param actions The actions to be placed in menu bar on top of the dashboard
-//     */
-//    public AbstractDashboard(String title, AbstractOrderedLayout dashboardLayout, AbstractAction[] actions) {
-//        this.dashboardLayout = dashboardLayout;
-//        
-//        MenuBar mnuDashboard = new MenuBar();
-//        
+//public class AbstractDashboard{}
+public class AbstractDashboard extends VerticalLayout {
+    /**
+     * The layout used by the panel. See some sample layouts in 
+     * the package org.kuwaiba.apis.web.gui.dashboards.layouts
+     */
+    private VerticalLayout dashboardLayout;
+    
+    /**
+     * Default constructor
+     * @param title The title of the dashboard
+     * @param dashboardLayout The layout to be used. See some sample layouts in 
+     * the package org.kuwaiba.apis.web.gui.dashboards.layouts
+     */
+    public AbstractDashboard(String title, VerticalLayout dashboardLayout) {
+        this.dashboardLayout = dashboardLayout;
+        //this.addComponent(dashboardLayout);
+        add(dashboardLayout);
+        this.setSizeFull();
+    }
+
+    /**
+     * Alternate constructor
+     * @param title The title of the dashboard
+     * @param dashboardLayout The layout to be used. See some sample layouts in 
+     * the package org.kuwaiba.apis.web.gui.dashboards.layouts
+     * @param actions The actions to be placed in menu bar on top of the dashboard
+     */
+    public AbstractDashboard(String title, VerticalLayout dashboardLayout, AbstractAction[] actions) {
+        this.dashboardLayout = dashboardLayout;
+        
+        MenuBar mnuDashboard = new MenuBar();
+        
 //        for (AbstractAction action : actions)
 //            mnuDashboard.addItem(action.getCaption(), new MenuBar.Command() {
 //                @Override
@@ -69,12 +66,12 @@ public class AbstractDashboard{}
 //                    action.actionPerformed();
 //                }
 //            });
-//        
-//        this.setContent(new VerticalLayout(mnuDashboard, dashboardLayout));
-//        this.setSizeFull();
-//    }
-//
-//    public AbstractOrderedLayout getDashboardLayout() {
-//        return dashboardLayout;
-//    }
-//}
+        
+        add(new VerticalLayout(mnuDashboard, dashboardLayout));
+        this.setSizeFull();
+    }
+
+    public VerticalLayout getDashboardLayout() {
+        return dashboardLayout;
+    }
+}

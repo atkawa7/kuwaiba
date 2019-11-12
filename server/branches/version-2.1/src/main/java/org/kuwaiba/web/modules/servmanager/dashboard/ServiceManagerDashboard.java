@@ -14,33 +14,31 @@
  */
 package org.kuwaiba.web.modules.servmanager.dashboard;
 
-//import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
-//import com.vaadin.server.Page;
-//import com.vaadin.ui.UI;
-//import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
-//import org.kuwaiba.apis.web.gui.dashboards.layouts.TheaterDashboardLayout;
-//import org.kuwaiba.apis.web.gui.dashboards.widgets.AttachedFilesDashboardWidget;
-//import org.kuwaiba.apis.web.gui.dashboards.widgets.SimpleLabelDashboardWidget;
-//import org.kuwaiba.apis.web.gui.notifications.Notifications;
-//import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-//import org.kuwaiba.beans.WebserviceBean;
-//import org.kuwaiba.exceptions.ServerSideException;
-//import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-//import org.kuwaiba.web.modules.navtree.dashboard.RelationshipsDashboardWidget;
-//import org.kuwaiba.web.modules.reports.dashboard.ReportShortcutWidget;
-//import org.kuwaiba.web.modules.servmanager.views.FormDashboardWidget;
+import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.notification.Notification;
+import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
+import org.kuwaiba.apis.web.gui.dashboards.layouts.TheaterDashboardLayout;
+import org.kuwaiba.apis.web.gui.dashboards.widgets.AttachedFilesDashboardWidget;
+import org.kuwaiba.apis.web.gui.dashboards.widgets.SimpleLabelDashboardWidget;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.web.modules.servmanager.views.FormDashboardWidget;
+import org.openide.util.Exceptions;
 
 /**
  * The dashboard used to show the information related to a given service
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class ServiceManagerDashboard{}
-//public class ServiceManagerDashboard extends AbstractDashboard {
-//    
-//    public ServiceManagerDashboard(RemoteObjectLight customer, RemoteObjectLight service, WebserviceBean wsBean) {
-//        super(service.toString(), new TheaterDashboardLayout(3, 3));
-//        //((TheaterDashboardLayout)getDashboardLayout()).setScreenWidget(new ZabbixGraphDashboardWidget(service, wsBean));
-//        ((TheaterDashboardLayout)getDashboardLayout()).setScreenWidget(new SimpleLabelDashboardWidget(service.getName(), service.getClassName()));
+//public class ServiceManagerDashboard{}
+public class ServiceManagerDashboard extends AbstractDashboard {
+    
+    public ServiceManagerDashboard(RemoteObjectLight customer, RemoteObjectLight service, WebserviceBean wsBean) {
+        super(service.toString(), new TheaterDashboardLayout(3, 3));
+        //((TheaterDashboardLayout)getDashboardLayout()).setScreenWidget(new ZabbixGraphDashboardWidget(service, wsBean));
+        ((TheaterDashboardLayout)getDashboardLayout()).setScreenWidget(new SimpleLabelDashboardWidget(service.getName(), service.getClassName()));
 //        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(0, 0, new ResourcesDashboardWidget(service, wsBean));
 //        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(1, 0, new TopologyViewDashboardWidget(this, service, wsBean));
 //        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(2, 0, new EndToEndViewDashboardWidget(this, service, wsBean));
@@ -48,28 +46,38 @@ public class ServiceManagerDashboard{}
 //        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(1, 1, new FormDashboardWidget(this, service, wsBean));
 //        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(2, 1, new AttachedFilesDashboardWidget(service, wsBean));
 //        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(0, 2, new ContactsDashboardWidget(customer, wsBean));
-//        
-//        try {
-//            Object object = wsBean.getConfigurationVariableValue("org.kuwaiba.report.shortcut.report1", 
-//                Page.getCurrent().getWebBrowser().getAddress(), 
-//                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-//            
-//            if (object != null) {
-//                String reportIdAsString = object.toString();
-//
-//                long reportId = Long.valueOf(reportIdAsString);
-//
-//                RemoteReport remoteReport = wsBean.getReport(reportId, 
-//                    Page.getCurrent().getWebBrowser().getAddress(), 
-//                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-//
-//                if (remoteReport != null)
-//                    ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(1, 2, new ReportShortcutWidget(service, remoteReport, wsBean));
-//            }
-//                        
-//        } catch (ServerSideException | NumberFormatException ex) {
-//            Notifications.showError(ex.getMessage());
-//        }
-//        
-//    }
-//}
+        
+        try {
+            getUI().ifPresent(ui -> {
+                RemoteSession currentSession = ui.getSession().getAttribute(RemoteSession.class);
+                String currentUrl = UI.getCurrent().getRouter().getUrl(ServiceManagerDashboard.class);
+                Object object;
+                try {
+                    object = wsBean.getConfigurationVariableValue("org.kuwaiba.report.shortcut.report1",
+                            currentUrl,
+                            currentSession.getSessionId());
+                    if (object != null) {
+                        String reportIdAsString = object.toString();
+
+                        long reportId = Long.valueOf(reportIdAsString);
+
+                        RemoteReport remoteReport = wsBean.getReport(reportId, 
+                            currentUrl, 
+                            currentSession.getSessionId());
+
+//                        if (remoteReport != null)
+//                            ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(1, 2, new ReportShortcutWidget(service, remoteReport, wsBean));
+                    }
+                } catch (ServerSideException ex) {
+                    new Notification("There was an error creating Service Manager Dashboard. Please contact the Administrtor", 3000, Notification.Position.BOTTOM_END).open();
+                    System.out.println("Error on Service Manager Dashboard: " + ex.getMessage());
+                }
+            });
+                        
+        } catch (NumberFormatException ex) {
+            new Notification("There was an error creating Service Manager Dashboard. Please contact the Administrtor", 3000, Notification.Position.BOTTOM_END).open();
+            System.out.println("Error on Service Manager Dashboard: " + ex.getMessage());
+        }
+        
+    }
+}

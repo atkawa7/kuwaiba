@@ -14,7 +14,11 @@
  */
 package org.kuwaiba.web.modules.servmanager;
 
+import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
@@ -24,6 +28,7 @@ import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.router.Route;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,9 +84,13 @@ public class ServiceManagerComponent extends AbstractTopComponent {
      */
     private List<String> existingNodeStyles;
 
-//    @Override
-//    public void enter(ViewChangeListener.ViewChangeEvent event) {
-    public void enter() {
+    public ServiceManagerComponent() {
+        
+    }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+//    public void initResources() {
         addClassName("dashboards");
         
         pnlMain = new SplitLayout();
@@ -95,6 +104,7 @@ public class ServiceManagerComponent extends AbstractTopComponent {
         this.existingNodeStyles = new ArrayList<>();
         
 //        add(mnuMain);
+        add(new Button("boton de prueba"));
         add(pnlMain);
 //        setExpandRatio(mnuMain, 0.5f);
 //        setExpandRatio(pnlMain, 9.5f);
@@ -124,7 +134,7 @@ public class ServiceManagerComponent extends AbstractTopComponent {
             
             txtServiceFilter = new TextField();
             txtServiceFilter.setPlaceholder("Type a service name or class...");
-//            txtServiceFilter.addValueChangeListener(this::onTxtFilterChange);
+            txtServiceFilter.addValueChangeListener(this::onTxtFilterChange);
             txtServiceFilter.setSizeFull();
             
             tblServices = new Grid<>();
@@ -158,9 +168,9 @@ public class ServiceManagerComponent extends AbstractTopComponent {
             tblServices.addSelectionListener(selectionEvent -> {
                 if (!selectionEvent.getAllSelectedItems().isEmpty()) {
                     Optional<RemoteObjectLight> selectedService = selectionEvent.getFirstSelectedItem();
-//                    ServiceManagerDashboard secondComponent = new ServiceManagerDashboard(cmbCustomers.getValue(), selectedService.get(), wsBean);
-                    ServiceManagerDashboard secondComponent = new ServiceManagerDashboard();
-//                    pnlMain.addToSecondary(secondComponent);
+                    ServiceManagerDashboard secondComponent = new ServiceManagerDashboard(cmbCustomers.getValue(), selectedService.get(), wsBean);
+//                    ServiceManagerDashboard secondComponent = new ServiceManagerDashboard();
+                    pnlMain.addToSecondary(secondComponent);
                 }
             });
 
@@ -178,13 +188,13 @@ public class ServiceManagerComponent extends AbstractTopComponent {
         
     }
     
-//    private void onTxtFilterChange(HasValue.ValueChangeEvent<String> event) {
-//        ListDataProvider<RemoteObjectLight> dataProvider = (ListDataProvider<RemoteObjectLight>) tblServices.getDataProvider();
-//        dataProvider.setFilter((source) -> {
-//            String filterAsLowerCase = event.getValue().toLowerCase();
-//            return source.getName().toLowerCase().contains(filterAsLowerCase) || source.getClassName().toLowerCase().contains(filterAsLowerCase);
-//        });
-//    }
+    private void onTxtFilterChange(ComponentValueChangeEvent<TextField, String> event) {
+        ListDataProvider<RemoteObjectLight> dataProvider = (ListDataProvider<RemoteObjectLight>) tblServices.getDataProvider();
+        dataProvider.setFilter((source) -> {
+            String filterAsLowerCase = getTxtServiceFilter().getValue().toLowerCase();
+            return source.getName().toLowerCase().contains(filterAsLowerCase) || source.getClassName().toLowerCase().contains(filterAsLowerCase);
+        });
+    }
 
     @Override
     public void registerComponents() { }
@@ -195,4 +205,14 @@ public class ServiceManagerComponent extends AbstractTopComponent {
     public SplitLayout getPnlMain() {
         return pnlMain;
     }
+
+    public TextField getTxtServiceFilter() {
+        return txtServiceFilter;
+    }
+
+    public void setTxtServiceFilter(TextField txtServiceFilter) {
+        this.txtServiceFilter = txtServiceFilter;
+    }
+    
+    
 }

@@ -15,17 +15,17 @@
  */
 package org.kuwaiba.apis.web.gui.dashboards;
 
-//import com.vaadin.icons.VaadinIcons;
-//import com.vaadin.shared.MouseEventDetails;
-//import com.vaadin.ui.Button;
-//import com.vaadin.ui.Component;
-//import com.vaadin.ui.Label;
-//import com.vaadin.ui.UI;
-//import com.vaadin.ui.VerticalLayout;
-//import com.vaadin.ui.Window;
-//import com.vaadin.ui.themes.ValoTheme;
-//import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
-//import org.kuwaiba.apis.web.gui.notifications.Notifications;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
+
 
 /**
  * A small embeddable component that can be inserted into an AbstractDashboard. A DashboardWidget has two "faces": 
@@ -33,139 +33,140 @@ package org.kuwaiba.apis.web.gui.dashboards;
  * Tile in a MS Windows Metro interface in most of the cases.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public abstract class AbstractDashboardWidget {}
-//public abstract class AbstractDashboardWidget extends VerticalLayout {
-//    /**
-//     * The active content to be displayed (cover or content)
-//     */
-//    protected ActiveContent activeContent;
-//    /**
-//     * The component with the cover information
-//     */
-//    protected Component coverComponent;
-//    /**
-//     * The component with the detailed information (actual content)
-//     */
-//    protected Component contentComponent;
-//    /**
-//     * the component where this dashboard its been displayed
-//     */
-//    protected AbstractDashboard parentDashboard;
-//    /**
-//     * Reference to the event bus so the widget can share information with other widgets
-//     */
-//    protected DashboardEventBus eventBus;
-//    /**
-//     * Dashboard widget title
-//     */
-//    protected String title;
-//    public AbstractDashboardWidget(String title) {
-//        this.title = title;
-//        this.activeContent = ActiveContent.CONTENT_COVER;
-//        this.setMargin(true);
-//    }
-//    
-//    public AbstractDashboardWidget(String title, AbstractDashboard parentDashboard) {
-//        this(title);
-//        this.parentDashboard = parentDashboard;
-//    }
-//
-//    public AbstractDashboardWidget(String title, DashboardEventBus eventBus) {
-//        this.eventBus = eventBus;
-//    }
-//    
-//    /**
-//     * Loads the configuration (if any) of the widget. In most cases, the configuration is extracted from configuration variables.
-//     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the minimum configuration parameters for the widget to work are not available.
-//     */
-//    protected void loadConfiguration() throws InvalidArgumentException { }
-//        
-//    public ActiveContent getActiveContent() {
-//        return activeContent;
-//    }
-//
-//    public void setActiveContent(ActiveContent activeContent) {
-//        this.activeContent = activeContent;
-//    }
-//    
-//    public final void fireEvent(DashboardEventListener.DashboardEvent event) {
-//        if (eventBus != null)
-//            eventBus.notifySubscribers(event);
-//    }
-//
-//    /**
-//     * Flips the current displayed component. That is, instead of the cover component, the component widget will be displayed
-//     */
-//    public void flip() {
-//        if (this.activeContent == ActiveContent.CONTENT_COVER) {
+//public abstract class AbstractDashboardWidget {}
+public abstract class AbstractDashboardWidget extends VerticalLayout {
+    /**
+     * The active content to be displayed (cover or content)
+     */
+    protected ActiveContent activeContent;
+    /**
+     * The component with the cover information
+     */
+    protected Component coverComponent;
+    /**
+     * The component with the detailed information (actual content)
+     */
+    protected Component contentComponent;
+    /**
+     * the component where this dashboard its been displayed
+     */
+    protected AbstractDashboard parentDashboard;
+    /**
+     * Reference to the event bus so the widget can share information with other widgets
+     */
+    protected DashboardEventBus eventBus;
+    /**
+     * Dashboard widget title
+     */
+    protected String title;
+    public AbstractDashboardWidget(String title) {
+        this.title = title;
+        this.activeContent = ActiveContent.CONTENT_COVER;
+        this.setMargin(true);
+    }
+    
+    public AbstractDashboardWidget(String title, AbstractDashboard parentDashboard) {
+        this(title);
+        this.parentDashboard = parentDashboard;
+    }
+
+    public AbstractDashboardWidget(String title, DashboardEventBus eventBus) {
+        this.eventBus = eventBus;
+    }
+    
+    /**
+     * Loads the configuration (if any) of the widget. In most cases, the configuration is extracted from configuration variables.
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the minimum configuration parameters for the widget to work are not available.
+     */
+    protected void loadConfiguration() throws InvalidArgumentException { }
+        
+    public ActiveContent getActiveContent() {
+        return activeContent;
+    }
+
+    public void setActiveContent(ActiveContent activeContent) {
+        this.activeContent = activeContent;
+    }
+    
+    public final void fireEvent(DashboardEventListener.DashboardEvent event) {
+        if (eventBus != null)
+            eventBus.notifySubscribers(event);
+    }
+
+    /**
+     * Flips the current displayed component. That is, instead of the cover component, the component widget will be displayed
+     */
+    public void flip() {
+        if (this.activeContent == ActiveContent.CONTENT_COVER) {
 //            replaceComponent(coverComponent, contentComponent);
-//            activeContent = ActiveContent.CONTENT_CONTENT;
-//        } else {
+            activeContent = ActiveContent.CONTENT_CONTENT;
+        } else {
 //            replaceComponent(contentComponent, coverComponent);
-//            activeContent = ActiveContent.CONTENT_COVER;
-//        }
-//    }
-//    
-//    /**
-//     * Displays the contents of the content widget in a separate modal window
-//     */
-//    public void launch() {
-//        if (contentComponent != null) {
-//            Window wdwContent = new Window(title);
+            activeContent = ActiveContent.CONTENT_COVER;
+        }
+    }
+    
+    /**
+     * Displays the contents of the content widget in a separate modal window
+     */
+    public void launch() {
+        if (contentComponent != null) {
+            Dialog wdwContent = new Dialog();
 //            wdwContent.setModal(true);
-//            wdwContent.setWidth(90, Unit.PERCENTAGE);
-//            wdwContent.setContent(contentComponent);
+            wdwContent.setWidth("90%");
+            wdwContent.add(contentComponent);
 //            wdwContent.center();
 //            UI.getCurrent().addWindow(wdwContent);
-//        } else Notifications.showError("The content component has not been set. Please check your createContent method");
-//    }
-//
-//    /**
-//     * Displays the contents of the content widget replacing the whole dashboard space
-//     */
-//    public void swap() {
-//        if (contentComponent != null && parentDashboard != null) {
+            wdwContent.open();
+        } else new Notification("The content component has not been set. Please check your createContent method", 3000, Notification.Position.BOTTOM_END).open();
+    }
+
+    /**
+     * Displays the contents of the content widget replacing the whole dashboard space
+     */
+    public void swap() {
+        if (contentComponent != null && parentDashboard != null) {
 //            Component formerContent = parentDashboard.getContent();
-//        
-//            Button btnBack = new Button(VaadinIcons.CHEVRON_LEFT, click -> {
-//                    parentDashboard.setContent(formerContent);
-//                });
-//            btnBack.setCaption(title);
-//            btnBack.addStyleNames(ValoTheme.BUTTON_BORDERLESS , "v-button-borderless-back");
-//
-//            VerticalLayout content =  new VerticalLayout(btnBack, contentComponent);
-//            parentDashboard.setContent(content);
-//        }else 
-//            getUI().addWindow(new Window("Error", new Label("The parent or content components have not been set. Please check your scene constructor or the createContent method")));
-//    }
-//    
-//    /**
-//     * Creates the cover component. Note that implementors must set the coverComponent attribute and manage the respective events
-//     * The default implementation creates a colored rectangle displaying the title of the widget without any style. For simple widgets it's recommended to use 
-//     * this implementation (that is, call super.createCover()) and set a style afterwards. 
-//     */
-//    public void createCover() { 
-//        VerticalLayout lytDefaultWidgetCover = new VerticalLayout();
-//        Label lblText = new Label(title);
-//        lblText.setStyleName("text-bottomright");
-//        lytDefaultWidgetCover.addLayoutClickListener((event) -> {
-//            if (event.getButton() == MouseEventDetails.MouseButton.LEFT) {
-//                this.createContent();
-//                launch();
-//            }
-//        });
-//        
-//        lytDefaultWidgetCover.addComponent(lblText);
-//        lytDefaultWidgetCover.setSizeFull();
-//        
-//        this.coverComponent = lytDefaultWidgetCover;
-//        addComponent(coverComponent);
-//    }
-//    public abstract void createContent();
-//    
-//    public enum ActiveContent {
-//        CONTENT_COVER,
-//        CONTENT_CONTENT
-//    }
-//   
-//}
+            Component formerContent = parentDashboard;
+        
+            Button btnBack = new Button(new Icon(VaadinIcon.CHEVRON_LEFT));
+            btnBack.addClickListener(click -> {
+                    parentDashboard.add(formerContent);
+                });
+            btnBack.setText(title);
+            btnBack.addThemeVariants(ButtonVariant.MATERIAL_OUTLINED);
+
+            VerticalLayout content =  new VerticalLayout(btnBack, contentComponent);
+            parentDashboard.add(content);
+        }else 
+            new Notification("The parent or content components have not been set. Please check your scene constructor or the createContent method", 3000, Notification.Position.BOTTOM_END).open();
+    }
+    
+    /**
+     * Creates the cover component. Note that implementors must set the coverComponent attribute and manage the respective events
+     * The default implementation creates a colored rectangle displaying the title of the widget without any style. For simple widgets it's recommended to use 
+     * this implementation (that is, call super.createCover()) and set a style afterwards. 
+     */
+    public void createCover() { 
+        VerticalLayout lytDefaultWidgetCover = new VerticalLayout();
+        Label lblText = new Label(title);
+        lblText.addClassName("text-bottomright");
+        lytDefaultWidgetCover.addClickListener((event) -> {
+            this.createContent();
+            launch();
+        });
+        
+        lytDefaultWidgetCover.add(lblText);
+        lytDefaultWidgetCover.setSizeFull();
+        
+        this.coverComponent = lytDefaultWidgetCover;
+        add(coverComponent);
+    }
+    public abstract void createContent();
+    
+    public enum ActiveContent {
+        CONTENT_COVER,
+        CONTENT_CONTENT
+    }
+   
+}

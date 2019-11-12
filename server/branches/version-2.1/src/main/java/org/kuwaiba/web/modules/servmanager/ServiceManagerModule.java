@@ -16,6 +16,7 @@
 package org.kuwaiba.web.modules.servmanager;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.tabs.Tab;
