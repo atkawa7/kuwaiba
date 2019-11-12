@@ -112,6 +112,7 @@ public class ServiceManagerComponent extends AbstractTopComponent {
                 @Override
                 public void selectionChange(SingleSelectionEvent<RemoteObjectLight> event) {
                     RemoteObjectLight selectedCustomer = event.getValue();
+                    txtServiceFilter.setValue("");
                     try {
                         if (cmbCustomers.getSelectedItem().isPresent()) {
                             List<RemoteObjectLight> servicesForCustomer = wsBean.getServicesForCustomer(selectedCustomer.getClassName(), selectedCustomer.getId(), -1, Page.getCurrent().getWebBrowser().getAddress(), 
@@ -126,6 +127,8 @@ public class ServiceManagerComponent extends AbstractTopComponent {
                         if (pnlMain.getSecondComponent() != null)
                             pnlMain.removeComponent(pnlMain.getSecondComponent());
                         
+                        txtServiceFilter.setEnabled(cmbCustomers.getValue() != null);
+                        
                     } catch (ServerSideException ex) {
                         Notifications.showError(ex.getMessage());
                     }
@@ -133,6 +136,7 @@ public class ServiceManagerComponent extends AbstractTopComponent {
             });
             
             txtServiceFilter = new TextField();
+            txtServiceFilter.setEnabled(false);
             txtServiceFilter.setPlaceholder("Type a service name or class...");
             txtServiceFilter.addValueChangeListener(this::onTxtFilterChange);
             txtServiceFilter.setSizeFull();
@@ -187,6 +191,9 @@ public class ServiceManagerComponent extends AbstractTopComponent {
     }
     
     private void onTxtFilterChange(HasValue.ValueChangeEvent<String> event) {
+        if (cmbCustomers.getValue() == null)
+            return;
+        
         ListDataProvider<RemoteObjectLight> dataProvider = (ListDataProvider<RemoteObjectLight>) tblServices.getDataProvider();
         dataProvider.setFilter((source) -> {
             String filterAsLowerCase = event.getValue().toLowerCase();
