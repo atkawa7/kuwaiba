@@ -43,11 +43,11 @@ public class ResourceFactory {
     /**
      * Default icon width (used in views)
      */
-    private static final int DEFAULT_ICON_WIDTH = 24;
+    public static final int DEFAULT_ICON_WIDTH = 24;
     /**
      * Default icon height (used in views)
      */
-    private static final int DEFAULT_ICON_HEIGHT = 24;
+    public static final int DEFAULT_ICON_HEIGHT = 24;
     /**
      * Default icon width (used in navigation trees)
      */
@@ -95,9 +95,9 @@ public class ResourceFactory {
     public StreamResource getClassIcon(String className, WebserviceBean webserviceBean) {
         if (className == null || webserviceBean == null)
             return null;
-        if (icons.containsKey(className))
-            return icons.get(className);
-        else {
+//        if (icons.containsKey(className))
+//            return icons.get(className);
+//        else {
             try {
                 RemoteSession remoteSession = UI.getCurrent().getSession().getAttribute(RemoteSession.class);
                 RemoteClassMetadata remoteClass = webserviceBean.getClass(className, remoteSession.getIpAddress(), remoteSession.getSessionId());
@@ -122,7 +122,7 @@ public class ResourceFactory {
             } catch (ServerSideException ex) {
                 Notification.show(ex.getMessage());
             }
-        }
+//        }
         return null;
     }
     
@@ -135,9 +135,9 @@ public class ResourceFactory {
     public StreamResource getClassSmallIcon(String className, WebserviceBean webserviceBean) {
         if (className == null || webserviceBean == null)
             return null;
-        if (smallIcons.containsKey(className))
-            return smallIcons.get(className);
-        else {
+//        if (smallIcons.containsKey(className))
+//            return smallIcons.get(className);
+//        else {
             try {
                 RemoteSession remoteSession = UI.getCurrent().getSession().getAttribute(RemoteSession.class);
                 RemoteClassMetadata remoteClass = webserviceBean.getClass(className, remoteSession.getIpAddress(), remoteSession.getSessionId());
@@ -162,7 +162,7 @@ public class ResourceFactory {
             } catch (ServerSideException ex) {
                 Notification.show(ex.getMessage());
             }
-        }
+//        }
         return null;
     }
     /**

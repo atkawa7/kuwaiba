@@ -23,6 +23,7 @@ import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Defines the behavior of views that can be plugged and played such as End to End views.
@@ -51,11 +52,14 @@ public abstract class AbstractView<T> {
      */
     protected Properties properties;
     
-    public AbstractView(MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem) {
+    protected WebserviceBean wsBean;
+    
+    public AbstractView(MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem, WebserviceBean wsBean) {
         this.mem = mem;
         this.aem = aem;
         this.bem= bem;
         this.properties = new Properties();
+        this.wsBean = wsBean;
     }
     
     /**

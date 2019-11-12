@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * A factory class used to lunch plug and play views.
@@ -39,12 +40,22 @@ public class ViewFactory {
      */
     private BusinessEntityManager bem;
     
+    private WebserviceBean wsBean;
+    
     public ViewFactory(MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem) {
         this.mem = mem;
         this.aem = aem;
         this.bem= bem;
     }
-    
+
+    public WebserviceBean getWsBean() {
+        return wsBean;
+    }
+
+    public void setWsBean(WebserviceBean wsBean) {
+        this.wsBean = wsBean;
+    }
+   
     /**
      * Creates an instance of a view, given its canonical name (that is, its name including the package information)
      * @param viewId The FQN of the class.
@@ -53,7 +64,7 @@ public class ViewFactory {
      */
     public AbstractView createViewInstance(String viewId) throws InstantiationException {
         try {
-            Object aView = Class.forName(viewId).getConstructor(MetadataEntityManager.class, ApplicationEntityManager.class, BusinessEntityManager.class).newInstance(mem, aem, bem);
+            Object aView = Class.forName(viewId).getConstructor(MetadataEntityManager.class, ApplicationEntityManager.class, BusinessEntityManager.class, WebserviceBean.class).newInstance(mem, aem, bem, wsBean);
             if (!(aView instanceof AbstractView))
                 throw new InstantiationException(String.format("The view identifier provided (%s) is not an AbstractView subclass", viewId));
             
