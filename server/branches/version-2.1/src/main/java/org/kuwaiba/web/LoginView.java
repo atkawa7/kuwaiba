@@ -122,7 +122,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
                     // Create the session object
                     aSession = bean.createSession(txtUsername.getValue(), //NOI18N
                             txtPassword.getValue(),  RemoteSession.TYPE_WEB,
-                            UI.getCurrent().getRouter().getUrl(LoginView.class));
+                            UI.getCurrent().getSession().getBrowser().getAddress());
                     // Send the session object to browser's session
                     ui.getSession().setAttribute(RemoteSession.class, aSession);
                     // Navigate to Welcome page

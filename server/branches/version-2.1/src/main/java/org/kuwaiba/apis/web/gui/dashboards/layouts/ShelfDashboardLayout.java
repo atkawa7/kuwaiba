@@ -46,25 +46,24 @@ public class ShelfDashboardLayout extends VerticalLayout {
 //        pnlMain.setLocked(true);
         pnlMain.setSizeFull();
         lytRightPanel = new VerticalLayout();
-        lytRightPanel.setWidth("100%");
-        //lytRightPanel.setHeightUndefined();
-        
-//        pnlMain.setSecondComponent(lytRightPanel);
+        lytRightPanel.setWidthFull();
+                
+        pnlMain.addToSecondary(lytRightPanel);
         Html lblTitle = new Html(String.format("<b>%s</b><h2>%s</h2>", subtitle, title));
-        add(lblTitle, pnlMain);
+        add(lblTitle, pnlMain);         
 //        setExpandRatio(pnlMain, 9.4f);
 //        setExpandRatio(lblTitle, 0.6f);
     }
     
     public void addToPile (AbstractDashboardWidget aDashboardWidget) {
-//        lytRightPanel.add(aDashboardWidget);
+        lytRightPanel.add(aDashboardWidget);
     }
     
     public void removeFromPile (AbstractDashboardWidget aDashboardWidget) {
-//        lytRightPanel.remove(aDashboardWidget);
+        lytRightPanel.remove(aDashboardWidget);
     }
     
     public void setMainDashboardWidget (AbstractDashboardWidget aDashboardwidget) {
-//        pnlMain.setFirstComponent(aDashboardwidget);
+        pnlMain.addToPrimary(aDashboardwidget);
     }
 }

@@ -48,7 +48,7 @@ import org.openide.util.Exceptions;
  *
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-@Route("TimelineView")
+//@Route("TimelineView")
 public class TimelineView extends HorizontalLayout {
     private WebserviceBean webserviceBean;
     private RemoteProcessInstance processInstance;
@@ -61,7 +61,7 @@ public class TimelineView extends HorizontalLayout {
     private TimeZone defaultTimeZone;
     
     public TimelineView(){
-        String url = UI.getCurrent().getRouter().getUrl(TimelineView.class);
+//        String url = UI.getCurrent().getRouter().getUrl(TimelineView.class);
         getUI().ifPresent(ui -> { 
             RemoteSession logedSession = null;
             logedSession = ui.getSession().getAttribute(RemoteSession.class);
@@ -74,7 +74,7 @@ public class TimelineView extends HorizontalLayout {
                 this.session = logedSession;
                 this.webserviceBean = ui.getSession().getAttribute(WebserviceBean.class);
                 try {
-                    this.processInstance = this.webserviceBean.getProcessInstance(0, url, this.session.getSessionId());
+                    this.processInstance = this.webserviceBean.getProcessInstance(0, session.getIpAddress(), this.session.getSessionId());
                 } catch (ServerSideException ex) {
                     Exceptions.printStackTrace(ex);
                 }
@@ -133,7 +133,7 @@ public class TimelineView extends HorizontalLayout {
     private List<TimelineStep> getTimelineSteps() {        
         List<RemoteActivityDefinition> activityDefinitions = getActivityDefinitions();
         // Current URL
-        String url = UI.getCurrent().getRouter().getUrl(TimelineView.class);
+//        String url = UI.getCurrent().getRouter().getUrl(TimelineView.class);
         if (activityDefinitions == null)
             return null;
         
@@ -153,7 +153,7 @@ public class TimelineView extends HorizontalLayout {
                 artifact = webserviceBean.getArtifactForActivity(
                         processInstance.getId(),
                         activityDefinition.getId(),
-                        url,
+                        session.getIpAddress(),
                         session.getSessionId());
             } catch (ServerSideException ex) {
                 // Activity does not have artifact
@@ -164,7 +164,7 @@ public class TimelineView extends HorizontalLayout {
                     previousArtifact = webserviceBean.getArtifactForActivity(
                             processInstance.getId(),
                             activityDefinitions.get(i - 1).getId(),
-                            url,
+                            session.getIpAddress(),
                             session.getSessionId());
                 }
             } catch (ServerSideException ex) {
@@ -325,12 +325,12 @@ public class TimelineView extends HorizontalLayout {
     
     private List<RemoteActivityDefinition> getActivityDefinitions() {
         List<RemoteActivityDefinition> activities = null;
-        String url = UI.getCurrent().getRouter().getUrl(TimelineView.class);
+//        String url = UI.getCurrent().getRouter().getUrl(TimelineView.class);
         try {
             
             activities = webserviceBean.getProcessInstanceActivitiesPath(
                 processInstance.getId(),
-                url,
+                session.getIpAddress(),
                 session.getSessionId());
             
         } catch (ServerSideException ex) {
@@ -475,14 +475,14 @@ public class TimelineView extends HorizontalLayout {
          */
         public String getTimelineIndicatorColor() throws ServerSideException {
             String color = "#000000";
-            String url = UI.getCurrent().getRouter().getUrl(TimelineView.class);
+//            String url = UI.getCurrent().getRouter().getUrl(TimelineView.class);
             
             RemoteKpiResult kpiResult = webserviceBean.executeActivityKpiAction(
                     "time",
                     artifact,
                     processDefinitionId,
                     activityDefinition.getId(),
-                    url,
+                    session.getIpAddress(),
                     session.getSessionId());
             if (kpiResult != null) {
                 if (kpiResult.getComplianceLevel() == 10)

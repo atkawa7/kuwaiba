@@ -24,6 +24,7 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.RouterLink;
 import org.kuwaiba.apis.web.gui.modules.AbstractModule;
+import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
@@ -80,10 +81,17 @@ public class OutsidePlantModule extends AbstractModule {
     }
 
     @Override
-    public void attachToMenu(Tabs tabs) {
-        RouterLink routerLink = new RouterLink(null, OutsidePlantComponent.class);
+    public Tab attachToMenu(Tabs tabs) {
+        RouterLink routerLink = new RouterLink(null, getTopComponentClass());
         routerLink.add(VaadinIcon.MAP_MARKER.create());
         routerLink.add(getName());
-        tabs.add(new Tab(routerLink));
+        Tab tab = new Tab(routerLink);
+        tabs.add(tab);
+        return tab;
     }    
+
+    @Override
+    public Class<? extends AbstractTopComponent> getTopComponentClass() {
+        return OutsidePlantComponent.class;
+    }
 }

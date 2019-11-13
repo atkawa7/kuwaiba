@@ -197,6 +197,12 @@
             <type>jar</type>
         </dependency>-->
         
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>flow-dnd</artifactId>
+            <version>2.0.7</version>
+        </dependency>
+                
     </dependencies>
 
     <build>

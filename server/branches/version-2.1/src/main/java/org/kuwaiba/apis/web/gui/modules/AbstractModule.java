@@ -16,7 +16,9 @@
 package org.kuwaiba.apis.web.gui.modules;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.menubar.MenuBar;
+import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -49,7 +51,7 @@ public abstract class AbstractModule {
     /**
      * The icon used in buttons and menus. Preferably use a 24x24 icon.
      */
-    protected Component icon;
+    protected Icon icon;
 
     /**
      * Use this constructor if the module will need to exchange messages with other modules.
@@ -93,12 +95,12 @@ public abstract class AbstractModule {
     @Deprecated
     public abstract void attachToMenu(MenuBar menuBar);
     
-    public abstract void attachToMenu(Tabs tabs);
+    public abstract Tab attachToMenu(Tabs tabs);
     /**
      * Gets the icon used in menus and buttons.
      * @return The icon.
      */
-    public Component getIcon() {
+    public Icon getIcon() {
         return this.icon;
     }
     /**
@@ -111,4 +113,6 @@ public abstract class AbstractModule {
      * What to do on closing
      */
     public abstract void close();
+    
+    public abstract Class<? extends AbstractTopComponent> getTopComponentClass();
 }

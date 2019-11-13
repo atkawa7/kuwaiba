@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.web.procmanager;
+package org.kuwaiba.web.modules.navtree;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -25,30 +25,32 @@ import org.kuwaiba.apis.web.gui.modules.AbstractModule;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.web.KuwaibaConst;
 
 /**
- * The definition of the Process Manager module. This module allows to create and manage Processes and BPMN sections
- * @author Jalbersson Guillemo Plazas {@literal <jalbersson.plazas@kuwaiba.org>}
+ * This is the next generation equivalent of the old navigation tree, which provides a quick way to 
+ * navigate through the containment hierarchy
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class ProcessManagerModule extends AbstractModule {
+public class NavigationTreeModule extends AbstractModule {
 
-    public ProcessManagerModule(WebserviceBean wsBean, RemoteSession session) {
+    public NavigationTreeModule(WebserviceBean wsBean, RemoteSession session) {
         super(wsBean, session);
     }
 
     @Override
     public String getName() {
-        return "Process Manager";
+        return "Navigation Tree";
     }
 
     @Override
     public String getDescription() {
-        return "This module allows to create and manage Processes and BPMN sections";
+        return "Navigate through your physical assets in a hierarchical fashion.";
     }
 
     @Override
     public String getVersion() {
-        return "1.0";
+        return "2.0";
     }
 
     @Override
@@ -58,7 +60,7 @@ public class ProcessManagerModule extends AbstractModule {
 
     @Override
     public int getType() {
-        return MODULE_TYPE_COMMERCIAL;
+        return MODULE_TYPE_FREE_CORE;
     }
 
     @Override
@@ -69,7 +71,9 @@ public class ProcessManagerModule extends AbstractModule {
     @Override
     public Tab attachToMenu(Tabs tabs) {
         RouterLink routerLink = new RouterLink(null, getTopComponentClass());
-        routerLink.add(VaadinIcon.CHART_GRID.create());
+        icon = VaadinIcon.FILE_TREE_SUB.create();
+        icon.setColor(KuwaibaConst.ICON_COLOR);
+        routerLink.add(icon);
         routerLink.add(getName());
         Tab tab = new Tab(routerLink);
         tabs.add(tab);
@@ -88,7 +92,6 @@ public class ProcessManagerModule extends AbstractModule {
 
     @Override
     public Class<? extends AbstractTopComponent> getTopComponentClass() {
-        return ProcessManagerComponent.class;
-    }
-    
+        return NavigationTreeComponent.class;
+    }    
 }

@@ -23,6 +23,7 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.RouterLink;
 import org.kuwaiba.apis.web.gui.modules.AbstractModule;
+import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
@@ -117,16 +118,23 @@ public class ServiceManagerModule extends AbstractModule {
     }
 
     @Override
-    public void attachToMenu(Tabs tabs) {
-        RouterLink routerLink = new RouterLink(null, ServiceManagerComponent.class);
+    public Tab attachToMenu(Tabs tabs) {
+        RouterLink routerLink = new RouterLink(null, getTopComponentClass());
         routerLink.add(VaadinIcon.START_COG.create());
         routerLink.add(getName());
-        tabs.add(new Tab(routerLink));
+        Tab tab = new Tab(routerLink);
+        tabs.add(tab);
+        return tab;
     }
 
     @Override
     public Component open() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Class<? extends AbstractTopComponent> getTopComponentClass() {
+        return ServiceManagerComponent.class;
     }
     
 }

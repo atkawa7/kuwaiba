@@ -22,9 +22,14 @@ public class KuwaibaConst {
     public static final String PAGE_ROOT = "";
     public static final String PAGE_WELCOME = "welcome";
     public static final String PAGE_OSP = "osp";
+    public static final String PAGE_NAVIGATION_TREE = "navtree";
+    public static final String PAGE_PROCESS_MANAGER = "processmanager";
     
     public static final String TITLE_WELCOME = "Welcome";
     public static final String TITLE_OSP = "OSP";
+    public static final String TITLE_NAVIGATION_TREE = "Navigation Tree";
+    public static final String TITLE_PROCESS_MANAGER = "Process Manager";
     
     public static final String META_VIEW_PORT = "width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes";
+    public static final String ICON_COLOR = "#56B7A4";
 }

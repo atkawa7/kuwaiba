@@ -34,6 +34,7 @@ import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
+import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * A factory class that builds and/or caches resources (mostly icons and backgrounds).
@@ -112,18 +113,28 @@ public class ResourceFactory {
                     if (defaultIcons.containsKey(color))
                         return defaultIcons.get(color);
                     else {
-                        StreamResource icon = buildIcon(remoteClass.getColor() + ".png", getIcon(new Color(remoteClass.getColor()), DEFAULT_ICON_WIDTH, DEFAULT_ICON_HEIGHT));
+                        StreamResource icon = buildIcon("default" + color + ".png", getIcon(new Color(color), DEFAULT_ICON_WIDTH, DEFAULT_ICON_HEIGHT));
                         VaadinSession.getCurrent().getResourceRegistry().registerResource(icon);
-                        defaultIcons.put(remoteClass.getColor(), icon);
+                        defaultIcons.put(color, icon);
                         return icon;                        
                     }
                 }
 
             } catch (ServerSideException ex) {
-                Notification.show(ex.getMessage());
+                if (!Constants.DUMMY_ROOT.equals(className))
+                    Notification.show(ex.getMessage());
+                
+                int color = Color.BLACK.getRGB();
+//                if (defaultIcons.containsKey(color))
+//                    return defaultIcons.get(color);
+//                else {
+                    StreamResource icon = buildIcon("default" + color + ".png", getIcon(new Color(color), DEFAULT_ICON_WIDTH, DEFAULT_ICON_HEIGHT));
+                    VaadinSession.getCurrent().getResourceRegistry().registerResource(icon);
+                    defaultIcons.put(color, icon);
+                    return icon;                        
+//                }
             }
 //        }
-        return null;
     }
     
     /**
@@ -152,18 +163,28 @@ public class ResourceFactory {
                     if (defaultSmallIcons.containsKey(color))
                         return defaultSmallIcons.get(color);
                     else {
-                        StreamResource icon = buildIcon(remoteClass.getColor() + ".png", getIcon(new Color(remoteClass.getColor()), DEFAULT_SMALL_ICON_WIDTH, DEFAULT_SMALL_ICON_HEIGHT));
+                        StreamResource icon = buildIcon("default" + color + ".png", getIcon(new Color(color), DEFAULT_SMALL_ICON_WIDTH, DEFAULT_SMALL_ICON_HEIGHT));
                         VaadinSession.getCurrent().getResourceRegistry().registerResource(icon);
-                        defaultSmallIcons.put(remoteClass.getColor(), icon);
+                        defaultSmallIcons.put(color, icon);
                         return icon;                        
                     }
                 }
 
             } catch (ServerSideException ex) {
-                Notification.show(ex.getMessage());
+                if (!Constants.DUMMY_ROOT.equals(className))
+                    Notification.show(ex.getMessage());
+                
+                int color = Color.BLACK.getRGB();
+//                if (defaultSmallIcons.containsKey(color))
+//                    return defaultSmallIcons.get(color);
+//                else {
+                    StreamResource icon = buildIcon("default" + color + ".png", getIcon(new Color(color), DEFAULT_SMALL_ICON_WIDTH, DEFAULT_SMALL_ICON_HEIGHT));
+                    VaadinSession.getCurrent().getResourceRegistry().registerResource(icon);
+                    defaultSmallIcons.put(color, icon);
+                    return icon;                        
+//                }
             }
 //        }
-        return null;
     }
     /**
      * Builds an icon resource
