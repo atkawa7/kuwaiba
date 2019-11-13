@@ -19,6 +19,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
+import org.kuwaiba.web.utils.GridLayout;
 
 /**
  * This layout takes its name because it resembles the way a theater looks like from upside: 
@@ -36,7 +37,8 @@ public class TheaterDashboardLayout extends VerticalLayout {
      * A grid that will contain the "chair" dashboard widgets
      */
     // No existe un GridLayout en Vaadin 14
-    private Grid<AbstractDashboardWidget> lytChairs;
+//    private Grid<AbstractDashboardWidget> lytChairs;
+    private GridLayout lytChairs;
     /**
      * Default constructor
      * @param lowLevelColumns Number of columns the lower part of the "theater chairs" will have
@@ -46,7 +48,7 @@ public class TheaterDashboardLayout extends VerticalLayout {
         this.lytScreen = new HorizontalLayout();
         this.lytScreen.setSizeFull();
         
-//        this.lytChairs = new Grid(lowLevelColumns, lowLevelRows);
+        this.lytChairs = new GridLayout(lowLevelColumns, lowLevelRows);
         this.lytChairs.setWidth("100%");
 //        this.lytChairs.setHeightUndefined();
 //        this.lytChairs.setSpacing(true);
@@ -54,6 +56,7 @@ public class TheaterDashboardLayout extends VerticalLayout {
         SplitLayout verticalSplitPanel = new SplitLayout();
         verticalSplitPanel.setOrientation(SplitLayout.Orientation.VERTICAL);
         verticalSplitPanel.setSplitterPosition(50);
+        verticalSplitPanel.setSizeFull();
         verticalSplitPanel.addToPrimary(this.lytScreen);
         verticalSplitPanel.addToSecondary(this.lytChairs);
         
@@ -67,12 +70,12 @@ public class TheaterDashboardLayout extends VerticalLayout {
      * @param screenWidget The component to be embedded
      */
     public void setScreenWidget(AbstractDashboardWidget screenWidget) {
-//        if (lytScreen.getComponentCount() != 0)
-//            this.lytScreen.replaceComponent(this.lytScreen.getComponent(0), screenWidget);
-//        else
-//            this.lytScreen.add(screenWidget);
+        if (lytScreen.getComponentCount() != 0)
+            this.lytScreen.replace(this.lytScreen.getComponentAt(0), screenWidget);
+        else
+            this.lytScreen.add(screenWidget);
         
-//        this.lytScreen.setComponentAlignment(screenWidget, Alignment.TOP_CENTER);
+        this.lytScreen.setAlignItems(Alignment.CENTER);
     }
     
     /**
@@ -83,6 +86,12 @@ public class TheaterDashboardLayout extends VerticalLayout {
      */
     public void setChairWidget(int column, int row, AbstractDashboardWidget chairWidget){
 //        this.lytChairs.add(chairWidget, column, row);
+        if(this.lytChairs != null && !this.lytChairs.getRows().isEmpty()){
+            if(row >= 0 && row < this.lytChairs.getRows().size()){
+                if(column < this.lytChairs.getRows().get(row).getComponentCount())
+                    this.lytChairs.getRows().get(row).getColumns().get(column).replace(this.lytChairs.getRows().get(row).getColumns().get(column), chairWidget);
+            }
+        }
     }
     
 }

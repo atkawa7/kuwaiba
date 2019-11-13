@@ -31,9 +31,11 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.router.Route;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import javax.inject.Inject;
+import org.kuwaiba.apis.web.gui.dashboards.TabsHolder;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -43,6 +45,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.web.modules.servmanager.dashboard.ServiceManagerDashboard;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidator;
+import org.kuwaiba.web.modules.servmanager.dashboard.ContactsTabWidget;
 
 /**
  * Main view for the Service Manager module
@@ -92,8 +95,9 @@ public class ServiceManagerComponent extends AbstractTopComponent {
     protected void onAttach(AttachEvent attachEvent) {
 //    public void initResources() {
         addClassName("dashboards");
-        
+        setHeightFull();
         pnlMain = new SplitLayout();
+        pnlMain.setSizeFull();
         pnlMain.setSplitterPosition(33);
 //        MenuBar mnuMain = ((IndexUI)getUI()).getMainMenu();
         MenuBar mnuMain = new MenuBar();
@@ -104,7 +108,6 @@ public class ServiceManagerComponent extends AbstractTopComponent {
         this.existingNodeStyles = new ArrayList<>();
         
 //        add(mnuMain);
-        add(new Button("boton de prueba"));
         add(pnlMain);
 //        setExpandRatio(mnuMain, 0.5f);
 //        setExpandRatio(pnlMain, 9.5f);
@@ -112,7 +115,7 @@ public class ServiceManagerComponent extends AbstractTopComponent {
         
         try {
             RemoteSession currentSession = UI.getCurrent().getSession().getAttribute(RemoteSession.class);
-            List<RemoteObjectLight> currentCustomers = wsBean.getObjectsOfClassLight(Constants.CLASS_GENERICCUSTOMER, -1, UI.getCurrent().getRouter().getUrl(ServiceManagerComponent.class), 
+            List<RemoteObjectLight> currentCustomers = wsBean.getObjectsOfClassLight(Constants.CLASS_GENERICCUSTOMER, -1, currentSession.getIpAddress(), 
                     currentSession.getSessionId());
             
             cmbCustomers = new ComboBox<>("", currentCustomers);
@@ -121,14 +124,15 @@ public class ServiceManagerComponent extends AbstractTopComponent {
             
             cmbCustomers.addValueChangeListener(event -> {
                 RemoteObjectLight selectedCustomer = event.getValue();
+                txtServiceFilter.setValue("");
                 try {
-                    List<RemoteObjectLight> servicesForCustomer = wsBean.getServicesForCustomer(selectedCustomer.getClassName(), selectedCustomer.getId(), -1, UI.getCurrent().getRouter().getUrl(ServiceManagerComponent.class), 
+                    List<RemoteObjectLight> servicesForCustomer = wsBean.getServicesForCustomer(selectedCustomer.getClassName(), selectedCustomer.getId(), -1, currentSession.getIpAddress(), 
                             currentSession.getSessionId());
 
                     tblServices.setItems(servicesForCustomer);
-
+                    txtServiceFilter.setEnabled(cmbCustomers.getValue() != null);
                 } catch (ServerSideException ex) {
-                    new Notification("Se produjo un error con el objeto seleccionado. Por favor contacte al administrador", 3000, Position.BOTTOM_END).open();
+                    new Notification("There was an error with the selected object. Please contact the Administrator", 3000, Position.BOTTOM_END).open();
                 }
             });
             
@@ -168,30 +172,45 @@ public class ServiceManagerComponent extends AbstractTopComponent {
             tblServices.addSelectionListener(selectionEvent -> {
                 if (!selectionEvent.getAllSelectedItems().isEmpty()) {
                     Optional<RemoteObjectLight> selectedService = selectionEvent.getFirstSelectedItem();
-                    ServiceManagerDashboard secondComponent = new ServiceManagerDashboard(cmbCustomers.getValue(), selectedService.get(), wsBean);
-//                    ServiceManagerDashboard secondComponent = new ServiceManagerDashboard();
+//                    ServiceManagerDashboard secondComponent = new ServiceManagerDashboard(cmbCustomers.getValue(), selectedService.get(), wsBean);
+                    try{
+                    TabsHolder secondComponent = new TabsHolder(cmbCustomers.getValue().getName(), selectedService.get().getName(), Arrays.asList(new ContactsTabWidget(cmbCustomers.getValue(), wsBean)));
                     pnlMain.addToSecondary(secondComponent);
+                    } catch(Exception ex){
+                        new Notification("There was an error while loading the component. Please contact the Administrator", 3000, Position.BOTTOM_END).open();
+                        System.out.println("Error on ServiceManagerComponent while loading TabsHolder: " + ex.getMessage());
+                    }
                 }
             });
 
-            FormLayout lytFilter = new FormLayout(cmbCustomers, txtServiceFilter);
-//            lytFilter.setMargin(true);
+            VerticalLayout lytFilter = new VerticalLayout(cmbCustomers, txtServiceFilter);
+            lytFilter.setHeight("30%");
+            lytFilter.setWidth("400px");
+            lytFilter.setMargin(true);
+            
+            VerticalLayout lytTblServices = new VerticalLayout(tblServices);
+            lytTblServices.setHeight("70%");
+            lytTblServices.setWidth("400px");
 
-            lytLeftPanel = new VerticalLayout(lytFilter, tblServices);
+            lytLeftPanel = new VerticalLayout(lytFilter, lytTblServices);
+            lytLeftPanel.setHeightFull();
 //            lytLeftPanel.setExpandRatio(lytFilter, 2);
 //            lytLeftPanel.setExpandRatio(tblServices, 8);
-            lytLeftPanel.setSizeFull();
             pnlMain.addToPrimary(lytLeftPanel);
         } catch (ServerSideException ex) {
-            new Notification("Hubo un problema al cargar el componente. Por favor contacte al Administrador", 3000, Position.BOTTOM_END).open();
+            new Notification("There was an error while loading the component. Please contact the Administrator", 3000, Position.BOTTOM_END).open();
+            System.out.println("Error on ServiceManagerComponent while executing onAttach: " + ex.getMessage());
         }
         
     }
     
     private void onTxtFilterChange(ComponentValueChangeEvent<TextField, String> event) {
+        if (cmbCustomers.getValue() == null)
+            return;
+        
         ListDataProvider<RemoteObjectLight> dataProvider = (ListDataProvider<RemoteObjectLight>) tblServices.getDataProvider();
         dataProvider.setFilter((source) -> {
-            String filterAsLowerCase = getTxtServiceFilter().getValue().toLowerCase();
+            String filterAsLowerCase = event.getValue().toLowerCase();
             return source.getName().toLowerCase().contains(filterAsLowerCase) || source.getClassName().toLowerCase().contains(filterAsLowerCase);
         });
     }
