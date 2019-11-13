@@ -14,7 +14,6 @@
  */
 package org.kuwaiba.web.utils;
 
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,14 +23,23 @@ import java.util.List;
  * @author Jalbersson Guillermo Plazas {@literal <jalbersson.plazas@kuwaiba.org>}
  */
 public class GridLayout extends VerticalLayout{
-
+    /**
+     * The total rows that will be used on the Layout. Each row has a list to hold its columns
+     */
     private List<GridLayoutRow> rows;
     
-    public GridLayout(int columns, int rows) {
+    //<editor-fold defaultstate="collapsed" desc="Constructor">
+    /**
+     * Default Constructor
+     * @param columns
+     * @param rows 
+     */
+     public GridLayout(int columns, int rows) {
         if(columns > 0 && rows > 0) {
             setHeightFull();
             setWidthFull();
-            setId("GridLayoutNew");
+            
+            // Addition of rows and columns
             setRows(new ArrayList<>());
             for(int i = 0; i < rows; i++){
                 GridLayoutRow row = new GridLayoutRow();
@@ -44,14 +52,16 @@ public class GridLayout extends VerticalLayout{
                 add(row);
         }
     }
-
-    public List<GridLayoutRow> getRows() {
+    //</editor-fold>
+   
+     //<editor-fold defaultstate="collapsed" desc="Getters & Setters">
+     public List<GridLayoutRow> getRows() {
         return rows;
     }
 
     public void setRows(List<GridLayoutRow> rows) {
         this.rows = rows;
     }
-    
-    
+    //</editor-fold>
+
 }

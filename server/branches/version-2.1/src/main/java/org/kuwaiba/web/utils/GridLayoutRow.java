@@ -24,13 +24,19 @@ import java.util.List;
  * @author Jalbersson Guillermo Plazas {@literal <jalbersson.plazas@kuwaiba.org>}
  */
 public class GridLayoutRow extends HorizontalLayout{
+    /**
+     * This can allow custom columns on each row of the Grid Layout
+     */
     List<VerticalLayout> columns;
 
+    //<editor-fold defaultstate="collapsed" desc="Constructors">
     public GridLayoutRow() {
         setColumns(new ArrayList<>());
         setWidthFull(); 
     }
-
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Getters & Setters">
     public List<VerticalLayout> getColumns() {
         return columns;
     }
@@ -38,5 +44,6 @@ public class GridLayoutRow extends HorizontalLayout{
     public void setColumns(List<VerticalLayout> columns) {
         this.columns = columns;
     }
+    //</editor-fold>
 
 }
