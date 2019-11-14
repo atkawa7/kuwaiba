@@ -97,7 +97,11 @@ public class ServiceManagerComponent extends AbstractTopComponent {
         addClassName("dashboards");
         setHeightFull();
         pnlMain = new SplitLayout();
-        pnlMain.setSizeFull();
+        pnlMain.setHeight("100%");
+        pnlMain.setWidth("100%");
+        pnlMain.addToSecondary(new VerticalLayout());
+        
+//        pnlMain.setSizeFull();
         pnlMain.setSplitterPosition(33);
 //        MenuBar mnuMain = ((IndexUI)getUI()).getMainMenu();
         MenuBar mnuMain = new MenuBar();
@@ -112,6 +116,7 @@ public class ServiceManagerComponent extends AbstractTopComponent {
 //        setExpandRatio(mnuMain, 0.5f);
 //        setExpandRatio(pnlMain, 9.5f);
         setSizeFull();
+        setId("ServiceManagerComponent");
         
         try {
             RemoteSession currentSession = UI.getCurrent().getSession().getAttribute(RemoteSession.class);
@@ -175,6 +180,7 @@ public class ServiceManagerComponent extends AbstractTopComponent {
 //                    ServiceManagerDashboard secondComponent = new ServiceManagerDashboard(cmbCustomers.getValue(), selectedService.get(), wsBean);
                     try{
                     TabsHolder secondComponent = new TabsHolder(cmbCustomers.getValue().getName(), selectedService.get().getName(), Arrays.asList(new ContactsTabWidget(cmbCustomers.getValue(), wsBean)));
+                    pnlMain.addToSecondary(new Button("Boton de prueba"));
                     pnlMain.addToSecondary(secondComponent);
                     } catch(Exception ex){
                         new Notification("There was an error while loading the component. Please contact the Administrator", 3000, Position.BOTTOM_END).open();

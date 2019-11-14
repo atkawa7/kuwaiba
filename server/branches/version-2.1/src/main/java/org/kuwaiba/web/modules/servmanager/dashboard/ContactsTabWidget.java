@@ -66,6 +66,7 @@ public class ContactsTabWidget extends AbstractTab {
                 
                 HashMap<String, List<RemoteContact>> contactsPerClass = new HashMap<>();
                 VerticalLayout lytContacts = new VerticalLayout();
+                lytContacts.setId("lytContacts");
                 
                 for(RemoteContact contact : customerContacts) {
                     if (!contactsPerClass.containsKey(contact.getClassName()))
@@ -100,9 +101,10 @@ public class ContactsTabWidget extends AbstractTab {
                     lytContacts.add(tblContactsPerType);
                 }
                 
-                lytContacts.setWidthFull();
+                lytContacts.setSizeFull();
                 
                 getContentPage().add(lytContacts);
+                getContentPage().setSizeFull();
             }
         } catch (ServerSideException ex) {
             getContentPage().add(new Label("There was an error loading Customer contacts. Please contact the Administrator."));

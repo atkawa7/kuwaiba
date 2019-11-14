@@ -88,6 +88,8 @@ public class TabsHolder extends VerticalLayout {
 
     public void createTabs(){
         Div pages = new Div();
+        pages.setId("pagesTabsHolder");
+        pages.setSizeFull();
         for(AbstractTab tab : getWidgetTabs()){
             getTabsToPages().put(tab, tab.getContentPage());
             getAllTabs().add(tab);
