@@ -27,6 +27,7 @@ import com.vaadin.flow.server.StreamResource;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
+import org.kuwaiba.apis.web.gui.dashboards.AbstractTab;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -39,7 +40,7 @@ import org.openide.util.Exceptions;
  * Widget that allows to manage the files attached to an inventory object
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class AttachedFilesTabWidget extends VerticalLayout {
+public class AttachedFilesTabWidget extends AbstractTab {
     /**
      * The reference to the business object the reports are related to
      */
@@ -50,18 +51,22 @@ public class AttachedFilesTabWidget extends VerticalLayout {
     private final WebserviceBean webserviceBean;
     
     public AttachedFilesTabWidget(RemoteObjectLight remoteObject, WebserviceBean webserviceBean) {
+        setLabel("Attached Files");
         this.remoteObject = remoteObject;
-        this.webserviceBean = webserviceBean;                
+        this.webserviceBean = webserviceBean;  
+        this.createContent();
     }
     
+    @Override
     public void createContent() {
         try {
             final RemoteSession remoteSession = UI.getCurrent().getSession().getAttribute(RemoteSession.class);
             List<RemoteFileObjectLight> files = webserviceBean.getFilesForObject(remoteObject.getClassName(), remoteObject.getId(), 
                 remoteSession.getIpAddress(), remoteSession.getSessionId());
-            if (files.isEmpty())
-                add(new Label("This object does not have files attached to it"));
-            else {
+            if (files.isEmpty()) {
+                getContentPage().add(new Label("This object does not have files attached to it"));
+                getContentPage().setSizeFull();
+            } else {
                 Grid<RemoteFileObjectLight> grdAttachments = new Grid();
                 grdAttachments.setItems(files);
                 grdAttachments.addComponentColumn(item -> {
@@ -86,7 +91,9 @@ public class AttachedFilesTabWidget extends VerticalLayout {
                 });
                 grdAttachments.addColumn(RemoteFileObjectLight::getTags).setHeader("Tags");
                 grdAttachments.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
-                add(grdAttachments);
+                grdAttachments.setSizeFull();
+                getContentPage().add(grdAttachments);
+                getContentPage().setSizeFull();
             }
         } catch (ServerSideException ex) {
             Exceptions.printStackTrace(ex);

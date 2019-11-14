@@ -32,4 +32,6 @@ public class KuwaibaConst {
     
     public static final String META_VIEW_PORT = "width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes";
     public static final String ICON_COLOR = "#56B7A4";
+    
+    public static final int SPLITTER_POSITION = 30;
 }

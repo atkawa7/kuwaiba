@@ -19,8 +19,8 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.ItemClickEvent;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
@@ -32,10 +32,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 import javax.inject.Inject;
+import org.kuwaiba.apis.web.gui.dashboards.TabsHolder;
 import org.kuwaiba.apis.web.gui.dashboards.widgets.AttachedFilesTabWidget;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.apis.web.gui.navigation.BasicIconGenerator;
-import org.kuwaiba.apis.web.gui.navigation.nodes.AbstractNode;
 import org.kuwaiba.apis.web.gui.navigation.nodes.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.navigation.trees.BasicTree;
 import org.kuwaiba.beans.WebserviceBean;
@@ -45,7 +45,6 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.web.KuwaibaConst;
 import org.kuwaiba.web.MainLayout;
-import org.openide.util.Exceptions;
 
 /**
  * The main component of the Navigation Tree module.
@@ -127,15 +126,19 @@ public class NavigationTreeComponent extends AbstractTopComponent {
         basicTree.addItemClickListener(new ComponentEventListener<ItemClickEvent<InventoryObjectNode>>() {
             @Override
             public void onComponentEvent(ItemClickEvent<InventoryObjectNode> event) {
-                InventoryObjectNode item = event.getItem();
-                AttachedFilesTabWidget attachedFilesTabWidget = new AttachedFilesTabWidget(item.getObject(), webserviceBean);
-                attachedFilesTabWidget.createContent();
-                splitLayout.addToSecondary(attachedFilesTabWidget);
+                RemoteObjectLight object = event.getItem().getObject();
+                
+                TabsHolder secondary = new TabsHolder(object.getName(), String.format("Object id: %s", object.getId()), 
+                    Arrays.asList(new AttachedFilesTabWidget(object, webserviceBean)));
+                splitLayout.addToSecondary(secondary);
+//                AttachedFilesTabWidget attachedFilesTabWidget = new AttachedFilesTabWidget(item.getObject(), webserviceBean);
+//                attachedFilesTabWidget.createContent();
+//                splitLayout.addToSecondary(attachedFilesTabWidget);
             }
         });        
         splitLayout.addToPrimary(basicTree);
-        //splitLayout.addToSecondary(new Label(">>>"));
-        splitLayout.setSplitterPosition(30);
+        splitLayout.addToSecondary(new VerticalLayout());
+        splitLayout.setSplitterPosition(KuwaibaConst.SPLITTER_POSITION);
         splitLayout.setSizeFull();
         add(splitLayout);
     }

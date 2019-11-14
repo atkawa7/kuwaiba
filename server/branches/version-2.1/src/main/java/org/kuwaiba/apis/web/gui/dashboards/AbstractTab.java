@@ -29,7 +29,7 @@ public abstract class AbstractTab extends Tab {
         this.contentPage = new Div();
     }
 
-    public void createContent(){}
+    public abstract void createContent();
 
     public Div getContentPage() {
         return contentPage;

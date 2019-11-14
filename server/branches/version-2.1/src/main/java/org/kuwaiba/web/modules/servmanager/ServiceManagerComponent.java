@@ -45,13 +45,14 @@ import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.web.modules.servmanager.dashboard.ServiceManagerDashboard;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidator;
+import org.kuwaiba.web.MainLayout;
 import org.kuwaiba.web.modules.servmanager.dashboard.ContactsTabWidget;
 
 /**
  * Main view for the Service Manager module
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-@Route("servmanager")
+@Route(value = "servmanager", layout = MainLayout.class)
 public class ServiceManagerComponent extends AbstractTopComponent {
     /**
      * View identifier
