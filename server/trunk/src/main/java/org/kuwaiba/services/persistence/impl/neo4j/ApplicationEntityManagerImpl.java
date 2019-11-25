@@ -3365,9 +3365,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         Node newTemplateElementInstance = graphDb.createNode(templateElementLabel);
         newTemplateElementInstance.setProperty(Constants.PROPERTY_UUID, UUID.randomUUID().toString());
         
-        for (String property : templateObject.getPropertyKeys())
+        for (String property : templateObject.getPropertyKeys()) {
+            if (Constants.PROPERTY_UUID.equals(property))
+                continue;
             newTemplateElementInstance.setProperty(property, templateObject.getProperty(property));
-        
+        }
         for (Relationship rel : templateObject.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING))
             newTemplateElementInstance.createRelationshipTo(rel.getEndNode(), RelTypes.RELATED_TO).setProperty(Constants.PROPERTY_NAME, rel.getProperty(Constants.PROPERTY_NAME));
         
