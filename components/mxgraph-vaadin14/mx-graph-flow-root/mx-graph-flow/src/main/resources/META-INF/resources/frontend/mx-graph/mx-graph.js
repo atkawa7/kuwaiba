@@ -34,7 +34,6 @@ class MxGraph extends PolymerElement {
           display: block;
         }
       </style>
-      <h2>Hello [[prop1]]!</h2>
       <div id="graphContainer" 
       style="overflow:hidden;width:[[width]];height:[[height]];background:url([[grid]])">
       </div>
@@ -83,18 +82,19 @@ class MxGraph extends PolymerElement {
     super.connectedCallback();
     // …
     console.log("CONECTEDCALLBACK")
-    new mxGraphApi().load().then(() => {this.initMxGraph()})
   }
 
 
   ready() {
-    super.ready();   
+    super.ready(); 
+    console.log("READY")
+    new mxGraphApi().load().then(() => {this.initMxGraph()})
   }
 
  //called then the mxGraph library has been loaded and initialize the grap object
   initMxGraph() {
         // Checks if the browser is supported
-
+         console.log("initMxGraph")
         if (!mxClient.isBrowserSupported())
         {
           // Displays an error message if the browser is not supported.
@@ -322,8 +322,10 @@ class MxGraph extends PolymerElement {
     console.log("tagAdded Method")
 
     if (this.graph) {
+        console.log("tagAdded Method GRAPH ready")
         this.updateCells(mutations);
     } else {
+        console.log("tagAdded Method NOT GRAPH ready")
         setTimeout(() => {
         
         this.updateCells(mutations);

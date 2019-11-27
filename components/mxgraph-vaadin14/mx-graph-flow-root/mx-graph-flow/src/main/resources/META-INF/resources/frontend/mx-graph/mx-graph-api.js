@@ -18,7 +18,7 @@ class mxGraphApi {
             this.promise = new Promise(resolve => {
                 this.resolve = resolve;
 
-                import('./mx-graph-build.min.js')
+                import('./mx-graph-build.js')
                 .then((module) => {
                     mxClient = module.mxClient;
                     mxUtils = module.mxUtils;

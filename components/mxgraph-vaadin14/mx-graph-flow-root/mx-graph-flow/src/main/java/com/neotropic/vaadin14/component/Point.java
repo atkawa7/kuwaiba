@@ -15,38 +15,37 @@
  */
 package com.neotropic.vaadin14.component;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Orlando Paz Duarte {@literal <orlando.paz@kuwaiba.org>}
  */
-public class Point {
+public class Point implements Serializable {
+    private double x;
+    private double y;
     
-    private int x;
-    private int y;
-
     public Point() {
     }
     
-    public Point(int x, int y) {
+    public Point(double x, double y) {
         this.x = x;
         this.y = y;
-    }   
-
-    public int getX() {
+    }
+    
+    public double getX() {
         return x;
     }
-
-    public void setX(int x) {
+    
+    public void setX(double x) {
         this.x = x;
     }
-
-    public int getY() {
+    
+    public double getY() {
         return y;
     }
-
-    public void setY(int y) {
+    
+    public void setY(double y) {
         this.y = y;
     }
-    
-    
 }

@@ -15,12 +15,14 @@
  */
 package com.neotropic.vaadin14.component;
 
+import com.google.gson.Gson;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Synchronize;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.shared.Registration;
+import java.util.List;
 
 /**
  * 
@@ -167,6 +169,13 @@ public class MxGraphCell extends Component {
         
     public void setPoints(String prop) {
         getElement().setProperty(PROPERTY_POINTS, prop);
+    }
+    
+    public void setPoints(List<Point> points) {
+        if(points != null && points.size()>0) {
+            String strPoints = new Gson().toJson(points);
+            getElement().setProperty(PROPERTY_POINTS, strPoints);
+        }      
     } 
     
     public int getStrokeWidth() {

@@ -20,6 +20,9 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.shared.Registration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * 
@@ -32,7 +35,12 @@ public class MxGraph extends Component {
     private static final String PROPERTY_WIDTH = "width";
     private static final String PROPERTY_HEIGHT = "height";
     
+    private List<MxGraphNode> nodes;
+    private List<MxGraphEdge> edges;
+    
     public MxGraph() {
+        nodes = new ArrayList();
+        edges = new ArrayList();
     }
     
      public String getGrid() {
@@ -68,10 +76,50 @@ public class MxGraph extends Component {
     }
    
     public void addNode(MxGraphNode graphNode) {
+        nodes.add(graphNode);
         getElement().appendChild(graphNode.getElement());     
     }
     
     public void addEdge(MxGraphEdge graphEdge) {
+        edges.add(graphEdge);
         getElement().appendChild(graphEdge.getElement());     
     }
+
+    public List<MxGraphNode> getNodes() {
+        return nodes;
+    }
+
+    public void setNodes(List<MxGraphNode> nodes) {
+        this.nodes = nodes;
+    }
+
+    public List<MxGraphEdge> getEdges() {
+        return edges;
+    }
+
+    public void setEdges(List<MxGraphEdge> edges) {
+        this.edges = edges;
+    }
+    
+    public void setFullSize() {
+        setWidth("100%");
+        setHeight("100%");
+    }
+    
+    public void removeIncompleteEdges() {
+        
+        ListIterator<MxGraphEdge> edgesIterator = edges.listIterator();
+        while(edgesIterator.hasNext()){
+            MxGraphEdge edge = edgesIterator.next();
+            if ((edge.getSource() == null || edge.getSource().isEmpty()) ||
+                    (edge.getTarget()== null || edge.getTarget().isEmpty())){
+                edgesIterator.remove();
+                getElement().removeChild(edge.getElement());
+            }
+        }
+    }
+
+
+    
+    
 }
