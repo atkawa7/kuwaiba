@@ -825,6 +825,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 return null;
             
             Node commonParent = (Node)queryResult.next().get("parentNode");
+            tx.success();
             if (Constants.DUMMY_ROOT.equals(commonParent.getProperty(Constants.PROPERTY_NAME)))
                 return new BusinessObjectLight(Constants.DUMMY_ROOT, "", Constants.DUMMY_ROOT);
             else
@@ -1675,6 +1676,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         try (Transaction tx = graphDb.beginTx()) {
             getChildrenOfClassRecursive(parentOid, parentClass, classToFilter, maxResults, res);
             Collections.sort(res);
+            tx.success();
             return res;
         }
     }

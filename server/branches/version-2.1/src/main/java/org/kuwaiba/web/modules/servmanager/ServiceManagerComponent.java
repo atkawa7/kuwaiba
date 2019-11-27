@@ -143,6 +143,7 @@ public class ServiceManagerComponent extends AbstractTopComponent {
             });
             
             txtServiceFilter = new TextField();
+            txtServiceFilter.setEnabled(false);
             txtServiceFilter.setPlaceholder("Type a service name or class...");
             txtServiceFilter.addValueChangeListener(this::onTxtFilterChange);
             txtServiceFilter.setSizeFull();
@@ -212,6 +213,9 @@ public class ServiceManagerComponent extends AbstractTopComponent {
     }
     
     private void onTxtFilterChange(ComponentValueChangeEvent<TextField, String> event) {
+        if (cmbCustomers.getValue() == null)
+            return;
+        
         if (cmbCustomers.getValue() == null)
             return;
         
