@@ -21,7 +21,11 @@ package org.kuwaiba.web;
 public class KuwaibaConst {
     public static final String PAGE_ROOT = "";
     public static final String PAGE_WELCOME = "welcome";
-    public static final String PAGE_OSP = "osp";
+    public static final String PAGE_OSP = "osp";    
+    public static final String PAGE_OBJECT_VIEW = "objectView";
+    public static final String PAGE_END_TO_END_DEMO = "endToEndDemo";
+    public static final String PAGE_TOPOLOGY_DEMO = "topologyDemo";
+
     public static final String PAGE_NAVIGATION_TREE = "navtree";
     public static final String PAGE_PROCESS_MANAGER = "processmanager";
     

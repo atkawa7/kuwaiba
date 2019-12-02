@@ -15,36 +15,35 @@
  */
 package org.kuwaiba.web.modules.servmanager.views;
 
-//import com.neotropic.vaadin.lienzo.client.core.shape.Point;
-//import com.neotropic.vaadin.lienzo.client.core.shape.SrvEdgeWidget;
-//import com.neotropic.vaadin.lienzo.client.core.shape.SrvNodeWidget;
-//import com.neotropic.vaadin.lienzo.client.events.NodeWidgetClickListener;
-//import com.vaadin.server.Page;
-//import com.vaadin.ui.Component;
-//import com.vaadin.ui.HorizontalLayout;
-//import com.vaadin.ui.Window;
-//import java.awt.Color;
-//import java.io.ByteArrayInputStream;
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.UUID;
-//import javax.xml.namespace.QName;
-//import javax.xml.stream.XMLInputFactory;
-//import javax.xml.stream.XMLStreamConstants;
-//import javax.xml.stream.XMLStreamException;
-//import javax.xml.stream.XMLStreamReader;
-//import org.kuwaiba.apis.web.gui.navigation.views.AbstractScene;
-//import org.kuwaiba.apis.web.gui.notifications.Notifications;
-//import org.kuwaiba.apis.web.gui.resources.ResourceFactory;
-//import org.kuwaiba.apis.web.gui.views.util.UtilHtml;
-//import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-//import org.kuwaiba.beans.WebserviceBean;
-//import org.kuwaiba.exceptions.ServerSideException;
-//import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-//import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLightList;
-//import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
-//import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
-//import org.openide.util.Exceptions;
+
+import com.neotropic.vaadin14.component.MxGraphEdge;
+import com.neotropic.vaadin14.component.MxGraphNode;
+import com.neotropic.vaadin14.component.Point;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.server.StreamResourceRegistry;
+import java.awt.Color;
+import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
+import org.kuwaiba.apis.web.gui.navigation.views.AbstractScene;
+import org.kuwaiba.apis.web.gui.resources.ResourceFactory;
+import org.kuwaiba.apis.web.gui.views.util.UtilHtml;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLightList;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
+import org.openide.util.Exceptions;
 
 /**
  * Shows an end-to-end view of a service by trying to match the endpoints of the logical circuits
@@ -53,22 +52,21 @@ package org.kuwaiba.web.modules.servmanager.views;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  * @author Adrian Fernando Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
-public class EndToEndViewScene{}
-//public class EndToEndViewScene extends AbstractScene {
-//    
-//    public final static String VIEW_CLASS = "EndToEndView"; 
-//    /**
-//     * The service this view is associated to
-//     */
-//    private RemoteObjectLight service;
-//    
-//    public EndToEndViewScene(RemoteObjectLight service, WebserviceBean wsBean, RemoteSession session) {
-//        super (wsBean, session);
-//        this.service = service;
+public class EndToEndViewScene extends AbstractScene {
+    
+    public final static String VIEW_CLASS = "EndToEndView"; 
+    /**
+     * The service this view is associated to
+     */
+    private RemoteObjectLight service;
+    
+    public EndToEndViewScene(RemoteObjectLight service, WebserviceBean wsBean, RemoteSession session) {
+        super (wsBean, session);
+        this.service = service;
 //        lienzoComponent.addNodeWidgetClickListener(nodeWidgetClickListener);
-//        setSizeUndefined();
-//    }
-//    
+        setSizeUndefined();
+    }
+    
 //    NodeWidgetClickListener nodeWidgetClickListener = new NodeWidgetClickListener() {
 //
 //        @Override
@@ -134,144 +132,143 @@ public class EndToEndViewScene{}
 //            lienzoComponent.updateNodeWidget(nodeObject);
 //        }
 //    };
-//    
-//    @Override
-//    public void render(byte[] structure) throws IllegalArgumentException { 
-//        try {
-//            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-//            QName qNode = new QName("node"); //NOI18N
-//            QName qEdge = new QName("edge"); //NOI18N
-//            QName qControlPoint = new QName("controlpoint"); //NOI18N
-//
-//            ByteArrayInputStream bais = new ByteArrayInputStream(structure);
-//            XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
-//
-////<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
-////        try {
-////            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/end2end_web_in_render.xml");
-////            fos.write(structure);
-////            fos.close();
-////        } catch(Exception e) {}
-////</editor-fold>
-//            
-//            while (reader.hasNext()) {
-//                int event = reader.next();
-//                if (event == XMLStreamConstants.START_ELEMENT) {
-//                    if (reader.getName().equals(qNode)) {
-//                        int xCoordinate = Integer.valueOf(reader.getAttributeValue(null,"x"));
-//                        int yCoordinate = Integer.valueOf(reader.getAttributeValue(null,"y"));
-//                        String nodeClass = reader.getAttributeValue(null, "class");
-//                        String nodeId = reader.getElementText();
-//                        RemoteObjectLight rol = wsBean.getObject(nodeClass, nodeId, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-//                        
-//                        SrvNodeWidget aSavedNode = findNodeWidget(rol);
-//                        if(aSavedNode == null){
-//                            aSavedNode = attachNodeWidget(rol);
-//                            aSavedNode.setX(100 + xCoordinate); //The position is scaled (in this case to a half the original size) so they diagram can fit in a single screen 
-//                            aSavedNode.setY(50 + yCoordinate);
-//                        } else { //If it's null, it means that the node wasn't added by the default rendering method, so the node no longer exists and shouldn't be rendered
-//                            aSavedNode.setX(100 + xCoordinate); //The position is scaled (in this case to a half the original size) so they diagram can fit in a single screen 
-//                            aSavedNode.setY(50 + yCoordinate);
-//                        }
-//                    } else {
-//                        if (reader.getName().equals(qEdge)) {
-//                            String edgeId = reader.getAttributeValue(null, "id"); //NOI18N
-//                            String edgeClass = reader.getAttributeValue(null, "class"); //NOI18N
-//                            String aSideid = reader.getAttributeValue(null, "asideid"); //NOI18N
-//                            String aSideClassName = reader.getAttributeValue(null, "asideclass"); //NOI18N
-//                            String bSideid = reader.getAttributeValue(null, "bsideid"); //NOI18N
-//                            String bSideClassName = reader.getAttributeValue(null, "bsideclass"); //NOI18N
-//                            
-//                            RemoteObjectLight sideA = new RemoteObjectLight(aSideClassName, aSideid, "");
-//                            RemoteObjectLight sideB = new RemoteObjectLight(bSideClassName, bSideid, "");
-//                            
-//                            RemoteObjectLight edge;
-//                            if(edgeId.startsWith("@"))
-//                                edge = new RemoteObjectLight(edgeId, "", edgeClass);
-//                            else
-//                                edge = wsBean.getObject(edgeClass, edgeId, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-//                            
-//                            SrvNodeWidget sideANodeWidget = findNodeWidget(sideA);
-//                            SrvNodeWidget sideBNodeWidget = findNodeWidget(sideB);
-//                            
-//                            SrvEdgeWidget aSavedEdge = findEdgeWidget(edge);
-//                            //controlpoints
-//                            List<Point> localControlPoints = new ArrayList<>();
-//                            while(true) {
-//                                reader.nextTag();
-//                                if (reader.getName().equals(qControlPoint)) {
-//                                    if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-//                                        localControlPoints.add(new Point((Integer.valueOf(reader.getAttributeValue(null,"x"))+100), Integer.valueOf(reader.getAttributeValue(null,"y"))+50));
-//                                } else 
-//                                    break;
-//                            }
-//                            if(sideANodeWidget != null && sideBNodeWidget != null && aSavedEdge == null){
-//                                attachEdgeWidget(edge, sideANodeWidget, sideBNodeWidget);
-//                                edges.get(edge).setCaption(edge.getName());
-//                                edges.get(edge).setControlPoints(localControlPoints);
-//                            }
-//                            else if (aSavedEdge != null)
-//                                aSavedEdge.setControlPoints(localControlPoints);
-//                        }
-//                    }
-//                }
-//            }//end while
-//            
-//            for (RemoteObjectLight object : nodes.keySet()) {       
-//                SrvNodeWidget node = nodes.get(object);
-//                node.setWidth(ResourceFactory.DEFAULT_ICON_WIDTH);
-//                node.setHeight(ResourceFactory.DEFAULT_ICON_HEIGHT);
-//                lienzoComponent.addNodeWidget(object, node);
-//            }
-//
-//            for (RemoteObjectLight edgeObjects : edges.keySet()) {
-//                SrvEdgeWidget edge = edges.get(edgeObjects);
-//                lienzoComponent.addEdgeWidget(edgeObjects, edge);
-//                lienzoComponent.updateEdgeWidget(edgeObjects);
-//            }
-//            addComponent(lienzoComponent);
-//            
-//        } catch (XMLStreamException ex) {
+    
+    @Override
+    public void render(byte[] structure) throws IllegalArgumentException { 
+        try {
+            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+            QName qNode = new QName("node"); //NOI18N
+            QName qEdge = new QName("edge"); //NOI18N
+            QName qControlPoint = new QName("controlpoint"); //NOI18N
+
+            ByteArrayInputStream bais = new ByteArrayInputStream(structure);
+            XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
+
+//<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
+        try {
+            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/end2end_web_in_render.xml");
+            fos.write(structure);
+            fos.close();
+        } catch(Exception e) {}
+//</editor-fold>
+            
+            while (reader.hasNext()) {
+                int event = reader.next();
+                if (event == XMLStreamConstants.START_ELEMENT) {
+                    if (reader.getName().equals(qNode)) {
+                        int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
+                        int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
+                        String nodeClass = reader.getAttributeValue(null, "class");
+                        String nodeId = reader.getElementText();
+                        RemoteObjectLight rol = wsBean.getObject(nodeClass, nodeId, session.getIpAddress(), session.getSessionId());
+                        
+                        MxGraphNode aSavedNode = findNodeWidget(rol);
+                        if(aSavedNode == null){
+                            attachNodeWidget(rol, xCoordinate, yCoordinate);                        
+                        } 
+                                    
+                    } else {
+                        if (reader.getName().equals(qEdge)) {
+                            String edgeId = reader.getAttributeValue(null, "id"); //NOI18N
+                            String edgeClass = reader.getAttributeValue(null, "class"); //NOI18N
+                            String aSideid = reader.getAttributeValue(null, "asideid"); //NOI18N
+                            String aSideClassName = reader.getAttributeValue(null, "asideclass"); //NOI18N
+                            String bSideid = reader.getAttributeValue(null, "bsideid"); //NOI18N
+                            String bSideClassName = reader.getAttributeValue(null, "bsideclass"); //NOI18N
+                            
+                            RemoteObjectLight sideA = new RemoteObjectLight(aSideClassName, aSideid, "");
+                            RemoteObjectLight sideB = new RemoteObjectLight(bSideClassName, bSideid, "");
+                            
+                            RemoteObjectLight edge;
+                            if(edgeId.startsWith("@"))
+                                edge = new RemoteObjectLight(edgeId, "", edgeClass);
+                            else
+                                edge = wsBean.getObject(edgeClass, edgeId, session.getIpAddress(), session.getSessionId());
+                            
+                            MxGraphNode sideANodeWidget = findNodeWidget(sideA);
+                            MxGraphNode sideBNodeWidget = findNodeWidget(sideB);
+                            
+                            MxGraphEdge aSavedEdge = findEdgeWidget(edge);
+                            
+                            //controlpoints
+                            List<Point> localControlPoints = new ArrayList<>();
+                            while(true) {
+                                reader.nextTag();
+                                if (reader.getName().equals(qControlPoint)) {
+                                    if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                                        localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
+                                } else 
+                                    break;
+                            }
+                            
+                            if(sideANodeWidget != null && sideBNodeWidget != null && aSavedEdge == null){
+                                attachEdgeWidget(edge, sideANodeWidget, sideBNodeWidget, localControlPoints);
+                            } else if (aSavedEdge != null) { //If it's null, it means that the node wasn't added by the default rendering method, so the node no longer exists and shouldn't be rendered
+                                aSavedEdge.setPoints(localControlPoints);
+                            }
+                        }
+                    }
+                }
+            }//end while
+                     
+            add(mxGraph);
+            
+        } catch (XMLStreamException ex) {
 //            Notifications.showError(ex.getMessage());
-//        } catch (ServerSideException ex) {
-//            Exceptions.printStackTrace(ex);
-//        }
-//    }
-//
-//    @Override
-//    public void render() {/*no longer need it*/}
-//    
-//    public void clear() {/*this.lienzoComponent.remove*/}
-//
-//    protected SrvNodeWidget attachNodeWidget(RemoteObjectLight node) {
-//        SrvNodeWidget newNode = new SrvNodeWidget();
-//        newNode.setUrlIcon("/kuwaiba/icons?class=" + node.getClassName());
-//        newNode.setCaption(node.toString());
-//        nodes.put(node, newNode);
-//        return newNode;
-//    }
-//    
-//    protected SrvEdgeWidget attachEdgeWidget(RemoteObjectLight edge, SrvNodeWidget sourceNode, SrvNodeWidget targetNode) {
-//        try {
-//            SrvEdgeWidget newEdge = new SrvEdgeWidget();
-//            newEdge.setSource(sourceNode);
-//            newEdge.setTarget(targetNode);
-//            
-//            RemoteClassMetadata classMetadata = wsBean.getClass(edge.getClassName(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-//            newEdge.setColor(UtilHtml.toHexString(new Color(classMetadata.getColor())));
-//            newEdge.setCaption(edge.toString());
-//            edges.put(edge, newEdge);
-//            return newEdge; 
-//        } catch (ServerSideException ex) {
-//            SrvEdgeWidget srvEdgeWidget = new SrvEdgeWidget();
-//            srvEdgeWidget.setId(UUID.randomUUID().toString());
-//            return srvEdgeWidget;
-//        }
-//    }
-//    
-//    private void closeWindows(){
+        } catch (ServerSideException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+
+    @Override
+    public void render() {//no longer need it
+    }
+    
+    public void clear() {
+        //this.lienzoComponent.remove
+    }
+    
+     protected MxGraphNode attachNodeWidget(RemoteObjectLight node, int xCoordinate, int yCoordinate) {
+        MxGraphNode newNode = new MxGraphNode();
+        String uri = StreamResourceRegistry.getURI(ResourceFactory.getInstance().getClassIcon(node.getClassName(), wsBean)).toString();
+        System.out.println("uri: " + uri);
+        newNode.setImage(uri);
+        newNode.setUuid(node.getId());
+        newNode.setLabel(node.toString());
+        newNode.setWidth(ResourceFactory.DEFAULT_ICON_WIDTH);
+        newNode.setHeight(ResourceFactory.DEFAULT_ICON_HEIGHT);
+        newNode.setX(100 + (xCoordinate)); //The position is scaled (in this case to a half the original size) so they diagram can fit in a single screen 
+        newNode.setY(50+(yCoordinate)); 
+        nodes.put(node, newNode);
+        mxGraph.addNode(newNode);
+        return newNode;
+    }
+    
+    protected MxGraphEdge attachEdgeWidget(RemoteObjectLight edgeObject, MxGraphNode sourceNode, MxGraphNode targetNode,List<Point> points) {
+       
+        MxGraphEdge newEdge = new MxGraphEdge();
+        
+        try {          
+            newEdge.setSource(sourceNode.getUuid());
+            newEdge.setTarget(targetNode.getUuid());
+            
+            RemoteClassMetadata classMetadata = wsBean.getClass(edgeObject.getClassName(), session.getIpAddress(), session.getSessionId());
+            newEdge.setStrokeColor(UtilHtml.toHexString(new Color(classMetadata.getColor())));
+            newEdge.setLabel(edgeObject.toString());
+            newEdge.setPoints(points);
+//            newEdge.setPoints("[{\"x\":200.0,\"y\":200.7},{\"x\":250.9,\"y\":300.0}]");
+            edges.put(edgeObject, newEdge);
+            mxGraph.addEdge(newEdge);
+            return newEdge; 
+        } catch (Exception ex) {
+            newEdge.setId(UUID.randomUUID().toString());
+            return newEdge;
+        }
+    }
+    
+    private void closeWindows(){
 //        getUI().getWindows().forEach(currentOpenWindow -> {
 //            getUI().removeWindow(currentOpenWindow);
 //        });
-//    }
-//}
+    }
+}
