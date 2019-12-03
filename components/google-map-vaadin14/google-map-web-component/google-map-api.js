@@ -21,36 +21,54 @@ limitations under the License.
 class MapApi {
     /**
      * 
-     * @param {string} key 
+     * @param {string} apiKey 
+     * @param {string} clientId
+     * @param {string} libraries libraries=drawing,geometry,places,visualization
      */
-    constructor(key) {
+    constructor(apiKey, clientId, libraries) {
+        if (!apiKey) {
+            console.warn('google-maps must include an API key');
+        }
         /** 
          * The string contains your application API key. See https://developers.google.com/maps/documentation/javascript/get-api-key
          * @type {string} 
          * @protected
          */
-        this._key = key;
+        this._apiKey = apiKey;
+        /**
+         * Specifies a client Id
+         * @type {string}
+         * @protected
+         */
+        this._clientId = clientId;
+        /**
+         * The string contains the additional libraries
+         * @type {string}
+         * @protected
+         */
+        this._libraries = libraries;
+
+        this._paramApiKey = '';
+        this._paramClientId = '';
+        this._paramLibraries = '';
+
+        if (this._apiKey && !this._clientId) {
+            this._paramApiKey = 'key=' + this._apiKey;             
+        }
+        if (this._clientId) {
+            this._paramClientId = 'client=' + this._clientId;
+        }
+        if (this._libraries) {            
+            this._paramLibraries = '&libraries=' + this._libraries;
+        }
+
         if (!window._mapApi) {
             /** @type {string} */
             this.callback = '_mapApi.ready';
+            this._paramCallback = '&callback=' + this.callback;
             window._mapApi = this;
             window._mapApi.ready = this.ready.bind(this);
         }
-    }
-    /**
-     * Gets your application API key
-     * @return {string}
-     */
-    get key() {
-        return this._key;
-    }
-    /**
-     * Sets your application API key
-     * @param {string} key
-     * @return {void}
-     */
-    set key(key) {
-        this._key = key;
     }
     /**
      * Loads the Maps JavaScript API
@@ -64,7 +82,7 @@ class MapApi {
 
                 if (typeof window.google === 'undefined') {
                     const script = document.createElement('script');
-                    script.src = 'https://maps.googleapis.com/maps/api/js?key=' + this.key + '&callback=' + this.callback;
+                    script.src = 'https://maps.googleapis.com/maps/api/js?' + this._paramApiKey + this._paramClientId + '&v=quarterly' + this._paramCallback + this._paramLibraries;
                     script.async = true;
                     script.defer = true;
                     document.body.append(script);

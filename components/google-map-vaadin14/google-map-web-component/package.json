@@ -2,8 +2,15 @@
   "name": "google-map",
   "description": "&lt;google-map&gt; is a web component",
   "main": "google-map.js",
+  "scripts": {
+    "resources": "sh scripts/resources.sh"
+  },
   "dependencies": {
-    "@polymer/polymer": "^3.0.0"
+    "@polymer/iron-pages": "^3.0.1",
+    "@polymer/polymer": "^3.0.0",
+    "@vaadin/vaadin-ordered-layout": "^1.1.0",
+    "@vaadin/vaadin-split-layout": "^4.1.1",
+    "@vaadin/vaadin-tabs": "^3.0.5"
   },
   "devDependencies": {
     "@polymer/test-fixture": "^4.0.2",
