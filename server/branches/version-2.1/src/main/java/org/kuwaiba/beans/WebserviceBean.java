@@ -700,4 +700,10 @@ public interface WebserviceBean {
     
     public void deleteValidatorDefinition(long validatorDefinitionId, String ipAddress, String sessionId) throws ServerSideException;
     //</editor-fold>
+    
+    //<editor-fold desc="Kuwaiba 2.1" defaultstate="collapsed">
+    public long getObjectChildCount(String className, String oid, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public List<RemoteObjectLight> getObjectChildren(String className, String oid, long skip, long limit, String ipAddress, String sessionId) throws ServerSideException;
+    //</editor-fold>
 }

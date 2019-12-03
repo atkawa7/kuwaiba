@@ -85,7 +85,7 @@ public class NavigationTreeComponent extends AbstractTopComponent {
                 if (parent != null) {
                     RemoteObjectLight object = parent.getObject();
                     try {
-                        List<RemoteObjectLight> children = webserviceBean.getObjectChildren(object.getClassName(), object.getId(), -1, remoteSession.getIpAddress(), remoteSession.getSessionId());
+                        List<RemoteObjectLight> children = webserviceBean.getObjectChildren(object.getClassName(), object.getId(), query.getOffset(), query.getLimit(), remoteSession.getIpAddress(), remoteSession.getSessionId());
                         List<InventoryObjectNode> theChildren = new ArrayList();
                         for (RemoteObjectLight child : children)
                             theChildren.add(new InventoryObjectNode(child));
@@ -95,7 +95,7 @@ public class NavigationTreeComponent extends AbstractTopComponent {
                         return new ArrayList().stream();
                     }
                 } else {
-                    return Arrays.asList(new InventoryObjectNode(new RemoteObjectLight(Constants.NODE_DUMMYROOT, "-1", "Root"))).stream();
+                    return Arrays.asList(new InventoryObjectNode(new RemoteObjectLight(Constants.NODE_DUMMYROOT, null, "Root"))).stream();
                 }
             }
 
@@ -105,7 +105,7 @@ public class NavigationTreeComponent extends AbstractTopComponent {
                 if (parent != null) {
                     RemoteObjectLight object = parent.getObject();
                     try {
-                        return webserviceBean.getObjectChildren(object.getClassName(), object.getId(), -1, remoteSession.getIpAddress(), remoteSession.getSessionId()).size();
+                        return (int) webserviceBean.getObjectChildCount(object.getClassName(), object.getId(), remoteSession.getIpAddress(), remoteSession.getSessionId());
                     } catch (ServerSideException ex) {
                         Notification.show(ex.getMessage());
                         return 0;

@@ -3554,4 +3554,93 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     private boolean canDeleteObject(Node instance) {
         return !instance.hasRelationship(RelTypes.RELATED_TO_SPECIAL, RelTypes.HAS_PROCESS_INSTANCE);        
     }
+    //<editor-fold desc="Kuwaiba 2.0" defaultstate="collapsed">
+    @Override
+    public long getObjectChildCount(String className, String oid) throws InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            if (className == null)
+                throw new InvalidArgumentException("The className cannot be null");
+                        
+            HashMap<String, Object> parameters = new HashMap();
+            StringBuilder queryBuilder = new StringBuilder();
+            final String COUNT = "count"; //NOI18N
+                                    
+            if (oid == null) {
+                queryBuilder.append("MATCH (dummyRoot:root:specialNodes)"); //NOI18N
+                queryBuilder.append("<-[:CHILD_OF]-"); //NOI18N
+                queryBuilder.append("(childNode:inventoryObjects)\n"); //NOI18N
+                queryBuilder.append("WHERE dummyRoot.name = $name\n"); //NOI18N
+                queryBuilder.append(String.format("RETURN count(childNode) AS %s;", COUNT)); //NOI18N
+                
+                parameters.put("name", Constants.DUMMY_ROOT); //NOI18N
+            } else {
+                queryBuilder.append("MATCH (classNode:classes)"); //NOI18N
+                queryBuilder.append("<-[:INSTANCE_OF]-"); //NOI18N
+                queryBuilder.append("(parentNode:inventoryObjects)"); //NOI18N
+                queryBuilder.append("<-[:CHILD_OF]-"); //NOI18N
+                queryBuilder.append("(childNode:inventoryObjects)\n"); //NOI18N
+                queryBuilder.append("WHERE classNode.name = $className\n"); //NOI18N
+                queryBuilder.append("AND parentNode._uuid = $oid\n"); //NOI18N
+                queryBuilder.append(String.format("RETURN count(childNode) AS %s;", COUNT)); //NOI18N
+                
+                parameters.put("className", className); //NOI18N
+                parameters.put("oid", oid); //NOI18N
+            }
+            Result result = graphDb.execute(queryBuilder.toString(), parameters);
+            while (result.hasNext()) {
+                tx.success();
+                return (long) result.next().get(COUNT);
+            }
+            tx.success();
+            return 0;
+        }
+    }
+    @Override
+    public List<BusinessObjectLight> getObjectChildren(String className, String oid, long skip, long limit) throws InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            if (className == null)
+                throw new InvalidArgumentException("The className cannot be null");
+            if (skip < 0)
+                throw new InvalidArgumentException("The skip cannot be less than 0");
+            if (limit < 0)
+                throw new InvalidArgumentException("The limit cannot be less than 0");
+                        
+            HashMap<String, Object> parameters = new HashMap();
+            StringBuilder queryBuilder = new StringBuilder();
+            final String CHILD_NODE = "childNode"; //NOI18N
+                                    
+            if (oid == null) {
+                queryBuilder.append("MATCH (dummyRoot:root:specialNodes)"); //NOI18N
+                queryBuilder.append("<-[:CHILD_OF]-"); //NOI18N
+                queryBuilder.append("(childNode:inventoryObjects)\n"); //NOI18N
+                queryBuilder.append("WHERE dummyRoot.name = $name\n"); //NOI18N
+                queryBuilder.append(String.format("RETURN childNode AS %s\n", CHILD_NODE)); //NOI18N
+                queryBuilder.append("ORDER BY childNode.name ASC SKIP $skip LIMIT $limit;"); //NOI18N
+                
+                parameters.put("name", Constants.DUMMY_ROOT); //NOI18N
+            } else {
+                queryBuilder.append("MATCH (classNode:classes)"); //NOI18N
+                queryBuilder.append("<-[:INSTANCE_OF]-"); //NOI18N
+                queryBuilder.append("(parentNode:inventoryObjects)"); //NOI18N
+                queryBuilder.append("<-[:CHILD_OF]-"); //NOI18N
+                queryBuilder.append("(childNode:inventoryObjects)\n"); //NOI18N
+                queryBuilder.append("WHERE classNode.name = $className\n"); //NOI18N
+                queryBuilder.append("AND parentNode._uuid = $oid\n"); //NOI18N
+                queryBuilder.append(String.format("RETURN childNode AS %s\n", CHILD_NODE)); //NOI18N
+                queryBuilder.append("ORDER BY childNode.name ASC SKIP $skip LIMIT $limit;"); //NOI18N
+                
+                parameters.put("className", className); //NOI18N
+                parameters.put("oid", oid); //NOI18N
+            }
+            parameters.put("skip", skip); //NOI18N
+            parameters.put("limit", limit); //NOI18N
+            Result result = graphDb.execute(queryBuilder.toString(), parameters);
+            List<BusinessObjectLight> objectChildren = new ArrayList();
+            while (result.hasNext())
+                objectChildren.add(createObjectLightFromNode((Node) result.next().get(CHILD_NODE)));
+            tx.success();
+            return objectChildren;
+        }
+    }
+    //</editor-fold>
 }

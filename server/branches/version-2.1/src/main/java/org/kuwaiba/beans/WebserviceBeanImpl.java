@@ -6742,4 +6742,29 @@ public class WebserviceBeanImpl implements WebserviceBean {
         return e2eMap;
     }
     // </editor-fold>
+    
+    //<editor-fold desc="Kuwaiba 2.0" defaultstate="collapsed">
+    @Override
+    public long getObjectChildCount(String className, String oid, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getObjectChildCount", ipAddress, sessionId);
+            return bem.getObjectChildCount(className, oid);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    @Override
+    public List<RemoteObjectLight> getObjectChildren(String className, String oid, long skip, long limit, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getObjectChildren", ipAddress, sessionId);
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectChildren(className, oid, skip, limit));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }        
+    }
+    //</editor-fold>
         }
