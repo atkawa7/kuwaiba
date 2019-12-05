@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.UUID;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
@@ -330,12 +331,29 @@ public class ViewModule  implements GenericCommercialModule {
                     nodes.add(new E2ENode(def.getDeviceA()));
                 if(def.getDeviceB() != null && !nodes.contains(new E2ENode(def.getDeviceB())))
                     nodes.add(new E2ENode(def.getDeviceB()));
-                if(def.getConnectionObject() != null && !edges.contains(new E2EEdge(def.getConnectionObject())))
-                    edges.add(new E2EEdge(def.getConnectionObject()));
-                if(def.getConnectionObject() != null && def.getDeviceA() != null)
-                    edgeSource.put(new E2EEdge(def.getConnectionObject()), new E2ENode(def.getDeviceA()));
-                if(def.getConnectionObject() != null && def.getDeviceB() != null)
-                    edgeTarget.put(new E2EEdge(def.getConnectionObject()), new E2ENode(def.getDeviceB()));
+                if(def.getConnectionObject() != null){
+                    E2EEdge newEdge = new E2EEdge(def.getConnectionObject());
+                    Properties properties = new Properties();
+                    newEdge.setProperties(properties);
+                    edges.add(newEdge);
+                
+                    if(def.getDeviceA() != null){
+                        edgeSource.put(new E2EEdge(def.getConnectionObject()), new E2ENode(def.getDeviceA()));
+                        
+                        properties.put("asidephysicalportid", def.getPhysicalEndpointObjectA() != null ? def.getPhysicalEndpointObjectA().getId() : "");
+                        properties.put("asidephysicalportclass", def.getPhysicalEndpointObjectA() != null ? def.getPhysicalEndpointObjectA().getClassName() : "");
+                        properties.put("asidelogicalportid", def.getLogicalEndpointObjectA() != null ? def.getLogicalEndpointObjectA().getId() : "");
+                        properties.put("asidelogicalportclass", def.getLogicalEndpointObjectA() != null ? def.getLogicalEndpointObjectA().getClassName() : "");
+                    }
+                    if(def.getDeviceB() != null){
+                        edgeTarget.put(new E2EEdge(def.getConnectionObject()), new E2ENode(def.getDeviceB()));
+                        
+                        properties.put("bsidephysicalportid", def.getPhysicalEndpointObjectB() != null ? def.getPhysicalEndpointObjectB().getId() : "");
+                        properties.put("bsidephysicalportclass", def.getPhysicalEndpointObjectB() != null ? def.getPhysicalEndpointObjectB().getClassName() : "");
+                        properties.put("bsidelogicalportid", def.getLogicalEndpointObjectB() != null ? def.getLogicalEndpointObjectB().getId() : "");
+                        properties.put("bsidelogicalportclass", def.getLogicalEndpointObjectB() != null ?  def.getLogicalEndpointObjectB().getClassName() : "");
+                    }
+                }
             });
                    
         } catch (Exception ex) {
@@ -405,8 +423,19 @@ public class ViewModule  implements GenericCommercialModule {
                 xmlew.add(xmlef.createAttribute(new QName("class"), edge.getEdge().getClassName()));
                 xmlew.add(xmlef.createAttribute(new QName("asideid"), edgeSource.get(edge).getBussinesObject().getId()));
                 xmlew.add(xmlef.createAttribute(new QName("asideclass"), edgeSource.get(edge).getBussinesObject().getClassName()));
+                //port a info
+                xmlew.add(xmlef.createAttribute(new QName("asidephysicalportid"), edge.getProperties().getProperty("asidephysicalportid")));
+                xmlew.add(xmlef.createAttribute(new QName("asidephysicalportclass"), edge.getProperties().getProperty("asidephysicalportclass")));
+                xmlew.add(xmlef.createAttribute(new QName("asidelogcialportid"), edge.getProperties().getProperty("asidelogicalportid")));
+                xmlew.add(xmlef.createAttribute(new QName("asidelogicalportclass"), edge.getProperties().getProperty("asidelogicalportclass")));
+                
                 xmlew.add(xmlef.createAttribute(new QName("bsideid"), edgeTarget.get(edge).getBussinesObject().getId()));
                 xmlew.add(xmlef.createAttribute(new QName("bsideclass"), edgeTarget.get(edge).getBussinesObject().getClassName()));
+                //port b info
+                xmlew.add(xmlef.createAttribute(new QName("bsidephysicalportid"), edge.getProperties().getProperty("bsidephysicalportid")));
+                xmlew.add(xmlef.createAttribute(new QName("bsidephysicalportclass"), edge.getProperties().getProperty("bsidephysicalportclass")));
+                xmlew.add(xmlef.createAttribute(new QName("bsidelogcialportid"), edge.getProperties().getProperty("bsidelogicalportid")));
+                xmlew.add(xmlef.createAttribute(new QName("bsidelogicalportclass"), edge.getProperties().getProperty("bsidelogicalportclass")));
                 
                 List<Point> points = (List<Point>)edge.getProperties().get("controlPoints");
                 if(points != null){
