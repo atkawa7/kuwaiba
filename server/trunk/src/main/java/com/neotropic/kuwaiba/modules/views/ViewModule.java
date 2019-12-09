@@ -416,15 +416,16 @@ public class ViewModule  implements GenericCommercialModule {
                 
                 xmlew.add(xmlef.createAttribute(new QName("id"), edge.getEdge().getId()));
                 xmlew.add(xmlef.createAttribute(new QName("class"), edge.getEdge().getClassName()));
+                //side a
                 xmlew.add(xmlef.createAttribute(new QName("asideid"), edgeSource.get(edge).getBussinesObject().getId()));
                 xmlew.add(xmlef.createAttribute(new QName("asideclass"), edgeSource.get(edge).getBussinesObject().getClassName()));
-                //port a info
+                //port a info side a
                 xmlew.add(xmlef.createAttribute(new QName("asidephysicalport"), edge.getProperties().getProperty("asidephysicalport")));
                 xmlew.add(xmlef.createAttribute(new QName("asidelogcialport"), edge.getProperties().getProperty("asidelogicalport")));
-                
+                //side b
                 xmlew.add(xmlef.createAttribute(new QName("bsideid"), edgeTarget.get(edge).getBussinesObject().getId()));
                 xmlew.add(xmlef.createAttribute(new QName("bsideclass"), edgeTarget.get(edge).getBussinesObject().getClassName()));
-                //port b info
+                //port b info side b
                 xmlew.add(xmlef.createAttribute(new QName("bsidephysicalport"), edge.getProperties().getProperty("bsidephysicalport")));
                 xmlew.add(xmlef.createAttribute(new QName("bsidelogcialport"), edge.getProperties().getProperty("bsidelogicalport")));
                                 
@@ -459,8 +460,6 @@ public class ViewModule  implements GenericCommercialModule {
 //        } catch(Exception e) {}
 //</editor-fold>
         return updatedViewObject;
-            
-            
             
         } catch (XMLStreamException ex) {
             Exceptions.printStackTrace(ex);
