@@ -459,4 +459,4 @@ public class ComponentRackView extends VerticalLayout {
             return rackUnit;
         }
     }
-}
+        }

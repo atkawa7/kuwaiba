@@ -35,7 +35,7 @@
            <description>Database port, if applicable. The reference implementation uses the Neo4Js Bolt protocol</description>
            <env-entry-name>dbPort</env-entry-name>
            <env-entry-type>java.lang.Integer</env-entry-type>
-           <env-entry-value>7070</env-entry-value>
+           <env-entry-value>6677</env-entry-value>
         </env-entry>
 
         <!-- Business rules -->
