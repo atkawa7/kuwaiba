@@ -793,7 +793,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                  throw new InvalidArgumentException(String.format("Class %s is not a list type", className));
 
             if (myClass.isInDesign())
-                 throw new OperationNotPermittedException("Can not create instances of classes marked as isDesign");
+                 throw new OperationNotPermittedException("Can not create instances of classes marked as inDesign");
 
             if (myClass.isAbstract())
                  throw new OperationNotPermittedException("Can not create instances of abstract classes");

@@ -983,7 +983,7 @@ public interface ApplicationEntityManager {
      * Creates an object inside a template.
      * @param templateElementClass Class of the object you want to create.
      * @param templateElementParentClassName Class of the parent to the obejct you want to create.
-     * @param templateElementParentId Id of the parent to the obejct you want to create.
+     * @param templateElementParentId Id of the parent to the object you want to create.
      * @param templateElementName Name of the element.
      * @return The id of the new object.
      * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the object (or its parent) class could not be found
