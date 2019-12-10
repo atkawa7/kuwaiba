@@ -87,22 +87,9 @@ public class CreatePhysicalConnectionAction extends GenericObjectNodeAction {
         JComboBox<String> cmbConnectionType = new JComboBox(new String[] {"Container", "Link"});
         JComplexDialogPanel connTypeDialog = new JComplexDialogPanel(new String[] {"Connection Type: "}, new JComponent [] {cmbConnectionType});
         
-        //When the endpoints selected are devices (Routers and ODFs)
-        if(CommunicationsStub.getInstance().isSubclassOf(endpointA.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT) ||
-                CommunicationsStub.getInstance().isSubclassOf(endpointA.getClassName(), Constants.CLASS_GENERICDISTRIBUTIONFRAME) &&
-            CommunicationsStub.getInstance().isSubclassOf(endpointB.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT) ||
-                CommunicationsStub.getInstance().isSubclassOf(endpointB.getClassName(), Constants.CLASS_GENERICDISTRIBUTIONFRAME)){
-            
-            if (JOptionPane.showConfirmDialog(null, connTypeDialog, (String) getValue(NAME), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-                if (cmbConnectionType.getSelectedIndex() == 0) 
-                        new NewContainerWizard(endpointNodes.get(0), endpointNodes.get(1), commonParent).show();
-                else 
-                    new NewLinkWizard(endpointNodes.get(0), endpointNodes.get(1), commonParent, null).show();
-            }
-        }
         //When the nodes selected are both endpoints are ports
         //if there are wirecontainers in both of the two selected nodes 
-        else if(CommunicationsStub.getInstance().isSubclassOf(endpointA.getClassName(), Constants.CLASS_GENERICPHYSICALPORT)
+        if(CommunicationsStub.getInstance().isSubclassOf(endpointA.getClassName(), Constants.CLASS_GENERICPHYSICALPORT)
                 && CommunicationsStub.getInstance().isSubclassOf(endpointB.getClassName(), Constants.CLASS_GENERICPHYSICALPORT))
         {
             
@@ -115,6 +102,17 @@ public class CreatePhysicalConnectionAction extends GenericObjectNodeAction {
                     new NewContainerWizard(endpointNodes.get(0), endpointNodes.get(1), commonParent).show();
                 else 
                     new NewLinkWizard(endpointNodes.get(0), endpointNodes.get(1), commonParent, existingWireContainersList).show();
+            }
+        }
+        //When the endpoints selected are devices (Routers and ODFs)
+        else if(CommunicationsStub.getInstance().isSubclassOf(endpointA.getClassName(), "ViewableObject") &&
+            CommunicationsStub.getInstance().isSubclassOf(endpointB.getClassName(), "ViewableObject")){
+            
+            if (JOptionPane.showConfirmDialog(null, connTypeDialog, (String) getValue(NAME), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                if (cmbConnectionType.getSelectedIndex() == 0) 
+                        new NewContainerWizard(endpointNodes.get(0), endpointNodes.get(1), commonParent).show();
+                else 
+                    new NewLinkWizard(endpointNodes.get(0), endpointNodes.get(1), commonParent, null).show();
             }
         }
     }
