@@ -31,8 +31,7 @@ import org.openide.util.lookup.ServiceProvider;
 
 /**
  * This action allows to connect directly all the possible mirror ports by its 
- * names in order to connect 
- * in a GenericDistribution Frame (an ODF or DDF)
+ * names in a GenericDistributionFrame (ODFs, DDFs)
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)

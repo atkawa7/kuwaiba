@@ -16,6 +16,9 @@
 package org.inventory.models.physicalconnections.wizards;
 
 import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.inventory.communications.core.LocalObjectLight;
@@ -23,6 +26,7 @@ import org.inventory.core.services.utils.ExplorablePanel;
 import org.inventory.navigation.navigationtree.nodes.ActionlessObjectNode;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.explorer.view.BeanTreeView;
+import org.openide.util.Utilities;
 
 /**
  * GUI components of the New Link wizard
@@ -70,12 +74,25 @@ public final class NewLinkVisualPanel2 extends JPanel {
         return "Link endpoints";
     }
     
-    public LocalObjectLight getSelectedAEndpoint() {
-        return pnlLeft.getLookup().lookup(LocalObjectLight.class);
+    public List<LocalObjectLight> getSelectedAEndpoint() {
+        Iterator<? extends LocalObjectLight> endpoints = pnlLeft.getLookup().lookupResult(LocalObjectLight.class).allInstances().iterator();
+        List<LocalObjectLight> endpointNodes = new ArrayList<>();
+        
+        while(endpoints.hasNext())
+            endpointNodes.add(endpoints.next());
+        
+        return endpointNodes; //pnlLeft.getLookup().lookup(LocalObjectLight.class);
     }
     
-    public LocalObjectLight getSelectedBEndpoint() {
-        return pnlRight.getLookup().lookup(LocalObjectLight.class);
+    public List<LocalObjectLight> getSelectedBEndpoint() {
+         Iterator<? extends LocalObjectLight> endpoints = pnlRight.getLookup().lookupResult(LocalObjectLight.class).allInstances().iterator();
+        List<LocalObjectLight> endpointNodes = new ArrayList<>();
+        
+        while(endpoints.hasNext())
+            endpointNodes.add(endpoints.next());
+        
+        return endpointNodes;
+        //return pnlRight.getLookup().lookup(LocalObjectLight.class);
     }
 
     /**

@@ -84,20 +84,38 @@ public class CreatePhysicalConnectionAction extends GenericObjectNodeAction {
                 I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        //if there are wirecontainers in both of the two selected nodes 
-        existingWireContainersList = CommunicationsStub.getInstance().getContainersBetweenObjects(endpointA.getClassName(), endpointA.getId(), 
-                endpointB.getClassName(), endpointB.getId(), Constants.CLASS_WIRECONTAINER);
-                            
         JComboBox<String> cmbConnectionType = new JComboBox(new String[] {"Container", "Link"});
-            
         JComplexDialogPanel connTypeDialog = new JComplexDialogPanel(new String[] {"Connection Type: "}, new JComponent [] {cmbConnectionType});
+        
+        //When the endpoints selected are devices (Routers and ODFs)
+        if(CommunicationsStub.getInstance().isSubclassOf(endpointA.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT) ||
+                CommunicationsStub.getInstance().isSubclassOf(endpointA.getClassName(), Constants.CLASS_GENERICDISTRIBUTIONFRAME) &&
+            CommunicationsStub.getInstance().isSubclassOf(endpointB.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT) ||
+                CommunicationsStub.getInstance().isSubclassOf(endpointB.getClassName(), Constants.CLASS_GENERICDISTRIBUTIONFRAME)){
             
-        if (JOptionPane.showConfirmDialog(null, connTypeDialog, (String) getValue(NAME), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+            if (JOptionPane.showConfirmDialog(null, connTypeDialog, (String) getValue(NAME), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                if (cmbConnectionType.getSelectedIndex() == 0) 
+                        new NewContainerWizard(endpointNodes.get(0), endpointNodes.get(1), commonParent).show();
+                else 
+                    new NewLinkWizard(endpointNodes.get(0), endpointNodes.get(1), commonParent, null).show();
+            }
+        }
+        //When the nodes selected are both endpoints are ports
+        //if there are wirecontainers in both of the two selected nodes 
+        else if(CommunicationsStub.getInstance().isSubclassOf(endpointA.getClassName(), Constants.CLASS_GENERICPHYSICALPORT)
+                && CommunicationsStub.getInstance().isSubclassOf(endpointB.getClassName(), Constants.CLASS_GENERICPHYSICALPORT))
+        {
+            
+            existingWireContainersList = CommunicationsStub.getInstance().getContainersBetweenObjects(endpointA.getClassName(), endpointA.getId(), 
+                endpointB.getClassName(), endpointB.getId(), Constants.CLASS_WIRECONTAINER);
 
-            if (cmbConnectionType.getSelectedIndex() == 0) 
-                new NewContainerWizard(endpointNodes.get(0), endpointNodes.get(1), commonParent).show();
-            else 
-                new NewLinkWizard(endpointNodes.get(0), endpointNodes.get(1), commonParent, existingWireContainersList).show();
+            if (JOptionPane.showConfirmDialog(null, connTypeDialog, (String) getValue(NAME), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+
+                if (cmbConnectionType.getSelectedIndex() == 0) 
+                    new NewContainerWizard(endpointNodes.get(0), endpointNodes.get(1), commonParent).show();
+                else 
+                    new NewLinkWizard(endpointNodes.get(0), endpointNodes.get(1), commonParent, existingWireContainersList).show();
+            }
         }
     }
 

@@ -15,8 +15,10 @@
  */
 package org.inventory.models.physicalconnections.wizards;
 
+import java.util.List;
 import javax.swing.event.ChangeListener;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.WizardDescriptor;
@@ -82,29 +84,37 @@ public class NewLinkWizardPanel2 implements WizardDescriptor.Panel<WizardDescrip
             throw new WizardValidationException(component, "You need to select both sides of the connection", 
                     "You need to select both sides of the connection");
         
-        if (!CommunicationsStub.getInstance().isSubclassOf(component.getSelectedAEndpoint().getClassName(), Constants.CLASS_GENERICPORT) || 
-                !CommunicationsStub.getInstance().isSubclassOf(component.getSelectedBEndpoint().getClassName(), Constants.CLASS_GENERICPORT))
-            throw new WizardValidationException(component, "Only ports can be connected using links", "Only ports can be connected using links");
+        List<LocalObjectLight> selectedAEndpoints = component.getSelectedAEndpoint();
+        List<LocalObjectLight> selectedBEndpoints = component.getSelectedBEndpoint();
+        if(selectedAEndpoints.size() != selectedBEndpoints.size())
+            throw new WizardValidationException(component, "The number of ports selected in both side must be the same size", "The number of ports selected in both sides must be the same size");
         
         String endpointConnected = "";
-        if (
-        !CommunicationsStub.getInstance().getSpecialAttribute(component.getSelectedAEndpoint().getClassName(), component.getSelectedAEndpoint().getId(), "endpointA").isEmpty() ||
-        !CommunicationsStub.getInstance().getSpecialAttribute(component.getSelectedAEndpoint().getClassName(), component.getSelectedAEndpoint().getId(), "endpointB").isEmpty()
-        ) {
-            endpointConnected = String.format("The selected endpoint %s is already connected", component.getSelectedAEndpoint());
-        }
+        for(int k = 0; k < selectedAEndpoints.size(); k++){
+            if (!CommunicationsStub.getInstance().isSubclassOf(selectedAEndpoints.get(k).getClassName(), Constants.CLASS_GENERICPORT) || 
+                    !CommunicationsStub.getInstance().isSubclassOf(selectedBEndpoints.get(k).getClassName(), Constants.CLASS_GENERICPORT))
+                throw new WizardValidationException(component, "Only ports can be connected using links", "Only ports can be connected using links");
+
+
+            if (
+                !CommunicationsStub.getInstance().getSpecialAttribute(selectedAEndpoints.get(k).getClassName(), selectedAEndpoints.get(k).getId(), "endpointA").isEmpty() ||
+                !CommunicationsStub.getInstance().getSpecialAttribute(selectedAEndpoints.get(k).getClassName(), selectedAEndpoints.get(k).getId(), "endpointB").isEmpty()
+            ) {
+                endpointConnected = String.format("The selected endpoint %s is already connected", component.getSelectedAEndpoint());
+            }
         
-        if (
-        !CommunicationsStub.getInstance().getSpecialAttribute(component.getSelectedBEndpoint().getClassName(), component.getSelectedBEndpoint().getId(), "endpointA").isEmpty() ||
-        !CommunicationsStub.getInstance().getSpecialAttribute(component.getSelectedBEndpoint().getClassName(), component.getSelectedBEndpoint().getId(), "endpointB").isEmpty()
-        ) {
+            if (
+                !CommunicationsStub.getInstance().getSpecialAttribute(selectedBEndpoints.get(k).getClassName(), selectedBEndpoints.get(k).getId(), "endpointA").isEmpty() ||
+                !CommunicationsStub.getInstance().getSpecialAttribute(selectedBEndpoints.get(k).getClassName(), selectedBEndpoints.get(k).getId(), "endpointB").isEmpty()
+            ) {
+                if (!"".equals(endpointConnected))
+                    endpointConnected += ", ";
+                endpointConnected += String.format("The selected endpoint %s is already connected", component.getSelectedBEndpoint());
+            }
+
             if (!"".equals(endpointConnected))
-                endpointConnected += ", ";
-            endpointConnected += String.format("The selected endpoint %s is already connected", component.getSelectedBEndpoint());
+                throw new WizardValidationException(component, endpointConnected, endpointConnected);
         }
-        
-        if (!"".equals(endpointConnected))
-            throw new WizardValidationException(component, endpointConnected, endpointConnected);
     }
 
 }

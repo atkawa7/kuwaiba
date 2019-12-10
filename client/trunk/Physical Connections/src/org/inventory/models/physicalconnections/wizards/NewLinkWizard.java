@@ -37,7 +37,7 @@ public final class NewLinkWizard {
     private ObjectNode aSide;
     private ObjectNode bSide;
     private LocalObjectLight parent;
-    private LocalObjectLight newConnection;
+    private List<LocalObjectLight> newConnections;
     private List<LocalObjectLight> existintWireContainersList;
     
     public NewLinkWizard(ObjectNode aSide, ObjectNode bSide, LocalObjectLight parent, List<LocalObjectLight> existintWireContainersList) {
@@ -45,6 +45,7 @@ public final class NewLinkWizard {
         this.bSide = bSide;
         this.parent = parent;
         this.existintWireContainersList = existintWireContainersList;
+        newConnections = new ArrayList<>();
     }
     
     public void show() {
@@ -52,7 +53,7 @@ public final class NewLinkWizard {
         NewLinkWizardPanel1 panel1 = new NewLinkWizardPanel1();
         NewLinkWizardPanel2 panel2 = new NewLinkWizardPanel2(aSide, bSide);
         NewLinkWizardPanel0 panel0 = null;
-        if(!existintWireContainersList.isEmpty()){
+        if(existintWireContainersList != null && !existintWireContainersList.isEmpty()){
             panel0 = new NewLinkWizardPanel0(existintWireContainersList);
             panels.add(panel0);
         }
@@ -78,23 +79,36 @@ public final class NewLinkWizard {
         wiz.setTitleFormat(new MessageFormat("{0}"));
         wiz.setTitle("New Link");
         if (DialogDisplayer.getDefault().notify(wiz) == WizardDescriptor.FINISH_OPTION) {
-            LocalObjectLight selectedAEndpoint = panel2.getComponent().getSelectedAEndpoint();
-            LocalObjectLight selectedBEndpoint = panel2.getComponent().getSelectedBEndpoint();
+            List<LocalObjectLight> selectedAEndpoints = panel2.getComponent().getSelectedAEndpoint();
+            List<LocalObjectLight> selectedBEndpoints = panel2.getComponent().getSelectedBEndpoint();
             
-            newConnection = CommunicationsStub.getInstance().createPhysicalConnection(selectedAEndpoint.getClassName(), selectedAEndpoint.getId(),
-                    selectedBEndpoint.getClassName(), selectedBEndpoint.getId(), 
+            if(selectedAEndpoints.size() == 1 && selectedBEndpoints.size() == 1){
+                newConnections.add(CommunicationsStub.getInstance().createPhysicalConnection(
+                        selectedAEndpoints.get(0).getClassName(), selectedAEndpoints.get(0).getId(),
+                    selectedBEndpoints.get(0).getClassName(), selectedBEndpoints.get(0).getId(), 
                     panel1.getComponent().getLinkName(), panel1.getComponent().getLinkClass().getClassName(),
                     panel1.getComponent().dontUseTemplate() || panel1.getComponent().getLinkTemplate() == null 
-                            ? null : panel1.getComponent().getLinkTemplate().getId());
+                            ? null : panel1.getComponent().getLinkTemplate().getId()));
+            }
+            else if(selectedAEndpoints.size() == selectedBEndpoints.size() && selectedAEndpoints.size() > 1){
+                newConnections = CommunicationsStub.getInstance().createPhysicalConnections(
+                        selectedAEndpoints, selectedBEndpoints,
+                        panel1.getComponent().getLinkName(), panel1.getComponent().getLinkClass().getClassName(),
+                        panel1.getComponent().dontUseTemplate() || panel1.getComponent().getLinkTemplate() == null
+                                ? null : panel1.getComponent().getLinkTemplate().getId());
+            }
             
-            if (newConnection == null)
+            if (newConnections == null || newConnections.isEmpty())
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             else
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, "The link was created successfully");
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, "The link" 
+                        + (newConnections.size() == 1 ? "" : "s")  
+                        + (newConnections.size() == 1 ? " was" : " were")
+                        + " created successfully");
         }
     } 
     
-    public LocalObjectLight getNewConnection() {
-        return newConnection;
+    public List<LocalObjectLight> getNewConnections() {
+        return newConnections;
     }
 }
