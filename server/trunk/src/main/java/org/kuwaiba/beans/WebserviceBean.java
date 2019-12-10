@@ -226,6 +226,7 @@ public interface WebserviceBean {
     public void connectMirrorPort(String[] aObjectClass, String[] aObjectId, String[] bObjectClass, String[] bObjectId, String ipAddress, String sessionId) throws ServerSideException;
     public void releaseMirrorPort(String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException;
     public String createPhysicalConnection(String aObjectClass, String aObjectId, String bObjectClass, String bObjectId, String name, String connectionClass, String templateId, String ipAddress, String sessionId) throws ServerSideException;
+    public String[] createPhysicalConnections(String[] aObjectClass, String[] aObjectId, String[] bObjectClass, String[] bObjectId, String name, String connectionClass, String templateId, String ipAddress, String sessionId) throws ServerSideException;
     public void deletePhysicalConnection(String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteObjectLight[] getPhysicalConnectionEndpoints(String connectionClass, String connectionId, String ipAddress, String sessionId) throws ServerSideException;
     
