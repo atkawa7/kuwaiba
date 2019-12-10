@@ -18,6 +18,7 @@ package org.inventory.views.objectview.scene;
 
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
@@ -75,13 +76,13 @@ public class PhysicalConnectionProvider implements ConnectProvider {
     @Override
     public void createConnection(Widget sourceWidget, Widget targetWidget) {
         ObjectViewConfigurationObject configObject = scene.getConfigObject();
-        LocalObjectLight newConnection;
+        List<LocalObjectLight> newConnection = new ArrayList<>();
         
         if ((boolean)configObject.getProperty("connectContainer")) {
             NewContainerWizard newContainerWizard = new NewContainerWizard(sourceWidget.getLookup().lookup(ObjectNode.class), 
                     targetWidget.getLookup().lookup(ObjectNode.class), (LocalObjectLight)configObject.getProperty("currentObject")); //NOI18N
             newContainerWizard.show();
-            newConnection = newContainerWizard.getNewConnection();
+            newConnection.add(newContainerWizard.getNewConnection());
         } else {
             LocalObjectLight sourceObject = (LocalObjectLight) scene.findObject(sourceWidget);
             LocalObjectLight targetObject = (LocalObjectLight) scene.findObject(targetWidget);
@@ -102,15 +103,15 @@ public class PhysicalConnectionProvider implements ConnectProvider {
                     (LocalObjectLight)configObject.getProperty("currentObject"), //NOI18N
                     existintWireContainersList);
             newLinkWizard.show();
-            newConnection = newLinkWizard.getNewConnection();
+            newConnection = newLinkWizard.getNewConnections();
         }
         
-        if (newConnection != null) {
-            LocalObjectLight parent = CommunicationsStub.getInstance().getParent(newConnection.getClassName(), newConnection.getId());
+        if (newConnection != null && !newConnection.isEmpty()) {
+            LocalObjectLight parent = CommunicationsStub.getInstance().getParent(newConnection.get(0).getClassName(), newConnection.get(0).getId());
             LocalObjectLight currentObject = (LocalObjectLight) configObject.getProperty("currentObject"); //NOI18N
             
             if (parent.getId().equals(currentObject.getId())) {
-                ConnectionWidget line = (ConnectionWidget)scene.addEdge(newConnection);
+                ConnectionWidget line = (ConnectionWidget)scene.addEdge(newConnection.get(0));
 
                 line.setTargetAnchor(AnchorFactory.createCenterAnchor(targetWidget));
                 line.setSourceAnchor(AnchorFactory.createCenterAnchor(sourceWidget));

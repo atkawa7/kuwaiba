@@ -19,6 +19,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JPopupMenu;
 import org.inventory.communications.CommunicationsStub;
@@ -169,7 +170,7 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
 
             @Override
             public void createConnection(Widget sourceWidget, Widget targetWidget) {
-                LocalObjectLight newConnection;
+                List<LocalObjectLight> newConnections = new ArrayList<>();
                 LocalObjectLight sourcePort = sourceWidget.getLookup().lookup(LocalObjectLight.class);
                 LocalObjectLight targetPort = targetWidget.getLookup().lookup(LocalObjectLight.class);
                 
@@ -192,12 +193,12 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
                 NewLinkWizard newLinkWizard = new NewLinkWizard(sourceWidget.getLookup().lookup(ObjectNode.class), 
                     targetWidget.getLookup().lookup(ObjectNode.class), commonParent, existintWireContainersList);
                 newLinkWizard.show();
-                newConnection = newLinkWizard.getNewConnection();
+                newConnections = newLinkWizard.getNewConnections();
                 
-                if (newConnection != null) {                    
-                    RackViewConnectionWidget edge = (RackViewConnectionWidget) addEdge(newConnection);
-                    setEdgeSource(newConnection, sourcePort);
-                    setEdgeTarget(newConnection, targetPort);
+                if (newConnections != null && !newConnections.isEmpty()) {                    
+                    RackViewConnectionWidget edge = (RackViewConnectionWidget) addEdge(newConnections.get(0));
+                    setEdgeSource(newConnections.get(0), sourcePort);
+                    setEdgeTarget(newConnections.get(0), targetPort);
                     
                     ((PortWidget) sourceWidget).setFree(false);
                     ((PortWidget) targetWidget).setFree(false);
