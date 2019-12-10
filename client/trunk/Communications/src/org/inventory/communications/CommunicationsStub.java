@@ -1998,7 +1998,7 @@ public class CommunicationsStub {
      */
     public boolean deleteObjects(List<String> classNames, List<String> oids){
         try {
-            service.deleteObjects(classNames, oids, false, this.session.getSessionId());
+            service.deleteObjects(classNames, oids, true, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -2258,6 +2258,46 @@ public class CommunicationsStub {
         }
     }
     
+        /**
+     * Creates a physical link (cable, fiber optics, mw link) or container (pipe, conduit, ditch)
+     * @param endpointsA source objects
+     * @param endpointsB target objects
+     * @param name Name of the new connection. Leave empty if you want to use the name in the template
+     * @param connectionClass Class for the corresponding connection to be created
+     * @param templateId Id of the template for the connectionClass. Use -1 to create a connection without template
+     * @return A local object light representing the new connection
+     */
+    public List<LocalObjectLight> createPhysicalConnections(List<LocalObjectLight> endpointsA,
+            List<LocalObjectLight> endpointsB, String name, String connectionClass, String templateId) {
+        try {
+            List<LocalObjectLight> result = new ArrayList<>();
+            List<String> endpointAClasses = new ArrayList<>();
+            List<String> endpointBClasses = new ArrayList<>();
+            List<String> endpointAIds = new ArrayList<>();
+            List<String> endpointBIds = new ArrayList<>();
+            for(int i = 0; i < endpointsA.size(); i ++){
+                endpointAClasses.add(endpointsA.get(i).getClassName());
+                endpointBClasses.add(endpointsB.get(i).getClassName());
+                endpointAIds.add(endpointsA.get(i).getId());
+                endpointBIds.add(endpointsB.get(i).getId());
+            }
+            
+            List<String> createdPhysicalConnectionsIds = service.createPhysicalConnections(endpointAClasses, 
+                    endpointAIds, endpointBClasses, endpointBIds, name, 
+                    connectionClass, templateId, this.session.getSessionId());
+            
+            for (String myObjectId : createdPhysicalConnectionsIds) {
+                result.add(new LocalObjectLight(myObjectId, name, connectionClass));
+            }
+             
+            return result;
+            
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
     public LocalObjectLight[] getPhysicalConnectionEndpoints(String connectionClass, String connectionId) {
         try{
             List<RemoteObjectLight> endpoints = service.getPhysicalConnectionEndpoints(connectionClass, connectionId, session.getSessionId());
@@ -2349,7 +2389,12 @@ public class CommunicationsStub {
 //            return null;
 //        }
 //    }
-    
+    /**
+     * Gets the physical path of a given port
+     * @param objectClass physical port class name
+     * @param objectId physical port id
+     * @return the physical path
+     */
     public LocalObjectLight[] getPhysicalPath(String objectClass, String objectId) {
         try{
             List<RemoteObjectLight> trace = service.getPhysicalPath(objectClass, objectId, session.getSessionId());

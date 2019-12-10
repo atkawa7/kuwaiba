@@ -76,6 +76,10 @@ public class Constants {
      */
     public static final String CLASS_GENERICLOGICALPORT = "GenericLogicalPort";
     /**
+     * Physical port
+     */
+    public static final String CLASS_GENERICPHYSICALPORT = "GenericPhysicalPort";
+    /**
      * Root class to all physical containers (wire, wireless, etc)
      */
     public static final String CLASS_GENERICPHYSICALCONTAINER = "GenericPhysicalContainer";
