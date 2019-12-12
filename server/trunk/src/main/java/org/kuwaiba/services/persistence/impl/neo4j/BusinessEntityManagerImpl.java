@@ -845,10 +845,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF, Direction.OUTGOING).getEndNode();
 
                 //If the direct parent is DummyRoot, return a dummy RemoteBusinessObject with oid = -1
-                if (parentNode.hasProperty(Constants.PROPERTY_NAME) && Constants.NODE_DUMMYROOT.equals(parentNode.getProperty(Constants.PROPERTY_NAME)) )
+                if (parentNode.hasProperty(Constants.PROPERTY_NAME) && Constants.NODE_DUMMYROOT.equals(parentNode.getProperty(Constants.PROPERTY_NAME)) ){
+                    tx.success();
                     return new BusinessObject(Constants.NODE_DUMMYROOT, "-1", Constants.NODE_DUMMYROOT);
-                else    
-                    return createObjectLightFromNode(parentNode);
+                }
+                else {
+                     tx.success();
+                     return createObjectLightFromNode(parentNode);
+                }   
             }
             if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF_SPECIAL)){
                 Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).getEndNode();

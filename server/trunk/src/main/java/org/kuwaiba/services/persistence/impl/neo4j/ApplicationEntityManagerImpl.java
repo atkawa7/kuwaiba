@@ -3007,6 +3007,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 templates.add(new TemplateObjectLight(className, (String)templateNode.getProperty(Constants.PROPERTY_UUID), 
                         (String)templateNode.getProperty(Constants.PROPERTY_NAME)));
             }
+            tx.success();
             return templates;
         }
     }
