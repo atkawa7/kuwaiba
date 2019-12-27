@@ -17,6 +17,7 @@ package com.neotropic.vaadin14.component.googlemap;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.Synchronize;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.shared.Registration;
@@ -38,27 +39,47 @@ public class GoogleMap extends Component {
         getElement().setProperty(Constants.Property.API_KEY, apiKey);
         getElement().setProperty(Constants.Property.CLIENT_ID, clientId);
     }
-    
+    @Synchronize(property = "lat", value = "map-center-changed")
     public double getCenterLat() {
-        return getElement().getProperty(Constants.Property.CENTER_LAT, Constants.Default.LAT);
+        return getElement().getProperty(Constants.Property.LAT, Constants.Default.LAT);
     }
     
     public void setCenterLat(double lat) {
-        getElement().setProperty(Constants.Property.CENTER_LAT, lat);
+        getElement().setProperty(Constants.Property.LAT, lat);
     }
-    
+    @Synchronize(property = "lng", value = "map-center-changed")
     public double getCenterLng() {
-        return getElement().getProperty(Constants.Property.CENTER_LNG, Constants.Default.LNG);
+        return getElement().getProperty(Constants.Property.LNG, Constants.Default.LNG);
     }
     
     public void setCenterLng(double lng) {
-        getElement().setProperty(Constants.Property.CENTER_LNG, lng);
+        getElement().setProperty(Constants.Property.LNG, lng);
+    }
+    @Synchronize(property = "zoom", value = "map-zoom-changed")
+    public double getZoom() {
+        return getElement().getProperty(Constants.Property.ZOOM, Constants.Default.ZOOM);
+    }
+    
+    public void setZoom(double zoom) {
+        getElement().setProperty(Constants.Property.ZOOM, zoom);
     }
     
     public void newMarker(GoogleMapMarker googleMapMarker) {
         getElement().appendChild(googleMapMarker.getElement());
     }
-        
+    
+    public void removeMarker(GoogleMapMarker googleMapMarker) {
+        getElement().removeChild(googleMapMarker.getElement());
+    }
+    
+    public void newPolyline(GoogleMapPolyline polyline) {
+        getElement().appendChild(polyline.getElement());
+    }
+    
+    public void removePolyline(GoogleMapPolyline polyline) {
+        getElement().removeChild(polyline.getElement());
+    }
+            
     public Registration addMapClickListener(ComponentEventListener<GoogleMapEvent.MapClickEvent> listener) {
         return addListener(GoogleMapEvent.MapClickEvent.class, listener);
     }

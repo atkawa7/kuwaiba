@@ -29,12 +29,19 @@ public class Constants {
         public static String ZOOM = "zoom";
         public static String WIDTH = "width";
         public static String HEIGHT = "height";
-        public static String CENTER_LAT = "centerLat";
-        public static String CENTER_LNG = "centerLng";
+        public static String STROKE_COLOR = "strokeColor";
+        public static String ICON = "icon";
+        public static String TITLE = "title";
+        public static String LABEL = "label";
+        public static String DRAGGABLE = "_draggable";
+        public static String VISIBLE = "visible";
     }
     public static class Default {
         public static double LAT = 2.4573831;
         public static double LNG = -76.6699746;
         public static double ZOOM = 10;
+        public static String STROKE_COLOR = "#FF0000";
+        public static boolean DRAGGABLE = false;
+        public static boolean VISIBLE = true;
     }
 }

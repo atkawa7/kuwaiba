@@ -20,6 +20,7 @@ import { FlattenedNodesObserver } from '@polymer/polymer/lib/utils/flattened-nod
 import {MapApi} from './google-map-api.js';
 import * as Constants from './google-map-constants.js';
 import {GoogleMapMarker} from './google-map-marker.js';
+import {GoogleMapPolyline} from './google-map-polyline.js';
 /**
  * `google-map`
  * &lt;google-map&gt; is a web component displays a map using Maps JavaScript API
@@ -73,28 +74,32 @@ class GoogleMap extends PolymerElement {
        */
       lat: {
         type: Number,
-        value: 2.4573831
+        value: 2.4573831,
+        observer: '_latChanged'
       },
       /**
        * The initial map center longitude coordinate ranges between [-180, 180] degress
        */
       lng: {
         type: Number,
-        value: -76.6699746
+        value: -76.6699746,
+        observer: '_lngChanged'
       },
       /**
        * The initial map zoom level, specify the value as an integer
        */
       zoom: {
         type: Number,
-        value: 10
+        value: 10,
+        observer: '_zoomChanged'
       }
     };
   }
-  
+  /*
   constructor() {
     super();
   }
+  */
   /*
   connectedCallback() {
     super.connectedCallback();
@@ -141,6 +146,8 @@ class GoogleMap extends PolymerElement {
     */
     var _this = this;
     this.map.addListener('center_changed', function() {
+      _this.lat = _this.map.getCenter().lat();
+      _this.lng = _this.map.getCenter().lng();
       _this.dispatchEvent(new CustomEvent('map-center-changed'));
     });
     this.map.addListener('mousemove', function(event) {
@@ -153,6 +160,7 @@ class GoogleMap extends PolymerElement {
       _this.dispatchEvent(new CustomEvent('map-mouse-over'));
     });
     this.map.addListener('zoom_changed', function() {
+      _this.zoom = _this.map.getZoom();
       _this.dispatchEvent(new CustomEvent('map-zoom-changed'));
     });
     this.map.addListener('click', function(event) {
@@ -170,11 +178,15 @@ class GoogleMap extends PolymerElement {
       _this.dispatchEvent(new CustomEvent('map-right-click', 
         {detail: {lat: lat, lng: lng}}));
     });
-
+    /*
+    this.addEventListener('lat-changed', function(event) {
+      console.log('>>> ' + event.detail.value);                  
+    });
+    */
     var _this = this;
     this._observer = new FlattenedNodesObserver(this, (info) => {      
-      _this._processNewMarkers(info.addedNodes);
-      _this._processRemovedMarkers(info.removedNodes);
+      _this._processAddedNodes(info.addedNodes);
+      _this._processRemovedNodes(info.removedNodes);
     });
   }
   /**
@@ -190,17 +202,48 @@ class GoogleMap extends PolymerElement {
     mapApi.load().then(() => {this.initMap()});
   }
        
-  _processNewMarkers(addedNodes) {
+  _processAddedNodes(addedNodes) {
     for (var i = 0; i < addedNodes.length; i++) {
       if (addedNodes[i].localName === Constants.googleMapMarker) {
-        console.log('>>>_processNewMarkers ' + addedNodes[i]);                
+        console.log('>>>_processNewMarker ' + addedNodes[i]);                
+        addedNodes[i].draw(this.map);
+      }
+      if (addedNodes[i].localName === Constants.googleMapPolyline) {
+        console.log('>>>_processNewPolyline ' + addedNodes[i]);
         addedNodes[i].draw(this.map);
       }
     }
   }
 
-  _processRemovedMarkers(removedNodes) {
-    console.log('>>>_processRemovedMarkers ' + removedNodes);    
+  _processRemovedNodes(removedNodes) {
+    for (var i = 0; i < removedNodes.length; i++) {
+      if (removedNodes[i].localName === Constants.googleMapMarker) {
+        console.log('>>>_processRemovedMarkers ' + removedNodes[i]);
+        removedNodes[i].remove();
+      }
+    }
+    
+  }
+
+  _latChanged(newValue, oldValue) {
+    if (this.map !== undefined) {
+      console.log(">>> _latChanged");
+      this.map.setCenter({lat: newValue, lng: this.map.getCenter().lng()});
+    }
+  }
+
+  _lngChanged(newValue, oldValue) {
+    if (this.map !== undefined) {
+      console.log(">>> _lngChanged");
+      this.map.setCenter({lat: this.map.getCenter().lat(), lng: newValue});
+    }
+  }
+
+  _zoomChanged(newValue, oldValue) {
+    if (this.map !== undefined) {
+      console.log(">>> _zoomChanged " + newValue);
+      this.map.setZoom(newValue);
+    }
   }
 }
 

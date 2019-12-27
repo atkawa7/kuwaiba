@@ -2,6 +2,7 @@ package com.neotropic.vaadin14.component.googlemap;
 
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.notification.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -13,6 +14,8 @@ import com.vaadin.flow.component.tabs.Tabs.SelectedChangeEvent;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.Command;
 import com.vaadin.flow.server.PWA;
+import elemental.json.Json;
+import elemental.json.JsonObject;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,19 +23,58 @@ import java.util.logging.Logger;
 @Route
 @PWA(name = "Project Base for Vaadin Flow with Spring", shortName = "Project Base")
 public class MainView extends VerticalLayout {
-    private final String API_KEY = "API-KEY";
+    private final String API_KEY = "[API-KEY]";
     private final String CLIENT_ID = null;
-    private Label lblMarkerClick;
-    private Label lblMarkerDblClick;
-    private Label lblMarkerRightClick;
-
+    
+    private final VerticalLayout verticalLayoutMain;
+    private final Tabs tabs;
+    private final HashMap<Tab, VerticalLayout> pages;
+    private final Tab tabMapEvents;
+    private final Tab tabMarkerEvents;
+    private final Tab tabPolylineEvents;
+    //<editor-fold desc="Mark Labels" defaultstate="collapsed">
+    private final Label lblMarkerClick;
+    private final Label lblMarkerDblClick;
+    private final Label lblMarkerDragEnd;
+    private final Label lblMarkerDragStart;
+    private final Label lblMarkerMouseOut;
+    private final Label lblMarkerMouseOver;
+    private final Label lblMarkerRightClick;
+    //</editor-fold>
+    //<editor-fold desc="Polyline Labels" defaultstate="collapsed">
+    private final Label lblPolylineClick;
+    private final Label lblPolylineDblClick;
+    private final Label lblPolylineMouseOut;
+    private final Label lblPolylineMouseOver;
+    private final Label lblPolylineRightClick;
+    //</editor-fold>
     public MainView(@Autowired MessageBean bean) {
         setSizeFull();
         GoogleMap googleMap = new GoogleMap(API_KEY, CLIENT_ID);
+        
         GoogleMapMarker googleMapMarker = new GoogleMapMarker(2.4573831, -76.6699746);
-        setMarkerListeners(googleMapMarker);
         googleMap.newMarker(googleMapMarker);
-        add(googleMap);
+        
+        JsonObject label = Json.createObject();
+        label.put("color", "#305F72"); //NOI18N
+        label.put("text", "Marker"); //NOI18N
+
+        googleMapMarker.setLabel(label);
+        googleMapMarker.setTitle("Marker"); //NOI18N
+        
+        setMarkerListeners(googleMap, googleMapMarker);
+        
+        GoogleMapPolyline googleMapPolyline = new GoogleMapPolyline();
+        googleMapPolyline.setStrokeColor("#32a852");
+        googleMapPolyline.appendCoordinate(new GoogleMapLatLng(2.4574702, -76.6349535));
+        googleMapPolyline.appendCoordinate(new GoogleMapLatLng(2.3512629, -76.6915093));
+        googleMapPolyline.appendCoordinate(new GoogleMapLatLng(2.260897, -76.7449569));
+        googleMapPolyline.appendCoordinate(new GoogleMapLatLng(2.1185563, -76.9974436));
+        googleMapPolyline.appendCoordinate(new GoogleMapLatLng(2.0693058, -77.0552842));
+        googleMap.newPolyline(googleMapPolyline);
+        
+        setPolylineListener(googleMapPolyline);
+////        add(googleMap);
         /*
         GoogleMapPoly googleMapPolyline = new GoogleMapPoly();
 
@@ -70,22 +112,27 @@ public class MainView extends VerticalLayout {
         SplitLayout splitLayoutMain = new SplitLayout();
         splitLayoutMain.addToPrimary(googleMap);
         
-        Tabs tabs = new Tabs();
+        tabs = new Tabs();
         
         tabs.setOrientation(Tabs.Orientation.HORIZONTAL);
         
-        Tab tabMapEvents = new Tab("Map Events");
-        Tab tabMarkerEvents = new Tab("Marker Events");
+        tabMapEvents = new Tab("Map Events");
+        tabMarkerEvents = new Tab("Marker Events");
+        tabPolylineEvents = new Tab("Polyline Events");
+        
         tabs.add(tabMapEvents);
         tabs.add(tabMarkerEvents);
+        tabs.add(tabPolylineEvents);
+        
         tabs.setSelectedTab(tabMapEvents);
+        
         VerticalLayout verticalLayoutMapEvents = new VerticalLayout();
         
-        Label lblMapClick = new Label("map-click (New Marker)"); //NOI18N
+        Label lblMapClick = new Label("map-click (Go To Pasto)"); //NOI18N
         lblMapClick.setWidthFull();
         Label lblMapDblClick = new Label("map-dbl-click"); //NOI18N
         lblMapDblClick.setWidthFull();
-        Label lblMapRightClick = new Label("map-right-click"); //NOI18N
+        Label lblMapRightClick = new Label("map-right-click (New Marker)"); //NOI18N
         lblMapRightClick.setWidthFull();
         Label lblMapCenterChanged = new Label("map-center-changed"); //NOI18N
         lblMapCenterChanged.setWidthFull();
@@ -109,23 +156,55 @@ public class MainView extends VerticalLayout {
         
         VerticalLayout verticalLayoutMarkerEvents = new VerticalLayout();
         
-        lblMarkerClick = new Label("marker-click"); //NOI18N
+        lblMarkerClick = new Label("marker-click (Move To Silvia)"); //NOI18N
         lblMarkerClick.setWidthFull();
-        lblMarkerDblClick = new Label("marker-dbl-click"); //NOI18N
+        lblMarkerDblClick = new Label("marker-dbl-click (Remove Marker)"); //NOI18N
         lblMarkerDblClick.setWidthFull();
+        lblMarkerDragEnd = new Label("marker-drag-end");
+        lblMarkerDragEnd.setWidthFull();
+        lblMarkerDragStart = new Label("marker-drag-start");
+        lblMarkerDragStart.setWidthFull();
+        lblMarkerMouseOut = new Label("marker-mouse-out");
+        lblMarkerMouseOut.setWidthFull();
+        lblMarkerMouseOver = new Label("marker-mouse-over");
+        lblMarkerMouseOver.setWidthFull();
         lblMarkerRightClick = new Label("marker-right-click"); //NOI18N
         lblMarkerRightClick.setWidthFull();
         
         verticalLayoutMarkerEvents.add(lblMarkerClick);
         verticalLayoutMarkerEvents.add(lblMarkerDblClick);
+        verticalLayoutMarkerEvents.add(lblMarkerDragEnd);
+        verticalLayoutMarkerEvents.add(lblMarkerDragStart);
+        verticalLayoutMarkerEvents.add(lblMarkerMouseOut);
+        verticalLayoutMarkerEvents.add(lblMarkerMouseOver);
         verticalLayoutMarkerEvents.add(lblMarkerRightClick);
-                
-        HashMap<Tab, VerticalLayout> pages = new HashMap();
+        
+        VerticalLayout verticalLayoutPolylineEvents = new VerticalLayout();
+        
+        lblPolylineClick = new Label("polyline-click");
+        lblPolylineClick.setWidthFull();
+        lblPolylineDblClick = new Label("polyline-dbl-click");
+        lblPolylineDblClick.setWidthFull();
+        lblPolylineMouseOut = new Label("polyline-mouse-out");
+        lblPolylineMouseOut.setWidthFull();
+        lblPolylineMouseOver = new Label("polyline-mouse-over");
+        lblPolylineMouseOver.setWidthFull();
+        lblPolylineRightClick = new Label("polyline-right-click");
+        lblPolylineRightClick.setWidthFull();
+        
+        verticalLayoutPolylineEvents.add(lblPolylineClick);
+        verticalLayoutPolylineEvents.add(lblPolylineDblClick);
+        verticalLayoutPolylineEvents.add(lblPolylineMouseOut);
+        verticalLayoutPolylineEvents.add(lblPolylineMouseOver);
+        verticalLayoutPolylineEvents.add(lblPolylineRightClick);
+        
+        pages = new HashMap();
         
         pages.put(tabMapEvents, verticalLayoutMapEvents);
-        pages.put(tabMarkerEvents, verticalLayoutMarkerEvents);                
+        pages.put(tabMarkerEvents, verticalLayoutMarkerEvents);
+        pages.put(tabPolylineEvents, verticalLayoutPolylineEvents);
                 
-        VerticalLayout verticalLayoutMain = new VerticalLayout();        
+        verticalLayoutMain = new VerticalLayout();        
         verticalLayoutMain.setSizeFull();
         
         verticalLayoutMain.add(tabs);
@@ -134,10 +213,10 @@ public class MainView extends VerticalLayout {
         tabs.addSelectedChangeListener(new ComponentEventListener<SelectedChangeEvent>() {
             @Override
             public void onComponentEvent(SelectedChangeEvent event) {
-                if (pages.containsKey(event.getSelectedTab())) {
-                    verticalLayoutMain.removeAll();
-                    verticalLayoutMain.add(tabs);
-                    verticalLayoutMain.add(pages.get(event.getSelectedTab()));
+                if (pages.containsKey(event.getPreviousTab()) && 
+                    pages.containsKey(event.getSelectedTab())) {
+                    verticalLayoutMain.replace(pages.get(event.getPreviousTab()), 
+                        pages.get(event.getSelectedTab()));
                 }
             }
         });
@@ -145,9 +224,12 @@ public class MainView extends VerticalLayout {
         googleMap.addMapClickListener(new ComponentEventListener<GoogleMapEvent.MapClickEvent>() {
             @Override
             public void onComponentEvent(GoogleMapEvent.MapClickEvent event) {
-                GoogleMapMarker googleMapMarker = new GoogleMapMarker(event.getLat(), event.getLng());
-                setMarkerListeners(googleMapMarker);
-                googleMap.newMarker(googleMapMarker);
+                googleMap.setCenterLat(1.2135252);
+                googleMap.setCenterLng(-77.3122422);
+                googleMap.setZoom(13);
+//                GoogleMapMarker googleMapMarker = new GoogleMapMarker(event.getLat(), event.getLng());
+//                setMarkerListeners(googleMapMarker);
+//                googleMap.newMarker(googleMapMarker);
                 setBackgroundLabel(lblMapClick);
                 //Notification.show(String.format("lat:%f, lng:%f", event.getLat(), event.getLng()));
             }
@@ -161,6 +243,28 @@ public class MainView extends VerticalLayout {
         googleMap.addMapRightClickListener(new ComponentEventListener<GoogleMapEvent.MapRightClickEvent>() {
             @Override
             public void onComponentEvent(GoogleMapEvent.MapRightClickEvent event) {
+                GoogleMapMarker googleMapMarker = new GoogleMapMarker(event.getLat(), event.getLng());
+                setMarkerListeners(googleMap, googleMapMarker);
+                googleMap.newMarker(googleMapMarker);
+                googleMapMarker.setDraggable(true);
+                
+                JsonObject label = Json.createObject();
+                label.put("color", "#305F72"); //NOI18N
+                label.put("text", "New Marker"); //NOI18N
+                
+                googleMapMarker.setLabel(label);
+                
+                JsonObject icon = Json.createObject();
+                JsonObject labelOrigin = Json.createObject();
+                labelOrigin.put("x", 20); //NOI18N
+                labelOrigin.put("y", 40); //NOI18N
+                icon.put("url", "star.png"); //NOI18N
+                icon.put("labelOrigin", labelOrigin); //NOI18N
+                
+                googleMapMarker.setIcon(icon);
+                
+                googleMapMarker.setTitle("New Marker");
+                
                 setBackgroundLabel(lblMapRightClick);
             }
         });
@@ -168,6 +272,7 @@ public class MainView extends VerticalLayout {
             @Override
             public void onComponentEvent(GoogleMapEvent.MapCenterChangedEvent event) {
                 setBackgroundLabel(lblMapCenterChanged);
+////                Notification.show("center lat " + googleMap.getCenterLat() + " lng " + googleMap.getCenterLng());
             }
         });
         googleMap.addMapMouseMoveListener(new ComponentEventListener<GoogleMapEvent.MapMouseMoveEvent>() {
@@ -192,6 +297,7 @@ public class MainView extends VerticalLayout {
             @Override
             public void onComponentEvent(GoogleMapEvent.MapZoomChangedEvent event) {
                 setBackgroundLabel(lblZoomChanged);
+////                Notification.show("zoom " + googleMap.getZoom());
             }
         });        
         splitLayoutMain.addToSecondary(verticalLayoutMain);
@@ -201,11 +307,43 @@ public class MainView extends VerticalLayout {
         add(splitLayoutMain);
     }
     
-    public void setMarkerListeners(GoogleMapMarker googleMapMarker) {
+//    private void updateMainLayout(Tab tab) {
+//        tabs.setSelectedTab(tab);
+//    }
+    
+    public void setMarkerListeners(GoogleMap googleMap, GoogleMapMarker googleMapMarker) {
+        googleMapMarker.addMarkerMouseOverListener(new ComponentEventListener<GoogleMapEvent.MarkerMouseOverEvent>() {
+            @Override
+            public void onComponentEvent(GoogleMapEvent.MarkerMouseOverEvent t) {
+                tabs.setSelectedTab(tabMarkerEvents);
+                setBackgroundLabel(lblMarkerMouseOver);
+            }
+        });
+        googleMapMarker.addMarkerMouseOutListener(new ComponentEventListener<GoogleMapEvent.MarkerMouseOutEvent>(){
+            @Override
+            public void onComponentEvent(GoogleMapEvent.MarkerMouseOutEvent t) {
+                tabs.setSelectedTab(tabMapEvents);
+                setBackgroundLabel(lblMarkerMouseOut);
+            }
+        });
         googleMapMarker.addMarkerClickListener(new ComponentEventListener<GoogleMapEvent.MarkerClickEvent>() {
             @Override
             public void onComponentEvent(GoogleMapEvent.MarkerClickEvent event) {
+                googleMapMarker.setLat(2.6116145);
+                googleMapMarker.setLng(-76.3862953);
                 setBackgroundLabel(lblMarkerClick);
+            }
+        });
+        googleMapMarker.addMarkerDragEndListener(new ComponentEventListener<GoogleMapEvent.MarkerDragEnd>() {
+            @Override
+            public void onComponentEvent(GoogleMapEvent.MarkerDragEnd event) {
+                setBackgroundLabel(lblMarkerDragEnd);
+            }
+        });
+        googleMapMarker.addMarkerDragStartListener(new ComponentEventListener<GoogleMapEvent.MarkerDragStart>(){
+            @Override
+            public void onComponentEvent(GoogleMapEvent.MarkerDragStart event) {
+                setBackgroundLabel(lblMarkerDragStart);
             }
         });
         googleMapMarker.addMarkerRightClickListener(new ComponentEventListener<GoogleMapEvent.MarkerRightClickEvent>() {
@@ -218,6 +356,42 @@ public class MainView extends VerticalLayout {
             @Override
             public void onComponentEvent(GoogleMapEvent.MarkerDblClickEvent event) {
                 setBackgroundLabel(lblMarkerDblClick);
+                googleMap.removeMarker(googleMapMarker);
+            }
+        });
+    }
+    
+    public void setPolylineListener(GoogleMapPolyline googleMapPolyline) {
+        googleMapPolyline.addPolylineMouseOverListener(new ComponentEventListener<GoogleMapEvent.PolylineMouseOverEvent>(){
+            @Override
+            public void onComponentEvent(GoogleMapEvent.PolylineMouseOverEvent t) {
+                tabs.setSelectedTab(tabPolylineEvents);
+                setBackgroundLabel(lblPolylineMouseOver);
+            }
+        });
+        googleMapPolyline.addPolylineMouseOutListener(new ComponentEventListener<GoogleMapEvent.PolylineMouseOutEvent>(){
+            @Override
+            public void onComponentEvent(GoogleMapEvent.PolylineMouseOutEvent t) {
+                tabs.setSelectedTab(tabMapEvents);
+                setBackgroundLabel(lblPolylineMouseOut);
+            }
+        });
+        googleMapPolyline.addPolylineClickListener(new ComponentEventListener<GoogleMapEvent.PolylineClickEvent>() {
+            @Override
+            public void onComponentEvent(GoogleMapEvent.PolylineClickEvent event) {
+                setBackgroundLabel(lblPolylineClick);
+            }
+        });
+        googleMapPolyline.addPolylineDblClickListener(new ComponentEventListener<GoogleMapEvent.PolylineDblClickEvent>() {
+            @Override
+            public void onComponentEvent(GoogleMapEvent.PolylineDblClickEvent event) {
+                setBackgroundLabel(lblPolylineDblClick);
+            }
+        });
+        googleMapPolyline.addPolylineRightClickListener(new ComponentEventListener<GoogleMapEvent.PolylineRightClickEvent>() {
+            @Override
+            public void onComponentEvent(GoogleMapEvent.PolylineRightClickEvent event) {
+                setBackgroundLabel(lblPolylineRightClick);
             }
         });
     }

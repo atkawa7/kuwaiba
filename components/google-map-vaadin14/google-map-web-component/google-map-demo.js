@@ -4,9 +4,12 @@ import '@vaadin/vaadin-tabs/vaadin-tabs.js';
 import '@vaadin/vaadin-tabs/vaadin-tab.js';
 import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout.js';
 import '@vaadin/vaadin-split-layout/vaadin-split-layout.js';
+import './google-map-constants.js';
 import './google-map.js';
 import './google-map-marker.js';
-import {GoogleMapMarker} from './google-map-marker.js';
+import './google-map-polyline.js';
+import './google-map-lat-lng.js';
+////import {GoogleMapMarker} from './google-map-marker.js';
 /**
  * `my-element`
  * my-element
@@ -30,7 +33,14 @@ class GoogleMapDemo extends PolymerElement {
       <vaadin-split-layout style="height: 100%;">
         <div style="width: 70%;">
           <google-map id="map" api-key=[[apiKey]] lib-drawing>
-            <google-map-marker id="marker" title="Marker" label='{"color":"#305F72", "text":"Marker"}'></google-map-marker>
+            <google-map-marker id="marker" lat="2.4574702" lng="-76.6349535" title="Marker" label='{"color":"#305F72", "text":"Marker"}'></google-map-marker>
+            <google-map-polyline id="polyline">
+              <google-map-lat-lng lat="2.4574702" lng="-76.6349535"></google-map-lat-lng>
+              <google-map-lat-lng lat="2.3512629" lng="-76.6915093"></google-map-lat-lng>
+              <google-map-lat-lng lat="2.260897" lng="-76.7449569"></google-map-lat-lng>
+              <google-map-lat-lng lat="2.1185563" lng="-76.9974436"></google-map-lat-lng>
+              <google-map-lat-lng lat="2.0693058" lng="-77.0552842"></google-map-lat-lng>
+            </google-map-polyline>
           </google-map>
         </div>
         <div style="width: 30%;">
@@ -42,7 +52,7 @@ class GoogleMapDemo extends PolymerElement {
 
           <iron-pages selected="[[page]]">
             <vaadin-vertical-layout>
-              <label id="lblMapClick">map-click</label>
+              <label id="lblMapClick">map-click (Go To Pasto)</label>
               <label id="lblMapDblClick">map-dbl-click</label>
               <label id="lblMapRightClick">map-right-click (New Marker)</label>
               <label id="lblMapCenterChanged">map-center-changed</label>
@@ -52,11 +62,21 @@ class GoogleMapDemo extends PolymerElement {
               <label id="lblMapZoomChanged">map-zoom-changed</label>
             </vaadin-vertical-layout>
             <vaadin-vertical-layout>
-              <label id="lblMarkerClick">marker-click</label>
-              <label id="lblMarkerDblClick">marker-dbl-click</label>
+              <label id="lblMarkerClick">marker-click (Move To Silvia)</label>
+              <label id="lblMarkerDblClick">marker-dbl-click (Remove Marker)</label>
+              <label id="lblMarkerDragEnd">marker-drag-end</label>
+              <label id="lblMarkerDragStart">marker-drag-start</label>
+              <label id="lblMarkerMouseOut">marker-mouse-out</label>
+              <label id="lblMarkerMouseOver">marker-mouse-over</label>
               <label id="lblMarkerRightClick">marker-right-click</label>
             </vaadin-vertical-layout>
-            <page><h3>Page 3</h3>Good Morning</page>
+            <vaadin-vertical-layout>
+              <label id="lblPolylineClick">polyline-click</label>
+              <label id="lblPolylineDblClick">polyline-dbl-click</label>
+              <label id="lblPolylineMouseOut">polyline-mouse-out</label>
+              <label id="lblPolylineMouseOver">polyline-mouse-over</label>
+              <label id="lblPolylineRightClick">polyline-right-click</label>
+            </vaadin-vertical-layout>
           </iron-pages>
         </div>
       </vaadin-split-layout>
@@ -77,20 +97,36 @@ class GoogleMapDemo extends PolymerElement {
   }
   ready() {
     super.ready();
+
     const map = this.$.map;
+    this._setMapEventListeners(map);
+    
     const marker = this.$.marker;
+    this._setMarkerEventListeners(marker);
+    
+    const polyline = this.$.polyline;
+    this._setPolylineEventListeners(polyline);
+  }
+
+  _updateLabelBackground(aLabel) {
+    aLabel.style.background = '#F2F4F9';
+    const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+    wait(1000).then(() => aLabel.style.background = 'transparent');                
+  }
+
+  _setMapEventListeners(map) {
     const _this = this;
 
     map.addEventListener('map-center-changed', function(event) {
       _this._updateLabelBackground(_this.$.lblMapCenterChanged);
     });
-    map.addEventListener('map-mouse-move', function(event) {
+    map.addEventListener('map-mouse-move', function(event) {      
       _this._updateLabelBackground(_this.$.lblMapMouseMove);
     });
     map.addEventListener('map-mouse-out', function(event) {
       _this._updateLabelBackground(_this.$.lblMapMouseOut);
     });
-    map.addEventListener('map-mouse-over', function(event) {
+    map.addEventListener('map-mouse-over', function(event) { 
       _this._updateLabelBackground(_this.$.lblMapMouseOver);
     });
     map.addEventListener('map-zoom-changed', function(event) {
@@ -98,6 +134,9 @@ class GoogleMapDemo extends PolymerElement {
     });
     map.addEventListener('map-click', function(event) {
       _this._updateLabelBackground(_this.$.lblMapClick);
+      map.lat = 1.2135252;
+      map.lng = -77.3122422;
+      map.zoom = 13;
     });
     map.addEventListener('map-dbl-click', function(event) {
       _this._updateLabelBackground(_this.$.lblMapDblClick);
@@ -108,28 +147,62 @@ class GoogleMapDemo extends PolymerElement {
       googleMapMarker.lng = event.detail.lng;
       googleMapMarker.label = JSON.parse('{"color":"#305F72", "text":"New Marker"}');
       googleMapMarker.title = 'New Marker';
+      googleMapMarker.icon = JSON.parse('{"url":"star.png", "labelOrigin":{"x": 20, "y": 40}}');
+      googleMapMarker._draggable = true;
       map.appendChild(googleMapMarker);
       _this._setMarkerEventListeners(googleMapMarker);
-
       _this._updateLabelBackground(_this.$.lblMapRightClick);
-    });
-    this._setMarkerEventListeners(marker);
+    });    
   }
-  _updateLabelBackground(aLabel) {
-    aLabel.style.background = '#F2F4F9';
-    const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
-    wait(1000).then(() => aLabel.style.background = 'transparent');                
-  }
+
   _setMarkerEventListeners(marker) {
     var _this = this;
+    marker.addEventListener('marker-mouse-over', function(event) {
+      _this.page = 1;
+      _this._updateLabelBackground(_this.$.lblMarkerMouseOver);
+    });
+    marker.addEventListener('marker-mouse-out', function(event) {
+      _this.page = 0;
+      _this._updateLabelBackground(_this.$.lblMarkerMouseOut);
+    });
     marker.addEventListener('marker-click', function(event) {
+      marker.lat = 2.6116145;
+      marker.lng = -76.3862953;
       _this._updateLabelBackground(_this.$.lblMarkerClick);
     });
     marker.addEventListener('marker-dbl-click', function(event) {
       _this._updateLabelBackground(_this.$.lblMarkerDblClick);
+      _this.$.map.removeChild(marker);
+    });
+    marker.addEventListener('marker-drag-end', function(event) {
+      _this._updateLabelBackground(_this.$.lblMarkerDragEnd);
+    });
+    marker.addEventListener('marker-drag-start', function(event) {
+      _this._updateLabelBackground(_this.$.lblMarkerDragStart);
     });
     marker.addEventListener('marker-right-click', function(event) {
       _this._updateLabelBackground(_this.$.lblMarkerRightClick);
+    });
+  }
+
+  _setPolylineEventListeners(polyline) {
+    var _this = this;
+    polyline.addEventListener('polyline-mouse-over', function(event) {
+      _this.page = 2;
+      _this._updateLabelBackground(_this.$.lblPolylineMouseOver);
+    });
+    polyline.addEventListener('polyline-mouse-out', function(event) {
+      _this.page = 0;
+      _this._updateLabelBackground(_this.$.lblPolylinMouseOut);
+    });
+    polyline.addEventListener('polyline-click', function(event) {
+      _this._updateLabelBackground(_this.$.lblPolylineClick);
+    });
+    polyline.addEventListener('polyline-dbl-click', function(event) {
+      _this._updateLabelBackground(_this.$.lblPolylineDblClick);
+    });
+    polyline.addEventListener('polyline-right-click', function(event) {
+      _this._updateLabelBackground(_this.$.lblPolylineRightClick);
     });
   }
 }
