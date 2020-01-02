@@ -8,8 +8,6 @@ import './google-map-constants.js';
 import './google-map.js';
 import './google-map-marker.js';
 import './google-map-polyline.js';
-import './google-map-lat-lng.js';
-////import {GoogleMapMarker} from './google-map-marker.js';
 /**
  * `my-element`
  * my-element
@@ -32,15 +30,9 @@ class GoogleMapDemo extends PolymerElement {
       </style>
       <vaadin-split-layout style="height: 100%;">
         <div style="width: 70%;">
-          <google-map id="map" api-key=[[apiKey]] lib-drawing>
+          <google-map id="map" api-key=[[apiKey]] map-type-id="hybrid">
             <google-map-marker id="marker" lat="2.4574702" lng="-76.6349535" title="Marker" label='{"color":"#305F72", "text":"Marker"}'></google-map-marker>
-            <google-map-polyline id="polyline">
-              <google-map-lat-lng lat="2.4574702" lng="-76.6349535"></google-map-lat-lng>
-              <google-map-lat-lng lat="2.3512629" lng="-76.6915093"></google-map-lat-lng>
-              <google-map-lat-lng lat="2.260897" lng="-76.7449569"></google-map-lat-lng>
-              <google-map-lat-lng lat="2.1185563" lng="-76.9974436"></google-map-lat-lng>
-              <google-map-lat-lng lat="2.0693058" lng="-77.0552842"></google-map-lat-lng>
-            </google-map-polyline>
+            <google-map-polyline id="polyline" editable draggable path='[{"lat":2.4574702, "lng":-76.6349535}, {"lat":2.3512629, "lng":-76.6915093}, {"lat":2.260897, "lng":-76.7449569}, {"lat":2.1185563, "lng":-76.9974436}, {"lat":2.0693058, "lng":-77.0552842}]'></google-map-polyline>
           </google-map>
         </div>
         <div style="width: 30%;">
@@ -72,10 +64,11 @@ class GoogleMapDemo extends PolymerElement {
             </vaadin-vertical-layout>
             <vaadin-vertical-layout>
               <label id="lblPolylineClick">polyline-click</label>
-              <label id="lblPolylineDblClick">polyline-dbl-click</label>
+              <label id="lblPolylineDblClick">polyline-dbl-click (Remove Polyline)</label>
               <label id="lblPolylineMouseOut">polyline-mouse-out</label>
               <label id="lblPolylineMouseOver">polyline-mouse-over</label>
               <label id="lblPolylineRightClick">polyline-right-click</label>
+              <label id="lblPolylinePathChanged">polyline-path-changed</label>
             </vaadin-vertical-layout>
           </iron-pages>
         </div>
@@ -88,7 +81,8 @@ class GoogleMapDemo extends PolymerElement {
         type: String
       },
       apiKey: {
-        type: String
+        type: String,
+        value: ''
       }
     };
   }
@@ -193,16 +187,20 @@ class GoogleMapDemo extends PolymerElement {
     });
     polyline.addEventListener('polyline-mouse-out', function(event) {
       _this.page = 0;
-      _this._updateLabelBackground(_this.$.lblPolylinMouseOut);
+      _this._updateLabelBackground(_this.$.lblPolylineMouseOut);
     });
     polyline.addEventListener('polyline-click', function(event) {
       _this._updateLabelBackground(_this.$.lblPolylineClick);
     });
     polyline.addEventListener('polyline-dbl-click', function(event) {
       _this._updateLabelBackground(_this.$.lblPolylineDblClick);
+      _this.$.map.removeChild(polyline);
     });
     polyline.addEventListener('polyline-right-click', function(event) {
       _this._updateLabelBackground(_this.$.lblPolylineRightClick);
+    });
+    polyline.addEventListener('polyline-path-changed', function(event) {
+      _this._updateLabelBackground(_this.$.lblPolylinePathChanged);
     });
   }
 }

@@ -237,6 +237,12 @@ public class GoogleMapEvent {
             super(source, fromClient);
         }
     }
+    @DomEvent("polyline-path-changed")
+    public static class PolylinePathChangedEvent extends ComponentEvent<GoogleMapPolyline> {
+        public PolylinePathChangedEvent(GoogleMapPolyline source, boolean fromClient) {
+            super(source, fromClient);
+        }
+    }
     //</editor-fold>
 }
 

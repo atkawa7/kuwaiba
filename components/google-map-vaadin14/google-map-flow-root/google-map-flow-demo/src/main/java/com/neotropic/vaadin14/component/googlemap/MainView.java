@@ -16,7 +16,9 @@ import com.vaadin.flow.server.Command;
 import com.vaadin.flow.server.PWA;
 import elemental.json.Json;
 import elemental.json.JsonObject;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 @Push
@@ -47,13 +49,15 @@ public class MainView extends VerticalLayout {
     private final Label lblPolylineMouseOut;
     private final Label lblPolylineMouseOver;
     private final Label lblPolylineRightClick;
+    private final Label lblPolylinePathChanged;
     //</editor-fold>
     public MainView(@Autowired MessageBean bean) {
         setSizeFull();
         GoogleMap googleMap = new GoogleMap(API_KEY, CLIENT_ID);
         
-        GoogleMapMarker googleMapMarker = new GoogleMapMarker(2.4573831, -76.6699746);
+        GoogleMapMarker googleMapMarker = new GoogleMapMarker(2.4574702, -76.6349535);
         googleMap.newMarker(googleMapMarker);
+        googleMap.setMapTypeId(Constants.MapTypeId.HYBRID);
         
         JsonObject label = Json.createObject();
         label.put("color", "#305F72"); //NOI18N
@@ -65,12 +69,22 @@ public class MainView extends VerticalLayout {
         setMarkerListeners(googleMap, googleMapMarker);
         
         GoogleMapPolyline googleMapPolyline = new GoogleMapPolyline();
+        googleMapPolyline.setEditable(true);
+        googleMapPolyline.setDraggable(true);
         googleMapPolyline.setStrokeColor("#32a852");
-        googleMapPolyline.appendCoordinate(new GoogleMapLatLng(2.4574702, -76.6349535));
-        googleMapPolyline.appendCoordinate(new GoogleMapLatLng(2.3512629, -76.6915093));
-        googleMapPolyline.appendCoordinate(new GoogleMapLatLng(2.260897, -76.7449569));
-        googleMapPolyline.appendCoordinate(new GoogleMapLatLng(2.1185563, -76.9974436));
-        googleMapPolyline.appendCoordinate(new GoogleMapLatLng(2.0693058, -77.0552842));
+////        googleMapPolyline.appendCoordinate(new GoogleMapLatLng(2.4574702, -76.6349535));
+////        googleMapPolyline.appendCoordinate(new GoogleMapLatLng(2.3512629, -76.6915093));
+////        googleMapPolyline.appendCoordinate(new GoogleMapLatLng(2.260897, -76.7449569));
+////        googleMapPolyline.appendCoordinate(new GoogleMapLatLng(2.1185563, -76.9974436));
+////        googleMapPolyline.appendCoordinate(new GoogleMapLatLng(2.0693058, -77.0552842));
+        List<LatLng> coordinates = new ArrayList();
+        coordinates.add(new LatLng(2.4574702, -76.6349535));
+        coordinates.add(new LatLng(2.3512629, -76.6915093));
+        coordinates.add(new LatLng(2.260897, -76.7449569));
+        coordinates.add(new LatLng(2.1185563, -76.9974436));
+        coordinates.add(new LatLng(2.0693058, -77.0552842));
+        googleMapPolyline.setPath(coordinates);
+        
         googleMap.newPolyline(googleMapPolyline);
         
         setPolylineListener(googleMapPolyline);
@@ -191,12 +205,15 @@ public class MainView extends VerticalLayout {
         lblPolylineMouseOver.setWidthFull();
         lblPolylineRightClick = new Label("polyline-right-click");
         lblPolylineRightClick.setWidthFull();
+        lblPolylinePathChanged = new Label("polyline-path-changed");
+        lblPolylinePathChanged.setWidthFull();
         
         verticalLayoutPolylineEvents.add(lblPolylineClick);
         verticalLayoutPolylineEvents.add(lblPolylineDblClick);
         verticalLayoutPolylineEvents.add(lblPolylineMouseOut);
         verticalLayoutPolylineEvents.add(lblPolylineMouseOver);
         verticalLayoutPolylineEvents.add(lblPolylineRightClick);
+        verticalLayoutPolylineEvents.add(lblPolylinePathChanged);
         
         pages = new HashMap();
         
@@ -392,6 +409,12 @@ public class MainView extends VerticalLayout {
             @Override
             public void onComponentEvent(GoogleMapEvent.PolylineRightClickEvent event) {
                 setBackgroundLabel(lblPolylineRightClick);
+            }
+        });
+        googleMapPolyline.addPolylinePathChangedListener(new ComponentEventListener<GoogleMapEvent.PolylinePathChangedEvent>() {
+            @Override
+            public void onComponentEvent(GoogleMapEvent.PolylinePathChangedEvent event) {
+                setBackgroundLabel(lblPolylinePathChanged);
             }
         });
     }

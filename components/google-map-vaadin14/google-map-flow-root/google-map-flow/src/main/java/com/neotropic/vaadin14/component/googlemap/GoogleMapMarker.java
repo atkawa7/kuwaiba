@@ -77,11 +77,11 @@ public class GoogleMapMarker extends Component {
     }
     
     public boolean getDraggable() {
-        return getElement().getProperty(Constants.Property.DRAGGABLE, Constants.Default.DRAGGABLE);
+        return getElement().getProperty(Constants.Property._DRAGGABLE, Constants.Default.DRAGGABLE);
     }
     
     public void setDraggable(boolean draggable) {
-        getElement().setProperty(Constants.Property.DRAGGABLE, draggable);
+        getElement().setProperty(Constants.Property._DRAGGABLE, draggable);
     }
     
     public boolean getMarkerVisible() {

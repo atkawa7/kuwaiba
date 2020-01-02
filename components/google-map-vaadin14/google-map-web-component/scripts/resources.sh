@@ -3,7 +3,6 @@ echo Start copy frontend files...
 cp \
 google-map-api.js \
 google-map-constants.js \
-google-map-lat-lng.js \
 google-map-marker.js \
 google-map-point.js \
 google-map-poly.js \

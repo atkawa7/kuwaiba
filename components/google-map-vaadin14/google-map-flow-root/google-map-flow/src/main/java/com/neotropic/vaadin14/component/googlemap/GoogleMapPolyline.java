@@ -17,9 +17,14 @@ package com.neotropic.vaadin14.component.googlemap;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.Synchronize;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.shared.Registration;
+import elemental.json.Json;
+import elemental.json.JsonArray;
+import elemental.json.JsonObject;
+import java.util.List;
 
 /**
  *
@@ -28,7 +33,25 @@ import com.vaadin.flow.shared.Registration;
 @Tag("google-map-polyline")
 @JsModule("./google-map-polyline.js")
 public class GoogleMapPolyline extends Component {
+    private List<LatLng> path;
+    
     public GoogleMapPolyline() {
+    }
+    
+    public boolean getDraggable() {
+        return getElement().getProperty(Constants.Property.DRAGGABLE, Constants.Default.DRAGGABLE);
+    }
+    
+    public void setDraggable(boolean draggable) {
+        getElement().setProperty(Constants.Property.DRAGGABLE, draggable);
+    }
+    
+    public boolean getEditable() {
+        return getElement().getProperty(Constants.Property.EDITABLE, Constants.Default.EDITABLE);
+    }
+    
+    public void setEditable(boolean editable) {
+        getElement().setProperty(Constants.Property.EDITABLE, editable);
     }
     
     public String getStrokeColor() {
@@ -39,12 +62,56 @@ public class GoogleMapPolyline extends Component {
         getElement().setProperty(Constants.Property.STROKE_COLOR, strokeColor);
     }
     
-    public void appendCoordinate(GoogleMapLatLng coordinate) {
-        getElement().appendChild(coordinate.getElement());
+    public double getStrokeOpacity() {
+        return getElement().getProperty(Constants.Property.STROKE_OPACITY, Constants.Default.STROKE_OPACITY);
     }
     
-    public void removeCoordinate(GoogleMapLatLng coordinate) {
-        getElement().removeChild(coordinate.getElement());
+    public void setStrokeOpacity(double strokeOpacity) {
+        getElement().setProperty(Constants.Property.STROKE_OPACITY, strokeOpacity);
+    }
+    
+    public double getStrokeWeight() {
+        return getElement().getProperty(Constants.Property.STROKE_WEIGHT, Constants.Default.STROKE_WEIGHT);
+    }
+    
+    public void setStrokeWeight(double strokeWeight) {
+        getElement().setProperty(Constants.Property.STROKE_WEIGHT, strokeWeight);
+    }
+    
+    public boolean getPolylineVisible() {
+        return getElement().getProperty(Constants.Property.VISIBLE, Constants.Default.VISIBLE);
+    }
+    
+    public void setPolylineVisible(boolean visible) {
+        getElement().setAttribute(Constants.Property.VISIBLE, visible);
+    }
+    
+    @Synchronize(property="path", value="polyline-path-changed")
+    public List<LatLng> getPath() {
+        if (getElement().getPropertyRaw("path") instanceof JsonArray) {
+            path.clear();
+            JsonArray jsonCoordinates = (JsonArray) getElement().getPropertyRaw("path");
+            for (int i = 0; i < jsonCoordinates.length(); i++) {
+                JsonObject jsonCoordinate = jsonCoordinates.getObject(i);
+                double lat = jsonCoordinate.getNumber("lat");
+                double lng = jsonCoordinate.getNumber("lng");
+                path.add(new LatLng(lat, lng));
+            }
+        }
+        return path;
+    }
+    
+    public void setPath(List<LatLng> path) {
+        this.path = path;
+        
+        JsonArray jsonPath = Json.createArray();
+        for (int i = 0; i < path.size(); i++) {
+            JsonObject jsonCoordinate = Json.createObject();
+            jsonCoordinate.put("lat", path.get(i).getLat());
+            jsonCoordinate.put("lng", path.get(i).getLng());
+            jsonPath.set(i, jsonCoordinate);
+        }
+        getElement().setPropertyJson(Constants.Property.PATH, jsonPath);
     }
     
     public Registration addPolylineClickListener(ComponentEventListener<GoogleMapEvent.PolylineClickEvent> listener) {
@@ -66,4 +133,9 @@ public class GoogleMapPolyline extends Component {
     public Registration addPolylineRightClickListener(ComponentEventListener<GoogleMapEvent.PolylineRightClickEvent> listener) {
         return addListener(GoogleMapEvent.PolylineRightClickEvent.class, listener);
     }
+    
+    public Registration addPolylinePathChangedListener(ComponentEventListener<GoogleMapEvent.PolylinePathChangedEvent> listener) {
+        return addListener(GoogleMapEvent.PolylinePathChangedEvent.class, listener);
+    }
+    
 }

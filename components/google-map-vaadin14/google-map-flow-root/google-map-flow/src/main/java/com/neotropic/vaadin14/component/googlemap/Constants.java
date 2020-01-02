@@ -30,18 +30,35 @@ public class Constants {
         public static String WIDTH = "width";
         public static String HEIGHT = "height";
         public static String STROKE_COLOR = "strokeColor";
+        public static String STROKE_OPACITY = "strokeOpacity";
+        public static String STROKE_WEIGHT = "strokeWeight";
         public static String ICON = "icon";
         public static String TITLE = "title";
         public static String LABEL = "label";
-        public static String DRAGGABLE = "_draggable";
+        public static String _DRAGGABLE = "_draggable";
+        public static String DRAGGABLE = "draggable";
         public static String VISIBLE = "visible";
+        public static String PATH = "path";
+        public static String EDITABLE = "editable";
+        public static String MAP_TYPE_ID = "mapTypeId";
     }
+    
     public static class Default {
         public static double LAT = 2.4573831;
         public static double LNG = -76.6699746;
         public static double ZOOM = 10;
         public static String STROKE_COLOR = "#FF0000";
+        public static double STROKE_OPACITY = 1.0;
+        public static double STROKE_WEIGHT = 2;
         public static boolean DRAGGABLE = false;
         public static boolean VISIBLE = true;
+        public static boolean EDITABLE = false;
+        public static String MAP_TYPE_ID = MapTypeId.ROADMAP;
+    }
+    public static class MapTypeId {
+        public static String HYBRID = "hybrid";
+        public static String ROADMAP = "roadmap";
+        public static String SATELLITE = "satellite";
+        public static String TERRAIN = "terrain";
     }
 }

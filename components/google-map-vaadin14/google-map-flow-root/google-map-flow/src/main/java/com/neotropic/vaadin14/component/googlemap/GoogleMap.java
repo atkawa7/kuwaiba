@@ -64,6 +64,14 @@ public class GoogleMap extends Component {
         getElement().setProperty(Constants.Property.ZOOM, zoom);
     }
     
+    public String getMapTypeId() {
+        return getElement().getProperty(Constants.Property.MAP_TYPE_ID, Constants.Default.MAP_TYPE_ID);
+    }
+    
+    public void setMapTypeId(String mapTypeId) {
+        getElement().setProperty(Constants.Property.MAP_TYPE_ID, mapTypeId);
+    }
+    
     public void newMarker(GoogleMapMarker googleMapMarker) {
         getElement().appendChild(googleMapMarker.getElement());
     }

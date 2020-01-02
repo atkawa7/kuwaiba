@@ -15,35 +15,32 @@
  */
 package com.neotropic.vaadin14.component.googlemap;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.dependency.JsModule;
-
 /**
  *
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-@Tag("google-map-lat-lng")
-@JsModule("./google-map-lat-lng.js")
-public class GoogleMapLatLng extends Component {
-    public GoogleMapLatLng(double lat, double lng) {
-        getElement().setProperty(Constants.Property.LAT, lat);
-        getElement().setProperty(Constants.Property.LNG, lng);
+public class LatLng {
+    private double lat;
+    private double lng;
+    
+    public LatLng(double lat, double lng) {
+        this.lat = lat;
+        this.lng = lng;
     }
     
     public double getLat() {
-        return getElement().getProperty(Constants.Property.LAT, Constants.Default.LAT);
+        return lat;
     }
     
     public void setLat(double lat) {
-        getElement().setProperty(Constants.Property.LAT, lat);
+        this.lat = lat;
     }
     
     public double getLng() {
-        return getElement().getProperty(Constants.Property.LNG, Constants.Default.LNG);
+        return lng;
     }
     
     public void setLng(double lng) {
-        getElement().setProperty(Constants.Property.LNG, lng);
+        this.lng = lng;
     }
 }

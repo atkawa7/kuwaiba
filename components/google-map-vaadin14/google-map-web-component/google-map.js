@@ -59,7 +59,10 @@ class GoogleMap extends PolymerElement {
       /**
        * The string contains your application API key. See https://developers.google.com/maps/documentation/javascript/get-api-key
        */
-      apiKey: String,
+      apiKey: {
+        type: String,
+        value: ''
+      },
       /**
        * Specifies a client Id
        */
@@ -92,6 +95,14 @@ class GoogleMap extends PolymerElement {
         type: Number,
         value: 10,
         observer: '_zoomChanged'
+      },
+      /**
+       * hybrid, roadmap, satellite, terrain
+       */
+      mapTypeId: {
+        type: String,
+        value: 'roadmap',
+        observer: '_mapTypeIdChanged'
       }
     };
   }
@@ -123,6 +134,7 @@ class GoogleMap extends PolymerElement {
       center: {lat: this.lat, lng: this.lng},
       zoom: this.zoom
     });
+    this.map.setMapTypeId(this.mapTypeId);
     /*
     Events:
     bounds_changed, 
@@ -218,31 +230,44 @@ class GoogleMap extends PolymerElement {
   _processRemovedNodes(removedNodes) {
     for (var i = 0; i < removedNodes.length; i++) {
       if (removedNodes[i].localName === Constants.googleMapMarker) {
-        console.log('>>>_processRemovedMarkers ' + removedNodes[i]);
+        console.log('>>>_processRemovedMarker ' + removedNodes[i]);
+        removedNodes[i].remove();
+      }
+      else if (removedNodes[i].localName === Constants.googleMapPolyline) {
+        console.log('>>>_processRemovedPolyline ' + removedNodes[i]);
         removedNodes[i].remove();
       }
     }
-    
   }
 
   _latChanged(newValue, oldValue) {
-    if (this.map !== undefined) {
+    if (this.map !== undefined && this.map.getCenter() !== undefined && 
+      this.map.getCenter().lat() !== newValue) {
       console.log(">>> _latChanged");
       this.map.setCenter({lat: newValue, lng: this.map.getCenter().lng()});
     }
   }
 
   _lngChanged(newValue, oldValue) {
-    if (this.map !== undefined) {
+    if (this.map !== undefined && this.map.getCenter() !== undefined && 
+      this.map.getCenter().lng() !== newValue) {
       console.log(">>> _lngChanged");
       this.map.setCenter({lat: this.map.getCenter().lat(), lng: newValue});
     }
   }
 
   _zoomChanged(newValue, oldValue) {
-    if (this.map !== undefined) {
+    if (this.map !== undefined && 
+      this.map.getZoom() !== newValue) {
       console.log(">>> _zoomChanged " + newValue);
       this.map.setZoom(newValue);
+    }
+  }
+
+  _mapTypeIdChanged(newValue, oldValue) {
+    if (this.map !== undefined && 
+      this.map.getMapTypeId() !== newValue) {
+      this.map.setMapTypeId(newValue);
     }
   }
 }
