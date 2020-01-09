@@ -39,6 +39,12 @@ public class GoogleMap extends Component {
         getElement().setProperty(Constants.Property.API_KEY, apiKey);
         getElement().setProperty(Constants.Property.CLIENT_ID, clientId);
     }
+    public GoogleMap(String apiKey, String clientId, String width, String height) {
+        getElement().getStyle().set(Constants.Property.WIDTH, width);
+        getElement().getStyle().set(Constants.Property.HEIGHT, height);        
+        getElement().setProperty(Constants.Property.API_KEY, apiKey);
+        getElement().setProperty(Constants.Property.CLIENT_ID, clientId);
+    }
     @Synchronize(property = "lat", value = "map-center-changed")
     public double getCenterLat() {
         return getElement().getProperty(Constants.Property.LAT, Constants.Default.LAT);
