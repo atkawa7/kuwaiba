@@ -758,6 +758,76 @@ public class TableCreator {
     }
     
     /**
+     * Creates a table for an X-Connection
+     * @param objLight the given object
+     * @param port the port where the links ends
+     * @return a grid layout with the ODF's information
+     * @throws ServerSideException if one of the attributes need it to create the table couldn't be retrieved
+     */
+    public Component createXconection(RemoteObjectLight objLight, RemoteObjectLight port) throws ServerSideException{
+        
+        RemoteObject odf = wsBean.getObject(objLight.getClassName(), objLight.getId(),
+                Page.getCurrent().getWebBrowser().getAddress(),
+                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+        
+        String rackPostion = odf.getAttribute("position");
+        String rackUnits = odf.getAttribute("rackUnits");
+        
+        Button rackBtn = new Button("Rack View");
+        rackBtn.addStyleNames("v-button-link", "button-in-cell");
+        RemoteObjectLight rack = wsBean.getFirstParentOfClass(objLight.getClassName(), objLight.getId(), "Rack",  Page.getCurrent().getWebBrowser().getAddress(),
+                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+        
+        if(rack != null){
+            Properties properties = new Properties();
+            properties.put("id", rack.getId());
+            properties.put("className", "Rack");
+
+            MiniAppRackView rackView = new MiniAppRackView(properties);
+            rackView.setWebserviceBean(wsBean);
+            rackBtn.addClickListener(event -> {
+                Window formWindow = new Window(" ");
+                
+                Component launchEmbedded = rackView.launchEmbedded();
+                formWindow.setContent(launchEmbedded);
+                formWindow.center();
+                formWindow.setHeight(70, Sizeable.Unit.PERCENTAGE);
+                formWindow.setWidth(70, Sizeable.Unit.PERCENTAGE);
+                UI.getCurrent().addWindow(formWindow);
+            });
+        }
+        
+        VerticalLayout lytData = new VerticalLayout();
+        lytData.setSpacing(false);
+        lytData.addStyleName("report-data-container");
+        lytData.addComponent(createTitle(objLight.getName(), ODF));
+        Component portRow = createTitleValueRow("ODF-PORT", port.getName());
+        portRow.addStyleName("cell-with-border-top");
+        lytData.addComponent(portRow);
+        
+        //row
+        lytData.addComponent(createTitleValueRow(""));
+        //row
+        if(rackPostion != null && isNumeric(rackPostion) && Integer.valueOf(rackPostion) > 0)
+            lytData.addComponent(createTitleValueRow("RACK POSTION", (String)rackPostion));
+        //row
+        if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0)
+            lytData.addComponent(createTitleValueRow("RACK UNITS", (String)rackUnits));
+        //row
+        lytData.addComponent(createTitleValueRow(""));
+        //row
+        lytData.addComponent(createMergedCellsRow2(getLocation(rack, objLight)));
+        //ODF Icon
+        VerticalLayout lytIcon =  new VerticalLayout(createIcon(objLight.getClassName()));
+        lytIcon.addStyleName("device-icon-container");
+        
+        VerticalLayout lytXconnectionTable = new VerticalLayout(lytData, lytIcon);   
+        lytXconnectionTable.setSpacing(false);
+        
+        return lytXconnectionTable;
+    }
+    
+    /**
      * Creates a table for a provider
      * @param providerName the provider name
      * @param providerId the provider id

@@ -65,15 +65,6 @@ public class FormsDashboardWidget extends AbstractDashboardWidget{
     }
 
     @Override
-    public void createContent() {
-//        try {
-//            
-//            FormCreator servManagerFormCreator = new FormCreator(service, wsBean, Page.getCurrent().getWebBrowser().getAddress(),
-//                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-//            
-//        } catch (ServerSideException ex) {
-//            Exceptions.printStackTrace(ex);
-//        }
-    }
+    public void createContent() { }
     
 }

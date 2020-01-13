@@ -3851,7 +3851,8 @@ public class KuwaibaService {
                                       @WebParam(name = "sideBClassNames")String[] sideBClassNames, @WebParam(name = "sideBIds")String[] sideBIds,
                                       @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
-            if ((sideAClassNames.length + sideAIds.length + linksClassNames.length + linksIds.length + sideBClassNames.length + sideBIds.length) / 4 != sideAClassNames.length)
+            if (sideAClassNames.length != sideAIds.length || linksClassNames.length != linksIds.length || sideBClassNames.length != sideBIds.length
+                    || sideAClassNames.length != sideBClassNames.length || sideBClassNames.length != linksClassNames.length)
                 throw new ServerSideException("The array sizes don't match");
             
             wsBean.connectPhysicalLinks(sideAClassNames, sideAIds, linksClassNames, linksIds, sideBClassNames, sideBIds, getIPAddress(), sessionId);
@@ -4021,7 +4022,7 @@ public class KuwaibaService {
         }
     }
     
-     /**
+    /**
      * Associates a list of objects (resources) to an existing service
      * @param objectClass Object class
      * @param objectId Object id

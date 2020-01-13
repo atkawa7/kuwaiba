@@ -729,10 +729,10 @@ public class ViewModule  implements GenericCommercialModule {
 
     /**
      * Provides a generic way to get the parents(the GenericCommunicationsElement or 
-     * the GenericBox) parents of the GenericPorts in a given path, then it parser 
+     * the GenericBox) parents of the GenericPorts in a given path, then it parses 
      * between physical path and a simplified list, of objects connections objects
      * [Node1 - Node2]
-     * [Node1 - Node3]
+     * [Node2 - Node3]
      * [Node3 - Node4]
      * @param path a physical path with endpoint, connection, endpoint(one or several ports, mirror, virtual, service instances)
      * @return a list of ConfigurationItem-connection-ConfigurationItem
@@ -751,7 +751,7 @@ public class ViewModule  implements GenericCommercialModule {
 
         BusinessObjectLight sourceDevice = null;
         List<ObjectLinkObjectDefinition> connectionsMap = new ArrayList<>();
-        //with this for we are rearing the path 3 at a time, endpoint - connection -endpoint (ignoring the mirror ports)
+        //with this for we are reading the path 3 at a time, endpoint - connection -endpoint (ignoring the mirror ports)
         for (BusinessObjectLight obj : path) {
             if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALLINK, obj.getClassName()))
                 connection = bem.getObject(obj.getClassName(), obj.getId());
@@ -779,6 +779,7 @@ public class ViewModule  implements GenericCommercialModule {
         
         return connectionsMap;
     }
+    
     private void orderNodes(){
         //initial coordinates, and a counter
         int x = 100, y = 0, fixer = 2;
