@@ -305,7 +305,7 @@ public class MPLSModule implements GenericCommercialModule {
                 BusinessObjectLight mplsLink = null;
                 if (linksIds[i] != null)
                     mplsLink = bem.getObjectLight(Constants.CLASS_MPLSLINK, linksIds[i]);
-                if(mplsLink != null && mplsLink.getClassName().equals(Constants.CLASS_MPLSLINK)) //NOI18N
+                if(mplsLink != null && !mplsLink.getClassName().equals(Constants.CLASS_MPLSLINK)) //NOI18N
                     throw new ServerSideException(String.format("Class %s is not a MPLS link", mplsLink.getClassName()));
                 if (sideAClassNames[i] != null && !mem.isSubclassOf(Constants.CLASS_GENERICPORT, sideAClassNames[i])) //NOI18N
                     throw new ServerSideException(String.format("Class %s is not a port", sideAClassNames[i]));
