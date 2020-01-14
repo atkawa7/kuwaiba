@@ -170,7 +170,6 @@ public class EntPhysicalSynchronizer {
     private boolean debugMode;
     
     public EntPhysicalSynchronizer(long dsConfigId, BusinessObjectLight obj, List<TableData> data) {
-        
         try {
             PersistenceService persistenceService = PersistenceService.getInstance();
             bem = persistenceService.getBusinessEntityManager();

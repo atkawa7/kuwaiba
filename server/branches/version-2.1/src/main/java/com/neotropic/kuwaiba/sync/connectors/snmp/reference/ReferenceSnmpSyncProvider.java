@@ -139,7 +139,7 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                     mappedObjLight = PersistenceService.getInstance().getBusinessEntityManager().getObjectLight(className, id);
                 } catch(InventoryException ex) {
                     pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
-                        new InvalidArgumentException(String.format(I18N.gm("snmp_sync_object_not_found"), ex.getMessage())));
+                        new InvalidArgumentException(String.format("Can not connect to the synchronization data source due to: %s", ex.getMessage())));
                 }
                 if (mappedObjLight != null) {
                     SnmpManager snmpManager = SnmpManager.getInstance();
@@ -159,32 +159,37 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                         snmpManager.setPrivacyProtocol(dsConfig.getParameters().get(Constants.PROPERTY_PRIVACY_PROTOCOL));
                         snmpManager.setPrivacyPass(dsConfig.getParameters().get(Constants.PROPERTY_PRIVACY_PASS));
                     }
+                    boolean firstSnmpConnectionAttemptFail = false;
                     //ENTITY-MIB table
                     ReferenceSnmpEntPhysicalTableResourceDefinition entPhysicalTable = new ReferenceSnmpEntPhysicalTableResourceDefinition();
                     List<List<String>> tableAsString = snmpManager.getTableAsString(entPhysicalTable.values().toArray(new OID[0]));
                         
                     if (tableAsString == null) {
                         pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
-                            new ConnectionException(String.format(I18N.gm("snmp_agent_connection_exception"), mappedObjLight.toString())));
-                        return pollResult;
+                            new ConnectionException(String.format("Can not connect to the synchronization data source in %s, due to: %s", address, mappedObjLight.toString())));
+                        firstSnmpConnectionAttemptFail = true;
                     }
-                    
-                    pollResult.getResult().put(dsConfig, new ArrayList<>());
-                    pollResult.getResult().get(dsConfig).add(
+                    else{
+                        pollResult.getResult().put(dsConfig, new ArrayList<>());
+                        pollResult.getResult().get(dsConfig).add(
                             new TableData("entPhysicalTable", SyncUtil.parseMibTable("instance", entPhysicalTable, tableAsString))); //NOI18N
-                
+                    }
                     //IF_MIB
                     SnmpifXTableResocurceDefinition ifMibTable = new SnmpifXTableResocurceDefinition();
-                    List<List<String>> ifMibTableAsString = snmpManager.getTableAsString(ifMibTable.values().toArray(new OID[0]));
-
-                    if (ifMibTableAsString == null) {
-                        pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
-                            new ConnectionException(String.format(I18N.gm("snmp_agent_connection_exception"), mappedObjLight.toString())));
-                        return pollResult;
+                    List<List<String>> ifMibTableAsString = null;
+                    //if the first attempt fails it will not be possible to make the sync, so we avoid the reading of others MIB tables
+                    if(!firstSnmpConnectionAttemptFail){
+                        ifMibTableAsString = snmpManager.getTableAsString(ifMibTable.values().toArray(new OID[0]));
+                        //if something goes wrong with reading the second MIB table.
+                        if (!firstSnmpConnectionAttemptFail && ifMibTableAsString == null) {
+                            pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
+                                new ConnectionException(String.format("Can not connect to the synchronization data source in %s, due to: %s", address, mappedObjLight.toString())));
+                        }
+                        else{
+                            pollResult.getResult().get(dsConfig).add(
+                                new TableData("ifMibTable", SyncUtil.parseMibTable("instance", ifMibTable, ifMibTableAsString))); //NOI18N
+                        }
                     }
-                    
-                    pollResult.getResult().get(dsConfig).add(
-                            new TableData("ifMibTable", SyncUtil.parseMibTable("instance", ifMibTable, ifMibTableAsString))); //NOI18N
                 }
             }
         }
@@ -225,7 +230,7 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
             
             EntPhysicalSynchronizer x = new EntPhysicalSynchronizer(entrySet.getKey().getId(),
                     new BusinessObjectLight(entrySet.getKey().getParameters().get("deviceClass"), 
-                    entrySet.getKey().getParameters().get("deviceId"), ""),
+                            entrySet.getKey().getParameters().get("deviceId"), ""),
                     mibTables);
             
             try {

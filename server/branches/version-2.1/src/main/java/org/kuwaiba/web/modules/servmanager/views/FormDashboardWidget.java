@@ -28,6 +28,9 @@ package org.kuwaiba.web.modules.servmanager.views;
 //import java.util.Arrays;
 //import java.util.LinkedList;
 //import java.util.List;
+//import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
+//import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
+//import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 //import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
 //import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 //import org.kuwaiba.apis.web.gui.notifications.Notifications;
@@ -37,6 +40,7 @@ package org.kuwaiba.web.modules.servmanager.views;
 //import org.kuwaiba.interfaces.ws.toserialize.business.RemoteLogicalConnectionDetails;
 //import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 //import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+//import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLinkObject;
 //import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
 //import org.kuwaiba.services.persistence.util.Constants;
 //import org.openide.util.Exceptions;
@@ -45,8 +49,7 @@ package org.kuwaiba.web.modules.servmanager.views;
  * Has methods to create form tables for end to end view
  * @author Adrian Martinez {@literal <adrian.martinez@kuwaiba.org>}
  */
-public class FormDashboardWidget{}
-//public class FormDashboardWidget extends AbstractDashboardWidget{
+public class FormDashboardWidget{// extends AbstractDashboardWidget{
 //    /**
 //     * For ADM side A
 //     */
@@ -129,6 +132,13 @@ public class FormDashboardWidget{}
 //                     
 //                    List<Component> listTempODFsA = new ArrayList<>();
 //                    List<Component> listTempODFsB = new ArrayList<>();
+//                    
+//                    
+//                    List<RemoteObjectLight> listAddedLogicalA = new ArrayList<>();
+//                    List<RemoteObjectLight> listAddedLogicalB = new ArrayList<>();
+//                    
+//                    List<RemoteObjectLight> listAddedPhysicalA = new ArrayList<>();
+//                    List<RemoteObjectLight> listAddedPhysicalB = new ArrayList<>();
 //                    boolean isSideAPeering = false;
 //                    boolean isSideBPeering = false;
 //                    if (wsBean.isSubclassOf(serviceResource.getClassName(), "GenericLogicalConnection", ipAddress, sessionId)) {
@@ -201,7 +211,8 @@ public class FormDashboardWidget{}
 //                            Component logicalA = createDeviceTable(aSideEquipmentLogical, 
 //                                    logicalCircuitDetails.getEndpointA(), stmEndPointA);
 //                            logicalA.setId(aSideEquipmentLogical.getId());
-//                            tempForm.setLogicalPartA(logicalA);                        
+//                            tempForm.setLogicalPartA(logicalA);  
+//                            listAddedLogicalA.add(aSideEquipmentLogical);
 //                            //This only applies if there is a peering, the peering should always be in side B
 //                            if(aSideEquipmentLogical.getClassName().toLowerCase().contains("cloud"))
 //                                isSideAPeering = true;
@@ -232,6 +243,7 @@ public class FormDashboardWidget{}
 //                                    logicalCircuitDetails.getEndpointB(), stmEndPointB);
 //                            logicalB.setId(bSideEquipmentLogical.getId());
 //                            tempForm.setLogicalPartB(logicalB);
+//                            listAddedLogicalB.add(bSideEquipmentLogical);
 //                        }
 //                        //This only applies if there is a peering, the peering should always be in side B
 //                        if(aSideEquipmentLogical != null && aSideEquipmentLogical.getClassName().toLowerCase().contains("cloud"))
@@ -239,72 +251,57 @@ public class FormDashboardWidget{}
 //                        //Now we render the physical part
 //                        //We start with the A side
 //                        if (!logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty()) {
-//                            int i = 2;
-//                            if (wsBean.isSubclassOf(logicalCircuitDetails.getPhysicalPathForEndpointA().get(0).getClassName(), 
-//                                    Constants.CLASS_GENERICLOGICALPORT, ipAddress, sessionId))
-//                                i = 3;
+//                            List<RemoteObjectLinkObject> physicalPathReaded = physicalPathReader(logicalCircuitDetails.getPhysicalPathForEndpointA());
+//                            
+//                            for (RemoteObjectLinkObject obj : physicalPathReaded) {
+//                                if(!listAddedPhysicalB.contains(obj.getDeviceB()) && !listAddedPhysicalA.contains(obj.getDeviceB()) &&
+//                                        !listAddedLogicalA.contains(obj.getDeviceB()) && !listAddedLogicalB.contains(obj.getDeviceB())){
 //
-//                            for(int index = i; index < logicalCircuitDetails.getPhysicalPathForEndpointA().size(); index += 3){
-//                                RemoteObjectLight nextPhysicalHop = logicalCircuitDetails.getPhysicalPathForEndpointA().get(index);
-//                                //If the physical equipment is not a subclass of GenericCommunicationsElement, nothing will be shown.
-//                                RemoteObjectLight aSidePhysicalEquipment = wsBean.getFirstParentOfClass(nextPhysicalHop.getClassName(), 
-//                                        nextPhysicalHop.getId(), "ConfigurationItem", ipAddress, sessionId);
-//
-//                                if(aSidePhysicalEquipment != null && !aSidePhysicalEquipment.getClassName().equals("ODF"))
-//                                    aSidePhysicalEquipment = wsBean.getFirstParentOfClass(nextPhysicalHop.getClassName(), 
-//                                            nextPhysicalHop.getId(), "GenericCommunicationsElement", ipAddress, sessionId);
-//
-//                                if(aSidePhysicalEquipment != null){
-//                                    if(aSidePhysicalEquipment.getClassName().equals("ODF"))
-//                                        listTempODFsA.add(tableCreator.createODF(aSidePhysicalEquipment, nextPhysicalHop));
+//                                    listAddedPhysicalA.add(obj.getDeviceB());
+//                                    if(obj.getDeviceB().getClassName().equals("ODF"))
+//                                        listTempODFsA.add(createDeviceTable(obj.getDeviceB(), obj.getPhysicalEndpointObjectB(), null));
 //                                    else
-//                                        tempForm.getPhysicalPartA().add(createDeviceTable(aSidePhysicalEquipment, nextPhysicalHop, null));
+//                                        tempForm.getPhysicalPartA().add(createDeviceTable(obj.getDeviceB(), obj.getPhysicalEndpointObjectB(), null));
 //                                }
 //                            }
 //                        }//Now the b side
 //                        if (!logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty()) {
-//                            int i = 2;
-//                            if (wsBean.isSubclassOf(logicalCircuitDetails.getPhysicalPathForEndpointB().get(0).getClassName(), 
-//                                    Constants.CLASS_GENERICLOGICALPORT, ipAddress, sessionId))
-//                                i = 3;
-//                            for(int index = i; index < logicalCircuitDetails.getPhysicalPathForEndpointB().size(); index += 3){
-//                                RemoteObjectLight nextPhysicalHop = logicalCircuitDetails.getPhysicalPathForEndpointB().get(index);
-//                                RemoteObjectLight bSideEquipmentPhysical = wsBean.getFirstParentOfClass(nextPhysicalHop.getClassName(), 
-//                                        nextPhysicalHop.getId(), "ConfigurationItem", ipAddress, sessionId);
-//                                
-//                                if(bSideEquipmentPhysical != null && !bSideEquipmentPhysical.getClassName().equals("ODF"))
-//                                    bSideEquipmentPhysical = wsBean.getFirstParentOfClass(nextPhysicalHop.getClassName(), 
-//                                            nextPhysicalHop.getId(), "GenericCommunicationsElement", ipAddress, sessionId);
-//                                 
-//                                if(bSideEquipmentPhysical != null){
-//                                    if(bSideEquipmentPhysical.getClassName().equals("ODF"))
-//                                        listTempODFsB.add(tableCreator.createODF(bSideEquipmentPhysical, nextPhysicalHop));
+//                            List<RemoteObjectLinkObject> physicalPathReaded = physicalPathReader(logicalCircuitDetails.getPhysicalPathForEndpointB());
+//                            
+//                            for (RemoteObjectLinkObject obj : physicalPathReaded) {
+//                                if(!listAddedPhysicalB.contains(obj.getDeviceB()) && !listAddedPhysicalA.contains(obj.getDeviceB()) &&
+//                                        !listAddedLogicalA.contains(obj.getDeviceB()) && !listAddedLogicalB.contains(obj.getDeviceB())){
+//                                    
+//                                    
+//                                    listAddedPhysicalB.add(obj.getDeviceB());
+//                                    if(obj.getDeviceB().getClassName().equals("ODF"))
+//                                        listTempODFsB.add(createDeviceTable(obj.getDeviceB(), obj.getPhysicalEndpointObjectB(), null));
 //                                    else
-//                                        tempForm.getPhysicalPartB().add(createDeviceTable(bSideEquipmentPhysical, nextPhysicalHop, null));
+//                                        tempForm.getPhysicalPartB().add(createDeviceTable(obj.getDeviceB(), obj.getPhysicalEndpointObjectB(), null));
 //                                }
 //                            }
 //                        }
-//                    }
 //                    
-//                    if(tempForm != null){
-//                        tempForm.setOdfsA(listTempODFsA);
-//                        tempForm.setOdfsB(listTempODFsB);
-//                        //This is only for peering, we must reorder an set the peering always in side B
-//                        if(isSideAPeering && !isSideBPeering){
+//                        if(tempForm != null){
+//                            tempForm.setOdfsA(listTempODFsA);
+//                            tempForm.setOdfsB(listTempODFsB);
+//                            //This is only for peering, we must reorder an set the peering always in side B
+//                            if(isSideAPeering && !isSideBPeering){
 //
-//                            Component tempComponent = tempForm.getLogicalPartB();
-//                            tempForm.setLogicalPartB(tempForm.getLogicalPartA());
-//                            tempForm.setLogicalPartA(tempComponent);
-//                            //ODFs
-//                            List<Component> tempODFs = tempForm.getOdfsB();
-//                            tempForm.setOdfsB(tempForm.getOdfsA());
-//                            tempForm.setOdfsA(tempODFs);
-//                            List<Component> listTempComponent = tempForm.getPhysicalPartB();
-//                            tempForm.setPhysicalPartB(tempForm.getPhysicalPartA());
-//                            tempForm.setPhysicalPartA(listTempComponent);
+//                                Component tempComponent = tempForm.getLogicalPartB();
+//                                tempForm.setLogicalPartB(tempForm.getLogicalPartA());  
+//                                tempForm.setLogicalPartA(tempComponent);
+//                                //ODFs
+//                                List<Component> tempODFs = tempForm.getOdfsB();
+//                                tempForm.setOdfsB(tempForm.getOdfsA());
+//                                tempForm.setOdfsA(tempODFs);
+//                                List<Component> listTempComponent = tempForm.getPhysicalPartB();
+//                                tempForm.setPhysicalPartB(tempForm.getPhysicalPartA());
+//                                tempForm.setPhysicalPartA(listTempComponent);
+//                            }
+//
+//                            tables.addFirst(tempForm);
 //                        }
-//
-//                        tables.addFirst(tempForm);
 //                    }
 //                }//end for
 //            }
@@ -440,9 +437,10 @@ public class FormDashboardWidget{}
 //                result[0] = SIDE_A;
 //                result[1] = i;
 //            }
-//            else if(tables.get(i).getLogicalPartB() != null && tables.get(i).getLogicalPartB().getId().equals(id))
+//            else if(tables.get(i).getLogicalPartB() != null && tables.get(i).getLogicalPartB().getId().equals(id)){
 //                result[0] = SIDE_B;
 //                result[1] = i;
+//            }
 //        }
 //        result[0] = 0;
 //        result[1] = -1;
@@ -568,7 +566,63 @@ public class FormDashboardWidget{}
 //            return tableCreator.createRouter(equipment, port);
 //        else if (equipment.getClassName().toLowerCase().contains("switch"))
 //            return tableCreator.createSwitch(equipment, port);
+//        else if (equipment.getClassName().toLowerCase().contains("x-connection"))
+//            return tableCreator.createXconection(equipment, port);
+//        else if (equipment.getClassName().toLowerCase().contains("odf"))
+//            return tableCreator.createODF(equipment, port);
 //        
 //        return null;
 //    }
-//}
+//    
+//    /**
+//     * Provides a generic way to get the parents(the GenericCommunicationsElement or 
+//     * the GenericBox) parents of the GenericPorts in a given path, then it parser 
+//     * between physical path and a simplified list, of objects connections objects
+//     * [Node1 - Node2]
+//     * [Node1 - Node3]
+//     * [Node3 - Node4]
+//     * @param path a physical path with endpoint, connection, endpoint(one or several ports, mirror, virtual, service instances)
+//     * @return a list of ConfigurationItem-connection-ConfigurationItem
+//     * @throws MetadataObjectNotFoundException
+//     * @throws MetadataObjectNotFoundException
+//     * @throws BusinessObjectNotFoundException
+//     * @throws InvalidArgumentException 
+//     */
+//    private List<RemoteObjectLinkObject> physicalPathReader(List<RemoteObjectLight> path) 
+//            throws ServerSideException
+//    {
+//        RemoteObject connection  = null;
+//        RemoteObjectLight device = null;
+//        RemoteObjectLight endpoint = null;
+//
+//        RemoteObjectLight sourceDevice = null;
+//        List<RemoteObjectLinkObject> connectionsMap = new ArrayList<>();
+//        //with this for we are reading the path 3 at a time, endpoint - connection -endpoint (ignoring the mirror ports)
+//        for (RemoteObjectLight obj : path) {
+//            if(wsBean.isSubclassOf(obj.getClassName(), Constants.CLASS_GENERICPHYSICALLINK, ipAddress, sessionId))
+//                connection = wsBean.getObject(obj.getClassName(), obj.getId(), ipAddress, sessionId);
+//            else if(wsBean.isSubclassOf(obj.getClassName(), Constants.CLASS_GENERICPHYSICALPORT, ipAddress, sessionId)) {
+//                    device = wsBean.getFirstParentOfClass(obj.getClassName(), obj.getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, ipAddress, sessionId);
+//                //if the parent could not be found it should be aGenericCommunications element(e.g. Router, Cloud, MPLSRouter, etc)
+//                if(device == null)
+//                    device = wsBean.getFirstParentOfClass(obj.getClassName(), obj.getId(), Constants.CLASS_GENERICDISTRIBUTIONFRAME, ipAddress, sessionId);
+//            }
+//            if(sourceDevice == null){
+//                sourceDevice = device;
+//                endpoint = obj;
+//            }
+//            else if(sourceDevice.equals(device))//this is in case of mirror ports to ignore the case
+//                continue;
+//            //if we found the deviceA, connection, deviceB we are available to save the data and create connecttion set
+//            if(connection != null && sourceDevice != null && device != null){//TODO check what happend with unconnected things
+//                connectionsMap.add(new RemoteObjectLinkObject(sourceDevice, endpoint, connection, obj, device));
+//                connection = null;
+//                device = null;
+//                endpoint = null;
+//                sourceDevice = null;
+//            }
+//        }//end for
+//        
+//        return connectionsMap;
+//    }
+}

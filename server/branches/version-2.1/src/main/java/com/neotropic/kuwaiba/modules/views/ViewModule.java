@@ -20,10 +20,12 @@ import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
 import java.awt.Point;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.UUID;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
@@ -330,12 +332,23 @@ public class ViewModule  implements GenericCommercialModule {
                     nodes.add(new E2ENode(def.getDeviceA()));
                 if(def.getDeviceB() != null && !nodes.contains(new E2ENode(def.getDeviceB())))
                     nodes.add(new E2ENode(def.getDeviceB()));
-                if(def.getConnectionObject() != null && !edges.contains(new E2EEdge(def.getConnectionObject())))
-                    edges.add(new E2EEdge(def.getConnectionObject()));
-                if(def.getConnectionObject() != null && def.getDeviceA() != null)
-                    edgeSource.put(new E2EEdge(def.getConnectionObject()), new E2ENode(def.getDeviceA()));
-                if(def.getConnectionObject() != null && def.getDeviceB() != null)
-                    edgeTarget.put(new E2EEdge(def.getConnectionObject()), new E2ENode(def.getDeviceB()));
+                if(def.getConnectionObject() != null){
+                    E2EEdge newEdge = new E2EEdge(def.getConnectionObject());
+                    Properties properties = new Properties();
+                    newEdge.setProperties(properties);
+                    edges.add(newEdge);
+                
+                    if(def.getDeviceA() != null){
+                        edgeSource.put(new E2EEdge(def.getConnectionObject()), new E2ENode(def.getDeviceA()));
+                        properties.put("asidephysicalport", def.getPhysicalEndpointObjectA() != null ? def.getPhysicalEndpointObjectA().getName(): "");
+                        properties.put("asidelogicalport", def.getLogicalEndpointObjectA() != null ? def.getLogicalEndpointObjectA().getName() : "");
+                    }
+                    if(def.getDeviceB() != null){
+                        edgeTarget.put(new E2EEdge(def.getConnectionObject()), new E2ENode(def.getDeviceB()));
+                        properties.put("bsidephysicalport", def.getPhysicalEndpointObjectB() != null ? def.getPhysicalEndpointObjectB().getName() : "");
+                        properties.put("bsidelogicalport", def.getLogicalEndpointObjectB() != null ? def.getLogicalEndpointObjectB().getName() : "");
+                    }
+                }
             });
                    
         } catch (Exception ex) {
@@ -403,11 +416,19 @@ public class ViewModule  implements GenericCommercialModule {
                 
                 xmlew.add(xmlef.createAttribute(new QName("id"), edge.getEdge().getId()));
                 xmlew.add(xmlef.createAttribute(new QName("class"), edge.getEdge().getClassName()));
+                //side a
                 xmlew.add(xmlef.createAttribute(new QName("asideid"), edgeSource.get(edge).getBussinesObject().getId()));
                 xmlew.add(xmlef.createAttribute(new QName("asideclass"), edgeSource.get(edge).getBussinesObject().getClassName()));
+                //port a info side a
+                xmlew.add(xmlef.createAttribute(new QName("asidephysicalport"), edge.getProperties().getProperty("asidephysicalport")));
+                xmlew.add(xmlef.createAttribute(new QName("asidelogcialport"), edge.getProperties().getProperty("asidelogicalport")));
+                //side b
                 xmlew.add(xmlef.createAttribute(new QName("bsideid"), edgeTarget.get(edge).getBussinesObject().getId()));
                 xmlew.add(xmlef.createAttribute(new QName("bsideclass"), edgeTarget.get(edge).getBussinesObject().getClassName()));
-                
+                //port b info side b
+                xmlew.add(xmlef.createAttribute(new QName("bsidephysicalport"), edge.getProperties().getProperty("bsidephysicalport")));
+                xmlew.add(xmlef.createAttribute(new QName("bsidelogcialport"), edge.getProperties().getProperty("bsidelogicalport")));
+                                
                 List<Point> points = (List<Point>)edge.getProperties().get("controlPoints");
                 if(points != null){
                     for(Point point : points){
@@ -434,13 +455,11 @@ public class ViewModule  implements GenericCommercialModule {
 //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
 //        try {
 //            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/end2end_created_view_in_module.xml");
-//            fos.write(savedView.getStructure());
+//            fos.write(updatedViewObject.getStructure());
 //            fos.close();
 //        } catch(Exception e) {}
 //</editor-fold>
         return updatedViewObject;
-            
-            
             
         } catch (XMLStreamException ex) {
             Exceptions.printStackTrace(ex);
@@ -710,10 +729,10 @@ public class ViewModule  implements GenericCommercialModule {
 
     /**
      * Provides a generic way to get the parents(the GenericCommunicationsElement or 
-     * the GenericBox) parents of the GenericPorts in a given path, then it parser 
+     * the GenericBox) parents of the GenericPorts in a given path, then it parses 
      * between physical path and a simplified list, of objects connections objects
      * [Node1 - Node2]
-     * [Node1 - Node3]
+     * [Node2 - Node3]
      * [Node3 - Node4]
      * @param path a physical path with endpoint, connection, endpoint(one or several ports, mirror, virtual, service instances)
      * @return a list of ConfigurationItem-connection-ConfigurationItem
@@ -732,7 +751,7 @@ public class ViewModule  implements GenericCommercialModule {
 
         BusinessObjectLight sourceDevice = null;
         List<ObjectLinkObjectDefinition> connectionsMap = new ArrayList<>();
-        //with this for we are rearing the path 3 at a time, endpoint - connection -endpoint (ignoring the mirror ports)
+        //with this we are reading the path 3 at a time, endpoint - connection -endpoint (ignoring the mirror ports)
         for (BusinessObjectLight obj : path) {
             if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALLINK, obj.getClassName()))
                 connection = bem.getObject(obj.getClassName(), obj.getId());
@@ -760,6 +779,7 @@ public class ViewModule  implements GenericCommercialModule {
         
         return connectionsMap;
     }
+    
     private void orderNodes(){
         //initial coordinates, and a counter
         int x = 100, y = 0, fixer = 2;
