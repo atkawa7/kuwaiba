@@ -118,6 +118,20 @@ public class MxGraph extends Component {
             }
         }
     }
+    
+    /**
+     * this method remove all cells(vertex and edges) in the graph
+     */
+    public void removeAllCells() {      
+        getElement().callJsFunction("removeAllCells");
+    }
+    
+    /**
+     * this method refresh all objects in the graph
+     */
+    public void refreshGraph() {
+        getElement().callJsFunction("refreshGraph");
+    }
 
 
     

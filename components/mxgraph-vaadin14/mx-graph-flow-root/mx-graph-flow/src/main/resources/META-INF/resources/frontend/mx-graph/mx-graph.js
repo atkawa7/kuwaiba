@@ -229,7 +229,7 @@ class MxGraph extends PolymerElement {
           }
           return false;
         }
-        // The method  isRemovePointEvent is overwritten, to update the points in the respective PolymerElement object.
+        // The method  changePoints is overwritten, to update the points in the respective PolymerElement object.
         var mxChangePoints = mxEdgeHandler.prototype.changePoints;
         mxEdgeHandler.prototype.changePoints = function( edge, points, clone){
           console.log("CHANGEPOINTS EVENT")
@@ -250,7 +250,7 @@ class MxGraph extends PolymerElement {
           mxChangePoints.apply(this,arguments);
         }
 
-        // The method  isRemovePointEvent is addPointAt, to update the points in the respective PolymerElement object, when a point is added,
+        // The method  addPointAt is overwritten, to update the points in the respective PolymerElement object, when a point is added,
 
         var addPointAt = mxEdgeHandler.prototype.addPointAt;
           mxEdgeHandler.prototype.addPointAt = function (state, x, y) {
@@ -350,8 +350,19 @@ updateCells(mutations) {
       }, this); 
 }
 
+//This method dispatches a custom event when any edge its clicked
   fireClickEdge(){
     this.dispatchEvent(new CustomEvent('click-edge', {detail: {kicked: true}}));
+  }
+  
+  //this method remove all cells(vertex and edges) in the graph
+  removeAllCells() {
+      this.graph.removeCells(this.graph.getChildVertices(this.graph.getDefaultParent()));
+  }
+  
+  //this method refresh all objects in the graph
+  refreshGraph() {
+      this.graph.refresh();
   }
 
   

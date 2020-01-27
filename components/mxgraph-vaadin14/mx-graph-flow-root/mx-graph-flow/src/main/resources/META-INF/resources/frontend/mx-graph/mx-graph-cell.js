@@ -300,6 +300,12 @@ class MxGraphCell extends PolymerElement {
      
 }
 
+updatePosition() {
+    this.cell.geometry.x = this.x;
+    this.cell.geometry.y = this.y;
+    this.graph.refresh();
+}
+
 // Custom Events
 
   fireClickEdge() {

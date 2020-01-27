@@ -236,4 +236,8 @@ public class MxGraphCell extends Component {
      public void addPoint(MxGraphPoint mxGraphPoint) {
         getElement().appendChild(mxGraphPoint.getElement());     
     }
+     
+     public void updatePosition() {
+         getElement().callJsFunction("updatePosition");
+     }
 }
