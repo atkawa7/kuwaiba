@@ -105,13 +105,14 @@ class MxGraphPoint extends PolymerElement {
       if (this.cell) {
         console.log("CREATING POINT");
         this.point = new mxPoint(this.x, this.y);
+        this.point.uuid = "idprueba";
         var geometryOfEdge =  this.parent.graph.getModel().getGeometry(this.cell);
         geometryOfEdge = geometryOfEdge.clone();
         if (!geometryOfEdge.points ) {
           geometryOfEdge.points = [];
         } 
          geometryOfEdge.points.push(this.point);
-         
+         geometryOfEdge.relative = false;
          this.parent.graph.getModel().setGeometry(this.cell, geometryOfEdge);
       }    
      
