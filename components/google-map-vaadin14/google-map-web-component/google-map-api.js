@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and 
 limitations under the License.
 */
-
+import * as Constants from './google-map-constants.js';
 /**
  * Class that load the Maps Java Script API
  */
@@ -82,7 +82,7 @@ class MapApi {
 
                 if (typeof window.google === 'undefined') {
                     const script = document.createElement('script');
-                    script.src = 'https://maps.googleapis.com/maps/api/js?' + this._paramApiKey + this._paramClientId + '&v=quarterly' + this._paramCallback + this._paramLibraries;
+                    script.src = 'https://maps.googleapis.com/maps/api/js?' + this._paramApiKey + this._paramClientId + '&v=' + Constants.googleMapsJavaScriptAPIVersion + this._paramCallback + this._paramLibraries;
                     script.async = true;
                     script.defer = true;
                     document.body.append(script);
