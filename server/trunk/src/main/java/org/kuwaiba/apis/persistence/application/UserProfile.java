@@ -30,8 +30,8 @@ public class UserProfile extends UserProfileLight {
     private List<Privilege> privileges;
  
     public UserProfile(long id, String userName, String firstName, String lastName, 
-            boolean enabled, long creationDate, int type, List<Privilege> privileges) {
-        super (id, userName, firstName, lastName, enabled, creationDate, type);
+            boolean enabled, long creationDate, int type, String email, List<Privilege> privileges) {
+        super (id, userName, firstName, lastName, enabled, creationDate, type, email);
         
         this.privileges = privileges;
     }

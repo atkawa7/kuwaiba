@@ -2697,12 +2697,12 @@ public class WebserviceBeanImpl implements WebserviceBean {
 
     @Override
     public void setUserProperties(long oid, String userName, String password, 
-    String firstName, String lastName, int enabled, int type, String ipAddress, String sessionId) throws ServerSideException{
+    String firstName, String lastName, int enabled, int type, String email, String ipAddress, String sessionId) throws ServerSideException{
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("setUserProperties", ipAddress, sessionId);
-            aem.setUserProperties(oid, userName, password, firstName, lastName, enabled, type);
+            aem.setUserProperties(oid, userName, password, firstName, lastName, enabled, type, email);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
@@ -2827,7 +2827,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
 
     @Override
     public long createUser(String userName, String password, String firstName, 
-        String lastName, boolean enabled, int type, List<PrivilegeInfo> privileges, 
+        String lastName, boolean enabled, int type, String email, List<PrivilegeInfo> privileges, 
         long defaultGroupId, String ipAddress, String sessionId) throws ServerSideException {
         
         if (aem == null)
@@ -2844,7 +2844,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 }
             }
             
-            long newUserId = aem.createUser(userName, password, firstName, lastName, enabled, type, remotePrivileges, defaultGroupId);
+            long newUserId = aem.createUser(userName, password, firstName, lastName, enabled, type, email, remotePrivileges, defaultGroupId);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                     ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, String.format("New User %s", userName));

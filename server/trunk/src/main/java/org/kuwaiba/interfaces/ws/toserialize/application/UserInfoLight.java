@@ -55,6 +55,10 @@ public class UserInfoLight implements Serializable {
      * User type. See UserProfileLight.USER_TYPE* for possible values
      */
     private int type;
+    /**
+     * User's email
+     */
+    private String email;
     
     //No-arg constructor required
     public UserInfoLight() { }
@@ -67,6 +71,7 @@ public class UserInfoLight implements Serializable {
         this.lastName = user.getLastName();
         this.creationDate = user.getCreationDate();
         this.type = user.getType();
+        this.email = user.getEmail();
     }
 
     public UserInfoLight(long id, String userName) {
@@ -120,5 +125,13 @@ public class UserInfoLight implements Serializable {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+    
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

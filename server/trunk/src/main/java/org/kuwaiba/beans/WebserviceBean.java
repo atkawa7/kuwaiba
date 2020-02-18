@@ -256,7 +256,7 @@ public interface WebserviceBean {
 
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">
     public void setUserProperties(long oid, String userName, String password, String firstName,
-            String lastName, int enabled, int type, String ipAddress, String sessionId)
+            String lastName, int enabled, int type, String email, String ipAddress, String sessionId)
             throws ServerSideException;
 
     public void addUserToGroup(long userId, long groupId, String ipAddress, String sessionId) throws ServerSideException;
@@ -276,7 +276,7 @@ public interface WebserviceBean {
     public List<GroupInfo> getGroups(String ipAddress, String sessionId) throws ServerSideException;
 
     public long createUser(String userName, String password, String firstName, 
-        String lastName, boolean enabled, int type, List<PrivilegeInfo> privileges, 
+        String lastName, boolean enabled, int type, String email, List<PrivilegeInfo> privileges, 
         long defaultGroupId, String ipAddress, String sessionId) throws ServerSideException;
 
     public void setGroupProperties(long oid, String groupName, String description, String ipAddress, String sessionId)throws ServerSideException;

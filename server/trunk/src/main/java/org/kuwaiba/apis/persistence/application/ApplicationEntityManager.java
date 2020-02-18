@@ -88,29 +88,31 @@ public interface ApplicationEntityManager {
      * @param lastName New user's last name
      * @param enabled Shall the new user be enabled by default
      * @param type User type. See UserProfileLight.USER_TYPE_* for possible values
+     * @param email New user's email
      * @param privileges New user's privileges. Use null for none
      * @param defaultGroupId Default group this user will be associated to
      * @return The id of the newly created user
      * @throws InvalidArgumentException Thrown if the username is null or empty or the username already exists
      */
     public long createUser(String userName, String password, String firstName,
-            String lastName, boolean enabled, int type, List<Privilege> privileges, long defaultGroupId)
+            String lastName, boolean enabled, int type, String email, List<Privilege> privileges, long defaultGroupId)
             throws InvalidArgumentException;
     
     /**
      * Set the properties of a given user using the id to search for it
      * @param oid User id
-     * @param userName New user's name. User null to leave it unchanged.
+     * @param userName New user's name. Use null to leave it unchanged
      * @param password New user's password. Use null to leave it unchanged
      * @param firstName New user's first name. Use null to leave it unchanged
      * @param lastName New user's last name. Use null to leave it unchanged
      * @param enabled 0 for false, 1 for true, -1 to leave it unchanged
      * @param type User type. See UserProfile.USER_TYPE* for possible values. Use -1 to leave it unchanged
+     * @param email New user's email. Use null to leave it unchanged
      * @throws InvalidArgumentException Thrown if the username is null or empty or the username already exists
      * @throws ApplicationObjectNotFoundException If the user could not be found
      */
     public void setUserProperties(long oid, String userName, String password, String firstName,
-            String lastName, int enabled, int type)
+            String lastName, int enabled, int type, String email)
             throws InvalidArgumentException, ApplicationObjectNotFoundException;
     /**
      * Updates the attributes of a user, using its username as key to find it
@@ -121,11 +123,12 @@ public interface ApplicationEntityManager {
      * @param lastName User's last name. Null if unchanged
      * @param enabled 0 for false, 1 for true, -1 to leave it unchanged
      * @param type User type. See UserProfile.USER_TYPE* for possible values. -1 to leave it unchanged
+     * @param email User's email. Null if unchanged
      * @throws InvalidArgumentException If the format of any of the parameters provided is erroneous
      * @throws ApplicationObjectNotFoundException If the user could not be found
      */
     public void setUserProperties(String formerUsername, String newUserName, String password, String firstName,
-            String lastName, int enabled, int type)
+            String lastName, int enabled, int type, String email)
             throws InvalidArgumentException, ApplicationObjectNotFoundException;
     
     /**

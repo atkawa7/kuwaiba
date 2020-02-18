@@ -453,7 +453,9 @@ public class Util {
                 (boolean)userNode.getProperty(UserProfile.PROPERTY_ENABLED),
                 (long)userNode.getProperty(UserProfile.PROPERTY_CREATION_DATE),
                 userNode.hasProperty(UserProfile.PROPERTY_TYPE) ?  //To keep backward compatibility
-                        (int)userNode.getProperty(UserProfile.PROPERTY_TYPE) : UserProfile.USER_TYPE_GUI);
+                        (int)userNode.getProperty(UserProfile.PROPERTY_TYPE) : UserProfile.USER_TYPE_GUI,
+                userNode.hasProperty(UserProfile.PROPERTY_EMAIL) ? //To keep backward compatibility
+                    (String) userNode.getProperty(UserProfile.PROPERTY_EMAIL) : null);
     }
     
     /**
@@ -477,6 +479,8 @@ public class Util {
                 (long)userNode.getProperty(UserProfile.PROPERTY_CREATION_DATE),
                 userNode.hasProperty(UserProfile.PROPERTY_TYPE) ?  //To keep backward compatibility
                         (int)userNode.getProperty(UserProfile.PROPERTY_TYPE) : UserProfile.USER_TYPE_GUI, 
+                userNode.hasProperty(UserProfile.PROPERTY_EMAIL) ? //To keep backward compatibility
+                    (String) userNode.getProperty(UserProfile.PROPERTY_EMAIL) : null,
                 privileges);
     }
     
@@ -513,6 +517,8 @@ public class Util {
                 (long)userNode.getProperty(UserProfile.PROPERTY_CREATION_DATE),
                 userNode.hasProperty(UserProfile.PROPERTY_TYPE) ?  //To keep backward compatibility
                         (int)userNode.getProperty(UserProfile.PROPERTY_TYPE) : UserProfile.USER_TYPE_GUI, 
+                userNode.hasProperty(UserProfile.PROPERTY_EMAIL) ? //To keep backward compatibility
+                    (String) userNode.getProperty(UserProfile.PROPERTY_EMAIL) : null, 
                 privileges);
     }
     
@@ -565,9 +571,12 @@ public class Util {
                         (String)userNode.getProperty(UserProfile.PROPERTY_LAST_NAME),
                         (boolean)userNode.getProperty(UserProfile.PROPERTY_ENABLED),
                         (long)userNode.getProperty(UserProfile.PROPERTY_CREATION_DATE),
-                        userNode.hasProperty(UserProfile.PROPERTY_TYPE) ?  //To keep backward compatibility
+                        userNode.hasProperty(UserProfile.PROPERTY_TYPE) ? //To keep backward compatibility
                             (int)userNode.getProperty(UserProfile.PROPERTY_TYPE) :
-                            UserProfile.USER_TYPE_GUI, userPrivileges));
+                            UserProfile.USER_TYPE_GUI, 
+                        userNode.hasProperty(UserProfile.PROPERTY_EMAIL) ? //To keep backward compatibility
+                            (String) userNode.getProperty(UserProfile.PROPERTY_EMAIL) : null, 
+                        userPrivileges));
         }
         
         List<Privilege> privileges = new ArrayList<>();
