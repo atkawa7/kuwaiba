@@ -48,7 +48,7 @@ public class LocalUserGroupObject extends LocalUserGroupObjectLight {
             
             users.add(new LocalUserObject(remoteUser.getId(), remoteUser.getUserName(), 
                     remoteUser.getFirstName(), remoteUser.getLastName(), remoteUser.isEnabled(), 
-                    remoteUser.getType(), userPrivileges));
+                    remoteUser.getType(), remoteUser.getEmail(), userPrivileges));
             }
     }
 

@@ -30,12 +30,13 @@ import java.util.Objects;
  */
 public class LocalUserObjectLight implements Comparable<LocalUserObjectLight> {
 
-    public static final String PROPERTY_USER_NAME = "username";
-    public static final String PROPERTY_PASSWORD = "password";
-    public static final String PROPERTY_FIRST_NAME = "firstName";
-    public static final String PROPERTY_LAST_NAME = "lastName";
-    public static final String PROPERTY_ENABLED = "enabled";
-    public static final String PROPERTY_TYPE = "type";
+    public static final String PROPERTY_USER_NAME = "username"; //NOI18N
+    public static final String PROPERTY_PASSWORD = "password"; //NOI18N
+    public static final String PROPERTY_FIRST_NAME = "firstName"; //NOI18N
+    public static final String PROPERTY_LAST_NAME = "lastName"; //NOI18N
+    public static final String PROPERTY_ENABLED = "enabled"; //NOI18N
+    public static final String PROPERTY_TYPE = "type"; //NOI18N
+    public static final String PROPERTY_EMAIL = "email"; //NOI18N
     
     private long id;
     private String userName;
@@ -43,18 +44,20 @@ public class LocalUserObjectLight implements Comparable<LocalUserObjectLight> {
     private String lastName;
     private int type;
     private boolean enabled;
+    private String email;
     
     protected List<VetoableChangeListener> vetoableChangeListeners;
     protected List<PropertyChangeListener> nonVetoableChangeListeners;
 
     public LocalUserObjectLight(long id, String userName, String firstName, 
-            String lastName, boolean enabled, int type) {
+            String lastName, boolean enabled, int type, String email) {
         this.id = id;
         this.userName = userName;
         this.firstName = firstName;
         this.lastName = lastName;
         this.enabled = enabled;
         this.type = type;
+        this.email = email;
         this.vetoableChangeListeners = new ArrayList<>();
         this.nonVetoableChangeListeners = new ArrayList<>();
     }
@@ -128,6 +131,19 @@ public class LocalUserObjectLight implements Comparable<LocalUserObjectLight> {
             this.enabled = enabled;
             firePropertyChange(PROPERTY_ENABLED, oldEnabled, enabled);
         } catch (PropertyVetoException ex) { }
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+    
+    public void setEmail(String email) {
+        try {
+            String oldEmail = this.email;
+            fireVetoablePropertyChange(PROPERTY_EMAIL, oldEmail, email);
+            this.email = email;
+            firePropertyChange(PROPERTY_EMAIL, oldEmail, email);
+        } catch (PropertyVetoException ex) {}
     }
     
     public void addVetoablePropertyChangeListener(VetoableChangeListener listener) {

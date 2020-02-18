@@ -22,6 +22,7 @@ import java.io.IOException;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalUserObject;
 import org.inventory.core.usermanager.nodes.actions.UserManagerActionFactory;
+import org.inventory.core.usermanager.nodes.properties.PropertyUserEmail;
 import org.inventory.core.usermanager.nodes.properties.PropertyUserEnabled;
 import org.inventory.core.usermanager.nodes.properties.PropertyUserFirstName;
 import org.inventory.core.usermanager.nodes.properties.PropertyUserLastName;
@@ -95,11 +96,13 @@ public class UserNode extends AbstractNode implements PropertyChangeListener {
         PropertyUserEnabled prpEnabled = new PropertyUserEnabled(user);
         PropertyUserType prpType = new PropertyUserType(user);
         PropertyUserPrivileges prpPrivileges = new PropertyUserPrivileges(user);
+        PropertyUserEmail prpEmail = new PropertyUserEmail(user);
         
         defaultSet.put(prpName);
         defaultSet.put(prpPassword);
         defaultSet.put(prpFirstName);
         defaultSet.put(prpLastName);
+        defaultSet.put(prpEmail);
         defaultSet.put(prpEnabled);
         defaultSet.put(prpType);
         defaultSet.put(prpPrivileges);

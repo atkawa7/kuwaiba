@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="creationDate" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="email" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -40,7 +41,8 @@ import javax.xml.bind.annotation.XmlType;
     "lastName",
     "creationDate",
     "enabled",
-    "type"
+    "type",
+    "email"
 })
 @XmlSeeAlso({
     UserInfo.class
@@ -54,6 +56,7 @@ public class UserInfoLight {
     protected long creationDate;
     protected boolean enabled;
     protected int type;
+    protected String email;
 
     /**
      * Gets the value of the id property.
@@ -189,6 +192,30 @@ public class UserInfoLight {
      */
     public void setType(int value) {
         this.type = value;
+    }
+
+    /**
+     * Gets the value of the email property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * Sets the value of the email property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setEmail(String value) {
+        this.email = value;
     }
 
 }

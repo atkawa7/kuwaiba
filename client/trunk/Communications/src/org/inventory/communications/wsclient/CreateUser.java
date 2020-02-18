@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="LastName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="email" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="privileges" type="{http://ws.interfaces.kuwaiba.org/}privilegeInfo" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="defaultGroupId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -44,6 +45,7 @@ import javax.xml.bind.annotation.XmlType;
     "lastName",
     "enabled",
     "type",
+    "email",
     "privileges",
     "defaultGroupId",
     "sessionId"
@@ -57,6 +59,7 @@ public class CreateUser {
     protected String lastName;
     protected boolean enabled;
     protected int type;
+    protected String email;
     protected List<PrivilegeInfo> privileges;
     protected long defaultGroupId;
     protected String sessionId;
@@ -187,6 +190,30 @@ public class CreateUser {
      */
     public void setType(int value) {
         this.type = value;
+    }
+
+    /**
+     * Gets the value of the email property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * Sets the value of the email property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setEmail(String value) {
+        this.email = value;
     }
 
     /**

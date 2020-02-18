@@ -1733,7 +1733,7 @@ public class CommunicationsStub {
                 
                 for (UserInfoLight user : remoteTask.getUsers())
                     users.add(new LocalUserObjectLight(user.getId(), user.getUserName(),
-                                        user.getFirstName(), user.getLastName(), user.isEnabled(), user.getType()));
+                                        user.getFirstName(), user.getLastName(), user.isEnabled(), user.getType(), user.getEmail()));
                 
                 localTasks.add(new LocalTask(remoteTask.getId(), remoteTask.getName(), 
                         remoteTask.getDescription(), remoteTask.isEnabled(), remoteTask.isCommitOnExecute(), remoteTask.getScript(), 
@@ -1759,7 +1759,7 @@ public class CommunicationsStub {
             
             for (UserInfoLight remoteSubscriber : remoteSubscribers)
                 subscribers.add(new LocalUserObjectLight(remoteSubscriber.getId(), remoteSubscriber.getUserName(),
-                                        remoteSubscriber.getFirstName(), remoteSubscriber.getLastName(), remoteSubscriber.isEnabled(), remoteSubscriber.getType()));
+                                        remoteSubscriber.getFirstName(), remoteSubscriber.getLastName(), remoteSubscriber.isEnabled(), remoteSubscriber.getType(), remoteSubscriber.getEmail()));
             
             return subscribers;
         }catch(Exception ex){
@@ -3006,7 +3006,7 @@ public class CommunicationsStub {
                 for (PrivilegeInfo remotePrivilege : user.getPrivileges())
                     localPrivileges.add(new LocalPrivilege(remotePrivilege.getFeatureToken(), remotePrivilege.getAccessLevel()));
                 localUsers.add(new LocalUserObject(user.getId(), user.getUserName(),
-                                        user.getFirstName(), user.getLastName(), user.isEnabled(), user.getType(), localPrivileges));
+                                        user.getFirstName(), user.getLastName(), user.isEnabled(), user.getType(), user.getEmail(), localPrivileges));
             }
             return localUsers;
         }catch(Exception ex){
@@ -3032,7 +3032,7 @@ public class CommunicationsStub {
                 
                 localUsers.add(new LocalUserObject(remoteUser.getId(), remoteUser.getUserName(),
                                         remoteUser.getFirstName(), remoteUser.getLastName(), 
-                                        remoteUser.isEnabled(), remoteUser.getType(), localPrivileges));
+                                        remoteUser.isEnabled(), remoteUser.getType(), remoteUser.getEmail(), localPrivileges));
             }
             return localUsers;
         } catch(Exception e){
@@ -3068,19 +3068,20 @@ public class CommunicationsStub {
      * @param password Password
      * @param enabled Will this user be enabled by default?
      * @param type User type. See LocalUserObjectLight.USER_TYPE* for possible values
+     * @param email User's email (optional)
      * @param defaultGroupId Id of the default group this user will be associated to. Users <b>always</b> belong to at least one group. Other groups can be added later.
      * @return The newly created user
      */
     public LocalUserObject createUser(String username, String firstName, String lastName, 
-            String password, boolean enabled, int type, long defaultGroupId) {
+            String password, boolean enabled, int type, String email, long defaultGroupId) {
         try{
             long newUserId = service.createUser(username, password, firstName, lastName, 
-                    true, type, null, defaultGroupId, this.session.getSessionId());
+                    true, type, email, null, defaultGroupId, this.session.getSessionId());
             
             UserInfo newUser = new UserInfo();
             newUser.setId(newUserId);
             newUser.setUserName(username);
-            return new LocalUserObject(newUserId, username, firstName, lastName, enabled, type, null);
+            return new LocalUserObject(newUserId, username, firstName, lastName, enabled, type, email, null);
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;
@@ -3096,13 +3097,14 @@ public class CommunicationsStub {
      * @param lastName New user's last name. Use null to leave it unchanged
      * @param enabled 0 for false, 1 for true, -1 to leave it unchanged
      * @param type User type. See UserProfile.USER_TYPE* for possible values. Use -1 to leave it unchanged
+     * @param email New user's email. Use null to leave it unchanged
      * @return ServerSideException Thrown if the username is null or empty or the username already exists or if the user could not be found
      */
     public boolean setUserProperties(long oid, String username, String password, 
-            String firstName, String lastName, int enabled, int type) {
+            String firstName, String lastName, int enabled, int type, String email) {
         try {            
             service.setUserProperties(oid, username, firstName, lastName, password, 
-                    enabled, type, this.session.getSessionId());
+                    enabled, type, email, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;

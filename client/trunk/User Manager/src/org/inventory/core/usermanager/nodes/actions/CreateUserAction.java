@@ -68,14 +68,16 @@ class CreateUserAction extends GenericInventoryAction {
         JCheckBox chkEnabled = new JCheckBox();
         chkEnabled.setSelected(true);
         chkEnabled.setName("chkEnabled");
+        JTextField txtEmail = new JTextField();
+        txtEmail.setName("txtEmail");
         JComboBox<LocalUserObjectLight.UserType> lstUserTypes = new JComboBox<>(new LocalUserObjectLight.UserType[] { new LocalUserObjectLight.UserType("GUI User", 1), 
                                                                     new LocalUserObjectLight.UserType("Web Service Interface User", 2),
                                                                     new LocalUserObjectLight.UserType("Southbound Interface User", 3) });
         lstUserTypes.setName("lstUserTypes");
         lstUserTypes.setSelectedIndex(0);
         
-        JComplexDialogPanel pnlNewUser = new JComplexDialogPanel(new String[] { "Username", "Password", "First Name", "Last Name", "Enabled", "Type" }, 
-                new JComponent[]{ txtUsername, txtPassword, txtFirstName, txtLastName, chkEnabled, lstUserTypes });
+        JComplexDialogPanel pnlNewUser = new JComplexDialogPanel(new String[] { "Username", "Password", "First Name", "Last Name", "Email", "Enabled", "Type" }, 
+                new JComponent[]{ txtUsername, txtPassword, txtFirstName, txtLastName, txtEmail, chkEnabled, lstUserTypes });
         
         if (JOptionPane.showConfirmDialog(null, pnlNewUser, "New User", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             LocalUserObject newUser = CommunicationsStub.getInstance().createUser(
@@ -85,6 +87,7 @@ class CreateUserAction extends GenericInventoryAction {
                     new String(((JPasswordField)pnlNewUser.getComponent("txtPassword")).getPassword()),
                     ((JCheckBox)pnlNewUser.getComponent("chkEnabled")).isSelected(),
                     ((LocalUserObjectLight.UserType)((JComboBox<LocalUserObjectLight.UserType>)pnlNewUser.getComponent("lstUserTypes")).getSelectedItem()).getType(),
+                    ((JTextField)pnlNewUser.getComponent("txtEmail")).getText(),
                     selectedNode.getLookup().lookup(LocalUserGroupObject.class).getId());
             
             if (newUser == null)

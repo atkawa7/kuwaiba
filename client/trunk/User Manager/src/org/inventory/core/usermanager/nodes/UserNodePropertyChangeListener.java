@@ -68,7 +68,8 @@ public class UserNodePropertyChangeListener implements VetoableChangeListener {
                     LocalUserObjectLight.PROPERTY_FIRST_NAME.equals(evt.getPropertyName()) ? (String)evt.getNewValue() : null,
                     LocalUserObjectLight.PROPERTY_LAST_NAME.equals(evt.getPropertyName()) ? (String)evt.getNewValue() : null,
                     LocalUserObjectLight.PROPERTY_ENABLED.equals(evt.getPropertyName()) ?  ((boolean)evt.getNewValue() ? 1 : 0) : -1,
-                    LocalUserObjectLight.PROPERTY_TYPE.equals(evt.getPropertyName()) ? (int)evt.getNewValue() : -1)) {
+                    LocalUserObjectLight.PROPERTY_TYPE.equals(evt.getPropertyName()) ? (int)evt.getNewValue() : -1,
+                    LocalUserObjectLight.PROPERTY_EMAIL.equals(evt.getPropertyName()) ? (String) evt.getNewValue() : null)) {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                 throw new PropertyVetoException(com.getError(), evt);
             }

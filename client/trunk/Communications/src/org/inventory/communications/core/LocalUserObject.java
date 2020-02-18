@@ -25,12 +25,12 @@ import java.util.List;
  */
 public class LocalUserObject extends LocalUserObjectLight {
     
-    public static final String PROPERTY_PRIVILEGES = "privileges";
+    public static final String PROPERTY_PRIVILEGES = "privileges"; //NOI18N
     private List<LocalPrivilege> privileges;
 
     public LocalUserObject(long userId, String username, String firstName, String lastName, 
-            boolean enabled, int type, List<LocalPrivilege> privileges) {
-        super(userId, username, firstName, lastName, enabled, type);
+            boolean enabled, int type, String email, List<LocalPrivilege> privileges) {
+        super(userId, username, firstName, lastName, enabled, type, email);
         this.privileges = privileges;
     }
 
