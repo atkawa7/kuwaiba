@@ -406,10 +406,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 userNode.setProperty(Constants.PROPERTY_NAME, userName);
                 cm.removeUser(userName);
             }
-
+            UserProfile userProfile = Util.createUserProfileWithGroupPrivilegesFromNode(userNode);
+            for (Session session : sessions.values()) {
+                if (session.getUser().getId() == userProfile.getId())
+                    session.setUser(userProfile);
+            }
             tx.success();
-            
-            cm.putUser(Util.createUserProfileWithGroupPrivilegesFromNode(userNode));
+            cm.putUser(userProfile);
         }
     }
 
@@ -465,9 +468,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (email != null)
                 userNode.setProperty(UserProfile.PROPERTY_EMAIL, email);
             
+            UserProfile userProfile = Util.createUserProfileWithGroupPrivilegesFromNode(userNode);
+            for (Session session : sessions.values()) {
+                if (session.getUser().getId() == userProfile.getId())
+                    session.setUser(userProfile);
+            }
             tx.success();
-            
-            cm.putUser(Util.createUserProfileWithGroupPrivilegesFromNode(userNode));
+            cm.putUser(userProfile);
         }
     }
 
