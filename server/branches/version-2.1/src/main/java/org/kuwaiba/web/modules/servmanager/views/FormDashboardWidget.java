@@ -625,4 +625,56 @@ public class FormDashboardWidget{// extends AbstractDashboardWidget{
 //        
 //        return connectionsMap;
 //    }
+    
+    /**
+     * Provides a generic way to get the parents(the GenericCommunicationsElement or 
+     * the GenericBox) parents of the GenericPorts in a given path, then it parser 
+     * between physical path and a simplified list, of objects connections objects
+     * [Node1 - Node2]
+     * [Node1 - Node3]
+     * [Node3 - Node4]
+     * @param path a physical path with endpoint, connection, endpoint(one or several ports, mirror, virtual, service instances)
+     * @return a list of ConfigurationItem-connection-ConfigurationItem
+     * @throws MetadataObjectNotFoundException
+     * @throws MetadataObjectNotFoundException
+     * @throws BusinessObjectNotFoundException
+     * @throws InvalidArgumentException 
+     */
+    private List<RemoteObjectLinkObject> physicalPathReader(List<RemoteObjectLight> path) 
+            throws ServerSideException
+    {
+        RemoteObject connection  = null;
+        RemoteObjectLight device = null;
+        RemoteObjectLight endpoint = null;
+
+        RemoteObjectLight sourceDevice = null;
+        List<RemoteObjectLinkObject> connectionsMap = new ArrayList<>();
+        //with this for we are reading the path 3 at a time, endpoint - connection -endpoint (ignoring the mirror ports)
+        for (RemoteObjectLight obj : path) {
+            if(wsBean.isSubclassOf(obj.getClassName(), Constants.CLASS_GENERICPHYSICALLINK, ipAddress, sessionId))
+                connection = wsBean.getObject(obj.getClassName(), obj.getId(), ipAddress, sessionId);
+            else if(wsBean.isSubclassOf(obj.getClassName(), Constants.CLASS_GENERICPHYSICALPORT, ipAddress, sessionId)) {
+                    device = wsBean.getFirstParentOfClass(obj.getClassName(), obj.getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, ipAddress, sessionId);
+                //if the parent could not be found it should be aGenericCommunications element(e.g. Router, Cloud, MPLSRouter, etc)
+                if(device == null)
+                    device = wsBean.getFirstParentOfClass(obj.getClassName(), obj.getId(), Constants.CLASS_GENERICDISTRIBUTIONFRAME, ipAddress, sessionId);
+            }
+            if(sourceDevice == null){
+                sourceDevice = device;
+                endpoint = obj;
+            }
+            else if(sourceDevice.equals(device))//this is in case of mirror ports to ignore the case
+                continue;
+            //if we found the deviceA, connection, deviceB we are available to save the data and create connecttion set
+            if(connection != null && sourceDevice != null && device != null){//TODO check what happend with unconnected things
+                connectionsMap.add(new RemoteObjectLinkObject(sourceDevice, endpoint, connection, obj, device));
+                connection = null;
+                device = null;
+                endpoint = null;
+                sourceDevice = null;
+            }
+        }//end for
+        
+        return connectionsMap;
+    }
 }

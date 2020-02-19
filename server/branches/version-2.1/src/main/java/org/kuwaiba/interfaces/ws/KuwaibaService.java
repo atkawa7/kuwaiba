@@ -243,6 +243,7 @@ public class KuwaibaService {
      * @param lastName User's last name
      * @param enabled Is this user enable by default?
      * @param type The type of the user. See UserProfileLight.USER_TYPE* for possible values
+     * @param email User's email
      * @param privileges A list privileges that will be granted to this user.
      * @param defaultGroupId Default group this user will be associated to. Users <b>always</b> belong to at least one group. Other groups can be added later.
      * @param sessionId Session token
@@ -258,11 +259,12 @@ public class KuwaibaService {
             @WebParam(name = "LastName")String lastName,
             @WebParam(name = "enabled")boolean enabled,
             @WebParam(name = "type") int type,
+            @WebParam(name = "email") String email,
             @WebParam(name = "privileges")List<PrivilegeInfo> privileges,
             @WebParam(name = "defaultGroupId")long defaultGroupId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
-            return wsBean.createUser(username, password, firstName, lastName, enabled, type, privileges, defaultGroupId, getIPAddress(), sessionId);
+            return wsBean.createUser(username, password, firstName, lastName, enabled, type, email, privileges, defaultGroupId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -282,6 +284,7 @@ public class KuwaibaService {
      * @param lastName New user's last name. Use null to leave it unchanged
      * @param enabled 0 for false, 1 for true, -1 to leave it unchanged
      * @param type User type. See UserProfile.USER_TYPE* for possible values. Use -1 to leave it unchanged
+     * @param email New user's email
      * @param sessionId Session token
      * @throws ServerSideException If the user is not allowed to invoke the method
      *                             If the username is null or empty or 
@@ -296,9 +299,10 @@ public class KuwaibaService {
             @WebParam(name = "password")String password,
             @WebParam(name = "enabled")int enabled,
             @WebParam(name = "type")int type,
+            @WebParam(name = "email") String email,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
-            wsBean.setUserProperties(oid, username, password, firstName, lastName, enabled, type, getIPAddress(), sessionId);
+            wsBean.setUserProperties(oid, username, password, firstName, lastName, enabled, type, email, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -3523,8 +3527,6 @@ public class KuwaibaService {
      * @param aObjectId "a" endpoint object id
      * @param bObjectClass "b" endpoint object class
      * @param bObjectId "b" endpoint object id
-     * @param parentClass Parent object class
-     * @param parentId Parent object id
      * @param name COnnection name. Leave empty if you want to use the one in the template
      * @param connectionClass Class used to create the connection. See Constants class for supported values
      * @param templateId Id of the template for class connectionClass. Use -1 if you want to create a connection without template
@@ -3552,6 +3554,51 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.createPhysicalConnection(aObjectClass, aObjectId,bObjectClass, bObjectId,
+                   name, connectionClass, templateId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createPhysicalConnection: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+
+    /**
+     * Creates a physical connection (a container or a link). The validations are made at server side (this is,
+     * if the connection can be established between the two endpoints, if they're not already connected, etc)
+     * @param aObjectClasses "a" endpoints object class
+     * @param aObjectIds "a" endpoints object id
+     * @param bObjectClasses "b" endpoints object class
+     * @param bObjectIds "b" endpoints object id
+     * @param name COnnection name. Leave empty if you want to use the one in the template
+     * @param connectionClass Class used to create the connection. See Constants class for supported values
+     * @param templateId Id of the template for class connectionClass. Use -1 if you want to create a connection without template
+     * @param sessionId Session token
+     * @return The new connection id
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             If the object's class can't be found
+     *                             If the parent id is not found
+     *                             If the update can't be performed due to a format issue
+     *                             If any of the attribute values has an invalid value or format.
+     *                             If the specified template could not be found.
+     *                             If any of the objects can't be found
+     *                             If any of the objects involved can't be connected (i.e. if it's not an inventory object)
+     *                             If any of the classes provided can not be found
+     */
+    @WebMethod(operationName = "createPhysicalConnections")
+    public String[] createPhysicalConnections(
+            @WebParam(name = "aObjectClasses")String[] aObjectClasses,
+            @WebParam(name = "aObjectIds")String[] aObjectIds,
+            @WebParam(name = "bObjectClasses")String[] bObjectClasses,
+            @WebParam(name = "bObjectIds")String[] bObjectIds,
+            @WebParam(name = "name")String name,
+            @WebParam(name = "connectionClass") String connectionClass,
+            @WebParam(name = "templateId") String templateId,
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
+        try{
+            return wsBean.createPhysicalConnections(aObjectClasses, aObjectIds, bObjectClasses, bObjectIds,
                    name, connectionClass, templateId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
@@ -3853,7 +3900,7 @@ public class KuwaibaService {
                                       @WebParam(name = "sideBClassNames")String[] sideBClassNames, @WebParam(name = "sideBIds")String[] sideBIds,
                                       @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
-             if (sideAClassNames.length != sideAIds.length || linksClassNames.length != linksIds.length || sideBClassNames.length != sideBIds.length
+            if (sideAClassNames.length != sideAIds.length || linksClassNames.length != linksIds.length || sideBClassNames.length != sideBIds.length
                     || sideAClassNames.length != sideBClassNames.length || sideBClassNames.length != linksClassNames.length)
                 throw new ServerSideException("The array sizes don't match");
             
@@ -4024,7 +4071,7 @@ public class KuwaibaService {
         }
     }
     
-     /**
+    /**
      * Associates a list of objects (resources) to an existing service
      * @param objectClass Object class
      * @param objectId Object id

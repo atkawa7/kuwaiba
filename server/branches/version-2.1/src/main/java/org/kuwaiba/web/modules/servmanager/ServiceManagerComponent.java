@@ -219,6 +219,9 @@ public class ServiceManagerComponent extends AbstractTopComponent {
         if (cmbCustomers.getValue() == null)
             return;
         
+        if (cmbCustomers.getValue() == null)
+            return;
+        
         ListDataProvider<RemoteObjectLight> dataProvider = (ListDataProvider<RemoteObjectLight>) tblServices.getDataProvider();
         dataProvider.setFilter((source) -> {
             String filterAsLowerCase = event.getValue().toLowerCase();

@@ -288,7 +288,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     //TODO add ipAddress, sessionId
     @Override
     public long createUser(String userName, String password, String firstName,
-            String lastName, boolean enabled, int type, List<Privilege> privileges, long defaultGroupId)
+            String lastName, boolean enabled, int type, String email, List<Privilege> privileges, long defaultGroupId)
             throws InvalidArgumentException {
         if (userName == null)
             throw new InvalidArgumentException("User name can not be null");
@@ -323,6 +323,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             newUserNode.setProperty(UserProfile.PROPERTY_LAST_NAME, lastName == null ? "" : lastName);
             newUserNode.setProperty(UserProfile.PROPERTY_TYPE, type);
             newUserNode.setProperty(Constants.PROPERTY_ENABLED, enabled);
+            newUserNode.setProperty(UserProfile.PROPERTY_EMAIL, email);
             
             Node defaultGroupNode = Util.findNodeByLabelAndId(groupLabel, defaultGroupId);
             
@@ -351,7 +352,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
     @Override
     public void setUserProperties(long oid, String userName, String password, String firstName,
-            String lastName, int enabled, int type)
+            String lastName, int enabled, int type, String email)
             throws InvalidArgumentException, ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
             Node userNode = Util.findNodeByLabelAndId(userLabel, oid);
@@ -383,6 +384,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (enabled != -1)
                 userNode.setProperty(Constants.PROPERTY_ENABLED, enabled == 1 );
             
+            if (email != null)
+                userNode.setProperty(UserProfile.PROPERTY_EMAIL, email);
+            
             if(userName != null) {
                 
                 if (userName.trim().isEmpty())
@@ -411,7 +415,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
     @Override
     public void setUserProperties(String formerUsername, String newUserName, String password, String firstName,
-            String lastName, int enabled, int type)
+            String lastName, int enabled, int type, String email)
             throws InvalidArgumentException, ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) { 
             Node userNode = graphDb.findNode(userLabel, Constants.PROPERTY_NAME, formerUsername);
@@ -458,6 +462,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new InvalidArgumentException("User enabled state is not valid");
             if (enabled != -1)
                 userNode.setProperty(Constants.PROPERTY_ENABLED, enabled == 1 );
+            if (email != null)
+                userNode.setProperty(UserProfile.PROPERTY_EMAIL, email);
             
             tx.success();
             
@@ -793,7 +799,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                  throw new InvalidArgumentException(String.format("Class %s is not a list type", className));
 
             if (myClass.isInDesign())
-                 throw new OperationNotPermittedException("Can not create instances of classes marked as isDesign");
+                 throw new OperationNotPermittedException("Can not create instances of classes marked as inDesign");
 
             if (myClass.isAbstract())
                  throw new OperationNotPermittedException("Can not create instances of abstract classes");
@@ -3007,6 +3013,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 templates.add(new TemplateObjectLight(className, (String)templateNode.getProperty(Constants.PROPERTY_UUID), 
                         (String)templateNode.getProperty(Constants.PROPERTY_NAME)));
             }
+            tx.success();
             return templates;
         }
     }

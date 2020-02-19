@@ -17,6 +17,8 @@
 package org.kuwaiba.services.persistence.cache;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
@@ -36,6 +38,10 @@ public class CacheManager {
      * Singleton
      */
     private static CacheManager cm;
+    /**
+     * Cache slots to save complex objects
+     */
+    private HashMap<String, CacheSlot> cacheSlots;
     /**
      * Class cache
      */
@@ -87,6 +93,7 @@ public class CacheManager {
     private HashMap<String, Object> configurationVariablesIndex;
     
     private CacheManager() {
+        cacheSlots = new HashMap<>();
         classIndex = new HashMap<>();
         userIndex = new HashMap<>();
         groupIndex = new HashMap<>();
@@ -464,5 +471,31 @@ public class CacheManager {
         uniqueClassAttributesIndex.clear();
         validatorDefinitionIndex.clear();
         superClassIndex.clear();
+    }
+
+    public HashMap<String, CacheSlot> getCacheSlots() {
+        return cacheSlots;
+    }
+    
+    public CacheSlot getCacheSlot(String cacheSlotName){
+        CacheSlot slot = cacheSlots.get(cacheSlotName);
+        if(slot == null)
+            return null;
+        else if(slot.isExpired())
+            return null;
+        else 
+            return slot;
+    }
+    
+    public void putCacheSlot(String cacheSlotName, Object content, int hoursOfValidity){
+        Date currentDate = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(currentDate);
+        cal.add(Calendar.MINUTE, hoursOfValidity);
+        cacheSlots.put(cacheSlotName, new CacheSlot(content, currentDate.getTime(), cal.getTimeInMillis()));
+    }
+
+    public void setCacheSlots(HashMap<String, CacheSlot> cacheSlots) {
+        this.cacheSlots = cacheSlots;
     }
 }

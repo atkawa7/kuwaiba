@@ -751,7 +751,7 @@ public class ViewModule  implements GenericCommercialModule {
 
         BusinessObjectLight sourceDevice = null;
         List<ObjectLinkObjectDefinition> connectionsMap = new ArrayList<>();
-        //with this we are reading the path 3 at a time, endpoint - connection -endpoint (ignoring the mirror ports)
+        //with this for we are reading the path 3 at a time, endpoint - connection -endpoint (ignoring the mirror ports)
         for (BusinessObjectLight obj : path) {
             if(mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALLINK, obj.getClassName()))
                 connection = bem.getObject(obj.getClassName(), obj.getId());
