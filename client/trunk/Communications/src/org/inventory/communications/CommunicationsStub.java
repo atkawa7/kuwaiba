@@ -1225,6 +1225,7 @@ public class CommunicationsStub {
                                                 ci.getAttributesDisplayNames().toArray(new String[0]), ci.getAttributesDescriptions().toArray(new String[0]),
                                                 ci.getAttributesMandatories(), ci.getAttributesMultiples(), 
                                                 ci.getAttributesUniques(),
+                                                ci.getAttributesNoCopies(),
                                                 ci.getAttributesVisibles(), ci.getAttributesOrders());
                 i++;
             }
@@ -1269,6 +1270,7 @@ public class CommunicationsStub {
                     cm.getAttributesMandatories(),
                     cm.getAttributesMultiples(),
                     cm.getAttributesUniques(),
+                    cm.getAttributesNoCopies(),
                     cm.getAttributesVisibles(),
                     cm.getAttributesOrders());
             cache.addMeta(new LocalClassMetadata[]{res});
@@ -1311,6 +1313,7 @@ public class CommunicationsStub {
                     cm.getAttributesMandatories(),
                     cm.getAttributesMultiples(),
                     cm.getAttributesUniques(),
+                    cm.getAttributesNoCopies(),
                     cm.getAttributesVisibles(),
                     cm.getAttributesOrders());
             cache.addMeta(new LocalClassMetadata[]{res});
@@ -1346,6 +1349,7 @@ public class CommunicationsStub {
                         cm.getAttributesDescriptions().toArray(new String[0]),
                         cm.getAttributesMandatories(), cm.getAttributesMultiples(),
                         cm.getAttributesUniques(),
+                        cm.getAttributesNoCopies(),
                         cm.getAttributesVisibles(),
                         cm.getAttributesOrders());
             cache.addMeta(new LocalClassMetadata[]{ res });
@@ -1382,7 +1386,9 @@ public class CommunicationsStub {
                 attrInfo.getId(), attrInfo.getName(), attrInfo.getType(), 
                 attrInfo.getDisplayName(), attrInfo.getDescription(), attrInfo.isVisible(), attrInfo.isMandatory(), 
                 attrInfo.isMultiple(),
-                attrInfo.isUnique(), attrInfo.getOrder());
+                attrInfo.isUnique(), 
+                attrInfo.isNoCopy(), 
+                attrInfo.getOrder());
             
             return lam;
         } catch (Exception ex) {
@@ -1805,7 +1811,7 @@ public class CommunicationsStub {
     }
     
     /**
-     * Unsubscribes a user from a task
+     * Unsubscribes a user from a task. That is, the results of the task won't be notified to this user anymore.
      * @param userId User id
      * @param taskId Task id
      * @return True if the operation was successful. False if not
@@ -2154,7 +2160,7 @@ public class CommunicationsStub {
                         mandatoryObjectAttributeInfo.getName(), mandatoryObjectAttributeInfo.getType(), 
                         mandatoryObjectAttributeInfo.getDisplayName(), mandatoryObjectAttributeInfo.getDescription(), 
                         mandatoryObjectAttributeInfo.isVisible(), mandatoryObjectAttributeInfo.isMandatory(), mandatoryObjectAttributeInfo.isMultiple(),
-                        mandatoryObjectAttributeInfo.isUnique(), mandatoryObjectAttributeInfo.getOrder()));
+                        mandatoryObjectAttributeInfo.isUnique(), mandatoryObjectAttributeInfo.isNoCopy(), mandatoryObjectAttributeInfo.getOrder()));
             return mandatoryObjectAttributes;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -2796,6 +2802,7 @@ public class CommunicationsStub {
                             cm.getAttributesDescriptions().toArray(new String[0]),
                             cm.getAttributesMandatories(), cm.getAttributesMultiples(),
                             cm.getAttributesUniques(),
+                            cm.getAttributesNoCopies(),
                             cm.getAttributesVisibles(),
                             cm.getAttributesOrders());
                     

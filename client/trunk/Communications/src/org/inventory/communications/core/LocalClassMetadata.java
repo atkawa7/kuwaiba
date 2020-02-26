@@ -38,6 +38,7 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
     private boolean [] attributesMandatories;
     private boolean [] attributesMultiples;
     private boolean [] attributesUniques;
+    private boolean [] attributesNoCopies;
     private boolean [] attributesVisibles;
     private int [] attributesMappings;
     private String [] attributesDescriptions;
@@ -64,6 +65,7 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
             List<Boolean> attributesMandatories, 
             List<Boolean> attributesMultiples, 
             List<Boolean> attributesUniques,
+            List<Boolean> attributesNoCopies,
             List<Boolean> attributesVisibles, 
             List<Integer> attributesOrders) {
         
@@ -76,6 +78,7 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
         this.attributesMandatories = new boolean[attributesMandatories.size()];
         this.attributesMultiples = new boolean[attributesMultiples.size()];
         this.attributesUniques = new boolean[attributesUniques.size()];
+        this.attributesNoCopies = new boolean[attributesNoCopies.size()];
         this.attributesVisibles = new boolean[attributesVisibles.size()];
         this.attributesOrders = new int[attributesOrders.size()];
         
@@ -86,6 +89,7 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
             this.attributesMandatories[i] = attributesMandatories.get(i);
             this.attributesMultiples[i] = attributesMultiples.get(i);
             this.attributesUniques[i] = attributesUniques.get(i);
+            this.attributesNoCopies[i] = attributesNoCopies.get(i);
             this.attributesOrders[i] = attributesOrders.get(i);
         }
 
@@ -193,7 +197,9 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
                                     attributesVisibles[i],
                                     attributesMandatories[i],
                                     attributesMultiples[i],
-                                    attributesUniques[i], attributesOrders[i]));
+                                    attributesUniques[i], 
+                                    attributesNoCopies[i], 
+                                    attributesOrders[i]));
         }
         return res;
     }
@@ -216,6 +222,14 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
         
     public long getCreationDate() {
         return creationDate;
+    }
+
+    public boolean[] getAttributesNoCopies() {
+        return attributesNoCopies;
+    }
+
+    public void setAttributesNoCopies(boolean[] attributesNoCopies) {
+        this.attributesNoCopies = attributesNoCopies;
     }
     
     public boolean hasAttribute(String attribute) {

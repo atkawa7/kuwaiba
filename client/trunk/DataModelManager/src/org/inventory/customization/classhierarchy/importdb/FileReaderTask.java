@@ -183,6 +183,8 @@ public class FileReaderTask extends SwingWorker<Void, Integer> {
                     ,
                      new ArrayList<>() //List<Boolean> attributesUniques
                     ,
+                     new ArrayList<>() //List<Boolean> attributesNoCopies
+                    ,
                      new ArrayList<>() //List<Boolean> attributesVisibles
                     ,
                      new ArrayList<>() //List<Integer> attributesOrders

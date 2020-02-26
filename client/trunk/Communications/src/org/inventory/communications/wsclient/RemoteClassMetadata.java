@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="attributesMandatories" type="{http://www.w3.org/2001/XMLSchema}boolean" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="attributesMultiples" type="{http://www.w3.org/2001/XMLSchema}boolean" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="attributesUniques" type="{http://www.w3.org/2001/XMLSchema}boolean" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="attributesNoCopies" type="{http://www.w3.org/2001/XMLSchema}boolean" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="attributesVisibles" type="{http://www.w3.org/2001/XMLSchema}boolean" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="attributesDescriptions" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="attributesOrders" type="{http://www.w3.org/2001/XMLSchema}int" maxOccurs="unbounded" minOccurs="0"/>
@@ -50,6 +51,7 @@ import javax.xml.bind.annotation.XmlType;
     "attributesMandatories",
     "attributesMultiples",
     "attributesUniques",
+    "attributesNoCopies",
     "attributesVisibles",
     "attributesDescriptions",
     "attributesOrders",
@@ -76,6 +78,8 @@ public class RemoteClassMetadata
     protected List<Boolean> attributesMultiples;
     @XmlElement(nillable = true)
     protected List<Boolean> attributesUniques;
+    @XmlElement(nillable = true)
+    protected List<Boolean> attributesNoCopies;
     @XmlElement(nillable = true)
     protected List<Boolean> attributesVisibles;
     @XmlElement(nillable = true)
@@ -288,6 +292,35 @@ public class RemoteClassMetadata
             attributesUniques = new ArrayList<Boolean>();
         }
         return this.attributesUniques;
+    }
+
+    /**
+     * Gets the value of the attributesNoCopies property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the attributesNoCopies property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getAttributesNoCopies().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Boolean }
+     * 
+     * 
+     */
+    public List<Boolean> getAttributesNoCopies() {
+        if (attributesNoCopies == null) {
+            attributesNoCopies = new ArrayList<Boolean>();
+        }
+        return this.attributesNoCopies;
     }
 
     /**

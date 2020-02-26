@@ -45,7 +45,7 @@ public class LocalAttributeMetadata implements Comparable<LocalAttributeMetadata
     }
 
     public LocalAttributeMetadata(long oid, String name, String type, String displayName, String description,
-            boolean isVisible, boolean mandatory, boolean multiple, boolean unique, int order) 
+            boolean isVisible, boolean mandatory, boolean multiple, boolean unique, boolean noCopy, int order) 
     {
         this.id = oid;
         this.name = name;
@@ -54,6 +54,7 @@ public class LocalAttributeMetadata implements Comparable<LocalAttributeMetadata
         this.mandatory = mandatory;
         this.multiple = multiple;
         this.unique = unique;
+        this.noCopy =noCopy;
         this.isVisible = isVisible;
         this.mapping = getMappingFromType(type, multiple);
         this.description = description;
@@ -63,7 +64,7 @@ public class LocalAttributeMetadata implements Comparable<LocalAttributeMetadata
     }
     
     public LocalAttributeMetadata(long oid, String name, Class type, String displayName, String description,
-            boolean isVisible, boolean mandatory, boolean unique, Integer mapping, int order) 
+            boolean isVisible, boolean mandatory, boolean unique, boolean noCopy, Integer mapping, int order) 
     {
         this.id = oid;
         this.name = name;
@@ -71,6 +72,7 @@ public class LocalAttributeMetadata implements Comparable<LocalAttributeMetadata
         this.displayName = displayName;
         this.mandatory = mandatory;
         this.unique = unique;
+        this.noCopy = noCopy;
         this.isVisible = isVisible;
         this.mapping = mapping;
         this.description = description;

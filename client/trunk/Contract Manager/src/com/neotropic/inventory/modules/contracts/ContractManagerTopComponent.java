@@ -24,7 +24,6 @@ import javax.swing.text.DefaultEditorKit;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.actions.DeleteBusinessObjectAction;
-import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -38,10 +37,6 @@ import org.openide.windows.TopComponent;
 /**
  * Main top component for the COntract Manager Module
  */
-@ConvertAsProperties(
-        dtd = "-//com.neotropic.inventory.modules.contracts//ContractManager//EN",
-        autostore = false
-)
 @TopComponent.Description(
         preferredID = "ContractManagerTopComponent",
         iconBase = "com/neotropic/inventory/modules/contracts/res/icon.png",
