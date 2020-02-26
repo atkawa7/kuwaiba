@@ -688,7 +688,7 @@ public interface ApplicationEntityManager {
     
     /**
      * Gets the name Of a special parent by scale up the SPECIAL_OF_CHILD hierarchy
-     * Use case: Use in reports to get the costumer of a service
+     * Use case: Use in reports to get the customer of a service
      * @param className className
      * @param id node id
      * @param targetLevel number of levels to scale up

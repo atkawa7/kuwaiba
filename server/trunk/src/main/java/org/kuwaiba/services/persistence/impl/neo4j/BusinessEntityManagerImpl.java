@@ -3093,19 +3093,37 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * @return The cloned node
      */
     private Node copyObject(Node templateObject, boolean recursive) {
-        
         Node newInstance = graphDb.createNode(inventoryObjectLabel);
-        for (String property : templateObject.getPropertyKeys())
-            newInstance.setProperty(property, templateObject.getProperty(property));
-        for (Relationship rel : templateObject.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING))
-            newInstance.createRelationshipTo(rel.getEndNode(), RelTypes.RELATED_TO).setProperty(Constants.PROPERTY_NAME, rel.getProperty(Constants.PROPERTY_NAME));
+         // Make sure the object has a name, even if it's marked as no copy. Remember that all inventory object nodes 
+         //must at least have the properties name, creationDate and _uuid. The latter are also set below too.
+        newInstance.setProperty(Constants.PROPERTY_NAME, "");
+        
+        // Let's find out what attributes should not be copied because they're either marked as unique or noCopy
+        ClassMetadata classMetadata = CacheManager.getInstance().
+                getClass((String)templateObject.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING)
+                        .getEndNode()
+                        .getProperty(Constants.PROPERTY_NAME));
+        
+        // First copy normal attributes
+        for (String property : templateObject.getPropertyKeys()) {
+            AttributeMetadata currentAttribute = classMetadata.getAttribute(property);
+            if (currentAttribute != null && !currentAttribute.isUnique() && !currentAttribute.isNoCopy())
+                newInstance.setProperty(property, templateObject.getProperty(property));
+        }
+        
+        // Then list types
+        for (Relationship rel : templateObject.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING)) {
+            AttributeMetadata currentAttribute = classMetadata.getAttribute((String)rel.getProperty(Constants.PROPERTY_NAME));
+            if (currentAttribute != null && !currentAttribute.isNoCopy()) // We don't check for uniqueness, because list types can not be set as unique
+                newInstance.createRelationshipTo(rel.getEndNode(), RelTypes.RELATED_TO).setProperty(Constants.PROPERTY_NAME, rel.getProperty(Constants.PROPERTY_NAME));
+        }
         
         newInstance.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
         newInstance.setProperty(Constants.PROPERTY_UUID, UUID.randomUUID().toString());
         
         newInstance.createRelationshipTo(templateObject.getRelationships(RelTypes.INSTANCE_OF).iterator().next().getEndNode(), RelTypes.INSTANCE_OF);
 
-        if (recursive){
+        if (recursive) {
             for (Relationship rel : templateObject.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING)){
                 Node newChild = copyObject(rel.getStartNode(), true);
                 newChild.createRelationshipTo(newInstance, RelTypes.CHILD_OF);

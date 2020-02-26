@@ -59,6 +59,10 @@ public class RemoteClassMetadata extends RemoteClassMetadataLight {
      */
     private boolean [] attributesUniques;
     /**
+     * If the respective attribute should be copied in a copy operation.
+     */
+    private boolean [] attributesNoCopies;
+    /**
      * Attributes visibility
      */
     private boolean [] attributesVisibles;
@@ -102,6 +106,7 @@ public class RemoteClassMetadata extends RemoteClassMetadataLight {
         this.attributesTypes = new String[this.attributesNames.length];
         this.attributesDisplayNames = new String[this.attributesNames.length];
         this.attributesUniques = new boolean[this.attributesNames.length];
+        this.attributesNoCopies = new boolean[this.attributesNames.length];
         this.attributesMandatories = new boolean[this.attributesNames.length];
         this.attributesMultiples = new boolean[this.attributesNames.length];
         this.attributesVisibles = new boolean[this.attributesNames.length];
@@ -117,6 +122,7 @@ public class RemoteClassMetadata extends RemoteClassMetadataLight {
             this.attributesDisplayNames[i] = myAtt.getDisplayName() == null?
                 "":myAtt.getDisplayName();
             this.attributesMandatories[i] = myAtt.isMandatory();
+            this.attributesNoCopies[i] = myAtt.isNoCopy();
             this.attributesMultiples[i] = myAtt.isMultiple();
             this.attributesUniques[i] = myAtt.isUnique();
             this.attributesVisibles[i] = myAtt.isVisible();
@@ -181,6 +187,14 @@ public class RemoteClassMetadata extends RemoteClassMetadataLight {
 
     public void setAttributesVisibles(boolean[] attributesVisibles) {
         this.attributesVisibles = attributesVisibles;
+    }
+
+    public boolean[] getAttributesNoCopies() {
+        return attributesNoCopies;
+    }
+
+    public void setAttributesNoCopies(boolean[] attributesNoCopies) {
+        this.attributesNoCopies = attributesNoCopies;
     }
 
     public String[] getAttributesDescriptions() {
