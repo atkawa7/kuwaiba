@@ -205,7 +205,8 @@ public class LocalUserObjectLight implements Comparable<LocalUserObjectLight> {
     
     public static class UserType {
         
-        public static UserType[] DEFAULT_USER_TYPES = new LocalUserObjectLight.UserType[] { new LocalUserObjectLight.UserType("GUI User", 1), 
+        public static UserType[] DEFAULT_USER_TYPES = new LocalUserObjectLight.UserType[] { new LocalUserObjectLight.UserType("System User", 0), 
+            new LocalUserObjectLight.UserType("GUI User", 1), 
                 new LocalUserObjectLight.UserType("Web Service Interface User", 2), 
                 new LocalUserObjectLight.UserType("Southbound Interface User", 3) };
         
@@ -234,7 +235,7 @@ public class LocalUserObjectLight implements Comparable<LocalUserObjectLight> {
         }
         
         public static UserType getDefaultUserTypeForRawType(int rawType) {
-            return DEFAULT_USER_TYPES[rawType - 1];
+            return DEFAULT_USER_TYPES[rawType];
         }
         
         @Override

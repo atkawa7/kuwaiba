@@ -82,7 +82,9 @@ public class PropertyUserType extends PropertySupport.ReadWrite<LocalUserObjectL
         public String[] getTags(){
             return new String[] { LocalUserObjectLight.UserType.DEFAULT_USER_TYPES[0].getLabel(),
                     LocalUserObjectLight.UserType.DEFAULT_USER_TYPES[1].getLabel(),
-                    LocalUserObjectLight.UserType.DEFAULT_USER_TYPES[2].getLabel() };
+                    LocalUserObjectLight.UserType.DEFAULT_USER_TYPES[2].getLabel(),
+                    LocalUserObjectLight.UserType.DEFAULT_USER_TYPES[3].getLabel()
+            };
         }
 
         @Override
