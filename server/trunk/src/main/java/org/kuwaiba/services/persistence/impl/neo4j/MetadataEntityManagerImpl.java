@@ -1929,7 +1929,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
      */
     private void loadUniqueAttributesCache() throws InvalidArgumentException{
         
-        Node inventoryObject = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, Constants.CLASS_INVENTORYOBJECT);
+        Node inventoryObject = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, Constants.CLASS_ROOTOBJECT);
         
         if (inventoryObject == null)
             return;

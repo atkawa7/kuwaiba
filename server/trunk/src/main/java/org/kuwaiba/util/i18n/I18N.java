@@ -15,6 +15,8 @@
 package org.kuwaiba.util.i18n;
 
 import java.util.Locale;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 
 /**
  * A wrapper to fetch the internationalization keys using a short syntax 
@@ -25,6 +27,15 @@ public class I18N {
     private static final String BUNDLE_PATH="LANG";
     
     public static String gm(String key){
-        return java.util.ResourceBundle.getBundle(BUNDLE_PATH, Locale.getDefault()).getString(key);
+        try {
+            Context context = new InitialContext();
+            String locale = (String)context.lookup("java:comp/env/locale");
+            String[] localArray = locale.split("-");
+            
+            return java.util.ResourceBundle.getBundle(BUNDLE_PATH, new Locale(localArray[0], localArray[1])).getString(key);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return java.util.ResourceBundle.getBundle(BUNDLE_PATH, Locale.getDefault()).getString(key);
+        }
     }
 }

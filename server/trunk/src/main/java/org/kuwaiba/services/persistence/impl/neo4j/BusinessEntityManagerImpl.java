@@ -3029,11 +3029,30 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                             if (attributes.get(attributeName).isEmpty())
                                 throw new InvalidArgumentException(String.format("The attribute %s is mandatory, it can not be null or empty", attributeName));
                         }
-                        if (classMetadata.getAttribute(attributeName).isUnique()){
-                            if(isObjectAttributeUnique(classMetadata.getName(), attributeName, attributes.get(attributeName)))
-                                instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName), classMetadata.getType(attributeName)));
+                        if (classMetadata.getAttribute(attributeName).isUnique()) {
+                            //
+                            BusinessObject businessObject = createObjectFromNode(instance);
+                            boolean updateUniqueAttrCache = false;
+                            if (businessObject.getAttributes().containsKey(attributeName) && 
+                                businessObject.getAttributes().get(attributeName) != null) {
+                                updateUniqueAttrCache = true;
+                            }
+                            if (updateUniqueAttrCache && 
+                                !businessObject.getAttributes().get(attributeName).equals(attributes.get(attributeName))) {
+                                updateUniqueAttrCache = true;
+                            }
                             else
-                                throw new InvalidArgumentException(String.format("The attribute \"%s\" is unique and the value you are trying to set is already in use", attributeName));
+                                updateUniqueAttrCache = false;
+                            if (businessObject.getAttributes().get(attributeName) == null)
+                                updateUniqueAttrCache = true;
+                            //
+                            if (updateUniqueAttrCache) {
+                                if(isObjectAttributeUnique(classMetadata.getName(), attributeName, attributes.get(attributeName))) {
+                                    instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName), classMetadata.getType(attributeName)));
+                                    CacheManager.getInstance().removeUniqueAttributeValue(businessObject.getClassName(), attributeName, businessObject.getAttributes().get(attributeName));
+                                } else
+                                    throw new InvalidArgumentException(String.format("The attribute \"%s\" is unique and the value you are trying to set is already in use", classMetadata.getAttribute(attributeName).getDisplayName() != null ? classMetadata.getAttribute(attributeName).getDisplayName() : attributeName));
+                            }
                         }
                         else
                             instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName), classMetadata.getType(attributeName)));

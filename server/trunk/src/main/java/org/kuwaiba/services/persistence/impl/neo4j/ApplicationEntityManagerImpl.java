@@ -829,10 +829,26 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throws MetadataObjectNotFoundException, OperationNotPermittedException, BusinessObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         try(Transaction tx = graphDb.beginTx())
         {
+            ClassMetadata classMetadata = Util.createClassMetadataFromNode(graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className));
+            
             if (!mem.isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, className))
                 throw new InvalidArgumentException(String.format("Class %s is not a list type", className));
 
             Node listTypeItemNode = getInstanceOfClass(className, oid);
+            
+            //Updates the unique attributes cache
+            try {
+                BusinessObject remoteObject = createObjectFromNode(listTypeItemNode);
+                for(AttributeMetadata attribute : classMetadata.getAttributes()) {
+                    if(attribute.isUnique()) { 
+                        String attributeValues = remoteObject.getAttributes().get(attribute.getName());
+                        if(attributeValues != null)
+                            CacheManager.getInstance().removeUniqueAttributeValue(className, attribute.getName(), attributeValues);
+                    }
+                }
+            } catch (InvalidArgumentException ex) {
+                //Should not happen
+            }
             
             Iterator<Relationship> relationShipsIterator = listTypeItemNode.getRelationships(RelTypes.RELATED_TO).iterator();
             if (relationShipsIterator.hasNext()) {
@@ -850,6 +866,75 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             tx.success();
             cm.removeListType(className);
         }
+    }
+    
+    private BusinessObject createObjectFromNode(Node instance) throws InvalidArgumentException {
+        String className = (String)instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME);
+        try {
+            return createObjectFromNode(instance, mem.getClass(className));
+        } catch (MetadataObjectNotFoundException mex) {
+            throw new InvalidArgumentException(mex.getLocalizedMessage());
+        }
+    }
+    /**
+     * Builds a RemoteBusinessObject instance from a node representing a business object
+     * @param instance The object as a Node instance.
+     * @param classMetadata The class metadata to map the node's properties into a RemoteBussinessObject.
+     * @return The business object.
+     * @throws InvalidArgumentException If an attribute value can't be mapped into value.
+     */
+    private BusinessObject createObjectFromNode(Node instance, ClassMetadata classMetadata) throws InvalidArgumentException {
+        
+        HashMap<String, String> attributes = new HashMap<>();
+        String name = "";
+        
+        for (AttributeMetadata myAtt : classMetadata.getAttributes()) {
+            //Only set the attributes existing in the current node. Please note that properties can't be null in
+            //Neo4J, so a null value is actually a non-existing relationship/value
+            if (instance.hasProperty(myAtt.getName())){
+               if (AttributeMetadata.isPrimitive(myAtt.getType())) {
+                    if (!myAtt.getType().equals("Binary")) {
+                        String value = String.valueOf(instance.getProperty(myAtt.getName()));
+                        
+                        if (Constants.PROPERTY_NAME.equals(myAtt.getName()))
+                            name = value;
+                        
+                        attributes.put(myAtt.getName(),value);
+                    }
+                }
+            }
+        }
+
+        //Iterates through relationships and transform the into "plain" attributes
+        Iterable<Relationship> iterableRelationships = instance.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING);
+        Iterator<Relationship> relationships = iterableRelationships.iterator();
+
+        while(relationships.hasNext()){
+            Relationship relationship = relationships.next();
+            if (!relationship.hasProperty(Constants.PROPERTY_NAME))
+                throw new InvalidArgumentException(String.format("El objeto con id %s está mal formado", instance.getId()));
+
+            String relationshipName = (String)relationship.getProperty(Constants.PROPERTY_NAME);              
+            
+            boolean hasRelationship = false;
+            for (AttributeMetadata myAtt : classMetadata.getAttributes()) {
+                if (myAtt.getName().equals(relationshipName)) {
+                    if (attributes.containsKey(relationshipName))
+                        attributes.put(relationshipName, attributes.get(relationshipName) + ";" + relationship.getEndNode().getProperty(Constants.PROPERTY_UUID)); //A multiple selection list type
+                    else    
+                        attributes.put(relationshipName, (String)relationship.getEndNode().getProperty(Constants.PROPERTY_UUID));
+                    hasRelationship = true;
+                    break;
+                }                  
+            }
+            
+            if (!hasRelationship) //This verification will help us find potential inconsistencies with list types
+                                  //What this does is to verify if is there is a RELATED_TO relationship that shouldn't exist because its name is not an attribute of the class
+                throw new InvalidArgumentException(String.format("El objeto con %s (%s) está relacionado con el tipo de lista %s (%s), pero eso no es coherente con el modelo de datos", 
+                            instance.getProperty(Constants.PROPERTY_NAME), instance.getId(), relationship.getEndNode().getProperty(Constants.PROPERTY_NAME), relationship.getEndNode().getId()));
+        }
+        
+        return new BusinessObject(classMetadata.getName(), (String)instance.getProperty(Constants.PROPERTY_UUID), name, attributes);
     }
 
     @Override
