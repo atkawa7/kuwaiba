@@ -33,6 +33,10 @@ public class UserProfileLight {
     
     public static final String DEFAULT_ADMIN = "admin";
     /**
+     * "Hard-coded" users that should not be deleted or modified in any way (nor can they log in).
+     */
+    public static final int USER_TYPE_SYSTEM = 0;
+    /**
      * Users that will access the system via desktop client or web interface
      */
     public static final int USER_TYPE_GUI = 1;

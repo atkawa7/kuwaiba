@@ -104,7 +104,8 @@ public class KuwaibaService {
 
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">
     /**
-     * Creates a session. Only one session per type is allowed. If a new session is created and there was already one of the same type, the old one will be discarded. See RemoteSession.TYPE_XXX for possible session types
+     * Creates a session. Only one session per type is allowed. If a new session is created and there was already one of the same type, 
+     * the old one will be discarded. See RemoteSession.TYPE_XXX for possible session types. System users can not create sessions.
      * @param username user login name
      * @param password user password
      * @param sessionType The type of session to be created. This type depends on what kind of client is trying to access (a desktop client, a web client, a web service user, etc. See RemoteSession.TYPE_XXX for possible session types
@@ -236,7 +237,8 @@ public class KuwaibaService {
     }
 
     /**
-     * Creates a user
+     * Creates a user. System users can be created but not deleted or modified. <b>Create system users only if you are a developer</b>, 
+     * as they can only be modified or deleted by accessing directly to the database.
      * @param username User name. Can't be null, empty or have non standard characters.
      * @param password A password (in plain text, it'll be encrypted later). Can't be null nor an empty string
      * @param firstName User's first name
@@ -249,7 +251,9 @@ public class KuwaibaService {
      * @param sessionId Session token
      * @return The new user Id
      * @throws ServerSideException If the user is not allowed to invoke the method
-     *                             If the username is null or empty or the username already exists
+     *                             If the username is null or empty or the username already exists, 
+     * if the user type is invalid or if the password is an empty string, or if it is attempted to change 
+     * the user name of the admin user name, or if this operation is attempted on a system user. Also, if the new user type is invalid.
      */
     @WebMethod(operationName = "createUser")
     public long createUser(
@@ -287,8 +291,9 @@ public class KuwaibaService {
      * @param email New user's email
      * @param sessionId Session token
      * @throws ServerSideException If the user is not allowed to invoke the method
-     *                             If the username is null or empty or 
-     *                             the username already exists or if the user could not be found
+     *                             If the username is null or empty or the username already exists, 
+     * if the user type is invalid or if the password is an empty string, or if it is attempted to change 
+     * the user name of the admin user name, or if this operation is attempted on a system user. Also, if the new user type is invalid.
      */
     @WebMethod(operationName = "setUserProperties")
     public void setUserProperties(

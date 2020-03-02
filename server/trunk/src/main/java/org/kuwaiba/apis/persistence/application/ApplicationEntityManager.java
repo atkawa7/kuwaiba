@@ -81,7 +81,8 @@ public interface ApplicationEntityManager {
     public HashMap<String, Session> getSessions();
     
     /**
-     * Creates a user
+     * Creates a user. System users ("hard-coded" kind of users used for internal tasks that can not be deleted nor modified byu the end users) can only be
+     * manipulated (that is, anything but created) by accessing directly to the database
      * @param userName New user's name. Mandatory.
      * @param password New user's password
      * @param firstName New user's first name
@@ -92,7 +93,7 @@ public interface ApplicationEntityManager {
      * @param privileges New user's privileges. Use null for none
      * @param defaultGroupId Default group this user will be associated to
      * @return The id of the newly created user
-     * @throws InvalidArgumentException Thrown if the username is null or empty or the username already exists
+     * @throws InvalidArgumentException If the username is null or empty or the username already exists, if the user type is invalid or if the password is an empty string.
      */
     public long createUser(String userName, String password, String firstName,
             String lastName, boolean enabled, int type, String email, List<Privilege> privileges, long defaultGroupId)
@@ -108,7 +109,9 @@ public interface ApplicationEntityManager {
      * @param enabled 0 for false, 1 for true, -1 to leave it unchanged
      * @param type User type. See UserProfile.USER_TYPE* for possible values. Use -1 to leave it unchanged
      * @param email New user's email. Use null to leave it unchanged
-     * @throws InvalidArgumentException Thrown if the username is null or empty or the username already exists
+     * @throws InvalidArgumentException If the username is null or empty or the username already exists, 
+     * if the user type is invalid or if the password is an empty string, or if it is attempted to change 
+     * the user name of the admin user name, or if this operation is attempted on a system user. Also, if the new user type is invalid.
      * @throws ApplicationObjectNotFoundException If the user could not be found
      */
     public void setUserProperties(long oid, String userName, String password, String firstName,
@@ -124,7 +127,9 @@ public interface ApplicationEntityManager {
      * @param enabled 0 for false, 1 for true, -1 to leave it unchanged
      * @param type User type. See UserProfile.USER_TYPE* for possible values. -1 to leave it unchanged
      * @param email User's email. Null if unchanged
-     * @throws InvalidArgumentException If the format of any of the parameters provided is erroneous
+     * @throws InvalidArgumentException If the username is null or empty or the username already exists, 
+     * if the user type is invalid or if the password is an empty string, or if it is attempted to change 
+     * the user name of the admin user name, or if this operation is attempted on a system user. Also, if the new user type is invalid.
      * @throws ApplicationObjectNotFoundException If the user could not be found
      */
     public void setUserProperties(String formerUsername, String newUserName, String password, String firstName,
@@ -727,14 +732,14 @@ public interface ApplicationEntityManager {
     public void validateWebServiceCall(String methodName, String ipAddress, String sessionId) throws NotAuthorizedException;
     
     /**
-     * Creates a session
+     * Creates a session. System users can not create sessions.
      * @param user User name
      * @param password Password
      * @param sessionType The type of session to be created. This type depends on what kind of client is trying to access (a desktop client, a web client, a web service user, etc. See Session.TYPE_XXX for possible session types
      * @param IPAddress IP address the session is created from
      * @return A session object with information about the session itself plus information about the user
      * @throws ApplicationObjectNotFoundException If the user does not exist
-     * @throws NotAuthorizedException If the password is incorrect or if the user is not enabled.
+     * @throws NotAuthorizedException If the password is incorrect or if the user is not enabled, or if a system user is used to create the session.
      */
     public Session createSession(String user, String password, int sessionType, String IPAddress) throws ApplicationObjectNotFoundException, NotAuthorizedException;
     

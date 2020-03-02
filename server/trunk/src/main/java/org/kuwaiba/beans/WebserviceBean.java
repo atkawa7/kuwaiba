@@ -67,11 +67,9 @@ import org.kuwaiba.interfaces.ws.toserialize.business.AssetLevelCorrelatedInform
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteLogicalConnectionDetails;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteMPLSConnectionDetails;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLinkObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLightList;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemotePhysicalConnectionDetails;
 import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHContainerLinkDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHPosition;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteAttributeMetadata;
