@@ -523,12 +523,15 @@ public class Util {
     }
     
     /**
-     * Releases all the relationships associated to a user, and deletes the node corresponding to such user.
-     * should be released but the caller
-     * @param userNode The user node
+     * Releases all the relationships associated to a user, and deletes the node corresponding to such user. The user "admin" can not be deleted. 
+     * Historical entry associated to the user to be deleted are NOT deleted, so they can be edited later if necessary.
+     * @param userNode The user node.
      * @throws InvalidArgumentException If you try to delete the default administrator
      */
     public static void deleteUserNode(Node userNode) throws InvalidArgumentException {
+        if (userNode.hasProperty(UserProfile.PROPERTY_TYPE) && (int)userNode.getProperty(UserProfile.PROPERTY_TYPE) == UserProfile.USER_TYPE_SYSTEM)
+            throw new InvalidArgumentException("System users can not be deleted or modified");
+        
         String userName = (String)userNode.getProperty(Constants.PROPERTY_NAME);
         if (UserProfile.DEFAULT_ADMIN.equals(userName))
             throw new InvalidArgumentException("The default administrator can not be deleted");
@@ -540,7 +543,7 @@ public class Util {
             privilegeNode.delete();
         }
 
-        //Delete the rest of relationships
+        //Delete the rest of relationships. Audit trail entries are kept.
         for (Relationship relationship : userNode.getRelationships()) 
             relationship.delete();
                 

@@ -285,7 +285,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         return sessions;
     }
 
-    //TODO add ipAddress, sessionId
     @Override
     public long createUser(String userName, String password, String firstName,
             String lastName, boolean enabled, int type, String email, List<Privilege> privileges, long defaultGroupId)
@@ -305,7 +304,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         if (password.trim().isEmpty())
             throw new InvalidArgumentException("Password can not be an empty string");
         
-        if (type != UserProfile.USER_TYPE_GUI && type != UserProfile.USER_TYPE_WEB_SERVICE && type != UserProfile.USER_TYPE_SOUTHBOUND)
+        if (type != UserProfile.USER_TYPE_GUI && type != UserProfile.USER_TYPE_WEB_SERVICE && 
+                type != UserProfile.USER_TYPE_SOUTHBOUND && type != UserProfile.USER_TYPE_SYSTEM)
             throw new InvalidArgumentException("Invalid user type");
             
         try(Transaction tx = graphDb.beginTx()) {
@@ -359,21 +359,26 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
             if(userNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Can not find a user with id %s", oid));
+            
+            // Note that once a system user is created, it can only be deleted or modified by accessing directly to the database 
+            if (userNode.hasProperty(UserProfile.PROPERTY_TYPE) && (int)userNode.getProperty(UserProfile.PROPERTY_TYPE) == UserProfile.USER_TYPE_SYSTEM)
+                throw new InvalidArgumentException("System users can not be deleted or modified");
 
             if(password != null) {
                 if (password.trim().isEmpty())
                     throw new InvalidArgumentException("Password can't be an empty string");
+                
+                userNode.setProperty(Constants.PROPERTY_PASSWORD, BCrypt.hashpw(password, BCrypt.gensalt()));
             }
             
-            if (password != null)
-                userNode.setProperty(Constants.PROPERTY_PASSWORD, BCrypt.hashpw(password, BCrypt.gensalt()));
             if (firstName != null)
                 userNode.setProperty(Constants.PROPERTY_FIRST_NAME, firstName);
             if (lastName != null)
                 userNode.setProperty(Constants.PROPERTY_LAST_NAME, lastName);
             
-            if (type != -1 && type != UserProfile.USER_TYPE_GUI && type != UserProfile.USER_TYPE_WEB_SERVICE && type != UserProfile.USER_TYPE_SOUTHBOUND)
-                throw new InvalidArgumentException("User type provided is not valid");
+            if (type != -1 && type != UserProfile.USER_TYPE_GUI && type != UserProfile.USER_TYPE_WEB_SERVICE && 
+                    type != UserProfile.USER_TYPE_SOUTHBOUND && type != UserProfile.USER_TYPE_SYSTEM)
+                throw new InvalidArgumentException("Invalid user type");
             
             if (type != -1)
                 userNode.setProperty(Constants.PROPERTY_TYPE, type);
@@ -406,10 +411,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 userNode.setProperty(Constants.PROPERTY_NAME, userName);
                 cm.removeUser(userName);
             }
-
+            UserProfile userProfile = Util.createUserProfileWithGroupPrivilegesFromNode(userNode);
+            for (Session session : sessions.values()) {
+                if (session.getUser().getId() == userProfile.getId())
+                    session.setUser(userProfile);
+            }
             tx.success();
-            
-            cm.putUser(Util.createUserProfileWithGroupPrivilegesFromNode(userNode));
+            cm.putUser(userProfile);
         }
     }
 
@@ -423,6 +431,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if(userNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Can not find a user with name %s", formerUsername));
 
+            // Note that once a system user is created, it can only be deleted or modified by accessing directly to the database 
+            if (userNode.hasProperty(UserProfile.PROPERTY_TYPE) && (int)userNode.getProperty(UserProfile.PROPERTY_TYPE) == UserProfile.USER_TYPE_SYSTEM)
+                throw new InvalidArgumentException("System users can not be deleted or modified");
+            
             if(newUserName != null) {
                 if (newUserName.trim().isEmpty())
                     throw new InvalidArgumentException("User name can not be an empty string");
@@ -454,8 +466,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 userNode.setProperty(Constants.PROPERTY_FIRST_NAME, firstName);
             if(lastName != null)
                 userNode.setProperty(Constants.PROPERTY_LAST_NAME, lastName);
-            if (type != -1 && type != UserProfile.USER_TYPE_GUI && type != UserProfile.USER_TYPE_WEB_SERVICE && type != UserProfile.USER_TYPE_SOUTHBOUND)
-                throw new InvalidArgumentException("User type provided is not valid");
+            if (type != -1 && type != UserProfile.USER_TYPE_GUI && type != UserProfile.USER_TYPE_WEB_SERVICE && 
+                    type != UserProfile.USER_TYPE_SOUTHBOUND && type != UserProfile.USER_TYPE_SYSTEM)
+                throw new InvalidArgumentException("Invalid user type");
             if (type != -1)
                 userNode.setProperty(Constants.PROPERTY_TYPE, type );
             if (enabled != -1 && enabled != 0 && enabled != 1)
@@ -465,9 +478,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (email != null)
                 userNode.setProperty(UserProfile.PROPERTY_EMAIL, email);
             
+            UserProfile userProfile = Util.createUserProfileWithGroupPrivilegesFromNode(userNode);
+            for (Session session : sessions.values()) {
+                if (session.getUser().getId() == userProfile.getId())
+                    session.setUser(userProfile);
+            }
             tx.success();
-            
-            cm.putUser(Util.createUserProfileWithGroupPrivilegesFromNode(userNode));
+            cm.putUser(userProfile);
         }
     }
 
@@ -726,24 +743,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
     @Override
     public void deleteGroups(long[] oids) throws ApplicationObjectNotFoundException, InvalidArgumentException {
-        
         try(Transaction tx = graphDb.beginTx()) {
             if(oids != null) {
+                
                 for (long id : oids) {
                     Node groupNode = Util.findNodeByLabelAndId(groupLabel, id);
                     if(groupNode == null)
-                        throw new ApplicationObjectNotFoundException(String.format("Can not find the group with id %s",id));
+                        throw new ApplicationObjectNotFoundException(String.format("Can not find a group with id %s", id));
                     
-                    Node adminNode = graphDb.findNode(userLabel, Constants.PROPERTY_NAME, UserProfile.DEFAULT_ADMIN);
-                    List<Node> adminGroupNodes = new ArrayList();
-
-                    for (Relationship relationship : adminNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP))
-                        adminGroupNodes.add(relationship.getEndNode());
-                    
-                    if (adminGroupNodes.size() == 1) {
-                        if (groupNode.getId() == adminGroupNodes.get(0).getId())
-                            throw new InvalidArgumentException("User admin can no be orphan. Put it in another group before removing this group");                                                                                    
-                    }
                     
                     for (Relationship relationship : groupNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_PRIVILEGE)) {
                         Node privilegeNode = relationship.getEndNode();
@@ -753,19 +760,16 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     
                     for (Relationship relationship : groupNode.getRelationships(Direction.INCOMING, RelTypes.BELONGS_TO_GROUP)) {
                         Node userNode = relationship.getStartNode();
-                        
-                        if (adminNode.getId() == userNode.getId())
-                            continue;
                                                 
                         relationship.delete();
                         
-                        //This will delete all users associated *only* to this group. The users associated to other groups will be kept and the relationship with this group will be released
-                        if (userNode.hasRelationship(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP)) 
+                        // This will delete all users associated *only* to this group. The users associated to other groups will be kept and the relationship 
+                        // with this group will be released. The user "admin" can not be deleted
+                        if (!userNode.hasRelationship(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP)) 
                             Util.deleteUserNode(userNode);
-                            
                     }
                     
-                    //Now we release the rest of the relationships
+                    // Now we release the rest of the relationships, if any
                     for (Relationship otherRelationship : groupNode.getRelationships())
                         otherRelationship.delete();
                     
@@ -825,10 +829,26 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throws MetadataObjectNotFoundException, OperationNotPermittedException, BusinessObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         try(Transaction tx = graphDb.beginTx())
         {
+            ClassMetadata classMetadata = Util.createClassMetadataFromNode(graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className));
+            
             if (!mem.isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, className))
                 throw new InvalidArgumentException(String.format("Class %s is not a list type", className));
 
             Node listTypeItemNode = getInstanceOfClass(className, oid);
+            
+            //Updates the unique attributes cache
+            try {
+                BusinessObject remoteObject = createObjectFromNode(listTypeItemNode);
+                for(AttributeMetadata attribute : classMetadata.getAttributes()) {
+                    if(attribute.isUnique()) { 
+                        String attributeValues = remoteObject.getAttributes().get(attribute.getName());
+                        if(attributeValues != null)
+                            CacheManager.getInstance().removeUniqueAttributeValue(className, attribute.getName(), attributeValues);
+                    }
+                }
+            } catch (InvalidArgumentException ex) {
+                //Should not happen
+            }
             
             Iterator<Relationship> relationShipsIterator = listTypeItemNode.getRelationships(RelTypes.RELATED_TO).iterator();
             if (relationShipsIterator.hasNext()) {
@@ -846,6 +866,75 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             tx.success();
             cm.removeListType(className);
         }
+    }
+    
+    private BusinessObject createObjectFromNode(Node instance) throws InvalidArgumentException {
+        String className = (String)instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME);
+        try {
+            return createObjectFromNode(instance, mem.getClass(className));
+        } catch (MetadataObjectNotFoundException mex) {
+            throw new InvalidArgumentException(mex.getLocalizedMessage());
+        }
+    }
+    /**
+     * Builds a RemoteBusinessObject instance from a node representing a business object
+     * @param instance The object as a Node instance.
+     * @param classMetadata The class metadata to map the node's properties into a RemoteBussinessObject.
+     * @return The business object.
+     * @throws InvalidArgumentException If an attribute value can't be mapped into value.
+     */
+    private BusinessObject createObjectFromNode(Node instance, ClassMetadata classMetadata) throws InvalidArgumentException {
+        
+        HashMap<String, String> attributes = new HashMap<>();
+        String name = "";
+        
+        for (AttributeMetadata myAtt : classMetadata.getAttributes()) {
+            //Only set the attributes existing in the current node. Please note that properties can't be null in
+            //Neo4J, so a null value is actually a non-existing relationship/value
+            if (instance.hasProperty(myAtt.getName())){
+               if (AttributeMetadata.isPrimitive(myAtt.getType())) {
+                    if (!myAtt.getType().equals("Binary")) {
+                        String value = String.valueOf(instance.getProperty(myAtt.getName()));
+                        
+                        if (Constants.PROPERTY_NAME.equals(myAtt.getName()))
+                            name = value;
+                        
+                        attributes.put(myAtt.getName(),value);
+                    }
+                }
+            }
+        }
+
+        //Iterates through relationships and transform the into "plain" attributes
+        Iterable<Relationship> iterableRelationships = instance.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING);
+        Iterator<Relationship> relationships = iterableRelationships.iterator();
+
+        while(relationships.hasNext()){
+            Relationship relationship = relationships.next();
+            if (!relationship.hasProperty(Constants.PROPERTY_NAME))
+                throw new InvalidArgumentException(String.format("El objeto con id %s está mal formado", instance.getId()));
+
+            String relationshipName = (String)relationship.getProperty(Constants.PROPERTY_NAME);              
+            
+            boolean hasRelationship = false;
+            for (AttributeMetadata myAtt : classMetadata.getAttributes()) {
+                if (myAtt.getName().equals(relationshipName)) {
+                    if (attributes.containsKey(relationshipName))
+                        attributes.put(relationshipName, attributes.get(relationshipName) + ";" + relationship.getEndNode().getProperty(Constants.PROPERTY_UUID)); //A multiple selection list type
+                    else    
+                        attributes.put(relationshipName, (String)relationship.getEndNode().getProperty(Constants.PROPERTY_UUID));
+                    hasRelationship = true;
+                    break;
+                }                  
+            }
+            
+            if (!hasRelationship) //This verification will help us find potential inconsistencies with list types
+                                  //What this does is to verify if is there is a RELATED_TO relationship that shouldn't exist because its name is not an attribute of the class
+                throw new InvalidArgumentException(String.format("El objeto con %s (%s) está relacionado con el tipo de lista %s (%s), pero eso no es coherente con el modelo de datos", 
+                            instance.getProperty(Constants.PROPERTY_NAME), instance.getId(), relationship.getEndNode().getProperty(Constants.PROPERTY_NAME), relationship.getEndNode().getId()));
+        }
+        
+        return new BusinessObject(classMetadata.getName(), (String)instance.getProperty(Constants.PROPERTY_UUID), name, attributes);
     }
 
     @Override
@@ -2160,6 +2249,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (userNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The user %s does not exist", userName));
 
+            if (userNode.hasProperty(UserProfile.PROPERTY_TYPE) && (int)userNode.getProperty(UserProfile.PROPERTY_TYPE) == UserProfile.USER_TYPE_SYSTEM)
+                throw new NotAuthorizedException("System users can not create sessions");
+            
             if (!(Boolean)userNode.getProperty(Constants.PROPERTY_ENABLED))
                 throw new NotAuthorizedException(String.format("The user %s is not enabled", userName));
 
@@ -2173,6 +2265,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         break;
                     }
                 }
+                
                 Session newSession = new Session(user, IPAddress, sessionType);
                 sessions.put(newSession.getToken(), newSession);
                 cm.putUser(user);
