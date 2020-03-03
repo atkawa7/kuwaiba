@@ -59,11 +59,19 @@ class MxGraph extends PolymerElement {
       } ,
       width: {
         type: String,
-        value: '400px',
+        value: '400px'
       },
       height: {
         type: String,
-        value: '400px',
+        value: '400px'
+      },
+      cellsMovable: {
+        type: Boolean,
+        value: true
+      },
+      cellsEditable: {
+        type: Boolean,
+        value: true
       }
     }
   }
@@ -111,6 +119,9 @@ class MxGraph extends PolymerElement {
           new mxRubberband(this.graph);
           //this.graph.setConnectable(true);
           this.graph.setAllowDanglingEdges(false);
+          
+          mxGraph.prototype.cellsEditable = this.cellsEditable;
+          mxGraph.prototype.cellsMovable = this.cellsMovable;
 
 
           //enable adding and removing control points. 
@@ -172,10 +183,10 @@ class MxGraph extends PolymerElement {
             }           
         });
 
-        //allow editing in edges labels
-        mxGraph.prototype.isCellEditable = function(	cell	){
-          return true;
-        }
+        //allow custom logic when editing in edges labels
+//        mxGraph.prototype.isCellEditable = function(	cell	){
+//          return true;
+//        }
         //Handler for labelChanged events fired when some label was edited.
         var labelChanged = mxGraph.prototype.labelChanged;
             mxGraph.prototype.labelChanged = function (cell, value, evt) {

@@ -34,6 +34,8 @@ public class MxGraph extends Component {
     private static final String PROPERTY_GRID = "grid";
     private static final String PROPERTY_WIDTH = "width";
     private static final String PROPERTY_HEIGHT = "height";
+    private static final String PROPERTY_CELLS_MOVABLE = "cellsMovable";
+    private static final String PROPERTY_CELLS_EDITABLE = "cellsEditable";
     
     private List<MxGraphNode> nodes;
     private List<MxGraphEdge> edges;
@@ -104,6 +106,22 @@ public class MxGraph extends Component {
     public void setFullSize() {
         setWidth("100%");
         setHeight("100%");
+    }
+    
+    public boolean getIsCellEditable() {
+        return getElement().getProperty(PROPERTY_CELLS_EDITABLE,false);
+    }
+        
+    public void setIsCellEditable(boolean prop) {
+        getElement().setProperty(PROPERTY_CELLS_EDITABLE, prop);
+    }
+    
+    public boolean getIsCellMovable() {
+        return getElement().getProperty(PROPERTY_CELLS_MOVABLE,false);
+    }
+        
+    public void setIsCellMovable(boolean prop) {
+        getElement().setProperty(PROPERTY_CELLS_MOVABLE, prop);
     }
     
     public void removeIncompleteEdges() {
