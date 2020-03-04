@@ -1038,7 +1038,6 @@ public class WebserviceBeanImpl implements WebserviceBean {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
-            
             Session newSession = aem.createSession(user, password, sessionType, IPAddress);
             aem.createGeneralActivityLogEntry(user, ActivityLogEntry.ACTIVITY_TYPE_OPEN_SESSION, String.format("Connected from %s", IPAddress));
             return new RemoteSession(newSession.getToken(), newSession.getUser(), sessionType, newSession.getIpAddress());
@@ -6824,7 +6823,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     // </editor-fold>
     
-    //<editor-fold desc="Kuwaiba 2.0" defaultstate="collapsed">
+    //<editor-fold desc="Kuwaiba 2.1" defaultstate="collapsed">
     @Override
     public long getObjectChildrenCount(String className, String oid, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)

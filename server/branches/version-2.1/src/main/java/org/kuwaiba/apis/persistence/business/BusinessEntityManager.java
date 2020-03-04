@@ -1138,13 +1138,13 @@ public interface BusinessEntityManager {
         throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
     //</editor-fold>
     
-    //<editor-fold desc="Kuwaiba 2.0" defaultstate="collapsed">
+    //<editor-fold desc="Kuwaiba 2.1" defaultstate="collapsed">
     /**
      * Get the child count given the parent class name and id.
      * @param className Parent class name
      * @param oid Parent id
      * @return The count of child
-     * @throw InvalidArgumentException If the class name is null
+     * @throws InvalidArgumentException If the class name is null
      */
     public long getObjectChildrenCount(String className, String oid) throws InvalidArgumentException;
     /**
@@ -1154,7 +1154,7 @@ public interface BusinessEntityManager {
      * @param skip Skip index
      * @param limit Max count of child
      * @return Set of children
-     * @throw InvalidArgumentException If the class name is null
+     * @throws InvalidArgumentException If the class name is null
      */
     public List<BusinessObjectLight> getObjectChildren(String className, String oid, long skip, long limit) throws InvalidArgumentException;
     //</editor-fold>
