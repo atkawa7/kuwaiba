@@ -1137,4 +1137,25 @@ public interface BusinessEntityManager {
     public BusinessObjectLight getWarehouseToObject(String objectClassName, String objectId) 
         throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
     //</editor-fold>
+    
+    //<editor-fold desc="Kuwaiba 2.1" defaultstate="collapsed">
+    /**
+     * Get the child count given the parent class name and id.
+     * @param className Parent class name
+     * @param oid Parent id
+     * @return The count of child
+     * @throws InvalidArgumentException If the class name is null
+     */
+    public long getObjectChildrenCount(String className, String oid) throws InvalidArgumentException;
+    /**
+     * Get a set of children to the given the parent class name and id.
+     * @param className Parent class name
+     * @param oid Parent id
+     * @param skip Skip index
+     * @param limit Max count of child
+     * @return Set of children
+     * @throws InvalidArgumentException If the class name is null
+     */
+    public List<BusinessObjectLight> getObjectChildren(String className, String oid, long skip, long limit) throws InvalidArgumentException;
+    //</editor-fold>
 }

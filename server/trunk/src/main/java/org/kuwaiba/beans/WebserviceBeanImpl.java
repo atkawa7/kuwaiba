@@ -1899,7 +1899,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(e.getMessage());
         }
     }
-
+    
     @Override
     public String[] createPhysicalConnections(String[] aObjectClass, String[] aObjectId,
             String[] bObjectClass, String[] bObjectId, String name, String connectionClass, 
@@ -6822,4 +6822,29 @@ public class WebserviceBeanImpl implements WebserviceBean {
         return e2eMap;
     }
     // </editor-fold>
+    
+    //<editor-fold desc="Kuwaiba 2.1" defaultstate="collapsed">
+    @Override
+    public long getObjectChildrenCount(String className, String oid, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getObjectChildrenCount", ipAddress, sessionId);
+            return bem.getObjectChildrenCount(className, oid);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    @Override
+    public List<RemoteObjectLight> getObjectChildren(String className, String oid, long skip, long limit, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getObjectChildren", ipAddress, sessionId);
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectChildren(className, oid, skip, limit));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }        
+    }
+    //</editor-fold>
         }
