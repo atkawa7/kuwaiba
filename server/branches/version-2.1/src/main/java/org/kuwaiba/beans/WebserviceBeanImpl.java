@@ -6826,12 +6826,12 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     //<editor-fold desc="Kuwaiba 2.0" defaultstate="collapsed">
     @Override
-    public long getObjectChildCount(String className, String oid, String ipAddress, String sessionId) throws ServerSideException {
+    public long getObjectChildrenCount(String className, String oid, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
-            aem.validateWebServiceCall("getObjectChildCount", ipAddress, sessionId);
-            return bem.getObjectChildCount(className, oid);
+            aem.validateWebServiceCall("getObjectChildrenCount", ipAddress, sessionId);
+            return bem.getObjectChildrenCount(className, oid);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

@@ -105,7 +105,7 @@ public class NavigationTreeComponent extends AbstractTopComponent {
                 if (parent != null) {
                     RemoteObjectLight object = parent.getObject();
                     try {
-                        return (int) webserviceBean.getObjectChildCount(object.getClassName(), object.getId(), remoteSession.getIpAddress(), remoteSession.getSessionId());
+                        return (int) webserviceBean.getObjectChildrenCount(object.getClassName(), object.getId(), remoteSession.getIpAddress(), remoteSession.getSessionId());
                     } catch (ServerSideException ex) {
                         Notification.show(ex.getMessage());
                         return 0;

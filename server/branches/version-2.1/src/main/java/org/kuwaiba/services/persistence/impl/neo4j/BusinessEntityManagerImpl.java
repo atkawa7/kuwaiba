@@ -3560,7 +3560,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     //<editor-fold desc="Kuwaiba 2.0" defaultstate="collapsed">
     @Override
-    public long getObjectChildCount(String className, String oid) throws InvalidArgumentException {
+    public long getObjectChildrenCount(String className, String oid) throws InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             if (className == null)
                 throw new InvalidArgumentException("The className cannot be null");

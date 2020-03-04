@@ -701,7 +701,7 @@ public interface WebserviceBean {
     //</editor-fold>
     
     //<editor-fold desc="Kuwaiba 2.1" defaultstate="collapsed">
-    public long getObjectChildCount(String className, String oid, String ipAddress, String sessionId) throws ServerSideException;
+    public long getObjectChildrenCount(String className, String oid, String ipAddress, String sessionId) throws ServerSideException;
     
     public List<RemoteObjectLight> getObjectChildren(String className, String oid, long skip, long limit, String ipAddress, String sessionId) throws ServerSideException;
     //</editor-fold>

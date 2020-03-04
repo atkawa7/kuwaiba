@@ -1146,7 +1146,7 @@ public interface BusinessEntityManager {
      * @return The count of child
      * @throw InvalidArgumentException If the class name is null
      */
-    public long getObjectChildCount(String className, String oid) throws InvalidArgumentException;
+    public long getObjectChildrenCount(String className, String oid) throws InvalidArgumentException;
     /**
      * Get a set of children to the given the parent class name and id.
      * @param className Parent class name
