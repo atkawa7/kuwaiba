@@ -1899,7 +1899,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(e.getMessage());
         }
     }
-    
+
     @Override
     public String[] createPhysicalConnections(String[] aObjectClass, String[] aObjectId,
             String[] bObjectClass, String[] bObjectId, String name, String connectionClass, 
