@@ -16,6 +16,7 @@
 package org.kuwaiba.web.modules.servmanager.views;
 
 //import com.vaadin.server.Page;
+
 //import com.vaadin.shared.MouseEventDetails;
 //import com.vaadin.shared.ui.ContentMode;
 //import com.vaadin.ui.Alignment;

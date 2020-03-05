@@ -2623,8 +2623,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             environmentParameters.setVariable("classLabel", classLabel); //NOI18N
             environmentParameters.setVariable("defaultReports", defaultReports); //NOI18N
             
-//            environmentParameters.setVariable("sceneExporter", SceneExporter.getInstance(/*this, mem*/));
-            
             //To keep backwards compatibility
             environmentParameters.setVariable("objectClassName", objectClassName); //NOI18N
             environmentParameters.setVariable("objectId", objectId); //NOI18N
@@ -3028,11 +3026,30 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                             if (attributes.get(attributeName).isEmpty())
                                 throw new InvalidArgumentException(String.format("The attribute %s is mandatory, it can not be null or empty", attributeName));
                         }
-                        if (classMetadata.getAttribute(attributeName).isUnique()){
-                            if(isObjectAttributeUnique(classMetadata.getName(), attributeName, attributes.get(attributeName)))
-                                instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName), classMetadata.getType(attributeName)));
+                        if (classMetadata.getAttribute(attributeName).isUnique()) {
+                            //
+                            BusinessObject businessObject = createObjectFromNode(instance);
+                            boolean updateUniqueAttrCache = false;
+                            if (businessObject.getAttributes().containsKey(attributeName) && 
+                                businessObject.getAttributes().get(attributeName) != null) {
+                                updateUniqueAttrCache = true;
+                            }
+                            if (updateUniqueAttrCache && 
+                                !businessObject.getAttributes().get(attributeName).equals(attributes.get(attributeName))) {
+                                updateUniqueAttrCache = true;
+                            }
                             else
-                                throw new InvalidArgumentException(String.format("The attribute \"%s\" is unique and the value you are trying to set is already in use", attributeName));
+                                updateUniqueAttrCache = false;
+                            if (businessObject.getAttributes().get(attributeName) == null)
+                                updateUniqueAttrCache = true;
+                            //
+                            if (updateUniqueAttrCache) {
+                                if(isObjectAttributeUnique(classMetadata.getName(), attributeName, attributes.get(attributeName))) {
+                                    instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName), classMetadata.getType(attributeName)));
+                                    CacheManager.getInstance().removeUniqueAttributeValue(businessObject.getClassName(), attributeName, businessObject.getAttributes().get(attributeName));
+                                } else
+                                    throw new InvalidArgumentException(String.format("The attribute \"%s\" is unique and the value you are trying to set is already in use", classMetadata.getAttribute(attributeName).getDisplayName() != null ? classMetadata.getAttribute(attributeName).getDisplayName() : attributeName));
+                            }
                         }
                         else
                             instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName), classMetadata.getType(attributeName)));
@@ -3092,19 +3109,37 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * @return The cloned node
      */
     private Node copyObject(Node templateObject, boolean recursive) {
-        
         Node newInstance = graphDb.createNode(inventoryObjectLabel);
-        for (String property : templateObject.getPropertyKeys())
-            newInstance.setProperty(property, templateObject.getProperty(property));
-        for (Relationship rel : templateObject.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING))
-            newInstance.createRelationshipTo(rel.getEndNode(), RelTypes.RELATED_TO).setProperty(Constants.PROPERTY_NAME, rel.getProperty(Constants.PROPERTY_NAME));
+         // Make sure the object has a name, even if it's marked as no copy. Remember that all inventory object nodes 
+         //must at least have the properties name, creationDate and _uuid. The latter are also set below too.
+        newInstance.setProperty(Constants.PROPERTY_NAME, "");
+        
+        // Let's find out what attributes should not be copied because they're either marked as unique or noCopy
+        ClassMetadata classMetadata = CacheManager.getInstance().
+                getClass((String)templateObject.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING)
+                        .getEndNode()
+                        .getProperty(Constants.PROPERTY_NAME));
+        
+        // First copy normal attributes
+        for (String property : templateObject.getPropertyKeys()) {
+            AttributeMetadata currentAttribute = classMetadata.getAttribute(property);
+            if (currentAttribute != null && !currentAttribute.isUnique() && !currentAttribute.isNoCopy())
+                newInstance.setProperty(property, templateObject.getProperty(property));
+        }
+        
+        // Then list types
+        for (Relationship rel : templateObject.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING)) {
+            AttributeMetadata currentAttribute = classMetadata.getAttribute((String)rel.getProperty(Constants.PROPERTY_NAME));
+            if (currentAttribute != null && !currentAttribute.isNoCopy()) // We don't check for uniqueness, because list types can not be set as unique
+                newInstance.createRelationshipTo(rel.getEndNode(), RelTypes.RELATED_TO).setProperty(Constants.PROPERTY_NAME, rel.getProperty(Constants.PROPERTY_NAME));
+        }
         
         newInstance.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
         newInstance.setProperty(Constants.PROPERTY_UUID, UUID.randomUUID().toString());
         
         newInstance.createRelationshipTo(templateObject.getRelationships(RelTypes.INSTANCE_OF).iterator().next().getEndNode(), RelTypes.INSTANCE_OF);
 
-        if (recursive){
+        if (recursive) {
             for (Relationship rel : templateObject.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING)){
                 Node newChild = copyObject(rel.getStartNode(), true);
                 newChild.createRelationshipTo(newInstance, RelTypes.CHILD_OF);
@@ -3557,7 +3592,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     private boolean canDeleteObject(Node instance) {
         return !instance.hasRelationship(RelTypes.RELATED_TO_SPECIAL, RelTypes.HAS_PROCESS_INSTANCE);        
     }
-    //<editor-fold desc="Kuwaiba 2.0" defaultstate="collapsed">
+    
+    //<editor-fold desc="Kuwaiba 2.1" defaultstate="collapsed">
     @Override
     public long getObjectChildrenCount(String className, String oid) throws InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
