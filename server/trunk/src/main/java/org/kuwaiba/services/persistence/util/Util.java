@@ -673,7 +673,7 @@ public class Util {
         if(!syncDataSourceConfigNode.hasRelationship(RelTypes.HAS_CONFIGURATION))
             throw new UnsupportedPropertyException(String.format("The sync configuration with id %s is malformed. its not related with a inventory object", syncDataSourceConfigNode.getId()));
         
-        Node inventoryObjectNode = syncDataSourceConfigNode.getSingleRelationship(RelTypes.HAS_CONFIGURATION, Direction.OUTGOING).getEndNode();
+        Node inventoryObjectNode = syncDataSourceConfigNode.getSingleRelationship(RelTypes.HAS_CONFIGURATION, Direction.INCOMING).getStartNode();
 
         HashMap<String, String> parameters = new HashMap<>();
         String configName = "";

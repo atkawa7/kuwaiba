@@ -198,6 +198,10 @@ public class Constants {
      */
     public static final String LABEL_ATTACHMENTS = "attachments";
     /**
+     * Label used for the metadata classes nodes label
+     */
+    public static final String LABEL_SYNCDSCONFIG = "syncDatasourceConfiguration"; //NOI18N
+    /**
      * Property "background path" for views
      */
     public static final String PROPERTY_BACKGROUND_FILE_NAME = "backgroundPath";

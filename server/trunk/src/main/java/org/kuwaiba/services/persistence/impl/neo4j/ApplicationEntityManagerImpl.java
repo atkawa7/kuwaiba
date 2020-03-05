@@ -3864,7 +3864,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                    throw new UnsupportedPropertyException(String.format("The object %s (%s) does not have a sync datasource configuration", 
                            inventoryObjectNode.getProperty(Constants.PROPERTY_NAME), objectId));
                 
-                syncDatasourceConfiguration = inventoryObjectNode.getSingleRelationship(RelTypes.HAS_CONFIGURATION, Direction.INCOMING).getStartNode();
+                syncDatasourceConfiguration = inventoryObjectNode.getSingleRelationship(RelTypes.HAS_CONFIGURATION, Direction.OUTGOING).getEndNode();
                 if(syncDatasourceConfiguration == null)
                     throw new ApplicationObjectNotFoundException(String.format("The object with id %s has a malformed data source configuration related", objectId));
             }
@@ -3975,7 +3975,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if(objectNode.hasRelationship(Direction.OUTGOING, RelTypes.HAS_CONFIGURATION))
                 throw new OperationNotPermittedException(String.format("The object id %s already has a sync datasource configuration", objectId));
             
-            Node syncDataSourceConfigNode =  graphDb.createNode();
+            Node syncDataSourceConfigNode =  graphDb.createNode(Label.label(Constants.LABEL_SYNCDSCONFIG));
             syncDataSourceConfigNode.setProperty(Constants.PROPERTY_NAME, configName);
             
             for (StringPair parameter : parameters) {
@@ -3985,7 +3985,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     throw new InvalidArgumentException(String.format("Parameter %s in configuration %s is duplicated", configName, parameter.getKey()));
             }
             
-            syncDataSourceConfigNode.createRelationshipTo(objectNode, RelTypes.HAS_CONFIGURATION);
+            objectNode.createRelationshipTo(syncDataSourceConfigNode, RelTypes.HAS_CONFIGURATION);
             syncDataSourceConfigNode.createRelationshipTo(syncGroupNode, RelTypes.BELONGS_TO_GROUP);
             
             tx.success();
@@ -4018,7 +4018,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             List<Relationship> relationshipsToDelete = new ArrayList();
            
-            for (Relationship relationship : syncDataSourceConfigNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_CONFIGURATION)) 
+            for (Relationship relationship : syncDataSourceConfigNode.getRelationships(Direction.INCOMING, RelTypes.HAS_CONFIGURATION)) 
                 relationshipsToDelete.add(relationship);
             
             for (Relationship relationship : syncDataSourceConfigNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP)) 
