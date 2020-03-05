@@ -3575,7 +3575,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             }
             attachmentNode.delete();
         }
-        
+        //Now the SyncsDataSourceConfiguration Related to the object
+        for (Relationship rel : instance.getRelationships(RelTypes.HAS_CONFIGURATION)){
+            rel.getStartNode().delete();
+            rel.delete();
+        }
         //Remove the remaining relationships without deleting the other end of the relationship, 
         //because we don't know what's there (a list type, another element of the model that should not be delete along, etc)
         for (Relationship rel : instance.getRelationships())
