@@ -104,6 +104,10 @@ public class Constants {
      */
     public static final String CLASS_GENERICDISTRIBUTIONFRAME = "GenericDistributionFrame";
     /**
+     * Root class of all generic distribution frame (DDF, ODF, etc)
+     */
+    public static final String CLASS_GENERICBOX = "GenericBox";
+    /**
      * Root class of all application list type (CustomShape)
      */
     public static final String CLASS_GENERICAPPLICATIONLISTTYPE = "GenericApplicationListType";
