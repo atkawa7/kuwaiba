@@ -8463,7 +8463,7 @@ public class KuwaibaService {
                 if (ex instanceof ServerSideException)
                     throw ex;
                 else {
-                    System.out.println("[KUWAIBA] An unexpected error occurred in moveSyncDataSourceConfiguration: " + ex.getMessage());
+                    System.out.println("[KUWAIBA] An unexpected error occurred in moveSyncDataSourceConfiguration: " + ex.getLocalizedMessage());
                     throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
                 }
             }
