@@ -1,0 +1,8 @@
+/home/lulita/workspace/java/KuwaibaServer/branches/version-2.1-spring/core/persistence/reference-implementation/src/main/java/org/neotropic/kuwaiba/persistence/reference/neo4j/ConnectionManagerImpl.java
+/home/lulita/workspace/java/KuwaibaServer/branches/version-2.1-spring/core/persistence/reference-implementation/src/main/java/org/neotropic/kuwaiba/persistence/reference/neo4j/CypherQueryBuilder.java
+/home/lulita/workspace/java/KuwaibaServer/branches/version-2.1-spring/core/persistence/reference-implementation/src/main/java/org/neotropic/kuwaiba/persistence/reference/neo4j/RelTypes.java
+/home/lulita/workspace/java/KuwaibaServer/branches/version-2.1-spring/core/persistence/reference-implementation/src/main/java/org/neotropic/kuwaiba/persistence/reference/neo4j/MetadataEntityManagerImpl.java
+/home/lulita/workspace/java/KuwaibaServer/branches/version-2.1-spring/core/persistence/reference-implementation/src/main/java/org/neotropic/kuwaiba/persistence/reference/neo4j/ApplicationEntityManagerImpl.java
+/home/lulita/workspace/java/KuwaibaServer/branches/version-2.1-spring/core/persistence/reference-implementation/src/main/java/org/neotropic/kuwaiba/persistence/reference/extras/processman/KpiManagerService.java
+/home/lulita/workspace/java/KuwaibaServer/branches/version-2.1-spring/core/persistence/reference-implementation/src/main/java/org/neotropic/kuwaiba/persistence/reference/neo4j/BusinessEntityManagerImpl.java
+/home/lulita/workspace/java/KuwaibaServer/branches/version-2.1-spring/core/persistence/reference-implementation/src/main/java/org/neotropic/kuwaiba/persistence/reference/neo4j/CypherParser.java
