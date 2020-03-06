@@ -3577,10 +3577,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         }
         
         //Now the SyncsDataSourceConfiguration Related to the object
-        for (Relationship rel : instance.getRelationships(RelTypes.HAS_CONFIGURATION)) {
-            Node configNode = rel.getEndNode();
-            rel.delete();
-            configNode.delete();
+        for (Relationship rel : instance.getRelationships(RelTypes.HAS_CONFIGURATION)){
+            Node endNode = rel.getEndNode();
+            for (Relationship relds : endNode.getRelationships())
+                relds.delete();
+            endNode.delete();
         }
         
         //Remove the remaining relationships without deleting the other end of the relationship, 
