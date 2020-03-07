@@ -738,6 +738,21 @@ public interface BusinessEntityManager {
         throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
     
     /**
+     * Returns the specified special relationships of a given object as a hashmap whose keys are
+     * the names of the relationships and the values the list of related objects. If no filter (attributeNames) is provided, all special attributes 
+     * (relationships) will be returned
+     * @param className Object class
+     * @param objectId Object Id
+     * @param attributeNames The list of special attributes (relationships) to be fetched. if none provided, the method will return all of them.
+     * @return The hash map with the existing special relationships and the associated objects
+     * @throws MetadataObjectNotFoundException If the class provided does not exist
+     * @throws BusinessObjectNotFoundException if the object does not exist
+     * @throws InvalidArgumentException If the object id is null
+     */
+    public HashMap<String,List<BusinessObjectLight>> getSpecialAttributes (String className, String objectId, String... attributeNames) 
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
+    
+    /**
      * Checks if an object has a given number of standard relationships with another object
      * @param objectClass Object class
      * @param objectId Object id
@@ -802,18 +817,7 @@ public interface BusinessEntityManager {
      */
     public List<BusinessObjectLight> getPhysicalPath(String objectClass, String objectId) 
         throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
-    
-    /**
-     * Convenience method that returns the link connected to a port (if any). It serves to avoid calling {@link getSpecialAttribute} two times.
-     * @param portClassName The class of the port
-     * @param portId The id of the port
-     * @return The link connected to the port or null if there isn't any
-     * @throws BusinessObjectNotFoundException If the port could not be found
-     * @throws MetadataObjectNotFoundException If the class provided does not exist
-     * @throws InvalidArgumentException If The class provided is not a subclass of GenericPort
-     */
-    public BusinessObject getLinkConnectedToPort(String portClassName, String portId) 
-            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
+
     
     //Attachments management
     /**
