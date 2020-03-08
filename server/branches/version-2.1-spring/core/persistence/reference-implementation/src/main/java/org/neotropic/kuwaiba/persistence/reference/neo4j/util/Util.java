@@ -16,6 +16,7 @@
 
 package org.neotropic.kuwaiba.persistence.reference.neo4j.util;
 
+import com.neotropic.kuwaiba.core.persistence.PersistenceService;
 import com.neotropic.kuwaiba.core.persistence.application.GroupProfile;
 import com.neotropic.kuwaiba.core.persistence.application.GroupProfileLight;
 import com.neotropic.kuwaiba.core.persistence.application.Pool;
@@ -346,12 +347,12 @@ public class Util {
         return attribute;
     }
     
-    public static RemotePool createRemotePoolFromNode(Node instance) throws InvalidArgumentException {
+    public static Pool createRemotePoolFromNode(Node instance) throws InvalidArgumentException {
         String instanceUuid = instance.hasProperty(Constants.PROPERTY_UUID) ? (String) instance.getProperty(Constants.PROPERTY_UUID) : null;
         if (instanceUuid == null)
             throw new InvalidArgumentException(String.format("The pool with id %s does not have uuid", instance.getId()));
                                 
-        return new RemotePool(instanceUuid, 
+        return new Pool(instanceUuid, 
                 (String)instance.getProperty(Constants.PROPERTY_NAME), 
                 (String)instance.getProperty(Constants.PROPERTY_DESCRIPTION),
                 (String)instance.getProperty(Constants.PROPERTY_CLASS_NAME), 

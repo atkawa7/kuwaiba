@@ -14,12 +14,12 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.services.persistence.impl.neo4j;
+package org.neotropic.kuwaiba.persistence.reference.neo4j;
 
+import com.neotropic.kuwaiba.core.persistence.application.ExtendedQuery;
+import com.neotropic.kuwaiba.core.persistence.util.Constants;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import org.kuwaiba.apis.persistence.application.ExtendedQuery;
-import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * Cypher parser

@@ -19,8 +19,8 @@ package com.neotropic.kuwaiba.core.persistence.business;
 import com.neotropic.kuwaiba.core.persistence.ChangeDescriptor;
 import com.neotropic.kuwaiba.core.persistence.application.FileObjectLight;
 import com.neotropic.kuwaiba.core.persistence.application.Pool;
-import com.neotropic.kuwaiba.core.persistence.application.reporting.Report;
-import com.neotropic.kuwaiba.core.persistence.application.reporting.ReportLight;
+import com.neotropic.kuwaiba.core.persistence.application.reporting.ReportMetadata;
+import com.neotropic.kuwaiba.core.persistence.application.reporting.ReportMetadataLight;
 import com.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException;
 import com.neotropic.kuwaiba.core.persistence.exceptions.ArraySizeMismatchException;
 import com.neotropic.kuwaiba.core.persistence.exceptions.BusinessObjectNotFoundException;
@@ -336,19 +336,6 @@ public interface BusinessEntityManager {
      */
     public BusinessObjectLight getFirstParentOfClass(String objectClassName, String oid, String objectToMatchClassName)
         throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
-
-    /**
-     * Gets the first parent of an object which matches the given class in the containment hierarchy
-     * @param objectClass Object class
-     * @param oid Object id
-     * @param parentClass Parent class
-     * @return The nearest parent of the provided class. Null if none found.
-     * @throws BusinessObjectNotFoundException If any of the requested objects can't be found
-     * @throws MetadataObjectNotFoundException If any of the class nodes involved is malformed
-     * @throws InvalidArgumentException If the database object could not be properly mapped into a serializable java object.
-     */
-    public BusinessObject getParentOfClass(String objectClass, String oid, String parentClass)
-            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
     
     /**
      * Checks recursively if it's safe to delete a single object
@@ -725,19 +712,6 @@ public interface BusinessEntityManager {
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
     
     /**
-     * Returns all the special relationships of a given object as a hashmap whose keys are
-     * the names of the relationships and the values the list of related objects
-     * @param className Object class
-     * @param objectId Object Id
-     * @return The hash map with the existing special relationships and the associated objects
-     * @throws MetadataObjectNotFoundException If the class provided does not exist
-     * @throws BusinessObjectNotFoundException if the object does not exist
-     * @throws InvalidArgumentException If the object id is null
-     */
-    public HashMap<String,List<BusinessObjectLight>> getSpecialAttributes (String className, String objectId) 
-        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
-    
-    /**
      * Returns the specified special relationships of a given object as a hashmap whose keys are
      * the names of the relationships and the values the list of related objects. If no filter (attributeNames) is provided, all special attributes 
      * (relationships) will be returned
@@ -1006,7 +980,7 @@ public interface BusinessEntityManager {
      * Creates a class level report (a report that will be available for all instances of a given class -and its subclasses-)
      * @param className Class this report is going to be related to. It can be ab abstract class and the report will be available for all its subclasses
      * @param reportName Name of the report.
-     * @param reportDescription Report description.
+     * @param reportDescription ReportMetadata description.
      * @param script Script text.
      * @param outputType What will be the default output of this report? See RemoteReportLight for possible values
      * @param enabled If enabled, a report can be executed.
@@ -1019,7 +993,7 @@ public interface BusinessEntityManager {
     /**
      * Creates an inventory level report (a report that is not tied to a particlar instance or class. In most cases, they also receive parameters)
      * @param reportName Name of the report.
-     * @param reportDescription Report description.
+     * @param reportDescription ReportMetadata description.
      * @param script Script text.
      * @param outputType What will be the default output of this report? See InventoryLevelReportDescriptor for possible values
      * @param enabled If enabled, a report can be executed.
@@ -1074,14 +1048,14 @@ public interface BusinessEntityManager {
      * @return The list of reports.
      * @throws MetadataObjectNotFoundException If the class could not be found
      */
-    public List<ReportLight> getClassLevelReports(String className, boolean recursive, boolean includeDisabled) throws MetadataObjectNotFoundException;
+    public List<ReportMetadataLight> getClassLevelReports(String className, boolean recursive, boolean includeDisabled) throws MetadataObjectNotFoundException;
     /**
      * Gets the inventory class reports.
      * @param includeDisabled True to also include the reports marked as disabled. False to return only the enabled ones.
      * @return The list of reports.
      * @throws ApplicationObjectNotFoundException f the dummy root could not be found, which is actually a severe problem.
      */
-    public List<ReportLight> getInventoryLevelReports(boolean includeDisabled) throws ApplicationObjectNotFoundException;
+    public List<ReportMetadataLight> getInventoryLevelReports(boolean includeDisabled) throws ApplicationObjectNotFoundException;
     
     /**
      * Gets the information related to a class level report.
@@ -1089,7 +1063,7 @@ public interface BusinessEntityManager {
      * @return  The report.
      * @throws ApplicationObjectNotFoundException If the report could not be found.
      */
-    public Report getReport(long reportId) throws ApplicationObjectNotFoundException;
+    public ReportMetadata getReport(long reportId) throws ApplicationObjectNotFoundException;
     
     /**
      * Executes a class level report and returns the result.

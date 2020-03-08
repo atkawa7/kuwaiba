@@ -15,11 +15,11 @@
 
 package org.neotropic.kuwaiba.persistence.reference.util;
 
+import com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 
 /**
  * Implements the <code>mirror(a, b)</code> function, that generates pairs of ports numbered from <code>a</code> to <code>b</code>.

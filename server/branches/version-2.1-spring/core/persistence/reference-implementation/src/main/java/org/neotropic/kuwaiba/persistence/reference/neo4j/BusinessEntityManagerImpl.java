@@ -14,13 +14,19 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.services.persistence.impl.neo4j;
+package org.neotropic.kuwaiba.persistence.reference.neo4j;
 
 import com.neotropic.kuwaiba.core.persistence.ChangeDescriptor;
 import com.neotropic.kuwaiba.core.persistence.ConnectionManager;
 import com.neotropic.kuwaiba.core.persistence.application.ApplicationEntityManager;
 import com.neotropic.kuwaiba.core.persistence.application.FileObject;
 import com.neotropic.kuwaiba.core.persistence.application.FileObjectLight;
+import com.neotropic.kuwaiba.core.persistence.application.Pool;
+import com.neotropic.kuwaiba.core.persistence.application.Validator;
+import com.neotropic.kuwaiba.core.persistence.application.ValidatorDefinition;
+import com.neotropic.kuwaiba.core.persistence.application.reporting.InventoryReport;
+import com.neotropic.kuwaiba.core.persistence.application.reporting.ReportMetadata;
+import com.neotropic.kuwaiba.core.persistence.application.reporting.ReportMetadataLight;
 import com.neotropic.kuwaiba.core.persistence.business.AnnotatedBusinessObjectLight;
 import com.neotropic.kuwaiba.core.persistence.business.BusinessEntityManager;
 import com.neotropic.kuwaiba.core.persistence.business.BusinessObject;
@@ -35,6 +41,7 @@ import com.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundE
 import com.neotropic.kuwaiba.core.persistence.exceptions.OperationNotPermittedException;
 import com.neotropic.kuwaiba.core.persistence.metadata.AttributeMetadata;
 import com.neotropic.kuwaiba.core.persistence.metadata.ClassMetadata;
+import com.neotropic.kuwaiba.core.persistence.metadata.ClassMetadataLight;
 import com.neotropic.kuwaiba.core.persistence.metadata.MetadataEntityManager;
 import com.neotropic.kuwaiba.core.persistence.util.Constants;
 import com.neotropic.kuwaiba.core.persistence.util.StringPair;
@@ -2273,7 +2280,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             newReport.setProperty(Constants.PROPERTY_NAME, reportName == null ? "" : reportName);
             newReport.setProperty(Constants.PROPERTY_DESCRIPTION, reportDescription == null ? "" : reportDescription);
             newReport.setProperty(Constants.PROPERTY_SCRIPT, script == null ? "" : script);
-            newReport.setProperty(Constants.PROPERTY_TYPE, Math.abs(outputType) > 4 ? RemoteReportLight.TYPE_HTML : outputType);
+            newReport.setProperty(Constants.PROPERTY_TYPE, Math.abs(outputType) > 4 ? ReportMetadataLight.TYPE_HTML : outputType);
             newReport.setProperty(Constants.PROPERTY_ENABLED, enabled);
             
             classNode.createRelationshipTo(newReport, RelTypes.HAS_REPORT);
@@ -2297,7 +2304,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             newReport.setProperty(Constants.PROPERTY_NAME, reportName == null ? "" : reportName);
             newReport.setProperty(Constants.PROPERTY_DESCRIPTION, reportDescription == null ? "" : reportDescription);
             newReport.setProperty(Constants.PROPERTY_SCRIPT, script == null ? "" : script);
-            newReport.setProperty(Constants.PROPERTY_TYPE, Math.abs(outputType) > 4 ? RemoteReportLight.TYPE_HTML : outputType);
+            newReport.setProperty(Constants.PROPERTY_TYPE, Math.abs(outputType) > 4 ? ReportMetadataLight.TYPE_HTML : outputType);
             newReport.setProperty(Constants.PROPERTY_ENABLED, enabled);
             
             if (parameters != null) {
@@ -2432,11 +2439,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public List<RemoteReportLight> getClassLevelReports(String className, boolean recursive, boolean includeDisabled) throws MetadataObjectNotFoundException {
+    public List<ReportMetadataLight> getClassLevelReports(String className, boolean recursive, boolean includeDisabled) throws MetadataObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             
             Node mainClassNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
-            List<RemoteReportLight> remoteReports = new ArrayList<>();
+            List<ReportMetadataLight> remoteReports = new ArrayList<>();
             
             if (mainClassNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
@@ -2445,7 +2452,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 Node classNode = mainClassNode;
                 do {
                     for (Relationship hasReportRelationship : classNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_REPORT)) 
-                        remoteReports.add(new RemoteReportLight(hasReportRelationship.getEndNode().getId(), 
+                        remoteReports.add(new ReportMetadataLight(hasReportRelationship.getEndNode().getId(), 
                                                             (String)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_NAME), 
                                                             (String)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_DESCRIPTION), 
                                                             (boolean)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_ENABLED),
@@ -2459,7 +2466,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             }
             else {
                 for (Relationship hasReportRelationship : mainClassNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_REPORT)) 
-                    remoteReports.add(new RemoteReportLight(hasReportRelationship.getEndNode().getId(), 
+                    remoteReports.add(new ReportMetadataLight(hasReportRelationship.getEndNode().getId(), 
                                                         (String)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_NAME), 
                                                         (String)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_DESCRIPTION), 
                                                         (boolean)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_ENABLED),
@@ -2471,7 +2478,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public List<RemoteReportLight> getInventoryLevelReports(boolean includeDisabled) throws ApplicationObjectNotFoundException {
+    public List<ReportMetadataLight> getInventoryLevelReports(boolean includeDisabled) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             
             Node dummyRootNode = graphDb.findNode(specialNodeLabel, Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
@@ -2479,11 +2486,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             if (dummyRootNode == null)
                 throw new ApplicationObjectNotFoundException("Dummy Root could not be found");
             
-            List<RemoteReportLight> remoteReports = new ArrayList<>();
+            List<ReportMetadataLight> remoteReports = new ArrayList<>();
             
             for (Relationship hasReportRelationship : dummyRootNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_REPORT)) {
                 if (includeDisabled || (boolean)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_ENABLED))
-                    remoteReports.add(new RemoteReportLight(hasReportRelationship.getEndNode().getId(), 
+                    remoteReports.add(new ReportMetadataLight(hasReportRelationship.getEndNode().getId(), 
                                                         (String)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_NAME), 
                                                         (String)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_DESCRIPTION), 
                                                         (boolean)hasReportRelationship.getEndNode().getProperty(Constants.PROPERTY_ENABLED),
@@ -2497,7 +2504,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public RemoteReport getReport(long reportId) throws ApplicationObjectNotFoundException {
+    public ReportMetadata getReport(long reportId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             
             Node reportNode = Util.findNodeByLabelAndId(reportsLabel, reportId);
@@ -2511,7 +2518,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     parameters.add(new StringPair(property.replace("PARAM_", ""), (String)reportNode.getProperty(property)));
             }
                 
-            return new RemoteReport(reportNode.getId(), (String)reportNode.getProperty(Constants.PROPERTY_NAME), 
+            return new ReportMetadata(reportNode.getId(), (String)reportNode.getProperty(Constants.PROPERTY_NAME), 
                                     (String)reportNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
                                     (boolean)reportNode.getProperty(Constants.PROPERTY_ENABLED),
                                     (int)reportNode.getProperty(Constants.PROPERTY_TYPE),
@@ -2538,7 +2545,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             environmentParameters.setVariable("graphDb", graphDb); //NOI18N
             environmentParameters.setVariable("inventoryObjectLabel", inventoryObjectLabel);            
             environmentParameters.setVariable("classLabel", classLabel); //NOI18N
-            environmentParameters.setVariable("defaultReports", defaultReports); //NOI18N
             
             //To keep backwards compatibility
             environmentParameters.setVariable("objectClassName", objectClassName); //NOI18N
@@ -2582,7 +2588,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             environmentParameters.setVariable("graphDb", graphDb); //NOI18N
             environmentParameters.setVariable("inventoryObjectLabel", inventoryObjectLabel); //NOI18N
             environmentParameters.setVariable("classLabel", classLabel); //NOI18N
-            environmentParameters.setVariable("defaultReports", defaultReports); //NOI18N
             
             try {
                 GroovyShell shell = new GroovyShell(BusinessEntityManager.class.getClassLoader(), environmentParameters);
@@ -2604,7 +2609,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     //</editor-fold>
     
     //<editor-fold desc="Pools" defaultstate="collapsed">
-        @Override
+    @Override
     public List<Pool> getRootPools(String className, int type, boolean includeSubclasses) throws InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             List<Pool> pools  = new ArrayList<>();

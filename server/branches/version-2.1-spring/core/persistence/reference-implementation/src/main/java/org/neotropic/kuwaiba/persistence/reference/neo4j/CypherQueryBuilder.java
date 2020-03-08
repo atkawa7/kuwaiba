@@ -27,6 +27,7 @@ import java.util.Map;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
+import org.neotropic.kuwaiba.persistence.reference.neo4j.util.Util;
 
 /**
  * Creates cypher Query

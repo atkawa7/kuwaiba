@@ -13,13 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.services.persistence.impl.neo4j;
+package org.neotropic.kuwaiba.persistence.reference.neo4j;
 
+import com.neotropic.kuwaiba.core.persistence.ConnectionManager;
+import com.neotropic.kuwaiba.core.persistence.exceptions.ConnectionException;
 import java.io.File;
 import java.util.List;
 import java.util.Properties;
-import org.kuwaiba.apis.persistence.exceptions.ConnectionException;
-import org.kuwaiba.apis.persistence.ConnectionManager;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
@@ -29,7 +29,7 @@ import org.neo4j.kernel.configuration.BoltConnector;
  * ConnectionManager reference implementation using Neo4J as DBMS
  * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
-public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseService>{
+public class ConnectionManagerImpl implements ConnectionManager<GraphDatabaseService> {
     /**
      * Default db path
      */

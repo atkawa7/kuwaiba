@@ -13,26 +13,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.services.persistence.impl.neo4j;
+package org.neotropic.kuwaiba.persistence.reference.neo4j;
 
+import com.neotropic.kuwaiba.core.persistence.ChangeDescriptor;
+import com.neotropic.kuwaiba.core.persistence.ConnectionManager;
+import com.neotropic.kuwaiba.core.persistence.exceptions.BusinessObjectNotFoundException;
+import com.neotropic.kuwaiba.core.persistence.exceptions.DatabaseException;
+import com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
+import com.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException;
+import com.neotropic.kuwaiba.core.persistence.metadata.AttributeMetadata;
+import com.neotropic.kuwaiba.core.persistence.metadata.ClassMetadata;
+import com.neotropic.kuwaiba.core.persistence.metadata.ClassMetadataLight;
+import com.neotropic.kuwaiba.core.persistence.metadata.MetadataEntityManager;
+import com.neotropic.kuwaiba.core.persistence.util.Constants;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
-import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
-import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.kuwaiba.apis.persistence.ConnectionManager;
-import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
-import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
-import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
-import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
-import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
-import org.kuwaiba.services.persistence.cache.CacheManager;
-import org.kuwaiba.services.persistence.util.Constants;
-import org.kuwaiba.services.persistence.util.Util;
-import org.kuwaiba.util.ChangeDescriptor;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
@@ -45,9 +43,11 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.helpers.collection.Iterators;
 import org.neo4j.kernel.impl.traversal.MonoDirectionalTraversalDescription;
+import org.neotropic.kuwaiba.persistence.reference.extras.caching.CacheManager;
+import org.neotropic.kuwaiba.persistence.reference.neo4j.util.Util;
 
 /**
- * MetadataEntityManager implementation for neo4j
+ * MetadataEntityManager implementation for Neo4j
  * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class MetadataEntityManagerImpl implements MetadataEntityManager {
