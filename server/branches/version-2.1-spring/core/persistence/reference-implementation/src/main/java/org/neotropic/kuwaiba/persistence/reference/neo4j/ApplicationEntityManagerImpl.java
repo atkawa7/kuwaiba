@@ -97,7 +97,6 @@ import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
 import org.mindrot.jbcrypt.BCrypt;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -112,12 +111,14 @@ import org.neo4j.helpers.collection.Iterators;
 import org.neotropic.kuwaiba.persistence.reference.extras.caching.CacheManager;
 import org.neotropic.kuwaiba.persistence.reference.neo4j.util.Util;
 import org.neotropic.kuwaiba.persistence.reference.util.DynamicNameGenerator;
+import org.springframework.stereotype.Service;
 import scala.collection.convert.Wrappers;
 
 /**
  * Application Entity Manager reference implementation
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
+@Service
 public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     /**
      * Graph db service
@@ -319,7 +320,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             newUserNode.setProperty(Constants.PROPERTY_ENABLED, enabled);
             newUserNode.setProperty(UserProfile.PROPERTY_EMAIL, email);
             
-            Node defaultGroupNode = Util.findNodeByLabelAndId(groupLabel, defaultGroupId);
+            Node defaultGroupNode = Util.findNodeByLabelAndId(graphDb, groupLabel, defaultGroupId);
             
             if (defaultGroupNode != null)
                 newUserNode.createRelationshipTo(defaultGroupNode, RelTypes.BELONGS_TO_GROUP);
@@ -349,7 +350,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             String lastName, int enabled, int type, String email)
             throws InvalidArgumentException, ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
-            Node userNode = Util.findNodeByLabelAndId(userLabel, oid);
+            Node userNode = Util.findNodeByLabelAndId(graphDb, userLabel, oid);
 
             if(userNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Can not find a user with id %s", oid));
@@ -485,7 +486,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public void addUserToGroup(long userId, long groupId) throws InvalidArgumentException, ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
-            Node groupNode = Util.findNodeByLabelAndId(groupLabel, groupId);
+            Node groupNode = Util.findNodeByLabelAndId(graphDb, groupLabel, groupId);
             if (groupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Group with id %s could not be found", groupId));
             
@@ -493,7 +494,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 if (belongsToGroupRelationship.getStartNode().getId() == userId)
                     throw new InvalidArgumentException(String.format("The user with id %s already belongs to group with id %s", userId, groupId));
             }            
-            Node userNode = Util.findNodeByLabelAndId(userLabel, userId);
+            Node userNode = Util.findNodeByLabelAndId(graphDb, userLabel, userId);
             
             if (userNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("User with id %s could not be found", userId));
@@ -507,7 +508,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public void removeUserFromGroup(long userId, long groupId) throws InvalidArgumentException, ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
-            Node groupNode = Util.findNodeByLabelAndId(groupLabel, groupId);
+            Node groupNode = Util.findNodeByLabelAndId(graphDb, groupLabel, groupId);
             
             if (groupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Group with id %s could not be found", groupId));
@@ -534,7 +535,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throw new InvalidArgumentException(String.format("The access level privided is not valid: %s", accessLevel));
             
         try (Transaction tx = graphDb.beginTx()) {
-            Node userNode = Util.findNodeByLabelAndId(userLabel, userId);
+            Node userNode = Util.findNodeByLabelAndId(graphDb, userLabel, userId);
             if (userNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("User with id %s could not be found", userId));
 
@@ -562,7 +563,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throw new InvalidArgumentException(String.format("The provided access level is not valid: %s", accessLevel));
         
         try (Transaction tx = graphDb.beginTx()) {
-            Node groupNode = Util.findNodeByLabelAndId(groupLabel, groupId);
+            Node groupNode = Util.findNodeByLabelAndId(graphDb, groupLabel, groupId);
             if (groupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Group with id %s could not be found", groupId));
 
@@ -586,7 +587,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public void removePrivilegeFromUser(long userId, String featureToken) throws InvalidArgumentException, ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
-            Node userNode = Util.findNodeByLabelAndId(userLabel, userId);
+            Node userNode = Util.findNodeByLabelAndId(graphDb, userLabel, userId);
             if (userNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("User with id %s could not be found", userId));
         
@@ -606,7 +607,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public void removePrivilegeFromGroup(long groupId, String featureToken) throws InvalidArgumentException, ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
-            Node groupNode = Util.findNodeByLabelAndId(groupLabel, groupId);
+            Node groupNode = Util.findNodeByLabelAndId(graphDb, groupLabel, groupId);
             if (groupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Group with id %s could not be found", groupId));
         
@@ -646,7 +647,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
             if (users != null) {
                 for (long userId : users) {
-                    Node userNode = Util.findNodeByLabelAndId(userLabel, userId);
+                    Node userNode = Util.findNodeByLabelAndId(graphDb, userLabel, userId);
                     if(userNode != null)
                         userNode.createRelationshipTo(newGroupNode, RelTypes.BELONGS_TO_GROUP);
                     else {
@@ -695,7 +696,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throws InvalidArgumentException, ApplicationObjectNotFoundException {
         
         try(Transaction tx = graphDb.beginTx()) {
-                Node groupNode = Util.findNodeByLabelAndId(groupLabel, id);
+                Node groupNode = Util.findNodeByLabelAndId(graphDb, groupLabel, id);
             if(groupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Can not find the group with id %s",id));
             
@@ -726,7 +727,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             //TODO watch if there are relationships you can/should not delete
             if(oids != null) {
                 for (long id : oids) {
-                    Node userNode = Util.findNodeByLabelAndId(userLabel, id);
+                    Node userNode = Util.findNodeByLabelAndId(graphDb, userLabel, id);
                     Util.deleteUserNode(userNode);
                 }
             }
@@ -741,7 +742,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if(oids != null) {
                 
                 for (long id : oids) {
-                    Node groupNode = Util.findNodeByLabelAndId(groupLabel, id);
+                    Node groupNode = Util.findNodeByLabelAndId(graphDb, groupLabel, id);
                     if(groupNode == null)
                         throw new ApplicationObjectNotFoundException(String.format("Can not find a group with id %s", id));
                     
@@ -1626,7 +1627,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         try(Transaction tx = graphDb.beginTx()) {
             String affectedProperty = "", oldValue = "", newValue = ""; //NOI18N
             
-            Node gView = Util.findNodeByLabelAndId(generalViewsLabel, oid);
+            Node gView = Util.findNodeByLabelAndId(graphDb, generalViewsLabel, oid);
             if (gView == null)
                 throw new ApplicationObjectNotFoundException(String.format("View with id %s could not be found", oid));
             if (name != null) {
@@ -1669,7 +1670,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public void deleteGeneralViews(long[] ids) throws ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
             for (long id : ids) {
-                Node gView = Util.findNodeByLabelAndId(generalViewsLabel, id);
+                Node gView = Util.findNodeByLabelAndId(graphDb, generalViewsLabel, id);
                 
                 if (gView == null)
                     throw new ApplicationObjectNotFoundException(String.format("View with id %s could not be found", id));
@@ -1772,7 +1773,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public ViewObject getGeneralView(long viewId) throws ApplicationObjectNotFoundException {
         
         try(Transaction tx = graphDb.beginTx()) {
-            Node gView = Util.findNodeByLabelAndId(generalViewsLabel, viewId);
+            Node gView = Util.findNodeByLabelAndId(graphDb, generalViewsLabel, viewId);
 
             if (gView == null)
                 throw new ApplicationObjectNotFoundException(String.format("View Object with id %s could not be found. It might have been deleted already", viewId));
@@ -1812,7 +1813,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             if(ownerOid != -1) {
                 queryNode.setProperty(CompactQuery.PROPERTY_IS_PUBLIC, false);
-                Node userNode = Util.findNodeByLabelAndId(userLabel, ownerOid);
+                Node userNode = Util.findNodeByLabelAndId(graphDb, userLabel, ownerOid);
 
                 if(userNode != null)
                     userNode.createRelationshipTo(queryNode, RelTypes.OWNS_QUERY);
@@ -1832,7 +1833,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public ChangeDescriptor saveQuery(long queryOid, String queryName, long ownerOid,
             byte[] queryStructure, String description) throws ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
-            Node queryNode = Util.findNodeByLabelAndId(queryLabel, queryOid);
+            Node queryNode = Util.findNodeByLabelAndId(graphDb, queryLabel, queryOid);
             
             if(queryNode == null)
                 throw new ApplicationObjectNotFoundException(String.format(
@@ -1858,7 +1859,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 affectedProperties += " " + CompactQuery.PROPERTY_IS_PUBLIC;
                 newValues += " " + "false";
                 
-                Node userNode = Util.findNodeByLabelAndId(userLabel, ownerOid);
+                Node userNode = Util.findNodeByLabelAndId(graphDb, userLabel, ownerOid);
                 if(userNode == null)
                     throw new ApplicationObjectNotFoundException(String.format(
                                 "Can not find the query with id %s", queryOid));
@@ -1883,7 +1884,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public void deleteQuery(long queryOid) throws ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx())
         {
-            Node queryNode = Util.findNodeByLabelAndId(queryLabel, queryOid);
+            Node queryNode = Util.findNodeByLabelAndId(graphDb, queryLabel, queryOid);
             if(queryNode == null)
                 throw new ApplicationObjectNotFoundException(String.format(
                         "Can not find the query with id %1s", queryOid));
@@ -1933,7 +1934,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         CompactQuery cq =  new CompactQuery();
 
         try(Transaction tx = graphDb.beginTx()) {
-            Node queryNode = Util.findNodeByLabelAndId(queryLabel, queryOid);
+            Node queryNode = Util.findNodeByLabelAndId(graphDb, queryLabel, queryOid);
             if (queryNode == null)
                  throw new ApplicationObjectNotFoundException(String.format(
                             "Can not find the query with id %s", queryOid));
@@ -2277,7 +2278,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public List<UserProfile> getUsersInGroup(long groupId) throws ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
-            Node groupNode = Util.findNodeByLabelAndId(groupLabel, groupId);
+            Node groupNode = Util.findNodeByLabelAndId(graphDb, groupLabel, groupId);
             if (groupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Group with id %s could not be found", groupId));
 
@@ -2292,7 +2293,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public List<GroupProfileLight> getGroupsForUser(long userId) throws ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
-            Node userNode = Util.findNodeByLabelAndId(userLabel, userId);
+            Node userNode = Util.findNodeByLabelAndId(graphDb, userLabel, userId);
             if (userNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("User with id %s could not be found", userId));
 
@@ -2419,7 +2420,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throws ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node taskNode = Util.findNodeByLabelAndId(taskLabel, taskId);
+            Node taskNode = Util.findNodeByLabelAndId(graphDb, taskLabel, taskId);
             if (taskNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
             String affectedProperty, oldValue, newValue;
@@ -2451,7 +2452,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public ChangeDescriptor updateTaskParameters(long taskId, List<StringPair> parameters) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node taskNode = Util.findNodeByLabelAndId(taskLabel, taskId);
+            Node taskNode = Util.findNodeByLabelAndId(graphDb, taskLabel, taskId);
             if (taskNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
             String affectedProperties = "", oldValues = "", newValues = "";
@@ -2482,7 +2483,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public ChangeDescriptor updateTaskSchedule(long taskId, TaskScheduleDescriptor schedule) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node taskNode = Util.findNodeByLabelAndId(taskLabel, taskId);
+            Node taskNode = Util.findNodeByLabelAndId(graphDb, taskLabel, taskId);
             if (taskNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
             String affectedProperties = "", oldValues = "", newValues = "";
@@ -2513,7 +2514,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public ChangeDescriptor updateTaskNotificationType(long taskId, TaskNotificationDescriptor notificationType) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node taskNode = Util.findNodeByLabelAndId(taskLabel, taskId);
+            Node taskNode = Util.findNodeByLabelAndId(graphDb, taskLabel, taskId);
             if (taskNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
             String affectedProperties = "", oldValues = "", newValues = "";
@@ -2539,7 +2540,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public void deleteTask(long taskId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node taskNode = Util.findNodeByLabelAndId(taskLabel, taskId);
+            Node taskNode = Util.findNodeByLabelAndId(graphDb, taskLabel, taskId);
             if (taskNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
                         
@@ -2555,7 +2556,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public ChangeDescriptor subscribeUserToTask(long userId, long taskId) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node taskNode = Util.findNodeByLabelAndId(taskLabel, taskId);
+            Node taskNode = Util.findNodeByLabelAndId(graphDb, taskLabel, taskId);
             if (taskNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
             
@@ -2571,7 +2572,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (found)
                 throw new InvalidArgumentException("This user is already subscribed to the task");
                         
-            Node userNode = Util.findNodeByLabelAndId(userLabel, userId);
+            Node userNode = Util.findNodeByLabelAndId(graphDb, userLabel, userId);
             if (userNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A user with id %s could not be found", userId));
             
@@ -2589,7 +2590,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public ChangeDescriptor unsubscribeUserFromTask(long userId, long taskId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node taskNode = Util.findNodeByLabelAndId(taskLabel, taskId);
+            Node taskNode = Util.findNodeByLabelAndId(graphDb, taskLabel, taskId);
             
             if (taskNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
@@ -2617,7 +2618,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public Task getTask(long taskId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
-            Node taskNode = Util.findNodeByLabelAndId(taskLabel, taskId);
+            Node taskNode = Util.findNodeByLabelAndId(graphDb, taskLabel, taskId);
             if (taskNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
                         
@@ -2629,7 +2630,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public List<UserProfileLight> getSubscribersForTask(long taskId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node taskNode = Util.findNodeByLabelAndId(taskLabel, taskId);
+            Node taskNode = Util.findNodeByLabelAndId(graphDb, taskLabel, taskId);
             
             if (taskNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
@@ -2663,7 +2664,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public List<Task> getTasksForUser(long userId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node userNode = Util.findNodeByLabelAndId(userLabel, userId);
+            Node userNode = Util.findNodeByLabelAndId(graphDb, userLabel, userId);
             
             if (userNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The user with id %s could not be found", userId));
@@ -2687,7 +2688,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node taskNode = Util.findNodeByLabelAndId(taskLabel, taskId);
+            Node taskNode = Util.findNodeByLabelAndId(graphDb, taskLabel, taskId);
             
             if (taskNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
@@ -3525,7 +3526,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new InvalidArgumentException("The name of the favorites folder can not be empty");
         
         try (Transaction tx = graphDb.beginTx()) {
-            Node userNode = Util.findNodeByLabelAndId(userLabel, userId);
+            Node userNode = Util.findNodeByLabelAndId(graphDb, userLabel, userId);
             
             if (userNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("User with id %s could not be found", userId));
@@ -3568,7 +3569,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public List<FavoritesFolder> getFavoritesFoldersForUser(long userId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
-            Node userNode = Util.findNodeByLabelAndId(userLabel, userId);
+            Node userNode = Util.findNodeByLabelAndId(graphDb, userLabel, userId);
             
             if (userNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("User with id %s could not be found", userId));
@@ -3709,7 +3710,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public void deleteBusinessRule(long businessRuleId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node businessRuleNode = Util.findNodeByLabelAndId(businessRulesLabel, businessRuleId);
+            Node businessRuleNode = Util.findNodeByLabelAndId(graphDb, businessRulesLabel, businessRuleId);
             
             if (businessRuleNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Business rule with id %s not found", businessRuleId));
@@ -3799,7 +3800,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             MetadataObjectNotFoundException, UnsupportedPropertyException {
         try (Transaction tx = graphDb.beginTx()) {
         
-            Node syncGroupNode = Util.findNodeByLabelAndId(syncGroupsLabel, syncGroupId);
+            Node syncGroupNode = Util.findNodeByLabelAndId(graphDb, syncGroupsLabel, syncGroupId);
             if (syncGroupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Sync group with id %s could not be found", syncGroupId));
             return Util.createSyncGroupFromNode(syncGroupNode);
@@ -3866,7 +3867,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         List<SyncDataSourceConfiguration> syncDataSourcesConfigurations = new ArrayList<>();
         
         try (Transaction tx = graphDb.beginTx()) {
-            Node syncGroupNode = Util.findNodeByLabelAndId(syncGroupsLabel, syncGroupId);
+            Node syncGroupNode = Util.findNodeByLabelAndId(graphDb, syncGroupsLabel, syncGroupId);
             
             if (syncGroupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The sync group with id %s could not be found", syncGroupId));
@@ -3902,7 +3903,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node syncGroupNode = Util.findNodeByLabelAndId(syncGroupsLabel, syncGroupId);
+            Node syncGroupNode = Util.findNodeByLabelAndId(graphDb, syncGroupsLabel, syncGroupId);
             
             if (syncGroupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Synchronization Group with id %s could not be found", syncGroupId));
@@ -3917,7 +3918,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public void deleteSynchronizationGroup(long syncGroupId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
-            Node syncGroupNode = Util.findNodeByLabelAndId(syncGroupsLabel, syncGroupId);
+            Node syncGroupNode = Util.findNodeByLabelAndId(graphDb, syncGroupsLabel, syncGroupId);
             
             if (syncGroupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Can not find the Synchronization group with id %s",syncGroupId));
@@ -3935,7 +3936,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new InvalidArgumentException("The sync configuration name can not be empty");
         
         try (Transaction tx = graphDb.beginTx()) {
-            Node syncGroupNode = Util.findNodeByLabelAndId(syncGroupsLabel, syncGroupId);
+            Node syncGroupNode = Util.findNodeByLabelAndId(graphDb, syncGroupsLabel, syncGroupId);
             if(syncGroupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The sync group with id %s could not be found", syncGroupId));
                        
@@ -3969,7 +3970,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         throws ApplicationObjectNotFoundException {
         
         try (Transaction tx = graphDb.beginTx()) {
-            Node syncDataSourceConfig = Util.findNodeByLabelAndId(syncDatasourceConfigLabel, syncDataSourceConfigId);
+            Node syncDataSourceConfig = Util.findNodeByLabelAndId(graphDb, syncDatasourceConfigLabel, syncDataSourceConfigId);
             if (syncDataSourceConfig == null)
                 throw new ApplicationObjectNotFoundException(String.format("Synchronization Data Source Configuration with id %s could not be found", syncDataSourceConfigId));
             
@@ -3983,7 +3984,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override    
     public void deleteSynchronizationDataSourceConfig(long syncDataSourceConfigId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
-            Node syncDataSourceConfigNode = Util.findNodeByLabelAndId(syncDatasourceConfigLabel, syncDataSourceConfigId);
+            Node syncDataSourceConfigNode = Util.findNodeByLabelAndId(graphDb, syncDatasourceConfigLabel, syncDataSourceConfigId);
             if (syncDataSourceConfigNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Can not find the Synchronization Data Source Configuration with id %s",syncDataSourceConfigId));
             
@@ -4007,16 +4008,16 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public void moveSyncDataSourceConfiguration(long oldSyncGroupId, long newSyncGroupId, long[] syncDataSourceConfigurationIds) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node oldSyncGroupNode = Util.findNodeByLabelAndId(syncGroupsLabel, oldSyncGroupId);
+            Node oldSyncGroupNode = Util.findNodeByLabelAndId(graphDb, syncGroupsLabel, oldSyncGroupId);
             if (oldSyncGroupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The sync group with id %s could not be find", oldSyncGroupId));
 
-            Node newSyncGroupNode = Util.findNodeByLabelAndId(syncGroupsLabel, newSyncGroupId);
+            Node newSyncGroupNode = Util.findNodeByLabelAndId(graphDb, syncGroupsLabel, newSyncGroupId);
             if (newSyncGroupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The sync group with id %s could not be find", newSyncGroupId));
             
             for (long syncDataSrcId : syncDataSourceConfigurationIds) {
-                Node syncDataSrcNode = Util.findNodeByLabelAndId(syncDatasourceConfigLabel, syncDataSrcId);
+                Node syncDataSrcNode = Util.findNodeByLabelAndId(graphDb, syncDatasourceConfigLabel, syncDataSrcId);
                 if (syncDataSrcNode == null)
                     throw new ApplicationObjectNotFoundException(String.format("Synchronization Data Source Configuration with id %s could not be found", syncDataSrcId));
                 
@@ -4036,7 +4037,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         try (Transaction tx = graphDb.beginTx()) {
                         
             for (long syncDataSrcId : syncDataSourceConfigurationIds) {
-                Node syncDataSrcNode = Util.findNodeByLabelAndId(syncDatasourceConfigLabel, syncDataSrcId);
+                Node syncDataSrcNode = Util.findNodeByLabelAndId(graphDb, syncDatasourceConfigLabel, syncDataSrcId);
                 if (syncDataSrcNode == null)
                     throw new ApplicationObjectNotFoundException(String.format("Synchronization Data Source Configuration with id %s could not be found", syncDataSrcId));
 
@@ -4063,12 +4064,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public void copySyncDataSourceConfiguration(long syncGroupId, long[] syncDataSourceConfigurationIds) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node syncGroupNode = Util.findNodeByLabelAndId(syncGroupsLabel, syncGroupId);
+            Node syncGroupNode = Util.findNodeByLabelAndId(graphDb, syncGroupsLabel, syncGroupId);
             if (syncGroupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The sync group with id %s could not be find", syncGroupId));
                         
             for (long syncDataSrcId : syncDataSourceConfigurationIds) {
-                Node syncDataSrcNode = Util.findNodeByLabelAndId(syncDatasourceConfigLabel, syncDataSrcId);
+                Node syncDataSrcNode = Util.findNodeByLabelAndId(graphDb, syncDatasourceConfigLabel, syncDataSrcId);
                 if (syncDataSrcNode == null)
                     throw new ApplicationObjectNotFoundException(String.format("Synchronization Data Source Configuration with id %s could not be found", syncDataSrcId));
                 
@@ -4080,242 +4081,362 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     //</editor-fold>
     //<editor-fold desc="Process API" defaultstate="collapsed">
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+//    @Override
+//    public Artifact getArtifactForActivity(long processInstanceId, long activityId) throws ApplicationObjectNotFoundException {
+//        try {
+//            return ProcessCache.getInstance().getArtifactForActivity(processInstanceId, activityId);
+//        } catch (InventoryException ex) {
+//            throw new ApplicationObjectNotFoundException(ex.getMessage());
+//        }
+//    }
+//
+//    @Override
+//    public ArtifactDefinition getArtifactDefinitionForActivity(long processDefinitionId, long activityDefinitionId) {
+//        try {
+//            return ProcessCache.getInstance().getArtifactDefinitionForActivity(processDefinitionId, activityDefinitionId);
+//        } catch (InventoryException ex) {
+//            ex.printStackTrace();
+//            return null;
+//        }
+//    }
+//
+//    @Override
+//    public void commitActivity(long processInstanceId, long activityDefinitionId, Artifact artifact) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+//        try (Transaction tx = graphDb.beginTx()) {
+//            Node processInstanceNode = Util.findNodeByLabelAndId(graphDb, processInstanceLabel, processInstanceId);
+//            if (processInstanceNode == null)
+//                throw new ApplicationObjectNotFoundException(String.format("The Process Instance with id %s could not be found", processInstanceId));
+//            
+//            try {
+//                artifact.setCommitDate(new Date().getTime());
+//                ProcessCache.getInstance().commitActivity(processInstanceId, activityDefinitionId, artifact);
+//                
+//                ProcessInstance processInstace = ProcessCache.getInstance().getProcessInstance(processInstanceId);
+//                                
+//                processInstanceNode.setProperty(Constants.PROPERTY_CURRENT_ACTIVITY_ID, processInstace.getCurrentActivity());
+//                                
+//                if (processInstace.getArtifactsContent() != null)
+//                    processInstanceNode.setProperty(Constants.PROPERTY_ARTIFACTS_CONTENT, processInstace.getArtifactsContent());
+//                
+//            } catch (InventoryException ex) {
+//                throw new InvalidArgumentException(String.format("The Process Instance could not be commited", processInstanceId));
+//            }
+//            
+//            tx.success();
+//        }
+//    }
+//    
+//    @Override
+//    public void updateActivity(long processInstanceId, long activityDefinitionId, Artifact artifact) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+//        try (Transaction tx = graphDb.beginTx()) {
+//            Node processInstanceNode = Util.findNodeByLabelAndId(graphDb, processInstanceLabel, processInstanceId);
+//            if (processInstanceNode == null)
+//                throw new ApplicationObjectNotFoundException(String.format("The Process Instance with id %s could not be found", processInstanceId));
+//            
+//            try {
+//                Artifact anArtifact = ProcessCache.getInstance().getArtifact(processInstanceId, activityDefinitionId);
+//                if (anArtifact != null) {
+//                    anArtifact.setId(artifact.getId());
+//                    anArtifact.setName(artifact.getName());
+//                    anArtifact.setContentType(artifact.getContentType());
+//                    anArtifact.setContent(artifact.getContent());
+//                    anArtifact.setSharedInformation(artifact.getSharedInformation());
+//                    ProcessCache.getInstance().updateActivity(processInstanceId, activityDefinitionId, anArtifact);
+//                } else
+//                    ProcessCache.getInstance().updateActivity(processInstanceId, activityDefinitionId, artifact);
+//                                    
+//                ProcessInstance processInstace = ProcessCache.getInstance().getProcessInstance(processInstanceId);
+//                if (processInstace.getArtifactsContent() != null)
+//                    processInstanceNode.setProperty(Constants.PROPERTY_ARTIFACTS_CONTENT, processInstace.getArtifactsContent());
+//                
+//            } catch (InventoryException ex) {
+//                throw new InvalidArgumentException(String.format("The process instance %s could not be updated", processInstanceId));
+//            }
+//            tx.success();
+//        }
+//    }
+//    
+//    @Override
+//    public List<ActivityDefinition> getProcessInstanceActivitiesPath(long processInstanceId) {
+//        try {
+//            return ProcessCache.getInstance().getProcessInstanceActivitiesPath(processInstanceId);
+//        } catch (InventoryException ex) {
+//            ex.printStackTrace();
+//            return null;
+//        }
+//    }
+//
+//    @Override
+//    public ActivityDefinition getNextActivityForProcessInstance(long processInstanceId) {
+//        try {
+//            return ProcessCache.getInstance().getNextActivityForProcessInstance(processInstanceId);
+//        } catch (InventoryException ex) {
+//            ex.printStackTrace();
+//            return null;
+//        }
+//    }
+//
+//    @Override
+//    public ProcessDefinition getProcessDefinition(long processDefinitionId) {
+//        try {
+//            return ProcessCache.getInstance().getProcessDefinition(processDefinitionId);
+//        } catch (InventoryException ex) {
+//            ex.printStackTrace();
+//            return null;
+//        }
+//    }
+//    
+//    @Override
+//    public ActivityDefinition getActivityDefinition(long processDefinitionId, long activityDefinitionId) {
+//        try {
+//            return ProcessCache.getInstance().getActivityDefinition(processDefinitionId, activityDefinitionId);
+//        } catch (InventoryException ex) {
+//            ex.printStackTrace();
+//            return null;
+//        }
+//    }
+//
+//    @Override
+//    public void deleteProcessDefinition(long processDefinitionId) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
+//
+//    @Override
+//    public void updateProcessDefinition(long processDefinitionId, List<StringPair> properties, byte[] structure) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
+//
+//    @Override
+//    public long createProcessDefinition(String name, String description, String version, boolean enabled, byte[] structure) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
+//    
+//    @Override
+//    public List<ProcessInstance> getProcessInstances(long processDefinitionId) throws ApplicationObjectNotFoundException {
+//        try (Transaction tx = graphDb.beginTx()) {
+//            ResourceIterator<Node> processInstanceNodes = graphDb.findNodes(processInstanceLabel);
+//            if (processInstanceNodes != null) {
+//                List<ProcessInstance> processInstances = new ArrayList();
+//                while (processInstanceNodes.hasNext()) {
+//                    Node processInstanceNode = processInstanceNodes.next();
+//                    ProcessInstance processInstance = Util.createProcessInstanceFromNode(processInstanceNode);
+//                    
+//                    if (processInstance.getProcessDefinition() == processDefinitionId) {
+//                        
+//                        processInstances.add(processInstance);
+//                        
+//                        try {
+//                            ProcessCache.getInstance().setProcessInstance(processInstance);
+//                        } catch (InventoryException ex) {
+//                            throw new ApplicationObjectNotFoundException(ex.getMessage());
+//                        }
+//                    }
+//                }
+//                try {
+//                    ProcessCache.getInstance().setProcessInstances(processDefinitionId, processInstances);
+//                } catch (InventoryException ex) {
+//                    throw new ApplicationObjectNotFoundException(ex.getMessage());
+//                }
+//            }
+//            tx.success();
+//        }
+//        try {
+//            return ProcessCache.getInstance().getProcessInstances(processDefinitionId);
+//        } catch (InventoryException ex) {
+//            throw new ApplicationObjectNotFoundException(ex.getMessage());
+//        }
+//    }
+//    
+//    @Override
+//    public List<ProcessDefinition> getProcessDefinitions() {
+//        return ProcessCache.getInstance().getProcessDefinitions();
+//    }
+//    
+//    @Override
+//    public ProcessInstance getProcessInstance(long processInstanceId) throws ApplicationObjectNotFoundException {
+//        try (Transaction tx = graphDb.beginTx()) {
+//            Node processInstanceNode = Util.findNodeByLabelAndId(graphDb, processInstanceLabel, processInstanceId);
+//            if (processInstanceNode == null)
+//                throw new ApplicationObjectNotFoundException(String.format("The Process Instance with id %s could not be found", processInstanceId));
+//            
+//            ProcessInstance processInstance = Util.createProcessInstanceFromNode(processInstanceNode);
+//            
+//            try {
+//                ProcessCache.getInstance().setProcessInstance(processInstance);
+//                return ProcessCache.getInstance().getProcessInstance(processInstance.getId());
+//            } catch (InventoryException ex) {
+//                throw new ApplicationObjectNotFoundException(String.format("The Process Instance with id %s could not be found", processInstanceId));
+//            }
+//        }
+//    }
+//    
+//    @Override
+//    public void reloadProcessDefinitions() {
+//        ProcessCache.getInstance().updateProcessDefinitions();
+//    }
+//
+//    @Override
+//    public long createProcessInstance(long processDefinitionId, String processInstanceName, String processInstanceDescription) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+//        
+//        try (Transaction tx = graphDb.beginTx()) {
+//            Node processInstanceNode = graphDb.createNode(processInstanceLabel);
+//            processInstanceNode.setProperty(Constants.PROPERTY_PROCESS_DEFINITION_ID, processDefinitionId);
+//            processInstanceNode.setProperty(Constants.PROPERTY_NAME, processInstanceName != null ? processInstanceName : "");
+//            processInstanceNode.setProperty(Constants.PROPERTY_DESCRIPTION, processInstanceDescription != null ? processInstanceDescription : "");
+//            
+//            try {
+//                long processInstanceId = ProcessCache.getInstance().createProcessInstance(processInstanceNode.getId(), processDefinitionId, processInstanceName, processInstanceDescription);
+//                
+//                ProcessInstance processInstance = ProcessCache.getInstance().getProcessInstance(processInstanceId);
+//                
+//                processInstanceNode.setProperty(Constants.PROPERTY_CURRENT_ACTIVITY_ID, processInstance.getCurrentActivity());
+//                tx.success();
+//                return processInstanceId;
+//                
+//            } catch (InventoryException ex) {
+//                throw new ApplicationObjectNotFoundException(ex.getMessage());
+//            }
+//        }
+//    }
+//    
+//    @Override
+//    public void deleteProcessInstance(long processInstanceId) throws OperationNotPermittedException {
+//        try (Transaction tx = graphDb.beginTx()) {
+//            Node processInstanceNode = Util.findNodeByLabelAndId(graphDb, processInstanceLabel, processInstanceId);
+//                        
+//            for (Relationship rel : processInstanceNode.getRelationships(RelTypes.HAS_PROCESS_INSTANCE, Direction.INCOMING)) {
+//                
+//                Node startNode = rel.getStartNode();
+//                rel.delete();
+//                deleteObject(startNode, false);
+//            }
+//            processInstanceNode.delete();
+//            
+//            tx.success();
+//        } catch(Exception ex) {
+//             throw new OperationNotPermittedException("Cannot delete process instance, because it still has relationships");
+//        }
+//    }
+
     @Override
     public Artifact getArtifactForActivity(long processInstanceId, long activityId) throws ApplicationObjectNotFoundException {
-        try {
-            return ProcessCache.getInstance().getArtifactForActivity(processInstanceId, activityId);
-        } catch (InventoryException ex) {
-            throw new ApplicationObjectNotFoundException(ex.getMessage());
-        }
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ArtifactDefinition getArtifactDefinitionForActivity(long processDefinitionId, long activityDefinitionId) {
-        try {
-            return ProcessCache.getInstance().getArtifactDefinitionForActivity(processDefinitionId, activityDefinitionId);
-        } catch (InventoryException ex) {
-            ex.printStackTrace();
-            return null;
-        }
+    public ArtifactDefinition getArtifactDefinitionForActivity(long processDefinitionId, long activityDefinitionId) throws ApplicationObjectNotFoundException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void commitActivity(long processInstanceId, long activityDefinitionId, Artifact artifact) throws ApplicationObjectNotFoundException, InvalidArgumentException {
-        try (Transaction tx = graphDb.beginTx()) {
-            Node processInstanceNode = Util.findNodeByLabelAndId(processInstanceLabel, processInstanceId);
-            if (processInstanceNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("The Process Instance with id %s could not be found", processInstanceId));
-            
-            try {
-                artifact.setCommitDate(new Date().getTime());
-                ProcessCache.getInstance().commitActivity(processInstanceId, activityDefinitionId, artifact);
-                
-                ProcessInstance processInstace = ProcessCache.getInstance().getProcessInstance(processInstanceId);
-                                
-                processInstanceNode.setProperty(Constants.PROPERTY_CURRENT_ACTIVITY_ID, processInstace.getCurrentActivity());
-                                
-                if (processInstace.getArtifactsContent() != null)
-                    processInstanceNode.setProperty(Constants.PROPERTY_ARTIFACTS_CONTENT, processInstace.getArtifactsContent());
-                
-            } catch (InventoryException ex) {
-                throw new InvalidArgumentException(String.format("The Process Instance could not be commited", processInstanceId));
-            }
-            
-            tx.success();
-        }
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public void updateActivity(long processInstanceId, long activityDefinitionId, Artifact artifact) throws ApplicationObjectNotFoundException, InvalidArgumentException {
-        try (Transaction tx = graphDb.beginTx()) {
-            Node processInstanceNode = Util.findNodeByLabelAndId(processInstanceLabel, processInstanceId);
-            if (processInstanceNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("The Process Instance with id %s could not be found", processInstanceId));
-            
-            try {
-                Artifact anArtifact = ProcessCache.getInstance().getArtifact(processInstanceId, activityDefinitionId);
-                if (anArtifact != null) {
-                    anArtifact.setId(artifact.getId());
-                    anArtifact.setName(artifact.getName());
-                    anArtifact.setContentType(artifact.getContentType());
-                    anArtifact.setContent(artifact.getContent());
-                    anArtifact.setSharedInformation(artifact.getSharedInformation());
-                    ProcessCache.getInstance().updateActivity(processInstanceId, activityDefinitionId, anArtifact);
-                } else
-                    ProcessCache.getInstance().updateActivity(processInstanceId, activityDefinitionId, artifact);
-                                    
-                ProcessInstance processInstace = ProcessCache.getInstance().getProcessInstance(processInstanceId);
-                if (processInstace.getArtifactsContent() != null)
-                    processInstanceNode.setProperty(Constants.PROPERTY_ARTIFACTS_CONTENT, processInstace.getArtifactsContent());
-                
-            } catch (InventoryException ex) {
-                throw new InvalidArgumentException(String.format("The process instance %s could not be updated", processInstanceId));
-            }
-            tx.success();
-        }
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public List<ActivityDefinition> getProcessInstanceActivitiesPath(long processInstanceId) {
-        try {
-            return ProcessCache.getInstance().getProcessInstanceActivitiesPath(processInstanceId);
-        } catch (InventoryException ex) {
-            ex.printStackTrace();
-            return null;
-        }
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ActivityDefinition getNextActivityForProcessInstance(long processInstanceId) {
-        try {
-            return ProcessCache.getInstance().getNextActivityForProcessInstance(processInstanceId);
-        } catch (InventoryException ex) {
-            ex.printStackTrace();
-            return null;
-        }
+    public ActivityDefinition getNextActivityForProcessInstance(long processInstanceId) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ProcessDefinition getProcessDefinition(long processDefinitionId) {
-        try {
-            return ProcessCache.getInstance().getProcessDefinition(processDefinitionId);
-        } catch (InventoryException ex) {
-            ex.printStackTrace();
-            return null;
-        }
+    public ProcessDefinition getProcessDefinition(long processDefinitionId) throws ApplicationObjectNotFoundException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public ActivityDefinition getActivityDefinition(long processDefinitionId, long activityDefinitionId) {
-        try {
-            return ProcessCache.getInstance().getActivityDefinition(processDefinitionId, activityDefinitionId);
-        } catch (InventoryException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-    }
-
-    @Override
-    public void deleteProcessDefinition(long processDefinitionId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void updateProcessDefinition(long processDefinitionId, List<StringPair> properties, byte[] structure) {
+    public void deleteProcessDefinition(long processDefinitionId) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public long createProcessDefinition(String name, String description, String version, boolean enabled, byte[] structure) {
+    public void updateProcessDefinition(long processDefinitionId, List<StringPair> properties, byte[] structure) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
+    @Override
+    public long createProcessDefinition(String name, String description, String version, boolean enabled, byte[] structure) throws InvalidArgumentException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     @Override
     public List<ProcessInstance> getProcessInstances(long processDefinitionId) throws ApplicationObjectNotFoundException {
-        try (Transaction tx = graphDb.beginTx()) {
-            ResourceIterator<Node> processInstanceNodes = graphDb.findNodes(processInstanceLabel);
-            if (processInstanceNodes != null) {
-                List<ProcessInstance> processInstances = new ArrayList();
-                while (processInstanceNodes.hasNext()) {
-                    Node processInstanceNode = processInstanceNodes.next();
-                    ProcessInstance processInstance = Util.createProcessInstanceFromNode(processInstanceNode);
-                    
-                    if (processInstance.getProcessDefinition() == processDefinitionId) {
-                        
-                        processInstances.add(processInstance);
-                        
-                        try {
-                            ProcessCache.getInstance().setProcessInstance(processInstance);
-                        } catch (InventoryException ex) {
-                            throw new ApplicationObjectNotFoundException(ex.getMessage());
-                        }
-                    }
-                }
-                try {
-                    ProcessCache.getInstance().setProcessInstances(processDefinitionId, processInstances);
-                } catch (InventoryException ex) {
-                    throw new ApplicationObjectNotFoundException(ex.getMessage());
-                }
-            }
-            tx.success();
-        }
-        try {
-            return ProcessCache.getInstance().getProcessInstances(processDefinitionId);
-        } catch (InventoryException ex) {
-            throw new ApplicationObjectNotFoundException(ex.getMessage());
-        }
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public List<ProcessDefinition> getProcessDefinitions() {
-        return ProcessCache.getInstance().getProcessDefinitions();
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public ProcessInstance getProcessInstance(long processInstanceId) throws ApplicationObjectNotFoundException {
-        try (Transaction tx = graphDb.beginTx()) {
-            Node processInstanceNode = Util.findNodeByLabelAndId(processInstanceLabel, processInstanceId);
-            if (processInstanceNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("The Process Instance with id %s could not be found", processInstanceId));
-            
-            ProcessInstance processInstance = Util.createProcessInstanceFromNode(processInstanceNode);
-            
-            try {
-                ProcessCache.getInstance().setProcessInstance(processInstance);
-                return ProcessCache.getInstance().getProcessInstance(processInstance.getId());
-            } catch (InventoryException ex) {
-                throw new ApplicationObjectNotFoundException(String.format("The Process Instance with id %s could not be found", processInstanceId));
-            }
-        }
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
-    public void reloadProcessDefinitions() {
-        ProcessCache.getInstance().updateProcessDefinitions();
+    public void reloadProcessDefinitions() throws InvalidArgumentException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public long createProcessInstance(long processDefinitionId, String processInstanceName, String processInstanceDescription) throws ApplicationObjectNotFoundException, InvalidArgumentException {
-        
-        try (Transaction tx = graphDb.beginTx()) {
-            Node processInstanceNode = graphDb.createNode(processInstanceLabel);
-            processInstanceNode.setProperty(Constants.PROPERTY_PROCESS_DEFINITION_ID, processDefinitionId);
-            processInstanceNode.setProperty(Constants.PROPERTY_NAME, processInstanceName != null ? processInstanceName : "");
-            processInstanceNode.setProperty(Constants.PROPERTY_DESCRIPTION, processInstanceDescription != null ? processInstanceDescription : "");
-            
-            try {
-                long processInstanceId = ProcessCache.getInstance().createProcessInstance(processInstanceNode.getId(), processDefinitionId, processInstanceName, processInstanceDescription);
-                
-                ProcessInstance processInstance = ProcessCache.getInstance().getProcessInstance(processInstanceId);
-                
-                processInstanceNode.setProperty(Constants.PROPERTY_CURRENT_ACTIVITY_ID, processInstance.getCurrentActivity());
-                tx.success();
-                return processInstanceId;
-                
-            } catch (InventoryException ex) {
-                throw new ApplicationObjectNotFoundException(ex.getMessage());
-            }
-        }
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public void deleteProcessInstance(long processInstanceId) throws OperationNotPermittedException {
-        try (Transaction tx = graphDb.beginTx()) {
-            Node processInstanceNode = Util.findNodeByLabelAndId(processInstanceLabel, processInstanceId);
-                        
-            for (Relationship rel : processInstanceNode.getRelationships(RelTypes.HAS_PROCESS_INSTANCE, Direction.INCOMING)) {
-                
-                Node startNode = rel.getStartNode();
-                rel.delete();
-                deleteObject(startNode, false);
-            }
-            processInstanceNode.delete();
-            
-            tx.success();
-        } catch(Exception ex) {
-             throw new OperationNotPermittedException("Cannot delete process instance, because it still has relationships");
-        }
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     //</editor-fold>
     
@@ -4866,7 +4987,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     //</editor-fold>
 //Helpers
     private Node getFavoritesFolderForUser(long favoritesFolderId, long userId) {
-        Node userNode = Util.findNodeByLabelAndId(userLabel, userId);
+        Node userNode = Util.findNodeByLabelAndId(graphDb, userLabel, userId);
 
         if (userNode == null)
             return null; // user not found

@@ -16,7 +16,6 @@
 
 package org.neotropic.kuwaiba.persistence.reference.neo4j.util;
 
-import com.neotropic.kuwaiba.core.persistence.PersistenceService;
 import com.neotropic.kuwaiba.core.persistence.application.GroupProfile;
 import com.neotropic.kuwaiba.core.persistence.application.GroupProfileLight;
 import com.neotropic.kuwaiba.core.persistence.application.Pool;
@@ -26,6 +25,7 @@ import com.neotropic.kuwaiba.core.persistence.application.TaskNotificationDescri
 import com.neotropic.kuwaiba.core.persistence.application.TaskScheduleDescriptor;
 import com.neotropic.kuwaiba.core.persistence.application.UserProfile;
 import com.neotropic.kuwaiba.core.persistence.application.UserProfileLight;
+import com.neotropic.kuwaiba.core.persistence.application.processman.ProcessInstance;
 import com.neotropic.kuwaiba.core.persistence.application.sync.SyncDataSourceConfiguration;
 import com.neotropic.kuwaiba.core.persistence.application.sync.SynchronizationGroup;
 import com.neotropic.kuwaiba.core.persistence.business.BusinessObjectLight;
@@ -55,7 +55,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
@@ -68,6 +67,7 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.kernel.impl.traversal.MonoDirectionalTraversalDescription;
 import org.neotropic.kuwaiba.persistence.reference.extras.caching.CacheManager;
+import org.neotropic.kuwaiba.persistence.reference.neo4j.RelTypes;
 
 
 /**
@@ -1089,13 +1089,12 @@ public class Util {
     
     /**
      * Finds a node tagged with a label and with a particular id
+     * @param graphDb The graphdb handler.
      * @param label The label used to tag the node
      * @param id The id of the node to find
      * @return The node or null if no node with with that label and id could be found
      */
-    public static Node findNodeByLabelAndId(Label label, long id) {
-        GraphDatabaseService graphDb = (GraphDatabaseService) PersistenceService.getInstance().getConnectionManager().getConnectionHandler();
-        
+    public static Node findNodeByLabelAndId(GraphDatabaseService graphDb, Label label, long id) {
         try (Transaction tx = graphDb.beginTx()) {
             
             String cypherQuery = "MATCH (node:" + label.name() + ") " +

@@ -24,11 +24,13 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.kernel.configuration.BoltConnector;
+import org.springframework.stereotype.Service;
 
 /**
  * ConnectionManager reference implementation using Neo4J as DBMS
  * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
+@Service
 public class ConnectionManagerImpl implements ConnectionManager<GraphDatabaseService> {
     /**
      * Default db path

@@ -76,16 +76,23 @@ import org.neo4j.helpers.collection.Iterators;
 import org.neotropic.kuwaiba.persistence.reference.extras.caching.CacheManager;
 import org.neotropic.kuwaiba.persistence.reference.neo4j.util.Util;
 import org.neotropic.kuwaiba.persistence.reference.util.DynamicNameGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Business entity manager reference implementation (using Neo4J as backend)
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
+@Service
 public class BusinessEntityManagerImpl implements BusinessEntityManager {
     /**
      * Default attachment location.
      */
     private static final String DEFAULT_ATTACHMENTS_PATH = "/data/files/attachments";
+    /**
+     * Reference to the Application Entity Manager.
+     */
+    private final ConnectionManager cmn;
     /**
      * Reference to the Application Entity Manager.
      */
@@ -141,9 +148,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * @param aem Reference to the ApplicationManager instance.
      * @param mem Reference to the MetadataManager instance. 
      */
+    @Autowired
     public BusinessEntityManagerImpl(ConnectionManager cmn, ApplicationEntityManager aem, MetadataEntityManager mem) {
         this.aem = aem;
         this.mem = mem;
+        this.cmn = cmn;
         this.graphDb = (GraphDatabaseService)cmn.getConnectionHandler();
         
         this.configuration = new Properties();
@@ -2328,7 +2337,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     @Override
     public ChangeDescriptor deleteReport(long reportId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
-            Node reportNode = Util.findNodeByLabelAndId(reportsLabel, reportId);
+            Node reportNode = Util.findNodeByLabelAndId(graphDb, reportsLabel, reportId);
             
             if (reportNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The report with id %s could not be found", reportId));
@@ -2350,7 +2359,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Integer type, String script) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node reportNode = Util.findNodeByLabelAndId(reportsLabel, reportId);
+            Node reportNode = Util.findNodeByLabelAndId(graphDb, reportsLabel, reportId);
             
             if (reportNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The report with id %s could not be found", reportId));
@@ -2405,7 +2414,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public ChangeDescriptor updateReportParameters(long reportId, List<StringPair> parameters) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node reportNode = Util.findNodeByLabelAndId(reportsLabel, reportId);
+            Node reportNode = Util.findNodeByLabelAndId(graphDb, reportsLabel, reportId);
             
             if (reportNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A report with id %s could not be found", reportId));
@@ -2507,7 +2516,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public ReportMetadata getReport(long reportId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node reportNode = Util.findNodeByLabelAndId(reportsLabel, reportId);
+            Node reportNode = Util.findNodeByLabelAndId(graphDb, reportsLabel, reportId);
             
             if (reportNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The report with id %s could not be found", reportId)); 
@@ -2531,7 +2540,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public byte[] executeClassLevelReport(String objectClassName, String objectId, long reportId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node reportNode = Util.findNodeByLabelAndId(reportsLabel, reportId);
+            Node reportNode = Util.findNodeByLabelAndId(graphDb, reportsLabel, reportId);
             
             if (reportNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The report with id %s could not be found", reportId)); 
@@ -2572,7 +2581,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public byte[] executeInventoryLevelReport(long reportId, List<StringPair> parameters) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node reportNode = Util.findNodeByLabelAndId(reportsLabel, reportId);
+            Node reportNode = Util.findNodeByLabelAndId(graphDb, reportsLabel, reportId);
             
             if (reportNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The report with id %s could not be found", reportId)); 
@@ -2770,7 +2779,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * @param oid object id
      * @return a Node representing the entity
      * @throws MetadataObjectNotFoundException id the class could not be found
-     * @throws org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException if the object could not be found
+     * @throws BusinessObjectNotFoundException if the object could not be found
      * @throws InvalidArgumentException If the object id is null
      */
     public Node getInstanceOfClass(String className, String oid) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException{
@@ -2805,7 +2814,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * @param oid object id
      * @return a Node representing the entity
      * @throws MetadataObjectNotFoundException if the class could not be found
-     * @throws org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException
+     * @throws BusinessObjectNotFoundException
      */
     public Node getInstanceOfClass(long classId, String oid) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException{
                 
@@ -2813,7 +2822,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         if (classId == -1)
             return graphDb.findNode(specialNodeLabel, Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
         
-        Node classNode = Util.findNodeByLabelAndId(classLabel, classId);
+        Node classNode = Util.findNodeByLabelAndId(graphDb, classLabel, classId);
         
         if (classNode == null)
             throw new MetadataObjectNotFoundException(String.format("Class with id %s could not be found", classId));

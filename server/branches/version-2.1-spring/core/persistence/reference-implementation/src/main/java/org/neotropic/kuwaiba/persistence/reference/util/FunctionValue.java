@@ -51,37 +51,37 @@ public class FunctionValue extends DynamicSectionFunction {
             
             attribute = matcher.group().split(",")[2];
                     
-            try {
-                BusinessEntityManager bem = PersistenceService.getInstance().getBusinessEntityManager();
-                remoteBusinessObject = bem.getObject(className, id);
-
-                if (!remoteBusinessObject.getAttributes().containsKey(attribute))
-                    throw new InvalidArgumentException(String.format("The attribute \"%s\" can not be found in object with id %s", attribute, id));
-
-            } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException ex) {
-                throw new InvalidArgumentException(String.format("The object with id %s can not be found", id));
-            }
+//            try {
+//                BusinessEntityManager bem = PersistenceService.getInstance().getBusinessEntityManager();
+//                remoteBusinessObject = bem.getObject(className, id);
+//
+//                if (!remoteBusinessObject.getAttributes().containsKey(attribute))
+//                    throw new InvalidArgumentException(String.format("The attribute \"%s\" can not be found in object with id %s", attribute, id));
+//
+//            } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException ex) {
+//                throw new InvalidArgumentException(String.format("The object with id %s can not be found", id));
+//            }
         }
     }
     
     @Override
     public List<String> getPossibleValues() {
         List<String> dynamicSections = new ArrayList();
-        try {
-            BusinessEntityManager bem = PersistenceService.getInstance().getBusinessEntityManager();
-            String attributeValue = null;
-            
-            if (remoteBusinessObject != null)
-                attributeValue = bem.getAttributeValueAsString(remoteBusinessObject.getClassName(), remoteBusinessObject.getId(), attribute);
-                        
-            if (attributeValue == null)
-                attributeValue = "__"; // If the attribute value is null
-                            
-            dynamicSections.add(attributeValue);
-            
-        } catch (Exception ex) {
-            dynamicSections.add("__"); // If the attribute value is null
-        }
+//        try {
+//            BusinessEntityManager bem = PersistenceService.getInstance().getBusinessEntityManager();
+//            String attributeValue = null;
+//            
+//            if (remoteBusinessObject != null)
+//                attributeValue = bem.getAttributeValueAsString(remoteBusinessObject.getClassName(), remoteBusinessObject.getId(), attribute);
+//                        
+//            if (attributeValue == null)
+//                attributeValue = "__"; // If the attribute value is null
+//                            
+//            dynamicSections.add(attributeValue);
+//            
+//        } catch (Exception ex) {
+//            dynamicSections.add("__"); // If the attribute value is null
+//        }
         return dynamicSections;
     }
 }

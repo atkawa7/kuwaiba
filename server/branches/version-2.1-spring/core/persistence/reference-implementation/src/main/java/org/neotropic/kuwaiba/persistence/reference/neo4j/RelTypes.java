@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.services.persistence.impl.neo4j;
+package org.neotropic.kuwaiba.persistence.reference.neo4j;
 
 import org.neo4j.graphdb.RelationshipType;
 

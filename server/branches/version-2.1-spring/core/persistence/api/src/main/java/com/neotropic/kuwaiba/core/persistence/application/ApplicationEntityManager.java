@@ -1374,7 +1374,7 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If some of the sync group cannot be found or If the provider of the sync group cannot be found
      * @throws InvalidArgumentException If the sync group is malformed
      */
-    public List<SynchronizationGroup> copySyncGroup(long[] syncGroupIds) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    //public List<SynchronizationGroup> copySyncGroup(long[] syncGroupIds) throws ApplicationObjectNotFoundException, InvalidArgumentException;
     /**
      * Creates "copy" a relation between a set of sync data source configurations and a given sync group
      * @param syncGroupId The Sync Group Id target

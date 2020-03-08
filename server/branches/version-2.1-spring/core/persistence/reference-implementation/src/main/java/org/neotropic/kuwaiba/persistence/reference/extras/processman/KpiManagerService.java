@@ -16,6 +16,15 @@
 
 package org.neotropic.kuwaiba.persistence.reference.extras.processman;
 
+import com.neotropic.kuwaiba.core.persistence.application.processman.ActivityDefinition;
+import com.neotropic.kuwaiba.core.persistence.application.processman.Artifact;
+import com.neotropic.kuwaiba.core.persistence.application.processman.Kpi;
+import com.neotropic.kuwaiba.core.persistence.application.processman.KpiAction;
+import com.neotropic.kuwaiba.core.persistence.application.processman.KpiResult;
+import com.neotropic.kuwaiba.core.persistence.application.processman.ProcessDefinition;
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
+
 /**
  *
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
@@ -23,9 +32,9 @@ package org.neotropic.kuwaiba.persistence.reference.extras.processman;
 public class KpiManagerService {
     public KpiResult runActivityKpiAction(
         String kpiName, 
-        Artifact artifact, 
-        ProcessDefinition processDefinition, 
-        ActivityDefinition activityDefinition) {
+            Artifact artifact, 
+            ProcessDefinition processDefinition, 
+            ActivityDefinition activityDefinition) {
         
         Binding binding = new Binding();
         

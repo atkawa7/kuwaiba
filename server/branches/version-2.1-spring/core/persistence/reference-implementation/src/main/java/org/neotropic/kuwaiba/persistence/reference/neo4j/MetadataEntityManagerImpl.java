@@ -45,11 +45,13 @@ import org.neo4j.helpers.collection.Iterators;
 import org.neo4j.kernel.impl.traversal.MonoDirectionalTraversalDescription;
 import org.neotropic.kuwaiba.persistence.reference.extras.caching.CacheManager;
 import org.neotropic.kuwaiba.persistence.reference.neo4j.util.Util;
+import org.springframework.stereotype.Service;
 
 /**
  * MetadataEntityManager implementation for Neo4j
  * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
+@Service
 public class MetadataEntityManagerImpl implements MetadataEntityManager {
     /**
      * Reference to the db handle
@@ -205,7 +207,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node classMetadata = Util.findNodeByLabelAndId(classLabel, newClassDefinition.getId());
+            Node classMetadata = Util.findNodeByLabelAndId(graphDb, classLabel, newClassDefinition.getId());
             
             if (classMetadata == null)
                 throw new MetadataObjectNotFoundException(String.format(
@@ -319,7 +321,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             throws MetadataObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node node = Util.findNodeByLabelAndId(classLabel, classId);
+            Node node = Util.findNodeByLabelAndId(graphDb, classLabel, classId);
 
             if (node == null)
                 throw new MetadataObjectNotFoundException(String.format(
@@ -634,7 +636,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         ClassMetadata clmt = null;
         try(Transaction tx = graphDb.beginTx()) 
         {
-            Node node = Util.findNodeByLabelAndId(classLabel, classId);
+            Node node = Util.findNodeByLabelAndId(graphDb, classLabel, classId);
             
             if (node == null)
                 throw new MetadataObjectNotFoundException(String.format(
@@ -695,7 +697,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     {
         try (Transaction tx = graphDb.beginTx())
         {        
-            Node classNode = Util.findNodeByLabelAndId(classLabel, classId);
+            Node classNode = Util.findNodeByLabelAndId(graphDb, classLabel, classId);
             
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("The class with id %s could not be found. Contact your administrator.", classId));
@@ -762,7 +764,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         AttributeMetadata attribute = null;
         try (Transaction tx = graphDb.beginTx())
         {
-            Node classNode = Util.findNodeByLabelAndId(classLabel, classId);
+            Node classNode = Util.findNodeByLabelAndId(graphDb, classLabel, classId);
             if (classNode == null) 
                 throw new MetadataObjectNotFoundException(String.format(
                         "The class with id %s could not be found. Contact your administrator.", classId));
@@ -790,7 +792,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         String affectedProperties = "", oldValues = "", newValues = "";
         
         try(Transaction tx = graphDb.beginTx()) {
-            Node classNode = Util.findNodeByLabelAndId(classLabel, classId);
+            Node classNode = Util.findNodeByLabelAndId(graphDb, classLabel, classId);
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("The class with id %s could not be found. Contact your administrator.", classId));
 
@@ -1119,7 +1121,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             throw new InvalidArgumentException(String.format("Attribute \"%s\" can not be deleted", attributeName));
         
         try (Transaction tx = graphDb.beginTx()) {
-            Node classNode = Util.findNodeByLabelAndId(classLabel, classId);
+            Node classNode = Util.findNodeByLabelAndId(graphDb, classLabel, classId);
 
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("The class with id %s could not be found. Contact your administrator.", classId));
@@ -1271,7 +1273,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         try(Transaction tx = graphDb.beginTx()) {
             if(parentClassId != -1) {
                 
-                parentNode = Util.findNodeByLabelAndId(classLabel, parentClassId);
+                parentNode = Util.findNodeByLabelAndId(graphDb, classLabel, parentClassId);
 
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
@@ -1286,7 +1288,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             
             for (long id : possibleChildren) {
                 
-                Node childNode = Util.findNodeByLabelAndId(classLabel, id);
+                Node childNode = Util.findNodeByLabelAndId(graphDb, classLabel, id);
 
                 if (childNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
@@ -1338,7 +1340,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             Node parentNode;
             if(parentClassId != -1) {
                 
-                parentNode = Util.findNodeByLabelAndId(classLabel, parentClassId);
+                parentNode = Util.findNodeByLabelAndId(graphDb, classLabel, parentClassId);
 
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
@@ -1352,7 +1354,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             List<ClassMetadataLight> currentPossibleSpecialChildren = refreshPossibleSpecialChildren(parentNode);
             
             for (long id : possibleSpecialChildren) {
-                Node childNode = Util.findNodeByLabelAndId(classLabel, id);
+                Node childNode = Util.findNodeByLabelAndId(graphDb, classLabel, id);
 
                 if (childNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
@@ -1534,14 +1536,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     throw new MetadataObjectNotFoundException("DummyRoot is corrupted");
             }
             else {
-                parentNode = Util.findNodeByLabelAndId(classLabel, parentClassId);
+                parentNode = Util.findNodeByLabelAndId(graphDb, classLabel, parentClassId);
                 
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
                             "The class with id %s could not be found. Contact your administrator.", parentClassId));
             }
             for (long id : childrenToBeRemoved) {
-                Node childNode = Util.findNodeByLabelAndId(classLabel, id);
+                Node childNode = Util.findNodeByLabelAndId(graphDb, classLabel, id);
                 
                 Iterable<Relationship> relationships = parentNode.getRelationships(RelTypes.POSSIBLE_CHILD, Direction.OUTGOING);
 
@@ -1569,14 +1571,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     throw new MetadataObjectNotFoundException("DummyRoot is corrupted");
             }
             else {
-                parentNode = Util.findNodeByLabelAndId(classLabel, parentClassId);
+                parentNode = Util.findNodeByLabelAndId(graphDb, classLabel, parentClassId);
                 
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
                             "The class with id %s could not be found. Contact your administrator.", parentClassId));
             }
             for (long id : specialChildrenToBeRemoved) {
-                Node childNode = Util.findNodeByLabelAndId(classLabel, id);
+                Node childNode = Util.findNodeByLabelAndId(graphDb, classLabel, id);
                 
                 Iterable<Relationship> relationships = parentNode.getRelationships(RelTypes.POSSIBLE_SPECIAL_CHILD, Direction.OUTGOING);
 

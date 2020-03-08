@@ -68,16 +68,16 @@ public class MirrorPortsPairingUtil {
             }//end for
             if(endPointsA.size() != endPointsB.size())
                 throw new InvalidArgumentException("The number of created mirror ports is odd");
-            else{
-                try {
-                    BusinessEntityManager bem = PersistenceService.getInstance().getBusinessEntityManager();
-                    
-                    for (int i=0; i < endPointsA.size(); i++) 
-                        bem.createSpecialRelationship(objectClassName, endPointsA.get(i), objectClassName, endPointsB.get(i), "mirror", true); //NOI18N
-                
-                } catch (BusinessObjectNotFoundException | OperationNotPermittedException | MetadataObjectNotFoundException ex) {
-                    throw new InvalidArgumentException("The list of created ports could not be mirrored");
-                }
+            else {
+//                try {
+//                    BusinessEntityManager bem = PersistenceService.getInstance().getBusinessEntityManager();
+//                    
+//                    for (int i=0; i < endPointsA.size(); i++) 
+//                        bem.createSpecialRelationship(objectClassName, endPointsA.get(i), objectClassName, endPointsB.get(i), "mirror", true); //NOI18N
+//                
+//                } catch (BusinessObjectNotFoundException | OperationNotPermittedException | MetadataObjectNotFoundException ex) {
+//                    throw new InvalidArgumentException("The list of created ports could not be mirrored");
+//                }
             }
         }
         else
