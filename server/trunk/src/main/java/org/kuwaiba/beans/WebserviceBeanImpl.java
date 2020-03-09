@@ -482,10 +482,12 @@ public class WebserviceBeanImpl implements WebserviceBean {
                                                        atrbMtdt.getType(),
                                                        atrbMtdt.isAdministrative(),
                                                        atrbMtdt.isVisible(),
+                                                       atrbMtdt.isReadOnly(),
                                                        atrbMtdt.isUnique(),
                                                        atrbMtdt.isMandatory(),
                                                        atrbMtdt.isMultiple(),
                                                        atrbMtdt.getDescription(), 
+                                                       atrbMtdt.isNoCopy(), 
                                                        atrbMtdt.getOrder());
             return atrbInfo;
          } catch (InventoryException ex) {
@@ -507,10 +509,12 @@ public class WebserviceBeanImpl implements WebserviceBean {
                                                        atrbMtdt.getType(),
                                                        atrbMtdt.isAdministrative(),
                                                        atrbMtdt.isVisible(),
+                                                       atrbMtdt.isReadOnly(),
                                                        atrbMtdt.isUnique(),
                                                        atrbMtdt.isMandatory(),
                                                        atrbMtdt.isMultiple(),
                                                        atrbMtdt.getDescription(), 
+                                                       atrbMtdt.isNoCopy(), 
                                                        atrbMtdt.getOrder());
             return attrInfo;
 
