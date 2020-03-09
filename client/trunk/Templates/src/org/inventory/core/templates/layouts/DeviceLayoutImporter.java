@@ -302,9 +302,10 @@ public class DeviceLayoutImporter {
                     return;
                 }
             }
+            //The name can not be null or empty then set the name to N/A
             if (relatedView == null) {
                 long newRelatedViewId = CommunicationsStub.getInstance().createListTypeItemRelatedView(
-                    listItem.getId(), listItem.getClassName(), "DeviceLayoutView", null, null, viewStructure, null); //NOI18N
+                    listItem.getId(), listItem.getClassName(), "DeviceLayoutView", "N/A", null, viewStructure, null); //NOI18N
 
                 if (newRelatedViewId == -1) {
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
@@ -312,7 +313,7 @@ public class DeviceLayoutImporter {
                 }
             } else {
                 if (!CommunicationsStub.getInstance().updateListTypeItemRelatedView(
-                    listItem.getId(), listItem.getClassName(), relatedView.getId(), null, null, viewStructure, null)) {
+                    listItem.getId(), listItem.getClassName(), relatedView.getId(), "N/A", null, viewStructure, null)) {
 
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                         NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

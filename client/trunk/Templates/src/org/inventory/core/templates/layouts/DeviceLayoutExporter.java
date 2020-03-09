@@ -94,7 +94,7 @@ public class DeviceLayoutExporter {
     
     private String prepareStructure(byte[] structure) {
         String strStructure = new String(structure);
-        strStructure = strStructure.replaceFirst("<view version=\"1.1\">", "");
+        strStructure = strStructure.replaceFirst("<view version=\"", "");
         strStructure = strStructure.replaceFirst("</view>", "");
         return strStructure;
     }
