@@ -16,8 +16,8 @@
 
 package org.neotropic.kuwaiba.persistence.reference.neo4j;
 
-import com.neotropic.kuwaiba.core.persistence.application.ExtendedQuery;
-import com.neotropic.kuwaiba.core.persistence.util.Constants;
+import org.neotropic.kuwaiba.core.persistence.application.ExtendedQuery;
+import org.neotropic.kuwaiba.core.persistence.util.Constants;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 

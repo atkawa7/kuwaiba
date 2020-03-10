@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence.exceptions;
+package org.neotropic.kuwaiba.core.persistence.exceptions;
 
 /**
  * Thrown when a certain operation can't be performed because a system restriction or illegal state

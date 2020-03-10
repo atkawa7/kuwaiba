@@ -14,8 +14,8 @@
  */
 package org.neotropic.kuwaiba.persistence.reference.util;
 
-import com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
-import com.neotropic.kuwaiba.core.persistence.util.StringPair;
+import org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
+import org.neotropic.kuwaiba.core.persistence.util.StringPair;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

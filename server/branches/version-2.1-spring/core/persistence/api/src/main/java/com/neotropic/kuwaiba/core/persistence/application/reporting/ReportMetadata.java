@@ -14,9 +14,9 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence.application.reporting;
+package org.neotropic.kuwaiba.core.persistence.application.reporting;
 
-import com.neotropic.kuwaiba.core.persistence.util.StringPair;
+import org.neotropic.kuwaiba.core.persistence.util.StringPair;
 import java.util.List;
 
 /**

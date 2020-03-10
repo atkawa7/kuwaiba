@@ -14,7 +14,7 @@
  *
  */
 
-package com.neotropic.kuwaiba.core.persistence.exceptions;
+package org.neotropic.kuwaiba.core.persistence.exceptions;
 
 /**
  * Thrown when the size of two (or more arrays) does not match, but should

@@ -16,13 +16,13 @@
 
 package org.neotropic.kuwaiba.persistence.reference.extras.caching;
 
-import com.neotropic.kuwaiba.core.persistence.application.GroupProfile;
-import com.neotropic.kuwaiba.core.persistence.application.UserProfile;
-import com.neotropic.kuwaiba.core.persistence.application.ValidatorDefinition;
-import com.neotropic.kuwaiba.core.persistence.metadata.ClassMetadata;
-import com.neotropic.kuwaiba.core.persistence.metadata.ClassMetadataLight;
-import com.neotropic.kuwaiba.core.persistence.metadata.GenericObjectList;
-import com.neotropic.kuwaiba.core.persistence.util.Constants;
+import org.neotropic.kuwaiba.core.persistence.application.GroupProfile;
+import org.neotropic.kuwaiba.core.persistence.application.UserProfile;
+import org.neotropic.kuwaiba.core.persistence.application.ValidatorDefinition;
+import org.neotropic.kuwaiba.core.persistence.metadata.ClassMetadata;
+import org.neotropic.kuwaiba.core.persistence.metadata.ClassMetadataLight;
+import org.neotropic.kuwaiba.core.persistence.metadata.GenericObjectList;
+import org.neotropic.kuwaiba.core.persistence.util.Constants;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;

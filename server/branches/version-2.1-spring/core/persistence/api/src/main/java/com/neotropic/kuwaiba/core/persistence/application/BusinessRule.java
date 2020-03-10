@@ -13,9 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.core.persistence.application;
+package org.neotropic.kuwaiba.core.persistence.application;
 
-import com.neotropic.kuwaiba.core.persistence.util.Constants;
+import org.neotropic.kuwaiba.core.persistence.util.Constants;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

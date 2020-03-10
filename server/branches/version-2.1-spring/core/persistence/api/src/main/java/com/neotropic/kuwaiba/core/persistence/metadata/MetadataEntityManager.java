@@ -14,14 +14,14 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence.metadata;
+package org.neotropic.kuwaiba.core.persistence.metadata;
 
-import com.neotropic.kuwaiba.core.persistence.ChangeDescriptor;
-import com.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.BusinessObjectNotFoundException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.DatabaseException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException;
+import org.neotropic.kuwaiba.core.persistence.ChangeDescriptor;
+import org.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.BusinessObjectNotFoundException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.DatabaseException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException;
 import java.util.List;
 
 /**

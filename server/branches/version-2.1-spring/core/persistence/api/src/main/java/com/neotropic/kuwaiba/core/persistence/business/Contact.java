@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.core.persistence.business;
+package org.neotropic.kuwaiba.core.persistence.business;
 
 /**
  * Represents a contact in the inventory address book. Contacts (technical, commercial and executive) are always 

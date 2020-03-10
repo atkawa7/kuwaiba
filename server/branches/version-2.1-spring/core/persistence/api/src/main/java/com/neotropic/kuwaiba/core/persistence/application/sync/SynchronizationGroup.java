@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence.application.sync;
+package org.neotropic.kuwaiba.core.persistence.application.sync;
 
 import java.io.Serializable;
 import java.util.List;

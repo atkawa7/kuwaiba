@@ -15,7 +15,7 @@
  */
 
 
-package com.neotropic.kuwaiba.core.persistence.application;
+package org.neotropic.kuwaiba.core.persistence.application;
 
 /**
  * Represents the privileges associated to a user

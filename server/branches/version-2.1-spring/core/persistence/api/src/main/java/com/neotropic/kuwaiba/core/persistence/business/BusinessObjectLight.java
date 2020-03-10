@@ -14,9 +14,9 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence.business;
+package org.neotropic.kuwaiba.core.persistence.business;
 
-import com.neotropic.kuwaiba.core.persistence.application.Validator;
+import org.neotropic.kuwaiba.core.persistence.application.Validator;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

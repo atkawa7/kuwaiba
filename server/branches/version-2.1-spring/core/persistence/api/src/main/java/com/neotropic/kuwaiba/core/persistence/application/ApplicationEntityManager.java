@@ -14,32 +14,32 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence.application;
+package org.neotropic.kuwaiba.core.persistence.application;
 
-import com.neotropic.kuwaiba.core.persistence.ChangeDescriptor;
+import org.neotropic.kuwaiba.core.persistence.ChangeDescriptor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
-import com.neotropic.kuwaiba.core.persistence.application.processman.ActivityDefinition;
-import com.neotropic.kuwaiba.core.persistence.application.processman.Artifact;
-import com.neotropic.kuwaiba.core.persistence.application.processman.ArtifactDefinition;
-import com.neotropic.kuwaiba.core.persistence.application.processman.ProcessDefinition;
-import com.neotropic.kuwaiba.core.persistence.application.processman.ProcessInstance;
-import com.neotropic.kuwaiba.core.persistence.application.sync.SyncDataSourceConfiguration;
-import com.neotropic.kuwaiba.core.persistence.application.sync.SynchronizationGroup;
-import com.neotropic.kuwaiba.core.persistence.business.BusinessObjectLight;
-import com.neotropic.kuwaiba.core.persistence.business.BusinessObjectList;
-import com.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.ArraySizeMismatchException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.BusinessRuleException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.NotAuthorizedException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.BusinessObjectNotFoundException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.OperationNotPermittedException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.UnsupportedPropertyException;
-import com.neotropic.kuwaiba.core.persistence.metadata.ClassMetadataLight;
-import com.neotropic.kuwaiba.core.persistence.util.StringPair;
+import org.neotropic.kuwaiba.core.persistence.application.processman.ActivityDefinition;
+import org.neotropic.kuwaiba.core.persistence.application.processman.Artifact;
+import org.neotropic.kuwaiba.core.persistence.application.processman.ArtifactDefinition;
+import org.neotropic.kuwaiba.core.persistence.application.processman.ProcessDefinition;
+import org.neotropic.kuwaiba.core.persistence.application.processman.ProcessInstance;
+import org.neotropic.kuwaiba.core.persistence.application.sync.SyncDataSourceConfiguration;
+import org.neotropic.kuwaiba.core.persistence.application.sync.SynchronizationGroup;
+import org.neotropic.kuwaiba.core.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.persistence.business.BusinessObjectList;
+import org.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.ArraySizeMismatchException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.BusinessRuleException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.NotAuthorizedException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.BusinessObjectNotFoundException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.OperationNotPermittedException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.UnsupportedPropertyException;
+import org.neotropic.kuwaiba.core.persistence.metadata.ClassMetadataLight;
+import org.neotropic.kuwaiba.core.persistence.util.StringPair;
 
 /**
  * This is the entity in charge of manipulating application objects such as users, views, etc
@@ -288,8 +288,8 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException if the class name is not valid
      * @throws BusinessObjectNotFoundException if the list type item can't be found
      * @throws OperationNotPermittedException if the object has relationships
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException If the class provided is not a list type
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.NotAuthorizedException If the user can't delete a list type item
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException If the class provided is not a list type
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.NotAuthorizedException If the user can't delete a list type item
      */
     public void deleteListTypeItem(String className, String oid, boolean realeaseRelationships)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException, NotAuthorizedException;
@@ -433,9 +433,9 @@ public interface ApplicationEntityManager {
      * @param oid object id
      * @param className object class
      * @return The structure of the device layout
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException In case that any of the devices contained within the main one
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException In case that any of the devices contained within the main one
      * has a malformed <b>model</b> attribute.
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException If the structure is somehow malformed.
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException If the structure is somehow malformed.
      */
     public byte[] getDeviceLayoutStructure(String oid, String className) throws ApplicationObjectNotFoundException, InvalidArgumentException;
         
@@ -977,8 +977,8 @@ public interface ApplicationEntityManager {
      * @param templateClass The class you want to create a template for.
      * @param templateName The name of the template. It can not be null.
      * @return The id of the newly created template.
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException If the provided class does not exist
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.OperationNotPermittedException If the template class is abstract.
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException If the provided class does not exist
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.OperationNotPermittedException If the template class is abstract.
      */
     public String createTemplate(String templateClass, String templateName) throws MetadataObjectNotFoundException, OperationNotPermittedException;
     /**
@@ -988,9 +988,9 @@ public interface ApplicationEntityManager {
      * @param templateElementParentId Id of the parent to the object you want to create.
      * @param templateElementName Name of the element.
      * @return The id of the new object.
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException If the object (or its parent) class could not be found
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException If the parent object could not be found
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.OperationNotPermittedException If the class provided to create the new element from is abstract.
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException If the object (or its parent) class could not be found
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException If the parent object could not be found
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.OperationNotPermittedException If the class provided to create the new element from is abstract.
      */
     public String createTemplateElement(String templateElementClass, String templateElementParentClassName, 
         String templateElementParentId, String templateElementName) 
@@ -1051,9 +1051,9 @@ public interface ApplicationEntityManager {
      * @param attributeNames Names of the attributes that you want to be updated as an array of strings.
      * @param attributeValues The values of the attributes you want to upfate. For list types, it's the id of the related type
      * @return The summary of the changes
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException If any of the classes provided as arguments do not exist
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException If the template element could not be found
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException If the arrays attributeNames and attributeValues have different sizes
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException If any of the classes provided as arguments do not exist
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException If the template element could not be found
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException If the arrays attributeNames and attributeValues have different sizes
      */
     public ChangeDescriptor updateTemplateElement(String templateElementClass, String templateElementId, 
             String[] attributeNames, String[] attributeValues) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
@@ -1062,15 +1062,15 @@ public interface ApplicationEntityManager {
      * @param templateElementClass The template element class.
      * @param templateElementId The template element id.
      * @return The summary of the changes
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException If the element's class could not be found.
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException If the element could not be found.
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException If the element's class could not be found.
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException If the element could not be found.
      */
     public ChangeDescriptor deleteTemplateElement(String templateElementClass, String templateElementId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException;
     /**
      * Gets the templates available for a given class
      * @param className Class whose templates we need
      * @return A list of templates (actually, the top element) as a list of RemoteOObjects
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException If the class provided could not be found.
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException If the class provided could not be found.
      */
     public List<TemplateObjectLight> getTemplatesForClass(String className) throws MetadataObjectNotFoundException;
     /**
@@ -1276,18 +1276,18 @@ public interface ApplicationEntityManager {
      * Fetches a synchronization group. From the conceptual point of view, a sync group is a set of Synchronization Data Sources.
      * @param syncGroupId The id of the sync group
      * @return The sync group
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException If the sync group could not be found
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException If the sync data group information is somehow malformed in the database
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException If can not find the class name of the device related with the data source configuration
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.UnsupportedPropertyException
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException If the sync group could not be found
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException If the sync data group information is somehow malformed in the database
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException If can not find the class name of the device related with the data source configuration
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.UnsupportedPropertyException
      */
     public SynchronizationGroup getSyncGroup(long syncGroupId) throws ApplicationObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException, UnsupportedPropertyException;
     /**
      * Gets the list of available sync groups 
      * @return The list of available sync groups
      * @throws InvalidArgumentException If any of the sync groups is malformed in the database
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.UnsupportedPropertyException
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.UnsupportedPropertyException
      */
     public List<SynchronizationGroup> getSyncGroups() throws InvalidArgumentException, MetadataObjectNotFoundException, UnsupportedPropertyException;
     /**
@@ -1314,8 +1314,8 @@ public interface ApplicationEntityManager {
      * @return A list of data source configurations
      * @throws ApplicationObjectNotFoundException If the sync group could not be found
      * @throws InvalidArgumentException If any of the configurations is malformed in the database
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.UnsupportedPropertyException
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.UnsupportedPropertyException
      */
     public List<SyncDataSourceConfiguration> getSyncDataSourceConfigurations(long syncGroupId) throws ApplicationObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException, UnsupportedPropertyException;
     /**
@@ -1469,7 +1469,7 @@ public interface ApplicationEntityManager {
     * Deletes a process definition
     * @param processDefinitionId The process definition to be deleted
     * @throws ApplicationObjectNotFoundException If the process definition could not be found
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException if there are process instances related to the process definition
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException if there are process instances related to the process definition
     */
     public void deleteProcessDefinition(long processDefinitionId) throws ApplicationObjectNotFoundException, InvalidArgumentException;
 
@@ -1478,8 +1478,8 @@ public interface ApplicationEntityManager {
     * @param processDefinitionId The process definition id
     * @param properties A key value dictionary with the standard properties to be updated. These properties are: name, description, version and enabled (use 'true' or 'false' for the latter)
     * @param structure A byte array withe XML process definition body
-    * @throws com.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException If the process definition could not be found
-    * @throws com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException If the structure is invalid or If one of the properties is malformed or has an unexpected name
+    * @throws org.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException If the process definition could not be found
+    * @throws org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException If the structure is invalid or If one of the properties is malformed or has an unexpected name
     */
     public void updateProcessDefinition(long processDefinitionId, List<StringPair> properties, byte[] structure) throws ApplicationObjectNotFoundException, InvalidArgumentException;
     /**
@@ -1516,7 +1516,7 @@ public interface ApplicationEntityManager {
     public ProcessInstance getProcessInstance(long processInstanceId) throws ApplicationObjectNotFoundException ;
     /**
      * Updates the process definitions
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException
      */
     public void reloadProcessDefinitions() throws InvalidArgumentException;
     /**
@@ -1550,7 +1550,7 @@ public interface ApplicationEntityManager {
      * Arrays: (value1,value2,value3,valueN), matrixes: [(row1col1, row1col2,... row1colN), (row2col1, row2col2,... row2colN), (rowNcol1, rowNcol2,... rowNcolN)]. The values will be interpreted as strings 
      * @return The id of the newly created variable
      * @throws ApplicationObjectNotFoundException If the parent pool could not be found
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException If the name is empty, the type is invalid, the value definition is empty
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException If the name is empty, the type is invalid, the value definition is empty
      */
     public long createConfigurationVariable(String configVariablesPoolId, String name, String description, int type, boolean masked, String valueDefinition) throws ApplicationObjectNotFoundException, InvalidArgumentException;
     /**
@@ -1572,7 +1572,7 @@ public interface ApplicationEntityManager {
      * Retrieves a configuration variable
      * @param name The name of the variable to be retrieved
      * @return The variable
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException If the variable could not be found
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException If the variable could not be found
      */
     public ConfigurationVariable getConfigurationVariable(String name) throws ApplicationObjectNotFoundException;
     /**
@@ -1580,7 +1580,7 @@ public interface ApplicationEntityManager {
      * @param name The name of the variable. Masked values are returned as null. Unexisting variables will be returned as null.
      * @return The value of the variable as a java object/data type. The numbers are returned as floats. The arrays and matrixes are returned as <code>ArrayList{@literal <String>}</code> and <code>ArrayList<ArrayList{@literal <String>}</code> instances respectively
      * @throws InvalidArgumentException If the value of the variable could not be successfully translated into a java type variable
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException If no configuration variable with that name could be found.
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException If no configuration variable with that name could be found.
      */
     public Object getConfigurationVariableValue(String name) throws InvalidArgumentException, ApplicationObjectNotFoundException;
     /**
@@ -1606,7 +1606,7 @@ public interface ApplicationEntityManager {
      * @param name The name of the pool. Empty or null values are not allowed
      * @param description The description of the pool
      * @return The id of the newly created pool
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException If the name provided is null or empty
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException If the name provided is null or empty
      */
     public String createConfigurationVariablesPool(String name, String description) throws InvalidArgumentException;
     /**
@@ -1663,7 +1663,7 @@ public interface ApplicationEntityManager {
      * @param objectClass The class of the object
      * @param objectId The id of the object
      * @return The list of validators associated to the object and its class
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.BusinessObjectNotFoundException If the object can not be found
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.BusinessObjectNotFoundException If the object can not be found
      */
     public List<Validator> runValidationsForObject(String objectClass, long objectId) throws BusinessObjectNotFoundException;
     /**

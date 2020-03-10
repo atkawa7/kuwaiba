@@ -14,7 +14,7 @@
  *
  */
 
-package com.neotropic.kuwaiba.core.persistence.exceptions;
+package org.neotropic.kuwaiba.core.persistence.exceptions;
 
 /**
  * This exception is raised when a pair attribute type - attribute value is not valid

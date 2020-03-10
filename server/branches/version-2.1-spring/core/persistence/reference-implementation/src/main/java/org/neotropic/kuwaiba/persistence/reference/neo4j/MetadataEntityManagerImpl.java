@@ -15,17 +15,17 @@
  */
 package org.neotropic.kuwaiba.persistence.reference.neo4j;
 
-import com.neotropic.kuwaiba.core.persistence.ChangeDescriptor;
-import com.neotropic.kuwaiba.core.persistence.ConnectionManager;
-import com.neotropic.kuwaiba.core.persistence.exceptions.BusinessObjectNotFoundException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.DatabaseException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException;
-import com.neotropic.kuwaiba.core.persistence.metadata.AttributeMetadata;
-import com.neotropic.kuwaiba.core.persistence.metadata.ClassMetadata;
-import com.neotropic.kuwaiba.core.persistence.metadata.ClassMetadataLight;
-import com.neotropic.kuwaiba.core.persistence.metadata.MetadataEntityManager;
-import com.neotropic.kuwaiba.core.persistence.util.Constants;
+import org.neotropic.kuwaiba.core.persistence.ChangeDescriptor;
+import org.neotropic.kuwaiba.core.persistence.ConnectionManager;
+import org.neotropic.kuwaiba.core.persistence.exceptions.BusinessObjectNotFoundException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.DatabaseException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException;
+import org.neotropic.kuwaiba.core.persistence.metadata.AttributeMetadata;
+import org.neotropic.kuwaiba.core.persistence.metadata.ClassMetadata;
+import org.neotropic.kuwaiba.core.persistence.metadata.ClassMetadataLight;
+import org.neotropic.kuwaiba.core.persistence.metadata.MetadataEntityManager;
+import org.neotropic.kuwaiba.core.persistence.util.Constants;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;

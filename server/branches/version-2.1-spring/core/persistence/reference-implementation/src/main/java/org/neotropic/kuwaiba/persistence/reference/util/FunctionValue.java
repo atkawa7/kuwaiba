@@ -14,11 +14,11 @@
  */
 package org.neotropic.kuwaiba.persistence.reference.util;
 
-import com.neotropic.kuwaiba.core.persistence.business.BusinessEntityManager;
-import com.neotropic.kuwaiba.core.persistence.business.BusinessObject;
-import com.neotropic.kuwaiba.core.persistence.exceptions.BusinessObjectNotFoundException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException;
+import org.neotropic.kuwaiba.core.persistence.business.BusinessEntityManager;
+import org.neotropic.kuwaiba.core.persistence.business.BusinessObject;
+import org.neotropic.kuwaiba.core.persistence.exceptions.BusinessObjectNotFoundException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;

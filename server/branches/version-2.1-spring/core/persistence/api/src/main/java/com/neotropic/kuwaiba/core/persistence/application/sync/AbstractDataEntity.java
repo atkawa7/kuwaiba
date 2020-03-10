@@ -13,7 +13,7 @@
  *   limitations under the License.
  * 
  */
-package com.neotropic.kuwaiba.core.persistence.application.sync;
+package org.neotropic.kuwaiba.core.persistence.application.sync;
 
 /**
  * The information from the sync data sources (devices, NMS, third-party databases, etc) 

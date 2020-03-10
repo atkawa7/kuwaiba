@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence.application;
+package org.neotropic.kuwaiba.core.persistence.application;
 
 /**
  * Represents an entry registering an event related to an object. It's usually related to updates

@@ -12,7 +12,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package com.neotropic.kuwaiba.core.persistence.application.processman;
+package org.neotropic.kuwaiba.core.persistence.application.processman;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -27,7 +27,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import com.neotropic.kuwaiba.core.persistence.PersistenceService;
+import org.neotropic.kuwaiba.core.persistence.PersistenceService;
 
 /**
  *

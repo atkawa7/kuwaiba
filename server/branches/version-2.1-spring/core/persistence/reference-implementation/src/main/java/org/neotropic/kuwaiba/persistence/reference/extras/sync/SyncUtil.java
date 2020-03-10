@@ -15,8 +15,8 @@
  */
 package org.neotropic.kuwaiba.persistence.reference.extras.sync;
 
-import com.neotropic.kuwaiba.core.persistence.business.BusinessObject;
-import com.neotropic.kuwaiba.core.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.persistence.business.BusinessObject;
+import org.neotropic.kuwaiba.core.persistence.business.BusinessObjectLight;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;

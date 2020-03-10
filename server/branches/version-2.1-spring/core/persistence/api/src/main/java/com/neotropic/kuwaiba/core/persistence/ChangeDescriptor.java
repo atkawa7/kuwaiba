@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.core.persistence;
+package org.neotropic.kuwaiba.core.persistence;
 
 /**
  * This class is used to summarize a changed made to an object or a set of objects. It's mainly used by those 

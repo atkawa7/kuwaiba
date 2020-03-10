@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence.exceptions;
+package org.neotropic.kuwaiba.core.persistence.exceptions;
 
 /**
  * Wrapper for IllegalArgumentException to permit to set the severity

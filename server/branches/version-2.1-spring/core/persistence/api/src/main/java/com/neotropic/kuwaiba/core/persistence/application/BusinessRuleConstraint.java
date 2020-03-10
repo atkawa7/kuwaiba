@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence.application;
+package org.neotropic.kuwaiba.core.persistence.application;
 
 /**
  * The actual logic behind a business rule. The contents of the constraint definition say what the present rule is matching

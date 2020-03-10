@@ -13,11 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.core.persistence.application.processman;
+package org.neotropic.kuwaiba.core.persistence.application.processman;
 
 import java.util.List;
 import java.util.Objects;
-import com.neotropic.kuwaiba.core.persistence.util.StringPair;
+import org.neotropic.kuwaiba.core.persistence.util.StringPair;
 
 /**
  * Every process activity has at least one artifact. An artifact is the result of 

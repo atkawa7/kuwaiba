@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.core.persistence.application.reporting;
+package org.neotropic.kuwaiba.core.persistence.application.reporting;
 
 /**
  * All report types must inherit from this abstract class. It describes the general behavior of a report. 

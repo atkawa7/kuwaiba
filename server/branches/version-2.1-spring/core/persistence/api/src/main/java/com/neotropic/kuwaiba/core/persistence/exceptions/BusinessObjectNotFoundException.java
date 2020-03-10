@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.core.persistence.exceptions;
+package org.neotropic.kuwaiba.core.persistence.exceptions;
 
 /**
  * Thrown if you're trying to access to a non existing object

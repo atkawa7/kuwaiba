@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.core.persistence.application.sync;
+package org.neotropic.kuwaiba.core.persistence.application.sync;
 
 import java.util.ArrayList;
 import java.util.HashMap;

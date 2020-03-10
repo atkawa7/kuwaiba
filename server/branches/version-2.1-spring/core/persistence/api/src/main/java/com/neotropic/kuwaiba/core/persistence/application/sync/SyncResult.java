@@ -13,7 +13,7 @@
  *   limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence.application.sync;
+package org.neotropic.kuwaiba.core.persistence.application.sync;
 
 /**
  * Instances of this class are intended to inform about the results of a synchronization process. 

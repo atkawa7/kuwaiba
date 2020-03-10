@@ -13,7 +13,7 @@
  *   limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence.application.sync;
+package org.neotropic.kuwaiba.core.persistence.application.sync;
 
 /**
  * This class represents a single result from comparing the info from a sync data 

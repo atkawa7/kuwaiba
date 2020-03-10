@@ -14,10 +14,10 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence.application;
+package org.neotropic.kuwaiba.core.persistence.application;
 
 import java.util.HashMap;
-import com.neotropic.kuwaiba.core.persistence.business.BusinessObject;
+import org.neotropic.kuwaiba.core.persistence.business.BusinessObject;
 
 /**
  * Instances of this class represent an inventory object defined within a template. 

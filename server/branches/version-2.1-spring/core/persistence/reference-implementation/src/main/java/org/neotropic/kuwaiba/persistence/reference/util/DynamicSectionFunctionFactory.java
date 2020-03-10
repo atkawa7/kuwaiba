@@ -14,7 +14,7 @@
  */
 package org.neotropic.kuwaiba.persistence.reference.util;
 
-import com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

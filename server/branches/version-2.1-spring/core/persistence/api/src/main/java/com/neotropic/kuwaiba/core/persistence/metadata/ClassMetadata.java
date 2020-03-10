@@ -14,9 +14,9 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence.metadata;
+package org.neotropic.kuwaiba.core.persistence.metadata;
 
-import com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
 import java.util.ArrayList;
 import java.util.List;
 

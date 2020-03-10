@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence.application;
+package org.neotropic.kuwaiba.core.persistence.application;
 
 /**
  * Simple POJO that represents a configuration variable. A configuration variable is a place where a value will be stored so it can retrieved by whomever need it. 

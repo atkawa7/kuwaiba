@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence.business;
+package org.neotropic.kuwaiba.core.persistence.business;
 
 import java.util.HashMap;
 

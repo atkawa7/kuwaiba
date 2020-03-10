@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence.exceptions;
+package org.neotropic.kuwaiba.core.persistence.exceptions;
 
 /**
  * Thrown if a metadata object cannot be found (an instance of ClassMetadata, AttributeMatadata, InterfaceMetadata or categoryMetadata)

@@ -14,12 +14,12 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence.application.queries;
+package org.neotropic.kuwaiba.core.persistence.application.queries;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import com.neotropic.kuwaiba.core.persistence.PersistenceService;
+import org.neotropic.kuwaiba.core.persistence.PersistenceService;
 //import org.neo4j.graphdb.GraphDatabaseService;
 //import org.neo4j.graphdb.Transaction;
 

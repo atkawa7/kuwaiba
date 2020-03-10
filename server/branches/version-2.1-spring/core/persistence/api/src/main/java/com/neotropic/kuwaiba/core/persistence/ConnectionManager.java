@@ -14,11 +14,11 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence;
+package org.neotropic.kuwaiba.core.persistence;
 
 import java.util.List;
 import java.util.Properties;
-import com.neotropic.kuwaiba.core.persistence.exceptions.ConnectionException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.ConnectionException;
 
 /**
  * Interface providing the general methods to manage the db/backend connection

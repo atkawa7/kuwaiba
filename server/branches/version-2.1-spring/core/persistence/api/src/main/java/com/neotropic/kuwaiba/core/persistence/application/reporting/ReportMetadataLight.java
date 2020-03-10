@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence.application.reporting;
+package org.neotropic.kuwaiba.core.persistence.application.reporting;
 
 /**
  * A simplified representation of a {@link Report}.

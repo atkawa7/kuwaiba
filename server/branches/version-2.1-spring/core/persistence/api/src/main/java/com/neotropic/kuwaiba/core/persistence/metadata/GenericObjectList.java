@@ -14,9 +14,9 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence.metadata;
+package org.neotropic.kuwaiba.core.persistence.metadata;
 
-import com.neotropic.kuwaiba.core.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.persistence.business.BusinessObjectLight;
 import java.util.List;
 
 /**

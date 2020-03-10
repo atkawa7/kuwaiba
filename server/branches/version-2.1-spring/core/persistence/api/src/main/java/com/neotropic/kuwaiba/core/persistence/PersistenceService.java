@@ -13,18 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.core.persistence;
+package org.neotropic.kuwaiba.core.persistence;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
 import java.util.Properties;
-import com.neotropic.kuwaiba.core.persistence.application.ApplicationEntityManager;
-//import com.neotropic.kuwaiba.core.persistence.business.BusinessEntityManager;
-//import com.neotropic.kuwaiba.core.persistence.exceptions.ConnectionException;
-//import com.neotropic.kuwaiba.core.persistence.metadata.MetadataEntityManager;
-//import com.neotropic.kuwaiba.core.persistence.integrity.DataIntegrityService;
-//import com.neotropic.kuwaiba.core.persistence.integrity.DataModelLoader;
-import com.neotropic.kuwaiba.core.persistence.util.Constants;
+import org.neotropic.kuwaiba.core.persistence.application.ApplicationEntityManager;
+import org.neotropic.kuwaiba.core.persistence.util.Constants;
 //import org.kuwaiba.apis.web.gui.views.ViewFactory;
 
 /**

@@ -14,14 +14,14 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence;
+package org.neotropic.kuwaiba.core.persistence;
 
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import com.neotropic.kuwaiba.core.persistence.application.ApplicationEntityManager;
-//import com.neotropic.kuwaiba.core.persistence.business.BusinessEntityManager;
-//import com.neotropic.kuwaiba.core.persistence.metadata.MetadataEntityManager;
+import org.neotropic.kuwaiba.core.persistence.application.ApplicationEntityManager;
+//import org.neotropic.kuwaiba.core.persistence.business.BusinessEntityManager;
+//import org.neotropic.kuwaiba.core.persistence.metadata.MetadataEntityManager;
 
 
 /**

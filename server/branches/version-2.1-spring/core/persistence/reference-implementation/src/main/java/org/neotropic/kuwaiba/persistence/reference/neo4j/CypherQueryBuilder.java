@@ -16,10 +16,10 @@
 
 package org.neotropic.kuwaiba.persistence.reference.neo4j;
 
-import com.neotropic.kuwaiba.core.persistence.application.ExtendedQuery;
-import com.neotropic.kuwaiba.core.persistence.application.ResultRecord;
-import com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
-import com.neotropic.kuwaiba.core.persistence.util.Constants;
+import org.neotropic.kuwaiba.core.persistence.application.ExtendedQuery;
+import org.neotropic.kuwaiba.core.persistence.application.ResultRecord;
+import org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
+import org.neotropic.kuwaiba.core.persistence.util.Constants;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

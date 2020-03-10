@@ -16,29 +16,29 @@
 
 package org.neotropic.kuwaiba.persistence.reference.neo4j.util;
 
-import com.neotropic.kuwaiba.core.persistence.application.GroupProfile;
-import com.neotropic.kuwaiba.core.persistence.application.GroupProfileLight;
-import com.neotropic.kuwaiba.core.persistence.application.Pool;
-import com.neotropic.kuwaiba.core.persistence.application.Privilege;
-import com.neotropic.kuwaiba.core.persistence.application.Task;
-import com.neotropic.kuwaiba.core.persistence.application.TaskNotificationDescriptor;
-import com.neotropic.kuwaiba.core.persistence.application.TaskScheduleDescriptor;
-import com.neotropic.kuwaiba.core.persistence.application.UserProfile;
-import com.neotropic.kuwaiba.core.persistence.application.UserProfileLight;
-import com.neotropic.kuwaiba.core.persistence.application.processman.ProcessInstance;
-import com.neotropic.kuwaiba.core.persistence.application.sync.SyncDataSourceConfiguration;
-import com.neotropic.kuwaiba.core.persistence.application.sync.SynchronizationGroup;
-import com.neotropic.kuwaiba.core.persistence.business.BusinessObjectLight;
-import com.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.UnsupportedPropertyException;
-import com.neotropic.kuwaiba.core.persistence.metadata.AttributeMetadata;
-import com.neotropic.kuwaiba.core.persistence.metadata.ClassMetadata;
-import com.neotropic.kuwaiba.core.persistence.metadata.ClassMetadataLight;
-import com.neotropic.kuwaiba.core.persistence.metadata.GenericObjectList;
-import com.neotropic.kuwaiba.core.persistence.util.Constants;
-import com.neotropic.kuwaiba.core.persistence.util.StringPair;
+import org.neotropic.kuwaiba.core.persistence.application.GroupProfile;
+import org.neotropic.kuwaiba.core.persistence.application.GroupProfileLight;
+import org.neotropic.kuwaiba.core.persistence.application.Pool;
+import org.neotropic.kuwaiba.core.persistence.application.Privilege;
+import org.neotropic.kuwaiba.core.persistence.application.Task;
+import org.neotropic.kuwaiba.core.persistence.application.TaskNotificationDescriptor;
+import org.neotropic.kuwaiba.core.persistence.application.TaskScheduleDescriptor;
+import org.neotropic.kuwaiba.core.persistence.application.UserProfile;
+import org.neotropic.kuwaiba.core.persistence.application.UserProfileLight;
+import org.neotropic.kuwaiba.core.persistence.application.processman.ProcessInstance;
+import org.neotropic.kuwaiba.core.persistence.application.sync.SyncDataSourceConfiguration;
+import org.neotropic.kuwaiba.core.persistence.application.sync.SynchronizationGroup;
+import org.neotropic.kuwaiba.core.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.UnsupportedPropertyException;
+import org.neotropic.kuwaiba.core.persistence.metadata.AttributeMetadata;
+import org.neotropic.kuwaiba.core.persistence.metadata.ClassMetadata;
+import org.neotropic.kuwaiba.core.persistence.metadata.ClassMetadataLight;
+import org.neotropic.kuwaiba.core.persistence.metadata.GenericObjectList;
+import org.neotropic.kuwaiba.core.persistence.util.Constants;
+import org.neotropic.kuwaiba.core.persistence.util.StringPair;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -232,21 +232,21 @@ public class Util {
      * @throws MetadataObjectNotFoundException If the class does not have a name
      */
     public static ClassMetadata setDefaultsForClassMetadatas(ClassMetadata classDefinition) throws MetadataObjectNotFoundException{
-        if(classDefinition.getName() == null){
+        if(classDefinition.getName() == null)
             throw new MetadataObjectNotFoundException("Can not create a class metadata entry without a name");
-        }
-        if(classDefinition.getDisplayName() == null){
+        
+        if(classDefinition.getDisplayName() == null)
             classDefinition.setDisplayName("");
-        }
-        if(classDefinition.getDescription() == null){
+        
+        if(classDefinition.getDescription() == null)
             classDefinition.setDescription("");
-        }
-        if(classDefinition.getIcon() == null){
+        
+        if(classDefinition.getIcon() == null)
             classDefinition.setIcon(new byte[0]);
-        }
-        if(classDefinition.getSmallIcon() == null){
+        
+        if(classDefinition.getSmallIcon() == null)
             classDefinition.setSmallIcon(new byte[0]);
-        }
+        
         
         classDefinition.getColor();
         return classDefinition;
@@ -612,7 +612,7 @@ public class Util {
      * Creates a generic object list (a list type) from a node
      * @param listTypeNode the list type node
      * @return a list type The specified list type node is malformed and lacks uuid property.
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException
      */
     public static GenericObjectList createGenericObjectListFromNode(Node listTypeNode) throws InvalidArgumentException {
         String listTypeNodeUuid = listTypeNode.hasProperty(Constants.PROPERTY_UUID) ? (String) listTypeNode.getProperty(Constants.PROPERTY_UUID) : null;

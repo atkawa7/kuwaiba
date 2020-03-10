@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence.metadata;
+package org.neotropic.kuwaiba.core.persistence.metadata;
 
 import java.io.Serializable;
 

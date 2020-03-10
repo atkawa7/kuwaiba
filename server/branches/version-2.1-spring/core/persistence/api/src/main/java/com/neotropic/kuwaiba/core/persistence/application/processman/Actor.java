@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.core.persistence.application.processman;
+package org.neotropic.kuwaiba.core.persistence.application.processman;
 
 /**
  * An actor is someone (a person, organizational unit or external agent, like a customer) who is responsible to cary on with an activity.

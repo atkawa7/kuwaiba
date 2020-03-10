@@ -14,9 +14,9 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence.application.sync;
+package org.neotropic.kuwaiba.core.persistence.application.sync;
 
-import com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
 import java.io.Serializable;
 import java.util.HashMap;
 

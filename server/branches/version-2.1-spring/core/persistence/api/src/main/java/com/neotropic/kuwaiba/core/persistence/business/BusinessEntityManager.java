@@ -14,20 +14,20 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.core.persistence.business;
+package org.neotropic.kuwaiba.core.persistence.business;
 
-import com.neotropic.kuwaiba.core.persistence.ChangeDescriptor;
-import com.neotropic.kuwaiba.core.persistence.application.FileObjectLight;
-import com.neotropic.kuwaiba.core.persistence.application.Pool;
-import com.neotropic.kuwaiba.core.persistence.application.reporting.ReportMetadata;
-import com.neotropic.kuwaiba.core.persistence.application.reporting.ReportMetadataLight;
-import com.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.ArraySizeMismatchException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.BusinessObjectNotFoundException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException;
-import com.neotropic.kuwaiba.core.persistence.exceptions.OperationNotPermittedException;
-import com.neotropic.kuwaiba.core.persistence.util.StringPair;
+import org.neotropic.kuwaiba.core.persistence.ChangeDescriptor;
+import org.neotropic.kuwaiba.core.persistence.application.FileObjectLight;
+import org.neotropic.kuwaiba.core.persistence.application.Pool;
+import org.neotropic.kuwaiba.core.persistence.application.reporting.ReportMetadata;
+import org.neotropic.kuwaiba.core.persistence.application.reporting.ReportMetadataLight;
+import org.neotropic.kuwaiba.core.persistence.exceptions.ApplicationObjectNotFoundException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.ArraySizeMismatchException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.BusinessObjectNotFoundException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException;
+import org.neotropic.kuwaiba.core.persistence.exceptions.OperationNotPermittedException;
+import org.neotropic.kuwaiba.core.persistence.util.StringPair;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
@@ -539,7 +539,7 @@ public interface BusinessEntityManager {
      * @return The list of special children of the given object, filtered using classToFilter
      * @throws MetadataObjectNotFoundException If the parent class name provided could not be found
      * @throws BusinessObjectNotFoundException If the parent object could not be found
-     * @throws com.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException If the filter class is invalid.
+     * @throws org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException If the filter class is invalid.
      */
     public List<BusinessObjectLight> getSpecialChildrenOfClassLight(String parentOid, String parentClass, String classToFilter, int maxResults)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;

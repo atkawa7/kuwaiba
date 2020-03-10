@@ -16,12 +16,12 @@
 
 package org.neotropic.kuwaiba.persistence.reference.extras.processman;
 
-import com.neotropic.kuwaiba.core.persistence.application.processman.ActivityDefinition;
-import com.neotropic.kuwaiba.core.persistence.application.processman.Artifact;
-import com.neotropic.kuwaiba.core.persistence.application.processman.Kpi;
-import com.neotropic.kuwaiba.core.persistence.application.processman.KpiAction;
-import com.neotropic.kuwaiba.core.persistence.application.processman.KpiResult;
-import com.neotropic.kuwaiba.core.persistence.application.processman.ProcessDefinition;
+import org.neotropic.kuwaiba.core.persistence.application.processman.ActivityDefinition;
+import org.neotropic.kuwaiba.core.persistence.application.processman.Artifact;
+import org.neotropic.kuwaiba.core.persistence.application.processman.Kpi;
+import org.neotropic.kuwaiba.core.persistence.application.processman.KpiAction;
+import org.neotropic.kuwaiba.core.persistence.application.processman.KpiResult;
+import org.neotropic.kuwaiba.core.persistence.application.processman.ProcessDefinition;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 
