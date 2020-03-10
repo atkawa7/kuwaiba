@@ -18,11 +18,9 @@ package org.neotropic.kuwaiba.web;
 
 import org.neotropic.kuwaiba.core.persistence.ConnectionManager;
 import org.neotropic.kuwaiba.core.persistence.application.ApplicationEntityManager;
-import org.neotropic.kuwaiba.core.persistence.business.BusinessEntityManager;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import org.neotropic.kuwaiba.persistence.reference.neo4j.Apa;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -37,14 +35,16 @@ public class IndexUI extends VerticalLayout {
     
     
     @Autowired
-    public IndexUI(ApplicationEntityManager aem) {
+    public IndexUI(ConnectionManager cmn, ApplicationEntityManager aem) {
         try {
-            //cmn.openConnection();
-            aem.createSyncGroup("sadssa");
-            //cmn.closeConnection();
-            add(new Label("<span>Tutto Bene!</span>"));
+            cmn.openConnection();
+            aem.createSession("admin", "dsadsad", 1, "127.0.0.1");
+            add(new Label("It works!"));
         } catch (Exception ex) {
-            add(new Label("<span>An error occurred: " + ex.getMessage() + "</span>"));
+            add(new Label("An error occurred: " + ex.getMessage()));
+        } finally {
+            cmn.closeConnection();
+            add(new Label("Session closed"));
         }
     }
     
