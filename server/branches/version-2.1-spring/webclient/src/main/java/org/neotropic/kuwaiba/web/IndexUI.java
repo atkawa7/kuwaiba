@@ -21,6 +21,8 @@ import org.neotropic.kuwaiba.core.persistence.application.ApplicationEntityManag
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import java.util.Locale;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -35,8 +37,9 @@ public class IndexUI extends VerticalLayout {
     
     
     @Autowired
-    public IndexUI(ConnectionManager cmn, ApplicationEntityManager aem) {
+    public IndexUI(ConnectionManager cmn, ApplicationEntityManager aem, TranslationService ts) {
         try {
+            add(new Label("Testing internationalization support: " + ts.getTranslatedString(Locale.ENGLISH, "txt.hola")));
             cmn.openConnection();
             aem.createSession("admin", "dsadsad", 1, "127.0.0.1");
             add(new Label("It works!"));

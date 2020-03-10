@@ -14,18 +14,12 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.web;
-
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+package org.neotropic.kuwaiba.core.i18n;
 
 /**
- * The Spring basic automated configuration file. 
+ *
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-@Configuration
-@ComponentScan(basePackages = { "org.neotropic.kuwaiba.persistence.reference.neo4j", 
-                                "org.neotropic.kuwaiba.core.i18n" })
-public class SpringConfiguration {
+public class I18N {
 
 }
