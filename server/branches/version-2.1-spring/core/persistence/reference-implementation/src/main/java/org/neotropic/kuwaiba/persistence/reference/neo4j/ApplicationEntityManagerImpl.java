@@ -111,15 +111,14 @@ import org.neo4j.helpers.collection.Iterators;
 import org.neotropic.kuwaiba.persistence.reference.extras.caching.CacheManager;
 import org.neotropic.kuwaiba.persistence.reference.neo4j.util.Util;
 import org.neotropic.kuwaiba.persistence.reference.util.DynamicNameGenerator;
-import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import scala.collection.convert.Wrappers;
 
 /**
  * Application Entity Manager reference implementation
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-@Repository
+@Component
 public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     /**
      * Graph db service

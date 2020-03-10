@@ -33,14 +33,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class IndexUI extends VerticalLayout {
 
     //@Autowired
-    private ConnectionManager cmn;
+    private ApplicationEntityManager cmn;
     
     
     @Autowired
-    public IndexUI(ConnectionManager aem) {
+    public IndexUI(ApplicationEntityManager aem) {
         try {
             //cmn.openConnection();
-            aem.openConnection();
+            aem.createSyncGroup("sadssa");
             //cmn.closeConnection();
             add(new Label("<span>Tutto Bene!</span>"));
         } catch (Exception ex) {
