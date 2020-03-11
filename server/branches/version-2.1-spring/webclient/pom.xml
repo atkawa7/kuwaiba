@@ -72,11 +72,11 @@
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-spring-boot-starter</artifactId>
         </dependency>
-        <!--
+        
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>flow-dnd</artifactId>
-        </dependency> -->
+        </dependency>
         
         <!-- Home made components -->
         <!-- To create views. A wrapper for the mx-graph library -->
@@ -87,12 +87,11 @@
             <type>jar</type>
         </dependency>-->
         <!-- Google Maps support -->
-        <!--<dependency>
-            <groupId>org.neotropic.vaadin14.component</groupId>
+        <dependency>
+            <groupId>com.neotropic.vaadin14.component</groupId>
             <artifactId>google-map-flow</artifactId>
             <version>1.0</version>
-            <type>jar</type>
-        </dependency>-->
+        </dependency>
         
         <!-- Visual API for reporting purposes -->
         <!--<dependency>
