@@ -21,11 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import org.neotropic.kuwaiba.core.persistence.ConnectionManager;
-import org.neotropic.kuwaiba.core.persistence.application.ApplicationEntityManager;
-import org.neotropic.kuwaiba.core.persistence.business.BusinessEntityManager;
-import org.neotropic.kuwaiba.core.persistence.exceptions.ConnectionException;
-import org.neotropic.kuwaiba.core.persistence.metadata.MetadataEntityManager;
+import org.neotropic.kuwaiba.persistence.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -45,13 +41,18 @@ public class Application {
     @Component
     public static class Bootstrap {
         @Autowired
-        private ConnectionManager cmn;
-        @Autowired
-        private MetadataEntityManager mem;
-        @Autowired
-        private ApplicationEntityManager aem;
-        @Autowired
-        private BusinessEntityManager bem;
+        private PersistenceService persistenceService;
+        // General properties
+        @Value("${general.enableSecurityManager}")
+        private boolean enableSecurityManager;
+        @Value("${general.corporateLogo}")
+        private String corporateLogo;
+        @Value("${general.companyName}")
+        private String companyName;
+        @Value("${general.debugMode}")
+        private String debugMode;
+        
+        // Connection properties
         @Value("${db.path}")
         private String dbPath;
         @Value("${db.host}")
@@ -59,29 +60,66 @@ public class Application {
         @Value("${db.port}")
         private int dbPort;
         
+        // Application properties
+        @Value("${aem.enforceBusinessRules}")
+        private String enforceBusinessRules;
+        @Value("${aem.processEnginePath}")
+        private String processEnginePath;
+        @Value("${aem.processesPath}")
+        private String processesPath;
+        @Value("${aem.maxRoutes}")
+        private String maxRoutes;
+        @Value("${aem.backgroundsPath}")
+        private String backgroundsPath;
+        
+        // Business properties
+        @Value("${bem.attachmentsPath}")
+        private String attachmentsPath;
+        @Value("${bem.maxAttachmentSize}")
+        private String maxAttachmentSize;
+        
+                
         @PostConstruct
         void init() {
-            Properties dbProperties = new Properties();
-            dbProperties.put("dbPath", dbPath);
-            dbProperties.put("dbHost", dbHost);
-            dbProperties.put("dbPort", dbPort);
+            Properties generalProperties = new Properties();
+            generalProperties.put("enableSecurityManager", enableSecurityManager);
+            persistenceService.setGeneralProperties(generalProperties);
             
-            cmn.setConfiguration(dbProperties);
+            Properties connectionProperties = new Properties();
+            connectionProperties.put("dbPath", dbPath);
+            connectionProperties.put("dbHost", dbHost);
+            connectionProperties.put("dbPort", dbPort);
+            persistenceService.setConnectionProperties(connectionProperties);
+
+            persistenceService.setMetadataProperties(new Properties());
+            
+            Properties applicationProperties = new Properties();
+            applicationProperties.put("enforceBusinessRules", enforceBusinessRules);
+            applicationProperties.put("processEnginePath", processEnginePath);
+            applicationProperties.put("processesPath", processesPath);
+            applicationProperties.put("maxRoutes", maxRoutes);
+            applicationProperties.put("backgroundsPath", backgroundsPath);
+            persistenceService.setApplicationProperties(applicationProperties);
+            
+            Properties businessProperties = new Properties();
+            applicationProperties.put("attachmentsPath", attachmentsPath);
+            applicationProperties.put("maxAttachmentSize", maxAttachmentSize);
+            persistenceService.setBusinessProperties(businessProperties);
+            
             try {
-                Logger.getLogger(Application.class.getName()).log(Level.INFO, "Starting connection to the database...");
-                cmn.openConnection();
-                Logger.getLogger(Application.class.getName()).log(Level.INFO, "Connection established");
-                
-            } catch (ConnectionException ex) {
-                Logger.getLogger(Application.class.getName()).log(Level.WARNING, "Error connecting to the database");
-                Logger.getLogger(Application.class.getName()).log(Level.SEVERE, null, ex);
+                persistenceService.start();
+            } catch (IllegalStateException ex) {
+                Logger.getLogger(Application.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage());
             }
         }
         
         @PreDestroy
         void shutdown() {
-            System.out.println("Closing conection");
-            cmn.closeConnection();
+            try {
+                persistenceService.stop();
+            } catch (IllegalStateException ex) {
+                Logger.getLogger(Application.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage());
+            }
         }
     }
 }

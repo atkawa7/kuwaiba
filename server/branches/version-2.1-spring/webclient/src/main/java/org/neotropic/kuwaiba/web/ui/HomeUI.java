@@ -20,13 +20,15 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.router.Route;
 import org.neotropic.kuwaiba.core.persistence.application.Session;
 
 /**
  * The home page. It's a dashboard that can be customized with widgets. 
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class WelcomeUI extends VerticalLayout implements BeforeEnterObserver {
+@Route("home")
+public class HomeUI extends VerticalLayout implements BeforeEnterObserver {
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {

@@ -21,7 +21,7 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 
 @Route("error")
-public class ErrorView extends VerticalLayout implements BeforeEnterObserver {
+public class ErrorUI extends VerticalLayout implements BeforeEnterObserver {
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {

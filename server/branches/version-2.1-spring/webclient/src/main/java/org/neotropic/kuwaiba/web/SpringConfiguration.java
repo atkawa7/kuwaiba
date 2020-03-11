@@ -24,8 +24,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Configuration
-@ComponentScan(basePackages = { "org.neotropic.kuwaiba.persistence.reference.neo4j", 
-                                "org.neotropic.kuwaiba.core.i18n" })
-public class SpringConfiguration {
-
-}
+@ComponentScan(basePackages = { "org.neotropic.kuwaiba.persistence", //The persistence service
+                                "org.neotropic.kuwaiba.persistence.reference.neo4j", // The XEM implementations
+                                "org.neotropic.kuwaiba.core.i18n"}) // The translation service
+public class SpringConfiguration { }

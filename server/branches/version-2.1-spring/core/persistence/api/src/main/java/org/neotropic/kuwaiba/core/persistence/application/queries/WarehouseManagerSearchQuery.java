@@ -19,7 +19,6 @@ package org.neotropic.kuwaiba.core.persistence.application.queries;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import org.neotropic.kuwaiba.core.persistence.PersistenceService;
 //import org.neo4j.graphdb.GraphDatabaseService;
 //import org.neo4j.graphdb.Transaction;
 

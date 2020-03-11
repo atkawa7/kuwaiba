@@ -54,7 +54,7 @@ public class LoginUI extends VerticalLayout implements BeforeEnterObserver {
      */
     private PasswordField txtPassword;
     /**
-     * Button that uses the filled data to create a session.
+     * Button that uses the data filled in by the user to create a session.
      */
     private Button btnLogin;
     /**
@@ -68,13 +68,23 @@ public class LoginUI extends VerticalLayout implements BeforeEnterObserver {
      */
     public LoginUI() {
         setSizeFull();
-        add(new HorizontalLayout()); // Top filler
-        add(new HorizontalLayout(new HorizontalLayout() /* Left filler */, 
+        HorizontalLayout lytTopFiller =new HorizontalLayout();
+        lytTopFiller.setSizeFull();
+        add(lytTopFiller); // Top filler
+        HorizontalLayout lytRightFiller = new HorizontalLayout();
+        lytRightFiller.setSizeFull();
+        HorizontalLayout lytLeftFiller = new HorizontalLayout();
+        lytLeftFiller.setSizeFull();
+        HorizontalLayout lytMidContent = new HorizontalLayout(lytLeftFiller /* Left filler */, 
                 buildLoginForm(), /* Content */
-                new HorizontalLayout() /* Right filler */));
-        add(new HorizontalLayout() /* Left filler */, 
+                lytRightFiller /* Right filler */);
+        lytMidContent.setSizeFull();
+        add(lytMidContent);
+        HorizontalLayout lytFooterContent = new HorizontalLayout(new HorizontalLayout() /* Left filler */, 
                 buildLoginFooter(), /* Footer content */ 
                 new HorizontalLayout() /* Right filler */);
+        lytFooterContent.setSizeFull();
+        add(lytFooterContent);
     }
     
     /**
@@ -117,32 +127,27 @@ public class LoginUI extends VerticalLayout implements BeforeEnterObserver {
                 }
              });
         });
-        FormLayout formResult = new FormLayout();
-        formResult.addFormItem(txtUsername, "User Name");
-        formResult.addFormItem(txtPassword, "Password");
-        formResult.add(btnLogin);
-        formResult.setWidth("400px");
         
-        return formResult;
+        FormLayout lytForm = new FormLayout();
+        lytForm.addFormItem(txtUsername, "User");
+        lytForm.addFormItem(txtPassword, "Password");
+        lytForm.add(btnLogin);
+        lytForm.setSizeFull();
+        
+        return lytForm;
      }
     
     private VerticalLayout buildLoginFooter() {
-        Image imgLogo = new Image("img/neotropic_logo.png", "Kuwaiba Logo");
-        
-        Div lblCopyright = new Div(new Html("Copyright 2010-2019 <a style=\"color:black\" target=\"blank\" href=\"http://www.neotropic.co\">Neotropic SAS</a>"));
-        
+        Image imgLogo = new Image("img/neotropic_logo.png", "Neotropic SAS Logo");
+        Div lblCopyright = new Div(new Html("<span style=\"font-size:small\">Copyright 2010-2020 <a target=\"blank\" href=\"http://www.neotropic.co\">Neotropic SAS</a></span>"));
         VerticalLayout lytFooter = new VerticalLayout(new HorizontalLayout(), imgLogo, lblCopyright); 
-        lytFooter.setWidth("100%");
-        lytFooter.setClassName("dark");
-        lytFooter.addClassName("v-align-right");
-        lytFooter.setSizeFull();
         lytFooter.setAlignItems(Alignment.CENTER);
         return lytFooter;
     }
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        if (UI.getCurrent().getSession().getAttribute(Session.class) != null) // If there is a session, redirect to the welcome page
-            event.forwardTo(WelcomeUI.class);
+        if (UI.getCurrent().getSession().getAttribute(Session.class) != null) // If there is a session, redirect to the home page
+            event.forwardTo(HomeUI.class);
     }
 }
