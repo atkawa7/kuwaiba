@@ -311,7 +311,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                                     int y = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
                                     
                                     String oid = reader.getAttributeValue(null,"id");
-                                    LocalObjectLight lol = new LocalObjectLight(oid, reader.getElementText(), null);
+                                    LocalObjectLight lol = new LocalObjectLight(oid, reader.getElementText(), "ACloud");
                                     this.addNode(lol).setPreferredLocation(new Point(x, y));
                                 }
                             }
@@ -320,10 +320,10 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                                 String aSide = reader.getAttributeValue(null,"aside");
                                 String bSide = reader.getAttributeValue(null,"bside");
 
-                                LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
+                                LocalObjectLight aSideObject = new LocalObjectLight(aSide, "", "AnEdge");
                                 Widget aSideWidget = this.findWidget(aSideObject);
 
-                                LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
+                                LocalObjectLight bSideObject = new LocalObjectLight(bSide, "", "AnEdge");
                                 Widget bSideWidget = this.findWidget(bSideObject);
 
                                 if (aSideWidget == null || bSideWidget == null)
@@ -354,7 +354,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                             else{ // FREE FRAMES
                                 if (reader.getName().equals(qPolygon)) { 
                                     String oid = UUID.randomUUID().toString();
-                                    LocalObjectLight lol = new LocalObjectLight(oid, oid + FREE_FRAME + reader.getAttributeValue(null, "title"), null);
+                                    LocalObjectLight lol = new LocalObjectLight(oid, oid + FREE_FRAME + reader.getAttributeValue(null, "title"), "AFrame");
                                     Widget myPolygon = addNode(lol);
                                     Point p = new Point();
                                     p.setLocation(Double.valueOf(reader.getAttributeValue(null, "x")), Double.valueOf(reader.getAttributeValue(null, "y")));
