@@ -121,7 +121,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
     
     public void addFreeFrame() {
         String oid = UUID.randomUUID().toString();
-        LocalObjectLight lol = new LocalObjectLight(oid, oid + FREE_FRAME + "New Frame", null);
+        LocalObjectLight lol = new LocalObjectLight(oid, oid + FREE_FRAME + "New Frame", "AFrame");
         Widget newWidget = addNode(lol);
         newWidget.setPreferredLocation(new Point(100, 100));
         this.validate();
@@ -130,7 +130,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
     
     public void addFreeCloud() {
         String oid = UUID.randomUUID().toString();
-        LocalObjectLight lol = new LocalObjectLight(oid, oid + CLOUD_ICON + "New Cloud", null);
+        LocalObjectLight lol = new LocalObjectLight(oid, oid + CLOUD_ICON + "New Cloud", "ACloud");
         Widget newWidget = addNode(lol);
         newWidget.setPreferredLocation(new Point(100, 100));
         this.validate();
