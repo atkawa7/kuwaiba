@@ -662,10 +662,10 @@ public class Util {
     public static SyncDataSourceConfiguration createSyncDataSourceConfigFromNode(Node syncDataSourceConfigNode) throws UnsupportedPropertyException, InvalidArgumentException{   
         
         if (!syncDataSourceConfigNode.hasProperty(Constants.PROPERTY_NAME))
-            throw new UnsupportedPropertyException(String.format("The sync configuration with id %s is malformed. Check its properties", syncDataSourceConfigNode.getId()));
+            throw new UnsupportedPropertyException(String.format("The sync configuration with id %s is malformed. Its name is empty", syncDataSourceConfigNode.getId()));
         
         if(!syncDataSourceConfigNode.hasRelationship(RelTypes.HAS_CONFIGURATION))
-            throw new UnsupportedPropertyException(String.format("The sync configuration with id %s is malformed. its not related with a inventory object", syncDataSourceConfigNode.getId()));
+            throw new UnsupportedPropertyException(String.format("The sync configuration with id %s is malformed. It is not related to any inventory object", syncDataSourceConfigNode.getId()));
         
         Node inventoryObjectNode = syncDataSourceConfigNode.getSingleRelationship(RelTypes.HAS_CONFIGURATION, Direction.OUTGOING).getStartNode();
 
@@ -676,7 +676,7 @@ public class Util {
             if (property.equals(Constants.PROPERTY_NAME))
                 configName = (String)syncDataSourceConfigNode.getProperty(property);
             if(property.equals("deviceId") && !((String)syncDataSourceConfigNode.getProperty(property)).equals(inventoryObjectNode.getProperty(Constants.PROPERTY_UUID)))
-                throw new UnsupportedPropertyException(String.format("The sync configuration with id %s is malformed. its not related with correct inventory object", inventoryObjectNode.getId()));   
+                throw new UnsupportedPropertyException(String.format("The sync configuration with id %s is malformed. It seems to be incorrectly related to a network device", inventoryObjectNode.getId()));   
             else
                 parameters.put(property, (String)syncDataSourceConfigNode.getProperty(property));
         }
