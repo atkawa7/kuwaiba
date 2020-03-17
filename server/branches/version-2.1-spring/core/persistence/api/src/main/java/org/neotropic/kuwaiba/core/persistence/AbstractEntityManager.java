@@ -16,6 +16,8 @@
 
 package org.neotropic.kuwaiba.core.persistence;
 
+import java.util.Properties;
+
 /**
  * An entity manager handles the business entities inside the database, that is, performs 
  * queries, creates, relates and deletes objects, etc. There are three types of entities in Kuwaiba: 
@@ -29,4 +31,10 @@ public interface AbstractEntityManager {
      * This optional method clears and builds the cache components needed in the current entity manager.
      */
     public void initCache();
+    /**
+     * Configuration variables (usually, yet not necessarily read from a config file) that will be used to process some calls 
+     * (for example file paths or constants).
+     * @param properties The set of properties. Each EM should document its variables and what are their default values.
+     */
+    public void setConfiguration(Properties properties);
 }

@@ -31,6 +31,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.neo4j.graphdb.Direction;
@@ -56,7 +57,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class MetadataEntityManagerImpl implements MetadataEntityManager {
-    
     /**
      * Class label
      */
@@ -69,6 +69,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
      * This hash contains the display name of the special relationship used in the different models
      */
     private HashMap<String, String> relationshipDisplayNames;
+    /**
+     * Configuration variables set from the persistence service before using this entity manager.
+     */
+    private Properties configuration;
     /**
      * Reference to the connection manager.
      */
@@ -92,8 +96,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     Calendar.getInstance().getTime(), ex.getMessage()));
         }
     }
-    
 
+    @Override
+    public void setConfiguration(Properties configuration) {
+        this.configuration = configuration;
+    }
+    
     @Override
     public long createClass(ClassMetadata classDefinition) throws MetadataObjectNotFoundException, DatabaseException, InvalidArgumentException {
         if (classDefinition.getName() == null)

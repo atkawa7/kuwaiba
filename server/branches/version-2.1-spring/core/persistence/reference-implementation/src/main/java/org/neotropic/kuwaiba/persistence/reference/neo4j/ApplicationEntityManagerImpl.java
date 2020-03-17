@@ -95,7 +95,6 @@ import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import org.mindrot.jbcrypt.BCrypt;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
@@ -110,6 +109,8 @@ import org.neotropic.kuwaiba.persistence.reference.extras.caching.CacheManager;
 import org.neotropic.kuwaiba.persistence.reference.neo4j.util.Util;
 import org.neotropic.kuwaiba.persistence.reference.util.DynamicNameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import scala.collection.convert.Wrappers;
 
@@ -211,6 +212,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      */
     private Label validatorDefinitions;
     /**
+     * The default password encoder to authenticate users. It is also used to set new passwords. It uses BCrypt algorithm and a strength of 60.
+     */
+    private PasswordEncoder passwordEnconder;
+    /**
      * Reference to the singleton instance of CacheManager
      */
     private CacheManager cm;
@@ -233,7 +238,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public ApplicationEntityManagerImpl() {
         this.configuration = new Properties();
         this.sessions = new HashMap<>();
-        
+        this.passwordEnconder = new BCryptPasswordEncoder();
         // Initilize labels
         this.userLabel = Label.label(Constants.LABEL_USER);
         this.inventoryObjectLabel = Label.label(Constants.LABEL_INVENTORY_OBJECTS);
@@ -311,7 +316,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
             newUserNode.setProperty(UserProfile.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
             newUserNode.setProperty(UserProfile.PROPERTY_NAME, userName);
-            newUserNode.setProperty(UserProfile.PROPERTY_PASSWORD, BCrypt.hashpw(password, BCrypt.gensalt()));
+            newUserNode.setProperty(UserProfile.PROPERTY_PASSWORD, passwordEnconder.encode(password));
             newUserNode.setProperty(UserProfile.PROPERTY_FIRST_NAME, firstName == null ? "" : firstName);
             newUserNode.setProperty(UserProfile.PROPERTY_LAST_NAME, lastName == null ? "" : lastName);
             newUserNode.setProperty(UserProfile.PROPERTY_TYPE, type);
@@ -361,7 +366,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 if (password.trim().isEmpty())
                     throw new InvalidArgumentException("Password can't be an empty string");
                 
-                userNode.setProperty(Constants.PROPERTY_PASSWORD, BCrypt.hashpw(password, BCrypt.gensalt()));
+                userNode.setProperty(Constants.PROPERTY_PASSWORD, passwordEnconder.encode(password));
             }
             
             if (firstName != null)
@@ -454,7 +459,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 cm.removeUser(newUserName);
             }
             if (password != null)
-                userNode.setProperty(Constants.PROPERTY_PASSWORD, BCrypt.hashpw(password, BCrypt.gensalt()));
+                userNode.setProperty(Constants.PROPERTY_PASSWORD, passwordEnconder.encode(password));
             if(firstName != null)
                 userNode.setProperty(Constants.PROPERTY_FIRST_NAME, firstName);
             if(lastName != null)
@@ -2248,7 +2253,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (!(Boolean)userNode.getProperty(Constants.PROPERTY_ENABLED))
                 throw new NotAuthorizedException(String.format("The user %s is not enabled", userName));
 
-            if (BCrypt.checkpw(password, (String)userNode.getProperty(Constants.PROPERTY_PASSWORD))) {
+            if (passwordEnconder.matches(password, (String)userNode.getProperty(Constants.PROPERTY_PASSWORD))) {
                 UserProfile user = Util.createUserProfileWithGroupPrivilegesFromNode(userNode);
 
                 for (Session aSession : sessions.values()) {

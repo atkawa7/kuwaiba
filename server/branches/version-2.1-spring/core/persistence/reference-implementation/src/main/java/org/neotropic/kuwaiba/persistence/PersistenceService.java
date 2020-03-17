@@ -156,11 +156,21 @@ public class PersistenceService {
             Logger.getLogger(PersistenceService.class.getName()).log(Level.INFO, 
                     String.format("[KUWAIBA] [%s] %s", Calendar.getInstance().getTime(), connectionManager.getConnectionDetails()));
             
+            mem.setConfiguration(metadataProperties);
+            mem.initCache();
+            Logger.getLogger(PersistenceService.class.getName()).log(Level.INFO, 
+                    String.format("[KUWAIBA] [%s] %s", Calendar.getInstance().getTime(), "Metadata Entity Manager initialized successfully"));
+            
+            
             aem.setConfiguration(applicationProperties);
             aem.initCache();
+            Logger.getLogger(PersistenceService.class.getName()).log(Level.INFO, 
+                    String.format("[KUWAIBA] [%s] %s", Calendar.getInstance().getTime(), "Application Entity Manager initialized successfully"));
             
             bem.setConfiguration(businessProperties);
             bem.initCache();
+            Logger.getLogger(PersistenceService.class.getName()).log(Level.INFO, 
+                    String.format("[KUWAIBA] [%s] %s", Calendar.getInstance().getTime(), "Business Entity Manager initialized successfully"));
             
             Logger.getLogger(PersistenceService.class.getName()).log(Level.INFO, 
                     String.format("[KUWAIBA] [%s] Persistence Service is up and running", Calendar.getInstance().getTime()));
