@@ -31,12 +31,13 @@ import org.neotropic.kuwaiba.core.persistence.util.StringPair;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import org.neotropic.kuwaiba.core.persistence.AbstractEntityManager;
 
 /**
  * This is the entity in charge of manipulating business objects
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public interface BusinessEntityManager {
+public interface BusinessEntityManager extends AbstractEntityManager {
     /**
      * Sets the global configuration options 
      * @param configuration The set of configuration variables

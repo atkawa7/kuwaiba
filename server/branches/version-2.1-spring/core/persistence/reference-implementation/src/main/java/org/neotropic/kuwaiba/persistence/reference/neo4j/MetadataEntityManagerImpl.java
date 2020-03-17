@@ -31,6 +31,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
@@ -45,6 +47,7 @@ import org.neo4j.helpers.collection.Iterators;
 import org.neo4j.kernel.impl.traversal.MonoDirectionalTraversalDescription;
 import org.neotropic.kuwaiba.persistence.reference.extras.caching.CacheManager;
 import org.neotropic.kuwaiba.persistence.reference.neo4j.util.Util;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -53,10 +56,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class MetadataEntityManagerImpl implements MetadataEntityManager {
-    /**
-     * Reference to the db handle
-     */
-    private GraphDatabaseService graphDb;
+    
     /**
      * Class label
      */
@@ -69,29 +69,30 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
      * This hash contains the display name of the special relationship used in the different models
      */
     private HashMap<String, String> relationshipDisplayNames;
-
-    private MetadataEntityManagerImpl() {
-        cm = CacheManager.getInstance();
-    }
-
     /**
-     * Constructor
-     * Get the a database connection and indexes from the connection manager.
-     * @param cmn A reference to the db connection manager
+     * Reference to the connection manager.
      */
-    public MetadataEntityManagerImpl(ConnectionManager cmn) {
-        this();
-        graphDb = (GraphDatabaseService) cmn.getConnectionHandler();
+    @Autowired
+    private ConnectionManager<GraphDatabaseService> connectionManager;
+    
+    public MetadataEntityManagerImpl() {
         this.relationshipDisplayNames = new HashMap<>();
-        classLabel = Label.label(Constants.LABEL_CLASS);
-        try(Transaction tx = graphDb.beginTx()) {
-            buildClassCache();
-        }catch(Exception ex) {
-            System.out.println(String.format("[KUWAIBA] [%s] An error was found while creating the MEM instance: %s", 
-                    Calendar.getInstance().getTime(), ex.getMessage()));
-        }
+        this.classLabel = Label.label(Constants.LABEL_CLASS);
         
     }
+    
+    @Override
+    public void initCache() {
+        this.cm = CacheManager.getInstance();
+        try(Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+            buildClassCache();
+        } catch(Exception ex) {
+            Logger.getLogger(MetadataEntityManagerImpl.class.getName()).log(Level.SEVERE, 
+                    String.format("[KUWAIBA] [%s] An error was found while creating the MEM instance: %s", 
+                    Calendar.getInstance().getTime(), ex.getMessage()));
+        }
+    }
+    
 
     @Override
     public long createClass(ClassMetadata classDefinition) throws MetadataObjectNotFoundException, DatabaseException, InvalidArgumentException {
@@ -104,12 +105,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         if(classDefinition.getName().isEmpty())
                     throw new InvalidArgumentException("Class name can not be an empty string");
         
-        try (Transaction tx = graphDb.beginTx()) {
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             
-            if (graphDb.findNode(classLabel, Constants.PROPERTY_NAME, classDefinition.getName()) != null)
+            if (connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, classDefinition.getName()) != null)
                 throw new InvalidArgumentException(String.format("Class %s already exists", classDefinition.getName()));
             
-            Node classNode = graphDb.createNode(classLabel);
+            Node classNode = connectionManager.getConnectionHandler().createNode(classLabel);
 
             classNode.setProperty(Constants.PROPERTY_NAME, classDefinition.getName());
             classNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, classDefinition.getDisplayName() == null ? "" : classDefinition.getDisplayName());
@@ -139,7 +140,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     throw new MetadataObjectNotFoundException(String.format("Only %s can be the root superclass", Constants.CLASS_ROOTOBJECT));
             }
             else { 
-                Node parentNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, classDefinition.getParentClassName());
+                Node parentNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, classDefinition.getParentClassName());
                 
                 if (parentNode != null) {
                     classNode.createRelationshipTo(parentNode, RelTypes.EXTENDS);
@@ -164,7 +165,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                             continue;
                         
                         Label label = Label.label(Constants.LABEL_ATTRIBUTE);
-                        Node newAttrNode = graphDb.createNode(label);
+                        Node newAttrNode = connectionManager.getConnectionHandler().createNode(label);
                         //Locks are not inherited
                         newAttrNode.setProperty(Constants.PROPERTY_NAME, attributeName);
                         newAttrNode.setProperty(Constants.PROPERTY_DESCRIPTION, parentAttrNode.getProperty(Constants.PROPERTY_DESCRIPTION));
@@ -205,9 +206,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             throws MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException {
         String affectedProperties = "", oldValues = "", newValues = "";
         
-        try (Transaction tx = graphDb.beginTx()) {
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             
-            Node classMetadata = Util.findNodeByLabelAndId(graphDb, classLabel, newClassDefinition.getId());
+            Node classMetadata = Util.findNodeByLabelAndId(connectionManager.getConnectionHandler(), classLabel, newClassDefinition.getId());
             
             if (classMetadata == null)
                 throw new MetadataObjectNotFoundException(String.format(
@@ -222,7 +223,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 if (!newClassDefinition.getName().matches("^[a-zA-Z0-9_-]*$"))
                     throw new InvalidArgumentException(String.format("Class name %s contains invalid characters", newClassDefinition.getName()));
                 
-                if (graphDb.findNode(classLabel, Constants.PROPERTY_NAME, newClassDefinition.getName()) != null)
+                if (connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, newClassDefinition.getName()) != null)
                    throw new InvalidArgumentException(String.format("Class %s already exists", newClassDefinition.getName()));
                 
                 classMetadata.setProperty(Constants.PROPERTY_NAME, newClassDefinition.getName());
@@ -319,9 +320,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     @Override
     public void deleteClass(long classId) 
             throws MetadataObjectNotFoundException, InvalidArgumentException {
-        try (Transaction tx = graphDb.beginTx()) {
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             
-            Node node = Util.findNodeByLabelAndId(graphDb, classLabel, classId);
+            Node node = Util.findNodeByLabelAndId(connectionManager.getConnectionHandler(), classLabel, classId);
 
             if (node == null)
                 throw new MetadataObjectNotFoundException(String.format(
@@ -342,7 +343,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             String className = (String)node.getProperty(Constants.PROPERTY_NAME);
             if (isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, className)) {
                 //If the class is a list type, let's check if it's used by another class
-                ResourceIterator<Node> classes = graphDb.findNodes(classLabel);
+                ResourceIterator<Node> classes = connectionManager.getConnectionHandler().findNodes(classLabel);
                                 
                 while (classes.hasNext()) {
                     Node classNode = classes.next();
@@ -384,9 +385,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     @Override
     public void deleteClass(String className) 
             throws MetadataObjectNotFoundException, InvalidArgumentException   {
-        try (Transaction tx  = graphDb.beginTx()) {
+        try (Transaction tx  = connectionManager.getConnectionHandler().beginTx()) {
             
-            Node node = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
+            Node node = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, className);
 
             if (node == null)
                 throw new MetadataObjectNotFoundException(String.format(
@@ -406,7 +407,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             
             if (isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, className)) {
                 //If the class is a list type, let's check if it's used by another class
-                ResourceIterator<Node> classes = graphDb.findNodes(classLabel);
+                ResourceIterator<Node> classes = connectionManager.getConnectionHandler().findNodes(classLabel);
                                 
                 while (classes.hasNext()) {
                     Node classNode = classes.next();
@@ -449,12 +450,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             boolean includeIndesign) 
             throws MetadataObjectNotFoundException {
         List<ClassMetadataLight> cml = new ArrayList<>();
-        try (Transaction tx = graphDb.beginTx()) {
-            Node myClassInventoryObjectNode =  graphDb.findNode(classLabel, Constants.PROPERTY_NAME, Constants.CLASS_INVENTORYOBJECT);
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+            Node myClassInventoryObjectNode =  connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, Constants.CLASS_INVENTORYOBJECT);
             Node myClassGenericObjectListNode = null;
             
             if (includeListTypes)
-                myClassGenericObjectListNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, Constants.CLASS_GENERICOBJECTLIST);
+                myClassGenericObjectListNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, Constants.CLASS_GENERICOBJECTLIST);
                         
             if (myClassInventoryObjectNode == null) {
                 throw new MetadataObjectNotFoundException(String.format(
@@ -483,7 +484,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 + "RETURN classmetadata, inventory "
                 + "ORDER BY classmetadata.name ASC;";
             
-            Result result = graphDb.execute(cypherQuery);
+            Result result = connectionManager.getConnectionHandler().execute(cypherQuery);
             Iterator<Node> n_column = result.columnAs("classmetadata"); 
             
             for (Node node : Iterators.asIterable(n_column))
@@ -522,8 +523,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 
         subclasses = new ArrayList();
             
-        try (Transaction tx = graphDb.beginTx()) {
-            Result result = graphDb.execute(cypherQuery);
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+            Result result = connectionManager.getConnectionHandler().execute(cypherQuery);
             Iterator<Node> n_column = result.columnAs("classmetadata"); //NOI18N
             if (includeSelf && (includeAbstractClasses ? true : !aClass.isAbstract()))
                 classManagerResultList.add(aClass);
@@ -578,9 +579,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         
         subclasses = new ArrayList();
 
-        try (Transaction tx = graphDb.beginTx()) {
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             
-            Result result = graphDb.execute(cypherQuery);
+            Result result = connectionManager.getConnectionHandler().execute(cypherQuery);
             Iterator<Node> n_column = result.columnAs("classmetadata"); //NOI18N
             if (includeSelf && (includeAbstractClasses ? true : !aClass.isAbstract()))
                 classManagerResultList.add(aClass);
@@ -616,8 +617,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                              "RETURN classmetadata, inventory " +
                              "ORDER BY classmetadata.name ASC";
         
-        try (Transaction tx = graphDb.beginTx()) {
-           Result result = graphDb.execute(cypherQuery);
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+           Result result = connectionManager.getConnectionHandler().execute(cypherQuery);
             ResourceIterator<Node> n_column = result.columnAs("classmetadata");
            //First, we inject the InventoryObject class (for some reason, the start node can't be retrieved as part of the path, so it can be sorted)
             ResourceIterator<Node> roots = result.columnAs("inventory");
@@ -634,9 +635,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     @Override
     public ClassMetadata getClass(long classId)  throws MetadataObjectNotFoundException {
         ClassMetadata clmt = null;
-        try(Transaction tx = graphDb.beginTx()) 
+        try(Transaction tx = connectionManager.getConnectionHandler().beginTx()) 
         {
-            Node node = Util.findNodeByLabelAndId(graphDb, classLabel, classId);
+            Node node = Util.findNodeByLabelAndId(connectionManager.getConnectionHandler(), classLabel, classId);
             
             if (node == null)
                 throw new MetadataObjectNotFoundException(String.format(
@@ -655,8 +656,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         if (clmt != null)
             return clmt;
         
-        try (Transaction tx = graphDb.beginTx()) {
-            Node node = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+            Node node = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, className);
             
             if (node == null)
                 throw new MetadataObjectNotFoundException(String.format(
@@ -677,9 +678,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         if (!attributeDefinition.getName().matches("^[a-zA-Z0-9_]*$"))
             throw new InvalidArgumentException(String.format("Attribute %s contains invalid characters", attributeDefinition.getName()));
         
-        try (Transaction tx = graphDb.beginTx())
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx())
         {
-            Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
+            Node classNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, className);
             
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.", className));
@@ -695,9 +696,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     public void createAttribute(long classId, AttributeMetadata attributeDefinition) 
             throws MetadataObjectNotFoundException, InvalidArgumentException 
     {
-        try (Transaction tx = graphDb.beginTx())
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx())
         {        
-            Node classNode = Util.findNodeByLabelAndId(graphDb, classLabel, classId);
+            Node classNode = Util.findNodeByLabelAndId(connectionManager.getConnectionHandler(), classLabel, classId);
             
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("The class with id %s could not be found. Contact your administrator.", classId));
@@ -712,8 +713,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     
     @Override
     public boolean hasAttribute(String className, String attributeName) throws MetadataObjectNotFoundException {
-        try (Transaction tx = graphDb.beginTx()) {
-            Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+            Node classNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, className);
                         
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format(
@@ -733,9 +734,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     public AttributeMetadata getAttribute(String className, String attributeName) 
             throws MetadataObjectNotFoundException, InvalidArgumentException {
         AttributeMetadata attribute = null;
-        try (Transaction tx = graphDb.beginTx())
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx())
         {
-            Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
+            Node classNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, className);
 
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format(
@@ -762,9 +763,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             throws MetadataObjectNotFoundException, InvalidArgumentException
     {
         AttributeMetadata attribute = null;
-        try (Transaction tx = graphDb.beginTx())
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx())
         {
-            Node classNode = Util.findNodeByLabelAndId(graphDb, classLabel, classId);
+            Node classNode = Util.findNodeByLabelAndId(connectionManager.getConnectionHandler(), classLabel, classId);
             if (classNode == null) 
                 throw new MetadataObjectNotFoundException(String.format(
                         "The class with id %s could not be found. Contact your administrator.", classId));
@@ -791,8 +792,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         
         String affectedProperties = "", oldValues = "", newValues = "";
         
-        try(Transaction tx = graphDb.beginTx()) {
-            Node classNode = Util.findNodeByLabelAndId(graphDb, classLabel, classId);
+        try(Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+            Node classNode = Util.findNodeByLabelAndId(connectionManager.getConnectionHandler(), classLabel, classId);
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("The class with id %s could not be found. Contact your administrator.", classId));
 
@@ -941,9 +942,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         
         String affectedProperties = "", oldValues = "", newValues = "";
         
-        try(Transaction tx = graphDb.beginTx()) 
+        try(Transaction tx = connectionManager.getConnectionHandler().beginTx()) 
         {
-            Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
+            Node classNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, className);
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.", className));
 
@@ -1090,8 +1091,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         if (attributeName.equals(Constants.PROPERTY_NAME) || attributeName.equals(Constants.PROPERTY_CREATION_DATE))
             throw new InvalidArgumentException(String.format("Attribute \"%s\" can not be deleted", attributeName));
         
-        try(Transaction tx = graphDb.beginTx()) {
-            Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, attributeName);
+        try(Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+            Node classNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, attributeName);
 
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.", className));
@@ -1120,8 +1121,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         if (attributeName.equals(Constants.PROPERTY_CREATION_DATE) || attributeName.equals(Constants.PROPERTY_NAME))
             throw new InvalidArgumentException(String.format("Attribute \"%s\" can not be deleted", attributeName));
         
-        try (Transaction tx = graphDb.beginTx()) {
-            Node classNode = Util.findNodeByLabelAndId(graphDb, classLabel, classId);
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+            Node classNode = Util.findNodeByLabelAndId(connectionManager.getConnectionHandler(), classLabel, classId);
 
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("The class with id %s could not be found. Contact your administrator.", classId));
@@ -1156,13 +1157,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             return classMetadataResultList;
         }
         
-        try (Transaction tx = graphDb.beginTx()) {
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             Node parentNode;
             
             if (parentClassName == null || parentClassName.equals(Constants.NODE_DUMMYROOT))
-                parentNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
+                parentNode = connectionManager.getConnectionHandler().findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
             else
-                parentNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, parentClassName);
+                parentNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, parentClassName);
             
             tx.success();
             return refreshPossibleChildren(parentNode);
@@ -1182,13 +1183,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 classMetadataResultList.add(cm.getClass(cachedPossibleChild));
             return classMetadataResultList;
         }
-        try (Transaction tx = graphDb.beginTx()) {
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             Node parentNode; 
             
             if (parentClassName == null || parentClassName.equals(Constants.NODE_DUMMYROOT))
-                parentNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
+                parentNode = connectionManager.getConnectionHandler().findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
             else
-                parentNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, parentClassName);
+                parentNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, parentClassName);
                         
             tx.success();
             return refreshPossibleSpecialChildren(parentNode);
@@ -1198,13 +1199,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     @Override
     public List<ClassMetadataLight> getPossibleChildrenNoRecursive(String parentClassName) 
             throws MetadataObjectNotFoundException {
-        try (Transaction tx = graphDb.beginTx()) {
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             Node parentNode;
             
             if (parentClassName == null || parentClassName.equals(Constants.NODE_DUMMYROOT))
-                parentNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
+                parentNode = connectionManager.getConnectionHandler().findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
             else
-                parentNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, parentClassName);
+                parentNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, parentClassName);
             
             Iterable<Relationship> relationships = parentNode.getRelationships(RelTypes.POSSIBLE_CHILD, Direction.OUTGOING);
             
@@ -1222,13 +1223,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     @Override
     public List<ClassMetadataLight> getPossibleSpecialChildrenNoRecursive(String parentClassName) 
             throws MetadataObjectNotFoundException {
-        try (Transaction tx = graphDb.beginTx()) {
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             Node parentNode;
             
             if (parentClassName == null || parentClassName.equals(Constants.NODE_DUMMYROOT))
-                parentNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
+                parentNode = connectionManager.getConnectionHandler().findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
             else
-                parentNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, parentClassName);
+                parentNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, parentClassName);
             
             Iterable<Relationship> relationships = parentNode.getRelationships(RelTypes.POSSIBLE_SPECIAL_CHILD, Direction.OUTGOING);
             
@@ -1270,10 +1271,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     public void addPossibleChildren(long parentClassId, long[] possibleChildren)
             throws MetadataObjectNotFoundException, InvalidArgumentException {
         Node parentNode;
-        try(Transaction tx = graphDb.beginTx()) {
+        try(Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             if(parentClassId != -1) {
                 
-                parentNode = Util.findNodeByLabelAndId(graphDb, classLabel, parentClassId);
+                parentNode = Util.findNodeByLabelAndId(connectionManager.getConnectionHandler(), classLabel, parentClassId);
 
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
@@ -1282,13 +1283,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     throw new InvalidArgumentException(
                             String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
             }else
-                parentNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
+                parentNode = connectionManager.getConnectionHandler().findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
 
             List<ClassMetadataLight> currentPossibleChildren = refreshPossibleChildren(parentNode);
             
             for (long id : possibleChildren) {
                 
-                Node childNode = Util.findNodeByLabelAndId(graphDb, classLabel, id);
+                Node childNode = Util.findNodeByLabelAndId(connectionManager.getConnectionHandler(), classLabel, id);
 
                 if (childNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
@@ -1336,11 +1337,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     public void addPossibleSpecialChildren(long parentClassId, long[] possibleSpecialChildren)
             throws MetadataObjectNotFoundException, InvalidArgumentException {
         
-        try(Transaction tx = graphDb.beginTx()) {
+        try(Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             Node parentNode;
             if(parentClassId != -1) {
                 
-                parentNode = Util.findNodeByLabelAndId(graphDb, classLabel, parentClassId);
+                parentNode = Util.findNodeByLabelAndId(connectionManager.getConnectionHandler(), classLabel, parentClassId);
 
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
@@ -1349,12 +1350,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     throw new InvalidArgumentException(
                             String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
             } else
-                parentNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
+                parentNode = connectionManager.getConnectionHandler().findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
 
             List<ClassMetadataLight> currentPossibleSpecialChildren = refreshPossibleSpecialChildren(parentNode);
             
             for (long id : possibleSpecialChildren) {
-                Node childNode = Util.findNodeByLabelAndId(graphDb, classLabel, id);
+                Node childNode = Util.findNodeByLabelAndId(connectionManager.getConnectionHandler(), classLabel, id);
 
                 if (childNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
@@ -1399,10 +1400,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             throws MetadataObjectNotFoundException, InvalidArgumentException {
         Node parentNode;
 
-        try(Transaction tx = graphDb.beginTx()) {
+        try(Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             if(parentClassName != null) {
                 
-                parentNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, parentClassName);
+                parentNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, parentClassName);
 
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
@@ -1412,7 +1413,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     throw new InvalidArgumentException(
                             String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
             } else {
-                parentNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
+                parentNode = connectionManager.getConnectionHandler().findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
 
                 if(!(Constants.NODE_DUMMYROOT).equals((String)parentNode.getProperty(Constants.PROPERTY_NAME)))
                         throw new MetadataObjectNotFoundException("DummyRoot node is corrupted");
@@ -1421,7 +1422,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         
             for (String possibleChildName : possibleChildren) {
                 
-                Node childNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, possibleChildName);
+                Node childNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, possibleChildName);
                 
                 if (childNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
@@ -1463,10 +1464,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             throws MetadataObjectNotFoundException, InvalidArgumentException {
         Node parentNode;
 
-        try(Transaction tx = graphDb.beginTx()) {
+        try(Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             if(parentClassName != null) {
                 
-                parentNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, parentClassName);
+                parentNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, parentClassName);
 
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
@@ -1476,7 +1477,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     throw new InvalidArgumentException(
                             String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
             } else {
-                parentNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
+                parentNode = connectionManager.getConnectionHandler().findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
                 
                 if(!(Constants.NODE_DUMMYROOT).equals((String)parentNode.getProperty(Constants.PROPERTY_NAME)))
                         throw new MetadataObjectNotFoundException("DummyRoot node is corrupted");
@@ -1484,7 +1485,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             List<ClassMetadataLight> currentPossibleSpecialChildren = refreshPossibleSpecialChildren(parentNode);
         
             for (String possibleSpecialChildName : possibleSpecialChildren) {
-                Node childNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, possibleSpecialChildName);
+                Node childNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, possibleSpecialChildName);
                 
                 if (childNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
@@ -1527,23 +1528,23 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     public void removePossibleChildren(long parentClassId, long[] childrenToBeRemoved) 
             throws MetadataObjectNotFoundException {
         
-        try (Transaction tx = graphDb.beginTx()) {
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             Node parentNode;
             if (parentClassId == -1){
-                parentNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
+                parentNode = connectionManager.getConnectionHandler().findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
                 
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException("DummyRoot is corrupted");
             }
             else {
-                parentNode = Util.findNodeByLabelAndId(graphDb, classLabel, parentClassId);
+                parentNode = Util.findNodeByLabelAndId(connectionManager.getConnectionHandler(), classLabel, parentClassId);
                 
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
                             "The class with id %s could not be found. Contact your administrator.", parentClassId));
             }
             for (long id : childrenToBeRemoved) {
-                Node childNode = Util.findNodeByLabelAndId(graphDb, classLabel, id);
+                Node childNode = Util.findNodeByLabelAndId(connectionManager.getConnectionHandler(), classLabel, id);
                 
                 Iterable<Relationship> relationships = parentNode.getRelationships(RelTypes.POSSIBLE_CHILD, Direction.OUTGOING);
 
@@ -1562,23 +1563,23 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     public void removePossibleSpecialChildren(long parentClassId, long[] specialChildrenToBeRemoved) 
             throws MetadataObjectNotFoundException {
         
-        try (Transaction tx = graphDb.beginTx()) {
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             Node parentNode;
             if (parentClassId == -1){
-                parentNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
+                parentNode = connectionManager.getConnectionHandler().findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
                 
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException("DummyRoot is corrupted");
             }
             else {
-                parentNode = Util.findNodeByLabelAndId(graphDb, classLabel, parentClassId);
+                parentNode = Util.findNodeByLabelAndId(connectionManager.getConnectionHandler(), classLabel, parentClassId);
                 
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
                             "The class with id %s could not be found. Contact your administrator.", parentClassId));
             }
             for (long id : specialChildrenToBeRemoved) {
-                Node childNode = Util.findNodeByLabelAndId(graphDb, classLabel, id);
+                Node childNode = Util.findNodeByLabelAndId(connectionManager.getConnectionHandler(), classLabel, id);
                 
                 Iterable<Relationship> relationships = parentNode.getRelationships(RelTypes.POSSIBLE_SPECIAL_CHILD, Direction.OUTGOING);
 
@@ -1598,8 +1599,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     public List<ClassMetadataLight> getUpstreamContainmentHierarchy(String className, 
             boolean recursive) throws MetadataObjectNotFoundException {
         List<ClassMetadataLight> res = new ArrayList<>();
-        try(Transaction tx = graphDb.beginTx()) {
-            Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
+        try(Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+            Node classNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, className);
             
             if (classNode == null)
                throw new MetadataObjectNotFoundException(String.format(
@@ -1611,7 +1612,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                                  "RETURN DISTINCT possibleParentClassNode " +
                                  "ORDER BY possibleParentClassNode.name ASC";
 
-            Result result = graphDb.execute(cypherQuery);
+            Result result = connectionManager.getConnectionHandler().execute(cypherQuery);
 
             Iterator<Node> directPossibleChildren = result.columnAs("possibleParentClassNode"); //NOI18N
             for (Node node : Iterators.asIterable(directPossibleChildren))
@@ -1626,8 +1627,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     public List<ClassMetadataLight> getUpstreamSpecialContainmentHierarchy(String className, 
             boolean recursive) throws MetadataObjectNotFoundException {
         List<ClassMetadataLight> res = new ArrayList<>();
-        try(Transaction tx = graphDb.beginTx()) {
-            Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
+        try(Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+            Node classNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, className);
             
             if (classNode == null)
                throw new MetadataObjectNotFoundException(String.format(
@@ -1639,7 +1640,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                                  "RETURN distinct possibleParentClassNode "+
                                  "ORDER BY possibleParentClassNode.name ASC";
 
-            Result result = graphDb.execute(cypherQuery);
+            Result result = connectionManager.getConnectionHandler().execute(cypherQuery);
 
             Iterator<Node> directPossibleChildren = result.columnAs("possibleParentClassNode"); //NOI18N
             for (Node node : Iterators.asIterable(directPossibleChildren))
@@ -1659,7 +1660,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             return res;
             
         res = new ArrayList<>();
-        try(Transaction tx = graphDb.beginTx()) {
+        try(Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             //Without the ORDER BY/LIMIT clauses, this query (oddly) the main path and also its parts separately, so we only take the longest path
             String cypherQuery = "MATCH paths = (sourceClass:classes)-[:EXTENDS*]->(rootClass) WHERE sourceClass.name = " +  //NOI18N
                     "{className} AND rootClass.name = 'InventoryObject' WITH nodes(paths) AS classHierarchy " + //NOI18N
@@ -1667,7 +1668,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put("className", className); //NOI18N
-            Result result = graphDb.execute(cypherQuery, parameters);
+            Result result = connectionManager.getConnectionHandler().execute(cypherQuery, parameters);
             
             ResourceIterator<ArrayList<Node>> classHierarchyPath = result.columnAs("classHierarchy");
             
@@ -1731,7 +1732,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
      */
     //Callers must handle associated transactions
    private void refreshCacheOn(Node rootClassNode){
-        TraversalDescription UPDATE_TRAVERSAL = graphDb.traversalDescription().
+        TraversalDescription UPDATE_TRAVERSAL = connectionManager.getConnectionHandler().traversalDescription().
                     breadthFirst().relationships(RelTypes.EXTENDS, Direction.INCOMING);
 
         for(Path p : UPDATE_TRAVERSAL.traverse(rootClassNode)) {
@@ -1747,7 +1748,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
    //Callers must handle associated transactions
     private void buildClassCache() throws InvalidArgumentException {
         cm.clearClassCache();
-        ResourceIterator<Node> classes = graphDb.findNodes(classLabel);
+        ResourceIterator<Node> classes = connectionManager.getConnectionHandler().findNodes(classLabel);
         while (classes.hasNext()) {
             Node classNode = classes.next();
             
@@ -1831,7 +1832,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             String attributeName) 
             throws MetadataObjectNotFoundException, InvalidArgumentException
     {
-        Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
+        Node classNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, className);
         
         String attributeType = Util.createClassMetadataFromNode(classNode).getAttribute(attributeName).getType();
         if (classNode == null)
@@ -1845,7 +1846,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                              "RETURN classmetadata ").concat(
                              "ORDER BY classmetadata.name ASC");
 
-        Result result = graphDb.execute(cypherQuery);
+        Result result = connectionManager.getConnectionHandler().execute(cypherQuery);
         Iterator<Node> n_column = result.columnAs("classmetadata");
         for (Node nodeClass : Iterators.asIterable(n_column))
             return objectsHasAttribute(nodeClass, attributeName, attributeType);
@@ -1911,15 +1912,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         if (classNode.hasRelationship(Direction.INCOMING, RelTypes.EXTENDS)) {
             //First we check the instances of the subclasses 
             String cypherQuery = String.format("MATCH (subclassInstance)-[:INSTANCE_OF]->(subclass)-[:EXTENDS*]->(class:classes) WHERE class.name='%s'AND EXISTS(instance.%s) WITH subclassInstance.%s as attributeValue, collect(subclassInstance) as matchingNodes WHERE SIZE(matchingNodes) > 1 RETURN matchingNodes", className, attributeName, attributeName);
-            if (graphDb.execute(cypherQuery).hasNext())
+            if (connectionManager.getConnectionHandler().execute(cypherQuery).hasNext())
                 return false;
             
             //Then the class itself
             cypherQuery = String.format("MATCH (instance)-[:INSTANCE_OF]->(class:classes) WHERE class.name='%s' AND EXISTS(instance.%s) WITH instance.%s as attributeValue, collect(instance) as matchingNodes WHERE SIZE(matchingNodes) > 1 RETURN matchingNodes", className, attributeName, attributeName);
-            return !graphDb.execute(cypherQuery).hasNext();
+            return !connectionManager.getConnectionHandler().execute(cypherQuery).hasNext();
         } else {
             String cypherQuery = String.format("MATCH (instance)-[:INSTANCE_OF]->(class:classes) WHERE class.name='%s' AND EXISTS(instance.%s) WITH instance.%s as attributeValue, collect(instance) as matchingNodes WHERE SIZE(matchingNodes) > 1 RETURN matchingNodes", className, attributeName, attributeName);
-            return !graphDb.execute(cypherQuery).hasNext();
+            return !connectionManager.getConnectionHandler().execute(cypherQuery).hasNext();
         }        
         
     }
@@ -1931,7 +1932,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
      */
     private void loadUniqueAttributesCache() throws InvalidArgumentException{
         
-        Node inventoryObject = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, Constants.CLASS_INVENTORYOBJECT);
+        Node inventoryObject = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, Constants.CLASS_INVENTORYOBJECT);
         
         if (inventoryObject == null)
             return;

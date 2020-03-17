@@ -157,7 +157,10 @@ public class PersistenceService {
                     String.format("[KUWAIBA] [%s] %s", Calendar.getInstance().getTime(), connectionManager.getConnectionDetails()));
             
             aem.setConfiguration(applicationProperties);
+            aem.initCache();
+            
             bem.setConfiguration(businessProperties);
+            bem.initCache();
             
             Logger.getLogger(PersistenceService.class.getName()).log(Level.INFO, 
                     String.format("[KUWAIBA] [%s] Persistence Service is up and running", Calendar.getInstance().getTime()));

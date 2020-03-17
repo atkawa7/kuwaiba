@@ -23,13 +23,13 @@ import org.neotropic.kuwaiba.core.persistence.exceptions.DatabaseException;
 import org.neotropic.kuwaiba.core.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.persistence.exceptions.MetadataObjectNotFoundException;
 import java.util.List;
+import org.neotropic.kuwaiba.core.persistence.AbstractEntityManager;
 
 /**
- * Manages the metadata entities
+ * Manages the metadata entities of the data model, such as classes and attributes.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public interface MetadataEntityManager {
-
+public interface MetadataEntityManager extends AbstractEntityManager {
     /**
      * Creates a class metadata with its attributes (some new and others inherited from the parent class).
      * @param classDefinition the class definition, name, display name, etc

@@ -20,6 +20,7 @@ import org.neotropic.kuwaiba.core.persistence.ChangeDescriptor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import org.neotropic.kuwaiba.core.persistence.AbstractEntityManager;
 import org.neotropic.kuwaiba.core.persistence.application.processman.ActivityDefinition;
 import org.neotropic.kuwaiba.core.persistence.application.processman.Artifact;
 import org.neotropic.kuwaiba.core.persistence.application.processman.ArtifactDefinition;
@@ -45,7 +46,7 @@ import org.neotropic.kuwaiba.core.persistence.util.StringPair;
  * This is the entity in charge of manipulating application objects such as users, views, etc
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public interface ApplicationEntityManager {
+public interface ApplicationEntityManager extends AbstractEntityManager {
     /**
      * Type of pool general purpose. 
      * These pools are not linked to any particular model
