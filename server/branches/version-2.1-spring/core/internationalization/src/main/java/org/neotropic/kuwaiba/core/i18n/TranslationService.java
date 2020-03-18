@@ -30,15 +30,19 @@ public class TranslationService {
     /**
      * The default application language.
      */
-    private final Locale defaultLanguage = Locale.ENGLISH;
+    private Locale currentLanguage = Locale.ENGLISH;
     /**
      * The list of languages currently supported and their respective translation bundles. 
      */
     private final HashMap<Locale, ResourceBundle> languages;
     
     
-    public Locale getDefaultLanguage() {
-        return defaultLanguage;
+    public Locale getCurrentLanguage() {
+        return currentLanguage;
+    }
+    
+    public void setCurrentlanguage(Locale newLanguage) {
+        this.currentLanguage = newLanguage;
     }
 
     public HashMap<Locale, ResourceBundle> getLanguages() {
@@ -49,20 +53,16 @@ public class TranslationService {
         return languages.get(language);
     }
     
-    public String getTranslatedString(Locale language, String key) {
-        String translatedString = "";
-        if(getResourceBundle(language).containsKey(key)) 
-            translatedString = getResourceBundle(language).getString(key);
-        else
-            translatedString = key;
-        
-        return translatedString;
+    public String getTranslatedString(String key) {
+        return getResourceBundle(currentLanguage).containsKey(key) ?  
+                    getResourceBundle(currentLanguage).getString(key) : key;
     }
-
+    
     public TranslationService() {
         this.languages = new HashMap<>();
         // Supported languages 
-        languages.put(defaultLanguage, ResourceBundle.getBundle("i18n.messages", this.defaultLanguage));
+        Locale enLanguage = new Locale("en");
+        languages.put(enLanguage, ResourceBundle.getBundle("i18n.messages", enLanguage));
         Locale esLanguage = new Locale("es");
         languages.put(esLanguage, ResourceBundle.getBundle("i18n.messages", esLanguage));
         Locale ptLanguage = new Locale("pt");

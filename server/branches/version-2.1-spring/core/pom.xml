@@ -15,5 +15,7 @@
         <module>navigation</module>
         <module>search</module>
         <module>internationalization</module>
+        <module>authentication</module>
+        <module>modules-api</module>
     </modules>
 </project>

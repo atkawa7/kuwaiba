@@ -7,6 +7,9 @@
         <version>2.1.3.RELEASE</version>
         <relativePath/>
     </parent>
+    
+    <name>Vaadin-based Web Client</name>
+    <description>The default Vaadin-based web interface</description>
     <artifactId>webclient</artifactId>
     <packaging>jar</packaging>
     

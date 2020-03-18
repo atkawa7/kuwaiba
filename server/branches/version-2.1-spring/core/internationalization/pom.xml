@@ -7,6 +7,8 @@
         <version>2.1</version>
     </parent>
     
+    <name>Internationalization and Localization</name>
+    <description>This module manages the localizationa and internationalization services</description>
     <artifactId>internationalization</artifactId>
     <packaging>jar</packaging>
     <version>2.1</version>

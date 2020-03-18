@@ -30,7 +30,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>persistence-api</artifactId>
-            <version>${project.version}</version>
+            <version>2.1</version>
         </dependency>
         
         <!-- Neo4J, Groovy, SNMP and JSON support -->

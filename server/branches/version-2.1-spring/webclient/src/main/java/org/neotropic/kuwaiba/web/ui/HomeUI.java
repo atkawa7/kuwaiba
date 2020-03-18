@@ -21,7 +21,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
-import org.neotropic.kuwaiba.core.persistence.application.Session;
+import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
 
 /**
  * The home page. It's a dashboard that can be customized with widgets. 

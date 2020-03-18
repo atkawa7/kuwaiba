@@ -15,6 +15,7 @@
  */
 package org.neotropic.kuwaiba.web.ui;
 
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.UI;
@@ -34,9 +35,10 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.neotropic.kuwaiba.core.persistence.application.ApplicationEntityManager;
-import org.neotropic.kuwaiba.core.persistence.application.Session;
-import org.neotropic.kuwaiba.core.persistence.exceptions.InventoryException;
+import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -62,11 +64,14 @@ public class LoginUI extends VerticalLayout implements BeforeEnterObserver {
      */
     @Autowired
     private ApplicationEntityManager aem;
-
     /**
-     * Default constructor
+     * Reference to the internationalization service.
      */
-    public LoginUI() {
+    @Autowired
+    private TranslationService ts;
+    
+    @Override
+    public void onAttach(AttachEvent ev) {
         setSizeFull();
         HorizontalLayout lytTopFiller =new HorizontalLayout();
         lytTopFiller.setSizeFull();
@@ -85,6 +90,7 @@ public class LoginUI extends VerticalLayout implements BeforeEnterObserver {
                 new HorizontalLayout() /* Right filler */);
         lytFooterContent.setSizeFull();
         add(lytFooterContent);
+        getUI().ifPresent( ui -> ui.getPage().setTitle(ts.getTranslatedString("ui.login.title")));
     }
     
     /**
@@ -147,7 +153,7 @@ public class LoginUI extends VerticalLayout implements BeforeEnterObserver {
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        if (UI.getCurrent().getSession().getAttribute(Session.class) != null) // If there is a session, redirect to the home page
+        if (UI.getCurrent().getSession().getAttribute(Session.class) != null) // If there is an active session, redirect to the home page, else, show the login form
             event.forwardTo(HomeUI.class);
     }
 }
