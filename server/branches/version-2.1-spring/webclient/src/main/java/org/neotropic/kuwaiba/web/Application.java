@@ -16,6 +16,7 @@
 
 package org.neotropic.kuwaiba.web;
 
+import java.util.Calendar;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,6 +24,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.xml.ws.Endpoint;
 import org.neotropic.kuwaiba.core.persistence.PersistenceService;
+import org.neotropic.kuwaiba.northbound.ws.KuwaibaSoapWebServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -113,9 +115,10 @@ public class Application {
                 Logger.getLogger(Application.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage());
             }
             
-            Endpoint.publish(
-                "http://localhost:8181/KuwaibaService", 
-                 new KuwaibaSoapWebServiceImpl(persistenceService));
+            Endpoint.publish("http://localhost:8181/KuwaibaService", new KuwaibaSoapWebServiceImpl(persistenceService));
+            Logger.getLogger(PersistenceService.class.getName()).log(Level.INFO, 
+                    String.format("[KUWAIBA] [%s] Web service initialized and running on port %s", 
+                            Calendar.getInstance().getTime(), "", 8181));
         }
         
         @PreDestroy

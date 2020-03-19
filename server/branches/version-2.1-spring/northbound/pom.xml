@@ -8,8 +8,8 @@
     </parent>
     
     <artifactId>northbound</artifactId>
-    <name>Standard Northdbound Interfaces</name>
-    <description>This module contains the default implementations of Kuwaiba's northbound interfaces, such as the SOAP-base webservice</description>
+    <name>Northdbound Interfaces</name>
+    <description>This module contains the default implementations of Kuwaiba's northbound interfaces, such as the SOAP-based webservice</description>
     <packaging>jar</packaging>
     
     <properties>
