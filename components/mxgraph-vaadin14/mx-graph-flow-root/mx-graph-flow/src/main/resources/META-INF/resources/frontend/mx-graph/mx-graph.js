@@ -16,7 +16,7 @@ limitations under the License.
 */
 
 import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
-import {mxGraphApi, mxClient, mxUtils, mxGraph, mxRubberband, mxEvent, mxEdgeHandler} from './mx-graph-api.js';
+import {mxGraphApi} from './mx-graph-api.js';
 
 /**
  * `my-element`

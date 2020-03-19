@@ -1,36 +1,18 @@
 
-
-export var mxClient;
-export var mxUtils;
-export var mxGraph;
-export var mxRubberband;
-export var mxEvent;
-export var mxCell;
-export var mxPoint;
-export var mxGeometry;
-export var mxEdgeHandler;
-
-
 class mxGraphApi {
     
     load() {
         if (!this.promise) {
             this.promise = new Promise(resolve => {
                 this.resolve = resolve;
-
-                import('./mx-graph-build.js')
-                .then((module) => {
-                    mxClient = module.mxClient;
-                    mxUtils = module.mxUtils;
-                    mxGraph = module.mxGraph;
-                    mxRubberband = module.mxRubberband;
-                    mxEvent = module.mxEvent;
-                    mxCell = module.mxCell;
-                    mxPoint = module.mxPoint;
-                    mxGeometry = module.mxGeometry;
-                    mxEdgeHandler = module.mxEdgeHandler;
-                    this.resolve();
+                const script = document.createElement('script');
+                script.src = './MXGRAPH/mxClient.min.js';
+                script.type = 'text/javascript';
+                script.async = true;
+                script.addEventListener('load', () => {
+                    this.ready();
                 });
+                document.body.append(script);
             });
         }
         return this.promise;
