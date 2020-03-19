@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.northboud;
+package org.neotropic.kuwaiba.web;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;

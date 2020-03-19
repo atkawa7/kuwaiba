@@ -54,11 +54,6 @@
         <!-- Persistence API and reference implementation -->
         <dependency>
             <groupId>org.neotropic.kuwaiba</groupId>
-            <artifactId>persistence-api</artifactId>
-            <version>2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.neotropic.kuwaiba</groupId>
             <artifactId>reference-implementation</artifactId>
             <version>2.1</version>
         </dependency>
@@ -102,6 +97,12 @@
             <artifactId>org-netbeans-api-visual</artifactId>
             <version>2.23.1</version>
         </dependency>-->
+        <!-- JAX-WS (SOAP-based web service support) -->
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+            <version>2.3.2-1</version>
+	</dependency>
         
     </dependencies>
     <dependencyManagement>

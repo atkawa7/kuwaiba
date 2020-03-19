@@ -21,6 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.xml.ws.Endpoint;
 import org.neotropic.kuwaiba.core.persistence.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -111,6 +112,10 @@ public class Application {
             } catch (IllegalStateException ex) {
                 Logger.getLogger(Application.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage());
             }
+            
+            Endpoint.publish(
+                "http://localhost:8181/KuwaibaService", 
+                 new KuwaibaSoapWebServiceImpl(persistenceService));
         }
         
         @PreDestroy

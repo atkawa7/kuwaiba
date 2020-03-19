@@ -6,17 +6,29 @@
         <artifactId>version-2.1-spring</artifactId>
         <version>2.1</version>
     </parent>
+    
     <artifactId>northbound</artifactId>
     <name>Standard Northdbound Interfaces</name>
     <description>This module contains the default implementations of Kuwaiba's northbound interfaces, such as the SOAP-base webservice</description>
     <packaging>jar</packaging>
     
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+    
     <dependencies>
         <!-- Persistence API -->
         <dependency>
-            <groupId>org.neotropic.kuwaiba</groupId>
-            <artifactId>persistence-api</artifactId>
-            <version>2.1</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>reference-implementation</artifactId>
+            <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+            <version>2.3.2-1</version>
+	</dependency>
     </dependencies>
+    
 </project>

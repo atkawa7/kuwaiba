@@ -123,6 +123,22 @@ public class PersistenceService {
     public void setConnectionProperties(Properties connectionProperties) {
         this.connectionProperties = connectionProperties;
     }
+
+    public ConnectionManager getConnectionManager() {
+        return connectionManager;
+    }
+
+    public MetadataEntityManager getMem() {
+        return mem;
+    }
+
+    public ApplicationEntityManager getAem() {
+        return aem;
+    }
+
+    public BusinessEntityManager getBem() {
+        return bem;
+    }
     
     private PersistenceService() {
         state = EXECUTION_STATE.STOPPED;
