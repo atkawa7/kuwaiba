@@ -5,45 +5,22 @@ import com.neotropic.vaadin14.component.MxGraphCell;
 import com.neotropic.vaadin14.component.MxGraphCellPositionChanged;
 import com.neotropic.vaadin14.component.MxGraphClickEdgeEvent;
 import com.neotropic.vaadin14.component.MxGraphPoint;
-import com.neotropic.vaadin14.component.PaperSlider;
-import com.neotropic.vaadin14.component.PaperSliderValueChangeEvent;
-import com.neotropic.vaadin14.component.Point;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
 import elemental.json.Json;
 import elemental.json.JsonArray;
-import elemental.json.JsonFactory;
 import elemental.json.JsonObject;
-import elemental.json.impl.JreJsonFactory;
-import elemental.json.impl.JreJsonObject;
-import java.util.ArrayList;
 
 @Route
 @PWA(name = "Project Base for Vaadin Flow with Spring", shortName = "Project Base")
 public class MainView extends VerticalLayout {
 
     public MainView(@Autowired MessageBean bean) {
-
-        PaperSlider paperSlider = new PaperSlider();
-        paperSlider.setValue(5);
-        paperSlider.addValueChangeListener(new ComponentEventListener<PaperSliderValueChangeEvent>() {
-            @Override
-            public void onComponentEvent(PaperSliderValueChangeEvent t) {
-                Notification.show("Paper slider value change; value = " + paperSlider.getValue());
-            }
-        });
-        add(paperSlider);
-        
-        Button button = new Button("Get paper slider value",
-                e -> Notification.show("value = " + paperSlider.getValue()));
-        add(button);
-        
         MxGraph myElement = new MxGraph();
   
         myElement.setWidth("400px");
@@ -93,12 +70,12 @@ public class MainView extends VerticalLayout {
 
           
           nodeA.setUuid("1");
-          nodeA.setImage("mx-graph/images/press32.png");
+          nodeA.setImage("images/press32.png");
           nodeA.setLabel("Press");
           nodeA.setGeometry(20, 100, 80, 20);
           nodeA.setIsVertex(true);
           nodeB.setUuid("2");
-          nodeB.setImage("mx-graph/images/print32.png");
+          nodeB.setImage("images/print32.png");
           nodeB.setLabel("print");
           nodeB.setGeometry(200, 100, 80, 20);
           nodeB.setIsVertex(true);
@@ -150,7 +127,7 @@ public class MainView extends VerticalLayout {
           
      }
   );              
-        myElement.setGrid("mx-graph/images/grid.gif");
+        myElement.setGrid("images/grid.gif");
         
         Button btnPointsChanged = new Button("Show Updated Data", click -> {      
 

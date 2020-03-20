@@ -7,7 +7,5 @@ import com.vaadin.flow.router.Route;
 public class View extends Div {
 
     public View() {
-        PaperSlider paperSlider = new PaperSlider();
-        add(paperSlider);
     }
 }
