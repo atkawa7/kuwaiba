@@ -115,10 +115,15 @@ public class Application {
                 Logger.getLogger(Application.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage());
             }
             
-            Endpoint.publish("http://localhost:8181/KuwaibaService", new KuwaibaSoapWebServiceImpl(persistenceService));
-            Logger.getLogger(PersistenceService.class.getName()).log(Level.INFO, 
+            if (persistenceService.getState().equals(PersistenceService.EXECUTION_STATE.RUNNING)) {
+                Endpoint.publish("http://localhost:8181/KuwaibaService", new KuwaibaSoapWebServiceImpl(persistenceService));
+                Logger.getLogger(PersistenceService.class.getName()).log(Level.INFO, 
                     String.format("[KUWAIBA] [%s] Web service initialized and running on port %s", 
-                            Calendar.getInstance().getTime(), "", 8181));
+                            Calendar.getInstance().getTime(), 8181));
+            } else
+                Logger.getLogger(PersistenceService.class.getName()).log(Level.SEVERE, 
+                    String.format("[KUWAIBA] [%s] Web service could not be initialized because the Persistence Service is not running", 
+                            Calendar.getInstance().getTime()));
         }
         
         @PreDestroy

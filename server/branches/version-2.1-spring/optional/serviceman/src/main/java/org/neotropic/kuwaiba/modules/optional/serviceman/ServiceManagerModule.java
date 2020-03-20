@@ -33,6 +33,11 @@ public class ServiceManagerModule extends AbstractModule<VerticalLayout> {
     private TranslationService ts;
     
     @Override
+    public String getId() {
+        return "serviceman";
+    }
+    
+    @Override
     public String getName() {
         return ts.getTranslatedString("module-definition.serviceman.name");
     }
@@ -63,8 +68,12 @@ public class ServiceManagerModule extends AbstractModule<VerticalLayout> {
     }
 
     @Override
-    public VerticalLayout getWebComponent() {
+    public VerticalLayout getPowerUserWebComponent() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public VerticalLayout getSimpleUserWebComponent() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

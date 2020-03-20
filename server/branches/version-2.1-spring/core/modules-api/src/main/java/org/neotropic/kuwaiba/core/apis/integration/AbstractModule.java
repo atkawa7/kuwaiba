@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  * @param <W> The web component to be embedded into the web page. In Vaadin, this 
  * could be a Panel, or a VerticalLayout, for example.
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public abstract class AbstractModule<W> {
     /**
@@ -45,6 +46,12 @@ public abstract class AbstractModule<W> {
     @Autowired
     protected BusinessEntityManager bem;
     
+    /**
+     * A simple unique string that identifies the module so it is easier to refer to it in automated processes such as defining 
+     * if a user can user certain functionality based on his/her privileges.
+     * @return 
+     */
+    public abstract String getId();
     /**
      * Gets the module's name. Must be unique, otherwise, the system will only take last one loaded at application's startup
      * @return The module's name
@@ -76,11 +83,20 @@ public abstract class AbstractModule<W> {
     public abstract ModuleType getModuleType();
     
     /**
-     * Builds the web component that will be embedded in the web client.
+     * Builds the web component that will be embedded in the web client for power users. Power users 
+     * are users who prefer an interface will all functionalities available, rather than a dumbed-down GUI. 
+     * Most of these users are data entry staff.
      * @return The web component. 
      */
-    public abstract W getWebComponent();
+    public abstract W getPowerUserWebComponent();
     
+    /**
+     * Builds the web component that will be embedded in the web client for simple users, this is a simplified version of 
+     * the component in {@link #getPowerUserWebComponent() }, and it is aimed to be used among users who are more interested in 
+     * consolidated information, such as managers or sales staff.
+     * @return The web component. 
+     */
+    public abstract W getSimpleUserWebComponent();
     /**
      * Says if the module can be used or not (for example, if the license has expired or not).
      * @throws OperationNotPermittedException if the module can not be loaded or used. 
