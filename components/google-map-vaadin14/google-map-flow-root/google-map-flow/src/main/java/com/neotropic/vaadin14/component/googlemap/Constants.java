@@ -28,7 +28,9 @@ public class Constants {
         public static String LNG = "lng";
         public static String ZOOM = "zoom";
         public static String WIDTH = "width";
+        public static String MIN_WIDTH = "min-width";
         public static String HEIGHT = "height";
+        public static String MIN_HEIGHT = "min-height";
         public static String STROKE_COLOR = "strokeColor";
         public static String STROKE_OPACITY = "strokeOpacity";
         public static String STROKE_WEIGHT = "strokeWeight";

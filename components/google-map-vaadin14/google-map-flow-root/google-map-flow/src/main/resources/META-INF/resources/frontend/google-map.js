@@ -118,7 +118,7 @@ class GoogleMap extends PolymerElement {
   */
   disconnectedCallback() {
     super.disconnectedCallback();
-    this._observer.disconnect();
+    //this._observer.disconnect();
   }
   
   /**

@@ -37,11 +37,13 @@ public class GoogleMap extends Component {
         getElement().getStyle().set(Constants.Property.WIDTH, "100%");
         getElement().getStyle().set(Constants.Property.HEIGHT, "100%");        
         getElement().setProperty(Constants.Property.API_KEY, apiKey);
+        getElement().getStyle().set(Constants.Property.MIN_WIDTH, "250px");  
         getElement().setProperty(Constants.Property.CLIENT_ID, clientId);
     }
     public GoogleMap(String apiKey, String clientId, String width, String height) {
         getElement().getStyle().set(Constants.Property.WIDTH, width);
-        getElement().getStyle().set(Constants.Property.HEIGHT, height);        
+        getElement().getStyle().set(Constants.Property.HEIGHT, height);  
+        getElement().getStyle().set(Constants.Property.MIN_WIDTH, "250px");  
         getElement().setProperty(Constants.Property.API_KEY, apiKey);
         getElement().setProperty(Constants.Property.CLIENT_ID, clientId);
     }
@@ -76,6 +78,23 @@ public class GoogleMap extends Component {
     
     public void setMapTypeId(String mapTypeId) {
         getElement().setProperty(Constants.Property.MAP_TYPE_ID, mapTypeId);
+    }
+    
+    
+    public void setWidth(String width) {
+        getElement().setProperty(Constants.Property.WIDTH, width);
+    }
+ 
+    public void setHeight(String height) {
+        getElement().setProperty(Constants.Property.HEIGHT, height);
+    }
+    
+    public void setMinWidth(String width) {
+        getElement().setProperty(Constants.Property.MIN_WIDTH, width);
+    }
+ 
+    public void setMinHeight(String height) {
+        getElement().setProperty(Constants.Property.MIN_HEIGHT, height);
     }
     
     public void newMarker(GoogleMapMarker googleMapMarker) {
