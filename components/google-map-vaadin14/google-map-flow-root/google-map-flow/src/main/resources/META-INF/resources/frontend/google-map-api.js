@@ -16,7 +16,8 @@ limitations under the License.
 */
 import * as Constants from './google-map-constants.js';
 /**
- * Class that load the Maps Java Script API
+ * Class to load the Maps Java Script API
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 class MapApi {
     /**
@@ -87,7 +88,7 @@ class MapApi {
                     script.defer = true;
                     document.body.append(script);
                 } else {
-                    this.resolve();
+                    this.ready();
                 }
             });
         }

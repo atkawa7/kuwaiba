@@ -2,7 +2,6 @@ package com.neotropic.vaadin14.component.googlemap;
 
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.notification.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -72,11 +71,6 @@ public class MainView extends VerticalLayout {
         googleMapPolyline.setEditable(true);
         googleMapPolyline.setDraggable(true);
         googleMapPolyline.setStrokeColor("#32a852");
-////        googleMapPolyline.appendCoordinate(new GoogleMapLatLng(2.4574702, -76.6349535));
-////        googleMapPolyline.appendCoordinate(new GoogleMapLatLng(2.3512629, -76.6915093));
-////        googleMapPolyline.appendCoordinate(new GoogleMapLatLng(2.260897, -76.7449569));
-////        googleMapPolyline.appendCoordinate(new GoogleMapLatLng(2.1185563, -76.9974436));
-////        googleMapPolyline.appendCoordinate(new GoogleMapLatLng(2.0693058, -77.0552842));
         List<LatLng> coordinates = new ArrayList();
         coordinates.add(new LatLng(2.4574702, -76.6349535));
         coordinates.add(new LatLng(2.3512629, -76.6915093));
@@ -88,41 +82,7 @@ public class MainView extends VerticalLayout {
         googleMap.newPolyline(googleMapPolyline);
         
         setPolylineListener(googleMapPolyline);
-////        add(googleMap);
-        /*
-        GoogleMapPoly googleMapPolyline = new GoogleMapPoly();
-
-        Button addPointsButton = new Button("Add Points");
-
-        addPointsButton.addClickListener(click -> {
-            List<GoogleMapPoint> path = new ArrayList();
-            path.add(new GoogleMapPoint(0.5, -0.5)); 
-            path.add(new GoogleMapPoint(-0.5, 0.5));
-
-            googleMapPolyline.setPath(path);
-            System.out.println(">>> ADDING PATH POLY"+ googleMapPolyline);
-        });
-
-
-        googleMap.addMarkerAddedListener(new ComponentEventListener<GoogleMapMarkerAdded>() {
-           @Override
-           public void onComponentEvent(GoogleMapMarkerAdded t) {
-               Notification notification = new Notification();
-               notification.add(new Label("marker added"));
-               notification.setDuration(3000);
-               notification.open();
-               System.out.println(String.format(">>> EVENT MARKER ADDED %s", t.getSource().getElement().getChildren()));
-
-           }
-        });
-        
-        googleMap.addClickListener(e -> {
-            Notification.show("Clicked at " + e.getX() + "," + e.getY(), 1000, Notification.Position.TOP_CENTER);
-        });
-        googleMap.addPolyLine(googleMapPolyline);
-        */
-           
-        
+                
         SplitLayout splitLayoutMain = new SplitLayout();
         splitLayoutMain.addToPrimary(googleMap);
         
@@ -244,11 +204,7 @@ public class MainView extends VerticalLayout {
                 googleMap.setCenterLat(1.2135252);
                 googleMap.setCenterLng(-77.3122422);
                 googleMap.setZoom(13);
-//                GoogleMapMarker googleMapMarker = new GoogleMapMarker(event.getLat(), event.getLng());
-//                setMarkerListeners(googleMapMarker);
-//                googleMap.newMarker(googleMapMarker);
                 setBackgroundLabel(lblMapClick);
-                //Notification.show(String.format("lat:%f, lng:%f", event.getLat(), event.getLng()));
             }
         });
         googleMap.addMapDblClickListener(new ComponentEventListener<GoogleMapEvent.MapDblClickEvent>() {
@@ -289,7 +245,6 @@ public class MainView extends VerticalLayout {
             @Override
             public void onComponentEvent(GoogleMapEvent.MapCenterChangedEvent event) {
                 setBackgroundLabel(lblMapCenterChanged);
-////                Notification.show("center lat " + googleMap.getCenterLat() + " lng " + googleMap.getCenterLng());
             }
         });
         googleMap.addMapMouseMoveListener(new ComponentEventListener<GoogleMapEvent.MapMouseMoveEvent>() {
@@ -314,7 +269,6 @@ public class MainView extends VerticalLayout {
             @Override
             public void onComponentEvent(GoogleMapEvent.MapZoomChangedEvent event) {
                 setBackgroundLabel(lblZoomChanged);
-////                Notification.show("zoom " + googleMap.getZoom());
             }
         });        
         splitLayoutMain.addToSecondary(verticalLayoutMain);
@@ -323,11 +277,7 @@ public class MainView extends VerticalLayout {
         splitLayoutMain.setSizeFull();
         add(splitLayoutMain);
     }
-    
-//    private void updateMainLayout(Tab tab) {
-//        tabs.setSelectedTab(tab);
-//    }
-    
+        
     public void setMarkerListeners(GoogleMap googleMap, GoogleMapMarker googleMapMarker) {
         googleMapMarker.addMarkerMouseOverListener(new ComponentEventListener<GoogleMapEvent.MarkerMouseOverEvent>() {
             @Override

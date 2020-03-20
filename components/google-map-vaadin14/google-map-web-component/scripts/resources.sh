@@ -4,8 +4,6 @@ cp \
 google-map-api.js \
 google-map-constants.js \
 google-map-marker.js \
-google-map-point.js \
-google-map-poly.js \
 google-map-polyline.js \
 google-map.js \
 ../google-map-flow-root/google-map-flow/src/main/resources/META-INF/resources/frontend/
@@ -13,6 +11,6 @@ google-map.js \
 cp \
 demo/marker.png \
 demo/star.png \
-../google-map-flow-root/google-map-flow/src/main/resources/META-INF/resources/
+../google-map-flow-root/google-map-flow-demo/src/main/resources/META-INF/resources/
 
 echo End copy frontend files

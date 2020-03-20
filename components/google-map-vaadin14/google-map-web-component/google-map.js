@@ -30,6 +30,7 @@ import {GoogleMapPolyline} from './google-map-polyline.js';
  * @demo demo/index.html
  * @extends PolymerElement
  * @summary Custom Element for Google Map
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 class GoogleMap extends PolymerElement {
   
@@ -190,11 +191,6 @@ class GoogleMap extends PolymerElement {
       _this.dispatchEvent(new CustomEvent('map-right-click', 
         {detail: {lat: lat, lng: lng}}));
     });
-    /*
-    this.addEventListener('lat-changed', function(event) {
-      console.log('>>> ' + event.detail.value);                  
-    });
-    */
     var _this = this;
     this._observer = new FlattenedNodesObserver(this, (info) => {      
       _this._processAddedNodes(info.addedNodes);
@@ -217,11 +213,9 @@ class GoogleMap extends PolymerElement {
   _processAddedNodes(addedNodes) {
     for (var i = 0; i < addedNodes.length; i++) {
       if (addedNodes[i].localName === Constants.googleMapMarker) {
-        console.log('>>>_processNewMarker ' + addedNodes[i]);                
         addedNodes[i].draw(this.map);
       }
       if (addedNodes[i].localName === Constants.googleMapPolyline) {
-        console.log('>>>_processNewPolyline ' + addedNodes[i]);
         addedNodes[i].draw(this.map);
       }
     }
@@ -230,11 +224,9 @@ class GoogleMap extends PolymerElement {
   _processRemovedNodes(removedNodes) {
     for (var i = 0; i < removedNodes.length; i++) {
       if (removedNodes[i].localName === Constants.googleMapMarker) {
-        console.log('>>>_processRemovedMarker ' + removedNodes[i]);
         removedNodes[i].remove();
       }
       else if (removedNodes[i].localName === Constants.googleMapPolyline) {
-        console.log('>>>_processRemovedPolyline ' + removedNodes[i]);
         removedNodes[i].remove();
       }
     }
@@ -243,7 +235,6 @@ class GoogleMap extends PolymerElement {
   _latChanged(newValue, oldValue) {
     if (this.map !== undefined && this.map.getCenter() !== undefined && 
       this.map.getCenter().lat() !== newValue) {
-      console.log(">>> _latChanged");
       this.map.setCenter({lat: newValue, lng: this.map.getCenter().lng()});
     }
   }
@@ -251,7 +242,6 @@ class GoogleMap extends PolymerElement {
   _lngChanged(newValue, oldValue) {
     if (this.map !== undefined && this.map.getCenter() !== undefined && 
       this.map.getCenter().lng() !== newValue) {
-      console.log(">>> _lngChanged");
       this.map.setCenter({lat: this.map.getCenter().lat(), lng: newValue});
     }
   }
@@ -259,7 +249,6 @@ class GoogleMap extends PolymerElement {
   _zoomChanged(newValue, oldValue) {
     if (this.map !== undefined && 
       this.map.getZoom() !== newValue) {
-      console.log(">>> _zoomChanged " + newValue);
       this.map.setZoom(newValue);
     }
   }

@@ -1,3 +1,19 @@
+/** 
+@license
+Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
+
+Licensed under the Apache License, Version 2.0 (the "License"); 
+you may not use this file except in compliance with the License. 
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software 
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License.
+*/
 import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
 import '@polymer/iron-pages/iron-pages.js';
 import '@vaadin/vaadin-tabs/vaadin-tabs.js';
@@ -9,12 +25,14 @@ import './google-map.js';
 import './google-map-marker.js';
 import './google-map-polyline.js';
 /**
- * `my-element`
- * my-element
+ * Google map web component showcase
+ * `google-map-demo`
+ * google-map-demo
  *
  * @customElement
  * @polymer
  * @demo demo/index.html
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 class GoogleMapDemo extends PolymerElement {
   static get template() {

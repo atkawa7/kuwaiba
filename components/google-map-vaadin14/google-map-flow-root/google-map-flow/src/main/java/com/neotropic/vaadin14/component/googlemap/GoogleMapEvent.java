@@ -48,23 +48,10 @@ public class GoogleMapEvent {
     
     @DomEvent("map-dbl-click")
     public static class MapDblClickEvent extends ComponentEvent<GoogleMap> {
-//        private final double lat;        
-//        private final double lng;
         
-        public MapDblClickEvent(GoogleMap source, boolean fromClient/*, 
-            @EventData("detail.lat") double lat, @EventData("detail.lng") double lng*/) {
+        public MapDblClickEvent(GoogleMap source, boolean fromClient) {
             super(source, fromClient);
-//            this.lat = lat;
-//            this.lng = lng;                    
         }
-        
-//        public double getLat() {
-//            return lat;
-//        }
-//        
-//        public double getLng() {
-//            return lng;
-//        }
     }
     
     @DomEvent("map-right-click")

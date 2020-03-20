@@ -1,7 +1,25 @@
+/** 
+@license
+Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
+
+Licensed under the Apache License, Version 2.0 (the "License"); 
+you may not use this file except in compliance with the License. 
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software 
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License.
+*/
 import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
 import {FlattenedNodesObserver} from '@polymer/polymer/lib/utils/flattened-nodes-observer.js';
 import * as Constants from './google-map-constants.js';
-
+/**
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
+ */
 class GoogleMapPolyline extends PolymerElement {
 	static get is() {
 		return Constants.googleMapPolyline;
@@ -63,6 +81,7 @@ class GoogleMapPolyline extends PolymerElement {
 			}
 		};
 	}
+	
 	draw(map) {
 		var _this = this;
 		this.polyline = new google.maps.Polyline({
@@ -90,13 +109,8 @@ class GoogleMapPolyline extends PolymerElement {
 			_this.dispatchEvent(new CustomEvent('polyline-right-click'));
 		});
 		this._setPolylinePath(this.path);
-		/*
-		this._observer = new FlattenedNodesObserver(this, (info) => {
-			_this._processNewCoordinates(info.addedNodes);
-			_this._processRemovedCoordinates(info.removedNodes);
-		});
-		*/
 	}
+
 	_setPolylinePath(path) {
 		if (path.length >= 2) {
 			var _this = this;
@@ -112,6 +126,7 @@ class GoogleMapPolyline extends PolymerElement {
 			});
 		}
 	}
+
 	_updatePath() {
 		var path = [];
 		this.polyline.getPath().forEach(function(coordinate, index) {
@@ -120,78 +135,48 @@ class GoogleMapPolyline extends PolymerElement {
 		this.path = path;
 		this.dispatchEvent(new CustomEvent('polyline-path-changed'));
 	}
+
 	remove() {
 		if (this.polyline !== undefined)
 			this.polyline.setMap(null);
 	}
-	/*
-	_processNewCoordinates(addedCoordinates) {
-		var _this = this;
-		var path = [];
-		for (var i = 0; i < addedCoordinates.length; i++) {			
-			if (addedCoordinates[i].localName === Constants.googleMapLatLng) {
-				console.log('>>> _processNewCoordinate lat ' + addedCoordinates[i].lat + ' lng ' + addedCoordinates[i].lng);
-				path.push({
-					lat: addedCoordinates[i].lat, 
-					lng: addedCoordinates[i].lng
-				});
-			}
-		}
-		this.polyline.setPath(path);
-		google.maps.event.addListener(this.polyline.getPath(), 'insert_at', function(index) {
-			console.log('>>> polyline-path-insert-at ' + index);
-			var j = 0;
-			for (var i = 0; i < _this.childNodes.length; i++) {
-				if (_this.childNodes[i].localName === Constants.googleMapLatLng)
-					console.log('>>> childNodes ' + ++j);
-			}
-		});
-		google.maps.event.addListener(this.polyline.getPath(), 'remove_at', function(index, removed) {
-			console.log('>>> polyline-path-remove-at index ' + index + ' removed ' + removed);
-			var j = 0;
-			for (var i = 0; i < _this.childNodes.length; i++) {
-				if (_this.childNodes[i].localName === Constants.googleMapLatLng)
-					console.log('>>> childNodes ' + ++j);
-			}
-		});
-		google.maps.event.addListener(this.polyline.getPath(), 'set_at', function(index, previous) {
-			console.log('>>> polyline-path-set-at index ' + index + ' previous lat ' + previous.lat() + ' lng ' + previous.lng());
-		});
-	}
-	_processRemovedCoordinates(removedCoordinates) {
-		console.log('>>> _processRemovedCoordinates');
-	}
-	*/
+
 	_draggableChanged(newValue, oldValue) {
 		if (this.polyline !== undefined && 
 			this.polyline.getDraggable() !== newValue) {
 			this.polyline.setDraggable(newValue);
 		}
 	}
+
 	_editableChanged(newValue, oldValue) {
 		if (this.polyline !== undefined && 
 			this.polyline.getEditable() !== newValue) {
 			this.polyline.setEditable(newValue);
 		}
 	}
+
 	_strokeColorChanged(newValue, oldValue) {
 		if (this.polyline !== undefined)
 			this.polyline.setOptions({strokeColor: newValue});
 	}
+
 	_strokeOpacityChanged(newValue, oldValue) {
 		if (this.polyline !== undefined)
 			this.polyline.setOptions({strokeOpacity: newValue});
 	}
+
 	_strokeWeightChanged(newValue, oldValue) {
 		if (this.polyline !== undefined)
 			this.polyline.setOptions({strokeWeight: newValue});
 	}
+
 	_visibleChanged(newValue, oldValue) {
 		if (this.polyline !== undefined && 
 			this.polyline.getVisible() != newValue) {
 			this.polyline.setVisible(newValue);
 		}
 	}
+
 	_pathChanged(newValue, oldValue) {		
 		if (this.polyline !== undefined && 
 			this.polyline.getPath() !== undefined) { 

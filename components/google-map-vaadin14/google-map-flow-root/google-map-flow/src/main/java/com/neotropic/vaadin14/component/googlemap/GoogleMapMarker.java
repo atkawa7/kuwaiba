@@ -51,7 +51,7 @@ public class GoogleMapMarker extends Component {
     public void setLng(double lng) {
         getElement().setProperty(Constants.Property.LNG, lng);
     }
-    //TODO: prove the get icon
+    
     public String getIcon() {
         return getElement().getProperty(Constants.Property.ICON, null);
     }
@@ -67,7 +67,7 @@ public class GoogleMapMarker extends Component {
     public void setTitle(String title) {
         getElement().setProperty(Constants.Property.TITLE, title);
     }
-    //TODO: prove the get label
+    
     public String getLabel() {
         return getElement().getProperty(Constants.Property.LABEL, null);
     }
