@@ -595,7 +595,7 @@ public class Constants {
     /**
      * Path for patches files
      */
-    public static final String PACTHES_PATH =  "patches/";
+    public static final String PATCHES_PATH =  "patches/";
     /**
      * Hint in patch file for a cypher query
      */
