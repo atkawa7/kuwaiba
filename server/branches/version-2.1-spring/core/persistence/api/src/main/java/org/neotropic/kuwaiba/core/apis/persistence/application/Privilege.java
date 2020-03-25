@@ -36,7 +36,7 @@ public class Privilege {
      */
     public static final int ACCESS_LEVEL_READ_WRITE = 2;
     /**
-     * Feature token property name to be used in the data base
+     * Feature token property name to be used in the database
      */
     public static final String PROPERTY_FEATURE_TOKEN = "featureToken";
     /**
@@ -48,7 +48,7 @@ public class Privilege {
      */
     private String featureToken;
     /**
-     * Access level. See ACCESS_LEVEL* for possible values 
+     * Access level. See ACCESS_LEVEL* for possible values.
      */
     private int accessLevel;
     
