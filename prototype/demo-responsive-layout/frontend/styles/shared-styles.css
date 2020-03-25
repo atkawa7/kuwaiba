@@ -1,0 +1,62 @@
+
+
+@media (max-width: 600px) {
+
+/**
+Mobile
+*/
+
+.lytAction  {
+  width : 100%;
+  justify-content: space-evenly;
+}
+
+.hideIfIsMobile {
+    visibility: hidden;
+}
+
+
+}
+
+@media only screen and (min-width: 600px) {
+
+/*
+desktop
+*/
+
+.lytAction  {
+  width : 500px;
+  justify-content: space-between;
+}
+
+
+}
+
+.bkLila {
+  background-color: #66ffa6;
+}
+
+.bkGray {
+  background-color: #dcedc8 !important;
+}
+
+.menu-link {
+    display: block;
+    margin: 0 auto;
+    padding: 10px 37px;
+}
+
+.subTitle {
+  font-weight: bold;
+   color: brown;
+}
+
+.divBoard {
+   justify-content: center;
+   align-items: center;
+   padding: 5em;
+   border: 1px black solid;
+}
+
+
+
