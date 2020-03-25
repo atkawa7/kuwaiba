@@ -1,9 +1,13 @@
-# Project Base for Vaadin Flow and Spring Boot
+# Project Demo for responsive applications using Vaadin 14
 
-This project can be used as a starting point to create your own Vaadin Flow application with Spring Boot.
-It contains all the necessary configuration and some placeholder files to get you started.
+This project can be used to obtain information about the different existing methods to integrate responsive views into a vaadin application.
 
-The best way to use it by via [vaadin.com/start](https://vaadin.com/start) - you can get only the necessary parts and choose the package naming you want to use.
+the demo contains :
+
+- how to get client software and device information
+- Use media queries adding classes to components from vaadin
+- Generate and change components depending on the aspect ratio of the screen
+- Add a listener to react to the resizing of the client's screen
 
 Import the project to the IDE of your choosing as a Maven project. 
 
