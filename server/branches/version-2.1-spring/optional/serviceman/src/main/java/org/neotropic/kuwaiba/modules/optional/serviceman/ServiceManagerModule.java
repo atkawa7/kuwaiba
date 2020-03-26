@@ -39,12 +39,12 @@ public class ServiceManagerModule extends AbstractModule<VerticalLayout> {
     
     @Override
     public String getName() {
-        return ts.getTranslatedString("module-definition.serviceman.name");
+        return ts.getTranslatedString("module.serviceman.name");
     }
 
     @Override
     public String getDescription() {
-        return ts.getTranslatedString("module-definition.serviceman.description");
+        return ts.getTranslatedString("module.serviceman.description");
     }
 
     @Override

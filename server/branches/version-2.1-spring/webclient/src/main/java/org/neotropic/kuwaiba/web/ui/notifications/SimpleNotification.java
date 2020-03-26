@@ -14,16 +14,26 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.core.apis.persistence.application;
+package org.neotropic.kuwaiba.web.ui.notifications;
+
+import com.vaadin.flow.component.notification.Notification;
 
 /**
- * Simple enumeration to define the type of 
+ *
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
+public class SimpleNotification extends AbstractNotification {
+    
+    public SimpleNotification(String title, String text) {
+        super(title, text);
+    }
 
-public enum PrivilegeType {
-    READ,
-    WRITE,
-    READ_AND_WRITE
+    @Override
+    public void open() {
+        Notification.show(text, 4000, Notification.Position.BOTTOM_CENTER);
+    }
+
+    @Override
+    public void close() { }
+
 }
-

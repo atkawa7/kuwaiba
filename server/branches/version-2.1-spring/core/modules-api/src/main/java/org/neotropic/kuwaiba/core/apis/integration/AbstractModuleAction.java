@@ -18,7 +18,11 @@ package org.neotropic.kuwaiba.core.apis.integration;
 
 import java.util.List;
 import java.util.Properties;
+import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Privilege;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * All actions in a module must extend 
@@ -28,43 +32,50 @@ public abstract class AbstractModuleAction {
     /**
      * A unique identifier for the action within the module .
      */
-    private String id;
+    protected String id;
     /**
      * The label to be used in menus or buttons.
      */
-    private String displayName;
+    protected String displayName;
     /**
      * A short description of what the action does, mainly to be used as tool text tip.
      */
-    private String description;
+    protected String description;
     /**
      * Icon for buttons, menu entries, widget cards, etc. SVG images are encouraged, because they can be easily rescaled.
      */
-    private byte[] icon;
+    protected byte[] icon;
     /**
      * Settings useful to renderer to display the action. Currently suggested and supported options: bold (boolean) and color (HTML hex RGB value).
      */
-    private Properties formatOptions;
+    protected Properties formatOptions;
     /**
      * In case this is a composed action with sub-actions.
      */
-    private List<AbstractModuleAction> childrenActions;
+    protected List<AbstractModuleAction> childrenActions;
     /**
      * This number will be used to position the action in menus (0 is the highest priority/importance). The default value is 1000.
      */
-    private int order;
+    protected int order;
     /**
      * What is to be execute once the action is triggered.
      */
-    private ModuleActionCallback callback;
-
-    public AbstractModuleAction(String id, String displayName, String description) {
-        this.id = id;
-        this.displayName = displayName;
-        this.description = description;
-        this.order = 1000;
-        this.callback = doNothing -> {}; // Do nothing by default
-    }
+    protected ModuleActionCallback callback;
+    /**
+     * Reference to the metadata entity manager.
+     */
+    @Autowired
+    protected MetadataEntityManager mem;
+    /**
+     * Reference to the application entity manager.
+     */
+    @Autowired
+    protected ApplicationEntityManager aem;
+    /**
+     * Reference to the business entity manager.
+     */
+    @Autowired
+    protected BusinessEntityManager bem;
 
     public String getId() {
         return id;

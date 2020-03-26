@@ -33,6 +33,8 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.theme.Theme;
+import com.vaadin.flow.theme.material.Material;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
@@ -45,6 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Login form
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
+@Theme(Material.class)
 @Route("")
 public class LoginUI extends VerticalLayout implements BeforeEnterObserver {
     /**
@@ -90,7 +93,7 @@ public class LoginUI extends VerticalLayout implements BeforeEnterObserver {
                 new HorizontalLayout() /* Right filler */);
         lytFooterContent.setSizeFull();
         add(lytFooterContent);
-        getUI().ifPresent( ui -> ui.getPage().setTitle(ts.getTranslatedString("ui.login.title")));
+        getUI().ifPresent( ui -> ui.getPage().setTitle(ts.getTranslatedString("module.login.ui.title")));
     }
     
     /**
