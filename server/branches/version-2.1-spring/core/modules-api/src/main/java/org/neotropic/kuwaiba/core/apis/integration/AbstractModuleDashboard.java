@@ -14,16 +14,12 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.web.ui;
-
-import com.vaadin.flow.component.orderedlayout.FlexLayout;
-import com.vaadin.flow.router.RouterLayout;
+package org.neotropic.kuwaiba.core.apis.integration;
 
 /**
- * A generic layout for those user profiles with may options. It is intended to be used 
- * by administrators, data entry staff, etc.
+ * The entry point to all modules should implement this interface.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class PowerUserApplicationLayout extends FlexLayout implements RouterLayout {
+public interface AbstractModuleDashboard extends ActionCompletedListener {
 
 }

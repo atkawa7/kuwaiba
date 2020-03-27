@@ -22,9 +22,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.xml.ws.Endpoint;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.core.persistence.PersistenceService;
-import org.neotropic.kuwaiba.northbound.ws.KuwaibaSoapWebServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -43,8 +42,6 @@ public class Application {
     
     @Component
     public static class Bootstrap {
-        @Autowired
-        private PersistenceService persistenceService;
         // General properties
         @Value("${general.enableSecurityManager}")
         private boolean enableSecurityManager;
@@ -81,7 +78,11 @@ public class Application {
         @Value("${bem.maxAttachmentSize}")
         private String maxAttachmentSize;
         
-                
+        @Autowired
+        private PersistenceService persistenceService;
+        @Autowired
+        private TranslationService ts;
+        
         @PostConstruct
         void init() {
             Properties generalProperties = new Properties();
@@ -112,7 +113,9 @@ public class Application {
             try {
                 persistenceService.start();
             } catch (IllegalStateException ex) {
-                Logger.getLogger(Application.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage());
+                Logger.getLogger(Application.class.getName()).log(Level.SEVERE, 
+                        String.format(ts.getTranslatedString("module.persistence.messages.cant-start-persistence-service"), 
+                            Calendar.getInstance().getTime(), ex.getLocalizedMessage()));
             }
             
 //            if (persistenceService.getState().equals(PersistenceService.EXECUTION_STATE.RUNNING)) {

@@ -20,6 +20,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntity
 import org.neotropic.kuwaiba.core.apis.persistence.application.Privilege;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -50,18 +51,28 @@ public abstract class AbstractModuleAction {
     /**
      * Reference to the metadata entity manager.
      */
-    @Autowired
     protected MetadataEntityManager mem;
     /**
      * Reference to the application entity manager.
      */
-    @Autowired
     protected ApplicationEntityManager aem;
     /**
      * Reference to the business entity manager.
      */
-    @Autowired
     protected BusinessEntityManager bem;
+    /**
+     * Reference to the internationalization service.
+     */
+    protected TranslationService ts;
+
+    public AbstractModuleAction(MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem, TranslationService ts) {
+        this.mem = mem;
+        this.aem = aem;
+        this.bem = bem;
+        this.ts = ts;
+    }
+    
+    
 
     public String getId() {
         return id;

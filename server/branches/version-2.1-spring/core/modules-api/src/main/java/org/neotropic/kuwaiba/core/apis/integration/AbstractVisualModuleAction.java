@@ -48,21 +48,6 @@ public abstract class AbstractVisualModuleAction<W> {
      * Those interested in being notified about the result of an action.
      */
     protected List<ActionCompletedListener> listeners;
-    /**
-     * Reference to the metadata entity manager.
-     */
-    @Autowired
-    protected MetadataEntityManager mem;
-    /**
-     * Reference to the application entity manager.
-     */
-    @Autowired
-    protected ApplicationEntityManager aem;
-    /**
-     * Reference to the business entity manager.
-     */
-    @Autowired
-    protected BusinessEntityManager bem;
 
     public AbstractVisualModuleAction() {
         this.listeners = new ArrayList<>();

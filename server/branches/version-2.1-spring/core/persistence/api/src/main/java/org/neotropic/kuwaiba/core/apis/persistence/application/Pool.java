@@ -17,7 +17,10 @@
 package org.neotropic.kuwaiba.core.apis.persistence.application;
 
 /**
- * A POJO representation of a pool
+ * A POJO representation of a pool. A pool is basically a bag where you put elements of the same type, 
+ * for example, a pool of instances of Router, or Buildings, etc. Pools are heavily used in many modules 
+ * to support tree-like structure, such as the Service Manager, which organizes customers and services 
+ * in groups and those groups are implemented via pools.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class Pool {
@@ -88,5 +91,10 @@ public class Pool {
 
     public void setType(int type) {
         this.type = type;
+    }
+    
+    @Override
+    public String toString() {
+        return this.name;
     }
 }

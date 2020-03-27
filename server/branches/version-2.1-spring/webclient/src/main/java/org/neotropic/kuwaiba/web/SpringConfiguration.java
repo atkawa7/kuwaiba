@@ -24,8 +24,10 @@ import org.springframework.context.annotation.Configuration;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Configuration
-@ComponentScan(basePackages = { "org.neotropic.kuwaiba.core.persistence", //The persistence service
-                                "org.neotropic.kuwaiba.core.persistence.reference.neo4j", // The XEM implementations
-                                "org.neotropic.kuwaiba.core.i18n", 
-                                "org.neotropic.kuwaiba.modules.optional.serviceman.actions" }) // The translation service
+@ComponentScan(basePackages = { "org.neotropic.kuwaiba.core.i18n", // The translation service
+                                "org.neotropic.kuwaiba.core.apis.integration",
+                                "org.neotropic.kuwaiba.core.persistence" //The persistence service
+                                //"org.neotropic.kuwaiba.core.persistence.reference.neo4j", // Reference persistence service implementation
+                                //"org.neotropic.kuwaiba.modules.optional.serviceman.actions"
+                              }) 
 public class SpringConfiguration { }
