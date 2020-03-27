@@ -16,8 +16,6 @@
 
 package org.neotropic.kuwaiba.core.apis.integration;
 
-import java.util.List;
-import java.util.Properties;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Privilege;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
@@ -41,18 +39,6 @@ public abstract class AbstractModuleAction {
      * A short description of what the action does, mainly to be used as tool text tip.
      */
     protected String description;
-    /**
-     * Icon for buttons, menu entries, widget cards, etc. SVG images are encouraged, because they can be easily rescaled.
-     */
-    protected byte[] icon;
-    /**
-     * Settings useful to renderer to display the action. Currently suggested and supported options: bold (boolean) and color (HTML hex RGB value).
-     */
-    protected Properties formatOptions;
-    /**
-     * In case this is a composed action with sub-actions.
-     */
-    protected List<AbstractModuleAction> childrenActions;
     /**
      * This number will be used to position the action in menus (0 is the highest priority/importance). The default value is 1000.
      */
@@ -101,30 +87,6 @@ public abstract class AbstractModuleAction {
         this.description = description;
     }
 
-    public byte[] getIcon() {
-        return icon;
-    }
-
-    public void setIcon(byte[] icon) {
-        this.icon = icon;
-    }
-
-    public Properties getFormatOptions() {
-        return formatOptions;
-    }
-
-    public void setFormatOptions(Properties formatOptions) {
-        this.formatOptions = formatOptions;
-    }
-
-    public List<AbstractModuleAction> getChildrenActions() {
-        return childrenActions;
-    }
-
-    public void setChildrenActions(List<AbstractModuleAction> childrenActions) {
-        this.childrenActions = childrenActions;
-    }
-
     public int getOrder() {
         return order;
     }
@@ -147,6 +109,14 @@ public abstract class AbstractModuleAction {
      * @return The access level needed to execute this action. See {@link Privilege}.ACCESS_LEVEL_XXX for possible values. 
      */
     public abstract int getRequiredAccessLevel();
+    
+    /**
+     * Does this action requires confirmation before executing it? This is typically true 
+     * for actions that will delete or otherwise dispose of some resources. The consumer of the action 
+     * might ignore this flag and simply execute the action. 
+     * @return 
+     */
+    public abstract boolean requiresConfirmation();
     
     /**
      * The callback code to be executed once the action is triggered.

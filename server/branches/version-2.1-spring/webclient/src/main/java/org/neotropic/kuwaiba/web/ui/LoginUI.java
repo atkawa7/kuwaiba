@@ -41,6 +41,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntity
 import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.modules.optional.serviceman.widgets.ServiceManagerDashboard;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -126,8 +127,7 @@ public class LoginUI extends VerticalLayout implements BeforeEnterObserver {
                     // Send the session object to browser's session
                     ui.getSession().setAttribute(Session.class, aSession);
                     // Navigate to Welcome page
-                    //ui.navigate("welcome");
-                    Notification.show("Authenticated");
+                    ui.navigate(ServiceMan.class);
                 } catch (InventoryException ex) { // User not found is no longer caught. Generic exception for any other unexpected situation
                     Notification.show("Login or password incorrect");
                 } catch (Exception ex) { 

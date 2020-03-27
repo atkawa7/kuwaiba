@@ -14,18 +14,26 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.web;
+package org.neotropic.util.visual.notifications;
 
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import com.vaadin.flow.component.notification.Notification;
 
 /**
- * The Spring basic automated configuration file. 
+ * Default implementation of a notification component.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-@Configuration
-@ComponentScan(basePackages = { "org.neotropic.kuwaiba.core.persistence", //The persistence service
-                                "org.neotropic.kuwaiba.core.persistence.reference.neo4j", // The XEM implementations
-                                "org.neotropic.kuwaiba.core.i18n", 
-                                "org.neotropic.kuwaiba.modules.optional.serviceman.actions" }) // The translation service
-public class SpringConfiguration { }
+public class SimpleNotification extends AbstractNotification {
+    
+    public SimpleNotification(String title, String text) {
+        super(title, text);
+    }
+
+    @Override
+    public void open() {
+        Notification.show(text, 4000, Notification.Position.BOTTOM_CENTER);
+    }
+
+    @Override
+    public void close() { }
+
+}

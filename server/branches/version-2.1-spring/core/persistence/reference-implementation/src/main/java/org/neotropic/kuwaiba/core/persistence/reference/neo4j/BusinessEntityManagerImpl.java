@@ -34,7 +34,6 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLightList;
 import org.neotropic.kuwaiba.core.apis.persistence.business.Contact;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.ApplicationObjectNotFoundException;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -442,14 +441,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public String createPoolItem(String poolId, String className, String[] attributeNames, String[] attributeValues, String templateId) 
-            throws ApplicationObjectNotFoundException, InvalidArgumentException, 
-            ArraySizeMismatchException, MetadataObjectNotFoundException {
-        
-        if (attributeNames != null && attributeValues != null) {
-            if (attributeNames.length != attributeValues.length)
-            throw new ArraySizeMismatchException("attributeNames", "attributeValues");
-        }
+    public String createPoolItem(String poolId, String className, HashMap<String, String> attributes, String templateId) 
+            throws ApplicationObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException {
         
         try (Transaction tx =connectionManager.getConnectionHandler().beginTx()) {
             Node pool = connectionManager.getConnectionHandler().findNode(poolLabel, Constants.PROPERTY_UUID, poolId);
@@ -469,12 +462,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             if (!mem.isSubclassOf((String)pool.getProperty(Constants.PROPERTY_CLASS_NAME), className))
                 throw new InvalidArgumentException(String.format("Class %s is not subclass of %s", className, (String)pool.getProperty(Constants.PROPERTY_CLASS_NAME)));
-            
-            HashMap<String, String> attributes = new HashMap<>();
-            if (attributeNames != null && attributeValues != null) {
-                for (int i = 0; i < attributeNames.length; i++)
-                    attributes.put(attributeNames[i], attributeValues[i]);
-            }
             
             Node newObject = createObject(classNode, classMetadata, attributes);
             newObject.createRelationshipTo(pool, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);

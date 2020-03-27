@@ -16,6 +16,8 @@
 
 package org.neotropic.kuwaiba.core.apis.integration;
 
+import java.util.HashMap;
+
 /**
  * Each module action has an optional set of parameters (for example, creating a new inventory 
  * object requires the parent of the new object, its type and optionally a list of default values to be
@@ -48,5 +50,18 @@ public class ModuleActionParameter<T> {
 
     public void setValue(T value) {
         this.value = value;
+    }
+    
+    /**
+     * Transforms a set of {@link ModuleActionParameter} instances into a standard HashMap.
+     * @param parameters The input parameters.
+     * @return The hash map (the key is the parameter name and the value is the parameter value).
+     */
+    public static HashMap<String, Object> asHashMap(ModuleActionParameter[] parameters) {
+        HashMap<String, Object> res = new HashMap<>();
+        for (ModuleActionParameter parameter : parameters) 
+            res.put(parameter.getName(), parameter.getValue());
+        
+        return res;
     }
 }

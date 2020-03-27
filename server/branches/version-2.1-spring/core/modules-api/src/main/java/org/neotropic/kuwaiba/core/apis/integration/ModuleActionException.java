@@ -22,5 +22,7 @@ package org.neotropic.kuwaiba.core.apis.integration;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ModuleActionException extends Exception {
-    
+    public ModuleActionException(String message) {
+        super(message);
+    }
 }

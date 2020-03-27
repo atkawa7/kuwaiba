@@ -12,6 +12,7 @@
     <description>The default Vaadin-based web interface</description>
     <artifactId>webclient</artifactId>
     <packaging>jar</packaging>
+    <version>2.1</version>
     
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -106,6 +107,16 @@
         <dependency>
             <groupId>org.neotropic.kuwaiba</groupId>
             <artifactId>northbound</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.neotropic.util</groupId>
+            <artifactId>visual</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.neotropic.kuwaiba</groupId>
+            <artifactId>serviceman</artifactId>
             <version>2.1</version>
         </dependency>
     </dependencies>

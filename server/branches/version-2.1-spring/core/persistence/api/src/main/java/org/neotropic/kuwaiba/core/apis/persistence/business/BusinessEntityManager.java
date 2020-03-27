@@ -22,7 +22,6 @@ import org.neotropic.kuwaiba.core.apis.persistence.application.Pool;
 import org.neotropic.kuwaiba.core.apis.persistence.application.reporting.ReportMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.application.reporting.ReportMetadataLight;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.ApplicationObjectNotFoundException;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -30,7 +29,6 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermit
 import org.neotropic.kuwaiba.core.apis.persistence.util.StringPair;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
 import org.neotropic.kuwaiba.core.apis.persistence.AbstractEntityManager;
 
 /**
@@ -38,11 +36,6 @@ import org.neotropic.kuwaiba.core.apis.persistence.AbstractEntityManager;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public interface BusinessEntityManager extends AbstractEntityManager {
-    /**
-     * Sets the global configuration options 
-     * @param configuration The set of configuration variables
-     */
-    public void setConfiguration(Properties configuration);
     /**
      * Creates a new inventory object
      * @param className Name of the class which this object will be instantiated from
@@ -118,17 +111,15 @@ public interface BusinessEntityManager extends AbstractEntityManager {
      * Creates an object inside a pool
      * @param poolId Parent pool id
      * @param className Class this object is going to be instance of
-     * @param attributeNames Attributes to be set
-     * @param attributeValues Attribute values to be set
+     * @param attributes The list of attributes to be set initially. The values are serialized objects.
      * @param templateId The id of the template to be used to create this object. This id was probably retrieved by {@link ApplicationEntityManager.getTemplatesForClass(String)} before. Use a null or empty string to not use a template.
      * @throws ApplicationObjectNotFoundException If the parent pool can't be found
      * @throws InvalidArgumentException If any of the attributes or its type is invalid
      * @return the id of the newly created object
-     * @throws ArraySizeMismatchException If attributeNames and attributeValues have different sizes.
      * @throws MetadataObjectNotFoundException If the class name could not be found 
      */
-    public String createPoolItem(String poolId, String className, String[] attributeNames, String[] attributeValues, String templateId) 
-            throws ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, MetadataObjectNotFoundException;
+    public String createPoolItem(String poolId, String className, HashMap<String, String> attributes, String templateId) 
+            throws ApplicationObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException;
     /**
      * Creates multiple objects using a given name pattern
      * @param className The class name for the new objects

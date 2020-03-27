@@ -14,29 +14,22 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.modules.optional.serviceman.widgets;
+package org.neotropic.kuwaiba.web.ui;
 
 import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewCustomerVisualAction;
+import org.neotropic.kuwaiba.modules.optional.serviceman.widgets.ServiceManagerDashboard;
 
 /**
- * Main dashboard page for the service manager module
+ *
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Route("serviceman")
-public class ServiceManagerDashboard extends VerticalLayout {
-    
+public class ServiceMan extends VerticalLayout {
     @Override
     public void onAttach(AttachEvent ev) {
         setSizeFull();
-        NewCustomerVisualAction actNewCustomer = new NewCustomerVisualAction();
-        Button btnAddCustomer = new Button(actNewCustomer.getModuleAction().getDisplayName(), (event) -> {
-            actNewCustomer.getVisualComponent().open();
-        });
-        
-        add(btnAddCustomer);
+        add(new ServiceManagerDashboard());
     }
 }

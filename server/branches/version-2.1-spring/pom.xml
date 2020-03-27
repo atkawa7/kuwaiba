@@ -15,6 +15,7 @@
         <module>optional</module>
         <module>northbound</module>
         <module>branding</module>
+        <module>util</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
