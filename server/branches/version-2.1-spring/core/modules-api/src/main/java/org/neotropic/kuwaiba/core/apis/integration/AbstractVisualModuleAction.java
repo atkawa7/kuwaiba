@@ -19,11 +19,6 @@ package org.neotropic.kuwaiba.core.apis.integration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
-import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
-import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
-import org.springframework.beans.factory.annotation.Autowired;
-
 /**
  * A module action has two parts: One is the actual, headless (that is, without 
  * graphical interface or any other mechanism to capture the necessary parameters) {@link Abstract}, and 
@@ -37,7 +32,7 @@ public abstract class AbstractVisualModuleAction<W> {
      */
     protected byte[] icon;
     /**
-     * Settings useful to renderer to display the action. Currently suggested and supported options: bold (boolean) and color (HTML hex RGB value).
+     * Settings useful to renderer to display the action. Currently suggested and supported options: bold (boolean) and color (HTML hex RGB value, including #).
      */
     protected Properties formatOptions;
     /**
@@ -70,7 +65,7 @@ public abstract class AbstractVisualModuleAction<W> {
     }
 
     public List<AbstractModuleAction> getChildrenActions() {
-        return childrenActions;
+        return this.childrenActions;
     }
 
     public void setChildrenActions(List<AbstractModuleAction> childrenActions) {
@@ -81,12 +76,16 @@ public abstract class AbstractVisualModuleAction<W> {
         listeners.add(listener);
     }
     
-    public void unregisterListeners() {
-        listeners.clear();
+    public void unregisterListener(ActionCompletedListener listener) {
+        this.listeners.remove(listener);
+    }
+    
+    public void clearListeners() {
+        this.listeners.clear();
     }
     
     public void fireActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent ev) {
-        listeners.stream().forEach(aListener -> {
+        this.listeners.stream().forEach(aListener -> {
                 aListener.actionCompleted(ev);
             });
     }

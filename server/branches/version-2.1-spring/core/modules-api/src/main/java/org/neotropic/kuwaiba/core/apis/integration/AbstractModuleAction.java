@@ -51,28 +51,23 @@ public abstract class AbstractModuleAction {
     /**
      * Reference to the metadata entity manager.
      */
+    @Autowired
     protected MetadataEntityManager mem;
     /**
      * Reference to the application entity manager.
      */
+    @Autowired
     protected ApplicationEntityManager aem;
     /**
      * Reference to the business entity manager.
      */
+    @Autowired
     protected BusinessEntityManager bem;
     /**
      * Reference to the internationalization service.
      */
+    @Autowired
     protected TranslationService ts;
-
-    public AbstractModuleAction(MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem, TranslationService ts) {
-        this.mem = mem;
-        this.aem = aem;
-        this.bem = bem;
-        this.ts = ts;
-    }
-    
-    
 
     public String getId() {
         return id;

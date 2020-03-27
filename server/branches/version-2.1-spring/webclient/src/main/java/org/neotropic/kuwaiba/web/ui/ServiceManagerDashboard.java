@@ -34,34 +34,32 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @Route("serviceman")
 public class ServiceManagerDashboard extends VerticalLayout implements AbstractModuleDashboard {
-    
+    @Autowired
     private NewCustomerVisualAction actNewCustomer;
-    
     @Autowired
     private TranslationService ts;
     
     @Override
     public void onAttach(AttachEvent ev) {
         setSizeFull();
-        this.actNewCustomer = new NewCustomerVisualAction();
+        getUI().ifPresent( ui -> ui.getPage().setTitle(ts.getTranslatedString("module.serviceman.title")));
         this.actNewCustomer.registerActionCompletedLister(this);
         Button btnAddCustomer = new Button(this.actNewCustomer.getModuleAction().getDisplayName(), (event) -> {
             this.actNewCustomer.getVisualComponent().open();
         });
         
         add(btnAddCustomer);
-        //add(new ServiceManagerDashboard());
     }
     
     @Override
     public void onDetach(DetachEvent ev) {
-        this.actNewCustomer.unregisterListeners();
+        this.actNewCustomer.unregisterListener(this);
     }
 
     @Override
     public void actionCompleted(ActionCompletedListener.ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCESS)
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.sucess"), ev.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
         else
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
     }

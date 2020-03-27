@@ -14,19 +14,23 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.web;
+package org.neotropic.kuwaiba.web.ui;
 
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.Route;
 
 /**
- * The Spring basic automated configuration file. 
+ * In order to be able to dynamically display modules that are registered only at 
+ * run-time, instead of using a single route per page (module dashboard), we will only use 
+ * this one, which will embed the desired dashboard programmatically.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-@Configuration
-@ComponentScan(basePackages = { "org.neotropic.kuwaiba.core.i18n", // The translation service
-                                "org.neotropic.kuwaiba.core.apis.integration",
-                                "org.neotropic.kuwaiba.core.persistence", //The persistence service
-                                "org.neotropic.kuwaiba.modules.optional.serviceman.actions"
-                              }) 
-public class SpringConfiguration { }
+@Route("app")
+public class ModuleWrapperUI extends VerticalLayout {
+    @Override
+    public void onAttach(AttachEvent ev) {
+        setSizeFull();
+        add(new ServiceManagerDashboard());
+    }
+}
