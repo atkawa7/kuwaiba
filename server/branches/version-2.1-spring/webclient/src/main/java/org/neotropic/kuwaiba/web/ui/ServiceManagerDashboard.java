@@ -25,6 +25,7 @@ import org.neotropic.kuwaiba.core.apis.integration.AbstractModuleDashboard;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewCustomerVisualAction;
+import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewServiceVisualAction;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,6 +38,8 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractM
     @Autowired
     private NewCustomerVisualAction actNewCustomer;
     @Autowired
+    private NewServiceVisualAction actNewService;
+    @Autowired
     private TranslationService ts;
     
     @Override
@@ -44,16 +47,24 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractM
         setSizeFull();
         getUI().ifPresent( ui -> ui.getPage().setTitle(ts.getTranslatedString("module.serviceman.title")));
         this.actNewCustomer.registerActionCompletedLister(this);
+        this.actNewService.registerActionCompletedLister(this);
+        
         Button btnAddCustomer = new Button(this.actNewCustomer.getModuleAction().getDisplayName(), (event) -> {
             this.actNewCustomer.getVisualComponent().open();
         });
         
+        Button btnAddService = new Button(this.actNewService.getModuleAction().getDisplayName(), (event) -> {
+            this.actNewService.getVisualComponent().open();
+        });
+        
         add(btnAddCustomer);
+        add(btnAddService);
     }
     
     @Override
     public void onDetach(DetachEvent ev) {
         this.actNewCustomer.unregisterListener(this);
+        this.actNewService.unregisterListener(this);
     }
 
     @Override

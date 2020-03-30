@@ -17,9 +17,15 @@
 package org.neotropic.kuwaiba.northbound.ws;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.jws.WebService;
+import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
+import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.StringPair;
-import org.neotropic.kuwaiba.core.persistence.PersistenceService;
 import org.neotropic.kuwaiba.northbound.ws.model.application.ApplicationLogEntry;
 import org.neotropic.kuwaiba.northbound.ws.model.application.GroupInfo;
 import org.neotropic.kuwaiba.northbound.ws.model.application.GroupInfoLight;
@@ -71,32 +77,47 @@ import org.neotropic.kuwaiba.northbound.ws.model.metadata.RemoteAttributeMetadat
 import org.neotropic.kuwaiba.northbound.ws.model.metadata.RemoteClassMetadata;
 import org.neotropic.kuwaiba.northbound.ws.model.metadata.RemoteClassMetadataLight;
 import org.neotropic.kuwaiba.northbound.ws.todeserialize.TransientQuery;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 /**
- *
+ * SOAP-based web service implementation.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @WebService(endpointInterface = "org.neotropic.kuwaiba.northbound.ws.KuwaibaSoapWebService", 
         serviceName = "KuwaibaService")
+@Service
 public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     /**
      * Reference to the persistence service to get references to the entity managers.
      */
-    private PersistenceService ps;
-
-    public KuwaibaSoapWebServiceImpl(PersistenceService ps) {
-        this.ps = ps;
-    }
+    @Autowired
+    private MetadataEntityManager mem;
+    @Autowired
+    private ApplicationEntityManager aem;
+    @Autowired
+    private BusinessEntityManager bem;
     
-    
-
     @Override
     public RemoteSession createSession(String username, String password, int sessionType) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Session session = aem.createSession(username, password, sessionType, "127.0.0.1");
+            return new RemoteSession(session.getToken(), session.getUser(), sessionType, "127.0.0.1");
+        } catch (InventoryException ex) { // Expected error
+            throw new ServerSideException(ex.getMessage());
+        } catch (Exception ex) { // Unexpected error. Log the stach trace and 
+            Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, "Unexpected error in createSession web service method", ex);
+            throw new ServerSideException(ex.getMessage());
+        }
     }
 
     @Override
     public void closeSession(String sessionId) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            aem.closeSession(sessionId, "127.0.0.1");
+        } catch (Exception ex) { // Unexpected error. Log the stach trace and 
+            Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, "Unexpected error in closeSession web service method", ex);
+            throw new ServerSideException(ex.getMessage());
+        }
     }
 
     @Override

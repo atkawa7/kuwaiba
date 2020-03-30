@@ -22,4 +22,8 @@ package org.neotropic.kuwaiba.northbound.ws;
  */
 public class ServerSideException extends Exception {
 
+    public ServerSideException(String msg) {
+        super(msg);
+    }
+    
 }

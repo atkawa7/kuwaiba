@@ -25,7 +25,7 @@ import javax.annotation.PreDestroy;
 import javax.xml.ws.Endpoint;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.core.persistence.PersistenceService;
-import org.neotropic.kuwaiba.northbound.ws.KuwaibaSoapWebServiceImpl;
+import org.neotropic.kuwaiba.northbound.ws.KuwaibaSoapWebService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -84,6 +84,8 @@ public class Application {
         private PersistenceService persistenceService;
         @Autowired
         private TranslationService ts;
+        @Autowired
+        private KuwaibaSoapWebService ws;
         
         @PostConstruct
         void init() {
@@ -121,7 +123,7 @@ public class Application {
             }
             
             if (persistenceService.getState().equals(PersistenceService.EXECUTION_STATE.RUNNING)) {
-                Endpoint.publish("http://localhost:8181/KuwaibaService", new KuwaibaSoapWebServiceImpl(persistenceService));
+                Endpoint.publish("http://localhost:8181/kuwaiba/KuwaibaService", ws);
                 Logger.getLogger(PersistenceService.class.getName()).log(Level.INFO, 
                     String.format("[KUWAIBA] [%s] Web service initialized and running on port %s", 
                             Calendar.getInstance().getTime(), 8181));
