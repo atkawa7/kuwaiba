@@ -285,6 +285,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
+    public void validateCall(String methodName, String username) throws NotAuthorizedException {
+        // Do nothing for now
+    }
+
+    @Override
     public long createUser(String userName, String password, String firstName,
             String lastName, boolean enabled, int type, String email, List<Privilege> privileges, long defaultGroupId)
             throws InvalidArgumentException {

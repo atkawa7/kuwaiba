@@ -30,7 +30,7 @@ import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Main dashboard page for the service manager module
+ * Main dashboard page for the service manager module.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Route("serviceman")

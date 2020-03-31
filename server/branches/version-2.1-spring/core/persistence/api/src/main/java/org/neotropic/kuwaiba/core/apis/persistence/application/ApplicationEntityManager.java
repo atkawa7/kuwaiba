@@ -74,6 +74,13 @@ public interface ApplicationEntityManager extends AbstractEntityManager {
      * @return A dictionary whose keys are the user names and the keys are the session related objects
      */
     public HashMap<String, Session> getSessions();
+    /**
+     * Checks if a call to a single method can be made by a particular user. This is temporary an applicable only to web service calls.
+     * @param methodName The name of the method to be matched.
+     * @param sessionId The session attempting to make the call.
+     * @throws NotAuthorizedException If such user is not allowed to call that method.
+     */
+    public void validateCall(String methodName, String sessionId) throws NotAuthorizedException;
     
     /**
      * Creates a user. System users ("hard-coded" kind of users used for internal tasks that can not be deleted nor modified byu the end users) can only be

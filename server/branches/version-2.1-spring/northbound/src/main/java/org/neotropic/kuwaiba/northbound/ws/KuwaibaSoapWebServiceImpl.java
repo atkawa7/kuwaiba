@@ -16,16 +16,20 @@
 
 package org.neotropic.kuwaiba.northbound.ws;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.jws.WebService;
+import org.neotropic.kuwaiba.core.apis.persistence.application.ActivityLogEntry;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
+import org.neotropic.kuwaiba.core.apis.persistence.application.UserProfile;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.StringPair;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.northbound.ws.model.application.ApplicationLogEntry;
 import org.neotropic.kuwaiba.northbound.ws.model.application.GroupInfo;
 import org.neotropic.kuwaiba.northbound.ws.model.application.GroupInfoLight;
@@ -96,16 +100,23 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     private ApplicationEntityManager aem;
     @Autowired
     private BusinessEntityManager bem;
+    @Autowired
+    private TranslationService ts;
     
     @Override
     public RemoteSession createSession(String username, String password, int sessionType) throws ServerSideException {
         try {
+            if (aem == null)
+                throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
+            
             Session session = aem.createSession(username, password, sessionType, "127.0.0.1");
+            aem.createGeneralActivityLogEntry(username, ActivityLogEntry.ACTIVITY_TYPE_OPEN_SESSION, String.format("Connected from %s", "127.0.0.1"));
             return new RemoteSession(session.getToken(), session.getUser(), sessionType, "127.0.0.1");
         } catch (InventoryException ex) { // Expected error
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
-            Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, "Unexpected error in createSession web service method", ex);
+            Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
+                    String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "createSession"), ex);
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -115,14 +126,27 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         try {
             aem.closeSession(sessionId, "127.0.0.1");
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
-            Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, "Unexpected error in closeSession web service method", ex);
+            Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
+                    String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "closeSession"), ex);
             throw new ServerSideException(ex.getMessage());
         }
     }
 
     @Override
     public List<RemoteUserInfo> getUsers(String sessionId) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (aem == null)
+            throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
+        try {
+            aem.validateCall("getUsers", sessionId);
+            List<UserProfile> users = aem.getUsers();
+            List<RemoteUserInfo> remoteUsers = new ArrayList<>();
+            
+            users.stream().forEach(aUser -> remoteUsers.add(new RemoteUserInfo(aUser)));
+            
+            return remoteUsers;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
     }
 
     @Override
