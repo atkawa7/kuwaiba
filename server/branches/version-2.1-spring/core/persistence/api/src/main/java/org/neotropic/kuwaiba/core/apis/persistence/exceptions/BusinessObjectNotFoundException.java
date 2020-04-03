@@ -24,4 +24,8 @@ public class BusinessObjectNotFoundException extends InventoryException {
     public BusinessObjectNotFoundException(String objectClass, String oid) {
         super(String.format("Object of class %s and id %s could not be found. It might have been deleted already", objectClass, oid));
     }
+    
+    public BusinessObjectNotFoundException(String message) {
+        super(message);
+    }
 }

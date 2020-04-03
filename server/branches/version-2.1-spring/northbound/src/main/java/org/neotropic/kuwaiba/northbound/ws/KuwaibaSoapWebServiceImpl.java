@@ -114,7 +114,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             return new RemoteSession(session.getToken(), session.getUser(), sessionType, "127.0.0.1");
         } catch (InventoryException ex) { // Expected error
             throw new ServerSideException(ex.getMessage());
-        } catch (Exception ex) { // Unexpected error. Log the stach trace and 
+        } catch (Exception ex) { // Unexpected error. Log the stack trace and re-throw
             Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
                     String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "createSession"), ex);
             throw new ServerSideException(ex.getMessage());
@@ -125,7 +125,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void closeSession(String sessionId) throws ServerSideException {
         try {
             aem.closeSession(sessionId, "127.0.0.1");
-        } catch (Exception ex) { // Unexpected error. Log the stach trace and 
+        } catch (Exception ex) { // Unexpected error. Log the stack trace and re-throw
             Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
                     String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "closeSession"), ex);
             throw new ServerSideException(ex.getMessage());

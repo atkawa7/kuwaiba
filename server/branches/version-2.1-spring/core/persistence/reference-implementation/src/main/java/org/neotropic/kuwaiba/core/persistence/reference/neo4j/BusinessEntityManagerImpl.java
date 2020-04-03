@@ -79,7 +79,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * Business entity manager reference implementation (using Neo4J as backend)
+ * Business entity manager reference implementation (using Neo4J as backend).
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Service
@@ -181,7 +181,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         
         try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {        
             Node classNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, className);
-            if (classNode == null)
+            if (classNode == null) 
                 throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
 
             if (myClass.isInDesign())
@@ -280,10 +280,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
            
             Node parentClassNode, parentNode = null;
             
-            if (Constants.NODE_DUMMYROOT.equals(parentClassName)) {
+            if (Constants.NODE_DUMMYROOT.equals(parentClassName))
                 parentNode = connectionManager.getConnectionHandler().findNode(specialNodeLabel, Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
-                
-            } else {
+            else {
                 parentClassNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, parentClassName);
                 
                 Iterator<Relationship> instances = parentClassNode.getRelationships(RelTypes.INSTANCE_OF).iterator();
@@ -330,7 +329,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             return newObject.hasProperty(Constants.PROPERTY_UUID) ? newObject.getProperty(Constants.PROPERTY_UUID).toString() : null;
         }
     }
-    
+
     @Override
     public String createSpecialObject(String className, String parentClassName, String parentOid, HashMap<String,String> attributes, String templateId)
             throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
@@ -917,7 +916,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public BusinessObjectLight getFirstParentOfClass(String objectClassName, String oid, String objectToMatchClassName)
+    public BusinessObject getFirstParentOfClass(String objectClassName, String oid, String objectToMatchClassName)
         throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
         
         try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
@@ -937,7 +936,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     String parentNodeClass = Util.getClassName(parentNode);
 
                     if (mem.isSubclassOf(objectToMatchClassName, parentNodeClass))
-                        return createObjectLightFromNode(parentNode);
+                        return createObjectFromNode(parentNode);
 
                     objectNode = parentNode;
                 } catch (MetadataObjectNotFoundException ex) { //If the parent object is either the Dummy Root or a pool

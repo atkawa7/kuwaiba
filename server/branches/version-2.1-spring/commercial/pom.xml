@@ -8,4 +8,7 @@
     </parent>
     <artifactId>commercial</artifactId>
     <packaging>pom</packaging>
+    <modules>
+        <module>sdh</module>
+    </modules>
 </project>

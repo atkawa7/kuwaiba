@@ -326,7 +326,7 @@ public interface BusinessEntityManager extends AbstractEntityManager {
      * @throws ApplicationObjectNotFoundException If the object provided is not in the standard containment hierarchy
      * @throws InvalidArgumentException If the oid is null
      */
-    public BusinessObjectLight getFirstParentOfClass(String objectClassName, String oid, String objectToMatchClassName)
+    public BusinessObject getFirstParentOfClass(String objectClassName, String oid, String objectToMatchClassName)
         throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
     
     /**
