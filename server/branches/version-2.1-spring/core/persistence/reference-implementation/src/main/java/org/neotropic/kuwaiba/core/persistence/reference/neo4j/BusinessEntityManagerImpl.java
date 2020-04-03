@@ -750,7 +750,20 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 case "Timestamp": //NOI18N
                     return new Date(Long.valueOf(theObject.getAttributes().get(attributeName))).toString();
                 default: //It's (or at least should be) a list type
-                    return aem.getListTypeItem(theAttribute.getType(), theObject.getAttributes().get(attributeName)).getName();
+                    if (theAttribute.isMultiple()) {
+                        String attributeValues = theObject.getAttributes().get(attributeName);
+                        String[] attrValues = attributeValues.split(";");
+                        StringBuilder stringBuilder = new StringBuilder();
+                        for (int i = 0; i < attrValues.length; i++) {
+                            stringBuilder.append(aem.getListTypeItem(theAttribute.getType(), attrValues[i]).getName());
+                            if (i == attrValues.length - 1)
+                                break;
+                            stringBuilder.append(";");
+                        }
+                        return stringBuilder.toString();
+                    } else {
+                        return aem.getListTypeItem(theAttribute.getType(), theObject.getAttributes().get(attributeName)).getName();
+                    }
             }
         }
     }
@@ -781,7 +794,20 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         res.put(attributeName, new Date(Long.valueOf(theObject.getAttributes().get(attributeName))).toString());
                         break;
                     default: //It's (or at least should be) a list type
-                        res.put(attributeName, aem.getListTypeItem(theAttribute.getType(), theObject.getAttributes().get(attributeName)).getName());
+                        if (theAttribute.isMultiple()) {
+                            String attributeValues = theObject.getAttributes().get(attributeName);
+                            String[] attrValues = attributeValues.split(";");
+                            StringBuilder stringBuilder = new StringBuilder();
+                            for (int i = 0; i < attrValues.length; i++) {
+                                stringBuilder.append(aem.getListTypeItem(theAttribute.getType(), attrValues[i]).getName());
+                                if (i == attrValues.length - 1)
+                                    break;
+                                stringBuilder.append(";");
+                            }
+                            res.put(attributeName, stringBuilder.toString());
+                        } else {
+                            res.put(attributeName, aem.getListTypeItem(theAttribute.getType(), theObject.getAttributes().get(attributeName)).getName());
+                        }
                 }
             }
         }
