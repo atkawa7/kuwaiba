@@ -18,9 +18,7 @@ package org.neotropic.kuwaiba.core.apis.integration;
 
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermittedException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Defines the behavior of all modules be it commercial, open source or third-party free contributions.
@@ -33,17 +31,14 @@ public abstract class AbstractModule<W> {
     /**
      * Reference to the metadata entity manager.
      */
-    @Autowired
     protected MetadataEntityManager mem;
     /**
      * Reference to the metadata entity manager.
      */
-    @Autowired
     protected ApplicationEntityManager aem;
     /**
      * Reference to the metadata entity manager.
      */
-    @Autowired
     protected BusinessEntityManager bem;
     
     /**
@@ -97,11 +92,18 @@ public abstract class AbstractModule<W> {
      * @return The web component. 
      */
     public abstract W getSimpleUserWebComponent();
+    
     /**
-     * Says if the module can be used or not (for example, if the license has expired or not).
-     * @throws OperationNotPermittedException if the module can not be loaded or used. 
+     * This method initializes the module. Must be called before anything else, otherwise the other modules won't be able to use the persistence service.
+     * @param aem The ApplicationEntityManager instance. Might be null if not needed by the module
+     * @param mem The MetadataEntityManager instance. Might be null if not needed by the module
+     * @param bem The BusinessEntityManager instance. Might be null if not needed by the module
      */
-    public abstract void validate() throws OperationNotPermittedException;
+    public void configureModule (MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem) {
+        this.mem = mem;
+        this.aem = aem;
+        this.bem = bem;
+    }
     
     public enum ModuleType {
         TYPE_OPEN_SOURCE,

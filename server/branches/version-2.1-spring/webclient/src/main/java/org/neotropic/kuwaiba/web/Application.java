@@ -17,12 +17,14 @@
 package org.neotropic.kuwaiba.web;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.xml.ws.Endpoint;
+import org.neotropic.kuwaiba.core.apis.integration.AbstractCommercialModule;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.core.persistence.PersistenceService;
 import org.neotropic.kuwaiba.northbound.ws.KuwaibaSoapWebService;
@@ -86,6 +88,8 @@ public class Application {
         private TranslationService ts;
         @Autowired
         private KuwaibaSoapWebService ws;
+        @Autowired
+        private List<AbstractCommercialModule> com;
         
         @PostConstruct
         void init() {
@@ -113,6 +117,9 @@ public class Application {
             applicationProperties.put("attachmentsPath", attachmentsPath);
             applicationProperties.put("maxAttachmentSize", maxAttachmentSize);
             persistenceService.setBusinessProperties(businessProperties);
+            
+            com.stream().forEach(a -> System.out.println("sdsaa " + a.getName()));
+            
             
             try {
                 persistenceService.start();

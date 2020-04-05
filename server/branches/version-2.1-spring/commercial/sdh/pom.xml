@@ -6,7 +6,9 @@
         <artifactId>commercial</artifactId>
         <version>2.1</version>
     </parent>
-    <groupId>com.neotropic.kuwaiba</groupId>
+    <name>SDH Networks</name>
+    <description>Support for SDH networks</description>
+    <groupId>com.neotropic.kuwaiba.commercial</groupId>
     <artifactId>sdh</artifactId>
     <packaging>jar</packaging>
     <dependencies>

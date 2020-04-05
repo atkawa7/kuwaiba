@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -13,38 +13,42 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.commercial;
+package com.neotropic.kuwaiba.commercial.sdh;
 
-import java.io.Serializable;
 import java.util.List;
-import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 
 /**
-  * Instances of this class define a tributary link
-  * @author Charles Edward Bedon Cortazar{@literal <charles.bedon@kuwaiba.org>}
-*/
-public class SDHTributaryLinkDefinition implements Serializable {
+ * Instances of this class define a container
+ * @author Charles Edward Bedon Cortazar{@literal <charles.bedon@kuwaiba.org>}
+ */
+public class SDHContainerLinkDefinition {
     /**
-     * Link object
+     * Container object
      */
-    private BusinessObjectLight link;
+    private BusinessObjectLight container;
 
+    /**
+     * Is this container structured?
+     */
+    private boolean structured;
     /**
      * The positions used by the container
      */
     private List<SDHPosition> positions;
 
-    public SDHTributaryLinkDefinition(BusinessObjectLight link, List<SDHPosition> positions) {
-        this.link = link;
+    public SDHContainerLinkDefinition(BusinessObjectLight container, boolean structured, List<SDHPosition> positions) {
+        this.container = container;
+        this.structured = structured;
         this.positions = positions;
     }       
 
     public BusinessObjectLight getContainerName() {
-        return link;
+        return container;
     }
 
-    public void setContainerName(BusinessObjectLight link) {
-        this.link = link;
+    public void setContainerName(BusinessObjectLight container) {
+        this.container = container;
     }
 
     public List<SDHPosition> getPositions() {
@@ -54,4 +58,12 @@ public class SDHTributaryLinkDefinition implements Serializable {
     public void setPositions(List<SDHPosition> positions) {
         this.positions = positions;
     }
+
+    public BusinessObjectLight getContainer() {
+        return container;
+    }
+
+    public boolean isStructured() {
+        return structured;
+    }        
 }

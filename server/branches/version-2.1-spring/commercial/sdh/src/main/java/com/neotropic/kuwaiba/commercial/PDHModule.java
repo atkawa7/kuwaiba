@@ -41,7 +41,7 @@ import org.springframework.stereotype.Service;
  * This class implements the functionality corresponding to the SDH module
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class SDHModule extends AbstractCommercialModule {
+public class PDHModule extends AbstractCommercialModule {
     //Constants
     /**
      * Root class of all high order tributary links (VC4)
@@ -97,7 +97,7 @@ public class SDHModule extends AbstractCommercialModule {
     
     @Override
     public String getName() {
-        return "SDH Networks Module"; //NOI18N
+        return "PDH Networks Module"; //NOI18N
     }
 
     @Override
