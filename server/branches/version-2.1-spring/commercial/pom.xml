@@ -10,5 +10,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>sdh</module>
+        <module>ipam</module>
+        <module>mpls</module>
+        <module>projects</module>
     </modules>
 </project>
