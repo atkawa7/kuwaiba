@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import org.neotropic.kuwaiba.core.apis.integration.GenericCommercialModule;
+import org.neotropic.kuwaiba.core.apis.integration.AbstractCommercialModule;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Pool;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
@@ -43,7 +43,7 @@ import org.neotropic.kuwaiba.northbound.ws.model.application.RemotePool;
  * IP address manager module
  * @author Adrian Martinez {@literal <adrian.martinez@kuwaiba.org>}
  */
-public class IPAMModule implements GenericCommercialModule{
+public class IPAMModule extends AbstractCommercialModule {
 
     /**
      * The MetadataEntityManager instance
@@ -107,12 +107,7 @@ public class IPAMModule implements GenericCommercialModule{
     }
 
     @Override
-    public boolean isValid() {
-        return true;
-    }
-
-    @Override
-    public void configureModule(ApplicationEntityManager aem, MetadataEntityManager mem, BusinessEntityManager bem) {
+    public void configureModule(MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem) {
         this.aem = aem;
         this.mem = mem;
         this.bem = bem;
@@ -546,5 +541,22 @@ public class IPAMModule implements GenericCommercialModule{
      */
     public boolean itOverlaps(String networkIp, String broadcastIp){
         return false;
+    }
+
+    @Override
+    public void validate() throws OperationNotPermittedException { }
+
+    @Override
+    public String getId() {
+        return "ipam-networks";}
+
+    @Override
+    public Object getPowerUserWebComponent() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object getSimpleUserWebComponent() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
