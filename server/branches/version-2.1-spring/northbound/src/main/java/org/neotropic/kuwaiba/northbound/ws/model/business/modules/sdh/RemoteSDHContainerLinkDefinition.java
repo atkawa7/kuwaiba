@@ -15,6 +15,8 @@
  */
 package org.neotropic.kuwaiba.northbound.ws.model.business.modules.sdh;
 
+import com.neotropic.kuwaiba.commercial.sdh.SDHContainerLinkDefinition;
+import com.neotropic.kuwaiba.commercial.sdh.SDHPosition;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,13 +46,13 @@ public class RemoteSDHContainerLinkDefinition implements Serializable {
 
     public RemoteSDHContainerLinkDefinition() { } //Required by JAX-WS
 
-//    public RemoteSDHContainerLinkDefinition(SDHContainerLinkDefinition containerLinkDefinition) {
-//        this.container = new RemoteObjectLight(containerLinkDefinition.getContainer());
-//        this.structured = containerLinkDefinition.isStructured();
-//        this.positions = new ArrayList<>();
-//        for (SDHPosition position : containerLinkDefinition.getPositions())
-//            positions.add(new RemoteSDHPosition(position));
-//    }
+    public RemoteSDHContainerLinkDefinition(SDHContainerLinkDefinition containerLinkDefinition) {
+        this.container = new RemoteObjectLight(containerLinkDefinition.getContainer());
+        this.structured = containerLinkDefinition.isStructured();
+        this.positions = new ArrayList<>();
+        for (SDHPosition position : containerLinkDefinition.getPositions())
+            positions.add(new RemoteSDHPosition(position));
+    }
     
     public RemoteSDHContainerLinkDefinition(RemoteObjectLight container, boolean structured, List<RemoteSDHPosition> positions) {
         this.container = container;

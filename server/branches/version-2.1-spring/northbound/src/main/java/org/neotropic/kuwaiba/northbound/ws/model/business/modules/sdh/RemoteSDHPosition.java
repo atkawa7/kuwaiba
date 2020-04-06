@@ -15,6 +15,7 @@
  */
 package org.neotropic.kuwaiba.northbound.ws.model.business.modules.sdh;
 
+import com.neotropic.kuwaiba.commercial.sdh.SDHPosition;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -40,11 +41,11 @@ public class RemoteSDHPosition implements Serializable {
 
     public RemoteSDHPosition() { } //Required by JAX-WS
     
-//    public RemoteSDHPosition(SDHPosition position) {
-//        this.connectionId = position.getLinkId();
-//        this.connectionClass = position.getLinkClass();
-//        this.position = position.getPosition();
-//    }
+    public RemoteSDHPosition(SDHPosition position) {
+        this.connectionId = position.getLinkId();
+        this.connectionClass = position.getLinkClass();
+        this.position = position.getPosition();
+    }
     
     public RemoteSDHPosition(String connectionClass, String connectionId, int position) {
         this.connectionId = connectionId;

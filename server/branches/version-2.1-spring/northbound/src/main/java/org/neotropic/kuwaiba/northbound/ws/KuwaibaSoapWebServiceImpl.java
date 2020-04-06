@@ -1983,7 +1983,18 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
 
     @Override
     public List<RemoteObjectLight> getObjectChildrenForClassWithId(String oid, long objectClassId, int maxResults, String sessionId) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (bem == null || aem == null)
+            throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
+        try {
+            aem.validateCall("getObjectChildrenForClassWithId", "127.0.0.1", sessionId);
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectChildren(objectClassId, oid, maxResults));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        } catch (Exception ex) { // Unexpected error. Log the stach trace and 
+            Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
+                    String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "getObjectChildrenForClassWithId"), ex);
+          throw new ServerSideException(ex.getMessage());
+        } 
     }
 
     @Override
@@ -3709,7 +3720,32 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
 
     @Override
     public void setClassProperties(long classId, String className, String displayName, String description, byte[] smallIcon, byte[] icon, int color, Boolean isAbstract, Boolean isInDesign, Boolean isCustom, Boolean isCountable, String sessionId) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (mem == null)
+             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
+        try {
+            aem.validateCall("setClassProperties", "127.0.0.1", sessionId);
+            ClassMetadata cm = new ClassMetadata();
+            
+            cm.setName(className);
+            cm.setDisplayName(displayName);
+            cm.setDescription(description);
+            cm.setAbstract(isAbstract);
+            cm.setColor(color);
+            cm.setCountable(isCountable);
+            cm.setCreationDate(Calendar.getInstance().getTimeInMillis());
+            cm.setIcon(icon);
+            cm.setSmallIcon(smallIcon);
+            cm.setCustom(isCustom);
+            
+            ChangeDescriptor changeDescriptor = mem.setClassProperties(cm);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
+                changeDescriptor);
+
+         } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
     }
 
     @Override
@@ -3757,10 +3793,9 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     @Override
     public RemoteAttributeMetadata getAttributeForClassWithId(String classId, String attributeName, String sessionId) throws ServerSideException {
         if (mem == null)
-            throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
-        
+            throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));       
         try {
-            aem.validateCall("setClassProperties", "127.0.0.1", sessionId);
+            aem.validateCall("getAttributeForClassWithId", "127.0.0.1", sessionId);
             AttributeMetadata atrbMtdt = mem.getAttribute(classId, attributeName);
 
             RemoteAttributeMetadata attrInfo = new RemoteAttributeMetadata(atrbMtdt.getName(),
@@ -3786,22 +3821,145 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
 
     @Override
     public void createAttribute(String className, String name, String displayName, String type, String description, boolean administrative, boolean visible, boolean isReadOnly, boolean noCopy, boolean unique, boolean mandatory, boolean multiple, int order, String sessionId) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (mem == null)
+            throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));       
+        try {
+            aem.validateCall("createAttribute", "127.0.0.1", sessionId);
+            AttributeMetadata attributeMetadata = new AttributeMetadata();
+
+            attributeMetadata.setName(name);
+            attributeMetadata.setDisplayName(displayName);
+            attributeMetadata.setDescription(description);
+            attributeMetadata.setReadOnly(isReadOnly);
+            attributeMetadata.setType(type);
+            attributeMetadata.setUnique(unique);
+            attributeMetadata.setMandatory(mandatory);
+            attributeMetadata.setVisible(visible);
+            attributeMetadata.setNoCopy(noCopy);
+            attributeMetadata.setOrder(order);
+
+            mem.createAttribute(className, attributeMetadata, true);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
+                String.format("Created attribute in %s class", className));
+
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        } catch (Exception ex) { // Unexpected error. Log the stach trace and 
+            Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
+                    String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "createAttribute"), ex);
+            throw new ServerSideException(ex.getMessage());
+        }
     }
 
     @Override
     public void createAttributeForClassWithId(long ClassId, String name, String displayName, String type, String description, boolean administrative, boolean visible, boolean readOnly, boolean noCopy, boolean unique, boolean mandatory, boolean multiple, int order, String sessionId) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (mem == null)
+            throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));       
+        try {
+            aem.validateCall("createAttributeForClassWithId", "127.0.0.1", sessionId);
+            AttributeMetadata attributeMetadata = new AttributeMetadata();
+
+            attributeMetadata.setName(name);
+            attributeMetadata.setDisplayName(displayName);
+            attributeMetadata.setDescription(description);
+            attributeMetadata.setReadOnly(readOnly);
+            attributeMetadata.setType(type);
+            attributeMetadata.setUnique(unique);
+            attributeMetadata.setMandatory(mandatory);
+            attributeMetadata.setVisible(visible);
+            attributeMetadata.setNoCopy(noCopy);
+            attributeMetadata.setOrder(order);
+            
+            ClassMetadata classMetadata = mem.getClass(ClassId);
+            mem.createAttribute(ClassId, attributeMetadata);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
+                String.format("Created attribute in %s class", classMetadata.getName()));
+
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        } catch (Exception ex) { // Unexpected error. Log the stach trace and 
+            Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
+                    String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "createAttributeForClassWithId"), ex);
+            throw new ServerSideException(ex.getMessage());
+        }
     }
 
     @Override
     public void setAttributeProperties(String className, long attributeId, String name, String displayName, String description, String type, Boolean administrative, Boolean mandatory, Boolean multiple, Boolean noCopy, Boolean readOnly, Boolean unique, Boolean visible, Integer order, String sessionId) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (mem == null)
+            throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));       
+        try {
+            aem.validateCall("setAttributeProperties", "127.0.0.1", sessionId);
+            AttributeMetadata attrMtdt = new AttributeMetadata();
+
+            attrMtdt.setId(attributeId);
+            attrMtdt.setName(name);
+            attrMtdt.setDisplayName(displayName);
+            attrMtdt.setDescription(description);
+            attrMtdt.setType(type);
+            attrMtdt.setAdministrative(administrative);
+            attrMtdt.setUnique(unique);
+            attrMtdt.setMandatory(mandatory);
+            attrMtdt.setMultiple(multiple);
+            attrMtdt.setVisible(visible);
+            attrMtdt.setReadOnly(readOnly);
+            attrMtdt.setNoCopy(noCopy);
+            attrMtdt.setOrder(order);
+
+            mem.setAttributeProperties(className, attrMtdt);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
+                String.format("Updated property in %s class", className));
+
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        } catch (Exception ex) { // Unexpected error. Log the stach trace and 
+            Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
+                    String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "setAttributeProperties"), ex);
+            throw new ServerSideException(ex.getMessage());
+        }
     }
 
     @Override
     public void setAttributePropertiesForClassWithId(long classId, long attributeId, String name, String displayName, String description, String type, Boolean administrative, Boolean mandatory, Boolean multiple, Boolean noCopy, Boolean readOnly, Boolean unique, Boolean visible, Integer order, String sessionId) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (mem == null)
+            throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));       
+        try {
+            aem.validateCall("setAttributePropertiesForClassWithId", "127.0.0.1", sessionId);
+            AttributeMetadata attrMtdt = new AttributeMetadata();
+
+            attrMtdt.setId(attributeId);
+            attrMtdt.setName(name);
+            attrMtdt.setDisplayName(displayName);
+            attrMtdt.setDescription(description);
+            attrMtdt.setType(type);
+            attrMtdt.setAdministrative(administrative);
+            attrMtdt.setUnique(unique);
+            attrMtdt.setMandatory(mandatory);
+            attrMtdt.setMultiple(multiple);
+            attrMtdt.setVisible(visible);
+            attrMtdt.setReadOnly(readOnly);
+            attrMtdt.setNoCopy(noCopy);
+            attrMtdt.setOrder(order);
+
+            ChangeDescriptor changeDescriptor = mem.setAttributeProperties(classId, attrMtdt);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
+                changeDescriptor);
+
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        } catch (Exception ex) { // Unexpected error. Log the stach trace and 
+            Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
+                    String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "setAttributePropertiesForClassWithId"), ex);
+            throw new ServerSideException(ex.getMessage());
+        }
     }
 
     @Override
@@ -3830,7 +3988,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
        if (mem == null)
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
-            aem.validateCall("deleteAttribute", "127.0.0.1", sessionId);
+            aem.validateCall("deleteAttributeForClassWithId", "127.0.0.1", sessionId);
             ClassMetadata classMetadata = mem.getClass(classId);
             mem.deleteAttribute(classId, attributeName);
             
@@ -3842,7 +4000,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
             Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
-                    String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "deleteAttribute"), ex);
+                    String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "deleteAttributeForClassWithId"), ex);
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -3869,7 +4027,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         if (mem == null)
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
-            aem.validateCall("getClass", "127.0.0.1", sessionId);
+            aem.validateCall("getClassWithId", "127.0.0.1", sessionId);
             ClassMetadata myClass = mem.getClass(classId);
          
             return new RemoteClassMetadata(myClass);
@@ -3992,7 +4150,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         if (mem == null)
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
-            aem.validateCall("deleteClass", "127.0.0.1", sessionId);
+            aem.validateCall("deleteClassWithId", "127.0.0.1", sessionId);
             ClassMetadata classMetadata = mem.getClass(classId);
             mem.deleteClass(classId);
             
@@ -5362,7 +5520,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public List<RemoteSDHContainerLinkDefinition> getSDHContainerLinkStructure(String containerLinkClass, String containerLinkId, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("getSDHContainerLinkStructure", "127.0.0.1", sessionId);
-            List<SDHContainerLinkDefinition> containerLinks = modSdh.getSDHContainerLinkStructure(transportLinkClass, transportLinkId);
+            List<SDHContainerLinkDefinition> containerLinks = modSdh.getSDHContainerLinkStructure(containerLinkClass, containerLinkId);
             List<RemoteSDHContainerLinkDefinition> res = new ArrayList<>();
             
             for (SDHContainerLinkDefinition containerLink : containerLinks)
@@ -5381,12 +5539,12 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     @Override
     public RemotePool[] getSubnetPools(String parentId, String className, String sessionId) throws ServerSideException {
         try {
-            aem.validateCall("getSubnetPools", "127.0.0.1", sessionId);
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            return RemotePool.toRemotePoolArray(ipamModule.getSubnetPools(parentId, className));
-            
-        } catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
+//            aem.validateCall("getSubnetPools", "127.0.0.1", sessionId);
+//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+//            return RemotePool.toRemotePoolArray(ipamModule.getSubnetPools(parentId, className));
+            return null;
+//        } catch (InventoryException ex) {
+//            throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
             Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
                     String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "getSDHContainerLinkStructure"), ex);
@@ -5397,12 +5555,12 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     @Override
     public List<RemoteObjectLight> getSubnets(String poolId, int limit, String sessionId) throws ServerSideException {
         try {
-            aem.validateCall("getSubnets", "127.0.0.1", sessionId);
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            return RemoteObjectLight.toRemoteObjectLightArray(ipamModule.getSubnets(limit, poolId));
-            
-        } catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
+//            aem.validateCall("getSubnets", "127.0.0.1", sessionId);
+//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+//            return RemoteObjectLight.toRemoteObjectLightArray(ipamModule.getSubnets(limit, poolId));
+            return null;
+//        } catch (InventoryException ex) {
+//            throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
             Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
                     String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "getSubnets"), ex);
@@ -5413,17 +5571,17 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     @Override
     public String createSubnetPool(String parentId, String subnetPoolName, String subnetPoolDescription, String className, String sessionId) throws ServerSideException {
         try {
-            aem.validateCall("createSubnetPool", "127.0.0.1", sessionId);
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            String subnetPoolId = ipamModule.createSubnetsPool(parentId, subnetPoolName, subnetPoolDescription, className);
-            
-            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
-                String.format("Created Subnet Pool %s [%s]", subnetPoolName, className));
-            
-            return subnetPoolId;            
-        } catch (InventoryException ex) {
-            throw new ServerSideException(ex.getMessage());
+//            aem.validateCall("createSubnetPool", "127.0.0.1", sessionId);
+//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+//            String subnetPoolId = ipamModule.createSubnetsPool(parentId, subnetPoolName, subnetPoolDescription, className);
+            return null;
+//            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+//                String.format("Created Subnet Pool %s [%s]", subnetPoolName, className));
+//            
+//            return subnetPoolId;            
+//        } catch (InventoryException ex) {
+//            throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
             Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
                     String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "createSubnetPool"), ex);
@@ -5435,24 +5593,25 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public String createSubnet(String poolId, String className, List<StringPair> attributes, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("createSubnet", "127.0.0.1", sessionId);
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            
-            String[] attributeNames = new String[attributes.size()];
-            String[] attributeValues = new String[attributes.size()];
-            
-            for (int i = 0; i < attributes.size(); i++) {
-                attributeNames[i] = attributes.get(i).getKey();
-                attributeValues[i] = attributes.get(i).getValue();
-            }
-                
-            String subnetId = ipamModule.createSubnet(id, className, attributeNames, attributeValues);
-            
-            String subnameName = bem.getObjectLight(className, subnetId).getName();
-            
-            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
-                String.format("Created subnet %s", subnameName));
-            return subnetId;
+//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+//            
+//            String[] attributeNames = new String[attributes.size()];
+//            String[] attributeValues = new String[attributes.size()];
+//            
+//            for (int i = 0; i < attributes.size(); i++) {
+//                attributeNames[i] = attributes.get(i).getKey();
+//                attributeValues[i] = attributes.get(i).getValue();
+//            }
+//                
+//            String subnetId = ipamModule.createSubnet(id, className, attributeNames, attributeValues);
+//            
+//            String subnameName = bem.getObjectLight(className, subnetId).getName();
+//            
+//            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+//                String.format("Created subnet %s", subnameName));
+//            return subnetId;
+            return null;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5466,12 +5625,12 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void deleteSubnetPools(String[] ids, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("deleteSubnetPools", "127.0.0.1", sessionId);
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            ipamModule.deleteSubnetPools(ids);
-            
-            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
-                String.format("Deleted %s subnet pools", ids.length));
+//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+//            ipamModule.deleteSubnetPools(ids);
+//            
+//            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+//                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
+//                String.format("Deleted %s subnet pools", ids.length));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5485,12 +5644,12 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void deleteSubnets(String className, List<String> oids, boolean releaseRelationships, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("deleteSubnets", "127.0.0.1", sessionId);
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            ipamModule.deleteSubnets(className, ids, releaseRelationships);
-            
-            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
-                String.format("Deleted %s subnets", ids.size()));
+//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+//            ipamModule.deleteSubnets(className, ids, releaseRelationships);
+//            
+//            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+//                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
+//                String.format("Deleted %s subnets", ids.size()));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5504,8 +5663,9 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public RemoteObject getSubnet(String id, String className, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("getSubnet", "127.0.0.1", sessionId);
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            return new RemoteObject(ipamModule.getSubnet(className, id));
+//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+//            return new RemoteObject(ipamModule.getSubnet(className, id));
+            return null;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5519,8 +5679,9 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public RemotePool getSubnetPool(String subnetPoolId, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("getSubnetPool", "127.0.0.1", sessionId);
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            return ipamModule.getSubnetPool(subnetPoolId);
+//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+//            return ipamModule.getSubnetPool(subnetPoolId);
+            return null;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5534,20 +5695,21 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public String addIPAddress(String id, String parentClassName, List<StringPair> attributesToBeUpdated, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("addIPAddress", "127.0.0.1", sessionId);
-            HashMap<String, String> attributes = new HashMap<>();
-            
-            for (StringPair attribute : attributesToBeUpdated)
-                attributes.put(attribute.getKey(), attribute.getValue());
-            
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            String ipAddressId = ipamModule.addIPAddress(id, parentClassName, attributes);
-                        
-            String ipAddressName = bem.getObjectLight(Constants.CLASS_IP_ADDRESS, ipAddressId).getName();
-            
-            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
-                String.format("Created IP Address %s", ipAddressName));
-            return ipAddressId;
+//            HashMap<String, String> attributes = new HashMap<>();
+//            
+//            for (StringPair attribute : attributesToBeUpdated)
+//                attributes.put(attribute.getKey(), attribute.getValue());
+//            
+//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+//            String ipAddressId = ipamModule.addIPAddress(id, parentClassName, attributes);
+//                        
+//            String ipAddressName = bem.getObjectLight(Constants.CLASS_IP_ADDRESS, ipAddressId).getName();
+//            
+//            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+//                String.format("Created IP Address %s", ipAddressName));
+//            return ipAddressId;
+            return null;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5561,12 +5723,12 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void removeIP(String[] oids, boolean releaseRelationships, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("removeIP", "127.0.0.1", sessionId);
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N            
-            ipamModule.removeIP(ids, releaseRelationships);
-            
-            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
-                String.format("Removed %s IP Addresses", ids.length));
+//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N            
+//            ipamModule.removeIP(ids, releaseRelationships);
+//            
+//            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+//                String.format("Removed %s IP Addresses", ids.length));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5580,8 +5742,9 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public List<RemoteObjectLight> getSubnetUsedIps(String id, int limit, String className, String sessionId) throws ServerSideException {
         try{
             aem.validateCall("getSubnetUsedIps", "127.0.0.1", sessionId);
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            return RemoteObjectLight.toRemoteObjectLightArray(ipamModule.getSubnetUsedIps(id, className));
+//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+//            return RemoteObjectLight.toRemoteObjectLightArray(ipamModule.getSubnetUsedIps(id, className));
+            return null;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5595,8 +5758,9 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public List<RemoteObjectLight> getSubnetsInSubnet(String id, int limit, String className, String sessionId) throws ServerSideException {
         try{
             aem.validateCall("getSubnetsInSubnet", "127.0.0.1", sessionId);
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            return RemoteObjectLight.toRemoteObjectLightArray(ipamModule.getSubnetsInSubnet(id, className));
+//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+//            return RemoteObjectLight.toRemoteObjectLightArray(ipamModule.getSubnetsInSubnet(id, className));
+            return null;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5610,12 +5774,12 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void relateSubnetToVlan(String id, String className, String vlanId, String sessionId) throws ServerSideException {
         try{
             aem.validateCall("relateSubnetToVLAN", "127.0.0.1", sessionId);
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            ipamModule.relateSubnetToVLAN(id, className, vlanId);
-            
-            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VLAN, vlanId, 
-                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
-                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN, "", id, "");
+//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+//            ipamModule.relateSubnetToVLAN(id, className, vlanId);
+//            
+//            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VLAN, vlanId, 
+//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+//                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN, "", id, "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5629,12 +5793,12 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void releaseSubnetFromVlan(String subnetId, String vlanId, String sessionId) throws ServerSideException {
         try{
             aem.validateCall("releaseSubnetFromVLAN", "127.0.0.1", sessionId);
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            ipamModule.releaseSubnetFromVLAN(vlanId, id);
-            
-            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VLAN, vlanId, 
-                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
-                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN, id, "", "");
+//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+//            ipamModule.releaseSubnetFromVLAN(vlanId, id);
+//            
+//            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VLAN, vlanId, 
+//                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+//                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN, id, "", "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5648,12 +5812,12 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void releaseSubnetFromVRF(String subnetId, String vrfId, String sessionId) throws ServerSideException {
         try{
             aem.validateCall("releaseSubnetFromVRF", "127.0.0.1", sessionId);
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            ipamModule.releaseSubnetFromVRF(subnetId, vrfId);
-            
-            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VRF_INSTANCE, vrfId, 
-                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
-                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVRFINSTACE, subnetId, "", "");
+//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+//            ipamModule.releaseSubnetFromVRF(subnetId, vrfId);
+//            
+//            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VRF_INSTANCE, vrfId, 
+//                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+//                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVRFINSTACE, subnetId, "", "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5667,12 +5831,12 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void relateSubnetToVrf(String id, String className, String vrfId, String sessionId) throws ServerSideException {
         try{
             aem.validateCall("relateSubnetToVRF", "127.0.0.1", sessionId);
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            ipamModule.relateSubnetToVRF(id, className, vrfId);
-            
-            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VRF_INSTANCE, vrfId, 
-                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
-                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVRFINSTACE, "", id, "");
+//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+//            ipamModule.relateSubnetToVRF(id, className, vrfId);
+//            
+//            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VRF_INSTANCE, vrfId, 
+//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+//                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVRFINSTACE, "", id, "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5686,12 +5850,12 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void relateIPtoPort(String id, String portClassName, String portId, String sessionId) throws ServerSideException {
         try{
             aem.validateCall("relateIPtoDevice", "127.0.0.1", sessionId);
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            ipamModule.relateIPtoPort(ipId, portClassName, portId);
-            
-            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), portClassName, portId,
-                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
-                IPAMModule.RELATIONSHIP_IPAMHASADDRESS, "", ipId, "");
+//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+//            ipamModule.relateIPtoPort(ipId, portClassName, portId);
+//            
+//            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), portClassName, portId,
+//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+//                IPAMModule.RELATIONSHIP_IPAMHASADDRESS, "", ipId, "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5705,8 +5869,9 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public boolean itOverlaps(String networkIp, String broadcastIp, String sessionId) throws ServerSideException {
         try{
             aem.validateCall("itOverlaps", "127.0.0.1", sessionId);
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            ipamModule.itOverlaps(networkIp, broadcastIp);
+//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+//            ipamModule.itOverlaps(networkIp, broadcastIp);
+            return false;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5714,19 +5879,18 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
                     String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "itOverlaps"), ex);
             throw new ServerSideException(ex.getMessage());
         }
-        return true;
     }
 
     @Override
     public void releasePortFromIP(String deviceClassName, String deviceId, String id, String sessionId) throws ServerSideException {
         try{
             aem.validateCall("releasePortFromIP", "127.0.0.1", sessionId);
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            ipamModule.releasePortFromIP(deviceClassName, deviceId, id);
-            
-            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), deviceClassName, deviceId,
-                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
-                IPAMModule.RELATIONSHIP_IPAMHASADDRESS, id, "", "");
+//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+//            ipamModule.releasePortFromIP(deviceClassName, deviceId, id);
+//            
+//            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), deviceClassName, deviceId,
+//                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+//                IPAMModule.RELATIONSHIP_IPAMHASADDRESS, id, "", "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5799,14 +5963,15 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         try {
             aem.validateCall("createMPLSLink", "127.0.0.1", sessionId);
             
-            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N MPLS Networks Module
-            HashMap<String, String> attributes = new HashMap<>();
-            
-            for (StringPair attribute : attributesToBeSet)
-                attributes.put(attribute.getKey(), attribute.getValue());
-            
-            String MPLSLinkId = mplsModule.createMPLSLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, attributes, getUserNameFromSession(sessionId));
-            return MPLSLinkId;
+//            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N MPLS Networks Module
+//            HashMap<String, String> attributes = new HashMap<>();
+//            
+//            for (StringPair attribute : attributesToBeSet)
+//                attributes.put(attribute.getKey(), attribute.getValue());
+//            
+//            String MPLSLinkId = mplsModule.createMPLSLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, attributes, getUserNameFromSession(sessionId));
+//            return MPLSLinkId;
+            return null;
             
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -5821,12 +5986,13 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public RemoteMPLSConnectionDetails getMPLSLinkEndpoints(String connectionId, String sessionId) throws ServerSideException {
         try{
             aem.validateCall("getMPLSLinkEndpoints", "127.0.0.1", sessionId);
-            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
-            MPLSConnectionDefinition mplsLinkEndpoints = mplsModule.getMPLSLinkDetails(connectionId);
+//            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
+//            MPLSConnectionDefinition mplsLinkEndpoints = mplsModule.getMPLSLinkDetails(connectionId);
             
-            RemoteMPLSConnectionDetails remoteMPLSConnectionDetails = new RemoteMPLSConnectionDetails(mplsLinkEndpoints);
-            
-            return remoteMPLSConnectionDetails;
+//            RemoteMPLSConnectionDetails remoteMPLSConnectionDetails = new RemoteMPLSConnectionDetails(mplsLinkEndpoints);
+//            
+//            return remoteMPLSConnectionDetails;
+            return null;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5840,8 +6006,8 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void connectMplsLink(String[] sideAClassNames, String[] sideAIds, String[] linksIds, String[] sideBClassNames, String[] sideBIds, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("connectMplsLink", "127.0.0.1", sessionId);
-            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
-            mplsModule.connectMplsLink(sideAClassNames, sideAIds, linksIds, sideBClassNames, sideBIds, getUserNameFromSession(sessionId));
+//            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
+//            mplsModule.connectMplsLink(sideAClassNames, sideAIds, linksIds, sideBClassNames, sideBIds, getUserNameFromSession(sessionId));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5855,8 +6021,8 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void disconnectMPLSLink(String connectionId, int sideToDisconnect, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("disconnectMPLSLink", "127.0.0.1", sessionId);
-            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
-            mplsModule.disconnectMPLSLink(connectionId, sideToDisconnect, getUserNameFromSession(sessionId));
+//            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
+//            mplsModule.disconnectMPLSLink(connectionId, sideToDisconnect, getUserNameFromSession(sessionId));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5870,8 +6036,8 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void deleteMPLSLink(String linkId, boolean forceDelete, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("deleteMPLSLink", "127.0.0.1", sessionId);
-            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
-            mplsModule.deleteMPLSLink(linkId, forceDelete, getUserNameFromSession(sessionId));
+//            MPLSModule mplsModule = (MPLSModule)aem.getCommercialModule("MPLS Networks Module"); //NOI18N
+//            mplsModule.deleteMPLSLink(linkId, forceDelete, getUserNameFromSession(sessionId));
             
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -5886,12 +6052,12 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void relatePortToInterface(String portId, String portClassName, String interfaceClassName, String interfaceId, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("relatePortToInterface", "127.0.0.1", sessionId);
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            ipamModule.relatePortToInterface(portId, portClassName, interfaceClassName, interfaceId);
-            
-            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), interfaceClassName, interfaceId, 
-                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
-                IPAMModule.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE, "", portId, "");            
+//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+//            ipamModule.relatePortToInterface(portId, portClassName, interfaceClassName, interfaceId);
+//            
+//            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), interfaceClassName, interfaceId, 
+//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+//                IPAMModule.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE, "", portId, "");            
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5905,12 +6071,12 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void releasePortFromInterface(String interfaceClassName, String interfaceId, String portId, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("releasePortFromInterface", "127.0.0.1", sessionId);
-            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            ipamModule.releasePortFromInterface(interfaceClassName, interfaceId, portId);
-            
-            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), interfaceClassName, interfaceId, 
-                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
-                IPAMModule.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE, portId, "", ""); 
+//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+//            ipamModule.releasePortFromInterface(interfaceClassName, interfaceId, portId);
+//            
+//            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), interfaceClassName, interfaceId, 
+//                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+//                IPAMModule.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE, portId, "", ""); 
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5926,8 +6092,9 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
             aem.validateCall("getProjectPools", "127.0.0.1", sessionId);
-            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
-            return projectsModule.getProjectPools();
+//            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
+//            return projectsModule.getProjectPools();
+            return null;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5941,15 +6108,16 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public String addProject(String parentId, String parentClassName, String className, String[] attributeNames, String[] attributeValues, String sessionId) throws ServerSideException {
        try {
             aem.validateCall("addProject", "127.0.0.1", sessionId);
-            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
+//            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
+//            
+//            String projectId = projectsModule.addProject(parentId, parentClassName, className, attributeNames, attributeValues);
+//            String projectName = bem.getObjectLight(className, projectId).getName();
+//            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+//                String.format("Created Project %s [%s]", projectName, className));
             
-            String projectId = projectsModule.addProject(parentId, parentClassName, className, attributeNames, attributeValues);
-            String projectName = bem.getObjectLight(className, projectId).getName();
-            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-                ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
-                String.format("Created Project %s [%s]", projectName, className));
-            
-            return projectId;
+//            return projectId;
+            return null;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5968,11 +6136,11 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             String projectName = bem.getObjectLight(className, oid).getName();
             aem.validateCall("deleteProject", "127.0.0.1", sessionId);
             
-            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
-            projectsModule.deleteProject(className, oid, releaseRelationships);
-            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-                ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
-                String.format("Deleted Project %s [%s]", projectName, className));
+//            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
+//            projectsModule.deleteProject(className, oid, releaseRelationships);
+//            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+//                ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
+//                String.format("Deleted Project %s [%s]", projectName, className));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5989,15 +6157,16 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         
         try {
             aem.validateCall("addActivity", "127.0.0.1", sessionId);
-            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
-            
-            String activityId = projectsModule.addActivity(parentId, parentClassName, className, attributeNames, attributeValues);
-            String activityName = bem.getObjectLight(className, activityId).getName();
-            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-                ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
-                String.format("Created Activity %s [%s]", activityName, className));
-            
-            return activityId;
+//            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
+//            
+//            String activityId = projectsModule.addActivity(parentId, parentClassName, className, attributeNames, attributeValues);
+//            String activityName = bem.getObjectLight(className, activityId).getName();
+//            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+//                String.format("Created Activity %s [%s]", activityName, className));
+//            
+//            return activityId;
+            return null;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -6015,11 +6184,11 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         try {
             aem.validateCall("deleteActivity", "127.0.0.1", sessionId);
             String activityName = bem.getObjectLight(className, oid).getName();
-            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
-            projectsModule.deleteActivity(className, oid, releaseRelationships);
-            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-                ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
-                String.format("Deleted Activity %s [%s]", activityName, className));
+//            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
+//            projectsModule.deleteActivity(className, oid, releaseRelationships);
+//            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+//                ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
+//                String.format("Deleted Activity %s [%s]", activityName, className));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -6037,8 +6206,9 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         try {
             aem.validateCall("getProjectsInProjectPool", "127.0.0.1", sessionId);
             
-            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
-            return RemoteObjectLight.toRemoteObjectLightArray(projectsModule.getProjectsInProjectPool(poolId, limit));
+//            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
+//            return RemoteObjectLight.toRemoteObjectLightArray(projectsModule.getProjectsInProjectPool(poolId, limit));
+            return null;        
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -6056,8 +6226,9 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         try {
             aem.validateCall("getProjectResurces", "127.0.0.1", sessionId);
             
-            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
-            return RemoteObjectLight.toRemoteObjectLightArray(projectsModule.getProjectResurces(projectClass, projectId));
+//            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
+//            return RemoteObjectLight.toRemoteObjectLightArray(projectsModule.getProjectResurces(projectClass, projectId));
+            return null;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -6075,13 +6246,14 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         try {
             aem.validateCall("associateObjectsToProject", "127.0.0.1", sessionId);
             
-            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
-            projectsModule.associateObjectsToProject(projectClass, projectId, objectClass, objectId);               
-            
-            String projectName = bem.getObjectLight(projectClass, projectId).getClassName();
-            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
-                String.format("Associated %s objects to project %s [%s]", objectId.length, projectName, projectClass));
+//            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
+//            projectsModule.associateObjectsToProject(projectClass, projectId, objectClass, objectId);               
+//            
+//            String projectName = bem.getObjectLight(projectClass, projectId).getClassName();
+//            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+//                String.format("Associated %s objects to project %s [%s]", objectId.length, projectName, projectClass));
+              return null;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -6098,14 +6270,14 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         
         try {
             aem.validateCall("associateObjectsToProject", "127.0.0.1", sessionId);
-            
-            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
-            projectsModule.associateObjectsToProject(projectClass, projectId, objectClass, objectId);               
-            
-            String projectName = bem.getObjectLight(projectClass, projectId).getClassName();
-            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
-                String.format("Associated %s objects to project %s [%s]", objectId.length, projectName, projectClass));
+//            
+//            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N
+//            projectsModule.associateObjectsToProject(projectClass, projectId, objectClass, objectId);               
+//            
+//            String projectName = bem.getObjectLight(projectClass, projectId).getClassName();
+//            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+//                String.format("Associated %s objects to project %s [%s]", objectId.length, projectName, projectClass));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -6123,13 +6295,13 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         try {
             aem.validateCall("associateObjectToProject", "127.0.0.1", sessionId);
             
-            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
-            projectsModule.associateObjectToProject(projectClass, projectId, objectClass, objectId);
-            
-            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), 
-                objectClass, objectId,
-                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
-                ProjectsModule.RELATIONSHIP_PROJECTSPROJECTUSES, "", projectId, "");
+//            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
+//            projectsModule.associateObjectToProject(projectClass, projectId, objectClass, objectId);
+//            
+//            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), 
+//                objectClass, objectId,
+//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+//                ProjectsModule.RELATIONSHIP_PROJECTSPROJECTUSES, "", projectId, "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -6152,8 +6324,9 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         try {
             aem.validateCall("getProjectsAssociateToObject", "127.0.0.1", sessionId);
             
-            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
-            return RemoteObjectLight.toRemoteObjectLightArray(projectsModule.getProjectsAssociateToObject(objectClass, objectId));
+//            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
+//            return RemoteObjectLight.toRemoteObjectLightArray(projectsModule.getProjectsAssociateToObject(objectClass, objectId));
+            return null;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -6171,13 +6344,14 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         try {
             aem.validateCall("createProjectPool", "127.0.0.1", sessionId);
             
-            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
-            String projectId = projectsModule.createProjectPool(name, description, instanceOfClass);
-            
-            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-                ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
-                String.format("Create Project Pool with id %s", projectId));
-            return projectId;
+//            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
+//            String projectId = projectsModule.createProjectPool(name, description, instanceOfClass);
+//            
+//            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+//                String.format("Create Project Pool with id %s", projectId));
+//            return projectId;
+            return null;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -6193,112 +6367,112 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
             aem.validateCall("getAffectedServices", "127.0.0.1", sessionId);
-            String[] resourceDefinitionTokens = resourceDefinition.split(";");
-            
-            if (resourceType == 1) { //Hardware
-            
-                switch (resourceDefinitionTokens.length) {
-                    case 1: //A whole network element
-                        return SimpleCorrelation.servicesInDevice(resourceDefinitionTokens[0], bem);
-                    case 2:
-                        return SimpleCorrelation.servicesInSlotOrBoard(resourceDefinitionTokens[0], resourceDefinitionTokens[1], bem, mem);
-                    case 3:
-                        
-                        List<BusinessObjectLight> matchedCommunicationsElements = bem.getObjectsWithFilterLight("GenericCommunicationsElement", "name", resourceDefinitionTokens[0]);
-                        
-                        if (matchedCommunicationsElements.isEmpty())
-                            throw new ServerSideException(String.format("No resource with name %s could be found", resourceDefinitionTokens[0]));
-                        
-                        if (matchedCommunicationsElements.size() > 1)
-                            throw new ServerSideException(String.format("More than one communications equipment with name %s was found", resourceDefinitionTokens[0]));
-                        
-                        List<BusinessObjectLight> deviceChildren = bem.getObjectChildren(matchedCommunicationsElements.get(0).getClassName(), 
-                                                                            matchedCommunicationsElements.get(0).getId(), -1);
-
-                        for (BusinessObjectLight deviceChild : deviceChildren) {
-                            if (resourceDefinitionTokens[1].equals(deviceChild.getName())) {
-                                List<BusinessObjectLight> portsInSlot = bem.getObjectChildren(deviceChild.getClassName(), deviceChild.getId(), -1);
-                                for (BusinessObjectLight portInSlot : portsInSlot) {
-                                    if (resourceDefinitionTokens[2].equals(portInSlot.getName())) 
-                                        return SimpleCorrelation.servicesInPorts(Arrays.asList(bem.getObject("GenericPort", portInSlot.getId())), bem);
-                                }
-                                throw new ServerSideException(String.format("No port %s was found on device %s", 
-                                        resourceDefinitionTokens[2], resourceDefinitionTokens[0]));
-                            }
-                        }  
-                        
-                        throw new ServerSideException(String.format("No slot in communications equipment %s with name %s was found", 
-                                resourceDefinitionTokens[0], resourceDefinitionTokens[1]));
-                    default:
-                        throw new ServerSideException("Invalid resource definition");
-                }
-            }
-            
-            if (resourceType == 2) { //Logical connection
-                List<BusinessObject> matchedConnections = bem.getObjectsWithFilter("GenericLogicalConnection", "name", resourceDefinitionTokens[0]);
-                if (matchedConnections.isEmpty())
-                    throw new ServerSideException(String.format("No logical connection with name %s could be found", resourceDefinitionTokens[0]));
-                
-                List<RemoteObjectLight> rawServices = new ArrayList<>();
-                for (BusinessObjectLight matchedConnection : matchedConnections) {
-                    List<BusinessObjectLight> servicesInConnection = bem.getSpecialAttribute(matchedConnection.getClassName(), 
-                            matchedConnection.getId(), "uses");
-                    for (BusinessObjectLight serviceInConnection : servicesInConnection)
-                        rawServices.add(new RemoteObjectLight(serviceInConnection));
-                }
-                
-                List<ServiceLevelCorrelatedInformation> serviceLevelCorrelatedInformation = new ArrayList<>();
-                HashMap<BusinessObjectLight, List<RemoteObjectLight>> rawCorrelatedInformation = new HashMap<>();
-
-                //Now we organize the rawServices by customers
-                for (RemoteObjectLight rawService : rawServices) {
-                    BusinessObjectLight customer = bem.getFirstParentOfClass(rawService.getClassName(), rawService.getId(), Constants.CLASS_GENERICCUSTOMER);
-                    if (customer != null) {//Services without customers will be ignored. This shouldn't happen, though
-                        if (!rawCorrelatedInformation.containsKey(customer))
-                            rawCorrelatedInformation.put(customer, new ArrayList<>());
-                        
-                        rawCorrelatedInformation.get(customer).add(rawService);
-                    }
-                }
-
-                for (BusinessObjectLight customer : rawCorrelatedInformation.keySet()) 
-                    serviceLevelCorrelatedInformation.add(new ServiceLevelCorrelatedInformation(new RemoteObjectLight(customer), rawCorrelatedInformation.get(customer)));
-
-                return new AssetLevelCorrelatedInformation(RemoteObject.toRemoteObjectArray(matchedConnections), serviceLevelCorrelatedInformation);
-            }
-            
-            if (resourceType == 3) { //Same as 2, but use a GenericPhysicalConnection
-                List<BusinessObject> matchedConnections = bem.getObjectsWithFilter(Constants.CLASS_GENERICPHYSICALCONNECTION, "name", resourceDefinitionTokens[0]);
-                if (matchedConnections.isEmpty())
-                    throw new ServerSideException(String.format("No physical connection with name %s could be found", resourceDefinitionTokens[0]));
-                
-                List<RemoteObjectLight> rawServices = new ArrayList<>();
-                for (BusinessObjectLight matchedConnection : matchedConnections) {
-                    List<BusinessObjectLight> servicesInConnection = bem.getSpecialAttribute(matchedConnection.getClassName(), 
-                            matchedConnection.getId(), "uses");
-                    for (BusinessObjectLight serviceInConnection : servicesInConnection)
-                        rawServices.add(new RemoteObjectLight(serviceInConnection));
-                }
-                
-                List<ServiceLevelCorrelatedInformation> serviceLevelCorrelatedInformation = new ArrayList<>();
-                HashMap<BusinessObjectLight, List<RemoteObjectLight>> rawCorrelatedInformation = new HashMap<>();
-
-                //Now we organize the rawServices by customers
-                for (RemoteObjectLight rawService : rawServices) {
-                    BusinessObjectLight customer = bem.getFirstParentOfClass(rawService.getClassName(), rawService.getId(), Constants.CLASS_GENERICCUSTOMER);
-                    if (customer != null) {//Services without customers will be ignored. This shouldn't happen, though
-                        if (!rawCorrelatedInformation.containsKey(customer))
-                            rawCorrelatedInformation.put(customer, new ArrayList<>());
-                        
-                        rawCorrelatedInformation.get(customer).add(rawService);
-                    }
-                }
-
-                for (BusinessObjectLight customer : rawCorrelatedInformation.keySet()) 
-                    serviceLevelCorrelatedInformation.add(new ServiceLevelCorrelatedInformation(new RemoteObjectLight(customer), rawCorrelatedInformation.get(customer)));
-
-                return new AssetLevelCorrelatedInformation(RemoteObject.toRemoteObjectArray(matchedConnections), serviceLevelCorrelatedInformation);
-            }
+//            String[] resourceDefinitionTokens = resourceDefinition.split(";");
+//            
+//            if (resourceType == 1) { //Hardware
+//            
+//                switch (resourceDefinitionTokens.length) {
+//                    case 1: //A whole network element
+//                        return SimpleCorrelation.servicesInDevice(resourceDefinitionTokens[0], bem);
+//                    case 2:
+//                        return SimpleCorrelation.servicesInSlotOrBoard(resourceDefinitionTokens[0], resourceDefinitionTokens[1], bem, mem);
+//                    case 3:
+//                        
+//                        List<BusinessObjectLight> matchedCommunicationsElements = bem.getObjectsWithFilterLight("GenericCommunicationsElement", "name", resourceDefinitionTokens[0]);
+//                        
+//                        if (matchedCommunicationsElements.isEmpty())
+//                            throw new ServerSideException(String.format("No resource with name %s could be found", resourceDefinitionTokens[0]));
+//                        
+//                        if (matchedCommunicationsElements.size() > 1)
+//                            throw new ServerSideException(String.format("More than one communications equipment with name %s was found", resourceDefinitionTokens[0]));
+//                        
+//                        List<BusinessObjectLight> deviceChildren = bem.getObjectChildren(matchedCommunicationsElements.get(0).getClassName(), 
+//                                                                            matchedCommunicationsElements.get(0).getId(), -1);
+//
+//                        for (BusinessObjectLight deviceChild : deviceChildren) {
+//                            if (resourceDefinitionTokens[1].equals(deviceChild.getName())) {
+//                                List<BusinessObjectLight> portsInSlot = bem.getObjectChildren(deviceChild.getClassName(), deviceChild.getId(), -1);
+//                                for (BusinessObjectLight portInSlot : portsInSlot) {
+//                                    if (resourceDefinitionTokens[2].equals(portInSlot.getName())) 
+//                                        return SimpleCorrelation.servicesInPorts(Arrays.asList(bem.getObject("GenericPort", portInSlot.getId())), bem);
+//                                }
+//                                throw new ServerSideException(String.format("No port %s was found on device %s", 
+//                                        resourceDefinitionTokens[2], resourceDefinitionTokens[0]));
+//                            }
+//                        }  
+//                        
+//                        throw new ServerSideException(String.format("No slot in communications equipment %s with name %s was found", 
+//                                resourceDefinitionTokens[0], resourceDefinitionTokens[1]));
+//                    default:
+//                        throw new ServerSideException("Invalid resource definition");
+//                }
+//            }
+//            
+//            if (resourceType == 2) { //Logical connection
+//                List<BusinessObject> matchedConnections = bem.getObjectsWithFilter("GenericLogicalConnection", "name", resourceDefinitionTokens[0]);
+//                if (matchedConnections.isEmpty())
+//                    throw new ServerSideException(String.format("No logical connection with name %s could be found", resourceDefinitionTokens[0]));
+//                
+//                List<RemoteObjectLight> rawServices = new ArrayList<>();
+//                for (BusinessObjectLight matchedConnection : matchedConnections) {
+//                    List<BusinessObjectLight> servicesInConnection = bem.getSpecialAttribute(matchedConnection.getClassName(), 
+//                            matchedConnection.getId(), "uses");
+//                    for (BusinessObjectLight serviceInConnection : servicesInConnection)
+//                        rawServices.add(new RemoteObjectLight(serviceInConnection));
+//                }
+//                
+//                List<ServiceLevelCorrelatedInformation> serviceLevelCorrelatedInformation = new ArrayList<>();
+//                HashMap<BusinessObjectLight, List<RemoteObjectLight>> rawCorrelatedInformation = new HashMap<>();
+//
+//                //Now we organize the rawServices by customers
+//                for (RemoteObjectLight rawService : rawServices) {
+//                    BusinessObjectLight customer = bem.getFirstParentOfClass(rawService.getClassName(), rawService.getId(), Constants.CLASS_GENERICCUSTOMER);
+//                    if (customer != null) {//Services without customers will be ignored. This shouldn't happen, though
+//                        if (!rawCorrelatedInformation.containsKey(customer))
+//                            rawCorrelatedInformation.put(customer, new ArrayList<>());
+//                        
+//                        rawCorrelatedInformation.get(customer).add(rawService);
+//                    }
+//                }
+//
+//                for (BusinessObjectLight customer : rawCorrelatedInformation.keySet()) 
+//                    serviceLevelCorrelatedInformation.add(new ServiceLevelCorrelatedInformation(new RemoteObjectLight(customer), rawCorrelatedInformation.get(customer)));
+//
+//                return new AssetLevelCorrelatedInformation(RemoteObject.toRemoteObjectArray(matchedConnections), serviceLevelCorrelatedInformation);
+//            }
+//            
+//            if (resourceType == 3) { //Same as 2, but use a GenericPhysicalConnection
+//                List<BusinessObject> matchedConnections = bem.getObjectsWithFilter(Constants.CLASS_GENERICPHYSICALCONNECTION, "name", resourceDefinitionTokens[0]);
+//                if (matchedConnections.isEmpty())
+//                    throw new ServerSideException(String.format("No physical connection with name %s could be found", resourceDefinitionTokens[0]));
+//                
+//                List<RemoteObjectLight> rawServices = new ArrayList<>();
+//                for (BusinessObjectLight matchedConnection : matchedConnections) {
+//                    List<BusinessObjectLight> servicesInConnection = bem.getSpecialAttribute(matchedConnection.getClassName(), 
+//                            matchedConnection.getId(), "uses");
+//                    for (BusinessObjectLight serviceInConnection : servicesInConnection)
+//                        rawServices.add(new RemoteObjectLight(serviceInConnection));
+//                }
+//                
+//                List<ServiceLevelCorrelatedInformation> serviceLevelCorrelatedInformation = new ArrayList<>();
+//                HashMap<BusinessObjectLight, List<RemoteObjectLight>> rawCorrelatedInformation = new HashMap<>();
+//
+//                //Now we organize the rawServices by customers
+//                for (RemoteObjectLight rawService : rawServices) {
+//                    BusinessObjectLight customer = bem.getFirstParentOfClass(rawService.getClassName(), rawService.getId(), Constants.CLASS_GENERICCUSTOMER);
+//                    if (customer != null) {//Services without customers will be ignored. This shouldn't happen, though
+//                        if (!rawCorrelatedInformation.containsKey(customer))
+//                            rawCorrelatedInformation.put(customer, new ArrayList<>());
+//                        
+//                        rawCorrelatedInformation.get(customer).add(rawService);
+//                    }
+//                }
+//
+//                for (BusinessObjectLight customer : rawCorrelatedInformation.keySet()) 
+//                    serviceLevelCorrelatedInformation.add(new ServiceLevelCorrelatedInformation(new RemoteObjectLight(customer), rawCorrelatedInformation.get(customer)));
+//
+//                return new AssetLevelCorrelatedInformation(RemoteObject.toRemoteObjectArray(matchedConnections), serviceLevelCorrelatedInformation);
+//            }
             
             throw new ServerSideException("Invalid resource type");
             
