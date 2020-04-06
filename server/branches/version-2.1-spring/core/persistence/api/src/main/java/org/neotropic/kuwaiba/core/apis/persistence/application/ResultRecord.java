@@ -31,6 +31,11 @@ public class ResultRecord extends BusinessObjectLight {
     public ResultRecord(String className, String id, String name) {
         super(className, id, name);
     }
+    
+    public ResultRecord(String className, String id, String name, List<String> extraColumns) {
+        super(className, id, name);
+        this.extraColumns = extraColumns;
+    }
 
     public List<String> getExtraColumns() {
         return extraColumns;

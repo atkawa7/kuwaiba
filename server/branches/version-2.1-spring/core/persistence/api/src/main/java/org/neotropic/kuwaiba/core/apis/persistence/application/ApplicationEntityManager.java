@@ -230,7 +230,7 @@ public interface ApplicationEntityManager extends AbstractEntityManager {
      * @throws ApplicationObjectNotFoundException If any of the users could not be found.
      * @throws InvalidArgumentException If any of the users is the default administrator, which can't be deleted
      */
-    public void deleteUsers(long[] oids)
+    public void deleteUsers(List<Long> oids)
             throws ApplicationObjectNotFoundException, InvalidArgumentException;
 
     /**
@@ -239,7 +239,7 @@ public interface ApplicationEntityManager extends AbstractEntityManager {
      * @throws ApplicationObjectNotFoundException If any of the groups could not be found.
      * @throws InvalidArgumentException If the group you are trying to delete contains the default administrator
      */
-    public void deleteGroups(long[] oids) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    public void deleteGroups(List<Long> oids) throws ApplicationObjectNotFoundException, InvalidArgumentException;
     
    /**
      * Creates a list type item
@@ -562,7 +562,7 @@ public interface ApplicationEntityManager extends AbstractEntityManager {
      * @param ids The ids of the views to be deleted.
      * @throws ApplicationObjectNotFoundException if the view can't be found
      */
-    public void deleteGeneralViews(long[] ids) throws ApplicationObjectNotFoundException;
+    public void deleteGeneralViews(List<Long> ids) throws ApplicationObjectNotFoundException;
 
     /**
      * Creates a Query
