@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.neotropic.kuwaiba.core.apis.integration.AbstractCommercialModule;
 import org.neotropic.kuwaiba.core.apis.integration.GenericCommercialModule;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ActivityLogEntry;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
@@ -41,7 +42,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
  * This class implements the functionality corresponding to the MPLS module
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class MPLSModule implements GenericCommercialModule {
+public class MPLSModule extends AbstractCommercialModule {
     /**
      * The MetadataEntityManager instance
      */
@@ -109,12 +110,7 @@ public class MPLSModule implements GenericCommercialModule {
     }
 
     @Override
-    public boolean isValid() {
-        return true;
-    }
-
-    @Override
-    public void configureModule(ApplicationEntityManager aem, MetadataEntityManager mem, BusinessEntityManager bem) {
+    public void configureModule(MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem) {
         this.mem = mem;
         this.bem = bem;
         this.aem = aem;
@@ -412,5 +408,23 @@ public class MPLSModule implements GenericCommercialModule {
         } catch(Exception ex){
             throw new InvalidArgumentException(ex.getMessage());
         }
+    }
+
+    @Override
+    public void validate() throws OperationNotPermittedException { }
+
+    @Override
+    public String getId() {
+        return "mpls-networks";
+    }
+
+    @Override
+    public Object getPowerUserWebComponent() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object getSimpleUserWebComponent() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
