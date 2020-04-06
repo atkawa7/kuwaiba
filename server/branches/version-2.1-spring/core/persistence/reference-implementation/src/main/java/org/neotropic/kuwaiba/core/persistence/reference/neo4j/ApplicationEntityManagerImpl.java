@@ -730,7 +730,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public void deleteUsers(long[] oids) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+    public void deleteUsers(List<Long> oids) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             //TODO watch if there are relationships you can/should not delete
@@ -746,7 +746,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public void deleteGroups(long[] oids) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+    public void deleteGroups(List<Long> oids) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         try(Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             if(oids != null) {
                 
@@ -1676,7 +1676,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public void deleteGeneralViews(long[] ids) throws ApplicationObjectNotFoundException {
+    public void deleteGeneralViews(List<Long> ids) throws ApplicationObjectNotFoundException {
         try(Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             for (long id : ids) {
                 Node gView = Util.findNodeByLabelAndId(connectionManager.getConnectionHandler(), generalViewsLabel, id);
