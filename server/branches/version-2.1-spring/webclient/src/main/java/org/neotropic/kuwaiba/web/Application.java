@@ -16,15 +16,14 @@
 
 package org.neotropic.kuwaiba.web;
 
+import com.neotropic.kuwaiba.commercial.SDHModule;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.xml.ws.Endpoint;
-import org.neotropic.kuwaiba.core.apis.integration.AbstractCommercialModule;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.core.persistence.PersistenceService;
 import org.neotropic.kuwaiba.northbound.ws.KuwaibaSoapWebService;
@@ -89,7 +88,7 @@ public class Application {
         @Autowired
         private KuwaibaSoapWebService ws;
         @Autowired
-        private List<AbstractCommercialModule> com;
+        private SDHModule modSdh;
         
         @PostConstruct
         void init() {
@@ -118,9 +117,6 @@ public class Application {
             applicationProperties.put("maxAttachmentSize", maxAttachmentSize);
             persistenceService.setBusinessProperties(businessProperties);
             
-            com.stream().forEach(a -> System.out.println("sdsaa " + a.getName()));
-            
-            
             try {
                 persistenceService.start();
             } catch (IllegalStateException ex) {
@@ -129,6 +125,8 @@ public class Application {
                             Calendar.getInstance().getTime(), ex.getLocalizedMessage()));
             }
             
+            modSdh.configureModule(persistenceService.getMem(), persistenceService.getAem(), persistenceService.getBem());
+            System.out.println("Mod: " + modSdh.getName());
             if (persistenceService.getState().equals(PersistenceService.EXECUTION_STATE.RUNNING)) {
                 Endpoint.publish("http://localhost:8181/kuwaiba/KuwaibaService", ws);
                 Logger.getLogger(PersistenceService.class.getName()).log(Level.INFO, 

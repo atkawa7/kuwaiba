@@ -115,12 +115,12 @@
         </dependency>
         <dependency>
             <groupId>org.neotropic.kuwaiba</groupId>
-            <artifactId>integration-api</artifactId>
+            <artifactId>serviceman</artifactId>
             <version>2.1</version>
         </dependency>
         <dependency>
-            <groupId>org.neotropic.kuwaiba</groupId>
-            <artifactId>serviceman</artifactId>
+            <groupId>com.neotropic.kuwaiba.commercial</groupId>
+            <artifactId>sdh</artifactId>
             <version>2.1</version>
         </dependency>
     </dependencies>

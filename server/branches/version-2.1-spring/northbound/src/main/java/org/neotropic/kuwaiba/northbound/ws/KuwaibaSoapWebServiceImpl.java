@@ -16,6 +16,9 @@
 
 package org.neotropic.kuwaiba.northbound.ws;
 
+import com.neotropic.kuwaiba.commercial.SDHModule;
+import com.neotropic.kuwaiba.commercial.sdh.SDHContainerLinkDefinition;
+import com.neotropic.kuwaiba.commercial.sdh.SDHPosition;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -70,6 +73,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.application.sync.Synchronizat
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObject;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLightList;
 import org.neotropic.kuwaiba.core.apis.persistence.business.Contact;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
@@ -80,7 +84,6 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.apis.persistence.util.StringPair;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.core.persistence.PersistenceService;
 import org.neotropic.kuwaiba.northbound.ws.model.application.ApplicationLogEntry;
 import org.neotropic.kuwaiba.northbound.ws.model.application.GroupInfo;
 import org.neotropic.kuwaiba.northbound.ws.model.application.GroupInfoLight;
@@ -158,6 +161,9 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     private BusinessEntityManager bem;
     @Autowired
     private TranslationService ts;
+    //Modules
+    @Autowired
+    private SDHModule modSdh;
     
     @Override
     public RemoteSession createSession(String username, String password, int sessionType) throws ServerSideException {
@@ -5043,9 +5049,10 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             parameters.put("syncGroupId", Long.toString(syncGroupId)); //NOI18N  
             parameters.put("sessionId", sessionId); //NOI18N  
             
-            BackgroundJob backgroundJob = new BackgroundJob("DefaultSyncJob", false, parameters); //NOI18N
-            JobManager.getInstance().launch(backgroundJob);
-            return backgroundJob;
+            //groundJob backgroundJob = new BackgroundJob("DefaultSyncJob", false, parameters); //NOI18N
+            //JobManager.getInstance().launch(backgroundJob);
+            //return backgroundJob;
+            return null;
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
             Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
                     String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "launchSupervisedSynchronizationTask"), ex);
@@ -5062,10 +5069,10 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             Properties parameters = new Properties();
             parameters.put("syncGroupId", Long.toString(syncGroupId)); //NOI18N
             
-            BackgroundJob backgroundJob = new BackgroundJob("DefaultSyncJob", false, parameters); //NOI18N
-            JobManager.getInstance().launch(backgroundJob);
-            return backgroundJob;
-
+            //BackgroundJob backgroundJob = new BackgroundJob("DefaultSyncJob", false, parameters); //NOI18N
+            //JobManager.getInstance().launch(backgroundJob);
+            //return backgroundJob;
+            return null;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5091,10 +5098,10 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             
             parameters.put("dataSourceConfigIds", syncDSConfigIds); //NOI18N  
             
-            BackgroundJob backgroundJob = new BackgroundJob("DefaultSyncJob", false, parameters); //NOI18N
-            JobManager.getInstance().launch(backgroundJob);
-            return backgroundJob;
-            
+            //BackgroundJob backgroundJob = new BackgroundJob("DefaultSyncJob", false, parameters); //NOI18N
+            //JobManager.getInstance().launch(backgroundJob);
+            //return backgroundJob;
+            return null;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }  catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5110,7 +5117,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
             aem.validateCall("executeSyncActions", "127.0.0.1", sessionId);
-            SynchronizationGroup syncGroup = PersistenceService.getInstance().getApplicationEntityManager().getSyncGroup(syncGroupId);
+            //SynchronizationGroup syncGroup = PersistenceService.getInstance().getApplicationEntityManager().getSyncGroup(syncGroupId);
             return null; //syncGroup.getProvider().finalize(actions);
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
             Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
@@ -5128,15 +5135,15 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             aem.validateCall("getCurrentJobs", "127.0.0.1", sessionId);
         
             List<RemoteBackgroundJob> result = new ArrayList();
-            for (BackgroundJob job : JobManager.getInstance().getCurrentJobs()) {
-                
-                if (job.getStatus().equals(BackgroundJob.JOB_STATUS.RUNNNING)) {
-                    result.add(new RemoteBackgroundJob(
-                        job.getId(), job.getJobTag(), job.getProgress(), 
-                        job.allowConcurrence(), job.getStatus().toString(), 
-                        job.getStartTime(), job.getEndTime()));
-                }
-            }
+//            for (BackgroundJob job : JobManager.getInstance().getCurrentJobs()) {
+//                
+//                if (job.getStatus().equals(BackgroundJob.JOB_STATUS.RUNNNING)) {
+//                    result.add(new RemoteBackgroundJob(
+//                        job.getId(), job.getJobTag(), job.getProgress(), 
+//                        job.allowConcurrence(), job.getStatus().toString(), 
+//                        job.getStartTime(), job.getEndTime()));
+//                }
+//            }
             return result;
             
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5152,9 +5159,9 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         
         try {
-            aem.validateCall("getCurrentJobs", "127.0.0.1", sessionId);
+            aem.validateCall("killJob", "127.0.0.1", sessionId);
         
-            JobManager.getInstance().kill(jobId);
+            //JobManager.getInstance().kill(jobId);
             
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
             Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
@@ -5167,8 +5174,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public String createSDHTransportLink(String classNameEndpointA, String idEndpointA, String classNameEndpointB, String idEndpointB, String linkType, String defaultName, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("createSDHTransportLink", "127.0.0.1", sessionId);
-            SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
-            String SDHTransportLinkId = sdhModule.createSDHTransportLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, defaultName);
+            String SDHTransportLinkId = modSdh.createSDHTransportLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, defaultName);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
@@ -5187,14 +5193,11 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public String createSDHContainerLink(String classNameEndpointA, String idEndpointA, String classNameEndpointB, String idEndpointB, String linkType, List<RemoteSDHPosition> positions, String defaultName, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("createSDHContainerLink", "127.0.0.1", sessionId);
-            SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
-            
             List<SDHPosition> remotePositions = new ArrayList<>();
-            
             for (RemoteSDHPosition position : positions)
                 remotePositions.add(new SDHPosition(position.getLinkClass(), position.getLinkId(), position.getPosition()));
             
-            String SDHContainerLinkId = sdhModule.createSDHContainerLink(classNameEndpointA, idEndpointA, 
+            String SDHContainerLinkId = modSdh.createSDHContainerLink(classNameEndpointA, idEndpointA, 
                     classNameEndpointB, idEndpointB, linkType, remotePositions, defaultName);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
@@ -5214,14 +5217,13 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public String createSDHTributaryLink(String classNameEndpointA, String idEndpointA, String classNameEndpointB, String idEndpointB, String linkType, List<RemoteSDHPosition> positions, String defaultName, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("createSDHTributaryLink", "127.0.0.1", sessionId);
-            SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
             
             List<SDHPosition> remotePositions = new ArrayList<>();
             
             for (RemoteSDHPosition position : positions)
                 remotePositions.add(new SDHPosition(position.getLinkClass(), position.getLinkId(), position.getPosition()));
             
-            String SDHTributaryLinkId = sdhModule.createSDHTributaryLink(classNameEndpointA, idEndpointA, classNameEndpointB, 
+            String SDHTributaryLinkId = modSdh.createSDHTributaryLink(classNameEndpointA, idEndpointA, classNameEndpointB, 
                     idEndpointB, linkType, remotePositions, defaultName);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
@@ -5241,10 +5243,9 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void deleteSDHTransportLink(String transportLinkClass, String transportLinkId, boolean forceDelete, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("deleteSDHTransportLink", "127.0.0.1", sessionId);
-            SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
             
             String transportLinkName = bem.getObject(transportLinkClass, transportLinkId).getName();
-            sdhModule.deleteSDHTransportLink(transportLinkClass, transportLinkId, forceDelete);
+            modSdh.deleteSDHTransportLink(transportLinkClass, transportLinkId, forceDelete);
                                     
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
@@ -5262,10 +5263,9 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void deleteSDHContainerLink(String containerLinkClass, String containerLinkId, boolean forceDelete, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("deleteSDHContainerLink", "127.0.0.1", sessionId);
-            SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
             
             String containerLinkName = bem.getObject(containerLinkClass, containerLinkId).getName();
-            sdhModule.deleteSDHContainerLink(containerLinkClass, containerLinkId, forceDelete);
+            modSdh.deleteSDHContainerLink(containerLinkClass, containerLinkId, forceDelete);
                         
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
@@ -5283,10 +5283,9 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void deleteSDHTributaryLink(String tributaryLinkClass, String tributaryLinkId, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("deleteSDHTributaryLink", "127.0.0.1", sessionId);
-            SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
             
             String tributaryLinkName = bem.getObject(tributaryLinkClass, tributaryLinkId).getName();
-            sdhModule.deleteSDHTributaryLink(tributaryLinkClass, tributaryLinkId);
+            modSdh.deleteSDHTributaryLink(tributaryLinkClass, tributaryLinkId);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
@@ -5304,11 +5303,9 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public List<RemoteObjectLightList> findSDHRoutesUsingTransportLinks(String communicationsEquipmentClassA, String communicationsEquipmentIdA, String communicationsEquipmentClassB, String communicationsEquipmentIB, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("findSDHRoutesUsingTransportLinks", "127.0.0.1", sessionId);
-            
-            SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
             List<RemoteObjectLightList> res  = new ArrayList<>();
             
-            List<BusinessObjectLightList> routes = sdhModule.findSDHRoutesUsingTransportLinks(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, communicationsEquipmentIB);
+            List<BusinessObjectLightList> routes = modSdh.findSDHRoutesUsingTransportLinks(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, communicationsEquipmentIB);
             for (BusinessObjectLightList route : routes)
                 res.add(new RemoteObjectLightList(route));
             return res;
@@ -5325,9 +5322,8 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public List<RemoteObjectLightList> findSDHRoutesUsingContainerLinks(String communicationsEquipmentClassA, String communicationsEquipmentIdA, String communicationsEquipmentClassB, String communicationsEquipmentIB, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("findSDHRoutesUsingContainerLinks", "127.0.0.1", sessionId);
-            SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
             List<RemoteObjectLightList> res  = new ArrayList<>();
-            List<BusinessObjectLightList> routes = sdhModule.findSDHRoutesUsingContainerLinks(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, communicationsEquipmentIB);
+            List<BusinessObjectLightList> routes = modSdh.findSDHRoutesUsingContainerLinks(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, communicationsEquipmentIB);
             for (BusinessObjectLightList route : routes)
                 res.add(new RemoteObjectLightList(route));
             
@@ -5345,8 +5341,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public List<RemoteSDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, String transportLinkId, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("getSDHTransportLinkStructure", "127.0.0.1", sessionId);
-            SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
-            List<SDHContainerLinkDefinition> containerLinks = sdhModule.getSDHTransportLinkStructure(transportLinkClass, transportLinkId);
+            List<SDHContainerLinkDefinition> containerLinks = modSdh.getSDHTransportLinkStructure(transportLinkClass, transportLinkId);
             
             List<RemoteSDHContainerLinkDefinition> res = new ArrayList<>();
             
@@ -5367,8 +5362,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public List<RemoteSDHContainerLinkDefinition> getSDHContainerLinkStructure(String containerLinkClass, String containerLinkId, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("getSDHContainerLinkStructure", "127.0.0.1", sessionId);
-            SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
-            List<SDHContainerLinkDefinition> containerLinks = sdhModule.getSDHContainerLinkStructure(transportLinkClass, transportLinkId);
+            List<SDHContainerLinkDefinition> containerLinks = modSdh.getSDHContainerLinkStructure(transportLinkClass, transportLinkId);
             List<RemoteSDHContainerLinkDefinition> res = new ArrayList<>();
             
             for (SDHContainerLinkDefinition containerLink : containerLinks)
