@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import org.neotropic.kuwaiba.core.apis.integration.GenericCommercialModule;
+import org.neotropic.kuwaiba.core.apis.integration.AbstractCommercialModule;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Pool;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
@@ -39,7 +39,7 @@ import org.neotropic.kuwaiba.northbound.ws.model.application.RemotePool;
  * Project management module
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class ProjectsModule implements GenericCommercialModule {
+public class ProjectsModule extends AbstractCommercialModule {
     
     /**
      * The MetadataEntityManager instance
@@ -88,10 +88,6 @@ public class ProjectsModule implements GenericCommercialModule {
         return ModuleType.TYPE_PERPETUAL_LICENSE;
     }
 
-    @Override
-    public boolean isValid() {
-        return true;
-    }
         
     /**
      * Gets the project pools
@@ -344,12 +340,29 @@ public class ProjectsModule implements GenericCommercialModule {
     }
                     
     @Override
-    public void configureModule(ApplicationEntityManager aem, MetadataEntityManager mem, BusinessEntityManager bem) {
+    public void configureModule(MetadataEntityManager mem, ApplicationEntityManager aem,  BusinessEntityManager bem) {
         this.mem = mem;
         this.aem = aem;
         this.bem = bem;
         
         this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_PROJECTSPROJECTUSES, "Resource associated to this project");
+    }
+
+    @Override
+    public void validate() throws OperationNotPermittedException { }
+
+    @Override
+    public String getId() {
+        return "projects";}
+
+    @Override
+    public Object getPowerUserWebComponent() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object getSimpleUserWebComponent() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }
