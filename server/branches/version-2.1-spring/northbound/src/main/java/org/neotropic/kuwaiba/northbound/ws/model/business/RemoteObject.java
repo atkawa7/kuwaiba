@@ -55,7 +55,7 @@ public class RemoteObject extends RemoteObjectLight implements Serializable {
         for (String attribute : object.getAttributes().keySet())
             attributes.add(new StringPair(attribute, object.getAttributes().get(attribute)));
     }
-    
+       
     public RemoteObject(TemplateObject object) {
         super(object.getClassName(), object.getId(), object.getName());
         this.attributes = new ArrayList<>();

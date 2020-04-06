@@ -18,6 +18,7 @@ package org.neotropic.kuwaiba.northbound.ws.model.application;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import org.neotropic.kuwaiba.core.apis.persistence.application.TaskScheduleDescriptor;
 
 /**
  * Describes when a task should be scheduled and executed
@@ -58,6 +59,12 @@ public final class RemoteTaskScheduleDescriptor implements Serializable {
         this.startTime = startTime;
         this.everyXMinutes = everyXMinutes;
         this.executionType = executionType;
+    }
+
+    public RemoteTaskScheduleDescriptor(TaskScheduleDescriptor schedule) {
+        this.startTime = schedule.getStartTime();
+        this.everyXMinutes = schedule.getEveryXMinutes();
+        this.executionType = schedule.getExecutionType();
     }
 
     public long getStartTime() {

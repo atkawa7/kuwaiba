@@ -20,6 +20,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.util.StringPair;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import org.neotropic.kuwaiba.core.apis.persistence.application.reporting.ReportMetadata;
 
 /**
  * An application report. A report might apply only to all instances of the same class or superclass 
@@ -44,6 +45,12 @@ public class RemoteReportMetadata extends RemoteReportMetadataLight {
         super(id, name, description, enabled, type);
         this.script = script;
         this.parameters = parameters;
+    }
+
+    public RemoteReportMetadata(ReportMetadata report) {
+        super(report.getId(), report.getName(), report.getDescription(), report.isEnabled(), report.getType());
+        this.script = report.getScript();
+        this.parameters = report.getParameters();
     }
 
     public String getScript() {

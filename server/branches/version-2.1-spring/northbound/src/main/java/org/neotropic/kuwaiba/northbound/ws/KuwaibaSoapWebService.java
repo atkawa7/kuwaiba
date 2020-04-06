@@ -324,7 +324,7 @@ public interface KuwaibaSoapWebService {
      *                             Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteUsers")
-    public void deleteUsers(@WebParam(name = "oids")long[] oids,
+    public void deleteUsers(@WebParam(name = "oids")List<Long> oids,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException;
 
     /**
@@ -336,7 +336,7 @@ public interface KuwaibaSoapWebService {
      *                             Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteGroups")
-    public void deleteGroups(@WebParam(name = "oids")long[] oids,
+    public void deleteGroups(@WebParam(name = "oids")List<Long> oids,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException;
 
     /**
@@ -622,7 +622,7 @@ public interface KuwaibaSoapWebService {
      *                             If the view can't be found
      */
     @WebMethod(operationName = "deleteGeneralView")
-    public void deleteGeneralView(@WebParam(name = "oids")long [] oids,
+    public void deleteGeneralView(@WebParam(name = "oids")List<Long> oids,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException;
 
     /**
@@ -1741,7 +1741,7 @@ public interface KuwaibaSoapWebService {
     /**
      * Updates attributes of a given object
      * @param className object's class name
-     * @param id Object id
+     * @param oid Object id
      * @param attributes A dictionary with pairs key-value, being <b>key</b>, the attribute name, and <b>value</b>, 
      * the serialized version of the attribute value. Single list types are represented by the id of the list type item (a numeric value), 
      * while multiple list types are strings wit the ids of the related list type items separated by semicolons (e.g. 123;786576;92332)
@@ -1753,7 +1753,7 @@ public interface KuwaibaSoapWebService {
      */
     @WebMethod(operationName = "updateObject")
     public void updateObject(@WebParam(name = "className")String className,
-            @WebParam(name = "id")String id,
+            @WebParam(name = "oid")String oid,
             @WebParam(name = "attributes")List<StringPair> attributes,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException;
 
@@ -3830,7 +3830,7 @@ public interface KuwaibaSoapWebService {
      */
     @WebMethod(operationName = "launchAdHocAutomatedSynchronizationTask")
     public List<RemoteSyncResult> launchAdHocAutomatedSynchronizationTask(
-            @WebParam(name = "synDsConfigIds") long[] synDsConfigIds, 
+            @WebParam(name = "synDsConfigIds") List<Long> synDsConfigIds, 
             @WebParam(name = "providersName")  String providersName, 
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException;
     

@@ -19,6 +19,8 @@ package org.neotropic.kuwaiba.northbound.ws.model.application;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import org.neotropic.kuwaiba.core.apis.persistence.application.reporting.ReportMetadataLight;
+import org.parboiled.parserunners.ProfilingParseRunner.Report;
 
 /**
  * A simplified representation of a {@link Report}.
@@ -69,6 +71,14 @@ public class RemoteReportMetadataLight implements Serializable, Comparable<Remot
         this.description = description;
         this.enabled = enabled;
         this.type = type;
+    }
+
+    public RemoteReportMetadataLight(ReportMetadataLight reportMetadataLights) {
+        this.id = reportMetadataLights.getId();
+        this.name = reportMetadataLights.getName();;
+        this.description = reportMetadataLights.getDescription();;
+        this.enabled = reportMetadataLights.isEnabled();;
+        this.type = reportMetadataLights.getType();;
     }
 
     public long getId() {

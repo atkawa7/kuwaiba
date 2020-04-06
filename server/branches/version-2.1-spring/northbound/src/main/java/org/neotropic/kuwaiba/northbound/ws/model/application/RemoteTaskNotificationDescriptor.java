@@ -18,6 +18,7 @@ package org.neotropic.kuwaiba.northbound.ws.model.application;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import org.neotropic.kuwaiba.core.apis.persistence.application.TaskNotificationDescriptor;
 
 /**
  * Describes how the results of a task should be notified to the users associated to it
@@ -49,6 +50,11 @@ public final class RemoteTaskNotificationDescriptor implements Serializable {
     public RemoteTaskNotificationDescriptor(String email, int notificationType) {
         this.email = email;
         this.notificationType = notificationType;
+    }
+
+    public RemoteTaskNotificationDescriptor(TaskNotificationDescriptor notificationType) {
+        this.email = notificationType.getEmail();
+        this.notificationType = notificationType.getNotificationType();
     }
 
     public String getEmail() {
