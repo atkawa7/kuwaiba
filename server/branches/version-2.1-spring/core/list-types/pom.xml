@@ -8,4 +8,7 @@
     </parent>
     <artifactId>list-types</artifactId>
     <packaging>pom</packaging>
+    <modules>
+        <module>ltmanager</module>
+    </modules>
 </project>
