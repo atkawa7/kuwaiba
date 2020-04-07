@@ -20,6 +20,7 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Simple page that implements the closing session logic and redirects to the login page.
@@ -27,10 +28,15 @@ import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
  */
 @Route("logout")
 public class LogoutUI extends VerticalLayout {
+    
+    @Autowired
+    private MenuBuilderService menuBuilderService;
+    
     @Override
     public void onAttach(AttachEvent ev) {
         getUI().ifPresent( ui -> { 
-            ui.getSession().setAttribute(Session.class, null);
+            menuBuilderService.unregisterMenu(ui.getSession().getAttribute(Session.class)); // Removes from cache the user menu to clear some memory
+            ui.getSession().setAttribute(Session.class, null); // Closing the session doesn't -oddly- clean up the session attributes
             ui.getSession().close();
             ui.navigate(LoginUI.class);
         });

@@ -54,6 +54,8 @@ public class MainLayout extends FlexLayout implements RouterLayout {
      */
     @Autowired
     private TranslationService ts;
+    @Autowired
+    private MenuBuilderService menuBuilderService;
     
     @PostConstruct
     public void init() {
@@ -61,11 +63,7 @@ public class MainLayout extends FlexLayout implements RouterLayout {
         this.lytHeader = new HorizontalLayout();
         this.lytContent = new VerticalLayout();
         this.lytFooter = new VerticalLayout();
-        
-        lytHeader.add(new Button(ts.getTranslatedString("module.login.ui.logout"), e -> {
-            getUI().ifPresent( ui -> ui.navigate(LogoutUI.class));
-        }));
-        
+     
         lytFooter.add(new Label(ts.getTranslatedString("module.general.messages.copyright-notice")));
         
         add(this.lytHeader);
@@ -78,6 +76,9 @@ public class MainLayout extends FlexLayout implements RouterLayout {
         getUI().ifPresent( ui -> { // If there isn't any active session, redirect to the login ui
             if (ui.getSession().getAttribute(Session.class) == null)
                 ui.navigate(LoginUI.class);
+            else
+                lytHeader.add(menuBuilderService.buildMenuForSession(ui.getSession().getAttribute(Session.class)));
+            
         });
     }
     

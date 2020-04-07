@@ -16,9 +16,14 @@
 
 package org.neotropic.kuwaiba.web.ui;
 
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.menubar.MenuBar;
+import com.vaadin.flow.component.menubar.MenuBarVariant;
 import java.util.HashMap;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,18 +34,44 @@ import org.springframework.stereotype.Service;
 @Service
 public class MenuBuilderService {
     /**
-     * The list of 
+     * The list of cached menus. The key of the hash map is the user name.
      */
     private HashMap<String, MenuBar> menuList;
+    /**
+     * Reference to the translation service.
+     */
+    @Autowired
+    private TranslationService ts;
 
     public MenuBuilderService() {
-        menuList = new HashMap<>();
+        this.menuList = new HashMap<>();
     }
     
-    public void registerMenu(Session aSession) {
+    /**
+     * Deletes from the cache (if existing) the menu associated to a given session 
+     * or user.
+     * @param session The session to unregister.
+     */
+    public void unregisterMenu(Session session) {
+        this.menuList.remove(session.getUser().getUserName());
+    }
+    
+    /**
+     * Builds or retrieves from the cache 
+     * @param session
+     * @return 
+     */
+    public MenuBar buildMenuForSession(Session session) {
+        if (this.menuList.containsKey(session.getUser().getUserName()))
+            return this.menuList.get(session.getUser().getUserName());
         
-    }
-    
-    public void unregisterMenu(Session aSession) {
+        MenuBar mnuNewBar = new MenuBar();
+        mnuNewBar.addThemeVariants(MenuBarVariant.MATERIAL_OUTLINED);
+        mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.home"), ev -> UI.getCurrent().navigate(HomeUI.class));
+        mnuNewBar.addItem(ts.getTranslatedString("module.serviceman.name"), ev -> UI.getCurrent().navigate(ServiceManagerUI.class));
+        mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.logout"), ev -> UI.getCurrent().navigate(LogoutUI.class));
+
+        this.menuList.put(session.getUser().getUserName(), mnuNewBar);
+        return mnuNewBar;
     }
 }
