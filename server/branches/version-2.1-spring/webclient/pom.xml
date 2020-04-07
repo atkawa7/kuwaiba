@@ -21,7 +21,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <vaadin.version>14.1.16</vaadin.version>
     </properties>
-    <!--
+    
     <pluginRepositories>
         <pluginRepository>
             <id>central</id>
@@ -49,7 +49,7 @@
             </snapshots>
         </repository>
     </repositories>
-    -->
+    
     <dependencies>        
         <!-- Persistence API and reference implementation -->
         <dependency>
@@ -117,6 +117,12 @@
             <groupId>com.neotropic.kuwaiba.commercial</groupId>
             <artifactId>sdh</artifactId>
             <version>2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.neotropic.kuwaiba</groupId>
+            <artifactId>ltmanager</artifactId>
+            <version>2.1</version>
+            <type>jar</type>
         </dependency>
     </dependencies>
     <dependencyManagement>

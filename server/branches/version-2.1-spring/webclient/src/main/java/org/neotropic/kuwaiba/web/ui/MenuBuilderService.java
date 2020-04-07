@@ -68,6 +68,7 @@ public class MenuBuilderService {
         mnuNewBar.addThemeVariants(MenuBarVariant.LUMO_SMALL);
         mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.home"), ev -> UI.getCurrent().navigate(HomeUI.class));
         mnuNewBar.addItem(ts.getTranslatedString("module.serviceman.name"), ev -> UI.getCurrent().navigate(ServiceManagerUI.class));
+        mnuNewBar.addItem(ts.getTranslatedString("module.ltmanager.name"), ev -> UI.getCurrent().navigate(ListTypeManagerUI.class));
         mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.logout"), ev -> UI.getCurrent().navigate(LogoutUI.class));
 
         this.menuList.put(session.getUser().getUserName(), mnuNewBar);
