@@ -18,7 +18,6 @@ package org.neotropic.kuwaiba.modules.optional.serviceman;
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractModule;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermittedException;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -49,7 +48,7 @@ public class ServiceManagerModule extends AbstractModule<VerticalLayout> {
 
     @Override
     public String getVersion() {
-        return "2.0";
+        return "2.1";
     }
 
     @Override
@@ -61,12 +60,7 @@ public class ServiceManagerModule extends AbstractModule<VerticalLayout> {
     public ModuleType getModuleType() {
         return ModuleType.TYPE_OPEN_SOURCE;
     }
-
-    @Override
-    public void validate() throws OperationNotPermittedException {
-        // This module can be used freely
-    }
-
+    
     @Override
     public VerticalLayout getPowerUserWebComponent() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

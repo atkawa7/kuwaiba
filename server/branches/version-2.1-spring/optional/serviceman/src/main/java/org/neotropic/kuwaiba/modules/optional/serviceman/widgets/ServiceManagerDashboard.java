@@ -14,59 +14,36 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.web.ui;
+package org.neotropic.kuwaiba.modules.optional.serviceman.widgets;
 
 import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.DetachEvent;
-import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.Route;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractModuleDashboard;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewCustomerVisualAction;
-import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewServiceVisualAction;
 import org.neotropic.util.visual.notifications.SimpleNotification;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Main dashboard page for the service manager module.
+ * The visual entry point to the Service Manager module. Th
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-@Route("serviceman")
 public class ServiceManagerDashboard extends VerticalLayout implements AbstractModuleDashboard {
-    @Autowired
-    private NewCustomerVisualAction actNewCustomer;
-    @Autowired
-    private NewServiceVisualAction actNewService;
-    @Autowired
+    /**
+     * Reference to the translation service.
+     */
     private TranslationService ts;
-    
+
+    public ServiceManagerDashboard(TranslationService ts) {
+        this.ts = ts;
+    }
+
     @Override
     public void onAttach(AttachEvent ev) {
         setSizeFull();
-        getUI().ifPresent( ui -> ui.getPage().setTitle(ts.getTranslatedString("module.serviceman.title")));
-        this.actNewCustomer.registerActionCompletedLister(this);
-        this.actNewService.registerActionCompletedLister(this);
-        
-        Button btnAddCustomer = new Button(this.actNewCustomer.getModuleAction().getDisplayName(), (event) -> {
-            this.actNewCustomer.getVisualComponent().open();
-        });
-        
-        Button btnAddService = new Button(this.actNewService.getModuleAction().getDisplayName(), (event) -> {
-            this.actNewService.getVisualComponent().open();
-        });
-        
-        add(btnAddCustomer);
-        add(btnAddService);
+        add(new Label(ts.getTranslatedString("module.general.messages.success") + " Yes! this ios the main serviceman dashboard"));
     }
     
-    @Override
-    public void onDetach(DetachEvent ev) {
-        this.actNewCustomer.unregisterListener(this);
-        this.actNewService.unregisterListener(this);
-    }
-
     @Override
     public void actionCompleted(ActionCompletedListener.ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCESS)

@@ -16,21 +16,31 @@
 
 package org.neotropic.kuwaiba.web.ui;
 
-import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.component.menubar.MenuBar;
+import java.util.HashMap;
+import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
+import org.springframework.stereotype.Service;
 
 /**
- * In order to be able to dynamically display modules that are registered only at 
- * run-time, instead of using a single route per page (module dashboard), we will only use 
- * this one, which will embed the desired dashboard programmatically.
+ * This singleton builds navigation menus based on user privileges and manage their changes 
+ * and instances.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-@Route("app")
-public class ModuleWrapperUI extends VerticalLayout {
-    @Override
-    public void onAttach(AttachEvent ev) {
-        setSizeFull();
-        add(new ServiceManagerUI());
+@Service
+public class MenuBuilderService {
+    /**
+     * The list of 
+     */
+    private HashMap<String, MenuBar> menuList;
+
+    public MenuBuilderService() {
+        menuList = new HashMap<>();
+    }
+    
+    public void registerMenu(Session aSession) {
+        
+    }
+    
+    public void unregisterMenu(Session aSession) {
     }
 }

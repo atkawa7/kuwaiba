@@ -19,18 +19,20 @@ package org.neotropic.kuwaiba.web.ui;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
 
 /**
- * In order to be able to dynamically display modules that are registered only at 
- * run-time, instead of using a single route per page (module dashboard), we will only use 
- * this one, which will embed the desired dashboard programmatically.
+ * Simple page that implements the closing session logic and redirects to the login page.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-@Route("app")
-public class ModuleWrapperUI extends VerticalLayout {
+@Route("logout")
+public class LogoutUI extends VerticalLayout {
     @Override
     public void onAttach(AttachEvent ev) {
-        setSizeFull();
-        add(new ServiceManagerUI());
+        getUI().ifPresent( ui -> { 
+            ui.getSession().setAttribute(Session.class, null);
+            ui.getSession().close();
+            ui.navigate(LoginUI.class);
+        });
     }
 }

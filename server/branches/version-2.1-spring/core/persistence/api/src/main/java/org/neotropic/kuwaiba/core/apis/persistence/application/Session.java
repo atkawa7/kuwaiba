@@ -22,6 +22,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Represents a single user session
@@ -116,7 +117,7 @@ public class Session implements Serializable {
     
     @Override
     public String toString() {
-        return getUser() +"["+getLoginTime()+"]"; //NOI18N
+        return getUser() + "[" + getLoginTime() + "]"; //NOI18N
     }
 
     private String generateSessionToken(){
@@ -129,5 +130,17 @@ public class Session implements Serializable {
         }catch(NoSuchAlgorithmException nsa){
             return null;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Session ? this.token.equals(((Session)o).getToken()) : false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 83 * hash + Objects.hashCode(this.token);
+        return hash;
     }
 }

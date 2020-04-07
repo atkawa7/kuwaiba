@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
  * All third-party commercial modules should inherit from this class.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-@Service
 public abstract class AbstractCommercialModule extends AbstractModule {
     /**
      * Gets the module's category. A category helps the user interface t

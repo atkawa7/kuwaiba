@@ -16,12 +16,77 @@
 
 package org.neotropic.kuwaiba.web.ui;
 
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasElement;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.RouterLayout;
+import java.util.Objects;
+import javax.annotation.PostConstruct;
+import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- *
+ * General layout to be used in power user interfaces, that is, interfaces that provides many functionalities, as
+ * opposed to simple user interfaces, aimed at casual users or managers. 
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class MainLayout extends FlexLayout {
-
+public class MainLayout extends FlexLayout implements RouterLayout {
+    /**
+     * Header component.
+     */
+    private HorizontalLayout lytHeader;
+    /**
+     * Content to be injected.
+     */
+    private VerticalLayout lytContent;
+    /**
+     * Footer content.
+     */
+    private VerticalLayout lytFooter;
+    /**
+     * Reference to the translation service.
+     */
+    @Autowired
+    private TranslationService ts;
+    
+    @PostConstruct
+    public void init() {
+        setSizeFull();
+        this.lytHeader = new HorizontalLayout();
+        this.lytContent = new VerticalLayout();
+        this.lytFooter = new VerticalLayout();
+        
+        lytHeader.add(new Button(ts.getTranslatedString("module.login.ui.logout"), e -> {
+            getUI().ifPresent( ui -> ui.navigate(LogoutUI.class));
+        }));
+        
+        lytFooter.add(new Label(ts.getTranslatedString("module.general.messages.copyright-notice")));
+        
+        add(this.lytHeader);
+        add(this.lytContent);
+        add(this.lytFooter);
+    }
+    
+    @Override
+    public void onAttach(AttachEvent ev) {
+        getUI().ifPresent( ui -> { // If there isn't any active session, redirect to the login ui
+            if (ui.getSession().getAttribute(Session.class) == null)
+                ui.navigate(LoginUI.class);
+        });
+    }
+    
+    @Override
+    public void showRouterLayoutContent(HasElement content) {
+      if (content != null) {
+        this.lytContent.removeAll();
+        this.lytContent.add(Objects.requireNonNull((Component)content));
+      }
+    }
+    
 }
