@@ -18,12 +18,15 @@ package org.neotropic.kuwaiba.web.ui;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewCustomerVisualAction;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewServiceVisualAction;
 import org.neotropic.kuwaiba.modules.optional.serviceman.widgets.ServiceManagerDashboard;
+import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -32,7 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Route(value = "serviceman", layout = MainLayout.class)
-public class ServiceManagerUI extends VerticalLayout {
+public class ServiceManagerUI extends VerticalLayout implements ActionCompletedListener {
     /**
      * The main dashboard
      */
@@ -72,9 +75,16 @@ public class ServiceManagerUI extends VerticalLayout {
     
     @Override
     public void onDetach(DetachEvent ev) {
-//        this.actNewCustomer.unregisterListener(this);
-//        this.actNewService.unregisterListener(this);
+        this.actNewCustomer.unregisterListener(this);
+        this.actNewService.unregisterListener(this);
     }
-
+    
+    @Override
+    public void actionCompleted(ActionCompletedListener.ActionCompletedEvent ev) {
+        if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCESS)
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
+        else
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
+    }
     
 }

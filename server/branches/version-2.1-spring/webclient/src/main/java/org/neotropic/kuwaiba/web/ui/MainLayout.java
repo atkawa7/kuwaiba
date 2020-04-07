@@ -19,7 +19,6 @@ package org.neotropic.kuwaiba.web.ui;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -61,6 +60,7 @@ public class MainLayout extends FlexLayout implements RouterLayout {
     public void init() {
         setSizeFull();
         this.lytHeader = new HorizontalLayout();
+        this.lytHeader.setWidthFull();
         this.lytContent = new VerticalLayout();
         this.lytFooter = new VerticalLayout();
      

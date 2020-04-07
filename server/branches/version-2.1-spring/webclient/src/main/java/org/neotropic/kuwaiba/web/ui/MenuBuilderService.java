@@ -17,7 +17,6 @@
 package org.neotropic.kuwaiba.web.ui;
 
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.menubar.MenuBarVariant;
 import java.util.HashMap;
@@ -66,7 +65,7 @@ public class MenuBuilderService {
             return this.menuList.get(session.getUser().getUserName());
         
         MenuBar mnuNewBar = new MenuBar();
-        mnuNewBar.addThemeVariants(MenuBarVariant.MATERIAL_OUTLINED);
+        mnuNewBar.addThemeVariants(MenuBarVariant.LUMO_SMALL);
         mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.home"), ev -> UI.getCurrent().navigate(HomeUI.class));
         mnuNewBar.addItem(ts.getTranslatedString("module.serviceman.name"), ev -> UI.getCurrent().navigate(ServiceManagerUI.class));
         mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.logout"), ev -> UI.getCurrent().navigate(LogoutUI.class));
