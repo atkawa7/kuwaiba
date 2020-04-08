@@ -19,6 +19,7 @@ package org.neotropic.kuwaiba.web.ui;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
+import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -35,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * opposed to simple user interfaces, aimed at casual users or managers. 
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
+@StyleSheet("css/main.css")
 public class MainLayout extends FlexLayout implements RouterLayout {
     /**
      * Header component.
@@ -58,13 +60,24 @@ public class MainLayout extends FlexLayout implements RouterLayout {
     
     @PostConstruct
     public void init() {
+        setId("main-layout");
         setSizeFull();
         this.lytHeader = new HorizontalLayout();
         this.lytHeader.setWidthFull();
         this.lytContent = new VerticalLayout();
         this.lytFooter = new VerticalLayout();
      
-        lytFooter.add(new Label(ts.getTranslatedString("module.general.messages.copyright-notice")));
+        this.lytHeader.setId("main-layout-header");
+        this.lytHeader.setWidthFull();
+        this.lytHeader.setAlignItems(Alignment.END);
+        
+        this.lytContent.setId("main-layout-content");
+        
+        this.lytFooter.setId("main-layout-footer");
+        this.lytFooter.add(new Label(ts.getTranslatedString("module.general.messages.copyright-notice")));
+        this.lytFooter.setAlignItems(Alignment.CENTER);
+        this.lytFooter.setWidthFull();
+        
         
         add(this.lytHeader);
         add(this.lytContent);

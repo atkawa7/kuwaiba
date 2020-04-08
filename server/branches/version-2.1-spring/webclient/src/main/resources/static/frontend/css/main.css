@@ -1,0 +1,65 @@
+body {
+    
+}
+
+/* Inherited styles */
+vaadin-radio-group {
+    font-size: small;
+    padding: 0px;
+    margin: 0px;
+}
+
+/* Power user interface layout */
+#main-layout {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+#main-layout-header {
+    max-height: 150px;
+}
+
+#main-layout-content {
+    font-size: small !important;
+    height: 100%;
+    width: 100%;
+}
+
+#main-layout-footer {
+    max-height: 100px;
+    font-size: xx-small;
+    color: darkgray;
+    padding-bottom: 30px;
+    padding-top: 10px;
+}
+
+/* Individual components */
+.search-box-large {
+    width: 500px;
+    font-size: small;
+}
+
+.search-box-compact {
+    width: 200px;
+    font-size: xx-small;
+}
+
+.radio-button-filters-large {
+    width: 500px;
+}
+
+.radio-button-filters-compact {
+    width: 100px;
+    font-size: xx-small;
+}
+
+/* Service Manager*/
+#serviceman-search-full {
+    max-height: 200px;
+    width: 100%;
+}
+
+#serviceman-search-compact {
+    
+}

@@ -18,16 +18,12 @@ package org.neotropic.kuwaiba.modules.optional.serviceman.widgets;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.checkbox.CheckboxGroup;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.renderer.TextRenderer;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractModuleDashboard;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
@@ -38,6 +34,14 @@ import org.neotropic.util.visual.notifications.SimpleNotification;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ServiceManagerDashboard extends VerticalLayout implements AbstractModuleDashboard {
+    /**
+     * Used in the main filter to indicate that the search will be performed on services.
+     */
+    private static final int OPTION_SEARCH_SERVICES = 1;
+    /**
+     * Used in the main filter to indicate that the search will be performed on customers.
+     */
+    private static final int OPTION_SEARCH_CUSTOMERS = 2;
     /**
      * Reference to the translation service.
      */
@@ -59,24 +63,27 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractM
         this.lytContent.setSizeFull();
         
         VerticalLayout lytSearch = new VerticalLayout();
-        lytSearch.setHeight("100px");
-        lytSearch.setWidth("30%");
+        lytSearch.setId("serviceman-search-component");
         lytSearch.setAlignItems(Alignment.CENTER);
+        
         TextField txtSearch = new TextField();
+        txtSearch.setClassName("search-box-large");
         txtSearch.setPlaceholder(ts.getTranslatedString("module.general.messages.search"));
-        txtSearch.addKeyDownListener((event) -> {
-            if (event.getKey() == Key.ENTER) {
-                Notification.show("Hola :D");
-            }
+        txtSearch.addKeyPressListener( event -> {
+            if (event.getKey().getKeys().get(0).equals(Key.ENTER.getKeys().get(0)))
+                Notification.show("Search");
         });
         
-        Checkbox chkSearchServices = new Checkbox(ts.getTranslatedString("module.serviceman.dashboard.ui.search-services"), true);
-        Checkbox chkSearchCustomers = new Checkbox(ts.getTranslatedString("module.serviceman.dashboard.ui.search-customers"), false);
-        CheckboxGroup<Checkbox> chkMainFilter = new CheckboxGroup();
-        chkMainFilter.setItems(chkSearchCustomers, chkSearchServices);
+        RadioButtonGroup<Integer> chkMainFilter = new RadioButtonGroup();
+        chkMainFilter.setClassName("radio-button-filters-large");
+        chkMainFilter.setItems(OPTION_SEARCH_SERVICES, OPTION_SEARCH_CUSTOMERS);
+        chkMainFilter.setValue(OPTION_SEARCH_SERVICES);
+        chkMainFilter.setRenderer(new TextRenderer<>(item -> {
+            return item == OPTION_SEARCH_SERVICES ? ts.getTranslatedString("module.serviceman.dashboard.ui.search-services") :
+                                ts.getTranslatedString("module.serviceman.dashboard.ui.search-customers"); //To change body of generated lambdas, choose Tools | Templates.
+        }));
         
-        lytSearch.add(txtSearch, new HorizontalLayout(chkSearchCustomers, chkSearchServices));
-        
+        lytSearch.add(txtSearch, new HorizontalLayout(chkMainFilter));
         this.lytContent.add(new HorizontalLayout(), lytSearch, new HorizontalLayout());
 
         add(this.lytContent);

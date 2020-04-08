@@ -66,6 +66,7 @@ public class MenuBuilderService {
         
         MenuBar mnuNewBar = new MenuBar();
         mnuNewBar.addThemeVariants(MenuBarVariant.LUMO_SMALL);
+        mnuNewBar.setWidthFull();
         mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.home"), ev -> UI.getCurrent().navigate(HomeUI.class));
         mnuNewBar.addItem(ts.getTranslatedString("module.serviceman.name"), ev -> UI.getCurrent().navigate(ServiceManagerUI.class));
         mnuNewBar.addItem(ts.getTranslatedString("module.ltmanager.name"), ev -> UI.getCurrent().navigate(ListTypeManagerUI.class));
