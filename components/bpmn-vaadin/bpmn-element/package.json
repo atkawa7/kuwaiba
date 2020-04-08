@@ -1,0 +1,24 @@
+{
+  "name": "@neotropic-sas/bpmn-element",
+  "description": "bpmn-element is a BPMN 2.0 viewer and modeler based on bpmn-js",
+  "version": "0.1.1",
+  "author": "Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>",
+  "license": "Apache-2.0",
+  "keywords": [
+    "bpmn",
+    "web-component",
+    "polymer"
+  ],
+  "main": "bpmn-modeler.js",
+  "dependencies": {
+    "@polymer/polymer": "^3.0.0"
+  },
+  "devDependencies": {
+    "@polymer/iron-demo-helpers": "^3.1.0",
+    "@polymer/test-fixture": "^4.0.2",
+    "@webcomponents/webcomponentsjs": "^2.0.0",
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4",
+    "wct-mocha": "^1.0.1"
+  }
+}
