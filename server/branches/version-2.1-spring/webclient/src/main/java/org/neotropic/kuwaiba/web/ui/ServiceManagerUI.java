@@ -18,15 +18,12 @@ package org.neotropic.kuwaiba.web.ui;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewCustomerVisualAction;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewServiceVisualAction;
 import org.neotropic.kuwaiba.modules.optional.serviceman.widgets.ServiceManagerDashboard;
-import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -35,13 +32,13 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Route(value = "serviceman", layout = MainLayout.class)
-public class ServiceManagerUI extends VerticalLayout implements ActionCompletedListener {
+public class ServiceManagerUI extends VerticalLayout {
     /**
      * The main dashboard
      */
     private ServiceManagerDashboard dashboard;
     /**
-     * 
+     * Reference to the action that creates customers
      */
     @Autowired
     private NewCustomerVisualAction actNewCustomer;
@@ -58,8 +55,8 @@ public class ServiceManagerUI extends VerticalLayout implements ActionCompletedL
         this.dashboard = new ServiceManagerDashboard(ts);
         add(this.dashboard);
         
-//        this.actNewCustomer.registerActionCompletedLister(this);
-//        this.actNewService.registerActionCompletedLister(this);
+        this.actNewCustomer.registerActionCompletedLister(this.dashboard);
+        this.actNewService.registerActionCompletedLister(this.dashboard);
 //        
 //        Button btnAddCustomer = new Button(this.actNewCustomer.getModuleAction().getDisplayName(), (event) -> {
 //            this.actNewCustomer.getVisualComponent().open();
@@ -75,16 +72,9 @@ public class ServiceManagerUI extends VerticalLayout implements ActionCompletedL
     
     @Override
     public void onDetach(DetachEvent ev) {
-        this.actNewCustomer.unregisterListener(this);
-        this.actNewService.unregisterListener(this);
+        this.actNewCustomer.unregisterListener(this.dashboard);
+        this.actNewService.unregisterListener(this.dashboard);
     }
-    
-    @Override
-    public void actionCompleted(ActionCompletedListener.ActionCompletedEvent ev) {
-        if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCESS)
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
-        else
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
-    }
+
     
 }

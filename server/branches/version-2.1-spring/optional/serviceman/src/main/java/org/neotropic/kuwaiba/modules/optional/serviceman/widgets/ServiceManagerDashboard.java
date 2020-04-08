@@ -17,15 +17,24 @@
 package org.neotropic.kuwaiba.modules.optional.serviceman.widgets;
 
 import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.checkbox.CheckboxGroup;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractModuleDashboard;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
 /**
- * The visual entry point to the Service Manager module. Th
+ * The visual entry point to the Service Manager module.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ServiceManagerDashboard extends VerticalLayout implements AbstractModuleDashboard {
@@ -33,6 +42,11 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractM
      * Reference to the translation service.
      */
     private TranslationService ts;
+    /**
+     * Sub-header with shortcut to common actions such as creating a service or a customer.
+     */
+    private HorizontalLayout lytQuickActions;
+    private VerticalLayout lytContent;
 
     public ServiceManagerDashboard(TranslationService ts) {
         this.ts = ts;
@@ -41,7 +55,31 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractM
     @Override
     public void onAttach(AttachEvent ev) {
         setSizeFull();
-        add(new Label(ts.getTranslatedString("module.general.messages.success") + " Yes! this ios the main serviceman dashboard"));
+        this.lytContent = new VerticalLayout();
+        this.lytContent.setSizeFull();
+        
+        VerticalLayout lytSearch = new VerticalLayout();
+        lytSearch.setHeight("100px");
+        lytSearch.setWidth("30%");
+        lytSearch.setAlignItems(Alignment.CENTER);
+        TextField txtSearch = new TextField();
+        txtSearch.setPlaceholder(ts.getTranslatedString("module.general.messages.search"));
+        txtSearch.addKeyDownListener((event) -> {
+            if (event.getKey() == Key.ENTER) {
+                Notification.show("Hola :D");
+            }
+        });
+        
+        Checkbox chkSearchServices = new Checkbox(ts.getTranslatedString("module.serviceman.dashboard.ui.search-services"), true);
+        Checkbox chkSearchCustomers = new Checkbox(ts.getTranslatedString("module.serviceman.dashboard.ui.search-customers"), false);
+        CheckboxGroup<Checkbox> chkMainFilter = new CheckboxGroup();
+        chkMainFilter.setItems(chkSearchCustomers, chkSearchServices);
+        
+        lytSearch.add(txtSearch, new HorizontalLayout(chkSearchCustomers, chkSearchServices));
+        
+        this.lytContent.add(new HorizontalLayout(), lytSearch, new HorizontalLayout());
+
+        add(this.lytContent);
     }
     
     @Override

@@ -24,7 +24,6 @@ import com.vaadin.flow.router.Route;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.ltmanager.actions.NewListTypeItemVisualAction;
-import org.neotropic.kuwaiba.modules.optional.serviceman.widgets.ServiceManagerDashboard;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -35,10 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @Route(value = "ltmanager", layout = MainLayout.class)
 public class ListTypeManagerUI extends VerticalLayout implements ActionCompletedListener {
-    /**
-     * The main dashboard
-     */
-    private ServiceManagerDashboard dashboard;
     /**
      * 
      */
@@ -77,5 +72,4 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
         else
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
     }
-    
 }
