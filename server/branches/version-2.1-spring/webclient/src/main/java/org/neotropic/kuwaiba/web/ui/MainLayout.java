@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @StyleSheet("css/main.css")
+@StyleSheet("css/main-layout.css")
 public class MainLayout extends FlexLayout implements RouterLayout {
     /**
      * Header component.
@@ -89,8 +90,10 @@ public class MainLayout extends FlexLayout implements RouterLayout {
         getUI().ifPresent( ui -> { // If there isn't any active session, redirect to the login ui
             if (ui.getSession().getAttribute(Session.class) == null)
                 ui.navigate(LoginUI.class);
-            else
-                lytHeader.add(menuBuilderService.buildMenuForSession(ui.getSession().getAttribute(Session.class)));
+            else {
+                this.lytHeader.removeAll();
+                this.lytHeader.add(menuBuilderService.buildMenuForSession(ui.getSession().getAttribute(Session.class)));
+            }
             
         });
     }

@@ -1,5 +1,8 @@
+
 body {
-    
+    /* Overrides the default material colors */
+    --material-primary-color: var(--primary-color, #5F9F9F) !important;
+    --material-primary-text-color: var(--primary-color, #5F9F9F) !important;
 }
 
 /* Inherited styles */
@@ -9,57 +12,26 @@ vaadin-radio-group {
     margin: 0px;
 }
 
-/* Power user interface layout */
-#main-layout {
-    display: flex;
-    min-height: 100vh;
-    flex-direction: column;
-}
-
-#main-layout-header {
-    max-height: 150px;
-}
-
-#main-layout-content {
-    font-size: small !important;
-    height: 100%;
-    width: 100%;
-}
-
-#main-layout-footer {
-    max-height: 100px;
-    font-size: xx-small;
-    color: darkgray;
-    padding-bottom: 30px;
-    padding-top: 10px;
-}
-
-/* Individual components */
-.search-box-large {
-    width: 500px;
+vaadin-text-field vaadin-password-field {
     font-size: small;
+/*    border-style: solid;
+    border-width: 1px;
+    border-radius: 15px;
+    border-color: darkgray;
+    padding: 2px 2px 2px 2px;*/
+}
+vaadin-context-menu-item {
+    text-transform: none;
 }
 
-.search-box-compact {
-    width: 200px;
-    font-size: xx-small;
+vaadin-menu-bar-button {
+    text-transform: none;
 }
 
-.radio-button-filters-large {
-    width: 500px;
+vaadin-button {
+    text-transform: none;
 }
 
-.radio-button-filters-compact {
-    width: 100px;
-    font-size: xx-small;
-}
-
-/* Service Manager*/
-#serviceman-search-full {
-    max-height: 200px;
-    width: 100%;
-}
-
-#serviceman-search-compact {
+/*vaadin-text-field-container {
     
-}
+}*/

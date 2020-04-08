@@ -70,7 +70,7 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractM
         txtSearch.setClassName("search-box-large");
         txtSearch.setPlaceholder(ts.getTranslatedString("module.general.messages.search"));
         txtSearch.addKeyPressListener( event -> {
-            if (event.getKey().getKeys().get(0).equals(Key.ENTER.getKeys().get(0)))
+            if (event.getKey().getKeys().get(0).equals(Key.ENTER.getKeys().get(0))) // Weirdly enough, event.getKey().equals(Key.Enter) returns false ALWAYS
                 Notification.show("Search");
         });
         

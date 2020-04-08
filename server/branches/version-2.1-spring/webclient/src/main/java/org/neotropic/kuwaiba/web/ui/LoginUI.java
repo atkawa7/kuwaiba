@@ -20,6 +20,7 @@ import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
@@ -49,6 +50,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @Theme(Material.class)
 @Route("")
+@StyleSheet("css/main.css")
 public class LoginUI extends VerticalLayout implements BeforeEnterObserver {
     /**
      * User name text field.
