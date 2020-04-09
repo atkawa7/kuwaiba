@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.neotropic.kuwaiba.ltmanager;
+package org.neotropic.kuwaiba.modules.core.listtypes.listtypeman;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractModule;
 import org.springframework.stereotype.Component;

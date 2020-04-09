@@ -6,7 +6,10 @@
         <artifactId>list-types</artifactId>
         <version>2.1</version>
     </parent>
-    <artifactId>ltmanager</artifactId>
+    <name>List Type Manager</name>
+    <description>Manage List Types and their items, also provides visualization of uses and relationships
+     </description>
+    <artifactId>listtypeman</artifactId>
     <packaging>jar</packaging>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -53,5 +56,4 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <name>ltmanager</name>
 </project>

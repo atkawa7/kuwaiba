@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.ltmanager.actions;
+package org.neotropic.kuwaiba.modules.core.listtypes.listtypeman.actions;
 
 import java.util.List;
 import java.util.HashMap;
@@ -112,7 +112,7 @@ public class NewListTypeItemVisualAction extends AbstractVisualModuleAction<Dial
                                 new ModuleActionParameter<>("displayName", txtDisplayName.getValue()));
                         
                         fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCESS, 
-                                ts.getTranslatedString("module.ltmanager.actions.new-list-type-item.ui.item-created-success"), NewListTypeItemAction.class));
+                                ts.getTranslatedString("module.listtypeman.actions.new-list-type-item.ui.item-created-success"), NewListTypeItemAction.class));
                         wdwNewListTypeItem.close();
                     }
                 } catch (ModuleActionException ex) {

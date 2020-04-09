@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.ltmanager.actions;
+package org.neotropic.kuwaiba.modules.core.listtypes.listtypeman.actions;
 
 import java.util.HashMap;
 import javax.annotation.PostConstruct;
@@ -34,9 +34,9 @@ public class NewListTypeItemAction extends AbstractModuleAction {
     
     @PostConstruct
     protected void init() {
-        this.id = "ltmanager.new-list-type";
-        this.displayName = ts.getTranslatedString("module.ltmanager.actions.new-list-type-item.name");
-        this.description = ts.getTranslatedString("module.ltmanager.actions.new-list-type-item.description");
+        this.id = "listtypeman.new-list-type";
+        this.displayName = ts.getTranslatedString("module.listtypeman.actions.new-list-type-item.name");
+        this.description = ts.getTranslatedString("module.listtypeman.actions.new-list-type-item.description");
         this.order = 1000;
     
         setCallback((parameters) -> {
