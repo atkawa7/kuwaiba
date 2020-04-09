@@ -36,7 +36,6 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotF
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermittedException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -94,9 +93,6 @@ public class SDHModule extends AbstractCommercialModule {
      * The timeslot used by a container in a transport link or in another container
      */
     public static String PROPERTY_SDHPOSITION = "sdhPosition";
-    
-    @Autowired
-    private ApplicationEntityManager ammm;
     
     @Override
     public String getName() {

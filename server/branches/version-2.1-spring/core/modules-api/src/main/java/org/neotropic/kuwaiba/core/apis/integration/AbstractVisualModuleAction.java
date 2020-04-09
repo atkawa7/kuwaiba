@@ -26,7 +26,7 @@ import java.util.Properties;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  * @param <W> The visual component that will be displayed upon triggering the action.
  */
-public abstract class AbstractVisualModuleAction<W> {
+public abstract class AbstractVisualModuleAction<W> implements Comparable<AbstractVisualModuleAction>{
     /**
      * Icon for buttons, menu entries, widget cards, etc. SVG images are encouraged, because they can be easily rescaled.
      */
@@ -102,4 +102,9 @@ public abstract class AbstractVisualModuleAction<W> {
      * @return The action.
      */
     public abstract AbstractModuleAction getModuleAction();
+    
+    @Override
+    public int compareTo(AbstractVisualModuleAction otherAction) {
+        return Integer.compare(getModuleAction().getOrder(), otherAction.getModuleAction().getOrder());
+    }
 }

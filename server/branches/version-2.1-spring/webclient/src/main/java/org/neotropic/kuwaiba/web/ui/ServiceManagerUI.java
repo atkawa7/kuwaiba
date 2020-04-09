@@ -20,6 +20,11 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import java.util.ArrayList;
+import org.checkerframework.common.value.qual.ArrayLen;
+import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewCustomerVisualAction;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewServiceVisualAction;
@@ -46,13 +51,28 @@ public class ServiceManagerUI extends VerticalLayout {
     private NewServiceVisualAction actNewService;
     @Autowired
     private TranslationService ts;
+    /**
+     * Reference to the Metadata Entity Manager.
+     */
+    @Autowired
+    private MetadataEntityManager mem;
+    /**
+     * Reference to the Application Entity Manager.
+     */
+    @Autowired
+    private ApplicationEntityManager aem;
+    /**
+     * Reference to the Business Entity Manager.
+     */
+    @Autowired
+    private BusinessEntityManager bem;
     
     @Override
     public void onAttach(AttachEvent ev) {
         setSizeFull();
         getUI().ifPresent( ui -> ui.getPage().setTitle(ts.getTranslatedString("module.serviceman.title")));
         
-        this.dashboard = new ServiceManagerDashboard(ts);
+        this.dashboard = new ServiceManagerDashboard(new ArrayList(), ts, mem, aem, bem);
         add(this.dashboard);
         
         this.actNewCustomer.registerActionCompletedLister(this.dashboard);

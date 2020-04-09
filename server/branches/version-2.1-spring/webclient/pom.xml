@@ -8,7 +8,7 @@
         <relativePath/>
     </parent>
     
-    <name>Vaadin-based Web Client</name>
+    <name>Web Client</name>
     <description>The default Vaadin-based web interface</description>
     <artifactId>webclient</artifactId>
     <packaging>jar</packaging>

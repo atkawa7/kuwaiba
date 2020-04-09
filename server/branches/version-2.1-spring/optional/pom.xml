@@ -6,6 +6,9 @@
         <artifactId>version-2.1-spring</artifactId>
         <version>2.1</version>
     </parent>
+    
+    <name>Optional Modules</name>
+    <description>Collection of non-essential open source modules. They're not mandatory for Kuwaiba to work headlessly</description>
     <artifactId>optional</artifactId>
     <packaging>pom</packaging>
     <modules>

@@ -37,7 +37,7 @@ public class NewCustomerAction extends AbstractModuleAction {
         this.id = "serviceman.new-customer";
         this.displayName = ts.getTranslatedString("module.serviceman.actions.new-customer.name");
         this.description = ts.getTranslatedString("module.serviceman.actions.new-customer.description");
-        this.order = 1000;
+        this.order = 1;
     
         setCallback((parameters) -> {
             HashMap<String, Object> parametersAsHashMap = ModuleActionParameter.asHashMap(parameters);

@@ -21,10 +21,8 @@ import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -67,21 +65,21 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
 
     @Autowired
     private TranslationService ts;
-    
-    @Autowired
-    protected MetadataEntityManager mem;
-    
     /**
-     * Reference to the application entity manager.
+     * Reference to the Metadata Entity Manager.
      */
     @Autowired
-    protected ApplicationEntityManager aem;
+    private MetadataEntityManager mem;
     /**
-     * Reference to the business entity manager.
+     * Reference to the Application Entity Manager.
      */
     @Autowired
-    protected BusinessEntityManager bem;
-    
+    private ApplicationEntityManager aem;
+    /**
+     * Reference to the Business Entity Manager.
+     */
+    @Autowired
+    private BusinessEntityManager bem;
     /**
      * The grid with the list Types
      */

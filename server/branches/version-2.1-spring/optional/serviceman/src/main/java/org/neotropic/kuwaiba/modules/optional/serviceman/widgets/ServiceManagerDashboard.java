@@ -18,15 +18,27 @@ package org.neotropic.kuwaiba.modules.optional.serviceman.widgets;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
+import java.util.List;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractModuleDashboard;
+import org.neotropic.kuwaiba.core.apis.integration.AbstractVisualModuleAction;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
+import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
+import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewServiceVisualAction;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
 /**
@@ -50,10 +62,33 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractM
      * Sub-header with shortcut to common actions such as creating a service or a customer.
      */
     private HorizontalLayout lytQuickActions;
+    /**
+     * The actual content. Initially it is just a search box then it can become a page displaying the service/customer details.
+     */
     private VerticalLayout lytContent;
+    /**
+     * Reference to the Metadata Entity Manager.
+     */
+    private MetadataEntityManager mem;
+    /**
+     * Reference to the Application Entity Manager.
+     */
+    private ApplicationEntityManager aem;
+    /**
+     * Reference to the Business Entity Manager.
+     */
+    private BusinessEntityManager bem;
+    /**
+     * The available actions
+     */
+    private NewServiceVisualAction actNewService;
 
-    public ServiceManagerDashboard(TranslationService ts) {
+    public ServiceManagerDashboard(List<AbstractVisualModuleAction> quickActions, TranslationService ts, MetadataEntityManager mem, 
+            ApplicationEntityManager aem, BusinessEntityManager bem) {
         this.ts = ts;
+        this.mem = mem;
+        this.aem = aem;
+        this.bem = bem;
     }
 
     @Override
@@ -66,13 +101,12 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractM
         lytSearch.setId("serviceman-search-component");
         lytSearch.setAlignItems(Alignment.CENTER);
         
+        VerticalLayout lytSearchResults = new VerticalLayout();
+        lytSearchResults.setSizeFull();
+        
         TextField txtSearch = new TextField();
         txtSearch.setClassName("search-box-large");
         txtSearch.setPlaceholder(ts.getTranslatedString("module.general.messages.search"));
-        txtSearch.addKeyPressListener( event -> {
-            if (event.getKey().getKeys().get(0).equals(Key.ENTER.getKeys().get(0))) // Weirdly enough, event.getKey().equals(Key.Enter) returns false ALWAYS
-                Notification.show("Search");
-        });
         
         RadioButtonGroup<Integer> chkMainFilter = new RadioButtonGroup();
         chkMainFilter.setClassName("radio-button-filters-large");
@@ -83,8 +117,26 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractM
                                 ts.getTranslatedString("module.serviceman.dashboard.ui.search-customers"); //To change body of generated lambdas, choose Tools | Templates.
         }));
         
+        txtSearch.addKeyPressListener( event -> {
+            if (event.getKey().getKeys().get(0).equals(Key.ENTER.getKeys().get(0))) { // Weirdly enough, event.getKey().equals(Key.Enter) returns false ALWAYS
+                Grid<BusinessObjectLight> tblResults = new  Grid<>();
+                tblResults.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
+                tblResults.setItemDetailsRenderer(new SearchResultRenderer());
+                try {
+                    tblResults.setItems(bem.getObjectsWithFilterLight(chkMainFilter.getValue() == OPTION_SEARCH_SERVICES ? Constants.CLASS_GENERICSERVICE :
+                            Constants.CLASS_GENERICCUSTOMER, Constants.PROPERTY_NAME, txtSearch.getValue()));
+                    lytSearchResults.removeAll();
+                    lytSearchResults.add(tblResults);
+                } catch (InventoryException ex) {
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
+                }
+            }
+        });
+        
         lytSearch.add(txtSearch, new HorizontalLayout(chkMainFilter));
-        this.lytContent.add(new HorizontalLayout(), lytSearch, new HorizontalLayout());
+        
+        
+        this.lytContent.add(new HorizontalLayout(), lytSearch, lytSearchResults);
 
         add(this.lytContent);
     }
@@ -95,5 +147,34 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractM
             new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
         else
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
+    }
+    
+    private class SearchResult {
+        private BusinessObjectLight businessObject;
+        List<AbstractVisualModuleAction> actions;
+
+        public BusinessObjectLight getBusinessObject() {
+            return businessObject;
+        }
+
+        public void setBusinessObject(BusinessObjectLight businessObject) {
+            this.businessObject = businessObject;
+        }
+
+        public List<AbstractVisualModuleAction> getActions() {
+            return actions;
+        }
+
+        public void setActions(List<AbstractVisualModuleAction> actions) {
+            this.actions = actions;
+        }
+    }
+    
+    private class SearchResultRenderer extends ComponentRenderer<HorizontalLayout, BusinessObjectLight> {
+
+        @Override
+        public HorizontalLayout createComponent(BusinessObjectLight result) {
+            return new HorizontalLayout(new Label(result.getName()), new Label(result.getClassName()));
+        } 
     }
 }
