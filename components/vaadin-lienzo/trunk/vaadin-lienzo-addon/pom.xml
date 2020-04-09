@@ -61,6 +61,13 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+                <repository>
+                    <id>central</id>
+                    <url>https://repo.maven.apache.org/maven2</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
 	</repositories>
 
 	<pluginRepositories>
@@ -74,6 +81,18 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</pluginRepository>
+                <pluginRepository>
+                    <id>central</id>
+                    <name>Central Repository</name>
+                    <url>https://repo.maven.apache.org/maven2</url>
+                    <layout>default</layout>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <updatePolicy>never</updatePolicy>
+                    </releases>
+                </pluginRepository>
 	</pluginRepositories>
 
 	<dependencies>
