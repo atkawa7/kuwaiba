@@ -9,6 +9,6 @@
     <artifactId>list-types</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>ltmanager</module>
+        <module>listtypeman</module>
     </modules>
 </project>
