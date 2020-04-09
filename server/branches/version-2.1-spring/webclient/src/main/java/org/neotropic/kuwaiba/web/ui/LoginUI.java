@@ -128,7 +128,7 @@ public class LoginUI extends VerticalLayout implements BeforeEnterObserver {
                     // Send the session object to browser's session
                     ui.getSession().setAttribute(Session.class, aSession);
                     // Navigate to Welcome page
-                    ui.navigate(ServiceManagerUI.class);
+                    ui.navigate(ListTypeManagerUI.class);
                 } catch (InventoryException ex) { // User not found is no longer caught. Generic exception for any other unexpected situation
                     new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), 
                             ts.getTranslatedString("module.login.ui.cant-login")).open();

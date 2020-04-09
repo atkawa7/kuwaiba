@@ -85,8 +85,8 @@ public class Application {
         private TranslationService ts;
 //        @Autowired
 //        private KuwaibaSoapWebService ws;
-        @Autowired
-        private SDHModule modSdh;
+//        @Autowired
+//        private SDHModule modSdh;
         
         @PostConstruct
         void init() {
@@ -123,9 +123,9 @@ public class Application {
                             Calendar.getInstance().getTime(), ex.getLocalizedMessage()));
             }
             
-            Logger.getLogger(SDHModule.class.getName()).log(Level.INFO, 
-                    String.format(ts.getTranslatedString("module.general.messages.initializing"), modSdh.getName()));
-            modSdh.configureModule(persistenceService.getMem(), persistenceService.getAem(), persistenceService.getBem());
+//            Logger.getLogger(SDHModule.class.getName()).log(Level.INFO, 
+//                    String.format(ts.getTranslatedString("module.general.messages.initializing"), modSdh.getName()));
+//            modSdh.configureModule(persistenceService.getMem(), persistenceService.getAem(), persistenceService.getBem());
 
 
 //            if (persistenceService.getState().equals(PersistenceService.EXECUTION_STATE.RUNNING)) {
