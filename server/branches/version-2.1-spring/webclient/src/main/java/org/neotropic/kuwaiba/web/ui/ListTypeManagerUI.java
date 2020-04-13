@@ -41,8 +41,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.modules.core.listtypes.listtypeman.actions.NewListTypeItemVisualAction;
-import org.neotropic.kuwaiba.modules.core.listtypes.listtypeman.widgets.ListTypeManagerDashboard;
+import org.neotropic.kuwaiba.modules.core.listtypeman.actions.NewListTypeItemVisualAction;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -51,14 +50,11 @@ import org.springframework.beans.factory.annotation.Autowired;
  * to different functionalities are presented in a single place.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-@Route(value = "ltmanager", layout = MainLayout.class)
+@Route(value = "listtypeman", layout = MainLayout.class)
 public class ListTypeManagerUI extends VerticalLayout implements ActionCompletedListener {
-     /**
-     * The main dashboard
-     */
-    private ListTypeManagerDashboard dashboard;
+
     /**
-     * 
+     * the visual action to create a new list type item
      */
     @Autowired
     private NewListTypeItemVisualAction newListTypeItemVisualAction;
@@ -174,7 +170,7 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
         grdListTypes.setHeightFull();
         
         grdListTypes.addColumn(ClassMetadataLight::getName).setHeader(ts.getTranslatedString("module.general.labels.name"))
-                .setKey(ts.getTranslatedString("module.general.labels.listty"));
+                .setKey(ts.getTranslatedString("module.general.labels.name"));
         
         grdListTypes.addItemClickListener(ev -> {
             try {
