@@ -1,0 +1,7 @@
+paper-autocomplete#styled {
+    --paper-input-container-focus-color: var(--accent-color);
+    --paper-autocomplete-suggestions-item-min-height: 60px;
+    --paper-autocomplete-suggestions-wrapper: {
+      background-color: var(--paper-amber-50);
+    };
+}
