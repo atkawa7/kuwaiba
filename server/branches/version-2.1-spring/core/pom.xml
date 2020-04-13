@@ -11,7 +11,7 @@
     <modules>
         <module>persistence</module>
         <module>data-model</module>
-        <module>list-types</module>
+        <module>listtypeman</module>
         <module>navigation</module>
         <module>search</module>
         <module>internationalization</module>
