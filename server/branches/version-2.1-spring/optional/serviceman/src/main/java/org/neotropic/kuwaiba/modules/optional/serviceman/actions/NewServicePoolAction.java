@@ -21,31 +21,48 @@ import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractModuleAction;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
+import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Privilege;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
+import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Creates a new service.
+ * Creates a new service pool.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Component
 public class NewServicePoolAction extends AbstractModuleAction {
+    /**
+     * Reference to the translation service.
+     */
+    @Autowired
+    private TranslationService ts;
+    /**
+     * Reference to the business entity manager.
+     */
+    @Autowired
+    private ApplicationEntityManager aem;
     
     @PostConstruct
     protected void init() {
-        this.id = "serviceman.new-service";
-        this.displayName = ts.getTranslatedString("module.serviceman.actions.new-service.name");
-        this.description = ts.getTranslatedString("module.serviceman.actions.new-service.description");
-        this.order = 1000;
+        this.id = "serviceman.new-service-pool";
+        this.displayName = ts.getTranslatedString("module.serviceman.actions.new-service-pool.name");
+        this.description = ts.getTranslatedString("module.serviceman.actions.new-service-pool.description");
+        this.order = 4;
     
         setCallback((parameters) -> {
             HashMap<String, Object> parametersAsHashMap = ModuleActionParameter.asHashMap(parameters);
-            String poolId = (String)parametersAsHashMap.get("poolId");
-            String customerClass = (String)parametersAsHashMap.get("serviceClass");
-            HashMap<String, String> attributes = (HashMap<String, String>)parametersAsHashMap.get("attributes");
+            BusinessObjectLight customer = (BusinessObjectLight)parametersAsHashMap.get(Constants.PROPERTY_PARENT);
+            String poolName = (String)parametersAsHashMap.get(Constants.PROPERTY_NAME);
+            String poolDescription = (String)parametersAsHashMap.get(Constants.PROPERTY_DESCRIPTION);
+            
             try {
-                bem.createPoolItem(poolId, customerClass, attributes, null);
+                aem.createPoolInObject(customer.getClassName(), customer.getId(), poolName, poolDescription, 
+                        Constants.CLASS_GENERICSERVICE, ApplicationEntityManager.POOL_TYPE_MODULE_COMPONENT);
             } catch (InventoryException ex) {
                 throw new ModuleActionException(ex.getMessage());
             } 

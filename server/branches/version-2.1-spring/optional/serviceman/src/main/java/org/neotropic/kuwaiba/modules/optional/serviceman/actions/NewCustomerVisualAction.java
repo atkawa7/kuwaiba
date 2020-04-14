@@ -100,6 +100,9 @@ public class NewCustomerVisualAction extends AbstractVisualModuleAction<Dialog> 
             
             // To show errors or warnings related to the input parameters.
             Label lblMessages = new Label();
+            lblMessages.setClassName("embedded-notification-error");
+            lblMessages.setWidthFull();
+            lblMessages.setVisible(false);
             
             TextField txtName = new TextField(ts.getTranslatedString("module.serviceman.actions.new-customer.ui.customer-name"));
             txtName.setRequiredIndicatorVisible(true);
@@ -107,9 +110,10 @@ public class NewCustomerVisualAction extends AbstractVisualModuleAction<Dialog> 
 
             Button btnOK = new Button(ts.getTranslatedString("module.general.messages.ok"), (e) -> {
                 try {
-                    if (cmbCustomerPools.getValue() == null || cmbCustomerTypes.getValue() == null || txtName.isEmpty())
+                    if (cmbCustomerPools.getValue() == null || cmbCustomerTypes.getValue() == null || txtName.isEmpty()) {
                         lblMessages.setText(ts.getTranslatedString("module.general.messages.must-fill-all-fields"));
-                    else {
+                        lblMessages.setVisible(true);
+                    } else {
                         HashMap<String, String> attributes = new HashMap<>();
                         attributes.put(Constants.PROPERTY_NAME, txtName.getValue());
                         newCustomerAction.getCallback().execute(new ModuleActionParameter<>("poolId", cmbCustomerPools.getValue().getId()), 

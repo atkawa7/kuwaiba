@@ -51,30 +51,30 @@ import org.springframework.stereotype.Component;
 @Component
 public class NewServiceVisualAction extends AbstractVisualModuleAction<Dialog> {
     /**
-     * Reference to the translation service.
-     */
-    @Autowired
-    private TranslationService ts;
-    /**
      * Reference to the underlying action.
      */
     @Autowired
     private NewServiceAction newServiceAction;
     /**
+     * Reference to the translation service.
+     */
+    @Autowired
+    private TranslationService ts;
+    /**
      * Reference to the metadata entity manager.
      */
     @Autowired
-    protected MetadataEntityManager mem;
+    private MetadataEntityManager mem;
     /**
      * Reference to the application entity manager.
      */
     @Autowired
-    protected ApplicationEntityManager aem;
+    private ApplicationEntityManager aem;
     /**
      * Reference to the business entity manager.
      */
     @Autowired
-    protected BusinessEntityManager bem;
+    private BusinessEntityManager bem;
     
     @Override
     public Dialog getVisualComponent(ModuleActionParameter... parameters) {
@@ -87,6 +87,9 @@ public class NewServiceVisualAction extends AbstractVisualModuleAction<Dialog> {
             
             // To show errors or warnings related to the input parameters.
             Label lblMessages = new Label();
+            lblMessages.setClassName("embedded-notification-error");
+            lblMessages.setWidthFull();
+            lblMessages.setVisible(false);
             
             List<BusinessObjectLight> customers = bem.getObjectsOfClassLight(Constants.CLASS_GENERICCUSTOMER, -1);
             ComboBox<BusinessObjectLight> cmbCustomers = new ComboBox<>(ts.getTranslatedString("module.serviceman.actions.new-service.ui.customer"), customers);
@@ -121,9 +124,10 @@ public class NewServiceVisualAction extends AbstractVisualModuleAction<Dialog> {
 
             Button btnOK = new Button(ts.getTranslatedString("module.general.messages.ok"), (e) -> {
                 try {
-                    if (cmbCustomers.getValue() == null || cmbServicePools.getValue() == null || cmbServiceTypes.getValue() == null || txtName.isEmpty())
+                    if (cmbCustomers.getValue() == null || cmbServicePools.getValue() == null || cmbServiceTypes.getValue() == null || txtName.isEmpty()) {
                         lblMessages.setText(ts.getTranslatedString("module.general.messages.must-fill-all-fields"));
-                    else {
+                        lblMessages.setVisible(true);
+                    } else {
                         HashMap<String, String> attributes = new HashMap<>();
                         attributes.put(Constants.PROPERTY_NAME, txtName.getValue());
                         newServiceAction.getCallback().execute(new ModuleActionParameter<>("poolId", cmbServicePools.getValue().getId()), 

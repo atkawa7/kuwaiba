@@ -18,9 +18,11 @@ package org.neotropic.kuwaiba.modules.optional.serviceman.widgets;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
@@ -34,11 +36,9 @@ import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewServiceVisualAction;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
 /**
@@ -55,6 +55,10 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractM
      */
     private static final int OPTION_SEARCH_CUSTOMERS = 2;
     /**
+     * The actions that can be added to the header submenu as shortcut actions.
+     */
+    private List<AbstractVisualModuleAction<Dialog>> quickActions;
+    /**
      * Reference to the translation service.
      */
     private TranslationService ts;
@@ -67,33 +71,25 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractM
      */
     private VerticalLayout lytContent;
     /**
-     * Reference to the Metadata Entity Manager.
-     */
-    private MetadataEntityManager mem;
-    /**
-     * Reference to the Application Entity Manager.
-     */
-    private ApplicationEntityManager aem;
-    /**
      * Reference to the Business Entity Manager.
      */
     private BusinessEntityManager bem;
-    /**
-     * The available actions
-     */
-    private NewServiceVisualAction actNewService;
 
-    public ServiceManagerDashboard(List<AbstractVisualModuleAction> quickActions, TranslationService ts, MetadataEntityManager mem, 
+
+    public ServiceManagerDashboard(List<AbstractVisualModuleAction<Dialog>> quickActions, TranslationService ts, MetadataEntityManager mem, 
             ApplicationEntityManager aem, BusinessEntityManager bem) {
         this.ts = ts;
-        this.mem = mem;
-        this.aem = aem;
         this.bem = bem;
+        this.quickActions = quickActions;
     }
 
     @Override
     public void onAttach(AttachEvent ev) {
         setSizeFull();
+        this.lytQuickActions = new HorizontalLayout(buildHeaderSubmenu());
+        this.lytQuickActions.setWidthFull();
+        this.lytQuickActions.setAlignItems(Alignment.CENTER);
+        
         this.lytContent = new VerticalLayout();
         this.lytContent.setSizeFull();
         
@@ -114,20 +110,29 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractM
         chkMainFilter.setValue(OPTION_SEARCH_SERVICES);
         chkMainFilter.setRenderer(new TextRenderer<>(item -> {
             return item == OPTION_SEARCH_SERVICES ? ts.getTranslatedString("module.serviceman.dashboard.ui.search-services") :
-                                ts.getTranslatedString("module.serviceman.dashboard.ui.search-customers"); //To change body of generated lambdas, choose Tools | Templates.
+                                ts.getTranslatedString("module.serviceman.dashboard.ui.search-customers");
         }));
         
         txtSearch.addKeyPressListener( event -> {
             if (event.getKey().getKeys().get(0).equals(Key.ENTER.getKeys().get(0))) { // Weirdly enough, event.getKey().equals(Key.Enter) returns false ALWAYS
-                Grid<BusinessObjectLight> tblResults = new  Grid<>();
-                tblResults.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
-                tblResults.setItemDetailsRenderer(new SearchResultRenderer());
+                
                 try {
-                    tblResults.setItems(bem.getObjectsWithFilterLight(chkMainFilter.getValue() == OPTION_SEARCH_SERVICES ? Constants.CLASS_GENERICSERVICE :
-                            Constants.CLASS_GENERICCUSTOMER, Constants.PROPERTY_NAME, txtSearch.getValue()));
+                    List<BusinessObjectLight> searchResults = bem.getSuggestedObjectsWithFilter(txtSearch.getValue(), chkMainFilter.getValue() == OPTION_SEARCH_SERVICES ? Constants.CLASS_GENERICSERVICE :
+                            Constants.CLASS_GENERICCUSTOMER, -1);
+                    
                     lytSearchResults.removeAll();
-                    lytSearchResults.add(tblResults);
-                } catch (InventoryException ex) {
+                    
+                    if (searchResults.isEmpty())
+                        lytSearchResults.add(new Label(ts.getTranslatedString("module.general.messages.no-search-results")));
+                    else {
+                        Grid<BusinessObjectLight> tblResults = new  Grid<>();
+                        tblResults.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
+                        tblResults.setItemDetailsRenderer(new SearchResultRenderer());
+                        tblResults.setItems(searchResults);
+                        tblResults.addColumn(BusinessObjectLight::getName);
+                        lytSearchResults.add(tblResults);
+                    }
+                } catch (Exception ex) {
                     new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
                 }
             }
@@ -136,9 +141,23 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractM
         lytSearch.add(txtSearch, new HorizontalLayout(chkMainFilter));
         
         
-        this.lytContent.add(new HorizontalLayout(), lytSearch, lytSearchResults);
+        this.lytContent.add(lytQuickActions, lytSearch, lytSearchResults);
 
         add(this.lytContent);
+    }
+    
+    /**
+     * Builds a header menu with the options exclusive to this module (new customer, new service, new pools, etc).
+     */
+    private MenuBar buildHeaderSubmenu() {
+        MenuBar mnuQuickActions = new MenuBar();
+        mnuQuickActions.setWidth("40%");
+        this.quickActions.stream().forEach( anAction -> {
+            mnuQuickActions.addItem(anAction.getModuleAction().getDisplayName(), event -> {
+                anAction.getVisualComponent().open();
+            });
+        });
+        return mnuQuickActions;
     }
     
     @Override
@@ -176,5 +195,5 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractM
         public HorizontalLayout createComponent(BusinessObjectLight result) {
             return new HorizontalLayout(new Label(result.getName()), new Label(result.getClassName()));
         } 
-    }
+    }    
 }

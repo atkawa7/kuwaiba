@@ -22,7 +22,10 @@ import org.neotropic.kuwaiba.core.apis.integration.AbstractModuleAction;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Privilege;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -31,13 +34,23 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class NewServiceAction extends AbstractModuleAction {
+    /**
+     * Reference to the translation service.
+     */
+    @Autowired
+    private TranslationService ts;
+    /**
+     * Reference to the business entity manager.
+     */
+    @Autowired
+    private BusinessEntityManager bem;
     
     @PostConstruct
     protected void init() {
         this.id = "serviceman.new-service";
         this.displayName = ts.getTranslatedString("module.serviceman.actions.new-service.name");
         this.description = ts.getTranslatedString("module.serviceman.actions.new-service.description");
-        this.order = 1000;
+        this.order = 2;
     
         setCallback((parameters) -> {
             HashMap<String, Object> parametersAsHashMap = ModuleActionParameter.asHashMap(parameters);
