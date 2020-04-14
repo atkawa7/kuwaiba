@@ -11,11 +11,11 @@
     <modules>
         <module>persistence</module>
         <module>data-model</module>
-        <module>listtypeman</module>
         <module>navigation</module>
         <module>search</module>
         <module>internationalization</module>
         <module>authentication</module>
         <module>modules-api</module>
+        <module>listtypeman</module>
     </modules>
 </project>
