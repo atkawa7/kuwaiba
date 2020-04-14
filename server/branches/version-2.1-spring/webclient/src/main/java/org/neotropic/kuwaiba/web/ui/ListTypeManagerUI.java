@@ -21,8 +21,11 @@ import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.grid.ItemClickEvent;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -30,8 +33,11 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
+import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
@@ -41,6 +47,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.modules.core.listtypeman.actions.DeleteListTypeItemVisualAction;
 import org.neotropic.kuwaiba.modules.core.listtypeman.actions.NewListTypeItemVisualAction;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,26 +86,38 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
     /**
      * The grid with the list Types
      */
-    private Grid<ClassMetadataLight> grdListTypes;
+    private Grid<ClassMetadataLight> tblListTypes;
     
     /**
      * The grid with the list Type items
      */
-    private Grid<BusinessObjectLight> grdListTypeItems;
+    private Grid<BusinessObjectLight> tblListTypeItems;
+    /**
+     * object to save the selected list type
+     */
+    private ClassMetadataLight currentListType;
+    /**
+     * button used to create a new item with the list type preselected
+     */
+    Button btnAddListTypeItemSec;
+    
+     /**
+     * the visual action to delete a list type item
+     */
+    @Autowired
+    private DeleteListTypeItemVisualAction deleteListTypeItemVisualAction;
 
     public ListTypeManagerUI() {
         super();
-        
+        tblListTypes = new Grid<>();
+        tblListTypeItems = new Grid<>();
         setSizeFull();
     }
     
     @Override
     public void onAttach(AttachEvent ev) {
         setSizeFull();
-        getUI().ifPresent( ui -> ui.getPage().setTitle(ts.getTranslatedString("module.listtypeman.title")));
-        
-//        this.dashboard = new ServiceManagerDashboard(ts);
-//        add(this.dashboard);
+        getUI().ifPresent( ui -> ui.getPage().setTitle(ts.getTranslatedString("module.listtypeman.title")));      
 
         try {
             createContent();
@@ -111,13 +130,22 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
     @Override
     public void onDetach(DetachEvent ev) {
         this.newListTypeItemVisualAction.unregisterListener(this);
+        this.deleteListTypeItemVisualAction.unregisterListener(this);
     }
     
     @Override
     public void actionCompleted(ActionCompletedListener.ActionCompletedEvent ev) {
-        if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCESS)
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
-        else
+        if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCESS) {
+            try {
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
+                
+                if (currentListType != null)
+                    loadListTypeItems(currentListType);
+                
+            } catch (Exception ex) {
+                Logger.getLogger(ListTypeManagerUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
     }
 
@@ -127,65 +155,77 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
         lytMainContent.setSizeFull();
          
         this.newListTypeItemVisualAction.registerActionCompletedLister(this);
+        this.deleteListTypeItemVisualAction.registerActionCompletedLister(this);
         
         Button btnAddListTypeItem = new Button(this.newListTypeItemVisualAction.getModuleAction().getDisplayName(), (event) -> {
             this.newListTypeItemVisualAction.getVisualComponent().open();
         });            
         
+        btnAddListTypeItemSec = new Button(this.newListTypeItemVisualAction.getModuleAction().getDisplayName(), (event) -> {
+            ModuleActionParameter listTypeParameter = new ModuleActionParameter("listType", currentListType);
+            this.newListTypeItemVisualAction.getVisualComponent(listTypeParameter).open();
+        }); 
+        btnAddListTypeItemSec.setEnabled(false);
+        
         buildListTypeGrid();
         
-        VerticalLayout leftContent = new VerticalLayout(grdListTypes, btnAddListTypeItem);
+        VerticalLayout rightContent = new VerticalLayout(btnAddListTypeItemSec, tblListTypeItems);
+        rightContent.setAlignItems(Alignment.END);
+        
+        VerticalLayout leftContent = new VerticalLayout(tblListTypes, btnAddListTypeItem);
          leftContent.setWidth("400px");
                 
          buildListTypeItemsGrid();      
          
-         lytMainContent.add(leftContent, grdListTypeItems);
+         lytMainContent.add(leftContent, rightContent);
          
          add(lytMainContent);
     }
 
     private void buildListTypeItemsGrid() {
-        // build the items grid
+        // build the items grid     
         
-        grdListTypeItems = new Grid<>();
+        tblListTypeItems.setHeightFull();
         
-        grdListTypeItems.setHeightFull();
-        
-        grdListTypeItems.addColumn(BusinessObjectLight::getName).setHeader(ts.getTranslatedString("module.listtypeman.listtypes"))
+        tblListTypeItems.addColumn(BusinessObjectLight::getName).setHeader(ts.getTranslatedString("module.listtypeman.listtypeitems"))
                 .setKey(ts.getTranslatedString("module.general.labels.name"));
        
-        grdListTypeItems.addComponentColumn(item -> createListTypeItemActionGrid(item));
+        tblListTypeItems.addComponentColumn(item -> createListTypeItemActionGrid(item));
     }
 
     private void buildListTypeGrid() throws InvalidArgumentException, MetadataObjectNotFoundException {
         //build list type grid
         List<ClassMetadataLight> listTypes = mem.getSubClassesLight(Constants.CLASS_GENERICOBJECTLIST, false, false);
-        
-        grdListTypes = new Grid<>();
-        
+             
         ListDataProvider<ClassMetadataLight> dataProvider = new ListDataProvider<>(listTypes);
         
-        grdListTypes.setDataProvider(dataProvider);
+        tblListTypes.setDataProvider(dataProvider);
         
-        grdListTypes.setHeightFull();
+        tblListTypes.setHeightFull();
         
-        grdListTypes.addColumn(ClassMetadataLight::getName).setHeader(ts.getTranslatedString("module.general.labels.name"))
+        tblListTypes.addColumn(ClassMetadataLight::getName).setHeader(createCenteredHeader(ts.getTranslatedString("module.listtypeman.listtypes")))
                 .setKey(ts.getTranslatedString("module.general.labels.name"));
         
-        grdListTypes.addItemClickListener(ev -> {
+        tblListTypes.addItemClickListener(ev -> {
             try {
-                List<BusinessObjectLight> listTypeItems = aem.getListTypeItems(ev.getItem().getName());
-                grdListTypeItems.setItems(listTypeItems);
-                grdListTypeItems.getDataProvider().refreshAll();
+                btnAddListTypeItemSec.setEnabled(true);
+                currentListType = ev.getItem();
+                loadListTypeItems(ev.getItem());
             } catch (Exception ex) {
                 
             }
         });
         
-        HeaderRow filterRow = grdListTypes.appendHeaderRow();
+        HeaderRow filterRow = tblListTypes.appendHeaderRow();
         
         TextField txtFilterListTypeName = createTxtFieldListTypeName(dataProvider);
-        filterRow.getCell(grdListTypes.getColumnByKey(ts.getTranslatedString("module.general.labels.name"))).setComponent(txtFilterListTypeName);
+        filterRow.getCell(tblListTypes.getColumnByKey(ts.getTranslatedString("module.general.labels.name"))).setComponent(txtFilterListTypeName);
+    }
+
+    private void loadListTypeItems(ClassMetadataLight item) throws MetadataObjectNotFoundException, InvalidArgumentException {
+        List<BusinessObjectLight> listTypeItems = aem.getListTypeItems(item.getName());
+        tblListTypeItems.setItems(listTypeItems);
+        tblListTypeItems.getDataProvider().refreshAll();
     }
     
     /**
@@ -203,13 +243,29 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
         return txtListTypeName;
     }
 
-    private HorizontalLayout createListTypeItemActionGrid(BusinessObjectLight businessObjectLight) {
+    private HorizontalLayout createListTypeItemActionGrid(BusinessObjectLight listTypeItem) {
         HorizontalLayout lyt;      
         Button btnEdit = new Button(new Icon(VaadinIcon.PENCIL));
-        Button btnDelete = new Button(new Icon(VaadinIcon.TRASH));
+        Button btnDelete = new Button(new Icon(VaadinIcon.TRASH), ev -> {
+
+            ModuleActionParameter listTypeParameter = new ModuleActionParameter("listTypeItem", listTypeItem);
+            this.deleteListTypeItemVisualAction.getVisualComponent(listTypeParameter).open();
+
+        });
         lyt = new HorizontalLayout(btnEdit, btnDelete);
         lyt.setWidthFull();
         lyt.setSpacing(true);
+        
+        return lyt;
+    }
+
+    private HorizontalLayout createCenteredHeader(String translatedString) {
+        Label lblHeader = new Label(translatedString);
+        lblHeader.setClassName("boldText");
+        HorizontalLayout lyt = new HorizontalLayout(lblHeader);
+        lyt.setAlignItems(FlexComponent.Alignment.CENTER);
+        lyt.setJustifyContentMode(JustifyContentMode.CENTER);
+        
         return lyt;
     }
 }
