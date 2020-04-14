@@ -80,12 +80,27 @@ public class NewListTypeItemVisualAction extends AbstractVisualModuleAction<Dial
         // necessary information will have to be requested (the parent customer pool and the customer type), 
         // but if launched from a customer pool, only the customer type will be requested.
        try {
+            ClassMetadataLight seletedListType = null;
+           
+            if (parameters != null & parameters.length > 0) {
+                for (ModuleActionParameter param : parameters) {
+                    if (param.getName().equals("listType"))
+                       seletedListType = (ClassMetadataLight) param.getValue();
+                }
+            }
+            
             List<ClassMetadataLight> listTypes = mem.getSubClassesLight(Constants.CLASS_GENERICOBJECTLIST, false, false);
             
             ComboBox<ClassMetadataLight> cmbListTypes = new ComboBox<>("List Type", listTypes);
             cmbListTypes.setAllowCustomValue(false);
             cmbListTypes.setRequiredIndicatorVisible(true);
             cmbListTypes.setSizeFull();
+            
+            if (seletedListType != null) {
+                cmbListTypes.setValue(seletedListType);
+                cmbListTypes.setEnabled(false);
+            }
+                
         
             TextField txtName = new TextField("Name");
             txtName.setRequiredIndicatorVisible(true);
