@@ -48,27 +48,7 @@ public abstract class AbstractModuleAction {
      * What is to be execute once the action is triggered.
      */
     protected ModuleActionCallback callback;
-    /**
-     * Reference to the metadata entity manager.
-     */
-    @Autowired
-    protected MetadataEntityManager mem;
-    /**
-     * Reference to the application entity manager.
-     */
-    @Autowired
-    protected ApplicationEntityManager aem;
-    /**
-     * Reference to the business entity manager.
-     */
-    @Autowired
-    protected BusinessEntityManager bem;
-    /**
-     * Reference to the internationalization service.
-     */
-    @Autowired
-    protected TranslationService ts;
-
+  
     public String getId() {
         return id;
     }
