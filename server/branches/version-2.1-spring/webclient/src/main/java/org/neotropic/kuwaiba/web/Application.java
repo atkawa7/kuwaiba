@@ -16,7 +16,6 @@
 
 package org.neotropic.kuwaiba.web;
 
-import com.neotropic.kuwaiba.commercial.SDHModule;
 import java.util.Calendar;
 import java.util.Properties;
 import java.util.logging.Level;

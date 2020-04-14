@@ -43,6 +43,15 @@
     font-size: xx-small;
 }
 
+.embedded-notification-error {
+    padding: 5px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: red;
+    color: red;
+    background-color: #FFA4A4;
+}
+
 /* Service Manager*/
 #serviceman-search-full {
     max-height: 200px;

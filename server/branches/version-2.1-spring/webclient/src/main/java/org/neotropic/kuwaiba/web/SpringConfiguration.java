@@ -25,8 +25,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ComponentScan(basePackages = { "org.neotropic.kuwaiba.core.i18n", // The translation service.
-                                "org.neotropic.kuwaiba.core.apis.integration", // The API necessary to create modules.
                                 "org.neotropic.kuwaiba.core.persistence", //The persistence service.
+                                "org.neotropic.kuwaiba.core.apis.integration", // The API necessary to create modules.
                                 "org.neotropic.kuwaiba.northbound.ws", // The SOAP-based web service interface implementation.
                                 "org.neotropic.kuwaiba.modules.optional.serviceman.actions",
                                 "com.neotropic.kuwaiba.commercial", // Commercial modules
