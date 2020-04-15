@@ -1,8 +1,16 @@
 
+@font-face {
+    font-family: ubuntu-r;
+    src: url('../fonts/ubuntu-r.ttf');
+}
+
 body {
     /* Overrides the default material colors */
     --material-primary-color: var(--primary-color, #5F9F9F) !important;
     --material-primary-text-color: var(--primary-color, #5F9F9F) !important;
+    --material-font-family: 'ubuntu-r' !important;
+    --material-body-font-size: small;
+    
 }
 
 /* Inherited styles */

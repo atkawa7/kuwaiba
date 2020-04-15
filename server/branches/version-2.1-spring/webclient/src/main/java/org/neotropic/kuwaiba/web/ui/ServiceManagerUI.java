@@ -21,6 +21,7 @@ import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import java.util.Arrays;
+import org.neotropic.kuwaiba.core.apis.integration.ActionRegistry;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
@@ -64,6 +65,11 @@ public class ServiceManagerUI extends VerticalLayout {
     @Autowired
     private NewServicePoolVisualAction actNewServicePool;
     /**
+     * Reference to the action registry.
+     */
+    @Autowired
+    private ActionRegistry actionRegistry;
+    /**
      * Reference to the translation service.
      */
     @Autowired
@@ -89,8 +95,7 @@ public class ServiceManagerUI extends VerticalLayout {
         setSizeFull();
         getUI().ifPresent( ui -> ui.getPage().setTitle(ts.getTranslatedString("module.serviceman.title")));
         
-        this.dashboard = new ServiceManagerDashboard(Arrays.asList(actNewCustomer, actNewService, 
-                actNewCustomerPool, actNewServicePool), ts, mem, aem, bem);
+        this.dashboard = new ServiceManagerDashboard(actionRegistry, ts, mem, aem, bem);
         add(this.dashboard);
         
         this.actNewCustomer.registerActionCompletedLister(this.dashboard);

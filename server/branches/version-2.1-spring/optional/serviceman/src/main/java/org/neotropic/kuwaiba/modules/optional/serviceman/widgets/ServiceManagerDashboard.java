@@ -18,9 +18,12 @@ package org.neotropic.kuwaiba.modules.optional.serviceman.widgets;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -30,8 +33,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import java.util.List;
-import org.neotropic.kuwaiba.core.apis.integration.AbstractModuleDashboard;
-import org.neotropic.kuwaiba.core.apis.integration.AbstractVisualModuleAction;
+import org.neotropic.kuwaiba.core.apis.integration.AbstractVisualAction;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
@@ -40,12 +42,15 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.util.visual.notifications.SimpleNotification;
+import org.neotropic.kuwaiba.core.apis.integration.AbstractDashboard;
+import org.neotropic.kuwaiba.core.apis.integration.ActionRegistry;
+import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
 
 /**
  * The visual entry point to the Service Manager module.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class ServiceManagerDashboard extends VerticalLayout implements AbstractModuleDashboard {
+public class ServiceManagerDashboard extends VerticalLayout implements AbstractDashboard {
     /**
      * Used in the main filter to indicate that the search will be performed on services.
      */
@@ -55,9 +60,17 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractM
      */
     private static final int OPTION_SEARCH_CUSTOMERS = 2;
     /**
-     * The actions that can be added to the header submenu as shortcut actions.
+     * Reference to the action registry.
      */
-    private List<AbstractVisualModuleAction<Dialog>> quickActions;
+    private ActionRegistry actionRegistry;
+    /**
+     * Actions associated to services.
+     */
+    private List<AbstractVisualAction> serviceActions;
+    /**
+     * Actions associated to customers.
+     */
+    private List<AbstractVisualAction> customerActions;
     /**
      * Reference to the translation service.
      */
@@ -75,12 +88,11 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractM
      */
     private BusinessEntityManager bem;
 
-
-    public ServiceManagerDashboard(List<AbstractVisualModuleAction<Dialog>> quickActions, TranslationService ts, MetadataEntityManager mem, 
+    public ServiceManagerDashboard(ActionRegistry actionRegistry, TranslationService ts, MetadataEntityManager mem, 
             ApplicationEntityManager aem, BusinessEntityManager bem) {
+        this.actionRegistry = actionRegistry;
         this.ts = ts;
         this.bem = bem;
-        this.quickActions = quickActions;
     }
 
     @Override
@@ -127,9 +139,9 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractM
                     else {
                         Grid<BusinessObjectLight> tblResults = new  Grid<>();
                         tblResults.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
-                        tblResults.setItemDetailsRenderer(new SearchResultRenderer());
                         tblResults.setItems(searchResults);
-                        tblResults.addColumn(BusinessObjectLight::getName);
+                        tblResults.addColumn(new SearchResultRenderer(chkMainFilter.getValue() == OPTION_SEARCH_SERVICES ? 
+                                serviceActions : customerActions));
                         lytSearchResults.add(tblResults);
                     }
                 } catch (Exception ex) {
@@ -151,11 +163,25 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractM
      */
     private MenuBar buildHeaderSubmenu() {
         MenuBar mnuQuickActions = new MenuBar();
-        mnuQuickActions.setWidth("40%");
-        this.quickActions.stream().forEach( anAction -> {
-            mnuQuickActions.addItem(anAction.getModuleAction().getDisplayName(), event -> {
-                anAction.getVisualComponent().open();
-            });
+        MenuItem mnuServices = mnuQuickActions.addItem(ts.getTranslatedString("module.serviceman.dashboard.ui.services"));
+        MenuItem mnuCustomers = mnuQuickActions.addItem(ts.getTranslatedString("module.serviceman.dashboard.ui.customers"));
+        
+        this.serviceActions.stream().forEach( aServiceAction -> {
+            if (aServiceAction.isQuickAction()) {
+                mnuServices.getSubMenu().addItem(aServiceAction.getModuleAction().getDisplayName(), event -> {
+                    ((Dialog)aServiceAction.getVisualComponent()).open();
+                });
+            }
+            
+        });
+        
+        this.customerActions.stream().forEach( aCustomerAction -> {
+            if (aCustomerAction.isQuickAction()) {
+                mnuCustomers.getSubMenu().addItem(aCustomerAction.getModuleAction().getDisplayName(), event -> {
+                    ((Dialog)aCustomerAction.getVisualComponent()).open();
+                });
+            }
+            
         });
         return mnuQuickActions;
     }
@@ -170,7 +196,7 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractM
     
     private class SearchResult {
         private BusinessObjectLight businessObject;
-        List<AbstractVisualModuleAction> actions;
+        List<AbstractVisualAction> actions;
 
         public BusinessObjectLight getBusinessObject() {
             return businessObject;
@@ -180,20 +206,47 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractM
             this.businessObject = businessObject;
         }
 
-        public List<AbstractVisualModuleAction> getActions() {
+        public List<AbstractVisualAction> getActions() {
             return actions;
         }
 
-        public void setActions(List<AbstractVisualModuleAction> actions) {
+        public void setActions(List<AbstractVisualAction> actions) {
             this.actions = actions;
         }
     }
     
-    private class SearchResultRenderer extends ComponentRenderer<HorizontalLayout, BusinessObjectLight> {
+    private class SearchResultRenderer extends ComponentRenderer<VerticalLayout, BusinessObjectLight> {
+        List<AbstractVisualAction> actions;
 
+        public SearchResultRenderer(List<AbstractVisualAction> actions) {
+            super();
+            this.actions = actions;
+        }
+        
         @Override
-        public HorizontalLayout createComponent(BusinessObjectLight result) {
-            return new HorizontalLayout(new Label(result.getName()), new Label(result.getClassName()));
+        public VerticalLayout createComponent(BusinessObjectLight result) {
+            VerticalLayout lytSearchResult = new VerticalLayout();
+            lytSearchResult.setSizeFull();
+            Div divTitle = new Div();
+            divTitle.setClassName("search-result-title");
+            HorizontalLayout lytActions = new HorizontalLayout();
+            lytActions.setClassName("search-result-action");
+            actions.stream().forEach( anAction -> {
+                Button btnAction = new Button(anAction.getModuleAction().getDisplayName());
+                btnAction.getElement().setProperty("title", anAction.getModuleAction().getDescription());
+                btnAction.addClickListener( event -> {
+                    try {
+                        anAction.getModuleAction().getCallback().execute();
+                    } catch (ModuleActionException ex) {
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
+                    }
+                });
+                lytActions.add(btnAction);
+            });
+            
+            
+            lytSearchResult.add(divTitle, lytActions);
+            return lytSearchResult;
         } 
     }    
 }

@@ -20,6 +20,6 @@ package org.neotropic.kuwaiba.core.apis.integration;
  * The entry point to all modules should implement this interface.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public interface AbstractModuleDashboard extends ActionCompletedListener {
+public interface AbstractDashboard extends ActionCompletedListener {
 
 }

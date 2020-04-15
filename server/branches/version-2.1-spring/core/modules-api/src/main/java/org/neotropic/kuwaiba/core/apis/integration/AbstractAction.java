@@ -16,18 +16,14 @@
 
 package org.neotropic.kuwaiba.core.apis.integration;
 
-import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Privilege;
-import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
-import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
-import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * All actions in a module must extend 
+ * All actions in a module must extend from this class, no matter if the are business, application 
+ * or metadata related.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public abstract class AbstractModuleAction {
+public abstract class AbstractAction {
     /**
      * A unique identifier for the action within the module .
      */
@@ -105,7 +101,7 @@ public abstract class AbstractModuleAction {
     public abstract boolean requiresConfirmation();
     
     /**
-     * The callback code to be executed once the action is triggered.
+     * A functional interface callback code to be executed once the action is triggered.
      */
     public interface ModuleActionCallback {
         public void execute(ModuleActionParameter... parameters) throws ModuleActionException;

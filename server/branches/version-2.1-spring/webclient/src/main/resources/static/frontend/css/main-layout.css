@@ -52,6 +52,15 @@
     background-color: #FFA4A4;
 }
 
+.search-result-title {
+    font-size: medium;
+    color: #FFA4A4;
+}
+
+.search-result-action {
+    color: mediumaquamarine;
+}
+
 /* Service Manager*/
 #serviceman-search-full {
     max-height: 200px;

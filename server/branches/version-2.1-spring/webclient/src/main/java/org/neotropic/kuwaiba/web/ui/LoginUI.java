@@ -105,15 +105,13 @@ public class LoginUI extends VerticalLayout implements BeforeEnterObserver {
     private FormLayout buildLoginForm() {        
         txtUsername = new TextField();
         txtUsername.setWidth("18em");
-        txtUsername.setPlaceholder("User");
         txtUsername.focus();
         
         txtPassword = new PasswordField();
         txtPassword.setWidth("18em");
-        txtPassword.setPlaceholder("Password");
         
         Icon loginIcon = new Icon(VaadinIcon.SIGN_IN);
-        btnLogin = new Button("Login", loginIcon);
+        btnLogin = new Button(ts.getTranslatedString("module.login.ui.login"), loginIcon);
         
         // This is used to press Enter instead of clicking the button
         btnLogin.addClickShortcut(Key.ENTER);
@@ -141,8 +139,8 @@ public class LoginUI extends VerticalLayout implements BeforeEnterObserver {
         });
         
         FormLayout lytForm = new FormLayout();
-        lytForm.addFormItem(txtUsername, "User");
-        lytForm.addFormItem(txtPassword, "Password");
+        lytForm.addFormItem(txtUsername, ts.getTranslatedString("module.login.ui.user"));
+        lytForm.addFormItem(txtPassword, ts.getTranslatedString("module.login.ui.password"));
         lytForm.add(btnLogin);
         lytForm.setSizeFull();
         

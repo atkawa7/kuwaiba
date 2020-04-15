@@ -25,8 +25,8 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import org.neotropic.kuwaiba.core.apis.integration.AbstractModuleAction;
-import org.neotropic.kuwaiba.core.apis.integration.AbstractVisualModuleAction;
+import org.neotropic.kuwaiba.core.apis.integration.AbstractAction;
+import org.neotropic.kuwaiba.core.apis.integration.AbstractVisualAction;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
@@ -43,7 +43,7 @@ import org.springframework.stereotype.Component;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Component
-public class NewServicePoolVisualAction extends AbstractVisualModuleAction<Dialog> {
+public class NewServicePoolVisualAction extends AbstractVisualAction<Dialog> {
     /**
      * Reference to the translation service.
      */
@@ -128,7 +128,12 @@ public class NewServicePoolVisualAction extends AbstractVisualModuleAction<Dialo
     }
 
     @Override
-    public AbstractModuleAction getModuleAction() {
+    public AbstractAction getModuleAction() {
         return newServicePoolAction;
+    }
+    
+    @Override
+    public boolean isQuickAction() {
+        return true;
     }
 }

@@ -18,7 +18,7 @@ package org.neotropic.kuwaiba.modules.optional.serviceman.actions;
 
 import java.util.HashMap;
 import javax.annotation.PostConstruct;
-import org.neotropic.kuwaiba.core.apis.integration.AbstractModuleAction;
+import org.neotropic.kuwaiba.core.apis.integration.AbstractAction;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Privilege;
@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Component
-public class NewServiceAction extends AbstractModuleAction {
+public class NewServiceAction extends AbstractAction {
     /**
      * Reference to the translation service.
      */
