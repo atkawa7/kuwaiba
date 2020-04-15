@@ -186,7 +186,7 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
         
         VerticalLayout lytListTypeItems = new VerticalLayout(btnAddListTypeItemSec, tblListTypeItems);
         lytListTypeItems.setAlignItems(Alignment.END);
-        lytListTypeItems.setWidth("40%");
+        lytListTypeItems.setWidth("30%");
         
         VerticalLayout lytListTypes= new VerticalLayout(tblListTypes, btnAddListTypeItem);
         lytListTypes.setWidth("30%");
@@ -196,7 +196,7 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
         propertysheet = new PropertySheet(new ArrayList<>(), "");
         propertysheet.addPropertyValueChangedListener(this);
         VerticalLayout lytPropertySheet = new VerticalLayout(propertysheet);
-        lytPropertySheet.setWidth("30%");
+        lytPropertySheet.setWidth("40%");
          
         lytMainContent.add(lytListTypes, lytListTypeItems, lytPropertySheet);
          
@@ -311,7 +311,7 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
                 
                 HashMap<String, String> attributes = new HashMap<>();
 
-                attributes.put(property.getName(), property.getValue().toString());
+                attributes.put(property.getName(), property.getAsStringToPersist());
 
                 bem.updateObject(currentListTypeItem.getClassName(), currentListTypeItem.getId(), attributes);
 
