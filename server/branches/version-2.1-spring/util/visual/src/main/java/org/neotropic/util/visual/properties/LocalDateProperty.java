@@ -18,21 +18,25 @@ package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 /**
- * Support for date-type properties
- * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
+ * Support for local-date-type properties
+ * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
-public class DateProperty extends AbstractProperty<Date>{
+public class LocalDateProperty extends AbstractProperty<LocalDate>{
 
-    public DateProperty(String name, String displayName, String description, Date value) {
+    public LocalDateProperty(String name, String displayName, String description, LocalDate value) {
         super(name, displayName, description, value);
     }
     
-    public DateProperty(String name, String displayName, String description, long value) {
-        super(name, displayName, description, new Date(value));
+    public LocalDateProperty(String name, String displayName, String description, long value) {
+        super(name, displayName, description, Instant.ofEpochMilli(value).atZone(ZoneId.systemDefault()).toLocalDate());
+        
     }
 
     @Override
@@ -46,19 +50,22 @@ public class DateProperty extends AbstractProperty<Date>{
     }
 
     @Override
-    public AbstractField getInplaceEditor() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public AbstractField getInplaceEditor() {       
+        DatePicker datePicker = new DatePicker();
+        datePicker.setPlaceholder("...");
+        return datePicker;
     }
 
     @Override
     public String getAsString() {
-        SimpleDateFormat formatter = new SimpleDateFormat("MMMMM d, YYYY HH:mm:ss");
-        return formatter.format(getValue());
+        return getValue().toString();
     }
 
     @Override
     public String getAsStringToPersist() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Instant instant = getValue().atStartOfDay(ZoneId.systemDefault()).toInstant();	
+	long timeInMillis = instant.toEpochMilli();
+        return timeInMillis + "";
     }
 
 }

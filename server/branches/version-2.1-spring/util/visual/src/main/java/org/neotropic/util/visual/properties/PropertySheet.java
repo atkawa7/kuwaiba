@@ -16,10 +16,13 @@
 package org.neotropic.util.visual.properties;
 
 
+import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,13 +40,38 @@ public class PropertySheet extends Grid<AbstractProperty> {
 
         setSizeUndefined();
         addComponentColumn((property) -> {
-            Label label = new Label( property.getName() ); //NOI18N
+            Label label = new Label( property.getName()); //NOI18N
             return label;
-        }).setHeader("Attribute Name");
+        }).setHeader("Attribute Name").setWidth("100px");
         addComponentColumn((property) -> {
-            Label label = new Label(property.getAsString());
-            return label;
-        }).setHeader("Value");
+            
+            Label labelValue = new Label(property.getAsString());
+            
+            AbstractField editField = property.getInplaceEditor();
+            editField.setValue(property.getValue());
+            editField.setVisible(false);
+            editField.getElement().addEventListener("change", ev -> {
+                labelValue.setText(editField.getValue().toString());
+                property.setValue( editField.getValue());
+                labelValue.setVisible(true);
+                editField.setVisible(false);
+                firePropertyValueChangedEvent(property);
+                this.getColumnByKey("advancedEditor").setVisible(true);
+            });
+            
+            VerticalLayout lytValue = new VerticalLayout(labelValue, editField);
+            lytValue.getElement().addEventListener("dblclick", e -> {
+                 boolean visibilityValue = labelValue.isVisible();
+
+                 labelValue.setVisible(!visibilityValue);
+                 editField.setVisible(visibilityValue);
+                 
+                 this.getColumnByKey("advancedEditor").setVisible(!visibilityValue);
+                 
+             });
+            
+            return lytValue;
+        }).setHeader("Value").setKey("value");
         addComponentColumn((property) -> {
             if (property.supportsAdvancedEditor()) {
                  Button btnAdvancedEditor = new Button("...", ev -> {
@@ -59,8 +87,8 @@ public class PropertySheet extends Grid<AbstractProperty> {
                  });
                  return btnAdvancedEditor;
             }
-            return new Button("...");
-        }).setHeader("");
+            return new HorizontalLayout();
+        }).setHeader("").setKey("advancedEditor");
     }
     
     public PropertySheet(List<AbstractProperty> properties, String caption) {

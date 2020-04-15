@@ -96,4 +96,9 @@ public abstract class AbstractProperty<T> {
      * @return The string representation of the value of the property
      */
     public abstract String getAsString();
+    /**
+     * The string value representation to persist
+     * @return the string to persist
+     */  
+    public abstract String getAsStringToPersist();
 }

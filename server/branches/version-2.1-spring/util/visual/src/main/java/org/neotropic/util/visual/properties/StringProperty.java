@@ -55,4 +55,9 @@ public class StringProperty extends AbstractProperty<String>{
     public String getAsString() {
         return getValue();
     }
+
+    @Override
+    public String getAsStringToPersist() {
+        return getValue(); 
+    }
 }

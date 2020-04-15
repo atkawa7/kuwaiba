@@ -16,9 +16,18 @@
 package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.UI;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObject;
@@ -44,6 +53,8 @@ public class PropertyFactory {
     /**
      * Builds a property set from a given inventory object
      * @param businessObject The business object
+     * @param bem BusinessEntityManager service
+     * @param mem MetadataEntityManager service
      * @return The set of properties ready to used in a property sheet component
      * @throws MetadataObjectNotFoundException
      * @throws BusinessObjectNotFoundException
@@ -57,12 +68,24 @@ public class PropertyFactory {
             ClassMetadata classMetadata = mem.getClass(businessObject.getClassName());
             
             ArrayList<AbstractProperty> objectProperties = new ArrayList<>();
-            
-            for (AttributeMetadata am : classMetadata.getAttributes())
-                objectProperties.add(new StringProperty(am.getName(), 
+           
+            for (AttributeMetadata am : classMetadata.getAttributes()) {
+                AbstractProperty property = null;
+                if (am.getType().equals("String"))
+                    property = new StringProperty(am.getName(), 
                         am.getDisplayName(), am.getDescription(), 
-                        objectAttributes.get(am.getName()) == null ? "<Not Set>" : objectAttributes.get(am.getName())));
-        
+                        objectAttributes.get(am.getName()) == null ? "<Not Set>" : objectAttributes.get(am.getName()));
+                else if (am.getType().equals("Date")) {
+                    
+                    DateFormat format = new SimpleDateFormat("EE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);             
+                    property = new LocalDateProperty(am.getName(),
+                            am.getDisplayName(), am.getDescription(),
+                            objectAttributes.get(am.getName()) == null ? null : LocalDate.parse(objectAttributes.get(am.getName()), formatter));
+                }
+                if (property != null)
+                    objectProperties.add(property);
+            }
         return objectProperties;
     }
 }
