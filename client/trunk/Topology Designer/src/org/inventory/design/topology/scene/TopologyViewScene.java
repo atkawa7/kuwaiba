@@ -148,9 +148,9 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
-            XMLEventWriter xmlew = xmlof.createXMLEventWriter(baos);
+            XMLEventWriter xmlew = xmlof.createXMLEventWriter(baos, "UTF-8"); // By default the character set is ISO something
             XMLEventFactory xmlef = XMLEventFactory.newInstance();
-            
+
             QName qnameView = new QName("view");
             xmlew.add(xmlef.createStartElement(qnameView, null, null));
             xmlew.add(xmlef.createAttribute(new QName("version"), FORMAT_VERSION));
@@ -286,7 +286,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
         
         try {
             ByteArrayInputStream bais = new ByteArrayInputStream(structure);
-            XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
+            XMLStreamReader reader = inputFactory.createXMLStreamReader(bais, "UTF-8");
 
             while (reader.hasNext()){
                 int event = reader.next();
