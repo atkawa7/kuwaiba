@@ -43,6 +43,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractDashboard;
+import org.neotropic.kuwaiba.core.apis.integration.AbstractVisualInventoryAction;
 import org.neotropic.kuwaiba.core.apis.integration.ActionRegistry;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
 
@@ -66,11 +67,11 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
     /**
      * Actions associated to services.
      */
-    private List<AbstractVisualAction> serviceActions;
+    private List<AbstractVisualInventoryAction> serviceActions;
     /**
      * Actions associated to customers.
      */
-    private List<AbstractVisualAction> customerActions;
+    private List<AbstractVisualInventoryAction> customerActions;
     /**
      * Reference to the translation service.
      */
@@ -93,6 +94,9 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
         this.actionRegistry = actionRegistry;
         this.ts = ts;
         this.bem = bem;
+        this.customerActions = actionRegistry.getActionsApplicableTo(Constants.CLASS_GENERICCUSTOMER);
+        this.serviceActions = actionRegistry.getActionsApplicableTo(Constants.CLASS_GENERICSERVICE);
+        
     }
 
     @Override
@@ -216,9 +220,9 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
     }
     
     private class SearchResultRenderer extends ComponentRenderer<VerticalLayout, BusinessObjectLight> {
-        List<AbstractVisualAction> actions;
+        List<AbstractVisualInventoryAction> actions;
 
-        public SearchResultRenderer(List<AbstractVisualAction> actions) {
+        public SearchResultRenderer(List<AbstractVisualInventoryAction> actions) {
             super();
             this.actions = actions;
         }
@@ -243,7 +247,6 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
                 });
                 lytActions.add(btnAction);
             });
-            
             
             lytSearchResult.add(divTitle, lytActions);
             return lytSearchResult;
