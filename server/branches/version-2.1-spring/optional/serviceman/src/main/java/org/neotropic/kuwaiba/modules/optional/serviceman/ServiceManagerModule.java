@@ -17,8 +17,12 @@
 package org.neotropic.kuwaiba.modules.optional.serviceman;
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractModule;
+import org.neotropic.kuwaiba.core.apis.integration.ActionRegistry;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewServicePoolVisualAction;
+import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewServiceVisualAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +34,28 @@ import org.springframework.stereotype.Component;
 public class ServiceManagerModule extends AbstractModule<VerticalLayout> {
     @Autowired
     private TranslationService ts;
+    /**
+     * Reference to the action that creates services.
+     */
+    @Autowired
+    private NewServiceVisualAction actNewService;
+    /**
+     * Reference to the action that creates service pools.
+     */
+    @Autowired
+    private NewServicePoolVisualAction actNewServicePool;
+    /**
+     * Reference to the action registry.
+     */
+    @Autowired
+    private ActionRegistry actionRegistry;
+    
+    @PostConstruct
+    public void init() {
+        this.actionRegistry.registerAction(actNewService);
+        this.actionRegistry.registerAction(actNewServicePool);
+    }
+    
     
     @Override
     public String getId() {

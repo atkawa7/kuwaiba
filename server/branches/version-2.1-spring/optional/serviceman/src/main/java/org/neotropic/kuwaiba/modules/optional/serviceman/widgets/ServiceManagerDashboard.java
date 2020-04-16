@@ -23,7 +23,6 @@ import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -231,8 +230,8 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
         public VerticalLayout createComponent(BusinessObjectLight result) {
             VerticalLayout lytSearchResult = new VerticalLayout();
             lytSearchResult.setSizeFull();
-            Div divTitle = new Div();
-            divTitle.setClassName("search-result-title");
+            Label lblTitle = new Label(result.toString());
+            lblTitle.setClassName("search-result-title");
             HorizontalLayout lytActions = new HorizontalLayout();
             lytActions.setClassName("search-result-action");
             actions.stream().forEach( anAction -> {
@@ -248,7 +247,7 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
                 lytActions.add(btnAction);
             });
             
-            lytSearchResult.add(divTitle, lytActions);
+            lytSearchResult.add(lblTitle, lytActions);
             return lytSearchResult;
         } 
     }    
