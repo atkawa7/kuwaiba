@@ -25,7 +25,9 @@ public abstract class AbstractVisualInventoryAction extends AbstractVisualAction
      * Tells the system what inventory objects support said action. Superclasses are also allowed. 
      * For example, returning GenericCommunicationsElement applies to all devices such as routers, multiplexers or switches, 
      * while InventoryObject will apply to any object.
-     * @return The class or superclass whose instances the action applies to.
+     * @return The class or superclass whose instances the action applies to. If null, this indicate that while the action is 
+     * related to inventory, it doesn't apply to a particular type, for example, when creating a Customer pool in the service manager 
+     * (or any root pool, for that matter).
      */
     public abstract String appliesTo();
 }

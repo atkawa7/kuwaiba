@@ -64,14 +64,6 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
      */
     private ActionRegistry actionRegistry;
     /**
-     * Actions associated to services.
-     */
-    private List<AbstractVisualInventoryAction> serviceActions;
-    /**
-     * Actions associated to customers.
-     */
-    private List<AbstractVisualInventoryAction> customerActions;
-    /**
      * Reference to the translation service.
      */
     private TranslationService ts;
@@ -84,6 +76,10 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
      */
     private VerticalLayout lytContent;
     /**
+     * Reference to the Metadata Entity Manager.
+     */
+    private MetadataEntityManager mem;
+    /**
      * Reference to the Business Entity Manager.
      */
     private BusinessEntityManager bem;
@@ -92,18 +88,17 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
             ApplicationEntityManager aem, BusinessEntityManager bem) {
         this.actionRegistry = actionRegistry;
         this.ts = ts;
+        this.mem = mem;
         this.bem = bem;
-        this.customerActions = actionRegistry.getActionsApplicableTo(Constants.CLASS_GENERICCUSTOMER);
-        this.serviceActions = actionRegistry.getActionsApplicableTo(Constants.CLASS_GENERICSERVICE);
-        
+        setPadding(false);
+        setMargin(false);
     }
 
     @Override
     public void onAttach(AttachEvent ev) {
         setSizeFull();
         this.lytQuickActions = new HorizontalLayout(buildHeaderSubmenu());
-        this.lytQuickActions.setWidthFull();
-        this.lytQuickActions.setAlignItems(Alignment.CENTER);
+        this.lytQuickActions.setId("serviceman-quick-actions");
         
         this.lytContent = new VerticalLayout();
         this.lytContent.setSizeFull();
@@ -144,7 +139,8 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
                         tblResults.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
                         tblResults.setItems(searchResults);
                         tblResults.addColumn(new SearchResultRenderer(chkMainFilter.getValue() == OPTION_SEARCH_SERVICES ? 
-                                serviceActions : customerActions));
+                                this.actionRegistry.getActionsApplicableTo(Constants.CLASS_GENERICSERVICE) : 
+                                this.actionRegistry.getActionsApplicableTo(Constants.CLASS_GENERICCUSTOMER)));
                         lytSearchResults.add(tblResults);
                     }
                 } catch (Exception ex) {
@@ -166,25 +162,20 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
      */
     private MenuBar buildHeaderSubmenu() {
         MenuBar mnuQuickActions = new MenuBar();
+        mnuQuickActions.setWidthFull();
         MenuItem mnuServices = mnuQuickActions.addItem(ts.getTranslatedString("module.serviceman.dashboard.ui.services"));
         MenuItem mnuCustomers = mnuQuickActions.addItem(ts.getTranslatedString("module.serviceman.dashboard.ui.customers"));
         
-        this.serviceActions.stream().forEach( aServiceAction -> {
-            if (aServiceAction.isQuickAction()) {
-                mnuServices.getSubMenu().addItem(aServiceAction.getModuleAction().getDisplayName(), event -> {
-                    ((Dialog)aServiceAction.getVisualComponent()).open();
-                });
-            }
-            
+        this.actionRegistry.getActionsApplicableTo(Constants.CLASS_GENERICSERVICE).stream().forEach(anAction -> {
+            if (anAction.isQuickAction()) 
+                mnuServices.getSubMenu().addItem(anAction.getModuleAction().getDisplayName(), 
+                        event -> ((Dialog)anAction.getVisualComponent()).open());
         });
         
-        this.customerActions.stream().forEach( aCustomerAction -> {
-            if (aCustomerAction.isQuickAction()) {
-                mnuCustomers.getSubMenu().addItem(aCustomerAction.getModuleAction().getDisplayName(), event -> {
-                    ((Dialog)aCustomerAction.getVisualComponent()).open();
-                });
-            }
-            
+        this.actionRegistry.getActionsApplicableTo(Constants.CLASS_GENERICCUSTOMER).stream().forEach(anAction -> {
+            if (anAction.isQuickAction()) 
+                mnuCustomers.getSubMenu().addItem(anAction.getModuleAction().getDisplayName(), 
+                        event -> ((Dialog)anAction.getVisualComponent()).open());
         });
         return mnuQuickActions;
     }
@@ -230,12 +221,14 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
         public VerticalLayout createComponent(BusinessObjectLight result) {
             VerticalLayout lytSearchResult = new VerticalLayout();
             lytSearchResult.setSizeFull();
+            lytSearchResult.setPadding(false);
             Label lblTitle = new Label(result.toString());
             lblTitle.setClassName("search-result-title");
             HorizontalLayout lytActions = new HorizontalLayout();
-            lytActions.setClassName("search-result-action");
+            lytActions.setClassName("search-result-actions");
             actions.stream().forEach( anAction -> {
                 Button btnAction = new Button(anAction.getModuleAction().getDisplayName());
+                btnAction.setClassName("search-result-action-button");
                 btnAction.getElement().setProperty("title", anAction.getModuleAction().getDescription());
                 btnAction.addClickListener( event -> {
                     try {

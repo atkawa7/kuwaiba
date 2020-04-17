@@ -10,9 +10,11 @@
 }
 
 #main-layout-content {
-    font-size: small !important;
+    font-size: small;
     height: 100%;
     width: 100%;
+    padding: 2px;
+    margin: 2px;
 }
 
 #main-layout-footer {
@@ -53,18 +55,30 @@
 }
 
 .search-result-title {
-    font-size: medium;
-    color: #FFA4A4;
+    color: #299AC8;
 }
 
-.search-result-action {
-    color: mediumaquamarine;
+.search-result-actions {
+    margin-top: 0px;
+    color: #29AD1D;
+}
+
+.search-result-action-button {
+    padding: 1px;
 }
 
 /* Service Manager*/
 #serviceman-search-full {
     max-height: 200px;
     width: 100%;
+}
+
+#serviceman-quick-actions {
+    align-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 1px;
+    margin: 1px;
 }
 
 #serviceman-search-component {

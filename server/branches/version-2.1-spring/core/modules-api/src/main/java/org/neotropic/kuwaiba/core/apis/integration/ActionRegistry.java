@@ -17,6 +17,7 @@
 package org.neotropic.kuwaiba.core.apis.integration;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -37,6 +38,11 @@ public class ActionRegistry {
      */
     private List<AbstractVisualInventoryAction> actions;
     /**
+     * 
+     */
+    private HashMap<String, List<AbstractVisualInventoryAction>> actionMap;
+    
+    /**
      * Reference to the MetadataEntityManager to access the data model cache.
      */
     @Autowired
@@ -44,20 +50,44 @@ public class ActionRegistry {
     
     public ActionRegistry() {
         this.actions = new ArrayList<>();
+        this.actionMap = new HashMap<>();
     }
     
+    /**
+     * Checks what actions are associated to a given inventory class. For example, 
+     * NewCustomer and DeleteCustomer are part of the returned list if <code>filter</code> is
+     * GenericCustomer. Note that the difference between this method and {@link #getActionsApplicableToRecursive(java.lang.String) } is 
+     * that this method will return the actions whose appliesTo matches exactly with the provided filter, while the latter 
+     * might match even subclasses of the appliesTo return value.
+     * @param filter The class to be evaluated.
+     * @return The actions that can be executed from an instance of the given class or superclass.
+     */
     public List<AbstractVisualInventoryAction> getActionsApplicableTo(String filter) {
+        return this.actionMap.containsKey(filter) ? this.actionMap.get(filter) : new ArrayList<>();
+    }
+    
+    /**
+     * Checks what actions are associated to a given inventory class. For example, 
+     * NewCustomer and DeleteCustomer are part of the returned list if <code>filter</code> is
+     * CorporateCustomer.
+     * @param filter The class to be evaluated.
+     * @return The actions that can be executed from an instance of the given class or superclass.
+     */
+    public List<AbstractVisualInventoryAction> getActionsApplicableToRecursive(String filter) {
         return this.actions.stream().filter((anAction) -> {
             try {
-                return mem.isSubclassOf(filter, anAction.appliesTo());
+                return anAction.appliesTo() == null ? false : mem.isSubclassOf(filter, anAction.appliesTo());
             } catch (MetadataObjectNotFoundException ex) { // No existing (or cached) classes will be ignored
                 return false;
             }
         }).collect(Collectors.toList());
     }
     
+    
+    
     /**
-     * Adds an action to the registry
+     * Adds an action to the registry. This method also feeds the action map cache structure, which is a hash map which keys are 
+     * all the possible super classes the actions are applicable to and the keys are the corresponding actions.
      * @param action The action to be added. Duplicated action ids are allowed, as long as the duplicate can be used 
      * to overwrite default behaviors, for example, if an object (say a connection) has a specific delete routine  that should 
      * be executed instead of the general purpose delete action, both actions should have the same id, and the renderer should 
@@ -65,6 +95,14 @@ public class ActionRegistry {
      */
     public void registerAction(AbstractVisualInventoryAction action) {
         this.actions.add(action);
+        if (action.appliesTo() != null) {
+            List<AbstractVisualInventoryAction> map = this.actionMap.get(action.appliesTo());
+            if (map == null) {
+                map = new ArrayList<>();
+                this.actionMap.put(action.appliesTo(), map);
+            }
+            map.add(action);
+        }
     }
     
     public List<AbstractVisualInventoryAction> getActions() {

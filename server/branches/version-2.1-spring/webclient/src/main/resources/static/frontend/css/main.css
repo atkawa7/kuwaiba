@@ -28,8 +28,13 @@ vaadin-text-field vaadin-password-field {
     border-color: darkgray;
     padding: 2px 2px 2px 2px;*/
 }
+
 vaadin-context-menu-item {
     text-transform: none;
+}
+
+vaadin-grid-cell-content {
+    padding: 2px;
 }
 
 vaadin-menu-bar-button {

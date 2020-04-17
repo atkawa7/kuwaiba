@@ -26,7 +26,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.RouterLayout;
 import java.util.Objects;
-import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,11 +55,13 @@ public class MainLayout extends FlexLayout implements RouterLayout {
      */
     @Autowired
     private TranslationService ts;
+    /**
+     * Reference to the menu builder service.
+     */
     @Autowired
     private MenuBuilderService menuBuilderService;
-    
-    @PostConstruct
-    public void init() {
+
+    public MainLayout() {
         setId("main-layout");
         setSizeFull();
         this.lytHeader = new HorizontalLayout();
@@ -75,10 +76,8 @@ public class MainLayout extends FlexLayout implements RouterLayout {
         this.lytContent.setId("main-layout-content");
         
         this.lytFooter.setId("main-layout-footer");
-        this.lytFooter.add(new Label(ts.getTranslatedString("module.general.messages.copyright-notice")));
         this.lytFooter.setAlignItems(Alignment.CENTER);
         this.lytFooter.setWidthFull();
-        
         
         add(this.lytHeader);
         add(this.lytContent);
@@ -87,6 +86,9 @@ public class MainLayout extends FlexLayout implements RouterLayout {
     
     @Override
     public void onAttach(AttachEvent ev) {
+        this.lytHeader.removeAll();
+        this.lytFooter.add(new Label(ts.getTranslatedString("module.general.messages.copyright-notice")));
+        
         getUI().ifPresent( ui -> { // If there isn't any active session, redirect to the login ui
             if (ui.getSession().getAttribute(Session.class) == null)
                 ui.navigate(LoginUI.class);
