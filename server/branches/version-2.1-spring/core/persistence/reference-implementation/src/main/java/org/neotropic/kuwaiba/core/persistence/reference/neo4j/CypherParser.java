@@ -114,10 +114,11 @@ public class CypherParser {
                 }
             }
             if(attibuteType.equals("String")){
-                if(condition == ExtendedQuery.LIKE)
-                        attributeValue = "\"(?i).*".concat(attributeValue).concat(".*\"");
-                else
-                    attributeValue = "\"(?i)".concat(attributeValue).concat("\"");
+                if(condition == ExtendedQuery.LIKE) {
+                    attributeValue = " TOLOWER(\"".concat(attributeValue).concat("\")");
+                    return "TOLOWER(instance.".concat(attributeName).concat(")").concat(operator).concat(attributeValue);
+                } else
+                    attributeValue = "\"".concat(attributeValue).concat("\"");
             }
                 
             return "instance.".concat(attributeName).concat(operator).concat(attributeValue);
@@ -163,11 +164,12 @@ public class CypherParser {
                     System.out.println("Wrong date format. It is expected " + Constants.DATE_FORMAT);//NOI18N
                 }
             }
-            if(attibuteType.equals("String")){
-                if(condition == ExtendedQuery.LIKE)
-                        attributeValue = "\"(?i).*".concat(attributeValue).concat(".*\"");
-                else
-                    attributeValue = "\"(?i)".concat(attributeValue).concat("\"");
+            if(attibuteType.equals("String")) {
+                if(condition == ExtendedQuery.LIKE) {
+                    attributeValue = " TOLOWER(\"".concat(attributeValue).concat("\")");
+                    return "TOLOWER(listType_" + joinName + "." + attributeName + ")" + operator + attributeValue;
+                } else
+                    attributeValue = "\"".concat(attributeValue).concat("\"");
             }
         }
         return "listType_" + joinName + "." + attributeName + operator + attributeValue;
@@ -210,10 +212,11 @@ public class CypherParser {
                 }
             }
             if(attibuteType.equals("String")){
-                if(condition == ExtendedQuery.LIKE)
-                        attributeValue = "\"(?i).*".concat(attributeValue).concat(".*\"");
-                else
-                    attributeValue = "\"(?i)".concat(attributeValue).concat("\"");
+                if(condition == ExtendedQuery.LIKE) {
+                    attributeValue = " TOLOWER(\"".concat(attributeValue).concat("\")");
+                    return "TOLOWER(" + joinName + "." + attributeName + ")" + operator + attributeValue;
+                } else
+                    attributeValue = "\"".concat(attributeValue).concat("\"");
             }
         }
         return joinName + "." + attributeName + operator + attributeValue;
@@ -227,7 +230,7 @@ public class CypherParser {
     public String getOperator(int condition){
         switch (condition) {
             case ExtendedQuery.EQUAL:
-                return " =~";//NOI18N
+                return " =";//NOI18N
             case ExtendedQuery.EQUAL_OR_GREATER_THAN:
                 return " >=";//NOI18N
             case ExtendedQuery.EQUAL_OR_LESS_THAN:
@@ -237,7 +240,7 @@ public class CypherParser {
             case ExtendedQuery.LESS_THAN:
                 return " <";//NOI18N
             case ExtendedQuery.LIKE:
-                return " =~";//NOI18N
+                return " CONTAINS ";//NOI18N
             default:
                 return "";
         }
