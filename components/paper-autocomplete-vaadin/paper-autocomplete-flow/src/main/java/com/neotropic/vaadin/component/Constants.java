@@ -21,7 +21,20 @@ package com.neotropic.vaadin.component;
  */
 public class Constants {
     private interface EnumProperty {
-        String getPropertyName();
+        String property();
+    }
+    public enum JsonKey {
+        TEXT ("text"),
+        VALUE ("value");
+
+        private final String key;
+
+        JsonKey(String key) {
+            this.key = key;
+        }
+        public String key() {
+            return key;
+        }
     }
     public static class PaperAutocomplete {
         public enum Property implements EnumProperty {
@@ -32,16 +45,21 @@ public class Constants {
             NO_LABEL_FLOAT ("noLabelFloat"), //NOI18N
             ALWAYS_FLOAT_LABEL ("alwaysFloatLabel"), //NOI18N
             SOURCE ("source"), //NOI18N
-            HIGHLIGHT_FIRST ("highlight-first"), //NOI18N
-            SHOW_RESULTS_ON_FOCUS ("show-results-on-focus"); //NOI18N
-
+            HIGHLIGHT_FIRST ("highlightFirst"), //NOI18N
+            SHOW_RESULTS_ON_FOCUS ("showResultsOnFocus"), //NOI18N
+            REMOTE_SOURCE ("remoteSource"), //NOI18N
+            MIN_LENGTH ("minLength"), //NOI18N
+            VALUE ("value"), //NOI18N
+            TEXT_PROPERTY ("textProperty"), //NOI18N
+            VALUE_PROPERTY ("valueProperty"); //NOI18N
+            
             private final String propertyName;
 
             private Property(String propertyName) {
                 this.propertyName = propertyName;
             }
             @Override
-            public String getPropertyName() {
+            public String property() {
                 return propertyName;
             }
         }
@@ -59,7 +77,7 @@ public class Constants {
                 this.propertyName = propertyName;
             }
             @Override
-            public String getPropertyName() {
+            public String property() {
                 return propertyName;
             }
         }

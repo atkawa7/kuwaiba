@@ -16,37 +16,34 @@
 package com.neotropic.vaadin.component;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.dependency.JsModule;
-import com.vaadin.flow.component.dependency.NpmPackage;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-@Tag("paper-icon-button")
-@JsModule("@polymer/paper-icon-button/paper-icon-button.js")
-@NpmPackage(value = "@polymer/paper-icon-button", version = "3.0.0")
+//@Tag("paper-icon-button")
+//@JsModule("@polymer/paper-icon-button/paper-icon-button.js")
+//@NpmPackage(value = "@polymer/paper-icon-button", version = "3.0.0")
 public class PaperIconButton extends Component {
     public PaperIconButton() {
     }
     public void setSlot(String slot) {
         getElement().setProperty(
-            Constants.PaperIconButton.Property.SLOT.getPropertyName(), slot);
+            Constants.PaperIconButton.Property.SLOT.name(), slot);
     }
     /**
      * @param suffix default value false
      */
     public void setSuffix(boolean suffix) {
         getElement().setProperty(
-            Constants.PaperIconButton.Property.SUFFIX.getPropertyName(), suffix);
+            Constants.PaperIconButton.Property.SUFFIX.name(), suffix);
     }
     public void setIcon(String icon) {
         getElement().setProperty(
-            Constants.PaperIconButton.Property.ICON.getPropertyName(), icon);
+            Constants.PaperIconButton.Property.ICON.name(), icon);
     }
     public void setPrefix(boolean prefix) {
         getElement().setProperty(
-            Constants.PaperIconButton.Property.PREFIX.getPropertyName(), prefix);
+            Constants.PaperIconButton.Property.PREFIX.name(), prefix);
     }
 }

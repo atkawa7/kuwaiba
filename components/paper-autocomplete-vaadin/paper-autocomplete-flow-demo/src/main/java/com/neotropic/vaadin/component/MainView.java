@@ -1,12 +1,13 @@
 package com.neotropic.vaadin.component;
 
+import com.neotropic.vaadin.component.CountryService.Country;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
-import elemental.json.Json;
-import elemental.json.JsonArray;
-import elemental.json.JsonObject;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -26,100 +27,123 @@ import org.springframework.beans.factory.annotation.Autowired;
         shortName = "Vaadin App",
         description = "This is an example Vaadin application.",
         enableInstallPrompt = true)
-//@CssImport("./styles/shared-styles.css")
-//@CssImport(value = "./styles/vaadin-text-field-styles.css", themeFor = "vaadin-app-layout")
 @CssImport(value = "./styles/vaadin-paper-autocomplete-styles.css")
 public class MainView extends VerticalLayout {
-
+    final String LOGIN = "login";
+    final String ID = "id";
     /**
      * Construct a new Vaadin view.
      * <p>
      * Build the initial UI state for the user accessing the application.
      *
-     * @param service The message service. Automatically injected Spring managed bean.
+     * @param countryService The country service. Automatically injected Spring managed bean.
      */
-    public MainView(@Autowired GreetService service) {
+    public MainView(@Autowired CountryService countryService) {
         // Select State
-        PaperAutocomplete inputLocal = new PaperAutocomplete();
+        PaperAutocomplete<Country> inputLocal = new PaperAutocomplete();
         inputLocal.setId("input-local"); //NOI18N
-        inputLocal.setLabel("Select State");
+        inputLocal.setLabel("Select country");
         inputLocal.setNoLabelFloat(true);
-        inputLocal.setSource(getSource());
+        inputLocal.setSource(Country::getName, Country::getAbbreviation, countryService.getCountries());
         add(inputLocal);
         // With a placeholder
-        PaperAutocomplete inputLocalPlaceholder = new PaperAutocomplete();
+        PaperAutocomplete<Country> inputLocalPlaceholder = new PaperAutocomplete();
         inputLocalPlaceholder.setId("input-local-placeholder"); //NOI18N
-        inputLocalPlaceholder.setLabel("State");
+        inputLocalPlaceholder.setLabel("Country");
         inputLocalPlaceholder.setPlaceholder("With a placeholder");
         inputLocalPlaceholder.setAlwaysFloatLabel(true);
-        inputLocalPlaceholder.setSource(getSource());
+        inputLocalPlaceholder.setSource(Country::getName, Country::getAbbreviation, countryService.getCountries());
         add(inputLocalPlaceholder);
         // State (custom styled)
-        PaperAutocomplete styled = new PaperAutocomplete();
+        PaperAutocomplete<Country> styled = new PaperAutocomplete();
         styled.setId("styled"); //NOI18N
-        styled.setLabel("State (custom styled)");
-        styled.setSource(getSource());
+        styled.setLabel("Country (custom styled)");
+        styled.setSource(Country::getName, Country::getAbbreviation, countryService.getCountries());
         add(styled);
         
         String ICON_SEARCH = "search"; //NOI18N
         // Using suffix
-        PaperAutocomplete suffix = new PaperAutocomplete();
-        suffix.setId("suffix"); //NOI18N
-        suffix.setLabel("Using suffix");
-        suffix.setSource(getSource());
-        
-        PaperIconButton btnSuffix = new PaperIconButton();
-        btnSuffix.setSlot(suffix.getId().get());
-        btnSuffix.setSuffix(true);
-        btnSuffix.setIcon(ICON_SEARCH);
-        
-        suffix.getElement().appendChild(btnSuffix.getElement());
-        add(suffix);
+//        PaperAutocomplete suffix = new PaperAutocomplete();
+//        suffix.setId("suffix"); //NOI18N
+//        suffix.setLabel("Using suffix");
+//        suffix.setSource(getSource());
+//        
+//        PaperIconButton btnSuffix = new PaperIconButton();
+//        btnSuffix.setSlot(suffix.getId().get());
+//        btnSuffix.setSuffix(true);
+//        btnSuffix.setIcon(ICON_SEARCH);
+//        
+//        suffix.getElement().appendChild(btnSuffix.getElement());
+//        add(suffix);
         // Using prefix
-        PaperAutocomplete preffix = new PaperAutocomplete();
-        preffix.setId("prefix"); //NOI18N
-        preffix.setLabel("Using prefix");
-        preffix.setSource(getSource());
-        
-        PaperIconButton btnPrefix = new PaperIconButton();
-        btnPrefix.setSlot(preffix.getId().get());
-        btnPrefix.setPrefix(true);
-        btnPrefix.setIcon(ICON_SEARCH);
-        
-        preffix.getElement().appendChild(btnPrefix.getElement());
-        add(preffix);
+//        PaperAutocomplete preffix = new PaperAutocomplete();
+//        preffix.setId("prefix"); //NOI18N
+//        preffix.setLabel("Using prefix");
+//        preffix.setSource(getSource());
+//        
+//        PaperIconButton btnPrefix = new PaperIconButton();
+//        btnPrefix.setSlot(preffix.getId().get());
+//        btnPrefix.setPrefix(true);
+//        btnPrefix.setIcon(ICON_SEARCH);
+//        
+//        preffix.getElement().appendChild(btnPrefix.getElement());
+//        add(preffix);
         // Auto highlight first option
-//        PaperAutocomplete highlightFirst = new PaperAutocomplete();
-//        highlightFirst.setId("highlightFirst");
-//        highlightFirst.setLabel("Auto highlight first option");
-//        highlightFirst.setHighlightFirst(true);
-//        highlightFirst.setSource(getSource());
-//        add(highlightFirst);
+        PaperAutocomplete<Country> highlightFirst = new PaperAutocomplete();
+        highlightFirst.setId("highlightFirst");
+        highlightFirst.setLabel("Auto highlight first option");
+        highlightFirst.setHighlightFirst(true);
+        highlightFirst.setSource(Country::getName, Country::getAbbreviation, countryService.getCountries());
+        add(highlightFirst);
         // Show results on focus
-//        PaperAutocomplete show = new PaperAutocomplete();
-//        show.setId(ICON_SEARCH);
-//        show.setLabel("Show results on focus");
-//        show.setShowResultsOnFocus(true);
-//        show.setSource(getSource());
-//        add(show);
-    }
-    
-    private JsonArray getSource() {
-        final String TEXT = "text";
-        final String VALUE = "value";
+        PaperAutocomplete<Country> show = new PaperAutocomplete();
+        show.setId("show");
+        show.setLabel("Show results on focus");
+        show.setShowResultsOnFocus(true);
+        show.setSource(Country::getName, Country::getAbbreviation, countryService.getCountries());
+        show.addAutocompleteSelectedListener(event -> {
+            Notification.show(event.getText());
+        });
+        add(show);
+        //input-remote-users
+        PaperAutocomplete<Country> inputRemoteUsers = new PaperAutocomplete();
+        inputRemoteUsers.setTextProvider(Country::getName);
+        inputRemoteUsers.setValueProvider(Country::getAbbreviation);
+        inputRemoteUsers.setId("input-remote-users");
+        inputRemoteUsers.setLabel("Select country");
+        inputRemoteUsers.setMinLength(2);
+        inputRemoteUsers.setRemoteSource(true);
+                
+        inputRemoteUsers.addAutocompleteSelectedListener(event -> {
+        });
+        inputRemoteUsers.addAutocompleteChange(event -> {
+            List<Country> suggestions = countryService.getCountries()
+                .stream()
+                .filter(country -> country.getName() != null && country.getName().toLowerCase().startsWith(event.getOptionText().toLowerCase()))
+                .collect(Collectors.toList());
+            inputRemoteUsers.suggestions(suggestions);
+        });
+        add(inputRemoteUsers);
         
-        JsonArray source = Json.createArray();
+        PaperAutocomplete<Country> inputRemoteCustomProperties = new PaperAutocomplete();
+        inputRemoteCustomProperties.setTextProvider(Country::getName);
+        inputRemoteCustomProperties.setValueProvider(Country::getAbbreviation);
+        inputRemoteCustomProperties.setId("input-remote-custom-properties");
+        inputRemoteCustomProperties.setLabel("Select country");
+        inputRemoteCustomProperties.setMinLength(2);
+        inputRemoteCustomProperties.setRemoteSource(true);
+        inputRemoteCustomProperties.setTextProperty("name");
+        inputRemoteCustomProperties.setValueProperty("abbreviation");
         
-        JsonObject obj0 = Json.createObject();
-        obj0.put(TEXT, "Alabama");
-        obj0.put(VALUE, "AL");
-        
-        JsonObject obj1 = Json.createObject();
-        obj1.put(TEXT, "Alaska");
-        obj1.put(VALUE, "AK");
-        
-        source.set(0, obj0);
-        source.set(1, obj1);
-        return source;
+        inputRemoteCustomProperties.addAutocompleteSelectedListener(event -> {
+        });
+        inputRemoteCustomProperties.addAutocompleteChange(event -> {
+            List<Country> suggestions = countryService.getCountries()
+                .stream()
+                .filter(country -> country.getName() != null && country.getName().toLowerCase().startsWith(event.getOptionText().toLowerCase()))
+                .collect(Collectors.toList());
+            inputRemoteCustomProperties.suggestions(suggestions);
+        });
+        add(inputRemoteCustomProperties);
     }
 }
