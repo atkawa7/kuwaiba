@@ -21,6 +21,8 @@ import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractModule;
 import org.neotropic.kuwaiba.core.apis.integration.ActionRegistry;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.modules.optional.serviceman.actions.DeleteCustomerVisualAction;
+import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewCustomerPoolVisualAction;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewServicePoolVisualAction;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewServiceVisualAction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,16 @@ public class ServiceManagerModule extends AbstractModule<VerticalLayout> {
     @Autowired
     private TranslationService ts;
     /**
+     * Reference to the action that creates customer pools.
+     */
+    @Autowired
+    private NewCustomerPoolVisualAction actNewCustomerPool;
+    /**
+     * Reference to the action that creates customers pools.
+     */
+    @Autowired
+    private NewCustomerPoolVisualAction actNewCustomer;
+    /**
      * Reference to the action that creates services.
      */
     @Autowired
@@ -45,6 +57,11 @@ public class ServiceManagerModule extends AbstractModule<VerticalLayout> {
     @Autowired
     private NewServicePoolVisualAction actNewServicePool;
     /**
+     * Reference to the action that deletes customers and its services.
+     */
+    @Autowired
+    private DeleteCustomerVisualAction actDeleteCustomer;
+    /**
      * Reference to the action registry.
      */
     @Autowired
@@ -52,6 +69,10 @@ public class ServiceManagerModule extends AbstractModule<VerticalLayout> {
     
     @PostConstruct
     public void init() {
+        // Register global actions
+        this.actionRegistry.registerAction(actNewCustomer);
+        this.actionRegistry.registerAction(actNewCustomerPool);
+        this.actionRegistry.registerAction(actDeleteCustomer);
         this.actionRegistry.registerAction(actNewService);
         this.actionRegistry.registerAction(actNewServicePool);
     }
