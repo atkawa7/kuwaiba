@@ -344,7 +344,7 @@ public class Util {
         attribute.setType((String)attributeNode.getProperty(Constants.PROPERTY_TYPE));
         attribute.setVisible((Boolean)attributeNode.getProperty(Constants.PROPERTY_VISIBLE));
         attribute.setAdministrative((Boolean)attributeNode.getProperty(Constants.PROPERTY_ADMINISTRATIVE));
-        attribute.setNoCopy((Boolean)attributeNode.getProperty(Constants.PROPERTY_NO_COPY));
+        attribute.setNoCopy(attributeNode.hasProperty(Constants.PROPERTY_NO_COPY) ? (Boolean)attributeNode.getProperty(Constants.PROPERTY_NO_COPY) : false);
         attribute.setMandatory(attributeNode.hasProperty(Constants.PROPERTY_MANDATORY) ? (Boolean)attributeNode.getProperty(Constants.PROPERTY_MANDATORY) : false );
         attribute.setUnique((Boolean)attributeNode.getProperty(Constants.PROPERTY_UNIQUE));
         attribute.setId(attributeNode.getId());
