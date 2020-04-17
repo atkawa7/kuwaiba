@@ -164,11 +164,12 @@ public class CypherParser {
                     System.out.println("Wrong date format. It is expected " + Constants.DATE_FORMAT);//NOI18N
                 }
             }
-            if(attibuteType.equals("String")){
-                if(condition == ExtendedQuery.LIKE)
-                        attributeValue = "\"(?i).*".concat(attributeValue).concat(".*\"");
-                else
-                    attributeValue = "\"(?i)".concat(attributeValue).concat("\"");
+            if(attibuteType.equals("String")) {
+                if(condition == ExtendedQuery.LIKE) {
+                    attributeValue = " TOLOWER(\"".concat(attributeValue).concat("\")");
+                    return "TOLOWER(listType_" + joinName + "." + attributeName + ")" + operator + attributeValue;
+                } else
+                    attributeValue = "\"".concat(attributeValue).concat("\"");
             }
         }
         return "listType_" + joinName + "." + attributeName + operator + attributeValue;
@@ -211,10 +212,11 @@ public class CypherParser {
                 }
             }
             if(attibuteType.equals("String")){
-                if(condition == ExtendedQuery.LIKE)
-                        attributeValue = "\"(?i).*".concat(attributeValue).concat(".*\"");
-                else
-                    attributeValue = "\"(?i)".concat(attributeValue).concat("\"");
+                if(condition == ExtendedQuery.LIKE) {
+                    attributeValue = " TOLOWER(\"".concat(attributeValue).concat("\")");
+                    return "TOLOWER(" + joinName + "." + attributeName + ")" + operator + attributeValue;
+                } else
+                    attributeValue = "\"".concat(attributeValue).concat("\"");
             }
         }
         return joinName + "." + attributeName + operator + attributeValue;
