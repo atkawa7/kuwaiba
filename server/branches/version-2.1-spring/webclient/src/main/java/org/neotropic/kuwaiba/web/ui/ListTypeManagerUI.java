@@ -21,6 +21,8 @@ import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -186,17 +188,18 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
         
         VerticalLayout lytListTypeItems = new VerticalLayout(btnAddListTypeItemSec, tblListTypeItems);
         lytListTypeItems.setAlignItems(Alignment.END);
-        lytListTypeItems.setWidth("30%");
+        lytListTypeItems.setClassName("width30p");
         
         VerticalLayout lytListTypes= new VerticalLayout(tblListTypes, btnAddListTypeItem);
-        lytListTypes.setWidth("30%");
+        lytListTypes.setClassName("width30p");
                 
         buildListTypeItemsGrid();  
          
-        propertysheet = new PropertySheet(new ArrayList<>(), "");
+        propertysheet = new PropertySheet(ts, new ArrayList<>(), "");
         propertysheet.addPropertyValueChangedListener(this);
-        VerticalLayout lytPropertySheet = new VerticalLayout(propertysheet);
-        lytPropertySheet.setWidth("40%");
+        H4 headerPropertySheet = new H4(ts.getTranslatedString("module.propertysheet.labels.header"));
+        VerticalLayout lytPropertySheet = new VerticalLayout(headerPropertySheet, propertysheet);
+        lytPropertySheet.setClassName("width40p");
          
         lytMainContent.add(lytListTypes, lytListTypeItems, lytPropertySheet);
          
@@ -221,7 +224,7 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
 
     private void updatePropertySheet() {
         try {
-            propertysheet.setItems(PropertyFactory.propertiesFromRemoteObject(currentListTypeItem, bem, mem));
+            propertysheet.setItems(PropertyFactory.propertiesFromRemoteObject(currentListTypeItem, aem, bem, mem));
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException
                 | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
             Logger.getLogger(ListTypeManagerUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -296,7 +299,7 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
 
     private HorizontalLayout createCenteredHeader(String translatedString) {
         Label lblHeader = new Label(translatedString);
-        lblHeader.setClassName("boldText");
+        lblHeader.setClassName("bold-text");
         HorizontalLayout lyt = new HorizontalLayout(lblHeader);
         lyt.setAlignItems(FlexComponent.Alignment.CENTER);
         lyt.setJustifyContentMode(JustifyContentMode.CENTER);
@@ -310,16 +313,13 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
             if (currentListTypeItem != null) {
                 
                 HashMap<String, String> attributes = new HashMap<>();
-
                 attributes.put(property.getName(), property.getAsStringToPersist());
 
                 bem.updateObject(currentListTypeItem.getClassName(), currentListTypeItem.getId(), attributes);
 
-                loadListTypeItems(currentListType);
-                
-                tblListTypeItems.select(currentListTypeItem);
-                
-                updatePropertySheet();
+                loadListTypeItems(currentListType);               
+                tblListTypeItems.select(currentListTypeItem);               
+//                updatePropertySheet();
 
                 new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
             }

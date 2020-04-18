@@ -84,3 +84,17 @@
 #serviceman-search-component {
     
 }
+
+.bold-text {
+    font-weight: bolder;
+}
+
+.width30p {
+    width: 30%;
+}
+.width40p {
+    width: 40%;
+}
+.width50p {
+    width: 50%;
+}
