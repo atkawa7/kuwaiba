@@ -17,27 +17,28 @@ package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.data.binder.Binder;
 
 
 /**
- * Support for String like properties
- * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
+ * Support for Long properties
+ * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
-public class StringProperty extends AbstractProperty<String>{
+public class LongProperty extends AbstractProperty<Long>{
 
-    public StringProperty(String name, String displayName, String description, String value) {
+    public LongProperty(String name, String displayName, String description, Long value) {
         super(name, displayName, description, value);
     }
 
     @Override
     public Component getAdvancedEditor() {
-        TextArea txtArea = new TextArea(this.getName(), this.getValue(), "...");  
-        txtArea.setWidthFull();
-        txtArea.setMinHeight("300px");
-        return txtArea;
+        NumberField nbrField = new NumberField(this.getName(), "...");  
+        nbrField.setStep(1);
+        
+        nbrField.setWidthFull();
+        nbrField.setMinHeight("300px");
+        return nbrField;
     }
 
     @Override
@@ -47,18 +48,31 @@ public class StringProperty extends AbstractProperty<String>{
 
     @Override
     public AbstractField getInplaceEditor() {
-        TextField txtPropertyEditor = new TextField();
-        txtPropertyEditor.setSizeFull();
-        return txtPropertyEditor;
+        NumberField nbrField = new NumberField("", "...");
+        nbrField.setWidthFull();
+
+        Binder<LongProperty> binder = new Binder<>(LongProperty.class);
+        binder.forField(nbrField)
+                .withConverter(
+                        new DoubleToLongConverter())
+                .bind(LongProperty::getValue,
+                        LongProperty::setValue);
+
+        binder.setBean(this);
+        
+        this.setHasBinder(true);
+
+        return nbrField;
     }
 
     @Override
     public String getAsString() {
-        return getValue();
+        return getValue() + "";
     }
 
     @Override
     public String getAsStringToPersist() {
-        return getValue(); 
+        return getAsString();
     }
+
 }

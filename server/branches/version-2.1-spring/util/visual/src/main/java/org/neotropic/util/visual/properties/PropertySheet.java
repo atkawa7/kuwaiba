@@ -25,6 +25,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.util.ArrayList;
 import java.util.List;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.util.visual.general.BoldLabel;
 
 /**
  * An embeddable property sheet 
@@ -32,27 +34,35 @@ import java.util.List;
  */
 public class PropertySheet extends Grid<AbstractProperty> {
 
+    private TranslationService ts;
+    
     private List<IPropertyValueChangedListener> propertyValueChangedListeners;
     
-    public PropertySheet() {
+    public PropertySheet(TranslationService ts) {
         
+        this.ts = ts;
         propertyValueChangedListeners = new ArrayList<>();
 
         setSizeUndefined();
         addComponentColumn((property) -> {
-            Label label = new Label( property.getName()); //NOI18N
+            Label label = new BoldLabel(property.toString()); //NOI18N
             return label;
-        }).setHeader("Attribute Name").setWidth("100px");
+        }).setHeader(ts.getTranslatedString("module.general.labels.attributenamme")).setAutoWidth(true);
+        
         addComponentColumn((property) -> {
             
             Label labelValue = new Label(property.getAsString());
             
             AbstractField editField = property.getInplaceEditor();
-            editField.setValue(property.getValue());
+            // if the property doesnt have a binder, then  set the value manually
+            if (!property.hasBinder()) 
+                 editField.setValue(property.getValue());
             editField.setVisible(false);
-            editField.getElement().addEventListener("change", ev -> {
+            
+            editField.addValueChangeListener( ev -> {
                 labelValue.setText(editField.getValue().toString());
-                property.setValue( editField.getValue());
+                if (!property.hasBinder())
+                    property.setValue( editField.getValue());
                 labelValue.setVisible(true);
                 editField.setVisible(false);
                 firePropertyValueChangedEvent(property);
@@ -71,7 +81,8 @@ public class PropertySheet extends Grid<AbstractProperty> {
              });
             
             return lytValue;
-        }).setHeader("Value").setKey("value");
+        }).setHeader(ts.getTranslatedString("module.general.labels.value")).setAutoWidth(true).setKey("value");
+        
         addComponentColumn((property) -> {
             if (property.supportsAdvancedEditor()) {
                  Button btnAdvancedEditor = new Button("...", ev -> {
@@ -88,11 +99,11 @@ public class PropertySheet extends Grid<AbstractProperty> {
                  return btnAdvancedEditor;
             }
             return new HorizontalLayout();
-        }).setHeader("").setKey("advancedEditor");
+        }).setHeader("").setAutoWidth(true).setKey("advancedEditor");
     }
     
-    public PropertySheet(List<AbstractProperty> properties, String caption) {
-        this();
+    public PropertySheet(TranslationService ts, List<AbstractProperty> properties, String caption) {
+        this(ts);
         setItems(properties);     
     }
 

@@ -17,6 +17,8 @@ package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.data.binder.Binder;
+import java.util.function.Consumer;
 
 
 /**
@@ -29,12 +31,14 @@ public abstract class AbstractProperty<T> {
     private String displayName;
     private String description;
     private T value;
+    private boolean hasBinder;
 
     public AbstractProperty(String name, String displayName, String description, T value) {
         this.name = name;
         this.displayName = displayName;
         this.description = description;
         this.value = value;
+        this.hasBinder = false;
     }
 
     public AbstractProperty(String name, T value) {
@@ -42,6 +46,8 @@ public abstract class AbstractProperty<T> {
         this.value = value;
         this.displayName = name;
         this.description = "";
+        this.hasBinder = false;
+
     }
 
     public String getName() {
@@ -75,6 +81,21 @@ public abstract class AbstractProperty<T> {
     public void setValue(T value) {
         this.value = value;
     }
+
+    public boolean hasBinder() {
+        return hasBinder;
+    }
+
+    public void setHasBinder(boolean hasBinder) {
+        this.hasBinder = hasBinder;
+    }
+ 
+    @Override
+    public String toString() {
+        if (this.displayName == null || this.displayName.isEmpty())
+            return this.name;
+        return displayName;
+    }
     
     /**
      * An advanced editor for the property
@@ -101,4 +122,8 @@ public abstract class AbstractProperty<T> {
      * @return the string to persist
      */  
     public abstract String getAsStringToPersist();
+    /**
+     * generic setter to implments casts to the T value
+     * @param value
+     */  
 }

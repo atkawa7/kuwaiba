@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObject;
@@ -38,7 +39,9 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentExc
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.AttributeMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
+import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -61,31 +64,63 @@ public class PropertyFactory {
      * @throws InvalidArgumentException
      * @throws ApplicationObjectNotFoundException
      */
-    public static List<AbstractProperty> propertiesFromRemoteObject(BusinessObjectLight businessObject, BusinessEntityManager bem, MetadataEntityManager mem) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException  {
-              
-        HashMap<String, String> objectAttributes = bem.getAttributeValuesAsString(businessObject.getClassName(), businessObject.getId() );
+    public static List<AbstractProperty> propertiesFromRemoteObject(BusinessObjectLight businessObject, ApplicationEntityManager aem, BusinessEntityManager bem, MetadataEntityManager mem) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
 
-            ClassMetadata classMetadata = mem.getClass(businessObject.getClassName());
-            
-            ArrayList<AbstractProperty> objectProperties = new ArrayList<>();
-           
-            for (AttributeMetadata am : classMetadata.getAttributes()) {
-                AbstractProperty property = null;
-                if (am.getType().equals("String"))
-                    property = new StringProperty(am.getName(), 
-                        am.getDisplayName(), am.getDescription(), 
-                        objectAttributes.get(am.getName()) == null ? "<Not Set>" : objectAttributes.get(am.getName()));
-                else if (am.getType().equals("Date")) {
-                    
-                    DateFormat format = new SimpleDateFormat("EE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);             
+        HashMap<String, String> objectAttributes = bem.getAttributeValuesAsString(businessObject.getClassName(), businessObject.getId());
+
+        ClassMetadata classMetadata = mem.getClass(businessObject.getClassName());
+
+        ArrayList<AbstractProperty> objectProperties = new ArrayList<>();
+  
+        for (AttributeMetadata am : classMetadata.getAttributes()) {
+            AbstractProperty property = null;
+
+            switch (am.getType()) {
+                case Constants.DATA_TYPE_STRING:
+
+                    property = new StringProperty(am.getName(),
+                            am.getDisplayName(), am.getDescription(),
+                            objectAttributes.get(am.getName()) == null ? "<Not Set>" : objectAttributes.get(am.getName()));
+                    break;
+                case Constants.DATA_TYPE_INTEGER:
+
+                    property = new IntegerProperty(am.getName(),
+                            am.getDisplayName(), am.getDescription(),
+                            objectAttributes.get(am.getName()) == null ? null : Integer.parseInt(objectAttributes.get(am.getName())));
+                    break;
+                case Constants.DATA_TYPE_DOUBLE :
+                case Constants.DATA_TYPE_FLOAT:
+
+                    property = new DoubleProperty(am.getName(),
+                            am.getDisplayName(), am.getDescription(),
+                            objectAttributes.get(am.getName()) == null ? null : Double.parseDouble(objectAttributes.get(am.getName())));
+                    break;
+                case Constants.DATA_TYPE_LONG:
+
+                    property = new LongProperty(am.getName(),
+                            am.getDisplayName(), am.getDescription(),
+                            objectAttributes.get(am.getName()) == null ? null : Long.parseLong(objectAttributes.get(am.getName())));
+                    break;
+                case Constants.DATA_TYPE_DATE:
+                case Constants.DATA_TYPE_TIME_STAMP:
+
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
                     property = new LocalDateProperty(am.getName(),
                             am.getDisplayName(), am.getDescription(),
                             objectAttributes.get(am.getName()) == null ? null : LocalDate.parse(objectAttributes.get(am.getName()), formatter));
-                }
-                if (property != null)
-                    objectProperties.add(property);
+                    break;
+                default:   // list type
+                     List<BusinessObjectLight> listTypeItems = aem.getListTypeItems(am.getType());
+                     List<BusinessObjectLight> selectedItems = listTypeItems.stream().filter(item -> item.getName().equals(objectAttributes.get(am.getName()))).collect(Collectors.toList());
+
+                     property = new ListTypeProperty(am.getName(),
+                            am.getDisplayName(), am.getDescription(),
+                            selectedItems.size() > 0  ? selectedItems.get(0) : null , listTypeItems);
             }
+            if (property != null) {
+                objectProperties.add(property);
+            }
+        }
         return objectProperties;
     }
 }

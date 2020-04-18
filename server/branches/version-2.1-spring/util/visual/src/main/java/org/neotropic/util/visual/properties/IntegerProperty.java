@@ -17,27 +17,28 @@ package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.textfield.BigDecimalField;
+import com.vaadin.flow.component.textfield.IntegerField;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.Binder;
 
 
 /**
- * Support for String like properties
- * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
+ * Support for Integer properties
+ * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
-public class StringProperty extends AbstractProperty<String>{
+public class IntegerProperty extends AbstractProperty<Integer>{
 
-    public StringProperty(String name, String displayName, String description, String value) {
+    public IntegerProperty(String name, String displayName, String description, Integer value) {
         super(name, displayName, description, value);
     }
 
     @Override
     public Component getAdvancedEditor() {
-        TextArea txtArea = new TextArea(this.getName(), this.getValue(), "...");  
-        txtArea.setWidthFull();
-        txtArea.setMinHeight("300px");
-        return txtArea;
+        IntegerField intField = new IntegerField(this.getName(), "...");  
+        intField.setWidthFull();
+        return intField;
     }
 
     @Override
@@ -47,18 +48,18 @@ public class StringProperty extends AbstractProperty<String>{
 
     @Override
     public AbstractField getInplaceEditor() {
-        TextField txtPropertyEditor = new TextField();
-        txtPropertyEditor.setSizeFull();
-        return txtPropertyEditor;
+        IntegerField intField = new IntegerField("", "...");  
+        intField.setWidthFull();
+        return intField;
     }
 
     @Override
     public String getAsString() {
-        return getValue();
+        return getValue() + "";
     }
 
     @Override
     public String getAsStringToPersist() {
-        return getValue(); 
+        return getAsString();
     }
 }
