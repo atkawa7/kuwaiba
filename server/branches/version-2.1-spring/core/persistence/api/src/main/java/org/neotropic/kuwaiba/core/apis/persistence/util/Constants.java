@@ -613,4 +613,36 @@ public class Constants {
      * Version for the XML document to save views (see http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_Save_Object_Views for details)
      */
      public static final String VIEW_FORMAT_VERSION = "1.2";
+     /**
+      * Name of the data type string
+      */
+     public static final String DATA_TYPE_STRING = "String";
+      /**
+      * Name of the data type Date
+      */
+     public static final String DATA_TYPE_DATE = "Date";
+      /**
+      * Name of the data type Integer
+      */
+     public static final String DATA_TYPE_INTEGER = "Integer";
+      /**
+      * Name of the data type Double
+      */
+     public static final String DATA_TYPE_DOUBLE = "Double";
+      /**
+      * Name of the data type Long
+      */
+     public static final String DATA_TYPE_LONG = "Long";
+      /**
+      * Name of the data type Float
+      */
+     public static final String DATA_TYPE_FLOAT = "Float";
+      /**
+      * Name of the data time stamp
+      */
+     public static final String DATA_TYPE_TIME_STAMP = "Timestamp";
+   
+     
+     
+     
 }
