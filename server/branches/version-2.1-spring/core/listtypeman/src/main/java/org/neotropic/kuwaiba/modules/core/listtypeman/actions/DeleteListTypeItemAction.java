@@ -13,7 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.neotropic.kuwaiba.modules.core.listtypeman.actions;
 
 import javax.annotation.PostConstruct;
@@ -27,38 +26,41 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Creates a new List Type.
+ * Delete a List Type item.
+ *
  * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
 @Component
 public class DeleteListTypeItemAction extends AbstractAction {
+
     /**
      * Reference to the translation service.
      */
     @Autowired
     private TranslationService ts;
+
     /**
-     * Reference to the business entity manager.
+     * Reference to the application entity manager.
      */
     @Autowired
     private ApplicationEntityManager aem;
-    
+
     @PostConstruct
     protected void init() {
         this.id = "listtypeman.delete-list-type-item";
         this.displayName = ts.getTranslatedString("module.listtypeman.actions.delete-list-type-item.name");
         this.description = ts.getTranslatedString("module.listtypeman.actions.delete-list-type-item.description");
         this.order = 1000;
-    
+
         setCallback((parameters) -> {
-            String className = (String)parameters.get("className");
-            String oid = (String)parameters.get("oid");
-            
+            String className = (String) parameters.get("className");
+            String oid = (String) parameters.get("oid");
+
             try {
                 aem.deleteListTypeItem(className, oid, false);
             } catch (InventoryException ex) {
                 throw new ModuleActionException(ex.getMessage());
-            } 
+            }
         });
     }
 

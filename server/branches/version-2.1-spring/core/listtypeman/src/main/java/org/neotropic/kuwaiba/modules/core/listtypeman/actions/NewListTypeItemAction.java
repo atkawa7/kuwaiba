@@ -29,18 +29,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Creates a new List Type.
- * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
+ * Creates a new List Type item.
+ *  @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
 @Component
 public class NewListTypeItemAction extends AbstractAction {
-    /**
+    
+     /**
      * Reference to the translation service.
      */
     @Autowired
     private TranslationService ts;
+    
     /**
-     * Reference to the business entity manager.
+     * Reference to the application entity manager.
      */
     @Autowired
     private ApplicationEntityManager aem;

@@ -13,7 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.neotropic.kuwaiba.modules.core.listtypeman.actions;
 
 import java.util.List;
@@ -43,11 +42,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Visual wrapper of a new customer action that provides means to choose the service pool and type.
- * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
+ * Visual wrapper of create a new list type item action
+ *
+ * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
 @Component
 public class NewListTypeItemVisualAction extends AbstractVisualAction<Dialog> {
+
     /**
      * Reference to the translation service.
      */
@@ -76,23 +77,16 @@ public class NewListTypeItemVisualAction extends AbstractVisualAction<Dialog> {
     
     @Override
     public Dialog getVisualComponent(ModuleActionParameterSet parameters) {
-        // This action might be called with or without parameters depending on who launches it. 
-        // For example, if launched from the dashboard, it won't received any initial parameter and all the 
-        // necessary information will have to be requested (the parent customer pool and the customer type), 
-        // but if launched from a customer pool, only the customer type will be requested.
-       try {
+        try {
             ClassMetadataLight seletedListType = null;
-           
-            if (parameters != null & parameters.length > 0) {
-                for (ModuleActionParameter param : parameters) {
-                    if (param.getName().equals("listType"))
-                       seletedListType = (ClassMetadataLight) param.getValue();
-                }
+            
+            if (parameters.containsKey("listType")) {
+                seletedListType = (ClassMetadataLight) parameters.get("listType");
             }
             
             List<ClassMetadataLight> listTypes = mem.getSubClassesLight(Constants.CLASS_GENERICOBJECTLIST, false, false);
             
-            ComboBox<ClassMetadataLight> cmbListTypes = new ComboBox<>("List Type", listTypes);
+            ComboBox<ClassMetadataLight> cmbListTypes = new ComboBox<>(ts.getTranslatedString("module.listtypeman.listtype"), listTypes);
             cmbListTypes.setAllowCustomValue(false);
             cmbListTypes.setRequiredIndicatorVisible(true);
             cmbListTypes.setSizeFull();
@@ -100,53 +94,52 @@ public class NewListTypeItemVisualAction extends AbstractVisualAction<Dialog> {
             if (seletedListType != null) {
                 cmbListTypes.setValue(seletedListType);
                 cmbListTypes.setEnabled(false);
-            }
-                
-        
-            TextField txtName = new TextField("Name");
+            }            
+            
+            TextField txtName = new TextField(ts.getTranslatedString("module.general.labels.name"));
             txtName.setRequiredIndicatorVisible(true);
             txtName.setSizeFull();
-
-            TextField txtDisplayName = new TextField("Display Name");
+            
+            TextField txtDisplayName = new TextField(ts.getTranslatedString("module.general.labels.display-name"));
             txtDisplayName.setSizeFull();
             
             Dialog wdwNewListTypeItem = new Dialog();
-            
+
             // To show errors or warnings related to the input parameters.
             Label lblMessages = new Label();
-
-            Button btnOK = new Button("OK", (e) -> {
+            
+            Button btnOK = new Button(ts.getTranslatedString("module.general.labels.create"), (e) -> {
                 try {
-                    if (cmbListTypes.getValue() == null)
-                       lblMessages.setText(ts.getTranslatedString("module.general.messages.must-fill-all-fields"));
-                    else {
+                    if (cmbListTypes.getValue() == null) {
+                        lblMessages.setText(ts.getTranslatedString("module.general.messages.must-fill-all-fields"));
+                    } else {
                         
                         HashMap<String, String> attributes = new HashMap<>();
                         attributes.put(Constants.PROPERTY_NAME, txtName.getValue());
                         newListTypeItemAction.getCallback().execute(new ModuleActionParameterSet(
-                                new ModuleActionParameter<>("className", cmbListTypes.getValue().toString()), 
+                                new ModuleActionParameter<>("className", cmbListTypes.getValue().toString()),
                                 new ModuleActionParameter<>("name", txtName.getValue()),
                                 new ModuleActionParameter<>("displayName", txtDisplayName.getValue())));
                         
-                        fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCESS, 
+                        fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCESS,
                                 ts.getTranslatedString("module.listtypeman.actions.new-list-type-item.ui.item-created-success"), NewListTypeItemAction.class));
                         wdwNewListTypeItem.close();
                     }
                 } catch (ModuleActionException ex) {
-                    fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_ERROR, 
-                                ex.getMessage(), NewListTypeItemAction.class));
+                    fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_ERROR,
+                            ex.getMessage(), NewListTypeItemAction.class));
                 }
             });
-
+            
             btnOK.setEnabled(false);
             txtName.addValueChangeListener((e) -> {
                 btnOK.setEnabled(!txtName.isEmpty());
             });
-
-            Button btnCancel = new Button("Cancel", (e) -> {
+            
+            Button btnCancel = new Button(ts.getTranslatedString("module.general.messages.cancel"), (e) -> {
                 wdwNewListTypeItem.close();
             });
-
+            
             FormLayout lytTextFields = new FormLayout(cmbListTypes, txtName, txtDisplayName);
             HorizontalLayout lytMoreButtons = new HorizontalLayout(btnOK, btnCancel);
             VerticalLayout lytMain = new VerticalLayout(lytTextFields, lytMoreButtons);
@@ -156,12 +149,12 @@ public class NewListTypeItemVisualAction extends AbstractVisualAction<Dialog> {
             
             return wdwNewListTypeItem;
         } catch (InventoryException ex) {
-            fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_ERROR, 
-                                ex.getMessage(), NewListTypeItemAction.class));
+            fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_ERROR,
+                    ex.getMessage(), NewListTypeItemAction.class));
             return new Dialog(new Label(ex.getMessage()));
-        } 
+        }        
     }
-
+    
     @Override
     public AbstractAction getModuleAction() {
         return newListTypeItemAction;
