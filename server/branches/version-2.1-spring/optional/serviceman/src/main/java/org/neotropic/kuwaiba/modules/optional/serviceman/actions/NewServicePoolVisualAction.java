@@ -30,6 +30,7 @@ import org.neotropic.kuwaiba.core.apis.integration.AbstractVisualInventoryAction
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
+import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameterSet;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
@@ -61,9 +62,12 @@ public class NewServicePoolVisualAction extends AbstractVisualInventoryAction {
     protected BusinessEntityManager bem;
     
     @Override
-    public Dialog getVisualComponent(ModuleActionParameter... parameters) {
+    public Dialog getVisualComponent(ModuleActionParameterSet parameters) {
         try {
             Dialog wdwNewCustomerPool = new Dialog();
+            
+            
+            
             
             ComboBox<BusinessObjectLight> cmbCustomers = new ComboBox<>(ts.getTranslatedString("module.serviceman.actions.new-service-pool.ui.customer"), 
                     bem.getObjectsOfClassLight(Constants.CLASS_GENERICCUSTOMER, -1));
@@ -88,9 +92,9 @@ public class NewServicePoolVisualAction extends AbstractVisualInventoryAction {
                         lblMessages.setText(ts.getTranslatedString("module.general.messages.must-fill-all-fields"));
                         lblMessages.setVisible(true);
                     } else {
-                        newServicePoolAction.getCallback().execute(new ModuleActionParameter<>(Constants.PROPERTY_PARENT, cmbCustomers.getValue()), 
+                        newServicePoolAction.getCallback().execute(new ModuleActionParameterSet(new ModuleActionParameter<>(Constants.PROPERTY_PARENT, cmbCustomers.getValue()), 
                                 new ModuleActionParameter<>(Constants.PROPERTY_NAME, txtName.getValue()), 
-                                new ModuleActionParameter<>(Constants.PROPERTY_DESCRIPTION, txtDescription.getValue()));
+                                new ModuleActionParameter<>(Constants.PROPERTY_DESCRIPTION, txtDescription.getValue())));
 
                         fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCESS, 
                                 ts.getTranslatedString("module.serviceman.actions.new-customer-pool.ui.customer-pool-created-success"), NewCustomerPoolAction.class));

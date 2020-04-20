@@ -96,7 +96,7 @@ public abstract class AbstractVisualAction<W> implements Comparable<AbstractVisu
      * passed to the underlying {@link AbstractAction}.
      * @return The visual component.
      */
-    public abstract W getVisualComponent(ModuleActionParameter... parameters);
+    public abstract W getVisualComponent(ModuleActionParameterSet parameters);
     /**
      * The underlying action wrapped by this visual object.
      * @return The action.

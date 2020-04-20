@@ -31,6 +31,7 @@ import org.neotropic.kuwaiba.core.apis.integration.AbstractVisualAction;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
+import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameterSet;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
@@ -76,12 +77,7 @@ public class DeleteListTypeItemVisualAction extends AbstractVisualAction<Dialog>
     protected BusinessEntityManager bem;
     
     @Override
-    public Dialog getVisualComponent(ModuleActionParameter... parameters) {
-        // This action might be called with or without parameters depending on who launches it.
-        // For example, if launched from the dashboard, it won't received any initial parameter and all the
-        // necessary information will have to be requested (the parent customer pool and the customer type), 
-        // but if launched from a customer pool, only the customer type will be requested.
-        
+    public Dialog getVisualComponent(ModuleActionParameterSet parameters) {
         BusinessObjectLight seletedListTypeItem = null;
         if (parameters != null & parameters.length > 0) {
             for (ModuleActionParameter param : parameters) {
@@ -100,8 +96,9 @@ public class DeleteListTypeItemVisualAction extends AbstractVisualAction<Dialog>
         wdwDeleteListTypeItem.getBtnConfirm().addClickListener((ev) -> {
             try {
                 
-                deleteListTypeItemAction.getCallback().execute(new ModuleActionParameter<>("className", listTypeItem.getClassName()),
-                        new ModuleActionParameter<>("oid", listTypeItem.getId()));
+                deleteListTypeItemAction.getCallback().execute(new ModuleActionParameterSet(
+                        new ModuleActionParameter<>("className", listTypeItem.getClassName()),
+                        new ModuleActionParameter<>("oid", listTypeItem.getId())));
                 
                 fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCESS,
                         ts.getTranslatedString("module.listtypeman.actions.delete-list-type-item.ui.item-created-success"), NewListTypeItemAction.class));

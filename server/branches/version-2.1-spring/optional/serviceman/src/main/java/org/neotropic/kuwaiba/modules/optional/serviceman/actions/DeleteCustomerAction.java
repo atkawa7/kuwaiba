@@ -16,11 +16,9 @@
 
 package org.neotropic.kuwaiba.modules.optional.serviceman.actions;
 
-import java.util.HashMap;
 import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractAction;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
-import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Privilege;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
@@ -54,8 +52,7 @@ public class DeleteCustomerAction extends AbstractAction {
         this.order = 2;
     
         setCallback((parameters) -> {
-            HashMap<String, Object> parametersAsHashMap = ModuleActionParameter.asHashMap(parameters);
-            BusinessObjectLight customer = (BusinessObjectLight)parametersAsHashMap.get("customer");
+            BusinessObjectLight customer = (BusinessObjectLight)parameters.get("customer");
             try {
                 bem.deleteObject(customer.getClassName(), customer.getId(), false);
             } catch (InventoryException ex) {

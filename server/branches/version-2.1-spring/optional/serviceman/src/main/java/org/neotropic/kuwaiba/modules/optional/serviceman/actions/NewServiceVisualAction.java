@@ -32,6 +32,7 @@ import org.neotropic.kuwaiba.core.apis.integration.AbstractVisualInventoryAction
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
+import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameterSet;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Pool;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
@@ -77,7 +78,7 @@ public class NewServiceVisualAction extends AbstractVisualInventoryAction {
     private BusinessEntityManager bem;
     
     @Override
-    public Dialog getVisualComponent(ModuleActionParameter... parameters) {
+    public Dialog getVisualComponent(ModuleActionParameterSet parameters) {
         // This action might be called with or without parameters depending on who launches it. 
         // For example, if launched from the dashboard, it won't received any initial parameter and all the 
         // necessary information will have to be requested (the parent customer pool and the customer type), 
@@ -130,9 +131,10 @@ public class NewServiceVisualAction extends AbstractVisualInventoryAction {
                     } else {
                         HashMap<String, String> attributes = new HashMap<>();
                         attributes.put(Constants.PROPERTY_NAME, txtName.getValue());
-                        newServiceAction.getCallback().execute(new ModuleActionParameter<>("poolId", cmbServicePools.getValue().getId()), 
+                        newServiceAction.getCallback().execute(new ModuleActionParameterSet(
+                                new ModuleActionParameter<>("poolId", cmbServicePools.getValue().getId()), 
                                 new ModuleActionParameter<>("serviceClass", cmbServiceTypes.getValue().getName()),
-                                new ModuleActionParameter<>("attributes", attributes));
+                                new ModuleActionParameter<>("attributes", attributes)));
                         
                         fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCESS, 
                                 ts.getTranslatedString("module.serviceman.actions.new-service.ui.service-created-success"), NewCustomerAction.class));

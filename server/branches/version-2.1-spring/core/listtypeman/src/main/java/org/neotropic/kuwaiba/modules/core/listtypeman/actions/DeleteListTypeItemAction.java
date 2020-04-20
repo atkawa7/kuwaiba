@@ -16,11 +16,9 @@
 
 package org.neotropic.kuwaiba.modules.core.listtypeman.actions;
 
-import java.util.HashMap;
 import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractAction;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
-import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Privilege;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
@@ -53,9 +51,8 @@ public class DeleteListTypeItemAction extends AbstractAction {
         this.order = 1000;
     
         setCallback((parameters) -> {
-            HashMap<String, Object> parametersAsHashMap = ModuleActionParameter.asHashMap(parameters);
-            String className = (String)parametersAsHashMap.get("className");
-            String oid = (String)parametersAsHashMap.get("oid");
+            String className = (String)parameters.get("className");
+            String oid = (String)parameters.get("oid");
             
             try {
                 aem.deleteListTypeItem(className, oid, false);

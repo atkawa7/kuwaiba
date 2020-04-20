@@ -276,6 +276,7 @@ public class Constants {
     public static final String PROPERTY_MASKED = "masked"; //NOI18N
     public static final String PROPERTY_VALUE = "value"; //NOI18N
     public static final String PROPERTY_PARENT = "parent"; //NOI18N
+    public static final String PROPERTY_RELATED_OBJECT = "relatedObject"; //NOI18N
     /**
      * Property SNMP version
      */

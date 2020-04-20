@@ -1,5 +1,4 @@
-/*
- *  Copyright 2010-2020 Neotropic SAS <contact@neotropic.co>.
+ /*  Copyright 2010-2020 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,8 +14,6 @@
  */
 
 package org.neotropic.kuwaiba.core.apis.integration;
-
-import java.util.HashMap;
 
 /**
  * Each module action has an optional set of parameters (for example, creating a new inventory 
@@ -35,7 +32,7 @@ public class ModuleActionParameter<T> {
         this.name = name;
         this.value = value;
     }
-
+    
     public String getName() {
         return name;
     }
@@ -50,18 +47,5 @@ public class ModuleActionParameter<T> {
 
     public void setValue(T value) {
         this.value = value;
-    }
-    
-    /**
-     * Transforms a set of {@link ModuleActionParameter} instances into a standard HashMap.
-     * @param parameters The input parameters.
-     * @return The hash map (the key is the parameter name and the value is the parameter value).
-     */
-    public static HashMap<String, Object> asHashMap(ModuleActionParameter[] parameters) {
-        HashMap<String, Object> res = new HashMap<>();
-        for (ModuleActionParameter parameter : parameters) 
-            res.put(parameter.getName(), parameter.getValue());
-        
-        return res;
     }
 }

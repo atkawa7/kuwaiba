@@ -19,7 +19,6 @@ package org.neotropic.kuwaiba.modules.optional.serviceman.widgets;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -45,6 +44,8 @@ import org.neotropic.kuwaiba.core.apis.integration.AbstractDashboard;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractVisualInventoryAction;
 import org.neotropic.kuwaiba.core.apis.integration.ActionRegistry;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
+import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
+import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameterSet;
 
 /**
  * The visual entry point to the Service Manager module.
@@ -163,19 +164,17 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
     private MenuBar buildHeaderSubmenu() {
         MenuBar mnuQuickActions = new MenuBar();
         mnuQuickActions.setWidthFull();
-        MenuItem mnuServices = mnuQuickActions.addItem(ts.getTranslatedString("module.serviceman.dashboard.ui.services"));
-        MenuItem mnuCustomers = mnuQuickActions.addItem(ts.getTranslatedString("module.serviceman.dashboard.ui.customers"));
         
         this.actionRegistry.getActionsApplicableTo(Constants.CLASS_GENERICSERVICE).stream().forEach(anAction -> {
             if (anAction.isQuickAction()) 
-                mnuServices.getSubMenu().addItem(anAction.getModuleAction().getDisplayName(), 
-                        event -> ((Dialog)anAction.getVisualComponent()).open());
+                mnuQuickActions.addItem(anAction.getModuleAction().getDisplayName(), 
+                        event -> ((Dialog)anAction.getVisualComponent(new ModuleActionParameterSet())).open());
         });
         
         this.actionRegistry.getActionsApplicableTo(Constants.CLASS_GENERICCUSTOMER).stream().forEach(anAction -> {
             if (anAction.isQuickAction()) 
-                mnuCustomers.getSubMenu().addItem(anAction.getModuleAction().getDisplayName(), 
-                        event -> ((Dialog)anAction.getVisualComponent()).open());
+                mnuQuickActions.addItem(anAction.getModuleAction().getDisplayName(), 
+                        event -> ((Dialog)anAction.getVisualComponent(new ModuleActionParameterSet())).open());
         });
         return mnuQuickActions;
     }
@@ -232,7 +231,8 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
                 btnAction.getElement().setProperty("title", anAction.getModuleAction().getDescription());
                 btnAction.addClickListener( event -> {
                     try {
-                        anAction.getModuleAction().getCallback().execute();
+                        anAction.getModuleAction().getCallback().execute(
+                                new ModuleActionParameterSet(new ModuleActionParameter(Constants.PROPERTY_RELATED_OBJECT, result)));
                     } catch (ModuleActionException ex) {
                         new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
                     }

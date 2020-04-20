@@ -20,7 +20,6 @@ import java.util.HashMap;
 import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractAction;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
-import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Privilege;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
@@ -53,10 +52,9 @@ public class NewCustomerAction extends AbstractAction {
         this.order = 1;
     
         setCallback((parameters) -> {
-            HashMap<String, Object> parametersAsHashMap = ModuleActionParameter.asHashMap(parameters);
-            String poolId = (String)parametersAsHashMap.get("poolId");
-            String customerClass = (String)parametersAsHashMap.get("customerClass");
-            HashMap<String, String> attributes = (HashMap<String, String>)parametersAsHashMap.get("attributes");
+            String poolId = (String)parameters.get("poolId");
+            String customerClass = (String)parameters.get("customerClass");
+            HashMap<String, String> attributes = (HashMap<String, String>)parameters.get("attributes");
             try {
                 bem.createPoolItem(poolId, customerClass, attributes, null);
             } catch (InventoryException ex) {

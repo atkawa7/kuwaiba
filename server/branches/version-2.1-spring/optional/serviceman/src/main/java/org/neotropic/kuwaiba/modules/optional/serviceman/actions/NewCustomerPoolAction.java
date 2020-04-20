@@ -16,11 +16,9 @@
 
 package org.neotropic.kuwaiba.modules.optional.serviceman.actions;
 
-import java.util.HashMap;
 import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractAction;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
-import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Privilege;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
@@ -54,9 +52,8 @@ public class NewCustomerPoolAction extends AbstractAction {
         this.order = 3;
     
         setCallback((parameters) -> {
-            HashMap<String, Object> parametersAsHashMap = ModuleActionParameter.asHashMap(parameters);
-            String poolName = (String)parametersAsHashMap.get(Constants.PROPERTY_NAME);
-            String poolDescription = (String)parametersAsHashMap.get(Constants.PROPERTY_DESCRIPTION);
+            String poolName = (String)parameters.get(Constants.PROPERTY_NAME);
+            String poolDescription = (String)parameters.get(Constants.PROPERTY_DESCRIPTION);
             
             try {
                 aem.createRootPool(poolName, poolDescription, Constants.CLASS_GENERICCUSTOMER, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT);

@@ -29,6 +29,7 @@ import org.neotropic.kuwaiba.core.apis.integration.AbstractVisualInventoryAction
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
+import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameterSet;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,7 @@ public class NewCustomerPoolVisualAction extends AbstractVisualInventoryAction {
     private NewCustomerPoolAction newCustomerPoolAction;
     
     @Override
-    public Dialog getVisualComponent(ModuleActionParameter... parameters) {
+    public Dialog getVisualComponent(ModuleActionParameterSet parameters) {
         Dialog wdwNewCustomerPool = new Dialog();
         TextField txtName = new TextField(ts.getTranslatedString("module.serviceman.actions.new-customer-pool.ui.pool-name"));
         txtName.setRequired(true);
@@ -72,10 +73,10 @@ public class NewCustomerPoolVisualAction extends AbstractVisualInventoryAction {
                 if (txtName.isEmpty()) {
                     lblMessages.setText(ts.getTranslatedString("module.general.messages.must-fill-all-fields"));
                     lblMessages.setVisible(true);
-                }
-                else {
-                    newCustomerPoolAction.getCallback().execute(new ModuleActionParameter<>(Constants.PROPERTY_NAME, txtName.getValue()), 
-                            new ModuleActionParameter<>(Constants.PROPERTY_DESCRIPTION, txtDescription.getValue()));
+                } else {
+                    newCustomerPoolAction.getCallback().execute(new ModuleActionParameterSet(
+                            new ModuleActionParameter<>(Constants.PROPERTY_NAME, txtName.getValue()), 
+                            new ModuleActionParameter<>(Constants.PROPERTY_DESCRIPTION, txtDescription.getValue())));
 
                     fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCESS, 
                             ts.getTranslatedString("module.serviceman.actions.new-customer-pool.ui.customer-pool-created-success"), NewCustomerPoolAction.class));

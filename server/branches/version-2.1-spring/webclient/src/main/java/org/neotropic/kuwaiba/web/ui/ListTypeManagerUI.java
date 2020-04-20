@@ -21,7 +21,6 @@ import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
-import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
@@ -41,6 +40,7 @@ import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
+import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameterSet;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
@@ -175,12 +175,12 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
         this.deleteListTypeItemVisualAction.registerActionCompletedLister(this);
         
         Button btnAddListTypeItem = new Button(this.newListTypeItemVisualAction.getModuleAction().getDisplayName(), (event) -> {
-            this.newListTypeItemVisualAction.getVisualComponent().open();
+            this.newListTypeItemVisualAction.getVisualComponent(new ModuleActionParameterSet()).open();
         });            
         
         btnAddListTypeItemSec = new Button(this.newListTypeItemVisualAction.getModuleAction().getDisplayName(), (event) -> {
-            ModuleActionParameter listTypeParameter = new ModuleActionParameter("listType", currentListType);
-            this.newListTypeItemVisualAction.getVisualComponent(listTypeParameter).open();
+            this.newListTypeItemVisualAction.getVisualComponent(new ModuleActionParameterSet(
+                                                                        new ModuleActionParameter("listType", currentListType))).open();
         }); 
         btnAddListTypeItemSec.setEnabled(false);
         
@@ -285,10 +285,8 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
     private HorizontalLayout createListTypeItemActionGrid(BusinessObjectLight listTypeItem) {
         HorizontalLayout lyt;      
         Button btnDelete = new Button(new Icon(VaadinIcon.TRASH), ev -> {
-
-            ModuleActionParameter listTypeParameter = new ModuleActionParameter("listTypeItem", listTypeItem);
-            this.deleteListTypeItemVisualAction.getVisualComponent(listTypeParameter).open();
-
+            this.deleteListTypeItemVisualAction.getVisualComponent(new ModuleActionParameterSet(
+                                                                        new ModuleActionParameter("listTypeItem", listTypeItem))).open();
         });
         lyt = new HorizontalLayout(btnDelete);
         lyt.setWidthFull();

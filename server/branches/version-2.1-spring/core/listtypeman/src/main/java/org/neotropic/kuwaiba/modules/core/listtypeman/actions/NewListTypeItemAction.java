@@ -53,12 +53,11 @@ public class NewListTypeItemAction extends AbstractAction {
         this.order = 1000;
     
         setCallback((parameters) -> {
-            HashMap<String, Object> parametersAsHashMap = ModuleActionParameter.asHashMap(parameters);
-            String className = (String)parametersAsHashMap.get("className");
-            String name = (String)parametersAsHashMap.get("name");
-            String dispName = (String)parametersAsHashMap.get("displayName");
+            String className = (String)parameters.get("className");
+            String name = (String)parameters.get("name");
+            String dispName = (String)parameters.get("displayName");
             
-            HashMap<String, String> attributes = (HashMap<String, String>)parametersAsHashMap.get("attributes");
+            HashMap<String, String> attributes = (HashMap<String, String>)parameters.get("attributes");
             try {
                 aem.createListTypeItem(className, name, dispName);
             } catch (InventoryException ex) {

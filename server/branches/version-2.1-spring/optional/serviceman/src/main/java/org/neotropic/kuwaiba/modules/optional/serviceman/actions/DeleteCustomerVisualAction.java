@@ -16,30 +16,15 @@
 
 package org.neotropic.kuwaiba.modules.optional.serviceman.actions;
 
-import java.util.List;
-import java.util.HashMap;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractAction;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractVisualInventoryAction;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
-import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
+import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameterSet;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
-import org.neotropic.kuwaiba.core.apis.persistence.application.Pool;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
-import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
-import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
-import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.util.visual.dialog.ConfirmDialog;
 import org.neotropic.util.visual.notifications.SimpleNotification;
@@ -74,8 +59,8 @@ public class DeleteCustomerVisualAction extends AbstractVisualInventoryAction {
     protected BusinessEntityManager bem;
     
     @Override
-    public Dialog getVisualComponent(ModuleActionParameter... parameters) {
-        BusinessObjectLight customer = (BusinessObjectLight)ModuleActionParameter.asHashMap(parameters).get("customer");
+    public Dialog getVisualComponent(ModuleActionParameterSet parameters) {
+        BusinessObjectLight customer = (BusinessObjectLight)parameters.get("customer");
         
         ConfirmDialog wdwDeleteCustomer = new ConfirmDialog(ts.getTranslatedString("module.serviceman.actions.delete-customer.ui.delete-customer"),
                 String.format(ts.getTranslatedString("module.serviceman.actions.delete-customer.ui.confirmation-delete-customer"), customer), 
@@ -83,7 +68,7 @@ public class DeleteCustomerVisualAction extends AbstractVisualInventoryAction {
         
         wdwDeleteCustomer.getBtnConfirm().addClickListener(evt -> {
             try {
-                this.actDeleteCustomerAction.getCallback().execute(parameters[0]);
+                this.actDeleteCustomerAction.getCallback().execute(parameters);
             } catch (ModuleActionException ex) {
                  fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_ERROR, 
                                      ex.getMessage(), NewCustomerAction.class));
