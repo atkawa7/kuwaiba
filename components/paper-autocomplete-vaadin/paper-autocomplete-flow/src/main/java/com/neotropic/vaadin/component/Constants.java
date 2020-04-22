@@ -64,22 +64,4 @@ public class Constants {
             }
         }
     }
-    public static class PaperIconButton {
-        public enum Property implements EnumProperty {
-            SLOT ("slot"), //NOI18N
-            SUFFIX ("suffix"), //NOI18N
-            ICON ("icon"), //NOI18N
-            PREFIX ("prefix"); //NOI18N
-
-            private final String propertyName;
-
-            private Property(String propertyName) {
-                this.propertyName = propertyName;
-            }
-            @Override
-            public String property() {
-                return propertyName;
-            }
-        }
-    }
 }

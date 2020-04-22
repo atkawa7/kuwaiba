@@ -1,6 +1,12 @@
-package com.neotropic.vaadin.component;
+package com.neotropic.vaadin.component.demo;
 
-import com.neotropic.vaadin.component.CountryService.Country;
+import com.neotropic.vaadin.component.PaperAutocomplete;
+import com.neotropic.vaadin.component.demo.services.CountryService;
+import com.neotropic.vaadin.component.demo.services.CountryService.Country;
+import com.neotropic.vaadin.component.demo.accounts.AccountAutocomplete;
+import com.neotropic.vaadin.component.demo.services.AccountService;
+import com.neotropic.vaadin.component.demo.services.StateService;
+import com.neotropic.vaadin.component.demo.states.AutocompleteSearch;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -36,10 +42,16 @@ public class MainView extends VerticalLayout {
      * <p>
      * Build the initial UI state for the user accessing the application.
      *
-     * @param countryService The country service. Automatically injected Spring managed bean.
+     * @param countryService The countries service. Automatically injected Spring managed bean.
+     * @param accountService The accounts service. Automatically injected Spring managed bean.
+     * @param stateService The states service. Automatically injected Spring managed bean.
      */
-    public MainView(@Autowired CountryService countryService) {
-        // Select State
+    public MainView(
+        @Autowired CountryService countryService, 
+        @Autowired AccountService accountService,
+        @Autowired StateService stateService) {
+        
+        //Select State
         PaperAutocomplete<Country> inputLocal = new PaperAutocomplete();
         inputLocal.setId("input-local"); //NOI18N
         inputLocal.setLabel("Select country");
@@ -63,31 +75,11 @@ public class MainView extends VerticalLayout {
         
         String ICON_SEARCH = "search"; //NOI18N
         // Using suffix
-//        PaperAutocomplete suffix = new PaperAutocomplete();
-//        suffix.setId("suffix"); //NOI18N
-//        suffix.setLabel("Using suffix");
-//        suffix.setSource(getSource());
-//        
-//        PaperIconButton btnSuffix = new PaperIconButton();
-//        btnSuffix.setSlot(suffix.getId().get());
-//        btnSuffix.setSuffix(true);
-//        btnSuffix.setIcon(ICON_SEARCH);
-//        
-//        suffix.getElement().appendChild(btnSuffix.getElement());
-//        add(suffix);
+        AutocompleteSearch suffix = new AutocompleteSearch("Using suffix", stateService.getStates(), true, false, ICON_SEARCH);
+        add(suffix);
         // Using prefix
-//        PaperAutocomplete preffix = new PaperAutocomplete();
-//        preffix.setId("prefix"); //NOI18N
-//        preffix.setLabel("Using prefix");
-//        preffix.setSource(getSource());
-//        
-//        PaperIconButton btnPrefix = new PaperIconButton();
-//        btnPrefix.setSlot(preffix.getId().get());
-//        btnPrefix.setPrefix(true);
-//        btnPrefix.setIcon(ICON_SEARCH);
-//        
-//        preffix.getElement().appendChild(btnPrefix.getElement());
-//        add(preffix);
+        AutocompleteSearch preffix = new AutocompleteSearch("Using prefix", stateService.getStates(), false, true, ICON_SEARCH);
+        add(preffix);
         // Auto highlight first option
         PaperAutocomplete<Country> highlightFirst = new PaperAutocomplete();
         highlightFirst.setId("highlightFirst");
@@ -145,5 +137,9 @@ public class MainView extends VerticalLayout {
             inputRemoteCustomProperties.suggestions(suggestions);
         });
         add(inputRemoteCustomProperties);
+
+        AccountAutocomplete accountAutocomplete = new AccountAutocomplete();
+        accountAutocomplete.setAccounts(accountService.getAccounts());
+        add(accountAutocomplete);
     }
 }

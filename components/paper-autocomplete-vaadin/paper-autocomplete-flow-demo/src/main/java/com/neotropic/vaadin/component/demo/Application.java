@@ -1,4 +1,4 @@
-package com.neotropic.vaadin.component;
+package com.neotropic.vaadin.component.demo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

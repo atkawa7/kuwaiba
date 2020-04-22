@@ -1,4 +1,4 @@
-package com.neotropic.vaadin.component;
+package com.neotropic.vaadin.component.demo;
 
 import com.vaadin.flow.component.textfield.testbench.TextFieldElement;
 import org.junit.Assert;

@@ -1,4 +1,4 @@
-package com.neotropic.vaadin.component;
+package com.neotropic.vaadin.component.demo;
 
 import org.junit.Assert;
 import org.junit.Before;

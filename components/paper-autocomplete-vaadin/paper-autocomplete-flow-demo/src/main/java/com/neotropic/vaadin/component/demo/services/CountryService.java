@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2020 Neotropic SAS <contact@neotropic.co>.
  *  
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License. 
@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and 
  *  limitations under the License.
  */
-package com.neotropic.vaadin.component;
+package com.neotropic.vaadin.component.demo.services;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +66,6 @@ public class CountryService {
         countries.add(new Country("Suriname", "SUR"));
         countries.add(new Country("Uruguay", "URY"));
         countries.add(new Country("Venezuela", "VEN"));
-        
         countries.add(new Country("Anguilla", "AIA"));
         countries.add(new Country("Aruba", "ABW"));
         countries.add(new Country("Bonaire, Sint Eustatius and Saba", "BES"));

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2020 Neotropic SAS <contact@neotropic.co>.
  *  
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License. 
@@ -42,6 +42,10 @@ public class PaperAutocomplete<T extends Object> extends Component {
     private ValueProvider<T, ?> valueProvider;
         
     public PaperAutocomplete() {
+    }
+    public PaperAutocomplete(String id, String label) {
+        setId(id);
+        setLabel(label);
     }
     //<editor-fold desc="Properties" defaultstate="collapsed">
     public void setClass(String propertyClass) {
