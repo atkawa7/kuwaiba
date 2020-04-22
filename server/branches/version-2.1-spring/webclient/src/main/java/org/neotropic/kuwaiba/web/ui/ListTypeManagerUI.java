@@ -183,23 +183,26 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
                                                                         new ModuleActionParameter("listType", currentListType))).open();
         }); 
         btnAddListTypeItemSec.setEnabled(false);
+        btnAddListTypeItemSec.setClassName("align-self-end");
+                    
+        H4 headerListTypes = new H4(ts.getTranslatedString("module.listtypeman.listtypes"));
+        VerticalLayout lytListTypes= new VerticalLayout(headerListTypes, tblListTypes, btnAddListTypeItem);
+//        lytListTypes.setClassName("width30p");
+        lytListTypes.setWidth("25%");    
+        buildListTypeGrid();       
         
-        buildListTypeGrid();
-        
-        VerticalLayout lytListTypeItems = new VerticalLayout(btnAddListTypeItemSec, tblListTypeItems);
-        lytListTypeItems.setAlignItems(Alignment.END);
-        lytListTypeItems.setClassName("width30p");
-        
-        VerticalLayout lytListTypes= new VerticalLayout(tblListTypes, btnAddListTypeItem);
-        lytListTypes.setClassName("width30p");
-                
-        buildListTypeItemsGrid();  
+        H4 headerListTypeItems = new H4(ts.getTranslatedString("module.listtypeman.listtypeitems"));
+        VerticalLayout lytListTypeItems = new VerticalLayout(headerListTypeItems, btnAddListTypeItemSec, tblListTypeItems); 
+//        lytListTypeItems.setClassName("width30p");
+        lytListTypeItems.setWidth("30%");
+        buildListTypeItemsGrid();
          
         propertysheet = new PropertySheet(ts, new ArrayList<>(), "");
         propertysheet.addPropertyValueChangedListener(this);
         H4 headerPropertySheet = new H4(ts.getTranslatedString("module.propertysheet.labels.header"));
         VerticalLayout lytPropertySheet = new VerticalLayout(headerPropertySheet, propertysheet);
-        lytPropertySheet.setClassName("width40p");
+//        lytPropertySheet.setClassName("width40p");
+        lytPropertySheet.setWidth("45%");
          
         lytMainContent.add(lytListTypes, lytListTypeItems, lytPropertySheet);
          
@@ -211,7 +214,8 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
         
         tblListTypeItems.setHeightFull();
         
-        tblListTypeItems.addColumn(BusinessObjectLight::getName).setHeader(ts.getTranslatedString("module.listtypeman.listtypeitems"))
+        tblListTypeItems.addColumn(BusinessObjectLight::getName)
+                .setHeader(String.format("%s %s", ts.getTranslatedString("module.listtypeman.listtypeitem"), ts.getTranslatedString("module.general.labels.name")))
                 .setKey(ts.getTranslatedString("module.general.labels.name"));
        
         tblListTypeItems.addComponentColumn(item -> createListTypeItemActionGrid(item));
@@ -241,7 +245,8 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
         
         tblListTypes.setHeightFull();
         
-        tblListTypes.addColumn(ClassMetadataLight::getName).setHeader(createCenteredHeader(ts.getTranslatedString("module.listtypeman.listtypes")))
+        tblListTypes.addColumn(ClassMetadataLight::getName)
+                .setHeader(String.format("%s %s", ts.getTranslatedString("module.listtypeman.listtype"), ts.getTranslatedString("module.general.labels.name")))
                 .setKey(ts.getTranslatedString("module.general.labels.name"));
         
         tblListTypes.addItemClickListener(ev -> {
@@ -316,8 +321,9 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
                 bem.updateObject(currentListTypeItem.getClassName(), currentListTypeItem.getId(), attributes);
 
                 loadListTypeItems(currentListType);               
-                tblListTypeItems.select(currentListTypeItem);               
-//                updatePropertySheet();
+                tblListTypeItems.select(currentListTypeItem);
+
+                updatePropertySheet();
 
                 new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
             }

@@ -98,3 +98,12 @@
 .width50p {
     width: 50%;
 }
+
+.text-secundary {
+    color: #b3b0b0;
+    font-size: .8em;
+}
+
+.align-self-end {
+    align-self: end;
+}
