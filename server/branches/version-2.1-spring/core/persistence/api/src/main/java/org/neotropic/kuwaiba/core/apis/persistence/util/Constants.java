@@ -639,9 +639,13 @@ public class Constants {
       */
      public static final String DATA_TYPE_FLOAT = "Float";
       /**
-      * Name of the data time stamp
+      * Name of the data type timestamp
       */
      public static final String DATA_TYPE_TIME_STAMP = "Timestamp";
+      /**
+      * Name of the data type list type
+      */
+     public static final String DATA_TYPE_LIST_TYPE = "List Type";
    
      
      
