@@ -19,7 +19,6 @@ package org.neotropic.util.visual.properties;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.datepicker.DatePicker;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -33,6 +32,10 @@ public class LocalDateProperty extends AbstractProperty<LocalDate>{
     public LocalDateProperty(String name, String displayName, String description, LocalDate value) {
         super(name, displayName, description, value);
     }
+
+    public LocalDateProperty(String name, String displayName, String description, LocalDate value, String type) {
+        super(name, displayName, description, value, type);
+    }   
     
     public LocalDateProperty(String name, String displayName, String description, long value) {
         super(name, displayName, description, Instant.ofEpochMilli(value).atZone(ZoneId.systemDefault()).toLocalDate());
@@ -40,7 +43,7 @@ public class LocalDateProperty extends AbstractProperty<LocalDate>{
     }
 
     @Override
-    public Component getAdvancedEditor() {
+    public AbstractField getAdvancedEditor() {
         throw new UnsupportedOperationException("This property type does not support an advanced editor."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -58,14 +61,22 @@ public class LocalDateProperty extends AbstractProperty<LocalDate>{
 
     @Override
     public String getAsString() {
-        return getValue().toString();
+        return getValue() == null ? "Not Set" : getValue().toString();
     }
 
     @Override
     public String getAsStringToPersist() {
+        if (getValue() != null) {
         Instant instant = getValue().atStartOfDay(ZoneId.systemDefault()).toInstant();	
 	long timeInMillis = instant.toEpochMilli();
         return timeInMillis + "";
+        } else 
+            return "0";
+    }
+    
+    @Override
+    public boolean supportsInplaceEditor() {
+        return true;
     }
 
 }

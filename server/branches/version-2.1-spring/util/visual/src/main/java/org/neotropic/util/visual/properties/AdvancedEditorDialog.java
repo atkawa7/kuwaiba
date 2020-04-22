@@ -5,6 +5,7 @@
  */
 package org.neotropic.util.visual.properties;
 
+import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -18,7 +19,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 public class AdvancedEditorDialog extends Dialog {
     
     private AbstractProperty property;
-    private Component mainComponentEditor;
+    private AbstractField mainComponentEditor;
     private Button accept;
     private Button cancel;
 
@@ -42,7 +43,7 @@ public class AdvancedEditorDialog extends Dialog {
         this.cancel = cancel;
     } 
 
-    public void setMainComponentEditor(Component mainComponentEditor) {
+    public void setMainComponentEditor(AbstractField mainComponentEditor) {
         this.mainComponentEditor = mainComponentEditor;
     }
 
@@ -77,7 +78,8 @@ public class AdvancedEditorDialog extends Dialog {
     }
 
     void loadNewValueIntoProperty() {
-        property.setValue(mainComponentEditor.getElement().getProperty("value"));
+        if (!property.hasBinder())
+            property.setValue(mainComponentEditor.getValue());
     }
     
 }

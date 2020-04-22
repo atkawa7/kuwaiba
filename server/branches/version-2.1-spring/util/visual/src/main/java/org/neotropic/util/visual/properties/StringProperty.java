@@ -19,7 +19,6 @@ import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.Binder;
 
 
 /**
@@ -32,8 +31,13 @@ public class StringProperty extends AbstractProperty<String>{
         super(name, displayName, description, value);
     }
 
+    public StringProperty(String name, String displayName, String description, String value, String type) {
+        super(name, displayName, description, value, type);
+    }
+       
+
     @Override
-    public Component getAdvancedEditor() {
+    public AbstractField getAdvancedEditor() {
         TextArea txtArea = new TextArea(this.getName(), this.getValue(), "...");  
         txtArea.setWidthFull();
         txtArea.setMinHeight("300px");
@@ -54,11 +58,16 @@ public class StringProperty extends AbstractProperty<String>{
 
     @Override
     public String getAsString() {
-        return getValue();
+        return getValue() == null ? "Not Set" : getValue();
     }
 
     @Override
     public String getAsStringToPersist() {
         return getValue(); 
+    }
+    
+    @Override
+    public boolean supportsInplaceEditor() {
+        return true;
     }
 }

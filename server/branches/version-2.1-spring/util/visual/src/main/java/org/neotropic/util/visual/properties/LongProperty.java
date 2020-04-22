@@ -29,15 +29,31 @@ public class LongProperty extends AbstractProperty<Long>{
 
     public LongProperty(String name, String displayName, String description, Long value) {
         super(name, displayName, description, value);
+        
+    }
+
+    public LongProperty(String name, String displayName, String description, Long value, String type) {
+        super(name, displayName, description, value, type);
+        this.setHasBinder(true);
     }
 
     @Override
-    public Component getAdvancedEditor() {
-        NumberField nbrField = new NumberField(this.getName(), "...");  
+    public AbstractField getAdvancedEditor() {
+        NumberField nbrField = new NumberField(this.getName(), "...");
         nbrField.setStep(1);
-        
+
         nbrField.setWidthFull();
         nbrField.setMinHeight("300px");
+
+        Binder<LongProperty> binder = new Binder<>(LongProperty.class);
+        binder.forField(nbrField)
+                .withConverter(
+                        new DoubleToLongConverter())
+                .bind(LongProperty::getValue,
+                        LongProperty::setValue);
+
+        binder.setBean(this);
+
         return nbrField;
     }
 
@@ -58,21 +74,24 @@ public class LongProperty extends AbstractProperty<Long>{
                 .bind(LongProperty::getValue,
                         LongProperty::setValue);
 
-        binder.setBean(this);
-        
-        this.setHasBinder(true);
+        binder.setBean(this);     
 
         return nbrField;
     }
 
     @Override
     public String getAsString() {
-        return getValue() + "";
+        return getValue() == null ? "Not Set" : getValue() + "";
     }
 
     @Override
     public String getAsStringToPersist() {
         return getAsString();
+    }
+    
+    @Override
+    public boolean supportsInplaceEditor() {
+        return true;
     }
 
 }

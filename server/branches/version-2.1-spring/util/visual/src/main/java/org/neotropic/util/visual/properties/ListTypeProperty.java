@@ -28,13 +28,22 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
  * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
 public class ListTypeProperty extends AbstractProperty<BusinessObjectLight>{
-
+    /**
+     * The whole list of list items available to fill the input combo boxes
+     */
     List<BusinessObjectLight> listTypes;
     
     public ListTypeProperty(String name, String displayName, String description, BusinessObjectLight value, List<BusinessObjectLight> listTypes) {
         super(name, displayName, description, value);
         this.listTypes = listTypes;
     }
+
+    public ListTypeProperty(String name, String displayName, String description, BusinessObjectLight value, List<BusinessObjectLight> listTypes, String type) {
+        super(name, displayName, description, value, type);
+        this.listTypes = listTypes;
+    }
+    
+    
 
     public List<BusinessObjectLight> getListTypes() {
         return listTypes;
@@ -45,7 +54,7 @@ public class ListTypeProperty extends AbstractProperty<BusinessObjectLight>{
     }
 
     @Override
-    public Component getAdvancedEditor() {
+    public AbstractField getAdvancedEditor() {
         return null;
     }
 
@@ -65,12 +74,17 @@ public class ListTypeProperty extends AbstractProperty<BusinessObjectLight>{
 
     @Override
     public String getAsString() {
-        return getValue() == null ? "" : getValue().toString();
+        return getValue() == null ? "Not Set" : getValue().toString();
     }
 
     @Override
     public String getAsStringToPersist() {
         return getValue() == null ? "" : getValue().getId() + "" ;
+    }
+    
+    @Override
+    public boolean supportsInplaceEditor() {
+        return true;
     }
 }
 

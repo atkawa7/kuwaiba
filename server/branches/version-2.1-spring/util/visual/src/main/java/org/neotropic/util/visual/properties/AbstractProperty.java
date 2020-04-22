@@ -17,8 +17,6 @@ package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.data.binder.Binder;
-import java.util.function.Consumer;
 
 
 /**
@@ -32,6 +30,7 @@ public abstract class AbstractProperty<T> {
     private String description;
     private T value;
     private boolean hasBinder;
+    private String type;
 
     public AbstractProperty(String name, String displayName, String description, T value) {
         this.name = name;
@@ -39,6 +38,15 @@ public abstract class AbstractProperty<T> {
         this.description = description;
         this.value = value;
         this.hasBinder = false;
+    }
+    
+    public AbstractProperty(String name, String displayName, String description, T value, String type) {
+        this.name = name;
+        this.displayName = displayName;
+        this.description = description;
+        this.value = value;
+        this.hasBinder = false;
+        this.type = type;
     }
 
     public AbstractProperty(String name, T value) {
@@ -89,6 +97,16 @@ public abstract class AbstractProperty<T> {
     public void setHasBinder(boolean hasBinder) {
         this.hasBinder = hasBinder;
     }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+    
+    
  
     @Override
     public String toString() {
@@ -101,12 +119,17 @@ public abstract class AbstractProperty<T> {
      * An advanced editor for the property
      * @return 
      */
-    public abstract Component getAdvancedEditor();
+    public abstract AbstractField getAdvancedEditor();
     /**
      * Does it support an advanced editor? If true  
      * @return 
      */
     public abstract boolean supportsAdvancedEditor();
+    /**
+     * Does it support in place editor? If true  
+     * @return 
+     */
+    public abstract boolean supportsInplaceEditor();
     /**
      * A simple field that will be used to edit the property
      * @return 

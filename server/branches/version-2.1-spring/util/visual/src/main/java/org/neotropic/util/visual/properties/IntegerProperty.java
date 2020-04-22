@@ -16,12 +16,7 @@
 package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.component.textfield.IntegerField;
-import com.vaadin.flow.component.textfield.NumberField;
-import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.component.textfield.TextField;
 
 
 /**
@@ -34,8 +29,12 @@ public class IntegerProperty extends AbstractProperty<Integer>{
         super(name, displayName, description, value);
     }
 
+    public IntegerProperty(String name, String displayName, String description, Integer value, String type) {
+        super(name, displayName, description, value, type);
+    }
+
     @Override
-    public Component getAdvancedEditor() {
+    public AbstractField getAdvancedEditor() {
         IntegerField intField = new IntegerField(this.getName(), "...");  
         intField.setWidthFull();
         return intField;
@@ -55,11 +54,16 @@ public class IntegerProperty extends AbstractProperty<Integer>{
 
     @Override
     public String getAsString() {
-        return getValue() + "";
+        return getValue() == null ? "Not Set" : getValue() + "";
     }
 
     @Override
     public String getAsStringToPersist() {
         return getAsString();
+    }
+    
+    @Override
+    public boolean supportsInplaceEditor() {
+        return true;
     }
 }

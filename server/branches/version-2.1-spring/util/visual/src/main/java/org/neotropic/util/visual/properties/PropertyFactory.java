@@ -80,26 +80,30 @@ public class PropertyFactory {
 
                     property = new StringProperty(am.getName(),
                             am.getDisplayName(), am.getDescription(),
-                            objectAttributes.get(am.getName()) == null ? "<Not Set>" : objectAttributes.get(am.getName()));
+                            (objectAttributes.get(am.getName()) == null ? "<Not Set>" : objectAttributes.get(am.getName())),
+                             Constants.DATA_TYPE_STRING);
                     break;
                 case Constants.DATA_TYPE_INTEGER:
 
                     property = new IntegerProperty(am.getName(),
                             am.getDisplayName(), am.getDescription(),
-                            objectAttributes.get(am.getName()) == null ? null : Integer.parseInt(objectAttributes.get(am.getName())));
+                            (objectAttributes.get(am.getName()) == null ? null : Integer.parseInt(objectAttributes.get(am.getName()))),
+                             Constants.DATA_TYPE_INTEGER);
                     break;
                 case Constants.DATA_TYPE_DOUBLE :
                 case Constants.DATA_TYPE_FLOAT:
 
                     property = new DoubleProperty(am.getName(),
                             am.getDisplayName(), am.getDescription(),
-                            objectAttributes.get(am.getName()) == null ? null : Double.parseDouble(objectAttributes.get(am.getName())));
+                            (objectAttributes.get(am.getName()) == null ? null : Double.parseDouble(objectAttributes.get(am.getName()))),
+                             am.getType().equals(Constants.DATA_TYPE_DOUBLE) ? Constants.DATA_TYPE_DOUBLE : Constants.DATA_TYPE_FLOAT );
                     break;
                 case Constants.DATA_TYPE_LONG:
 
                     property = new LongProperty(am.getName(),
                             am.getDisplayName(), am.getDescription(),
-                            objectAttributes.get(am.getName()) == null ? null : Long.parseLong(objectAttributes.get(am.getName())));
+                            (objectAttributes.get(am.getName()) == null ? null : Long.parseLong(objectAttributes.get(am.getName()))),
+                             Constants.DATA_TYPE_LONG);
                     break;
                 case Constants.DATA_TYPE_DATE:
                 case Constants.DATA_TYPE_TIME_STAMP:
@@ -107,15 +111,30 @@ public class PropertyFactory {
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
                     property = new LocalDateProperty(am.getName(),
                             am.getDisplayName(), am.getDescription(),
-                            objectAttributes.get(am.getName()) == null ? null : LocalDate.parse(objectAttributes.get(am.getName()), formatter));
+                            (objectAttributes.get(am.getName()) == null ? null : LocalDate.parse(objectAttributes.get(am.getName()), formatter)), 
+                             am.getType().equals(Constants.DATA_TYPE_DATE) ? Constants.DATA_TYPE_DATE : Constants.DATA_TYPE_TIME_STAMP );
                     break;
                 default:   // list type
                      List<BusinessObjectLight> listTypeItems = aem.getListTypeItems(am.getType());
-                     List<BusinessObjectLight> selectedItems = listTypeItems.stream().filter(item -> item.getName().equals(objectAttributes.get(am.getName()))).collect(Collectors.toList());
+                     List<BusinessObjectLight> selectedItems = new ArrayList<>();
+                     String attributeValue  = objectAttributes.get(am.getName());
+                     
+                     if (attributeValue != null) {
+                        String[] tokensItems = attributeValue.split(";");
 
-                     property = new ListTypeProperty(am.getName(),
+                        for (String token : tokensItems) {
+                            selectedItems.addAll(listTypeItems.stream().filter(item -> item.getName().equals(token)).collect(Collectors.toList()));
+                        }
+                    }
+
+                     if (am.isMultiple())                   
+                         property = new ListTypeMultipleProperty(am.getName(),
                             am.getDisplayName(), am.getDescription(),
-                            selectedItems.size() > 0  ? selectedItems.get(0) : null , listTypeItems);
+                            selectedItems , listTypeItems,Constants.DATA_TYPE_LIST_TYPE); 
+                     else 
+                         property = new ListTypeProperty(am.getName(),
+                            am.getDisplayName(), am.getDescription(),
+                            (selectedItems.size() > 0  ? selectedItems.get(0) : null) , listTypeItems, Constants.DATA_TYPE_LIST_TYPE);
             }
             if (property != null) {
                 objectProperties.add(property);

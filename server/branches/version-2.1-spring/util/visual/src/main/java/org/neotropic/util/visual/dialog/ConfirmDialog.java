@@ -36,6 +36,7 @@ public class ConfirmDialog extends Dialog {
 
         btnConfirm = new Button(confirmButtonText);
         btnConfirm.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        btnConfirm.focus();
         buttons.add(btnConfirm);
 
         final Button btnCancel = new Button("Cancel", e -> close());

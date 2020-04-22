@@ -18,8 +18,6 @@ package org.neotropic.util.visual.properties;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.textfield.NumberField;
-import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.component.textfield.TextField;
 
 
 /**
@@ -32,8 +30,12 @@ public class DoubleProperty extends AbstractProperty<Double>{
         super(name, displayName, description, value);
     }
 
+    public DoubleProperty(String name, String displayName, String description, Double value, String type) {
+        super(name, displayName, description, value, type);
+    }  
+
     @Override
-    public Component getAdvancedEditor() {
+    public AbstractField getAdvancedEditor() {
         NumberField nbrField = new NumberField(this.getName(), "...");  
         nbrField.setStep(1);
         
@@ -56,11 +58,16 @@ public class DoubleProperty extends AbstractProperty<Double>{
 
     @Override
     public String getAsString() {
-        return getValue() + "";
+        return getValue() == null ? "Not Set" : getValue() + "";
     }
 
     @Override
     public String getAsStringToPersist() {
         return getAsString();
+    }
+    
+    @Override
+    public boolean supportsInplaceEditor() {
+        return true;
     }
 }
