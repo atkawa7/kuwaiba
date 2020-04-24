@@ -194,8 +194,7 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
                 if (parent != null) {
                     ClassMetadataLight object = parent.getObject();
                     try {
-                        List<ClassMetadataLight> children = mem.getSubClassesLightNoRecursive(object.getName(), false, false);
-                        return children.size();
+                        return (int) mem.getSubClassesCount(object.getName());
                     } catch (MetadataObjectNotFoundException ex) {
                         Notification.show(ex.getMessage());
                         return 0;
