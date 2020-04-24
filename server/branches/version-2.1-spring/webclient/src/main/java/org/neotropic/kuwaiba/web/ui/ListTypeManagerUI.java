@@ -63,7 +63,7 @@ import org.neotropic.util.visual.properties.AbstractProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Main for the service manager module. This class manages how the pages corresponding 
+ * Main for the List type manager module. This class manages how the pages corresponding 
  * to different functionalities are presented in a single place.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */

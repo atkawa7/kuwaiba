@@ -128,7 +128,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
-        </dependency>   
+        </dependency>
+         <dependency>
+            <groupId>org.neotropic.kuwaiba</groupId>
+            <artifactId>data-model</artifactId>
+            <version>2.1</version>
+            <type>jar</type>
+        </dependency>    
     </dependencies>
     <dependencyManagement>
         <dependencies>
