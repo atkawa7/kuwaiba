@@ -135,7 +135,6 @@ class BpmnModeler extends PolymerElement {
           _this.bpmnModeler.importXML(xhr.response, function(err) {
             if (err)
               return console.error('could not import BPMN 2.0 diagram', err);
-            _this._successImport();
           });
         }
       }
