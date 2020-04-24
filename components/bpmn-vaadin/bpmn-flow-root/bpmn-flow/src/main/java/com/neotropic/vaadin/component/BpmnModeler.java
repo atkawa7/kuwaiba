@@ -22,20 +22,12 @@ import com.vaadin.flow.component.dependency.NpmPackage;
 import elemental.json.Json;
 import elemental.json.JsonArray;
 
-//@Tag("paper-slider")
-//@JsModule("@polymer/paper-slider/paper-slider.js")
-//@NpmPackage(value = "@polymer/paper-slider", version = "^3.0.1")
-/*
- If you wish to include your own JS modules in the add-on jar, add the module
- files to './src/main/resources/META-INF/resources/frontend' and insert an
- annotation @JsModule("./my-module.js") here.
-*/
 /**
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @Tag("bpmn-modeler")
 @JsModule("@neotropic-sas/bpmn-element/bpmn-modeler.js")
-@NpmPackage(value = "@neotropic-sas/bpmn-element", version = "^1.0.2")
+@NpmPackage(value = "@neotropic-sas/bpmn-element", version = "^1.0.3")
 public class BpmnModeler extends Component {
     
     public BpmnModeler() {
