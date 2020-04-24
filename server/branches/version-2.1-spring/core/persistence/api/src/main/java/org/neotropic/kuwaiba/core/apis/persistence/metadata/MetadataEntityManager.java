@@ -107,6 +107,13 @@ public interface MetadataEntityManager extends AbstractEntityManager {
      */
     public List<ClassMetadataLight> getSubClassesLightNoRecursive(String className, boolean includeAbstractClasses, boolean includeSelf) 
             throws MetadataObjectNotFoundException;
+    
+    /**
+     * Get the child count given the parent class name
+     * @param className parent class Name
+     * @return Count of children 
+     */
+    public long getSubClassesCount(String className) throws MetadataObjectNotFoundException;
     /**
      * Retrieves all the class metadata except for classes marked as dummy
      * @param includeListTypes boolean to indicate if the list should include the subclasses of GenericObjectList

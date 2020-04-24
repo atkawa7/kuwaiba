@@ -25,6 +25,11 @@ import java.util.List;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ClassMetadata extends ClassMetadataLight {
+
+    public ClassMetadata(long id, String name, String displayName) {
+        super(id, name, displayName);
+    }
+
     /**
      *  Indicates if the instances of this class are physical assets
      *  (in other words, if it's meaningful to have a count on them)
