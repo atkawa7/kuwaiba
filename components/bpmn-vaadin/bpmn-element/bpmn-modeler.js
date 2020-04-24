@@ -16,8 +16,7 @@ limitations under the License.
 */
 import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
 import {PrePackagedDistro} from './pre-packaged-distro.js';
-import {getBpmnDiagram, createMoveEvent} from './util.js';
-import {FlattenedNodesObserver} from '@polymer/polymer/lib/utils/flattened-nodes-observer.js';
+import {getBpmnDiagram} from './util.js';
 import '@polymer/polymer/lib/elements/dom-repeat.js';
 /**
  * `bpmn-modeler`
@@ -48,7 +47,6 @@ class BpmnModeler extends PolymerElement {
         <link rel="stylesheet" href="{{item}}">
       </template>
       <div class="fullSize" id="[[containerId]]"></div>
-      <slot></slot>
     `;
   }
   static get properties() {
@@ -115,7 +113,6 @@ class BpmnModeler extends PolymerElement {
    * @private
    */
   _initBpmnModeler() {
-    this.diagramUrl = 'https://raw.githubusercontent.com/bpmn-io/bpmn-js/develop/test/fixtures/bpmn/simple.bpmn';
     var _this = this;
     var emptyModules = {};
     if (!this.djsContextPad)
@@ -148,59 +145,8 @@ class BpmnModeler extends PolymerElement {
       this.bpmnModeler.importXML(getBpmnDiagram(), function(err) {
         if (err)
           return console.error('could not import BPMN 2.0 diagram', err);
-        _this._successImport();
       });
     }
-  }
-  /**
-   * @private
-   */
-  _successImport() {
-    var _this = this;
-    this._observer = new FlattenedNodesObserver(this, (info) => {
-      _this._processAddedNodes(info.addedNodes);
-      _this._processRemovedNodes(info.removedNodes);
-    });
-    //var elementRegistry = this.bpmnModeler.get('elementRegistry');
-    //var modeling = this.bpmnModeler.get('modeling');
-    //var startEventShape = elementRegistry.get('StartEvent_04nvcdf');
-    //var task = modeling.appendShape(startEventShape, { type: 'bpmn:Task', x: 500, y: 500 });
-    /*
-    var palette = this.bpmnModeler.get('palette');
-    var dragging = this.bpmnModeler.get('dragging');
-
-    var entry = palette.getEntries()['create.exclusive-gateway'];
-
-    if (entry && entry.action && entry.action.click) {
-      //entry.action.click(mouse.getLastMoveEvent());
-      entry.action.click(createMoveEvent(250, 250));
-    }
-    dragging.end();
-    */
-  }
-  /**
-   * Processes added nodes
-   * @param {PolymerElement} addedNodes
-   * @private
-   */
-  _processAddedNodes(addedNodes) {
-    var _this = this;
-    addedNodes.forEach(node => {
-      if (node.added)
-        node.added(_this.bpmnModeler);
-    });
-  }
-  /**
-   * Processes removed nodes
-   * @param {PolymerElement} addedNodes
-   * @private
-   */
-  _processRemovedNodes(removedNodes) {
-    var _this = this;
-    removedNodes.forEach(node => {
-      if (node.removed)
-        node.removed(_this.bpmnModeler);
-    });
   }
 }
 window.customElements.define(BpmnModeler.is, BpmnModeler);

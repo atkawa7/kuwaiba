@@ -1,6 +1,5 @@
+# \<bpmn-viewer\>
 # \<bpmn-modeler\>
-
-bpmn-modeler
 
 ## Install the Polymer-CLI
 
