@@ -24,6 +24,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
+import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery;
@@ -52,6 +53,7 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.listtypeman.actions.DeleteListTypeItemVisualAction;
 import org.neotropic.kuwaiba.modules.core.listtypeman.actions.NewListTypeItemVisualAction;
 import org.neotropic.util.visual.icons.BasicIconGenerator;
+import org.neotropic.util.visual.icons.ResourceFactory;
 import org.neotropic.util.visual.properties.PropertySheet;
 import org.neotropic.util.visual.properties.PropertySheet.IPropertyValueChangedListener;
 import org.neotropic.util.visual.notifications.SimpleNotification;
@@ -62,16 +64,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Main for the Data Model manager module. This class manages how the pages corresponding 
  * to different functionalities are presented in a single place.
- * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
+ * @author Orlando Paz {@literal <Orlando.Paz@kuwaiba.org>}
  */
 @Route(value = "datamodelman", layout = MainLayout.class)
 public class DataModelManagerUI extends VerticalLayout implements ActionCompletedListener, IPropertyValueChangedListener {
 
-    /**
-     * the visual action to create a new list type item
-     */
-    @Autowired
-    private NewListTypeItemVisualAction newListTypeItemVisualAction;
 
     @Autowired
     private TranslationService ts;
@@ -90,41 +87,15 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
      */
     @Autowired
     private BusinessEntityManager bem;
-    /**
-     * The grid with the list Types
-     */
-    private Grid<ClassMetadataLight> tblListTypes;
     
-    /**
-     * The grid with the list Type items
-     */
-    private Grid<BusinessObjectLight> tblListTypeItems;
-    /**
-     * object to save the selected list type
-     */
-    private ClassMetadataLight currentListType;
-    /**
-     * object to save the selected list type item
-     */
-    private BusinessObjectLight currentListTypeItem;
+//    @Autowired
+//    BasicIconGenerator basicIconGenerator;
     
-    /**
-     * button used to create a new item with the list type preselected
-     */
-    Button btnAddListTypeItemSec;
-    
-     /**
-     * the visual action to delete a list type item
-     */  
     @Autowired
-    private DeleteListTypeItemVisualAction deleteListTypeItemVisualAction;
-    
-    PropertySheet propertysheet;
-
+    private ResourceFactory resourceFactory;
+       
     public DataModelManagerUI() {
         super();
-        tblListTypes = new Grid<>();
-        tblListTypeItems = new Grid<>();
         setSizeFull();
     }
     
@@ -143,8 +114,7 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
     
     @Override
     public void onDetach(DetachEvent ev) {
-        this.newListTypeItemVisualAction.unregisterListener(this);
-        this.deleteListTypeItemVisualAction.unregisterListener(this);
+
     }
     
     @Override
@@ -184,7 +154,7 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
                         return new ArrayList().stream();
                     }
                 } else {
-                    return Arrays.asList(new DataModelNode(new ClassMetadata(-1, Constants.NODE_DUMMYROOT, "Root"), "")).stream();
+                    return Arrays.asList(new DataModelNode(new ClassMetadata(-1, Constants.NODE_DUMMYROOT, "Root"), Constants.NODE_DUMMYROOT)).stream();
                 }
             }
 
@@ -209,13 +179,11 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
                 return true;
             }
         };
-        
-        BasicTree<DataModelNode> basicTree = new BasicTree(dataProvider, new BasicIconGenerator());
-        basicTree.setSizeFull();
-        
-        splitLayout.addToPrimary(basicTree);
+               
+        BasicTree<DataModelNode> basicTree = new BasicTree(dataProvider , new BasicIconGenerator(), resourceFactory);
+//        basicTree.setSizeFull();      
          
-        lytMainContent.add(splitLayout);
+        lytMainContent.add(basicTree);
          
         add(lytMainContent);
     }
@@ -224,24 +192,6 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
 
     @Override
     public void updatePropertyChanged(AbstractProperty property) {
-        try {
-            if (currentListTypeItem != null) {
-                
-                HashMap<String, String> attributes = new HashMap<>();
-                attributes.put(property.getName(), property.getAsStringToPersist());
-
-                bem.updateObject(currentListTypeItem.getClassName(), currentListTypeItem.getId(), attributes);
-
-                        
-                tblListTypeItems.select(currentListTypeItem);
-
-                
-
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
-            }
-        } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException
-                | OperationNotPermittedException | InvalidArgumentException ex) {
-            Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            
     }
 }
