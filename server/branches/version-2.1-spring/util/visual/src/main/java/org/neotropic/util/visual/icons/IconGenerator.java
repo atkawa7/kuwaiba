@@ -28,5 +28,5 @@ public interface IconGenerator<T> {
      * @param item the item for which the icon is generated
      * @return the generated stream resource
      */
-    AbstractStreamResource apply(T item);
+    AbstractStreamResource apply(T item, ResourceFactory factory);
 }

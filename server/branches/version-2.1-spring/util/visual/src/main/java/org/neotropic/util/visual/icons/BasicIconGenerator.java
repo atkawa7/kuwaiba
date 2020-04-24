@@ -18,21 +18,28 @@ package org.neotropic.util.visual.icons;
 
 import com.vaadin.flow.server.AbstractStreamResource;
 import org.neotropic.util.visual.tree.nodes.AbstractNode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
+
 public class BasicIconGenerator implements IconGenerator<AbstractNode> {
         
+//    @Autowired
+//    private ResourceFactory resourceFactory;
+    
     public BasicIconGenerator() {    
     }
     
     @Override
-    public AbstractStreamResource apply(AbstractNode item) {
+    public AbstractStreamResource apply(AbstractNode item, ResourceFactory resourceFactory) {
         
-       return ResourceFactory.getInstance().getClassSmallIcon(item.getClassName());
+       return resourceFactory.getClassSmallIcon(item.getClassName()); 
        
     }
     
