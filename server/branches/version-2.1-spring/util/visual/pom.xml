@@ -31,7 +31,14 @@
             <version>2.1</version>
              <type>jar</type>
          </dependency>
-
+         
+         <dependency>
+            <groupId>org.neotropic.kuwaiba</groupId>
+            <artifactId>integration-api</artifactId>
+            <version>2.1</version>
+            <type>jar</type>
+        </dependency>
+        
     </dependencies>
     
         <dependencyManagement>
