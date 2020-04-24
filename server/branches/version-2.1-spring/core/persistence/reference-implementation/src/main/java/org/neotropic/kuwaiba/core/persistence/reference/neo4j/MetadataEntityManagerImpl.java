@@ -610,6 +610,38 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     }
     
     @Override
+    public long getSubClassesCount(String className) 
+            throws MetadataObjectNotFoundException {
+        ClassMetadata aClass = cm.getClass(className);
+        if (aClass == null)
+            throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.", className));
+        
+        List<ClassMetadataLight> subclasses = cm.getSubclassesNorecursive(className);        
+        if(subclasses != null) {
+            return subclasses.size();
+        }
+        // Retrieving all subclasses to update the cache
+        
+        String cypherQuery = ""
+            + "MATCH (inventory:classes)<-[:EXTENDS]-(classmetadata) "
+            + "WHERE inventory.name IN ['" + className + "'] "
+            + "RETURN COUNT(classmetadata) as Count";     
+
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+            
+            Result result = connectionManager.getConnectionHandler().execute(cypherQuery);
+            
+            while (result.hasNext()) {
+                tx.success();
+                return (long) result.next().get("Count");
+            }
+            
+            tx.success();
+        }
+        return -1;
+    }
+    
+    @Override
     public List<ClassMetadata> getAllClasses(boolean includeListTypes, boolean includeIndesign) {
         List<ClassMetadata> classMetadataResultList = new ArrayList<>();
         
