@@ -18,20 +18,16 @@ package org.neotropic.kuwaiba.web.ui;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
-import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery;
 import com.vaadin.flow.router.Route;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,21 +36,15 @@ import org.kuwaiba.web.modules.core.datamodelman.nodes.DataModelNode;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
-import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermittedException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.modules.core.listtypeman.actions.DeleteListTypeItemVisualAction;
-import org.neotropic.kuwaiba.modules.core.listtypeman.actions.NewListTypeItemVisualAction;
-import org.neotropic.util.visual.icons.BasicIconGenerator;
-import org.neotropic.util.visual.icons.ResourceFactory;
-import org.neotropic.util.visual.properties.PropertySheet;
+import org.neotropic.kuwaiba.web.icons.BasicIconGenerator;
+import org.neotropic.kuwaiba.web.resources.ResourceFactory;
 import org.neotropic.util.visual.properties.PropertySheet.IPropertyValueChangedListener;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.properties.AbstractProperty;
@@ -87,10 +77,9 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
      */
     @Autowired
     private BusinessEntityManager bem;
-    
-//    @Autowired
-//    BasicIconGenerator basicIconGenerator;
-    
+    /**
+     * factory to build resources from data source
+     */  
     @Autowired
     private ResourceFactory resourceFactory;
        
@@ -154,14 +143,25 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
                         return new ArrayList().stream();
                     }
                 } else {
-                    return Arrays.asList(new DataModelNode(new ClassMetadata(-1, Constants.NODE_DUMMYROOT, "Root"), Constants.NODE_DUMMYROOT)).stream();
-                }
+                    try {
+                        ClassMetadata inventoryObjectClass = mem.getClass(Constants.CLASS_INVENTORYOBJECT);
+                        return Arrays.asList(new DataModelNode(
+                                new ClassMetadataLight(inventoryObjectClass.getId(), 
+                                    inventoryObjectClass.getName(),
+                                    inventoryObjectClass.getDisplayName()), inventoryObjectClass.getName())).stream();
+                    } catch (MetadataObjectNotFoundException ex) {
+                        Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
+                        return new ArrayList().stream();
+                    }
+                }              
             }
 
             @Override
             public int getChildCount(HierarchicalQuery<DataModelNode, Void> query) {
                 DataModelNode parent = query.getParent();
                 if (parent != null) {
+                    if (Constants.DUMMY_ROOT.equals(parent.getClassName()))
+                        return 1;
                     ClassMetadataLight object = parent.getObject();
                     try {
                         return (int) mem.getSubClassesCount(object.getName());
@@ -179,9 +179,9 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
                 return true;
             }
         };
-               
-        BasicTree<DataModelNode> basicTree = new BasicTree(dataProvider , new BasicIconGenerator(), resourceFactory);
-//        basicTree.setSizeFull();      
+
+        BasicTree<DataModelNode> basicTree = new BasicTree(dataProvider , new BasicIconGenerator(resourceFactory));
+        basicTree.setSizeFull();      
          
         lytMainContent.add(basicTree);
          

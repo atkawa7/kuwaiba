@@ -13,32 +13,30 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.neotropic.util.visual.icons;
+package org.neotropic.kuwaiba.web.icons;
 
 
 import com.vaadin.flow.server.AbstractStreamResource;
+import org.neotropic.util.visual.resources.AbstractResourceFactory;
+import org.neotropic.util.visual.icons.IconGenerator;
 import org.neotropic.util.visual.tree.nodes.AbstractNode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 /**
- *
+ * Implementation that provides the ability to generate small icons for kuwaiba objects
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
 
-public class BasicIconGenerator implements IconGenerator<AbstractNode> {
+public class BasicIconGenerator extends IconGenerator<AbstractNode> {
         
-//    @Autowired
-//    private ResourceFactory resourceFactory;
-    
-    public BasicIconGenerator() {    
-    }
+    public BasicIconGenerator(AbstractResourceFactory resourceFactory) {
+        super(resourceFactory);
+    }  
     
     @Override
-    public AbstractStreamResource apply(AbstractNode item, ResourceFactory resourceFactory) {
-        
+    public AbstractStreamResource apply(AbstractNode item) {
+       
        return resourceFactory.getClassSmallIcon(item.getClassName()); 
        
     }

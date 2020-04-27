@@ -30,7 +30,6 @@ import org.springframework.context.annotation.Configuration;
                                 "org.neotropic.kuwaiba.northbound.ws", // The SOAP-based web service interface implementation.
                                 "org.neotropic.kuwaiba.modules.optional.serviceman",
                                 "com.neotropic.kuwaiba.commercial", // Commercial modules
-                                "org.neotropic.kuwaiba.modules.core.listtypeman.actions",
-                                "org.neotropic.util.visual" //visual utilities
+                                "org.neotropic.kuwaiba.modules.core.listtypeman.actions"
                               }) 
 public class SpringConfiguration { }

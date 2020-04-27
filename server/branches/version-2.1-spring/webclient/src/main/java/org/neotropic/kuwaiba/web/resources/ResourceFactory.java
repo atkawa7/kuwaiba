@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.neotropic.util.visual.icons;
+package org.neotropic.kuwaiba.web.resources;
 
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.server.InputStreamFactory;
@@ -29,9 +29,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
+import org.neotropic.util.visual.resources.AbstractResourceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +44,7 @@ import org.springframework.stereotype.Service;
  * @author Orlando Paz {@literal <Orlando.paz@kuwaiba.org>}
  */
  @Service
-public class ResourceFactory {
+public class ResourceFactory extends AbstractResourceFactory {
     /**
      * Default icon width (used in views)
      */
@@ -81,22 +83,14 @@ public class ResourceFactory {
     @Autowired
     private  MetadataEntityManager mem;
     
-    private ResourceFactory() {
+    public ResourceFactory() {
         icons = new HashMap();
         smallIcons = new HashMap();
         defaultIcons = new HashMap();
         defaultSmallIcons = new HashMap();
     }
-    
-    public static ResourceFactory getInstance() {
-        return instance == null ? instance = new ResourceFactory() : instance;
-    }
-    
-    /**
-     * Builds and caches an icon of a given class. 
-     * @param className the class name of the icon will be built for
-     * @return The cached resource
-     */
+       
+   @Override
     public StreamResource getClassIcon(String className) {
         if (className == null || mem == null) {
             return null;
@@ -125,7 +119,7 @@ public class ResourceFactory {
                 }
             }
 
-        } catch (Exception ex) {
+        } catch (MetadataObjectNotFoundException ex) {
             if (!Constants.DUMMY_ROOT.equals(className)) {
                 Notification.show(ex.getMessage());
             }
@@ -142,54 +136,53 @@ public class ResourceFactory {
         }
 //        }
     }
-    
-    /**
-     * Gets or builds (but doesn't caches) the small icon of the given class name
-     * @param className The class name
-     * @return The cached resource if it has been previously cached, or a generic black icon otherwise
-     */
-    public StreamResource getClassSmallIcon(String className) {
-        if (className == null || mem == null)
-            return null;
+       
+    @Override
+     public StreamResource getClassSmallIcon(String className) {
+         if (className == null || mem == null) 
+             return null;
+         
 //        if (smallIcons.containsKey(className))
 //            return smallIcons.get(className);
 //        else {
-            try {
-                ClassMetadata remoteClass = mem.getClass(className);
-                byte[] classIcon = remoteClass.getSmallIcon();
-                if (classIcon != null && classIcon.length > 0) {
-                    StreamResource icon = buildIcon("small" + className + ".png", remoteClass.getIcon());
-                    VaadinSession.getCurrent().getResourceRegistry().registerResource(icon);
-                    smallIcons.put(className, icon);
-                    return icon;
-                } else {
-                    int color = remoteClass.getColor();
-                    if (defaultSmallIcons.containsKey(color))
-                        return defaultSmallIcons.get(color);
-                    else {
-                        StreamResource icon = buildIcon("default" + color + ".png", getIcon(new Color(color), DEFAULT_SMALL_ICON_WIDTH, DEFAULT_SMALL_ICON_HEIGHT));
-                        VaadinSession.getCurrent().getResourceRegistry().registerResource(icon);
-                        defaultSmallIcons.put(color, icon);
-                        return icon;                        
-                    }
-                }
+         try {
+             ClassMetadata remoteClass = mem.getClass(className);
+             byte[] classIcon = remoteClass.getSmallIcon();
+             if (classIcon != null && classIcon.length > 0) {
+                 StreamResource icon = buildIcon("small" + className + ".png", remoteClass.getIcon());
+                 VaadinSession.getCurrent().getResourceRegistry().registerResource(icon);
+                 smallIcons.put(className, icon);
+                 return icon;
+             } else {
+                 int color = remoteClass.getColor();
+                 if (defaultSmallIcons.containsKey(color)) {
+                     return defaultSmallIcons.get(color);
+                 } else {
+                     StreamResource icon = buildIcon("default" + color + ".png", getIcon(new Color(color), DEFAULT_SMALL_ICON_WIDTH, DEFAULT_SMALL_ICON_HEIGHT));
+                     VaadinSession.getCurrent().getResourceRegistry().registerResource(icon);
+                     defaultSmallIcons.put(color, icon);
+                     return icon;
+                 }
+             }
 
-            } catch (Exception ex) {
-                if (!Constants.DUMMY_ROOT.equals(className))
-                    Notification.show(ex.getMessage());
-                
-                int color = Color.BLACK.getRGB();
+         } catch (MetadataObjectNotFoundException ex) {
+             if (!Constants.DUMMY_ROOT.equals(className)) 
+                 Notification.show(ex.getMessage());
+             
+
+             int color = Color.BLACK.getRGB();
 //                if (defaultSmallIcons.containsKey(color))
 //                    return defaultSmallIcons.get(color);
 //                else {
-                    StreamResource icon = buildIcon("default" + color + ".png", getIcon(new Color(color), DEFAULT_SMALL_ICON_WIDTH, DEFAULT_SMALL_ICON_HEIGHT));
-                    VaadinSession.getCurrent().getResourceRegistry().registerResource(icon);
-                    defaultSmallIcons.put(color, icon);
-                    return icon;                        
+             StreamResource icon = buildIcon("default" + color + ".png", getIcon(new Color(color), DEFAULT_SMALL_ICON_WIDTH, DEFAULT_SMALL_ICON_HEIGHT));
+             VaadinSession.getCurrent().getResourceRegistry().registerResource(icon);
+             defaultSmallIcons.put(color, icon);
+             return icon;
 //                }
-            }
+         }
 //        }
-    }
+     }
+     
     /**
      * Builds an icon resource
      * @param name the name of the resource
