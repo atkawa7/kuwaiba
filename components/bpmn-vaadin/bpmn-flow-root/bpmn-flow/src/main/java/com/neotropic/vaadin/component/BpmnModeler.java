@@ -19,6 +19,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
+import com.vaadin.flow.function.SerializableConsumer;
 import elemental.json.Json;
 import elemental.json.JsonArray;
 
@@ -27,7 +28,7 @@ import elemental.json.JsonArray;
  */
 @Tag("bpmn-modeler")
 @JsModule("@neotropic-sas/bpmn-element/bpmn-modeler.js")
-@NpmPackage(value = "@neotropic-sas/bpmn-element", version = "^1.0.3")
+@NpmPackage(value = "@neotropic-sas/bpmn-element", version = "^1.0.4")
 public class BpmnModeler extends Component {
     
     public BpmnModeler() {
@@ -65,5 +66,9 @@ public class BpmnModeler extends Component {
     public BpmnModeler(String diagramUrl, boolean djsPalette, boolean djsContextPad) {
         this(djsPalette, djsContextPad);
         getElement().setProperty(Property.DIAGRAM_URL.getName(), diagramUrl);
+    }
+    public void exportDiagram(SerializableConsumer<String> consumer) {
+        getElement().executeJs("this.exportDiagram()");
+        getElement().executeJs("return this.xml").then(String.class, consumer);
     }
 }

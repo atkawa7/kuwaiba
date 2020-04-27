@@ -26,7 +26,7 @@ import com.vaadin.flow.component.dependency.NpmPackage;
  */
 @Tag("bpmn-viewer")
 @JsModule("@neotropic-sas/bpmn-element/bpmn-viewer.js")
-@NpmPackage(value = "@neotropic-sas/bpmn-element", version = "^1.0.3")
+@NpmPackage(value = "@neotropic-sas/bpmn-element", version = "^1.0.4")
 public class BpmnViewer extends Component {
     /**
      * @param diagramUrl 

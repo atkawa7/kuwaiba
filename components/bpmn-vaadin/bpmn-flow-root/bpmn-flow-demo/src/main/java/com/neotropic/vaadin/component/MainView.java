@@ -1,11 +1,14 @@
 package com.neotropic.vaadin.component;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
 import java.util.HashMap;
@@ -37,10 +40,8 @@ public class MainView extends VerticalLayout {
      * Construct a new Vaadin view.
      * <p>
      * Build the initial UI state for the user accessing the application.
-     *
-     * @param service The message service. Automatically injected Spring managed bean.
      */
-    public MainView(@Autowired GreetService service) {
+    public MainView() {
         setSizeFull();
         BpmnViewer bpmnViewer = new BpmnViewer(
             "https://cdn.staticaly.com/gh/bpmn-io/bpmn-js-examples/dfceecba/starter/diagram.bpmn");
@@ -49,6 +50,27 @@ public class MainView extends VerticalLayout {
             true, true);
         BpmnModeler newBpmnDiagram = new BpmnModeler(true, true);
         
+        Button btnDiagram = new Button("Export diagram");
+        Button btnNewBpmnDiagram = new Button("Export diagram");
+        
+        btnDiagram.addClickListener(e -> {
+            bpmnDiagram.exportDiagram(xml -> {
+                TextArea textArea = new TextArea();
+                textArea.setValue(xml);
+                Notification notification = new Notification(textArea);
+                notification.setDuration(2000);
+                notification.open();
+            });
+        });
+        btnNewBpmnDiagram.addClickListener(e -> {
+            newBpmnDiagram.exportDiagram(xml -> {
+                TextArea textArea = new TextArea();
+                textArea.setValue(xml);
+                Notification notification = new Notification(textArea);
+                notification.setDuration(2000);
+                notification.open();
+            });
+        });
         Tab tabBpmnViewer = new Tab("BPMN Viewer");
         Tab tabBpmnDiagram = new Tab("BPMN Modeler");
         Tab tabNewBpmnDiagram = new Tab("New BPMN Diagram");
@@ -58,15 +80,17 @@ public class MainView extends VerticalLayout {
         Div divBpmnViewer = new Div();
         divBpmnViewer.setSizeFull();
         divBpmnViewer.add(bpmnViewer);
-        
+                
         Div divBpmnDiagram = new Div();
         divBpmnDiagram.setSizeFull();
+        divBpmnDiagram.add(btnDiagram);
         divBpmnDiagram.add(bpmnDiagram);
         
         Div divNewBpmnDiagram = new Div();
         divNewBpmnDiagram.setSizeFull();
+        divNewBpmnDiagram.add(btnNewBpmnDiagram);
         divNewBpmnDiagram.add(newBpmnDiagram);
-        
+                
         Map<Tab, Component> mapTabs = new HashMap();
         mapTabs.put(tabBpmnViewer, divBpmnViewer);
         mapTabs.put(tabBpmnDiagram, divBpmnDiagram);
