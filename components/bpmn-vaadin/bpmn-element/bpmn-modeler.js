@@ -147,5 +147,13 @@ class BpmnModeler extends PolymerElement {
       });
     }
   }
+  exportDiagram() {
+    var _this = this;
+    this.bpmnModeler.saveXML({ format: true }, function(err, xml) {
+      if (err)
+        return console.error('could not save BPMN 2.0 diagram', err);
+      _this.xml = xml;
+    });
+  }
 }
 window.customElements.define(BpmnModeler.is, BpmnModeler);

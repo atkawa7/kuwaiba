@@ -1,7 +1,7 @@
 {
   "name": "@neotropic-sas/bpmn-element",
   "description": "bpmn-element is a BPMN 2.0 viewer and modeler based on bpmn-js",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": "Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>",
   "license": "Apache-2.0",
   "repository": "https://sourceforge.net/p/kuwaiba/code/HEAD/tree/components/bpmn-vaadin/",
