@@ -20,7 +20,6 @@ import com.vaadin.flow.server.AbstractStreamResource;
 import org.neotropic.util.visual.resources.AbstractResourceFactory;
 import org.neotropic.util.visual.icons.IconGenerator;
 import org.neotropic.util.visual.tree.nodes.AbstractNode;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Implementation that provides the ability to generate small icons for kuwaiba objects
