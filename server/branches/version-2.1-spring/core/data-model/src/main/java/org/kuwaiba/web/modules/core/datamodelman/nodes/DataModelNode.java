@@ -11,7 +11,7 @@ import org.neotropic.util.visual.tree.nodes.AbstractNode;
 
 /**
  * Represents a node in the data model manager tree.
- * @author Orlando Paz
+ * @author Orlando Paz  {@literal <orlando.paz@kuwaiba.org>}
  */
 public class DataModelNode extends AbstractNode<ClassMetadataLight>{
 
