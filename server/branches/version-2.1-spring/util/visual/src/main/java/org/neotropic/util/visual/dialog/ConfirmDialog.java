@@ -14,8 +14,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 /**
- *
- * @author Orlando Paz
+ * Generic Dialog that provides the capability to confirm specific actions.
+ * @author Orlando Paz  {@literal <orlando.paz@kuwaiba.org>}
  */
 public class ConfirmDialog extends Dialog {
     

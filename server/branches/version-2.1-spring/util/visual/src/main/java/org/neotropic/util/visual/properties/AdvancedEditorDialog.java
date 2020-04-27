@@ -13,8 +13,8 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 
 /**
- *
- * @author opaz
+ * Dialog that allows editing for properties that support the advanced editor
+ * @author Orlando Paz  {@literal <orlando.paz@kuwaiba.org>} 
  */
 public class AdvancedEditorDialog extends Dialog {
     

@@ -21,7 +21,6 @@ import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
 import com.vaadin.flow.server.StreamResourceRegistry;
 import org.neotropic.util.visual.icons.IconGenerator;
-import org.neotropic.util.visual.icons.ResourceFactory;
 import org.neotropic.util.visual.tree.nodes.AbstractNode;
 
 
@@ -29,10 +28,11 @@ import org.neotropic.util.visual.tree.nodes.AbstractNode;
  * A tree that extends the features of the Tree Grid and makes use of the Nodes API
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
+ * @param <T> Entity name for the tree grid
  */
 public class BasicTree<T extends AbstractNode> extends TreeGrid<T> {
     
-    public BasicTree(HierarchicalDataProvider<T, Void> dataProvider, IconGenerator<T> iconGenerator, ResourceFactory resourceFactory) {
+    public BasicTree(HierarchicalDataProvider<T, Void> dataProvider, IconGenerator<T> iconGenerator) {
         StringBuilder template = new StringBuilder();
         template.append("<vaadin-grid-tree-toggle ");
         template.append("leaf='[[item.leaf]]' ");
@@ -53,8 +53,8 @@ public class BasicTree<T extends AbstractNode> extends TreeGrid<T> {
         
         TemplateRenderer<T> renderer = TemplateRenderer.<T> of (template.toString());
         renderer.withProperty("leaf", item -> false);
-        renderer.withProperty("icon", item -> StreamResourceRegistry.getURI(iconGenerator.apply(item, resourceFactory)).toString());
-        renderer.withProperty("name", item -> item.toString());
+        renderer.withProperty("icon", item -> StreamResourceRegistry.getURI(iconGenerator.apply(item)).toString());
+        renderer.withProperty("name", item -> item.getClassName());
         
         addColumn(renderer);
         addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);

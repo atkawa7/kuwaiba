@@ -16,11 +16,9 @@
 package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.combobox.ComboBox;
 import java.util.List;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
-import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
 
 
 /**

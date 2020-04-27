@@ -17,7 +17,6 @@
 package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import java.time.Instant;
 import java.time.LocalDate;

@@ -15,18 +15,26 @@
  */
 package org.neotropic.util.visual.icons;
 
+import org.neotropic.util.visual.resources.AbstractResourceFactory;
 import com.vaadin.flow.server.AbstractStreamResource;
 
 /**
- * Interface for generated icons for an item
+ * Abstract class for generated icons for an item
  * @param <T> item type for which the icon is generated 
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public interface IconGenerator<T> {
+public abstract class IconGenerator<T> {
+     
+    protected AbstractResourceFactory resourceFactory;
+
+    public IconGenerator(AbstractResourceFactory resourceFactory) {
+        this.resourceFactory = resourceFactory;
+    }  
+    
     /**
      * Gets a stream resource for the item
      * @param item the item for which the icon is generated
      * @return the generated stream resource
      */
-    AbstractStreamResource apply(T item, ResourceFactory factory);
+    public abstract AbstractStreamResource apply(T item);
 }
