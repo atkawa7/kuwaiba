@@ -24,12 +24,18 @@ import org.springframework.context.annotation.Configuration;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Configuration
-@ComponentScan(basePackages = { "org.neotropic.kuwaiba.core.i18n", // The translation service.
-                                "org.neotropic.kuwaiba.core.persistence", //The persistence service.
-                                "org.neotropic.kuwaiba.core.apis.integration", // The API necessary to create modules.
+//@ComponentScan(basePackages = { "org.neotropic.kuwaiba.core.i18n", // The translation service.
+//                                "org.neotropic.kuwaiba.core.persistence", //The persistence service.
+//                                "org.neotropic.kuwaiba.core.apis.integration", // The API necessary to create modules.
+//                                "org.neotropic.kuwaiba.northbound.ws", // The SOAP-based web service interface implementation.
+//                                "org.neotropic.kuwaiba.modules.optional.serviceman",
+//                                "com.neotropic.kuwaiba.commercial", // Commercial modules
+//                                "org.neotropic.kuwaiba.modules.core.listtypeman.actions",
+//                                "org.neotropic.util.visual" //visual utilities
+//                              }) 
+@ComponentScan(basePackages = { "org.neotropic.kuwaiba.core",
+                                "org.neotropic.kuwaiba.modules",
                                 "org.neotropic.kuwaiba.northbound.ws", // The SOAP-based web service interface implementation.
-                                "org.neotropic.kuwaiba.modules.optional.serviceman",
-                                "com.neotropic.kuwaiba.commercial", // Commercial modules
-                                "org.neotropic.kuwaiba.modules.core.listtypeman.actions"
                               }) 
+
 public class SpringConfiguration { }

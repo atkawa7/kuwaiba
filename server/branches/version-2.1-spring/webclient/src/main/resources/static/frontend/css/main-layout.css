@@ -25,6 +25,26 @@
     padding-top: 10px;
 }
 
+/* Widgets */
+#widgets-empty {
+    
+}
+
+.widgets-standard-cover {
+    position: relative;
+    color: white;
+    background-color: #6F918A;
+    width: 350px;
+    height: 350px;
+}
+
+.widgets-standard-cover-content {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    font-size: large;
+}
+
 /* Individual components */
 .search-box-large {
     width: 500px;

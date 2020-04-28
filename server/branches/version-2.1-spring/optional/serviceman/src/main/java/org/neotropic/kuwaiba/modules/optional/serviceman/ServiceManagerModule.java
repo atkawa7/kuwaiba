@@ -34,6 +34,10 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ServiceManagerModule extends AbstractModule<VerticalLayout> {
+    /**
+     * The module id.
+     */
+    public static final String MODULE_ID = "serviceman"; 
     @Autowired
     private TranslationService ts;
     /**
@@ -66,21 +70,20 @@ public class ServiceManagerModule extends AbstractModule<VerticalLayout> {
      */
     @Autowired
     private ActionRegistry actionRegistry;
-    
+
     @PostConstruct
     public void init() {
-        // Register global actions
-        this.actionRegistry.registerAction(actNewCustomer);
-        this.actionRegistry.registerAction(actNewCustomerPool);
-        this.actionRegistry.registerAction(actDeleteCustomer);
-        this.actionRegistry.registerAction(actNewService);
-        this.actionRegistry.registerAction(actNewServicePool);
+        // Register all actions provided by this module
+        this.actionRegistry.registerAction(MODULE_ID, actNewCustomer);
+        this.actionRegistry.registerAction(MODULE_ID, actNewCustomerPool);
+        this.actionRegistry.registerAction(MODULE_ID, actDeleteCustomer);
+        this.actionRegistry.registerAction(MODULE_ID, actNewService);
+        this.actionRegistry.registerAction(MODULE_ID, actNewServicePool);
     }
-    
     
     @Override
     public String getId() {
-        return "serviceman";
+        return MODULE_ID;
     }
     
     @Override

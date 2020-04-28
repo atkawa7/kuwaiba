@@ -7,8 +7,8 @@
         <version>2.1</version>
     </parent>
     
-    <name>Kuwaiba Open Network Inventory Persistence API</name>
-    <description>The actual Persistence API</description>
+    <name>Persistence API</name>
+    <description>Persistence abstraction layer definition</description>
     <artifactId>persistence-api</artifactId>
     <version>2.1</version>
     <packaging>jar</packaging>

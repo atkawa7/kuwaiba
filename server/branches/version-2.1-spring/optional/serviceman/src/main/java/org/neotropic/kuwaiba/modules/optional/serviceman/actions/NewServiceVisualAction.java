@@ -86,6 +86,8 @@ public class NewServiceVisualAction extends AbstractVisualInventoryAction {
         try {
             Dialog wdwNewCustomer = new Dialog();
             
+            
+            
             // To show errors or warnings related to the input parameters.
             Label lblMessages = new Label();
             lblMessages.setClassName("embedded-notification-error");
@@ -97,6 +99,11 @@ public class NewServiceVisualAction extends AbstractVisualInventoryAction {
             cmbCustomers.setRequired(true);
             cmbCustomers.setAllowCustomValue(false);
             cmbCustomers.setSizeFull();
+            
+            if (parameters.containsKey(Constants.PROPERTY_RELATED_OBJECT)) {
+                //BusinessObjectLight customer = (BusinessObjectLight);
+                
+            }
             
             ComboBox<Pool> cmbServicePools = new ComboBox<>(ts.getTranslatedString("module.serviceman.actions.new-service.ui.service-pool"));
             cmbServicePools.setRequiredIndicatorVisible(true);

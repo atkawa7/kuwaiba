@@ -15,5 +15,6 @@
         <module>contract-manager</module>
         <module>processman</module>
         <module>serviceman</module>
+        <module>physical-connections</module>
     </modules>
 </project>

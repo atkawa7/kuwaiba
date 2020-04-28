@@ -15,7 +15,7 @@
  */
 
 package org.neotropic.kuwaiba.core.apis.integration;
-
+        
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,10 +38,13 @@ public class ActionRegistry {
      */
     private List<AbstractVisualInventoryAction> actions;
     /**
-     * 
+     * All registered actions grouped by instances of what class are they applicable to.
      */
-    private HashMap<String, List<AbstractVisualInventoryAction>> actionMap;
-    
+    private HashMap<String, List<AbstractVisualInventoryAction>> actionsByApplicableClass;
+    /**
+     * All registered actions grouped by the module they are provided by.
+     */
+    private HashMap<String, List<AbstractVisualInventoryAction>> actionsByModule;
     /**
      * Reference to the MetadataEntityManager to access the data model cache.
      */
@@ -50,7 +53,8 @@ public class ActionRegistry {
     
     public ActionRegistry() {
         this.actions = new ArrayList<>();
-        this.actionMap = new HashMap<>();
+        this.actionsByApplicableClass = new HashMap<>();
+        this.actionsByModule = new HashMap<>();
     }
     
     /**
@@ -63,7 +67,7 @@ public class ActionRegistry {
      * @return The actions that can be executed from an instance of the given class or superclass.
      */
     public List<AbstractVisualInventoryAction> getActionsApplicableTo(String filter) {
-        return this.actionMap.containsKey(filter) ? this.actionMap.get(filter) : new ArrayList<>();
+        return this.actionsByApplicableClass.containsKey(filter) ? this.actionsByApplicableClass.get(filter) : new ArrayList<>();
     }
     
     /**
@@ -86,26 +90,43 @@ public class ActionRegistry {
     
     
     /**
-     * Adds an action to the registry. This method also feeds the action map cache structure, which is a hash map which keys are 
-     * all the possible super classes the actions are applicable to and the keys are the corresponding actions.
+     * Adds an action to the registry.This method also feeds the action map cache structure, which is a hash map which keys are 
+ all the possible super classes the actions are applicable to and the keys are the corresponding actions.
+     * @param moduleId The id of the module this action is provided by. The id is returned by AbstractModule.getId().
      * @param action The action to be added. Duplicated action ids are allowed, as long as the duplicate can be used 
      * to overwrite default behaviors, for example, if an object (say a connection) has a specific delete routine  that should 
      * be executed instead of the general purpose delete action, both actions should have the same id, and the renderer should 
      * override the default action with the specific one.
      */
-    public void registerAction(AbstractVisualInventoryAction action) {
+    public void registerAction(String moduleId, AbstractVisualInventoryAction action) {
         this.actions.add(action);
-        if (action.appliesTo() != null) {
-            List<AbstractVisualInventoryAction> map = this.actionMap.get(action.appliesTo());
-            if (map == null) {
-                map = new ArrayList<>();
-                this.actionMap.put(action.appliesTo(), map);
-            }
-            map.add(action);
-        }
+        
+        if (!this.actionsByModule.containsKey(moduleId))
+            this.actionsByModule.put(moduleId, new ArrayList<>());
+        this.actionsByModule.get(moduleId).add(action);
+
+        String applicableTo = action.appliesTo() == null ? "" : action.appliesTo(); // Actions not applicable to any particular class are classified under an empty string key
+        
+        if (!this.actionsByApplicableClass.containsKey(applicableTo))
+            this.actionsByApplicableClass.put(applicableTo, new ArrayList<>());
+        
+        this.actionsByApplicableClass.get(applicableTo).add(action);
     }
     
-    public List<AbstractVisualInventoryAction> getActions() {
+    /**
+     * Returns all registered actions.
+     * @return All registered actions.
+     */
+    public List<AbstractVisualInventoryAction> getAllActions() {
         return this.actions;
+    }
+
+    /**
+     * Returns all actions registered by a particular module.
+     * @param moduleId The id of the module. Usually the strings that comes from calling AbstractModule.getId().
+     * @return The list of actions, even if none registered for the given module (in that case, an empty array will be returned).
+     */
+    public List<AbstractVisualInventoryAction> getActionsForModule(String moduleId) {
+        return this.actionsByModule.containsKey(moduleId) ? this.actionsByModule.get(moduleId) : new ArrayList<>();
     }
 }

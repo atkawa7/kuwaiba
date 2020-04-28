@@ -3,19 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.neotropic.kuwaiba</groupId>
-        <artifactId>core</artifactId>
+        <artifactId>optional</artifactId>
         <version>2.1</version>
     </parent>
-    <name>Integration API</name>
-    <description>An API that defines the behavior of buil-in and third party modules</description>
-    <artifactId>integration-api</artifactId>
+    <name>Physical Connections</name>
+    <description>Provides tools and services that allow the creation of physical connections (optical, electrical and power-related)</description>
+    <artifactId>physical-connections</artifactId>
     <packaging>jar</packaging>
     <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>internationalization</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>reference-implementation</artifactId>
@@ -23,12 +18,13 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>persistence-api</artifactId>
+            <artifactId>internationalization</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>integration-api</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
-    <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
 </project>

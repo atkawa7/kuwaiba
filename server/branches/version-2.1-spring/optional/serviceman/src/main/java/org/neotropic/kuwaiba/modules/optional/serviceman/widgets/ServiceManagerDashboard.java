@@ -46,6 +46,7 @@ import org.neotropic.kuwaiba.core.apis.integration.ActionRegistry;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameterSet;
+import org.neotropic.kuwaiba.modules.optional.serviceman.ServiceManagerModule;
 
 /**
  * The visual entry point to the Service Manager module.
@@ -98,7 +99,7 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
     @Override
     public void onAttach(AttachEvent ev) {
         setSizeFull();
-        this.lytQuickActions = new HorizontalLayout(buildHeaderSubmenu());
+        this.lytQuickActions = new HorizontalLayout(buildQuickActionsMenu());
         this.lytQuickActions.setId("serviceman-quick-actions");
         
         this.lytContent = new VerticalLayout();
@@ -125,8 +126,7 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
         }));
         
         txtSearch.addKeyPressListener( event -> {
-            if (event.getKey().getKeys().get(0).equals(Key.ENTER.getKeys().get(0))) { // Weirdly enough, event.getKey().equals(Key.Enter) returns false ALWAYS
-                
+            if (event.getKey().getKeys().get(0).equals(Key.ENTER.getKeys().get(0))) { // Weirdly enough, event.getKey().equals(Key.Enter) ALWAYS returns false
                 try {
                     List<BusinessObjectLight> searchResults = bem.getSuggestedObjectsWithFilter(txtSearch.getValue(), chkMainFilter.getValue() == OPTION_SEARCH_SERVICES ? Constants.CLASS_GENERICSERVICE :
                             Constants.CLASS_GENERICCUSTOMER, -1);
@@ -161,21 +161,16 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
     /**
      * Builds a header menu with the options exclusive to this module (new customer, new service, new pools, etc).
      */
-    private MenuBar buildHeaderSubmenu() {
+    private MenuBar buildQuickActionsMenu() {
         MenuBar mnuQuickActions = new MenuBar();
         mnuQuickActions.setWidthFull();
         
-        this.actionRegistry.getActionsApplicableTo(Constants.CLASS_GENERICSERVICE).stream().forEach(anAction -> {
+        this.actionRegistry.getActionsForModule(ServiceManagerModule.MODULE_ID).stream().forEach(anAction -> {
             if (anAction.isQuickAction()) 
                 mnuQuickActions.addItem(anAction.getModuleAction().getDisplayName(), 
                         event -> ((Dialog)anAction.getVisualComponent(new ModuleActionParameterSet())).open());
         });
         
-        this.actionRegistry.getActionsApplicableTo(Constants.CLASS_GENERICCUSTOMER).stream().forEach(anAction -> {
-            if (anAction.isQuickAction()) 
-                mnuQuickActions.addItem(anAction.getModuleAction().getDisplayName(), 
-                        event -> ((Dialog)anAction.getVisualComponent(new ModuleActionParameterSet())).open());
-        });
         return mnuQuickActions;
     }
     
