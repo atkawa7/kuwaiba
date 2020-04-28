@@ -159,7 +159,7 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
                 if (currentListType != null)
                     loadListTypeItems(currentListType);
                 
-            } catch (Exception ex) {
+            } catch (InvalidArgumentException | MetadataObjectNotFoundException ex) {
                 Logger.getLogger(ListTypeManagerUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else
@@ -255,7 +255,7 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
                 btnAddListTypeItemSec.setEnabled(true);
                 currentListType = ev.getItem();
                 loadListTypeItems(ev.getItem());
-            } catch (Exception ex) {
+            } catch (InvalidArgumentException | MetadataObjectNotFoundException ex) {
                 
             }
         });
