@@ -78,6 +78,6 @@ report.getComponents().add(new HTMLHx(1, String.format("ODF/DDF Usage Report for
 report.getComponents().add(headerTable);
 report.getComponents().add(detailsTable);
 report.getComponents().add(new HTMLDiv("width:100%;text-align:center", "footer", "", "This report is powered by <a href=\"https://www.kuwaiba.org\">Kuwaiba Open Network Inventory</a>"));
-report.getComponents().add(new HTMLDiv("width:100%;text-align:center", "footer", "", "Get commercial support with <a href=\"https://www.neotropic.co\">Neotropic SAS</a>"));
+report.getComponents().add(new HTMLDiv("width:100%;text-align:center", "footer", "", "Get commercial support from <a href=\"https://www.neotropic.co\">Neotropic SAS</a>"));
 
 return report;
