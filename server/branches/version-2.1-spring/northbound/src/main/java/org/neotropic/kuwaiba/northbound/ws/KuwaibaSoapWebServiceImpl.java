@@ -16,9 +16,9 @@
 
 package org.neotropic.kuwaiba.northbound.ws;
 
-import com.neotropic.kuwaiba.commercial.SDHModule;
-import com.neotropic.kuwaiba.commercial.sdh.SDHContainerLinkDefinition;
-import com.neotropic.kuwaiba.commercial.sdh.SDHPosition;
+import com.neotropic.kuwaiba.modules.commercial.SDHModule;
+import com.neotropic.kuwaiba.modules.commercial.sdh.SDHContainerLinkDefinition;
+import com.neotropic.kuwaiba.modules.commercial.sdh.SDHPosition;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;

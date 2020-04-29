@@ -15,8 +15,8 @@
  */
 package org.neotropic.kuwaiba.northbound.ws.model.business.modules.sdh;
 
-import com.neotropic.kuwaiba.commercial.sdh.SDHContainerLinkDefinition;
-import com.neotropic.kuwaiba.commercial.sdh.SDHPosition;
+import com.neotropic.kuwaiba.modules.commercial.sdh.SDHContainerLinkDefinition;
+import com.neotropic.kuwaiba.modules.commercial.sdh.SDHPosition;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

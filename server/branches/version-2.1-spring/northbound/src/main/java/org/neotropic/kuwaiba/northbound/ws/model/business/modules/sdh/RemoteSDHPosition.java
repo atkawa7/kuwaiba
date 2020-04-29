@@ -15,7 +15,7 @@
  */
 package org.neotropic.kuwaiba.northbound.ws.model.business.modules.sdh;
 
-import com.neotropic.kuwaiba.commercial.sdh.SDHPosition;
+import com.neotropic.kuwaiba.modules.commercial.sdh.SDHPosition;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
