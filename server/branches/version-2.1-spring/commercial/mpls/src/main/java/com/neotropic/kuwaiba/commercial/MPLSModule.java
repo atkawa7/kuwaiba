@@ -22,7 +22,6 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractCommercialModule;
-import org.neotropic.kuwaiba.core.apis.integration.GenericCommercialModule;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ActivityLogEntry;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
@@ -416,15 +415,5 @@ public class MPLSModule extends AbstractCommercialModule {
     @Override
     public String getId() {
         return "mpls-networks";
-    }
-
-    @Override
-    public Object getPowerUserWebComponent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Object getSimpleUserWebComponent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
