@@ -16,7 +16,6 @@
 
 package org.neotropic.kuwaiba.modules.optional.serviceman.actions;
 
-import java.util.List;
 import java.util.HashMap;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -51,6 +50,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class NewServiceVisualAction extends AbstractVisualInventoryAction {
+    private Pool selectedServicePool = null;
     /**
      * Reference to the underlying action.
      */
@@ -86,24 +86,16 @@ public class NewServiceVisualAction extends AbstractVisualInventoryAction {
         try {
             Dialog wdwNewCustomer = new Dialog();
             
-            
-            
             // To show errors or warnings related to the input parameters.
             Label lblMessages = new Label();
             lblMessages.setClassName("embedded-notification-error");
             lblMessages.setWidthFull();
             lblMessages.setVisible(false);
             
-            List<BusinessObjectLight> customers = bem.getObjectsOfClassLight(Constants.CLASS_GENERICCUSTOMER, -1);
-            ComboBox<BusinessObjectLight> cmbCustomers = new ComboBox<>(ts.getTranslatedString("module.serviceman.actions.new-service.ui.customer"), customers);
+            ComboBox<BusinessObjectLight> cmbCustomers = new ComboBox<>(ts.getTranslatedString("module.serviceman.actions.new-service.ui.customer"));
             cmbCustomers.setRequired(true);
             cmbCustomers.setAllowCustomValue(false);
             cmbCustomers.setSizeFull();
-            
-            if (parameters.containsKey(Constants.PROPERTY_RELATED_OBJECT)) {
-                //BusinessObjectLight customer = (BusinessObjectLight);
-                
-            }
             
             ComboBox<Pool> cmbServicePools = new ComboBox<>(ts.getTranslatedString("module.serviceman.actions.new-service.ui.service-pool"));
             cmbServicePools.setRequiredIndicatorVisible(true);
@@ -111,20 +103,21 @@ public class NewServiceVisualAction extends AbstractVisualInventoryAction {
             cmbServicePools.setSizeFull();
             cmbCustomers.addValueChangeListener((event) -> {
                 try {
-                    BusinessObjectLight selectedCustomer = cmbCustomers.getValue();
-                    cmbServicePools.setItems(bem.getPoolsInObject(selectedCustomer.getClassName(), selectedCustomer.getId(), Constants.CLASS_GENERICSERVICE));
+                    cmbServicePools.setItems(bem.getPoolsInObject(cmbCustomers.getValue().getClassName(), 
+                            cmbCustomers.getValue().getId(), Constants.CLASS_GENERICSERVICE));
                 } catch (InventoryException ex) {
                     lblMessages.setText(ex.getLocalizedMessage());
                 }
             });
+            cmbServicePools.addValueChangeListener(ev -> {
+                this.selectedServicePool = cmbServicePools.getValue();
+            });
             
-            List<ClassMetadataLight> serviceTypes = mem.getSubClassesLight(Constants.CLASS_GENERICSERVICE, false, false);
-
             ComboBox<ClassMetadataLight> cmbServiceTypes = 
-                    new ComboBox<>(ts.getTranslatedString("module.serviceman.actions.new-service.ui.service-type"), serviceTypes);
+                    new ComboBox<>(ts.getTranslatedString("module.serviceman.actions.new-service.ui.service-type"), 
+                    mem.getSubClassesLight(Constants.CLASS_GENERICSERVICE, false, false));
             cmbServiceTypes.setRequiredIndicatorVisible(true);
             cmbServiceTypes.setSizeFull();
-
             
             TextField txtName = new TextField(ts.getTranslatedString("module.serviceman.actions.new-service.ui.service-name"));
             txtName.setRequiredIndicatorVisible(true);
@@ -132,14 +125,14 @@ public class NewServiceVisualAction extends AbstractVisualInventoryAction {
 
             Button btnOK = new Button(ts.getTranslatedString("module.general.messages.ok"), (e) -> {
                 try {
-                    if (cmbCustomers.getValue() == null || cmbServicePools.getValue() == null || cmbServiceTypes.getValue() == null || txtName.isEmpty()) {
+                    if (this.selectedServicePool == null || cmbServiceTypes.getValue() == null || txtName.isEmpty()) {
                         lblMessages.setText(ts.getTranslatedString("module.general.messages.must-fill-all-fields"));
                         lblMessages.setVisible(true);
                     } else {
                         HashMap<String, String> attributes = new HashMap<>();
                         attributes.put(Constants.PROPERTY_NAME, txtName.getValue());
                         newServiceAction.getCallback().execute(new ModuleActionParameterSet(
-                                new ModuleActionParameter<>("poolId", cmbServicePools.getValue().getId()), 
+                                new ModuleActionParameter<>("poolId", this.selectedServicePool.getId()), 
                                 new ModuleActionParameter<>("serviceClass", cmbServiceTypes.getValue().getName()),
                                 new ModuleActionParameter<>("attributes", attributes)));
                         
@@ -162,15 +155,32 @@ public class NewServiceVisualAction extends AbstractVisualInventoryAction {
                 wdwNewCustomer.close();
             });
 
-            FormLayout lytTextFields = new FormLayout(cmbCustomers, cmbServicePools, cmbServiceTypes, txtName);
+            FormLayout lytTextFields = new FormLayout();
+            
+            if (!parameters.containsKey("customer") && !parameters.containsKey("servicePool")) { // The action is launched without context
+                cmbCustomers.setItems(bem.getObjectsOfClassLight(Constants.CLASS_GENERICCUSTOMER, -1));
+                lytTextFields.add(cmbCustomers, cmbServicePools);
+            } else {
+                // Depending on the context from which the action is launched, some fields can be pre-selected
+                if (parameters.containsKey("customer")) { // This means that the action has been launched from a customer object
+                    BusinessObjectLight selectedCustomer = (BusinessObjectLight)parameters.get("customer");
+                    cmbServicePools.setItems(bem.getPoolsInObject(selectedCustomer.getClassName(), 
+                            selectedCustomer.getId(), Constants.CLASS_GENERICSERVICE));
+                    lytTextFields.add(cmbServicePools);
+                }
+
+                if (parameters.containsKey("servicePool")) // This means that the action has been launched from a service pool
+                    this.selectedServicePool = (Pool)parameters.get("servicePool");
+            }
+            
+            lytTextFields.add(cmbServiceTypes, txtName);
             lytTextFields.setWidthFull();
             HorizontalLayout lytMoreButtons = new HorizontalLayout(btnOK, btnCancel);
             lytMoreButtons.setAlignItems(FlexComponent.Alignment.END);
             VerticalLayout lytMain = new VerticalLayout(lblMessages, lytTextFields, lytMoreButtons);
             lytMain.setSizeFull();
-
             wdwNewCustomer.add(lytMain);
-            
+
             return wdwNewCustomer;
         } catch (InventoryException ex) {
             fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_ERROR, 

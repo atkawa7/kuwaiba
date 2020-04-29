@@ -41,7 +41,6 @@ public class PhysicalConnectionsModule extends AbstractModule {
         // Register global actions
     }
     
-    
     @Override
     public String getId() {
         return MODULE_ID;
@@ -71,15 +70,4 @@ public class PhysicalConnectionsModule extends AbstractModule {
     public ModuleType getModuleType() {
         return ModuleType.TYPE_OPEN_SOURCE;
     }
-
-    @Override
-    public Object getPowerUserWebComponent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Object getSimpleUserWebComponent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 }

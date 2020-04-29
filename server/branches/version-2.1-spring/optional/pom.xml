@@ -16,5 +16,6 @@
         <module>processman</module>
         <module>serviceman</module>
         <module>physical-connections</module>
+        <module>reporting</module>
     </modules>
 </project>

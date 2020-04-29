@@ -225,12 +225,7 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
                 btnAction.setClassName("search-result-action-button");
                 btnAction.getElement().setProperty("title", anAction.getModuleAction().getDescription());
                 btnAction.addClickListener( event -> {
-                    try {
-                        anAction.getModuleAction().getCallback().execute(
-                                new ModuleActionParameterSet(new ModuleActionParameter(Constants.PROPERTY_RELATED_OBJECT, result)));
-                    } catch (ModuleActionException ex) {
-                        new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
-                    }
+                    ((Dialog)anAction.getVisualComponent(new ModuleActionParameterSet(new ModuleActionParameter("customer", result)))).open();
                 });
                 lytActions.add(btnAction);
             });

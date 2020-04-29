@@ -16,7 +16,6 @@
 
 package org.neotropic.kuwaiba.modules.optional.serviceman.actions;
 
-import java.util.List;
 import java.util.HashMap;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -50,6 +49,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class NewCustomerVisualAction extends AbstractVisualInventoryAction {
+    private Pool selectedCustomerPool; 
     /**
      * Reference to the translation service.
      */
@@ -83,21 +83,19 @@ public class NewCustomerVisualAction extends AbstractVisualInventoryAction {
         // necessary information will have to be requested (the parent customer pool and the customer type), 
         // but if launched from a customer pool, only the customer type will be requested.
         try {
-            List<Pool> customerPools = bem.getRootPools(Constants.CLASS_GENERICCUSTOMER, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
-
-            ComboBox<Pool> cmbCustomerPools = new ComboBox<>(ts.getTranslatedString("module.serviceman.actions.new-customer.ui.customer-pool"), customerPools);
+            Dialog wdwNewCustomer = new Dialog();
+            
+            ComboBox<Pool> cmbCustomerPools = new ComboBox<>(ts.getTranslatedString("module.serviceman.actions.new-customer.ui.customer-pool"));
             cmbCustomerPools.setRequiredIndicatorVisible(true);
             cmbCustomerPools.setAllowCustomValue(false);
             cmbCustomerPools.setSizeFull();
-
-            List<ClassMetadataLight> customerTypes = mem.getSubClassesLight(Constants.CLASS_GENERICCUSTOMER, false, false);
+            cmbCustomerPools.addValueChangeListener( ev -> this.selectedCustomerPool = cmbCustomerPools.getValue() );
 
             ComboBox<ClassMetadataLight> cmbCustomerTypes = 
-                    new ComboBox<>(ts.getTranslatedString("module.serviceman.actions.new-customer.ui.customer-type"), customerTypes);
+                    new ComboBox<>(ts.getTranslatedString("module.serviceman.actions.new-customer.ui.customer-type"), 
+                                   mem.getSubClassesLight(Constants.CLASS_GENERICCUSTOMER, false, false));
             cmbCustomerTypes.setRequiredIndicatorVisible(true);
             cmbCustomerTypes.setSizeFull();
-
-            Dialog wdwNewCustomer = new Dialog();
             
             // To show errors or warnings related to the input parameters.
             Label lblMessages = new Label();
@@ -111,14 +109,14 @@ public class NewCustomerVisualAction extends AbstractVisualInventoryAction {
 
             Button btnOK = new Button(ts.getTranslatedString("module.general.messages.ok"), (e) -> {
                 try {
-                    if (cmbCustomerPools.getValue() == null || cmbCustomerTypes.getValue() == null || txtName.isEmpty()) {
+                    if (this.selectedCustomerPool == null || cmbCustomerTypes.getValue() == null || txtName.isEmpty()) {
                         lblMessages.setText(ts.getTranslatedString("module.general.messages.must-fill-all-fields"));
                         lblMessages.setVisible(true);
                     } else {
                         HashMap<String, String> attributes = new HashMap<>();
                         attributes.put(Constants.PROPERTY_NAME, txtName.getValue());
                         newCustomerAction.getCallback().execute(new ModuleActionParameterSet(
-                                new ModuleActionParameter<>("poolId", cmbCustomerPools.getValue().getId()), 
+                                new ModuleActionParameter<>("poolId", this.selectedCustomerPool.getId()), 
                                 new ModuleActionParameter<>("customerClass", cmbCustomerTypes.getValue().getName()),
                                 new ModuleActionParameter<>("attributes", attributes)));
                         
@@ -141,13 +139,20 @@ public class NewCustomerVisualAction extends AbstractVisualInventoryAction {
                 wdwNewCustomer.close();
             });
 
-            FormLayout lytTextFields = new FormLayout(cmbCustomerPools, cmbCustomerTypes, txtName);
+            FormLayout lytTextFields = new FormLayout();
+            if (parameters.containsKey("customerPool")) // The action is launched from a customer pool
+                this.selectedCustomerPool = (Pool)parameters.get("customerPool");
+            else { // The action is launched without context
+                cmbCustomerPools.setItems(bem.getRootPools(Constants.CLASS_GENERICCUSTOMER, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false));
+                lytTextFields.add(cmbCustomerPools);
+            }
+            
+            lytTextFields.add(cmbCustomerTypes, txtName);
             lytTextFields.setWidthFull();
             HorizontalLayout lytMoreButtons = new HorizontalLayout(btnOK, btnCancel);
             lytMoreButtons.setAlignItems(FlexComponent.Alignment.END);
             VerticalLayout lytMain = new VerticalLayout(lblMessages, lytTextFields, lytMoreButtons);
             lytMain.setSizeFull();
-
             wdwNewCustomer.add(lytMain);
             
             return wdwNewCustomer;

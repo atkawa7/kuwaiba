@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2020 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,26 +13,43 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.neotropic.kuwaiba.modules.core.datamodelman;
+
+package org.neotropic.kuwaiba.optional.reporting;
+
 import org.neotropic.kuwaiba.core.apis.integration.AbstractModule;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-
 /**
- * The definition of the Data Model Manager module
- * @author Orlando Paz  {@literal <orlando.paz@kuwaiba.org>}
+ * Provides tools to create and launch class and inventory level reports.
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Component
-public class DataModelManagerModule  extends AbstractModule {
+public class ReportingModule extends AbstractModule {
+    /**
+     * Module id.
+     */
+    public static final String MODULE_ID = "reporting";
+    /**
+     * Reference to the translation service.
+     */
+    @Autowired
+    private TranslationService ts;
+    
+    @Override
+    public String getId() {
+        return MODULE_ID;
+    }
 
     @Override
     public String getName() {
-        return "Data Model Manager";
+        return ts.getTranslatedString("module.reporting.name");
     }
 
     @Override
     public String getDescription() {
-        return "This module allows to manage the data model structure hierarchy of all objects and list types";
+        return ts.getTranslatedString("module.reporting.description");
     }
 
     @Override
@@ -44,14 +61,9 @@ public class DataModelManagerModule  extends AbstractModule {
     public String getVendor() {
         return "Neotropic SAS <contact@neotropic.co>";
     }
-    
-     @Override
-    public String getId() {
-        return "ltmanager";
-    }
 
     @Override
     public ModuleType getModuleType() {
-        return ModuleType.TYPE_OPEN_SOURCE;        
+        return ModuleType.TYPE_OPEN_SOURCE;
     }
 }

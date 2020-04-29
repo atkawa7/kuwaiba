@@ -23,17 +23,18 @@ import org.neotropic.kuwaiba.core.apis.integration.ActionRegistry;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.DeleteCustomerVisualAction;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewCustomerPoolVisualAction;
+import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewCustomerVisualAction;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewServicePoolVisualAction;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewServiceVisualAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Module definition.
+ * Manage customers, services and their relationships with network resources.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Component
-public class ServiceManagerModule extends AbstractModule<VerticalLayout> {
+public class ServiceManagerModule extends AbstractModule {
     /**
      * The module id.
      */
@@ -49,7 +50,7 @@ public class ServiceManagerModule extends AbstractModule<VerticalLayout> {
      * Reference to the action that creates customers pools.
      */
     @Autowired
-    private NewCustomerPoolVisualAction actNewCustomer;
+    private NewCustomerVisualAction actNewCustomer;
     /**
      * Reference to the action that creates services.
      */
@@ -74,11 +75,11 @@ public class ServiceManagerModule extends AbstractModule<VerticalLayout> {
     @PostConstruct
     public void init() {
         // Register all actions provided by this module
+        this.actionRegistry.registerAction(MODULE_ID, actNewService);
         this.actionRegistry.registerAction(MODULE_ID, actNewCustomer);
         this.actionRegistry.registerAction(MODULE_ID, actNewCustomerPool);
-        this.actionRegistry.registerAction(MODULE_ID, actDeleteCustomer);
-        this.actionRegistry.registerAction(MODULE_ID, actNewService);
         this.actionRegistry.registerAction(MODULE_ID, actNewServicePool);
+        this.actionRegistry.registerAction(MODULE_ID, actDeleteCustomer);
     }
     
     @Override
@@ -109,15 +110,5 @@ public class ServiceManagerModule extends AbstractModule<VerticalLayout> {
     @Override
     public ModuleType getModuleType() {
         return ModuleType.TYPE_OPEN_SOURCE;
-    }
-    
-    @Override
-    public VerticalLayout getPowerUserWebComponent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public VerticalLayout getSimpleUserWebComponent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -86,7 +86,7 @@ public class DeleteCustomerVisualAction extends AbstractVisualInventoryAction {
     
     @Override
     public boolean isQuickAction() {
-        return true;
+        return false;
     }
     
     @Override

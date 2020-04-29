@@ -23,11 +23,8 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManage
 /**
  * Defines the behavior of all modules be it commercial, open source or third-party free contributions.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
- * @param <W> The web component to be embedded into the web page. In Vaadin, this 
- * could be a Panel, or a VerticalLayout, for example.
- * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public abstract class AbstractModule<W> {
+public abstract class AbstractModule {
     /**
      * Reference to the metadata entity manager.
      */
@@ -76,22 +73,6 @@ public abstract class AbstractModule<W> {
      * @return The module's types
      */
     public abstract ModuleType getModuleType();
-    
-    /**
-     * Builds the web component that will be embedded in the web client for power users. Power users 
-     * are users who prefer an interface will all functionalities available, rather than a dumbed-down GUI. 
-     * Most of these users are data entry staff.
-     * @return The web component. 
-     */
-    public abstract W getPowerUserWebComponent();
-    
-    /**
-     * Builds the web component that will be embedded in the web client for simple users, this is a simplified version of 
-     * the component in {@link #getPowerUserWebComponent() }, and it is aimed to be used among users who are more interested in 
-     * consolidated information, such as managers or sales staff.
-     * @return The web component. 
-     */
-    public abstract W getSimpleUserWebComponent();
     
     /**
      * This method initializes the module. Must be called before anything else, otherwise the other modules won't be able to use the persistence service.

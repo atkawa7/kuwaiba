@@ -14,7 +14,6 @@
  *  limitations under the License.
  */
 package org.neotropic.kuwaiba.modules.core.listtypeman;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractModule;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +23,7 @@ import org.springframework.stereotype.Component;
  * @author Orlando Paz  {@literal <orlando.paz@kuwaiba.org>}
  */
 @Component
-public class ListTypeManagerModule  extends AbstractModule<VerticalLayout> {
+public class ListTypeManagerModule  extends AbstractModule {
 
     @Override
     public String getName() {
@@ -55,15 +54,4 @@ public class ListTypeManagerModule  extends AbstractModule<VerticalLayout> {
     public ModuleType getModuleType() {
         return ModuleType.TYPE_OPEN_SOURCE;        
     }
-
-    @Override
-    public VerticalLayout getPowerUserWebComponent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public VerticalLayout getSimpleUserWebComponent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 }
