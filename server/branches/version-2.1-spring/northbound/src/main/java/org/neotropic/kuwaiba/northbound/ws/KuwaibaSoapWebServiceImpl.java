@@ -16,8 +16,8 @@
 
 package org.neotropic.kuwaiba.northbound.ws;
 
-import com.neotropic.kuwaiba.modules.commercial.SDHModule;
 import com.neotropic.kuwaiba.modules.commercial.sdh.SDHContainerLinkDefinition;
+import com.neotropic.kuwaiba.modules.commercial.sdh.SDHModule;
 import com.neotropic.kuwaiba.modules.commercial.sdh.SDHPosition;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -133,7 +133,6 @@ import org.neotropic.kuwaiba.northbound.ws.model.business.RemoteObject;
 import org.neotropic.kuwaiba.northbound.ws.model.business.RemoteObjectLight;
 import org.neotropic.kuwaiba.northbound.ws.model.business.RemoteObjectLightList;
 import org.neotropic.kuwaiba.northbound.ws.model.business.RemoteObjectSpecialRelationships;
-import org.neotropic.kuwaiba.northbound.ws.model.business.ServiceLevelCorrelatedInformation;
 import org.neotropic.kuwaiba.northbound.ws.model.business.modules.sdh.RemoteSDHContainerLinkDefinition;
 import org.neotropic.kuwaiba.northbound.ws.model.business.modules.sdh.RemoteSDHPosition;
 import org.neotropic.kuwaiba.northbound.ws.model.metadata.RemoteAttributeMetadata;

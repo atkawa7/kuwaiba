@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.modules.commercial;
+package com.neotropic.kuwaiba.modules.commercial.sdh;
 
 import com.neotropic.kuwaiba.modules.commercial.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.commercial.sdh.SDHPosition;

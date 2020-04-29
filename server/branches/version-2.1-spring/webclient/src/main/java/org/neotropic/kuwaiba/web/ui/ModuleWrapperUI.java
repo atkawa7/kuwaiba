@@ -16,6 +16,7 @@
 
 package org.neotropic.kuwaiba.web.ui;
 
+import org.neotropic.kuwaiba.modules.optional.serviceman.ServiceManagerUI;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;

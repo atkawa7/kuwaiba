@@ -16,14 +16,17 @@
 
 package org.neotropic.kuwaiba.web;
 
+import com.neotropic.kuwaiba.modules.commercial.sdh.SDHModule;
 import java.util.Calendar;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.xml.ws.Endpoint;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.core.persistence.PersistenceService;
+import org.neotropic.kuwaiba.northbound.ws.KuwaibaSoapWebService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -82,10 +85,10 @@ public class Application {
         private PersistenceService persistenceService;
         @Autowired
         private TranslationService ts;
-//        @Autowired
-//        private KuwaibaSoapWebService ws;
-//        @Autowired
-//        private SDHModule modSdh;
+        @Autowired
+        private KuwaibaSoapWebService ws;
+        @Autowired
+        private SDHModule modSdh;
         
         @PostConstruct
         void init() {
@@ -122,20 +125,19 @@ public class Application {
                             Calendar.getInstance().getTime(), ex.getLocalizedMessage()));
             }
             
-//            Logger.getLogger(SDHModule.class.getName()).log(Level.INFO, 
-//                    String.format(ts.getTranslatedString("module.general.messages.initializing"), modSdh.getName()));
-//            modSdh.configureModule(persistenceService.getMem(), persistenceService.getAem(), persistenceService.getBem());
+            Logger.getLogger(SDHModule.class.getName()).log(Level.INFO, 
+                    String.format(ts.getTranslatedString("module.general.messages.initializing"), modSdh.getName()));
+            modSdh.configureModule(persistenceService.getMem(), persistenceService.getAem(), persistenceService.getBem());
 
-
-//            if (persistenceService.getState().equals(PersistenceService.EXECUTION_STATE.RUNNING)) {
-//                Endpoint.publish("http://localhost:8181/kuwaiba/KuwaibaService", ws);
-//                Logger.getLogger(PersistenceService.class.getName()).log(Level.INFO, 
-//                    String.format("[KUWAIBA] [%s] Web service initialized and running on port %s", 
-//                            Calendar.getInstance().getTime(), 8181));
-//            } else
-//                Logger.getLogger(PersistenceService.class.getName()).log(Level.SEVERE, 
-//                    String.format("[KUWAIBA] [%s] Web service could not be initialized because the Persistence Service is not running", 
-//                            Calendar.getInstance().getTime()));
+            if (persistenceService.getState().equals(PersistenceService.EXECUTION_STATE.RUNNING)) {
+                Endpoint.publish("http://localhost:8181/kuwaiba/KuwaibaService", ws);
+                Logger.getLogger(PersistenceService.class.getName()).log(Level.INFO, 
+                    String.format("[KUWAIBA] [%s] Web service initialized and running on port %s", 
+                            Calendar.getInstance().getTime(), 8181));
+            } else
+                Logger.getLogger(PersistenceService.class.getName()).log(Level.SEVERE, 
+                    String.format("[KUWAIBA] [%s] Web service could not be initialized because the Persistence Service is not running", 
+                            Calendar.getInstance().getTime()));
         }
         
         @PreDestroy

@@ -16,6 +16,7 @@
 
 package org.neotropic.kuwaiba.web.ui;
 
+import org.neotropic.kuwaiba.modules.optional.serviceman.ServiceManagerUI;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.menubar.MenuBarVariant;

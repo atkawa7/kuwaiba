@@ -16,6 +16,7 @@
 
 package org.neotropic.kuwaiba.web;
 
+import com.vaadin.flow.spring.annotation.EnableVaadin;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,18 +25,16 @@ import org.springframework.context.annotation.Configuration;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Configuration
-//@ComponentScan(basePackages = { "org.neotropic.kuwaiba.core.i18n", // The translation service.
-//                                "org.neotropic.kuwaiba.core.persistence", //The persistence service.
-//                                "org.neotropic.kuwaiba.core.apis.integration", // The API necessary to create modules.
-//                                "org.neotropic.kuwaiba.northbound.ws", // The SOAP-based web service interface implementation.
-//                                "org.neotropic.kuwaiba.modules.optional.serviceman",
-//                                "com.neotropic.kuwaiba.commercial", // Commercial modules
-//                                "org.neotropic.kuwaiba.modules.core.listtypeman.actions",
-//                                "org.neotropic.util.visual" //visual utilities
-//                              }) 
-@ComponentScan(basePackages = { "org.neotropic.kuwaiba.core",
-                                "org.neotropic.kuwaiba.modules",
+// Spring beans
+@ComponentScan(basePackages = { "org.neotropic.kuwaiba.core", // Core services and utilities
+                                "org.neotropic.kuwaiba.modules.core", // Core modules
+                                "org.neotropic.kuwaiba.modules.optional", // Optional modules
+                                "com.neotropic.kuwaiba.modules.commercial", // Commercial modules
                                 "org.neotropic.kuwaiba.northbound.ws", // The SOAP-based web service interface implementation.
-                              }) 
-
+                              })
+// Vaadin routes
+@EnableVaadin(value = { "org.neotropic.kuwaiba.modules.core",  // UIs for core modules
+                        "org.neotropic.kuwaiba.modules.optional", // UIs for optional modules
+                        "com.neotropic.kuwaiba.modules.commercial", // UIs for commercial modules
+                        "org.neotropic.kuwaiba.web.ui"}) // General purpose UIs
 public class SpringConfiguration { }

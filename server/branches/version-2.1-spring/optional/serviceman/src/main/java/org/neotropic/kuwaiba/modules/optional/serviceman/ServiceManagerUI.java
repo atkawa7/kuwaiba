@@ -14,13 +14,12 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.web.ui;
+package org.neotropic.kuwaiba.modules.optional.serviceman;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import java.util.Arrays;
 import org.neotropic.kuwaiba.core.apis.integration.ActionRegistry;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
@@ -38,7 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * to different functionalities are presented in a single place.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-@Route(value = "serviceman", layout = MainLayout.class)
+@Route(value = "serviceman")
 public class ServiceManagerUI extends VerticalLayout {
     /**
      * The main dashboard.
