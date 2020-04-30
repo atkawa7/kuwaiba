@@ -16,6 +16,7 @@
 
 package org.neotropic.kuwaiba.web.ui;
 
+import com.neotropic.kuwaiba.modules.commercial.ospman.OutsidePlantManagerUI;
 import org.neotropic.kuwaiba.modules.optional.serviceman.ServiceManagerUI;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.menubar.MenuBar;
@@ -69,7 +70,7 @@ public class MenuBuilderService {
         mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.home"), ev -> UI.getCurrent().navigate(HomeUI.class));
         mnuNewBar.addItem(ts.getTranslatedString("module.serviceman.name"), ev -> UI.getCurrent().navigate(ServiceManagerUI.class));
         mnuNewBar.addItem(ts.getTranslatedString("module.listtypeman.name"), ev -> UI.getCurrent().navigate(ListTypeManagerUI.class));
-        mnuNewBar.addItem(ts.getTranslatedString("module.ospman.name"), ev -> UI.getCurrent().navigate(OutsidePlantUI.class));
+        mnuNewBar.addItem(ts.getTranslatedString("module.ospman.name"), ev -> UI.getCurrent().navigate(OutsidePlantManagerUI.class));
         mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.logout"), ev -> UI.getCurrent().navigate(LogoutUI.class));
 
         this.menuList.put(session.getUser().getUserName(), mnuNewBar);

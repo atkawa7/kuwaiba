@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.neotropic.kuwaiba.web.ui;
+package com.neotropic.kuwaiba.modules.commercial.ospman;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -22,7 +22,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntity
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.modules.commercial.osp.widgets.OutsidePlantDashboard;
+import com.neotropic.kuwaiba.modules.commercial.ospman.widgets.OutsidePlantManagerDashboard;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -30,12 +30,12 @@ import org.springframework.beans.factory.annotation.Autowired;
  * to different functionalities are presented in a single place.
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-@Route(value = "ospman", layout = MainLayout.class)
-public class OutsidePlantUI extends VerticalLayout {
+@Route(value = "ospman", layout = OutsidePlantManagerLayout.class)
+public class OutsidePlantManagerUI extends VerticalLayout {
     /**
      * The main dashboard.
      */
-    private OutsidePlantDashboard dashboard;
+    private OutsidePlantManagerDashboard dashboard;
     /**
      * Reference to the translation service.
      */
@@ -62,7 +62,7 @@ public class OutsidePlantUI extends VerticalLayout {
         setSizeFull();
         getUI().ifPresent( ui -> ui.getPage().setTitle(ts.getTranslatedString("module.ospman.title")));
         
-        this.dashboard = new OutsidePlantDashboard(ts, aem, bem, mem);
+        this.dashboard = new OutsidePlantManagerDashboard(ts, aem, bem, mem);
         add(this.dashboard);
     }
 }
