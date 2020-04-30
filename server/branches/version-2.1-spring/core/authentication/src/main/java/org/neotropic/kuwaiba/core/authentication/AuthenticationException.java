@@ -17,9 +17,13 @@
 package org.neotropic.kuwaiba.core.authentication;
 
 /**
- *
+ * Thrown when an authentication process fails.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class LocalAuthenticationProvider extends AbstractAuthenticationProvider {
+public class AuthenticationException extends Exception {
 
+    public AuthenticationException(String message) {
+        super(message);
+    }
+    
 }

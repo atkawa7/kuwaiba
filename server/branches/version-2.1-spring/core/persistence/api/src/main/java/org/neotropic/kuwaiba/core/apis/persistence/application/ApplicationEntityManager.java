@@ -738,12 +738,12 @@ public interface ApplicationEntityManager extends AbstractEntityManager {
      * @param user User name
      * @param password Password
      * @param sessionType The type of session to be created. This type depends on what kind of client is trying to access (a desktop client, a web client, a web service user, etc. See Session.TYPE_XXX for possible session types
-     * @param IPAddress IP address the session is created from
+     * @param ipAddress IP address the session is created from
      * @return A session object with information about the session itself plus information about the user
      * @throws ApplicationObjectNotFoundException If the user does not exist
      * @throws NotAuthorizedException If the password is incorrect or if the user is not enabled, or if a system user is used to create the session.
      */
-    public Session createSession(String user, String password, int sessionType, String IPAddress) throws ApplicationObjectNotFoundException, NotAuthorizedException;
+    public Session createSession(String user, String password, int sessionType, String ipAddress) throws ApplicationObjectNotFoundException, NotAuthorizedException;
     
     /**
      * Retrieves a user from the session ring given a session id

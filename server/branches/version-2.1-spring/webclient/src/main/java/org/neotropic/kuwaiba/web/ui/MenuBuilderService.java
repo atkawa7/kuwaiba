@@ -19,7 +19,6 @@ package org.neotropic.kuwaiba.web.ui;
 import org.neotropic.kuwaiba.modules.optional.serviceman.ServiceManagerUI;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.menubar.MenuBar;
-import com.vaadin.flow.component.menubar.MenuBarVariant;
 import java.util.HashMap;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
@@ -66,11 +65,9 @@ public class MenuBuilderService {
             return this.menuList.get(session.getUser().getUserName());
         
         MenuBar mnuNewBar = new MenuBar();
-        mnuNewBar.addThemeVariants(MenuBarVariant.LUMO_SMALL);
         mnuNewBar.setWidthFull();
         mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.home"), ev -> UI.getCurrent().navigate(HomeUI.class));
         mnuNewBar.addItem(ts.getTranslatedString("module.serviceman.name"), ev -> UI.getCurrent().navigate(ServiceManagerUI.class));
-        mnuNewBar.addItem(ts.getTranslatedString("module.listtypeman.name"), ev -> UI.getCurrent().navigate(ListTypeManagerUI.class));
         mnuNewBar.addItem(ts.getTranslatedString("module.listtypeman.name"), ev -> UI.getCurrent().navigate(ListTypeManagerUI.class));
         mnuNewBar.addItem(ts.getTranslatedString("module.ospman.name"), ev -> UI.getCurrent().navigate(OutsidePlantUI.class));
         mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.logout"), ev -> UI.getCurrent().navigate(LogoutUI.class));

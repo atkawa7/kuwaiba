@@ -16,12 +16,25 @@
 
 package org.neotropic.kuwaiba.core.authentication.ldap;
 
+import java.util.HashMap;
+import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
 import org.neotropic.kuwaiba.core.authentication.AbstractAuthenticationProvider;
+import org.neotropic.kuwaiba.core.authentication.AuthenticationException;
 
 /**
  *
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class LdapAuthenticationProvider extends AbstractAuthenticationProvider {
+
+    @Override
+    public void configureProvider(HashMap<String, Object> parameters) throws AuthenticationException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Session login(String user, String password, int sessionType, String ipAddress) throws AuthenticationException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
 }

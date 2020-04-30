@@ -37,7 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * to different functionalities are presented in a single place.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-@Route(value = "serviceman")
+@Route(value = "serviceman", layout = ServiceManagerLayout.class)
 public class ServiceManagerUI extends VerticalLayout {
     /**
      * The main dashboard.
@@ -101,17 +101,6 @@ public class ServiceManagerUI extends VerticalLayout {
         this.actNewService.registerActionCompletedLister(this.dashboard);
         this.actNewCustomerPool.registerActionCompletedLister(this.dashboard);
         this.actNewServicePool.registerActionCompletedLister(this.dashboard);
-//        
-//        Button btnAddCustomer = new Button(this.actNewCustomer.getModuleAction().getDisplayName(), (event) -> {
-//            this.actNewCustomer.getVisualComponent().open();
-//        });
-//        
-//        Button btnAddService = new Button(this.actNewService.getModuleAction().getDisplayName(), (event) -> {
-//            this.actNewService.getVisualComponent().open();
-//        });
-//        
-//        add(btnAddCustomer);
-//        add(btnAddService);
     }
     
     @Override
@@ -121,6 +110,4 @@ public class ServiceManagerUI extends VerticalLayout {
         this.actNewCustomerPool.unregisterListener(this.dashboard);
         this.actNewServicePool.unregisterListener(this.dashboard);
     }
-
-    
 }

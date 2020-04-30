@@ -16,10 +16,29 @@
 
 package org.neotropic.kuwaiba.core.authentication;
 
+import java.util.HashMap;
+import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
+
 /**
- *
+ * Defines the general behavior of the classes that will authenticate users against 
+ * different providers, such an Active Directory or the built-in database.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class AbstractAuthenticationProvider {
-
+public abstract class AbstractAuthenticationProvider {
+    /**
+     * Sets the parameters necessary for the authentication to work (database handle, Active Directory settings, etc).
+     * @param parameters The set of parameters. The implementor must document what is required.
+     * @throws AuthenticationException If something goes wrong, most likely, the parameters are insufficient or not correct.
+     */
+    public abstract void configureProvider(HashMap<String, Object> parameters) throws AuthenticationException;
+    /**
+     * Attempts to authenticate a user. 
+     * @param user The user.
+     * @param password The password.
+     * @param sessionType The session type (web, desktop, web service, other)
+     * @param ipAddress The IP address the login request comes from.
+     * @return A session object containing the user profile and its privileges, basically.
+     * @throws AuthenticationException If the authentication process is incorrect. 
+     */
+    public abstract Session login(String user, String password, int sessionType, String ipAddress) throws AuthenticationException;
 }

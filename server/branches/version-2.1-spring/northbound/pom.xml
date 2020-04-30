@@ -58,14 +58,14 @@
             <version>2.3.2-1</version>
 	</dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>internationalization</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.neotropic.kuwaiba.commercial</groupId>
             <artifactId>sdh</artifactId>
             <version>2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>internationalization</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
     

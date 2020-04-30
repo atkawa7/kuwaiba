@@ -9,8 +9,8 @@
     <groupId>com.neotropic.kuwaiba.modules.commercial</groupId>
     <artifactId>osp</artifactId>
     <version>2.1</version>
-    <name>Outside plant</name>
-    <description>Support for outside plant</description>
+    <name>Outside Plant</name>
+    <description>Build geographically-aware view with your outside plant infrastructure</description>
 
     <properties>
         <vaadin.version>14.1.16</vaadin.version>

@@ -2243,7 +2243,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public Session createSession(String userName, String password, int sessionType, String IPAddress) throws ApplicationObjectNotFoundException, NotAuthorizedException {
+    public Session createSession(String userName, String password, int sessionType, String ipAddress) throws ApplicationObjectNotFoundException, NotAuthorizedException {
         if (userName == null || password == null)
             throw  new ApplicationObjectNotFoundException("User or Password must not be null or empty");
         
@@ -2270,7 +2270,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     }
                 }
                 
-                Session newSession = new Session(user, IPAddress, sessionType);
+                Session newSession = new Session(user, ipAddress, sessionType);
                 sessions.put(newSession.getToken(), newSession);
                 cm.putUser(user);
                 return newSession;

@@ -16,10 +16,13 @@
 
 package org.neotropic.kuwaiba.core.authentication;
 
+import org.springframework.stereotype.Service;
+
 /**
- *
+ * Provides methods 
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
+@Service
 public class AuthenticationService {
-
+    
 }

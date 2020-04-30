@@ -14,13 +14,16 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.web.ui;
+package org.neotropic.kuwaiba.modules.optional.serviceman;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.menubar.MenuBar;
+import com.vaadin.flow.component.menubar.MenuBarVariant;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -31,13 +34,12 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * General layout to be used in power user interfaces, that is, interfaces that provides many functionalities, as
- * opposed to simple user interfaces, aimed at casual users or managers. 
+ *
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @StyleSheet("css/main.css")
 @StyleSheet("css/main-layout.css")
-public class MainLayout extends FlexLayout implements RouterLayout {
+public class ServiceManagerLayout extends FlexLayout implements RouterLayout {
     /**
      * Header component.
      */
@@ -55,13 +57,8 @@ public class MainLayout extends FlexLayout implements RouterLayout {
      */
     @Autowired
     private TranslationService ts;
-    /**
-     * Reference to the menu builder service.
-     */
-    @Autowired
-    private MenuBuilderService menuBuilderService;
 
-    public MainLayout() {
+    public ServiceManagerLayout() {
         setId("main-layout");
         setSizeFull();
         this.lytHeader = new HorizontalLayout();
@@ -84,6 +81,18 @@ public class MainLayout extends FlexLayout implements RouterLayout {
         add(this.lytFooter);
     }
     
+    public MenuBar buildMenu(Session session) {
+        MenuBar mnuNewBar = new MenuBar();
+        mnuNewBar.addThemeVariants(MenuBarVariant.LUMO_SMALL);
+        mnuNewBar.setWidthFull();
+        mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.home"), ev -> UI.getCurrent().navigate("home"));
+        mnuNewBar.addItem(ts.getTranslatedString("module.serviceman.name"), ev -> UI.getCurrent().navigate("serviceman"));
+        mnuNewBar.addItem(ts.getTranslatedString("module.listtypeman.name"), ev -> UI.getCurrent().navigate("listtypeman"));
+        mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.logout"), ev -> UI.getCurrent().navigate("logout"));
+
+        return mnuNewBar;
+    }
+    
     @Override
     public void onAttach(AttachEvent ev) {
         this.lytHeader.removeAll();
@@ -94,7 +103,7 @@ public class MainLayout extends FlexLayout implements RouterLayout {
                 ui.navigate("");
             else {
                 this.lytHeader.removeAll();
-                this.lytHeader.add(menuBuilderService.buildMenuForSession(ui.getSession().getAttribute(Session.class)));
+                this.lytHeader.add(buildMenu(ui.getSession().getAttribute(Session.class)));
             }
             
         });
@@ -107,5 +116,4 @@ public class MainLayout extends FlexLayout implements RouterLayout {
         this.lytContent.add(Objects.requireNonNull((Component)content));
       }
     }
-    
 }
