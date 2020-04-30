@@ -41,13 +41,13 @@ public class BasicTree<T extends AbstractNode> extends TreeGrid<T> {
         template.append(">");
         
         template.append("<img ");
-        template.append("width='20px' ");
-        template.append("height='20px' ");
+        template.append("width='15px' ");
+        template.append("height='15px' ");
         template.append("src='[[item.icon]]' ");
         template.append("alt='' ");
         template.append(">");
         
-        template.append("&nbsp;&nbsp;[[item.name]]");
+        template.append("<p style=\"margin:0 0 0 10px;\">[[item.name]]</p>");
         
         template.append("</vaadin-grid-tree-toggle>");
         
@@ -57,7 +57,7 @@ public class BasicTree<T extends AbstractNode> extends TreeGrid<T> {
         renderer.withProperty("name", item -> item.getClassName());
         
         addColumn(renderer);
-        addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
+        addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS, GridVariant.LUMO_COMPACT);
         setDataProvider(dataProvider);
     }    
 }

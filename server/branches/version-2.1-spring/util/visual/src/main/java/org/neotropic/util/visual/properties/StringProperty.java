@@ -34,8 +34,11 @@ public class StringProperty extends AbstractProperty<String>{
     public StringProperty(String name, String displayName, String description, String value, String type) {
         super(name, displayName, description, value, type);
     }
-       
 
+    public StringProperty(String name, String displayName, String description, String value, String type, boolean readOnly) {
+        super(name, displayName, description, value, type, readOnly);
+    }
+    
     @Override
     public AbstractField getAdvancedEditor() {
         TextArea txtArea = new TextArea(this.getName(), this.getValue(), "...");  

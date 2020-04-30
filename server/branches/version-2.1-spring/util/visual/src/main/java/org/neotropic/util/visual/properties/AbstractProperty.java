@@ -16,7 +16,6 @@
 package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.Component;
 
 
 /**
@@ -31,6 +30,7 @@ public abstract class AbstractProperty<T> {
     private T value;
     private boolean hasBinder;
     private String type;
+    private boolean readOnly;
 
     public AbstractProperty(String name, String displayName, String description, T value) {
         this.name = name;
@@ -38,6 +38,7 @@ public abstract class AbstractProperty<T> {
         this.description = description;
         this.value = value;
         this.hasBinder = false;
+        this.readOnly = false;
     }
     
     public AbstractProperty(String name, String displayName, String description, T value, String type) {
@@ -47,6 +48,17 @@ public abstract class AbstractProperty<T> {
         this.value = value;
         this.hasBinder = false;
         this.type = type;
+        this.readOnly = false;
+    }
+    
+    public AbstractProperty(String name, String displayName, String description, T value, String type, boolean readOnly) {
+        this.name = name;
+        this.displayName = displayName;
+        this.description = description;
+        this.value = value;
+        this.hasBinder = false;
+        this.type = type;
+        this.readOnly = readOnly;
     }
 
     public AbstractProperty(String name, T value) {
@@ -55,7 +67,7 @@ public abstract class AbstractProperty<T> {
         this.displayName = name;
         this.description = "";
         this.hasBinder = false;
-
+        this.readOnly = false;
     }
 
     public String getName() {
@@ -105,8 +117,14 @@ public abstract class AbstractProperty<T> {
     public void setType(String type) {
         this.type = type;
     }
-    
-    
+
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
  
     @Override
     public String toString() {

@@ -33,6 +33,10 @@ public class IntegerProperty extends AbstractProperty<Integer>{
         super(name, displayName, description, value, type);
     }
 
+    public IntegerProperty(String name, String displayName, String description, Integer value, String type, boolean readOnly) {
+        super(name, displayName, description, value, type, readOnly);
+    }
+    
     @Override
     public AbstractField getAdvancedEditor() {
         IntegerField intField = new IntegerField(this.getName(), "...");  

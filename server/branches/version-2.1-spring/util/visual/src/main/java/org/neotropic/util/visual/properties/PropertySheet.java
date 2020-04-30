@@ -18,11 +18,13 @@ package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.util.ArrayList;
@@ -46,6 +48,7 @@ public class PropertySheet extends Grid<AbstractProperty> {
     public PropertySheet(TranslationService ts) {
         
         addThemeVariants(GridVariant.LUMO_COMPACT); 
+        addClassName("grid-compact");
         
         this.ts = ts;
         propertyValueChangedListeners = new ArrayList<>();
@@ -54,14 +57,14 @@ public class PropertySheet extends Grid<AbstractProperty> {
             VerticalLayout lytName = new VerticalLayout();
             lytName.setSpacing(false);
             lytName.setPadding(false);
-            Label lblName = new BoldLabel(property.toString()); //NOI18N
+            Label lblName = new BoldLabel(property.toString()); 
             Label lblType = new BoldLabel(property.getType()); 
             lblType.setClassName("text-secundary");
             lblName.setTitle(property.getDescription() == null || property.getDescription().isEmpty()
                     ? property.toString() : property.getDescription());
             lytName.add(lblName, lblType);
             return lytName;
-        }).setHeader(ts.getTranslatedString("module.general.labels.attributenamme")).setFlexGrow(2);
+        }).setHeader(ts.getTranslatedString("module.general.labels.attributenamme")).setKey("name").setFlexGrow(2);
         
         addComponentColumn((property) -> {
             
@@ -70,7 +73,7 @@ public class PropertySheet extends Grid<AbstractProperty> {
             lblValue.setWidthFull();
             lytValue.add(lblValue);
             
-            if (property.supportsInplaceEditor()) {
+            if (!property.isReadOnly() &&  property.supportsInplaceEditor()) {
                 AbstractField editField = property.getInplaceEditor();
                 // if the property doesnt have a binder, then  set the value manually
                 if (!property.hasBinder()) {
@@ -78,18 +81,21 @@ public class PropertySheet extends Grid<AbstractProperty> {
                 }
 
                 Button btnEdit = new Button(new Icon(VaadinIcon.CHECK_CIRCLE_O));
+                btnEdit.addClassName("icon-button");
                 Button btnCancel = new Button(new Icon(VaadinIcon.CLOSE_SMALL));
+                btnCancel.addClassName("icon-button");
                 HorizontalLayout hlytEditField = new HorizontalLayout(editField, btnEdit, btnCancel);
 
                 hlytEditField.setVisible(false);
                 hlytEditField.setPadding(false);
-                hlytEditField.setSpacing(false);
+                hlytEditField.setSpacing(true);
+                hlytEditField.setAlignItems(FlexComponent.Alignment.CENTER);
 
                 btnEdit.addClickListener(e -> {
                     lblValue.setVisible(true);
                     hlytEditField.setVisible(false);
                     this.getColumnByKey("advancedEditor").setVisible(true);
-
+                    this.getColumnByKey("name").setFlexGrow(2);
                     if (editField.getValue() == null) {
                         new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.error-null-value")).open();
                         return;
@@ -111,6 +117,7 @@ public class PropertySheet extends Grid<AbstractProperty> {
                     lblValue.setVisible(true);
                     hlytEditField.setVisible(false);
                     this.getColumnByKey("advancedEditor").setVisible(true);
+                    this.getColumnByKey("name").setFlexGrow(2);
                 });
 
                 lblValue.getElement().addEventListener("dblclick", e -> {
@@ -120,7 +127,7 @@ public class PropertySheet extends Grid<AbstractProperty> {
                     this.currentBtnCancelInEditProperty = btnCancel;
 
                     boolean visibilityValue = lblValue.isVisible();
-
+                    this.getColumnByKey("name").setFlexGrow(1);
                     lblValue.setVisible(!visibilityValue);
                     hlytEditField.setVisible(visibilityValue);
 
@@ -136,7 +143,7 @@ public class PropertySheet extends Grid<AbstractProperty> {
                 .setKey("value").setFlexGrow(4);
         
         addComponentColumn((property) -> {
-            if (property.supportsAdvancedEditor()) {
+            if (!property.isReadOnly() && property.supportsAdvancedEditor()) {
                  Button btnAdvancedEditor = new Button("...", ev -> {
                      
                      AdvancedEditorDialog dialog = new AdvancedEditorDialog(property);

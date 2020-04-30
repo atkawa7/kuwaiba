@@ -36,6 +36,10 @@ public class LongProperty extends AbstractProperty<Long>{
         this.setHasBinder(true);
     }
 
+    public LongProperty(String name, String displayName, String description, Long value, String type, boolean readOnly) {
+        super(name, displayName, description, value, type, readOnly);
+    }  
+
     @Override
     public AbstractField getAdvancedEditor() {
         NumberField nbrField = new NumberField(this.getName(), "...");
