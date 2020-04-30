@@ -228,7 +228,7 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
 
     private void updatePropertySheet() {
         try {
-            propertysheet.setItems(PropertyFactory.propertiesFromRemoteObject(currentListTypeItem, aem, bem, mem));
+            propertysheet.setItems(PropertyFactory.propertiesFromBusinessObject(currentListTypeItem, aem, bem, mem));
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException
                 | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
             Logger.getLogger(ListTypeManagerUI.class.getName()).log(Level.SEVERE, null, ex);

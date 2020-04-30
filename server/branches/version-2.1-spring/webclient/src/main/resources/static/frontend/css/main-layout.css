@@ -104,7 +104,7 @@
 #serviceman-search-component {
     
 }
-
+/* asign bolder style to some text */
 .bold-text {
     font-weight: bolder;
 }
@@ -112,18 +112,29 @@
 .width30p {
     width: 30%;
 }
+
 .width40p {
     width: 40%;
 }
+
 .width50p {
     width: 50%;
 }
-
+/* style subtitle in property sheet column name*/
 .text-secundary {
     color: #b3b0b0;
     font-size: .8em;
 }
-
+ /* used to align to end items in a flex container*/
 .align-self-end {
-    align-self: end;
+    align-self: flex-end;
+}
+/* style to reset icon button properties without text*/
+.icon-button {
+    height: 30px;
+}
+
+/* style to compact a little the grid rows */
+.grid-compact .vaadin-grid[part~="cell"] > vaadin-grid-cell-content {
+    padding: 0;
 }

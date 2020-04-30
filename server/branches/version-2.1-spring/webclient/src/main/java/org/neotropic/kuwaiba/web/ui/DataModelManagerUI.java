@@ -19,10 +19,14 @@ package org.neotropic.kuwaiba.web.ui;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.accordion.Accordion;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
+import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery;
@@ -37,8 +41,11 @@ import org.neotropic.kuwaiba.modules.core.datamodelman.nodes.DataModelNode;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.ApplicationObjectNotFoundException;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.neotropic.kuwaiba.core.apis.persistence.metadata.AttributeMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
@@ -46,9 +53,9 @@ import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.web.icons.BasicIconGenerator;
 import org.neotropic.kuwaiba.web.resources.ResourceFactory;
-import org.neotropic.util.visual.properties.PropertySheet.IPropertyValueChangedListener;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.properties.AbstractProperty;
+import org.neotropic.util.visual.properties.PropertyFactory;
 import org.neotropic.util.visual.properties.PropertySheet;
 import org.neotropic.util.visual.tree.BasicTree;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +66,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Orlando Paz {@literal <Orlando.Paz@kuwaiba.org>}
  */
 @Route(value = "dmman", layout = MainLayout.class)
-public class DataModelManagerUI extends VerticalLayout implements ActionCompletedListener, IPropertyValueChangedListener {
+public class DataModelManagerUI extends VerticalLayout implements ActionCompletedListener {
 
 
     @Autowired
@@ -84,14 +91,42 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
      */  
     @Autowired
     private ResourceFactory resourceFactory;
-    
-    BasicTree<DataModelNode> InventoryObjectTree;
-    
-    BasicTree<DataModelNode> genericObjectListTree;       
-         
+     /**
+     * factory to build resources from data source
+     */ 
+    TreeGrid<DataModelNode> inventoryObjectTree;
+     /**
+     * factory to build resources from data source
+     */ 
+    TreeGrid<DataModelNode> genericObjectListTree;       
+    /**
+     * sheet for general Attributes
+     */     
     PropertySheet propsheetGeneralAttributes;
-    
+     /**
+     * sheet for class Attributes properties
+     */   
+    PropertySheet propsheetClassAttributes;
+     /**
+     * current selected class 
+     */   
     ClassMetadataLight selectedClass;
+     /**
+     * combo filter for inventory tree
+     */   
+    ComboBox<ClassMetadataLight> cbxFilterInventoryTree;
+     /**
+     * combo filter for list type tree
+     */   
+    ComboBox<ClassMetadataLight> cbxFilterListTypeTree;
+     /**
+     * grid to list class attributes
+     */   
+    Grid<AttributeMetadata> tblClassAttributes;
+     /**
+     * current selected class attribute
+     */   
+    AttributeMetadata selectedAttribute;
     
     public DataModelManagerUI() {
         super();
@@ -133,18 +168,32 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
                 
         SplitLayout splitLayout = new SplitLayout();
         splitLayout.setSizeFull();
-        splitLayout.setSplitterPosition(30);
+        splitLayout.setSplitterPosition(25); 
                
         initializeInventoryObjectTree();
         initializeGenericObjectListTree(); 
          
         Accordion accordion = new Accordion();
-        accordion.add(ts.getTranslatedString("module.datamodelman.inventory-object"), InventoryObjectTree);
-        accordion.add(ts.getTranslatedString("module.datamodelman.generic-object-list"), genericObjectListTree);
-        splitLayout.addToPrimary(accordion);
+        accordion.setSizeFull();
+        accordion.add(ts.getTranslatedString("module.datamodelman.inventory-classes"), 
+                new VerticalLayout(cbxFilterInventoryTree, inventoryObjectTree));
+        accordion.add(ts.getTranslatedString("module.datamodelman.list-types"), 
+                new VerticalLayout(cbxFilterListTypeTree, genericObjectListTree));
+        accordion.close();
+                
+        VerticalLayout lytTrees = new VerticalLayout(new H4(ts.getTranslatedString("module.datamodelman.classes")), accordion);
+        lytTrees.setPadding(false);
+        lytTrees.setSizeFull();
+        splitLayout.addToPrimary(lytTrees);
         
-        initializePropSheetGenericAttributes();      
-        HorizontalLayout lytSecundaryContent = new HorizontalLayout(propsheetGeneralAttributes);
+        initializePropSheetGenericAttributes(); 
+        initializeGridClassAttributes();
+        initializePropSheetClassAttributes(); 
+        VerticalLayout lytLeft = new VerticalLayout(new H4(ts.getTranslatedString("module.datamodelman.general-class-attributes")),
+                                    propsheetGeneralAttributes, new H4(ts.getTranslatedString("module.datamodelman.class-attributes")),
+                                    tblClassAttributes);
+        VerticalLayout lytRight = new VerticalLayout(new H4(ts.getTranslatedString("module.datamodelman.general-attributes")), propsheetClassAttributes);
+        HorizontalLayout lytSecundaryContent = new HorizontalLayout(lytLeft, lytRight);
         lytSecundaryContent.setSizeFull();
         
         splitLayout.addToSecondary(lytSecundaryContent);
@@ -153,7 +202,216 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
     }
 
     private void initializeInventoryObjectTree() {
-        HierarchicalDataProvider dataProvider = new AbstractBackEndHierarchicalDataProvider<DataModelNode, Void>() {
+        HierarchicalDataProvider dataProvider = buildHierarchicalDataProvider(Constants.CLASS_INVENTORYOBJECT);
+        
+        inventoryObjectTree = new BasicTree(dataProvider , new BasicIconGenerator(resourceFactory));
+        
+        List<ClassMetadataLight> inventoryObjectClasses = new ArrayList<>();
+        try {
+            inventoryObjectClasses = mem.getSubClassesLight(Constants.CLASS_INVENTORYOBJECT, true, true);
+        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+            Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        cbxFilterInventoryTree = new ComboBox<>(ts.getTranslatedString("module.general.labels.filter"));
+        cbxFilterInventoryTree.setWidthFull();
+        cbxFilterInventoryTree.setItems(inventoryObjectClasses);
+        cbxFilterInventoryTree.setClearButtonVisible(true);
+        cbxFilterInventoryTree.setItemLabelGenerator(ClassMetadataLight::getName);
+        
+        cbxFilterInventoryTree.addValueChangeListener(ev -> {
+            if (ev.getValue() == null) 
+                inventoryObjectTree.setDataProvider(buildHierarchicalDataProvider(Constants.CLASS_INVENTORYOBJECT));
+            else 
+                inventoryObjectTree.setDataProvider(buildHierarchicalDataProvider(ev.getValue().getName()));
+           
+        });
+        
+        inventoryObjectTree.addItemClickListener( item ->  {
+            selectedClass = item.getItem().getObject();
+            updatePropertySheetGeneralAttributes();
+            updateGridClassAttributes(item.getItem().getObject());
+            propsheetClassAttributes.clear();
+        });
+    }
+    
+    private void updatePropertySheetGeneralAttributes() {
+        try {
+            ClassMetadata classMetadata = mem.getClass(selectedClass.getName());
+            
+            propsheetGeneralAttributes.setItems(PropertyFactory.generalPropertiesFromClass(classMetadata));
+        } catch (MetadataObjectNotFoundException ex) {
+            Logger.getLogger(ListTypeManagerUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void updatePropertySheetClassAttributes() {
+        try {           
+            propsheetClassAttributes.setItems(PropertyFactory.generalPropertiesFromAttribute(selectedAttribute));
+        } catch (Exception ex) {
+            Logger.getLogger(ListTypeManagerUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void initializeGenericObjectListTree() {
+        HierarchicalDataProvider dataProvider = buildHierarchicalDataProvider(Constants.CLASS_GENERICOBJECTLIST);
+        
+        genericObjectListTree = new BasicTree(dataProvider , new BasicIconGenerator(resourceFactory));
+//        genericObjectListTree.addco
+        genericObjectListTree.addItemClickListener( item ->  {
+            selectedClass = item.getItem().getObject();
+            updatePropertySheetGeneralAttributes();
+            updateGridClassAttributes(item.getItem().getObject());
+            propsheetClassAttributes.clear();
+        });
+        
+        List<ClassMetadataLight> listTypeClasses = new ArrayList<>();
+        try {       
+            listTypeClasses = mem.getSubClassesLight(Constants.CLASS_GENERICOBJECTLIST, true, true);
+        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+            Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        cbxFilterListTypeTree = new ComboBox<>(ts.getTranslatedString("module.general.labels.filter"));
+        cbxFilterListTypeTree.setWidthFull();
+        cbxFilterListTypeTree.setItems(listTypeClasses);
+        cbxFilterListTypeTree.setClearButtonVisible(true);
+        cbxFilterListTypeTree.setItemLabelGenerator(ClassMetadataLight::getName);
+        
+        cbxFilterListTypeTree.addValueChangeListener(ev -> {
+            if (ev.getValue() == null) 
+                genericObjectListTree.setDataProvider(buildHierarchicalDataProvider(Constants.CLASS_GENERICOBJECTLIST));
+            else 
+                genericObjectListTree.setDataProvider(buildHierarchicalDataProvider(ev.getValue().getName()));
+           
+        });
+    }
+
+    private void initializePropSheetGenericAttributes() {
+        propsheetGeneralAttributes = new PropertySheet(ts, new ArrayList<>(), "");
+        propsheetGeneralAttributes.addPropertyValueChangedListener((AbstractProperty<? extends Object> property) -> {
+            try {
+                if (selectedClass != null) { 
+
+                    ClassMetadata classToUpdate = new ClassMetadata();
+                    classToUpdate.setId(selectedClass.getId());
+                    switch(property.getName()) {
+                        case Constants.PROPERTY_NAME:
+                            classToUpdate.setName(property.getValue().toString());
+                            break;
+                        case Constants.PROPERTY_DISPLAY_NAME:
+                            classToUpdate.setDisplayName(property.getValue().toString());
+                            break;
+                        case Constants.PROPERTY_DESCRIPTION:
+                            classToUpdate.setDescription(property.getValue().toString());
+                            break;
+                        case Constants.PROPERTY_ABSTRACT:
+                            classToUpdate.setAbstract((Boolean)property.getValue());
+                            break;
+                        case Constants.PROPERTY_IN_DESIGN:
+                            classToUpdate.setInDesign((Boolean)property.getValue());
+                            break;
+                        case Constants.PROPERTY_COUNTABLE:
+                            classToUpdate.setCountable((Boolean)property.getValue());
+                            break;                     
+                    }                                     
+                    mem.setClassProperties(classToUpdate);                   
+
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
+                }
+            }catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException
+                    | InvalidArgumentException ex) {
+                Logger.getLogger(ListTypeManagerUI.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ApplicationObjectNotFoundException ex) {
+                Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });     
+    }
+
+
+    private void initializeGridClassAttributes() {
+        
+        tblClassAttributes = new Grid();
+             
+        tblClassAttributes.addColumn(AttributeMetadata::getName)
+                .setHeader(String.format("%s %s", ts.getTranslatedString("module.listtypeman.listtype"), ts.getTranslatedString("module.general.labels.name")))
+                .setKey(ts.getTranslatedString("module.general.labels.name"));
+        
+        tblClassAttributes.addItemClickListener(ev -> {
+            try {
+                selectedAttribute = ev.getItem();
+                updatePropertySheetClassAttributes();
+            } catch (Exception ex) {
+
+            }
+        });
+    }
+
+    private void updateGridClassAttributes(ClassMetadataLight object) {
+        
+        try {
+            ClassMetadata classMetadata = mem.getClass(object.getName());
+            tblClassAttributes.setItems(classMetadata.getAttributes());
+            tblClassAttributes.getDataProvider().refreshAll();
+        } catch (MetadataObjectNotFoundException ex) {
+            Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void initializePropSheetClassAttributes() {
+        propsheetClassAttributes = new PropertySheet(ts, new ArrayList<>(), "");
+        propsheetClassAttributes.addPropertyValueChangedListener((AbstractProperty<? extends Object> property) -> {
+             try {
+                if (selectedAttribute != null && selectedClass != null) {
+                    
+                    AttributeMetadata attributeMetadataToUpdate = new AttributeMetadata();
+                    attributeMetadataToUpdate.setId(selectedAttribute.getId());
+                    attributeMetadataToUpdate.setName(null);
+                    
+                    switch(property.getName()) {
+                        case Constants.PROPERTY_NAME:
+                            attributeMetadataToUpdate.setName(property.getValue().toString());
+                            break;
+                        case Constants.PROPERTY_DISPLAY_NAME:
+                            attributeMetadataToUpdate.setDisplayName(property.getValue().toString());
+                            break;
+                        case Constants.PROPERTY_DESCRIPTION:
+                            attributeMetadataToUpdate.setDescription(property.getValue().toString());
+                            break;
+                        case Constants.PROPERTY_MANDATORY:
+                            attributeMetadataToUpdate.setMandatory((Boolean)property.getValue());
+                            break;
+                        case Constants.PROPERTY_UNIQUE:
+                            attributeMetadataToUpdate.setUnique((Boolean)property.getValue());
+                            break;
+                        case Constants.PROPERTY_MULTIPLE:
+                            attributeMetadataToUpdate.setVisible((Boolean)property.getValue());
+                            break;                     
+                        case Constants.PROPERTY_VISIBLE:
+                            attributeMetadataToUpdate.setVisible((Boolean)property.getValue());
+                            break;                     
+                        case Constants.PROPERTY_ADMINISTRATIVE:
+                            attributeMetadataToUpdate.setAdministrative((Boolean)property.getValue());
+                            break;                     
+                        case Constants.PROPERTY_NO_COPY:
+                            attributeMetadataToUpdate.setNoCopy((Boolean)property.getValue());
+                            break;                     
+                        case Constants.PROPERTY_ORDER:
+                            attributeMetadataToUpdate.setOrder((Integer)property.getValue());
+                            break;                     
+                    }
+                                      
+                    mem.setAttributeProperties(selectedClass.getId(), attributeMetadataToUpdate);
+
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
+                }
+            }catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException
+                    | InvalidArgumentException ex) {
+                Logger.getLogger(ListTypeManagerUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });     
+    }
+    
+    public HierarchicalDataProvider buildHierarchicalDataProvider(String rootClass) {
+        return new AbstractBackEndHierarchicalDataProvider<DataModelNode, Void>() {
             @Override
             protected Stream<DataModelNode> fetchChildrenFromBackEnd(HierarchicalQuery<DataModelNode, Void> query) {
                 DataModelNode parent = query.getParent();
@@ -171,7 +429,7 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
                     }
                 } else {
                     try {
-                        ClassMetadata inventoryObjectClass = mem.getClass(Constants.CLASS_INVENTORYOBJECT);
+                        ClassMetadata inventoryObjectClass = mem.getClass(rootClass);
                         return Arrays.asList(new DataModelNode(
                                 new ClassMetadataLight(inventoryObjectClass.getId(),
                                         inventoryObjectClass.getName(),
@@ -187,8 +445,6 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
             public int getChildCount(HierarchicalQuery<DataModelNode, Void> query) {
                 DataModelNode parent = query.getParent();
                 if (parent != null) {
-                    if (Constants.DUMMY_ROOT.equals(parent.getClassName()))
-                        return 1;
                     ClassMetadataLight object = parent.getObject();
                     try {
                         return (int) mem.getSubClassesCount(object.getName());
@@ -206,93 +462,5 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
                 return true;
             }
         };
-        
-        InventoryObjectTree = new BasicTree(dataProvider , new BasicIconGenerator(resourceFactory));
-        
-        InventoryObjectTree.addItemClickListener( item ->  {
-            selectedClass = item.getItem().getObject();
-            updatePropertySheet();
-        });
-    }
-    
-      private void updatePropertySheet() {
-//        try {
-//            ClassMetadata classMetadata = mem.getClass(selectedClass.getName());
-//            HashMap<String, String> generalAttributes = new HashMap<>();
-//            generalAttributes.put("name", v);
-//            
-//            propsheetGeneralAttributes.setItems(PropertyFactory.buildPropertyList(classMetadata,));
-//        } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException
-//                | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
-//            Logger.getLogger(ListTypeManagerUI.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-    }
-    
-    private void initializeGenericObjectListTree() {
-        HierarchicalDataProvider dataProvider = new AbstractBackEndHierarchicalDataProvider<DataModelNode, Void>() {
-            @Override
-            protected Stream<DataModelNode> fetchChildrenFromBackEnd(HierarchicalQuery<DataModelNode, Void> query) {
-                DataModelNode parent = query.getParent();
-                if (parent != null) {
-                    ClassMetadataLight object = parent.getObject();
-                    try {
-                        List<ClassMetadataLight> children = mem.getSubClassesLightNoRecursive(object.getName(), true, false);
-                        List<DataModelNode> theChildren = new ArrayList();
-                        for (ClassMetadataLight child : children)
-                            theChildren.add(new DataModelNode(child, child.getName()));
-                        return theChildren.stream();
-                    } catch (MetadataObjectNotFoundException ex) {
-                        Notification.show(ex.getMessage());
-                        return new ArrayList().stream();
-                    }
-                } else {
-                    try {
-                        ClassMetadata inventoryObjectClass = mem.getClass(Constants.CLASS_GENERICOBJECTLIST);
-                        return Arrays.asList(new DataModelNode(
-                                new ClassMetadataLight(inventoryObjectClass.getId(),
-                                        inventoryObjectClass.getName(),
-                                        inventoryObjectClass.getDisplayName()), inventoryObjectClass.getName())).stream();
-                    } catch (MetadataObjectNotFoundException ex) {
-                        Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
-                        return new ArrayList().stream();
-                    }
-                }              
-            }
-
-            @Override
-            public int getChildCount(HierarchicalQuery<DataModelNode, Void> query) {
-                DataModelNode parent = query.getParent();
-                if (parent != null) {
-
-                    ClassMetadataLight object = parent.getObject();
-                    try {
-                        return (int) mem.getSubClassesCount(object.getName());
-                    } catch (MetadataObjectNotFoundException ex) {
-                        Notification.show(ex.getMessage());
-                        return 0;
-                    }
-                    
-                } else
-                    return 1;
-            }
-
-            @Override
-            public boolean hasChildren(DataModelNode node) {
-                return true;
-            }
-        };     
-        
-        genericObjectListTree = new BasicTree(dataProvider , new BasicIconGenerator(resourceFactory));
-
-    }
-
-    private void initializePropSheetGenericAttributes() {
-        propsheetGeneralAttributes = new PropertySheet(ts, new ArrayList<>(), "");
-        propsheetGeneralAttributes.addPropertyValueChangedListener(this);     
-    }
-
-    @Override
-    public void updatePropertyChanged(AbstractProperty property) {
-            
     }
 }

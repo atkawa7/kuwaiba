@@ -43,4 +43,32 @@ vaadin-menu-bar-button {
 
 vaadin-button {
     text-transform: none;
+    min-width: 30px;  
 }
+/*style for accordion summary title*/
+.vaadin-accordion-panel[part="summary-content"] > * {
+    font-weight: bolder;
+    font-size: 1.1em;
+}
+/*compact accordion component*/
+.vaadin-accordion-panel[part="content"] {
+    padding: 0px;
+}
+/*remove margin on icon buttons with the class icon-button*/
+.icon-button .vaadin-button[part="prefix"] > iron-icon {
+    margin: 0px;
+}
+/* reset the width and color of the vaadin splitter */
+.vaadin-split-layout[part="splitter"] {
+    min-width: 5px;
+    background-color: var(--_material-split-layout-splitter-background-color, #c5c3c3);
+}
+/* change handle splitter width */
+.vaadin-split-layout[part="handle"] {
+    width: 20px;
+}
+
+
+/*vaadin-text-field-container {
+    
+}*/
