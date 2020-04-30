@@ -67,7 +67,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * to different functionalities are presented in a single place.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-@Route(value = "listtypeman", layout = MainLayout.class)
+@Route(value = "ltman", layout = MainLayout.class)
 public class ListTypeManagerUI extends VerticalLayout implements ActionCompletedListener, IPropertyValueChangedListener {
 
     /**

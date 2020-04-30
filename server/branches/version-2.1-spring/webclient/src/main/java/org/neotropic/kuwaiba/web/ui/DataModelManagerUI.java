@@ -58,7 +58,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * to different functionalities are presented in a single place.
  * @author Orlando Paz {@literal <Orlando.Paz@kuwaiba.org>}
  */
-@Route(value = "datamodelman", layout = MainLayout.class)
+@Route(value = "dmman", layout = MainLayout.class)
 public class DataModelManagerUI extends VerticalLayout implements ActionCompletedListener, IPropertyValueChangedListener {
 
 

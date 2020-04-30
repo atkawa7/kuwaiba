@@ -23,12 +23,12 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.menubar.MenuBar;
-import com.vaadin.flow.component.menubar.MenuBarVariant;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.RouterLayout;
 import java.util.Objects;
+import org.neotropic.kuwaiba.core.apis.integration.ModuleRegistry;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +57,11 @@ public class ServiceManagerLayout extends FlexLayout implements RouterLayout {
      */
     @Autowired
     private TranslationService ts;
+    /**
+     * Reference to the module registry.
+     */
+    @Autowired
+    private ModuleRegistry moduleRegistry;
 
     public ServiceManagerLayout() {
         setId("main-layout");
@@ -83,11 +88,12 @@ public class ServiceManagerLayout extends FlexLayout implements RouterLayout {
     
     public MenuBar buildMenu(Session session) {
         MenuBar mnuNewBar = new MenuBar();
-        mnuNewBar.addThemeVariants(MenuBarVariant.LUMO_SMALL);
         mnuNewBar.setWidthFull();
+        
         mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.home"), ev -> UI.getCurrent().navigate("home"));
-        mnuNewBar.addItem(ts.getTranslatedString("module.serviceman.name"), ev -> UI.getCurrent().navigate("serviceman"));
-        mnuNewBar.addItem(ts.getTranslatedString("module.listtypeman.name"), ev -> UI.getCurrent().navigate("listtypeman"));
+        this.moduleRegistry.getModules().values().stream().forEach( aModule -> {
+            mnuNewBar.addItem(aModule.getName(), ev -> UI.getCurrent().navigate(aModule.getId()));
+        });
         mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.logout"), ev -> UI.getCurrent().navigate("logout"));
 
         return mnuNewBar;

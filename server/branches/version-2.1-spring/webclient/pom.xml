@@ -59,11 +59,6 @@
         </dependency>
         
         <!-- Internationalization and localization support -->
-        <dependency>
-            <groupId>org.neotropic.kuwaiba</groupId>
-            <artifactId>internationalization</artifactId>
-            <version>2.1</version>
-        </dependency>
         
         <!-- Vaadin -->
         <dependency>

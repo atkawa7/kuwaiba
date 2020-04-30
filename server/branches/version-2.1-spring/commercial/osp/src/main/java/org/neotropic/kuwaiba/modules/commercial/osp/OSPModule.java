@@ -15,7 +15,10 @@
  */
 package org.neotropic.kuwaiba.modules.commercial.osp;
 
+import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractCommercialModule;
+import org.neotropic.kuwaiba.core.apis.integration.ActionRegistry;
+import org.neotropic.kuwaiba.core.apis.integration.ModuleRegistry;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermittedException;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,15 +32,32 @@ import org.springframework.stereotype.Component;
 public class OSPModule extends AbstractCommercialModule {
     @Autowired
     private TranslationService ts;
+    /**
+     * Reference to the action registry.
+     */
+    @Autowired
+    private ActionRegistry actionRegistry;
+    /**
+     * Reference to the module registry.
+     */
+    @Autowired
+    private ModuleRegistry moduleRegistry;
+
+    @PostConstruct
+    public void init() {
+        // Register all actions provided by this module
+        
+        // Now register the module itself
+        this.moduleRegistry.registerModule(this);
+    }
+    
     @Override
     public String getCategory() {
-        return "network/transport"; //NOI18N
+        return "network/transport";
     }
 
     @Override
-    public void validate() throws OperationNotPermittedException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public void validate() throws OperationNotPermittedException { }
 
     @Override
     public String getId() {
@@ -68,15 +88,4 @@ public class OSPModule extends AbstractCommercialModule {
     public ModuleType getModuleType() {
         return ModuleType.TYPE_OPEN_SOURCE;
     }
-
-//    @Override
-//    public Object getPowerUserWebComponent() {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-//
-//    @Override
-//    public Object getSimpleUserWebComponent() {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-    
 }

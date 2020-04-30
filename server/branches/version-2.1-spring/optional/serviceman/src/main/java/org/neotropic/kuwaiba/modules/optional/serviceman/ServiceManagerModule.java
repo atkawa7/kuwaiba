@@ -16,10 +16,10 @@
 
 package org.neotropic.kuwaiba.modules.optional.serviceman;
 
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractModule;
 import org.neotropic.kuwaiba.core.apis.integration.ActionRegistry;
+import org.neotropic.kuwaiba.core.apis.integration.ModuleRegistry;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.DeleteCustomerVisualAction;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewCustomerPoolVisualAction;
@@ -71,6 +71,11 @@ public class ServiceManagerModule extends AbstractModule {
      */
     @Autowired
     private ActionRegistry actionRegistry;
+    /**
+     * Reference to the module registry.
+     */
+    @Autowired
+    private ModuleRegistry moduleRegistry;
 
     @PostConstruct
     public void init() {
@@ -80,6 +85,9 @@ public class ServiceManagerModule extends AbstractModule {
         this.actionRegistry.registerAction(MODULE_ID, actNewCustomerPool);
         this.actionRegistry.registerAction(MODULE_ID, actNewServicePool);
         this.actionRegistry.registerAction(MODULE_ID, actDeleteCustomer);
+        
+        // Now register the module itself
+        this.moduleRegistry.registerModule(this);
     }
     
     @Override

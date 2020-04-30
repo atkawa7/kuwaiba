@@ -14,7 +14,11 @@
  *  limitations under the License.
  */
 package org.neotropic.kuwaiba.modules.core.datamodelman;
+import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractModule;
+import org.neotropic.kuwaiba.core.apis.integration.ActionRegistry;
+import org.neotropic.kuwaiba.core.apis.integration.ModuleRegistry;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
@@ -24,7 +28,25 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class DataModelManagerModule  extends AbstractModule {
+    /**
+     * Reference to the action registry.
+     */
+    @Autowired
+    private ActionRegistry actionRegistry;
+    /**
+     * Reference to the module registry.
+     */
+    @Autowired
+    private ModuleRegistry moduleRegistry;
 
+    @PostConstruct
+    public void init() {
+        // Register all actions provided by this module
+        
+        // Now register the module itself
+        this.moduleRegistry.registerModule(this);
+    }
+    
     @Override
     public String getName() {
         return "Data Model Manager";
@@ -47,7 +69,7 @@ public class DataModelManagerModule  extends AbstractModule {
     
      @Override
     public String getId() {
-        return "ltmanager";
+        return "dmman";
     }
 
     @Override
