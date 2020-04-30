@@ -36,6 +36,8 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotF
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermittedException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -44,6 +46,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class SDHModule extends AbstractCommercialModule {
+       
+    /**
+    * translation service
+    */
+    @Autowired
+    private TranslationService ts;
     //Constants
     /**
      * Root class of all high order tributary links (VC4)
@@ -96,12 +104,12 @@ public class SDHModule extends AbstractCommercialModule {
     
     @Override
     public String getName() {
-        return "SDH Networks Module"; //NOI18N
+        return ts.getTranslatedString("module.sdh.name");
     }
 
     @Override
     public String getDescription() {
-        return "Simple SDH module that allows the creation of STMX links, high and low order virtual circuits and finding routes between multiplexers";
+        return ts.getTranslatedString("module.sdh.description");
     }
 
     @Override
