@@ -45,6 +45,9 @@ public class Application {
     
     @Component
     public static class Bootstrap {
+        // Web service properties
+        @Value("${ws.port}")
+        private int wsPort;
         // General properties
         @Value("${general.enableSecurityManager}")
         private boolean enableSecurityManager;
@@ -130,10 +133,10 @@ public class Application {
             modSdh.configureModule(persistenceService.getMem(), persistenceService.getAem(), persistenceService.getBem());
 
             if (persistenceService.getState().equals(PersistenceService.EXECUTION_STATE.RUNNING)) {
-                Endpoint.publish("http://localhost:8181/kuwaiba/KuwaibaService", ws);
+                Endpoint.publish(String.format("http://localhost:%s/kuwaiba/KuwaibaService", wsPort), ws);
                 Logger.getLogger(PersistenceService.class.getName()).log(Level.INFO, 
                     String.format("[KUWAIBA] [%s] Web service initialized and running on port %s", 
-                            Calendar.getInstance().getTime(), 8181));
+                            Calendar.getInstance().getTime(), wsPort));
             } else
                 Logger.getLogger(PersistenceService.class.getName()).log(Level.SEVERE, 
                     String.format("[KUWAIBA] [%s] Web service could not be initialized because the Persistence Service is not running", 
