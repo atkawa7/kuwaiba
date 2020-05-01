@@ -18,6 +18,7 @@ import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractModule;
 import org.neotropic.kuwaiba.core.apis.integration.ActionRegistry;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleRegistry;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -47,14 +48,20 @@ public class DataModelManagerModule  extends AbstractModule {
         this.moduleRegistry.registerModule(this);
     }
     
+     /**
+    * translation service
+    */
+    @Autowired
+    private TranslationService ts;
+    
     @Override
     public String getName() {
-        return "Data Model Manager";
+        return ts.getTranslatedString("module.datamodelman.name");
     }
 
     @Override
     public String getDescription() {
-        return "This module allows to manage the data model structure hierarchy of all objects and list types";
+        return ts.getTranslatedString("module.datamodelman.description");
     }
 
     @Override
