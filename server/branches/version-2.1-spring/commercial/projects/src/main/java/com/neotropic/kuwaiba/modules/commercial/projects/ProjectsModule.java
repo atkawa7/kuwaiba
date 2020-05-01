@@ -33,7 +33,9 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotF
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermittedException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.northbound.ws.model.application.RemotePool;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Project management module
@@ -41,6 +43,11 @@ import org.neotropic.kuwaiba.northbound.ws.model.application.RemotePool;
  */
 public class ProjectsModule extends AbstractCommercialModule {
     
+    /**
+    * translation service
+    */
+    @Autowired
+    private TranslationService ts;
     /**
      * The MetadataEntityManager instance
      */
@@ -60,12 +67,12 @@ public class ProjectsModule extends AbstractCommercialModule {
     
     @Override
     public String getName() {
-        return "Projects Module"; //NOI18N
+        return ts.getTranslatedString("module.projects.name");
     }
 
     @Override
     public String getDescription() {
-        return "Projects Management Module";
+        return ts.getTranslatedString("module.projects.description");
     }
 
     @Override
