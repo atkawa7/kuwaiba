@@ -16,6 +16,8 @@
 package org.neotropic.kuwaiba.modules.core.listtypeman;
 import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractModule;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.neotropic.kuwaiba.core.apis.integration.ActionRegistry;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ListTypeManagerModule  extends AbstractModule {
+    
+    /**
+    * translation service
+    */
+    @Autowired
+    private TranslationService ts;
     /**
      * Reference to the action registry.
      */
@@ -46,15 +54,15 @@ public class ListTypeManagerModule  extends AbstractModule {
         // Now the module itself
         this.moduleRegistry.registerModule(this);
     }
-
+   
     @Override
     public String getName() {
-        return "List Type Manager";
+        return ts.getTranslatedString("module.listtypeman.name");
     }
 
     @Override
     public String getDescription() {
-        return "This module allows to manage the list type items for the available list types previously created using the Data Model Manager";
+        return ts.getTranslatedString("module.listtypeman.description");
     }
 
     @Override

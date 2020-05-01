@@ -43,7 +43,6 @@ import org.springframework.stereotype.Component;
 
 /**
  * Visual wrapper of create a new list type item action
- *
  * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
 @Component
