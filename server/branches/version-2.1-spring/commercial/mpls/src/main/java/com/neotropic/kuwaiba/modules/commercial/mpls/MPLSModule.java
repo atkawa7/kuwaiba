@@ -35,6 +35,8 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotF
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermittedException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 /**
@@ -42,6 +44,12 @@ import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class MPLSModule extends AbstractCommercialModule {
+    
+    /*
+     translation service
+    */
+    @Autowired
+    private TranslationService ts;
     /**
      * The MetadataEntityManager instance
      */
@@ -76,16 +84,16 @@ public class MPLSModule extends AbstractCommercialModule {
      * the end points of the MPLS link, it is used to explore the MPLS links in a 
      * MPLS device or the routing between devices
      */
-    public static String RELATIONSHIP_MPLSLINK = "mplsLink";
-            
-    @Override
+    public static String RELATIONSHIP_MPLSLINK = "mplsLink";           
+    
+     @Override
     public String getName() {
-        return "MPLS Networks Module"; //NOI18N
+        return ts.getTranslatedString("module.mpsl.name");
     }
 
     @Override
     public String getDescription() {
-        return "MPLS Module, ";
+        return ts.getTranslatedString("module.mpsl.description");
     }
     
     @Override
