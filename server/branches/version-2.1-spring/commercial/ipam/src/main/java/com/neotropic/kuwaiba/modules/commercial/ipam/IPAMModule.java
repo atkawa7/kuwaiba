@@ -37,7 +37,9 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.NotAuthorizedExcep
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermittedException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.northbound.ws.model.application.RemotePool;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * IP address manager module
@@ -45,6 +47,11 @@ import org.neotropic.kuwaiba.northbound.ws.model.application.RemotePool;
  */
 public class IPAMModule extends AbstractCommercialModule {
 
+    /*
+     translation service
+    */
+    @Autowired
+    private TranslationService ts;
     /**
      * The MetadataEntityManager instance
      */
@@ -78,12 +85,12 @@ public class IPAMModule extends AbstractCommercialModule {
     
     @Override
     public String getName() {
-        return "IPAM Module"; //NOI18N
+        return ts.getTranslatedString("module.ipam.name");
     }
 
     @Override
     public String getDescription() {
-        return "IP Address Management Module";
+        return ts.getTranslatedString("module.ipam.description");
     }
 
     @Override
