@@ -112,6 +112,7 @@ public interface MetadataEntityManager extends AbstractEntityManager {
      * Get the child count given the parent class name
      * @param className parent class Name
      * @return Count of children 
+     * @throws org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException 
      */
     public long getSubClassesCount(String className) throws MetadataObjectNotFoundException;
     /**

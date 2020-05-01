@@ -646,8 +646,8 @@ public class Constants {
       * Name of the data type list type
       */
      public static final String DATA_TYPE_LIST_TYPE = "List Type";
-   
-     
-     
-     
+     /* Name of the data type boolean
+      */
+     public static final String DATA_TYPE_BOOLEAN = "Boolean";
+       
 }
