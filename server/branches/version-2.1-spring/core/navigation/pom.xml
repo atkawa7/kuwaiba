@@ -8,4 +8,7 @@
     </parent>
     <artifactId>navigation</artifactId>
     <packaging>pom</packaging>
+    <modules>
+        <module>navtreeman</module>
+    </modules>
 </project>

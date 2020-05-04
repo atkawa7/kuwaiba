@@ -30,6 +30,10 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class OutsidePlantManagerModule extends AbstractCommercialModule {
+    /**
+     * The module id.
+     */
+    private static final String MODULE_ID = "ospman"; //NOI18N
     @Autowired
     private TranslationService ts;
     /**
@@ -61,7 +65,7 @@ public class OutsidePlantManagerModule extends AbstractCommercialModule {
 
     @Override
     public String getId() {
-        return "ospman"; //NOI18N
+        return MODULE_ID;
     }
 
     @Override

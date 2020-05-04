@@ -21,14 +21,30 @@ import java.util.Properties;
 import com.neotropic.kuwaiba.modules.commercial.ospman.AbstractMapProvider;
 import com.neotropic.kuwaiba.modules.commercial.ospman.GeoCoordinate;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OutsidePlantConstants;
+import com.vaadin.flow.component.splitlayout.SplitLayout;
+import com.vaadin.flow.component.splitlayout.SplitLayoutVariant;
+import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider;
+import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
+import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractDashboard;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.modules.optional.navtreeman.icons.BasicIconGenerator;
+import org.neotropic.kuwaiba.modules.optional.navtreeman.nodes.InventoryObjectNode;
+import org.neotropic.kuwaiba.modules.optional.navtreeman.resources.ResourceFactory;
 import org.neotropic.util.visual.notifications.SimpleNotification;
+import org.neotropic.util.visual.tree.BasicTree;
 
 /**
  * The visual entry point to the Outside Plan Module.
@@ -39,6 +55,10 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
      * Reference to the translation service.
      */
     private final TranslationService ts;
+    /**
+     * Factory to build resources from data source.
+     */
+    private final ResourceFactory resourceFactory;
     /**
      * Reference to the Application Entity Manager.
      */
@@ -58,10 +78,12 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
     
     public OutsidePlantManagerDashboard(
         TranslationService ts, 
+        ResourceFactory resourceFactory,
         ApplicationEntityManager aem, 
         BusinessEntityManager bem, 
         MetadataEntityManager mem) {
         this.ts = ts;
+        this.resourceFactory = resourceFactory;
         this.aem = aem;
         this.bem = bem;
         this.mem = mem;
@@ -98,11 +120,15 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
                 mapProperties.put("center", new GeoCoordinate(latitude, longitude)); //NOI18N
                 mapProperties.put("zoom", zoom);
                 
-                setSizeFull();
-                
                 AbstractMapProvider mapProvider = (AbstractMapProvider) mapProviderClass.newInstance();
                 mapProvider.initialize(mapProperties);
-                add(mapProvider.getComponent());
+                SplitLayout splitLayout = new SplitLayout();
+                splitLayout.addToPrimary(buildTree());
+                splitLayout.addToSecondary(mapProvider.getComponent());
+                splitLayout.setSplitterPosition(25);
+                splitLayout.addThemeVariants(SplitLayoutVariant.LUMO_SMALL);
+                splitLayout.setSizeFull();
+                add(splitLayout);
             }
         } catch (Exception ex) {
             new SimpleNotification(
@@ -110,6 +136,63 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
                 ex.getLocalizedMessage()
             ).open();
         }
+    }
+    private HierarchicalDataProvider getDataProvider() {
+        return new AbstractBackEndHierarchicalDataProvider<InventoryObjectNode, Void>() {
+            @Override
+            protected Stream<InventoryObjectNode> fetchChildrenFromBackEnd(HierarchicalQuery<InventoryObjectNode, Void> query) {
+                InventoryObjectNode parent = query.getParent();
+                if (parent != null) {
+                    BusinessObjectLight object = parent.getObject();
+                    try {
+                        List<BusinessObjectLight> children = bem.getObjectChildren(
+                            object.getClassName(), object.getId(), query.getOffset(), query.getLimit());
+                        List<InventoryObjectNode> nodes = new ArrayList();
+                        for (BusinessObjectLight child : children)
+                            nodes.add(new InventoryObjectNode(child, child.getClassName()));
+                        return nodes.stream();
+                    } catch (InvalidArgumentException ex) {
+                        new SimpleNotification(
+                            ts.getTranslatedString("module.general.messages.error"), 
+                            ex.getMessage()).open();
+                        return new ArrayList().stream();
+                    }
+                } else {
+                    BusinessObjectLight dummyRoot = new BusinessObjectLight(
+                        Constants.DUMMY_ROOT, null, Constants.DUMMY_ROOT);
+                    return Arrays.asList(new InventoryObjectNode(dummyRoot, 
+                        dummyRoot.getClassName())).stream();
+                }
+            }
+
+            @Override
+            public int getChildCount(HierarchicalQuery<InventoryObjectNode, Void> query) {
+                InventoryObjectNode parent = query.getParent();
+                if (parent != null) {
+                    BusinessObjectLight object = parent.getObject();
+                    try {
+                        return (int) bem.getObjectChildrenCount(object.getClassName(), object.getId());
+                    } catch (Exception ex) {
+                        new SimpleNotification(
+                            ts.getTranslatedString("module.general.messages.error"), 
+                            ex.getMessage()).open();
+                        return 0;
+                    }
+                }
+                else
+                    return 1;
+            }
+
+            @Override
+            public boolean hasChildren(InventoryObjectNode node) {
+                return true;
+            }
+        };
+    }
+    private BasicTree buildTree() {
+        BasicTree basicTree = new BasicTree(getDataProvider(), new BasicIconGenerator(resourceFactory));
+        basicTree.setSizeFull();
+        return basicTree;
     }
     
     @Override

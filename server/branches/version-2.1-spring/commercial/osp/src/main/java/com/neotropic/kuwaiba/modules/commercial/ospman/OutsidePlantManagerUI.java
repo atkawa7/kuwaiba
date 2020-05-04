@@ -23,6 +23,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import com.neotropic.kuwaiba.modules.commercial.ospman.widgets.OutsidePlantManagerDashboard;
+import org.neotropic.kuwaiba.modules.optional.navtreeman.resources.ResourceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -41,6 +42,11 @@ public class OutsidePlantManagerUI extends VerticalLayout {
      */
     @Autowired
     private TranslationService ts;
+    /**
+     * Factory to build resources from data source.
+     */
+    @Autowired
+    private ResourceFactory resourceFactory;
     /**
      * Reference to the Metadata Entity Manager.
      */
@@ -62,7 +68,7 @@ public class OutsidePlantManagerUI extends VerticalLayout {
         setSizeFull();
         getUI().ifPresent( ui -> ui.getPage().setTitle(ts.getTranslatedString("module.ospman.title")));
         
-        this.dashboard = new OutsidePlantManagerDashboard(ts, aem, bem, mem);
+        this.dashboard = new OutsidePlantManagerDashboard(ts, resourceFactory, aem, bem, mem);
         add(this.dashboard);
     }
 }
