@@ -19,5 +19,6 @@
         <module>authentication</module>
         <module>modules-api</module>
         <module>listtypeman</module>
+        <module>navigation</module>
     </modules>
 </project>
