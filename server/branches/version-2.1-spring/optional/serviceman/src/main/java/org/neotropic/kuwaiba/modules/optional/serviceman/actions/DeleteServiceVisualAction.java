@@ -33,11 +33,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Frontend to the delete customer action.
+ * Frontend to the delete service action.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Component
-public class DeleteCustomerVisualAction extends AbstractVisualInventoryAction {
+public class DeleteServiceVisualAction extends AbstractVisualInventoryAction {
     /**
      * Reference to the translation service.
      */
@@ -47,7 +47,7 @@ public class DeleteCustomerVisualAction extends AbstractVisualInventoryAction {
      * Reference to the underlying action.
      */
     @Autowired
-    private DeleteCustomerAction actDeleteCustomerAction;
+    private DeleteServiceAction actDeleteServiceAction;
     /**
      * Reference to the application entity manager.
      */
@@ -61,15 +61,15 @@ public class DeleteCustomerVisualAction extends AbstractVisualInventoryAction {
     
     @Override
     public Dialog getVisualComponent(ModuleActionParameterSet parameters) {
-        BusinessObjectLight customer = (BusinessObjectLight)parameters.get("customer");
+        BusinessObjectLight service = (BusinessObjectLight)parameters.get("service");
         
-        ConfirmDialog wdwDeleteCustomer = new ConfirmDialog(ts.getTranslatedString("module.serviceman.actions.delete-customer.ui.delete-customer"),
-                String.format(ts.getTranslatedString("module.serviceman.actions.delete-customer.ui.confirmation-delete-customer"), customer), 
+        ConfirmDialog wdwDeleteCustomer = new ConfirmDialog(ts.getTranslatedString("module.serviceman.actions.delete-service.ui.delete-service"),
+                String.format(ts.getTranslatedString("module.serviceman.actions.delete-service.ui.confirmation-delete-service"), service), 
                 ts.getTranslatedString("module.general.messages.ok"));
         
         wdwDeleteCustomer.getBtnConfirm().addClickListener(evt -> {
             try {
-                this.actDeleteCustomerAction.getCallback().execute(parameters);
+                this.actDeleteServiceAction.getCallback().execute(parameters);
             } catch (ModuleActionException ex) {
                  fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_ERROR, 
                                      ex.getMessage(), NewCustomerAction.class));
@@ -82,7 +82,7 @@ public class DeleteCustomerVisualAction extends AbstractVisualInventoryAction {
 
     @Override
     public AbstractAction getModuleAction() {
-        return actDeleteCustomerAction;
+        return actDeleteServiceAction;
     }
     
     @Override
@@ -92,6 +92,6 @@ public class DeleteCustomerVisualAction extends AbstractVisualInventoryAction {
     
     @Override
     public String appliesTo() {
-        return Constants.CLASS_GENERICCUSTOMER;
+        return Constants.CLASS_GENERICSERVICE;
     }
 }

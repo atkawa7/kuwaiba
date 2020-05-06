@@ -9,8 +9,7 @@ body {
     --material-primary-color: var(--primary-color, #5F9F9F) !important;
     --material-primary-text-color: var(--primary-color, #5F9F9F) !important;
     --material-font-family: 'ubuntu-r' !important;
-    --material-body-font-size: small;
-    
+    --material-body-font-size: small;  
 }
 
 /* Inherited styles */
@@ -22,11 +21,6 @@ vaadin-radio-group {
 
 vaadin-text-field vaadin-password-field {
     font-size: small;
-/*    border-style: solid;
-    border-width: 1px;
-    border-radius: 15px;
-    border-color: darkgray;
-    padding: 2px 2px 2px 2px;*/
 }
 
 vaadin-context-menu-item {

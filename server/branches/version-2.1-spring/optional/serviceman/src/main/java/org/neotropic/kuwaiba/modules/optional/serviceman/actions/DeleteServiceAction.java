@@ -28,11 +28,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Deletes a customer.
+ * Deletes a service.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Component
-public class DeleteCustomerAction extends AbstractAction {
+public class DeleteServiceAction extends AbstractAction {
     /**
      * Reference to the translation service.
      */
@@ -46,15 +46,15 @@ public class DeleteCustomerAction extends AbstractAction {
     
     @PostConstruct
     protected void init() {
-        this.id = "serviceman.delete-customer";
-        this.displayName = ts.getTranslatedString("module.serviceman.actions.delete-customer.name");
-        this.description = ts.getTranslatedString("module.serviceman.actions.delete-customer.description");
+        this.id = "serviceman.delete-service";
+        this.displayName = ts.getTranslatedString("module.serviceman.actions.delete-service.name");
+        this.description = ts.getTranslatedString("module.serviceman.actions.delete-service.description");
         this.order = 10;
     
         setCallback((parameters) -> {
-            BusinessObjectLight customer = (BusinessObjectLight)parameters.get("customer");
+            BusinessObjectLight service = (BusinessObjectLight)parameters.get("service");
             try {
-                bem.deleteObject(customer.getClassName(), customer.getId(), false);
+                bem.deleteObject(service.getClassName(), service.getId(), true);
             } catch (InventoryException ex) {
                 throw new ModuleActionException(ex.getMessage());
             } 

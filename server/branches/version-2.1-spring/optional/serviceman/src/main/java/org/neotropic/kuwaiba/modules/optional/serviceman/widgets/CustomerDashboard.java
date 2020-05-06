@@ -17,7 +17,7 @@
 package org.neotropic.kuwaiba.modules.optional.serviceman.widgets;
 
 /**
- *
+ * A dashboard to display the customer's information about a customer in the Service Manager.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class CustomerDashboard {

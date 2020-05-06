@@ -27,14 +27,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 // Spring beans
 @ComponentScan(basePackages = { "org.neotropic.kuwaiba.core", // Core services and utilities
-                                "org.neotropic.kuwaiba.modules.core", // Core modules
-                                "org.neotropic.kuwaiba.modules.optional", // Optional modules
-                                "com.neotropic.kuwaiba.modules.commercial", // Commercial modules
+                                "org.neotropic.kuwaiba.modules", // Core and optional modules
+                                "com.neotropic.kuwaiba.modules", // Commercial modules
                                 "org.neotropic.kuwaiba.northbound.ws", // The SOAP-based web service interface implementation.
                               })
 // Vaadin routes
-@EnableVaadin(value = { "org.neotropic.kuwaiba.modules.core",  // UIs for core modules
-                        "org.neotropic.kuwaiba.modules.optional", // UIs for optional modules
-                        "com.neotropic.kuwaiba.modules.commercial", // UIs for commercial modules
+@EnableVaadin(value = { "org.neotropic.kuwaiba.modules",  // UIs for core and optional modules
+                        "com.neotropic.kuwaiba.modules", // UIs for commercial modules
                         "org.neotropic.kuwaiba.web.ui"}) // General purpose UIs
 public class SpringConfiguration { }
