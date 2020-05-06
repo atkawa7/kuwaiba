@@ -16,6 +16,5 @@
         <module>ipam</module>
         <module>mpls</module>
         <module>projects</module>
-        <module>osp</module>
     </modules>
 </project>
