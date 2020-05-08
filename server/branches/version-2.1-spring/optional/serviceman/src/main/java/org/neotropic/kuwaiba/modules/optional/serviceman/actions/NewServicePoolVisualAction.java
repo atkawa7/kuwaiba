@@ -96,7 +96,7 @@ public class NewServicePoolVisualAction extends AbstractVisualInventoryAction {
                                 new ModuleActionParameter<>(Constants.PROPERTY_NAME, txtName.getValue()), 
                                 new ModuleActionParameter<>(Constants.PROPERTY_DESCRIPTION, txtDescription.getValue())));
 
-                        fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCESS, 
+                        fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS, 
                                 ts.getTranslatedString("module.serviceman.actions.new-customer-pool.ui.customer-pool-created-success"), NewCustomerPoolAction.class));
                         wdwNewCustomerPool.close();
                     }

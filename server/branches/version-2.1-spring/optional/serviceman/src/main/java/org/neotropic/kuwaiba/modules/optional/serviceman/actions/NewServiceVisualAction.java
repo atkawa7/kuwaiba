@@ -136,7 +136,7 @@ public class NewServiceVisualAction extends AbstractVisualInventoryAction {
                                 new ModuleActionParameter<>("serviceClass", cmbServiceTypes.getValue().getName()),
                                 new ModuleActionParameter<>("attributes", attributes)));
                         
-                        fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCESS, 
+                        fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS, 
                                 ts.getTranslatedString("module.serviceman.actions.new-service.ui.service-created-success"), NewCustomerAction.class));
                         wdwNewCustomer.close();
                     }

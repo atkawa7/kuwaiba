@@ -120,7 +120,7 @@ public class NewListTypeItemVisualAction extends AbstractVisualAction<Dialog> {
                                 new ModuleActionParameter<>("name", txtName.getValue()),
                                 new ModuleActionParameter<>("displayName", txtDisplayName.getValue())));
                         
-                        fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCESS,
+                        fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
                                 ts.getTranslatedString("module.listtypeman.actions.new-list-type-item.ui.item-created-success"), NewListTypeItemAction.class));
                         wdwNewListTypeItem.close();
                     }

@@ -196,7 +196,7 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
     
     @Override
     public void actionCompleted(ActionCompletedEvent ev) {
-        if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCESS)
+        if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS)
             new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
         else
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();

@@ -89,7 +89,7 @@ public class DeleteListTypeItemVisualAction extends AbstractVisualAction<Dialog>
                         new ModuleActionParameter<>("className", listTypeItem.getClassName()),
                         new ModuleActionParameter<>("oid", listTypeItem.getId())));
 
-                fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCESS,
+                fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
                         ts.getTranslatedString("module.listtypeman.actions.delete-list-type-item.ui.item-created-success"), NewListTypeItemAction.class));
                 wdwDeleteListTypeItem.close();
             } catch (ModuleActionException ex) {

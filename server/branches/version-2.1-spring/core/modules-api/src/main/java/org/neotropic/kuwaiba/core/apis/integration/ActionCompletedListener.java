@@ -34,7 +34,7 @@ public interface ActionCompletedListener {
         /**
          * If the action was completed successfully. 
          */
-        public static int STATUS_SUCESS = 1;
+        public static int STATUS_SUCCESS = 1;
         /**
          * If the action was completed with warnings. 
          */

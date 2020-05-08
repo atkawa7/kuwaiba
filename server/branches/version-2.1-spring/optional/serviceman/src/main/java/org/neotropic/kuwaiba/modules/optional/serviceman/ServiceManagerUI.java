@@ -25,6 +25,8 @@ import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntity
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.modules.optional.serviceman.actions.DeleteCustomerVisualAction;
+import org.neotropic.kuwaiba.modules.optional.serviceman.actions.DeleteServiceVisualAction;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewCustomerPoolVisualAction;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewCustomerVisualAction;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewServicePoolVisualAction;
@@ -64,6 +66,16 @@ public class ServiceManagerUI extends VerticalLayout {
     @Autowired
     private NewServicePoolVisualAction actNewServicePool;
     /**
+     * Reference to the action that deletes customers.
+     */
+    @Autowired
+    private DeleteCustomerVisualAction actDeleteCustomer;
+    /**
+     * Reference to the action that deletes services.
+     */
+    @Autowired
+    private DeleteServiceVisualAction actDeleteService;
+    /**
      * Reference to the action registry.
      */
     @Autowired
@@ -101,6 +113,8 @@ public class ServiceManagerUI extends VerticalLayout {
         this.actNewService.registerActionCompletedLister(this.dashboard);
         this.actNewCustomerPool.registerActionCompletedLister(this.dashboard);
         this.actNewServicePool.registerActionCompletedLister(this.dashboard);
+        this.actDeleteCustomer.registerActionCompletedLister(this.dashboard);
+        this.actDeleteService.registerActionCompletedLister(this.dashboard);
     }
     
     @Override
@@ -109,5 +123,7 @@ public class ServiceManagerUI extends VerticalLayout {
         this.actNewService.unregisterListener(this.dashboard);
         this.actNewCustomerPool.unregisterListener(this.dashboard);
         this.actNewServicePool.unregisterListener(this.dashboard);
+        this.actDeleteCustomer.unregisterListener(this.dashboard);
+        this.actDeleteService.unregisterListener(this.dashboard);
     }
 }

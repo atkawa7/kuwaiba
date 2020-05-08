@@ -22,6 +22,7 @@ import org.neotropic.kuwaiba.core.apis.integration.ActionRegistry;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleRegistry;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.DeleteCustomerVisualAction;
+import org.neotropic.kuwaiba.modules.optional.serviceman.actions.DeleteServiceVisualAction;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewCustomerPoolVisualAction;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewCustomerVisualAction;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewServicePoolVisualAction;
@@ -47,7 +48,7 @@ public class ServiceManagerModule extends AbstractModule {
     @Autowired
     private NewCustomerPoolVisualAction actNewCustomerPool;
     /**
-     * Reference to the action that creates customers pools.
+     * Reference to the action that creates customers.
      */
     @Autowired
     private NewCustomerVisualAction actNewCustomer;
@@ -67,6 +68,11 @@ public class ServiceManagerModule extends AbstractModule {
     @Autowired
     private DeleteCustomerVisualAction actDeleteCustomer;
     /**
+     * Reference to the action that deletes services and releases their network resources.
+     */
+    @Autowired
+    private DeleteServiceVisualAction actDeleteService;
+    /**
      * Reference to the action registry.
      */
     @Autowired
@@ -85,6 +91,7 @@ public class ServiceManagerModule extends AbstractModule {
         this.actionRegistry.registerAction(MODULE_ID, actNewCustomerPool);
         this.actionRegistry.registerAction(MODULE_ID, actNewServicePool);
         this.actionRegistry.registerAction(MODULE_ID, actDeleteCustomer);
+        this.actionRegistry.registerAction(MODULE_ID, actDeleteService);
         
         // Now register the module itself
         this.moduleRegistry.registerModule(this);

@@ -16,6 +16,8 @@
 
 package org.neotropic.kuwaiba.modules.optional.serviceman.actions;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractAction;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
@@ -23,6 +25,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.application.Privilege;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
+import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -52,11 +55,14 @@ public class DeleteCustomerAction extends AbstractAction {
         this.order = 10;
     
         setCallback((parameters) -> {
-            BusinessObjectLight customer = (BusinessObjectLight)parameters.get("customer");
             try {
+                BusinessObjectLight customer = (BusinessObjectLight)parameters.get(Constants.PROPERTY_RELATED_OBJECT);
                 bem.deleteObject(customer.getClassName(), customer.getId(), false);
             } catch (InventoryException ex) {
                 throw new ModuleActionException(ex.getMessage());
+            } catch (Exception ex) {
+                Logger.getLogger(DeleteCustomerAction.class.getName()).log(Level.SEVERE, ex.getMessage());
+                throw new ModuleActionException(ts.getTranslatedString("module.general.messages.unexpected-error"));
             } 
         });
     }

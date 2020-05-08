@@ -43,7 +43,6 @@ import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractDashboard;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractVisualInventoryAction;
 import org.neotropic.kuwaiba.core.apis.integration.ActionRegistry;
-import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameterSet;
 import org.neotropic.kuwaiba.modules.optional.serviceman.ServiceManagerModule;
@@ -151,8 +150,6 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
         });
         
         lytSearch.add(txtSearch, new HorizontalLayout(chkMainFilter));
-        
-        
         this.lytContent.add(lytQuickActions, lytSearch, lytSearchResults);
 
         add(this.lytContent);
@@ -176,7 +173,7 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
     
     @Override
     public void actionCompleted(ActionCompletedListener.ActionCompletedEvent ev) {
-        if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCESS)
+        if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS)
             new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
         else
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
@@ -225,7 +222,8 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
                 btnAction.setClassName("search-result-action-button");
                 btnAction.getElement().setProperty("title", anAction.getModuleAction().getDescription());
                 btnAction.addClickListener( event -> {
-                    ((Dialog)anAction.getVisualComponent(new ModuleActionParameterSet(new ModuleActionParameter("customer", result)))).open();
+                    ((Dialog)anAction.getVisualComponent(new ModuleActionParameterSet(
+                            new ModuleActionParameter(Constants.PROPERTY_RELATED_OBJECT, result)))).open();
                 });
                 lytActions.add(btnAction);
             });

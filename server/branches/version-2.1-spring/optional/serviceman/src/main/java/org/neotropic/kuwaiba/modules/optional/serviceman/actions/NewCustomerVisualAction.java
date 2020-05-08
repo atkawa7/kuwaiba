@@ -120,7 +120,7 @@ public class NewCustomerVisualAction extends AbstractVisualInventoryAction {
                                 new ModuleActionParameter<>("customerClass", cmbCustomerTypes.getValue().getName()),
                                 new ModuleActionParameter<>("attributes", attributes)));
                         
-                        fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCESS, 
+                        fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS, 
                                 ts.getTranslatedString("module.serviceman.actions.new-customer.ui.customer-created-success"), NewCustomerAction.class));
                         wdwNewCustomer.close();
                     }

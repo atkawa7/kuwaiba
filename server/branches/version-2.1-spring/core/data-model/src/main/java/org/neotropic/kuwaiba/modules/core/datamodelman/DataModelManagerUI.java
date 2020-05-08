@@ -180,7 +180,7 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
     
     @Override
     public void actionCompleted(ActionCompletedListener.ActionCompletedEvent ev) {
-        if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCESS) {
+        if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
             try {
                 new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
                                             

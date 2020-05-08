@@ -24,9 +24,6 @@
 
         <jetty.version>9.4.15.v20190215</jetty.version>
     </properties>
-    <organization>
-        <name>Johny Ortega</name>
-    </organization>
     <licenses>
         <license>
             <name>Apache 2</name>

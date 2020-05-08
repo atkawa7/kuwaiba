@@ -28,7 +28,6 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.util.visual.dialog.ConfirmDialog;
-import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -61,19 +60,21 @@ public class DeleteCustomerVisualAction extends AbstractVisualInventoryAction {
     
     @Override
     public Dialog getVisualComponent(ModuleActionParameterSet parameters) {
-        BusinessObjectLight customer = (BusinessObjectLight)parameters.get("customer");
+        BusinessObjectLight customer = (BusinessObjectLight)parameters.get(Constants.PROPERTY_RELATED_OBJECT);
         
-        ConfirmDialog wdwDeleteCustomer = new ConfirmDialog(ts.getTranslatedString("module.serviceman.actions.delete-customer.ui.delete-customer"),
+        ConfirmDialog wdwDeleteCustomer = new ConfirmDialog(ts.getTranslatedString("module.serviceman.actions.delete-customer.name"),
                 String.format(ts.getTranslatedString("module.serviceman.actions.delete-customer.ui.confirmation-delete-customer"), customer), 
                 ts.getTranslatedString("module.general.messages.ok"));
         
         wdwDeleteCustomer.getBtnConfirm().addClickListener(evt -> {
             try {
                 this.actDeleteCustomerAction.getCallback().execute(parameters);
+                fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS, 
+                                     ts.getTranslatedString("module.serviceman.actions.delete-customer.ui.customer-deleted-success"), DeleteCustomerVisualAction.class));
+                wdwDeleteCustomer.close();
             } catch (ModuleActionException ex) {
                  fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_ERROR, 
-                                     ex.getMessage(), NewCustomerAction.class));
-                 new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
+                                     ex.getMessage(), DeleteCustomerVisualAction.class));
             } 
         });
 
