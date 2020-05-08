@@ -47,6 +47,10 @@ public class GoogleMap extends Component {
         getElement().setProperty(Constants.Property.API_KEY, apiKey);
         getElement().setProperty(Constants.Property.CLIENT_ID, clientId);
     }
+    public GoogleMap(String apiKey, String clientId, String libraries) {
+        this(apiKey, clientId);
+        getElement().setProperty(Constants.Property.LIBRARIES, libraries);
+    }
     @Synchronize(property = "lat", value = "map-center-changed")
     public double getCenterLat() {
         return getElement().getProperty(Constants.Property.LAT, Constants.Default.LAT);
@@ -112,7 +116,23 @@ public class GoogleMap extends Component {
     public void removePolyline(GoogleMapPolyline polyline) {
         getElement().removeChild(polyline.getElement());
     }
-            
+    
+    public void newPolygon(GoogleMapPolygon polygon) {
+        getElement().appendChild(polygon.getElement());
+    }
+    
+    public void removePolygon(GoogleMapPolygon polygon) {
+        getElement().removeChild(polygon.getElement());
+    }
+    
+    public void newDrawingManager(DrawingManager drawingManager) {
+        getElement().appendChild(drawingManager.getElement());
+    }
+    
+    public void removeDrawingManager(DrawingManager drawingManager) {
+        getElement().removeChild(drawingManager.getElement());
+    }
+    
     public Registration addMapClickListener(ComponentEventListener<GoogleMapEvent.MapClickEvent> listener) {
         return addListener(GoogleMapEvent.MapClickEvent.class, listener);
     }

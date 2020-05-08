@@ -19,8 +19,6 @@ import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
 import { FlattenedNodesObserver } from '@polymer/polymer/lib/utils/flattened-nodes-observer.js';
 import {MapApi} from './google-map-api.js';
 import * as Constants from './google-map-constants.js';
-import {GoogleMapMarker} from './google-map-marker.js';
-import {GoogleMapPolyline} from './google-map-polyline.js';
 /**
  * `google-map`
  * &lt;google-map&gt; is a web component displays a map using Maps JavaScript API
@@ -46,12 +44,11 @@ class GoogleMap extends PolymerElement {
         #map {          
           height: 100%;
           width: 100%;
-        }       
+        }
       </style>
+      <slot></slot>
       <!--Container for the map-->
       <div id="map"></div>
-      <slot></slot>
-      <!--<slot id="markers"></slot>-->
     `;
   }
 
@@ -136,6 +133,12 @@ class GoogleMap extends PolymerElement {
     });
     this.map.setMapTypeId(this.mapTypeId);
     /*
+    var drawingManager = new google.maps.drawing.DrawingManager({
+      drawingMode: 'marker'
+    });
+    drawingManager.setMap(this.map);
+    */
+    /*
     Events:
     bounds_changed, 
     *center_changed, 
@@ -210,25 +213,17 @@ class GoogleMap extends PolymerElement {
   }
        
   _processAddedNodes(addedNodes) {
-    for (var i = 0; i < addedNodes.length; i++) {
-      if (addedNodes[i].localName === Constants.googleMapMarker) {
-        addedNodes[i].draw(this.map);
-      }
-      if (addedNodes[i].localName === Constants.googleMapPolyline) {
-        addedNodes[i].draw(this.map);
-      }
-    }
+    addedNodes.forEach(value => {
+      if (value.added)
+        value.added(this.map);
+    });
   }
 
   _processRemovedNodes(removedNodes) {
-    for (var i = 0; i < removedNodes.length; i++) {
-      if (removedNodes[i].localName === Constants.googleMapMarker) {
-        removedNodes[i].remove();
-      }
-      else if (removedNodes[i].localName === Constants.googleMapPolyline) {
-        removedNodes[i].remove();
-      }
-    }
+    removedNodes.forEach(value => { 
+      if (value.removed)
+        value.removed();
+    });
   }
 
   _latChanged(newValue, oldValue) {

@@ -2,6 +2,8 @@ package com.neotropic.vaadin14.component.googlemap;
 
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -26,6 +28,7 @@ import java.util.logging.Logger;
 public class MainView extends VerticalLayout {
     private final String API_KEY = "[API-KEY]";
     private final String CLIENT_ID = null;
+    private final String LIBRARIES = "drawing";
     
     private final VerticalLayout verticalLayoutMain;
     private final Tabs tabs;
@@ -52,7 +55,7 @@ public class MainView extends VerticalLayout {
     //</editor-fold>
     public MainView(@Autowired MessageBean bean) {
         setSizeFull();
-        GoogleMap googleMap = new GoogleMap(API_KEY, CLIENT_ID);
+        GoogleMap googleMap = new GoogleMap(API_KEY, CLIENT_ID, LIBRARIES);
         
         GoogleMapMarker googleMapMarker = new GoogleMapMarker(2.4574702, -76.6349535);
         googleMap.newMarker(googleMapMarker);
@@ -67,22 +70,14 @@ public class MainView extends VerticalLayout {
         
         setMarkerListeners(googleMap, googleMapMarker);
         
-        GoogleMapPolyline googleMapPolyline = new GoogleMapPolyline();
-        googleMapPolyline.setEditable(true);
-        googleMapPolyline.setDraggable(true);
-        googleMapPolyline.setStrokeColor("#32a852");
         List<LatLng> coordinates = new ArrayList();
         coordinates.add(new LatLng(2.4574702, -76.6349535));
         coordinates.add(new LatLng(2.3512629, -76.6915093));
         coordinates.add(new LatLng(2.260897, -76.7449569));
         coordinates.add(new LatLng(2.1185563, -76.9974436));
         coordinates.add(new LatLng(2.0693058, -77.0552842));
-        googleMapPolyline.setPath(coordinates);
+        addNewPolyline(coordinates, googleMap);
         
-        googleMap.newPolyline(googleMapPolyline);
-        
-        setPolylineListener(googleMapPolyline);
-                
         SplitLayout splitLayoutMain = new SplitLayout();
         splitLayoutMain.addToPrimary(googleMap);
         
@@ -216,28 +211,7 @@ public class MainView extends VerticalLayout {
         googleMap.addMapRightClickListener(new ComponentEventListener<GoogleMapEvent.MapRightClickEvent>() {
             @Override
             public void onComponentEvent(GoogleMapEvent.MapRightClickEvent event) {
-                GoogleMapMarker googleMapMarker = new GoogleMapMarker(event.getLat(), event.getLng());
-                setMarkerListeners(googleMap, googleMapMarker);
-                googleMap.newMarker(googleMapMarker);
-                googleMapMarker.setDraggable(true);
-                
-                JsonObject label = Json.createObject();
-                label.put("color", "#305F72"); //NOI18N
-                label.put("text", "New Marker"); //NOI18N
-                
-                googleMapMarker.setLabel(label);
-                
-                JsonObject icon = Json.createObject();
-                JsonObject labelOrigin = Json.createObject();
-                labelOrigin.put("x", 20); //NOI18N
-                labelOrigin.put("y", 40); //NOI18N
-                icon.put("url", "star.png"); //NOI18N
-                icon.put("labelOrigin", labelOrigin); //NOI18N
-                
-                googleMapMarker.setIcon(icon);
-                
-                googleMapMarker.setTitle("New Marker");
-                
+                addNewMarker(event.getLat(), event.getLng(), googleMap);
                 setBackgroundLabel(lblMapRightClick);
             }
         });
@@ -271,6 +245,43 @@ public class MainView extends VerticalLayout {
                 setBackgroundLabel(lblZoomChanged);
             }
         });        
+        DrawingManager drawingManager = new DrawingManager();
+        googleMap.newDrawingManager(drawingManager);
+        drawingManager.addDrawingManagerMarkerCompleteListener(event -> 
+            addNewMarker(event.getLat(), event.getLng(), googleMap)
+        );
+        drawingManager.addDrawingManagerPolylineCompleteListener(event -> 
+            addNewPolyline(event.getPath(), googleMap)
+        );
+        drawingManager.addDrawingManagerPolygonCompleteListener(event -> 
+            addNewPolygon(event.getPaths(), googleMap)
+        );
+        Tabs tabsDrawingManager = new Tabs();
+        tabsDrawingManager.getStyle().set("position", "absolute");
+        tabsDrawingManager.getStyle().set("z-index", "5");
+        tabsDrawingManager.getStyle().set("top", "10px");
+        tabsDrawingManager.getStyle().set("left", "25%");
+        tabsDrawingManager.getStyle().set("background-color", "#fff");
+        
+        Tab tabHand = new Tab(new Icon(VaadinIcon.HAND));
+        Tab tabMarker = new Tab(new Icon(VaadinIcon.MAP_MARKER));
+        Tab tabPolygon = new Tab(new Icon(VaadinIcon.STAR_O));
+        Tab tabPolyline = new Tab(new Icon(VaadinIcon.SPARK_LINE));
+        
+        tabsDrawingManager.add(tabHand, tabMarker, tabPolyline, tabPolygon);
+        tabsDrawingManager.setSelectedTab(tabHand);
+        tabsDrawingManager.addSelectedChangeListener(event -> {
+            if (tabHand.equals(event.getSelectedTab()))
+                drawingManager.setDrawingMode(null);
+            else if (tabMarker.equals(event.getSelectedTab()))
+                drawingManager.setDrawingMode(OverlayType.MARKER);
+            else if (tabPolygon.equals(event.getSelectedTab()))
+                drawingManager.setDrawingMode(OverlayType.POLYGON);
+            else if (tabPolyline.equals(event.getSelectedTab()))
+                drawingManager.setDrawingMode(OverlayType.POLYLINE);
+        });
+        googleMap.getElement().appendChild(tabsDrawingManager.getElement());
+        
         splitLayoutMain.addToSecondary(verticalLayoutMain);
         
         splitLayoutMain.setSplitterPosition(70);
@@ -328,7 +339,48 @@ public class MainView extends VerticalLayout {
         });
     }
     
-    public void setPolylineListener(GoogleMapPolyline googleMapPolyline) {
+    public void addNewMarker(double lat, double lng, GoogleMap googleMap) {
+        GoogleMapMarker googleMapMarker = new GoogleMapMarker(lat, lng);
+        setMarkerListeners(googleMap, googleMapMarker);
+        googleMap.newMarker(googleMapMarker);
+        googleMapMarker.setDraggable(true);
+
+        JsonObject label = Json.createObject();
+        label.put("color", "#305F72"); //NOI18N
+        label.put("text", "New Marker"); //NOI18N
+
+        googleMapMarker.setLabel(label);
+
+        JsonObject icon = Json.createObject();
+        JsonObject labelOrigin = Json.createObject();
+        labelOrigin.put("x", 20); //NOI18N
+        labelOrigin.put("y", 40); //NOI18N
+        icon.put("url", "star.png"); //NOI18N
+        icon.put("labelOrigin", labelOrigin); //NOI18N
+
+        googleMapMarker.setIcon(icon);
+
+        googleMapMarker.setTitle("New Marker");
+    }
+    
+    public void addNewPolyline(List<LatLng> path, GoogleMap googleMap) {
+        GoogleMapPolyline googleMapPolyline = new GoogleMapPolyline();
+        googleMapPolyline.setEditable(true);
+        googleMapPolyline.setDraggable(true);
+        googleMapPolyline.setStrokeColor("#32a852");
+        googleMapPolyline.setPath(path);
+        
+        googleMap.newPolyline(googleMapPolyline);
+        
+        setPolylineListeners(googleMapPolyline);
+    }
+    
+    public void addNewPolygon(List<List<LatLng>> paths, GoogleMap googleMap) {
+        GoogleMapPolygon googleMapPolygon = new GoogleMapPolygon(paths);
+        googleMap.newPolygon(googleMapPolygon);
+    }
+    
+    public void setPolylineListeners(GoogleMapPolyline googleMapPolyline) {
         googleMapPolyline.addPolylineMouseOverListener(new ComponentEventListener<GoogleMapEvent.PolylineMouseOverEvent>(){
             @Override
             public void onComponentEvent(GoogleMapEvent.PolylineMouseOverEvent t) {

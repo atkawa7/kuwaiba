@@ -93,7 +93,7 @@ class GoogleMapMarker extends PolymerElement {
     };
     return icon;
   }
-  draw(map) {
+  added(map) {
     var position = {lat: this.lat, lng: this.lng};
 
     this.marker = new google.maps.Marker({
@@ -160,7 +160,7 @@ class GoogleMapMarker extends PolymerElement {
     */
   }
 
-  remove() {
+  removed() {
     if (this.marker !== undefined)
       this.marker.setMap(null);
   }

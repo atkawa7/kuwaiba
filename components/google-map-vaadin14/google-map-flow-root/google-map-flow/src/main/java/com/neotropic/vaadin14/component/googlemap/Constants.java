@@ -41,8 +41,11 @@ public class Constants {
         public static String DRAGGABLE = "draggable";
         public static String VISIBLE = "visible";
         public static String PATH = "path";
+        public static String PATHS = "paths";
         public static String EDITABLE = "editable";
         public static String MAP_TYPE_ID = "mapTypeId";
+        public static String DRAWING_MODE = "drawingMode";
+        public static String DRAWING_CONTROL = "drawingControl";
     }
     
     public static class Default {

@@ -18,6 +18,9 @@ package com.neotropic.vaadin14.component.googlemap;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
+import elemental.json.JsonArray;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -230,6 +233,61 @@ public class GoogleMapEvent {
             super(source, fromClient);
         }
     }
+    //</editor-fold>
+    //<editor-fold desc="Drawing Manager Events" defaultstate="collapsed">
+    @DomEvent("marker-complete")
+    public static class DrawingManagerMarkerCompleteEvent extends ComponentEvent<DrawingManager> {
+        private final double lat;
+        private final double lng;
+        
+        public DrawingManagerMarkerCompleteEvent(DrawingManager source, boolean fromClient, 
+            @EventData("event.detail.lat") double lat, 
+            @EventData("event.detail.lng") double lng) {
+            super(source, fromClient);
+            this.lat = lat;
+            this.lng = lng;
+        }
+        public double getLat() {
+            return lat;
+        }
+        public double getLng() {
+            return lng;
+        }
+    }
+    @DomEvent("polyline-complete")
+    public static class DrawingManagerPolylineCompleteEvent extends ComponentEvent<DrawingManager> {
+        private final List<LatLng> path;
+        public DrawingManagerPolylineCompleteEvent(DrawingManager source, boolean fromClient, 
+            @EventData("event.detail.path") JsonArray path) {
+            super(source, fromClient);
+            
+            this.path = new ArrayList();
+            for (int i = 0; i < path.length(); i++) {
+                LatLng latLng = new LatLng(
+                    path.getObject(i).getNumber("lat"),
+                    path.getObject(i).getNumber("lng")
+                );
+                this.path.add(latLng);
+            }
+        }
+        public List<LatLng> getPath() {
+            return path;
+        }
+    }
+    @DomEvent("polygon-complete")
+    public static class DrawingManagerPolygonCompleteEvent extends ComponentEvent<DrawingManager> {
+        private final List<List<LatLng>> paths;
+        public DrawingManagerPolygonCompleteEvent(DrawingManager source, boolean fromClient, 
+            @EventData("event.detail.paths") JsonArray paths) {
+            super(source, fromClient);
+            this.paths = GoogleMapPolygon.pathsAsList(paths);
+        }
+        public List<List<LatLng>> getPaths() {
+            return paths;
+        }
+    }
+    //</editor-fold>
+    //<editor-fold desc="Polygon Events" defaultstate="collapsed">
     //</editor-fold>
 }
 

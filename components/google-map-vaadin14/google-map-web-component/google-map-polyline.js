@@ -27,11 +27,10 @@ class GoogleMapPolyline extends PolymerElement {
 	static get template() {
 		return html`
 			<style>
-			:host {
-			display: block;
-			}
+				:host {
+					display: block;
+				}
 			</style>
-			<slot></slot>
 		`;
 	}
 	static get properties() {
@@ -82,7 +81,7 @@ class GoogleMapPolyline extends PolymerElement {
 		};
 	}
 	
-	draw(map) {
+	added(map) {
 		var _this = this;
 		this.polyline = new google.maps.Polyline({
 			draggable: this.draggable,
@@ -136,7 +135,7 @@ class GoogleMapPolyline extends PolymerElement {
 		this.dispatchEvent(new CustomEvent('polyline-path-changed'));
 	}
 
-	remove() {
+	removed() {
 		if (this.polyline !== undefined)
 			this.polyline.setMap(null);
 	}
