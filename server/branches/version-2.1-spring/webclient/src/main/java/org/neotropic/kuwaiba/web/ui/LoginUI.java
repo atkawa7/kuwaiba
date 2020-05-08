@@ -15,6 +15,7 @@
  */
 package org.neotropic.kuwaiba.web.ui;
 
+import org.neotropic.kuwaiba.modules.core.datamodelman.DataModelManagerUI;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.Key;

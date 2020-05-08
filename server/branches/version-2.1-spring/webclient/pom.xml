@@ -47,7 +47,7 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-        </repository>
+        </repository>      
     </repositories>
     
     <dependencies>        
@@ -137,7 +137,7 @@
             <groupId>com.neotropic.kuwaiba.modules.commercial</groupId>
             <artifactId>ospman</artifactId>
             <version>2.1</version>
-        </dependency>
+        </dependency>       
     </dependencies>
     <dependencyManagement>
         <dependencies>
@@ -147,7 +147,7 @@
                 <version>${vaadin.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
+            </dependency>         
         </dependencies>
     </dependencyManagement>
     

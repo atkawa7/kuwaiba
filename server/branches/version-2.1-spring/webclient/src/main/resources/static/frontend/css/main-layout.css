@@ -120,6 +120,14 @@
 .width50p {
     width: 50%;
 }
+
+.width100p {
+    width: 100%;
+}
+
+.width500px {
+    width: 500px; 
+}
 /* style subtitle in property sheet column name*/
 .text-secundary {
     color: #b3b0b0;
@@ -137,4 +145,20 @@
 /* style to compact a little the grid rows */
 .grid-compact .vaadin-grid[part~="cell"] > vaadin-grid-cell-content {
     padding: 0;
+}
+
+paper-swatch-picker paper-icon-button {
+    border: 1px solid black;
+}
+
+.lbl-icon-dmman {
+    width: 70px;
+}
+
+.div-icon-dmman {
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
 }

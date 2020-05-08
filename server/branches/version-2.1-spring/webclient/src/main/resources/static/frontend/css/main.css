@@ -55,7 +55,7 @@ vaadin-button {
 /* reset the width and color of the vaadin splitter */
 .vaadin-split-layout[part="splitter"] {
     min-width: 5px;
-    background-color: var(--_material-split-layout-splitter-background-color, #c5c3c3);
+    background-color: var(--material-split-layout-splitter-background-color, #c5c3c3);
 }
 /* change handle splitter width */
 .vaadin-split-layout[part="handle"] {
