@@ -649,5 +649,19 @@ public class Constants {
      /* Name of the data type boolean
       */
      public static final String DATA_TYPE_BOOLEAN = "Boolean";
+     /* Name of the data type color
+      */
+     public static final String DATA_TYPE_COLOR = "Color";
+     /* default icon size
+      */
+     public static final String DEFAULT_ICON_SIZE = "32px";
+     /* default small icon size
+      */
+     public static final String DEFAULT_SMALL_ICON_SIZE = "16px";
+     /**
+      * max icon size in bytes
+      */
+     public static final int MAX_ICON_SIZE_IN_BYTES = 10000;
+     
        
 }
