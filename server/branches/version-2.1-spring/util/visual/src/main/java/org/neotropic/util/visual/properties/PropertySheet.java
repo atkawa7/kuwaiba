@@ -26,6 +26,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
@@ -138,7 +139,9 @@ public class PropertySheet extends Grid<AbstractProperty> {
             }
        
             return lytValue;
-        }).setHeader(ts.getTranslatedString("module.general.labels.value"))
+        }).setHeader(String.format("%s (%s)", 
+                ts.getTranslatedString("module.general.labels.value"),
+                ts.getTranslatedString("module.propertysheet.labels.dbl-click-edit")))
                 .setKey("value").setFlexGrow(4);
         
         addComponentColumn((property) -> {

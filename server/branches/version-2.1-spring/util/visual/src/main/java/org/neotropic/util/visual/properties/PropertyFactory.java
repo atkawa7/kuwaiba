@@ -16,6 +16,7 @@
 package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.UI;
+import java.awt.Color;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -199,6 +200,14 @@ public class PropertyFactory {
                             Constants.PROPERTY_COUNTABLE, Constants.PROPERTY_COUNTABLE,
                             classMetadata.isCountable()== null ? false : classMetadata.isCountable(),
                              Constants.DATA_TYPE_BOOLEAN);
+        objectProperties.add(property);
+        
+        String hexColor = String.format("#%06x", (0xFFFFFF & classMetadata.getColor())); 
+//        String hexColor = "#"+ Integer.toHexString(classMetadata.getColor());
+        property = new ColorProperty(Constants.PROPERTY_COLOR,
+                            Constants.PROPERTY_COLOR, Constants.PROPERTY_COLOR,
+                            hexColor,
+                            Constants.DATA_TYPE_COLOR);
         objectProperties.add(property);
 
         return objectProperties;

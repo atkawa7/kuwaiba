@@ -11,6 +11,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 /**
  * Dialog that allows editing for properties that support the advanced editor
@@ -60,11 +61,12 @@ public class AdvancedEditorDialog extends Dialog {
     public AdvancedEditorDialog(AbstractProperty property) {
         
         setWidth("500px");
+        VerticalLayout lytMainLayout = new VerticalLayout();
         
         this.property = property;
         this.mainComponentEditor = property.getAdvancedEditor();
         
-        add(mainComponentEditor);
+        lytMainLayout.add(mainComponentEditor);
         
         accept = new Button("Accept");
         cancel = new Button("Cancel", ev -> {
@@ -73,8 +75,9 @@ public class AdvancedEditorDialog extends Dialog {
         
         HorizontalLayout lytButtons = new HorizontalLayout(accept, cancel);
         lytButtons.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
-        
-        add(lytButtons);
+        lytMainLayout. add(lytButtons);
+                
+        add(lytMainLayout);
     }
 
     void loadNewValueIntoProperty() {
