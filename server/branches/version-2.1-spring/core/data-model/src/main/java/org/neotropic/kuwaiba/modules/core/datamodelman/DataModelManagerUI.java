@@ -244,7 +244,7 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
         
         Hr divisor = new Hr();
         divisor.setClassName("width100p");
-        BoldLabel lblInfoFile = new BoldLabel(String.format("%s. %s: %s",
+        BoldLabel lblInfoFile = new BoldLabel(String.format("%s.     %s: %s",
                 ts.getTranslatedString("module.datamodelman.accepted-icon-file-types"), 
                 ts.getTranslatedString("module.datamodelman.max-size"),
                 Constants.MAX_ICON_SIZE_IN_BYTES));
