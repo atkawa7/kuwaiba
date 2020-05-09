@@ -21,6 +21,7 @@ import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
@@ -52,6 +53,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Theme(Material.class)
 @Route("")
 @StyleSheet("css/main.css")
+@CssImport(value="./styles/custom-spliter.css", themeFor="vaadin-split-layout")
+@CssImport(value="./styles/custom-acordion.css", themeFor="vaadin-accordion-panel")
+@CssImport(value="./styles/compact-grid.css", themeFor="vaadin-grid")
+@CssImport(value="./styles/icon-button.css", themeFor="vaadin-button")
 public class LoginUI extends VerticalLayout implements BeforeEnterObserver {
     /**
      * User name text field.

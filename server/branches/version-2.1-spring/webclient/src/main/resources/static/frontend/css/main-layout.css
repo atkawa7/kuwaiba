@@ -150,15 +150,29 @@
 paper-swatch-picker paper-icon-button {
     border: 1px solid black;
 }
-
+/* label of section class icon */
 .lbl-icon-dmman {
     width: 70px;
 }
-
+/* div used to wrap the class icon image */
 .div-icon-dmman {
     width: 40px;
     height: 40px;
     align-items: center;
     justify-content: center;
     display: flex;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.lbl-accordion {
+    font-size: 1.1em;
+    color: white;
+}
+/* vertical line */
+.vl {
+  border-left: 6px solid green;
+  height: 90%;
 }

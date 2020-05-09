@@ -1,0 +1,10 @@
+
+[part="toggle"] {
+    color: white;
+}
+
+div[part="summary"] {
+    background-color:var(--material-primary-color);
+}
+
+
