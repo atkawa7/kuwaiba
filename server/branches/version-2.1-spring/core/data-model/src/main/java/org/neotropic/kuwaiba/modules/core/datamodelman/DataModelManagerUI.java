@@ -20,8 +20,10 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.accordion.Accordion;
+import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Hr;
@@ -146,14 +148,30 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
      * current selected class attribute
      */   
     AttributeMetadata selectedAttribute;
-    
+    /**
+     * upload control to class icon
+     */
     Upload uploadIcon;
-    
+    /**
+     * upload control to small class icon
+     */
     Upload uploadSmallIcon;
-    
+    /**
+     * icon class image
+     */
     Image iconImage;
-            
-    Image smallIconImage;        
+    /**
+     * upload control to small class icon
+     */        
+    Image smallIconImage;  
+    /**
+     * layout to show class attributes property sheet
+     */
+    VerticalLayout lytPropSheetClassAttributes;
+    /**
+     * contains class icons
+     */
+    VerticalLayout lytIcons ;
     
     public DataModelManagerUI() {
         super();
@@ -203,18 +221,27 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
         Accordion accordion = new Accordion();
         accordion.setSizeFull();
         
+        BoldLabel lblInventoryTree = new BoldLabel(ts.getTranslatedString("module.datamodelman.inventory-classes"));
+        lblInventoryTree.addClassName("lbl-accordion");
+        HorizontalLayout lytSummaryInventoryTree = new HorizontalLayout(lblInventoryTree); 
+        lytSummaryInventoryTree.setWidthFull();
         VerticalLayout lytInventoryTree = new VerticalLayout(cbxFilterInventoryTree, inventoryObjectTree);
         lytInventoryTree.setPadding(false);
         lytInventoryTree.setSpacing(false);
-        accordion.add(ts.getTranslatedString("module.datamodelman.inventory-classes"), 
-                lytInventoryTree);
+        AccordionPanel apInventoryTree = new AccordionPanel(lytSummaryInventoryTree, lytInventoryTree);
+        accordion.add(apInventoryTree);
+               
+        BoldLabel lblListType = new BoldLabel(ts.getTranslatedString("module.datamodelman.list-types"));
+        lblListType.addClassName("lbl-accordion");
+        HorizontalLayout lytSummaryListType = new HorizontalLayout(lblListType);  
+        lytSummaryListType.setWidthFull();
         VerticalLayout lytListType = new VerticalLayout(cbxFilterListTypeTree, genericObjectListTree);
         lytListType.setPadding(false);
         lytListType.setSpacing(false);
-        accordion.add(ts.getTranslatedString("module.datamodelman.list-types"), 
-                lytListType);
-        accordion.close();
-           
+        AccordionPanel apListType = new AccordionPanel(lytSummaryListType, lytListType);
+        accordion.add(apListType);
+        
+        accordion.close();       
         VerticalLayout lytTrees = new VerticalLayout(new H4(ts.getTranslatedString("module.datamodelman.classes")), accordion);
         lytTrees.setPadding(false);
         lytTrees.setSizeFull();
@@ -244,14 +271,16 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
         
         Hr divisor = new Hr();
         divisor.setClassName("width100p");
-        BoldLabel lblInfoFile = new BoldLabel(String.format("%s.     %s: %s",
+        BoldLabel lblInfoFile = new BoldLabel(String.format("%s.     %s: %s bytes",
                 ts.getTranslatedString("module.datamodelman.accepted-icon-file-types"), 
                 ts.getTranslatedString("module.datamodelman.max-size"),
                 Constants.MAX_ICON_SIZE_IN_BYTES));
         lblInfoFile.setClassName("text-secundary");
-        VerticalLayout lytIcons = new VerticalLayout(new H4(ts.getTranslatedString("module.datamodelman.class-icons")), 
-                                      lblInfoFile, lytClassIcon, divisor, lytSmallClassIcon);  
-        lytIcons.setWidth("60%");
+        HorizontalLayout lytIconss = new HorizontalLayout( lytClassIcon, lytSmallClassIcon);
+        lytIcons = new VerticalLayout(new H4(ts.getTranslatedString("module.datamodelman.icons")), 
+                                      lblInfoFile, lytIconss);  
+//        lytIcons.setWidth("60%");
+        lytIcons.setVisible(false);
         VerticalLayout lytGeneralAttributes = new VerticalLayout(propsheetGeneralAttributes);
         
         VerticalLayout lytAttributes = new VerticalLayout();
@@ -260,13 +289,14 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
         lytAttributes.setSpacing(false);
         lytAttributes.setPadding(false);
         
-        VerticalLayout lytLeft = new VerticalLayout(tblClassAttributes);
-        VerticalLayout lytRight = new VerticalLayout(new H4(ts.getTranslatedString("module.datamodelman.attributes")), propsheetClassAttributes);
-        lytRight.setSpacing(false);
-        HorizontalLayout lytClassAttributes = new HorizontalLayout(lytLeft, lytRight);
+        VerticalLayout lytListClassAttributes = new VerticalLayout(tblClassAttributes);
+        lytPropSheetClassAttributes = new VerticalLayout(new H4(ts.getTranslatedString("module.datamodelman.attributes")), propsheetClassAttributes);
+        lytPropSheetClassAttributes.setSpacing(false);
+        lytPropSheetClassAttributes.setVisible(false);
+        HorizontalLayout lytClassAttributes = new HorizontalLayout(lytListClassAttributes, lytPropSheetClassAttributes);
         lytClassAttributes.setSizeFull();
         
-        Tab tab1 = new Tab(ts.getTranslatedString("module.datamodelman.general-attributes"));
+        Tab tab1 = new Tab(ts.getTranslatedString("module.datamodelman.properties"));
         Div page1 = new Div();
         page1.setSizeFull();
         page1.add(lytAttributes);
@@ -329,6 +359,8 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
             updateGridClassAttributes(item.getItem().getObject());
             updateIconImages();
             propsheetClassAttributes.clear();
+            lytPropSheetClassAttributes.setVisible(false);
+            lytIcons.setVisible(true);
         });
     }
     
@@ -360,6 +392,8 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
             updateGridClassAttributes(item.getItem().getObject());
             updateIconImages();
             propsheetClassAttributes.clear();
+            lytPropSheetClassAttributes.setVisible(false);
+            lytIcons.setVisible(true);
         });
         
         List<ClassMetadataLight> listTypeClasses = new ArrayList<>();
@@ -385,7 +419,6 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
 
     private void initializePropSheetGenericAttributes() {
         propsheetGeneralAttributes = new PropertySheet(ts, new ArrayList<>(), "");
-        propsheetGeneralAttributes.setHeightByRows(false);
         propsheetGeneralAttributes.addPropertyValueChangedListener((AbstractProperty<? extends Object> property) -> {
             try {
                 if (selectedClass != null) { 
@@ -441,7 +474,10 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
     private void initializeGridClassAttributes() {
         
         tblClassAttributes = new Grid();
-             
+        tblClassAttributes.addThemeVariants(GridVariant.LUMO_COMPACT);
+        tblClassAttributes.addThemeVariants(GridVariant.MATERIAL_COLUMN_DIVIDERS);
+        tblClassAttributes.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+        tblClassAttributes.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         tblClassAttributes.addColumn(AttributeMetadata::getName)
                 .setHeader(ts.getTranslatedString("module.general.labels.attributenamme"))
                 .setKey(ts.getTranslatedString("module.general.labels.name"));
@@ -450,6 +486,7 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
             try {
                 selectedAttribute = ev.getItem();
                 updatePropertySheetClassAttributes();
+                lytPropSheetClassAttributes.setVisible(true);
             } catch (Exception ex) {
 
             }
