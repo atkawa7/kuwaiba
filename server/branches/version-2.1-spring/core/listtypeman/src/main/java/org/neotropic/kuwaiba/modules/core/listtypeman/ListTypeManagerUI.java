@@ -119,7 +119,10 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
     
      /**
      * the visual action to delete a list type item
-     */  
+     */ 
+    
+    VerticalLayout lytPropertySheet;
+            
     @Autowired
     private DeleteListTypeItemVisualAction deleteListTypeItemVisualAction;
     
@@ -175,11 +178,13 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
         this.newListTypeItemVisualAction.registerActionCompletedLister(this);
         this.deleteListTypeItemVisualAction.registerActionCompletedLister(this);
         
-        Button btnAddListTypeItem = new Button(this.newListTypeItemVisualAction.getModuleAction().getDisplayName(), (event) -> {
+        Button btnAddListTypeItem = new Button(this.newListTypeItemVisualAction.getModuleAction().getDisplayName(), new Icon(VaadinIcon.PLUS),
+                 (event) -> {
             this.newListTypeItemVisualAction.getVisualComponent(new ModuleActionParameterSet()).open();
         });            
         
-        btnAddListTypeItemSec = new Button(this.newListTypeItemVisualAction.getModuleAction().getDisplayName(), (event) -> {
+        btnAddListTypeItemSec = new Button(this.newListTypeItemVisualAction.getModuleAction().getDisplayName(), new Icon(VaadinIcon.PLUS),
+                (event) -> {
             this.newListTypeItemVisualAction.getVisualComponent(new ModuleActionParameterSet(
                                                                         new ModuleActionParameter("listType", currentListType))).open();
         }); 
@@ -201,7 +206,8 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
         propertysheet = new PropertySheet(ts, new ArrayList<>(), "");
         propertysheet.addPropertyValueChangedListener(this);
         H4 headerPropertySheet = new H4(ts.getTranslatedString("module.propertysheet.labels.header"));
-        VerticalLayout lytPropertySheet = new VerticalLayout(headerPropertySheet, propertysheet);
+        lytPropertySheet = new VerticalLayout(headerPropertySheet, propertysheet);
+        lytPropertySheet.setVisible(false);
 //        lytPropertySheet.setClassName("width40p");
         lytPropertySheet.setWidth("45%");
          
@@ -224,6 +230,7 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
         tblListTypeItems.addItemClickListener(ev -> {
             currentListTypeItem = ev.getItem();
             updatePropertySheet(); 
+            lytPropertySheet.setVisible(true);
         });
     }
 
@@ -254,6 +261,7 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
             try {
                 propertysheet.clear();
                 btnAddListTypeItemSec.setEnabled(true);
+                lytPropertySheet.setVisible(false);
                 currentListType = ev.getItem();
                 loadListTypeItems(ev.getItem());
             } catch (InvalidArgumentException | MetadataObjectNotFoundException ex) {

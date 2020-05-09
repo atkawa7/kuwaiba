@@ -16,6 +16,7 @@
 package org.neotropic.kuwaiba.modules.core.listtypeman.actions;
 
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.html.Label;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractAction;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractVisualAction;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
@@ -69,13 +70,8 @@ public class DeleteListTypeItemVisualAction extends AbstractVisualAction<Dialog>
     public Dialog getVisualComponent(ModuleActionParameterSet parameters) {
         BusinessObjectLight seletedListTypeItem = null;
 
-        if (parameters.containsKey("listTypeItem")) 
-            seletedListTypeItem = (BusinessObjectLight) parameters.get("listTypeItem");
-        
-
-        if (seletedListTypeItem == null) 
-            return null;
-        
+        if (parameters.containsKey("listTypeItem")) {
+            seletedListTypeItem = (BusinessObjectLight) parameters.get("listTypeItem");      
 
         BusinessObjectLight listTypeItem = seletedListTypeItem;
 
@@ -90,15 +86,17 @@ public class DeleteListTypeItemVisualAction extends AbstractVisualAction<Dialog>
                         new ModuleActionParameter<>("oid", listTypeItem.getId())));
 
                 fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
-                        ts.getTranslatedString("module.listtypeman.actions.delete-list-type-item.ui.item-created-success"), NewListTypeItemAction.class));
+                        ts.getTranslatedString("module.listtypeman.actions.delete-list-type-item.ui.item-created-success"), DeleteListTypeItemAction.class));
                 wdwDeleteListTypeItem.close();
             } catch (ModuleActionException ex) {
                 fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_ERROR,
-                        ex.getMessage(), NewListTypeItemAction.class));
+                        ex.getMessage(), DeleteListTypeItemAction.class));
                 wdwDeleteListTypeItem.close();
             }
         });
         return wdwDeleteListTypeItem;
+        } else 
+            return new Dialog(new Label(ts.getTranslatedString("module.listtypeman.error-param-listtypeitem")));
     }
 
     @Override
