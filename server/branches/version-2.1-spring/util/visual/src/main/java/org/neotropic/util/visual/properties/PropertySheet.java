@@ -18,6 +18,7 @@ package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Label;
@@ -26,7 +27,6 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
@@ -37,6 +37,7 @@ import org.neotropic.util.visual.notifications.SimpleNotification;
  * An embeddable property sheet 
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
+@JsModule("@vaadin/vaadin-lumo-styles/presets/compact.js")
 public class PropertySheet extends Grid<AbstractProperty> {
 
     private TranslationService ts;
@@ -47,19 +48,27 @@ public class PropertySheet extends Grid<AbstractProperty> {
     
     public PropertySheet(TranslationService ts) {
         
+        // doent work with material
         addThemeVariants(GridVariant.LUMO_COMPACT); 
+        addThemeVariants(GridVariant.MATERIAL_COLUMN_DIVIDERS);
+        addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+        addThemeVariants(GridVariant.LUMO_NO_BORDER);
         addClassName("grid-compact");
+        
+        setHeightByRows(true);
         
         this.ts = ts;
         propertyValueChangedListeners = new ArrayList<>();
 
         addComponentColumn((property) -> {
             VerticalLayout lytName = new VerticalLayout();
-            lytName.setSpacing(false);
             lytName.setPadding(false);
+            lytName.setSpacing(false);
             Label lblName = new BoldLabel(property.toString()); 
             Label lblType = new BoldLabel(property.getType()); 
             lblType.setClassName("text-secundary");
+            if (property.isReadOnly())
+                lblType.addClassName("italic");
             lblName.setTitle(property.getDescription() == null || property.getDescription().isEmpty()
                     ? property.toString() : property.getDescription());
             lytName.add(lblName, lblType);
@@ -69,6 +78,7 @@ public class PropertySheet extends Grid<AbstractProperty> {
         addComponentColumn((property) -> {
             
             VerticalLayout lytValue = new VerticalLayout();
+            lytValue.setPadding(false);
             Label lblValue = new Label(property.getAsString()); 
             lblValue.setWidthFull();
             lytValue.add(lblValue);
