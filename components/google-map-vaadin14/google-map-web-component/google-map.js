@@ -101,6 +101,35 @@ class GoogleMap extends PolymerElement {
         type: String,
         value: 'roadmap',
         observer: '_mapTypeIdChanged'
+      },
+      disableDefaultUi: {
+        type: Boolean,
+        value: false,
+        observer: '_disableDefaultUiChanged'
+      },
+      zoomControl: {
+        type: Boolean,
+        observer: '_zoomControlChanged'
+      },
+      mapTypeControl: {
+        type: Boolean,
+        observer: '_mapTypeControlChanged'
+      },
+      scaleControl: {
+        type: Boolean,
+        observer: '_scaleControlChanged'
+      },
+      streetViewControl: {
+        type: Boolean,
+        observer: '_streetViewControlChanged'
+      },
+      rotateControl: {
+        type: Boolean,
+        observer: '_rotateControlChanged'
+      },
+      fullscreenControl: {
+        type: Boolean,
+        observer: '_fullscreenControlChanged'
       }
     };
   }
@@ -129,7 +158,8 @@ class GoogleMap extends PolymerElement {
      */
     this.map = new google.maps.Map(this.shadowRoot.querySelector('#map'), {
       center: {lat: this.lat, lng: this.lng},
-      zoom: this.zoom
+      zoom: this.zoom,
+      disableDefaultUI: this.disableDefaultUi
     });
     this.map.setMapTypeId(this.mapTypeId);
     /*
@@ -252,6 +282,34 @@ class GoogleMap extends PolymerElement {
       this.map.getMapTypeId() !== newValue) {
       this.map.setMapTypeId(newValue);
     }
+  }
+  _disableDefaultUiChanged(newValue) {
+    if (this.map)
+      this.map.setOptions({disableDefaultUI : newValue});      
+  }
+  _zoomControlChanged(newValue) {
+    if (this.map)
+      this.map.setOptions({zoomControl : newValue});
+  }
+  _mapTypeControlChanged(newValue) {
+    if (this.map)
+      this.map.setOptions({mapTypeControl : newValue});
+  }
+  _scaleControlChanged(newValue) {
+    if (this.map)
+      this.map.setOptions({scaleControl : newValue});
+  }
+  _streetViewControlChanged(newValue) {
+    if (this.map)
+      this.map.setOptions({streetViewControl : newValue});
+  }
+  _rotateControlChanged(newValue) {
+    if (this.map)
+      this.map.setOptions({rotateControl : newValue});
+  }
+  _fullscreenControlChanged(newValue) {
+    if (this.map)
+      this.map.setOptions({fullscreenControl : newValue});
   }
 }
 

@@ -64,7 +64,7 @@ class GoogleMapDemo extends PolymerElement {
       </style>
       <vaadin-split-layout style="height: 100%;">
         <div style="width: 70%;">
-          <google-map id="map" api-key=[[apiKey]] map-type-id="hybrid" libraries="drawing">
+          <google-map id="map" api-key=[[apiKey]] map-type-id="hybrid" libraries="drawing" disable-default-ui>
             <div id="floating-panel">
               <vaadin-tabs selected="{{drawingModePage}}">
                 <vaadin-tab><iron-icon icon="vaadin:hand"></iron-icon></vaadin-tab>
@@ -150,7 +150,7 @@ class GoogleMapDemo extends PolymerElement {
 
     const map = this.$.map;
     this._setMapEventListeners(map);
-    
+        
     const marker = this.$.marker;
     this._setMarkerEventListeners(marker);
     
@@ -186,7 +186,7 @@ class GoogleMapDemo extends PolymerElement {
       _this._updateLabelBackground(_this.$.lblMapZoomChanged);
     });
     map.addEventListener('map-click', function(event) {
-      _this._updateLabelBackground(_this.$.lblMapClick);
+      _this._updateLabelBackground(_this.$.lblMapClick);      
       map.lat = 1.2135252;
       map.lng = -77.3122422;
       map.zoom = 13;

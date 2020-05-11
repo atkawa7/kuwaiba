@@ -1,6 +1,15 @@
 {
-  "name": "google-map",
+  "name": "@neotropic-sas/google-map",
   "description": "&lt;google-map&gt; is a web component",
+  "version": "1.0.0",
+  "author": "Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>",
+  "license": "Apache-2.0",
+  "repository": "https://sourceforge.net/p/kuwaiba/code/HEAD/tree/components/google-map-vaadin14/google-map-web-component/",
+  "keywords": [
+    "google maps",
+    "web-component",
+    "polymer"
+  ],
   "main": "google-map.js",
   "scripts": {
     "resources": "sh scripts/resources.sh"
