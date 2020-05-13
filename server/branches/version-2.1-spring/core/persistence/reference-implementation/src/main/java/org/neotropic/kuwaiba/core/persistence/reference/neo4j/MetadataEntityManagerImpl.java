@@ -1132,7 +1132,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             throw new InvalidArgumentException(String.format("Attribute \"%s\" can not be deleted", attributeName));
         
         try(Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
-            Node classNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, attributeName);
+            Node classNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, className);
 
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.", className));
