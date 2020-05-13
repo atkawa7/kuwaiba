@@ -23,25 +23,20 @@ public class ConfirmDialog extends Dialog {
 
     public ConfirmDialog(String caption, String text, String confirmButtonText) {
 
-        final VerticalLayout content = new VerticalLayout();
-        content.setPadding(false);
-        add(content);
-
-        add(new H3(caption));
-        add(new Span(text));
-
         final HorizontalLayout buttons = new HorizontalLayout();
-        buttons.setPadding(false);
-        add(buttons);
 
         btnConfirm = new Button(confirmButtonText);
+        btnConfirm.setClassName("primary-button");
         btnConfirm.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         btnConfirm.focus();
         buttons.add(btnConfirm);
 
         final Button btnCancel = new Button("Cancel", e -> close());
         buttons.add(btnCancel);
-
+        
+        VerticalLayout content = new VerticalLayout(new H3(caption), new Span(text), buttons);
+        content.setPadding(true);
+        add(content);
     }
 
     public Button getBtnConfirm() {
