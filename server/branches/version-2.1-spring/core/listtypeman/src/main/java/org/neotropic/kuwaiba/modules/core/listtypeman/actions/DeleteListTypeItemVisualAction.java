@@ -68,12 +68,10 @@ public class DeleteListTypeItemVisualAction extends AbstractVisualAction<Dialog>
 
     @Override
     public Dialog getVisualComponent(ModuleActionParameterSet parameters) {
-        BusinessObjectLight seletedListTypeItem = null;
+        BusinessObjectLight seletedListTypeItem;
 
         if (parameters.containsKey("listTypeItem")) {
             seletedListTypeItem = (BusinessObjectLight) parameters.get("listTypeItem");      
-
-        BusinessObjectLight listTypeItem = seletedListTypeItem;
 
         ConfirmDialog wdwDeleteListTypeItem = new ConfirmDialog(ts.getTranslatedString("module.general.labels.confirmcaption"),
                 ts.getTranslatedString("module.general.labels.confirmdeletemessage"),
@@ -82,8 +80,8 @@ public class DeleteListTypeItemVisualAction extends AbstractVisualAction<Dialog>
             try {
 
                 deleteListTypeItemAction.getCallback().execute(new ModuleActionParameterSet(
-                        new ModuleActionParameter<>("className", listTypeItem.getClassName()),
-                        new ModuleActionParameter<>("oid", listTypeItem.getId())));
+                        new ModuleActionParameter<>("className", seletedListTypeItem.getClassName()),
+                        new ModuleActionParameter<>("oid", seletedListTypeItem.getId())));
 
                 fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
                         ts.getTranslatedString("module.listtypeman.actions.delete-list-type-item.ui.item-created-success"), DeleteListTypeItemAction.class));

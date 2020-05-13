@@ -16,7 +16,6 @@
 package org.neotropic.kuwaiba.modules.core.listtypeman.actions;
 
 import java.util.List;
-import java.util.HashMap;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -113,8 +112,6 @@ public class NewListTypeItemVisualAction extends AbstractVisualAction<Dialog> {
                         lblMessages.setText(ts.getTranslatedString("module.general.messages.must-fill-all-fields"));
                     } else {
                         
-                        HashMap<String, String> attributes = new HashMap<>();
-                        attributes.put(Constants.PROPERTY_NAME, txtName.getValue());
                         newListTypeItemAction.getCallback().execute(new ModuleActionParameterSet(
                                 new ModuleActionParameter<>("className", cmbListTypes.getValue().toString()),
                                 new ModuleActionParameter<>("name", txtName.getValue()),
