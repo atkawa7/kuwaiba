@@ -42,7 +42,7 @@ vaadin-button {
 
 /*compact accordion component*/
 .vaadin-accordion-panel[part="content"] {
-    padding: 0px;
+    /*padding: 0px;*/
 }
 /*remove margin on icon buttons with the class icon-button*/
 .icon-button [part="prefix"] > iron-icon {
