@@ -62,6 +62,7 @@ import java.util.stream.Stream;
 import org.apache.commons.io.IOUtils;
 import org.neotropic.kuwaiba.modules.core.datamodelman.nodes.DataModelNode;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
+import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener.ActionCompletedEvent;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameterSet;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
@@ -96,7 +97,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Orlando Paz {@literal <Orlando.Paz@kuwaiba.org>}
  */
 @Route(value = "dmman", layout = DataModelManagerLayout.class)
-public class DataModelManagerUI extends VerticalLayout implements ActionCompletedListener {
+public class DataModelManagerUI extends VerticalLayout {
 
 
     @Autowired
@@ -203,8 +204,20 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
      * contains class icons
      */
     VerticalLayout lytIcons ;
-    
-    ActionCompletedListener listenerAttributeSection;
+    Button btnDeleteAttribute;
+    Button btnDeleteClass;
+    /**
+     * listener to attribute actions
+     */
+    ActionCompletedListener listenerAttributeActions;
+    /**
+     * listener to delete class action
+     */
+    ActionCompletedListener listenerDeleteClassAction;
+    /**
+     * listener to new class action
+     */
+    ActionCompletedListener listenerNewClassAction;
     
     public DataModelManagerUI() {
         super();
@@ -226,19 +239,19 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
     
     @Override
     public void onDetach(DetachEvent ev) {
-         this.newClassVisualAction.unregisterListener(this);
-         this.deleteClassVisualAction.unregisterListener(this);
-         this.newAttributeVisualAction.unregisterListener(listenerAttributeSection);
-         this.deleteAttributeVisualAction.unregisterListener(listenerAttributeSection);
+         this.newClassVisualAction.unregisterListener(listenerNewClassAction);
+         this.deleteClassVisualAction.unregisterListener(listenerDeleteClassAction);
+         this.newAttributeVisualAction.unregisterListener(listenerAttributeActions);
+         this.deleteAttributeVisualAction.unregisterListener(listenerAttributeActions);
     }
     
-    @Override
-    public void actionCompleted(ActionCompletedListener.ActionCompletedEvent ev) {
+    public void showActionCompledMessages(ActionCompletedListener.ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
             try {
                 genericObjectListTree.getDataProvider().refreshAll();
                 inventoryObjectTree.getDataProvider().refreshAll();
                 propsheetGeneralAttributes.clear();
+                lytIcons.setVisible(true);
                 new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
                                             
             } catch (Exception ex) {
@@ -246,29 +259,49 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
             }
         } else
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
+ 
     }
 
     private void createContent() throws InvalidArgumentException, MetadataObjectNotFoundException {
          
-        this.newClassVisualAction.registerActionCompletedLister(this);
-        this.deleteClassVisualAction.registerActionCompletedLister(this);
+        listenerNewClassAction = (ActionCompletedEvent ev) -> {          
+                genericObjectListTree.getDataProvider().refreshAll();
+                inventoryObjectTree.getDataProvider().refreshAll();                            
+                showActionCompledMessages(ev);      
+        }; 
+        this.newClassVisualAction.registerActionCompletedLister(listenerNewClassAction);
         
-        listenerAttributeSection = (ActionCompletedEvent ev) -> {
-            if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
-                try {
+        listenerDeleteClassAction = (ActionCompletedEvent ev) -> {
+           
+                    genericObjectListTree.getDataProvider().refreshAll();
+                    inventoryObjectTree.getDataProvider().refreshAll();
+                    //clear general attributes section
+                    propsheetGeneralAttributes.clear();
+                    lytIcons.setVisible(false);
+                    btnDeleteClass.setEnabled(false);         
+                    
+                    selectedClass = null;
+                    selectedAttribute = null;
+                    selectedTreeNode = null;
+                    //clear class attributes section
+                    updateGridClassAttributes(selectedClass);
+                    propsheetClassAttributes.clear();
+                    btnDeleteAttribute.setEnabled(false);         
+                    
+                    showActionCompledMessages(ev);            
+        }; 
+        this.deleteClassVisualAction.registerActionCompletedLister(listenerDeleteClassAction);      
+        
+        listenerAttributeActions = (ActionCompletedEvent ev) -> {
+           
                     updateGridClassAttributes(selectedClass);
                     selectedAttribute = null;
                     propsheetClassAttributes.clear();
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
-                    
-                } catch (Exception ex) {
-                    Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            } else
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
+                    btnDeleteAttribute.setEnabled(false);                   
+                    showActionCompledMessages(ev);            
         };       
-        this.newAttributeVisualAction.registerActionCompletedLister(listenerAttributeSection);
-        this.deleteAttributeVisualAction.registerActionCompletedLister(listenerAttributeSection);
+        this.newAttributeVisualAction.registerActionCompletedLister(listenerAttributeActions);
+        this.deleteAttributeVisualAction.registerActionCompletedLister(listenerAttributeActions);
         
         SplitLayout splitLayout = new SplitLayout();
         splitLayout.setSizeFull();
@@ -308,7 +341,7 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
                     } else 
                         new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.datamodelman.messages.class-unselected")).open();
                 });
-        Button btnDeleteClass = new Button(this.deleteClassVisualAction.getModuleAction().getDisplayName(), new Icon(VaadinIcon.TRASH),
+        btnDeleteClass = new Button(this.deleteClassVisualAction.getModuleAction().getDisplayName(), new Icon(VaadinIcon.TRASH),
                 (event) -> {
                     if (selectedClass != null) {
                         this.deleteClassVisualAction.getVisualComponent(new ModuleActionParameterSet(
@@ -316,7 +349,7 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
                     } else 
                         new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.datamodelman.messages.class-unselected")).open();
                 });
-//        btnDeleteClass.setEnabled(false);
+        btnDeleteClass.setEnabled(false);
         HorizontalLayout lylActions = new HorizontalLayout(btnNewClass, btnDeleteClass);
         
         accordion.close();       
@@ -355,9 +388,9 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
                 ts.getTranslatedString("module.datamodelman.max-size"),
                 Constants.MAX_ICON_SIZE_IN_BYTES));
         lblInfoFile.setClassName("text-secundary");
-        HorizontalLayout lytIconss = new HorizontalLayout( lytClassIcon, lytSmallClassIcon);
+        HorizontalLayout lytUploadIcons = new HorizontalLayout( lytClassIcon, lytSmallClassIcon);
         lytIcons = new VerticalLayout(new H4(ts.getTranslatedString("module.datamodelman.icons")), 
-                                      lblInfoFile, lytIconss);  
+                                      lblInfoFile, lytUploadIcons);  
 //        lytIcons.setWidth("60%");
         lytIcons.setVisible(false);
         VerticalLayout lytGeneralAttributes = new VerticalLayout(propsheetGeneralAttributes);
@@ -376,7 +409,7 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
                     } else 
                         new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.datamodelman.messages.class-unselected")).open();
                 });
-         Button btnDeleteAttribute = new Button(this.deleteAttributeVisualAction.getModuleAction().getDisplayName(), new Icon(VaadinIcon.TRASH),
+        btnDeleteAttribute = new Button(this.deleteAttributeVisualAction.getModuleAction().getDisplayName(), new Icon(VaadinIcon.TRASH),
                 (event) -> {
                     if (selectedClass != null && selectedAttribute != null) {
                         this.deleteAttributeVisualAction.getVisualComponent(new ModuleActionParameterSet(
@@ -385,6 +418,7 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
                     } else 
                         new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.datamodelman.messages.class-unselected")).open();
                 });
+        btnDeleteAttribute.setEnabled(false);
         VerticalLayout lytListClassAttributes = new VerticalLayout(new HorizontalLayout(btnNewAttribute, btnDeleteAttribute),
                                                            tblClassAttributes);
         lytPropSheetClassAttributes = new VerticalLayout(new H4(ts.getTranslatedString("module.datamodelman.attributes")), propsheetClassAttributes);
@@ -459,6 +493,8 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
             propsheetClassAttributes.clear();
             lytPropSheetClassAttributes.setVisible(false);
             lytIcons.setVisible(true);
+            btnDeleteAttribute.setEnabled(false);
+            btnDeleteClass.setEnabled(true);
         });
     }
     
@@ -492,6 +528,8 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
             propsheetClassAttributes.clear();
             lytPropSheetClassAttributes.setVisible(false);
             lytIcons.setVisible(true);
+            btnDeleteAttribute.setEnabled(false);
+            btnDeleteClass.setEnabled(true);
         });
         
         List<ClassMetadataLight> listTypeClasses = new ArrayList<>();
@@ -585,6 +623,7 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
                 selectedAttribute = ev.getItem();
                 updatePropertySheetClassAttributes();
                 lytPropSheetClassAttributes.setVisible(true);
+                btnDeleteAttribute.setEnabled(true);
             } catch (Exception ex) {
 
             }
@@ -594,9 +633,12 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
     private void updateGridClassAttributes(ClassMetadataLight object) {
         
         try {
+            if (object != null) {
             ClassMetadata classMetadata = mem.getClass(object.getName());
             tblClassAttributes.setItems(classMetadata.getAttributes());
             tblClassAttributes.getDataProvider().refreshAll();
+            } else
+                tblClassAttributes.setItems(new ArrayList<>());
         } catch (MetadataObjectNotFoundException ex) {
             Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
         }

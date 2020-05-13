@@ -131,7 +131,7 @@ public class NewAttributeVisualAction extends AbstractVisualAction<Dialog> {
 
                     
                     fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
-                            ts.getTranslatedString("module.datamodelman.actions.new-attribute-created-success"), NewAttributeAction.class));
+                            ts.getTranslatedString("module.datamodelman.actions.new-class-attribute-success"), NewAttributeAction.class));
                     wdwNewAttribute.close();
                 }
             } catch (ModuleActionException ex) {
