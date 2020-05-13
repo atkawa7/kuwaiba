@@ -21,6 +21,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -29,6 +30,8 @@ import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -59,6 +62,8 @@ import java.util.stream.Stream;
 import org.apache.commons.io.IOUtils;
 import org.neotropic.kuwaiba.modules.core.datamodelman.nodes.DataModelNode;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
+import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
+import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameterSet;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.ApplicationObjectNotFoundException;
@@ -71,6 +76,10 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.modules.core.datamodelman.actions.DeleteAttributeVisualAction;
+import org.neotropic.kuwaiba.modules.core.datamodelman.actions.DeleteClassVisualAction;
+import org.neotropic.kuwaiba.modules.core.datamodelman.actions.NewAttributeVisualAction;
+import org.neotropic.kuwaiba.modules.core.datamodelman.actions.NewClassVisualAction;
 import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicIconGenerator;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.util.visual.general.BoldLabel;
@@ -112,6 +121,26 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
      */  
     @Autowired
     private ResourceFactory resourceFactory;
+    /**
+     * the visual action to create a new class
+     */
+    @Autowired
+    private NewClassVisualAction newClassVisualAction;
+    /**
+     * the visual action to delete a class
+     */
+    @Autowired
+    private DeleteClassVisualAction deleteClassVisualAction;
+    /**
+     * the visual action to create a new attribute
+     */
+    @Autowired
+    private NewAttributeVisualAction newAttributeVisualAction;
+   /**
+     * the visual action to delete  attribute
+     */
+    @Autowired
+    private DeleteAttributeVisualAction deleteAttributeVisualAction;
      /**
      * factory to build resources from data source
      */ 
@@ -132,6 +161,8 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
      * current selected class 
      */   
     ClassMetadataLight selectedClass;
+    
+    DataModelNode selectedTreeNode;
      /**
      * combo filter for inventory tree
      */   
@@ -173,6 +204,8 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
      */
     VerticalLayout lytIcons ;
     
+    ActionCompletedListener listenerAttributeSection;
+    
     public DataModelManagerUI() {
         super();
         setSizeFull();
@@ -193,13 +226,19 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
     
     @Override
     public void onDetach(DetachEvent ev) {
-
+         this.newClassVisualAction.unregisterListener(this);
+         this.deleteClassVisualAction.unregisterListener(this);
+         this.newAttributeVisualAction.unregisterListener(listenerAttributeSection);
+         this.deleteAttributeVisualAction.unregisterListener(listenerAttributeSection);
     }
     
     @Override
     public void actionCompleted(ActionCompletedListener.ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
             try {
+                genericObjectListTree.getDataProvider().refreshAll();
+                inventoryObjectTree.getDataProvider().refreshAll();
+                propsheetGeneralAttributes.clear();
                 new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
                                             
             } catch (Exception ex) {
@@ -210,7 +249,27 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
     }
 
     private void createContent() throws InvalidArgumentException, MetadataObjectNotFoundException {
-                
+         
+        this.newClassVisualAction.registerActionCompletedLister(this);
+        this.deleteClassVisualAction.registerActionCompletedLister(this);
+        
+        listenerAttributeSection = (ActionCompletedEvent ev) -> {
+            if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
+                try {
+                    updateGridClassAttributes(selectedClass);
+                    selectedAttribute = null;
+                    propsheetClassAttributes.clear();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
+                    
+                } catch (Exception ex) {
+                    Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
+        };       
+        this.newAttributeVisualAction.registerActionCompletedLister(listenerAttributeSection);
+        this.deleteAttributeVisualAction.registerActionCompletedLister(listenerAttributeSection);
+        
         SplitLayout splitLayout = new SplitLayout();
         splitLayout.setSizeFull();
         splitLayout.setSplitterPosition(25); 
@@ -234,15 +293,35 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
         BoldLabel lblListType = new BoldLabel(ts.getTranslatedString("module.datamodelman.list-types"));
         lblListType.addClassName("lbl-accordion");
         HorizontalLayout lytSummaryListType = new HorizontalLayout(lblListType);  
-        lytSummaryListType.setWidthFull();
+        lytSummaryListType.setWidthFull();        
         VerticalLayout lytListType = new VerticalLayout(cbxFilterListTypeTree, genericObjectListTree);
         lytListType.setPadding(false);
         lytListType.setSpacing(false);
         AccordionPanel apListType = new AccordionPanel(lytSummaryListType, lytListType);
         accordion.add(apListType);
         
+        Button btnNewClass = new Button(this.newClassVisualAction.getModuleAction().getDisplayName(), new Icon(VaadinIcon.PLUS),
+                (event) -> {
+                    if (selectedClass != null) {
+                        this.newClassVisualAction.getVisualComponent(new ModuleActionParameterSet(
+                        new ModuleActionParameter("parentClass", selectedClass))).open();
+                    } else 
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.datamodelman.messages.class-unselected")).open();
+                });
+        Button btnDeleteClass = new Button(this.deleteClassVisualAction.getModuleAction().getDisplayName(), new Icon(VaadinIcon.TRASH),
+                (event) -> {
+                    if (selectedClass != null) {
+                        this.deleteClassVisualAction.getVisualComponent(new ModuleActionParameterSet(
+                        new ModuleActionParameter("class", selectedClass))).open();
+                    } else 
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.datamodelman.messages.class-unselected")).open();
+                });
+//        btnDeleteClass.setEnabled(false);
+        HorizontalLayout lylActions = new HorizontalLayout(btnNewClass, btnDeleteClass);
+        
         accordion.close();       
-        VerticalLayout lytTrees = new VerticalLayout(new H4(ts.getTranslatedString("module.datamodelman.classes")), accordion);
+        VerticalLayout lytTrees = new VerticalLayout(new H4(ts.getTranslatedString("module.datamodelman.classes")), 
+                                               lylActions, accordion);
         lytTrees.setPadding(false);
         lytTrees.setSizeFull();
         splitLayout.addToPrimary(lytTrees);
@@ -289,7 +368,25 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
         lytAttributes.setSpacing(false);
         lytAttributes.setPadding(false);
         
-        VerticalLayout lytListClassAttributes = new VerticalLayout(tblClassAttributes);
+        Button btnNewAttribute = new Button(this.newAttributeVisualAction.getModuleAction().getDisplayName(), new Icon(VaadinIcon.PLUS),
+                (event) -> {
+                    if (selectedClass != null) {
+                        this.newAttributeVisualAction.getVisualComponent(new ModuleActionParameterSet(
+                        new ModuleActionParameter("class", selectedClass))).open();
+                    } else 
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.datamodelman.messages.class-unselected")).open();
+                });
+         Button btnDeleteAttribute = new Button(this.deleteAttributeVisualAction.getModuleAction().getDisplayName(), new Icon(VaadinIcon.TRASH),
+                (event) -> {
+                    if (selectedClass != null && selectedAttribute != null) {
+                        this.deleteAttributeVisualAction.getVisualComponent(new ModuleActionParameterSet(
+                        new ModuleActionParameter("class", selectedClass),
+                        new ModuleActionParameter("attribute", selectedAttribute))).open();
+                    } else 
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.datamodelman.messages.class-unselected")).open();
+                });
+        VerticalLayout lytListClassAttributes = new VerticalLayout(new HorizontalLayout(btnNewAttribute, btnDeleteAttribute),
+                                                           tblClassAttributes);
         lytPropSheetClassAttributes = new VerticalLayout(new H4(ts.getTranslatedString("module.datamodelman.attributes")), propsheetClassAttributes);
         lytPropSheetClassAttributes.setSpacing(false);
         lytPropSheetClassAttributes.setVisible(false);
@@ -355,6 +452,7 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
         
         inventoryObjectTree.addItemClickListener( item ->  {
             selectedClass = item.getItem().getObject();
+            selectedTreeNode = item.getItem();
             updatePropertySheetGeneralAttributes();
             updateGridClassAttributes(item.getItem().getObject());
             updateIconImages();
@@ -455,7 +553,7 @@ public class DataModelManagerUI extends VerticalLayout implements ActionComplete
                             break;  
                     }                                     
                     mem.setClassProperties(classToUpdate);   
-                    
+
                     genericObjectListTree.getDataProvider().refreshAll();
                     inventoryObjectTree.getDataProvider().refreshAll();
                     updatePropertySheetGeneralAttributes();
