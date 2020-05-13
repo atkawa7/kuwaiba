@@ -176,3 +176,9 @@ paper-swatch-picker paper-icon-button {
   border-left: 6px solid green;
   height: 90%;
 }
+
+.primary-button {
+    background-color:var(--material-primary-color);
+    color: white;
+    font-weight: bold;
+}
