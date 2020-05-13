@@ -649,6 +649,9 @@ public class Constants {
      /* Name of the data type boolean
       */
      public static final String DATA_TYPE_BOOLEAN = "Boolean";
+     
+     public static final String [] DATA_TYPES = {DATA_TYPE_STRING, DATA_TYPE_DATE, DATA_TYPE_INTEGER,
+                                            DATA_TYPE_DOUBLE, DATA_TYPE_LONG, DATA_TYPE_FLOAT, DATA_TYPE_TIME_STAMP};
      /* Name of the data type color
       */
      public static final String DATA_TYPE_COLOR = "Color";
