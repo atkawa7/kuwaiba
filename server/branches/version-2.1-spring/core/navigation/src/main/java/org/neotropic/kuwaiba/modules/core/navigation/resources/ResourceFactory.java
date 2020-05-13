@@ -149,7 +149,7 @@ public class ResourceFactory extends AbstractResourceFactory {
              ClassMetadata remoteClass = mem.getClass(className);
              byte[] classIcon = remoteClass.getSmallIcon();
              if (classIcon != null && classIcon.length > 0) {
-                 StreamResource icon = buildIcon("small" + className + ".png", remoteClass.getIcon());
+                 StreamResource icon = buildIcon("small" + className + ".png", remoteClass.getSmallIcon());
                  VaadinSession.getCurrent().getResourceRegistry().registerResource(icon);
                  smallIcons.put(className, icon);
                  return icon;
