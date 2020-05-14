@@ -119,16 +119,18 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
                 mapProperties.put("apiKey", apiKey); //NOI18N
                 mapProperties.put("center", new GeoCoordinate(latitude, longitude)); //NOI18N
                 mapProperties.put("zoom", zoom);
+                mapProperties.put("bem", bem);
                 
                 AbstractMapProvider mapProvider = (AbstractMapProvider) mapProviderClass.newInstance();
                 mapProvider.initialize(mapProperties);
-                SplitLayout splitLayout = new SplitLayout();
-                splitLayout.addToPrimary(buildTree());
-                splitLayout.addToSecondary(mapProvider.getComponent());
-                splitLayout.setSplitterPosition(25);
-                splitLayout.addThemeVariants(SplitLayoutVariant.LUMO_SMALL);
-                splitLayout.setSizeFull();
-                add(splitLayout);
+                add(mapProvider.getComponent());
+////                SplitLayout splitLayout = new SplitLayout();
+////                splitLayout.addToPrimary(buildTree());
+////                splitLayout.addToSecondary(mapProvider.getComponent());
+////                splitLayout.setSplitterPosition(25);
+////                splitLayout.addThemeVariants(SplitLayoutVariant.LUMO_SMALL);
+////                splitLayout.setSizeFull();
+////                add(splitLayout);
             }
         } catch (Exception ex) {
             new SimpleNotification(
@@ -137,62 +139,62 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
             ).open();
         }
     }
-    private HierarchicalDataProvider getDataProvider() {
-        return new AbstractBackEndHierarchicalDataProvider<InventoryObjectNode, Void>() {
-            @Override
-            protected Stream<InventoryObjectNode> fetchChildrenFromBackEnd(HierarchicalQuery<InventoryObjectNode, Void> query) {
-                InventoryObjectNode parent = query.getParent();
-                if (parent != null) {
-                    BusinessObjectLight object = parent.getObject();
-                    try {
-                        List<BusinessObjectLight> children = bem.getObjectChildren(
-                            object.getClassName(), object.getId(), query.getOffset(), query.getLimit());
-                        List<InventoryObjectNode> nodes = new ArrayList();
-                        for (BusinessObjectLight child : children)
-                            nodes.add(new InventoryObjectNode(child));
-                        return nodes.stream();
-                    } catch (InvalidArgumentException ex) {
-                        new SimpleNotification(
-                            ts.getTranslatedString("module.general.messages.error"), 
-                            ex.getMessage()).open();
-                        return new ArrayList().stream();
-                    }
-                } else {
-                    return Arrays.asList(new InventoryObjectNode(
-                        new BusinessObjectLight(Constants.DUMMY_ROOT, null, "Root")
-                    )).stream();
-                }
-            }
-
-            @Override
-            public int getChildCount(HierarchicalQuery<InventoryObjectNode, Void> query) {
-                InventoryObjectNode parent = query.getParent();
-                if (parent != null) {
-                    BusinessObjectLight object = parent.getObject();
-                    try {
-                        return (int) bem.getObjectChildrenCount(object.getClassName(), object.getId());
-                    } catch (Exception ex) {
-                        new SimpleNotification(
-                            ts.getTranslatedString("module.general.messages.error"), 
-                            ex.getMessage()).open();
-                        return 0;
-                    }
-                } else {
-                    return 1;
-                }
-            }
-
-            @Override
-            public boolean hasChildren(InventoryObjectNode node) {
-                return true;
-            }
-        };
-    }
-    private NavigationTree buildTree() {
-        NavigationTree navigationTree = new NavigationTree(getDataProvider(), new BasicIconGenerator(resourceFactory));
-        navigationTree.setSizeFull();
-        return navigationTree;
-    }
+////    private HierarchicalDataProvider getDataProvider() {
+////        return new AbstractBackEndHierarchicalDataProvider<InventoryObjectNode, Void>() {
+////            @Override
+////            protected Stream<InventoryObjectNode> fetchChildrenFromBackEnd(HierarchicalQuery<InventoryObjectNode, Void> query) {
+////                InventoryObjectNode parent = query.getParent();
+////                if (parent != null) {
+////                    BusinessObjectLight object = parent.getObject();
+////                    try {
+////                        List<BusinessObjectLight> children = bem.getObjectChildren(
+////                            object.getClassName(), object.getId(), query.getOffset(), query.getLimit());
+////                        List<InventoryObjectNode> nodes = new ArrayList();
+////                        for (BusinessObjectLight child : children)
+////                            nodes.add(new InventoryObjectNode(child));
+////                        return nodes.stream();
+////                    } catch (InvalidArgumentException ex) {
+////                        new SimpleNotification(
+////                            ts.getTranslatedString("module.general.messages.error"), 
+////                            ex.getMessage()).open();
+////                        return new ArrayList().stream();
+////                    }
+////                } else {
+////                    return Arrays.asList(new InventoryObjectNode(
+////                        new BusinessObjectLight(Constants.DUMMY_ROOT, null, "Root")
+////                    )).stream();
+////                }
+////            }
+////
+////            @Override
+////            public int getChildCount(HierarchicalQuery<InventoryObjectNode, Void> query) {
+////                InventoryObjectNode parent = query.getParent();
+////                if (parent != null) {
+////                    BusinessObjectLight object = parent.getObject();
+////                    try {
+////                        return (int) bem.getObjectChildrenCount(object.getClassName(), object.getId());
+////                    } catch (Exception ex) {
+////                        new SimpleNotification(
+////                            ts.getTranslatedString("module.general.messages.error"), 
+////                            ex.getMessage()).open();
+////                        return 0;
+////                    }
+////                } else {
+////                    return 1;
+////                }
+////            }
+////
+////            @Override
+////            public boolean hasChildren(InventoryObjectNode node) {
+////                return true;
+////            }
+////        };
+////    }
+////    private NavigationTree buildTree() {
+////        NavigationTree navigationTree = new NavigationTree(getDataProvider(), new BasicIconGenerator(resourceFactory));
+////        navigationTree.setSizeFull();
+////        return navigationTree;
+////    }
     
     @Override
     public void actionCompleted(ActionCompletedEvent ev) {
