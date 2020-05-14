@@ -78,7 +78,7 @@ public class CacheManager {
     /**
      * List of the classes with unique attributes and its values index
      */
-    private HashMap<String, HashMap<String, List<String>>> uniqueClassAttributesIndex;
+    private HashMap<String, HashMap<String, List<Object>>> uniqueClassAttributesIndex;
     /**
      * A structure that caches the superclasses of a given class (the key of the hashmap). This structure does contain redundant information, 
      * but that is the trade off to simplify the access to the upstream class hierarchy
@@ -187,18 +187,18 @@ public class CacheManager {
      * @param attributeName attribute name 
      * @param value new value of an unique attribute
      */
-    public void putUniqueAttributeValueIndex(String className, String attributeName, String value) {
-        HashMap<String, List<String>> uniqueClassAttributes = uniqueClassAttributesIndex.get(className);
+    public void putUniqueAttributeValueIndex(String className, String attributeName, Object value) {
+        HashMap<String, List<Object>> uniqueClassAttributes = uniqueClassAttributesIndex.get(className);
         if(uniqueClassAttributes == null) {
             uniqueClassAttributes = new HashMap<>();
-            List<String> values = new ArrayList<>();
+            List<Object> values = new ArrayList<>();
             if(value != null) //maybe still there is no object of this class with this unique attribute
                 values.add(value);
             uniqueClassAttributes.put(attributeName, values);
             uniqueClassAttributesIndex.put(className, uniqueClassAttributes);
         }
-        else{
-            List<String> values = uniqueClassAttributes.get(attributeName);
+        else {
+            List<Object> values = uniqueClassAttributes.get(attributeName);
             if(values == null) {
                 values = new ArrayList<>();
                 values.add(value);
@@ -213,8 +213,8 @@ public class CacheManager {
         }
     }
     
-    public void putUniqueAttributeValuesIndex(String className, String attributeName, List<String> values){
-        HashMap<String, List<String>> uniqueClassAttributes = uniqueClassAttributesIndex.get(className);
+    public void putUniqueAttributeValuesIndex(String className, String attributeName, List<Object> values){
+        HashMap<String, List<Object>> uniqueClassAttributes = uniqueClassAttributesIndex.get(className);
         if(uniqueClassAttributes == null){
             uniqueClassAttributes = new HashMap<>();
             if(values != null)
@@ -277,11 +277,11 @@ public class CacheManager {
         return subClassesNoRecursiveIndex.get(className);
     }
     
-    public HashMap<String, List<String>> getUniqueClassAttributes(String className){
+    public HashMap<String, List<Object>> getUniqueClassAttributes(String className){
         return uniqueClassAttributesIndex.get(className);
     }
     
-    public List<String> getUniqueAttributeValues(String className, String attributeName){
+    public List<Object> getUniqueAttributeValues(String className, String attributeName){
         if (uniqueClassAttributesIndex.get(className) != null)
             return uniqueClassAttributesIndex.get(className).get(attributeName);
         else
@@ -343,9 +343,9 @@ public class CacheManager {
             uniqueClassAttributesIndex.get(className).remove(attributeName);
     }    
     
-    public void removeUniqueAttributeValue(String className, String attributeName, String attributeValue){
-        HashMap<String, List<String>> uniqueClassAttributes = uniqueClassAttributesIndex.get(className);
-        List<String> uniqueValues = uniqueClassAttributes.get(attributeName);
+    public void removeUniqueAttributeValue(String className, String attributeName, Object attributeValue) {
+        HashMap<String, List<Object>> uniqueClassAttributes = uniqueClassAttributesIndex.get(className);
+        List<Object> uniqueValues = uniqueClassAttributes.get(attributeName);
         if(uniqueValues != null)
             uniqueValues.remove(attributeValue);
         uniqueClassAttributes.put(attributeName, uniqueValues);

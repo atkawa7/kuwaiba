@@ -15,10 +15,10 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman.google;
 
-import com.neotropic.vaadin14.component.googlemap.GoogleMap;
 import com.vaadin.flow.component.Component;
 import java.util.List;
 import java.util.Properties;
+import com.neotropic.flow.component.googlemap.GoogleMap;
 import com.neotropic.kuwaiba.modules.commercial.ospman.AbstractMapProvider;
 import com.neotropic.kuwaiba.modules.commercial.ospman.GeoCoordinate;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
@@ -28,11 +28,11 @@ import org.neotropic.kuwaiba.core.apis.integration.views.ViewEventListener;
  *
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class GoogleMapMapProvider extends AbstractMapProvider {
+public class GoogleMapsMapProvider extends AbstractMapProvider {
+    /**
+     * The map component.
+     */
     private GoogleMap googleMap;
-    
-    public GoogleMapMapProvider() {
-    }
     
     @Override
     public void initialize(Properties properties) {

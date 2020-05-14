@@ -845,9 +845,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 BusinessObject remoteObject = createObjectFromNode(listTypeItemNode);
                 for(AttributeMetadata attribute : classMetadata.getAttributes()) {
                     if(attribute.isUnique()) { 
-                        String attributeValues = remoteObject.getAttributes().get(attribute.getName());
-                        if(attributeValues != null)
-                            CacheManager.getInstance().removeUniqueAttributeValue(className, attribute.getName(), attributeValues);
+                        Object attributeValue = remoteObject.getAttributes().get(attribute.getName());
+                        if(attributeValue != null)
+                            CacheManager.getInstance().removeUniqueAttributeValue(className, attribute.getName(), attributeValue);
                     }
                 }
             } catch (InvalidArgumentException ex) {
@@ -888,8 +888,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      * @throws InvalidArgumentException If an attribute value can't be mapped into value.
      */
     private BusinessObject createObjectFromNode(Node instance, ClassMetadata classMetadata) throws InvalidArgumentException {
-        
-        HashMap<String, String> attributes = new HashMap<>();
+        HashMap<String, Object> attributes = new HashMap<>();
         String name = "";
         
         for (AttributeMetadata myAtt : classMetadata.getAttributes()) {
@@ -897,14 +896,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             //Neo4J, so a null value is actually a non-existing relationship/value
             if (instance.hasProperty(myAtt.getName())) {
                if (AttributeMetadata.isPrimitive(myAtt.getType())) {
-                    if (!myAtt.getType().equals("Binary")) {
-                        String value = String.valueOf(instance.getProperty(myAtt.getName()));
-                        
-                        if (Constants.PROPERTY_NAME.equals(myAtt.getName()))
-                            name = value;
-                        
-                        attributes.put(myAtt.getName(),value);
-                    }
+                    Object value = instance.getProperty(myAtt.getName());
+                    if (Constants.PROPERTY_NAME.equals(myAtt.getName()))
+                        name = (String)value;
+
+                    attributes.put(myAtt.getName(), value);
                 }
             }
         }
@@ -916,17 +912,28 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         while(relationships.hasNext()) {
             Relationship relationship = relationships.next();
             if (!relationship.hasProperty(Constants.PROPERTY_NAME))
-                throw new InvalidArgumentException(String.format("El objeto con id %s está mal formado", instance.getId()));
+                throw new InvalidArgumentException(String.format("Object with id %s has a malformed RELATED_TO relationship", instance.getId()));
 
             String relationshipName = (String)relationship.getProperty(Constants.PROPERTY_NAME);              
             
             boolean hasRelationship = false;
             for (AttributeMetadata myAtt : classMetadata.getAttributes()) {
                 if (myAtt.getName().equals(relationshipName)) {
-                    if (attributes.containsKey(relationshipName))
-                        attributes.put(relationshipName, attributes.get(relationshipName) + ";" + relationship.getEndNode().getProperty(Constants.PROPERTY_UUID)); //A multiple selection list type
-                    else    
-                        attributes.put(relationshipName, (String)relationship.getEndNode().getProperty(Constants.PROPERTY_UUID));
+                    Node listTypeItemNode = relationship.getEndNode();
+                    if (myAtt.isMultiple()) {
+                        if (attributes.containsKey(relationshipName))
+                            ((List<BusinessObjectLight>)attributes.get(relationshipName)).add(new BusinessObjectLight((String)listTypeItemNode.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME), 
+                                                               (String)listTypeItemNode.getProperty(Constants.PROPERTY_UUID), (String)listTypeItemNode.getProperty(Constants.PROPERTY_NAME)));
+                        else {
+                            List<BusinessObjectLight> multipleListTypeItems = new ArrayList<>();
+                            multipleListTypeItems.add(new BusinessObjectLight((String)listTypeItemNode.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME), 
+                                                               (String)listTypeItemNode.getProperty(Constants.PROPERTY_UUID), (String)listTypeItemNode.getProperty(Constants.PROPERTY_NAME)));
+                            attributes.put(relationshipName, multipleListTypeItems); //A multiple selection list type
+                        }
+                    } else
+                        attributes.put(relationshipName, 
+                                       new BusinessObjectLight((String)listTypeItemNode.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME), 
+                                                               (String)listTypeItemNode.getProperty(Constants.PROPERTY_UUID), (String)listTypeItemNode.getProperty(Constants.PROPERTY_NAME)));
                     hasRelationship = true;
                     break;
                 }                  
@@ -934,7 +941,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             if (!hasRelationship) //This verification will help us find potential inconsistencies with list types
                                   //What this does is to verify if is there is a RELATED_TO relationship that shouldn't exist because its name is not an attribute of the class
-                throw new InvalidArgumentException(String.format("El objeto con %s (%s) está relacionado con el tipo de lista %s (%s), pero eso no es coherente con el modelo de datos", 
+                throw new InvalidArgumentException(String.format("Object %s (%s) is related to list type %s (%s), but this is not consistent with the data model", 
                             instance.getProperty(Constants.PROPERTY_NAME), instance.getId(), relationship.getEndNode().getProperty(Constants.PROPERTY_NAME), relationship.getEndNode().getId()));
         }
         
@@ -3240,7 +3247,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     while (theResult.hasNext()) {
                         Map<String, Object> row = theResult.next();
                         for (String column : row.keySet()) 
-                            thePaths.get(column).add(createRemoteObjectFromNode((Node)row.get(column)));
+                            thePaths.get(column).add(createBusinessObjectFromNode((Node)row.get(column)));
                     }
                 } catch (InvalidArgumentException ex) {} //this should not happen
 
@@ -5071,10 +5078,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         return res;
     }
     
-    private BusinessObject createRemoteObjectFromNode(Node instance) throws InvalidArgumentException {
+    private BusinessObject createBusinessObjectFromNode(Node instance) throws InvalidArgumentException {
         String className = (String)instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME);
         try {
-            return createRemoteObjectFromNode(instance, mem.getClass(className));
+            return createBusinessObjectFromNode(instance, mem.getClass(className));
         } catch (MetadataObjectNotFoundException mex) {
             throw new InvalidArgumentException(mex.getLocalizedMessage());
         }
@@ -5101,9 +5108,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      * @return The business object.
      * @throws InvalidArgumentException If an attribute value can't be mapped into value.
      */
-    private BusinessObject createRemoteObjectFromNode(Node instance, ClassMetadata classMetadata) throws InvalidArgumentException {
+    private BusinessObject createBusinessObjectFromNode(Node instance, ClassMetadata classMetadata) throws InvalidArgumentException {
         
-        HashMap<String, String> attributes = new HashMap<>();
+        HashMap<String, Object> attributes = new HashMap<>();
         String name = "";
         
         for (AttributeMetadata myAtt : classMetadata.getAttributes()) {

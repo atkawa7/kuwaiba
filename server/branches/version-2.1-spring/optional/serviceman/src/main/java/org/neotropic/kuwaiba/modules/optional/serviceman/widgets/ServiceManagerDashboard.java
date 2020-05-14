@@ -17,6 +17,7 @@
 package org.neotropic.kuwaiba.modules.optional.serviceman.widgets;
 
 import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -31,7 +32,6 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import java.util.List;
-import org.neotropic.kuwaiba.core.apis.integration.AbstractVisualAction;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
@@ -83,6 +83,10 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
     /**
      * Reference to the Business Entity Manager.
      */
+    private ApplicationEntityManager aem;
+    /**
+     * Reference to the Business Entity Manager.
+     */
     private BusinessEntityManager bem;
 
     public ServiceManagerDashboard(ActionRegistry actionRegistry, TranslationService ts, MetadataEntityManager mem, 
@@ -90,6 +94,7 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
         this.actionRegistry = actionRegistry;
         this.ts = ts;
         this.mem = mem;
+        this.aem = aem;
         this.bem = bem;
         setPadding(false);
         setMargin(false);
@@ -138,9 +143,10 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
                         Grid<BusinessObjectLight> tblResults = new  Grid<>();
                         tblResults.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
                         tblResults.setItems(searchResults);
-                        tblResults.addColumn(new SearchResultRenderer(chkMainFilter.getValue() == OPTION_SEARCH_SERVICES ? 
+                        tblResults.addColumn(new BusinessObjectSearchResultRenderer(chkMainFilter.getValue() == OPTION_SEARCH_SERVICES ? 
                                 this.actionRegistry.getActionsApplicableTo(Constants.CLASS_GENERICSERVICE) : 
-                                this.actionRegistry.getActionsApplicableTo(Constants.CLASS_GENERICCUSTOMER)));
+                                this.actionRegistry.getActionsApplicableTo(Constants.CLASS_GENERICCUSTOMER), chkMainFilter.getValue() == OPTION_SEARCH_SERVICES ?
+                                        new ServiceSearchResultCallback() : new CustomerSearchResultCallback()));
                         lytSearchResults.add(tblResults);
                     }
                 } catch (Exception ex) {
@@ -150,9 +156,9 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
         });
         
         lytSearch.add(txtSearch, new HorizontalLayout(chkMainFilter));
-        this.lytContent.add(lytQuickActions, lytSearch, lytSearchResults);
+        this.lytContent.add(lytSearch, lytSearchResults);
 
-        add(this.lytContent);
+        add(lytQuickActions, this.lytContent);
     }
     
     /**
@@ -179,33 +185,55 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
     }
     
-    private class SearchResult {
-        private BusinessObjectLight businessObject;
-        List<AbstractVisualAction> actions;
+    public void replaceContent(Component newContent) {
+        this.lytContent.removeAll();
+        this.lytContent.add(newContent);
+    }
+    
+    /**
+     * Functional interface intended to be used to create the content that will be placed in the page when a search result 
+     * is clicked.
+     * @param <T> The type of the search result.
+     */
+    public interface SearchResultCallback<T> {
+        /**
+         * Given a search result, builds content to be displayed in the page.
+         * @param searchResult The search result to be expanded.
+         * @return The visual component that will show the detailed information about the search result.
+         */
+        public Component buildSearchResultDetailsPage(T searchResult);
+    }
+    
+    public class CustomerSearchResultCallback implements SearchResultCallback<BusinessObjectLight> {
 
-        public BusinessObjectLight getBusinessObject() {
-            return businessObject;
-        }
-
-        public void setBusinessObject(BusinessObjectLight businessObject) {
-            this.businessObject = businessObject;
-        }
-
-        public List<AbstractVisualAction> getActions() {
-            return actions;
-        }
-
-        public void setActions(List<AbstractVisualAction> actions) {
-            this.actions = actions;
+        @Override
+        public Component buildSearchResultDetailsPage(BusinessObjectLight searchResult) {
+            return new CustomerDashboard(searchResult);
         }
     }
     
-    private class SearchResultRenderer extends ComponentRenderer<VerticalLayout, BusinessObjectLight> {
-        List<AbstractVisualInventoryAction> actions;
+    public class ServiceSearchResultCallback implements SearchResultCallback<BusinessObjectLight> {
 
-        public SearchResultRenderer(List<AbstractVisualInventoryAction> actions) {
+        @Override
+        public Component buildSearchResultDetailsPage(BusinessObjectLight searchResult) {
+            return new ServiceDashboard(searchResult, ts, mem, aem, bem);
+        }
+    }
+    
+    private class BusinessObjectSearchResultRenderer extends ComponentRenderer<VerticalLayout, BusinessObjectLight> {
+        private List<AbstractVisualInventoryAction> actions;
+        private SearchResultCallback<BusinessObjectLight> resultCallback;
+        
+        /**
+         * Main constructor.
+         * @param actions The list of actions associated to the present search result.
+         * @param searchResultCallback What code should be trigger upon clicking on a search result.
+         */
+        public BusinessObjectSearchResultRenderer(List<AbstractVisualInventoryAction> actions, 
+                SearchResultCallback<BusinessObjectLight> searchResultCallback) {
             super();
             this.actions = actions;
+            this.resultCallback = searchResultCallback;
         }
         
         @Override
@@ -213,8 +241,13 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
             VerticalLayout lytSearchResult = new VerticalLayout();
             lytSearchResult.setSizeFull();
             lytSearchResult.setPadding(false);
-            Label lblTitle = new Label(result.toString());
-            lblTitle.setClassName("search-result-title");
+            Button btnTitle = new Button(result.toString());
+            btnTitle.setClassName("search-result-title");
+            btnTitle.setWidthFull();
+            btnTitle.addClickListener( e -> {
+                replaceContent(this.resultCallback.buildSearchResultDetailsPage(result));
+            });
+            
             HorizontalLayout lytActions = new HorizontalLayout();
             lytActions.setClassName("search-result-actions");
             actions.stream().forEach( anAction -> {
@@ -228,7 +261,7 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
                 lytActions.add(btnAction);
             });
             
-            lytSearchResult.add(lblTitle, lytActions);
+            lytSearchResult.add(btnTitle, lytActions);
             return lytSearchResult;
         } 
     }    

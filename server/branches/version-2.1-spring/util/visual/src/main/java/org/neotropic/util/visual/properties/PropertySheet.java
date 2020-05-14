@@ -34,7 +34,7 @@ import org.neotropic.util.visual.general.BoldLabel;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
 /**
- * An embeddable property sheet 
+ * An embeddable property sheet.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @JsModule("@vaadin/vaadin-lumo-styles/presets/compact.js")
@@ -48,7 +48,7 @@ public class PropertySheet extends Grid<AbstractProperty> {
     
     public PropertySheet(TranslationService ts) {
         
-        // doent work with material
+        // Doesn't work with material
         addThemeVariants(GridVariant.LUMO_COMPACT); 
         addThemeVariants(GridVariant.MATERIAL_COLUMN_DIVIDERS);
         addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
@@ -86,9 +86,8 @@ public class PropertySheet extends Grid<AbstractProperty> {
             if (!property.isReadOnly() &&  property.supportsInplaceEditor()) {
                 AbstractField editField = property.getInplaceEditor();
                 // if the property doesnt have a binder, then  set the value manually
-                if (!property.hasBinder()) {
-                    editField.setValue(property.getValue());
-                }
+                if (!property.hasBinder())
+                    editField.setValue(property.getValue() == null ? "" : property.getValue());
 
                 Button btnEdit = new Button(new Icon(VaadinIcon.CHECK_CIRCLE_O));
                 btnEdit.addClassName("icon-button");
@@ -107,7 +106,8 @@ public class PropertySheet extends Grid<AbstractProperty> {
                     this.getColumnByKey("advancedEditor").setVisible(true);
                     this.getColumnByKey("name").setFlexGrow(2);
                     if (editField.getValue() == null) {
-                        new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.error-null-value")).open();
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), 
+                                ts.getTranslatedString("module.general.messages.error-null-value")).open();
                         return;
                     }
 
@@ -121,9 +121,9 @@ public class PropertySheet extends Grid<AbstractProperty> {
                 });
 
                 btnCancel.addClickListener(ev -> {
-                    if (!property.hasBinder()) {
+                    if (!property.hasBinder())
                         editField.setValue(property.getValue());
-                    }
+                    
                     lblValue.setVisible(true);
                     hlytEditField.setVisible(false);
                     this.getColumnByKey("advancedEditor").setVisible(true);
@@ -165,7 +165,6 @@ public class PropertySheet extends Grid<AbstractProperty> {
                          dialog.close();
                      });
                      dialog.open();
-                     
                  });
                  return btnAdvancedEditor;
             }
@@ -195,5 +194,4 @@ public class PropertySheet extends Grid<AbstractProperty> {
     public void addPropertyValueChangedListener(IPropertyValueChangedListener iPropertyValueChangedListener) {
         propertyValueChangedListeners.add(iPropertyValueChangedListener);
     }
-
 }

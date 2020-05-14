@@ -29,23 +29,23 @@ public class BusinessObject extends BusinessObjectLight {
      * Map of attributes and values. Multiple selection list types are represented by comma (",") separated long values. These values
      * are the ids of the list types the object is referring to
      */
-    private HashMap <String, String> attributes;
+    private HashMap <String, Object> attributes;
 
     public BusinessObject(String className, String id, String name) {
         super(className, id, name);
     }
 
-    public BusinessObject(String className, String id, String name, HashMap<String, String> attributes) {
+    public BusinessObject(String className, String id, String name, HashMap<String, Object> attributes) {
         super(className, id, name);
         this.attributes = attributes;
     }
 
 
-    public HashMap<String, String> getAttributes() {
+    public HashMap<String, Object> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(HashMap<String, String> attributes) {
+    public void setAttributes(HashMap<String, Object> attributes) {
         this.attributes = attributes;
     }
 }

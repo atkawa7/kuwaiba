@@ -62,6 +62,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
@@ -744,26 +745,18 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 case "Integer": //NOI18N
                 case "Float": //NOI18N
                 case "Long": //NOI18N
-                    return theObject.getAttributes().get(attributeName);
+                    return theObject.getAttributes().get(attributeName).toString();
                 case "Date": //NOI18N
                 case "Time": //NOI18N
                 case "Timestamp": //NOI18N
-                    return new Date(Long.valueOf(theObject.getAttributes().get(attributeName))).toString();
+                    return new Date((Long)theObject.getAttributes().get(attributeName)).toString();
                 default: //It's (or at least should be) a list type
                     if (theAttribute.isMultiple()) {
-                        String attributeValues = theObject.getAttributes().get(attributeName);
-                        String[] attrValues = attributeValues.split(";");
-                        StringBuilder stringBuilder = new StringBuilder();
-                        for (int i = 0; i < attrValues.length; i++) {
-                            stringBuilder.append(aem.getListTypeItem(theAttribute.getType(), attrValues[i]).getName());
-                            if (i == attrValues.length - 1)
-                                break;
-                            stringBuilder.append(";");
-                        }
-                        return stringBuilder.toString();
-                    } else {
-                        return aem.getListTypeItem(theAttribute.getType(), theObject.getAttributes().get(attributeName)).getName();
-                    }
+                        List<BusinessObjectLight> attributeValues = (List<BusinessObjectLight>)theObject.getAttributes().get(attributeName);
+                        return attributeValues.stream().map(aListTypeItem -> aListTypeItem.getName())
+                                .collect(Collectors.joining(";"));
+                    } else
+                        return ((BusinessObjectLight)theObject.getAttributes().get(attributeName)).getName();
             }
         }
     }
@@ -786,28 +779,20 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     case "Integer": //NOI18N
                     case "Float": //NOI18N
                     case "Long": //NOI18N
-                        res.put(attributeName, theObject.getAttributes().get(attributeName));
+                        res.put(attributeName, theObject.getAttributes().get(attributeName).toString());
                         break;
                     case "Date": //NOI18N
                     case "Time": //NOI18N
                     case "Timestamp": //NOI18N
-                        res.put(attributeName, new Date(Long.valueOf(theObject.getAttributes().get(attributeName))).toString());
+                        res.put(attributeName, new Date((Long)theObject.getAttributes().get(attributeName)).toString());
                         break;
                     default: //It's (or at least should be) a list type
                         if (theAttribute.isMultiple()) {
-                            String attributeValues = theObject.getAttributes().get(attributeName);
-                            String[] attrValues = attributeValues.split(";");
-                            StringBuilder stringBuilder = new StringBuilder();
-                            for (int i = 0; i < attrValues.length; i++) {
-                                stringBuilder.append(aem.getListTypeItem(theAttribute.getType(), attrValues[i]).getName());
-                                if (i == attrValues.length - 1)
-                                    break;
-                                stringBuilder.append(";");
-                            }
-                            res.put(attributeName, stringBuilder.toString());
-                        } else {
-                            res.put(attributeName, aem.getListTypeItem(theAttribute.getType(), theObject.getAttributes().get(attributeName)).getName());
-                        }
+                        List<BusinessObjectLight> attributeValues = (List<BusinessObjectLight>)theObject.getAttributes().get(attributeName);
+                        res.put(attributeName, attributeValues.stream().map(aListTypeItem -> aListTypeItem.getName())
+                                .collect(Collectors.joining(";")));
+                    } else
+                            res.put(attributeName, ((BusinessObjectLight)theObject.getAttributes().get(attributeName)).getName());
                 }
             }
         }
@@ -992,9 +977,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         BusinessObject remoteObject = createObjectFromNode(instance);
                         for(AttributeMetadata attribute : classMetadata.getAttributes()) {
                             if (attribute.isUnique()) { 
-                                String attributeValues = remoteObject.getAttributes().get(attribute.getName());
-                                if (attributeValues != null)
-                                    CacheManager.getInstance().removeUniqueAttributeValue(className, attribute.getName(), attributeValues);
+                                Object attributeValue = remoteObject.getAttributes().get(attribute.getName());
+                                if (attributeValue != null)
+                                    CacheManager.getInstance().removeUniqueAttributeValue(className, attribute.getName(), attributeValue);
                             }
                         }
                     } catch (InvalidArgumentException ex) {
@@ -3175,10 +3160,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * @param attributeValue attribute value
      * @return true if the attribute value is unique
      */
-    private boolean isObjectAttributeUnique(String className, String attributeName, String attributeValue) {
-        List<String> uniqueAttributeValues = CacheManager.getInstance().getUniqueAttributeValues(className, attributeName);
+    private boolean isObjectAttributeUnique(String className, String attributeName, Object attributeValue) {
+        List<Object> uniqueAttributeValues = CacheManager.getInstance().getUniqueAttributeValues(className, attributeName);
         if (uniqueAttributeValues != null) {
-            for (String uniqueAttributeValue : uniqueAttributeValues) {
+            for (Object uniqueAttributeValue : uniqueAttributeValues) {
                 if (uniqueAttributeValue.equals(attributeValue))
                     return false;
             }
@@ -3417,7 +3402,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      */
     private BusinessObject createObjectFromNode(Node instance, ClassMetadata classMetadata) throws InvalidArgumentException {
         
-        HashMap<String, String> attributes = new HashMap<>();
+        HashMap<String, Object> attributes = new HashMap<>();
         String name = "";
         
         for (AttributeMetadata myAtt : classMetadata.getAttributes()) {
@@ -3425,10 +3410,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             //Neo4J, so a null value is actually a non-existing relationship/value
             if (instance.hasProperty(myAtt.getName())) {
                if (AttributeMetadata.isPrimitive(myAtt.getType())) {
-                    String value = String.valueOf(instance.getProperty(myAtt.getName()));
+                    Object value = instance.getProperty(myAtt.getName());
 
                     if (Constants.PROPERTY_NAME.equals(myAtt.getName()))
-                        name = value;
+                        name = (String)value;
 
                     attributes.put(myAtt.getName(),value);
                 }

@@ -29,8 +29,9 @@ public abstract class AbstractMapProvider {
     /**
      * Sets all the relevant configuration parameters so the underlying component can work properly, such as API keys, default languages, etc.
      * @param properties The configuration parameters.
+     * @throws IllegalArgumentException If there are parameters missing.
      */
-    public abstract void initialize(Properties properties);
+    public abstract void initialize(Properties properties) throws IllegalArgumentException;
     /**
      * Reconfigures the map with a new set of properties. In a way is very similar to {@link #initialize(java.util.Properties)}, but the latter is called 
      * to actually create the map, while this method assumes that the map component already exists and make sure all the provisions are taken so 

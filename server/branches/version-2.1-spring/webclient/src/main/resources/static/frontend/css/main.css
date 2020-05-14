@@ -6,6 +6,7 @@
 
 body {
     /* Overrides the default material colors */
+    --primary-color: #5F9F9F;
     --material-primary-color: var(--primary-color, #5F9F9F) !important;
     --material-primary-text-color: var(--primary-color, #5F9F9F) !important;
     --material-font-family: 'ubuntu-r' !important;

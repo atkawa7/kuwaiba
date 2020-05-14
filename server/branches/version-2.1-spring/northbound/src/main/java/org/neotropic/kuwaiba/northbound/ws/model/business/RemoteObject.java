@@ -18,10 +18,12 @@ package org.neotropic.kuwaiba.northbound.ws.model.business;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.neotropic.kuwaiba.core.apis.persistence.application.TemplateObject;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObject;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.util.StringPair;
 
 /**
@@ -52,8 +54,17 @@ public class RemoteObject extends RemoteObjectLight implements Serializable {
         super(object.getClassName(), object.getId(), object.getName());
         this.attributes = new ArrayList<>();
         
-        for (String attribute : object.getAttributes().keySet())
-            attributes.add(new StringPair(attribute, object.getAttributes().get(attribute)));
+        for (String attribute : object.getAttributes().keySet()) {
+            if (object.getAttributes().get(attribute) instanceof BusinessObjectLight) // It is a single-choice list type
+                attributes.add(new StringPair(attribute, ((BusinessObjectLight)object.getAttributes().get(attribute)).getId()));
+            else if (object.getAttributes().get(attribute) instanceof List) // It is a multiple-choice list type
+                    attributes.add(new StringPair(attribute, ((List<BusinessObjectLight>)object.getAttributes().get(attribute)).
+                                                                            stream().
+                                                                                map( aListTypeItem -> aListTypeItem.getId()).
+                                                                                collect(Collectors.joining(";"))));
+                else // It is a primitive type
+                    attributes.add(new StringPair(attribute, String.valueOf(object.getAttributes().get(attribute))));
+        }
     }
        
     public RemoteObject(TemplateObject object) {

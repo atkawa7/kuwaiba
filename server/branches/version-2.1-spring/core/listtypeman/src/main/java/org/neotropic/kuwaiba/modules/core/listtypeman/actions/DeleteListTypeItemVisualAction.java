@@ -78,7 +78,6 @@ public class DeleteListTypeItemVisualAction extends AbstractVisualAction<Dialog>
                 ts.getTranslatedString("module.general.labels.delete"));
         wdwDeleteListTypeItem.getBtnConfirm().addClickListener((ev) -> {
             try {
-
                 deleteListTypeItemAction.getCallback().execute(new ModuleActionParameterSet(
                         new ModuleActionParameter<>("className", seletedListTypeItem.getClassName()),
                         new ModuleActionParameter<>("oid", seletedListTypeItem.getId())));
@@ -92,7 +91,7 @@ public class DeleteListTypeItemVisualAction extends AbstractVisualAction<Dialog>
                 wdwDeleteListTypeItem.close();
             }
         });
-        return wdwDeleteListTypeItem;
+        return wdwDeleteListTypeItem; 
         } else 
             return new Dialog(new Label(ts.getTranslatedString("module.listtypeman.error-param-listtypeitem")));
     }

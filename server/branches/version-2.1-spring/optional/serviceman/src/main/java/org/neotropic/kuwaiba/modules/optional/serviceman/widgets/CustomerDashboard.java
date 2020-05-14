@@ -16,10 +16,19 @@
 
 package org.neotropic.kuwaiba.modules.optional.serviceman.widgets;
 
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
+
 /**
- * A dashboard to display the customer's information about a customer in the Service Manager.
+ *
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class CustomerDashboard {
+public class CustomerDashboard extends VerticalLayout {
 
+    public CustomerDashboard(BusinessObjectLight theCustomer) {
+        setSizeFull();
+        add(new Label("A customer! " + theCustomer));
+    }
+    
 }
