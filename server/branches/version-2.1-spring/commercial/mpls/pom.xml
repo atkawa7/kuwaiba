@@ -9,6 +9,9 @@
     <groupId>com.neotropic.kuwaiba</groupId>
     <artifactId>mpls</artifactId>
     <packaging>jar</packaging>
+    
+    <name>MPLS Networks</name>
+    <description></description>
     <dependencies>
         <dependency>
             <groupId>org.neotropic.kuwaiba</groupId>

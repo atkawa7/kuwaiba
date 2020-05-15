@@ -38,13 +38,13 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManage
  *
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class GoogleMapMapProvider extends AbstractMapProvider {
+public class GoogleMapsMapProvider extends AbstractMapProvider {
     private GoogleMap googleMap;
     private List<OSPNode> markers;
     private List<OSPEdge> polylines;
     private BusinessObjectLight tmpObject;
     
-    public GoogleMapMapProvider() {
+    public GoogleMapsMapProvider() {
         markers = new ArrayList();
         polylines = new ArrayList();
     }
@@ -215,5 +215,4 @@ public class GoogleMapMapProvider extends AbstractMapProvider {
     public void addPolylineRightClickListener(ViewEventListener ev) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
 }

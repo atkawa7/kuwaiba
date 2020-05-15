@@ -49,8 +49,13 @@ public class TaskResult implements Serializable {
     public static TaskResult createErrorResult(String message) {
         ArrayList<ResultMessage> errorMessage = new ArrayList<>();
         errorMessage.add(new ResultMessage(ResultMessage.STATUS_ERROR, message));
-                
         return new TaskResult(errorMessage);
+    }
+    
+    public static TaskResult createInformationResult(String message) {
+        ArrayList<ResultMessage> infoMessage = new ArrayList<>();
+        infoMessage.add(new ResultMessage(ResultMessage.STATUS_SUCCESS, message));
+        return new TaskResult(infoMessage);
     }
     
     public static ResultMessage createErrorMessage(String message) {

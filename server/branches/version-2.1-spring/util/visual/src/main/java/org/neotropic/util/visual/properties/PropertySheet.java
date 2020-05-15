@@ -76,7 +76,6 @@ public class PropertySheet extends Grid<AbstractProperty> {
         }).setHeader(ts.getTranslatedString("module.general.labels.attributenamme")).setKey("name").setFlexGrow(2);
         
         addComponentColumn((property) -> {
-            
             VerticalLayout lytValue = new VerticalLayout();
             lytValue.setPadding(false);
             Label lblValue = new Label(property.getAsString()); 
@@ -112,9 +111,9 @@ public class PropertySheet extends Grid<AbstractProperty> {
                     }
 
                     lblValue.setText(editField.getValue().toString());
-                    if (!property.hasBinder()) {
+                    if (!property.hasBinder())
                         property.setValue(editField.getValue());
-                    }
+                    
                     this.currentBtnCancelInEditProperty = null;
                     firePropertyValueChangedEvent(property);
 
@@ -157,7 +156,6 @@ public class PropertySheet extends Grid<AbstractProperty> {
         addComponentColumn((property) -> {
             if (!property.isReadOnly() && property.supportsAdvancedEditor()) {
                  Button btnAdvancedEditor = new Button("...", ev -> {
-                     
                      AdvancedEditorDialog dialog = new AdvancedEditorDialog(property);
                      dialog.getAccept().addClickListener(clickEv -> {
                          dialog.loadNewValueIntoProperty();

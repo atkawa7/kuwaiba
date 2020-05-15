@@ -39,6 +39,7 @@ import org.neotropic.util.visual.properties.IntegerProperty;
 import org.neotropic.util.visual.properties.ListTypeMultipleProperty;
 import org.neotropic.util.visual.properties.ListTypeProperty;
 import org.neotropic.util.visual.properties.LongProperty;
+import org.neotropic.util.visual.properties.PropertyFactory;
 import org.neotropic.util.visual.properties.PropertySheet;
 import org.neotropic.util.visual.properties.StringProperty;
 
@@ -66,6 +67,8 @@ public class ServiceDashboard extends HorizontalLayout {
             List<AbstractProperty> serviceAttributes = new ArrayList<>();
             
             this.classMetadata.getAttributes().forEach(anAttribute -> {
+                //PropertyFactory.
+                
                 try {
                     switch (anAttribute.getType()) {
                         case Constants.DATA_TYPE_STRING:
