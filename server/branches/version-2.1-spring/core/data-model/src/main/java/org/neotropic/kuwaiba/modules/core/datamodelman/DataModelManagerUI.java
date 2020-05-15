@@ -86,7 +86,7 @@ import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.util.visual.general.BoldLabel;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.properties.AbstractProperty;
-import org.neotropic.util.visual.properties.PropertyFactory;
+import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
 import org.neotropic.util.visual.properties.PropertySheet;
 import org.neotropic.util.visual.tree.BasicTree;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -248,12 +248,7 @@ public class DataModelManagerUI extends VerticalLayout {
     public void showActionCompledMessages(ActionCompletedListener.ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
             try {
-                genericObjectListTree.getDataProvider().refreshAll();
-                inventoryObjectTree.getDataProvider().refreshAll();
-                propsheetGeneralAttributes.clear();
-                lytIcons.setVisible(true);
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
-                                            
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();                                          
             } catch (Exception ex) {
                 Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
             }
