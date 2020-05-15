@@ -56,7 +56,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.listtypeman.actions.DeleteListTypeItemVisualAction;
 import org.neotropic.kuwaiba.modules.core.listtypeman.actions.NewListTypeItemVisualAction;
-import org.neotropic.util.visual.properties.PropertyFactory;
+import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
 import org.neotropic.util.visual.properties.PropertySheet;
 import org.neotropic.util.visual.properties.PropertySheet.IPropertyValueChangedListener;
 import org.neotropic.util.visual.notifications.SimpleNotification;
@@ -132,7 +132,7 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
         super();
         tblListTypes = new Grid<>();
         tblListTypeItems = new Grid<>();
-        setSizeFull();
+        setSizeFull();       
     }
     
     @Override
