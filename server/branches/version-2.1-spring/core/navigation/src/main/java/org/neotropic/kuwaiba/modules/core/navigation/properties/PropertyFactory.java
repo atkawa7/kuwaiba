@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.neotropic.util.visual.properties;
+package org.neotropic.kuwaiba.modules.core.navigation.properties;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -33,12 +33,22 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.AttributeMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
+import org.neotropic.util.visual.properties.AbstractProperty;
+import org.neotropic.util.visual.properties.BooleanProperty;
+import org.neotropic.util.visual.properties.ColorProperty;
+import org.neotropic.util.visual.properties.DoubleProperty;
+import org.neotropic.util.visual.properties.IntegerProperty;
+import org.neotropic.util.visual.properties.ListTypeMultipleProperty;
+import org.neotropic.util.visual.properties.ListTypeProperty;
+import org.neotropic.util.visual.properties.LocalDateProperty;
+import org.neotropic.util.visual.properties.LongProperty;
+import org.neotropic.util.visual.properties.StringProperty;
 
 
 
 /**
  * A factory class that builds property sets given business objects.
- * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
+ * @author Orlando Paz  {@literal <orlando.paz@kuwaiba.org>}
  */
 public class PropertyFactory {
  
@@ -70,7 +80,7 @@ public class PropertyFactory {
 
                     property = new StringProperty(am.getName(),
                             am.getDisplayName(), am.getDescription(),
-                            (objectAttributes.get(am.getName()) == null ? "<Not Set>" : objectAttributes.get(am.getName())),
+                            (objectAttributes.get(am.getName()) == null ? null : objectAttributes.get(am.getName())),
                             Constants.DATA_TYPE_STRING);
                     break;
                 case Constants.DATA_TYPE_INTEGER:
@@ -137,11 +147,8 @@ public class PropertyFactory {
                                 am.getDisplayName(), am.getDescription(),
                                 (selectedItems.size() > 0 ? selectedItems.get(0) : null), listTypeItems, Constants.DATA_TYPE_LIST_TYPE);
                     }
-            }
-            
-            if (property != null) {
-                objectProperties.add(property);
-            }
+            }           
+            objectProperties.add(property);           
         }
         return objectProperties;
     }
@@ -154,21 +161,21 @@ public class PropertyFactory {
         property = new StringProperty(Constants.PROPERTY_NAME,
                             Constants.PROPERTY_NAME, Constants.PROPERTY_NAME,
                             classMetadata.getName() == null  || classMetadata.getName().isEmpty() ?
-                                    "<Not Set>" : classMetadata.getName(),
+                                    AbstractProperty.NULL_LABEL : classMetadata.getName(),
                              Constants.DATA_TYPE_STRING);
         objectProperties.add(property);
         
         property = new StringProperty(Constants.PROPERTY_DISPLAY_NAME,
                             Constants.PROPERTY_DISPLAY_NAME, Constants.PROPERTY_DISPLAY_NAME,
                             classMetadata.getDisplayName()== null  || classMetadata.getDisplayName().isEmpty() ?
-                                    "<Not Set>" : classMetadata.getDisplayName(),
+                                    AbstractProperty.NULL_LABEL : classMetadata.getDisplayName(),
                              Constants.DATA_TYPE_STRING);
         objectProperties.add(property);
         
         property = new StringProperty(Constants.PROPERTY_DESCRIPTION,
                             Constants.PROPERTY_DESCRIPTION, Constants.PROPERTY_DESCRIPTION,
                             classMetadata.getDescription()== null  || classMetadata.getDescription().isEmpty() ?
-                                    "<Not Set>" : classMetadata.getDescription(),
+                                    AbstractProperty.NULL_LABEL : classMetadata.getDescription(),
                              Constants.DATA_TYPE_STRING);
         objectProperties.add(property);
         
@@ -206,7 +213,7 @@ public class PropertyFactory {
         ArrayList<AbstractProperty> objectProperties = new ArrayList<>();
         AbstractProperty property;
         
-        boolean readOnlyAttribute = false;
+        boolean readOnlyAttribute;
         //special case for creation date attribute
         readOnlyAttribute = Constants.PROPERTY_CREATION_DATE.equals(attributeMetadata.getName());
                         
@@ -214,21 +221,21 @@ public class PropertyFactory {
         property = new StringProperty(Constants.PROPERTY_NAME,
                             Constants.PROPERTY_NAME, Constants.PROPERTY_NAME,
                             attributeMetadata.getName() == null  || attributeMetadata.getName().isEmpty() ?
-                                    "<Not Set>" : attributeMetadata.getName(),
+                                    AbstractProperty.NULL_LABEL : attributeMetadata.getName(),
                              Constants.DATA_TYPE_STRING, readOnlyAttribute);
         objectProperties.add(property);
         
         property = new StringProperty(Constants.PROPERTY_DISPLAY_NAME,
                             Constants.PROPERTY_DISPLAY_NAME, Constants.PROPERTY_DISPLAY_NAME,
                             attributeMetadata.getDisplayName()== null  || attributeMetadata.getDisplayName().isEmpty() ?
-                                    "<Not Set>" : attributeMetadata.getDisplayName(),
+                                    AbstractProperty.NULL_LABEL : attributeMetadata.getDisplayName(),
                              Constants.DATA_TYPE_STRING, readOnlyAttribute);
         objectProperties.add(property);
         
         property = new StringProperty(Constants.PROPERTY_DESCRIPTION,
                             Constants.PROPERTY_DESCRIPTION, Constants.PROPERTY_DESCRIPTION,
                             attributeMetadata.getDescription()== null  || attributeMetadata.getDescription().isEmpty() ?
-                                    "<Not Set>" : attributeMetadata.getDescription(),
+                                    AbstractProperty.NULL_LABEL : attributeMetadata.getDescription(),
                              Constants.DATA_TYPE_STRING, readOnlyAttribute);
         objectProperties.add(property);
         
