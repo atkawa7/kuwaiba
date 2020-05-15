@@ -29,6 +29,7 @@ import com.neotropic.kuwaiba.modules.commercial.ospman.GeoCoordinate;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OutsidePlantTools;
 import elemental.json.Json;
 import elemental.json.JsonObject;
+import java.util.ArrayList;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.integration.views.ViewEventListener;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
@@ -39,8 +40,13 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManage
  */
 public class GoogleMapMapProvider extends AbstractMapProvider {
     private GoogleMap googleMap;
+    private List<OSPNode> markers;
+    private List<OSPEdge> polylines;
+    private BusinessObjectLight tmpObject;
     
     public GoogleMapMapProvider() {
+        markers = new ArrayList();
+        polylines = new ArrayList();
     }
     
     @Override
@@ -59,19 +65,19 @@ public class GoogleMapMapProvider extends AbstractMapProvider {
         
         DrawingManager drawingManager = new DrawingManager();
         googleMap.newDrawingManager(drawingManager);
-        drawingManager.addDrawingManagerMarkerCompleteListener(event -> {
-            GoogleMapMarker googleMapMarker = new GoogleMapMarker(event.getLat(), event.getLng());
-            googleMap.newMarker(googleMapMarker);
-            
-            JsonObject icon = Json.createObject();
-            JsonObject labelOrigin = Json.createObject();
-            labelOrigin.put("x", 20); //NOI18N
-            labelOrigin.put("y", 40); //NOI18N
-            icon.put("url", "marker.png"); //NOI18N
-            icon.put("labelOrigin", labelOrigin); //NOI18N
-            
-            googleMapMarker.setIcon(icon);
-        });
+//        drawingManager.addDrawingManagerMarkerCompleteListener(event -> {
+//            GoogleMapMarker googleMapMarker = new GoogleMapMarker(event.getLat(), event.getLng());
+//            googleMap.newMarker(googleMapMarker);
+//            
+//            JsonObject icon = Json.createObject();
+//            JsonObject labelOrigin = Json.createObject();
+//            labelOrigin.put("x", 20); //NOI18N
+//            labelOrigin.put("y", 40); //NOI18N
+//            icon.put("url", "marker.png"); //NOI18N
+//            icon.put("labelOrigin", labelOrigin); //NOI18N
+//            
+//            googleMapMarker.setIcon(icon);
+//        });
         drawingManager.addDrawingManagerPolygonCompleteListener(event -> {
             googleMap.newPolygon(new GoogleMapPolygon(event.getPaths()));
         });
@@ -81,7 +87,7 @@ public class GoogleMapMapProvider extends AbstractMapProvider {
             googleMap.newPolyline(googleMapPolyline);
         });
         
-        OutsidePlantTools outsidePlantTools = new OutsidePlantTools(bem);
+        OutsidePlantTools outsidePlantTools = new OutsidePlantTools(bem, markers);
         this.googleMap.getElement().appendChild(outsidePlantTools.getElement());
         outsidePlantTools.addToolChangeListener(event -> {
             if (OutsidePlantTools.Tool.HAND.equals(event.getTool()))
@@ -93,6 +99,19 @@ public class GoogleMapMapProvider extends AbstractMapProvider {
             if (OutsidePlantTools.Tool.POLYLINE.equals(event.getTool()))
                 drawingManager.setDrawingMode(OverlayType.POLYLINE);
         });
+        outsidePlantTools.addNewMarkerListener(event -> {
+            drawingManager.setDrawingMode(OverlayType.MARKER);
+            tmpObject = event.getObject();
+        });
+        outsidePlantTools.addCenterChangeListener(event -> {
+            googleMap.setCenterLat(event.getGeoCoordinate().getLatitude());
+            googleMap.setCenterLng(event.getGeoCoordinate().getLongitude());
+        });
+        drawingManager.addDrawingManagerMarkerCompleteListener(event -> {
+            addMarker(tmpObject, 
+                new GeoCoordinate(event.getLat(), event.getLng()), "marker.png");
+            drawingManager.setDrawingMode(null);
+        });
     }
 
     @Override
@@ -102,7 +121,26 @@ public class GoogleMapMapProvider extends AbstractMapProvider {
 
     @Override
     public void addMarker(BusinessObjectLight businessObject, GeoCoordinate position, String iconUrl) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        OSPNode ospNode = new OSPNode(businessObject, position);
+        markers.add(ospNode);
+        
+        GoogleMapMarker googleMapMarker = new GoogleMapMarker(position.getLatitude(), position.getLongitude());
+        googleMap.newMarker(googleMapMarker);
+        
+        JsonObject label = Json.createObject();
+////        label.put("color", "#305F72"); //NOI18N
+        label.put("text", businessObject.getName()); //NOI18N
+
+        googleMapMarker.setLabel(label);
+
+        JsonObject icon = Json.createObject();
+        JsonObject labelOrigin = Json.createObject();
+        labelOrigin.put("x", 20); //NOI18N
+        labelOrigin.put("y", 40); //NOI18N
+        icon.put("url", iconUrl); //NOI18N
+        icon.put("labelOrigin", labelOrigin); //NOI18N
+
+        googleMapMarker.setIcon(icon);
     }
 
     @Override
@@ -127,7 +165,7 @@ public class GoogleMapMapProvider extends AbstractMapProvider {
 
     @Override
     public List<OSPNode> getMarkers() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return markers;
     }
 
     @Override
