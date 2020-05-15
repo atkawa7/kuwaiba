@@ -39,7 +39,6 @@ import org.neotropic.util.visual.properties.IntegerProperty;
 import org.neotropic.util.visual.properties.ListTypeMultipleProperty;
 import org.neotropic.util.visual.properties.ListTypeProperty;
 import org.neotropic.util.visual.properties.LongProperty;
-import org.neotropic.util.visual.properties.PropertyFactory;
 import org.neotropic.util.visual.properties.PropertySheet;
 import org.neotropic.util.visual.properties.StringProperty;
 
