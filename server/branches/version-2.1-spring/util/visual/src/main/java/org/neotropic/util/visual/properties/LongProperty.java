@@ -84,7 +84,7 @@ public class LongProperty extends AbstractProperty<Long>{
 
     @Override
     public String getAsString() {
-        return getValue() == null ? "Not Set" : getValue() + "";
+        return getValue() == null ? AbstractProperty.NULL_LABEL : getValue() + "";
     }
 
     @Override
@@ -95,6 +95,11 @@ public class LongProperty extends AbstractProperty<Long>{
     @Override
     public boolean supportsInplaceEditor() {
         return true;
+    }
+
+    @Override
+    public Long getDefaultValue() {
+        return 0l;
     }
 
 }

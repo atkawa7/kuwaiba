@@ -31,6 +31,7 @@ public abstract class AbstractProperty<T> {
     private boolean hasBinder;
     private String type;
     private boolean readOnly;
+    public static String NULL_LABEL = "Not Set";
 
     public AbstractProperty(String name, String displayName, String description, T value) {
         this.name = name;
@@ -95,8 +96,10 @@ public abstract class AbstractProperty<T> {
     }
 
     public T getValue() {
-        return value;
+        return value == null ? getDefaultValue() : value;
     }
+    
+    public abstract T getDefaultValue();
 
     public void setValue(T value) {
         this.value = value;

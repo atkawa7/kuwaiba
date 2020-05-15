@@ -16,7 +16,6 @@
 package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 
@@ -61,7 +60,7 @@ public class StringProperty extends AbstractProperty<String>{
 
     @Override
     public String getAsString() {
-        return getValue() == null ? "Not Set" : getValue();
+        return getValue() == null || getValue().isEmpty() ? getDefaultValue() : getValue();
     }
 
     @Override
@@ -72,5 +71,10 @@ public class StringProperty extends AbstractProperty<String>{
     @Override
     public boolean supportsInplaceEditor() {
         return true;
+    }
+
+    @Override
+    public String getDefaultValue() {
+       return AbstractProperty.NULL_LABEL;
     }
 }

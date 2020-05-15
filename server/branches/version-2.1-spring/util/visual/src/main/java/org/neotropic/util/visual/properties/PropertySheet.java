@@ -174,7 +174,8 @@ public class PropertySheet extends Grid<AbstractProperty> {
     
     public PropertySheet(TranslationService ts, List<AbstractProperty> properties, String caption) {
         this(ts);
-        setItems(properties);     
+        setItems(properties); 
+        AbstractProperty.NULL_LABEL = ts.getTranslatedString("module.propertysheet.labels.null-value-property");
     }
 
     public void clear() {

@@ -60,7 +60,7 @@ public class LocalDateProperty extends AbstractProperty<LocalDate>{
 
     @Override
     public String getAsString() {
-        return getValue() == null ? "Not Set" : getValue().toString();
+        return getValue() == null ? AbstractProperty.NULL_LABEL : getValue().toString();
     }
 
     @Override
@@ -76,6 +76,11 @@ public class LocalDateProperty extends AbstractProperty<LocalDate>{
     @Override
     public boolean supportsInplaceEditor() {
         return true;
+    }
+
+    @Override
+    public LocalDate getDefaultValue() {
+        return LocalDate.now();
     }
 
 }

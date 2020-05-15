@@ -65,5 +65,10 @@ public class DateProperty extends AbstractProperty<Date>{
     public boolean supportsInplaceEditor() {
         return true;
     }
+    
+    @Override
+    public Date getDefaultValue() {
+        return new Date();    
+    }
 
 }

@@ -101,5 +101,10 @@ public class ListTypeMultipleProperty extends AbstractProperty<List<BusinessObje
     public boolean supportsInplaceEditor() {
         return false;
     }
+
+    @Override
+    public List<BusinessObjectLight> getDefaultValue() {
+       return new ArrayList<>();
+    }
 }
 

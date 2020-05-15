@@ -48,7 +48,7 @@ public class BooleanProperty extends AbstractProperty<Boolean>{
 
     @Override
     public String getAsString() {
-        return getValue() == null ? "Not Set" : getValue().toString();
+        return getValue() == null ? AbstractProperty.NULL_LABEL : getValue().toString();
     }
 
     @Override
@@ -59,5 +59,10 @@ public class BooleanProperty extends AbstractProperty<Boolean>{
     @Override
     public boolean supportsInplaceEditor() {
         return true;
+    }
+
+    @Override
+    public Boolean getDefaultValue() {
+        return false;
     }
 }

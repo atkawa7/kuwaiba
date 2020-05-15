@@ -72,7 +72,7 @@ public class ListTypeProperty extends AbstractProperty<BusinessObjectLight>{
 
     @Override
     public String getAsString() {
-        return getValue() == null ? "Not Set" : getValue().toString();
+        return getValue() == null ? AbstractProperty.NULL_LABEL : getValue().toString();
     }
 
     @Override
@@ -83,6 +83,11 @@ public class ListTypeProperty extends AbstractProperty<BusinessObjectLight>{
     @Override
     public boolean supportsInplaceEditor() {
         return true;
+    }
+
+    @Override
+    public BusinessObjectLight getDefaultValue() {
+        return null;
     }
 }
 
