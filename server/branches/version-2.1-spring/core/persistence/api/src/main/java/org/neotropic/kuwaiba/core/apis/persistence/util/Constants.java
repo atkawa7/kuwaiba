@@ -646,6 +646,14 @@ public class Constants {
       * Name of the data type list type
       */
      public static final String DATA_TYPE_LIST_TYPE = "List Type";
+      /**
+      * Name of the data type object
+      */
+     public static final String DATA_TYPE_OBJECT = "Object";
+      /**
+      * Name of the data type object multiple
+      */
+     public static final String DATA_TYPE_OBJECT_MULTIPLE = "Object Multiple";
      /* Name of the data type boolean
       */
      public static final String DATA_TYPE_BOOLEAN = "Boolean";
