@@ -38,8 +38,8 @@ import org.neotropic.util.visual.properties.BooleanProperty;
 import org.neotropic.util.visual.properties.ColorProperty;
 import org.neotropic.util.visual.properties.DoubleProperty;
 import org.neotropic.util.visual.properties.IntegerProperty;
-import org.neotropic.util.visual.properties.ListTypeMultipleProperty;
-import org.neotropic.util.visual.properties.ListTypeProperty;
+import org.neotropic.util.visual.properties.ObjectMultipleProperty;
+import org.neotropic.util.visual.properties.ObjectProperty;
 import org.neotropic.util.visual.properties.LocalDateProperty;
 import org.neotropic.util.visual.properties.LongProperty;
 import org.neotropic.util.visual.properties.StringProperty;
@@ -139,13 +139,13 @@ public class PropertyFactory {
                     }
 
                     if (am.isMultiple()) {
-                        property = new ListTypeMultipleProperty(am.getName(),
+                        property = new ObjectMultipleProperty(am.getName(),
                                 am.getDisplayName(), am.getDescription(),
-                                selectedItems, listTypeItems, Constants.DATA_TYPE_LIST_TYPE);
+                                new ArrayList<>(selectedItems), new ArrayList<>(listTypeItems), Constants.DATA_TYPE_OBJECT_MULTIPLE);
                     } else {
-                        property = new ListTypeProperty(am.getName(),
+                        property = new ObjectProperty(am.getName(),
                                 am.getDisplayName(), am.getDescription(),
-                                (selectedItems.size() > 0 ? selectedItems.get(0) : null), listTypeItems, Constants.DATA_TYPE_LIST_TYPE);
+                                (selectedItems.size() > 0 ? (Object) selectedItems.get(0) : null), new ArrayList<>(listTypeItems), Constants.DATA_TYPE_OBJECT);
                     }
             }           
             objectProperties.add(property);           
