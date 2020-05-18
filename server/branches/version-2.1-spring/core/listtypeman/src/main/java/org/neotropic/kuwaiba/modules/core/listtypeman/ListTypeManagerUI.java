@@ -57,6 +57,7 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.listtypeman.actions.DeleteListTypeItemVisualAction;
 import org.neotropic.kuwaiba.modules.core.listtypeman.actions.NewListTypeItemVisualAction;
 import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
+import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyValueConverter;
 import org.neotropic.util.visual.properties.PropertySheet;
 import org.neotropic.util.visual.properties.PropertySheet.IPropertyValueChangedListener;
 import org.neotropic.util.visual.notifications.SimpleNotification;
@@ -355,7 +356,7 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
             if (currentListTypeItem != null) {
                 
                 HashMap<String, String> attributes = new HashMap<>();
-                attributes.put(property.getName(), property.getAsStringToPersist());
+                attributes.put(property.getName(), PropertyValueConverter.getAsStringToPersist(property));
 
                 bem.updateObject(currentListTypeItem.getClassName(), currentListTypeItem.getId(), attributes);
 
