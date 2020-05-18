@@ -49,9 +49,9 @@ def filter2Table = new HTMLTable(null, null, ["Name", "Serial Number", "Rack Uni
 // Neo4J's Cypher sentences (that is, direct access to the database), which would run *a lot* faster, but depending on the size 
 // of your database, the difference might be negligible.
 bem.getObjectsOfClass(instancesToFilter, -1 /* fetch all results */).each { anObject ->
-    def theVendor = bem.getAttributeValueAsString(anObject.getClassName(), anObject.getId(), filterAttribute);
-    if (theVendor != null) {
-        switch (theVendor) { // This comparison is case sensitive and does only exact matches. Use equalsIgnoreCase() and "if" blocks for more permissive matches
+    def theFilter = bem.getAttributeValueAsString(anObject.getClassName(), anObject.getId(), filterAttribute);
+    if (theFilter != null) {
+        switch (theFilter) { // This comparison is case sensitive and does only exact matches. Use equalsIgnoreCase() and "if" blocks for more permissive matches
             case filterValue1:
                 filter1Table.getRows().add(new HTMLRow(null, null,
                     [   new HTMLColumn(anObject.getName()),
