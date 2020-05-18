@@ -62,11 +62,6 @@ public class StringProperty extends AbstractProperty<String>{
     public String getAsString() {
         return getValue() == null || getValue().isEmpty() ? getDefaultValue() : getValue();
     }
-
-    @Override
-    public String getAsStringToPersist() {
-        return getValue(); 
-    }
     
     @Override
     public boolean supportsInplaceEditor() {

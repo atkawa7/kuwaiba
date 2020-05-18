@@ -25,38 +25,39 @@ import org.neotropic.util.visual.general.BoldLabel;
 
 
 /**
- * Support for multiple list type properties
+ * Support for multiple object properties
  * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
-public class ListTypeMultipleProperty extends AbstractProperty<List<BusinessObjectLight>>{
+public class ObjectMultipleProperty extends AbstractProperty<List<Object>>{
     /**
      * The whole list of list items available to fill the list boxes
      */
-    List<BusinessObjectLight> listTypes;
+    List<Object> allItems;
     
-    public ListTypeMultipleProperty(String name, String displayName, String description, List<BusinessObjectLight> value, List<BusinessObjectLight> listTypes) {
+    public ObjectMultipleProperty(String name, String displayName, String description, List<Object> value, List<Object> items) {
         super(name, displayName, description, value);
-        this.listTypes = listTypes;
+        this.allItems = items;
     }
      
-    public ListTypeMultipleProperty(String name, String displayName, String description, List<BusinessObjectLight> value, List<BusinessObjectLight> listTypes, String type) {
+    public ObjectMultipleProperty(String name, String displayName, String description, List<Object> value, List<Object> items, String type) {
+         
         super(name, displayName, description, value, type);
-        this.listTypes = listTypes;
+        this.allItems = items;
     }
 
-    public List<BusinessObjectLight> getListTypes() {
-        return listTypes;
+    public List<Object> getListTypes() {
+        return allItems;
     }
 
-    public void setListTypes(List<BusinessObjectLight> listTypes) {
-        this.listTypes = listTypes;
+    public void setListTypes(List<Object> listTypes) {
+        this.allItems = listTypes;
     }
 
     @Override
     public AbstractField getAdvancedEditor() {     
-        BoldLabel title = new BoldLabel("Select Items");
-        MultiSelectListBox<BusinessObjectLight> lstBoxEditor = new MultiSelectListBox<>();
-        lstBoxEditor.setItems(listTypes);
+        BoldLabel title = new BoldLabel(AbstractProperty.SELECT_ITEMS_LABEL);
+        MultiSelectListBox<Object> lstBoxEditor = new MultiSelectListBox<>();
+        lstBoxEditor.setItems(allItems);
         lstBoxEditor.select(getValue());
         VerticalLayout content = new VerticalLayout(title, lstBoxEditor);
         return lstBoxEditor;
@@ -75,27 +76,10 @@ public class ListTypeMultipleProperty extends AbstractProperty<List<BusinessObje
     @Override
     public String getAsString() {
         if(getValue() == null  || getValue().isEmpty())
-            return "Not Items Selected";
-        List<BusinessObjectLight> tempList = new ArrayList<>(getValue());
-        return (tempList.size() +  " Items Selected");
-    }
-
-    @Override
-    public String getAsStringToPersist() {
-        if (getValue() == null) 
-            return ""; 
-        
-        List<BusinessObjectLight> tempList = new ArrayList<>(getValue());
-        
-        String idItems = "";
-        for (int i = 0; i < tempList.size(); i++) {
-            if (i > 0) 
-                idItems += ";";
-            
-            idItems += tempList.get(i).getId();
-        }
-        return idItems;
-    }
+            return AbstractProperty.NOT_ITEMS_SELECTED_LABEL;
+        List<Object> tempList = new ArrayList<>(getValue());
+        return (tempList.size() + " " + AbstractProperty.ITEMS_SELECTED_LABEL);
+    } 
     
     @Override
     public boolean supportsInplaceEditor() {
@@ -103,7 +87,7 @@ public class ListTypeMultipleProperty extends AbstractProperty<List<BusinessObje
     }
 
     @Override
-    public List<BusinessObjectLight> getDefaultValue() {
+    public List<Object> getDefaultValue() {
        return new ArrayList<>();
     }
 }

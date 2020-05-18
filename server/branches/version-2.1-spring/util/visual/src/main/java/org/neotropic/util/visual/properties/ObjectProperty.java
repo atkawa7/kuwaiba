@@ -22,33 +22,31 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 
 
 /**
- * Support for list type properties
+ * Support for object properties
  * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
-public class ListTypeProperty extends AbstractProperty<BusinessObjectLight>{
+public class ObjectProperty extends AbstractProperty<Object>{
     /**
      * The whole list of list items available to fill the input combo boxes
      */
-    List<BusinessObjectLight> listTypes;
+    List<Object> items;
     
-    public ListTypeProperty(String name, String displayName, String description, BusinessObjectLight value, List<BusinessObjectLight> listTypes) {
+    public ObjectProperty(String name, String displayName, String description, Object value, List<Object> listTypes) {
         super(name, displayName, description, value);
-        this.listTypes = listTypes;
+        this.items = listTypes;
     }
 
-    public ListTypeProperty(String name, String displayName, String description, BusinessObjectLight value, List<BusinessObjectLight> listTypes, String type) {
+    public ObjectProperty(String name, String displayName, String description, Object value, List<Object> listTypes, String type) {
         super(name, displayName, description, value, type);
-        this.listTypes = listTypes;
+        this.items = listTypes;
     }
     
-    
-
-    public List<BusinessObjectLight> getListTypes() {
-        return listTypes;
+    public List<Object> getItems() {
+        return items;
     }
 
-    public void setListTypes(List<BusinessObjectLight> listTypes) {
-        this.listTypes = listTypes;
+    public void setItems(List<Object> listTypes) {
+        this.items = listTypes;
     }
 
     @Override
@@ -63,9 +61,9 @@ public class ListTypeProperty extends AbstractProperty<BusinessObjectLight>{
 
     @Override
     public AbstractField getInplaceEditor() {
-        ComboBox<BusinessObjectLight> cbxListTypes = new ComboBox<>();
+        ComboBox<Object> cbxListTypes = new ComboBox<>();
         cbxListTypes.setAllowCustomValue(false);
-        cbxListTypes.setItems(listTypes);
+        cbxListTypes.setItems(items);
         cbxListTypes.setWidthFull();
         return cbxListTypes;
     }
@@ -73,11 +71,6 @@ public class ListTypeProperty extends AbstractProperty<BusinessObjectLight>{
     @Override
     public String getAsString() {
         return getValue() == null ? AbstractProperty.NULL_LABEL : getValue().toString();
-    }
-
-    @Override
-    public String getAsStringToPersist() {
-        return getValue() == null ? "" : getValue().getId() + "" ;
     }
     
     @Override
@@ -88,6 +81,10 @@ public class ListTypeProperty extends AbstractProperty<BusinessObjectLight>{
     @Override
     public BusinessObjectLight getDefaultValue() {
         return null;
+    }
+    
+    public interface ListTypeObject {
+        public void hasId();
     }
 }
 

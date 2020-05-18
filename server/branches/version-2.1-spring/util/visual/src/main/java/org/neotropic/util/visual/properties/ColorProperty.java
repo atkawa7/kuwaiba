@@ -53,11 +53,6 @@ public class ColorProperty extends AbstractProperty<String>{
     public String getAsString() {
         return getValue() == null ? AbstractProperty.NULL_LABEL : getValue();
     }
-
-    @Override
-    public String getAsStringToPersist() {      
-        return getValue();
-    }
     
     @Override
     public boolean supportsInplaceEditor() {

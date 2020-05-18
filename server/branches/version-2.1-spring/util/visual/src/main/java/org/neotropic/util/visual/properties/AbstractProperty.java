@@ -31,7 +31,11 @@ public abstract class AbstractProperty<T> {
     private boolean hasBinder;
     private String type;
     private boolean readOnly;
+    // Constants
     public static String NULL_LABEL = "Not Set";
+    public static String NOT_ITEMS_SELECTED_LABEL = "Not Items Selected";
+    public static String ITEMS_SELECTED_LABEL = "Items Selected";
+    public static String SELECT_ITEMS_LABEL = "Select Items";
 
     public AbstractProperty(String name, String displayName, String description, T value) {
         this.name = name;
@@ -161,13 +165,5 @@ public abstract class AbstractProperty<T> {
      * @return The string representation of the value of the property
      */
     public abstract String getAsString();
-    /**
-     * The string value representation to persist
-     * @return the string to persist
-     */  
-    public abstract String getAsStringToPersist();
-    /**
-     * generic setter to implments casts to the T value
-     * @param value
-     */  
+     
 }

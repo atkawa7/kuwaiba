@@ -62,16 +62,6 @@ public class LocalDateProperty extends AbstractProperty<LocalDate>{
     public String getAsString() {
         return getValue() == null ? AbstractProperty.NULL_LABEL : getValue().toString();
     }
-
-    @Override
-    public String getAsStringToPersist() {
-        if (getValue() != null) {
-        Instant instant = getValue().atStartOfDay(ZoneId.systemDefault()).toInstant();	
-	long timeInMillis = instant.toEpochMilli();
-        return timeInMillis + "";
-        } else 
-            return "0";
-    }
     
     @Override
     public boolean supportsInplaceEditor() {

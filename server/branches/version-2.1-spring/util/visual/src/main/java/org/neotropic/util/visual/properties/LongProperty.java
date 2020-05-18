@@ -86,11 +86,6 @@ public class LongProperty extends AbstractProperty<Long>{
     public String getAsString() {
         return getValue() == null ? AbstractProperty.NULL_LABEL : getValue() + "";
     }
-
-    @Override
-    public String getAsStringToPersist() {
-        return getAsString();
-    }
     
     @Override
     public boolean supportsInplaceEditor() {

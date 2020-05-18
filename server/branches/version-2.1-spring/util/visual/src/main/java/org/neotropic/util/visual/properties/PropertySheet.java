@@ -174,6 +174,9 @@ public class PropertySheet extends Grid<AbstractProperty> {
         this(ts);
         setItems(properties); 
         AbstractProperty.NULL_LABEL = ts.getTranslatedString("module.propertysheet.labels.null-value-property");
+        AbstractProperty.NOT_ITEMS_SELECTED_LABEL = ts.getTranslatedString("module.propertysheet.labels.not-items-selected");
+        AbstractProperty.ITEMS_SELECTED_LABEL = ts.getTranslatedString("module.propertysheet.labels.items-selected");
+        AbstractProperty.SELECT_ITEMS_LABEL = ts.getTranslatedString("module.propertysheet.labels.select-items");
     }
 
     public void clear() {

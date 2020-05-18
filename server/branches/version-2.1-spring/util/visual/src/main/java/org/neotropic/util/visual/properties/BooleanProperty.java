@@ -50,11 +50,6 @@ public class BooleanProperty extends AbstractProperty<Boolean>{
     public String getAsString() {
         return getValue() == null ? AbstractProperty.NULL_LABEL : getValue().toString();
     }
-
-    @Override
-    public String getAsStringToPersist() {
-        return getValue().toString();
-    }
     
     @Override
     public boolean supportsInplaceEditor() {

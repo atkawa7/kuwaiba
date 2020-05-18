@@ -59,11 +59,6 @@ public class DoubleProperty extends AbstractProperty<Double> {
     public String getAsString() {
         return getValue() == null ? AbstractProperty.NULL_LABEL : getValue() + "";
     }
-
-    @Override
-    public String getAsStringToPersist() {
-        return getAsString();
-    }
     
     @Override
     public boolean supportsInplaceEditor() {
