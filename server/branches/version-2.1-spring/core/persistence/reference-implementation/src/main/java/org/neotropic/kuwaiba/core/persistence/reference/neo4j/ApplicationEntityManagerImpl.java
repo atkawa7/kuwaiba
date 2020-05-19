@@ -982,28 +982,21 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public BusinessObjectLight getListTypeItem(String listTypeClassName, String listTypeItemId) throws 
+    public BusinessObject getListTypeItem(String listTypeClassName, String listTypeItemId) throws 
         MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
         
         try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
-            Node classNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, listTypeClassName);
+            Node listTypeItemNode = connectionManager.getConnectionHandler().findNode(listTypeItemLabel, Constants.PROPERTY_UUID, listTypeItemId);
             
-            if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.", listTypeClassName));
+            if (listTypeItemNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A list type with id %s could not be found", listTypeItemId));
             
-            if (!Util.isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, classNode))
-                throw new InvalidArgumentException(String.format("Class %s is not a list type", listTypeClassName));
-            
-            for (Relationship childRel : classNode.getRelationships(RelTypes.INSTANCE_OF)) {
-                Node child = childRel.getStartNode();
-                if (listTypeItemId.equals((String) child.getProperty(Constants.PROPERTY_UUID))) { 
-                    tx.success();
-                    return new BusinessObjectLight(listTypeClassName, (String) child.getProperty(Constants.PROPERTY_UUID), 
-                            (String) child.getProperty(Constants.PROPERTY_NAME));
-                }
-                
-            }
-            throw new ApplicationObjectNotFoundException(String.format("A list type of class %s and id %s could not be found", listTypeClassName, listTypeItemId));
+            if (listTypeItemNode.hasRelationship(RelTypes.INSTANCE_OF) && 
+                    listTypeItemNode.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME).equals(listTypeClassName))
+                throw new MetadataObjectNotFoundException(String.format("Class %s does not match that of the given list type item", listTypeClassName));
+
+            tx.success();
+            return createBusinessObjectFromNode(listTypeItemNode);
         }
     }
     

@@ -17,49 +17,45 @@ package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.util.ArrayList;
 import java.util.List;
-import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.util.visual.general.BoldLabel;
-
 
 /**
  * Support for multiple object properties
  * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
-public class ObjectMultipleProperty extends AbstractProperty<List<Object>>{
+public class ObjectMultipleProperty extends AbstractProperty<List>{
     /**
      * The whole list of list items available to fill the list boxes
      */
     List<Object> allItems;
     
-    public ObjectMultipleProperty(String name, String displayName, String description, List<Object> value, List<Object> items) {
+    public ObjectMultipleProperty(String name, String displayName, String description, List value, List items) {
         super(name, displayName, description, value);
         this.allItems = items;
     }
      
-    public ObjectMultipleProperty(String name, String displayName, String description, List<Object> value, List<Object> items, String type) {
+    public ObjectMultipleProperty(String name, String displayName, String description, List value, List items, String type) {
          
         super(name, displayName, description, value, type);
         this.allItems = items;
     }
 
-    public List<Object> getListTypes() {
+    public List getListTypes() {
         return allItems;
     }
 
-    public void setListTypes(List<Object> listTypes) {
+    public void setListTypes(List listTypes) {
         this.allItems = listTypes;
     }
 
     @Override
     public AbstractField getAdvancedEditor() {     
         BoldLabel title = new BoldLabel(AbstractProperty.SELECT_ITEMS_LABEL);
-        MultiSelectListBox<Object> lstBoxEditor = new MultiSelectListBox<>();
+        MultiSelectListBox lstBoxEditor = new MultiSelectListBox<>();
         lstBoxEditor.setItems(allItems);
         lstBoxEditor.select(getValue());
-        VerticalLayout content = new VerticalLayout(title, lstBoxEditor);
         return lstBoxEditor;
     }
 
@@ -87,7 +83,7 @@ public class ObjectMultipleProperty extends AbstractProperty<List<Object>>{
     }
 
     @Override
-    public List<Object> getDefaultValue() {
+    public List getDefaultValue() {
        return new ArrayList<>();
     }
 }

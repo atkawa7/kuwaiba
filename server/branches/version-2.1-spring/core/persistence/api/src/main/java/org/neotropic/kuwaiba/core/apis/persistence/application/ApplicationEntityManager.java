@@ -28,6 +28,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.application.processman.Proces
 import org.neotropic.kuwaiba.core.apis.persistence.application.processman.ProcessInstance;
 import org.neotropic.kuwaiba.core.apis.persistence.application.sync.SyncDataSourceConfiguration;
 import org.neotropic.kuwaiba.core.apis.persistence.application.sync.SynchronizationGroup;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObject;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectList;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.ApplicationObjectNotFoundException;
@@ -273,7 +274,7 @@ public interface ApplicationEntityManager extends AbstractEntityManager {
      * @throws InvalidArgumentException if the list type class name provided is not a list type
      * @throws ApplicationObjectNotFoundException If the the item id can not be found
      */
-    public BusinessObjectLight getListTypeItem(String listTypeClassName, String listTypeItemId) throws 
+    public BusinessObject getListTypeItem(String listTypeClassName, String listTypeItemId) throws 
         MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException;
     
     /**

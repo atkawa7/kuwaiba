@@ -25,7 +25,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
  * Support for object properties
  * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
-public class ObjectProperty extends AbstractProperty<Object>{
+public class ObjectProperty extends AbstractProperty {
     /**
      * The whole list of list items available to fill the input combo boxes
      */
@@ -41,11 +41,11 @@ public class ObjectProperty extends AbstractProperty<Object>{
         this.items = listTypes;
     }
     
-    public List<Object> getItems() {
+    public List getItems() {
         return items;
     }
 
-    public void setItems(List<Object> listTypes) {
+    public void setItems(List listTypes) {
         this.items = listTypes;
     }
 

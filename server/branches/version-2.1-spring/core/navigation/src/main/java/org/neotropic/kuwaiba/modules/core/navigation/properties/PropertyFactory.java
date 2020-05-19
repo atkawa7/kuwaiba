@@ -18,138 +18,103 @@ package org.neotropic.kuwaiba.modules.core.navigation.properties;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
-import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObject;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.ApplicationObjectNotFoundException;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.BusinessObjectNotFoundException;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.AttributeMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.util.visual.properties.AbstractProperty;
 import org.neotropic.util.visual.properties.BooleanProperty;
 import org.neotropic.util.visual.properties.ColorProperty;
 import org.neotropic.util.visual.properties.DoubleProperty;
 import org.neotropic.util.visual.properties.IntegerProperty;
-import org.neotropic.util.visual.properties.ObjectMultipleProperty;
-import org.neotropic.util.visual.properties.ObjectProperty;
 import org.neotropic.util.visual.properties.LocalDateProperty;
 import org.neotropic.util.visual.properties.LongProperty;
+import org.neotropic.util.visual.properties.ObjectMultipleProperty;
+import org.neotropic.util.visual.properties.ObjectProperty;
 import org.neotropic.util.visual.properties.StringProperty;
-
-
 
 /**
  * A factory class that builds property sets given business objects.
  * @author Orlando Paz  {@literal <orlando.paz@kuwaiba.org>}
  */
 public class PropertyFactory {
- 
+    /**
+     * Default formatter.
+     */
+    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("EE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
     
     /**
      * Builds a property set from a given inventory object
      * @param businessObject The business object
-     * @param bem BusinessEntityManager service
-     * @param mem MetadataEntityManager service
+     * @param ts Reference to the translation service.
+     * @param aem ApplicationEntityManager service.
+     * @param mem MetadataEntityManager service.
      * @return The set of properties ready to used in a property sheet component
-     * @throws MetadataObjectNotFoundException
-     * @throws BusinessObjectNotFoundException
-     * @throws InvalidArgumentException
-     * @throws ApplicationObjectNotFoundException
+     * @throws InventoryException
      */
-    public static List<AbstractProperty> propertiesFromBusinessObject(BusinessObjectLight businessObject, ApplicationEntityManager aem, BusinessEntityManager bem, MetadataEntityManager mem) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
-
-        HashMap<String, String> objectAttributes = bem.getAttributeValuesAsString(businessObject.getClassName(), businessObject.getId());
-
-        ClassMetadata classMetadata = mem.getClass(businessObject.getClassName());
-
+    public static List<AbstractProperty> propertiesFromBusinessObject(BusinessObject businessObject, TranslationService ts, ApplicationEntityManager aem, 
+            MetadataEntityManager mem) throws InventoryException {
+        ClassMetadata classMetadata = mem.getClass(
+                businessObject.getClassName());
         ArrayList<AbstractProperty> objectProperties = new ArrayList<>();
-  
-        for (AttributeMetadata am : classMetadata.getAttributes()) {
-            AbstractProperty property = null;
-            
-            switch (am.getType()) {
-                case Constants.DATA_TYPE_STRING:
-
-                    property = new StringProperty(am.getName(),
-                            am.getDisplayName(), am.getDescription(),
-                            (objectAttributes.get(am.getName()) == null ? null : objectAttributes.get(am.getName())),
-                            Constants.DATA_TYPE_STRING);
-                    break;
-                case Constants.DATA_TYPE_INTEGER:
-
-                    property = new IntegerProperty(am.getName(),
-                            am.getDisplayName(), am.getDescription(),
-                            (objectAttributes.get(am.getName()) == null ? null : Integer.parseInt(objectAttributes.get(am.getName()))),
-                            Constants.DATA_TYPE_INTEGER);
-                    break;
-                case Constants.DATA_TYPE_BOOLEAN:
-
-                    property = new BooleanProperty(am.getName(),
-                            am.getDisplayName(), am.getDescription(),
-                            (objectAttributes.get(am.getName()) == null ? false : Boolean.valueOf(objectAttributes.get(am.getName()))),
-                            Constants.DATA_TYPE_BOOLEAN);
-                    break;
-                case Constants.DATA_TYPE_DOUBLE:
-                case Constants.DATA_TYPE_FLOAT:
-
-                    property = new DoubleProperty(am.getName(),
-                            am.getDisplayName(), am.getDescription(),
-                            (objectAttributes.get(am.getName()) == null ? null : Double.parseDouble(objectAttributes.get(am.getName()))),
-                            am.getType().equals(Constants.DATA_TYPE_DOUBLE) ? Constants.DATA_TYPE_DOUBLE : Constants.DATA_TYPE_FLOAT);
-                    break;
-                case Constants.DATA_TYPE_LONG:
-
-                    property = new LongProperty(am.getName(),
-                            am.getDisplayName(), am.getDescription(),
-                            (objectAttributes.get(am.getName()) == null ? null : Long.parseLong(objectAttributes.get(am.getName()))),
-                            Constants.DATA_TYPE_LONG);
-                    //special case for creation date attribute
-                    if (Constants.PROPERTY_CREATION_DATE.equals(am.getName())) 
-                        property.setReadOnly(true);
-                    
-                    break;
-                case Constants.DATA_TYPE_DATE:
-                case Constants.DATA_TYPE_TIME_STAMP:
-
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
-                    property = new LocalDateProperty(am.getName(),
-                            am.getDisplayName(), am.getDescription(),
-                            (objectAttributes.get(am.getName()) == null ? null : LocalDate.parse(objectAttributes.get(am.getName()), formatter)),
-                            am.getType().equals(Constants.DATA_TYPE_DATE) ? Constants.DATA_TYPE_DATE : Constants.DATA_TYPE_TIME_STAMP);
-                    break;
-                default:   // list type
-                    List<BusinessObjectLight> listTypeItems = aem.getListTypeItems(am.getType());
-                    List<BusinessObjectLight> selectedItems = new ArrayList<>();
-                    String attributeValue = objectAttributes.get(am.getName());
-
-                    if (attributeValue != null) {
-                        String[] tokensItems = attributeValue.split(";");
-
-                        for (String token : tokensItems) {
-                            selectedItems.addAll(listTypeItems.stream().filter(item -> item.getName().equals(token)).collect(Collectors.toList()));
+        classMetadata.getAttributes().stream().forEach(anAttribute -> {
+            try {
+                switch (anAttribute.getType()) {
+                    case Constants.DATA_TYPE_STRING:
+                        objectProperties.add(new StringProperty(anAttribute.getName(), anAttribute.getDisplayName(), 
+                                anAttribute.getDescription(), (String)businessObject.getAttributes().get(anAttribute.getName())));
+                        break;
+                    case Constants.DATA_TYPE_FLOAT:
+                        objectProperties.add(new DoubleProperty(anAttribute.getName(), anAttribute.getDisplayName(), 
+                                anAttribute.getDescription(), (Double)businessObject.getAttributes().get(anAttribute.getName())));
+                        break;
+                    case Constants.DATA_TYPE_INTEGER:
+                        objectProperties.add(new IntegerProperty(anAttribute.getName(), anAttribute.getDisplayName(), 
+                                anAttribute.getDescription(), (Integer)businessObject.getAttributes().get(anAttribute.getName())));
+                        break;
+                    case Constants.DATA_TYPE_BOOLEAN:
+                        objectProperties.add(new BooleanProperty(anAttribute.getName(), anAttribute.getDisplayName(), 
+                                anAttribute.getDescription(), (Boolean)businessObject.getAttributes().get(anAttribute.getName())));
+                        break;
+                    case Constants.DATA_TYPE_LONG:
+                        objectProperties.add(new LongProperty(anAttribute.getName(), anAttribute.getDisplayName(), 
+                                anAttribute.getDescription(), (Long)businessObject.getAttributes().get(anAttribute.getName())));
+                        break;
+                    case Constants.DATA_TYPE_DATE:
+                    case Constants.DATA_TYPE_TIME_STAMP:
+                        objectProperties.add(new LocalDateProperty(anAttribute.getName(), anAttribute.getDisplayName(), 
+                                anAttribute.getDescription(), (Long)businessObject.getAttributes().get(anAttribute.getName())));
+                        break;
+                    case Constants.DATA_TYPE_LIST_TYPE:
+                        try {
+                            List items = aem.getListTypeItems(anAttribute.getType());
+                            if (anAttribute.isMultiple())
+                                objectProperties.add(new ObjectMultipleProperty(anAttribute.getName(), anAttribute.getDisplayName(), 
+                                        anAttribute.getDescription(), (List<BusinessObjectLight>)businessObject.getAttributes().get(anAttribute.getName()), items));
+                            else
+                                objectProperties.add(new ObjectProperty(anAttribute.getName(), anAttribute.getDisplayName(), 
+                                        anAttribute.getDescription(), (BusinessObjectLight)businessObject.getAttributes().get(anAttribute.getName()), items));
+                        } catch(InventoryException ex) {
+                            Logger.getLogger(PropertyFactory.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage());
                         }
-                    }
-
-                    if (am.isMultiple()) {
-                        property = new ObjectMultipleProperty(am.getName(),
-                                am.getDisplayName(), am.getDescription(),
-                                new ArrayList<>(selectedItems), new ArrayList<>(listTypeItems), Constants.DATA_TYPE_OBJECT_MULTIPLE);
-                    } else {
-                        property = new ObjectProperty(am.getName(),
-                                am.getDisplayName(), am.getDescription(),
-                                (selectedItems.size() > 0 ? (Object) selectedItems.get(0) : null), new ArrayList<>(listTypeItems), Constants.DATA_TYPE_OBJECT);
-                    }
-            }           
-            objectProperties.add(property);           
-        }
+                        break;
+                }
+            } catch(NumberFormatException ex) { // Faulty values will be ignored and silently logged
+                Logger.getLogger(PropertyFactory.class.getName()).log(Level.SEVERE, 
+                        String.format(ts.getTranslatedString(String.format("module.propertysheet.labels.wrong-data-type", anAttribute.getName(), 
+                                businessObject.getId(), businessObject.getAttributes().get(anAttribute.getName())))));
+            }
+        });
+  
         return objectProperties;
     }
     

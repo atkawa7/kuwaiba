@@ -44,10 +44,12 @@ import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameterSet;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObject;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermittedException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
@@ -237,9 +239,10 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
 
     private void updatePropertySheet() {
         try {
-            propertysheet.setItems(PropertyFactory.propertiesFromBusinessObject(currentListTypeItem, aem, bem, mem));
-        } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException
-                | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+            BusinessObject aWholeListTypeItem = aem.getListTypeItem(currentListTypeItem.getClassName(), currentListTypeItem.getId());
+            propertysheet.setItems(PropertyFactory.propertiesFromBusinessObject(aWholeListTypeItem, ts, aem, mem));
+        } catch (InventoryException ex) {
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
             Logger.getLogger(ListTypeManagerUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
