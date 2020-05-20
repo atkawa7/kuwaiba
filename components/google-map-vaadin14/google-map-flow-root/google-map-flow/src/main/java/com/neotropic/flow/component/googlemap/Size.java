@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2020 Neotropic SAS <contact@neotropic.co>.
  *  
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License. 
@@ -22,40 +22,40 @@ import elemental.json.JsonObject;
  *
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class LatLng {
-    private double lat;
-    private double lng;
+public class Size {
+    private double width;
+    private double height;
     
-    public LatLng(double lat, double lng) {
-        this.lat = lat;
-        this.lng = lng;
+    public Size(double width, double height) {
+        this.width = width;
+        this.height = height;
     }
     
-    public LatLng(JsonObject latLng) {
-        this.lat = latLng.getNumber(Constants.Property.LAT);
-        this.lng = latLng.getNumber(Constants.Property.LNG);
+    public Size(JsonObject size) {
+        this.width = size.getNumber(Constants.Property.WIDTH);
+        this.height = size.getNumber(Constants.Property.HEIGHT);
     }
     
-    public double getLat() {
-        return lat;
+    public double getWidth() {
+        return width;
     }
     
-    public void setLat(double lat) {
-        this.lat = lat;
+    public void setWidth(double width) {
+        this.width = width;
     }
     
-    public double getLng() {
-        return lng;
+    public double getHeight() {
+        return height;
     }
     
-    public void setLng(double lng) {
-        this.lng = lng;
+    public void setHeight(double height) {
+        this.height = height;
     }
     
     public JsonObject toJson() {
-        JsonObject latLng = Json.createObject();
-        latLng.put(Constants.Property.LAT, lat);
-        latLng.put(Constants.Property.LNG, lng);
-        return latLng;
+        JsonObject size = Json.createObject();
+        size.put(Constants.Property.WIDTH, width);
+        size.put(Constants.Property.HEIGHT, height);
+        return size;
     }
 }

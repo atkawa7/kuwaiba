@@ -21,6 +21,7 @@ import com.vaadin.flow.component.Synchronize;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.shared.Registration;
+import elemental.json.Json;
 import elemental.json.JsonValue;
 
 /**
@@ -91,6 +92,22 @@ public class GoogleMapMarker extends Component {
     public void setMarkerVisible(boolean visible) {
         getElement().setProperty(Constants.Property.VISIBLE, visible);
     }
+    @Synchronize(property = "animation", value = "marker-animation-changed")
+    public Animation getAnimation() {
+        return Animation.getAnimation(
+            getElement().getProperty(Constants.Property.ANIMATION, null)
+        );
+    }
+    /**
+     * Sets to start an animation, or null to stop
+     * @param animation 
+     */
+    public void setAnimation(Animation animation) {
+        if (animation != null)
+            getElement().setProperty(Constants.Property.ANIMATION, animation.animation());
+        else
+            getElement().setPropertyJson(Constants.Property.ANIMATION, Json.createNull());
+    }
     //</editor-fold>
     //<editor-fold desc="Marker Listeners" defaultstate="collapsed">
     public Registration addMarkerClickListener(ComponentEventListener<GoogleMapEvent.MarkerClickEvent> listener) {
@@ -121,6 +138,9 @@ public class GoogleMapMarker extends Component {
     }
     public Registration addMarkerRightClickListener(ComponentEventListener<GoogleMapEvent.MarkerRightClickEvent> listener) {
         return addListener(GoogleMapEvent.MarkerRightClickEvent.class, listener);        
+    }
+    public Registration addMarkerAnimationChangedListener(ComponentEventListener<GoogleMapEvent.MarkerAnimationChangedEvent> listener) {
+        return addListener(GoogleMapEvent.MarkerAnimationChangedEvent.class, listener);
     }
     //</editor-fold>
 }

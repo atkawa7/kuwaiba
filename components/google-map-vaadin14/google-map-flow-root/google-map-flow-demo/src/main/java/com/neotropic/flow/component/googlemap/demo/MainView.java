@@ -1,5 +1,6 @@
 package com.neotropic.flow.component.googlemap.demo;
 
+import com.neotropic.flow.component.googlemap.Animation;
 import com.neotropic.flow.component.googlemap.GoogleMapEvent;
 import com.neotropic.flow.component.googlemap.GoogleMapPolyline;
 import com.neotropic.flow.component.googlemap.GoogleMapMarker;
@@ -9,7 +10,9 @@ import com.neotropic.flow.component.googlemap.LatLng;
 import com.neotropic.flow.component.googlemap.GoogleMapPolygon;
 import com.neotropic.flow.component.googlemap.OverlayType;
 import com.neotropic.flow.component.googlemap.Constants;
+import com.neotropic.flow.component.googlemap.InfoWindow;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -352,7 +355,28 @@ public class MainView extends VerticalLayout {
                 googleMapMarker.setLat(2.6116145);
                 googleMapMarker.setLng(-76.3862953);
                 setBackgroundLabel(lblMarkerClick);
+                if (googleMapMarker.getAnimation() == null)
+                    googleMapMarker.setAnimation(Animation.BOUNCE);
+                else
+                    googleMapMarker.setAnimation(null);
             }
+        });
+        googleMapMarker.addMarkerRightClickListener(event -> {
+            InfoWindow infoWindow = new InfoWindow();
+            googleMap.add(infoWindow);
+            infoWindow.addInfoWindowAddedListener(addedEvent -> {
+                VerticalLayout vlt = new VerticalLayout();
+                vlt.add(new Label("Info Window"));
+                Button btnClose = new Button(
+                    "Close", 
+                    new Icon(VaadinIcon.CLOSE), 
+                    clickEvent -> infoWindow.close()
+                );
+                vlt.add(btnClose);
+                infoWindow.add(vlt);
+
+                infoWindow.open(googleMap, googleMapMarker);
+            });
         });
         googleMapMarker.addMarkerDragEndListener(new ComponentEventListener<GoogleMapEvent.MarkerDragEnd>() {
             @Override
@@ -402,7 +426,7 @@ public class MainView extends VerticalLayout {
 
         googleMapMarker.setIcon(icon);
 
-        googleMapMarker.setTitle("New Marker");
+        googleMapMarker.setTitle("New Marker");    
     }
     
     public void addNewPolyline(List<LatLng> path, GoogleMap googleMap) {

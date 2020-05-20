@@ -93,6 +93,12 @@ class GoogleMapPolygon extends PolymerElement {
       }
     };
   }
+  /**
+   * @return {google.maps.MVCObject} The google.maps.Polygon
+   */
+  getMVCObject() {
+    return this.polygon;
+  }
   added(map) {
     this.polygon = new google.maps.Polygon({
       clickable: this.clickable,

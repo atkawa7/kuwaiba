@@ -5,7 +5,7 @@
     <groupId>com.neotropic.flow.component</groupId>
     <artifactId>google-map-flow</artifactId>
     <version>1.0.0</version>
-    <name>google-map-flow</name>
+    <name>Google Map</name>
     <description>Integration of google-map for Vaadin platform</description>
 
     <properties>

@@ -16,7 +16,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    <name>google-map-flow-root</name>
+    <name>Google Map Flow Parent</name>
     <modules>
         <module>google-map-flow</module>
         <module>google-map-flow-demo</module>

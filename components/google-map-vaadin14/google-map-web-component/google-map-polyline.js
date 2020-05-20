@@ -15,7 +15,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
-import {FlattenedNodesObserver} from '@polymer/polymer/lib/utils/flattened-nodes-observer.js';
 import * as Constants from './google-map-constants.js';
 /**
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
@@ -80,7 +79,12 @@ class GoogleMapPolyline extends PolymerElement {
 			}
 		};
 	}
-	
+	/**
+	 * @return {google.maps.MVCObject} The google.maps.Polyline
+	 */
+	getMVCObject() {
+		return this.polyline;
+	}		
 	added(map) {
 		var _this = this;
 		this.polyline = new google.maps.Polyline({

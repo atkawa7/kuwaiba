@@ -83,8 +83,21 @@ class GoogleMapMarker extends PolymerElement {
         type: Boolean,
         value: true,
         observer: '_visibleChanged'
+      },
+      /**
+       * @type {string}
+       */
+      animation: {
+        type: String,
+        observer: '_animationChanged'
       }
     };
+  }
+  /**
+   * @return {google.maps.MVCObject} The google.maps.Marker
+   */
+  getMVCObject() {
+    return this.marker;
   }
   _getIcon() {
     var icon = {
@@ -103,7 +116,8 @@ class GoogleMapMarker extends PolymerElement {
       icon: this._getIcon(),
       label: this.label,
       draggable: this._draggable,
-      visible: this.visible
+      visible: this.visible,
+      animation: this.animation
     });
     var _this = this;
     this.marker.addListener('click', function(event) {
@@ -134,6 +148,9 @@ class GoogleMapMarker extends PolymerElement {
     this.marker.addListener('rightclick', function(event) {
       _this.dispatchEvent(new CustomEvent('marker-right-click'));
     });
+    this.marker.addListener('animation_changed', () => 
+      this.dispatchEvent(new CustomEvent('marker-animation-changed'))
+    );
     /*
     Events: 
     animation_changed, 
@@ -213,6 +230,21 @@ class GoogleMapMarker extends PolymerElement {
     if (this.marker !== undefined && 
       this.marker.getVisible() !== newValue) {
         this.marker.setVisible(newValue);
+    }
+  }
+  /**
+   * 
+   * @param {string} newValue 
+   * @param {string} oldValue 
+   */
+  _animationChanged(newValue, oldValue) {
+    if (this.marker) {
+      if ('bounce' === newValue)
+        this.marker.setAnimation(google.maps.Animation.BOUNCE);
+      else if ('drop' === newValue)
+        this.marker.setAnimation(google.maps.Animation.DROP);
+      else
+        this.marker.setAnimation(null);
     }
   }
 }

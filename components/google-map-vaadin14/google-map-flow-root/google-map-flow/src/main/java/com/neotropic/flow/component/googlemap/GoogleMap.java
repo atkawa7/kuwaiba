@@ -17,6 +17,7 @@ package com.neotropic.flow.component.googlemap;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.Synchronize;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
@@ -28,7 +29,7 @@ import com.vaadin.flow.shared.Registration;
  */
 @Tag("google-map")
 @JsModule("./google-map.js")
-public class GoogleMap extends Component {
+public class GoogleMap extends Component implements HasComponents {
     /**
      * @param apiKey Your API key and set the client id to null. See https://developers.google.com/maps/documentation/javascript/get-api-key
      * @param clientId Your client id and set the apiKey to null. See https://developers.google.com/maps/documentation/javascript/get-api-key
@@ -142,35 +143,35 @@ public class GoogleMap extends Component {
     }
     
     public void newMarker(GoogleMapMarker googleMapMarker) {
-        getElement().appendChild(googleMapMarker.getElement());
+        add(googleMapMarker);
     }
     
     public void removeMarker(GoogleMapMarker googleMapMarker) {
-        getElement().removeChild(googleMapMarker.getElement());
+        remove(googleMapMarker);
     }
     
     public void newPolyline(GoogleMapPolyline polyline) {
-        getElement().appendChild(polyline.getElement());
+        add(polyline);
     }
     
     public void removePolyline(GoogleMapPolyline polyline) {
-        getElement().removeChild(polyline.getElement());
+        remove(polyline);
     }
     
     public void newPolygon(GoogleMapPolygon polygon) {
-        getElement().appendChild(polygon.getElement());
+        add(polygon);
     }
     
     public void removePolygon(GoogleMapPolygon polygon) {
-        getElement().removeChild(polygon.getElement());
+        remove(polygon);
     }
     
     public void newDrawingManager(DrawingManager drawingManager) {
-        getElement().appendChild(drawingManager.getElement());
+        add(drawingManager);
     }
     
     public void removeDrawingManager(DrawingManager drawingManager) {
-        getElement().removeChild(drawingManager.getElement());
+        remove(drawingManager);
     }
     
     public Registration addMapClickListener(ComponentEventListener<GoogleMapEvent.MapClickEvent> listener) {

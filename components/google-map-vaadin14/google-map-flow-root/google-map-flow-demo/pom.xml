@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.neotropic.flow.component</groupId>
     <artifactId>google-map-flow-demo</artifactId>
-    <name>google-map-flow-demo</name>
+    <name>Google Map Demo</name>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 

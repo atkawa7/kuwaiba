@@ -195,6 +195,12 @@ public class GoogleMapEvent {
             super(source, fromClient);
         }
     }
+    @DomEvent("marker-animation-changed")
+    public static class MarkerAnimationChangedEvent extends ComponentEvent<GoogleMapMarker> {
+        public MarkerAnimationChangedEvent(GoogleMapMarker source, boolean fromClient) {
+            super(source, fromClient);
+        }
+    }
     //</editor-fold>
     //<editor-fold desc="Polyline Events" defaultstate="collapsed">
     @DomEvent("polyline-click")
@@ -327,6 +333,44 @@ public class GoogleMapEvent {
     public static class PolygonPathsChangedEvent extends ComponentEvent<GoogleMapPolygon> {
         
         public PolygonPathsChangedEvent(GoogleMapPolygon source, boolean fromClient) {
+            super(source, fromClient);
+        }
+    }
+    //</editor-fold>
+    //<editor-fold desc="Info Window Events" defaultstate="collapsed">
+    @DomEvent("info-window-close-click")
+    public static class InfoWindowCloseClickEvent extends ComponentEvent<InfoWindow> {
+        public InfoWindowCloseClickEvent(InfoWindow source, boolean fromClient) {
+            super(source, fromClient);
+        }
+    }
+    @DomEvent("info-window-content-changed")
+    public static class InfoWindowContentChangedEvent extends ComponentEvent<InfoWindow> {
+        public InfoWindowContentChangedEvent(InfoWindow source, boolean fromClient) {
+            super(source, fromClient);
+        }
+    }
+    @DomEvent("info-window-dom-ready")
+    public static class InfoWindowDomReadyEvent extends ComponentEvent<InfoWindow> {
+        public InfoWindowDomReadyEvent(InfoWindow source, boolean fromClient) {
+            super(source, fromClient);
+        }
+    }
+    @DomEvent("info-window-position-changed")
+    public static class InfoWindowPositionChangedEvent extends ComponentEvent<InfoWindow> {
+        public InfoWindowPositionChangedEvent(InfoWindow source, boolean fromClient) {
+            super(source, fromClient);
+        }
+    }
+    @DomEvent("info-window-zindex-changed")
+    public static class InfoWindowZIndexChangedEvent extends ComponentEvent<InfoWindow> {
+        public InfoWindowZIndexChangedEvent(InfoWindow source, boolean fromClient) {
+            super(source, fromClient);
+        }
+    }
+    @DomEvent("info-window-added")
+    public static class InfoWindowAddedEvent extends ComponentEvent<InfoWindow> {
+        public InfoWindowAddedEvent(InfoWindow source, boolean fromClient) {
             super(source, fromClient);
         }
     }

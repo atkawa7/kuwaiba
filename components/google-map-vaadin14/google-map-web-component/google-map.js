@@ -133,6 +133,12 @@ class GoogleMap extends PolymerElement {
       }
     };
   }
+  /**
+   * @return {google.maps.MVCObject} The google.maps.Map
+   */
+  getMVCObject() {
+    return this.map;
+  }
   /*
   constructor() {
     super();

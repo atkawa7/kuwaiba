@@ -53,6 +53,12 @@ public class Constants {
         public static String STREET_VIEW_CONTROL = "streetViewControl";
         public static String ROTATE_CONTROL = "rotateControl";
         public static String FULLSCREEN_CONTROL = "fullscreenControl";
+        public static String ANIMATION = "animation";
+        public static String DISABLE_AUTO_PAN = "disableAutoPan";
+        public static String MAX_WIDTH = "maxWidth";
+        public static String PIXEL_OFFSET = "pixelOffset";
+        public static String POSITION = "position";
+        public static String Z_INDEX = "zIndex";
     }
     
     public static class Default {
