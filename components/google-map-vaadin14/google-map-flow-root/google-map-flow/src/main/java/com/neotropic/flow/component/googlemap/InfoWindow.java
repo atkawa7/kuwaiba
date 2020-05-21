@@ -83,6 +83,11 @@ public class InfoWindow extends Component implements HasComponents {
             "this.open($0.getMVCObject(), $1.getMVCObject())", 
             map, component);
     }
+    public void open(GoogleMap map) {
+        getElement().executeJs(
+            "this.open($0.getMVCObject())", 
+            map);
+    }
     public void close() {
         getElement().executeJs("this.close()");
     }

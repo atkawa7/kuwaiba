@@ -201,8 +201,15 @@ class GoogleMap extends PolymerElement {
       _this.lng = _this.map.getCenter().lng();
       _this.dispatchEvent(new CustomEvent('map-center-changed'));
     });
-    this.map.addListener('mousemove', function(event) {
-      _this.dispatchEvent(new CustomEvent('map-mouse-move'));
+    this.map.addListener('mousemove', event => {
+      this.dispatchEvent(new CustomEvent('map-mouse-move', 
+        {
+          detail: {
+            lat: event.latLng.lat(), 
+            lng: event.latLng.lng()
+          }
+        }
+      ));
     });
     this.map.addListener('mouseout', function(event) {
       _this.dispatchEvent(new CustomEvent('map-mouse-out'));

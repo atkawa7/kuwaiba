@@ -174,6 +174,14 @@ public class GoogleMap extends Component implements HasComponents {
         remove(drawingManager);
     }
     
+    public void addInfoWindow(InfoWindow infoWindow) {
+        add(infoWindow);
+    }
+    
+    public void removeInfoWindow(InfoWindow infoWindow) {
+        remove(infoWindow);
+    }
+    
     public Registration addMapClickListener(ComponentEventListener<GoogleMapEvent.MapClickEvent> listener) {
         return addListener(GoogleMapEvent.MapClickEvent.class, listener);
     }

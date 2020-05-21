@@ -48,7 +48,6 @@ public class GoogleMapEvent {
             return lng;
         }
     }
-    
     @DomEvent("map-dbl-click")
     public static class MapDblClickEvent extends ComponentEvent<GoogleMap> {
         
@@ -88,9 +87,23 @@ public class GoogleMapEvent {
     
     @DomEvent("map-mouse-move")
     public static class MapMouseMoveEvent extends ComponentEvent<GoogleMap> {
-
-        public MapMouseMoveEvent(GoogleMap source, boolean fromClient) {
+        private final double lat;        
+        private final double lng;
+        
+        public MapMouseMoveEvent(GoogleMap source, boolean fromClient, 
+            @EventData("event.detail.lat") double lat, 
+            @EventData("event.detail.lng") double lng) {
             super(source, fromClient);
+            this.lat = lat;
+            this.lng = lng;
+        }
+        
+        public double getLat() {
+            return lat;
+        }
+        
+        public double getLng() {
+            return lng;
         }
     }
     
