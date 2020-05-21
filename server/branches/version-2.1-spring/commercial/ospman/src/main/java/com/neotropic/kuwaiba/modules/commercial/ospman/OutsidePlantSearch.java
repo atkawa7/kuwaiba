@@ -39,11 +39,13 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 
 /**
- *
+ * A search component to find inventory objects to add or navigate in the map
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class OutsidePlantSearch extends Div {
-    public OutsidePlantSearch(BusinessEntityManager bem, List<OSPNode> markers) {
+    private List<OSPNode> markers;
+    
+    public OutsidePlantSearch(BusinessEntityManager bem) {
         TextField txtSearch = new TextField();
         txtSearch.setWidth("400px");
         txtSearch.setValueChangeMode(ValueChangeMode.EAGER);
@@ -101,14 +103,14 @@ public class OutsidePlantSearch extends Div {
                             hly.setJustifyContentMode(FlexComponent.JustifyContentMode.START);
                             hly.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
                             
-                            if (getOSPNode(markers, obj) != null) {
+                            if (getOSPNode(this.markers, obj) != null) {
                                 icon.setColor("#E74C3C");
                                 btnAdd.setVisible(false);
                             }
                             return hly;
                         }));
                         grid.addSelectionListener(selectionEvent -> {
-                            OSPNode ospNode = getOSPNode(markers, selectionEvent.getFirstSelectedItem().get());
+                            OSPNode ospNode = getOSPNode(this.markers, selectionEvent.getFirstSelectedItem().get());
                             if (ospNode != null) {
                                 txtSearch.setValue(ospNode.getBusinessObject().getName());      
                                 fireEvent(new SelectionEvent(this, false, ospNode));
@@ -123,15 +125,17 @@ public class OutsidePlantSearch extends Div {
             }
         });
     }
-    private final OSPNode getOSPNode(List<OSPNode> markers, BusinessObjectLight obj) {
-        OSPNode ospNode = null;
-        for (OSPNode marker : markers) {
-            if (obj.equals(marker.getBusinessObject())) {
-                ospNode = marker;
-                break;
+    public void setMarkers(List<OSPNode> markers) {
+        this.markers = markers;
+    }
+    private OSPNode getOSPNode(List<OSPNode> markers, BusinessObjectLight obj) {
+        if (markers != null) {
+            for (OSPNode marker : markers) {
+                if (obj.equals(marker.getBusinessObject()))
+                    return marker;
             }
         }
-        return ospNode;
+        return null;
     }
     public Registration addSelectionListener(ComponentEventListener<SelectionEvent> listener) {
         return addListener(SelectionEvent.class, listener);
