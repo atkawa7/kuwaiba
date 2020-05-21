@@ -28,6 +28,10 @@ public class InventoryObjectNode extends AbstractNode<BusinessObjectLight> {
     public InventoryObjectNode(BusinessObjectLight object) {
         super(object, object.getClassName());
     }
+
+    public InventoryObjectNode(BusinessObjectLight object, String className) {
+        super(object, className);
+    }
         
     @Override
     public AbstractAction[] getActions() {

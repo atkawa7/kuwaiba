@@ -92,8 +92,10 @@ public class ResourceFactory extends AbstractResourceFactory {
        
    @Override
     public StreamResource getClassIcon(String className) {
-        if (className == null || mem == null) {
-            return null;
+        if (className == null || className.isEmpty() || mem == null) {
+            StreamResource icon = buildIcon("default.png", getIcon(Color.black, DEFAULT_ICON_WIDTH, DEFAULT_ICON_HEIGHT));
+            VaadinSession.getCurrent().getResourceRegistry().registerResource(icon);
+            return icon;
         }
 //        if (icons.containsKey(className))
 //            return icons.get(className);
@@ -139,9 +141,12 @@ public class ResourceFactory extends AbstractResourceFactory {
        
     @Override
      public StreamResource getClassSmallIcon(String className) {
-         if (className == null || mem == null) 
-             return null;
-         
+         if (className == null || className.isEmpty() || mem == null) {
+            StreamResource icon = buildIcon("default.png", getIcon(Color.black, DEFAULT_ICON_WIDTH, DEFAULT_ICON_HEIGHT));
+            VaadinSession.getCurrent().getResourceRegistry().registerResource(icon);
+            return icon;
+         }
+                  
 //        if (smallIcons.containsKey(className))
 //            return smallIcons.get(className);
 //        else {
