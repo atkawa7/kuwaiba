@@ -22,6 +22,7 @@ import com.vaadin.flow.component.Synchronize;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.shared.Registration;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -165,6 +166,15 @@ public class MxGraphCell extends Component {
     @Synchronize(property = "points", value = "points-changed")
     public String getPoints() {
         return getElement().getProperty(PROPERTY_POINTS);
+    }
+    
+    @Synchronize(property = "points", value = "points-changed")
+    public List<Point> getPointList() {
+        String points = getElement().getProperty(PROPERTY_POINTS);
+        
+        Gson gson = new Gson();
+        ArrayList<Point> listPoints = gson.fromJson(points, ArrayList.class);
+        return listPoints;
     }
         
     public void setPoints(String prop) {
