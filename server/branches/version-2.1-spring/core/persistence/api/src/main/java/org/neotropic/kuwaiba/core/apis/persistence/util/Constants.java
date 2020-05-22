@@ -674,5 +674,9 @@ public class Constants {
       */
      public static final int MAX_ICON_SIZE_IN_BYTES = 10000;
      
+     public static int DEFAULT_ICON_WIDTH = 24;
+     
+     public static int DEFAULT_ICON_HEIGHT = 24;
+     
        
 }
