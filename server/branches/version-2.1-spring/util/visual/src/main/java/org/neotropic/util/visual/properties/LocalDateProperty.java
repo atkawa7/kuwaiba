@@ -19,25 +19,31 @@ package org.neotropic.util.visual.properties;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import java.time.Instant;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 /**
  * Support for local-date-type properties
  * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
-public class LocalDateProperty extends AbstractProperty<LocalDate>{
+public class LocalDateProperty extends AbstractProperty<LocalDateTime> {
+    /**
+     * Default formatter.
+     */
+    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("EE MMM dd HH:mm yyyy", Locale.ENGLISH);
 
-    public LocalDateProperty(String name, String displayName, String description, LocalDate value) {
+    public LocalDateProperty(String name, String displayName, String description, LocalDateTime value) {
         super(name, displayName, description, value);
     }
 
-    public LocalDateProperty(String name, String displayName, String description, LocalDate value, String type) {
+    public LocalDateProperty(String name, String displayName, String description, LocalDateTime value, String type) {
         super(name, displayName, description, value, type);
     }   
     
     public LocalDateProperty(String name, String displayName, String description, long value) {
-        super(name, displayName, description, Instant.ofEpochMilli(value).atZone(ZoneId.systemDefault()).toLocalDate());
+        super(name, displayName, description, Instant.ofEpochMilli(value).atZone(ZoneId.systemDefault()).toLocalDateTime());
         
     }
 
@@ -60,7 +66,7 @@ public class LocalDateProperty extends AbstractProperty<LocalDate>{
 
     @Override
     public String getAsString() {
-        return getValue() == null ? AbstractProperty.NULL_LABEL : getValue().toString();
+        return getValue() == null ? AbstractProperty.NULL_LABEL : getValue().format(DATE_FORMATTER);
     }
     
     @Override
@@ -69,8 +75,8 @@ public class LocalDateProperty extends AbstractProperty<LocalDate>{
     }
 
     @Override
-    public LocalDate getDefaultValue() {
-        return LocalDate.now();
+    public LocalDateTime getDefaultValue() {
+        return LocalDateTime.now();
     }
 
 }

@@ -17,8 +17,12 @@ package org.neotropic.util.visual.widgets;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 
 /**
  * A small embeddable component that can be inserted into an AbstractDashboard. A DashboardWidget has two "faces": 
@@ -43,6 +47,18 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
      * Dashboard widget title
      */
     protected String title;
+    /**
+     * Reference to the Metadata Entity Manager.
+     */
+    protected MetadataEntityManager mem;
+    /**
+     * Reference to the Application Entity Manager.
+     */
+    protected ApplicationEntityManager aem;
+    /**
+     * Reference to the Business Entity Manager.
+     */
+    protected BusinessEntityManager bem;
     
     public AbstractDashboardWidget(String title) {
         this.title = title;
@@ -92,22 +108,20 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
      * The default implementation creates a colored rectangle displaying the title of the widget without any style. For simple widgets it's recommended to use 
      * this implementation (that is, call super.createCover()) and set a style afterwards. 
      */
-    public void createCover() { 
-        VerticalLayout lytDefaultWidgetCover = new VerticalLayout();
-        lytDefaultWidgetCover.addClassName("widgets-standard-cover");
+    public void createCover() {
+        Div divCover = new Div();
+        Label lblTitle = new Label(title);
+        lblTitle.addClassName("widgets-standard-cover-content");
+        divCover.addClassName("widgets-standard-cover");
+        divCover.add(lblTitle);
         
-        Label lblText = new Label(title);
-        lblText.addClassName("widgets-standard-cover-content");
-        
-        lytDefaultWidgetCover.addClickListener(event -> {
+        divCover.addClickListener(event -> {
             this.createContent();
             launch();
         });
         
-        lytDefaultWidgetCover.add(lblText);
-        lytDefaultWidgetCover.setSizeFull();
-        
-        this.coverComponent = lytDefaultWidgetCover;
+        removeAll();
+        this.coverComponent = divCover;
         add(this.coverComponent);
     }
     public abstract void createContent();

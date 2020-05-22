@@ -27,23 +27,29 @@
 }
 
 /* Widgets */
-#widgets-empty {
-    
-}
-
+/* Most dashboard with a cover component to be clicked to be activated have these properties  */
 .widgets-standard-cover {
     position: relative;
-    color: white;
-    background-color: #6F918A;
     width: 350px;
     height: 350px;
 }
 
 .widgets-standard-cover-content {
     position: absolute;
-    bottom: 0px;
-    right: 0px;
+    bottom: 5px;
+    right: 5px;
     font-size: large;
+    text-align: center;
+}
+
+.widgets-colors-magenta {
+    color: white;
+    background-color: #9850CE;
+}
+
+.widgets-colors-good-green {
+    color: white;
+    background-color: #5FC8A4;
 }
 
 /* Individual components */

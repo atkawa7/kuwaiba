@@ -15,11 +15,8 @@
  */
 package org.neotropic.kuwaiba.modules.core.navigation.properties;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
@@ -46,12 +43,7 @@ import org.neotropic.util.visual.properties.StringProperty;
  * A factory class that builds property sets given business objects.
  * @author Orlando Paz  {@literal <orlando.paz@kuwaiba.org>}
  */
-public class PropertyFactory {
-    /**
-     * Default formatter.
-     */
-    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("EE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
-    
+public class PropertyFactory {    
     /**
      * Builds a property set from a given inventory object
      * @param businessObject The business object
@@ -91,8 +83,10 @@ public class PropertyFactory {
                         break;
                     case Constants.DATA_TYPE_DATE:
                     case Constants.DATA_TYPE_TIME_STAMP:
-                        objectProperties.add(new LocalDateProperty(anAttribute.getName(), anAttribute.getDisplayName(), 
-                                anAttribute.getDescription(), (Long)businessObject.getAttributes().get(anAttribute.getName())));
+                        LocalDateProperty aDateProperty = new LocalDateProperty(anAttribute.getName(), anAttribute.getDisplayName(), 
+                                anAttribute.getDescription(), (Long)businessObject.getAttributes().get(anAttribute.getName()));
+                        aDateProperty.setReadOnly(anAttribute.getName().equals(Constants.PROPERTY_CREATION_DATE));
+                        objectProperties.add(aDateProperty);
                         break;
                     case Constants.DATA_TYPE_LIST_TYPE:
                         try {
@@ -108,7 +102,7 @@ public class PropertyFactory {
                         }
                         break;
                 }
-            } catch(NumberFormatException ex) { // Faulty values will be ignored and silently logged
+            } catch(Exception ex) { // Faulty values will be ignored and silently logged
                 Logger.getLogger(PropertyFactory.class.getName()).log(Level.SEVERE, 
                         String.format(ts.getTranslatedString(String.format("module.propertysheet.labels.wrong-data-type", anAttribute.getName(), 
                                 businessObject.getId(), businessObject.getAttributes().get(anAttribute.getName())))));

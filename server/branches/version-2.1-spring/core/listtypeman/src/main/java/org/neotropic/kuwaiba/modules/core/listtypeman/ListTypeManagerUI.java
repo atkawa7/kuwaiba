@@ -250,13 +250,9 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
     private void buildListTypeGrid() throws InvalidArgumentException, MetadataObjectNotFoundException {
         //build list type grid
         List<ClassMetadataLight> listTypes = mem.getSubClassesLight(Constants.CLASS_GENERICOBJECTLIST, false, false);
-             
         ListDataProvider<ClassMetadataLight> dataProvider = new ListDataProvider<>(listTypes);
-        
         tblListTypes.setDataProvider(dataProvider);
-        
         tblListTypes.setHeightFull();
-        
         tblListTypes.addColumn(ClassMetadataLight::getName)
                 .setHeader(String.format("%s %s", ts.getTranslatedString("module.listtypeman.listtype"), ts.getTranslatedString("module.general.labels.name")))
                 .setKey(ts.getTranslatedString("module.general.labels.name"));

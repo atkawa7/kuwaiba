@@ -52,6 +52,7 @@ public class ServiceDashboard extends HorizontalLayout {
             List<AbstractProperty> serviceAttributes = PropertyFactory.propertiesFromBusinessObject(this.service, ts, aem, mem);
             this.shtServiceProperties = new PropertySheet(ts, serviceAttributes, ts.getTranslatedString("module.propertysheet.labels.header"));
             add(this.shtServiceProperties);
+            add(new NetworkResourcesWidget(ts.getTranslatedString("module.serviceman.widgets.network-resources.title")));
         } catch (InventoryException ex) {
             add(new Label(ex.getMessage()));
         }

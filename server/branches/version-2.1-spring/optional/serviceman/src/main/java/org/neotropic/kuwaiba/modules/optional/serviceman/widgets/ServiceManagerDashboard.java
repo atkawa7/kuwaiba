@@ -23,6 +23,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -241,10 +242,10 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
             VerticalLayout lytSearchResult = new VerticalLayout();
             lytSearchResult.setSizeFull();
             lytSearchResult.setPadding(false);
-            Button btnTitle = new Button(result.toString());
-            btnTitle.setClassName("search-result-title");
-            btnTitle.setWidthFull();
-            btnTitle.addClickListener( e -> {
+            Div divTitle = new Div(new Label(result.toString()));
+            divTitle.setClassName("search-result-title");
+            divTitle.setWidthFull();
+            divTitle.addClickListener( e -> {
                 replaceContent(this.resultCallback.buildSearchResultDetailsPage(result));
             });
             
@@ -261,7 +262,7 @@ public class ServiceManagerDashboard extends VerticalLayout implements AbstractD
                 lytActions.add(btnAction);
             });
             
-            lytSearchResult.add(btnTitle, lytActions);
+            lytSearchResult.add(divTitle, lytActions);
             return lytSearchResult;
         } 
     }    
