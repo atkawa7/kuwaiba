@@ -22,6 +22,7 @@ import com.vaadin.flow.component.Synchronize;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.shared.Registration;
+import elemental.json.JsonValue;
 
 /**
  *
@@ -126,6 +127,15 @@ public class GoogleMap extends Component implements HasComponents {
     public void setFullscreenControl(boolean fullscreenControl) {
         getElement().setProperty(Constants.Property.FULLSCREEN_CONTROL, fullscreenControl);
     }
+    
+    public JsonValue getStyles() {
+        return (JsonValue) getElement().getPropertyRaw(Constants.Property.STYLES);
+    }
+    
+    public void setStyles(JsonValue styles) {
+        getElement().setPropertyJson(Constants.Property.STYLES, styles);
+    }
+    
     public void setWidth(String width) {
         getElement().setProperty(Constants.Property.WIDTH, width);
     }

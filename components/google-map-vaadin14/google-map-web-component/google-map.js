@@ -41,19 +41,30 @@ class GoogleMap extends PolymerElement {
       <style>
         /* Always set the map height explicitly to define the size of the div
         * element that contains the map. */
-        #map {          
+        .fullSize {          
           height: 100%;
           width: 100%;
+          padding: 0;
+          margin: 0;
         }
       </style>
       <slot></slot>
       <!--Container for the map-->
-      <div id="map"></div>
+      <div class="fullSize" id="[[divId]]"></div>
     `;
   }
 
   static get properties() {
     return {
+      /**
+       * @attribute divId
+       * @type {string}
+       * @default 'map'
+       */
+      divId: {
+        type: String,
+        value: 'map'
+      },
       /**
        * The string contains your application API key. See https://developers.google.com/maps/documentation/javascript/get-api-key
        */
@@ -130,6 +141,14 @@ class GoogleMap extends PolymerElement {
       fullscreenControl: {
         type: Boolean,
         observer: '_fullscreenControlChanged'
+      },
+      /**
+       * @attribute styles
+       * @type {array}
+       */
+      styles: {
+        type: Array,
+        observer: '_stylesChanged'
       }
     };
   }
@@ -162,12 +181,13 @@ class GoogleMap extends PolymerElement {
      * Map instance which define a single map on a page
      * @type google.map.Map
      */
-    this.map = new google.maps.Map(this.shadowRoot.querySelector('#map'), {
+    this.map = new google.maps.Map(this.shadowRoot.getElementById(this.divId), {
       center: {lat: this.lat, lng: this.lng},
       zoom: this.zoom,
       disableDefaultUI: this.disableDefaultUi
     });
     this.map.setMapTypeId(this.mapTypeId);
+    this._stylesChanged(this.styles);
     /*
     var drawingManager = new google.maps.drawing.DrawingManager({
       drawingMode: 'marker'
@@ -323,6 +343,10 @@ class GoogleMap extends PolymerElement {
   _fullscreenControlChanged(newValue) {
     if (this.map)
       this.map.setOptions({fullscreenControl : newValue});
+  }
+  _stylesChanged(newValue) {
+    if (this.map)
+      this.map.setOptions({styles: newValue});
   }
 }
 

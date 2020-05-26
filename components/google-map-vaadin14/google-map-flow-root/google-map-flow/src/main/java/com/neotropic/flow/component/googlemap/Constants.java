@@ -59,6 +59,7 @@ public class Constants {
         public static String PIXEL_OFFSET = "pixelOffset";
         public static String POSITION = "position";
         public static String Z_INDEX = "zIndex";
+        public static String STYLES = "styles";
     }
     
     public static class Default {

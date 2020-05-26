@@ -27,6 +27,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.Command;
 import com.vaadin.flow.server.PWA;
 import elemental.json.Json;
+import elemental.json.JsonArray;
 import elemental.json.JsonObject;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,7 +81,7 @@ public class MainView extends VerticalLayout {
         
         GoogleMapMarker googleMapMarker = new GoogleMapMarker(2.4574702, -76.6349535);
         googleMap.newMarker(googleMapMarker);
-        googleMap.setMapTypeId(Constants.MapTypeId.HYBRID);
+        googleMap.setMapTypeId(Constants.MapTypeId.ROADMAP);
         
         JsonObject label = Json.createObject();
         label.put("color", "#305F72"); //NOI18N
@@ -332,6 +333,32 @@ public class MainView extends VerticalLayout {
         splitLayoutMain.setSplitterPosition(70);
         splitLayoutMain.setSizeFull();
         add(splitLayoutMain);
+        
+//        JsonArray styles = Json.createArray();
+//
+//        JsonArray stylers = Json.createArray();
+//        JsonObject color = Json.createObject();
+//        color.put("color", "#ffffff");
+//        stylers.set(0, color);
+//        
+//        JsonObject style = Json.createObject();
+//        style.put("elementType", "geometry");
+//        style.put("stylers", stylers);
+//        styles.set(0, style);
+//        googleMap.setStyles(styles);
+//        JsonArray styles = Json.createArray();
+//
+        JsonArray styles = Json.createArray();
+        JsonArray stylers = Json.createArray();
+        JsonObject visibility = Json.createObject();
+        visibility.put("visibility", "off");
+        stylers.set(0, visibility);
+        
+        JsonObject style = Json.createObject();
+        style.put("featureType", "poi");
+        style.put("stylers", stylers);
+        styles.set(0, style);
+        googleMap.setStyles(styles);
     }
         
     public void setMarkerListeners(GoogleMap googleMap, GoogleMapMarker googleMapMarker) {
