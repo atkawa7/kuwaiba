@@ -16,12 +16,14 @@
 package com.neotropic.vaadin14.component;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Synchronize;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.shared.Registration;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -173,7 +175,8 @@ public class MxGraphCell extends Component {
         String points = getElement().getProperty(PROPERTY_POINTS);
         
         Gson gson = new Gson();
-        ArrayList<Point> listPoints = gson.fromJson(points, ArrayList.class);
+        Type pointType = new TypeToken<ArrayList<Point>>() {}.getType(); 
+        ArrayList<Point> listPoints = gson.fromJson(points, pointType);
         return listPoints;
     }
         
