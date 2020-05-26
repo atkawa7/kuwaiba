@@ -30,6 +30,7 @@ import java.util.Properties;
 import com.neotropic.kuwaiba.modules.commercial.ospman.AbstractMapProvider;
 import com.neotropic.kuwaiba.modules.commercial.ospman.GeoCoordinate;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OutsidePlantTools;
+import org.neotropic.util.visual.views.ViewEventListener;
 import elemental.json.Json;
 import elemental.json.JsonObject;
 import java.util.ArrayList;
@@ -37,7 +38,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
-import org.neotropic.kuwaiba.core.apis.integration.views.ViewEventListener;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 
 /**

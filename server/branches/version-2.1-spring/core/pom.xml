@@ -20,5 +20,6 @@
         <module>modules-api</module>
         <module>listtypeman</module>
         <module>navigation</module>
+        <module>Visualization</module>
     </modules>
 </project>

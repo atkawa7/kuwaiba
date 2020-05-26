@@ -21,10 +21,15 @@ import java.util.Properties;
 import com.neotropic.kuwaiba.modules.commercial.ospman.AbstractMapProvider;
 import com.neotropic.kuwaiba.modules.commercial.ospman.GeoCoordinate;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OutsidePlantConstants;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OutsidePlantView;
+import org.neotropic.util.visual.views.AbstractView;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractDashboard;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
@@ -72,43 +77,61 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
         this.aem = aem;
         this.bem = bem;
         this.mem = mem;
+        setSizeFull();
         setPadding(false);
         setMargin(false);
+        setSpacing(false);
     }
 
     @Override
     protected void onAttach(AttachEvent attachEvent) {
+        super.onAttach(attachEvent);
         try {
-            this.latitude = (double) aem.getConfigurationVariableValue("widgets.simplemap.centerLatitude");
-        } catch (InventoryException | ClassCastException ex) {
-            this.latitude = OutsidePlantConstants.DEFAULT_CENTER_LATITUDE;
+            OutsidePlantView outsidePlantView = new OutsidePlantView(mem, aem, bem, ts);
+//            AbstractView outsidePlantView = new ViewFactory(mem, aem, bem).createViewInstance(
+//                    "com.neotropic.kuwaiba.modules.commercial.ospman.google.OutsidePlantView");
+            outsidePlantView.buildEmptyView();
+            add(outsidePlantView.getAsComponent());
+        } catch (InvalidArgumentException ex) {
+            Logger.getLogger(OutsidePlantManagerDashboard.class.getName()).log(Level.SEVERE, null, ex);
         }
-        try {
-            this.longitude = (double) aem.getConfigurationVariableValue("widgets.simplemap.centerLongitide");
-        } catch (InventoryException | ClassCastException ex) {
-            this.longitude = OutsidePlantConstants.DEFAULT_CENTER_LONGITUDE;
-        }
-        try {
-            this.zoom = (int) aem.getConfigurationVariableValue("widgets.simplemap.zoom");
-        } catch (InventoryException | ClassCastException ex) {
-            this.zoom = OutsidePlantConstants.DEFAULT_ZOOM;
-        }
-        try {
-            super.onAttach(attachEvent);
-            setSizeFull();
-            String className = (String) aem.getConfigurationVariableValue("general.maps.provider"); //NOI18N
-            Class mapProviderClass = Class.forName(className);
-            if (AbstractMapProvider.class.isAssignableFrom(mapProviderClass)) {
-                String apiKey = (String) aem.getConfigurationVariableValue("general.maps.apiKey"); //NOI18N
-                Properties mapProperties = new Properties();
-                mapProperties.put("apiKey", apiKey); //NOI18N
-                mapProperties.put("center", new GeoCoordinate(latitude, longitude)); //NOI18N
-                mapProperties.put("zoom", zoom);
-                mapProperties.put("bem", bem);
-                
-                AbstractMapProvider mapProvider = (AbstractMapProvider) mapProviderClass.newInstance();
-                mapProvider.initialize(mapProperties);
-                add(mapProvider.getComponent());
+//        } catch (InstantiationException ex) {
+//            Logger.getLogger(OutsidePlantManagerDashboard.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (InvalidArgumentException ex) {
+//            Logger.getLogger(OutsidePlantManagerDashboard.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+/*
+try {
+this.latitude = (double) aem.getConfigurationVariableValue("widgets.simplemap.centerLatitude");
+} catch (InventoryException | ClassCastException ex) {
+this.latitude = OutsidePlantConstants.DEFAULT_CENTER_LATITUDE;
+}
+try {
+this.longitude = (double) aem.getConfigurationVariableValue("widgets.simplemap.centerLongitide");
+} catch (InventoryException | ClassCastException ex) {
+this.longitude = OutsidePlantConstants.DEFAULT_CENTER_LONGITUDE;
+}
+try {
+this.zoom = (int) aem.getConfigurationVariableValue("widgets.simplemap.zoom");
+} catch (InventoryException | ClassCastException ex) {
+this.zoom = OutsidePlantConstants.DEFAULT_ZOOM;
+}
+try {
+super.onAttach(attachEvent);
+setSizeFull();
+String className = (String) aem.getConfigurationVariableValue("general.maps.provider"); //NOI18N
+Class mapProviderClass = Class.forName(className);
+if (AbstractMapProvider.class.isAssignableFrom(mapProviderClass)) {
+String apiKey = (String) aem.getConfigurationVariableValue("general.maps.apiKey"); //NOI18N
+Properties mapProperties = new Properties();
+mapProperties.put("apiKey", apiKey); //NOI18N
+mapProperties.put("center", new GeoCoordinate(latitude, longitude)); //NOI18N
+mapProperties.put("zoom", zoom);
+mapProperties.put("bem", bem);
+
+AbstractMapProvider mapProvider = (AbstractMapProvider) mapProviderClass.newInstance();
+mapProvider.initialize(mapProperties);
+add(mapProvider.getComponent());
 ////                SplitLayout splitLayout = new SplitLayout();
 ////                splitLayout.addToPrimary(buildTree());
 ////                splitLayout.addToSecondary(mapProvider.getComponent());
@@ -116,13 +139,14 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
 ////                splitLayout.addThemeVariants(SplitLayoutVariant.LUMO_SMALL);
 ////                splitLayout.setSizeFull();
 ////                add(splitLayout);
-            }
-        } catch (Exception ex) {
-            new SimpleNotification(
-                ts.getTranslatedString("module.general.messages.error"), 
-                ex.getLocalizedMessage()
-            ).open();
-        }
+}
+} catch (Exception ex) {
+new SimpleNotification(
+ts.getTranslatedString("module.general.messages.error"),
+ex.getLocalizedMessage()
+).open();
+}
+*/
     }
 ////    private HierarchicalDataProvider getDataProvider() {
 ////        return new AbstractBackEndHierarchicalDataProvider<InventoryObjectNode, Void>() {

@@ -15,11 +15,11 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman;
 
+import org.neotropic.util.visual.views.ViewEventListener;
 import com.vaadin.flow.component.Component;
 import java.util.List;
 import java.util.Properties;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
-import org.neotropic.kuwaiba.core.apis.integration.views.ViewEventListener;
 
 /**
  * All map provider components must extend from this class. This way, using Google Maps, Bing Maps or OpenStreet Map will be transparent for the OSP module
