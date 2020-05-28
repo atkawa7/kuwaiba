@@ -1,17 +1,19 @@
-# GoogleMap Component for Vaadin Flow
+# Google Maps Component for Vaadin Flow
 
-Vaadin 14 Java integration of <google-map> web component
+Adaptation of <google-map> web component for the Vaadin Flow platform
 
 ## License
 
 Apache License 2.0
 
-## Installing
+## Installation
+
+Use the following maven dependency in your project, provided that the component has already been installed in your local repository.
 
 <dependency>
-    <groupId>com.neotropic.vaadin14.component</groupId>
-    <artifactId>google-map-flow</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <groupId>com.neotropic.flow.component</groupId>
+    <artifactId>google-maps-flow</artifactId>
+    <version>1.0</version>
     <type>jar</type>
 </dependency>
 
@@ -20,5 +22,10 @@ Apache License 2.0
 GoogleMap googleMap = new GoogleMap("API_KEY");
 
 ## Starting the test/demo server:
+
 1. Run `mvn jetty:run`.
-2. Open http://localhost:8080 in the browser.
+2. Open http://localhost:8080 in your browser.
+
+## Disclaimer
+
+Google Maps and Vaadin trademarks are property of their respective owners. Neotropic SAS is not affiliated in any way to these companies. Use this component at your own risk.
