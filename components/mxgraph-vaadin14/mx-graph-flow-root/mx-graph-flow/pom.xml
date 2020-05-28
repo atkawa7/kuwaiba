@@ -3,12 +3,12 @@
 
     <groupId>com.neotropic.vaadin14.component</groupId>
     <artifactId>mx-graph-flow</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <name>mx-graph-flow</name>
-    <description>vaadin add on that uses the polymer component of mxgraph for the creation of graphs and diagrams</description>
+    <version>1.0</version>
+    <name>Mx Graph Component for Vaadin Flow</name>
+    <description>Vaadin Flow wrapper for the polymer component of the library Mx Graph</description>
 
     <properties>
-        <vaadin.version>14.1.17</vaadin.version>
+        <vaadin.version>14.1.16</vaadin.version>
 
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -20,7 +20,7 @@
         <jetty.version>9.4.15.v20190215</jetty.version>
     </properties>
     <organization>
-        <name>Neotropic</name>
+        <name>Neotropic SAS</name>
     </organization>
     <licenses>
         <license>
