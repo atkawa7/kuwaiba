@@ -77,6 +77,7 @@ import com.neotropic.inventory.modules.sync.AbstractRunnableSyncFindingsManager;
 import com.neotropic.inventory.modules.sync.AbstractRunnableSyncResultsManager;
 import com.neotropic.inventory.modules.sync.LocalSyncAction;
 import com.neotropic.inventory.modules.sync.LocalSyncProvider;
+import java.util.LinkedHashMap;
 import org.inventory.communications.core.LocalConfigurationVariable;
 import org.inventory.communications.core.LocalMPLSConnectionDetails;
 import org.inventory.communications.core.LocalValidator;
@@ -109,6 +110,7 @@ import org.inventory.communications.wsclient.RemoteMPLSConnectionDetails;
 import org.inventory.communications.wsclient.RemoteObject;
 import org.inventory.communications.wsclient.RemoteObjectLight;
 import org.inventory.communications.wsclient.RemoteObjectLightList;
+import org.inventory.communications.wsclient.RemoteObjectRelatedObjects;
 import org.inventory.communications.wsclient.RemoteObjectSpecialRelationships;
 import org.inventory.communications.wsclient.RemotePool;
 import org.inventory.communications.wsclient.RemoteQueryLight;
@@ -2230,10 +2232,41 @@ public class CommunicationsStub {
             return false;
         }
     }
+    /**
+     * Connect two ports using a mirrorMultiple relationship
+     * @param aObjectClass Port a class
+     * @param aObjectId Port a id
+     * @param bObjectClasses Port b classes
+     * @param bObjectIds Port b ids
+     */
+    public boolean connectMirrorMultiplePort(String aObjectClass, String aObjectId, 
+        List<String> bObjectClasses, List<String> bObjectIds) {
+        try {
+            service.connectMirrorMultiplePort(aObjectClass, aObjectId, bObjectClasses, bObjectIds, session.getSessionId());
+            return true;
+        } catch(Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
     
     public boolean releaseMirrorPort (String objectClass, String objectId) {
         try {
             service.releaseMirrorPort (objectClass, objectId, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    /**
+     * Releases a port mirroring multiple relationship between two ports, receiving one of the ports as parameter
+     * @param objectClass Object class
+     * @param objectId Object id
+     */
+    public boolean releaseMirrorMultiplePort (String objectClass, String objectId) {
+        try {
+            service.releaseMirrorMultiplePort(objectClass, objectId, session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -2417,7 +2450,39 @@ public class CommunicationsStub {
             return null;
         }
     }
-    
+    /**
+     * Gets A tree representation of all physical paths as a hash map.
+     * @param objectClass The source port class
+     * @param objectId The source port id
+     * @return A tree representation of all physical paths as a hash map or null
+     *  If any of the objects involved in the path cannot be found
+     *  If any of the object classes involved in the path cannot be found
+     *  If any of the objects involved in the path has a malformed list type attribute
+     *  If any of the objects involved in the path has an invalid objectId or className
+     */   
+    public HashMap<LocalObjectLight, List<LocalObjectLight>> getPhysicalTree(String objectClass, String objectId) {
+        try {
+            HashMap<LocalObjectLight, List<LocalObjectLight>> tree = new LinkedHashMap();
+            RemoteObjectRelatedObjects remoteTree = service.getPhysicalTree(objectClass, objectId, session.getSessionId());
+            if (remoteTree.getObjs() != null && remoteTree.getRelatedObjects() != null &&
+                remoteTree.getObjs().size() == remoteTree.getRelatedObjects().size()) {
+                
+                for (int i = 0; i < remoteTree.getObjs().size(); i++) {
+                    RemoteObjectLight remoteObject = remoteTree.getObjs().get(i);
+                    LocalObjectLight object = new LocalObjectLight(remoteObject.getId(), remoteObject.getName(), remoteObject.getClassName());
+                    tree.put(object, new ArrayList());
+                    for (RemoteObjectLight nextRemoteObject : remoteTree.getRelatedObjects().get(i).getList()) {
+                        LocalObjectLight nextObject = new LocalObjectLight(nextRemoteObject.getId(), nextRemoteObject.getName(), nextRemoteObject.getClassName());
+                        tree.get(object).add(nextObject);
+                    }
+                }
+            }
+            return tree;
+        } catch(Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
     /**
      * Convenience method that returns the link connected to a port (if any). It serves to avoid calling {@link getSpecialAttribute} two times.
      * @param portClassName The class of the port

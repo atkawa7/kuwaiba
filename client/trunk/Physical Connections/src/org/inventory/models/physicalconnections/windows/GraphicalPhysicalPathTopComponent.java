@@ -26,8 +26,10 @@ import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
+import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.models.physicalconnections.scene.ObjectBoxWidget;
 import org.inventory.models.physicalconnections.scene.PhysicalPathScene;
+import org.inventory.models.physicalconnections.scene.PhysicalTreeScene;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
@@ -43,12 +45,21 @@ import org.openide.windows.WindowManager;
 public class GraphicalPhysicalPathTopComponent extends TopComponent implements ExplorerManager.Provider {
     private ExplorerManager em;
     private JScrollPane pnlScrollMain;
-    private PhysicalPathScene scene;
+    private AbstractScene scene;
     private JToolBar barMain;
     private JButton btnExport;
     private JButton btnRefresh;
 
     public GraphicalPhysicalPathTopComponent(PhysicalPathScene scene) {
+        this.scene = scene;
+        this.setDisplayName("Physical Path");
+        setLayout(new BorderLayout());
+        em = new ExplorerManager();
+        associateLookup(scene.getLookup());
+        initComponents();
+    }
+    
+    public GraphicalPhysicalPathTopComponent(PhysicalTreeScene scene) {
         this.scene = scene;
         this.setDisplayName("Physical Path");
         setLayout(new BorderLayout());
@@ -84,10 +95,13 @@ public class GraphicalPhysicalPathTopComponent extends TopComponent implements E
         btnRefresh.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                for (LocalObjectLight node : ((PhysicalPathScene) scene).getNodes()) {
+                for (Object node : ((AbstractScene) scene).getNodes()) {
                     Widget widget = scene.findWidget(node);
                     if (widget instanceof ObjectBoxWidget) {
-                        ((ObjectBoxWidget) widget).getLabelWidget().setLabel(node.toString());
+                        if (scene instanceof PhysicalTreeScene)
+                            ((ObjectBoxWidget) widget).getLabelWidget().setLabel(((LocalObjectLight) node).getName());
+                        else
+                            ((ObjectBoxWidget) widget).getLabelWidget().setLabel(node.toString());
                         
                         widget.revalidate();
                         widget.repaint();

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -11,7 +11,6 @@
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
- * 
  */
 package org.inventory.models.physicalconnections.scene;
 
@@ -20,6 +19,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.visual.actions.CustomAddRemoveControlPointAction;
 import org.inventory.core.visual.actions.CustomMoveControlPointAction;
@@ -34,9 +34,9 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Service class for this module
- * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class PhysicalPathScene extends AbstractScene <LocalObjectLight, LocalObjectLight>{
+public class PhysicalTreeScene extends AbstractScene <LocalObjectLight, LocalObjectLight>{
     public static final int X_OFFSET = 50;
     /**
      * Default control point move action (shared by all connection widgets)
@@ -48,16 +48,16 @@ public class PhysicalPathScene extends AbstractScene <LocalObjectLight, LocalObj
      */
     private final CustomAddRemoveControlPointAction addRemoveControlPointAction =
             new CustomAddRemoveControlPointAction(this);
-    private Router router;
-
-    public PhysicalPathScene() {       
+    
+    private final Router router;
+    
+    public PhysicalTreeScene() {       
         nodeLayer = new LayerWidget(this);
         edgeLayer = new LayerWidget(this);
-        router = RouterFactory.createFreeRouter(); 
-//        router = RouterFactory.createOrthogonalSearchRouter(nodeLayer);
-//        nodeLayer.setLayout(LayoutFactory.createHorizontalFlowLayout(LayoutFactory.SerialAlignment.LEFT_TOP, 50));
+        router = RouterFactory.createFreeRouter();
+        
         addChild(nodeLayer);
-        addChild(edgeLayer);
+        addChild(edgeLayer);  
     }
     
     public LayerWidget getNodeLayer() {
@@ -66,8 +66,10 @@ public class PhysicalPathScene extends AbstractScene <LocalObjectLight, LocalObj
     
     @Override
     protected Widget attachNodeWidget(LocalObjectLight node) {
-        Color randomColor = CommunicationsStub.getInstance().getMetaForClass(node.getClassName(), false).getColor();//ObjectBoxWidget.colorPalette[new Random().nextInt(12)];
-        Widget widget = new ObjectBoxWidget(this, node, randomColor);
+        LocalClassMetadata nodeClass = CommunicationsStub.getInstance().getMetaForClass(node.getClassName(), false);
+        Color classColor = nodeClass.getColor();
+        Widget widget = new ObjectBoxWidget(this, node, classColor);
+        ((ObjectBoxWidget) widget).getLabelWidget().setLabel(node.getName());        
         widget.getActions().addAction(createSelectAction());
         initSelectionListener();
         widget.repaint();
@@ -84,11 +86,12 @@ public class PhysicalPathScene extends AbstractScene <LocalObjectLight, LocalObj
         widget.getActions().addAction(moveControlPointAction);
         widget.setControlPointShape(PointShape.SQUARE_FILLED_BIG);
         widget.setEndPointShape(PointShape.SQUARE_FILLED_BIG);
+////        widget.setRouter(RouterFactory.createOrthogonalSearchRouter(nodeLayer, edgeLayer));
         widget.setRouter(router);
         edgeLayer.addChild(widget);
         return widget;
     }
-    
+        
     public void addRootWidget (Widget widget){
         widget.getActions().addAction(ActionFactory.createMoveAction());
         nodeLayer.addChild(widget);

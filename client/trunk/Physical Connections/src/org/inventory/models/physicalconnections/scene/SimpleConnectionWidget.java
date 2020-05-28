@@ -38,6 +38,15 @@ public class SimpleConnectionWidget extends SelectableConnectionWidget {
         getLabelWidget().setVisible(false);
     }
     
+    public SimpleConnectionWidget(PhysicalTreeScene scene, LocalObjectLight object, Color originalColor) {
+        super(scene, object);
+        this.originalColor = originalColor;
+        setRouter(scene.getRouter());
+        setForeground(originalColor);
+        setEndPointShape(PointShape.SQUARE_FILLED_BIG);
+        getLabelWidget().setVisible(false);
+    }
+    
     @Override
     public void notifyStateChanged (ObjectState previousState, ObjectState state) {
         
