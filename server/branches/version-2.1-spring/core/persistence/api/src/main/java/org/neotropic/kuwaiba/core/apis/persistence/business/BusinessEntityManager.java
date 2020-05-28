@@ -783,7 +783,19 @@ public interface BusinessEntityManager extends AbstractEntityManager {
      */
     public List<BusinessObjectLight> getPhysicalPath(String objectClass, String objectId) 
         throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
-
+    
+    /**
+     * Gets A tree representation of all physical paths as a hash map.
+     * @param objectClass The source port class
+     * @param objectId The source port id
+     * @return A tree representation of all physical paths as a hash map
+     * @throws BusinessObjectNotFoundException If any of the objects involved in the path cannot be found
+     * @throws MetadataObjectNotFoundException If any of the object classes involved in the path cannot be found
+     * @throws ApplicationObjectNotFoundException If any of the objects involved in the path has a malformed list type attribute
+     * @throws InvalidArgumentException If any of the objects involved in the path has an invalid objectId or className
+     */    
+    public HashMap<BusinessObjectLight, List<BusinessObjectLight>> getPhysicalTree(String objectClass, String objectId) 
+        throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
     
     //Attachments management
     /**

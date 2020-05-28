@@ -66,6 +66,7 @@ import org.neotropic.kuwaiba.northbound.ws.model.business.RemoteMPLSConnectionDe
 import org.neotropic.kuwaiba.northbound.ws.model.business.RemoteObject;
 import org.neotropic.kuwaiba.northbound.ws.model.business.RemoteObjectLight;
 import org.neotropic.kuwaiba.northbound.ws.model.business.RemoteObjectLightList;
+import org.neotropic.kuwaiba.northbound.ws.model.business.RemoteObjectRelatedObjects;
 import org.neotropic.kuwaiba.northbound.ws.model.business.RemoteObjectSpecialRelationships;
 import org.neotropic.kuwaiba.northbound.ws.model.business.modules.sdh.RemoteSDHContainerLinkDefinition;
 import org.neotropic.kuwaiba.northbound.ws.model.business.modules.sdh.RemoteSDHPosition;
@@ -2063,7 +2064,22 @@ public interface KuwaibaSoapWebService {
             @WebParam(name = "bObjectClass")String[] bObjectClass,
             @WebParam(name = "bObjectId")String[] bObjectId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException;
-    
+    /**
+     * Connect two ports using a mirrorMultiple relationship
+     * @param aObjectClass Port a class
+     * @param aObjectId Port a id
+     * @param bObjectClasses Port b classes
+     * @param bObjectIds Port b ids
+     * @param sessionId Session token
+     * @throws ServerSideException
+     */
+    @WebMethod(operationName = "connectMirrorMultiplePort")
+    public void connectMirrorMultiplePort(
+        @WebParam(name="aObjectClass") String aObjectClass, 
+        @WebParam(name="aObjectId") String aObjectId, 
+        @WebParam(name="bObjectClasses") List<String> bObjectClasses, 
+        @WebParam(name="bObjectIds") List<String> bObjectIds,
+        @WebParam(name="sessionId") String sessionId) throws ServerSideException;
     /**
      * Releases a port mirroring relationship between two ports, receiving one of the ports as parameter
      * @param objectClass Object class
@@ -2074,6 +2090,19 @@ public interface KuwaibaSoapWebService {
      */
     @WebMethod(operationName = "releaseMirrorPort")
     public void releaseMirrorPort(
+            @WebParam(name = "objectClass")String objectClass,
+            @WebParam(name = "objectId")String objectId,
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException;
+    /**
+     * Releases a port mirroring multiple relationship between two ports, receiving one of the ports as parameter
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @param sessionId Session token
+     * @throws ServerSideException If the object can not be found
+     *                             If the class can not be found
+     */
+    @WebMethod(operationName = "releaseMirrorMultiplePort")
+    public void releaseMirrorMultiplePort(
             @WebParam(name = "objectClass")String objectClass,
             @WebParam(name = "objectId")String objectId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException;
@@ -2278,6 +2307,24 @@ public interface KuwaibaSoapWebService {
     public List<RemoteObjectLight> getPhysicalPath (@WebParam(name = "objectClass")String objectClass,
             @WebParam(name = "objectId")String objectId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException;
+    
+    /**
+     * Gets the tree representation of all physical paths.
+     * @param objectClass Port object class
+     * @param objectId Port object id
+     * @param sessionId Session token
+     * @return A tree representation of all physical paths.
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *  If any of the objects involved in the path cannot be found
+     *  If any of the object classes involved in the path cannot be found
+     *  If any of the objects involved in the path has a malformed list type attribute
+     *  If any of the objects involved in the path has an invalid objectId or className
+     */
+    @WebMethod(operationName = "getPhysicalTree")
+    public RemoteObjectRelatedObjects getPhysicalTree(
+        @WebParam(name = "objectClass") String objectClass, 
+        @WebParam(name = "objectId") String objectId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException;
    
     /**
      * Connects pairs of ports (if they are not connected already) using physical link

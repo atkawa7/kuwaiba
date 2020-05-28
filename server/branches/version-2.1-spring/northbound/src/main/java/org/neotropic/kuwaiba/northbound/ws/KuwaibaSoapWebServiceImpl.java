@@ -132,6 +132,7 @@ import org.neotropic.kuwaiba.northbound.ws.model.business.RemoteMPLSConnectionDe
 import org.neotropic.kuwaiba.northbound.ws.model.business.RemoteObject;
 import org.neotropic.kuwaiba.northbound.ws.model.business.RemoteObjectLight;
 import org.neotropic.kuwaiba.northbound.ws.model.business.RemoteObjectLightList;
+import org.neotropic.kuwaiba.northbound.ws.model.business.RemoteObjectRelatedObjects;
 import org.neotropic.kuwaiba.northbound.ws.model.business.RemoteObjectSpecialRelationships;
 import org.neotropic.kuwaiba.northbound.ws.model.business.modules.sdh.RemoteSDHContainerLinkDefinition;
 import org.neotropic.kuwaiba.northbound.ws.model.business.modules.sdh.RemoteSDHPosition;
@@ -2769,6 +2770,41 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
           throw new ServerSideException(ex.getMessage());
         }
     }
+    
+    @Override
+    public void connectMirrorMultiplePort(String aObjectClass, String aObjectId, List<String> bObjectClasses, List<String>  bObjectIds, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
+        for (String bObjectId : bObjectIds) {
+            if (aObjectId.equals(bObjectId))
+                throw new ServerSideException("A port can not be mirror to itself");
+        }
+        try {
+            aem.validateCall("connectMirrorMultiplePort", "127.0.0.1", sessionId);
+            final String MIRROR_MULTIPLE = "mirrorMultiple";
+            
+            if (!mem.isSubclassOf("GenericPort", aObjectClass))
+                throw new ServerSideException(String.format("Object %s is not a port", bem.getObjectLight(aObjectClass, aObjectId)));
+                        
+            for (int i = 0; i < bObjectClasses.size(); i++) {
+                if (!mem.isSubclassOf("GenericPort", aObjectClass)) {
+                    throw new ServerSideException(String.format(
+                        "Object %s is not a port", 
+                        bem.getObjectLight(bObjectClasses.get(i), bObjectIds.get(i))));
+                }
+                if (bem.hasSpecialRelationship(bObjectClasses.get(i), bObjectIds.get(i), MIRROR_MULTIPLE, 1)) //NOI18N
+                    throw new ServerSideException(String.format("Object %s already has a %s port", bem.getObjectLight(bObjectClasses.get(i), bObjectIds.get(i)), MIRROR_MULTIPLE));
+                
+                bem.createSpecialRelationship(aObjectClass, aObjectId, bObjectClasses.get(i), bObjectIds.get(i), MIRROR_MULTIPLE, true); //NOI18N
+            
+                aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), aObjectClass, aObjectId, 
+                    ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                    MIRROR_MULTIPLE, "", bObjectClasses.get(i) + ", " + bObjectIds.get(i), ""); //NOI18N      
+            }
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
 
     @Override
     public void releaseMirrorPort(String objectClass, String objectId, String sessionId) throws ServerSideException {
@@ -2798,6 +2834,34 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
                     String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "releaseMirrorPort"), ex);
           throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void releaseMirrorMultiplePort(String objectClass, String objectId, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
+        
+        try {
+            aem.validateCall("releaseMirrorMultiplePort", "127.0.0.1", sessionId);
+            if (!mem.isSubclassOf("GenericPort", objectClass)) //NOI18N
+                throw new ServerSideException(String.format("Object %s is not a port", bem.getObjectLight(objectClass, objectId)));
+            final String MIRROR_MULTIPLE = "mirrorMultiple"; //NOI18N
+                        
+            BusinessObjectLight theOtherPort = null;
+            if (bem.hasSpecialRelationship(objectClass, objectId, MIRROR_MULTIPLE, 1))
+                theOtherPort = bem.getSpecialAttribute(objectClass, objectId, MIRROR_MULTIPLE).get(0);
+            
+            if (theOtherPort == null)
+                throw new ServerSideException(String.format("Object %s no has a mirror multiple port", bem.getObjectLight(objectClass, objectId)));
+                
+            bem.releaseSpecialRelationship(objectClass, objectId, "-1", MIRROR_MULTIPLE);
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), objectClass, objectId, 
+                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                MIRROR_MULTIPLE, theOtherPort.getId(), "", ""); //NOI18N
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
         }
     }
 
@@ -3227,6 +3291,20 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
             Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
                     String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "getPhysicalPath"), ex);
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemoteObjectRelatedObjects getPhysicalTree(String objectClass, String objectId, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
+        try {
+            aem.validateCall("getPhysicalTree", "127.0.0.1", sessionId);
+            if (!mem.isSubclassOf("GenericPort", objectClass))
+                throw new ServerSideException(String.format("Class %s is not a port", objectClass));
+            return new RemoteObjectRelatedObjects(bem.getPhysicalTree(objectClass, objectId));            
+        } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
