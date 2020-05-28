@@ -17,23 +17,32 @@ package com.neotropic.kuwaiba.modules.commercial.ospman.widgets;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import java.util.Properties;
-import com.neotropic.kuwaiba.modules.commercial.ospman.AbstractMapProvider;
-import com.neotropic.kuwaiba.modules.commercial.ospman.GeoCoordinate;
-import com.neotropic.kuwaiba.modules.commercial.ospman.OutsidePlantConstants;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OutsidePlantView;
-import org.neotropic.util.visual.views.AbstractView;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.neotropic.kuwaiba.modules.commercial.ospman.actions.NewOspViewAction;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.menubar.MenuBar;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractDashboard;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.application.ViewObject;
+import org.neotropic.kuwaiba.core.apis.persistence.application.ViewObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
+import org.neotropic.kuwaiba.visualization.views.ViewNodeIconGenerator;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
 /**
@@ -66,12 +75,18 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
     private double latitude;
     private int zoom;
     
+    private HorizontalLayout hlyQuickActions;
+    private VerticalLayout vlyContent;
+    
+    private NewOspViewAction newOspViewAction;
+    
     public OutsidePlantManagerDashboard(
         TranslationService ts, 
         ResourceFactory resourceFactory,
         ApplicationEntityManager aem, 
         BusinessEntityManager bem, 
-        MetadataEntityManager mem) {
+        MetadataEntityManager mem,
+        NewOspViewAction newOspViewAction) {
         this.ts = ts;
         this.resourceFactory = resourceFactory;
         this.aem = aem;
@@ -80,21 +95,67 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
         setSizeFull();
         setPadding(false);
         setMargin(false);
-        setSpacing(false);
+        this.newOspViewAction = newOspViewAction;
     }
 
     @Override
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
-        try {
-            OutsidePlantView outsidePlantView = new OutsidePlantView(mem, aem, bem, ts);
+        hlyQuickActions = new HorizontalLayout(buildQuickActionsMenu());
+        
+        vlyContent = new VerticalLayout();
+        vlyContent.setSizeFull();
+        VerticalLayout vlySearch = new VerticalLayout();
+        vlySearch.setAlignItems(Alignment.CENTER);
+        VerticalLayout vlySearchResults = new VerticalLayout();
+        vlySearchResults.setSizeFull();
+                
+        TextField txtSearch = new TextField();
+        txtSearch.setClassName("search-box-large");
+        txtSearch.setPlaceholder(ts.getTranslatedString("module.general.messages.search"));
+        txtSearch.addKeyPressListener(event -> {
+            if (event.getKey().matches(Key.ENTER.getKeys().get(0))) {
+                try {
+                    List<ViewObjectLight> viewObjs = aem.getOSPViews();
+                    vlySearchResults.removeAll();
+                    
+                    List<ViewObjectLight> filteredViewObjs = viewObjs.stream()
+                        .filter(viewObject -> 
+                            viewObject.getName().toLowerCase().contains(txtSearch.getValue().toLowerCase())
+                        )
+                        .collect(Collectors.toList());
+                    if (filteredViewObjs.isEmpty()) {
+                        vlySearchResults.add(new Label(ts.getTranslatedString("module.general.messages.no-search-result")));
+                    } else {
+                        Grid<ViewObjectLight> grdResults = new Grid();
+                        grdResults.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
+                        grdResults.setItems(filteredViewObjs);
+                        grdResults.addColumn(new ViewObjectLightSearchResultRenderer());
+                        vlySearchResults.add(grdResults);
+                    }
+                } catch (InvalidArgumentException ex) {
+                    new SimpleNotification(
+                        ts.getTranslatedString("module.general.messages.error"), 
+                        ex.getLocalizedMessage()).open();
+                }
+            }
+        });
+        vlySearch.add(txtSearch);
+        
+        vlyContent.add(vlySearch, vlySearchResults);
+        
+        add(hlyQuickActions, vlyContent);
+        
+////        try {
+////            OutsidePlantView outsidePlantView = new OutsidePlantView(mem, aem, bem, ts);
 //            AbstractView outsidePlantView = new ViewFactory(mem, aem, bem).createViewInstance(
 //                    "com.neotropic.kuwaiba.modules.commercial.ospman.google.OutsidePlantView");
-            outsidePlantView.buildEmptyView();
-            add(outsidePlantView.getAsComponent());
-        } catch (InvalidArgumentException ex) {
-            Logger.getLogger(OutsidePlantManagerDashboard.class.getName()).log(Level.SEVERE, null, ex);
-        }
+////            outsidePlantView.buildEmptyView();
+////            add(outsidePlantView.getAsComponent());
+////        } catch (InvalidArgumentException ex) {
+////            Logger.getLogger(OutsidePlantManagerDashboard.class.getName()).log(Level.SEVERE, null, ex);
+////        }
+
 //        } catch (InstantiationException ex) {
 //            Logger.getLogger(OutsidePlantManagerDashboard.class.getName()).log(Level.SEVERE, null, ex);
 //        } catch (InvalidArgumentException ex) {
@@ -147,6 +208,52 @@ ex.getLocalizedMessage()
 ).open();
 }
 */
+    }
+    private MenuBar buildQuickActionsMenu() {
+        MenuBar mnuQuickActions = new MenuBar();
+        mnuQuickActions.setWidthFull();
+        mnuQuickActions.addItem(newOspViewAction.getDisplayName(), event -> {
+            addOutsidePlantView(null);
+        });
+        return mnuQuickActions;
+    }
+    private void addOutsidePlantView(ViewObjectLight viewObjectLight) {
+        try {
+            removeAll();
+            OutsidePlantView outsidePlantView = new OutsidePlantView(mem, aem, bem, ts, 
+                new ViewNodeIconGenerator(resourceFactory));
+            if (viewObjectLight == null)
+                outsidePlantView.buildEmptyView();
+            else {
+                ViewObject viewObject = aem.getOSPView(viewObjectLight.getId());
+                outsidePlantView.getProperties().put(Constants.PROPERTY_ID, viewObjectLight.getId());
+                outsidePlantView.getProperties().put(Constants.PROPERTY_NAME, viewObjectLight.getName());
+                outsidePlantView.getProperties().put(Constants.PROPERTY_DESCRIPTION, viewObjectLight.getDescription());
+                outsidePlantView.buildWithSavedView(viewObject.getStructure());
+            }
+            add(outsidePlantView.getAsComponent());
+        } catch (InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+            new SimpleNotification(
+                ts.getTranslatedString("module.general.messages.error"), 
+                ex.getLocalizedMessage()).open();
+        }
+    }
+    public class ViewObjectLightSearchResultRenderer extends ComponentRenderer<VerticalLayout, ViewObjectLight> {
+        @Override
+        public VerticalLayout createComponent(ViewObjectLight viewObjectLight) {
+            VerticalLayout vltSearchResult = new VerticalLayout();
+            vltSearchResult.setSizeFull();
+            vltSearchResult.setPadding(false);
+            vltSearchResult.setMargin(false);
+            Div divTitle = new Div(new Label(viewObjectLight.getName()));
+            divTitle.setClassName("search-result-title");
+            divTitle.setWidthFull();
+            divTitle.addClickListener(event -> {
+                addOutsidePlantView(viewObjectLight);
+            });
+            vltSearchResult.add(divTitle);
+            return vltSearchResult;
+        }
     }
 ////    private HierarchicalDataProvider getDataProvider() {
 ////        return new AbstractBackEndHierarchicalDataProvider<InventoryObjectNode, Void>() {

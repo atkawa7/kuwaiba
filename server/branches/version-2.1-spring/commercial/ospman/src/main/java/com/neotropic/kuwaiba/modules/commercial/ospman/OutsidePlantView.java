@@ -25,6 +25,7 @@ import org.neotropic.util.visual.views.ViewMap;
 import org.neotropic.util.visual.views.util.UtilHtml;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.server.StreamResourceRegistry;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -49,6 +50,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotF
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.visualization.views.ViewNodeIconGenerator;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
 /**
@@ -60,16 +62,18 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
      * The map provider used to render this view.
      */
     private AbstractMapProvider mapProvider;
-    private TranslationService ts;
-    private ApplicationEntityManager aem;
-    private BusinessEntityManager bem;
-    private MetadataEntityManager mem;
+    private final TranslationService ts;
+    private final ApplicationEntityManager aem;
+    private final BusinessEntityManager bem;
+    private final MetadataEntityManager mem;
+    private final ViewNodeIconGenerator iconGenerator;
     
-    public OutsidePlantView(MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem, TranslationService ts) {
+    public OutsidePlantView(MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem, TranslationService ts, ViewNodeIconGenerator iconGenerator) {
         this.aem = aem;
         this.bem = bem;
         this.mem = mem;
         this.ts = ts;
+        this.iconGenerator = iconGenerator;
     }
 
     @Override
@@ -221,8 +225,9 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
             for (AbstractViewNode node : this.viewMap.getNodes()) {
                 BusinessObjectLight businessObject = (BusinessObjectLight)node.getIdentifier();
                 this.mapProvider.addMarker(businessObject, 
-                        new GeoCoordinate((double)node.getProperties().get("lat"),  //NOI18N
-                                (double)node.getProperties().get("lon")), "/kuwaiba/icons?class=" + businessObject.getClassName()); //NOI18N
+                    new GeoCoordinate((double)node.getProperties().get("lat"),  //NOI18N
+                    (double)node.getProperties().get("lon")), 
+                    StreamResourceRegistry.getURI(iconGenerator.apply((BusinessObjectViewNode) node)).toString()); //NOI18N
             }
 
             for (AbstractViewEdge edge : this.viewMap.getEdges()) {
@@ -422,8 +427,9 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
             this.viewMap.addNode(newNode);
             if (this.mapProvider != null) { //The view could be created without a graphical representation (the map). so here we make sure that's not the case
                 GeoCoordinate position = (GeoCoordinate)properties.get("position");
-                this.mapProvider.addMarker(localObject, position == null ? this.mapProvider.getCenter() : position , 
-                        "/kuwaiba/icons?class=" + businessObject.getClassName());
+                this.mapProvider.addMarker(localObject, 
+                    position == null ? this.mapProvider.getCenter() : position, 
+                    StreamResourceRegistry.getURI(iconGenerator.apply(newNode)).toString());
             }
             return newNode;
         } else
