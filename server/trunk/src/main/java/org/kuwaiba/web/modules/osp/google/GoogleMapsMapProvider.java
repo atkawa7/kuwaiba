@@ -208,10 +208,16 @@ public class GoogleMapsMapProvider extends AbstractMapProvider {
             }
         });
     }
-
+    
     @Override
     public void addMarkerRightClickListener(ViewEventListener ev) {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        this.map.addMarkerRightClickListener(clickedMarker -> {
+            for (BusinessObjectLight businessObject : nodes.keySet()) {
+                if (nodes.get(businessObject).equals(clickedMarker)) {
+                    ev.eventProcessed(businessObject, ViewEventListener.EventType.TYPE_RIGHTCLICK);
+                }
+            }
+        });
     }
 
     @Override

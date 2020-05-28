@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -2176,33 +2177,88 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         List<BusinessObjectLight> path = new ArrayList<>();
         //If the port is a logical port (virtual port, Pseudowire or service instance, we look for the first physical parent port)
         String logicalPortId = null;
-        //This is to ensure that only works with virtual ports when are direct child of a physical port
-        //it won't work with pseudowires or loopbacks or any logical ports if is direct child of the device 
         if(mem.isSubclassOf(Constants.CLASS_GENERICLOGICALPORT, objectClass)){
-            logicalPortId = objectId; 
-            BusinessObjectLight firstPhysicalParentPort = getFirstParentOfClass(objectClass, objectId, Constants.CLASS_GENERICPHYSICALPORT);
-            objectId = firstPhysicalParentPort != null ? firstPhysicalParentPort.getId() : null;
+            logicalPortId = objectId;
+            if(objectClass.equals("Pseudowire"))
+                objectId = getFirstParentOfClass(objectClass, objectId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT).getId();
+            else{    
+                BusinessObjectLight firstPhysicalParentPort = getFirstParentOfClass(objectClass, objectId, Constants.CLASS_GENERICPHYSICALPORT);
+                objectId = firstPhysicalParentPort.getId();
+            }
         }
-        if(objectId != null){
-            //The first part of the query will return many paths, the longest is the one we need. The others are
-            //subsets of the longest
-            String cypherQuery = "MATCH paths = (o)-[r:" + RelTypes.RELATED_TO_SPECIAL + "*]-(c) "+
-                                 "WHERE o._uuid = '" + objectId + "' AND all(rel in r where rel.name = 'mirror' or rel.name = 'endpointA' or rel.name = 'endpointB') "+
-                                 "WITH nodes(paths) as path " +
-                                 "RETURN path ORDER BY length(path) DESC LIMIT 1";
-            try (Transaction tx = graphDb.beginTx()){
-                if(logicalPortId != null) //if was launch from a virtual port we should add thar port.
-                    path.add(createObjectLightFromNode(graphDb.findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, logicalPortId)));
-                Result result = graphDb.execute(cypherQuery);
-                Iterator<List<Node>> column = result.columnAs("path");
-
-                for (List<Node> listOfNodes : Iterators.asIterable(column)) {
-                    for(Node node : listOfNodes)
-                        path.add(createObjectLightFromNode(node));
-                }
+        //The first part of the query will return many paths, the longest is the one we need. The others are
+        //subsets of the longest
+        String cypherQuery = "MATCH paths = (o)-[r:" + RelTypes.RELATED_TO_SPECIAL + "*]-(c) "+
+                             "WHERE o._uuid = '" + objectId + "' AND all(rel in r where rel.name IN ['mirror','mirrorMultiple'] or rel.name = 'endpointA' or rel.name = 'endpointB') "+
+                             "WITH nodes(paths) as path " +
+                             "RETURN path ORDER BY length(path) DESC LIMIT 1";
+        try (Transaction tx = graphDb.beginTx()){
+            if(logicalPortId != null)
+                path.add(createObjectLightFromNode(graphDb.findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, logicalPortId)));
+            Result result = graphDb.execute(cypherQuery);
+            Iterator<List<Node>> column = result.columnAs("path");
+            
+            for (List<Node> listOfNodes : Iterators.asIterable(column)) {
+                for(Node node : listOfNodes)
+                    path.add(createObjectLightFromNode(node));
             }
         }
         return path;
+    }
+    
+    @Override
+    public HashMap<BusinessObjectLight, List<BusinessObjectLight>> getPhysicalTree(String objectClass, String objectId) 
+        throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
+        HashMap<BusinessObjectLight, List<BusinessObjectLight>> tree = new LinkedHashMap();
+        // If the port is a logical port (virtual port, Pseudowire or service instance, we look for the first physical parent port)
+        String logicalPortId = null;
+        if (mem.isSubclassOf(Constants.CLASS_GENERICLOGICALPORT, objectClass)) {
+            logicalPortId = objectId;
+            if (objectClass.equals("Pseudowire")) {
+                BusinessObjectLight object = getFirstParentOfClass(objectClass, objectId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+                objectId = object.getId();
+            } else {
+                BusinessObjectLight firstPhysicalParentPort = getFirstParentOfClass(objectClass, objectId, Constants.CLASS_GENERICPHYSICALPORT);
+                objectId = firstPhysicalParentPort.getId();
+            }
+        }
+        try (Transaction tx = graphDb.beginTx()) {
+            //The first part of the query will return many paths, that we build as a tree
+            StringBuilder queryBuilder = new StringBuilder();
+            queryBuilder.append("MATCH paths = (o)-[r:" + RelTypes.RELATED_TO_SPECIAL + "*]-(c) ");
+            queryBuilder.append("WHERE o._uuid = '" + objectId + "' AND all(rel in r where rel.name IN ['mirror','mirrorMultiple'] or rel.name = 'endpointA' or rel.name = 'endpointB') ");
+            queryBuilder.append("WITH nodes(paths) as path ");
+            queryBuilder.append("RETURN path ORDER BY length(path) DESC");
+
+            BusinessObjectLight logicalPort = null;
+            if (logicalPortId != null) {
+                logicalPort = createObjectLightFromNode(graphDb.findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, logicalPortId));
+                tree.put(logicalPort, new ArrayList());
+            }
+            Result result = graphDb.execute(queryBuilder.toString());
+            Iterator<List<Node>> column = result.columnAs("path"); //NOI18N
+
+            for (List<Node> listOfNodes : Iterators.asIterable(column)) {
+                for (int i = 0; i < listOfNodes.size(); i++) {
+                    BusinessObjectLight object = createObjectLightFromNode(listOfNodes.get(i));
+
+                    if (!tree.containsKey(object))
+                        tree.put(object, new ArrayList());
+
+                    if (logicalPort != null && i == 0)
+                        tree.get(logicalPort).add(object);
+
+                    if (i < listOfNodes.size() - 1) {
+                        BusinessObjectLight nextObject = createObjectLightFromNode(listOfNodes.get(i + 1));
+
+                        if (!tree.get(object).contains(nextObject))
+                            tree.get(object).add(nextObject);
+                    }
+                }
+            }
+            tx.success();
+        }
+        return tree;
     }
     
     @Override

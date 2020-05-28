@@ -27,6 +27,7 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -35,6 +36,7 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.dnd.DropTargetExtension;
 import com.vaadin.ui.dnd.event.DropEvent;
 import com.vaadin.ui.dnd.event.DropListener;
+import com.vaadin.ui.themes.ValoTheme;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.List;
@@ -90,6 +92,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
     
     @Override
     public void createContent() {
+        RemoteSession remoteSession = (RemoteSession) UI.getCurrent().getSession().getAttribute("session");
         try {
             AbstractView theOspView = (AbstractView)PersistenceService.getInstance().getViewFactory().
                     createViewInstance("org.kuwaiba.web.modules.osp.OutsidePlantView"); //NOI18N
@@ -124,6 +127,43 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
             theOspView.addNodeClickListener((source, type) -> {
                 eventBus.notifySubscribers(new DashboardEventListener.DashboardEvent(this, 
                         DashboardEventListener.DashboardEvent.TYPE_SELECTION, new RemoteObjectLight((BusinessObjectLight)source)));
+            });
+            
+            theOspView.addNodeRightClickListener((source, type) -> {
+                Window window = new Window();
+                window.center();
+                window.setModal(true);
+                window.setResizable(true);
+                VerticalLayout lytContent = new VerticalLayout();
+                lytContent.setSizeUndefined();
+                Button btnContaiment = new Button("FTTH Internal View");
+                btnContaiment.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
+                btnContaiment.addClickListener(clickEvent -> {
+                    RemoteObjectLight object = new RemoteObjectLight((BusinessObjectLight) source);
+                    FtthOspNodeInternalView internalView = new FtthOspNodeInternalView(wsBean, remoteSession, object);
+                    if (internalView.canBuildInternalView()) {
+                        Window wnd = new Window();
+                        wnd.setWidth("75%");
+                        wnd.setHeight("75%");
+                        wnd.setContent(internalView.buildInternalView());
+                        wnd.center();
+                        wnd.setModal(true);
+                        wnd.setResizable(true);
+                        UI.getCurrent().addWindow(wnd);
+                    } else {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("Cannot build the internal view to the object valid class are");
+                        stringBuilder.append(String.format("object %s of class %s and id %s ", object.getName(), object.getClassName(), object.getId()));
+                        stringBuilder.append("valid class are");
+                        for (String className : FtthOspNodeInternalView.ClassName.getClassNames())
+                            stringBuilder.append(String.format(" %s", className));
+                        Notifications.showWarning(stringBuilder.toString());
+                    }
+                });
+                lytContent.addComponent(new Label("Actions"));
+                lytContent.addComponent(btnContaiment);
+                window.setContent(lytContent);
+                UI.getCurrent().addWindow(window);
             });
                     
             theOspView.addEdgeClickListener((source, type) -> {
@@ -198,8 +238,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                         lytContent.setWidth(100, Unit.PERCENTAGE);
 
                         wdwOpen.setContent(lytContent);
-                        wdwOpen.setWidth(40, Unit.PERCENTAGE);
-                        
+
                         wdwOpen.center();
                         wdwOpen.setModal(true);
                         UI.getCurrent().addWindow(wdwOpen);
@@ -215,6 +254,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                 else {
                     VerticalLayout lytContent = new VerticalLayout();
                     Window wdwSave = new Window("Save OSP View");
+                    wdwSave.setWidth(300, Unit.PIXELS);
 
                     TextField txtName = new TextField("Name");
                     txtName.setValue(theOspView.getProperties().getProperty(Constants.PROPERTY_NAME)== null ? "" : 
@@ -247,6 +287,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                                 wdwSave.close();
                             }
                         }
+
                     });
 
                     Button btnCancel = new Button("Cancel", (event) -> {
@@ -259,14 +300,13 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                     HorizontalLayout lytButtons = new HorizontalLayout(btnOk, btnCancel);
 
                     lytContent.addComponents(lytProperties, lytButtons);
-                    lytContent.setExpandRatio(lytProperties, 8);
-                    lytContent.setExpandRatio(lytButtons, 2);
+                    lytContent.setExpandRatio(lytProperties, 9);
+                    lytContent.setExpandRatio(lytButtons, 1);
                     lytContent.setComponentAlignment(lytButtons, Alignment.MIDDLE_RIGHT);
-                    lytContent.setMargin(true);
                     lytContent.setSizeFull();
 
-                    wdwSave.setHeight(30, Unit.PERCENTAGE);
-                    wdwSave.setWidth(35, Unit.PERCENTAGE);
+                    wdwSave.setHeight(20, Unit.PERCENTAGE);
+                    wdwSave.setWidth(25, Unit.PERCENTAGE);
                     wdwSave.setContent(lytContent);
 
                     wdwSave.center();
@@ -345,7 +385,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
 
                 wdwSelectRootObjects.setContent(lytContent);
             });
-
+                        
             VerticalLayout lytContent = new VerticalLayout(mnuMain, mapComponent);
             lytContent.setExpandRatio(mnuMain, 0.3f);
             lytContent.setExpandRatio(mapComponent, 9.7f);

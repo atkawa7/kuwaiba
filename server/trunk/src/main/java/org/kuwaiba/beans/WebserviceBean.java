@@ -69,6 +69,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteMPLSConnectionDetail
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLightList;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectRelatedObjects;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
 import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHContainerLinkDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHPosition;
@@ -222,7 +223,9 @@ public interface WebserviceBean {
     public String[] createBulkSpecialObjects(String className, String parentClassName, String parentId, int numberOfSpecialObjects, String namePattern, String ipAddress, String sessionId) throws ServerSideException;
     //Physical connections
     public void connectMirrorPort(String[] aObjectClass, String[] aObjectId, String[] bObjectClass, String[] bObjectId, String ipAddress, String sessionId) throws ServerSideException;
+    public void connectMirrorMultiplePort(String aObjectClass, String aObjectId, List<String> bObjectClasses, List<String>  bObjectIds, String ipAddress, String sessionId) throws ServerSideException;
     public void releaseMirrorPort(String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public void releaseMirrorMultiplePort(String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException;
     public String createPhysicalConnection(String aObjectClass, String aObjectId, String bObjectClass, String bObjectId, String name, String connectionClass, String templateId, String ipAddress, String sessionId) throws ServerSideException;
     public String[] createPhysicalConnections(String[] aObjectClass, String[] aObjectId, String[] bObjectClass, String[] bObjectId, String name, String connectionClass, String templateId, String ipAddress, String sessionId) throws ServerSideException;
     public void deletePhysicalConnection(String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException;
@@ -235,6 +238,7 @@ public interface WebserviceBean {
     public void disconnectPhysicalConnection(String connectionClass, String connectionId, int sideToDisconnect, String ipAddress, String sessionId) throws ServerSideException;
     
     public List<RemoteObjectLight> getPhysicalPath(String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteObjectRelatedObjects getPhysicalTree(String objectClass, String objectId, String ipAddress, String sessionId) throws ServerSideException;
     @Deprecated
     public RemoteLogicalConnectionDetails getLogicalLinkDetails(String linkClass, String linkId, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteViewObject validateSavedE2EView(List<String> linkClasses, List<String> linkIds, RemoteViewObject savedView, String ipAddress, String sessionId) throws ServerSideException;

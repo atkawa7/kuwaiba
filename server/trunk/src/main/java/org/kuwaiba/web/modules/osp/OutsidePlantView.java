@@ -445,6 +445,11 @@ public class OutsidePlantView extends AbstractView<RemoteObjectLight> {
     public void addNodeClickListener(ViewEventListener listener) {
         this.mapProvider.addMarkerClickListener(listener);
     }
+    
+    @Override
+    public void addNodeRightClickListener(ViewEventListener listener) {
+        this.mapProvider.addMarkerRightClickListener(listener);
+    }
 
     @Override
     public void addEdgeClickListener(ViewEventListener listener) {

@@ -311,4 +311,9 @@ public class ObjectView extends AbstractView<RemoteObjectLight> {
     public void addEdgeClickListener(ViewEventListener listener) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public void addNodeRightClickListener(ViewEventListener listener) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

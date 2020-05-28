@@ -143,6 +143,11 @@ public abstract class AbstractView<T> {
      */
     public abstract void addNodeClickListener(ViewEventListener listener);
     /**
+     * Adds a listener to the node right click event
+     * @param listener The listener object.
+     */
+    public abstract void addNodeRightClickListener(ViewEventListener listener);
+    /**
      * Adds a listener to the edge click events.
      * @param listener The listener object.
      */

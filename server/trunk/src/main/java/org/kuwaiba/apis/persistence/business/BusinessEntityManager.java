@@ -802,6 +802,19 @@ public interface BusinessEntityManager {
         throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
     
     /**
+     * Gets A tree representation of all physical paths as a hash map.
+     * @param objectClass The source port class
+     * @param objectId The source port id
+     * @return A tree representation of all physical paths as a hash map
+     * @throws BusinessObjectNotFoundException If any of the objects involved in the path cannot be found
+     * @throws MetadataObjectNotFoundException If any of the object classes involved in the path cannot be found
+     * @throws ApplicationObjectNotFoundException If any of the objects involved in the path has a malformed list type attribute
+     * @throws InvalidArgumentException If any of the objects involved in the path has an invalid objectId or className
+     */    
+    public HashMap<BusinessObjectLight, List<BusinessObjectLight>> getPhysicalTree(String objectClass, String objectId) 
+        throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
+    
+    /**
      * Convenience method that returns the link connected to a port (if any). It serves to avoid calling {@link getSpecialAttribute} two times.
      * @param portClassName The class of the port
      * @param portId The id of the port
