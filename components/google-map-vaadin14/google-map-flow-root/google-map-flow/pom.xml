@@ -4,8 +4,8 @@
 
     <groupId>com.neotropic.flow.component</groupId>
     <artifactId>google-maps-flow</artifactId>
-    <version>1.0.0</version>
-    <name>Google Maps Add-on for Vaadin</name>
+    <version>1.0</version>
+    <name>Google Maps Component for Vaadin Flow</name>
     <description>Google Maps support for Vaadin platform</description>
 
     <properties>
