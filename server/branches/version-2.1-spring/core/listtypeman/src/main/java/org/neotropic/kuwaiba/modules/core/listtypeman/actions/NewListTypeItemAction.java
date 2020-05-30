@@ -19,8 +19,8 @@ package org.neotropic.kuwaiba.modules.core.listtypeman.actions;
 import java.util.HashMap;
 import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractAction;
+import org.neotropic.kuwaiba.core.apis.integration.ActionResponse;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
-import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Privilege;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
@@ -62,6 +62,7 @@ public class NewListTypeItemAction extends AbstractAction {
             HashMap<String, String> attributes = (HashMap<String, String>)parameters.get("attributes");
             try {
                 aem.createListTypeItem(className, name, dispName);
+                return new ActionResponse();
             } catch (InventoryException ex) {
                 throw new ModuleActionException(ex.getMessage());
             } 
