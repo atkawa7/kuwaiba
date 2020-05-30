@@ -31,7 +31,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
  * @param <N> Node object type
  * @param <E> Edge object type
  */
-public class MxGraphView<N, E> {
+public class MxGraphCanvas<N, E> {
     
     MxGraph mxGraph;  
     
@@ -85,7 +85,7 @@ public class MxGraphView<N, E> {
         this.targetEdgeNodes = targetEdgeNodes;
     }  
 
-    public MxGraphView() {
+    public MxGraphCanvas() {
         initGraph();
     }   
     
@@ -93,7 +93,7 @@ public class MxGraphView<N, E> {
        mxGraph = new MxGraph();
        mxGraph.setFullSize();
        mxGraph.getElement().getStyle().set("height", "100%");
-
+       mxGraph.setGrid("img/grid.gif");
        nodes = new HashMap<>();
        edges = new HashMap<>();     
        sourceEdgeNodes = new HashMap<>();
@@ -128,8 +128,8 @@ public class MxGraphView<N, E> {
             newNode.setLabel(node.toString());
             newNode.setWidth(Constants.DEFAULT_ICON_WIDTH);
             newNode.setHeight(Constants.DEFAULT_ICON_HEIGHT);
-            newNode.setX(50 + (xCoordinate)); //The position is scaled
-            newNode.setY(50 + (yCoordinate));
+            newNode.setX((xCoordinate)); //The position is scaled
+            newNode.setY((yCoordinate));
             nodes.put(node, newNode);
             mxGraph.addNode(newNode);
             mxGraph.refreshGraph();
