@@ -53,3 +53,8 @@ vaadin-button {
 .vaadin-grid[part~="cell"] {
     min-height: 20px;
 }
+
+.vaadin-dialog-overlay[part="content"] {
+    padding: 8px 24px;
+    min-width: 0;
+}
