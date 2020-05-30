@@ -18,6 +18,7 @@ package org.neotropic.kuwaiba.modules.optional.serviceman.actions;
 
 import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractAction;
+import org.neotropic.kuwaiba.core.apis.integration.ActionResponse;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Privilege;
@@ -60,6 +61,7 @@ public class NewServicePoolAction extends AbstractAction {
             try {
                 aem.createPoolInObject(customer.getClassName(), customer.getId(), poolName, poolDescription, 
                         Constants.CLASS_GENERICSERVICE, ApplicationEntityManager.POOL_TYPE_MODULE_COMPONENT);
+                return new ActionResponse();
             } catch (InventoryException ex) {
                 throw new ModuleActionException(ex.getMessage());
             } 

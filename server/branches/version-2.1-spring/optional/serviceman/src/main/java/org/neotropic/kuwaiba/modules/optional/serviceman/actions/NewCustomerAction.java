@@ -19,6 +19,7 @@ package org.neotropic.kuwaiba.modules.optional.serviceman.actions;
 import java.util.HashMap;
 import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractAction;
+import org.neotropic.kuwaiba.core.apis.integration.ActionResponse;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Privilege;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
@@ -57,6 +58,7 @@ public class NewCustomerAction extends AbstractAction {
             HashMap<String, String> attributes = (HashMap<String, String>)parameters.get("attributes");
             try {
                 bem.createPoolItem(poolId, customerClass, attributes, null);
+                return new ActionResponse();
             } catch (InventoryException ex) {
                 throw new ModuleActionException(ex.getMessage());
             } 

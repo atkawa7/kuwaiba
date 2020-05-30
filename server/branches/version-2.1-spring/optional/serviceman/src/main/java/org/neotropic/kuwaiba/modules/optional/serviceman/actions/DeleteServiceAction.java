@@ -20,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractAction;
+import org.neotropic.kuwaiba.core.apis.integration.ActionResponse;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Privilege;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
@@ -58,6 +59,7 @@ public class DeleteServiceAction extends AbstractAction {
             try {
                 BusinessObjectLight service = (BusinessObjectLight)parameters.get(Constants.PROPERTY_RELATED_OBJECT);
                 bem.deleteObject(service.getClassName(), service.getId(), true);
+                return new ActionResponse();
             } catch (InventoryException ex) {
                 throw new ModuleActionException(ex.getMessage());
             } catch (Exception ex) {
