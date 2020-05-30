@@ -18,6 +18,7 @@ package org.neotropic.kuwaiba.modules.core.datamodelman.actions;
 
 import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractAction;
+import org.neotropic.kuwaiba.core.apis.integration.ActionResponse;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Privilege;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
@@ -66,6 +67,7 @@ public class NewAttributeAction extends AbstractAction {
             
             try {
                 mem.createAttribute(className, newAttribute, false);
+                return new ActionResponse();
             } catch (InventoryException ex) {
                 throw new ModuleActionException(ex.getMessage());
             } 

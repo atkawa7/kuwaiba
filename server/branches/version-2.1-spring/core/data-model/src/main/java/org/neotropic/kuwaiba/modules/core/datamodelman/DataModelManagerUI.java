@@ -593,9 +593,7 @@ public class DataModelManagerUI extends VerticalLayout {
                     new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
                 }
             } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException
-                    | InvalidArgumentException ex) {
-                Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ApplicationObjectNotFoundException ex) {
+                    | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
                 Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         });     
