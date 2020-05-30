@@ -104,6 +104,6 @@ public abstract class AbstractAction {
      * A functional interface callback code to be executed once the action is triggered.
      */
     public interface ModuleActionCallback {
-        public void execute(ModuleActionParameterSet parameters) throws ModuleActionException;
+        public ActionResponse execute(ModuleActionParameterSet parameters) throws ModuleActionException;
     }
 }

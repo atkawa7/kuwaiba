@@ -59,11 +59,22 @@ public interface ActionCompletedListener {
          * The action that generates the event;
          */
         private Class clazz;
+        /**
+         * Possible action result 
+         */
+        private ActionResponse actionResponse;
 
         public ActionCompletedEvent(int status, String message, Class clazz) {
             this.status= status;
             this.message = message;
             this.clazz = clazz;
+        }
+        
+        public ActionCompletedEvent(int status, String message, Class clazz, ActionResponse actionResponse) {
+            this.status= status;
+            this.message = message;
+            this.clazz = clazz;
+            this.actionResponse = actionResponse;
         }
 
         public String getMessage() {
@@ -89,5 +100,15 @@ public interface ActionCompletedListener {
         public void setClazz(Class clazz) {
             this.clazz = clazz;
         }
+
+        public ActionResponse getActionResponse() {
+            return actionResponse;
+        }
+
+        public void setActionResponse(ActionResponse actionResponse) {
+            this.actionResponse = actionResponse;
+        }
+
+                
     }
 }
