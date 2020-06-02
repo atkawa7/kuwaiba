@@ -24,6 +24,7 @@ import org.neotropic.util.visual.views.ViewEventListener;
 import org.neotropic.util.visual.views.ViewMap;
 import org.neotropic.util.visual.views.util.UtilHtml;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.server.StreamResourceRegistry;
 import java.awt.Color;
@@ -32,6 +33,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -52,6 +54,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.visualization.views.ViewNodeIconGenerator;
 import org.neotropic.util.visual.notifications.SimpleNotification;
+import org.neotropic.util.visual.tools.ToolRegister;
 
 /**
  * Places a set of selected elements on a map and allows the user to connect and explore them.
@@ -68,7 +71,13 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
     private final MetadataEntityManager mem;
     private final ViewNodeIconGenerator iconGenerator;
     
-    public OutsidePlantView(MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem, TranslationService ts, ViewNodeIconGenerator iconGenerator) {
+    public OutsidePlantView(
+        MetadataEntityManager mem, 
+        ApplicationEntityManager aem, 
+        BusinessEntityManager bem, 
+        TranslationService ts, 
+        ViewNodeIconGenerator iconGenerator) {
+        
         this.aem = aem;
         this.bem = bem;
         this.mem = mem;
@@ -235,13 +244,62 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
                 this.mapProvider.addPolyline(businessObject, (BusinessObjectLight)this.viewMap.getEdgeSource(edge).getIdentifier(), 
                         (BusinessObjectLight)this.viewMap.getEdgeTarget(edge).getIdentifier(), (List<GeoCoordinate>)edge.getProperties().get("controlPoints"), edge.getProperties()); //NOI18N
             }
-
+            addToolManager(this.mapProvider);
             return this.mapProvider.getComponent();
         } catch (Exception ex) {
             return new Label(String.format("An unexpected error occurred while loading the OSP view: %s", ex.getLocalizedMessage()));
         }
     }
+    
+    private void addToolManager(AbstractMapProvider mapProvider) {
+        if (mapProvider instanceof ToolRegister && 
+            mapProvider.getComponent() instanceof HasComponents) {
+            
+            OutsidePlantTools outsidePlantTools = new OutsidePlantTools(bem, ts, (AbstractMapProvider) mapProvider, (ToolRegister) mapProvider);
+            ((HasComponents) mapProvider.getComponent()).add(outsidePlantTools);
+            
+            outsidePlantTools.addOspNodeAddListener(event -> {
+                BusinessObjectViewNode viewNode = new BusinessObjectViewNode(event.getObject());
+                viewNode.getProperties().put("lat", event.getLat()); //NOI18N
+                viewNode.getProperties().put("lon", event.getLng()); //NOI18N
+                this.viewMap.addNode(viewNode);
+                this.mapProvider.addMarker(
+                    event.getObject(), 
+                    new GeoCoordinate(event.getLat(), event.getLng()), 
+                    StreamResourceRegistry.getURI(iconGenerator.apply(viewNode)).toString()
+                );
+            });
+            
+            outsidePlantTools.addOspEdgeAddListener(event -> {
+                try {
+                    BusinessObjectLight tmp = new BusinessObjectLight("OpticalLink", UUID.randomUUID().toString(), null); //NOI18N
 
+                    BusinessObjectViewEdge viewEdge = new BusinessObjectViewEdge(tmp);
+                    viewEdge.getProperties().put("controlPoints", event.getPath()); //NOI18N
+                    viewEdge.getProperties().put("color", //NOI18N
+                        UtilHtml.toHexString(new Color(mem.getClass(tmp.getClassName()).getColor())));
+
+                    viewMap.addEdge(viewEdge);
+                    viewMap.attachSourceNode(viewEdge, viewMap.getNode(event.getSourceNode().getBusinessObject()));
+                    viewMap.attachTargetNode(viewEdge, viewMap.getNode(event.getTargetNode().getBusinessObject()));
+
+                    this.mapProvider.addPolyline(
+                        tmp, 
+                        event.getSourceNode().getBusinessObject(), 
+                        event.getTargetNode().getBusinessObject(), 
+                        event.getPath(), 
+                        properties
+                    );
+                } catch (MetadataObjectNotFoundException ex) {
+                    new SimpleNotification(
+                        ts.getTranslatedString("module.general.messages.error"), 
+                        ex.getLocalizedMessage()
+                    ).open();
+                }
+            });
+        }
+    }
+    
     @Override
     public void buildWithBusinessObject(BusinessObjectLight businessObject) {
         throw new UnsupportedOperationException("This view can not be built from an object. Use buildWithSavedView instead."); 

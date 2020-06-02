@@ -37,15 +37,17 @@ import com.vaadin.flow.shared.Registration;
 import java.util.List;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 
 /**
  * A search component to find inventory objects to add or navigate in the map
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class OutsidePlantSearch extends Div {
-    private List<OSPNode> markers;
-    
-    public OutsidePlantSearch(BusinessEntityManager bem) {
+    private final TranslationService translationService;
+        
+    public OutsidePlantSearch(BusinessEntityManager bem, TranslationService translationService, AbstractMapProvider mapProvider) {
+        this.translationService = translationService;
         TextField txtSearch = new TextField();
         txtSearch.setWidth("400px");
         txtSearch.setValueChangeMode(ValueChangeMode.EAGER);
@@ -103,14 +105,14 @@ public class OutsidePlantSearch extends Div {
                             hly.setJustifyContentMode(FlexComponent.JustifyContentMode.START);
                             hly.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
                             
-                            if (getOSPNode(this.markers, obj) != null) {
+                            if (getOSPNode(mapProvider.getMarkers(), obj) != null) {
                                 icon.setColor("#E74C3C");
                                 btnAdd.setVisible(false);
                             }
                             return hly;
                         }));
                         grid.addSelectionListener(selectionEvent -> {
-                            OSPNode ospNode = getOSPNode(this.markers, selectionEvent.getFirstSelectedItem().get());
+                            OSPNode ospNode = getOSPNode(mapProvider.getMarkers(), selectionEvent.getFirstSelectedItem().get());
                             if (ospNode != null) {
                                 txtSearch.setValue(ospNode.getBusinessObject().getName());      
                                 fireEvent(new SelectionEvent(this, false, ospNode));
@@ -120,14 +122,17 @@ public class OutsidePlantSearch extends Div {
                         paperDialog.open();
                     }          
                 } catch (Exception ex) {
-    //                ex.printStackTrace();
+                    /*
+                    new SimpleNotification(
+                        translationService.getTranslatedString("module.general.messages.error"), 
+                        ex.getLocalizedMessage()
+                    ).open();
+                    */
                 }
             }
         });
     }
-    public void setMarkers(List<OSPNode> markers) {
-        this.markers = markers;
-    }
+    
     private OSPNode getOSPNode(List<OSPNode> markers, BusinessObjectLight obj) {
         if (markers != null) {
             for (OSPNode marker : markers) {
@@ -137,12 +142,17 @@ public class OutsidePlantSearch extends Div {
         }
         return null;
     }
+    
     public Registration addSelectionListener(ComponentEventListener<SelectionEvent> listener) {
         return addListener(SelectionEvent.class, listener);
     }
+    
     public Registration addNewListener(ComponentEventListener<NewEvent> listener) {
         return addListener(NewEvent.class, listener);
     }
+    /**
+     * 
+     */
     public class SelectionEvent extends ComponentEvent<OutsidePlantSearch> {
         private final OSPNode ospNode;
         
@@ -154,6 +164,9 @@ public class OutsidePlantSearch extends Div {
             return ospNode;
         }
     }
+    /**
+     * 
+     */
     public class NewEvent extends ComponentEvent<OutsidePlantSearch> {
         private final BusinessObjectLight object;
         

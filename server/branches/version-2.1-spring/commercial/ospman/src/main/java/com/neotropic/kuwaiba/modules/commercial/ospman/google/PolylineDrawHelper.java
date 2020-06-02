@@ -23,11 +23,11 @@ import com.neotropic.flow.component.googlemap.GoogleMapEvent.MarkerMouseOverEven
 import com.neotropic.flow.component.googlemap.GoogleMapMarker;
 import com.neotropic.flow.component.googlemap.LatLng;
 import com.neotropic.flow.component.googlemap.OverlayType;
-import com.neotropic.kuwaiba.modules.commercial.ospman.OutsidePlantTools;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.shared.Registration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * A tool to help draws polylines.
@@ -40,46 +40,102 @@ import java.util.List;
  * 
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class DrawPolylineTool {
+public class PolylineDrawHelper {
     /**
-     * Detected source marker using marker click events
+     * Detected source marker using marker click events.
      */
     private GoogleMapMarker source;
     /**
-     * Got polyline path using polyline complete event
+     * Got polyline path using polyline complete event.
      */
     private List<LatLng> path;
     /**
-     * Detected target marker using marker mouse over events
+     * Detected target marker using marker mouse over events.
      */
     private GoogleMapMarker target;
     /**
-     * Set of the marker click event registration
+     * Set of the marker click event registration.
      */
     private final List<Registration> registrationMarkerClickEventListener = new ArrayList();
     /**
-     * Set of the polyline complete event registration
+     * Set of the polyline complete event registration.
      */
     private final List<Registration> registrationPolylineCompleteEventListener = new ArrayList();
     /**
-     * Set of the marker mouse over event registration
+     * Set of the marker mouse over event registration.
      */
     private final List<Registration> registrationMarkerMouseOverEventListener = new ArrayList();
-    
-    public DrawPolylineTool(GoogleMap googleMap, DrawingManager drawingManager, OutsidePlantTools ospTools) {
-        addMarkerClickEventListener(googleMap, drawingManager, ospTools);
-        addPolylineCompleteEventListener(drawingManager);
+    /**
+     * Google Maps Flow Component.
+     */
+    private final GoogleMap googleMap;
+    /**
+     * Drawing Manager Flow Component child of the Google Maps Flow Component.
+     */
+    private final DrawingManager drawingManager;
+    /**
+     * Consumer to notify the polyline complete.
+     */
+    private final Consumer<PolylineDrawHelper> consumer;
+    /**
+     * Creates a new instance of PolylineDrawHelper class
+     * @param googleMap Google Maps Flow Component
+     * @param drawingManager Drawing Manager Flow Component child of the Google Maps Flow Component
+     * @param consumer Consumer to notify the polyline complete
+     */
+    public PolylineDrawHelper(GoogleMap googleMap, DrawingManager drawingManager, Consumer<PolylineDrawHelper> consumer) {
+        this.googleMap = googleMap;
+        this.drawingManager = drawingManager;
+        this.consumer = consumer;
+    }
+    /**
+     * Starts the process to draw a polyline.
+     */
+    public void start() {
+        cancel();
+        addMarkerClickEventListener();
+        addPolylineCompleteEventListener();
+    }
+    /**
+     * Cancels the draw polyline process.
+     */
+    public void cancel() {
+        source = null;
+        path = null;
+        target = null;
+        unregisterListeners();
+    }
+    /**
+     * Gets the source marker.
+     * @return the source marker
+     */
+    public GoogleMapMarker getSource() {
+        return source;
+    }
+    /**
+     * Gets the polyline path.
+     * @return the polyline path
+     */
+    public List<LatLng> getPath() {
+        return path;
+    }
+    /**
+     * Gets the target marker.
+     * @return the target marker
+     */
+    public GoogleMapMarker getTarget() {
+        return target;
     }
     /**
      * Adds a marker click event listener to all the markers in the map to 
-     * detect the source marker
+     * detect the source marker.
      */
-    private void addMarkerClickEventListener(GoogleMap googleMap, DrawingManager drawingManager, OutsidePlantTools ospTools) {
+    private void addMarkerClickEventListener() {
         ComponentEventListener<MarkerClickEvent> markerClickListener = clickEvent -> {
             source = clickEvent.getSource();
             drawingManager.setDrawingMode(OverlayType.POLYLINE);
             unregisterMarkerClickEventListener();
-            addMarkerMouseOverEventListener(googleMap, drawingManager, ospTools);
+            addMarkerMouseOverEventListener();
         };
         googleMap.getChildren().forEach(child -> {
             if (child instanceof GoogleMapMarker) {
@@ -90,9 +146,9 @@ public class DrawPolylineTool {
         });
     }
     /**
-     * Adds a polyline complete event listener to get the draw path
+     * Adds a polyline complete event listener to get the draw path.
      */
-    private void addPolylineCompleteEventListener(DrawingManager drawingManager) {
+    private void addPolylineCompleteEventListener() {
         ComponentEventListener<DrawingManagerPolylineCompleteEvent> polylineCompleteEvent = event -> {
             path = event.getPath();
             drawingManager.setDrawingMode(null);
@@ -104,13 +160,17 @@ public class DrawPolylineTool {
     }
     /**
      * Adds a marker mouse over event listener to all the markers in the map to 
-     * detect the target marker
+     * detect the target marker.
      */
-    private void addMarkerMouseOverEventListener(GoogleMap googleMap, DrawingManager drawingManager, OutsidePlantTools ospTools) {
+    private void addMarkerMouseOverEventListener() {
         ComponentEventListener<MarkerMouseOverEvent> markerMouseOverEventListener = mouseOverEvent -> {
             target = mouseOverEvent.getSource();
             unregisterMarkerMouseOverEventListener();
-            ospTools.polylineCompleted(source, target, path);
+            
+            path.set(0, new LatLng(source.getLat(), source.getLng()));
+            path.set(path.size() - 1, new LatLng(target.getLat(), target.getLng()));
+            
+            consumer.accept(this);
         };
         googleMap.getChildren().forEach(child -> {
             if (child instanceof GoogleMapMarker) {
@@ -122,7 +182,7 @@ public class DrawPolylineTool {
     }
     /**
      * Once the source marker is detected the registered marker click events 
-     * are not necessary
+     * are not necessary.
      */
     private void unregisterMarkerClickEventListener() {
         registrationMarkerClickEventListener.forEach(registration -> registration.remove());
@@ -130,7 +190,7 @@ public class DrawPolylineTool {
     }
     /**
      * Once the path is got the registered polyline complete events are not
-     * necessary
+     * necessary.
      */
     private void unregisterPolylineCompleteListeners() {
         registrationPolylineCompleteEventListener.forEach(registration -> 
@@ -140,7 +200,7 @@ public class DrawPolylineTool {
     }
     /**
      * Once the target marker is detected the registered marker mouse over events 
-     * are not necessary
+     * are not necessary.
      */
     private void unregisterMarkerMouseOverEventListener() {
         registrationMarkerMouseOverEventListener.forEach(registration -> 
@@ -149,7 +209,7 @@ public class DrawPolylineTool {
         registrationMarkerMouseOverEventListener.clear();
     }
     /**
-     * Removes unnecessary listener
+     * Removes unnecessary listener.
      * This can happen when the draw polyline tool is selected and then change 
      * the choice for another tool
      */

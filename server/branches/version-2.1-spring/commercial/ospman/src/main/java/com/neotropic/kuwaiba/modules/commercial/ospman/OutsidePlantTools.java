@@ -15,10 +15,7 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman;
 
-import com.neotropic.flow.component.googlemap.GoogleMapMarker;
-import com.neotropic.flow.component.googlemap.LatLng;
 import com.neotropic.kuwaiba.modules.commercial.ospman.AbstractMapProvider.OSPNode;
-import com.neotropic.kuwaiba.modules.commercial.ospman.google.DrawPolylineTool;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
@@ -26,177 +23,168 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.shared.Registration;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.util.visual.tools.Tool;
+import org.neotropic.util.visual.tools.ToolRegister;
 
 /**
  * Component with a set of tools available to work in an outside plant canvas
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class OutsidePlantTools extends HorizontalLayout {
-    public enum Tool {
-        HAND, MARKER, POLYGON, POLYLINE;
-    }
-    private Tool tool;
-    private DrawPolylineTool drawPolylineTool;
-    
+    private BusinessObjectLight tmpObject;
+    private final TranslationService translationService;
     private final OutsidePlantSearch outsidePlantSearch;
     
-    public OutsidePlantTools(BusinessEntityManager bem) {
-        tool = Tool.HAND;
-        getElement().getStyle().set("background-color", "#fff");
-        getElement().getStyle().set("left", "2%");
-        getElement().getStyle().set("position", "absolute");
-        getElement().getStyle().set("top", "8%");
-        getElement().getStyle().set("z-index", "5");
+    public OutsidePlantTools(BusinessEntityManager bem, 
+        TranslationService translationService, 
+        AbstractMapProvider mapProvider, ToolRegister toolRegister) {
+        
+        this.translationService = translationService;
+        Tool toolHand = new Tool("hand", null, null); //NOI18N
+        Tool toolMarker = new Tool("marker", null, null); //NOI18N
+        Tool toolPolygon = new Tool("polygon", null, null); //NOI18N
+        Tool toolPolyline = new Tool("polyline", null, null); //NOI18N
+        toolRegister.getTools().addAll(Arrays.asList(
+            toolHand, toolMarker, toolPolygon, toolPolyline));
+        
+        getElement().getStyle().set("background-color", "#fff"); //NOI18N
+        getElement().getStyle().set("left", "2%"); //NOI18N
+        getElement().getStyle().set("position", "absolute"); //NOI18N
+        getElement().getStyle().set("top", "8%"); //NOI18N
+        getElement().getStyle().set("z-index", "5"); //NOI18N
         
         Button btnHand = new Button(new Icon(VaadinIcon.HAND));
-//        Button btnMarker = new Button(new Icon(VaadinIcon.MAP_MARKER));
         Button btnPolygon = new Button(new Icon(VaadinIcon.STAR_O));
         Button btnPolyline = new Button(new Icon(VaadinIcon.SPARK_LINE));
 
         btnHand.addClickListener(event -> {
-            setDrawPolylineTool(null);
-            tool = Tool.HAND;
             enabledButtons(btnHand, btnPolygon, btnPolyline);
-            fireEvent(new ToolChangeEvent(this, false));
+            toolRegister.setTool(toolHand);
         });
-//        btnMarker.addClickListener(event -> {
-//            tool = Tool.MARKER;
-//            enabledButtons(btnMarker, btnHand, btnPolygon, btnPolyline);
-//            fireEvent(new ToolChangeEvent(this, false));
-//        });
+        
         btnPolygon.addClickListener(event -> {
-            setDrawPolylineTool(null);
-            tool = Tool.POLYGON;
             enabledButtons(btnPolygon, btnHand, btnPolyline);
-            fireEvent(new ToolChangeEvent(this, false));
+            toolRegister.setTool(toolPolygon);
         });
+        
         btnPolyline.addClickListener(event -> {
-            tool = Tool.POLYLINE;
             enabledButtons(btnPolyline, btnHand, btnPolygon);
-            fireEvent(new ToolChangeEvent(this, false));
+            toolRegister.setTool(toolPolyline);
         });
-        outsidePlantSearch = new OutsidePlantSearch(bem);
+        
+        outsidePlantSearch = new OutsidePlantSearch(bem, this.translationService, mapProvider);
+        
         outsidePlantSearch.addNewListener(event -> {
-            setDrawPolylineTool(null);
-            tool = Tool.MARKER;
+            tmpObject = event.getObject();
+            toolRegister.setTool(toolMarker);
             enabledButtons(btnHand, btnPolygon, btnPolyline);
-            fireEvent(new NewMarkerEvent(this, false, event.getObject()));
         });
-////        outsidePlantSearch.addSelectionListener(event -> {
-////            fireEvent(new CenterChangeEvent(this, false, event.getOspNode().getLocation()));
-////        });
         outsidePlantSearch.addSelectionListener(event -> {
-            fireEvent(new MarkerSelectedEvent(this, false, event.getOspNode()));
+            Properties properties = new Properties();
+            properties.put("animate-marker", event.getOspNode()); //NOI18N
+            properties.put("set-map-center", event.getOspNode().getLocation()); //NOI18N
+            mapProvider.reload(properties);
+        });
+        
+        toolRegister.addListener(event -> {
+            /**
+             * If a marker-complete event is fired the marker tool was active
+             */
+            if ("add-marker".equals(event.getId())) { //NOI18N
+                toolRegister.setTool(toolHand);
+                fireEvent(new OspNodeAddEvent(this, true, tmpObject, 
+                    (double) event.getProperties().get("lat"), //NOI18N
+                    (double) event.getProperties().get("lng") //NOI18N
+                ));
+            } else if ("add-polyline".equals(event.getId())) { //NOI18N
+                fireEvent(new OspEdgeAddEvent(this, false, 
+                    (OSPNode) event.getProperties().get("source"), //NOI18N
+                    (OSPNode) event.getProperties().get("target"), //NOI18N
+                    (List) event.getProperties().get("path")) //NOI18N
+                );
+                //Enables the polyline tool again
+                toolRegister.setTool(toolPolyline);
+            } else if ("remove-marker".equals(event.getId())) {
+                
+            } else if ("remove-polyline".equals(event.getId())) {
+                
+            }
+            
         });
         setMargin(false);
         setPadding(false);
         setSpacing(false);
         add(btnHand, btnPolygon, btnPolyline, outsidePlantSearch);
     }
-    public void setMarkers(List<OSPNode> markers) {
-        outsidePlantSearch.setMarkers(markers);
-    }
-    public void setDrawPolylineTool(DrawPolylineTool drawPolylineTool) {
-        if (this.drawPolylineTool != null)
-            this.drawPolylineTool.unregisterListeners();
-        this.drawPolylineTool = drawPolylineTool;
-    }
-    public void polylineCompleted(GoogleMapMarker source, GoogleMapMarker target, List<LatLng> path) {
-        fireEvent(new PolylineCompletedEvent(this, false, source, target, path));
-    }
-    public Registration addPolylineCompletedListener(ComponentEventListener<PolylineCompletedEvent> listener) {
-        return addListener(PolylineCompletedEvent.class, listener);
-    }
+    
     private void enabledButtons(Button disableButton, Button... enableButtons) {
         for (Button enableButton : enableButtons)
             enableButton.setEnabled(true);
         disableButton.setEnabled(false);
     }
     
-    public Tool getTool() {
-        return tool;
+    public Registration addOspEdgeAddListener(ComponentEventListener<OspEdgeAddEvent> listener) {
+        return addListener(OspEdgeAddEvent.class, listener);
     }
     
-    public Registration addToolChangeListener(ComponentEventListener<ToolChangeEvent> listener) {
-        return addListener(ToolChangeEvent.class, listener);
+    public Registration addOspNodeAddListener(ComponentEventListener<OspNodeAddEvent> listener) {
+        return addListener(OspNodeAddEvent.class, listener);
     }
-    
-    public Registration addNewMarkerListener(ComponentEventListener<NewMarkerEvent> listener) {
-        return addListener(NewMarkerEvent.class, listener);
-    }
-    
-    public Registration addCenterChangeListener(ComponentEventListener<CenterChangeEvent> listener) {
-        return addListener(CenterChangeEvent.class, listener);
-    }
-    
-    public Registration addMarkerSelectedChangeListener(ComponentEventListener<MarkerSelectedEvent> listener) {
-        return addListener(MarkerSelectedEvent.class, listener);
-    }
-    
-    public class ToolChangeEvent extends ComponentEvent<OutsidePlantTools> {
-        private final Tool tool;
-        
-        public ToolChangeEvent(OutsidePlantTools source, boolean fromClient) {
-            super(source, fromClient);
-            tool = source.getTool();
-        }
-        
-        public Tool getTool() {
-            return tool;
-        }
-    }
-    public class NewMarkerEvent extends ComponentEvent<OutsidePlantTools> {
+    /**
+     * 
+     */
+    public class OspNodeAddEvent extends ComponentEvent<OutsidePlantTools> {
         private final BusinessObjectLight object;
-        public NewMarkerEvent(OutsidePlantTools source, boolean fromClient, BusinessObjectLight object) {
+        private final double lat;
+        private final double lng;
+        
+        public OspNodeAddEvent(OutsidePlantTools source, boolean fromClient, BusinessObjectLight object, double lat, double lng) {
             super(source, fromClient);
             this.object = object;
+            this.lat = lat;
+            this.lng = lng;
         }
         public BusinessObjectLight getObject() {
             return object;
         }
-    }
-    public class CenterChangeEvent extends ComponentEvent<OutsidePlantTools> {
-        private GeoCoordinate geoCoordinate;
-        public CenterChangeEvent(OutsidePlantTools source, boolean fromClient, GeoCoordinate geoCoordinate) {
-            super(source, fromClient);
-            this.geoCoordinate = geoCoordinate;
+        public double getLat() {
+            return lat;
         }
-        public GeoCoordinate getGeoCoordinate() {
-            return geoCoordinate;
+        public double getLng() {
+            return lng;
         }
     }
-    public class MarkerSelectedEvent extends ComponentEvent<OutsidePlantTools> {
-        private final OSPNode ospNode;
-        public MarkerSelectedEvent(OutsidePlantTools source, boolean fromClient, OSPNode ospNode) {
-            super(source, fromClient);
-            this.ospNode = ospNode;
-        }
-        public OSPNode getOspNode() {
-            return ospNode;
-        }
-    }
-    public class PolylineCompletedEvent extends ComponentEvent<OutsidePlantTools> {
-        private final GoogleMapMarker sourceMarker;
-        private final GoogleMapMarker targetMarker;
-        private final List<LatLng> path;
+    /**
+     * 
+     */
+    public class OspEdgeAddEvent extends ComponentEvent<OutsidePlantTools> {
+        private final OSPNode sourceNode;
+        private final OSPNode targetNode;
+        private final List<GeoCoordinate> path;
         
-        public PolylineCompletedEvent(OutsidePlantTools source, boolean fromClient, 
-            GoogleMapMarker sourceMarker, GoogleMapMarker targetMarker, List<LatLng> path) {
+        public OspEdgeAddEvent(OutsidePlantTools source, boolean fromClient, 
+            OSPNode sourceMarker, OSPNode targetMarker, List<GeoCoordinate> path) {
             super(source, fromClient);
-            this.sourceMarker = sourceMarker;
-            this.targetMarker = targetMarker;
+            this.sourceNode = sourceMarker;
+            this.targetNode = targetMarker;
             this.path = path;
         }
-        public GoogleMapMarker getSourceMarker() {
-            return sourceMarker;
+        
+        public OSPNode getSourceNode() {
+            return sourceNode;
         }
-        public GoogleMapMarker getTargetMarker() {
-            return targetMarker;
+        
+        public OSPNode getTargetNode() {
+            return targetNode;
         }
-        public List<LatLng> getPath() {
+        
+        public List<GeoCoordinate> getPath() {
             return path;
         }
     }
