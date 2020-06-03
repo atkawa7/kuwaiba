@@ -35,29 +35,28 @@ import java.util.List;
 @JsModule("./mx-graph/mx-graph-cell.js")
 public class MxGraphCell extends Component {
     
-    private static final String PROPERTY_UUID = "uuid";   
-    private static final String PROPERTY_SOURCE = "source";
-    private static final String PROPERTY_TARGET = "target";   
-    private static final String PROPERTY_EDGE = "edge";
-    private static final String PROPERTY_VERTEX = "vertex";
-    private static final String PROPERTY_SOURCE_LABEL = "sourceLabel";
-    private static final String PROPERTY_TARGET_LABEL = "targetLabel";
-    private static final String PROPERTY_IMAGE = "image";
-    private static final String PROPERTY_LABEL = "label";
-    private static final String PROPERTY_WIDTH = "width";
-    private static final String PROPERTY_HEIGHT = "height";
-    private static final String PROPERTY_X = "x";    
-    private static final String PROPERTY_Y = "y";
-    private static final String PROPERTY_POINTS = "points";    
-    private static final String PROPERTY_STROKE_WIDTH = "strokeWidth";    
-    private static final String PROPERTY_LABEL_BACKGROUND_COLOR = "labelBackgroundColor";
-    private static final String PROPERTY_PERIMETER_SPACING = "perimeterSpacing";
-    private static final String PROPERTY_STROKE_COLOR = "strokeColor";    
-    private static final String PROPERTY_FONT_COLOR = "fontColor";
-
-
-
-
+    public static final String PROPERTY_UUID = "uuid";   
+    public static final String PROPERTY_SOURCE = "source";
+    public static final String PROPERTY_TARGET = "target";   
+    public static final String PROPERTY_EDGE = "edge";
+    public static final String PROPERTY_VERTEX = "vertex";
+    public static final String PROPERTY_SOURCE_LABEL = "sourceLabel";
+    public static final String PROPERTY_TARGET_LABEL = "targetLabel";
+    public static final String PROPERTY_IMAGE = "image";
+    public static final String PROPERTY_LABEL = "label";
+    public static final String PROPERTY_WIDTH = "width";
+    public static final String PROPERTY_HEIGHT = "height";
+    public static final String PROPERTY_X = "x";    
+    public static final String PROPERTY_Y = "y";
+    public static final String PROPERTY_POINTS = "points";    
+    public static final String PROPERTY_STROKE_WIDTH = "strokeWidth";    
+    public static final String PROPERTY_LABEL_BACKGROUND_COLOR = "labelBackgroundColor";
+    public static final String PROPERTY_PERIMETER_SPACING = "perimeterSpacing";
+    public static final String PROPERTY_STROKE_COLOR = "strokeColor";    
+    public static final String PROPERTY_FONT_COLOR = "fontColor";
+    public static final String PROPERTY_CURVED = "curved";
+    public static final String PROPERTY_DASHED = "dashed";
+    
     public MxGraphCell() {
     }
     
@@ -229,6 +228,22 @@ public class MxGraphCell extends Component {
         
     public void setFontColor(String prop) {
         getElement().setProperty(PROPERTY_FONT_COLOR, prop);
+    }
+    
+    public boolean isDashed() {
+        return getElement().getProperty(PROPERTY_DASHED).equals("1");
+    }
+        
+    public void setIsDashed(Boolean prop) {
+        getElement().setProperty(PROPERTY_DASHED, prop ? "1" : "0");
+    }
+    
+    public boolean isCurved() {
+        return getElement().getProperty(PROPERTY_CURVED).equals("1");
+    }
+        
+    public void setIsCurved(Boolean prop) {
+        getElement().setProperty(PROPERTY_CURVED, prop ? "1" : "0");
     }
     
     public void setGeometry(int x, int y, int width, int height) {

@@ -116,7 +116,7 @@ class MxGraph extends PolymerElement {
           // Creates the graph inside the given container
           this.graph = new mxGraph(this.$.graphContainer);
           // Enables rubberband selection
-          new mxRubberband(this.graph);
+          //new mxRubberband(this.graph);
           //this.graph.setConnectable(true);
           this.graph.setAllowDanglingEdges(false);
           
@@ -127,6 +127,8 @@ class MxGraph extends PolymerElement {
           //enable adding and removing control points. 
           mxEdgeHandler.prototype.addEnabled = true;
 	  mxEdgeHandler.prototype.removeEnabled = true;
+          
+          this.graph.getSelectionModel().setSingleSelection(true);
           
           
           var _this = this;
@@ -143,6 +145,15 @@ class MxGraph extends PolymerElement {
                 console.log("CLICK on EDGE")					
               } 
           });
+          
+          var keyHandler = new mxKeyHandler(this.graph);
+    				keyHandler.bindKey(46, function(evt)
+    				{
+    				  if (_this.graph.isEnabled())
+    				  {
+    				    _this.graph.removeCells();
+    				  }
+    				});
 
           // Called when any cell is moved
           this.graph.addListener(mxEvent.CELLS_MOVED, function (sender, evt) {
@@ -182,7 +193,26 @@ class MxGraph extends PolymerElement {
 
             }           
         });
-
+        
+         //allow custom logic when unselect cells
+        var cellRemoved = mxGraphSelectionModel.prototype.cellRemoved;
+        mxGraphSelectionModel.prototype.cellRemoved = function(	cell ) {
+            cellRemoved.apply(this, arguments);
+            if (cell) {
+                _this.fireCellUnselected(cell.id, _this.graph.getModel().isVertex(cell));
+            }
+            console.log("CELL UNSELECTED :" + cell.id + " is Vertex : " + _this.graph.getModel().isVertex(cell));	
+        }
+        
+         //allow custom logic when select cells
+        var cellAdded = mxGraphSelectionModel.prototype.cellAdded;
+        mxGraphSelectionModel.prototype.cellAdded = function(	cell ) {
+            cellAdded.apply(this, arguments);
+            if (cell) {
+                _this.fireCellSelected(cell.id, _this.graph.getModel().isVertex(cell));
+            }
+            console.log("CELL SELECTED :" + cell.id + " is Vertex : " + _this.graph.getModel().isVertex(cell));	
+        }
         //allow custom logic when editing in edges labels
 //        mxGraph.prototype.isCellEditable = function(	cell	){
 //          return true;
@@ -286,7 +316,7 @@ class MxGraph extends PolymerElement {
             }
           }
 
-          // The method  removePoint is addPointAt, to update the points in the respective PolymerElement object, when a point is removed,
+          // The method  removePoint is overwritten, to update the points in the respective PolymerElement object, when a point is removed,
 
           var removePoint = mxEdgeHandler.prototype.removePoint;
           mxEdgeHandler.prototype.removePoint = function (state, index) {
@@ -364,6 +394,18 @@ updateCells(mutations) {
 //This method dispatches a custom event when any edge its clicked
   fireClickEdge(){
     this.dispatchEvent(new CustomEvent('click-edge', {detail: {kicked: true}}));
+  }
+  
+   //This method dispatches a custom event when any edge its clicked
+  fireCellSelected(cellId, isVertex){
+    this.dispatchEvent(new CustomEvent('cell-selected',
+    {detail: {kicked: true, cellId: cellId, isVertex:isVertex}}));
+  }
+  
+  //This method dispatches a custom event when any edge is unselected
+  fireCellUnselected(cellId, isVertex){
+    this.dispatchEvent(new CustomEvent('cell-unselected',
+    {detail: {kicked: true, cellId: cellId, isVertex:isVertex}}));
   }
   
   //this method remove all cells(vertex and edges) in the graph

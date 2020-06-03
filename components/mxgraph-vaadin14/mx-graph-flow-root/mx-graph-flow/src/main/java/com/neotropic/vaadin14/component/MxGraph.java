@@ -73,6 +73,14 @@ public class MxGraph extends Component {
         return super.addListener(MxGraphClickEdgeEvent.class, clickEdgeListener);
     }
     
+    public Registration addCellUnselectedListener(ComponentEventListener<MxGraphCellUnselectedEvent> eventListener) {
+        return super.addListener(MxGraphCellUnselectedEvent.class, eventListener);
+    }
+    
+    public Registration addCellSelectedListener(ComponentEventListener<MxGraphCellSelectedEvent> eventListener) {
+        return super.addListener(MxGraphCellSelectedEvent.class, eventListener);
+    }
+    
     public void addCell(MxGraphCell mxGraphCell) {
         getElement().appendChild(mxGraphCell.getElement());     
     }

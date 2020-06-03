@@ -137,6 +137,14 @@ class MxGraphCell extends PolymerElement {
       fontColor : {
         type: String,
         value: 'black'
+      },
+      dashed: {
+        type: String,
+        value: '0'
+      },
+      curved: {
+        type: String,
+        value: '0'
       }
       
       
@@ -222,6 +230,9 @@ class MxGraphCell extends PolymerElement {
             ';strokeWidth=' + this.strokeWidth + 
             ';labelBackgroundColor=' + this.labelBackgroundColor +
             ';strokeColor=' + this.strokeColor  +           
+            ';dashed=' + this.dashed  +           
+            ';curved=' + this.curved  +           
+            ';rounded=1'  +           
             ';fontColor=' + this.fontColor );
 
         
