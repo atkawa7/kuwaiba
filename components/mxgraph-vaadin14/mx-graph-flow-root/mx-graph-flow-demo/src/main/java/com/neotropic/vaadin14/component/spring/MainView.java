@@ -3,6 +3,7 @@ package com.neotropic.vaadin14.component.spring;
 import com.neotropic.vaadin14.component.MxGraph;
 import com.neotropic.vaadin14.component.MxGraphCell;
 import com.neotropic.vaadin14.component.MxGraphCellPositionChanged;
+import com.neotropic.vaadin14.component.MxGraphCellUnselectedEvent;
 import com.neotropic.vaadin14.component.MxGraphClickEdgeEvent;
 import com.neotropic.vaadin14.component.MxGraphPoint;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -21,10 +22,11 @@ import elemental.json.JsonObject;
 public class MainView extends VerticalLayout {
 
     public MainView(@Autowired MessageBean bean) {
-        MxGraph myElement = new MxGraph();
+        
+        MxGraph mxGraph = new MxGraph();
   
-        myElement.setWidth("400px");
-        myElement.setHeight("400px");
+        mxGraph.setWidth("400px");
+        mxGraph.setHeight("400px");
        
        
         Button addButton = new Button("Add Cell"); // (3)
@@ -33,7 +35,7 @@ public class MainView extends VerticalLayout {
      // (1)
      MxGraphCell mxGraphCell = new MxGraphCell();
      
-     myElement.addCell(mxGraphCell);
+     mxGraph.addCell(mxGraphCell);
      }
   );
         
@@ -62,6 +64,13 @@ public class MainView extends VerticalLayout {
             }
         });
         
+        mxGraph.addCellUnselectedListener(new ComponentEventListener<MxGraphCellUnselectedEvent>() {
+            @Override
+            public void onComponentEvent(MxGraphCellUnselectedEvent t) {
+               Notification.show("Cell Unselected Id:" + t.getCellId() + " is Vertex:" + t.isVertex());
+            }
+        });
+        
         
         Button addVerticesEdge = new Button("Add Demo Vertices Edge"); // (3)
 
@@ -87,9 +96,11 @@ public class MainView extends VerticalLayout {
           edge.setSource(nodeA.getUuid());
           edge.setTarget(nodeB.getUuid());
 //          edge.setLabelBackgroundColor("gray");
-          edge.setStrokeWidth(2);
+          edge.setStrokeWidth(1);
           edge.setStrokeColor("blue");
           edge.setPerimeterSpacing(2);
+          edge.setIsCurved(true);
+          edge.setIsDashed(true);
 //          edge.setFontColor("white");
 
          // ArrayList<Point> points = new ArrayList<>();
@@ -107,9 +118,9 @@ public class MainView extends VerticalLayout {
 
           edge.setPoints(points.toJson());
        
-          myElement.addCell(nodeA);
-          myElement.addCell(nodeB);
-          myElement.addCell(edge);
+          mxGraph.addCell(nodeA);
+          mxGraph.addCell(nodeB);
+          mxGraph.addCell(edge);
      }
   );
           Button addPoint = new Button("Add Demo Point Edge"); // (3)
@@ -127,7 +138,7 @@ public class MainView extends VerticalLayout {
           
      }
   );              
-        myElement.setGrid("images/grid.gif");
+        mxGraph.setGrid("images/grid.gif");
         
         Button btnPointsChanged = new Button("Show Updated Data", click -> {      
 
@@ -145,7 +156,7 @@ public class MainView extends VerticalLayout {
         
      });
         
-        add(myElement);
+        add(mxGraph);
         add(btnPointsChanged);
         add(addButton);
         add(addVerticesEdge);
