@@ -15,6 +15,7 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman;
 
+import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.DialogDeleteOSPView;
 import org.neotropic.util.visual.views.AbstractView;
 import org.neotropic.util.visual.views.AbstractViewEdge;
 import org.neotropic.util.visual.views.AbstractViewNode;
@@ -25,7 +26,10 @@ import org.neotropic.util.visual.views.ViewMap;
 import org.neotropic.util.visual.views.util.UtilHtml;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.server.Command;
 import com.vaadin.flow.server.StreamResourceRegistry;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
@@ -53,6 +57,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.visualization.views.ViewNodeIconGenerator;
+import org.neotropic.util.visual.dialog.ConfirmDialog;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.tools.ToolRegister;
 
@@ -70,19 +75,22 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
     private final BusinessEntityManager bem;
     private final MetadataEntityManager mem;
     private final ViewNodeIconGenerator iconGenerator;
+    private final Command cmdParentBack;
     
     public OutsidePlantView(
         MetadataEntityManager mem, 
         ApplicationEntityManager aem, 
         BusinessEntityManager bem, 
         TranslationService ts, 
-        ViewNodeIconGenerator iconGenerator) {
+        ViewNodeIconGenerator iconGenerator,
+        Command cmdParentBack) {
         
         this.aem = aem;
         this.bem = bem;
         this.mem = mem;
         this.ts = ts;
         this.iconGenerator = iconGenerator;
+        this.cmdParentBack = cmdParentBack;
     }
 
     @Override
@@ -297,7 +305,70 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
                     ).open();
                 }
             });
+            
+            outsidePlantTools.setSaveCommand(() -> {
+                if (viewMap.getNodes().isEmpty()) {
+                    new SimpleNotification(
+                        ts.getTranslatedString("module.general.messages.information"), 
+                        ts.getTranslatedString("module.ospman.empty-view")
+                    ).open();
+                } else
+                    saveOSPView();
+            });
+            outsidePlantTools.setBackCommand(() -> {
+                if (!viewMap.getNodes().isEmpty())
+                    saveOSPView();
+                cmdParentBack.execute();
+            });
+            outsidePlantTools.setDeleteCommand(() -> {
+                if (!this.getProperties().get(Constants.PROPERTY_ID).equals(-1)) {
+                    DialogDeleteOSPView confirmDialog = new DialogDeleteOSPView((long) this.getProperties().get(Constants.PROPERTY_ID), ts, aem);
+                    confirmDialog.open();
+                    confirmDialog.addDialogCloseActionListener(event -> 
+                        cmdParentBack.execute()
+                    );
+                }
+            });
         }
+    }
+    
+    private void saveOSPView() {
+        FormLayout fly = new FormLayout();
+        TextField txtName = new TextField();
+        txtName.setValue(this.getProperties().getProperty(Constants.PROPERTY_NAME) == null ? 
+            "" : this.getProperties().getProperty(Constants.PROPERTY_NAME));
+        TextField txtDescription = new TextField();
+        txtDescription.setValue(this.getProperties().getProperty(Constants.PROPERTY_DESCRIPTION) == null ? 
+            "" : this.getProperties().getProperty(Constants.PROPERTY_DESCRIPTION));
+        fly.addFormItem(txtName, ts.getTranslatedString("module.general.labels.name"));
+        fly.addFormItem(txtDescription, ts.getTranslatedString("module.general.labels.description"));
+
+        ConfirmDialog confirmDialog = new ConfirmDialog(ts, 
+            ts.getTranslatedString("module.ospman.save-view"), fly, 
+            ts.getTranslatedString("module.general.messages.ok"), () -> {
+                try {
+                    if (this.properties.get(Constants.PROPERTY_ID).equals(-1)) {
+                        long newOSPViewId = aem.createOSPView(txtName.getValue(), txtDescription.getValue(), this.getAsXml());
+                        this.getProperties().put(Constants.PROPERTY_ID, newOSPViewId);
+                    } else {
+                        aem.updateOSPView((long) this.getProperties().get(Constants.PROPERTY_ID), 
+                            txtName.getValue(), txtDescription.getValue(), this.getAsXml());
+                    }
+                    this.getProperties().put(Constants.PROPERTY_NAME, txtName.getValue());
+                    this.getProperties().put(Constants.PROPERTY_DESCRIPTION, txtDescription.getValue());
+                    new SimpleNotification(
+                        ts.getTranslatedString("module.general.messages.success"), 
+                        ts.getTranslatedString("module.ospman.view-saved")
+                    ).open();
+                } catch (InventoryException ex) {
+                    new SimpleNotification(
+                        ts.getTranslatedString("module.general.messages.error"), 
+                        ex.getLocalizedMessage()
+                    ).open();
+                }
+            }
+        );
+        confirmDialog.open();
     }
     
     @Override

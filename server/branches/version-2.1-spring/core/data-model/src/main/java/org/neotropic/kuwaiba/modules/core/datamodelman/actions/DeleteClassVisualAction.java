@@ -75,7 +75,7 @@ public class DeleteClassVisualAction extends AbstractVisualAction<Dialog> {
 
         ClassMetadataLight classToDelete = seletedClass;
 
-        ConfirmDialog wdwDeleteClass = new ConfirmDialog(ts.getTranslatedString("module.general.labels.confirmcaption"),
+        ConfirmDialog wdwDeleteClass = new ConfirmDialog(ts.getTranslatedString("module.general.labels.confirmation"),
                 ts.getTranslatedString("module.general.labels.confirmdeletemessage"),
                 ts.getTranslatedString("module.general.labels.delete"));
         wdwDeleteClass.getBtnConfirm().addClickListener((ev) -> {

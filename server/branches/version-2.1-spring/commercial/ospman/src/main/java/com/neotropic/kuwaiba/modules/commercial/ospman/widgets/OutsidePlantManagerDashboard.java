@@ -19,7 +19,9 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OutsidePlantView;
 import com.neotropic.kuwaiba.modules.commercial.ospman.actions.NewOspViewAction;
+import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.DialogDeleteOSPView;
 import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
@@ -71,10 +73,6 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
      */
     private final MetadataEntityManager mem;
     
-    private double longitude;
-    private double latitude;
-    private int zoom;
-    
     private HorizontalLayout hlyQuickActions;
     private VerticalLayout vlyContent;
     
@@ -87,6 +85,7 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
         BusinessEntityManager bem, 
         MetadataEntityManager mem,
         NewOspViewAction newOspViewAction) {
+        
         this.ts = ts;
         this.resourceFactory = resourceFactory;
         this.aem = aem;
@@ -101,6 +100,11 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
     @Override
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
+        init();
+    }
+    
+    private void init() {
+        removeAll();
         hlyQuickActions = new HorizontalLayout(buildQuickActionsMenu());
         
         vlyContent = new VerticalLayout();
@@ -145,70 +149,8 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
         vlyContent.add(vlySearch, vlySearchResults);
         
         add(hlyQuickActions, vlyContent);
-        
-////        try {
-////            OutsidePlantView outsidePlantView = new OutsidePlantView(mem, aem, bem, ts);
-//            AbstractView outsidePlantView = new ViewFactory(mem, aem, bem).createViewInstance(
-//                    "com.neotropic.kuwaiba.modules.commercial.ospman.google.OutsidePlantView");
-////            outsidePlantView.buildEmptyView();
-////            add(outsidePlantView.getAsComponent());
-////        } catch (InvalidArgumentException ex) {
-////            Logger.getLogger(OutsidePlantManagerDashboard.class.getName()).log(Level.SEVERE, null, ex);
-////        }
-
-//        } catch (InstantiationException ex) {
-//            Logger.getLogger(OutsidePlantManagerDashboard.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (InvalidArgumentException ex) {
-//            Logger.getLogger(OutsidePlantManagerDashboard.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-/*
-try {
-this.latitude = (double) aem.getConfigurationVariableValue("widgets.simplemap.centerLatitude");
-} catch (InventoryException | ClassCastException ex) {
-this.latitude = OutsidePlantConstants.DEFAULT_CENTER_LATITUDE;
-}
-try {
-this.longitude = (double) aem.getConfigurationVariableValue("widgets.simplemap.centerLongitide");
-} catch (InventoryException | ClassCastException ex) {
-this.longitude = OutsidePlantConstants.DEFAULT_CENTER_LONGITUDE;
-}
-try {
-this.zoom = (int) aem.getConfigurationVariableValue("widgets.simplemap.zoom");
-} catch (InventoryException | ClassCastException ex) {
-this.zoom = OutsidePlantConstants.DEFAULT_ZOOM;
-}
-try {
-super.onAttach(attachEvent);
-setSizeFull();
-String className = (String) aem.getConfigurationVariableValue("general.maps.provider"); //NOI18N
-Class mapProviderClass = Class.forName(className);
-if (AbstractMapProvider.class.isAssignableFrom(mapProviderClass)) {
-String apiKey = (String) aem.getConfigurationVariableValue("general.maps.apiKey"); //NOI18N
-Properties mapProperties = new Properties();
-mapProperties.put("apiKey", apiKey); //NOI18N
-mapProperties.put("center", new GeoCoordinate(latitude, longitude)); //NOI18N
-mapProperties.put("zoom", zoom);
-mapProperties.put("bem", bem);
-
-AbstractMapProvider mapProvider = (AbstractMapProvider) mapProviderClass.newInstance();
-mapProvider.initialize(mapProperties);
-add(mapProvider.getComponent());
-////                SplitLayout splitLayout = new SplitLayout();
-////                splitLayout.addToPrimary(buildTree());
-////                splitLayout.addToSecondary(mapProvider.getComponent());
-////                splitLayout.setSplitterPosition(25);
-////                splitLayout.addThemeVariants(SplitLayoutVariant.LUMO_SMALL);
-////                splitLayout.setSizeFull();
-////                add(splitLayout);
-}
-} catch (Exception ex) {
-new SimpleNotification(
-ts.getTranslatedString("module.general.messages.error"),
-ex.getLocalizedMessage()
-).open();
-}
-*/
     }
+    
     private MenuBar buildQuickActionsMenu() {
         MenuBar mnuQuickActions = new MenuBar();
         mnuQuickActions.setWidthFull();
@@ -217,11 +159,12 @@ ex.getLocalizedMessage()
         });
         return mnuQuickActions;
     }
+    
     private void addOutsidePlantView(ViewObjectLight viewObjectLight) {
         try {
             removeAll();
             OutsidePlantView outsidePlantView = new OutsidePlantView(mem, aem, bem, ts, 
-                new ViewNodeIconGenerator(resourceFactory));
+                new ViewNodeIconGenerator(resourceFactory), () -> init());
             if (viewObjectLight == null)
                 outsidePlantView.buildEmptyView();
             else {
@@ -238,6 +181,7 @@ ex.getLocalizedMessage()
                 ex.getLocalizedMessage()).open();
         }
     }
+    
     public class ViewObjectLightSearchResultRenderer extends ComponentRenderer<VerticalLayout, ViewObjectLight> {
         @Override
         public VerticalLayout createComponent(ViewObjectLight viewObjectLight) {
@@ -251,7 +195,17 @@ ex.getLocalizedMessage()
             divTitle.addClickListener(event -> {
                 addOutsidePlantView(viewObjectLight);
             });
-            vltSearchResult.add(divTitle);
+            HorizontalLayout hlyActions = new HorizontalLayout();
+            hlyActions.setClassName("search-result-actions");
+            
+            Button btnDelete = new Button(ts.getTranslatedString("module.general.labels.delete"));
+            btnDelete.setClassName("search-result-action-button");
+            btnDelete.addClickListener(event -> {
+                DialogDeleteOSPView dialogDeleteOSPView = new DialogDeleteOSPView(viewObjectLight.getId(), ts, aem);
+                dialogDeleteOSPView.open();
+            });
+            hlyActions.add(btnDelete);
+            vltSearchResult.add(divTitle, hlyActions);
             return vltSearchResult;
         }
     }

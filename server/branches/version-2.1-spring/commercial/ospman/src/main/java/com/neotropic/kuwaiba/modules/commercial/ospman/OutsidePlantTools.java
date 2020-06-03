@@ -22,6 +22,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.server.Command;
 import com.vaadin.flow.shared.Registration;
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +41,10 @@ public class OutsidePlantTools extends HorizontalLayout {
     private BusinessObjectLight tmpObject;
     private final TranslationService translationService;
     private final OutsidePlantSearch outsidePlantSearch;
+    private final List<Button> buttons;
+    private Command cmdBack;
+    private Command cmdSave;
+    private Command cmdDelete;
     
     public OutsidePlantTools(BusinessEntityManager bem, 
         TranslationService translationService, 
@@ -58,23 +63,31 @@ public class OutsidePlantTools extends HorizontalLayout {
         getElement().getStyle().set("position", "absolute"); //NOI18N
         getElement().getStyle().set("top", "8%"); //NOI18N
         getElement().getStyle().set("z-index", "5"); //NOI18N
+        Button btnBack = new Button(new Icon(VaadinIcon.ARROW_LEFT), 
+            event -> executeCommand(cmdBack));
+        Button btnSave = new Button(new Icon(VaadinIcon.SAFE), 
+            event -> executeCommand(cmdSave));
+        Button btnDelete = new Button(new Icon(VaadinIcon.TRASH), 
+            event -> executeCommand(cmdDelete));
         
         Button btnHand = new Button(new Icon(VaadinIcon.HAND));
         Button btnPolygon = new Button(new Icon(VaadinIcon.STAR_O));
         Button btnPolyline = new Button(new Icon(VaadinIcon.SPARK_LINE));
+        
+        this.buttons = Arrays.asList(btnHand, btnPolygon, btnPolyline);
 
         btnHand.addClickListener(event -> {
-            enabledButtons(btnHand, btnPolygon, btnPolyline);
+            enabledButtons(btnHand);
             toolRegister.setTool(toolHand);
         });
         
         btnPolygon.addClickListener(event -> {
-            enabledButtons(btnPolygon, btnHand, btnPolyline);
+            enabledButtons(btnPolygon);
             toolRegister.setTool(toolPolygon);
         });
         
         btnPolyline.addClickListener(event -> {
-            enabledButtons(btnPolyline, btnHand, btnPolygon);
+            enabledButtons(btnPolyline);
             toolRegister.setTool(toolPolyline);
         });
         
@@ -83,7 +96,7 @@ public class OutsidePlantTools extends HorizontalLayout {
         outsidePlantSearch.addNewListener(event -> {
             tmpObject = event.getObject();
             toolRegister.setTool(toolMarker);
-            enabledButtons(btnHand, btnPolygon, btnPolyline);
+            enabledButtons(btnHand);
         });
         outsidePlantSearch.addSelectionListener(event -> {
             Properties properties = new Properties();
@@ -120,13 +133,33 @@ public class OutsidePlantTools extends HorizontalLayout {
         setMargin(false);
         setPadding(false);
         setSpacing(false);
-        add(btnHand, btnPolygon, btnPolyline, outsidePlantSearch);
+        add(btnBack, btnSave, btnDelete, outsidePlantSearch, btnHand, btnPolygon, btnPolyline);
+        
+        enabledButtons(btnHand);
+        toolRegister.setTool(toolHand);
     }
     
-    private void enabledButtons(Button disableButton, Button... enableButtons) {
-        for (Button enableButton : enableButtons)
+    private void enabledButtons(Button disableButton) {
+        for (Button enableButton : buttons)
             enableButton.setEnabled(true);
         disableButton.setEnabled(false);
+    }
+    
+    private void executeCommand(Command command) {
+        if (command != null)
+            command.execute();
+    }
+    
+    public void setBackCommand(Command cmdBack) {
+        this.cmdBack = cmdBack;
+    }
+    
+    public void setSaveCommand(Command cmdSave) {
+        this.cmdSave = cmdSave;
+    }
+    
+    public void setDeleteCommand(Command cmdDelete) {
+        this.cmdDelete = cmdDelete;
     }
     
     public Registration addOspEdgeAddListener(ComponentEventListener<OspEdgeAddEvent> listener) {

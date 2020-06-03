@@ -25,7 +25,6 @@ import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameterSet;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
-import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.util.visual.dialog.ConfirmDialog;
@@ -73,7 +72,7 @@ public class DeleteMPLSViewVisualAction extends AbstractVisualAction<Dialog> {
         if (parameters.containsKey("viewId")) {
             viewId = (Long) parameters.get("viewId");
 
-            ConfirmDialog wdwDeleteClass = new ConfirmDialog(ts.getTranslatedString("module.general.labels.confirmcaption"),
+            ConfirmDialog wdwDeleteClass = new ConfirmDialog(ts.getTranslatedString("module.general.labels.confirmation"),
                     ts.getTranslatedString("module.general.labels.confirmdeletemessage"),
                     ts.getTranslatedString("module.general.labels.delete"));
             wdwDeleteClass.getBtnConfirm().addClickListener((ev) -> {

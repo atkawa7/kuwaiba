@@ -77,7 +77,7 @@ public class DeleteAttributeVisualAction extends AbstractVisualAction<Dialog> {
             seletedClass = (ClassMetadataLight) parameters.get("class");  
             attribute = (AttributeMetadata) parameters.get("attribute");   
 
-        ConfirmDialog wdwDeleteClass = new ConfirmDialog(ts.getTranslatedString("module.general.labels.confirmcaption"),
+        ConfirmDialog wdwDeleteClass = new ConfirmDialog(ts.getTranslatedString("module.general.labels.confirmation"),
                 ts.getTranslatedString("module.general.labels.confirmdeletemessage"),
                 ts.getTranslatedString("module.general.labels.delete"));
         wdwDeleteClass.getBtnConfirm().addClickListener((ev) -> {
