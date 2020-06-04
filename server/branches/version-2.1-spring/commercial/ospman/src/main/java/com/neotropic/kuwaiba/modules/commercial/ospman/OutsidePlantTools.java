@@ -16,14 +16,13 @@
 package com.neotropic.kuwaiba.modules.commercial.ospman;
 
 import com.neotropic.kuwaiba.modules.commercial.ospman.AbstractMapProvider.OSPNode;
-import com.vaadin.flow.component.ComponentEvent;
-import com.vaadin.flow.component.ComponentEventListener;
+import com.neotropic.kuwaiba.modules.commercial.ospman.commands.CommandAddMarker;
+import com.neotropic.kuwaiba.modules.commercial.ospman.commands.CommandAddConnection;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.server.Command;
-import com.vaadin.flow.shared.Registration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -45,6 +44,10 @@ public class OutsidePlantTools extends HorizontalLayout {
     private Command cmdBack;
     private Command cmdSave;
     private Command cmdDelete;
+    private CommandAddMarker cmdAddMarker;
+    private CommandAddConnection cmdAddPolyline;
+    private Command cmdRemoveMarker;
+    private Command cmdRemovePolyline;
     
     public OutsidePlantTools(BusinessEntityManager bem, 
         TranslationService translationService, 
@@ -110,17 +113,22 @@ public class OutsidePlantTools extends HorizontalLayout {
              * If a marker-complete event is fired the marker tool was active
              */
             if ("add-marker".equals(event.getId())) { //NOI18N
+                if (cmdAddMarker != null) {
+                    cmdAddMarker.setBussinesObject(tmpObject);
+                    cmdAddMarker.setLat((double) event.getProperties().get("lat")); //NOI18N
+                    cmdAddMarker.setLng((double) event.getProperties().get("lng")); //NOI18N
+                    cmdAddMarker.execute();
+                }
                 toolRegister.setTool(toolHand);
-                fireEvent(new OspNodeAddEvent(this, true, tmpObject, 
-                    (double) event.getProperties().get("lat"), //NOI18N
-                    (double) event.getProperties().get("lng") //NOI18N
-                ));
             } else if ("add-polyline".equals(event.getId())) { //NOI18N
-                fireEvent(new OspEdgeAddEvent(this, false, 
-                    (OSPNode) event.getProperties().get("source"), //NOI18N
-                    (OSPNode) event.getProperties().get("target"), //NOI18N
-                    (List) event.getProperties().get("path")) //NOI18N
-                );
+                if (cmdAddPolyline != null) {
+                    cmdAddPolyline.setSource(((OSPNode) 
+                        event.getProperties().get("source")).getBusinessObject()); //NOI18N
+                    cmdAddPolyline.setTarget(((OSPNode) 
+                        event.getProperties().get("target")).getBusinessObject()); //NOI18N
+                    cmdAddPolyline.setPath((List) event.getProperties().get("path")); //NOI18N
+                    cmdAddPolyline.execute();
+                }
                 //Enables the polyline tool again
                 toolRegister.setTool(toolPolyline);
             } else if ("remove-marker".equals(event.getId())) {
@@ -144,12 +152,7 @@ public class OutsidePlantTools extends HorizontalLayout {
             enableButton.setEnabled(true);
         disableButton.setEnabled(false);
     }
-    
-    private void executeCommand(Command command) {
-        if (command != null)
-            command.execute();
-    }
-    
+        
     public void setBackCommand(Command cmdBack) {
         this.cmdBack = cmdBack;
     }
@@ -162,63 +165,16 @@ public class OutsidePlantTools extends HorizontalLayout {
         this.cmdDelete = cmdDelete;
     }
     
-    public Registration addOspEdgeAddListener(ComponentEventListener<OspEdgeAddEvent> listener) {
-        return addListener(OspEdgeAddEvent.class, listener);
+    public void setAddmarkerCommand(CommandAddMarker cmdAddMarker) {
+        this.cmdAddMarker = cmdAddMarker;
     }
     
-    public Registration addOspNodeAddListener(ComponentEventListener<OspNodeAddEvent> listener) {
-        return addListener(OspNodeAddEvent.class, listener);
+    public void setAddPolylineCommand(CommandAddConnection cmdAddPolyline) {
+        this.cmdAddPolyline = cmdAddPolyline;
     }
-    /**
-     * 
-     */
-    public class OspNodeAddEvent extends ComponentEvent<OutsidePlantTools> {
-        private final BusinessObjectLight object;
-        private final double lat;
-        private final double lng;
-        
-        public OspNodeAddEvent(OutsidePlantTools source, boolean fromClient, BusinessObjectLight object, double lat, double lng) {
-            super(source, fromClient);
-            this.object = object;
-            this.lat = lat;
-            this.lng = lng;
-        }
-        public BusinessObjectLight getObject() {
-            return object;
-        }
-        public double getLat() {
-            return lat;
-        }
-        public double getLng() {
-            return lng;
-        }
-    }
-    /**
-     * 
-     */
-    public class OspEdgeAddEvent extends ComponentEvent<OutsidePlantTools> {
-        private final OSPNode sourceNode;
-        private final OSPNode targetNode;
-        private final List<GeoCoordinate> path;
-        
-        public OspEdgeAddEvent(OutsidePlantTools source, boolean fromClient, 
-            OSPNode sourceMarker, OSPNode targetMarker, List<GeoCoordinate> path) {
-            super(source, fromClient);
-            this.sourceNode = sourceMarker;
-            this.targetNode = targetMarker;
-            this.path = path;
-        }
-        
-        public OSPNode getSourceNode() {
-            return sourceNode;
-        }
-        
-        public OSPNode getTargetNode() {
-            return targetNode;
-        }
-        
-        public List<GeoCoordinate> getPath() {
-            return path;
-        }
+    //Helpers
+    private void executeCommand(Command command) {
+        if (command != null)
+            command.execute();
     }
 }

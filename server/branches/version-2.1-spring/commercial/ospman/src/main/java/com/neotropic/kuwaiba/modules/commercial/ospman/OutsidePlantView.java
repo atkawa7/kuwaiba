@@ -15,6 +15,8 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman;
 
+import com.neotropic.kuwaiba.modules.commercial.ospman.commands.CommandAddMarker;
+import com.neotropic.kuwaiba.modules.commercial.ospman.commands.CommandAddConnection;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.DialogDeleteOSPView;
 import org.neotropic.util.visual.views.AbstractView;
 import org.neotropic.util.visual.views.AbstractViewEdge;
@@ -266,43 +268,43 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
             OutsidePlantTools outsidePlantTools = new OutsidePlantTools(bem, ts, (AbstractMapProvider) mapProvider, (ToolRegister) mapProvider);
             ((HasComponents) mapProvider.getComponent()).add(outsidePlantTools);
             
-            outsidePlantTools.addOspNodeAddListener(event -> {
-                BusinessObjectViewNode viewNode = new BusinessObjectViewNode(event.getObject());
-                viewNode.getProperties().put("lat", event.getLat()); //NOI18N
-                viewNode.getProperties().put("lon", event.getLng()); //NOI18N
-                this.viewMap.addNode(viewNode);
-                this.mapProvider.addMarker(
-                    event.getObject(), 
-                    new GeoCoordinate(event.getLat(), event.getLng()), 
-                    StreamResourceRegistry.getURI(iconGenerator.apply(viewNode)).toString()
-                );
+            outsidePlantTools.setAddmarkerCommand(new CommandAddMarker() {
+                @Override
+                public void execute() {
+                    BusinessObjectViewNode viewNode = new BusinessObjectViewNode(getBussinesObject());
+                    viewNode.getProperties().put("lat", getLat()); //NOI18N
+                    viewNode.getProperties().put("lng", getLng()); //NOI18N
+                    
+                    viewMap.addNode(viewNode);
+                    
+                    mapProvider.addMarker(getBussinesObject(), 
+                        new GeoCoordinate(getLat(), getLng()), 
+                        StreamResourceRegistry.getURI(iconGenerator.apply(viewNode)).toString()
+                    );
+                }
             });
-            
-            outsidePlantTools.addOspEdgeAddListener(event -> {
+            outsidePlantTools.setAddPolylineCommand(new CommandAddConnection() {
+                @Override
+                public void execute() {
                 try {
                     BusinessObjectLight tmp = new BusinessObjectLight("OpticalLink", UUID.randomUUID().toString(), null); //NOI18N
 
                     BusinessObjectViewEdge viewEdge = new BusinessObjectViewEdge(tmp);
-                    viewEdge.getProperties().put("controlPoints", event.getPath()); //NOI18N
+                    viewEdge.getProperties().put("controlPoints", getPath()); //NOI18N
                     viewEdge.getProperties().put("color", //NOI18N
                         UtilHtml.toHexString(new Color(mem.getClass(tmp.getClassName()).getColor())));
 
                     viewMap.addEdge(viewEdge);
-                    viewMap.attachSourceNode(viewEdge, viewMap.getNode(event.getSourceNode().getBusinessObject()));
-                    viewMap.attachTargetNode(viewEdge, viewMap.getNode(event.getTargetNode().getBusinessObject()));
+                    viewMap.attachSourceNode(viewEdge, viewMap.getNode(getSource()));
+                    viewMap.attachTargetNode(viewEdge, viewMap.getNode(getTarget()));
 
-                    this.mapProvider.addPolyline(
-                        tmp, 
-                        event.getSourceNode().getBusinessObject(), 
-                        event.getTargetNode().getBusinessObject(), 
-                        event.getPath(), 
-                        properties
-                    );
+                    mapProvider.addPolyline(tmp, getSource(), getTarget(), getPath(), properties);
                 } catch (MetadataObjectNotFoundException ex) {
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.error"), 
                         ex.getLocalizedMessage()
                     ).open();
+                }
                 }
             });
             
