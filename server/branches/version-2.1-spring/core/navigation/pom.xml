@@ -28,7 +28,7 @@
         </pluginRepository>
     </pluginRepositories>
     <repositories>
-        <repository>
+            <repository>
             <id>central</id>
             <url>https://repo1.maven.org/maven2/</url>
             <snapshots>

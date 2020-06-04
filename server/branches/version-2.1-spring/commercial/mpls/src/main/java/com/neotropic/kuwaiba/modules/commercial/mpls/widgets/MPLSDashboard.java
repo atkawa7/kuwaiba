@@ -187,10 +187,10 @@ public class MPLSDashboard extends VerticalLayout  {
         selectedEndPointA = null;
         selectedEndPointB = null;
         Dialog dlgConnection = new Dialog();
-        TextField txtConnectionName = new TextField(ts.getTranslatedString("module.mpsl.connection-name"));
+        TextField txtConnectionName = new TextField(ts.getTranslatedString("module.mpls.connection-name"));
         
-        ComboBox<BusinessObjectLight> cbxSourceObject = new ComboBox<>(ts.getTranslatedString("module.mpsl.source-equipment"));
-        ComboBox<BusinessObjectLight>  cbxTargetObject = new ComboBox<>(ts.getTranslatedString("module.mpsl.target-equipment"));
+        ComboBox<BusinessObjectLight> cbxSourceObject = new ComboBox<>(ts.getTranslatedString("module.mpls.source-equipment"));
+        ComboBox<BusinessObjectLight>  cbxTargetObject = new ComboBox<>(ts.getTranslatedString("module.mpls.target-equipment"));
         
         cbxSourceObject.setAllowCustomValue(false);
         cbxSourceObject.setClearButtonVisible(true);
@@ -208,7 +208,7 @@ public class MPLSDashboard extends VerticalLayout  {
         cbxSourceObject.addValueChangeListener(listener -> {
             if (listener.getValue() != null && listener.getValue().equals(selectedTargetEquipment)) {
                 cbxSourceObject.setValue(null);
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpsl.must-select-different-equipments")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpls.must-select-different-equipments")).open();
                 return;
             }
             selectedSourceEquipment = listener.getValue();
@@ -218,7 +218,7 @@ public class MPLSDashboard extends VerticalLayout  {
         cbxTargetObject.addValueChangeListener(listener -> {
             if (listener.getValue() != null && listener.getValue().equals(selectedSourceEquipment)) {
                 cbxTargetObject.setValue(null);
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpsl.must-select-different-equipments")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpls.must-select-different-equipments")).open();
                 return;
             }
             selectedTargetEquipment = listener.getValue();
@@ -233,21 +233,21 @@ public class MPLSDashboard extends VerticalLayout  {
              selectedEndPointB = item.getItem().getObject();
         });
         
-        HorizontalLayout lytTrees = new HorizontalLayout(new VerticalLayout(new H5(ts.getTranslatedString("module.mpsl.source-end-point")), sourceTree) 
-                                 , new VerticalLayout(new H5(ts.getTranslatedString("module.mpsl.target-end-point")),targetTree));
+        HorizontalLayout lytTrees = new HorizontalLayout(new VerticalLayout(new H5(ts.getTranslatedString("module.mpls.source-end-point")), sourceTree) 
+                                 , new VerticalLayout(new H5(ts.getTranslatedString("module.mpls.target-end-point")),targetTree));
         lytTrees.setSizeFull();
               
         Button btnCancel = new Button(ts.getTranslatedString("module.general.messages.cancel"), evt -> {
             dlgConnection.close();
         });
-        Button btnCreateConnection = new Button(ts.getTranslatedString("module.mpsl.create-connection"), evt -> {
+        Button btnCreateConnection = new Button(ts.getTranslatedString("module.mpls.create-connection"), evt -> {
             
             if (selectedEndPointA == null) {
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpsl.must-select-end-point-a")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpls.must-select-end-point-a")).open();
                 return;
             }
             if (selectedEndPointB == null) {
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpsl.must-select-end-point-b")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpls.must-select-end-point-b")).open();
                 return;
             }
             try {
@@ -347,7 +347,7 @@ public class MPLSDashboard extends VerticalLayout  {
         try {
             if (currentView != null) {
             aem.updateGeneralView(currentView.getId(), currentView.getName(), currentView.getDescription(), mplsView.getAsXml(), null);
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpsl.view-saved")).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.view-saved")).open();
             }
         } catch (InvalidArgumentException | ApplicationObjectNotFoundException ex) {
             Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);

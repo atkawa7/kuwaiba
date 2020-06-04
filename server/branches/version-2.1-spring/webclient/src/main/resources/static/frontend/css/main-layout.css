@@ -30,8 +30,8 @@
 /* Most dashboard with a cover component to be clicked to be activated have these properties  */
 .widgets-standard-cover {
     position: relative;
-    width: 350px;
-    height: 350px;
+    width: 200px;
+    height: 200px;
 }
 
 .widgets-standard-cover-content {

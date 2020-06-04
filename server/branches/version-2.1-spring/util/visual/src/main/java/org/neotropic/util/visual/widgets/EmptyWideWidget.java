@@ -25,7 +25,8 @@ import com.vaadin.flow.component.html.Label;
 public class EmptyWideWidget extends AbstractDashboardWidget {
 
     public EmptyWideWidget(String title) {
-        super(title);
+        super(); 
+        setTitle(title);
         setWidthFull();
     }
 

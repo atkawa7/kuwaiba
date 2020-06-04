@@ -29,32 +29,41 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
 import org.neotropic.util.visual.properties.AbstractProperty;
 import org.neotropic.util.visual.properties.PropertySheet;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class ServiceDashboard extends HorizontalLayout {
-    /**
-     * Reference to the service being displayed.
-     */
-    private BusinessObject service;
+@Component
+public class ServiceDashboardFactory {
+    @Autowired
+    private MetadataEntityManager mem;
+    @Autowired
+    private ApplicationEntityManager aem;
+    @Autowired
+    private BusinessEntityManager bem;
+    @Autowired
+    private TranslationService ts;
     /**
      * The property sheet with the attributes of the service.
      */
     private PropertySheet shtServiceProperties;
     
-    public ServiceDashboard(BusinessObjectLight aService, TranslationService ts, 
-            MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem) {
-        setSizeFull();
+    public HorizontalLayout build(BusinessObjectLight aService) {
+        HorizontalLayout dashboard = new HorizontalLayout();
+        dashboard.setSizeFull();
         try {
-            this.service = bem.getObject(aService.getClassName(), aService.getId());
-            List<AbstractProperty> serviceAttributes = PropertyFactory.propertiesFromBusinessObject(this.service, ts, aem, mem);
+            BusinessObject service = bem.getObject(aService.getClassName(), aService.getId());
+            List<AbstractProperty> serviceAttributes = PropertyFactory.propertiesFromBusinessObject(service, ts, aem, mem);
             this.shtServiceProperties = new PropertySheet(ts, serviceAttributes, ts.getTranslatedString("module.propertysheet.labels.header"));
-            add(this.shtServiceProperties);
-            add(new NetworkResourcesWidget(ts.getTranslatedString("module.serviceman.widgets.network-resources.title")));
+            dashboard.add(this.shtServiceProperties);
+            dashboard.add(new NetworkResourcesWidget(service, mem, aem, bem, ts));
+            
         } catch (InventoryException ex) {
-            add(new Label(ex.getMessage()));
+            dashboard.add(new Label(ex.getMessage()));
         }
+        return dashboard;
     }
 }

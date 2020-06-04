@@ -23,6 +23,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 
 /**
  * A small embeddable component that can be inserted into an AbstractDashboard. A DashboardWidget has two "faces": 
@@ -38,7 +39,7 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
     /**
      * The component with the cover information
      */
-    protected Component coverComponent;
+    protected Div coverComponent;
     /**
      * The component with the detailed information (actual content)
      */
@@ -59,18 +60,23 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
      * Reference to the Business Entity Manager.
      */
     protected BusinessEntityManager bem;
-    
-    public AbstractDashboardWidget(String title) {
-        this.title = title;
-        this.activeContent = ActiveContent.CONTENT_COVER;
-    }
-    
     /**
-     * Loads the configuration (if any) of the widget. In most cases, the configuration is extracted from configuration variables.
-     * @throws IllegalArgumentException If the minimum configuration parameters for the widget to work are not available.
+     * Reference to the translation service.
      */
-    protected void loadConfiguration() throws IllegalArgumentException { }
-        
+    protected TranslationService ts;
+
+    /**
+     * Use this constructor only for those widgets that won't be accessing the database.
+     */
+    public AbstractDashboardWidget() { }
+    
+    public AbstractDashboardWidget(MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem, TranslationService ts) {
+        this.mem = mem;
+        this.aem = aem;
+        this.bem = bem;
+        this.ts = ts;
+    }
+
     public ActiveContent getActiveContent() {
         return activeContent;
     }
@@ -79,6 +85,14 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
         this.activeContent = activeContent;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    
     /**
      * Flips the current displayed component. That is, instead of the cover component, the component widget will be displayed
      */

@@ -164,8 +164,8 @@
         </dependency>
         <dependency>
             <groupId>com.neotropic.flow.component</groupId>
-            <artifactId>google-map-flow</artifactId>
-            <version>1.0.0</version>
+            <artifactId>google-maps-flow</artifactId>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>org.neotropic.kuwaiba</groupId>

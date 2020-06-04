@@ -80,12 +80,12 @@ public class MPLSModule extends AbstractCommercialModule {
     
      @Override
     public String getName() {
-        return ts.getTranslatedString("module.mpsl.name");
+        return ts.getTranslatedString("module.mpls.name");
     }
 
     @Override
     public String getDescription() {
-        return ts.getTranslatedString("module.mpsl.description");
+        return ts.getTranslatedString("module.mpls.description");
     }
     
     @Override

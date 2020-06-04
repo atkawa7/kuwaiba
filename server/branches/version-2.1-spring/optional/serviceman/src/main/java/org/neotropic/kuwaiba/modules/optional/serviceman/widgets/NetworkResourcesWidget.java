@@ -17,27 +17,56 @@
 package org.neotropic.kuwaiba.modules.optional.serviceman.widgets;
 
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import java.util.List;
+import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
+import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.util.visual.widgets.AbstractDashboardWidget;
 
 /**
- * Shows the network resources associated to a service.
+ * Shows the network resources related to a service.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class NetworkResourcesWidget extends AbstractDashboardWidget {
-
-    public NetworkResourcesWidget(String title) {
-        super(title);
+    /**
+     * The service the network resources belong to.
+     */
+    private BusinessObjectLight service;
+    public NetworkResourcesWidget(BusinessObjectLight service, MetadataEntityManager mem, ApplicationEntityManager aem, 
+            BusinessEntityManager bem, TranslationService ts) {
+        super(mem, aem, bem, ts);
+        this.service = service;
+        setTitle(ts.getTranslatedString("module.serviceman.widgets.network-resources.title"));
         createCover();
-        ((Div)coverComponent).addClassName("widgets-colors-good-green");
+        coverComponent.addClassName("widgets-colors-good-green");
     }
-
+    
     @Override
     public void createContent() {
-        
-        Grid<BusinessObjectLight> tblNetworkResources = new Grid<>();
-        
+        try {
+            List<BusinessObjectLight> relatedNetworkResources = bem.getSpecialAttribute(service.getClassName(), service.getId(), "uses");
+            if (relatedNetworkResources.isEmpty()) {
+                contentComponent = new Label(ts.getTranslatedString("module.serviceman.widgets.network-resources.ui.no-network-resouces"));
+                return;
+            }
+                
+            Grid<BusinessObjectLight> tblNetworkResources = new Grid<>();
+            tblNetworkResources.setItems(relatedNetworkResources);
+            tblNetworkResources.addColumn(BusinessObjectLight::getName).setHeader(ts.getTranslatedString("module.widgets.messages.general.name"));
+            tblNetworkResources.addColumn(BusinessObjectLight::getClassName).setHeader(ts.getTranslatedString("module.widgets.messages.general.type"));
+            tblNetworkResources.setWidthFull();
+            VerticalLayout lytContent = new VerticalLayout(tblNetworkResources);
+            lytContent.setPadding(true);
+            lytContent.setSizeFull();
+            contentComponent = lytContent;
+        } catch (InventoryException ex) {
+            contentComponent = new Label(ex.getLocalizedMessage());
+        }
     }
 
 }

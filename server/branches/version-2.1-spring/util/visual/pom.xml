@@ -39,7 +39,7 @@
         <dependency>
             <groupId>com.neotropic.vaadin14.component</groupId>
             <artifactId>mx-graph-flow</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
             <type>jar</type>
         </dependency>
     </dependencies>

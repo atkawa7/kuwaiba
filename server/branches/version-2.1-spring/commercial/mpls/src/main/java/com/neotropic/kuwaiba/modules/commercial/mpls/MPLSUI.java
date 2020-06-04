@@ -184,7 +184,7 @@ public class MPLSUI extends VerticalLayout {
         
         dashboard = new MPLSDashboard(ts, mem, aem, bem, resourceFactory, mplsService);
         dashboard.setWidth("60%");
-        H4 headerListTypes = new H4(ts.getTranslatedString("module.mpsl.mpls-views"));
+        H4 headerListTypes = new H4(ts.getTranslatedString("module.mpls.mpls-views"));
         VerticalLayout lytViews = new VerticalLayout(headerListTypes, tblViews, btnNewView);
         lytViews.setSpacing(false);
         lytViews.setPadding(false);
