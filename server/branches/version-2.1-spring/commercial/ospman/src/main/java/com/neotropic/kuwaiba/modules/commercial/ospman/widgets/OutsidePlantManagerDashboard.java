@@ -44,6 +44,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
+import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionService;
 import org.neotropic.kuwaiba.visualization.views.ViewNodeIconGenerator;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
@@ -72,6 +73,10 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
      * Reference to the Metadata Entity Manager.
      */
     private final MetadataEntityManager mem;
+    /**
+     * Reference to the Physical Connection Service.
+     */
+    private final PhysicalConnectionService physicalConnectionService;
     
     private HorizontalLayout hlyQuickActions;
     private VerticalLayout vlyContent;
@@ -84,6 +89,7 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
         ApplicationEntityManager aem, 
         BusinessEntityManager bem, 
         MetadataEntityManager mem,
+        PhysicalConnectionService physicalConnectionService,
         NewOspViewAction newOspViewAction) {
         
         this.ts = ts;
@@ -91,6 +97,7 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
         this.aem = aem;
         this.bem = bem;
         this.mem = mem;
+        this.physicalConnectionService = physicalConnectionService;
         setSizeFull();
         setPadding(false);
         setMargin(false);
@@ -163,8 +170,8 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
     private void addOutsidePlantView(ViewObjectLight viewObjectLight) {
         try {
             removeAll();
-            OutsidePlantView outsidePlantView = new OutsidePlantView(mem, aem, bem, ts, 
-                new ViewNodeIconGenerator(resourceFactory), () -> init());
+            OutsidePlantView outsidePlantView = new OutsidePlantView(mem, aem, bem, physicalConnectionService, ts, 
+                new ViewNodeIconGenerator(resourceFactory), true, () -> init());
             if (viewObjectLight == null)
                 outsidePlantView.buildEmptyView();
             else {

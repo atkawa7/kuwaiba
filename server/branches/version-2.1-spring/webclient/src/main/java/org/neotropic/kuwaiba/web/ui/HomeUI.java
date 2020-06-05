@@ -16,24 +16,72 @@
 
 package org.neotropic.kuwaiba.web.ui;
 
+import com.neotropic.kuwaiba.modules.commercial.ospman.widgets.SimpleMapDashboardWidget;
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
+import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
+import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * The home page. It's a dashboard that can be customized with widgets. 
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-@Route("home")
+@Route(value = "home", layout = MainLayout.class)
 public class HomeUI extends VerticalLayout implements BeforeEnterObserver {
+    /**
+     * Reference to the Translation Service.
+     */
+    @Autowired
+    private TranslationService ts;
+    /**
+     * Reference to the Resource Factory.
+     */
+    @Autowired
+    private ResourceFactory resourceFactory;
+    /**
+     * Reference to the Application Entity Manager.
+     */
+    @Autowired
+    private ApplicationEntityManager aem;
+    /**
+     * Reference to the Business Entity Manager.
+     */
+    @Autowired
+    private BusinessEntityManager bem;
+    /**
+     * Reference to the Metadata Entity Manager.
+     */
+    @Autowired
+    private MetadataEntityManager mem;
+    /**
+     * Reference to the Physical Connection Service.
+     */
+    @Autowired
+    private PhysicalConnectionService physicalConnectionService;
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
         if (UI.getCurrent().getSession().getAttribute(Session.class) == null) // If there is no session, redirect to the login page
             event.forwardTo(LoginUI.class);
     }
-
+    @Override
+    public void onAttach(AttachEvent event) {
+        setSizeFull();
+        setMargin(false);
+        setPadding(false);
+        setSpacing(false);
+        
+        getUI().ifPresent(ui -> ui.getPage().setTitle(ts.getTranslatedString("module.login.ui.home")));
+        add(new SimpleMapDashboardWidget(aem, bem, mem, physicalConnectionService, ts, resourceFactory));
+    }
 }

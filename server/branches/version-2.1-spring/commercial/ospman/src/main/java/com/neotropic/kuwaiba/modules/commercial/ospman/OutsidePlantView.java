@@ -18,6 +18,7 @@ package com.neotropic.kuwaiba.modules.commercial.ospman;
 import com.neotropic.kuwaiba.modules.commercial.ospman.commands.CommandAddMarker;
 import com.neotropic.kuwaiba.modules.commercial.ospman.commands.CommandAddConnection;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.DialogDeleteOSPView;
+import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.DialogNewContainer;
 import org.neotropic.util.visual.views.AbstractView;
 import org.neotropic.util.visual.views.AbstractViewEdge;
 import org.neotropic.util.visual.views.AbstractViewNode;
@@ -39,7 +40,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.UUID;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -58,6 +58,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotF
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionService;
 import org.neotropic.kuwaiba.visualization.views.ViewNodeIconGenerator;
 import org.neotropic.util.visual.dialog.ConfirmDialog;
 import org.neotropic.util.visual.notifications.SimpleNotification;
@@ -76,23 +77,29 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
     private final ApplicationEntityManager aem;
     private final BusinessEntityManager bem;
     private final MetadataEntityManager mem;
+    private final PhysicalConnectionService physicalConnectionService;
     private final ViewNodeIconGenerator iconGenerator;
     private final Command cmdParentBack;
+    private final boolean drawingControl;
     
     public OutsidePlantView(
         MetadataEntityManager mem, 
         ApplicationEntityManager aem, 
         BusinessEntityManager bem, 
+        PhysicalConnectionService physicalConnectionService, 
         TranslationService ts, 
         ViewNodeIconGenerator iconGenerator,
+        boolean drawingControl,
         Command cmdParentBack) {
         
         this.aem = aem;
         this.bem = bem;
         this.mem = mem;
+        this.physicalConnectionService = physicalConnectionService;
         this.ts = ts;
         this.iconGenerator = iconGenerator;
         this.cmdParentBack = cmdParentBack;
+        this.drawingControl = drawingControl;
     }
 
     @Override
@@ -254,7 +261,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
                 this.mapProvider.addPolyline(businessObject, (BusinessObjectLight)this.viewMap.getEdgeSource(edge).getIdentifier(), 
                         (BusinessObjectLight)this.viewMap.getEdgeTarget(edge).getIdentifier(), (List<GeoCoordinate>)edge.getProperties().get("controlPoints"), edge.getProperties()); //NOI18N
             }
-            addToolManager(this.mapProvider);
+            if (drawingControl)
+                addToolManager(this.mapProvider);
             return this.mapProvider.getComponent();
         } catch (Exception ex) {
             return new Label(String.format("An unexpected error occurred while loading the OSP view: %s", ex.getLocalizedMessage()));
@@ -286,25 +294,28 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
             outsidePlantTools.setAddPolylineCommand(new CommandAddConnection() {
                 @Override
                 public void execute() {
-                try {
-                    BusinessObjectLight tmp = new BusinessObjectLight("OpticalLink", UUID.randomUUID().toString(), null); //NOI18N
+                    new DialogNewContainer(
+                        getSource(), getTarget(), ts, aem, bem, mem, physicalConnectionService, 
+                        container -> {
+                            try {
+                                BusinessObjectViewEdge viewEdge = new BusinessObjectViewEdge(container);
+                                viewEdge.getProperties().put("controlPoints", getPath()); //NOI18N
+                                viewEdge.getProperties().put("color", //NOI18N
+                                    UtilHtml.toHexString(new Color(mem.getClass(container.getClassName()).getColor())));
 
-                    BusinessObjectViewEdge viewEdge = new BusinessObjectViewEdge(tmp);
-                    viewEdge.getProperties().put("controlPoints", getPath()); //NOI18N
-                    viewEdge.getProperties().put("color", //NOI18N
-                        UtilHtml.toHexString(new Color(mem.getClass(tmp.getClassName()).getColor())));
+                                viewMap.addEdge(viewEdge);
+                                viewMap.attachSourceNode(viewEdge, viewMap.getNode(getSource()));
+                                viewMap.attachTargetNode(viewEdge, viewMap.getNode(getTarget()));
 
-                    viewMap.addEdge(viewEdge);
-                    viewMap.attachSourceNode(viewEdge, viewMap.getNode(getSource()));
-                    viewMap.attachTargetNode(viewEdge, viewMap.getNode(getTarget()));
-
-                    mapProvider.addPolyline(tmp, getSource(), getTarget(), getPath(), properties);
-                } catch (MetadataObjectNotFoundException ex) {
-                    new SimpleNotification(
-                        ts.getTranslatedString("module.general.messages.error"), 
-                        ex.getLocalizedMessage()
+                                mapProvider.addPolyline(container, getSource(), getTarget(), getPath(), properties);
+                            } catch (MetadataObjectNotFoundException ex) {
+                                new SimpleNotification(
+                                    ts.getTranslatedString("module.general.messages.error"), 
+                                    ex.getLocalizedMessage()
+                                ).open();
+                            }
+                        }
                     ).open();
-                }
                 }
             });
             

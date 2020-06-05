@@ -172,6 +172,11 @@
             <artifactId>Visualization</artifactId>
             <version>2.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.neotropic.kuwaiba</groupId>
+            <artifactId>physical-connections</artifactId>
+            <version>2.1</version>
+        </dependency>
     </dependencies>
 
     <build>
