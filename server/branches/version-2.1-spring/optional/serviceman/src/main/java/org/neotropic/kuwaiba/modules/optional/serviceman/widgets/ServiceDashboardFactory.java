@@ -27,6 +27,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
+import org.neotropic.kuwaiba.modules.core.navigation.widgets.ReportsWidget;
 import org.neotropic.util.visual.properties.AbstractProperty;
 import org.neotropic.util.visual.properties.PropertySheet;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,7 @@ public class ServiceDashboardFactory {
             this.shtServiceProperties = new PropertySheet(ts, serviceAttributes, ts.getTranslatedString("module.propertysheet.labels.header"));
             dashboard.add(this.shtServiceProperties);
             dashboard.add(new NetworkResourcesWidget(service, mem, aem, bem, ts));
-            
+            dashboard.add(new ReportsWidget(service, mem, aem, bem, ts));
         } catch (InventoryException ex) {
             dashboard.add(new Label(ex.getMessage()));
         }

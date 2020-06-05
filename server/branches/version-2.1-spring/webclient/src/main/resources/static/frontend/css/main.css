@@ -11,6 +11,7 @@ body {
     --material-primary-text-color: var(--primary-color, #5F9F9F) !important;
     --material-font-family: 'ubuntu-r' !important;
     --material-body-font-size: small;  
+    --material-small-font-size: small;
 }
 
 /* Inherited styles */

@@ -14,13 +14,14 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.modules.optional.serviceman.widgets;
+package org.neotropic.kuwaiba.modules.core.navigation.widgets;
 
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.util.List;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.application.reporting.ReportMetadataLight;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
@@ -29,42 +30,42 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.util.visual.widgets.AbstractDashboardWidget;
 
 /**
- * Shows the network resources related to a service.
+ * Shows the list of class level reports associated to a give object and allows to launch it.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class NetworkResourcesWidget extends AbstractDashboardWidget {
+public class ReportsWidget extends AbstractDashboardWidget {
     /**
-     * The service the network resources belong to.
+     * The inventory object we need the report list for.
      */
-    private BusinessObjectLight service;
-    public NetworkResourcesWidget(BusinessObjectLight service, MetadataEntityManager mem, ApplicationEntityManager aem, 
+    private BusinessObjectLight inventoryObject;
+    public ReportsWidget(BusinessObjectLight inventoryObject, MetadataEntityManager mem, ApplicationEntityManager aem, 
             BusinessEntityManager bem, TranslationService ts) {
         super(mem, aem, bem, ts);
-        this.service = service;
-        setTitle(ts.getTranslatedString("module.serviceman.widgets.network-resources.title"));
+        this.inventoryObject = inventoryObject;
+        setTitle(ts.getTranslatedString("module.navigation.widgets.reports.title"));
         createCover();
-        coverComponent.addClassName("widgets-colors-magenta");
+        coverComponent.addClassName("widgets-colors-good-green");
     }
     
     @Override
     public void createContent() {
         try {
-            List<BusinessObjectLight> relatedNetworkResources = bem.getSpecialAttribute(service.getClassName(), service.getId(), "uses");
-            if (relatedNetworkResources.isEmpty()) {
-                contentComponent = new Label(ts.getTranslatedString("module.serviceman.widgets.network-resources.ui.no-network-resources"));
+            List<ReportMetadataLight> classLevelReports = bem.getClassLevelReports(inventoryObject.getClassName(), false, false);
+            if (classLevelReports.isEmpty()) {
+                contentComponent = new Label(ts.getTranslatedString("module.navigation.widgets.reports.ui.no-reports"));
                 return;
             }
                 
-            Grid<BusinessObjectLight> tblNetworkResources = new Grid<>();
-            tblNetworkResources.setItems(relatedNetworkResources);
-            tblNetworkResources.addColumn(BusinessObjectLight::getName).setHeader(ts.getTranslatedString("module.widgets.messages.general.name"));
-            tblNetworkResources.addColumn(BusinessObjectLight::getClassName).setHeader(ts.getTranslatedString("module.widgets.messages.general.type"));
-            tblNetworkResources.setSizeFull();
-            VerticalLayout lytContent = new VerticalLayout(tblNetworkResources);
+            Grid<ReportMetadataLight> tblReports = new Grid<>();
+            tblReports.setItems(classLevelReports);
+            tblReports.addColumn(ReportMetadataLight::getName).setHeader(ts.getTranslatedString("module.widgets.messages.general.name"));
+            tblReports.setSizeFull();
+            VerticalLayout lytContent = new VerticalLayout(tblReports);
             lytContent.addClassName("widgets-layout-dialog-list");
             contentComponent = lytContent;
         } catch (InventoryException ex) {
             contentComponent = new Label(ex.getLocalizedMessage());
         }
     }
+
 }

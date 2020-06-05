@@ -52,6 +52,13 @@
     background-color: #5FC8A4;
 }
 
+/* To be applied in dialog with lists (a grid) inside   */
+.widgets-layout-dialog-list {
+   padding: 5px;
+   min-height: 350px;
+   min-width: 350px;
+}
+
 /* Individual components */
 .search-box-large {
     width: 500px;
