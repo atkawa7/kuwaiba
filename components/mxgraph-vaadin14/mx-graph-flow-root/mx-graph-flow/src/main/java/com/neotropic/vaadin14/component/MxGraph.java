@@ -81,6 +81,10 @@ public class MxGraph extends Component {
         return super.addListener(MxGraphCellSelectedEvent.class, eventListener);
     }
     
+    public Registration addDeleteCellSelectedListener(ComponentEventListener<MxGraphDeleteCellSelectedEvent> eventListener) {
+        return super.addListener(MxGraphDeleteCellSelectedEvent.class, eventListener);
+    }
+    
     public void addCell(MxGraphCell mxGraphCell) {
         getElement().appendChild(mxGraphCell.getElement());     
     }
@@ -148,8 +152,13 @@ public class MxGraph extends Component {
     /**
      * this method remove all cells(vertex and edges) in the graph
      */
-    public void removeAllCells() {      
-        getElement().callJsFunction("removeAllCells");
+    public void removeAllCells() {     
+        
+        nodes.stream().forEach(node ->  getElement().removeChild(node.getElement()));
+        edges.stream().forEach(edge ->  getElement().removeChild(edge.getElement()));
+        nodes = new ArrayList<>();
+        edges = new ArrayList<>();
+//        getElement().callJsFunction("removeAllCells");
     }
     
     /**
@@ -159,7 +168,15 @@ public class MxGraph extends Component {
         getElement().callJsFunction("refreshGraph");
     }
 
+    public void removeNode(MxGraphNode node) {
+        getElement().removeChild(node.getElement());
+        nodes.remove(node);
+    }
+    
+    public void removeEdge(MxGraphEdge edge) {
+        getElement().removeChild(edge.getElement());
+        edges.remove(edge);
+    }
 
-    
-    
+ 
 }

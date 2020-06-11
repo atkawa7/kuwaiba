@@ -172,11 +172,13 @@ public class MxGraphCell extends Component {
     @Synchronize(property = "points", value = "points-changed")
     public List<Point> getPointList() {
         String points = getElement().getProperty(PROPERTY_POINTS);
-        
+        if (points != null){
         Gson gson = new Gson();
         Type pointType = new TypeToken<ArrayList<Point>>() {}.getType(); 
         ArrayList<Point> listPoints = gson.fromJson(points, pointType);
-        return listPoints;
+        return listPoints == null ? new ArrayList<>() : listPoints;
+        } else
+            return new ArrayList<>();
     }
         
     public void setPoints(String prop) {

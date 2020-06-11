@@ -33,7 +33,7 @@ class MxGraphCell extends PolymerElement {
     return {
       uuid: {
         type: String,
-        value: '0'
+        value: Math.random() + ''
       },
       cell: {           // reference to the cell that represents the Polymer Object MxGraphCell
         type: Object,
@@ -199,7 +199,7 @@ class MxGraphCell extends PolymerElement {
       if (this.vertex) {  //if the cell is a vertex then...
         console.log("CREATIN VERTEX");
         var imageStyle = this.image ? ';shape=image;verticalLabelPosition=bottom;image='.concat(this.image) : '';
-        this.cell = this.graph.insertVertex(parent, null, this.label, this.x, this.y, this.width, this.height,
+        this.cell = this.graph.insertVertex(parent, this.uuid ? this.uuid : null, this.label, this.x, this.y, this.width, this.height,
               'verticalAlign=top' + imageStyle +
              ';fontStyle=1;labelPadding=5' +
             ';labelBackgroundColor=' + this.labelBackgroundColor +                
@@ -224,7 +224,7 @@ class MxGraphCell extends PolymerElement {
           },this);
           
           // create the edge and assign the reference
-          this.cell = this.graph.insertEdge(parent, null, this.label, sourceNode, targetNode,
+          this.cell = this.graph.insertEdge(parent, this.uuid ? this.uuid : null, this.label, sourceNode, targetNode,
           'fontStyle=1;endArrow=none;orthogonalLoop=1;labelPadding=5\
             ;perimeterSpacing=' + this.perimeterSpacing +
             ';strokeWidth=' + this.strokeWidth + 

@@ -146,14 +146,18 @@ class MxGraph extends PolymerElement {
               } 
           });
           
+//          detect delete key to fire delete object event
           var keyHandler = new mxKeyHandler(this.graph);
-    				keyHandler.bindKey(46, function(evt)
-    				{
-    				  if (_this.graph.isEnabled())
-    				  {
-    				    _this.graph.removeCells();
-    				  }
-    				});
+                        keyHandler.bindKey(46, function(evt)
+                        {
+                          if (_this.graph.isEnabled())
+                          {
+                           // _this.graph.removeCells(); // direct delete disables, instead event is fired
+                          }
+                          if (_this.graph.getSelectionCell() ) { // just single selection is supported
+                            _this.fireDeleteCellSelected();
+                          }
+                        });
 
           // Called when any cell is moved
           this.graph.addListener(mxEvent.CELLS_MOVED, function (sender, evt) {
@@ -376,20 +380,39 @@ class MxGraph extends PolymerElement {
      
 }
 
-updateCells(mutations) {
+    updateCells(mutations) {
 
-    mutations.forEach(function(mutation) {
-      console.log("MUTATION TYPE" + mutation.type);
-      var node  = mutation.addedNodes[0];
-      if(node) {
-          if (node.localName === "mx-graph-cell") {
-                node.parent = this;   // add reference to the parent PolymerObject
-                node.graph = this.graph; // add the mxGraph object
-                this.push('cells', node);             
-           }
-       }
-      }, this); 
-}
+        mutations.forEach(function(mutation) {
+        console.log("MUTATION TYPE" + mutation.type);
+        var addedNodes = mutation.addedNodes;
+        addedNodes.forEach(node => {
+            if (node) {
+                if (node.localName === "mx-graph-cell") {
+                console.log("CELL TAG ADDED " + node.uuid);
+                node.parent = this; // add reference to the parent PolymerObject
+                        node.graph = this.graph; // add the mxGraph object
+                        this.push('cells', node);
+                }
+            }
+        });
+        var removedNodes = mutation.removedNodes;
+        removedNodes.forEach(node => {
+        if (node) {
+            if (node.localName === "mx-graph-cell") {
+                var index = this.cells.indexOf(node);
+                if (index > -1) {
+                    this.cells.splice(index, 1);
+                }  
+                if (node.cell) {
+                    console.log("CELL TAG REMOVED " + node.uuid);
+                    var nodes = [node.cell];
+                    this.graph.removeCells(nodes , false);
+                }
+            };
+          };
+        });
+      }, this);
+   }
 
 //This method dispatches a custom event when any edge its clicked
   fireClickEdge(){
@@ -408,6 +431,11 @@ updateCells(mutations) {
     {detail: {kicked: true, cellId: cellId, isVertex:isVertex}}));
   }
   
+  //This method dispatches a custom event when the delete key is press.
+  fireDeleteCellSelected(){
+    this.dispatchEvent(new CustomEvent('delete-cell-selected', {detail: {kicked: true}}));
+  }
+  
   //this method remove all cells(vertex and edges) in the graph
   removeAllCells() {
       this.graph.removeCells(this.graph.getChildVertices(this.graph.getDefaultParent()));
@@ -417,7 +445,6 @@ updateCells(mutations) {
   refreshGraph() {
       this.graph.refresh();
   }
-
   
 }
 
