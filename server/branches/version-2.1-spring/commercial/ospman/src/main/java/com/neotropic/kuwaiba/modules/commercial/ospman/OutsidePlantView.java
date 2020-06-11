@@ -616,5 +616,15 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
     public void addEdgeClickListener(ViewEventListener listener) {
         this.mapProvider.addPolylineClickListener(listener);
     }
+
+    @Override
+    public void deleteNode(BusinessObjectLight businessObject) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void deleteEdge(BusinessObjectLight businessObject) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }
