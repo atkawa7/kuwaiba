@@ -19,6 +19,7 @@ import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import java.util.ArrayList;
 import java.util.List;
+import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.util.visual.general.BoldLabel;
 
 /**
@@ -34,12 +35,7 @@ public class ObjectMultipleProperty extends AbstractProperty<List>{
     public ObjectMultipleProperty(String name, String displayName, String description, List value, List items) {
         super(name, displayName, description, value);
         this.allItems = items;
-    }
-     
-    public ObjectMultipleProperty(String name, String displayName, String description, List value, List items, String type) {
-         
-        super(name, displayName, description, value, type);
-        this.allItems = items;
+        setType(Constants.DATA_TYPE_LIST_TYPE);
     }
 
     public List getListTypes() {

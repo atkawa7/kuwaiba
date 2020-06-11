@@ -17,6 +17,7 @@ package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.textfield.NumberField;
+import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 
 
 /**
@@ -27,11 +28,8 @@ public class DoubleProperty extends AbstractProperty<Double> {
 
     public DoubleProperty(String name, String displayName, String description, Double value) {
         super(name, displayName, description, value);
+        setType(Constants.DATA_TYPE_DOUBLE);
     }
-
-    public DoubleProperty(String name, String displayName, String description, Double value, String type) {
-        super(name, displayName, description, value, type);
-    }  
 
     @Override
     public AbstractField getAdvancedEditor() {

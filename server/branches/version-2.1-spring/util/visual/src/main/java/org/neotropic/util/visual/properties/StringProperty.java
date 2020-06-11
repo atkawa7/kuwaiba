@@ -18,6 +18,7 @@ package org.neotropic.util.visual.properties;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 
 
 /**
@@ -28,14 +29,12 @@ public class StringProperty extends AbstractProperty<String>{
 
     public StringProperty(String name, String displayName, String description, String value) {
         super(name, displayName, description, value);
+        setType(Constants.DATA_TYPE_STRING);
     }
 
-    public StringProperty(String name, String displayName, String description, String value, String type) {
-        super(name, displayName, description, value, type);
-    }
-
-    public StringProperty(String name, String displayName, String description, String value, String type, boolean readOnly) {
-        super(name, displayName, description, value, type, readOnly);
+    public StringProperty(String name, String displayName, String description, String value, boolean readOnly) {
+        super(name, displayName, description, value, readOnly);
+        setType(Constants.DATA_TYPE_STRING);
     }
     
     @Override

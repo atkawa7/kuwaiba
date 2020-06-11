@@ -17,6 +17,7 @@ package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.textfield.IntegerField;
+import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 
 
 /**
@@ -27,14 +28,12 @@ public class IntegerProperty extends AbstractProperty<Integer>{
 
     public IntegerProperty(String name, String displayName, String description, Integer value) {
         super(name, displayName, description, value);
+        setType(Constants.DATA_TYPE_INTEGER);
     }
 
-    public IntegerProperty(String name, String displayName, String description, Integer value, String type) {
-        super(name, displayName, description, value, type);
-    }
-
-    public IntegerProperty(String name, String displayName, String description, Integer value, String type, boolean readOnly) {
-        super(name, displayName, description, value, type, readOnly);
+    public IntegerProperty(String name, String displayName, String description, Integer value , boolean readOnly) {
+        super(name, displayName, description, value, readOnly);
+        setType(Constants.DATA_TYPE_INTEGER);
     }
     
     @Override

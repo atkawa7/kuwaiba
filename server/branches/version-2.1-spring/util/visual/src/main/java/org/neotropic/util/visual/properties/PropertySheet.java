@@ -73,7 +73,7 @@ public class PropertySheet extends Grid<AbstractProperty> {
                     ? property.toString() : property.getDescription());
             lytName.add(lblName, lblType);
             return lytName;
-        }).setHeader(ts.getTranslatedString("module.general.labels.attributenamme")).setKey("name").setFlexGrow(2);
+        }).setHeader(ts.getTranslatedString("module.general.labels.attributename")).setKey("name").setFlexGrow(3);
         
         addComponentColumn((property) -> {
             VerticalLayout lytValue = new VerticalLayout();
@@ -103,7 +103,7 @@ public class PropertySheet extends Grid<AbstractProperty> {
                     lblValue.setVisible(true);
                     hlytEditField.setVisible(false);
                     this.getColumnByKey("advancedEditor").setVisible(true);
-                    this.getColumnByKey("name").setFlexGrow(2);
+                    this.getColumnByKey("name").setFlexGrow(3);
                     if (editField.getValue() == null) {
                         new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), 
                                 ts.getTranslatedString("module.general.messages.error-null-value")).open();
@@ -126,7 +126,7 @@ public class PropertySheet extends Grid<AbstractProperty> {
                     lblValue.setVisible(true);
                     hlytEditField.setVisible(false);
                     this.getColumnByKey("advancedEditor").setVisible(true);
-                    this.getColumnByKey("name").setFlexGrow(2);
+                    this.getColumnByKey("name").setFlexGrow(3);
                 });
 
                 lblValue.getElement().addEventListener("dblclick", e -> {
@@ -151,7 +151,7 @@ public class PropertySheet extends Grid<AbstractProperty> {
         }).setHeader(String.format("%s (%s)", 
                 ts.getTranslatedString("module.general.labels.value"),
                 ts.getTranslatedString("module.propertysheet.labels.dbl-click-edit")))
-                .setKey("value").setFlexGrow(4);
+                .setKey("value").setFlexGrow(5);
         
         addComponentColumn((property) -> {
             if (!property.isReadOnly() && property.supportsAdvancedEditor()) {
@@ -167,7 +167,7 @@ public class PropertySheet extends Grid<AbstractProperty> {
                  return btnAdvancedEditor;
             }
             return new HorizontalLayout();
-        }).setHeader("").setKey("advancedEditor");
+        }).setHeader("").setKey("advancedEditor").setWidth("50px");
     }
     
     public PropertySheet(TranslationService ts, List<AbstractProperty> properties, String caption) {

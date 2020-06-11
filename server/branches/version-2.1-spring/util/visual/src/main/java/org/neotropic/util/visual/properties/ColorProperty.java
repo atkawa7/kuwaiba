@@ -17,6 +17,7 @@
 package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.AbstractField;
+import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.util.visual.colorpicker.ColorPicker;
 
 /**
@@ -27,11 +28,8 @@ public class ColorProperty extends AbstractProperty<String>{
 
     public ColorProperty(String name, String displayName, String description, String value) {
         super(name, displayName, description, value);
-    }
-
-    public ColorProperty(String name, String displayName, String description, String value, String type) {
-        super(name, displayName, description, value, type);
-    }   
+        setType(Constants.DATA_TYPE_COLOR);
+    }  
 
     @Override
     public AbstractField getAdvancedEditor() {

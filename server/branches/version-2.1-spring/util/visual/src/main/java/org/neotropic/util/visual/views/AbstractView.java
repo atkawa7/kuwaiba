@@ -59,7 +59,7 @@ public abstract class AbstractView<T> {
      */
     public Properties getProperties() {
         return this.properties;
-    }
+    }     
     /**
      * Who wrote the view.
      * @return A string with the name of the creator of the view, and preferably a way to contact him/her.
@@ -119,9 +119,19 @@ public abstract class AbstractView<T> {
      */
     public abstract AbstractViewEdge addEdge(T businessObject, T sourceBusinessObject, T targetBusinessObject, Properties properties);
     /**
+     * delete a node from the viewMap
+     * @param businessObject The business object behind the node to be deleted
+     */
+    public abstract void deleteNode(T businessObject);
+    /**
+     * delete a edge from the viewMap
+     * @param businessObject The business object behind the edge to be deleted
+     */
+    public abstract void deleteEdge(T businessObject);
+    /**
      * Adds a listener to the node click events.
      * @param listener The listener object.
-     */
+     */   
     public abstract void addNodeClickListener(ViewEventListener listener);
     /**
      * Adds a listener to the edge click events.

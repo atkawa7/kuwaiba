@@ -46,23 +46,12 @@ public abstract class AbstractProperty<T> {
         this.readOnly = false;
     }
     
-    public AbstractProperty(String name, String displayName, String description, T value, String type) {
+    public AbstractProperty(String name, String displayName, String description, T value, boolean readOnly) {
         this.name = name;
         this.displayName = displayName;
         this.description = description;
         this.value = value;
         this.hasBinder = false;
-        this.type = type;
-        this.readOnly = false;
-    }
-    
-    public AbstractProperty(String name, String displayName, String description, T value, String type, boolean readOnly) {
-        this.name = name;
-        this.displayName = displayName;
-        this.description = description;
-        this.value = value;
-        this.hasBinder = false;
-        this.type = type;
         this.readOnly = readOnly;
     }
 

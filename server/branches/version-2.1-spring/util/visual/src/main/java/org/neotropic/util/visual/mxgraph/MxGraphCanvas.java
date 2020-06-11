@@ -17,16 +17,23 @@
 package org.neotropic.util.visual.mxgraph;
 
 import com.neotropic.vaadin14.component.MxGraph;
+import com.neotropic.vaadin14.component.MxGraphCell;
+import com.neotropic.vaadin14.component.MxGraphCellSelectedEvent;
+import com.neotropic.vaadin14.component.MxGraphCellUnselectedEvent;
+import com.neotropic.vaadin14.component.MxGraphDeleteCellSelectedEvent;
 import com.neotropic.vaadin14.component.MxGraphEdge;
 import com.neotropic.vaadin14.component.MxGraphNode;
 import com.neotropic.vaadin14.component.Point;
+import com.vaadin.flow.server.Command;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 
 
 /**
- * Wraper to manage mxgraph instance and his objects
+ * Wrapper to manage mxgraph instance and his objects
  * @author Orlando Paz  {@literal <orlando.paz@kuwaiba.org>} 
  * @param <N> Node object type
  * @param <E> Edge object type
@@ -41,10 +48,18 @@ public class MxGraphCanvas<N, E> {
      */
     private HashMap<E, MxGraphEdge> edges;
     
-    private HashMap<MxGraphEdge,N> sourceEdgeNodes;
+    private HashMap<E,N> sourceEdgeNodes;
     
-    private HashMap<MxGraphEdge,N> targetEdgeNodes;
-
+    private HashMap<E,N> targetEdgeNodes;
+    
+    private String selectedCellId;
+    
+    private String selectedCellType;
+    
+    Command comObjectSelected;
+    
+    Command comObjectDeleted;
+    
     public MxGraph getMxGraph() {
         return mxGraph;
     }
@@ -69,21 +84,45 @@ public class MxGraphCanvas<N, E> {
         this.edges = edges;
     }
 
-    public HashMap<MxGraphEdge, N> getSourceEdgeNodes() {
+    public HashMap<E, N> getSourceEdgeNodes() {
         return sourceEdgeNodes;
     }
 
-    public void setSourceEdgeNodes(HashMap<MxGraphEdge, N> sourceEdgeNodes) {
+    public void setSourceEdgeNodes(HashMap<E, N> sourceEdgeNodes) {
         this.sourceEdgeNodes = sourceEdgeNodes;
     }
 
-    public HashMap<MxGraphEdge, N> getTargetEdgeNodes() {
+    public HashMap<E, N> getTargetEdgeNodes() {
         return targetEdgeNodes;
     }
 
-    public void setTargetEdgeNodes(HashMap<MxGraphEdge, N> targetEdgeNodes) {
+    public void setTargetEdgeNodes(HashMap<E, N> targetEdgeNodes) {
         this.targetEdgeNodes = targetEdgeNodes;
     }  
+
+    public String getSelectedCellId() {
+        return selectedCellId;
+    }
+
+    public void setSelectedCellId(String selectedCellId) {
+        this.selectedCellId = selectedCellId;
+    }
+
+    public String getSelectedCellType() {
+        return selectedCellType;
+    }
+
+    public void setSelectedCellType(String selectedCellType) {
+        this.selectedCellType = selectedCellType;
+    }
+
+    public void setComObjectSelected(Command comObjectSelected) {
+        this.comObjectSelected = comObjectSelected;
+    }
+
+    public void setComObjectDeleted(Command comObjectDeleted) {
+        this.comObjectDeleted = comObjectDeleted;
+    }
 
     public MxGraphCanvas() {
         initGraph();
@@ -93,11 +132,29 @@ public class MxGraphCanvas<N, E> {
        mxGraph = new MxGraph();
        mxGraph.setFullSize();
        mxGraph.getElement().getStyle().set("height", "100%");
+       mxGraph.getElement().getStyle().set("width", "100%");
        mxGraph.setGrid("img/grid.gif");
        nodes = new HashMap<>();
        edges = new HashMap<>();     
        sourceEdgeNodes = new HashMap<>();
        targetEdgeNodes = new HashMap<>();
+       
+       mxGraph.addCellUnselectedListener((MxGraphCellUnselectedEvent t) -> {
+           this.selectedCellId = null;
+           this.selectedCellType = null;
+       });
+       
+       mxGraph.addCellSelectedListener((MxGraphCellSelectedEvent t) -> {
+           this.selectedCellId = t.getCellId();
+           this.selectedCellType = t.isVertex() ? MxGraphCell.PROPERTY_VERTEX : MxGraphCell.PROPERTY_EDGE;
+           if (comObjectSelected != null)
+               comObjectSelected.execute();
+       });
+       
+       mxGraph.addDeleteCellSelectedListener((MxGraphDeleteCellSelectedEvent t) -> {
+           if (comObjectDeleted != null)
+               comObjectDeleted.execute();
+       });
     } 
     
     public MxGraphNode findMxGraphNode(N node) {
@@ -108,15 +165,15 @@ public class MxGraphCanvas<N, E> {
         return edges.get(edge);
     }
     
-    public N findSourceEdgeObject(MxGraphEdge edge) {
+    public N findSourceEdgeObject(E edge) {
         return sourceEdgeNodes.get(edge);
     }
     
-    public N findTargetEdgeObject(MxGraphEdge edge) {
+    public N findTargetEdgeObject(E edge) {
         return targetEdgeNodes.get(edge);
     }
 
-    public MxGraphNode attachNodeWidget(N node, String nodeId, int xCoordinate, int yCoordinate, String imageUri) {
+    public MxGraphNode addNode(N node, String nodeId, int xCoordinate, int yCoordinate, String imageUri) {
 
         if (!nodes.containsKey(node)) {
 
@@ -138,13 +195,14 @@ public class MxGraphCanvas<N, E> {
         return null;
     }
     
-    public MxGraphEdge attachEdgeWidget(E edgeObject, N sourceObject, N targetObject, List<Point> points,String sourceLabel, String targetLabel) {
+    public MxGraphEdge addEdge(E edgeObject, String edgeId, N sourceObject, N targetObject, List<Point> points,String sourceLabel, String targetLabel) {
        
          if (!edges.containsKey(edgeObject)) {       
             MxGraphNode sourceNode = findMxGraphNode(sourceObject);
             MxGraphNode targetNode = findMxGraphNode(targetObject);
             MxGraphEdge newEdge = new MxGraphEdge();
 
+            newEdge.setUuid(edgeId);
             newEdge.setSource(sourceNode.getUuid());
             newEdge.setTarget(targetNode.getUuid());
             newEdge.setSourceLabel(sourceLabel);
@@ -153,13 +211,51 @@ public class MxGraphCanvas<N, E> {
             newEdge.setPoints(points);
 
             edges.put(edgeObject, newEdge);
-            sourceEdgeNodes.put(newEdge, sourceObject);
-            targetEdgeNodes.put(newEdge, targetObject);
+            sourceEdgeNodes.put(edgeObject, sourceObject);
+            targetEdgeNodes.put(edgeObject, targetObject);
             mxGraph.addEdge(newEdge);
             mxGraph.refreshGraph();
             return newEdge;       
         }        
         return null;
     }
-         
+
+    public void deleteNode(N businessObject) {
+        
+        mxGraph.removeNode(nodes.get(businessObject));
+        nodes.remove(businessObject);
+        
+        //delete edges related to the object
+        List<E> edgesToDelete = new ArrayList<>();
+        
+        for (Map.Entry<E, N> entry : sourceEdgeNodes.entrySet()) {
+            if (entry.getValue().equals(businessObject)) {
+                edgesToDelete.add(entry.getKey());
+            }
+        }
+        for (Map.Entry<E, N> entry : targetEdgeNodes.entrySet()) {
+            if (entry.getValue().equals(businessObject)) {
+                edgesToDelete.add(entry.getKey());
+            }
+        }
+        
+        for (E edge : edgesToDelete) {   
+            mxGraph.removeEdge(edges.get(edge));
+            edges.remove(edge);
+            sourceEdgeNodes.remove(edge);
+            targetEdgeNodes.remove(edge);
+        }    
+    }
+    
+    public void deleteEdge(E businessObject) {
+        
+        mxGraph.removeEdge(edges.get(businessObject));
+        edges.remove(businessObject);
+                    
+        edges.remove(businessObject);
+        sourceEdgeNodes.remove(businessObject);
+        targetEdgeNodes.remove(businessObject);
+                
+    }
+      
 }

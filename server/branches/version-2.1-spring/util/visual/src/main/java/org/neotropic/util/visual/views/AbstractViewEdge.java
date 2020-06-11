@@ -53,10 +53,10 @@ public abstract class AbstractViewEdge<E> {
     
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof AbstractViewNode))
+        if (!(obj instanceof AbstractViewEdge))
             return false;
         
-        return identifier.equals(((AbstractViewNode)obj).getIdentifier());
+        return identifier.equals(((AbstractViewEdge)obj).getIdentifier());
     }
 
     @Override

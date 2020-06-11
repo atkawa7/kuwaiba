@@ -35,11 +35,6 @@ public class ObjectProperty extends AbstractProperty {
         super(name, displayName, description, value);
         this.items = listTypes;
     }
-
-    public ObjectProperty(String name, String displayName, String description, Object value, List<Object> listTypes, String type) {
-        super(name, displayName, description, value, type);
-        this.items = listTypes;
-    }
     
     public List getItems() {
         return items;

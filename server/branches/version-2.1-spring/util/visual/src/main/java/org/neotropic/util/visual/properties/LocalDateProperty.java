@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 
 /**
  * Support for local-date-type properties
@@ -36,15 +37,12 @@ public class LocalDateProperty extends AbstractProperty<LocalDateTime> {
 
     public LocalDateProperty(String name, String displayName, String description, LocalDateTime value) {
         super(name, displayName, description, value);
-    }
-
-    public LocalDateProperty(String name, String displayName, String description, LocalDateTime value, String type) {
-        super(name, displayName, description, value, type);
-    }   
+        setType(Constants.DATA_TYPE_DATE);
+    }  
     
     public LocalDateProperty(String name, String displayName, String description, long value) {
         super(name, displayName, description, Instant.ofEpochMilli(value).atZone(ZoneId.systemDefault()).toLocalDateTime());
-        
+         setType(Constants.DATA_TYPE_DATE);
     }
 
     @Override
