@@ -223,9 +223,9 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
             
             String objectId = mplsView.getMxgraphCanvas().getSelectedCellId();
             if (MxGraphCell.PROPERTY_VERTEX.equals(mplsView.getMxgraphCanvas().getSelectedCellType())){
-                 selectedObject = ((BusinessObjectViewNode) mplsView.getAsViewMap().getNode(objectId)).getIdentifier();
+                 selectedObject = ((BusinessObjectViewNode) mplsView.getAsViewMap().findNode(objectId)).getIdentifier();
             } else {
-                 selectedObject = ((BusinessObjectViewEdge) mplsView.getAsViewMap().getEdge(objectId)).getIdentifier();            
+                 selectedObject = ((BusinessObjectViewEdge) mplsView.getAsViewMap().findEdge(objectId)).getIdentifier();            
             }
             updatePropertySheet();
             
