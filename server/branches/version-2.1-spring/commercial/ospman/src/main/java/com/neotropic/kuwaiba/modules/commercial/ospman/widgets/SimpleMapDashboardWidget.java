@@ -25,7 +25,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
-import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionService;
+import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.visualization.views.BusinessObjectViewNode;
 import org.neotropic.kuwaiba.visualization.views.ViewNodeIconGenerator;
 import org.neotropic.util.visual.notifications.SimpleNotification;
@@ -44,11 +44,11 @@ public class SimpleMapDashboardWidget extends AbstractDashboardWidget {
     /**
      * Reference to the Physical Connection Service.
      */
-    private final PhysicalConnectionService physicalConnectionService;
+    private final PhysicalConnectionsService physicalConnectionService;
     
     public SimpleMapDashboardWidget(
         ApplicationEntityManager aem, BusinessEntityManager bem, 
-        MetadataEntityManager mem, PhysicalConnectionService physicalConnectionService, TranslationService ts, 
+        MetadataEntityManager mem, PhysicalConnectionsService physicalConnectionService, TranslationService ts, 
         ResourceFactory resourceFactory) {
         
         super(mem, aem, bem, ts);

@@ -84,9 +84,12 @@ public interface ToolRegister {
     }
     
     public class ToolRegisterEvent {
-        private final String id;
-        private final HashMap<String, Object> properties;
-
+        private String id;
+        private HashMap<String, Object> properties;
+        
+        public ToolRegisterEvent() {
+        }
+        
         public ToolRegisterEvent(String id, HashMap<String, Object> properties) {
             this.id = id;
             this.properties = properties;

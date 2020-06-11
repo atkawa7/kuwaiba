@@ -19,6 +19,7 @@ import com.vaadin.flow.component.html.H3;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.modules.core.navigation.commands.Command;
 import org.neotropic.util.visual.dialog.ConfirmDialog;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
@@ -28,13 +29,16 @@ import org.neotropic.util.visual.notifications.SimpleNotification;
  */
 public class DialogDeleteOSPView extends ConfirmDialog {
     
-    public DialogDeleteOSPView(long ospViewId, TranslationService ts, ApplicationEntityManager aem) {
+    public DialogDeleteOSPView(long ospViewId, TranslationService ts, ApplicationEntityManager aem, Command cmdDeleted) {
         super(ts, 
             ts.getTranslatedString("module.general.labels.confirmation"),                         
             new H3(ts.getTranslatedString("module.ospman.delete-view")), 
             ts.getTranslatedString("module.general.messages.ok"), () -> {
                 try {
                     aem.deleteOSPView(ospViewId);
+                    if (cmdDeleted != null)
+                        cmdDeleted.execute();
+                    
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.success"),
                         ts.getTranslatedString("module.ospman.view-deleted")

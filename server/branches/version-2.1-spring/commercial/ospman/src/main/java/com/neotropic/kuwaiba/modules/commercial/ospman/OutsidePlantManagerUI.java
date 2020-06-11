@@ -25,7 +25,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManage
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import com.neotropic.kuwaiba.modules.commercial.ospman.widgets.OutsidePlantManagerDashboard;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
-import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionService;
+import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -73,7 +73,7 @@ public class OutsidePlantManagerUI extends VerticalLayout {
      * Reference to the Physical Connection Service.
      */
     @Autowired
-    private PhysicalConnectionService physicalConnectionService;
+    private PhysicalConnectionsService physicalConnectionService;
     
     @Override
     public void onAttach(AttachEvent ev) {

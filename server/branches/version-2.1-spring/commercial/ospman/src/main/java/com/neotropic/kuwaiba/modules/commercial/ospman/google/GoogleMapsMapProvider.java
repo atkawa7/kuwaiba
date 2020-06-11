@@ -29,6 +29,17 @@ import java.util.List;
 import java.util.Properties;
 import com.neotropic.kuwaiba.modules.commercial.ospman.AbstractMapProvider;
 import com.neotropic.kuwaiba.modules.commercial.ospman.GeoCoordinate;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspInfoWindowContainer;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.EdgeAddedEvent;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolset.ToolHand;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolset.ToolMarker;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolset.ToolPolygon;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolset.ToolPolyline;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.EdgeInfoWindowRequestEvent;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.EdgePathChangedEvent;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.NodeAddedEvent;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.NodeInfoWindowRequestEvent;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.NodePositionChangedEvent;
 import org.neotropic.util.visual.views.ViewEventListener;
 import elemental.json.Json;
 import elemental.json.JsonObject;
@@ -44,7 +55,7 @@ import org.neotropic.util.visual.tools.ToolRegister;
  *
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class GoogleMapsMapProvider extends AbstractMapProvider implements ToolRegister {
+public class GoogleMapsMapProvider extends AbstractMapProvider implements ToolRegister, OspInfoWindowContainer {
     /**
      * Saves the mouse position in the map
      */
@@ -75,6 +86,9 @@ public class GoogleMapsMapProvider extends AbstractMapProvider implements ToolRe
     private final List<ToolRegisterListener> toolRegisterListeners = new ArrayList();
     private PolylineDrawHelper polylineDrawHelper;
     
+    private final List<ViewEventListener> polylineRightClickListeners = new ArrayList();
+    private final List<ViewEventListener> markerRightClickListeners = new ArrayList();
+        
     public GoogleMapsMapProvider() {
     }
     
@@ -121,20 +135,24 @@ public class GoogleMapsMapProvider extends AbstractMapProvider implements ToolRe
         this.googleMap.newDrawingManager(drawingManager);
         
         drawingManager.addDrawingManagerMarkerCompleteListener(event -> {
-            HashMap<String, Object> eventProperties = new HashMap();
-            eventProperties.put("lat", event.getLat()); //NOI18N
-            eventProperties.put("lng", event.getLng()); //NOI18N
-            fireEvent(new ToolRegisterEvent("add-marker", eventProperties)); //NOI18N
+            fireEvent(new NodeAddedEvent(new GeoCoordinate(event.getLat(), event.getLng())));
         });
         drawingManager.addDrawingManagerPolygonCompleteListener(event -> {
             googleMap.newPolygon(new GoogleMapPolygon(event.getPaths()));
         });
         polylineDrawHelper = new PolylineDrawHelper(googleMap, drawingManager, helper -> {
-            HashMap<String, Object> eventProperties = new HashMap();
-            eventProperties.put("source", markerNode.get(helper.getSource())); //NOI18N
-            eventProperties.put("path", getGeoCoordinates(helper.getPath())); //NOI18N
-            eventProperties.put("target", markerNode.get(helper.getTarget())); //NOI18N
-            fireEvent(new ToolRegisterEvent("add-polyline", eventProperties)); //NOI18N
+            GoogleMapPolyline gmPolyline = new GoogleMapPolyline();
+            gmPolyline.setPath(helper.getPath());
+            googleMap.newPolyline(gmPolyline);
+            
+            fireEvent(new EdgeAddedEvent(
+                markerNode.get(helper.getSource()), 
+                markerNode.get(helper.getTarget()), 
+                getGeoCoordinates(helper.getPath()), 
+                () -> {
+                    googleMap.removePolyline(gmPolyline);
+                }
+            ));
         });
     }
     
@@ -191,20 +209,43 @@ public class GoogleMapsMapProvider extends AbstractMapProvider implements ToolRe
 
         googleMapMarker.setIcon(icon);
         
+        googleMapMarker.setDraggable(true);
+        googleMapMarker.addMarkerPositionChangedListener(event -> {
+            if (nodeEdges.containsKey(businessObject)) {
+                List<BusinessObjectLight> edges = nodeEdges.get(businessObject);
+                for (BusinessObjectLight edge : edges) {
+                    if (objEdge.containsKey(edge)) {
+                        OSPEdge ospEdge = objEdge.get(edge);
+                        if (edgePolyline.containsKey(ospEdge)) {
+                            GoogleMapPolyline gmPolyline = edgePolyline.get(ospEdge);
+                            List<LatLng> path = gmPolyline.getPath();
+                            
+                            if (ospEdge.getSourceObject().equals(businessObject))
+                                path.set(0, new LatLng(googleMapMarker.getLat(), googleMapMarker.getLng()));
+                            else if (ospEdge.getTargetObject().equals(businessObject))
+                                path.set(path.size() - 1, new LatLng(googleMapMarker.getLat(), googleMapMarker.getLng()));
+                            gmPolyline.setPath(path);
+                            
+                            List<GeoCoordinate> newControlPoints = getGeoCoordinates(gmPolyline.getPath());
+                            ospEdge.setControlPoints(newControlPoints);
+                            fireEvent(new EdgePathChangedEvent(businessObject, newControlPoints));
+                        }
+                    }
+                }
+            }
+            ospNode.getLocation().setLatitude(googleMapMarker.getLat());
+            ospNode.getLocation().setLongitude(googleMapMarker.getLng());
+            fireEvent(new NodePositionChangedEvent(businessObject, 
+                new GeoCoordinate(googleMapMarker.getLat(), googleMapMarker.getLng()))
+            );
+        });
+        
         googleMapMarker.addMarkerRightClickListener(event -> {
-            infoWindow.removeAll();
-            MarkerTools markerTools = new MarkerTools(ospNode, googleMapMarker, infoWindow);
-            markerTools.addDeleteMarkerEventListener(deleteMarkerEvent -> {
-                infoWindow.close();
-                
-                HashMap<String, Object> eventProperties = new HashMap();
-                eventProperties.put("osp-node", ospNode); //NOI18N
-                fireEvent(new ToolRegisterEvent("remove-marker", eventProperties));
-                
-                removeMarker(ospNode.getBusinessObject());
-            });
-            infoWindow.add(markerTools);
-            infoWindow.open(googleMap, googleMapMarker);
+            if (markerRightClickListeners != null)
+                markerRightClickListeners.forEach(listener -> 
+                    listener.eventProcessed(ospNode, ViewEventListener.EventType.TYPE_RIGHTCLICK)
+                );
+            fireEvent(new NodeInfoWindowRequestEvent(ospNode));
         });
         nodeMarker.put(ospNode, googleMapMarker);
         markerNode.put(googleMapMarker, ospNode);
@@ -236,21 +277,23 @@ public class GoogleMapsMapProvider extends AbstractMapProvider implements ToolRe
         OSPEdge polyline = new OSPEdge(businessObject, sourceObject, targetObject, controlPoints);
         
         googleMapPolyline.addPolylineRightClickListener(event -> {
-            infoWindow.removeAll();
-            PolylineTools polylineTools = new PolylineTools(polyline, googleMapPolyline, infoWindow);
-            polylineTools.addDeletePolylineEventListener(deletePolylineEvent -> {
-                infoWindow.close();
-                
-                HashMap<String, Object> eventProperties = new HashMap();
-                eventProperties.put("osp-edge", polyline); //NOI18N
-                fireEvent(new ToolRegisterEvent("remove-polyline", eventProperties));
-                
-                removePolyline(businessObject);
-            });
-            infoWindow.add(polylineTools);
-            infoWindow.setPosition(mapMouseMoveLatLng);
-            infoWindow.open(googleMap);
+            if (polylineRightClickListeners != null) {
+                polylineRightClickListeners.forEach(listener -> 
+                    listener.eventProcessed(polyline, ViewEventListener.EventType.TYPE_RIGHTCLICK)
+                );                
+            }
+            fireEvent(new EdgeInfoWindowRequestEvent(polyline, 
+                new GeoCoordinate(mapMouseMoveLatLng.getLat(), mapMouseMoveLatLng.getLng())));
         });
+        googleMapPolyline.addPolylineClickListener(event -> 
+            googleMapPolyline.setEditable(!googleMapPolyline.getEditable())
+        );
+        googleMapPolyline.addPolylinePathChangedListener(event -> {
+            List<GeoCoordinate> newControlPoints = getGeoCoordinates(googleMapPolyline.getPath());
+            polyline.setControlPoints(newControlPoints);
+            fireEvent(new EdgePathChangedEvent(businessObject, newControlPoints));
+        });
+        
         objEdge.put(businessObject, polyline);
         edgePolyline.put(polyline, googleMapPolyline);
         polylineEdge.put(googleMapPolyline, polyline);
@@ -313,7 +356,8 @@ public class GoogleMapsMapProvider extends AbstractMapProvider implements ToolRe
     
     @Override
     public void removeListeners() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        markerRightClickListeners.clear();
+        polylineRightClickListeners.clear();
     }
 
     @Override
@@ -322,8 +366,8 @@ public class GoogleMapsMapProvider extends AbstractMapProvider implements ToolRe
     }
 
     @Override
-    public void addMarkerRightClickListener(ViewEventListener ev) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void addMarkerRightClickListener(ViewEventListener listener) {
+        markerRightClickListeners.add(listener);
     }
 
     @Override
@@ -332,10 +376,10 @@ public class GoogleMapsMapProvider extends AbstractMapProvider implements ToolRe
     }
 
     @Override
-    public void addPolylineRightClickListener(ViewEventListener ev) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void addPolylineRightClickListener(ViewEventListener listener) {
+        polylineRightClickListeners.add(listener);
     }
-
+    
     @Override
     public List<Tool> getTools() {
         return tools;
@@ -343,23 +387,56 @@ public class GoogleMapsMapProvider extends AbstractMapProvider implements ToolRe
 
     @Override
     public void setTool(Tool tool) {
-        if (tool != null) {
+        if (getTools().contains(tool)) {
             polylineDrawHelper.cancel();
-            
-            if ("hand".equals(tool.getId())) { //NOI18N
+
+            if (tool instanceof ToolHand)
                 drawingManager.setDrawingMode(null);
-            } else if ("marker".equals(tool.getId())) { //NOI18N
+            else if (tool instanceof ToolMarker)
                 drawingManager.setDrawingMode(OverlayType.MARKER);
-            } else if ("polygon".equals(tool.getId())) { //NOI18N
+            else if (tool instanceof ToolPolygon)
                 drawingManager.setDrawingMode(OverlayType.POLYGON);
-            } else if ("polyline".equals(tool.getId())) { //NOI18N
+            else if (tool instanceof ToolPolyline)
                 polylineDrawHelper.start();
-            }
         }
     }
     
     @Override
     public List<ToolRegisterListener> getListeners() {
         return toolRegisterListeners;
+    }
+    
+    @Override
+    public InfoWindow getInfoWindow() {
+        return infoWindow;
+    }
+    
+    @Override
+    public void setInfoWindowContent(Component content) {
+        getInfoWindow().removeAll();
+        getInfoWindow().add(content);
+    }
+    
+    @Override
+    public void setInfoWindowPosition(GeoCoordinate position) {
+        getInfoWindow().setPosition(
+            new LatLng(position.getLatitude(), position.getLongitude()));
+    }
+    
+    @Override
+    public void openInfoWindow() {
+        getInfoWindow().open(googleMap);
+    }
+    
+    @Override
+    public void openInfoWindow(BusinessObjectLight businessObject) {
+        if (objNode.containsKey(businessObject) && 
+            nodeMarker.containsKey(objNode.get(businessObject)))
+            getInfoWindow().open(googleMap, nodeMarker.get(objNode.get(businessObject)));
+    }
+    
+    @Override
+    public void closeInfoWindow() {
+        getInfoWindow().close();
     }
 }

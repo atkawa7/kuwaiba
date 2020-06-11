@@ -770,33 +770,6 @@ public interface BusinessEntityManager extends AbstractEntityManager {
      */
     public List<BusinessObjectLightList> findRoutesThroughSpecialRelationships (String objectAClassName, String objectAId, String objectBClassName, String objectBId, String relationshipName) throws InvalidArgumentException;
     
-    /**
-     * Finds the physical path from one port to another
-     * @param objectClass The source port class.
-     * @param objectId The source port id.
-     * @return A list of objects that make part of the physical trace.
-     * @throws MetadataObjectNotFoundException can't f
-     * @throws BusinessObjectNotFoundException 
-     * @throws ApplicationObjectNotFoundException
-     * @throws InvalidArgumentException If one of the 
-     * @deprecated This method shouldn't be here since it's context dependant. Don't use it, will be removed in the future
-     */
-    public List<BusinessObjectLight> getPhysicalPath(String objectClass, String objectId) 
-        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
-    
-    /**
-     * Gets A tree representation of all physical paths as a hash map.
-     * @param objectClass The source port class
-     * @param objectId The source port id
-     * @return A tree representation of all physical paths as a hash map
-     * @throws BusinessObjectNotFoundException If any of the objects involved in the path cannot be found
-     * @throws MetadataObjectNotFoundException If any of the object classes involved in the path cannot be found
-     * @throws ApplicationObjectNotFoundException If any of the objects involved in the path has a malformed list type attribute
-     * @throws InvalidArgumentException If any of the objects involved in the path has an invalid objectId or className
-     */    
-    public HashMap<BusinessObjectLight, List<BusinessObjectLight>> getPhysicalTree(String objectClass, String objectId) 
-        throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
-    
     //Attachments management
     /**
      * Relates a file to an inventory object

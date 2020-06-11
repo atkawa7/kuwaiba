@@ -36,6 +36,10 @@ public class Tool {
     public Tool() {
     }
     
+    public Tool(String id) {
+        this.id = id;
+    }
+    
     public Tool(String id, String name, String description) {
         this.id = id;
         this.name = name;

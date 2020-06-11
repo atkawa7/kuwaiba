@@ -19,6 +19,7 @@ package org.neotropic.kuwaiba.northbound.ws;
 import com.neotropic.kuwaiba.modules.commercial.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.commercial.sdh.SDHModule;
 import com.neotropic.kuwaiba.modules.commercial.sdh.SDHPosition;
+import com.neotropic.kuwaiba.modules.commercial.sdh.persistence.SdhService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -84,6 +85,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.apis.persistence.util.StringPair;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.northbound.ws.model.application.ApplicationLogEntry;
 import org.neotropic.kuwaiba.northbound.ws.model.application.GroupInfo;
 import org.neotropic.kuwaiba.northbound.ws.model.application.GroupInfoLight;
@@ -163,8 +165,10 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     private TranslationService ts;
     //Modules
     @Autowired
-    private SDHModule modSdh;
-    
+    private SdhService sdhService;
+    @Autowired
+    private PhysicalConnectionsService physicalConnectionsService;
+        
     @Override
     public RemoteSession createSession(String username, String password, int sessionType) throws ServerSideException {
         try {
@@ -3080,7 +3084,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             List<BusinessObjectLight> endpointARelationship = bem.getSpecialAttribute(linkClass, linkId, endpointARelationshipName);
             if (!endpointARelationship.isEmpty()) {
                 endpointA = endpointARelationship.get(0);
-                physicalPathA = bem.getPhysicalPath(endpointA.getClassName(), endpointA.getId());
+                physicalPathA = physicalConnectionsService.getPhysicalPath(endpointA.getClassName(), endpointA.getId());
             }
             
             HashMap<BusinessObjectLight, List<BusinessObjectLight>> physicalPathForVlansEndpointA = new HashMap<>();    
@@ -3100,7 +3104,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             List<BusinessObjectLight> endpointBRelationship = bem.getSpecialAttribute(linkClass, linkId, endpointBRelationshipName);
             if (!endpointBRelationship.isEmpty()) {
                 endpointB = endpointBRelationship.get(0);
-                physicalPathB = bem.getPhysicalPath(endpointB.getClassName(), endpointB.getId());
+                physicalPathB = physicalConnectionsService.getPhysicalPath(endpointB.getClassName(), endpointB.getId());
             }
             
             HashMap<BusinessObjectLight, List<BusinessObjectLight>> physicalPathForVlansEndpointB = new HashMap<>();    
@@ -3149,7 +3153,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
                     List<BusinessObjectLight> vlanPorts = bem.getSpecialAttribute(vlan.getClassName(), vlan.getId(), "portBelongsToVlan");
                     for (BusinessObjectLight vlanPort : vlanPorts) {
                         if(vlanPort.getId() != null && endpoint.getId() != null && !vlanPort.getId().equals(endpoint.getId())){//we get the physical path for every port of the vlan except of the given endpoint 
-                            List<BusinessObjectLight> vlanPhysicalPath = bem.getPhysicalPath(vlanPort.getClassName(), vlanPort.getId());
+                            List<BusinessObjectLight> vlanPhysicalPath = physicalConnectionsService.getPhysicalPath(vlanPort.getClassName(), vlanPort.getId());
                             if(!vlanPhysicalPath.isEmpty())
                                 vlansPhysicalPath.put(vlanPort, vlanPhysicalPath);
                         }
@@ -3254,7 +3258,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             List<BusinessObjectLight> allCommunicationsPorts = bem.getChildrenOfClassLightRecursive(objectId, objectClass, "GenericCommunicationsPort", -1);
             
             for (BusinessObjectLight aCommunicationsPort : allCommunicationsPorts) {
-                List<BusinessObjectLight> physicalPath = bem.getPhysicalPath(aCommunicationsPort.getClassName(), aCommunicationsPort.getId());
+                List<BusinessObjectLight> physicalPath = physicalConnectionsService.getPhysicalPath(aCommunicationsPort.getClassName(), aCommunicationsPort.getId());
                 if (physicalPath.size() > 1)
                     res.add(new RemoteObjectLightList(physicalPath));
             }
@@ -3283,7 +3287,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             if (!mem.isSubclassOf("GenericPort", objectClass))
                 throw new ServerSideException(String.format("Class %s is not a port", objectClass));
             
-            List<BusinessObjectLight> thePath = bem.getPhysicalPath(objectClass, objectId); 
+            List<BusinessObjectLight> thePath = physicalConnectionsService.getPhysicalPath(objectClass, objectId); 
             return RemoteObjectLight.toRemoteObjectLightArray(thePath);
 
         } catch (InventoryException ex) {
@@ -3303,7 +3307,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             aem.validateCall("getPhysicalTree", "127.0.0.1", sessionId);
             if (!mem.isSubclassOf("GenericPort", objectClass))
                 throw new ServerSideException(String.format("Class %s is not a port", objectClass));
-            return new RemoteObjectRelatedObjects(bem.getPhysicalTree(objectClass, objectId));            
+            return new RemoteObjectRelatedObjects(physicalConnectionsService.getPhysicalTree(objectClass, objectId));            
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -5409,7 +5413,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public String createSDHTransportLink(String classNameEndpointA, String idEndpointA, String classNameEndpointB, String idEndpointB, String linkType, String defaultName, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("createSDHTransportLink", "127.0.0.1", sessionId);
-            String SDHTransportLinkId = modSdh.createSDHTransportLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, defaultName);
+            String SDHTransportLinkId = sdhService.createSDHTransportLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, defaultName);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
@@ -5432,7 +5436,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             for (RemoteSDHPosition position : positions)
                 remotePositions.add(new SDHPosition(position.getLinkClass(), position.getLinkId(), position.getPosition()));
             
-            String SDHContainerLinkId = modSdh.createSDHContainerLink(classNameEndpointA, idEndpointA, 
+            String SDHContainerLinkId = sdhService.createSDHContainerLink(classNameEndpointA, idEndpointA, 
                     classNameEndpointB, idEndpointB, linkType, remotePositions, defaultName);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
@@ -5458,7 +5462,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             for (RemoteSDHPosition position : positions)
                 remotePositions.add(new SDHPosition(position.getLinkClass(), position.getLinkId(), position.getPosition()));
             
-            String SDHTributaryLinkId = modSdh.createSDHTributaryLink(classNameEndpointA, idEndpointA, classNameEndpointB, 
+            String SDHTributaryLinkId = sdhService.createSDHTributaryLink(classNameEndpointA, idEndpointA, classNameEndpointB, 
                     idEndpointB, linkType, remotePositions, defaultName);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
@@ -5480,7 +5484,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             aem.validateCall("deleteSDHTransportLink", "127.0.0.1", sessionId);
             
             String transportLinkName = bem.getObject(transportLinkClass, transportLinkId).getName();
-            modSdh.deleteSDHTransportLink(transportLinkClass, transportLinkId, forceDelete);
+            sdhService.deleteSDHTransportLink(transportLinkClass, transportLinkId, forceDelete);
                                     
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
@@ -5500,7 +5504,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             aem.validateCall("deleteSDHContainerLink", "127.0.0.1", sessionId);
             
             String containerLinkName = bem.getObject(containerLinkClass, containerLinkId).getName();
-            modSdh.deleteSDHContainerLink(containerLinkClass, containerLinkId, forceDelete);
+            sdhService.deleteSDHContainerLink(containerLinkClass, containerLinkId, forceDelete);
                         
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
@@ -5520,7 +5524,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             aem.validateCall("deleteSDHTributaryLink", "127.0.0.1", sessionId);
             
             String tributaryLinkName = bem.getObject(tributaryLinkClass, tributaryLinkId).getName();
-            modSdh.deleteSDHTributaryLink(tributaryLinkClass, tributaryLinkId);
+            sdhService.deleteSDHTributaryLink(tributaryLinkClass, tributaryLinkId);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
@@ -5540,7 +5544,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             aem.validateCall("findSDHRoutesUsingTransportLinks", "127.0.0.1", sessionId);
             List<RemoteObjectLightList> res  = new ArrayList<>();
             
-            List<BusinessObjectLightList> routes = modSdh.findSDHRoutesUsingTransportLinks(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, communicationsEquipmentIB);
+            List<BusinessObjectLightList> routes = sdhService.findSDHRoutesUsingTransportLinks(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, communicationsEquipmentIB);
             for (BusinessObjectLightList route : routes)
                 res.add(new RemoteObjectLightList(route));
             return res;
@@ -5558,7 +5562,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         try {
             aem.validateCall("findSDHRoutesUsingContainerLinks", "127.0.0.1", sessionId);
             List<RemoteObjectLightList> res  = new ArrayList<>();
-            List<BusinessObjectLightList> routes = modSdh.findSDHRoutesUsingContainerLinks(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, communicationsEquipmentIB);
+            List<BusinessObjectLightList> routes = sdhService.findSDHRoutesUsingContainerLinks(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, communicationsEquipmentIB);
             for (BusinessObjectLightList route : routes)
                 res.add(new RemoteObjectLightList(route));
             
@@ -5576,7 +5580,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public List<RemoteSDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, String transportLinkId, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("getSDHTransportLinkStructure", "127.0.0.1", sessionId);
-            List<SDHContainerLinkDefinition> containerLinks = modSdh.getSDHTransportLinkStructure(transportLinkClass, transportLinkId);
+            List<SDHContainerLinkDefinition> containerLinks = sdhService.getSDHTransportLinkStructure(transportLinkClass, transportLinkId);
             
             List<RemoteSDHContainerLinkDefinition> res = new ArrayList<>();
             
@@ -5597,7 +5601,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public List<RemoteSDHContainerLinkDefinition> getSDHContainerLinkStructure(String containerLinkClass, String containerLinkId, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("getSDHContainerLinkStructure", "127.0.0.1", sessionId);
-            List<SDHContainerLinkDefinition> containerLinks = modSdh.getSDHContainerLinkStructure(containerLinkClass, containerLinkId);
+            List<SDHContainerLinkDefinition> containerLinks = sdhService.getSDHContainerLinkStructure(containerLinkClass, containerLinkId);
             List<RemoteSDHContainerLinkDefinition> res = new ArrayList<>();
             
             for (SDHContainerLinkDefinition containerLink : containerLinks)

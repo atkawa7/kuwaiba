@@ -15,21 +15,32 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman;
 
+import com.neotropic.kuwaiba.modules.commercial.ospman.AbstractMapProvider.OSPEdge;
 import com.neotropic.kuwaiba.modules.commercial.ospman.AbstractMapProvider.OSPNode;
-import com.neotropic.kuwaiba.modules.commercial.ospman.commands.CommandAddMarker;
-import com.neotropic.kuwaiba.modules.commercial.ospman.commands.CommandAddConnection;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.EdgeAddedEvent;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolset.ToolHand;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolset.ToolMarker;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolset.ToolPolygon;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolset.ToolPolyline;
+import org.neotropic.kuwaiba.modules.core.navigation.commands.Command;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.EdgeInfoWindowRequestEvent;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.EdgePathChangedEvent;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.NodeAddedEvent;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.NodeInfoWindowRequestEvent;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.NodePositionChangedEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.server.Command;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.util.visual.tools.Tool;
+import org.neotropic.kuwaiba.modules.core.navigation.commands.FourArgsCommand;
+import org.neotropic.kuwaiba.modules.core.navigation.commands.OneArgCommand;
+import org.neotropic.kuwaiba.modules.core.navigation.commands.TwoArgsCommand;
 import org.neotropic.util.visual.tools.ToolRegister;
 
 /**
@@ -41,23 +52,28 @@ public class OutsidePlantTools extends HorizontalLayout {
     private final TranslationService translationService;
     private final OutsidePlantSearch outsidePlantSearch;
     private final List<Button> buttons;
+    
     private Command cmdBack;
-    private Command cmdSave;
-    private Command cmdDelete;
-    private CommandAddMarker cmdAddMarker;
-    private CommandAddConnection cmdAddPolyline;
-    private Command cmdRemoveMarker;
-    private Command cmdRemovePolyline;
+    
+    private Command cmdSaveOspView;
+    private Command cmdDeleteOspView;
+    private Command cmdOspViewChanged;
+    
+    private TwoArgsCommand<BusinessObjectLight, GeoCoordinate> cmdAddMarker;
+    private FourArgsCommand<BusinessObjectLight, BusinessObjectLight, List<GeoCoordinate>, Command> cmdAddPolyline;
+    
+    private OneArgCommand<OSPNode> cmdDeleteMarker;
+    private OneArgCommand<OSPEdge> cmdDeletePolyline;
     
     public OutsidePlantTools(BusinessEntityManager bem, 
         TranslationService translationService, 
         AbstractMapProvider mapProvider, ToolRegister toolRegister) {
         
         this.translationService = translationService;
-        Tool toolHand = new Tool("hand", null, null); //NOI18N
-        Tool toolMarker = new Tool("marker", null, null); //NOI18N
-        Tool toolPolygon = new Tool("polygon", null, null); //NOI18N
-        Tool toolPolyline = new Tool("polyline", null, null); //NOI18N
+        ToolHand toolHand = new ToolHand();
+        ToolMarker toolMarker = new ToolMarker();
+        ToolPolygon toolPolygon = new ToolPolygon();
+        ToolPolyline toolPolyline = new ToolPolyline();
         toolRegister.getTools().addAll(Arrays.asList(
             toolHand, toolMarker, toolPolygon, toolPolyline));
         
@@ -69,9 +85,9 @@ public class OutsidePlantTools extends HorizontalLayout {
         Button btnBack = new Button(new Icon(VaadinIcon.ARROW_LEFT), 
             event -> executeCommand(cmdBack));
         Button btnSave = new Button(new Icon(VaadinIcon.SAFE), 
-            event -> executeCommand(cmdSave));
+            event -> executeCommand(cmdSaveOspView));
         Button btnDelete = new Button(new Icon(VaadinIcon.TRASH), 
-            event -> executeCommand(cmdDelete));
+            event -> executeCommand(cmdDeleteOspView));
         
         Button btnHand = new Button(new Icon(VaadinIcon.HAND));
         Button btnPolygon = new Button(new Icon(VaadinIcon.STAR_O));
@@ -112,35 +128,53 @@ public class OutsidePlantTools extends HorizontalLayout {
             /**
              * If a marker-complete event is fired the marker tool was active
              */
-            if ("add-marker".equals(event.getId())) { //NOI18N
-                if (cmdAddMarker != null) {
-                    cmdAddMarker.setBussinesObject(tmpObject);
-                    cmdAddMarker.setLat((double) event.getProperties().get("lat")); //NOI18N
-                    cmdAddMarker.setLng((double) event.getProperties().get("lng")); //NOI18N
-                    cmdAddMarker.execute();
-                }
+            if (event instanceof NodeAddedEvent) {
+                NodeAddedEvent theEvent = (NodeAddedEvent) event;
+                if (cmdAddMarker != null)
+                    cmdAddMarker.execute(tmpObject, theEvent.getPosition());
+                
                 toolRegister.setTool(toolHand);
-            } else if ("add-polyline".equals(event.getId())) { //NOI18N
+            } else if (event instanceof EdgeAddedEvent) {
+                EdgeAddedEvent theEvent = (EdgeAddedEvent) event;
                 if (cmdAddPolyline != null) {
-                    cmdAddPolyline.setSource(((OSPNode) 
-                        event.getProperties().get("source")).getBusinessObject()); //NOI18N
-                    cmdAddPolyline.setTarget(((OSPNode) 
-                        event.getProperties().get("target")).getBusinessObject()); //NOI18N
-                    cmdAddPolyline.setPath((List) event.getProperties().get("path")); //NOI18N
-                    cmdAddPolyline.execute();
+                    cmdAddPolyline.execute(
+                        theEvent.getSource().getBusinessObject(),
+                        theEvent.getTarget().getBusinessObject(),
+                        theEvent.getPath(), 
+                        theEvent.getDeleteDummyEdgeCommand()
+                    );
                 }
                 //Enables the polyline tool again
                 toolRegister.setTool(toolPolyline);
-            } else if ("remove-marker".equals(event.getId())) {
-                
-            } else if ("remove-polyline".equals(event.getId())) {
-                
             }
-            
+            else if (event instanceof NodePositionChangedEvent)
+                executeCommand(cmdOspViewChanged);
+            else if (event instanceof EdgePathChangedEvent)
+                executeCommand(cmdOspViewChanged);
+            else if (mapProvider instanceof OspInfoWindowContainer) {
+                OspInfoWindowContainer container = (OspInfoWindowContainer) mapProvider;
+                
+                if (event instanceof NodeInfoWindowRequestEvent) {
+                    NodeInfoWindowRequestEvent theEvent = (NodeInfoWindowRequestEvent) event;
+                    NodeInfoWindowContent content = new NodeInfoWindowContent(theEvent.getOspNode(), container, translationService, bem);
+                    content.setDeleteNodeCommand(cmdDeleteMarker);
+                    container.setInfoWindowContent(content);
+                    container.openInfoWindow(theEvent.getOspNode().getBusinessObject());
+                    
+                } else if (event instanceof EdgeInfoWindowRequestEvent) {
+                    EdgeInfoWindowRequestEvent theEvent = (EdgeInfoWindowRequestEvent) event;
+                    EdgeInfoWindowContent content = new EdgeInfoWindowContent(theEvent.getOspEdge(), container);
+                    content.setDeleteEdgeCommand(cmdDeletePolyline);
+                    container.setInfoWindowContent(content);
+                    container.setInfoWindowPosition(theEvent.getPosition());
+                    container.openInfoWindow();
+                }
+            }
         });
         setMargin(false);
         setPadding(false);
         setSpacing(false);
+        
         add(btnBack, btnSave, btnDelete, outsidePlantSearch, btnHand, btnPolygon, btnPolyline);
         
         enabledButtons(btnHand);
@@ -157,20 +191,32 @@ public class OutsidePlantTools extends HorizontalLayout {
         this.cmdBack = cmdBack;
     }
     
-    public void setSaveCommand(Command cmdSave) {
-        this.cmdSave = cmdSave;
+    public void setSaveOspViewCommand(Command cmdSaveOspView) {
+        this.cmdSaveOspView = cmdSaveOspView;
     }
     
-    public void setDeleteCommand(Command cmdDelete) {
-        this.cmdDelete = cmdDelete;
+    public void setDeleteOspViewCommand(Command cmdDeleteOspView) {
+        this.cmdDeleteOspView = cmdDeleteOspView;
     }
     
-    public void setAddmarkerCommand(CommandAddMarker cmdAddMarker) {
+    public void setAddmarkerCommand(TwoArgsCommand<BusinessObjectLight, GeoCoordinate> cmdAddMarker) {
         this.cmdAddMarker = cmdAddMarker;
     }
     
-    public void setAddPolylineCommand(CommandAddConnection cmdAddPolyline) {
+    public void setAddPolylineCommand(FourArgsCommand<BusinessObjectLight, BusinessObjectLight, List<GeoCoordinate>, Command> cmdAddPolyline) {
         this.cmdAddPolyline = cmdAddPolyline;
+    }
+    
+    public void setOspViewChangedCommand(Command cmdViewChanged) {
+        this.cmdOspViewChanged = cmdViewChanged;
+    }
+    
+    public void setDeleteMarkerCommand(OneArgCommand<OSPNode> cmdDeleteMarker) {
+        this.cmdDeleteMarker = cmdDeleteMarker;
+    }
+    
+    public void setDeletePolylineCommand(OneArgCommand<OSPEdge> cmdDeletePolyline) {
+        this.cmdDeletePolyline = cmdDeletePolyline;
     }
     //Helpers
     private void executeCommand(Command command) {

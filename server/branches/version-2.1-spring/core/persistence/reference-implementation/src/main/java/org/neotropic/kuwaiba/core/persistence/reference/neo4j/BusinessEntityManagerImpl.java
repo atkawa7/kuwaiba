@@ -75,6 +75,7 @@ import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.helpers.collection.Iterators;
 import org.neotropic.kuwaiba.core.persistence.reference.extras.caching.CacheManager;
+import org.neotropic.kuwaiba.core.persistence.reference.neo4j.util.ObjectGraphMappingService;
 import org.neotropic.kuwaiba.core.persistence.reference.neo4j.util.Util;
 import org.neotropic.kuwaiba.core.persistence.reference.util.DynamicNameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -142,7 +143,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     @Autowired
     private ApplicationEntityManager aem;
     
-    
+    @Autowired
+    private ObjectGraphMappingService ogmService;
     /**
      * Main constructor. It receives references to the other entity managers
      */
@@ -844,13 +846,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 }
                 else {
                      tx.success();
-                     return createObjectLightFromNode(parentNode);
+                     return ogmService.createObjectLightFromNode(parentNode);
                 }   
             }
             if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF_SPECIAL)) {
                 Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).getEndNode();
                 if (parentNode.hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING))
-                    return createObjectLightFromNode(parentNode);
+                    return ogmService.createObjectLightFromNode(parentNode);
                 else
                     // Use the dummy root like parent to services, contracts, projects poolNode...
                     return new BusinessObject(Constants.NODE_DUMMYROOT, "-1", Constants.NODE_DUMMYROOT);
@@ -880,7 +882,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     }
                 }
                 if (node.hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING))
-                    parents.add(createObjectLightFromNode(node));
+                    parents.add(ogmService.createObjectLightFromNode(node));
                 else //the node has a poolNode as a parent
                     parents.add(Util.createRemoteObjectLightFromPoolNode(node));
             }
@@ -913,7 +915,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 }
                 
                 if (node.hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING)) {                    
-                    parents.add(createObjectLightFromNode(node));
+                    parents.add(ogmService.createObjectLightFromNode(node));
                     
                     String parentNodeClass = Util.getClassName(node);
                     if (mem.isSubclassOf(objectToMatchClassName, parentNodeClass))
@@ -1375,12 +1377,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 while(children.iterator().hasNext() && (counter < maxResults)) {
                     counter++;
                     Node child = children.iterator().next().getStartNode();
-                    res.add(createObjectLightFromNode(child));
+                    res.add(ogmService.createObjectLightFromNode(child));
                 }
             } else {
                 while(instances.hasNext()) {
                     Node child = instances.next().getStartNode();
-                    res.add(createObjectLightFromNode(child));
+                    res.add(ogmService.createObjectLightFromNode(child));
                 }
             }
             
@@ -1407,12 +1409,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 while(children.hasNext() && (counter < maxResults)) {
                     counter++;
                     Node child = children.next().getStartNode();
-                    res.add(createObjectLightFromNode(child));
+                    res.add(ogmService.createObjectLightFromNode(child));
                 }
             } else {
                 while(children.hasNext()) {
                     Node child = children.next().getStartNode();
-                    res.add(createObjectLightFromNode(child));
+                    res.add(ogmService.createObjectLightFromNode(child));
                 }
             }
             return res;
@@ -1449,7 +1451,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 if (childUuid.equals(oid))
                     continue;
                 
-                res.add(createObjectLightFromNode(child));
+                res.add(ogmService.createObjectLightFromNode(child));
             }
             return res;
         }
@@ -1490,7 +1492,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         counter ++;
                     else break;
                 }
-                instances.add(createObjectLightFromNode(instance));                                                                                
+                instances.add(ogmService.createObjectLightFromNode(instance));                                                                                
             }
             
             Collections.sort(instances);
@@ -1608,7 +1610,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             int counter = 0;
             
             for (Relationship specialChildRelationships : parentNode.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.INCOMING)) {
-                BusinessObjectLight specialChild = createObjectLightFromNode(specialChildRelationships.getStartNode());
+                BusinessObjectLight specialChild = ogmService.createObjectLightFromNode(specialChildRelationships.getStartNode());
                 
                 if (mem.isSubclassOf(classToFilter, specialChild.getClassName())) {
                     res.add(specialChild);
@@ -1696,7 +1698,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         if (endNodeUuid == null)
                             throw new InvalidArgumentException(String.format("The object with id %s does not have uuid", rel.getEndNode()));
                         res.add(endNodeUuid.equals(objectId) ? 
-                            createObjectLightFromNode(rel.getStartNode()) : createObjectLightFromNode(rel.getEndNode()));
+                            ogmService.createObjectLightFromNode(rel.getStartNode()) : ogmService.createObjectLightFromNode(rel.getEndNode()));
                     }
                 }
             }
@@ -1718,7 +1720,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         if (endNodeUuid == null)
                             throw new InvalidArgumentException(String.format("The object with id %s does not have uuid", rel.getEndNode().getId()));                                
                         BusinessObjectLight theObject = endNodeUuid.equals(objectId) ? 
-                            createObjectLightFromNode(rel.getStartNode()) : createObjectLightFromNode(rel.getEndNode());
+                            ogmService.createObjectLightFromNode(rel.getStartNode()) : ogmService.createObjectLightFromNode(rel.getEndNode());
                         res.add(new AnnotatedBusinessObjectLight(theObject, rel.getAllProperties()));
                     }
                 }
@@ -1744,7 +1746,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         currentObjects = new ArrayList<>();
                         res.put(relName, currentObjects);
                     }
-                    currentObjects.add(createObjectLightFromNode(rel.getOtherNode(objectNode)));
+                    currentObjects.add(ogmService.createObjectLightFromNode(rel.getOtherNode(objectNode)));
                 }
             }
             return res;
@@ -1763,7 +1765,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     if (rel.getProperty(Constants.PROPERTY_NAME).equals(Constants.REL_PROPERTY_POOL))
                         return res;
                 }
-                res.add(createObjectLightFromNode(rel.getStartNode()));
+                res.add(ogmService.createObjectLightFromNode(rel.getStartNode()));
             }
             return res;
         }
@@ -1909,7 +1911,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             for (Relationship customerRelationship : contactNode.getRelationships(RelTypes.RELATED_TO_SPECIAL, Direction.INCOMING)) {
                 if (customerRelationship.hasProperty(Constants.PROPERTY_NAME) && customerRelationship.getProperty(Constants.PROPERTY_NAME).equals("contacts"))
-                    return new Contact(createObjectFromNode(contactNode), createObjectLightFromNode(customerRelationship.getStartNode()));
+                    return new Contact(createObjectFromNode(contactNode), ogmService.createObjectLightFromNode(customerRelationship.getStartNode()));
             }
             
             throw new InvalidArgumentException("The contact does not have a customer associated to it, please check its relationships");
@@ -1925,7 +1927,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             for (Relationship contactRelationship : customerNode.getRelationships(RelTypes.RELATED_TO_SPECIAL, Direction.OUTGOING)) {
                 if (contactRelationship.hasProperty(Constants.PROPERTY_NAME) && contactRelationship.getProperty(Constants.PROPERTY_NAME).equals("contacts")) {
                     Node contactNode = contactRelationship.getEndNode();
-                    contacts.add(new Contact(createObjectFromNode(contactNode), createObjectLightFromNode(customerNode)));
+                    contacts.add(new Contact(createObjectFromNode(contactNode), ogmService.createObjectLightFromNode(customerNode)));
                 }
             }
             return contacts;
@@ -1956,7 +1958,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 Node contactNode = contactNodes.next();
                 if (contactNode.hasRelationship(RelTypes.RELATED_TO_SPECIAL, Direction.INCOMING)) {
                     Node customerNode = contactNode.getRelationships(RelTypes.RELATED_TO_SPECIAL, Direction.INCOMING).iterator().next().getStartNode();
-                    res.add(new Contact(createObjectFromNode(contactNode), createObjectLightFromNode(customerNode)));
+                    res.add(new Contact(createObjectFromNode(contactNode), ogmService.createObjectLightFromNode(customerNode)));
                 }
             }
             return res;
@@ -2089,98 +2091,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         }
     }
     
-    //TODO DELETE. This is a business dependant method, should not be here. Don't use it
-    @Override
-    @Deprecated
-    public List<BusinessObjectLight> getPhysicalPath(String objectClass, String objectId) 
-        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
-        List<BusinessObjectLight> path = new ArrayList<>();
-        //If the port is a logical port (virtual port, Pseudowire or service instance, we look for the first physical parent port)
-        String logicalPortId = null;
-        if(mem.isSubclassOf(Constants.CLASS_GENERICLOGICALPORT, objectClass)){
-            logicalPortId = objectId;
-            if(objectClass.equals("Pseudowire"))
-                objectId = getFirstParentOfClass(objectClass, objectId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT).getId();
-            else{    
-                BusinessObjectLight firstPhysicalParentPort = getFirstParentOfClass(objectClass, objectId, Constants.CLASS_GENERICPHYSICALPORT);
-                objectId = firstPhysicalParentPort.getId();
-            }
-        }
-        //The first part of the query will return many paths, the longest is the one we need. The others are
-        //subsets of the longest
-        String cypherQuery = "MATCH paths = (o)-[r:" + RelTypes.RELATED_TO_SPECIAL + "*]-(c) "+
-                             "WHERE o._uuid = '" + objectId + "' AND all(rel in r where rel.name IN ['mirror','mirrorMultiple'] or rel.name = 'endpointA' or rel.name = 'endpointB') "+
-                             "WITH nodes(paths) as path " +
-                             "RETURN path ORDER BY length(path) DESC LIMIT 1";
-        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()){
-            if(logicalPortId != null)
-                path.add(createObjectLightFromNode(connectionManager.getConnectionHandler().findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, logicalPortId)));
-            Result result = connectionManager.getConnectionHandler().execute(cypherQuery);
-            Iterator<List<Node>> column = result.columnAs("path");
-            
-            for (List<Node> listOfNodes : Iterators.asIterable(column)) {
-                for(Node node : listOfNodes)
-                    path.add(createObjectLightFromNode(node));
-            }
-        }
-        return path;
-    }
-    
-    @Override
-    public HashMap<BusinessObjectLight, List<BusinessObjectLight>> getPhysicalTree(String objectClass, String objectId) 
-        throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
-        HashMap<BusinessObjectLight, List<BusinessObjectLight>> tree = new LinkedHashMap();
-        // If the port is a logical port (virtual port, Pseudowire or service instance, we look for the first physical parent port)
-        String logicalPortId = null;
-        if (mem.isSubclassOf(Constants.CLASS_GENERICLOGICALPORT, objectClass)) {
-            logicalPortId = objectId;
-            if (objectClass.equals("Pseudowire")) {
-                BusinessObjectLight object = getFirstParentOfClass(objectClass, objectId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
-                objectId = object.getId();
-            } else {
-                BusinessObjectLight firstPhysicalParentPort = getFirstParentOfClass(objectClass, objectId, Constants.CLASS_GENERICPHYSICALPORT);
-                objectId = firstPhysicalParentPort.getId();
-            }
-        }
-        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
-            //The first part of the query will return many paths, that we build as a tree
-            StringBuilder queryBuilder = new StringBuilder();
-            queryBuilder.append("MATCH paths = (o)-[r:" + RelTypes.RELATED_TO_SPECIAL + "*]-(c) ");
-            queryBuilder.append("WHERE o._uuid = '" + objectId + "' AND all(rel in r where rel.name IN ['mirror','mirrorMultiple'] or rel.name = 'endpointA' or rel.name = 'endpointB') ");
-            queryBuilder.append("WITH nodes(paths) as path ");
-            queryBuilder.append("RETURN path ORDER BY length(path) DESC");
-
-            BusinessObjectLight logicalPort = null;
-            if (logicalPortId != null) {
-                logicalPort = createObjectLightFromNode(connectionManager.getConnectionHandler().findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, logicalPortId));
-                tree.put(logicalPort, new ArrayList());
-            }
-            Result result = connectionManager.getConnectionHandler().execute(queryBuilder.toString());
-            Iterator<List<Node>> column = result.columnAs("path"); //NOI18N
-
-            for (List<Node> listOfNodes : Iterators.asIterable(column)) {
-                for (int i = 0; i < listOfNodes.size(); i++) {
-                    BusinessObjectLight object = createObjectLightFromNode(listOfNodes.get(i));
-
-                    if (!tree.containsKey(object))
-                        tree.put(object, new ArrayList());
-
-                    if (logicalPort != null && i == 0)
-                        tree.get(logicalPort).add(object);
-
-                    if (i < listOfNodes.size() - 1) {
-                        BusinessObjectLight nextObject = createObjectLightFromNode(listOfNodes.get(i + 1));
-
-                        if (!tree.get(object).contains(nextObject))
-                            tree.get(object).add(nextObject);
-                    }
-                }
-            }
-            tx.success();
-        }
-        return tree;
-    }
-
     @Override
     public List<BusinessObjectLightList> findRoutesThroughSpecialRelationships(String objectAClassName, 
             String objectAId, String objectBClassName, String objectBId, String relationshipName) throws InvalidArgumentException {
@@ -2201,7 +2111,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 BusinessObjectLightList aPath = new BusinessObjectLightList();
                 boolean discardPath = false;
                 for (Node aNode : list) {
-                    BusinessObjectLight aHop = createObjectLightFromNode(aNode);
+                    BusinessObjectLight aHop = ogmService.createObjectLightFromNode(aNode);
                     if (aPath.getList().contains(aHop)) {
                         discardPath = true;
                         break;
@@ -2244,7 +2154,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             List<Node> lstWarehouseColumn = Iterators.asList(warehouseColumn);
             
             for (Node warehouse : lstWarehouseColumn)
-                warehouses.add(createObjectLightFromNode(warehouse));
+                warehouses.add(ogmService.createObjectLightFromNode(warehouse));
             
             Collections.sort(warehouses);
             
@@ -2276,7 +2186,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             List<Node> lstWarehouseColumn = Iterators.asList(warehouseColumn);
             
             for (Node warehouse : lstWarehouseColumn)
-                warehouses.add(createObjectLightFromNode(warehouse));
+                warehouses.add(ogmService.createObjectLightFromNode(warehouse));
             
             Collections.sort(warehouses);
             
@@ -2311,7 +2221,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             List<Node> lstphysicalNodeColumn = Iterators.asList(physicalNodeColumn);
             
             for (Node physicalNode : lstphysicalNodeColumn)
-                physicalNodes.add(createObjectLightFromNode(physicalNode));
+                physicalNodes.add(ogmService.createObjectLightFromNode(physicalNode));
             
             Collections.sort(physicalNodes);
             
@@ -2811,7 +2721,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         
                         Node temp = connectionManager.getConnectionHandler().findNode(poolLabel, Constants.PROPERTY_UUID, itemUuid);
                         if (temp == null)  //If it's not a pool, but a normal business object
-                            poolItems.add(createObjectLightFromNode(item));
+                            poolItems.add(ogmService.createObjectLightFromNode(item));
                     }
                 }
             }
@@ -3243,7 +3153,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         for (Relationship instanceOfRelationship : classNode.getRelationships(Direction.INCOMING, RelTypes.INSTANCE_OF)) {
             Node instance = instanceOfRelationship.getStartNode();
             if (instance.hasProperty(filterName) && instance.getProperty(filterName).equals(filterValue))
-                res.add(createObjectLightFromNode(instance));
+                res.add(ogmService.createObjectLightFromNode(instance));
             else {
                 Iterable<Relationship> iterableRelationships = instance.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING);
                 Iterator<Relationship> relationships = iterableRelationships.iterator();
@@ -3255,7 +3165,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         String.valueOf(relationship.getProperty(Constants.PROPERTY_NAME)).equals(filterName) &&
                         String.valueOf(relationship.getEndNode().getId()).equals(filterValue)) {
                         
-                        res.add(createObjectLightFromNode(instance));                        
+                        res.add(ogmService.createObjectLightFromNode(instance));                        
                     }
                 }
             }
@@ -3316,7 +3226,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 throw new MetadataObjectNotFoundException(String.format("Class for object with oid %s could not be found", child.getId()));
 
             if (mem.isSubclassOf(classToFilter, childClassName)) {
-                res.add(createObjectLightFromNode(child));
+                res.add(ogmService.createObjectLightFromNode(child));
 
                 if (maxResults > 0 && res.size() == maxResults)
                     break;
@@ -3348,7 +3258,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     throw new MetadataObjectNotFoundException(String.format("Class for object with oid %s could not be found", specialChild.getId()));
 
                 if (mem.isSubclassOf(classToFilter, specialChildClassName)) {
-                    res.add(createObjectLightFromNode(specialChild));
+                    res.add(ogmService.createObjectLightFromNode(specialChild));
 
                     if (maxResults > 0 && res.size() == maxResults)
                         break;
@@ -3358,88 +3268,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         }
     }
     
-    private BusinessObjectLight createObjectLightFromNode (Node instance) {
-        String className = (String)instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME);
-        
-        //First, we create the naked business object, without validators
-        BusinessObjectLight res = new BusinessObjectLight(className, (String)instance.getProperty(Constants.PROPERTY_UUID), 
-                (String)instance.getProperty(Constants.PROPERTY_NAME));
-        
-        //Then, we check the cache for validator definitions
-        List<ValidatorDefinition> validatorDefinitions = CacheManager.getInstance().getValidatorDefinitions(className);
-        if (validatorDefinitions == null) { //Since the validator definitions are not cached, we retrieve them for the object class and its super classes
-            validatorDefinitions = new ArrayList<>();
-            try {
-                List<ClassMetadataLight> classHierarchy = mem.getUpstreamClassHierarchy(className, true);
-                //The query returns the hierarchy from the subclass to the super class, and we reverse it so the lower level validator definitions 
-                //have a higher priority (that is, are processed the last)
-                Collections.reverse(classHierarchy); 
-                for (ClassMetadataLight aClass : classHierarchy) {
-                    ResourceIterator<Node> validatorDefinitionNodes = connectionManager.getConnectionHandler().findNodes(Label.label(Constants.LABEL_VALIDATOR_DEFINITIONS), 
-                            Constants.PROPERTY_CLASS_NAME, 
-                            aClass.getName());
-                    
-                    while (validatorDefinitionNodes.hasNext()) {
-                        Node aValidatorDefinitionNode = validatorDefinitionNodes.next();
-                        String script = (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_SCRIPT);
-                        
-                        if (!script.trim().isEmpty()) { //Empty scripts are ignored
-                            try {
-                                //We will load on-the-fly a ValidatorDefinition subclass and instantiate an object from it. The the signature class defined in the 
-                                //script file should be something like "public class %s extends ValidatorDefinition" and implement the "run" mathod. The name of the class
-                                //will be built dynamically based on the id of the validator definition and a fixed prefix. This is done so the user doesn't use accidentally a
-                                //class name already in use by another validator definition.
-                                String validatorDefinitionClassName = "ValidatorDefinition" + aValidatorDefinitionNode.getId();
-                                Class validatorDefinitionClass = validatorDefinitionsClassLoader.parseClass(
-                                        String.format(script, validatorDefinitionClassName, validatorDefinitionClassName));
-                            
-                                ValidatorDefinition validatorDefinitionInstance =  (ValidatorDefinition)validatorDefinitionClass.
-                                        getConstructor(long.class, String.class, String.class, String.class, String.class, boolean.class).
-                                        newInstance(aValidatorDefinitionNode.getId(), 
-                                                (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_NAME), 
-                                                (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
-                                                aClass.getName(), 
-                                                (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_SCRIPT), 
-                                                (boolean)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_ENABLED));
-
-                                validatorDefinitions.add(validatorDefinitionInstance);
-                            } catch (Exception ex) { //If there's an error parsing the script or instantiating the class, this validator definition will be ignored and the error logged
-                                System.out.println(String.format("[KUWAIBA]   %s", ex.getLocalizedMessage()));
-                                //ex.printStackTrace();
-                            }
-                        }
-                    }
-                }
-                
-                //Now we cachethe results
-                CacheManager.getInstance().addValidatorDefinitions(className, validatorDefinitions);
-            } catch (MetadataObjectNotFoundException ex) {
-                //Should not happen
-            }    
-        }
-        
-        List<Validator> validators = new ArrayList<>();
-        
-        //Now we run the applicable validator definitions
-        validatorDefinitions.forEach((aValidatorDefinition) -> {
-            try {
-                String script = aValidatorDefinition.getScript();
-                if (aValidatorDefinition.isEnabled()) {
-                    Validator validator = aValidatorDefinition.run(className, (String)instance.getProperty(Constants.PROPERTY_UUID));
-                    if (validator != null) //It's possible that after evaluating the condition nothing should be done, so the method "run" could actually return null
-                        validators.add(validator);
-                }
-            } catch (Exception ex) { //Errors will be logged and the validator definition skipped
-                System.out.println(String.format("[KUWAIBA] An unexpected error occurred while evaluating validator %s in object %s(%s): %s", 
-                        aValidatorDefinition.getName(), instance.getProperty(Constants.PROPERTY_NAME), 
-                        instance.getId(), ex.getLocalizedMessage()));
-            }
-        });
-        
-        res.setValidators(validators);
-        return res;
-    }
-       
     private BusinessObject createObjectFromNode(Node instance) throws InvalidArgumentException {
         String className = (String)instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME);
         try {
@@ -3664,7 +3492,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Result result = connectionManager.getConnectionHandler().execute(queryBuilder.toString(), parameters);
             List<BusinessObjectLight> objectChildren = new ArrayList();
             while (result.hasNext())
-                objectChildren.add(createObjectLightFromNode((Node) result.next().get(CHILD_NODE)));
+                objectChildren.add(ogmService.createObjectLightFromNode((Node) result.next().get(CHILD_NODE)));
             tx.success();
             return objectChildren;
         }

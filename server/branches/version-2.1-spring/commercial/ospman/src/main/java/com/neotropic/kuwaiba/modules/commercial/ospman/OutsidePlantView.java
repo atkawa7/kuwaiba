@@ -15,8 +15,6 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman;
 
-import com.neotropic.kuwaiba.modules.commercial.ospman.commands.CommandAddMarker;
-import com.neotropic.kuwaiba.modules.commercial.ospman.commands.CommandAddConnection;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.DialogDeleteOSPView;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.DialogNewContainer;
 import org.neotropic.util.visual.views.AbstractView;
@@ -29,10 +27,10 @@ import org.neotropic.util.visual.views.ViewMap;
 import org.neotropic.util.visual.views.util.UtilHtml;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.server.Command;
 import com.vaadin.flow.server.StreamResourceRegistry;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
@@ -49,6 +47,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.BusinessObjectNotFoundException;
@@ -58,7 +57,8 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotF
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionService;
+import org.neotropic.kuwaiba.modules.core.navigation.commands.Command;
+import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.visualization.views.ViewNodeIconGenerator;
 import org.neotropic.util.visual.dialog.ConfirmDialog;
 import org.neotropic.util.visual.notifications.SimpleNotification;
@@ -70,6 +70,19 @@ import org.neotropic.util.visual.tools.ToolRegister;
  */
 public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
     /**
+     * Checks if an outside plant view has modifications to save
+     */
+    private boolean dirty = false;
+    /**
+     * Set of property names
+     */
+    private class PropertyNames {
+        public static final String LAT = "lat"; //NOI18N
+        public static final String LON = "lon"; //NOI18N
+        public static final String CONTROL_POINTS = "controlPoints"; //NOI18N
+        public static final String COLOR = "color"; //NOI18N
+    }
+    /**
      * The map provider used to render this view.
      */
     private AbstractMapProvider mapProvider;
@@ -77,7 +90,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
     private final ApplicationEntityManager aem;
     private final BusinessEntityManager bem;
     private final MetadataEntityManager mem;
-    private final PhysicalConnectionService physicalConnectionService;
+    private final PhysicalConnectionsService physicalConnectionsService;
     private final ViewNodeIconGenerator iconGenerator;
     private final Command cmdParentBack;
     private final boolean drawingControl;
@@ -86,7 +99,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
         MetadataEntityManager mem, 
         ApplicationEntityManager aem, 
         BusinessEntityManager bem, 
-        PhysicalConnectionService physicalConnectionService, 
+        PhysicalConnectionsService physicalConnectionService, 
         TranslationService ts, 
         ViewNodeIconGenerator iconGenerator,
         boolean drawingControl,
@@ -95,7 +108,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
         this.aem = aem;
         this.bem = bem;
         this.mem = mem;
-        this.physicalConnectionService = physicalConnectionService;
+        this.physicalConnectionsService = physicalConnectionService;
         this.ts = ts;
         this.iconGenerator = iconGenerator;
         this.cmdParentBack = cmdParentBack;
@@ -276,50 +289,73 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
             OutsidePlantTools outsidePlantTools = new OutsidePlantTools(bem, ts, (AbstractMapProvider) mapProvider, (ToolRegister) mapProvider);
             ((HasComponents) mapProvider.getComponent()).add(outsidePlantTools);
             
-            outsidePlantTools.setAddmarkerCommand(new CommandAddMarker() {
-                @Override
-                public void execute() {
-                    BusinessObjectViewNode viewNode = new BusinessObjectViewNode(getBussinesObject());
-                    viewNode.getProperties().put("lat", getLat()); //NOI18N
-                    viewNode.getProperties().put("lng", getLng()); //NOI18N
-                    
-                    viewMap.addNode(viewNode);
-                    
-                    mapProvider.addMarker(getBussinesObject(), 
-                        new GeoCoordinate(getLat(), getLng()), 
-                        StreamResourceRegistry.getURI(iconGenerator.apply(viewNode)).toString()
-                    );
-                }
+            outsidePlantTools.setAddmarkerCommand((businessObject, position) -> {
+                BusinessObjectViewNode viewNode = new BusinessObjectViewNode(businessObject);
+                viewNode.getProperties().put(PropertyNames.LAT, position.getLatitude()); //NOI18N
+                viewNode.getProperties().put(PropertyNames.LON, position.getLatitude()); //NOI18N
+
+                viewMap.addNode(viewNode);
+
+                mapProvider.addMarker(businessObject, position, 
+                    StreamResourceRegistry.getURI(iconGenerator.apply(viewNode)).toString()
+                );
+                dirty = true;
             });
-            outsidePlantTools.setAddPolylineCommand(new CommandAddConnection() {
-                @Override
-                public void execute() {
-                    new DialogNewContainer(
-                        getSource(), getTarget(), ts, aem, bem, mem, physicalConnectionService, 
-                        container -> {
-                            try {
-                                BusinessObjectViewEdge viewEdge = new BusinessObjectViewEdge(container);
-                                viewEdge.getProperties().put("controlPoints", getPath()); //NOI18N
-                                viewEdge.getProperties().put("color", //NOI18N
-                                    UtilHtml.toHexString(new Color(mem.getClass(container.getClassName()).getColor())));
+            
+            outsidePlantTools.setAddPolylineCommand((source, target, path, cmdDeleteDummyEdge) -> {
+                DialogNewContainer dialogNewContainer = new DialogNewContainer(
+                    source, target, ts, aem, bem, mem, physicalConnectionsService, 
+                    container -> {
+                        try {
+                            BusinessObjectViewEdge viewEdge = new BusinessObjectViewEdge(container);
+                            viewEdge.getProperties().put(PropertyNames.CONTROL_POINTS, path); //NOI18N
+                            viewEdge.getProperties().put(PropertyNames.COLOR, //NOI18N
+                                UtilHtml.toHexString(new Color(mem.getClass(container.getClassName()).getColor())));
 
-                                viewMap.addEdge(viewEdge);
-                                viewMap.attachSourceNode(viewEdge, viewMap.getNode(getSource()));
-                                viewMap.attachTargetNode(viewEdge, viewMap.getNode(getTarget()));
-
-                                mapProvider.addPolyline(container, getSource(), getTarget(), getPath(), properties);
-                            } catch (MetadataObjectNotFoundException ex) {
-                                new SimpleNotification(
-                                    ts.getTranslatedString("module.general.messages.error"), 
-                                    ex.getLocalizedMessage()
-                                ).open();
-                            }
+                            viewMap.addEdge(viewEdge);
+                            viewMap.attachSourceNode(viewEdge, viewMap.getNode(source));
+                            viewMap.attachTargetNode(viewEdge, viewMap.getNode(target));
+                            
+                            mapProvider.addPolyline(container, target, source, path, properties);
+                            dirty = true;
+                        } catch (MetadataObjectNotFoundException ex) {
+                            new SimpleNotification(
+                                ts.getTranslatedString("module.general.messages.error"), 
+                                ex.getLocalizedMessage()
+                            ).open();
                         }
+                    }
+                );
+                dialogNewContainer.open();
+                dialogNewContainer.addOpenedChangeListener(event -> {
+                    if (!event.isOpened() && cmdDeleteDummyEdge != null)
+                        cmdDeleteDummyEdge.execute();
+                });
+            });
+            
+            outsidePlantTools.setDeleteMarkerCommand(ospNode -> {
+                mapProvider.removeMarker(ospNode.getBusinessObject());
+                dirty = true;
+            });
+            
+            outsidePlantTools.setDeletePolylineCommand(ospEdge -> {
+                try {
+                    Session session = UI.getCurrent().getSession().getAttribute(Session.class);
+                    physicalConnectionsService.deletePhysicalConnection(
+                            ospEdge.getBusinessObject().getClassName(),
+                            ospEdge.getBusinessObject().getId(),
+                            session.getUser().getUserName());
+                    mapProvider.removePolyline(ospEdge.getBusinessObject());
+                    dirty = true;
+                } catch (IllegalStateException | InventoryException ex) {
+                    new SimpleNotification(
+                        ts.getTranslatedString("module.general.messages.error"), 
+                        ex.getMessage()
                     ).open();
                 }
             });
             
-            outsidePlantTools.setSaveCommand(() -> {
+            outsidePlantTools.setSaveOspViewCommand(() -> {
                 if (viewMap.getNodes().isEmpty()) {
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.information"), 
@@ -328,60 +364,71 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
                 } else
                     saveOSPView();
             });
+            
             outsidePlantTools.setBackCommand(() -> {
                 if (!viewMap.getNodes().isEmpty())
                     saveOSPView();
                 cmdParentBack.execute();
             });
-            outsidePlantTools.setDeleteCommand(() -> {
+            
+            outsidePlantTools.setDeleteOspViewCommand(() -> {
                 if (!this.getProperties().get(Constants.PROPERTY_ID).equals(-1)) {
-                    DialogDeleteOSPView confirmDialog = new DialogDeleteOSPView((long) this.getProperties().get(Constants.PROPERTY_ID), ts, aem);
+                    DialogDeleteOSPView confirmDialog = new DialogDeleteOSPView((long) this.getProperties().get(Constants.PROPERTY_ID), ts, aem, null);
                     confirmDialog.open();
-                    confirmDialog.addDialogCloseActionListener(event -> 
-                        cmdParentBack.execute()
-                    );
+                    confirmDialog.addOpenedChangeListener(event -> {
+                        if (!event.isOpened())
+                            cmdParentBack.execute();
+                    });
                 }
+            });
+            
+            outsidePlantTools.setOspViewChangedCommand(() -> {
+                dirty = true;
             });
         }
     }
     
     private void saveOSPView() {
-        FormLayout fly = new FormLayout();
-        TextField txtName = new TextField();
-        txtName.setValue(this.getProperties().getProperty(Constants.PROPERTY_NAME) == null ? 
-            "" : this.getProperties().getProperty(Constants.PROPERTY_NAME));
-        TextField txtDescription = new TextField();
-        txtDescription.setValue(this.getProperties().getProperty(Constants.PROPERTY_DESCRIPTION) == null ? 
-            "" : this.getProperties().getProperty(Constants.PROPERTY_DESCRIPTION));
-        fly.addFormItem(txtName, ts.getTranslatedString("module.general.labels.name"));
-        fly.addFormItem(txtDescription, ts.getTranslatedString("module.general.labels.description"));
+        if (dirty) {
+            FormLayout fly = new FormLayout();
+            TextField txtName = new TextField();
+            txtName.setRequiredIndicatorVisible(true);
+            txtName.setValue(this.getProperties().getProperty(Constants.PROPERTY_NAME) == null ? 
+                "" : this.getProperties().getProperty(Constants.PROPERTY_NAME));
+            TextField txtDescription = new TextField();
+            txtDescription.setValue(this.getProperties().getProperty(Constants.PROPERTY_DESCRIPTION) == null ? 
+                "" : this.getProperties().getProperty(Constants.PROPERTY_DESCRIPTION));
+            fly.addFormItem(txtName, ts.getTranslatedString("module.general.labels.name"));
+            fly.addFormItem(txtDescription, ts.getTranslatedString("module.general.labels.description"));
 
-        ConfirmDialog confirmDialog = new ConfirmDialog(ts, 
-            ts.getTranslatedString("module.ospman.save-view"), fly, 
-            ts.getTranslatedString("module.general.messages.ok"), () -> {
-                try {
-                    if (this.properties.get(Constants.PROPERTY_ID).equals(-1)) {
-                        long newOSPViewId = aem.createOSPView(txtName.getValue(), txtDescription.getValue(), this.getAsXml());
-                        this.getProperties().put(Constants.PROPERTY_ID, newOSPViewId);
-                    } else {
-                        aem.updateOSPView((long) this.getProperties().get(Constants.PROPERTY_ID), 
-                            txtName.getValue(), txtDescription.getValue(), this.getAsXml());
+            ConfirmDialog confirmDialog = new ConfirmDialog(ts, 
+                ts.getTranslatedString("module.ospman.save-view"), fly, 
+                ts.getTranslatedString("module.general.messages.ok"), () -> {
+                    try {
+                        if (this.properties.get(Constants.PROPERTY_ID).equals(-1)) {
+                            long newOSPViewId = aem.createOSPView(txtName.getValue(), txtDescription.getValue(), this.getAsXml());
+                            this.getProperties().put(Constants.PROPERTY_ID, newOSPViewId);
+                        } else {
+                            aem.updateOSPView((long) this.getProperties().get(Constants.PROPERTY_ID), 
+                                txtName.getValue(), txtDescription.getValue(), this.getAsXml());
+                        }
+                        this.getProperties().put(Constants.PROPERTY_NAME, txtName.getValue());
+                        this.getProperties().put(Constants.PROPERTY_DESCRIPTION, txtDescription.getValue());
+                        dirty = false;
+                        new SimpleNotification(
+                            ts.getTranslatedString("module.general.messages.success"), 
+                            ts.getTranslatedString("module.ospman.view-saved")
+                        ).open();
+                    } catch (InventoryException ex) {
+                        new SimpleNotification(
+                            ts.getTranslatedString("module.general.messages.error"), 
+                            ex.getLocalizedMessage()
+                        ).open();
                     }
-                    this.getProperties().put(Constants.PROPERTY_NAME, txtName.getValue());
-                    this.getProperties().put(Constants.PROPERTY_DESCRIPTION, txtDescription.getValue());
-                    new SimpleNotification(
-                        ts.getTranslatedString("module.general.messages.success"), 
-                        ts.getTranslatedString("module.ospman.view-saved")
-                    ).open();
-                } catch (InventoryException ex) {
-                    new SimpleNotification(
-                        ts.getTranslatedString("module.general.messages.error"), 
-                        ex.getLocalizedMessage()
-                    ).open();
                 }
-            }
-        );
-        confirmDialog.open();
+            );
+            confirmDialog.open();
+        }
     }
     
     @Override

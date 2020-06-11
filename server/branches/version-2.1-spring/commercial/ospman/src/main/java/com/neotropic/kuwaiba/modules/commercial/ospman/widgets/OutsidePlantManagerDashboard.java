@@ -29,7 +29,9 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractDashboard;
@@ -44,7 +46,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
-import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionService;
+import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.visualization.views.ViewNodeIconGenerator;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
@@ -76,7 +78,7 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
     /**
      * Reference to the Physical Connection Service.
      */
-    private final PhysicalConnectionService physicalConnectionService;
+    private final PhysicalConnectionsService physicalConnectionService;
     
     private HorizontalLayout hlyQuickActions;
     private VerticalLayout vlyContent;
@@ -89,7 +91,7 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
         ApplicationEntityManager aem, 
         BusinessEntityManager bem, 
         MetadataEntityManager mem,
-        PhysicalConnectionService physicalConnectionService,
+        PhysicalConnectionsService physicalConnectionService,
         NewOspViewAction newOspViewAction) {
         
         this.ts = ts;
@@ -110,6 +112,22 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
         init();
     }
     
+    private List<ViewObjectLight> getViewObjects(String searchValue) {
+        try {
+            List<ViewObjectLight> viewObjs = aem.getOSPViews();
+            return viewObjs.stream()
+                    .filter(viewObject ->
+                            viewObject.getName().toLowerCase().contains(searchValue.toLowerCase())
+                    )
+                    .collect(Collectors.toList());
+        } catch (InvalidArgumentException ex) {
+            new SimpleNotification(
+                ts.getTranslatedString("module.general.messages.error"), 
+                ex.getLocalizedMessage()).open();
+            return new ArrayList();
+        }
+    }
+    
     private void init() {
         removeAll();
         hlyQuickActions = new HorizontalLayout(buildQuickActionsMenu());
@@ -126,28 +144,25 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
         txtSearch.setPlaceholder(ts.getTranslatedString("module.general.messages.search"));
         txtSearch.addKeyPressListener(event -> {
             if (event.getKey().matches(Key.ENTER.getKeys().get(0))) {
-                try {
-                    List<ViewObjectLight> viewObjs = aem.getOSPViews();
-                    vlySearchResults.removeAll();
-                    
-                    List<ViewObjectLight> filteredViewObjs = viewObjs.stream()
-                        .filter(viewObject -> 
-                            viewObject.getName().toLowerCase().contains(txtSearch.getValue().toLowerCase())
-                        )
-                        .collect(Collectors.toList());
-                    if (filteredViewObjs.isEmpty()) {
-                        vlySearchResults.add(new Label(ts.getTranslatedString("module.general.messages.no-search-result")));
-                    } else {
-                        Grid<ViewObjectLight> grdResults = new Grid();
-                        grdResults.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
-                        grdResults.setItems(filteredViewObjs);
-                        grdResults.addColumn(new ViewObjectLightSearchResultRenderer());
-                        vlySearchResults.add(grdResults);
-                    }
-                } catch (InvalidArgumentException ex) {
-                    new SimpleNotification(
-                        ts.getTranslatedString("module.general.messages.error"), 
-                        ex.getLocalizedMessage()).open();
+                vlySearchResults.removeAll();
+                List<ViewObjectLight> filteredViewObjs = getViewObjects(txtSearch.getValue());
+
+                if (filteredViewObjs.isEmpty()) {
+                    vlySearchResults.add(new Label(ts.getTranslatedString("module.general.messages.no-search-result")));
+                } else {
+                    Grid<ViewObjectLight> grdResults = new Grid();
+                    grdResults.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
+                    DataProvider<ViewObjectLight, Void> dataProvider = DataProvider.fromCallbacks(
+                        query -> {
+                            query.getOffset();
+                            query.getLimit();
+                            return getViewObjects(txtSearch.getValue()).stream();
+                        }, 
+                        query -> getViewObjects(txtSearch.getValue()).size()
+                    );
+                    grdResults.setDataProvider(dataProvider);
+                    grdResults.addColumn(new ViewObjectLightSearchResultRenderer(dataProvider));
+                    vlySearchResults.add(grdResults);
                 }
             }
         });
@@ -190,6 +205,12 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
     }
     
     public class ViewObjectLightSearchResultRenderer extends ComponentRenderer<VerticalLayout, ViewObjectLight> {
+        private final DataProvider<ViewObjectLight, Void> dataProvider;
+        
+        public ViewObjectLightSearchResultRenderer(DataProvider<ViewObjectLight, Void> dataProvider) {
+            this.dataProvider = dataProvider;
+        }
+        
         @Override
         public VerticalLayout createComponent(ViewObjectLight viewObjectLight) {
             VerticalLayout vltSearchResult = new VerticalLayout();
@@ -208,7 +229,9 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
             Button btnDelete = new Button(ts.getTranslatedString("module.general.labels.delete"));
             btnDelete.setClassName("search-result-action-button");
             btnDelete.addClickListener(event -> {
-                DialogDeleteOSPView dialogDeleteOSPView = new DialogDeleteOSPView(viewObjectLight.getId(), ts, aem);
+                DialogDeleteOSPView dialogDeleteOSPView = new DialogDeleteOSPView(
+                    viewObjectLight.getId(), ts, aem, () -> dataProvider.refreshAll()
+                );
                 dialogDeleteOSPView.open();
             });
             hlyActions.add(btnDelete);

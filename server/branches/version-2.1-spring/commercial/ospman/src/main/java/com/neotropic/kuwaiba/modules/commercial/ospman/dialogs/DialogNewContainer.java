@@ -17,6 +17,7 @@ package com.neotropic.kuwaiba.modules.commercial.ospman.dialogs;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -36,7 +37,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionService;
+import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
 /**
@@ -47,7 +48,7 @@ public class DialogNewContainer extends Dialog {
     
     public DialogNewContainer(BusinessObjectLight source, BusinessObjectLight target, 
         TranslationService ts, ApplicationEntityManager aem, BusinessEntityManager bem, MetadataEntityManager mem, 
-        PhysicalConnectionService physicalConnectionService, Consumer<BusinessObjectLight> containerConsumer) {
+        PhysicalConnectionsService physicalConnectionService, Consumer<BusinessObjectLight> containerConsumer) {
         
         try {
             FormLayout formLayout = new FormLayout();
@@ -107,6 +108,8 @@ public class DialogNewContainer extends Dialog {
                     ).open();
                 }
             });
+            btnOk.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            btnOk.setClassName("primary-button");
             buttons.add(btnCancel, btnOk);
             
             content.add(formLayout, buttons);
