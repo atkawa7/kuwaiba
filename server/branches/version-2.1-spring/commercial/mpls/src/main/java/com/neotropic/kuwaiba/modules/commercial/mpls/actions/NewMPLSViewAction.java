@@ -59,7 +59,8 @@ public class NewMPLSViewAction extends AbstractAction {
             
             try {
                 String viewName = (String)parameters.get("viewName");                
-                long newViewId = aem.createGeneralView(CLASS_VIEW, viewName, "", new byte[0], null);
+                String viewDescription = (String)parameters.get("description");                
+                long newViewId = aem.createGeneralView(CLASS_VIEW, viewName, viewDescription, new byte[0], null);
                 
                 ActionResponse actionResponse = new ActionResponse();
                 actionResponse.put("viewId", newViewId); // the id of the view created
@@ -72,32 +73,6 @@ public class NewMPLSViewAction extends AbstractAction {
             }
         });
     }
-    
-//    public boolean saveCurrentView() {
-//         if (currentView == null || currentView.getId() == -1) { //New view
-//            long newViewId = aem.createGeneralView(CLASS_VIEW, currentView.getName(), view.getDescription(), scene.getAsXML(), null);
-//            if (newViewId == -1) {
-//                return false;
-//            }
-//            else {
-//                view = new LocalObjectView(newViewId, CLASS_VIEW, view.getName(), view.getDescription(), scene.getAsXML(), null);
-//                MPLSConfigurationObject configObject = Lookup.getDefault().lookup(MPLSConfigurationObject.class);
-//                configObject.setProperty("saved", true);            String className = (String)parameters.get("name");
-//
-//                return true;
-//            }
-//        }
-//        else {
-//            if (com.updateGeneralView(view.getId(), view.getName(), view.getDescription(), scene.getAsXML(), null)) {
-//                MPLSConfigurationObject configObject = Lookup.getDefault().lookup(MPLSConfigurationObject.class);
-//                configObject.setProperty("saved", true);
-//                return true;
-//            } else {
-//                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
-//                return false;
-//            }
-//        }
-//    }
 
     @Override
     public int getRequiredAccessLevel() {

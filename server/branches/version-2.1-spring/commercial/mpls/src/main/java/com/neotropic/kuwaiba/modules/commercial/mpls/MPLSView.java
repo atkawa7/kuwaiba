@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -86,22 +87,22 @@ public class MPLSView extends AbstractView<BusinessObjectLight> {
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return ts.getTranslatedString("module.mpsl.mpls-view.name");
     }
 
     @Override
     public String getDescription() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return ts.getTranslatedString("module.mpsl.mpls-view.description");
     }
-
+    
     @Override
     public String getVersion() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return "1.0";
     }
-
+    
     @Override
     public String getVendor() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return "Neotropic SAS <contact@neotropic.co>"; //NOI18N
     }
 
     @Override
@@ -363,17 +364,8 @@ public class MPLSView extends AbstractView<BusinessObjectLight> {
                 int x = (int) properties.get("x");
                 int y = (int) properties.get("y");
                 String urlImage = (String) properties.get("imageUrl");
-//                MxGraphNode newMxGraphNode = new MxGraphNode();
-//                
-//                newMxGraphNode.setUuid( businessObject.getId());
-//                newMxGraphNode.setLabel( businessObject.toString());
-//                if (urlImage != null && !urlImage.isEmpty()) 
-//                    newMxGraphNode.setImage(urlImage);
-//                newMxGraphNode.setWidth(Constants.DEFAULT_ICON_WIDTH);
-//                newMxGraphNode.setHeight(Constants.DEFAULT_ICON_HEIGHT);
-//                newMxGraphNode.setX(x); //The position is scaled
-//                newMxGraphNode.setY(y);
-                mxgraphCanvas.attachNodeWidget(businessObject, businessObject.getId(), x, y, urlImage);
+
+                mxgraphCanvas.addNode(businessObject, businessObject.getId(), x, y, urlImage);
                             
             }
             
@@ -407,18 +399,9 @@ public class MPLSView extends AbstractView<BusinessObjectLight> {
             if (this.mxgraphCanvas != null) { //The view could be created without a graphical representation (the map). so here we make sure that's not the case
                 List<Point> controlPoints = (List<Point>) properties.get("controlPoints");
                 String sourceLabel =  (String) properties.get("sourceLabel");
-                String targetLabel =  (String) properties.get("targetLabel");
-                
-//                MxGraphEdge newMxgraphEdge = new MxGraphEdge();
-//
-//                newMxgraphEdge.setSource(sourceBusinessObject.getId());
-//                newMxgraphEdge.setTarget(targetBusinessObject.getId());
-//                newMxgraphEdge.setSourceLabel(sourceLabel);
-//                newMxgraphEdge.setTargetLabel(targetLabel);
-//                newMxgraphEdge.setLabel(businessObject.toString());
-//                newMxgraphEdge.setPoints(controlPoints);
+                String targetLabel =  (String) properties.get("targetLabel");               
 
-                mxgraphCanvas.attachEdgeWidget(businessObject, sourceBusinessObject, targetBusinessObject, controlPoints, sourceLabel, targetLabel);
+                mxgraphCanvas.addEdge(businessObject, businessObject.getId(), sourceBusinessObject, targetBusinessObject, controlPoints, sourceLabel, targetLabel);
 
             }
             return newEdge;
@@ -432,7 +415,7 @@ public class MPLSView extends AbstractView<BusinessObjectLight> {
      * export it in other formats. This method wipes the existing view map and builds it again from 
      * whatever it is on the map currently
      */
-    private void syncViewMap() {
+    public void syncViewMap() {
         this.viewMap.clear();
         if (mxgraphCanvas == null)
             return;
@@ -451,8 +434,8 @@ public class MPLSView extends AbstractView<BusinessObjectLight> {
             anEdge.getProperties().put("targetLabel", entry.getValue().getTargetLabel());
             
             this.viewMap.getEdges().add(anEdge);
-            this.viewMap.attachSourceNode(anEdge, new BusinessObjectViewNode(mxgraphCanvas.findSourceEdgeObject(entry.getValue())));
-            this.viewMap.attachTargetNode(anEdge, new BusinessObjectViewNode(mxgraphCanvas.findTargetEdgeObject(entry.getValue())));
+            this.viewMap.attachSourceNode(anEdge, new BusinessObjectViewNode(mxgraphCanvas.findSourceEdgeObject(entry.getKey())));
+            this.viewMap.attachTargetNode(anEdge, new BusinessObjectViewNode(mxgraphCanvas.findTargetEdgeObject(entry.getKey())));
         };
     }
 
@@ -470,5 +453,20 @@ public class MPLSView extends AbstractView<BusinessObjectLight> {
     public void buildWithBusinessObject(BusinessObjectLight businessObject) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public void deleteNode(BusinessObjectLight businessObject) {
+        
+        mxgraphCanvas.deleteNode(businessObject);
+        syncViewMap();
+             
+    }
+
+    @Override
+    public void deleteEdge(BusinessObjectLight businessObject) {
+        mxgraphCanvas.deleteEdge(businessObject);
+        syncViewMap();
+    }
+        
 
 }

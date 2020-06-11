@@ -19,8 +19,11 @@ import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.contextmenu.MenuItem;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.shared.Registration;
 import java.util.ArrayList;
@@ -31,6 +34,8 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 
 /**
  * Component with a set of tools available to work in an Mpls view
@@ -38,21 +43,39 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotF
  */
 public class MplsTools extends HorizontalLayout {
     
-    private Button btnNewConnection;
+    TranslationService ts;
+    MenuBar menuAddConnection;  
     private ComboBox cbxObjects;
     private Button btnSaveView;  
+    MenuBar menuDeleteObject;  
      
-    public MplsTools(BusinessEntityManager bem, List<Object> object) {
+    public MplsTools(BusinessEntityManager bem, TranslationService ts, List<Object> object) {
         
-        btnNewConnection = new Button("New Connection",new Icon(VaadinIcon.CONNECT), event -> {
-            fireEvent(new NewConnectionEvent(this, false));
+        this.ts = ts;
+        menuAddConnection = new MenuBar();
+        menuAddConnection.setVisible(false);
+        MenuItem addConnectionItem = menuAddConnection.addItem(new Label(ts.getTranslatedString("module.mpsl.add-connection")));
+        addConnectionItem.addComponentAsFirst(new Icon(VaadinIcon.CONNECT));
+        addConnectionItem.addComponentAtIndex(2, new Icon(VaadinIcon.ANGLE_DOWN));
+        
+        addConnectionItem.getSubMenu().addItem(ts.getTranslatedString("module.mpsl.new-connection"), 
+                e -> {
+              fireEvent(new NewConnectionEvent(this, false));
         });
+        addConnectionItem.getSubMenu().addItem(ts.getTranslatedString("module.mpsl.existent-connection"),
+                e -> {
+              fireEvent(new AddExistingConnectionEvent(this, false));
+        });  
+        addConnectionItem.getSubMenu().addItem(ts.getTranslatedString("module.mpsl.detect-connections"),
+                e -> {
+              fireEvent(new DetectConnectionsEvent(this, false));
+        }); 
 
-        cbxObjects = new ComboBox("Add Object");
+        cbxObjects = new ComboBox(ts.getTranslatedString("module.mpsl.add_equipment"));
         cbxObjects.setWidth("300px");
         List<BusinessObjectLight> items = new ArrayList<>();
         try {
-           items = bem.getObjectsOfClassLight("GenericCommunicationsElement", 50);
+           items = bem.getObjectsOfClassLight(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, 50);
         } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
             Logger.getLogger(MplsTools.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -62,11 +85,28 @@ public class MplsTools extends HorizontalLayout {
              fireEvent(new NewObjectEvent(this, false, (BusinessObjectLight) event.getValue()));
         });
         
-        btnSaveView = new Button("Save View", new Icon(VaadinIcon.LEVEL_DOWN_BOLD), evt -> {
+        btnSaveView = new Button(ts.getTranslatedString("module.mpsl.save-view"), new Icon(VaadinIcon.LEVEL_DOWN_BOLD), evt -> {
             fireEvent(new SaveViewEvent(this, false));
         });
+        
+        menuDeleteObject = new MenuBar();
+        menuDeleteObject.setVisible(false);
+        MenuItem deleteItem = menuDeleteObject.addItem(new Label(ts.getTranslatedString("module.mpsl.delete-object")));
+        deleteItem.addComponentAsFirst(new Icon(VaadinIcon.TRASH));
+        deleteItem.addComponentAtIndex(2, new Icon(VaadinIcon.ANGLE_DOWN));
+        
+        deleteItem.getSubMenu().addItem(ts.getTranslatedString("module.mpsl.delete-from-database-view"), 
+                e -> {
+                    fireEvent(new DeleteObjectPermanentlyEvent(this, false));
+        });
+        deleteItem.getSubMenu().addItem(ts.getTranslatedString("module.mpsl.delete-from-view"),
+                e -> {
+                    fireEvent(new DeleteObjectEvent(this, false));
+        });      
 
-        add(btnNewConnection, cbxObjects, btnSaveView);
+        this.setAlignItems(Alignment.BASELINE);
+        add(cbxObjects, menuAddConnection, menuDeleteObject, btnSaveView);
+        
     }
     
     public Registration addNewObjectListener(ComponentEventListener<NewObjectEvent> listener) {
@@ -79,6 +119,22 @@ public class MplsTools extends HorizontalLayout {
     
     public Registration addSaveViewListener(ComponentEventListener<SaveViewEvent> listener) {
         return addListener(SaveViewEvent.class, listener);
+    }
+    
+    public Registration addDeleteObjectListener(ComponentEventListener<DeleteObjectEvent> listener) {
+        return addListener(DeleteObjectEvent.class, listener);
+    }
+    
+    public Registration addDeleteObjectPermanentlyObjectListener(ComponentEventListener<DeleteObjectPermanentlyEvent> listener) {
+        return addListener(DeleteObjectPermanentlyEvent.class, listener);
+    }
+    
+    public Registration AddExistingConnectionListener(ComponentEventListener<AddExistingConnectionEvent> listener) {
+        return addListener(AddExistingConnectionEvent.class, listener);
+    }
+    
+    public Registration AddDetectConnectionsListener(ComponentEventListener<DetectConnectionsEvent> listener) {
+        return addListener(DetectConnectionsEvent.class, listener);
     }
     
     public class NewObjectEvent extends ComponentEvent<MplsTools> {
@@ -98,16 +154,42 @@ public class MplsTools extends HorizontalLayout {
         }
     }
     
+    public class AddExistingConnectionEvent extends ComponentEvent<MplsTools> {
+        public AddExistingConnectionEvent(MplsTools source, boolean fromClient) {
+            super(source, fromClient);
+        }
+    }
+    
     public class SaveViewEvent extends ComponentEvent<MplsTools> {
         public SaveViewEvent(MplsTools source, boolean fromClient) {
             super(source, fromClient);
         }
     }
     
+    public class DeleteObjectEvent extends ComponentEvent<MplsTools> {
+        public DeleteObjectEvent(MplsTools source, boolean fromClient) {
+            super(source, fromClient);
+        }
+    }
+    
+    public class DeleteObjectPermanentlyEvent extends ComponentEvent<MplsTools> {
+        public DeleteObjectPermanentlyEvent(MplsTools source, boolean fromClient) {
+            super(source, fromClient);
+        }
+    }
+    
+    public class DetectConnectionsEvent extends ComponentEvent<MplsTools> {
+        public DetectConnectionsEvent(MplsTools source, boolean fromClient) {
+            super(source, fromClient);
+        }
+    }
+    
     public void setToolsEnabled(boolean enable) {
-        btnNewConnection.setEnabled(enable);
+        
         cbxObjects.setEnabled(enable);
+        menuAddConnection.setVisible(enable);
         btnSaveView.setEnabled(enable);
+        menuDeleteObject.setVisible(enable);
     }
     
 }

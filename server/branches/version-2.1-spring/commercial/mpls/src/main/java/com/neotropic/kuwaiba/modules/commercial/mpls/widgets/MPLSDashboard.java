@@ -17,53 +17,86 @@
 package com.neotropic.kuwaiba.modules.commercial.mpls.widgets;
 
 import com.neotropic.kuwaiba.modules.commercial.mpls.*;
+import static com.neotropic.kuwaiba.modules.commercial.mpls.MPLSModule.CLASS_VIEW;
+import com.neotropic.kuwaiba.modules.commercial.mpls.actions.DeleteMPLSViewVisualAction;
+import com.neotropic.kuwaiba.modules.commercial.mpls.actions.NewMPLSViewVisualAction;
+import com.neotropic.kuwaiba.modules.commercial.mpls.persistence.MPLSConnectionDefinition;
 import com.neotropic.kuwaiba.modules.commercial.mpls.persistence.MPLSService;
 import com.neotropic.kuwaiba.modules.commercial.mpls.tools.MplsTools;
+import com.neotropic.vaadin14.component.MxGraphCell;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.H5;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.treegrid.TreeGrid;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.server.StreamResourceRegistry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import org.apache.commons.lang3.StringUtils;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
+import org.neotropic.kuwaiba.core.apis.integration.ActionResponse;
+import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
+import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameterSet;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ViewObject;
+import org.neotropic.kuwaiba.core.apis.persistence.application.ViewObjectLight;
+import org.neotropic.kuwaiba.core.apis.persistence.business.AnnotatedBusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObject;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.NotAuthorizedException;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermittedException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicIconGenerator;
 import org.neotropic.kuwaiba.modules.core.navigation.navtree.NavigationTree;
 import org.neotropic.kuwaiba.modules.core.navigation.navtree.nodes.InventoryObjectNode;
+import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
+import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyValueConverter;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
+import org.neotropic.kuwaiba.visualization.views.BusinessObjectViewEdge;
+import org.neotropic.kuwaiba.visualization.views.BusinessObjectViewNode;
+import org.neotropic.util.visual.dialog.ConfirmDialog;
 import org.neotropic.util.visual.notifications.SimpleNotification;
+import org.neotropic.util.visual.properties.AbstractProperty;
+import org.neotropic.util.visual.properties.PropertySheet;
+import org.neotropic.util.visual.views.AbstractViewEdge;
+import org.neotropic.util.visual.views.AbstractViewNode;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * MPLS Main Dashboard
  * @author Orlando Paz {@literal <Orlando.Paz@kuwaiba.org>}
  */
-public class MPLSDashboard extends VerticalLayout  {
+public class MPLSDashboard extends VerticalLayout implements PropertySheet.IPropertyValueChangedListener {
     
     private TranslationService ts;
     /**
@@ -79,23 +112,46 @@ public class MPLSDashboard extends VerticalLayout  {
      */
     private BusinessEntityManager bem;
     
+    /**
+     * listener to attribute actions
+     */
+    private ActionCompletedListener listenerDeleteAction;
+    /**
+     * listener to attribute actions
+     */
+    private ActionCompletedListener listenerNewViewAction;
+    
+    private DeleteMPLSViewVisualAction deleteMPLSViewVisualAction;
+    
+    private NewMPLSViewVisualAction newMPLSViewVisualAction;
+    
     private ResourceFactory resourceFactory;
     
     private MPLSService mplsService;
         
-    BusinessObjectLight selectedSourceEquipment;
+    private BusinessObjectLight selectedSourceEquipment;
     
-    BusinessObjectLight selectedTargetEquipment;
+    private BusinessObjectLight selectedTargetEquipment;
     
-    BusinessObjectLight selectedEndPointA;
+    private BusinessObjectLight selectedEndPointA;
     
-    BusinessObjectLight selectedEndPointB;  
+    private BusinessObjectLight selectedEndPointB;  
     
-    ViewObject currentView;
+    private ViewObject currentView;
     
-    MplsTools mplsTools;
+    private MplsTools mplsTools;
     
-    MPLSView mplsView;
+    private MPLSView mplsView;
+    
+    private List<ViewObjectLight> mplsViews;
+    
+    private Grid<ViewObjectLight> tblViews;
+    
+    Dialog dlgMPLSViews;
+    
+    private BusinessObjectLight selectedObject;
+    
+    PropertySheet propertySheet;
 
     public ViewObject getCurrentView() {
         return currentView;
@@ -114,7 +170,7 @@ public class MPLSDashboard extends VerticalLayout  {
         this.mplsTools = mplsTools;
     }  
     
-    public MPLSDashboard(TranslationService ts, MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem, ResourceFactory resourceFactory, MPLSService mplsService) {
+    public MPLSDashboard(TranslationService ts, MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem, ResourceFactory resourceFactory, MPLSService mplsService, DeleteMPLSViewVisualAction deleteMPLSViewVisualAction, NewMPLSViewVisualAction newMPLSViewVisualAction) {
         super();
         this.ts = ts;
         this.mem = mem;
@@ -122,8 +178,10 @@ public class MPLSDashboard extends VerticalLayout  {
         this.bem = bem;
         this.resourceFactory = resourceFactory;
         this.mplsService = mplsService;
+        this.newMPLSViewVisualAction = newMPLSViewVisualAction;
+        this.deleteMPLSViewVisualAction = deleteMPLSViewVisualAction;
         setSizeFull();
-    }
+    }        
 
     @Override
     protected void onAttach(AttachEvent attachEvent) {
@@ -133,7 +191,8 @@ public class MPLSDashboard extends VerticalLayout  {
    
     @Override
     public void onDetach(DetachEvent ev) {
-        
+        this.deleteMPLSViewVisualAction.unregisterListener(listenerDeleteAction);
+        this.newMPLSViewVisualAction.unregisterListener(listenerNewViewAction);
     }
     
     public void showActionCompledMessages(ActionCompletedListener.ActionCompletedEvent ev) {
@@ -149,28 +208,78 @@ public class MPLSDashboard extends VerticalLayout  {
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
     }
 
-    private void createContent() {        
+    private void createContent() {    
+        
+        Button btnOpenView = new Button(ts.getTranslatedString("module.mpsl.open-mpls-view"), new Icon(VaadinIcon.EDIT), ev -> {
+             openListMplsViewDialog();
+        });
+        Button btnNewView = new Button(ts.getTranslatedString("module.mpsl.new-mpls-view"), new Icon(VaadinIcon.PLUS), ev -> {
+             this.newMPLSViewVisualAction.getVisualComponent(new ModuleActionParameterSet()).open();
+        });
+        HorizontalLayout lytGeneralActions = new HorizontalLayout(btnOpenView, btnNewView);
 
-        mplsView = new MPLSView(mem, aem, bem, ts, resourceFactory);       
+        mplsView = new MPLSView(mem, aem, bem, ts, resourceFactory);   
+        mplsView.getMxgraphCanvas().setComObjectSelected(() -> {
+            
+            String objectId = mplsView.getMxgraphCanvas().getSelectedCellId();
+            if (MxGraphCell.PROPERTY_VERTEX.equals(mplsView.getMxgraphCanvas().getSelectedCellType())){
+                 selectedObject = ((BusinessObjectViewNode) mplsView.getAsViewMap().getNode(objectId)).getIdentifier();
+            } else {
+                 selectedObject = ((BusinessObjectViewEdge) mplsView.getAsViewMap().getEdge(objectId)).getIdentifier();            
+            }
+            updatePropertySheet();
+            
+        });
+        mplsView.getMxgraphCanvas().setComObjectDeleted(() -> {
+            openDeleteObjectDialog(true);   // delete from database by default
+        });
+        initializeActions();
+        initializeTblViews();
               
-        mplsTools = new MplsTools(bem, null);
+        mplsTools = new MplsTools(bem, ts, null);
         mplsTools.addNewObjectListener(event -> {   
              BusinessObjectLight tmpObject = event.getObject();
              if(tmpObject != null) {
                 String uri = StreamResourceRegistry.getURI(resourceFactory.getClassIcon(tmpObject.getClassName())).toString();       
-                mplsView.getMxgraphCanvas().attachNodeWidget(tmpObject, tmpObject.getId(), 20, 20, uri);
+                mplsView.getMxgraphCanvas().addNode(tmpObject, tmpObject.getId(), 20, 20, uri);
+                mplsView.syncViewMap();
              }
         });
         mplsTools.addNewConnectionListener(event -> {                           
-            openConnectionAssistant();           
+            openNewConnectionDialog();           
+        });
+        mplsTools.AddExistingConnectionListener(event -> {                           
+            openExistingConnectionDialog();           
         });
         mplsTools.addSaveViewListener(event -> {
             saveCurrentView();
         });
+        mplsTools.addDeleteObjectListener(event -> {
+            openDeleteObjectDialog(false);
+        });
+        mplsTools.addDeleteObjectPermanentlyObjectListener(event -> {
+            openDeleteObjectDialog(true);
+        });
+        mplsTools.AddDetectConnectionsListener(event -> {
+            detectRelationships();
+        });
         mplsTools.setToolsEnabled(false);
-        VerticalLayout mainContent = new VerticalLayout(mplsTools, mplsView.getAsComponent());
+        VerticalLayout lytDashboard = new VerticalLayout(lytGeneralActions, mplsTools, mplsView.getAsComponent());
+        lytDashboard.setWidth("65%");
+        //prop sheet section
+        H4 headerListTypes = new H4(ts.getTranslatedString("module.propertysheet.labels.header"));
+        propertySheet = new PropertySheet(ts, new ArrayList<>(), "");
+        propertySheet.addPropertyValueChangedListener(this);
         
-        addAndExpand(mainContent);
+        VerticalLayout lytSheet = new VerticalLayout(headerListTypes, propertySheet);
+        lytSheet.setSpacing(false);
+        lytSheet.setPadding(false);
+        lytSheet.setWidth("35%");
+
+        HorizontalLayout lytMain = new HorizontalLayout(lytDashboard, lytSheet);
+        lytMain.setSizeFull();
+        
+        addAndExpand(lytMain);
         setSizeFull();
     }
     
@@ -180,7 +289,7 @@ public class MPLSDashboard extends VerticalLayout  {
             mplsView.buildWithSavedView(currentView.getStructure());
     }
     
-    private void openConnectionAssistant() {
+    private void openNewConnectionDialog() {
          
         selectedSourceEquipment = null;
         selectedTargetEquipment = null;
@@ -272,7 +381,8 @@ public class MPLSDashboard extends VerticalLayout  {
                 } else {
                     BusinessObjectLight mplsLink = bem.getObject(Constants.CLASS_MPLSLINK, newTransportLink);
                     new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), "MPLS Link Created").open();
-                    mplsView.getMxgraphCanvas().attachEdgeWidget(mplsLink, selectedSourceEquipment, selectedTargetEquipment, null, selectedEndPointA.getName(), selectedEndPointB.getName());
+                    mplsView.getMxgraphCanvas().addEdge(mplsLink, mplsLink.getId(), selectedSourceEquipment, selectedTargetEquipment, null, selectedEndPointA.getName(), selectedEndPointB.getName());
+                    mplsView.syncViewMap();
                     dlgConnection.close();
                 }
             } catch (InvalidArgumentException | MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
@@ -355,4 +465,286 @@ public class MPLSDashboard extends VerticalLayout  {
         }
           
     }
+
+    private void openDeleteObjectDialog(boolean deletePermanently) {
+        
+        if (deletePermanently) {
+            ConfirmDialog dlgConfirmDelete = new ConfirmDialog(ts.getTranslatedString("module.general.labels.confirmcaption"),
+                        ts.getTranslatedString("module.mpsl.delete-permanently-message"),
+                        ts.getTranslatedString("module.general.labels.delete"));
+            dlgConfirmDelete.open();
+            dlgConfirmDelete.getBtnConfirm().addClickListener(evt -> {
+                deleteSelectedObject(deletePermanently);
+                dlgConfirmDelete.close();
+            });
+        } else
+           deleteSelectedObject(deletePermanently); 
+    }
+
+    private void deleteSelectedObject(boolean deletePermanently) {            
+        if( selectedObject != null) {
+            try {
+                if (MxGraphCell.PROPERTY_VERTEX.equals(mplsView.getMxgraphCanvas().getSelectedCellType())) {
+                    if (deletePermanently)
+                        bem.deleteObject(selectedObject.getClassName(), selectedObject.getId(), false);
+                    mplsView.deleteNode(selectedObject);                                 
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpsl.object-deleted")).open();
+                } else {
+                    if (deletePermanently)
+                        mplsService.deleteMPLSLink(selectedObject.getId(), true, "m");                
+                    mplsView.deleteEdge(selectedObject);
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpsl.mpls-link-deleted")).open();
+                }
+                if (deletePermanently)
+                        saveCurrentView();     
+                selectedObject = null;
+            } catch (BusinessObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
+                Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage()).open();
+            }
+        }
+    }
+
+    private void openExistingConnectionDialog() {
+        
+        try {
+            List<BusinessObjectLight> mplsLinks = bem.getObjectsOfClassLight(Constants.CLASS_MPLSLINK, -1);
+            ComboBox<BusinessObjectLight>  cbxMplsLinks = new ComboBox<>(ts.getTranslatedString("module.mpsl.target-equipment"));
+            cbxMplsLinks.setAllowCustomValue(false);
+            cbxMplsLinks.setItems(mplsLinks);
+            Dialog dlgConnection = new Dialog();
+//            BoldLabel lblSelectedView
+        Button btnCancel = new Button(ts.getTranslatedString("module.general.messages.cancel"), evt -> {
+            dlgConnection.close();
+        });
+        Button btnCreateConnection = new Button(ts.getTranslatedString("module.mpsl.add-connection"), evt -> {
+        
+                try {
+                    BusinessObjectLight mplsLinkSelected = cbxMplsLinks.getValue();
+                    MPLSConnectionDefinition connectionDetails = mplsService.getMPLSLinkDetails(mplsLinkSelected.getId());
+                    
+                    String uri = StreamResourceRegistry.getURI(resourceFactory.getClassIcon(connectionDetails.getDeviceA().getClassName())).toString();                                 
+                    Properties props = new Properties();
+                    props.put("imageUrl", uri);
+                    props.put("x", 50 );
+                    props.put("y", 50 );
+                    mplsView.addNode(connectionDetails.getDeviceA(), props);
+                    
+                    uri = StreamResourceRegistry.getURI(resourceFactory.getClassIcon(connectionDetails.getDeviceB().getClassName())).toString();                                 
+                    props = new Properties();
+                    props.put("imageUrl", uri);
+                    props.put("x", 400 );
+                    props.put("y", 50 );
+                    mplsView.addNode(connectionDetails.getDeviceB(), props);
+                    
+                    props = new Properties();
+                    props.put("controlPoints", new ArrayList());
+                    props.put("sourceLabel", connectionDetails.getEndpointA() == null ? "" : connectionDetails.getEndpointA().getName());
+                    props.put("targetLabel", connectionDetails.getEndpointB() == null ? "" : connectionDetails.getEndpointB().getName());
+                    mplsView.addEdge(mplsLinkSelected, connectionDetails.getDeviceA(), connectionDetails.getDeviceB(), props);
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), "MPLS Link Added").open();
+                    dlgConnection.close();
+                } catch (InvalidArgumentException ex) {
+                    Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);
+                }
+        
+        });
+         HorizontalLayout lytButtons = new HorizontalLayout(btnCancel, btnCreateConnection);
+         
+         dlgConnection.add(cbxMplsLinks, lytButtons);
+         dlgConnection.setWidth("400px");
+         dlgConnection.open();
+            
+        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+            Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void detectRelationships() {
+            List<BusinessObjectLight> mplsLinksAdded = new ArrayList<>();
+            List<BusinessObjectLight> nodesAdded = new ArrayList<>();
+        try {
+                            
+            Properties props;
+            List<BusinessObjectLight> viewNodes = new ArrayList(mplsView.getMxgraphCanvas().getNodes().keySet());
+            for (BusinessObjectLight node : viewNodes) {
+                
+                List<AnnotatedBusinessObjectLight> objectMplsLinks = bem.getAnnotatedSpecialAttribute(node.getClassName(), node.getId(), MPLSService.RELATIONSHIP_MPLSLINK);
+                
+                for (AnnotatedBusinessObjectLight link : objectMplsLinks) {
+                    if (mplsView.getMxgraphCanvas().getEdges().containsKey(link.getObject()))
+                        continue;
+                    MPLSConnectionDefinition connectionDetails = mplsService.getMPLSLinkDetails(link.getObject().getId());                
+                                    
+                    BusinessObjectLight theOtherEndPoint;
+                    
+                    if (node.equals(connectionDetails.getDeviceA()))
+                        theOtherEndPoint = connectionDetails.getDeviceB();
+                    else
+                        theOtherEndPoint = connectionDetails.getDeviceA();
+                    
+                    if (!mplsView.getMxgraphCanvas().getNodes().containsKey(theOtherEndPoint)) { 
+                        String uri = StreamResourceRegistry.getURI(resourceFactory.getClassIcon(theOtherEndPoint.getClassName())).toString();                                 
+                        props = new Properties();
+                        props.put("imageUrl", uri);
+                        props.put("x", 50 );
+                        props.put("y", 50 );
+                        mplsView.addNode(theOtherEndPoint, props);
+                        nodesAdded.add(theOtherEndPoint);
+                               
+                    }
+                
+                    props = new Properties();
+                    props.put("controlPoints", new ArrayList());
+                    props.put("sourceLabel", connectionDetails.getEndpointA() == null ? "" : connectionDetails.getEndpointA().getName());
+                    props.put("targetLabel", connectionDetails.getEndpointB() == null ? "" : connectionDetails.getEndpointB().getName());   
+                    mplsView.addEdge(link.getObject(), connectionDetails.getDeviceA(), connectionDetails.getDeviceB(), props);                        
+                    mplsLinksAdded.add(link.getObject());
+               }
+            }
+            if (nodesAdded.size() > 0)    
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), nodesAdded.size() + " Object(s) Added").open();
+            if (mplsLinksAdded.size() > 0)    
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), mplsLinksAdded.size() + " MPLS Link(s) Added").open();
+            else 
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"),"No MPLS Link found for objects in view").open();
+        }
+        catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException ex) {
+            Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+        private void initializeTblViews() {
+        
+        loadViews();
+        tblViews = new Grid<>();
+        ListDataProvider<ViewObjectLight> dataProvider = new ListDataProvider<>(mplsViews);
+        tblViews.setDataProvider(dataProvider);
+        tblViews.addColumn(ViewObjectLight::getName).setFlexGrow(3).setKey(ts.getTranslatedString("module.general.labels.name"));
+        tblViews.addComponentColumn(item -> createActionsColumn(item)).setKey("component-column");
+        
+        HeaderRow filterRow = tblViews.appendHeaderRow();
+        
+        TextField txtViewNameFilter = new TextField(ts.getTranslatedString("module.general.labels.filter"), ts.getTranslatedString("module.general.labels.filterplaceholder"));
+        txtViewNameFilter.setValueChangeMode(ValueChangeMode.EAGER);
+        txtViewNameFilter.setWidthFull();
+        txtViewNameFilter.addValueChangeListener(event -> dataProvider.addFilter(
+        project -> StringUtils.containsIgnoreCase(project.getName(),
+                txtViewNameFilter.getValue())));
+        
+        filterRow.getCell(tblViews.getColumnByKey(ts.getTranslatedString("module.general.labels.name"))).setComponent(txtViewNameFilter);
+        
+    }
+
+    private HorizontalLayout createActionsColumn(ViewObjectLight item) {
+        HorizontalLayout lytActions = new HorizontalLayout();
+        
+        Button btnDelete = new Button(new Icon(VaadinIcon.TRASH), evt -> {
+             this.deleteMPLSViewVisualAction.getVisualComponent(new ModuleActionParameterSet( new ModuleActionParameter("viewId", item.getId()))).open();
+        });
+        btnDelete.setClassName("icon-button");
+        Button btnEdit = new Button(new Icon(VaadinIcon.EDIT), evt -> {
+            try {
+                ViewObject view = aem.getGeneralView(item.getId());
+                setCurrentView(view);
+                if (dlgMPLSViews != null)
+                    this.dlgMPLSViews.close();
+                this.mplsTools.setToolsEnabled(true);
+            } catch (ApplicationObjectNotFoundException ex) {
+                Logger.getLogger(MPLSUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        btnEdit.setClassName("icon-button");
+        
+        lytActions.add(btnDelete, btnEdit);
+        
+        return lytActions;       
+    }
+    
+    public void loadViews() {
+        try {
+            mplsViews = aem.getGeneralViews(CLASS_VIEW,-1);             
+        } catch (InvalidArgumentException | NotAuthorizedException ex) {
+            Logger.getLogger(MPLSUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void initializeActions() {
+        listenerDeleteAction = (ActionCompletedListener.ActionCompletedEvent ev) -> {
+            loadViews();
+            tblViews.setItems(mplsViews);
+            tblViews.getDataProvider().refreshAll();
+            showActionCompledMessages(ev);
+            mplsTools.setToolsEnabled(false);
+            setCurrentView(null);
+            if (dlgMPLSViews != null)
+                dlgMPLSViews.close();
+        };
+        this.deleteMPLSViewVisualAction.registerActionCompletedLister(listenerDeleteAction);
+        
+        listenerNewViewAction = (ActionCompletedListener.ActionCompletedEvent ev) -> {
+            loadViews();
+            tblViews.setItems(mplsViews);
+            tblViews.getDataProvider().refreshAll();
+            showActionCompledMessages(ev);
+            mplsTools.setToolsEnabled(true);
+            if (dlgMPLSViews != null)
+                dlgMPLSViews.close();
+            ActionResponse response = ev.getActionResponse();
+            try {
+                ViewObject newView = aem.getGeneralView((long) response.get("viewId"));
+                setCurrentView(newView);
+            } catch (ApplicationObjectNotFoundException ex) {
+                Logger.getLogger(MPLSUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        };
+        this.newMPLSViewVisualAction.registerActionCompletedLister(listenerNewViewAction);        
+    }
+
+    private void openListMplsViewDialog() {
+        dlgMPLSViews = new Dialog();
+              
+        Button btnCancel = new Button(ts.getTranslatedString("module.general.messages.cancel"), ev -> {
+            dlgMPLSViews.close();
+        });      
+        VerticalLayout lytContent = new VerticalLayout(tblViews, btnCancel);
+        lytContent.setAlignItems(Alignment.CENTER);
+        dlgMPLSViews.add(lytContent);
+        dlgMPLSViews.setWidth("600px");
+        dlgMPLSViews.open();
+    }
+    
+    @Override
+    public void updatePropertyChanged(AbstractProperty property) {
+        try {
+            if (selectedObject != null) {              
+                HashMap<String, String> attributes = new HashMap<>();
+                attributes.put(property.getName(), PropertyValueConverter.getAsStringToPersist(property));
+
+                bem.updateObject(selectedObject.getClassName(), selectedObject.getId(), attributes);
+                updatePropertySheet();
+                resetDashboard();
+
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
+            }
+        } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException
+                | OperationNotPermittedException | InvalidArgumentException ex) {
+            Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void updatePropertySheet() {
+        try {
+           
+            if (selectedObject != null) {
+                BusinessObject aWholeListTypeItem = bem.getObject(selectedObject.getClassName(), selectedObject.getId());
+                propertySheet.setItems(PropertyFactory.propertiesFromBusinessObject(aWholeListTypeItem, ts, aem, mem));
+            }
+        } catch (InventoryException ex) {
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
+            Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
 }

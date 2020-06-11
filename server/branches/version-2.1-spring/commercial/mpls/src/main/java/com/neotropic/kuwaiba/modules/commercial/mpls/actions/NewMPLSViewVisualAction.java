@@ -21,6 +21,7 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractAction;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractVisualAction;
@@ -74,9 +75,11 @@ public class NewMPLSViewVisualAction extends AbstractVisualAction<Dialog> {
     public Dialog getVisualComponent(ModuleActionParameterSet parameters) {       
                 
         BoldLabel lblParentClass = new BoldLabel("New MPLS View");
-        TextField txtName = new TextField(ts.getTranslatedString("module.general.labels.name"));
+        TextField txtName = new TextField(ts.getTranslatedString("module.general.labels.name"));      
         txtName.setRequiredIndicatorVisible(true);
         txtName.setSizeFull();
+        TextArea txtDescription = new TextArea(ts.getTranslatedString("module.general.labels.description"));
+        txtDescription.setSizeFull();
         Dialog wdwNewClass = new Dialog();
         // To show errors or warnings related to the input parameters.
         Label lblMessages = new Label();
@@ -87,7 +90,8 @@ public class NewMPLSViewVisualAction extends AbstractVisualAction<Dialog> {
                 } else {
                     
                     ActionResponse response = newMPLSViewAction.getCallback().execute(new ModuleActionParameterSet(
-                            new ModuleActionParameter<>("viewName", txtName.getValue())));
+                            new ModuleActionParameter<>("viewName", txtName.getValue()), 
+                            new ModuleActionParameter<>("description", txtDescription.getValue())));
                     
                     fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
                             ts.getTranslatedString("module.mpls.actions.new-view-created-success"), NewMPLSViewAction.class, response));
@@ -108,7 +112,7 @@ public class NewMPLSViewVisualAction extends AbstractVisualAction<Dialog> {
             wdwNewClass.close();
         });
         
-        FormLayout lytTextFields = new FormLayout(lblParentClass, txtName);
+        FormLayout lytTextFields = new FormLayout(lblParentClass, txtName, txtDescription);
         HorizontalLayout lytMoreButtons = new HorizontalLayout(btnOK, btnCancel);
         VerticalLayout lytMain = new VerticalLayout(lytTextFields, lytMoreButtons);
         lytMain.setSizeFull();

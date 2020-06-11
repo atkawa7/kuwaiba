@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.modules.commercial.mpls;
+package com.neotropic.kuwaiba.modules.commercial.mpls.persistence;
 
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObject;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
