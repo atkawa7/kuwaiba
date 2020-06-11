@@ -78,13 +78,17 @@ public class PropertyFactory {
                                 anAttribute.getDescription(), (Boolean)businessObject.getAttributes().get(anAttribute.getName())));
                         break;
                     case Constants.DATA_TYPE_LONG:
-                        objectProperties.add(new LongProperty(anAttribute.getName(), anAttribute.getDisplayName(), 
-                                anAttribute.getDescription(), (Long)businessObject.getAttributes().get(anAttribute.getName())));
+                        LongProperty aLongProperty = new LongProperty(anAttribute.getName(), anAttribute.getDisplayName(), 
+                                anAttribute.getDescription(), (Long)businessObject.getAttributes().get(anAttribute.getName()));
+                         //special case for creation date attribute
+                        if (Constants.PROPERTY_CREATION_DATE.equals(anAttribute.getName())) 
+                            aLongProperty.setReadOnly(true);
+                        objectProperties.add(aLongProperty);
                         break;
                     case Constants.DATA_TYPE_DATE:
                     case Constants.DATA_TYPE_TIME_STAMP:
                         LocalDateProperty aDateProperty = new LocalDateProperty(anAttribute.getName(), anAttribute.getDisplayName(), 
-                                anAttribute.getDescription(), (Long)businessObject.getAttributes().get(anAttribute.getName()));
+                                anAttribute.getDescription(), (Long)businessObject.getAttributes().get(anAttribute.getName())                                );
                         aDateProperty.setReadOnly(anAttribute.getName().equals(Constants.PROPERTY_CREATION_DATE));
                         objectProperties.add(aDateProperty);
                         break;
@@ -120,48 +124,41 @@ public class PropertyFactory {
         property = new StringProperty(Constants.PROPERTY_NAME,
                             Constants.PROPERTY_NAME, Constants.PROPERTY_NAME,
                             classMetadata.getName() == null  || classMetadata.getName().isEmpty() ?
-                                    AbstractProperty.NULL_LABEL : classMetadata.getName(),
-                             Constants.DATA_TYPE_STRING);
+                                    AbstractProperty.NULL_LABEL : classMetadata.getName());
         objectProperties.add(property);
         
         property = new StringProperty(Constants.PROPERTY_DISPLAY_NAME,
                             Constants.PROPERTY_DISPLAY_NAME, Constants.PROPERTY_DISPLAY_NAME,
                             classMetadata.getDisplayName()== null  || classMetadata.getDisplayName().isEmpty() ?
-                                    AbstractProperty.NULL_LABEL : classMetadata.getDisplayName(),
-                             Constants.DATA_TYPE_STRING);
+                                    AbstractProperty.NULL_LABEL : classMetadata.getDisplayName());
         objectProperties.add(property);
         
         property = new StringProperty(Constants.PROPERTY_DESCRIPTION,
                             Constants.PROPERTY_DESCRIPTION, Constants.PROPERTY_DESCRIPTION,
                             classMetadata.getDescription()== null  || classMetadata.getDescription().isEmpty() ?
-                                    AbstractProperty.NULL_LABEL : classMetadata.getDescription(),
-                             Constants.DATA_TYPE_STRING);
+                                    AbstractProperty.NULL_LABEL : classMetadata.getDescription());
         objectProperties.add(property);
         
         property = new BooleanProperty(Constants.PROPERTY_ABSTRACT,
                             Constants.PROPERTY_ABSTRACT, Constants.PROPERTY_ABSTRACT,
-                            classMetadata.isAbstract() == null ? false : classMetadata.isAbstract(),
-                             Constants.DATA_TYPE_BOOLEAN);
+                            classMetadata.isAbstract() == null ? false : classMetadata.isAbstract());
         objectProperties.add(property);
         
         property = new BooleanProperty(Constants.PROPERTY_IN_DESIGN,
                             Constants.PROPERTY_IN_DESIGN, Constants.PROPERTY_IN_DESIGN,
-                            classMetadata.isInDesign()== null ? false : classMetadata.isInDesign(),
-                             Constants.DATA_TYPE_BOOLEAN);
+                            classMetadata.isInDesign()== null ? false : classMetadata.isInDesign());
         objectProperties.add(property);
         
         property = new BooleanProperty(Constants.PROPERTY_COUNTABLE,
                             Constants.PROPERTY_COUNTABLE, Constants.PROPERTY_COUNTABLE,
-                            classMetadata.isCountable()== null ? false : classMetadata.isCountable(),
-                             Constants.DATA_TYPE_BOOLEAN);
+                            classMetadata.isCountable()== null ? false : classMetadata.isCountable());
         objectProperties.add(property);
         
         String hexColor = String.format("#%06x", (0xFFFFFF & classMetadata.getColor())); 
 //        String hexColor = "#"+ Integer.toHexString(classMetadata.getColor());
         property = new ColorProperty(Constants.PROPERTY_COLOR,
                             Constants.PROPERTY_COLOR, Constants.PROPERTY_COLOR,
-                            hexColor,
-                            Constants.DATA_TYPE_COLOR);
+                            hexColor );
         objectProperties.add(property);
 
         return objectProperties;
@@ -180,64 +177,64 @@ public class PropertyFactory {
         property = new StringProperty(Constants.PROPERTY_NAME,
                             Constants.PROPERTY_NAME, Constants.PROPERTY_NAME,
                             attributeMetadata.getName() == null  || attributeMetadata.getName().isEmpty() ?
-                                    AbstractProperty.NULL_LABEL : attributeMetadata.getName(),
-                             Constants.DATA_TYPE_STRING, readOnlyAttribute);
+                                    AbstractProperty.NULL_LABEL : attributeMetadata.getName()
+                            , readOnlyAttribute);
         objectProperties.add(property);
         
         property = new StringProperty(Constants.PROPERTY_DISPLAY_NAME,
                             Constants.PROPERTY_DISPLAY_NAME, Constants.PROPERTY_DISPLAY_NAME,
                             attributeMetadata.getDisplayName()== null  || attributeMetadata.getDisplayName().isEmpty() ?
-                                    AbstractProperty.NULL_LABEL : attributeMetadata.getDisplayName(),
-                             Constants.DATA_TYPE_STRING, readOnlyAttribute);
+                                    AbstractProperty.NULL_LABEL : attributeMetadata.getDisplayName()
+                             , readOnlyAttribute);
         objectProperties.add(property);
         
         property = new StringProperty(Constants.PROPERTY_DESCRIPTION,
                             Constants.PROPERTY_DESCRIPTION, Constants.PROPERTY_DESCRIPTION,
                             attributeMetadata.getDescription()== null  || attributeMetadata.getDescription().isEmpty() ?
                                     AbstractProperty.NULL_LABEL : attributeMetadata.getDescription(),
-                             Constants.DATA_TYPE_STRING, readOnlyAttribute);
+                              readOnlyAttribute);
         objectProperties.add(property);
         
         property = new BooleanProperty(Constants.PROPERTY_MANDATORY,
                             Constants.PROPERTY_MANDATORY, Constants.PROPERTY_MANDATORY,
                             attributeMetadata.isMandatory() == null ? false : attributeMetadata.isMandatory(),
-                             Constants.DATA_TYPE_BOOLEAN, readOnlyAttribute);
+                             readOnlyAttribute);
         objectProperties.add(property);
         
         property = new BooleanProperty(Constants.PROPERTY_UNIQUE,
                             Constants.PROPERTY_UNIQUE, Constants.PROPERTY_UNIQUE,
                             attributeMetadata.isUnique() == null ? false : attributeMetadata.isUnique(),
-                             Constants.DATA_TYPE_BOOLEAN, readOnlyAttribute);
+                              readOnlyAttribute);
         objectProperties.add(property);
         
         property = new BooleanProperty(Constants.PROPERTY_MULTIPLE,
                             Constants.PROPERTY_MULTIPLE, Constants.PROPERTY_MULTIPLE,
                             attributeMetadata.isMultiple()== null ? false : attributeMetadata.isMultiple(),
-                             Constants.DATA_TYPE_BOOLEAN, readOnlyAttribute);
+                              readOnlyAttribute);
         objectProperties.add(property);
         
         property = new BooleanProperty(Constants.PROPERTY_VISIBLE,
                             Constants.PROPERTY_VISIBLE, Constants.PROPERTY_VISIBLE,
                             attributeMetadata.isVisible()== null ? false : attributeMetadata.isVisible(),
-                             Constants.DATA_TYPE_BOOLEAN, readOnlyAttribute);
+                              readOnlyAttribute);
         objectProperties.add(property);
         
         property = new BooleanProperty(Constants.PROPERTY_ADMINISTRATIVE,
                             Constants.PROPERTY_ADMINISTRATIVE, Constants.PROPERTY_ADMINISTRATIVE,
-                            attributeMetadata.isAdministrative()== null ? false : attributeMetadata.isAdministrative(),
-                             Constants.DATA_TYPE_BOOLEAN);
+                            attributeMetadata.isAdministrative()== null ? false : attributeMetadata.isAdministrative()
+                             );
         objectProperties.add(property);
         
         property = new BooleanProperty(Constants.PROPERTY_NO_COPY,
                             Constants.PROPERTY_ADMINISTRATIVE, Constants.PROPERTY_NO_COPY,
                             attributeMetadata.isNoCopy()== null ? false : attributeMetadata.isNoCopy(),
-                             Constants.DATA_TYPE_BOOLEAN, readOnlyAttribute);
+                             readOnlyAttribute);
         objectProperties.add(property);
         
         property = new IntegerProperty(Constants.PROPERTY_ORDER,
                             Constants.PROPERTY_ORDER, Constants.PROPERTY_ORDER,
                             attributeMetadata.getOrder() == null ? null : attributeMetadata.getOrder(),
-                             Constants.DATA_TYPE_INTEGER, readOnlyAttribute);
+                             readOnlyAttribute);
         objectProperties.add(property);
 
         return objectProperties;
