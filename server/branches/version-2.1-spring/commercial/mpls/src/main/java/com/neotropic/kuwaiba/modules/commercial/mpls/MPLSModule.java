@@ -15,7 +15,9 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.mpls;
 
+import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractCommercialModule;
+import org.neotropic.kuwaiba.core.apis.integration.ModuleRegistry;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermittedException;
@@ -50,6 +52,11 @@ public class MPLSModule extends AbstractCommercialModule {
      */
     @Autowired
     private ApplicationEntityManager aem;
+    /**
+     * Reference to the module registry.
+     */
+    @Autowired
+    private ModuleRegistry moduleRegistry;
     //Constants
         /**
      * Class to identify all views made using the MPLS module
@@ -101,6 +108,13 @@ public class MPLSModule extends AbstractCommercialModule {
     @Override
     public String getCategory() {
         return "network/transport";
+    }
+    
+    @PostConstruct
+    public void init() {
+        
+        // Now register the module itself
+        this.moduleRegistry.registerModule(this);
     }
 
     @Override
