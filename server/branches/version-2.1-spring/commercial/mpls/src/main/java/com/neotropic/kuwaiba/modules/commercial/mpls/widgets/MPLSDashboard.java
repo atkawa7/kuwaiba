@@ -619,7 +619,8 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
                 }
                 if (deletePermanently)
                         saveCurrentView();     
-                selectedObject = null;
+                selectedObject = null;              
+                updatePropertySheet();
             } catch (BusinessObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
                 Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);
                 new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage()).open();
@@ -727,6 +728,8 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
             if (dlgMPLSViews != null)
                 this.dlgMPLSViews.close();
             this.mplsTools.setGeneralToolsEnabled(true);
+            selectedObject = null;
+            updatePropertySheet();
             this.btnRemoveView.setEnabled(true);
             new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.actions.view-loaded")).open();
         } catch (ApplicationObjectNotFoundException ex) {
@@ -759,6 +762,8 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
             lytViewInfo.setVisible(false);
             lblCurrentViewName.setText("");
             lblCurrentViewDescription.setText("");  
+            selectedObject = null;
+            updatePropertySheet();
         };
         this.deleteMPLSViewVisualAction.registerActionCompletedLister(listenerDeleteAction);
         
@@ -772,6 +777,8 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
             lytViewInfo.setVisible(true);
             if (dlgMPLSViews != null)
                 dlgMPLSViews.close();
+            selectedObject = null;
+            updatePropertySheet();
             ActionResponse response = ev.getActionResponse();
             try {
                 ViewObject newView = aem.getGeneralView((long) response.get("viewId"));
@@ -826,7 +833,8 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
             if (selectedObject != null) {
                 BusinessObject aWholeListTypeItem = bem.getObject(selectedObject.getClassName(), selectedObject.getId());
                 propertySheet.setItems(PropertyFactory.propertiesFromBusinessObject(aWholeListTypeItem, ts, aem, mem));
-            }
+            } else 
+                propertySheet.clear();
         } catch (InventoryException ex) {
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
             Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);

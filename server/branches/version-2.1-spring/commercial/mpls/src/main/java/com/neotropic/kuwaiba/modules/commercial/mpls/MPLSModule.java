@@ -15,8 +15,11 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.mpls;
 
+import com.neotropic.kuwaiba.modules.commercial.mpls.actions.DeleteMPLSViewVisualAction;
+import com.neotropic.kuwaiba.modules.commercial.mpls.actions.NewMPLSViewVisualAction;
 import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractCommercialModule;
+import org.neotropic.kuwaiba.core.apis.integration.ActionRegistry;
 import org.neotropic.kuwaiba.core.apis.integration.ModuleRegistry;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
@@ -53,10 +56,21 @@ public class MPLSModule extends AbstractCommercialModule {
     @Autowired
     private ApplicationEntityManager aem;
     /**
+     * Reference to the action registry.
+     */
+    @Autowired
+    private ActionRegistry actionRegistry;
+    /**
      * Reference to the module registry.
      */
     @Autowired
     private ModuleRegistry moduleRegistry;
+    
+    @Autowired
+    private DeleteMPLSViewVisualAction deleteMPLSViewVisualAction;
+    
+    @Autowired
+    private NewMPLSViewVisualAction newMPLSViewVisualAction;
     //Constants
         /**
      * Class to identify all views made using the MPLS module
