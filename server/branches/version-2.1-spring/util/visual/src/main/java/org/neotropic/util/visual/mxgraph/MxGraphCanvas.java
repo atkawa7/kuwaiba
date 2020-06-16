@@ -60,6 +60,8 @@ public class MxGraphCanvas<N, E> {
     
     Command comObjectDeleted;
     
+    Command comObjectUnselected;
+    
     public MxGraph getMxGraph() {
         return mxGraph;
     }
@@ -124,6 +126,10 @@ public class MxGraphCanvas<N, E> {
         this.comObjectDeleted = comObjectDeleted;
     }
 
+    public void setComObjectUnselected(Command comObjectUnselected) {
+        this.comObjectUnselected = comObjectUnselected;
+    }
+    
     public MxGraphCanvas() {
         initGraph();
     }   
@@ -142,6 +148,8 @@ public class MxGraphCanvas<N, E> {
        mxGraph.addCellUnselectedListener((MxGraphCellUnselectedEvent t) -> {
            this.selectedCellId = null;
            this.selectedCellType = null;
+           if (comObjectUnselected != null)
+               comObjectUnselected.execute();
        });
        
        mxGraph.addCellSelectedListener((MxGraphCellSelectedEvent t) -> {
@@ -172,7 +180,15 @@ public class MxGraphCanvas<N, E> {
     public N findTargetEdgeObject(E edge) {
         return targetEdgeNodes.get(edge);
     }
-
+    /**
+     * Creates a new node in the canvas
+     * @param node the object that represent the node
+     * @param nodeId the node id
+     * @param xCoordinate the x coordinate in the canvas
+     * @param yCoordinate the y coordinate in the canvas
+     * @param imageUri the uri image
+     * @return the new node
+     */
     public MxGraphNode addNode(N node, String nodeId, int xCoordinate, int yCoordinate, String imageUri) {
 
         if (!nodes.containsKey(node)) {
@@ -194,7 +210,17 @@ public class MxGraphCanvas<N, E> {
         }
         return null;
     }
-    
+    /**
+     * creates a new edge in the canvas
+     * @param edgeObject the object that represents the edge
+     * @param edgeId the edge id
+     * @param sourceObject the source edge object
+     * @param targetObject the target edge object
+     * @param points the control points list
+     * @param sourceLabel the source label
+     * @param targetLabel the target label
+     * @return the new edge
+     */
     public MxGraphEdge addEdge(E edgeObject, String edgeId, N sourceObject, N targetObject, List<Point> points,String sourceLabel, String targetLabel) {
        
          if (!edges.containsKey(edgeObject)) {       
@@ -219,8 +245,11 @@ public class MxGraphCanvas<N, E> {
         }        
         return null;
     }
-
-    public void deleteNode(N businessObject) {
+    /**
+     * Removes a node from the canvas
+     * @param businessObject the object to be removed
+     */
+    public void removeNode(N businessObject) {
         
         mxGraph.removeNode(nodes.get(businessObject));
         nodes.remove(businessObject);
@@ -246,16 +275,17 @@ public class MxGraphCanvas<N, E> {
             targetEdgeNodes.remove(edge);
         }    
     }
-    
-    public void deleteEdge(E businessObject) {
-        
+    /**
+     * Removes an edge from the canvas
+     * @param businessObject the object to be removed
+     */
+    public void removeEdge(E businessObject) {       
         mxGraph.removeEdge(edges.get(businessObject));
         edges.remove(businessObject);
                     
         edges.remove(businessObject);
         sourceEdgeNodes.remove(businessObject);
-        targetEdgeNodes.remove(businessObject);
-                
+        targetEdgeNodes.remove(businessObject);            
     }
       
 }

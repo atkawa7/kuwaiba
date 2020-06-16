@@ -119,15 +119,15 @@ public abstract class AbstractView<T> {
      */
     public abstract AbstractViewEdge addEdge(T businessObject, T sourceBusinessObject, T targetBusinessObject, Properties properties);
     /**
-     * delete a node from the viewMap
-     * @param businessObject The business object behind the node to be deleted
+     * remove a node from the viewMap
+     * @param businessObject The business object behind the node to be removed
      */
-    public abstract void deleteNode(T businessObject);
+    public abstract void removeNode(T businessObject);
     /**
-     * delete a edge from the viewMap
-     * @param businessObject The business object behind the edge to be deleted
+     * remove a edge from the viewMap
+     * @param businessObject The business object behind the edge to be removed
      */
-    public abstract void deleteEdge(T businessObject);
+    public abstract void removeEdge(T businessObject);
     /**
      * Adds a listener to the node click events.
      * @param listener The listener object.
