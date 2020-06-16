@@ -18,23 +18,13 @@ package com.neotropic.kuwaiba.modules.commercial.mpls.tools;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.contextmenu.MenuItem;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.shared.Registration;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 
 /**
@@ -43,69 +33,57 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
  */
 public class MplsTools extends HorizontalLayout {
     
-    TranslationService ts;
-    MenuBar menuAddConnection;  
-    private ComboBox cbxObjects;
+    private TranslationService ts;
+    private MplsSearch mplsSearch;
+    private Button btnNewConnection;  
+    private Button btnDetectConnections;  
     private Button btnSaveView;  
-    MenuBar menuDeleteObject;  
+    private Button btnRemoveFromDatabase;  
+    private Button btnRemoveFromView;  
      
-    public MplsTools(BusinessEntityManager bem, TranslationService ts, List<Object> object) {
+    public MplsTools(BusinessEntityManager bem, TranslationService ts, List<BusinessObjectLight> addedNodes, List<BusinessObjectLight> addedLinks) {
         
         this.ts = ts;
-        menuAddConnection = new MenuBar();
-        menuAddConnection.setVisible(false);
-        MenuItem addConnectionItem = menuAddConnection.addItem(new Label(ts.getTranslatedString("module.mpsl.add-connection")));
-        addConnectionItem.addComponentAsFirst(new Icon(VaadinIcon.CONNECT));
-        addConnectionItem.addComponentAtIndex(2, new Icon(VaadinIcon.ANGLE_DOWN));
-        
-        addConnectionItem.getSubMenu().addItem(ts.getTranslatedString("module.mpsl.new-connection"), 
+      
+        btnNewConnection = new Button(new Icon(VaadinIcon.CONNECT),
                 e -> {
               fireEvent(new NewConnectionEvent(this, false));
-        });
-        addConnectionItem.getSubMenu().addItem(ts.getTranslatedString("module.mpsl.existent-connection"),
-                e -> {
-              fireEvent(new AddExistingConnectionEvent(this, false));
-        });  
-        addConnectionItem.getSubMenu().addItem(ts.getTranslatedString("module.mpsl.detect-connections"),
+        }); 
+        setButtonTitle(btnNewConnection, ts.getTranslatedString("module.mpls.new-connection"));
+       
+        btnDetectConnections = new Button(new Icon(VaadinIcon.CLUSTER),
                 e -> {
               fireEvent(new DetectConnectionsEvent(this, false));
         }); 
-
-        cbxObjects = new ComboBox(ts.getTranslatedString("module.mpsl.add_equipment"));
-        cbxObjects.setWidth("300px");
-        List<BusinessObjectLight> items = new ArrayList<>();
-        try {
-           items = bem.getObjectsOfClassLight(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, 50);
-        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
-            Logger.getLogger(MplsTools.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        cbxObjects.setItems(items);
-        cbxObjects.setAllowCustomValue(false);
-        cbxObjects.addValueChangeListener( event -> {
-             fireEvent(new NewObjectEvent(this, false, (BusinessObjectLight) event.getValue()));
-        });
+        setButtonTitle(btnDetectConnections, ts.getTranslatedString("module.mpls.detect-connections"));
         
-        btnSaveView = new Button(ts.getTranslatedString("module.mpsl.save-view"), new Icon(VaadinIcon.LEVEL_DOWN_BOLD), evt -> {
+        mplsSearch = new MplsSearch(ts, bem, addedNodes, addedLinks);
+        mplsSearch.addNewObjectListener(evt -> {
+            fireEvent(new NewObjectEvent(this, false, (BusinessObjectLight) evt.getObject()));
+        });
+     
+        btnSaveView = new Button(new Icon(VaadinIcon.LEVEL_DOWN_BOLD), evt -> {
             fireEvent(new SaveViewEvent(this, false));
         });
+        btnSaveView.getElement().setProperty("title", ts.getTranslatedString("module.mpls.save-view"));
+        setButtonTitle(btnSaveView, ts.getTranslatedString("module.mpls.save-view"));        
         
-        menuDeleteObject = new MenuBar();
-        menuDeleteObject.setVisible(false);
-        MenuItem deleteItem = menuDeleteObject.addItem(new Label(ts.getTranslatedString("module.mpsl.delete-object")));
-        deleteItem.addComponentAsFirst(new Icon(VaadinIcon.TRASH));
-        deleteItem.addComponentAtIndex(2, new Icon(VaadinIcon.ANGLE_DOWN));
-        
-        deleteItem.getSubMenu().addItem(ts.getTranslatedString("module.mpsl.delete-from-database-view"), 
+        btnRemoveFromDatabase = new Button( new Icon(VaadinIcon.TRASH),
                 e -> {
                     fireEvent(new DeleteObjectPermanentlyEvent(this, false));
         });
-        deleteItem.getSubMenu().addItem(ts.getTranslatedString("module.mpsl.delete-from-view"),
+        btnRemoveFromDatabase.setEnabled(false);
+        setButtonTitle(btnRemoveFromDatabase, ts.getTranslatedString("module.mpls.delete-from-database-view"));        
+              
+        btnRemoveFromView = new Button(new Icon(VaadinIcon.FILE_REMOVE),
                 e -> {
                     fireEvent(new DeleteObjectEvent(this, false));
-        });      
-
+        }); 
+        btnRemoveFromView.setEnabled(false);
+        setButtonTitle(btnRemoveFromView, ts.getTranslatedString("module.mpls.delete-from-view"));        
+         
         this.setAlignItems(Alignment.BASELINE);
-        add(cbxObjects, menuAddConnection, menuDeleteObject, btnSaveView);
+        add(btnSaveView, mplsSearch, btnNewConnection, btnDetectConnections, btnRemoveFromDatabase, btnRemoveFromView);
         
     }
     
@@ -136,7 +114,7 @@ public class MplsTools extends HorizontalLayout {
     public Registration AddDetectConnectionsListener(ComponentEventListener<DetectConnectionsEvent> listener) {
         return addListener(DetectConnectionsEvent.class, listener);
     }
-    
+   
     public class NewObjectEvent extends ComponentEvent<MplsTools> {
         private final BusinessObjectLight object;
         public NewObjectEvent(MplsTools source, boolean fromClient, BusinessObjectLight object) {
@@ -184,12 +162,33 @@ public class MplsTools extends HorizontalLayout {
         }
     }
     
-    public void setToolsEnabled(boolean enable) {
-        
-        cbxObjects.setEnabled(enable);
-        menuAddConnection.setVisible(enable);
+    /**
+     * Function that enables/disables main functionality buttons 
+     * @param enable true to enable the buttons, false otherwise
+     */
+    public void setGeneralToolsEnabled(boolean enable) {     
+        btnNewConnection.setEnabled(enable);
         btnSaveView.setEnabled(enable);
-        menuDeleteObject.setVisible(enable);
+        btnDetectConnections.setEnabled(enable);
+        mplsSearch.setEnabled(enable);
+    }
+    
+    /**
+     * Function that enables/disables the buttons that depends of object selection events 
+     * @param enable true to enable the buttons, false otherwise
+     */
+    public void setSelectionToolsEnabled(boolean enable) {
+        btnRemoveFromDatabase.setEnabled(enable);
+        btnRemoveFromView.setEnabled(enable);
+    }
+    
+    /**
+     * Set the title/tool tip for the given button
+     * @param button the button to be set
+     * @param title the title to be added
+     */
+    public static void setButtonTitle(Button button, String title) {
+        button.getElement().setProperty("title", title);     
     }
     
 }

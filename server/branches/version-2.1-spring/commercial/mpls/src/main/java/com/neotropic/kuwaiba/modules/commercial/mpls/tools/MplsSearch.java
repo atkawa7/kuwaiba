@@ -16,8 +16,10 @@
 package com.neotropic.kuwaiba.modules.commercial.mpls.tools;
 
 import com.neotropic.flow.component.paperdialog.PaperDialog;
+import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -27,6 +29,7 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -36,18 +39,26 @@ import com.vaadin.flow.shared.Registration;
 import java.util.List;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.util.visual.general.BoldLabel;
 
 /**
  *
  * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
 public class MplsSearch extends Div {
-    public MplsSearch(BusinessEntityManager bem, List<Object> markers) {
+    
+    TranslationService ts;
+    
+    public MplsSearch(TranslationService ts, BusinessEntityManager bem, List<BusinessObjectLight> addedNodes, List<BusinessObjectLight> addedLinks) {
         TextField txtSearch = new TextField();
-        txtSearch.setWidth("400px");
+        txtSearch.setWidth("300px");
         txtSearch.setValueChangeMode(ValueChangeMode.EAGER);
         txtSearch.setClearButtonVisible(true);
-        txtSearch.setPlaceholder("Search");
+        txtSearch.setPlaceholder(ts.getTranslatedString("module.mpls.search-objects-links"));
         Button btnSearch = new Button(new Icon(VaadinIcon.SEARCH));
         txtSearch.setPrefixComponent(btnSearch);
         
@@ -62,97 +73,114 @@ public class MplsSearch extends Div {
         add(txtSearch);
         add(paperDialog);
         
-        txtSearch.addValueChangeListener(event -> {
-            paperDialog.removeAll();
-            if (event.isFromClient()) {
-                try {
-                    List<BusinessObjectLight> objects = bem.getObjectsOfClassLight(event.getValue(), -1);
-                    if (!objects.isEmpty()) {
-                        Grid<BusinessObjectLight> grid = new Grid();
-                        grid.addThemeVariants(GridVariant.LUMO_NO_ROW_BORDERS);
-                        grid.setMaxWidth("350px");
-                        grid.setWidth("350px");
-                        grid.setItems(objects);
-                        grid.addColumn(new ComponentRenderer<>(obj -> {
-                            HorizontalLayout hly = new HorizontalLayout();
-                            hly.setMargin(false);
-                            hly.setPadding(false);
-                            Icon icon = new Icon(VaadinIcon.MAP_MARKER);
-                            icon.setColor("#737373");
+        txtSearch.addValueChangeListener(new HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<TextField, String>>() {
+            @Override
+            public void valueChanged(AbstractField.ComponentValueChangeEvent<TextField, String> event) {
+                paperDialog.removeAll();
+                if (event.isFromClient()) {
+                    try {
+                        VerticalLayout lytContent = new VerticalLayout();
+                        lytContent.setPadding(false);
+                        lytContent.setMargin(false);
+                        
+                        List<BusinessObjectLight> lstEquipmentsSearch = bem.getObjectsWithFilterLight(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, Constants.PROPERTY_NAME, event.getValue());              
+                        if (!lstEquipmentsSearch.isEmpty()) {
                             
-                            VerticalLayout vlyObj = new VerticalLayout();
-                            vlyObj.setMargin(false);
-                            vlyObj.setPadding(false);
-                            vlyObj.setSpacing(false);
+                            Grid<BusinessObjectLight> gridEquipments = new Grid();
+                            gridEquipments.addThemeVariants(GridVariant.LUMO_NO_ROW_BORDERS);
+                            gridEquipments.setItems(lstEquipmentsSearch);
+                            gridEquipments.setHeightByRows(true);
+                            gridEquipments.addColumn(new ComponentRenderer<>((obj) -> {
+                                HorizontalLayout hly = new HorizontalLayout();
+                                hly.setMargin(false);
+                                hly.setPadding(false);
+                                Icon icon = new Icon(VaadinIcon.COG);
+                                icon.setColor("#737373");
+                                FlexLayout lytObjectName = new FlexLayout();
+                                lytObjectName.setWidthFull();
+                                lytObjectName.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
+                                lytObjectName.setWrapMode(FlexLayout.WrapMode.WRAP);
 
-                            Label lblObjName = new Label(obj.getName());
-                            Emphasis emObjClass = new Emphasis(obj.getClassName());
+                                Label lblObjName = new Label(obj.getName());
+                                Emphasis emObjClass = new Emphasis(obj.getClassName());
+                                lytObjectName.add(lblObjName, emObjClass);
+                                Button btnAdd = new Button(new Icon(VaadinIcon.PLUS));
+                                paperDialog.dialogConfirm(btnAdd);
+                                btnAdd.addClickListener((clickEvent) -> {
+                                    txtSearch.setValue(obj.getName());
+                                    fireEvent(new NewObjectEvent(MplsSearch.this, false, obj));
+                                });
+                                hly.add(icon, lytObjectName, btnAdd);
+                                hly.setJustifyContentMode(FlexComponent.JustifyContentMode.START);
+                                hly.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
+                                if (addedNodes.contains(obj)) {
+                                    icon.setColor("#E74C3C");
+                                    btnAdd.setVisible(false);
+                                }   
+                                return hly;
+                            }));
+                         
+                            lytContent.add(new BoldLabel(ts.getTranslatedString("module.mpls.equipments")), gridEquipments);                          
+                        }
 
-                            vlyObj.add(lblObjName, emObjClass);
-
-                            Button btnAdd = new Button(new Icon(VaadinIcon.PLUS));
-                            paperDialog.dialogConfirm(btnAdd);
-                            btnAdd.addClickListener(clickEvent -> {
-                                txtSearch.setValue(obj.getName());      
-                                fireEvent(new NewEvent(this, false, obj));
-                            });
-                            hly.add(icon, vlyObj, btnAdd);
-                            hly.setJustifyContentMode(FlexComponent.JustifyContentMode.START);
-                            hly.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
+                        List<BusinessObjectLight> lstMPLSLinksSearch = bem.getObjectsWithFilterLight(Constants.CLASS_MPLSLINK, Constants.PROPERTY_NAME, event.getValue());
+                        if (!lstMPLSLinksSearch.isEmpty()) {   
                             
-                            if (getObject(markers, obj) != null) {
-                                icon.setColor("#E74C3C");
-                                btnAdd.setVisible(false);
-                            }
-                            return hly;
-                        }));
-                        grid.addSelectionListener(selectionEvent -> {
-//                            Object ospNode = getObject(markers, selectionEvent.getFirstSelectedItem().get());
-//                            if (ospNode != null) {
-//                                txtSearch.setValue(ospNode.getBusinessObject().getName());      
-//                                fireEvent(new SelectionEvent(this, false, ospNode));
-//                            }
-                        });
-                        paperDialog.add(grid);
-                        paperDialog.open();
-                    }          
-                } catch (Exception ex) {
-    //                ex.printStackTrace();
+                            Grid<BusinessObjectLight> gridMPLSLinks = new Grid();
+                            gridMPLSLinks.setHeightByRows(true);
+                            gridMPLSLinks.addThemeVariants(GridVariant.LUMO_NO_ROW_BORDERS);
+                            gridMPLSLinks.setItems(lstMPLSLinksSearch);
+                            gridMPLSLinks.addColumn(new ComponentRenderer<>((obj) -> {
+                                HorizontalLayout hly = new HorizontalLayout();
+                                hly.setMargin(false);
+                                hly.setPadding(false);
+                                Icon icon = new Icon(VaadinIcon.CONNECT_O);
+                                icon.setColor("#737373");
+                                FlexLayout lytObjectName = new FlexLayout();
+                                lytObjectName.setWidthFull();
+                                lytObjectName.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
+                                lytObjectName.setWrapMode(FlexLayout.WrapMode.WRAP);
+                                Label lblObjName = new Label(obj.getName());
+                                Emphasis emObjClass = new Emphasis(obj.getClassName());
+                                lytObjectName.add(lblObjName, emObjClass);
+                                Button btnAdd = new Button(new Icon(VaadinIcon.PLUS));
+                                paperDialog.dialogConfirm(btnAdd);
+                                btnAdd.addClickListener((clickEvent) -> {
+                                    txtSearch.setValue(obj.getName());
+                                    fireEvent(new NewObjectEvent(MplsSearch.this, false, obj));
+                                });
+                                hly.add(icon, lytObjectName, btnAdd);
+                                hly.setJustifyContentMode(FlexComponent.JustifyContentMode.START);
+                                hly.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
+                                if (addedLinks.contains(obj)) {
+                                    icon.setColor("#E74C3C");
+                                    btnAdd.setVisible(false);
+                                }  
+                                return hly;
+                            }));
+                            lytContent.add(new BoldLabel(ts.getTranslatedString("module.mpls.mpls-links")), gridMPLSLinks);
+                        }
+                        if (!lstEquipmentsSearch.isEmpty() || !lstMPLSLinksSearch.isEmpty()) {
+                            paperDialog.add(lytContent);
+                            paperDialog.open();
+                            txtSearch.focus();
+                        }
+                    }catch (InvalidArgumentException | MetadataObjectNotFoundException ex) {
+                        ex.printStackTrace();
+                    }
                 }
             }
         });
     }
-    private final Object getObject(List<Object> markers, BusinessObjectLight obj) {
-        Object ospNode = null;
-        for (Object marker : markers) {
-//            if (obj.equals(marker.getBusinessObject())) {
-//                ospNode = marker;
-//                break;
-//            }
-        }
-        return ospNode;
+
+    public Registration addNewObjectListener(ComponentEventListener<NewObjectEvent> listener) {
+        return addListener(NewObjectEvent.class, listener);
     }
-    public Registration addSelectionListener(ComponentEventListener<SelectionEvent> listener) {
-        return addListener(SelectionEvent.class, listener);
-    }
-    public Registration addNewListener(ComponentEventListener<NewEvent> listener) {
-        return addListener(NewEvent.class, listener);
-    }
-    public class SelectionEvent extends ComponentEvent<MplsSearch> {
-        private final Object ospNode;
-        
-        public SelectionEvent(MplsSearch source, boolean fromClient, Object ospNode) {
-            super(source, fromClient);
-            this.ospNode = ospNode;
-        }
-        public Object getOspNode() {
-            return ospNode;
-        }
-    }
-    public class NewEvent extends ComponentEvent<MplsSearch> {
+
+    public class NewObjectEvent extends ComponentEvent<MplsSearch> {
         private final BusinessObjectLight object;
         
-        public NewEvent(MplsSearch source, boolean fromClient, BusinessObjectLight object) {
+        public NewObjectEvent(MplsSearch source, boolean fromClient, BusinessObjectLight object) {
             super(source, fromClient);
             this.object = object;
         }

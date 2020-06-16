@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Creates a new View
+ * Creates a new MPLS View
  *  @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
 @Component

@@ -21,28 +21,19 @@ import com.neotropic.kuwaiba.modules.commercial.mpls.actions.NewMPLSViewVisualAc
 import com.neotropic.kuwaiba.modules.commercial.mpls.persistence.MPLSService;
 import com.neotropic.kuwaiba.modules.commercial.mpls.widgets.MPLSDashboard;
 import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.html.H4;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermittedException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyValueConverter;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.util.visual.notifications.SimpleNotification;
-import org.neotropic.util.visual.properties.AbstractProperty;
-import org.neotropic.util.visual.properties.PropertySheet;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -51,7 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Orlando Paz {@literal <Orlando.Paz@kuwaiba.org>}
  */
 @Route(value = "mpls", layout = MPLSLayout.class)
-public class MPLSUI extends VerticalLayout {
+public class MPLSManagerUI extends VerticalLayout {
 
     @Autowired
     private TranslationService ts;
@@ -86,7 +77,7 @@ public class MPLSUI extends VerticalLayout {
     private MPLSDashboard dashboard; 
    
     
-    public MPLSUI() {
+    public MPLSManagerUI() {
         super();
         setSizeFull();
     }
@@ -109,7 +100,7 @@ public class MPLSUI extends VerticalLayout {
             try {                
                 new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();                                          
             } catch (Exception ex) {
-                Logger.getLogger(MPLSUI.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MPLSManagerUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();

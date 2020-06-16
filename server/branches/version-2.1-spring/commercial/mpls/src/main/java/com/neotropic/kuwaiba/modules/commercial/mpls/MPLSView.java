@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,7 +53,7 @@ import org.neotropic.util.visual.views.ViewEventListener;
 import org.neotropic.util.visual.views.ViewMap;
 
 /**
- *
+ * Custom view implementation for MPLS view module with a mxgraph component as canvas.
  * @author Orlando Paz  {@literal <orlando.paz@kuwaiba.org>} 
  */
 public class MPLSView extends AbstractView<BusinessObjectLight> {
@@ -87,12 +86,12 @@ public class MPLSView extends AbstractView<BusinessObjectLight> {
 
     @Override
     public String getName() {
-        return ts.getTranslatedString("module.mpsl.mpls-view.name");
+        return ts.getTranslatedString("module.mpls.mpls-view.name");
     }
 
     @Override
     public String getDescription() {
-        return ts.getTranslatedString("module.mpsl.mpls-view.description");
+        return ts.getTranslatedString("module.mpls.mpls-view.description");
     }
     
     @Override
@@ -177,7 +176,7 @@ public class MPLSView extends AbstractView<BusinessObjectLight> {
             return baos.toByteArray();
         } catch (XMLStreamException ex) {
             Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);
-            new SimpleNotification("Error", "Unexpected Error").open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();           
         }
         return null;
     }
@@ -190,22 +189,8 @@ public class MPLSView extends AbstractView<BusinessObjectLight> {
     @Override
     public Component getAsComponent() {
         try {
-
             if (this.mxgraphCanvas == null) 
                 mxgraphCanvas = new MxGraphCanvas<>();
-
-//            for (AbstractViewNode node : this.viewMap.getNodes()) {
-//                BusinessObjectLight businessObject = (BusinessObjectLight)node.getIdentifier();
-//                mxgraphCanvas.attachNodeWidget(businessObject, businessObject.getId(), 
-//                        (int)node.getProperties().get("lat"), (int)node.getProperties().get("lon")),
-//                           (int)node.getProperties().get("lat")); 
-//            }
-//
-//            for (AbstractViewEdge edge : this.viewMap.getEdges()) {
-//                BusinessObjectLight businessObject = (BusinessObjectLight)edge.getIdentifier();
-//                this.mapProvider.addPolyline(businessObject, (BusinessObjectLight)this.viewMap.getEdgeSource(edge).getIdentifier(), 
-//                        (BusinessObjectLight)this.viewMap.getEdgeTarget(edge).getIdentifier(), (List<GeoCoordinate>)edge.getProperties().get("controlPoints"), edge.getProperties()); //NOI18N
-//            }
 
             return this.mxgraphCanvas.getMxGraph();
         } catch (Exception ex) {
@@ -330,7 +315,7 @@ public class MPLSView extends AbstractView<BusinessObjectLight> {
             }
             reader.close();
         } catch (NumberFormatException | XMLStreamException ex) {
-            new SimpleNotification("Load View", "The view seems corrupted and could not be loaded").open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.mpls.view-corruted")).open();
              Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);
         } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | ApplicationObjectNotFoundException | InvalidArgumentException ex) {
             Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);
@@ -354,25 +339,21 @@ public class MPLSView extends AbstractView<BusinessObjectLight> {
     public AbstractViewNode addNode(BusinessObjectLight businessObject, Properties properties) {
       
         AbstractViewNode aNode = this.viewMap.findNode(businessObject);
-        if (aNode == null) {
-            
+        if (aNode == null) {            
             BusinessObjectViewNode newNode = new BusinessObjectViewNode(businessObject);
             newNode.setProperties(properties);           
             this.viewMap.addNode(newNode);
             
-            if (this.mxgraphCanvas != null) { //The view could be created without a graphical representation (the map). so here we make sure that's not the case
+            if (this.mxgraphCanvas != null) { //The view could be created without a graphical representation (the canvas). so here we make sure that's not the case
                 int x = (int) properties.get("x");
                 int y = (int) properties.get("y");
                 String urlImage = (String) properties.get("imageUrl");
 
-                mxgraphCanvas.addNode(businessObject, businessObject.getId(), x, y, urlImage);
-                            
-            }
-            
+                mxgraphCanvas.addNode(businessObject, businessObject.getId(), x, y, urlImage);                           
+            }          
             return newNode;
         } else
-            return aNode;
-    
+            return aNode;   
     }
 
     @Override
@@ -455,18 +436,15 @@ public class MPLSView extends AbstractView<BusinessObjectLight> {
     }
 
     @Override
-    public void deleteNode(BusinessObjectLight businessObject) {
-        
-        mxgraphCanvas.deleteNode(businessObject);
-        syncViewMap();
-             
+    public void removeNode(BusinessObjectLight businessObject) {       
+        mxgraphCanvas.removeNode(businessObject);
+        syncViewMap();            
     }
 
     @Override
-    public void deleteEdge(BusinessObjectLight businessObject) {
-        mxgraphCanvas.deleteEdge(businessObject);
+    public void removeEdge(BusinessObjectLight businessObject) {
+        mxgraphCanvas.removeEdge(businessObject);
         syncViewMap();
     }
         
-
 }

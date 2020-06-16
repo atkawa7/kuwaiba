@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Visual wrapper of delete class action
+ * Visual wrapper of delete MPLS view action
  *
  * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
@@ -73,8 +73,8 @@ public class DeleteMPLSViewVisualAction extends AbstractVisualAction<Dialog> {
             viewId = (Long) parameters.get("viewId");
 
             ConfirmDialog wdwDeleteClass = new ConfirmDialog(ts.getTranslatedString("module.general.labels.confirmation"),
-                    ts.getTranslatedString("module.general.labels.confirmdeletemessage"),
-                    ts.getTranslatedString("module.general.labels.delete"));
+                    ts.getTranslatedString("module.mpls.labels.confirm-remove-message"),
+                    ts.getTranslatedString("module.general.messages.ok"));
             wdwDeleteClass.getBtnConfirm().addClickListener((ev) -> {
                 try {
                     deleteClassAction.getCallback().execute(new ModuleActionParameterSet(

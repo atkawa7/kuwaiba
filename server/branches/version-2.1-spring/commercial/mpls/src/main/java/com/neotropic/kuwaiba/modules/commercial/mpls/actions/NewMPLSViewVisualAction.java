@@ -74,7 +74,7 @@ public class NewMPLSViewVisualAction extends AbstractVisualAction<Dialog> {
     @Override
     public Dialog getVisualComponent(ModuleActionParameterSet parameters) {       
                 
-        BoldLabel lblParentClass = new BoldLabel("New MPLS View");
+        BoldLabel lblParentClass = new BoldLabel(ts.getTranslatedString("module.mpls.actions.new-mpls-view"));
         TextField txtName = new TextField(ts.getTranslatedString("module.general.labels.name"));      
         txtName.setRequiredIndicatorVisible(true);
         txtName.setSizeFull();
