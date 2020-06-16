@@ -156,8 +156,8 @@ public class MxGraph extends Component {
         
         nodes.stream().forEach(node ->  getElement().removeChild(node.getElement()));
         edges.stream().forEach(edge ->  getElement().removeChild(edge.getElement()));
-        nodes = new ArrayList<>();
-        edges = new ArrayList<>();
+        nodes.clear();
+        edges.clear();
 //        getElement().callJsFunction("removeAllCells");
     }
     
