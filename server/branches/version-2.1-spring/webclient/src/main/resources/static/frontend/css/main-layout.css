@@ -197,3 +197,8 @@ paper-swatch-picker paper-icon-button {
     color: white;
     font-weight: bold;
 }
+
+.hintMplsView {
+    font-style: italic;
+    font-size: .9em;
+}
