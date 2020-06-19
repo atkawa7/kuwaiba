@@ -30,6 +30,7 @@ import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.server.StreamResourceRegistry;
 import java.awt.Color;
@@ -316,7 +317,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
                             viewMap.attachSourceNode(viewEdge, viewMap.getNode(source));
                             viewMap.attachTargetNode(viewEdge, viewMap.getNode(target));
                             
-                            mapProvider.addPolyline(container, target, source, path, properties);
+                            mapProvider.addPolyline(container, source, target, path, viewEdge.getProperties());
                             dirty = true;
                         } catch (MetadataObjectNotFoundException ex) {
                             new SimpleNotification(
@@ -339,20 +340,27 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
             });
             
             outsidePlantTools.setDeletePolylineCommand(ospEdge -> {
-                try {
-                    Session session = UI.getCurrent().getSession().getAttribute(Session.class);
-                    physicalConnectionsService.deletePhysicalConnection(
-                            ospEdge.getBusinessObject().getClassName(),
-                            ospEdge.getBusinessObject().getId(),
-                            session.getUser().getUserName());
-                    mapProvider.removePolyline(ospEdge.getBusinessObject());
-                    dirty = true;
-                } catch (IllegalStateException | InventoryException ex) {
-                    new SimpleNotification(
-                        ts.getTranslatedString("module.general.messages.error"), 
-                        ex.getMessage()
-                    ).open();
-                }
+                ConfirmDialog confirmDialog = new ConfirmDialog(ts, 
+                    ts.getTranslatedString("module.ospman.dialog.title.delete-connection"), 
+                    new Span(ts.getTranslatedString("module.ospman.dialog.content.delete-connection")), 
+                    ts.getTranslatedString("module.general.messages.ok"), () -> {
+                        try {
+                            Session session = UI.getCurrent().getSession().getAttribute(Session.class);
+                            physicalConnectionsService.deletePhysicalConnection(
+                                    ospEdge.getBusinessObject().getClassName(),
+                                    ospEdge.getBusinessObject().getId(),
+                                    session.getUser().getUserName());
+                            mapProvider.removePolyline(ospEdge.getBusinessObject());
+                            dirty = true;
+                        } catch (IllegalStateException | InventoryException ex) {
+                            new SimpleNotification(
+                                ts.getTranslatedString("module.general.messages.error"), 
+                                ex.getMessage()
+                            ).open();
+                        }
+                    }
+                );
+                confirmDialog.open();
             });
             
             outsidePlantTools.setSaveOspViewCommand(() -> {

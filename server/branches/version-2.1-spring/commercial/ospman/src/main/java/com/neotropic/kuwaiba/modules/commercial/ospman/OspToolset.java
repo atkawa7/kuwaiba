@@ -15,6 +15,7 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman;
 
+import com.neotropic.kuwaiba.modules.commercial.ospman.AbstractMapProvider.OSPNode;
 import org.neotropic.util.visual.tools.Tool;
 
 /**
@@ -25,33 +26,51 @@ public class OspToolset {
     /**
      * Outside plant tool hand
      */
-    public static class ToolHand extends Tool {
-        public ToolHand() {
-            super("hand"); //NOI18N
-        }
-    }
+    public static class ToolHand extends Tool { }
     /**
      * Outside plant tool marker
      */
-    public static class ToolMarker extends Tool {
-        public ToolMarker() {
-            super("marker"); //NOI18N
-        }
-    }
+    public static class ToolMarker extends Tool { }
     /**
      * Outside plant tool polygon
      */
-    public static class ToolPolygon extends Tool {
-        public ToolPolygon() {
-            super("polygon"); //NOI18N
-        }
-    }
+    public static class ToolPolygon extends Tool { }
     /**
      * Outside plant tool polyline
      */
-    public static class ToolPolyline extends Tool {
-        public ToolPolyline() {
-            super("polyline"); //NOI18N
+    public static class ToolPolyline extends Tool { }
+    /**
+     * Outside plant tool to bounce a marker
+     */
+    public static class ToolBounceMarker extends Tool {
+        /**
+         * Node to bounce
+         */
+        private OSPNode bounceNode;
+        
+        public OSPNode getBounceNode() {
+            return bounceNode;
+        }
+        
+        public void setBounceNode(OSPNode bounceNode) {
+            this.bounceNode = bounceNode;
+        }
+    }
+    /**
+     * Outside plant tool to change the map center
+     */
+    public static class ToolChangeMapCenter extends Tool {
+        /**
+         * New map center
+         */
+        private GeoCoordinate newCenter;
+        
+        public GeoCoordinate getNewCenter() {
+            return newCenter;
+        }
+        
+        public void setNewCenter(GeoCoordinate newCenter) {
+            this.newCenter = newCenter;
         }
     }
 }

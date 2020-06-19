@@ -37,9 +37,12 @@ import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolset.ToolPolygon;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolset.ToolPolyline;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.EdgeInfoWindowRequestEvent;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.EdgePathChangedEvent;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.MapCenterChangedEvent;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.NodeAddedEvent;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.NodeInfoWindowRequestEvent;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.NodePositionChangedEvent;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolset.ToolBounceMarker;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolset.ToolChangeMapCenter;
 import org.neotropic.util.visual.views.ViewEventListener;
 import elemental.json.Json;
 import elemental.json.JsonObject;
@@ -47,7 +50,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
-import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.util.visual.tools.Tool;
 import org.neotropic.util.visual.tools.ToolRegister;
 
@@ -114,7 +116,6 @@ public class GoogleMapsMapProvider extends AbstractMapProvider implements ToolRe
         String clientId = (String) properties.get("clientId"); //NOI18N
         GeoCoordinate center = (GeoCoordinate) properties.get("center"); //NOI18N
         int zoom = (int) properties.get("zoom"); //NOI18N
-        BusinessEntityManager bem = (BusinessEntityManager) properties.get("bem"); //NOI18N
         
         this.googleMap = new GoogleMap(apiKey, clientId, "drawing"); //NOI18N
         this.googleMap.setDisableDefaultUi(true);
@@ -131,6 +132,10 @@ public class GoogleMapsMapProvider extends AbstractMapProvider implements ToolRe
             mapMouseMoveLatLng.setLat(event.getLat());
             mapMouseMoveLatLng.setLng(event.getLng());
         });
+        this.googleMap.addMapCenterChangedListener(event -> {
+            fireEvent(new MapCenterChangedEvent(new GeoCoordinate(
+                googleMap.getCenterLat(), googleMap.getCenterLng())));
+        });
         drawingManager = new DrawingManager();
         this.googleMap.newDrawingManager(drawingManager);
         
@@ -143,6 +148,7 @@ public class GoogleMapsMapProvider extends AbstractMapProvider implements ToolRe
         polylineDrawHelper = new PolylineDrawHelper(googleMap, drawingManager, helper -> {
             GoogleMapPolyline gmPolyline = new GoogleMapPolyline();
             gmPolyline.setPath(helper.getPath());
+            gmPolyline.setStrokeColor("#000000");
             googleMap.newPolyline(gmPolyline);
             
             fireEvent(new EdgeAddedEvent(
@@ -158,33 +164,6 @@ public class GoogleMapsMapProvider extends AbstractMapProvider implements ToolRe
     
     @Override
     public void reload(Properties properties) {
-        final String ANIMATE_MARKER = "animate-marker"; //NOI18N
-        final String SET_MAP_CENTER = "set-map-center"; //NOI18N
-        if (properties != null) {
-            
-            if (properties.containsKey(ANIMATE_MARKER) && 
-                properties.get(ANIMATE_MARKER) instanceof OSPNode) {
-                
-                OSPNode ospNode = (OSPNode) properties.get(ANIMATE_MARKER);
-                
-                if (nodeMarker.containsKey(ospNode)) {
-                    GoogleMapMarker gmMarker = nodeMarker.get(ospNode);
-                    gmMarker.setAnimation(Animation.BOUNCE);
-                    // Temporal click listener used to stop the marker animation
-                    gmMarker.addMarkerClickListener(event -> {
-                        gmMarker.setAnimation(null);
-                        // Removes the temporal listener
-                        event.unregisterListener();
-                    });
-                }
-            }
-            if (properties.containsKey(SET_MAP_CENTER) && 
-                properties.get(SET_MAP_CENTER) instanceof GeoCoordinate) {
-                GeoCoordinate geoCoordinate = (GeoCoordinate) properties.get(SET_MAP_CENTER);
-                googleMap.setCenterLat(geoCoordinate.getLatitude());
-                googleMap.setCenterLng(geoCoordinate.getLongitude());
-            }
-        }
     }
 
     @Override
@@ -195,7 +174,6 @@ public class GoogleMapsMapProvider extends AbstractMapProvider implements ToolRe
         googleMap.newMarker(googleMapMarker);
         
         JsonObject label = Json.createObject();
-////        label.put("color", "#305F72"); //NOI18N
         label.put("text", businessObject.getName()); //NOI18N
 
         googleMapMarker.setLabel(label);
@@ -272,6 +250,9 @@ public class GoogleMapsMapProvider extends AbstractMapProvider implements ToolRe
     public void addPolyline(BusinessObjectLight businessObject, BusinessObjectLight sourceObject, BusinessObjectLight targetObject, List<GeoCoordinate> controlPoints, Properties properties) {
         GoogleMapPolyline googleMapPolyline = new GoogleMapPolyline();
         googleMapPolyline.setPath(getLatLngs(controlPoints));
+        if (properties.containsKey("color")) //NOI18N
+            googleMapPolyline.setStrokeColor(properties.getProperty("color")); //NOI18N
+        
         googleMap.newPolyline(googleMapPolyline);
         
         OSPEdge polyline = new OSPEdge(businessObject, sourceObject, targetObject, controlPoints);
@@ -396,8 +377,32 @@ public class GoogleMapsMapProvider extends AbstractMapProvider implements ToolRe
                 drawingManager.setDrawingMode(OverlayType.MARKER);
             else if (tool instanceof ToolPolygon)
                 drawingManager.setDrawingMode(OverlayType.POLYGON);
-            else if (tool instanceof ToolPolyline)
+            else if (tool instanceof ToolPolyline) {
+                drawingManager.setDrawingMode(null);
                 polylineDrawHelper.start();
+            } else if (tool instanceof ToolBounceMarker) {
+                ToolBounceMarker theTool = (ToolBounceMarker) tool;
+                if (theTool.getBounceNode() != null && 
+                    nodeMarker.containsKey(theTool.getBounceNode())) {
+                    GoogleMapMarker gmMarker = nodeMarker.get(theTool.getBounceNode());
+                    gmMarker.setAnimation(Animation.BOUNCE);
+                    // Temporal click listener used to stop the marker animation
+                    gmMarker.addMarkerClickListener(event -> {
+                        gmMarker.setAnimation(null);
+                        // Removes the temporal listener
+                        event.unregisterListener();
+                    });
+                    googleMap.setCenterLat(gmMarker.getLat());
+                    googleMap.setCenterLng(gmMarker.getLng());
+                }
+                
+            } else if (tool instanceof ToolChangeMapCenter) {
+                ToolChangeMapCenter theTool = (ToolChangeMapCenter) tool;
+                if (theTool.getNewCenter() != null) {
+                    googleMap.setCenterLat(theTool.getNewCenter().getLatitude());
+                    googleMap.setCenterLng(theTool.getNewCenter().getLongitude());
+                }
+            }
         }
     }
     

@@ -34,6 +34,7 @@ public class EdgeInfoWindowContent extends VerticalLayout {
         HorizontalLayout hlyTools = new HorizontalLayout();
         
         hlyTools.add(new Button(new Icon(VaadinIcon.TRASH), event -> {
+            container.closeInfoWindow();
             if (cmdDeleteEdge != null)
                 cmdDeleteEdge.execute(ospEdges);
         }));

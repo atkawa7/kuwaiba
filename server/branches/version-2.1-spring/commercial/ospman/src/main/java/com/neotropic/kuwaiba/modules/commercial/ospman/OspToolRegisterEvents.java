@@ -157,4 +157,18 @@ public class OspToolRegisterEvents {
             return cmdDeleteDummyEdge;
         }
     }
+    /**
+     * This event is fired when map center changed
+     */
+    public static class MapCenterChangedEvent extends ToolRegisterEvent {
+        private final GeoCoordinate newCenter;
+        
+        public MapCenterChangedEvent(GeoCoordinate newCenter) {
+            this.newCenter = newCenter;
+        }
+        
+        public GeoCoordinate getNewCenter() {
+            return newCenter;
+        }
+    }
 }

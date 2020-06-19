@@ -25,16 +25,18 @@ import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolset.ToolPolyline;
 import org.neotropic.kuwaiba.modules.core.navigation.commands.Command;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.EdgeInfoWindowRequestEvent;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.EdgePathChangedEvent;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.MapCenterChangedEvent;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.NodeAddedEvent;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.NodeInfoWindowRequestEvent;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.NodePositionChangedEvent;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolset.ToolBounceMarker;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolset.ToolChangeMapCenter;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
@@ -74,8 +76,11 @@ public class OutsidePlantTools extends HorizontalLayout {
         ToolMarker toolMarker = new ToolMarker();
         ToolPolygon toolPolygon = new ToolPolygon();
         ToolPolyline toolPolyline = new ToolPolyline();
+        ToolBounceMarker toolBounceMarker = new ToolBounceMarker();
+        ToolChangeMapCenter toolChangeMapCenter = new ToolChangeMapCenter();
+        
         toolRegister.getTools().addAll(Arrays.asList(
-            toolHand, toolMarker, toolPolygon, toolPolyline));
+            toolHand, toolMarker, toolPolygon, toolPolyline, toolBounceMarker, toolChangeMapCenter));
         
         getElement().getStyle().set("background-color", "#fff"); //NOI18N
         getElement().getStyle().set("left", "2%"); //NOI18N
@@ -118,10 +123,8 @@ public class OutsidePlantTools extends HorizontalLayout {
             enabledButtons(btnHand);
         });
         outsidePlantSearch.addSelectionListener(event -> {
-            Properties properties = new Properties();
-            properties.put("animate-marker", event.getOspNode()); //NOI18N
-            properties.put("set-map-center", event.getOspNode().getLocation()); //NOI18N
-            mapProvider.reload(properties);
+            toolBounceMarker.setBounceNode(event.getOspNode());
+            toolRegister.setTool(toolBounceMarker);
         });
         
         toolRegister.addListener(event -> {
@@ -151,6 +154,8 @@ public class OutsidePlantTools extends HorizontalLayout {
                 executeCommand(cmdOspViewChanged);
             else if (event instanceof EdgePathChangedEvent)
                 executeCommand(cmdOspViewChanged);
+            else if (event instanceof MapCenterChangedEvent)
+                executeCommand(cmdOspViewChanged);                
             else if (mapProvider instanceof OspInfoWindowContainer) {
                 OspInfoWindowContainer container = (OspInfoWindowContainer) mapProvider;
                 
