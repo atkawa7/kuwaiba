@@ -192,6 +192,22 @@ public class GoogleMap extends Component implements HasComponents {
         remove(infoWindow);
     }
     
+    public void addRectangle(GoogleMapRectangle rectangle) {
+        add(rectangle);
+    }
+    
+    public void removeRectangle(GoogleMapRectangle rectangle) {
+        remove(rectangle);
+    }
+    
+    public void addOverlayView(OverlayView overlayView) {
+        add(overlayView);
+    }
+    
+    public void removeOverlayView(OverlayView overlayView) {
+        remove(overlayView);
+    }
+    
     public Registration addMapClickListener(ComponentEventListener<GoogleMapEvent.MapClickEvent> listener) {
         return addListener(GoogleMapEvent.MapClickEvent.class, listener);
     }

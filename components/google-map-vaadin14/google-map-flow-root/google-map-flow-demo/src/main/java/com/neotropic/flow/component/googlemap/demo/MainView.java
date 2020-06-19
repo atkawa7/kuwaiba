@@ -10,7 +10,11 @@ import com.neotropic.flow.component.googlemap.LatLng;
 import com.neotropic.flow.component.googlemap.GoogleMapPolygon;
 import com.neotropic.flow.component.googlemap.OverlayType;
 import com.neotropic.flow.component.googlemap.Constants;
+import com.neotropic.flow.component.googlemap.GoogleMapRectangle;
 import com.neotropic.flow.component.googlemap.InfoWindow;
+import com.neotropic.flow.component.googlemap.LatLngBounds;
+import com.neotropic.flow.component.googlemap.OverlayView;
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Label;
@@ -34,49 +38,55 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.springframework.beans.factory.annotation.Value;
 @Push
 @Route
 @PWA(name = "Project Base for Vaadin Flow with Spring", shortName = "Project Base")
 public class MainView extends VerticalLayout {
-    private final String API_KEY = "[API-KEY]";
-    private final String CLIENT_ID = null;
-    private final String LIBRARIES = "drawing";
+    @Value("${google.maps.api-key}")
+    private String apiKey;
+    @Value("${google.maps.libraries}")
+    private String libraries;
     
-    private final VerticalLayout verticalLayoutMain;
-    private final Tabs tabs;
-    private final HashMap<Tab, VerticalLayout> pages;
-    private final Tab tabMapEvents;
-    private final Tab tabMarkerEvents;
-    private final Tab tabPolylineEvents;
-    private final Tab tabPolygonEvents;
+    private VerticalLayout verticalLayoutMain;
+    private Tabs tabs;
+    private HashMap<Tab, VerticalLayout> pages;
+    private Tab tabMapEvents;
+    private Tab tabMarkerEvents;
+    private Tab tabPolylineEvents;
+    private Tab tabPolygonEvents;
     //<editor-fold desc="Mark Labels" defaultstate="collapsed">
-    private final Label lblMarkerClick;
-    private final Label lblMarkerDblClick;
-    private final Label lblMarkerDragEnd;
-    private final Label lblMarkerDragStart;
-    private final Label lblMarkerMouseOut;
-    private final Label lblMarkerMouseOver;
-    private final Label lblMarkerRightClick;
+    private Label lblMarkerClick;
+    private Label lblMarkerDblClick;
+    private Label lblMarkerDragEnd;
+    private Label lblMarkerDragStart;
+    private Label lblMarkerMouseOut;
+    private Label lblMarkerMouseOver;
+    private Label lblMarkerRightClick;
     //</editor-fold>
     //<editor-fold desc="Polyline Labels" defaultstate="collapsed">
-    private final Label lblPolylineClick;
-    private final Label lblPolylineDblClick;
-    private final Label lblPolylineMouseOut;
-    private final Label lblPolylineMouseOver;
-    private final Label lblPolylineRightClick;
-    private final Label lblPolylinePathChanged;
+    private Label lblPolylineClick;
+    private Label lblPolylineDblClick;
+    private Label lblPolylineMouseOut;
+    private Label lblPolylineMouseOver;
+    private Label lblPolylineRightClick;
+    private Label lblPolylinePathChanged;
     //</editor-fold>
     //<editor-fold desc="Polygon Labels" defaultstate="collapsed">
-    private final Label lblPolygonClick;
-    private final Label lblPolygonDblClick;
-    private final Label lblPolygonMouseOut;
-    private final Label lblPolygonMouseOver;
-    private final Label lblPolygonRightClick;
-    private final Label lblPolygonPathsChanged;
+    private Label lblPolygonClick;
+    private Label lblPolygonDblClick;
+    private Label lblPolygonMouseOut;
+    private Label lblPolygonMouseOver;
+    private Label lblPolygonRightClick;
+    private Label lblPolygonPathsChanged;
     //</editor-fold>
     public MainView() {
+    }
+    
+    @Override
+    public void onAttach(AttachEvent ev) {
         setSizeFull();
-        GoogleMap googleMap = new GoogleMap(API_KEY, CLIENT_ID, LIBRARIES);
+        GoogleMap googleMap = new GoogleMap(apiKey, null, libraries);
         googleMap.setDisableDefaultUi(true);
         
         GoogleMapMarker googleMapMarker = new GoogleMapMarker(2.4574702, -76.6349535);
@@ -313,8 +323,10 @@ public class MainView extends VerticalLayout {
         Tab tabMarker = new Tab(new Icon(VaadinIcon.MAP_MARKER));
         Tab tabPolygon = new Tab(new Icon(VaadinIcon.STAR_O));
         Tab tabPolyline = new Tab(new Icon(VaadinIcon.SPARK_LINE));
+        Tab tabRectangle = new Tab(new Icon(VaadinIcon.THIN_SQUARE));
+        Tab tabOverlayView = new Tab(new Icon(VaadinIcon.STOP));
         
-        tabsDrawingManager.add(tabHand, tabMarker, tabPolyline, tabPolygon);
+        tabsDrawingManager.add(tabHand, tabMarker, tabPolyline, tabPolygon, tabRectangle, tabOverlayView);
         tabsDrawingManager.setSelectedTab(tabHand);
         tabsDrawingManager.addSelectedChangeListener(event -> {
             if (tabHand.equals(event.getSelectedTab()))
@@ -325,6 +337,19 @@ public class MainView extends VerticalLayout {
                 drawingManager.setDrawingMode(OverlayType.POLYGON);
             else if (tabPolyline.equals(event.getSelectedTab()))
                 drawingManager.setDrawingMode(OverlayType.POLYLINE);
+            else if (tabRectangle.equals(event.getSelectedTab())) {
+                drawingManager.setDrawingMode(OverlayType.RECTANGLE);
+                drawingManager.addDrawingManagerRectangleCompleteListener(theEvent -> {
+                    addNewRectangle(theEvent.getBounds(), googleMap);
+                    theEvent.unregisterListener();
+                });
+            } else if (tabOverlayView.equals(event.getSelectedTab())) {
+                drawingManager.setDrawingMode(OverlayType.RECTANGLE);
+                drawingManager.addDrawingManagerRectangleCompleteListener(theEvent -> {
+                    addNewOverlayView(theEvent.getBounds(), googleMap);
+                    theEvent.unregisterListener();
+                });
+            }
         });
         googleMap.getElement().appendChild(tabsDrawingManager.getElement());
         
@@ -473,6 +498,16 @@ public class MainView extends VerticalLayout {
         googleMapPolygon.setEditable(true);
         googleMap.newPolygon(googleMapPolygon);
         setPolygonListener(googleMapPolygon);
+    }
+    
+    public void addNewRectangle(LatLngBounds bounds, GoogleMap googleMap) {
+        GoogleMapRectangle googleMapRectangle = new GoogleMapRectangle(bounds);
+        googleMap.addRectangle(googleMapRectangle);
+    }
+    
+    public void addNewOverlayView(LatLngBounds bounds, GoogleMap googleMap) {
+        OverlayView overlayView = new OverlayView(bounds);
+        googleMap.addOverlayView(overlayView);
     }
     
     public void setPolylineListeners(GoogleMapPolyline googleMapPolyline) {

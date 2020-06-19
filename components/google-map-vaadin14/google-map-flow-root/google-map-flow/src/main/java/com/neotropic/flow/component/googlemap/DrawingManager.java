@@ -63,4 +63,8 @@ public class DrawingManager extends Component {
         ComponentEventListener<GoogleMapEvent.DrawingManagerPolygonCompleteEvent> listener) {
         return addListener(GoogleMapEvent.DrawingManagerPolygonCompleteEvent.class, listener);
     }
+    public Registration addDrawingManagerRectangleCompleteListener(
+        ComponentEventListener<GoogleMapEvent.DrawingManagerRectangleCompleteEvent> listener) {
+        return addListener(GoogleMapEvent.DrawingManagerRectangleCompleteEvent.class, listener);
+    }
 }

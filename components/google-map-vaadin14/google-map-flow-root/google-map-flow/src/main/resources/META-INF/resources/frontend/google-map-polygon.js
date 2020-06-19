@@ -264,7 +264,7 @@ class GoogleMapPolygon extends PolymerElement {
   }
   removed() {
     if (this.polygon)
-      this.polygon.setMap(map);
+      this.polygon.setMap(null);
   }
 }
 window.customElements.define(GoogleMapPolygon.is, GoogleMapPolygon);

@@ -19,17 +19,16 @@ package com.neotropic.flow.component.googlemap;
  *
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public enum OverlayType {
-    MARKER ("marker"), //NOI18N
-    POLYGON ("polygon"), //NOI18N
-    POLYLINE ("polyline"), //NOI18N
-    RECTANGLE ("rectangle") //NOI18N
+public enum StrokePosition {
+    CENTER ("center"), //NOI18N
+    INSIDE ("inside"), //NOI18N
+    OUTSIDE ("outside") //NOI18N
     ;
-    private final String constantName;
-    private OverlayType(String constantName) {
-        this.constantName = constantName;
+    private final String string;
+    private StrokePosition(String string) {
+        this.string = string;
     }
-    public String constantName() {
-        return constantName;
+    public String asString() {
+        return string;
     }
 }

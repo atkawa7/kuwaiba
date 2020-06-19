@@ -39,6 +39,9 @@ class GoogleMap extends PolymerElement {
   static get template() {
     return html`
       <style>
+        :host {
+          display: block;
+        }
         /* Always set the map height explicitly to define the size of the div
         * element that contains the map. */
         .fullSize {          

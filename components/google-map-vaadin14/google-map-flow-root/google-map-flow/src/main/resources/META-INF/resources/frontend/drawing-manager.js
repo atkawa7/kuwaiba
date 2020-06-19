@@ -93,6 +93,16 @@ class DrawingManager extends PolymerElement {
         }
       ));
     });
+    this.drawingManager.addListener('rectanglecomplete', rectangle => {
+      rectangle.setMap(null);
+      this.dispatchEvent(new CustomEvent('rectangle-complete', 
+        {
+          detail: {
+            bounds: rectangle.getBounds().toJSON()
+          }
+        }
+      ));
+    });
   }
   removed() {
     if (this.drawingManager)

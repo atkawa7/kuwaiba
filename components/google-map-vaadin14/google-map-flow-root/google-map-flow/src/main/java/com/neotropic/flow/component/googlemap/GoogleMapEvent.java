@@ -19,6 +19,7 @@ import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
 import elemental.json.JsonArray;
+import elemental.json.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -305,6 +306,20 @@ public class GoogleMapEvent {
             return paths;
         }
     }
+    @DomEvent("rectangle-complete")
+    public static class DrawingManagerRectangleCompleteEvent extends ComponentEvent<DrawingManager> {
+        private final LatLngBounds bounds;
+        
+        public DrawingManagerRectangleCompleteEvent(DrawingManager source, boolean fromClient, 
+            @EventData("event.detail.bounds") JsonObject bounds) {
+            super(source, fromClient);
+            this.bounds = new LatLngBounds(bounds);
+        }
+        
+        public LatLngBounds getBounds() {
+            return bounds;
+        }
+    }
     //</editor-fold>
     //<editor-fold desc="Polygon Events" defaultstate="collapsed">
     @DomEvent("polygon-click")
@@ -385,6 +400,246 @@ public class GoogleMapEvent {
     public static class InfoWindowAddedEvent extends ComponentEvent<InfoWindow> {
         public InfoWindowAddedEvent(InfoWindow source, boolean fromClient) {
             super(source, fromClient);
+        }
+    }
+    //</editor-fold>
+    //<editor-fold desc="Rectangle" defaultstate="collapsed">
+    @DomEvent("rectangle-bounds-changed")
+    public static class RectangleBoundsChangedEvent extends ComponentEvent<GoogleMapRectangle> {
+
+        public RectangleBoundsChangedEvent(GoogleMapRectangle source, boolean fromClient) {
+            super(source, fromClient);
+        }
+    }
+    
+    @DomEvent("rectangle-click")
+    public static class RectangleClickEvent extends ComponentEvent<GoogleMapRectangle> {
+        private final double lat;
+        private final double lng;
+
+        public RectangleClickEvent(GoogleMapRectangle source, boolean fromClient,
+            @EventData("event.detail.lat") double lat, @EventData("event.detail.lng") double lng) {
+            super(source, fromClient);
+            this.lat = lat;
+            this.lng = lng;
+        }
+        
+        public double getLat() {
+            return lat;
+        }
+        
+        public double getLng() {
+            return lng;
+        }
+    }
+    
+    @DomEvent("rectangle-dbl-click")
+    public static class RectangleDblClickEvent extends ComponentEvent<GoogleMapRectangle> {
+        private final double lat;
+        private final double lng;
+
+        public RectangleDblClickEvent(GoogleMapRectangle source, boolean fromClient,
+            @EventData("event.detail.lat") double lat, @EventData("event.detail.lng") double lng) {
+            super(source, fromClient);
+            this.lat = lat;
+            this.lng = lng;
+        }
+        
+        public double getLat() {
+            return lat;
+        }
+        
+        public double getLng() {
+            return lng;
+        }
+    }
+    
+    @DomEvent("rectangle-drag")
+    public static class RectangleDragEvent extends ComponentEvent<GoogleMapRectangle> {
+        private final double lat;
+        private final double lng;
+
+        public RectangleDragEvent(GoogleMapRectangle source, boolean fromClient,
+            @EventData("event.detail.lat") double lat, @EventData("event.detail.lng") double lng) {
+            super(source, fromClient);
+            this.lat = lat;
+            this.lng = lng;
+        }
+        
+        public double getLat() {
+            return lat;
+        }
+        
+        public double getLng() {
+            return lng;
+        }
+    }
+    
+    @DomEvent("rectangle-drag-end")
+    public static class RectangleDragEndEvent extends ComponentEvent<GoogleMapRectangle> {
+        private final double lat;
+        private final double lng;
+
+        public RectangleDragEndEvent(GoogleMapRectangle source, boolean fromClient,
+            @EventData("event.detail.lat") double lat, @EventData("event.detail.lng") double lng) {
+            super(source, fromClient);
+            this.lat = lat;
+            this.lng = lng;
+        }
+        
+        public double getLat() {
+            return lat;
+        }
+        
+        public double getLng() {
+            return lng;
+        }
+    }
+    
+    @DomEvent("rectangle-drag-start")
+    public static class RectangleDragStartEvent extends ComponentEvent<GoogleMapRectangle> {
+        private final double lat;
+        private final double lng;
+
+        public RectangleDragStartEvent(GoogleMapRectangle source, boolean fromClient,
+            @EventData("event.detail.lat") double lat, @EventData("event.detail.lng") double lng) {
+            super(source, fromClient);
+            this.lat = lat;
+            this.lng = lng;
+        }
+        
+        public double getLat() {
+            return lat;
+        }
+        
+        public double getLng() {
+            return lng;
+        }
+    }
+    
+    @DomEvent("rectangle-mouse-down")
+    public static class RectangleMouseDownEvent extends ComponentEvent<GoogleMapRectangle> {
+        private final double lat;
+        private final double lng;
+
+        public RectangleMouseDownEvent(GoogleMapRectangle source, boolean fromClient,
+            @EventData("event.detail.lat") double lat, @EventData("event.detail.lng") double lng) {
+            super(source, fromClient);
+            this.lat = lat;
+            this.lng = lng;
+        }
+        
+        public double getLat() {
+            return lat;
+        }
+        
+        public double getLng() {
+            return lng;
+        }
+    }
+    
+    @DomEvent("rectangle-mouse-move")
+    public static class RectangleMouseMoveEvent extends ComponentEvent<GoogleMapRectangle> {
+        private final double lat;
+        private final double lng;
+
+        public RectangleMouseMoveEvent(GoogleMapRectangle source, boolean fromClient,
+            @EventData("event.detail.lat") double lat, @EventData("event.detail.lng") double lng) {
+            super(source, fromClient);
+            this.lat = lat;
+            this.lng = lng;
+        }
+        
+        public double getLat() {
+            return lat;
+        }
+        
+        public double getLng() {
+            return lng;
+        }
+    }
+    
+    @DomEvent("rectangle-mouse-out")
+    public static class RectangleMouseOutEvent extends ComponentEvent<GoogleMapRectangle> {
+        private final double lat;
+        private final double lng;
+
+        public RectangleMouseOutEvent(GoogleMapRectangle source, boolean fromClient,
+            @EventData("event.detail.lat") double lat, @EventData("event.detail.lng") double lng) {
+            super(source, fromClient);
+            this.lat = lat;
+            this.lng = lng;
+        }
+        
+        public double getLat() {
+            return lat;
+        }
+        
+        public double getLng() {
+            return lng;
+        }
+    }
+    
+    @DomEvent("rectangle-mouse-over")
+    public static class RectangleMouseOverEvent extends ComponentEvent<GoogleMapRectangle> {
+        private final double lat;
+        private final double lng;
+
+        public RectangleMouseOverEvent(GoogleMapRectangle source, boolean fromClient,
+            @EventData("event.detail.lat") double lat, @EventData("event.detail.lng") double lng) {
+            super(source, fromClient);
+            this.lat = lat;
+            this.lng = lng;
+        }
+        
+        public double getLat() {
+            return lat;
+        }
+        
+        public double getLng() {
+            return lng;
+        }
+    }
+    
+    @DomEvent("rectangle-mouse-up")
+    public static class RectangleMouseUpEvent extends ComponentEvent<GoogleMapRectangle> {
+        private final double lat;
+        private final double lng;
+
+        public RectangleMouseUpEvent(GoogleMapRectangle source, boolean fromClient,
+            @EventData("event.detail.lat") double lat, @EventData("event.detail.lng") double lng) {
+            super(source, fromClient);
+            this.lat = lat;
+            this.lng = lng;
+        }
+        
+        public double getLat() {
+            return lat;
+        }
+        
+        public double getLng() {
+            return lng;
+        }
+    }
+    
+    @DomEvent("rectangle-right-click")
+    public static class RectangleRightClickEvent extends ComponentEvent<GoogleMapRectangle> {
+        private final double lat;
+        private final double lng;
+
+        public RectangleRightClickEvent(GoogleMapRectangle source, boolean fromClient, 
+            @EventData("event.detail.lat") double lat, @EventData("event.detail.lng") double lng) {
+            super(source, fromClient);
+            this.lat = lat;
+            this.lng = lng;
+        }
+        
+        public double getLat() {
+            return lat;
+        }
+        
+        public double getLng() {
+            return lng;
         }
     }
     //</editor-fold>
