@@ -16,7 +16,9 @@ import com.neotropic.flow.component.googlemap.LatLngBounds;
 import com.neotropic.flow.component.googlemap.OverlayView;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -86,6 +88,9 @@ public class MainView extends VerticalLayout {
     @Override
     public void onAttach(AttachEvent ev) {
         setSizeFull();
+        setMargin(false);
+        setPadding(false);
+        
         GoogleMap googleMap = new GoogleMap(apiKey, null, libraries);
         googleMap.setDisableDefaultUi(true);
         
@@ -325,8 +330,9 @@ public class MainView extends VerticalLayout {
         Tab tabPolyline = new Tab(new Icon(VaadinIcon.SPARK_LINE));
         Tab tabRectangle = new Tab(new Icon(VaadinIcon.THIN_SQUARE));
         Tab tabOverlayView = new Tab(new Icon(VaadinIcon.STOP));
+        Tab tabGoogleMapsMxGraph = new Tab(new Icon(VaadinIcon.GLOBE));
         
-        tabsDrawingManager.add(tabHand, tabMarker, tabPolyline, tabPolygon, tabRectangle, tabOverlayView);
+        tabsDrawingManager.add(tabHand, tabMarker, tabPolyline, tabPolygon, tabRectangle, tabOverlayView, tabGoogleMapsMxGraph);
         tabsDrawingManager.setSelectedTab(tabHand);
         tabsDrawingManager.addSelectedChangeListener(event -> {
             if (tabHand.equals(event.getSelectedTab()))
@@ -349,7 +355,8 @@ public class MainView extends VerticalLayout {
                     addNewOverlayView(theEvent.getBounds(), googleMap);
                     theEvent.unregisterListener();
                 });
-            }
+            } else if (tabGoogleMapsMxGraph.equals(event.getSelectedTab()))
+                UI.getCurrent().navigate(OverlaysView.class);
         });
         googleMap.getElement().appendChild(tabsDrawingManager.getElement());
         
@@ -508,6 +515,12 @@ public class MainView extends VerticalLayout {
     public void addNewOverlayView(LatLngBounds bounds, GoogleMap googleMap) {
         OverlayView overlayView = new OverlayView(bounds);
         googleMap.addOverlayView(overlayView);
+        
+        Div div = new Div();
+        div.getStyle().set("background", "blue");
+        div.getStyle().set("opacity", "0.7");
+        div.add(new Label("Hello!!"));
+        overlayView.add(div);
     }
     
     public void setPolylineListeners(GoogleMapPolyline googleMapPolyline) {

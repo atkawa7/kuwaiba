@@ -16,6 +16,7 @@
 package com.neotropic.flow.component.googlemap;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import elemental.json.Json;
@@ -27,7 +28,7 @@ import elemental.json.JsonObject;
  */
 @Tag("overlay-view")
 @JsModule("./overlay-view.js")
-public class OverlayView extends Component {
+public class OverlayView extends Component implements HasComponents {
     
     public OverlayView() {
     }

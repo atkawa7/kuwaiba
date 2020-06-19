@@ -35,7 +35,6 @@ class OverlayView extends PolymerElement {
           display: block;
         }
       </style>
-      <slot></slot>
     `;
   }
 
@@ -61,15 +60,6 @@ class OverlayView extends PolymerElement {
    * @param {google.maps.Map} map 
    */
   added(map) {
-    this._observer = new FlattenedNodesObserver(this, info => {
-      info.addedNodes.forEach(value => {
-        this._div = value;
-      });
-      info.removedNodes.forEach(value => {
-        this._div = value;
-      });
-    });
-
     MyOverlay.prototype = new google.maps.OverlayView();
 
     function MyOverlay(bounds, map) {
@@ -78,18 +68,11 @@ class OverlayView extends PolymerElement {
       this._div = null;
       this.setMap(map)
     }
+    var _this = this;
     MyOverlay.prototype.onAdd = function() {
-      var div = document.createElement('div');
-      div.style.boderStyle = 'none';
-      div.style.borderWidth = '0px';
-      div.style.overflow = 'visible';
-      div.style.position = 'absolute';
-      div.style.background = 'blue';
-      div.style.opacity = 0.7;
+      this._div = _this._div;
 
-      this._div = div;
-
-      this.getPanes().overlayLayer.appendChild(div);
+      this.getPanes().overlayLayer.appendChild(this._div);
     }
     MyOverlay.prototype.draw = function() {
       var overlayProjection = this.getProjection();
@@ -98,6 +81,7 @@ class OverlayView extends PolymerElement {
       var ne = overlayProjection.fromLatLngToDivPixel(this._bounds.getNorthEast());
 
       var div = this._div;
+      div.style.position = 'absolute';
       div.style.left = sw.x + 'px';
       div.style.top = ne.y + 'px';
       div.style.width = (ne.x - sw.x) + 'px';
@@ -108,13 +92,20 @@ class OverlayView extends PolymerElement {
       this._div = null;
     }
 
-    this.overlay = new MyOverlay(
-      new google.maps.LatLngBounds(
-        {lat: this.bounds.south, lng: this.bounds.west}, 
-        {lat: this.bounds.north, lng: this.bounds.east}
-      ), 
-      map
-    );
+    this._observer = new FlattenedNodesObserver(this, info => {
+      info.addedNodes.forEach(value => {
+        this.overlay = new MyOverlay(
+          new google.maps.LatLngBounds(
+            {lat: this.bounds.south, lng: this.bounds.west}, 
+            {lat: this.bounds.north, lng: this.bounds.east}
+          ), 
+          map
+        );
+        this._div = value;
+      });
+      info.removedNodes.forEach(value => {
+      });
+    });
   }
 
   removed() {
