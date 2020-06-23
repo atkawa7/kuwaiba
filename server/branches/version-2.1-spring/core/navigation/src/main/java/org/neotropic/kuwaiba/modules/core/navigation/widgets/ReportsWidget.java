@@ -52,7 +52,9 @@ public class ReportsWidget extends AbstractDashboardWidget {
         try {
             List<ReportMetadataLight> classLevelReports = bem.getClassLevelReports(inventoryObject.getClassName(), false, false);
             if (classLevelReports.isEmpty()) {
-                contentComponent = new Label(ts.getTranslatedString("module.navigation.widgets.reports.ui.no-reports"));
+                Label lblNoReports = new Label(ts.getTranslatedString("module.navigation.widgets.reports.ui.no-reports"));
+                lblNoReports.addClassName("text-padded");
+                contentComponent = lblNoReports;
                 return;
             }
                 
@@ -64,7 +66,9 @@ public class ReportsWidget extends AbstractDashboardWidget {
             lytContent.addClassName("widgets-layout-dialog-list");
             contentComponent = lytContent;
         } catch (InventoryException ex) {
-            contentComponent = new Label(ex.getLocalizedMessage());
+            Label lblUnexpectedError = new Label(ex.getLocalizedMessage());
+            lblUnexpectedError.addClassName("text-padded");
+            contentComponent = lblUnexpectedError;
         }
     }
 

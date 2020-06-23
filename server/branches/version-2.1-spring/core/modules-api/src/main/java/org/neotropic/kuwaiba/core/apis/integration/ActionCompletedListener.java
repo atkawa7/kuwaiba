@@ -56,11 +56,11 @@ public interface ActionCompletedListener {
          */
         private String message;
         /**
-         * The action that generates the event;
+         * The action that generated the event.
          */
         private Class clazz;
         /**
-         * Possible action result 
+         * Possible action result.
          */
         private ActionResponse actionResponse;
 
@@ -108,7 +108,5 @@ public interface ActionCompletedListener {
         public void setActionResponse(ActionResponse actionResponse) {
             this.actionResponse = actionResponse;
         }
-
-                
     }
 }

@@ -118,12 +118,12 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
 
     @Override
     public String getName() {
-        return "Outside Plant View";
+        return ts.getTranslatedString("module.ospman.name");
     }
 
     @Override
     public String getDescription() {
-        return "Places a set of selected elements on a map and allows the user to connect and explore them.";
+        return ts.getTranslatedString("module.ospman.description");
     }
 
     @Override

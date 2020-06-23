@@ -30,15 +30,15 @@
 /* Most dashboard with a cover component to be clicked to be activated have these properties  */
 .widgets-standard-cover {
     position: relative;
-    width: 200px;
-    height: 200px;
+    width: 100px;
+    height: 100px;
 }
 
 .widgets-standard-cover-content {
     position: absolute;
     bottom: 5px;
     right: 5px;
-    font-size: large;
+    font-size: medium;
     text-align: center;
 }
 
@@ -143,11 +143,21 @@
 .width500px {
     width: 500px; 
 }
-/* style subtitle in property sheet column name*/
-.text-secundary {
-    color: #b3b0b0;
+/* Small, secondary-colored text used mainly for footers and image captions */
+.text-secondary {
+    color: #B3B0B0;
     font-size: .8em;
 }
+
+a.text-secondary {
+    color: #88AA00;
+}
+
+/* To be used in dialogs so the text appears padded. Note that Label instances in Vaadin do not support setPadding or setMargin */ 
+.text-padded {
+    padding: 5px;
+}
+
  /* used to align to end items in a flex container*/
 .align-self-end {
     align-self: flex-end;
@@ -159,7 +169,7 @@
 
 /* style to compact a little the grid rows */
 .grid-compact .vaadin-grid[part~="cell"] > vaadin-grid-cell-content {
-    padding: 0;
+    padding: 2px;
 }
 
 paper-swatch-picker paper-icon-button {

@@ -382,7 +382,7 @@ public class DataModelManagerUI extends VerticalLayout {
                 ts.getTranslatedString("module.datamodelman.accepted-icon-file-types"), 
                 ts.getTranslatedString("module.datamodelman.max-size"),
                 Constants.MAX_ICON_SIZE_IN_BYTES));
-        lblInfoFile.setClassName("text-secundary");
+        lblInfoFile.setClassName("text-secondary");
         HorizontalLayout lytUploadIcons = new HorizontalLayout( lytClassIcon, lytSmallClassIcon);
         lytIcons = new VerticalLayout(new H4(ts.getTranslatedString("module.datamodelman.icons")), 
                                       lblInfoFile, lytUploadIcons);  

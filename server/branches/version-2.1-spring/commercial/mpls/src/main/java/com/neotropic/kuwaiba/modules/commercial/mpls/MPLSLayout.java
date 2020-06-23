@@ -19,9 +19,9 @@ package com.neotropic.kuwaiba.modules.commercial.mpls;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.StyleSheet;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -102,7 +102,7 @@ public class MPLSLayout extends FlexLayout implements RouterLayout {
     @Override
     public void onAttach(AttachEvent ev) {
         this.lytHeader.removeAll();
-        this.lytFooter.add(new Label(ts.getTranslatedString("module.general.messages.copyright-notice")));
+        this.lytFooter.add(new Html("<span>Copyright <a href=\"https://www.neotropic.co\" target=\"_blank\">Neotropic SAS</a> 2010 - 2020</span>"));
         
         getUI().ifPresent( ui -> { // If there isn't any active session, redirect to the login ui
             if (ui.getSession().getAttribute(Session.class) == null)

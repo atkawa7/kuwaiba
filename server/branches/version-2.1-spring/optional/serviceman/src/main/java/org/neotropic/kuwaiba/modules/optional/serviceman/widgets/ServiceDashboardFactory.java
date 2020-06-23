@@ -34,7 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- *
+ * A factory class to build Service Manager dashboards as an strategy to avoid carrying around the XEMs and the translation service. 
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Component

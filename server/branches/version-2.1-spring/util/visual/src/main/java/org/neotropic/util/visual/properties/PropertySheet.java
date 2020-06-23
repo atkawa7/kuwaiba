@@ -47,17 +47,9 @@ public class PropertySheet extends Grid<AbstractProperty> {
     private Button currentBtnCancelInEditProperty;
     
     public PropertySheet(TranslationService ts) {
-        
-        // Doesn't work with material
-        addThemeVariants(GridVariant.LUMO_COMPACT); 
-        addThemeVariants(GridVariant.MATERIAL_COLUMN_DIVIDERS);
-        addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
-        addThemeVariants(GridVariant.LUMO_NO_BORDER);
-        addClassName("grid-compact");
-        
-        setHeightByRows(true);
-        
         this.ts = ts;
+        addClassName("grid-compact");
+        setHeightByRows(true);
         propertyValueChangedListeners = new ArrayList<>();
 
         addComponentColumn((property) -> {
@@ -66,7 +58,7 @@ public class PropertySheet extends Grid<AbstractProperty> {
             lytName.setSpacing(false);
             Label lblName = new BoldLabel(property.toString()); 
             Label lblType = new BoldLabel(property.getType()); 
-            lblType.setClassName("text-secundary");
+            lblType.setClassName("text-secondary");
             if (property.isReadOnly())
                 lblType.addClassName("italic");
             lblName.setTitle(property.getDescription() == null || property.getDescription().isEmpty()

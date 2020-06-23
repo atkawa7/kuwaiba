@@ -315,7 +315,7 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
                     tblListTypeItemUses.addColumn(BusinessObjectLight::getName).setHeader(ts.getTranslatedString("module.general.labels.name"));
                     tblListTypeItemUses.addColumn(BusinessObjectLight::getClassName).setHeader(ts.getTranslatedString("module.general.labels.class-name"));
                     
-                    VerticalLayout lytContent = new VerticalLayout(new H4(ts.getTranslatedString("module.listtypeman.object-usages")),
+                    VerticalLayout lytContent = new VerticalLayout(new H4(ts.getTranslatedString("module.listtypeman.listtypeitem-references")),
                             tblListTypeItemUses, new Button(ts.getTranslatedString("module.general.messages.ok"), event -> {
                                 dlgListTypeItemUses.close();
                             }));                  

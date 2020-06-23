@@ -148,7 +148,7 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
                 List<ViewObjectLight> filteredViewObjs = getViewObjects(txtSearch.getValue());
 
                 if (filteredViewObjs.isEmpty()) {
-                    vlySearchResults.add(new Label(ts.getTranslatedString("module.general.messages.no-search-result")));
+                    vlySearchResults.add(new Label(ts.getTranslatedString("module.general.messages.no-search-results")));
                 } else {
                     Grid<ViewObjectLight> grdResults = new Grid();
                     grdResults.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);

@@ -42,19 +42,15 @@ public class NavigationTree<T extends InventoryObjectNode> extends TreeGrid<T> {
             .append(" height='15px'")
             .append(" src='[[item.icon]]'")
             .append(">")
-            .append("<p style='margin: 0 0 0 10px;'>[[item.name]]</p>")
+            .append("<p style='margin: 0 0 0 10px;'>[[item.name]] <span class=\"text-secondary\">[[item.class]]</span></p>")
             .append("</vaadin-grid-tree-toggle>")
             .toString();
         TemplateRenderer<T> renderer = TemplateRenderer.<T> of (template);
         renderer.withProperty("leaf", item -> false);
-        renderer.withProperty("icon", item -> 
-            StreamResourceRegistry.getURI(iconGenerator.apply(item)).toString()
-        );
-        renderer.withProperty("name", item -> 
-            Constants.DUMMY_ROOT.equals(item.getObject().getClassName()) ? 
-                String.format("%s", item.getObject().getName()) :
-                String.format("%s [%s]", item.getObject().getName(), item.getObject().getClassName())
-        );
+        renderer.withProperty("icon", item -> StreamResourceRegistry.getURI(iconGenerator.apply(item)).toString());
+        renderer.withProperty("name", item -> item.getObject().getName());
+        renderer.withProperty("class", item -> Constants.DUMMY_ROOT.equals(item.getObject().getClassName()) ? "" : item.getObject().getClassName());
+
         addColumn(renderer);
         addThemeVariants(
             GridVariant.LUMO_NO_BORDER, 
