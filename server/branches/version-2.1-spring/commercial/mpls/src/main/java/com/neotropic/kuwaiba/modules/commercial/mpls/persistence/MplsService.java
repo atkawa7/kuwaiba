@@ -15,7 +15,6 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.mpls.persistence;
 
-import com.neotropic.kuwaiba.modules.commercial.mpls.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -45,10 +44,9 @@ import org.springframework.stereotype.Service;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Service
-public class MPLSService {
-    
+public class MplsService {
     /*
-     translation service
+    * Translation service
     */
     @Autowired
     private TranslationService ts;
@@ -71,7 +69,7 @@ public class MPLSService {
         /**
      * Class to identify all views made using the MPLS module
      */
-    public static String CLASS_VIEW = "MPLSModuleView";
+    public static String VIEW_CLASS = "MPLSModuleView";
     /**
      * A side in a tributary link
      */
@@ -174,7 +172,7 @@ public class MPLSService {
                 try {
                     bem.deleteObject(Constants.CLASS_MPLSLINK, newConnectionId, true);
                 } catch (Exception ex) {
-                    Logger.getLogger(MPLSService.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MplsService.class.getName()).log(Level.SEVERE, null, ex);
                 } 
             }
 
@@ -213,7 +211,7 @@ public class MPLSService {
      * @return MPLS link endpoints
      * @throws InvalidArgumentException 
      */
-    public MPLSConnectionDefinition getMPLSLinkDetails(String connectionId) 
+    public MplsConnectionDefinition getMPLSLinkDetails(String connectionId) 
             throws InvalidArgumentException 
     {
         if (bem == null || mem == null)
@@ -223,7 +221,7 @@ public class MPLSService {
            
             List<BusinessObjectLight> endpointAs = bem.getSpecialAttribute(Constants.CLASS_MPLSLINK, connectionId, RELATIONSHIP_MPLSENDPOINTA);
             List<BusinessObjectLight> endpointBs = bem.getSpecialAttribute(Constants.CLASS_MPLSLINK, connectionId, RELATIONSHIP_MPLSENDPOINTB);
-            MPLSConnectionDefinition mplsConnectionDefinition = new MPLSConnectionDefinition(mplsLink);
+            MplsConnectionDefinition mplsConnectionDefinition = new MplsConnectionDefinition(mplsLink);
             //side A
             if(!endpointAs.isEmpty()){
                 BusinessObjectLight endpointA = endpointAs.get(0);
@@ -281,7 +279,7 @@ public class MPLSService {
                 if (linksIds[i] != null)
                     mplsLink = bem.getObjectLight(Constants.CLASS_MPLSLINK, linksIds[i]);
                 if(mplsLink != null && !mplsLink.getClassName().equals(Constants.CLASS_MPLSLINK)) //NOI18N
-                    throw new InvalidArgumentException(String.format("Class %s is not a MPLS link", mplsLink.getClassName()));
+                    throw new InvalidArgumentException(String.format("Class %s is not an MPLS link", mplsLink.getClassName()));
                 if (sideAClassNames[i] != null && !mem.isSubclassOf(Constants.CLASS_GENERICPORT, sideAClassNames[i])) //NOI18N
                     throw new InvalidArgumentException(String.format("Class %s is not a port", sideAClassNames[i]));
                 if (sideBClassNames[i] != null && !mem.isSubclassOf(Constants.CLASS_GENERICPORT, sideBClassNames[i])) //NOI18N

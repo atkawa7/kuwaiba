@@ -43,7 +43,7 @@ import org.springframework.stereotype.Component;
  * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
 @Component
-public class NewMPLSViewVisualAction extends AbstractVisualAction<Dialog> {
+public class NewMplsViewVisualAction extends AbstractVisualAction<Dialog> {
 
     /**
      * Reference to the translation service.
@@ -54,7 +54,7 @@ public class NewMPLSViewVisualAction extends AbstractVisualAction<Dialog> {
      * Reference to the underlying action.
      */
     @Autowired
-    private NewMPLSViewAction newMPLSViewAction;
+    private NewMplsViewAction newMPLSViewAction;
     /**
      * Reference to the metadata entity manager.
      */
@@ -94,12 +94,12 @@ public class NewMPLSViewVisualAction extends AbstractVisualAction<Dialog> {
                             new ModuleActionParameter<>("description", txtDescription.getValue())));
                     
                     fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
-                            ts.getTranslatedString("module.mpls.actions.new-view-created-success"), NewMPLSViewAction.class, response));
+                            ts.getTranslatedString("module.mpls.actions.new-view-created-success"), NewMplsViewAction.class, response));
                     wdwNewClass.close();
                 }
             } catch (ModuleActionException ex) {
                 fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_ERROR,
-                        ex.getMessage(), NewMPLSViewAction.class));
+                        ex.getMessage(), NewMplsViewAction.class));
             }
         });
         

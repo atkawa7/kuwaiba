@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
  * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
 @Component
-public class DeleteMPLSViewAction extends AbstractAction {
+public class DeleteMplsViewAction extends AbstractAction {
 
     /**
      * Reference to the translation service.

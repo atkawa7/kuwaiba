@@ -1,12 +1,22 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *  Copyright 2010-2020 Neotropic SAS <contact@neotropic.co>.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       https://apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package com.neotropic.kuwaiba.modules.commercial.mpls;
 
-import com.neotropic.kuwaiba.modules.commercial.mpls.widgets.MPLSDashboard;
+import com.neotropic.kuwaiba.modules.commercial.mpls.widgets.MplsDashboard;
 import com.neotropic.vaadin14.component.MxGraphEdge;
 import com.neotropic.vaadin14.component.MxGraphNode;
 import com.neotropic.vaadin14.component.Point;
@@ -56,7 +66,7 @@ import org.neotropic.util.visual.views.ViewMap;
  * Custom view implementation for MPLS view module with a mxgraph component as canvas.
  * @author Orlando Paz  {@literal <orlando.paz@kuwaiba.org>} 
  */
-public class MPLSView extends AbstractView<BusinessObjectLight> {
+public class MplsView extends AbstractView<BusinessObjectLight> {
     
     private MxGraphCanvas<BusinessObjectLight, BusinessObjectLight> mxgraphCanvas;
     private TranslationService ts;
@@ -73,7 +83,7 @@ public class MPLSView extends AbstractView<BusinessObjectLight> {
         this.mxgraphCanvas = mxgraphCanvas;
     }
 
-    public MPLSView(MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem, TranslationService ts, ResourceFactory
+    public MplsView(MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem, TranslationService ts, ResourceFactory
              resourceFactory) {
         this.aem = aem;
         this.bem = bem;
@@ -175,7 +185,7 @@ public class MPLSView extends AbstractView<BusinessObjectLight> {
             xmlew.close();
             return baos.toByteArray();
         } catch (XMLStreamException ex) {
-            Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();           
         }
         return null;
@@ -315,10 +325,10 @@ public class MPLSView extends AbstractView<BusinessObjectLight> {
             }
             reader.close();
         } catch (NumberFormatException | XMLStreamException ex) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.mpls.view-corruted")).open();
-             Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.mpls.view-corrupted")).open();
+             Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
         } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | ApplicationObjectNotFoundException | InvalidArgumentException ex) {
-            Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
         } 
     }
 

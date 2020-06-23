@@ -16,10 +16,10 @@
 
 package com.neotropic.kuwaiba.modules.commercial.mpls;
 
-import com.neotropic.kuwaiba.modules.commercial.mpls.actions.DeleteMPLSViewVisualAction;
-import com.neotropic.kuwaiba.modules.commercial.mpls.actions.NewMPLSViewVisualAction;
-import com.neotropic.kuwaiba.modules.commercial.mpls.persistence.MPLSService;
-import com.neotropic.kuwaiba.modules.commercial.mpls.widgets.MPLSDashboard;
+import com.neotropic.kuwaiba.modules.commercial.mpls.actions.DeleteMplsViewVisualAction;
+import com.neotropic.kuwaiba.modules.commercial.mpls.actions.NewMplsViewVisualAction;
+import com.neotropic.kuwaiba.modules.commercial.mpls.persistence.MplsService;
+import com.neotropic.kuwaiba.modules.commercial.mpls.widgets.MplsDashboard;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
@@ -41,8 +41,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  * to different functionalities are presented in a single place.
  * @author Orlando Paz {@literal <Orlando.Paz@kuwaiba.org>}
  */
-@Route(value = "mpls", layout = MPLSLayout.class)
-public class MPLSManagerUI extends VerticalLayout {
+@Route(value = "mpls", layout = MplsLayout.class)
+public class MplsManagerUI extends VerticalLayout {
 
     @Autowired
     private TranslationService ts;
@@ -63,21 +63,20 @@ public class MPLSManagerUI extends VerticalLayout {
     private BusinessEntityManager bem;
     
     @Autowired
-    private MPLSService mplsService;
+    private MplsService mplsService;
     
     @Autowired
-    private DeleteMPLSViewVisualAction deleteMPLSViewVisualAction;
+    private DeleteMplsViewVisualAction deleteMPLSViewVisualAction;
     
     @Autowired
-    private NewMPLSViewVisualAction newMPLSViewVisualAction;
+    private NewMplsViewVisualAction newMPLSViewVisualAction;
     
     @Autowired
     private ResourceFactory resourceFactory;
     
-    private MPLSDashboard dashboard; 
+    private MplsDashboard dashboard; 
    
-    
-    public MPLSManagerUI() {
+    public MplsManagerUI() {
         super();
         setSizeFull();
     }
@@ -100,14 +99,14 @@ public class MPLSManagerUI extends VerticalLayout {
             try {                
                 new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();                                          
             } catch (Exception ex) {
-                Logger.getLogger(MPLSManagerUI.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MplsManagerUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
     }
 
     private void createContent() throws InvalidArgumentException, MetadataObjectNotFoundException {                      
-        dashboard = new MPLSDashboard(ts, mem, aem, bem, resourceFactory, mplsService, deleteMPLSViewVisualAction, newMPLSViewVisualAction);
+        dashboard = new MplsDashboard(ts, mem, aem, bem, resourceFactory, mplsService, deleteMPLSViewVisualAction, newMPLSViewVisualAction);
         dashboard.setSizeFull();
                
         add(dashboard);

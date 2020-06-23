@@ -15,8 +15,8 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.mpls;
 
-import com.neotropic.kuwaiba.modules.commercial.mpls.actions.DeleteMPLSViewVisualAction;
-import com.neotropic.kuwaiba.modules.commercial.mpls.actions.NewMPLSViewVisualAction;
+import com.neotropic.kuwaiba.modules.commercial.mpls.actions.DeleteMplsViewVisualAction;
+import com.neotropic.kuwaiba.modules.commercial.mpls.actions.NewMplsViewVisualAction;
 import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.AbstractCommercialModule;
 import org.neotropic.kuwaiba.core.apis.integration.ActionRegistry;
@@ -33,7 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * This class implements the functionality corresponding to the MPLS module
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class MPLSModule extends AbstractCommercialModule {
+public class MplsModule extends AbstractCommercialModule {
     
     /*
      translation service
@@ -67,10 +67,10 @@ public class MPLSModule extends AbstractCommercialModule {
     private ModuleRegistry moduleRegistry;
     
     @Autowired
-    private DeleteMPLSViewVisualAction deleteMPLSViewVisualAction;
+    private DeleteMplsViewVisualAction deleteMPLSViewVisualAction;
     
     @Autowired
-    private NewMPLSViewVisualAction newMPLSViewVisualAction;
+    private NewMplsViewVisualAction newMPLSViewVisualAction;
     //Constants
         /**
      * Class to identify all views made using the MPLS module

@@ -16,12 +16,12 @@
 
 package com.neotropic.kuwaiba.modules.commercial.mpls.widgets;
 
-import com.neotropic.kuwaiba.modules.commercial.mpls.*;
-import static com.neotropic.kuwaiba.modules.commercial.mpls.MPLSModule.CLASS_VIEW;
-import com.neotropic.kuwaiba.modules.commercial.mpls.actions.DeleteMPLSViewVisualAction;
-import com.neotropic.kuwaiba.modules.commercial.mpls.actions.NewMPLSViewVisualAction;
-import com.neotropic.kuwaiba.modules.commercial.mpls.persistence.MPLSConnectionDefinition;
-import com.neotropic.kuwaiba.modules.commercial.mpls.persistence.MPLSService;
+import com.neotropic.kuwaiba.modules.commercial.mpls.MplsManagerUI;
+import com.neotropic.kuwaiba.modules.commercial.mpls.MplsView;
+import com.neotropic.kuwaiba.modules.commercial.mpls.actions.DeleteMplsViewVisualAction;
+import com.neotropic.kuwaiba.modules.commercial.mpls.actions.NewMplsViewVisualAction;
+import com.neotropic.kuwaiba.modules.commercial.mpls.persistence.MplsConnectionDefinition;
+import com.neotropic.kuwaiba.modules.commercial.mpls.persistence.MplsService;
 import com.neotropic.kuwaiba.modules.commercial.mpls.tools.MplsTools;
 import com.neotropic.vaadin14.component.MxGraphCell;
 import com.vaadin.flow.component.AttachEvent;
@@ -98,7 +98,7 @@ import org.neotropic.util.visual.properties.PropertySheet;
  * MPLS Main Dashboard
  * @author Orlando Paz {@literal <Orlando.Paz@kuwaiba.org>}
  */
-public class MPLSDashboard extends VerticalLayout implements PropertySheet.IPropertyValueChangedListener {
+public class MplsDashboard extends VerticalLayout implements PropertySheet.IPropertyValueChangedListener {
     
     private TranslationService ts;
     /**
@@ -125,11 +125,11 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
     /**
      * reference of the visual action to remove a mpls view
      */
-    private DeleteMPLSViewVisualAction deleteMPLSViewVisualAction;
+    private DeleteMplsViewVisualAction deleteMPLSViewVisualAction;
     /**
      * reference of the visual action to add a mpls view
      */
-    private NewMPLSViewVisualAction newMPLSViewVisualAction;
+    private NewMplsViewVisualAction newMPLSViewVisualAction;
     /**
      * factory to instance object icons
      */
@@ -137,7 +137,7 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
     /**
      * service to persistence actions
      */
-    private MPLSService mplsService;
+    private MplsService mplsService;
      /**
      * source Equipment in create new connection dialog
      */   
@@ -165,7 +165,7 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
     /**
      * Instance of the main canvas view
      */
-    private MPLSView mplsView;
+    private MplsView mplsView;
     /**
      * list of mpls views
      */
@@ -212,7 +212,9 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
         this.mplsTools = mplsTools;
     }  
     
-    public MPLSDashboard(TranslationService ts, MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem, ResourceFactory resourceFactory, MPLSService mplsService, DeleteMPLSViewVisualAction deleteMPLSViewVisualAction, NewMPLSViewVisualAction newMPLSViewVisualAction) {
+    public MplsDashboard(TranslationService ts, MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem, 
+            ResourceFactory resourceFactory, MplsService mplsService, DeleteMplsViewVisualAction deleteMPLSViewVisualAction, 
+            NewMplsViewVisualAction newMPLSViewVisualAction) {
         super();
         this.ts = ts;
         this.mem = mem;
@@ -246,7 +248,7 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
                 new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
                                             
             } catch (Exception ex) {
-                Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
@@ -272,7 +274,7 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
         btnRemoveView.setEnabled(false);
         MplsTools.setButtonTitle(btnRemoveView, ts.getTranslatedString("module.mpls.remove-view"));
         
-        mplsView = new MPLSView(mem, aem, bem, ts, resourceFactory);   
+        mplsView = new MplsView(mem, aem, bem, ts, resourceFactory);   
         mplsView.getMxgraphCanvas().setComObjectSelected(() -> {
             
             String objectId = mplsView.getMxgraphCanvas().getSelectedCellId();
@@ -302,7 +304,7 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
              try {
                  
                 if(tmpObject.getClassName().equals(Constants.CLASS_MPLSLINK)) {                  
-                   MPLSConnectionDefinition connectionDetails = mplsService.getMPLSLinkDetails(tmpObject.getId());                    
+                   MplsConnectionDefinition connectionDetails = mplsService.getMPLSLinkDetails(tmpObject.getId());                    
                    if (connectionDetails.getDeviceA() != null && connectionDetails.getDeviceB() != null) {
                        addNodeToView(connectionDetails.getDeviceA(), 100, 50);
                        addNodeToView(connectionDetails.getDeviceB(), 400, 50);
@@ -494,7 +496,7 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
                     dlgConnection.close();
                 }
             } catch (InvalidArgumentException | MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
-                Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
                 new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
             } 
             
@@ -551,7 +553,7 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
                         BusinessObjectLight object = parent.getObject();
                         return (int) bem.getObjectChildrenCount(object.getClassName(), object.getId());
                     } catch (InvalidArgumentException ex) {
-                        Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
                         return 0;
                     }
                     
@@ -576,7 +578,7 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
             new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.view-saved")).open();
             }
         } catch (InvalidArgumentException | ApplicationObjectNotFoundException ex) {
-            Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
         }
           
@@ -622,7 +624,7 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
                 selectedObject = null;              
                 updatePropertySheet();
             } catch (BusinessObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
-                Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
                 new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage()).open();
             }
         }
@@ -642,12 +644,12 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
             List<BusinessObjectLight> viewNodes = new ArrayList(mplsView.getMxgraphCanvas().getNodes().keySet());
             for (BusinessObjectLight node : viewNodes) {
                 
-                List<AnnotatedBusinessObjectLight> objectMplsLinks = bem.getAnnotatedSpecialAttribute(node.getClassName(), node.getId(), MPLSService.RELATIONSHIP_MPLSLINK);
+                List<AnnotatedBusinessObjectLight> objectMplsLinks = bem.getAnnotatedSpecialAttribute(node.getClassName(), node.getId(), MplsService.RELATIONSHIP_MPLSLINK);
                 
                 for (AnnotatedBusinessObjectLight link : objectMplsLinks) {
                     if (mplsView.getMxgraphCanvas().getEdges().containsKey(link.getObject()))
                         continue;
-                    MPLSConnectionDefinition connectionDetails = mplsService.getMPLSLinkDetails(link.getObject().getId());                
+                    MplsConnectionDefinition connectionDetails = mplsService.getMPLSLinkDetails(link.getObject().getId());                
                                     
                     BusinessObjectLight theOtherEndPoint;
                     
@@ -676,7 +678,7 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
                 new SimpleNotification(ts.getTranslatedString("module.general.messages.success"),"No MPLS Link found for objects in view").open();
         }
         catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException ex) {
-            Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -733,15 +735,15 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
             this.btnRemoveView.setEnabled(true);
             new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.actions.view-loaded")).open();
         } catch (ApplicationObjectNotFoundException ex) {
-            Logger.getLogger(MPLSManagerUI.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MplsManagerUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     public void loadViews() {
         try {
-            mplsViews = aem.getGeneralViews(CLASS_VIEW,-1);             
+            mplsViews = aem.getGeneralViews(MplsService.VIEW_CLASS,-1);             
         } catch (InvalidArgumentException | NotAuthorizedException ex) {
-            Logger.getLogger(MPLSManagerUI.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MplsManagerUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -786,7 +788,7 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
                 lblCurrentViewName.setText(newView.getName());
                 lblCurrentViewDescription.setText(newView.getDescription());               
             } catch (ApplicationObjectNotFoundException ex) {
-                Logger.getLogger(MPLSManagerUI.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MplsManagerUI.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         };
@@ -824,7 +826,7 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
             }
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException
                 | OperationNotPermittedException | InvalidArgumentException ex) {
-            Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -837,7 +839,7 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
                 propertySheet.clear();
         } catch (InventoryException ex) {
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
-            Logger.getLogger(MPLSDashboard.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     /**
@@ -861,7 +863,7 @@ public class MPLSDashboard extends VerticalLayout implements PropertySheet.IProp
      * adds and edge with his nodes o the mpls view
      * @param connection The link definition
      */
-    private void addEdgeToView(MPLSConnectionDefinition connection) {
+    private void addEdgeToView(MplsConnectionDefinition connection) {
         if (mplsView.getAsViewMap().findEdge(connection.getConnectionObject()) == null) {
             Properties props = new Properties();
             props.put("controlPoints", new ArrayList());

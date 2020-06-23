@@ -16,7 +16,7 @@
 
 package org.neotropic.kuwaiba.web.ui;
 
-import com.neotropic.kuwaiba.modules.commercial.mpls.MPLSManagerUI;
+import com.neotropic.kuwaiba.modules.commercial.mpls.MplsManagerUI;
 import org.neotropic.kuwaiba.modules.core.datamodelman.DataModelManagerUI;
 import org.neotropic.kuwaiba.modules.core.listtypeman.ListTypeManagerUI;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OutsidePlantManagerUI;
@@ -75,7 +75,7 @@ public class MenuBuilderService {
         mnuNewBar.addItem(ts.getTranslatedString("module.datamodelman.name"), ev -> UI.getCurrent().navigate(DataModelManagerUI.class));
         mnuNewBar.addItem(ts.getTranslatedString("module.listtypeman.name"), ev -> UI.getCurrent().navigate(ListTypeManagerUI.class));
         mnuNewBar.addItem(ts.getTranslatedString("module.ospman.name"), ev -> UI.getCurrent().navigate(OutsidePlantManagerUI.class));
-        mnuNewBar.addItem(ts.getTranslatedString("module.mpls.name"), ev -> UI.getCurrent().navigate(MPLSManagerUI.class));
+        mnuNewBar.addItem(ts.getTranslatedString("module.mpls.name"), ev -> UI.getCurrent().navigate(MplsManagerUI.class));
         mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.logout"), ev -> UI.getCurrent().navigate(LogoutUI.class));
 
         this.menuList.put(session.getUser().getUserName(), mnuNewBar);

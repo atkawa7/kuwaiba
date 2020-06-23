@@ -34,12 +34,12 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- *
+ * The general layout to be used in the MPLS module.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @StyleSheet("css/main.css")
 @StyleSheet("css/main-layout.css")
-public class MPLSLayout extends FlexLayout implements RouterLayout {
+public class MplsLayout extends FlexLayout implements RouterLayout {
     /**
      * Header component.
      */
@@ -63,7 +63,7 @@ public class MPLSLayout extends FlexLayout implements RouterLayout {
     @Autowired
     private ModuleRegistry moduleRegistry;
 
-    public MPLSLayout() {
+    public MplsLayout() {
         setId("main-layout");
         setSizeFull();
         this.lytHeader = new HorizontalLayout();

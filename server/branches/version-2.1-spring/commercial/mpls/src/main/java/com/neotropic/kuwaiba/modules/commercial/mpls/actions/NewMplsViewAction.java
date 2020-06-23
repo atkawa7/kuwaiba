@@ -16,7 +16,7 @@
 
 package com.neotropic.kuwaiba.modules.commercial.mpls.actions;
 
-import static com.neotropic.kuwaiba.modules.commercial.mpls.MPLSModule.CLASS_VIEW;
+import com.neotropic.kuwaiba.modules.commercial.mpls.persistence.MplsService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
  *  @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
 @Component
-public class NewMPLSViewAction extends AbstractAction {
+public class NewMplsViewAction extends AbstractAction {
     
      /**
      * Reference to the translation service.
@@ -60,7 +60,7 @@ public class NewMPLSViewAction extends AbstractAction {
             try {
                 String viewName = (String)parameters.get("viewName");                
                 String viewDescription = (String)parameters.get("description");                
-                long newViewId = aem.createGeneralView(CLASS_VIEW, viewName, viewDescription, new byte[0], null);
+                long newViewId = aem.createGeneralView(MplsService.VIEW_CLASS, viewName, viewDescription, new byte[0], null);
                 
                 ActionResponse actionResponse = new ActionResponse();
                 actionResponse.put("viewId", newViewId); // the id of the view created
@@ -68,7 +68,7 @@ public class NewMPLSViewAction extends AbstractAction {
                 return actionResponse;
                         
             } catch (InvalidArgumentException ex) {
-                Logger.getLogger(NewMPLSViewAction.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(NewMplsViewAction.class.getName()).log(Level.SEVERE, null, ex);
                 return null;
             }
         });

@@ -37,7 +37,7 @@ import org.springframework.stereotype.Component;
  * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
 @Component
-public class DeleteMPLSViewVisualAction extends AbstractVisualAction<Dialog> {
+public class DeleteMplsViewVisualAction extends AbstractVisualAction<Dialog> {
 
     /**
      * Reference to the translation service.
@@ -48,7 +48,7 @@ public class DeleteMPLSViewVisualAction extends AbstractVisualAction<Dialog> {
      * Reference to the underlying action.
      */
     @Autowired
-    private DeleteMPLSViewAction deleteClassAction;
+    private DeleteMplsViewAction deleteClassAction;
     /**
      * Reference to the metadata entity manager.
      */
@@ -81,11 +81,11 @@ public class DeleteMPLSViewVisualAction extends AbstractVisualAction<Dialog> {
                             new ModuleActionParameter<>("viewId", viewId)));
 
                     fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
-                            ts.getTranslatedString("module.mpls.actions.view-delete-success"), DeleteMPLSViewAction.class));
+                            ts.getTranslatedString("module.mpls.actions.view-delete-success"), DeleteMplsViewAction.class));
                     wdwDeleteClass.close();
                 } catch (ModuleActionException ex) {
                     fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_ERROR,
-                            ex.getMessage(), DeleteMPLSViewAction.class));
+                            ex.getMessage(), DeleteMplsViewAction.class));
                     wdwDeleteClass.close();
                 }
             });

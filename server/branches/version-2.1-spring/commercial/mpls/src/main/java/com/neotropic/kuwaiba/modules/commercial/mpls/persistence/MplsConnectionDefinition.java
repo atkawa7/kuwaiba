@@ -26,7 +26,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
  * This information is useful to build reports and end-to-end views
  * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
-public class MPLSConnectionDefinition {
+public class MplsConnectionDefinition {
     /**
     * The complete information of the connection (that is, all its attributes)
     */
@@ -56,7 +56,7 @@ public class MPLSConnectionDefinition {
      */
     private BusinessObjectLight vfiB;
 
-    public MPLSConnectionDefinition(BusinessObject connectionObject) {
+    public MplsConnectionDefinition(BusinessObject connectionObject) {
         this.connectionObject = connectionObject;
     }
     
