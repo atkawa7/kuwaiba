@@ -40,7 +40,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
-import org.neotropic.kuwaiba.visualization.views.ViewNodeIconGenerator;
+import org.neotropic.kuwaiba.visualization.api.ViewNodeIconGenerator;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
 /**

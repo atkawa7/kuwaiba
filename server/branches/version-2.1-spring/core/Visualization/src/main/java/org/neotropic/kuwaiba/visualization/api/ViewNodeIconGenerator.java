@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.neotropic.kuwaiba.visualization.views;
+package org.neotropic.kuwaiba.visualization.api;
 
 import com.vaadin.flow.server.AbstractStreamResource;
 import org.neotropic.util.visual.icons.IconGenerator;

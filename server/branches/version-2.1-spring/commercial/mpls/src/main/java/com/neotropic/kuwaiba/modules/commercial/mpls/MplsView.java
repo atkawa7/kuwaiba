@@ -52,8 +52,8 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
-import org.neotropic.kuwaiba.visualization.views.BusinessObjectViewEdge;
-import org.neotropic.kuwaiba.visualization.views.BusinessObjectViewNode;
+import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewEdge;
+import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
 import org.neotropic.util.visual.mxgraph.MxGraphCanvas;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.views.AbstractView;

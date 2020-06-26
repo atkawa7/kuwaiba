@@ -86,8 +86,8 @@ import org.neotropic.kuwaiba.modules.core.navigation.navtree.nodes.InventoryObje
 import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
 import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyValueConverter;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
-import org.neotropic.kuwaiba.visualization.views.BusinessObjectViewEdge;
-import org.neotropic.kuwaiba.visualization.views.BusinessObjectViewNode;
+import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewEdge;
+import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
 import org.neotropic.util.visual.dialog.ConfirmDialog;
 import org.neotropic.util.visual.general.BoldLabel;
 import org.neotropic.util.visual.notifications.SimpleNotification;

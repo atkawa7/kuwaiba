@@ -13,22 +13,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.neotropic.kuwaiba.visualization.views;
+package org.neotropic.kuwaiba.visualization.api;
 
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
-import org.neotropic.util.visual.views.AbstractViewEdge;
 import org.neotropic.util.visual.views.AbstractViewNode;
 
 /**
- * An edge that represents a business, inventory object.
+ * A node that represents a business, inventory object.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class BusinessObjectViewEdge extends AbstractViewEdge<BusinessObjectLight> {
+public class BusinessObjectViewNode extends AbstractViewNode<BusinessObjectLight> {
 
-    public BusinessObjectViewEdge(BusinessObjectLight identifier) {
+    public BusinessObjectViewNode(BusinessObjectLight identifier) {
         super(identifier);
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         //A node can be matched using an instance of the its identifier, or simply its id
