@@ -17,11 +17,11 @@
 package org.neotropic.kuwaiba.modules.optional.serviceman.actions;
 
 import com.vaadin.flow.component.dialog.Dialog;
-import org.neotropic.kuwaiba.core.apis.integration.AbstractAction;
-import org.neotropic.kuwaiba.core.apis.integration.AbstractVisualInventoryAction;
-import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
-import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
-import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameterSet;
+import org.neotropic.kuwaiba.core.apis.integration.modules.actions.AbstractAction;
+import org.neotropic.kuwaiba.core.apis.integration.modules.actions.AbstractVisualInventoryAction;
+import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionCompletedListener;
+import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionException;
+import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionParameterSet;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;

@@ -15,7 +15,7 @@
  */
 package org.neotropic.kuwaiba.modules.core.navigation.navtree.nodes;
 
-import org.neotropic.kuwaiba.core.apis.integration.AbstractAction;
+import org.neotropic.kuwaiba.core.apis.integration.modules.actions.AbstractAction;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.util.visual.tree.nodes.AbstractNode;
 

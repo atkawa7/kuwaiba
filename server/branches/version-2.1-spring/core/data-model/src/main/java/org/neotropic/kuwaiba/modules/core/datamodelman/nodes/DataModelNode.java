@@ -5,7 +5,7 @@
  */
 package org.neotropic.kuwaiba.modules.core.datamodelman.nodes;
 
-import org.neotropic.kuwaiba.core.apis.integration.AbstractAction;
+import org.neotropic.kuwaiba.core.apis.integration.modules.actions.AbstractAction;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
 import org.neotropic.util.visual.tree.nodes.AbstractNode;
 

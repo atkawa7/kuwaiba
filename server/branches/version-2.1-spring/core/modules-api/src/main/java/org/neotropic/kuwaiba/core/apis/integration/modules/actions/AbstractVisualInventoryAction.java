@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.core.apis.integration;
+package org.neotropic.kuwaiba.core.apis.integration.modules.actions;
 
 /**
  * Actions applicable to inventory objects must inherit from this class.

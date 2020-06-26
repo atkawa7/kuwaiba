@@ -25,7 +25,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
+import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;

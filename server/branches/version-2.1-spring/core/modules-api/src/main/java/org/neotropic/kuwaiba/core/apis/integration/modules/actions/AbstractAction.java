@@ -14,8 +14,10 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.core.apis.integration;
+package org.neotropic.kuwaiba.core.apis.integration.modules.actions;
 
+import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionException;
+import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionParameterSet;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Privilege;
 
 /**

@@ -302,7 +302,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
                     }
                     mapProperties.put("bem", bem);
                     
-                    this.mapProvider = (AbstractMapProvider)mapsProviderClass.newInstance();
+                    this.mapProvider = (AbstractMapProvider)mapsProviderClass.getDeclaredConstructor().newInstance();
                     this.mapProvider.initialize(mapProperties);
                 } else
                     return new Label(String.format("Class %s is not a valid map provider", mapsProviderClass.getCanonicalName()));

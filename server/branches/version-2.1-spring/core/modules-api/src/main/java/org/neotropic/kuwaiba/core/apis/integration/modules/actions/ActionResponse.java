@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package org.neotropic.kuwaiba.core.apis.integration;
+package org.neotropic.kuwaiba.core.apis.integration.modules.actions;
 
 import java.util.Properties;
 

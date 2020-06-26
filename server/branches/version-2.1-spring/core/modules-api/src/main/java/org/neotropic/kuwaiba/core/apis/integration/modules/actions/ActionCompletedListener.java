@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.core.apis.integration;
+package org.neotropic.kuwaiba.core.apis.integration.modules.actions;
 
 /**
  * All components interested in being notified once an action is completed should implement this interface.

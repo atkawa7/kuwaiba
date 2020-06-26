@@ -18,9 +18,9 @@ package org.neotropic.kuwaiba.modules.optional.serviceman.actions;
 
 import java.util.HashMap;
 import javax.annotation.PostConstruct;
-import org.neotropic.kuwaiba.core.apis.integration.AbstractAction;
-import org.neotropic.kuwaiba.core.apis.integration.ActionResponse;
-import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
+import org.neotropic.kuwaiba.core.apis.integration.modules.actions.AbstractAction;
+import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionResponse;
+import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionException;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Privilege;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;

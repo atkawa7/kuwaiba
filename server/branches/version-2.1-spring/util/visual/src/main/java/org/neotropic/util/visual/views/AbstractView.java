@@ -99,7 +99,8 @@ public abstract class AbstractView<T> {
      */
     public abstract void buildWithBusinessObject(T businessObject);
     /**
-     * Builds an empty view map that can be use to render default views.
+     * Builds an empty view map that can be used to render default views (that is, 
+     * views that are not loaded from a saved state in the database, but created usually for the first time)
      */
     public abstract void buildEmptyView();
     /**

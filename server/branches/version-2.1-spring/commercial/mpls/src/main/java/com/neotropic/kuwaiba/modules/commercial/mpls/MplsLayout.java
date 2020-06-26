@@ -28,7 +28,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.RouterLayout;
 import java.util.Objects;
-import org.neotropic.kuwaiba.core.apis.integration.ModuleRegistry;
+import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleRegistry;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;

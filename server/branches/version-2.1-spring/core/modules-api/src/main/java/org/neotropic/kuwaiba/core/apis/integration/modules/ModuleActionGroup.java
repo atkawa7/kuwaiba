@@ -14,9 +14,10 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.core.apis.integration;
+package org.neotropic.kuwaiba.core.apis.integration.modules;
 
 import java.util.List;
+import org.neotropic.kuwaiba.core.apis.integration.modules.actions.AbstractVisualAction;
 
 /**
  * An action group is typically used in menus. It groups several related actions.

@@ -16,7 +16,7 @@
 package com.neotropic.kuwaiba.modules.commercial.ospman.actions;
 
 import javax.annotation.PostConstruct;
-import org.neotropic.kuwaiba.core.apis.integration.AbstractAction;
+import org.neotropic.kuwaiba.core.apis.integration.modules.actions.AbstractAction;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Privilege;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -16,7 +16,7 @@
 package org.neotropic.util.visual.tree.nodes;
 
 import java.util.Objects;
-import org.neotropic.kuwaiba.core.apis.integration.AbstractAction;
+import org.neotropic.kuwaiba.core.apis.integration.modules.actions.AbstractAction;
 
 /**
  * A node that represents a business domain object from the model.

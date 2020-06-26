@@ -14,7 +14,9 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.core.apis.integration;
+package org.neotropic.kuwaiba.core.apis.integration.dashboards;
+
+import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionCompletedListener;
 
 /**
  * The entry point to all modules should implement this interface.

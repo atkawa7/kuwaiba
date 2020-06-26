@@ -15,7 +15,7 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.sdh;
 
-import org.neotropic.kuwaiba.core.apis.integration.AbstractCommercialModule;
+import org.neotropic.kuwaiba.core.apis.integration.modules.AbstractCommercialModule;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermittedException;

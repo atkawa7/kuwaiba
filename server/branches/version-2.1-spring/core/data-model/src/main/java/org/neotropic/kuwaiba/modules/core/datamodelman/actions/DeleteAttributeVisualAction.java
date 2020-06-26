@@ -17,12 +17,12 @@ package org.neotropic.kuwaiba.modules.core.datamodelman.actions;
 
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Label;
-import org.neotropic.kuwaiba.core.apis.integration.AbstractAction;
-import org.neotropic.kuwaiba.core.apis.integration.AbstractVisualAction;
-import org.neotropic.kuwaiba.core.apis.integration.ActionCompletedListener;
-import org.neotropic.kuwaiba.core.apis.integration.ModuleActionException;
-import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameter;
-import org.neotropic.kuwaiba.core.apis.integration.ModuleActionParameterSet;
+import org.neotropic.kuwaiba.core.apis.integration.modules.actions.AbstractAction;
+import org.neotropic.kuwaiba.core.apis.integration.modules.actions.AbstractVisualAction;
+import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionCompletedListener;
+import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionException;
+import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionParameter;
+import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionParameterSet;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.AttributeMetadata;

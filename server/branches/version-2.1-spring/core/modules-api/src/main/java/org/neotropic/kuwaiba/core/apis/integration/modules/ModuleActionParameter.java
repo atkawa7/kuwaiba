@@ -13,7 +13,7 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.core.apis.integration;
+package org.neotropic.kuwaiba.core.apis.integration.modules;
 
 /**
  * Each module action has an optional set of parameters (for example, creating a new inventory 

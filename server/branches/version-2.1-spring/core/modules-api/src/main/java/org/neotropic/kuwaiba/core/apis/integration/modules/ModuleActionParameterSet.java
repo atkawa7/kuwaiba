@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.core.apis.integration;
+package org.neotropic.kuwaiba.core.apis.integration.modules;
 
 import java.util.HashMap;
 

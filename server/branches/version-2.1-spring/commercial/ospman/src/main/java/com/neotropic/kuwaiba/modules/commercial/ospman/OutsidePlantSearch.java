@@ -38,12 +38,17 @@ import java.util.List;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 
 /**
  * A search component to find inventory objects to add or navigate in the map
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class OutsidePlantSearch extends Div {
+    /**
+     * The min number of characters that will trigger the search 
+     */
+    private final int MIN_CHARACTERS = 4;
     private final TranslationService translationService;
         
     public OutsidePlantSearch(BusinessEntityManager bem, TranslationService translationService, AbstractMapProvider mapProvider) {
@@ -70,8 +75,11 @@ public class OutsidePlantSearch extends Div {
         txtSearch.addValueChangeListener(event -> {
             paperDialog.removeAll();
             if (event.isFromClient()) {
+                if (event.getValue().length() < MIN_CHARACTERS)
+                    return;
+                
                 try {
-                    List<BusinessObjectLight> objects = bem.getObjectsOfClassLight(event.getValue(), -1);
+                    List<BusinessObjectLight> objects = bem.getSuggestedObjectsWithFilter(event.getValue(), Constants.CLASS_VIEWABLEOBJECT, 10);
                     if (!objects.isEmpty()) {
                         Grid<BusinessObjectLight> grid = new Grid();
                         grid.addThemeVariants(GridVariant.LUMO_NO_ROW_BORDERS);
@@ -99,7 +107,7 @@ public class OutsidePlantSearch extends Div {
                             paperDialog.dialogConfirm(btnAdd);
                             btnAdd.addClickListener(clickEvent -> {
                                 txtSearch.setValue(obj.getName());      
-                                fireEvent(new NewEvent(this, false, obj));
+                                fireEvent(new NewNodeInViewEvent(this, false, obj));
                             });
                             hly.add(icon, vlyObj, btnAdd);
                             hly.setJustifyContentMode(FlexComponent.JustifyContentMode.START);
@@ -147,8 +155,8 @@ public class OutsidePlantSearch extends Div {
         return addListener(SelectionEvent.class, listener);
     }
     
-    public Registration addNewListener(ComponentEventListener<NewEvent> listener) {
-        return addListener(NewEvent.class, listener);
+    public Registration addNewListener(ComponentEventListener<NewNodeInViewEvent> listener) {
+        return addListener(NewNodeInViewEvent.class, listener);
     }
     /**
      * 
@@ -167,10 +175,10 @@ public class OutsidePlantSearch extends Div {
     /**
      * 
      */
-    public class NewEvent extends ComponentEvent<OutsidePlantSearch> {
+    public class NewNodeInViewEvent extends ComponentEvent<OutsidePlantSearch> {
         private final BusinessObjectLight object;
         
-        public NewEvent(OutsidePlantSearch source, boolean fromClient, BusinessObjectLight object) {
+        public NewNodeInViewEvent(OutsidePlantSearch source, boolean fromClient, BusinessObjectLight object) {
             super(source, fromClient);
             this.object = object;
         }

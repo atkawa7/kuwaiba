@@ -16,9 +16,9 @@
 package com.neotropic.kuwaiba.modules.commercial.ospman;
 
 import javax.annotation.PostConstruct;
-import org.neotropic.kuwaiba.core.apis.integration.AbstractCommercialModule;
-import org.neotropic.kuwaiba.core.apis.integration.ActionRegistry;
-import org.neotropic.kuwaiba.core.apis.integration.ModuleRegistry;
+import org.neotropic.kuwaiba.core.apis.integration.modules.AbstractCommercialModule;
+import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionRegistry;
+import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleRegistry;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermittedException;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
