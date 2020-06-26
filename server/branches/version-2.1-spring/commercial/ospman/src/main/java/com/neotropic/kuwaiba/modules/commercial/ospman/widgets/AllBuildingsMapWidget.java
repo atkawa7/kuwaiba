@@ -13,6 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package com.neotropic.kuwaiba.modules.commercial.ospman.widgets;
 
 import com.neotropic.kuwaiba.modules.commercial.ospman.OutsidePlantView;
@@ -25,46 +26,34 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
-import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.visualization.views.BusinessObjectViewNode;
 import org.neotropic.kuwaiba.visualization.views.ViewNodeIconGenerator;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.widgets.AbstractDashboardWidget;
 
 /**
- * A simple widget that shows a map and places all the buildings in the database with 
- * the attributes <code>latitude</code> and <code>longitude</code> set to valid values.
+ * A map with all GenericPhysicalNode instances with a valid <code>latitude</code> and <code>longitude</code> attribute values.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class SimpleMapDashboardWidget extends AbstractDashboardWidget {
-    /**
-     * Reference to the resource factory
-     */
-    private final ResourceFactory resourceFactory;
-    /**
-     * Reference to the Physical Connection Service.
-     */
-    private final PhysicalConnectionsService physicalConnectionService;
+public class AllBuildingsMapWidget extends AbstractDashboardWidget {
     
-    public SimpleMapDashboardWidget(
-        ApplicationEntityManager aem, BusinessEntityManager bem, 
-        MetadataEntityManager mem, PhysicalConnectionsService physicalConnectionService, TranslationService ts, 
-        ResourceFactory resourceFactory) {
-        
+    private ResourceFactory resourceFactory;
+    
+    public AllBuildingsMapWidget(ApplicationEntityManager aem, BusinessEntityManager bem, 
+            MetadataEntityManager mem, TranslationService ts, ResourceFactory resourceFactory) {
         super(mem, aem, bem, ts);
         this.resourceFactory = resourceFactory;
-        this.physicalConnectionService = physicalConnectionService;
         setSizeFull();
         createContent();
     }
 
     @Override
     public void createContent() {
+        OutsidePlantView viewOsp = new OutsidePlantView(mem, aem, bem, ts, 
+            new ViewNodeIconGenerator(resourceFactory), false, () -> {});
+        viewOsp.buildEmptyView();
+        
         try {
-            OutsidePlantView outsidePlantView = new OutsidePlantView(mem, aem, bem, physicalConnectionService, ts, 
-                new ViewNodeIconGenerator(resourceFactory), false, () -> {});
-            outsidePlantView.buildEmptyView();
-            
             List<BusinessObjectLight> allPhysicalLocation = bem.getObjectsOfClassLight(Constants.CLASS_GENERICLOCATION, -1);
             allPhysicalLocation.stream().forEach(aPhysicalLocation -> {
                 try {
@@ -75,7 +64,7 @@ public class SimpleMapDashboardWidget extends AbstractDashboardWidget {
                             BusinessObjectViewNode aNode = new BusinessObjectViewNode(aPhysicalLocation);
                             aNode.getProperties().put("lat", Double.valueOf(lat)); //NOI18N
                             aNode.getProperties().put("lon", Double.valueOf(lng)); //NOI18N
-                            outsidePlantView.getAsViewMap().addNode(aNode);
+                            viewOsp.getAsViewMap().addNode(aNode);
                         }
                     }
                                         
@@ -86,7 +75,7 @@ public class SimpleMapDashboardWidget extends AbstractDashboardWidget {
                     ).open();
                 }
             });
-            add(outsidePlantView.getAsComponent());
+            add(viewOsp.getAsComponent());
         } catch (InventoryException ex) {
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"), 

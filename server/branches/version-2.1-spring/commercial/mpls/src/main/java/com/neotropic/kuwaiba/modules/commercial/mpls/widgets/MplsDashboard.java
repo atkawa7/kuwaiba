@@ -95,7 +95,7 @@ import org.neotropic.util.visual.properties.AbstractProperty;
 import org.neotropic.util.visual.properties.PropertySheet;
 
 /**
- * MPLS Main Dashboard
+ * MPLS Main Dashboard.
  * @author Orlando Paz {@literal <Orlando.Paz@kuwaiba.org>}
  */
 public class MplsDashboard extends VerticalLayout implements PropertySheet.IPropertyValueChangedListener {
@@ -177,7 +177,7 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
     /**
      * Dialog that lists the whole list of the views
      */
-    Dialog dlgMPLSViews;
+    Dialog wdwMPLSViews;
     /**
      * reference to the current selected object in the canvas
      */
@@ -242,20 +242,13 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
     }
     
     public void showActionCompledMessages(ActionCompletedListener.ActionCompletedEvent ev) {
-        if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
-            try {
-                
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
-                                            
-            } catch (Exception ex) {
-                Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else
+        if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) 
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
+        else
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
     }
 
     private void createContent() {    
-        
         Button btnOpenView = new Button(new Icon(VaadinIcon.FOLDER_OPEN_O), ev -> {
              openListMplsViewDialog();
         });
@@ -727,8 +720,8 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
             lblCurrentViewName.setText(view.getName());
             lblCurrentViewDescription.setText(view.getDescription());
             lytViewInfo.setVisible(true);
-            if (dlgMPLSViews != null)
-                this.dlgMPLSViews.close();
+            if (wdwMPLSViews != null)
+                this.wdwMPLSViews.close();
             this.mplsTools.setGeneralToolsEnabled(true);
             selectedObject = null;
             updatePropertySheet();
@@ -777,8 +770,8 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
             mplsTools.setGeneralToolsEnabled(true);
             btnRemoveView.setEnabled(true);
             lytViewInfo.setVisible(true);
-            if (dlgMPLSViews != null)
-                dlgMPLSViews.close();
+            if (wdwMPLSViews != null)
+                wdwMPLSViews.close();
             selectedObject = null;
             updatePropertySheet();
             ActionResponse response = ev.getActionResponse();
@@ -796,19 +789,19 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
     }
 
     /**
-     * open the dialog that shows the list of mpls views
+     * open the dialog that shows the list of available MPLS views.
      */
     private void openListMplsViewDialog() {
-        dlgMPLSViews = new Dialog();
+        wdwMPLSViews = new Dialog();
               
         Button btnCancel = new Button(ts.getTranslatedString("module.general.messages.cancel"), ev -> {
-            dlgMPLSViews.close();
+            wdwMPLSViews.close();
         });      
         VerticalLayout lytContent = new VerticalLayout(tblViews, btnCancel);
         lytContent.setAlignItems(Alignment.CENTER);
-        dlgMPLSViews.add(lytContent);
-        dlgMPLSViews.setWidth("600px");
-        dlgMPLSViews.open();
+        wdwMPLSViews.add(lytContent);
+        wdwMPLSViews.setWidth("600px");
+        wdwMPLSViews.open();
     }
     
     @Override
@@ -824,9 +817,8 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
 
                 new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
             }
-        } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException
-                | OperationNotPermittedException | InvalidArgumentException ex) {
-            Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InventoryException ex) {
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ex.getLocalizedMessage()).open();
         }
     }
     

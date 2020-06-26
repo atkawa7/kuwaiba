@@ -51,5 +51,4 @@ public class NewOspViewAction extends AbstractAction {
     public boolean requiresConfirmation() {
         return false;
     }
-    
 }

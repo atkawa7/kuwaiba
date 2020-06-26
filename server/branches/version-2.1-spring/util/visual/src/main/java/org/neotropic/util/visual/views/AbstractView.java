@@ -39,17 +39,17 @@ public abstract class AbstractView<T> {
     }
     
     /**
-     * The name of the view.
+     * The name of the view. This might not be important for hard-coded views, but it is relevant in custom, scripted views.
      * @return A short display name of the view
      */
     public abstract String getName();
     /**
-     * More details on what the view does.
-     * @return 
+     * More details on what the view does.  This might not be important for hard-coded views, but it is relevant in custom, scripted views.
+     * @return The view description.
      */
     public abstract String getDescription();
     /**
-     * The current version of the view
+     * The current version of the view.  This might not be important for hard-coded views, but it is relevant in custom, scripted views.
      * @return The version of the view.
      */
     public abstract String getVersion();
@@ -82,7 +82,7 @@ public abstract class AbstractView<T> {
      */
     public abstract Component getAsComponent() throws InvalidArgumentException;
     /**
-     * Exports the view as a ViewMap (a representation of the view as a set of Java objects related each other). It most likely will have to be called after calling {@link #build() } or {@link  #build(java.lang.Object) }.
+     * Exports the view as a ViewMap (a representation of the view as a set of Java objects related to each other). It most likely will have to be called after calling {@link #build() } or {@link  #build(java.lang.Object) }.
      * @return The view map of the view.
      */
     public ViewMap getAsViewMap() {

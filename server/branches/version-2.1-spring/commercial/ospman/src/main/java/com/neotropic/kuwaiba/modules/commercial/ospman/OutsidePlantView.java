@@ -39,6 +39,8 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -87,34 +89,80 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
      * The map provider used to render this view.
      */
     private AbstractMapProvider mapProvider;
-    private final TranslationService ts;
-    private final ApplicationEntityManager aem;
-    private final BusinessEntityManager bem;
-    private final MetadataEntityManager mem;
-    private final PhysicalConnectionsService physicalConnectionsService;
-    private final ViewNodeIconGenerator iconGenerator;
-    private final Command cmdParentBack;
-    private final boolean drawingControl;
+    /**
+     * Reference to the translation service.
+     */
+    private TranslationService ts;
+    /**
+     * Reference to the Application Entity Manager.
+     */
+    private ApplicationEntityManager aem;
+    /**
+     * Reference to the Application Entity Manager.
+     */
+    private BusinessEntityManager bem;
+    /**
+     * Reference to the Application Entity Manager.
+     */
+    private MetadataEntityManager mem;
+    /**
+     * A service that performs the backend actions that allow managing connections-related actions.
+     */
+    private PhysicalConnectionsService physicalConnectionsService;
+    /**
+     * A service that generates icons for nodes.
+     */
+    private ViewNodeIconGenerator iconGenerator;
+    /**
+     * What to do when the "back" button is clicked.
+     */
+    private Command cmdParentBack;
+    /**
+     * Show drawing controls?
+     */
+    private boolean drawingControl;
     
-    public OutsidePlantView(
-        MetadataEntityManager mem, 
-        ApplicationEntityManager aem, 
-        BusinessEntityManager bem, 
-        PhysicalConnectionsService physicalConnectionService, 
-        TranslationService ts, 
-        ViewNodeIconGenerator iconGenerator,
-        boolean drawingControl,
-        Command cmdParentBack) {
-        
+    /**
+     * This constructor is suitable for read-only views
+     * @param mem
+     * @param aem
+     * @param bem
+     * @param ts
+     * @param iconGenerator
+     * @param drawingControl
+     * @param cmdParentBack 
+     */
+    public OutsidePlantView(MetadataEntityManager mem,  ApplicationEntityManager aem, 
+                              BusinessEntityManager bem, TranslationService ts, ViewNodeIconGenerator iconGenerator, 
+                              boolean drawingControl, Command cmdParentBack) {
         this.aem = aem;
         this.bem = bem;
         this.mem = mem;
-        this.physicalConnectionsService = physicalConnectionService;
         this.ts = ts;
         this.iconGenerator = iconGenerator;
         this.cmdParentBack = cmdParentBack;
         this.drawingControl = drawingControl;
     }
+    
+    /**
+     * This constructor should be used in views that will provide tools to manage connections.
+     * @param mem 
+     * @param aem
+     * @param bem
+     * @param physicalConnectionService
+     * @param ts
+     * @param iconGenerator
+     * @param drawingControl
+     * @param cmdParentBack 
+     */
+    public OutsidePlantView(MetadataEntityManager mem,  ApplicationEntityManager aem, 
+                              BusinessEntityManager bem, PhysicalConnectionsService physicalConnectionService, 
+                              TranslationService ts, ViewNodeIconGenerator iconGenerator, boolean drawingControl, Command cmdParentBack) {
+        this(mem, aem, bem, ts, iconGenerator, drawingControl, cmdParentBack);
+        this.physicalConnectionsService = physicalConnectionService;
+    }
+    
+    
 
     @Override
     public String getName() {
@@ -278,8 +326,12 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
             if (drawingControl)
                 addToolManager(this.mapProvider);
             return this.mapProvider.getComponent();
-        } catch (Exception ex) {
-            return new Label(String.format("An unexpected error occurred while loading the OSP view: %s", ex.getLocalizedMessage()));
+        } catch (InventoryException ex) {
+            return new Label(ex.getLocalizedMessage());
+        } 
+        catch (Exception ex) {
+            Logger.getLogger(OutsidePlantView.class.toString()).log(Level.SEVERE, ex.getMessage());
+            return new Label(ts.getTranslatedString("module.general.messages.unexpected-error"));
         }
     }
     
@@ -304,34 +356,39 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
             });
             
             outsidePlantTools.setAddPolylineCommand((source, target, path, cmdDeleteDummyEdge) -> {
-                DialogNewContainer dialogNewContainer = new DialogNewContainer(
-                    source, target, ts, aem, bem, mem, physicalConnectionsService, 
-                    container -> {
-                        try {
-                            BusinessObjectViewEdge viewEdge = new BusinessObjectViewEdge(container);
-                            viewEdge.getProperties().put(PropertyNames.CONTROL_POINTS, path); //NOI18N
-                            viewEdge.getProperties().put(PropertyNames.COLOR, //NOI18N
-                                UtilHtml.toHexString(new Color(mem.getClass(container.getClassName()).getColor())));
+                if (physicalConnectionsService == null)
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), 
+                            ts.getTranslatedString("module.general.messages.can-not-use-tool-in-context")).open();
+                else {
+                    DialogNewContainer dialogNewContainer = new DialogNewContainer(
+                        source, target, ts, aem, bem, mem, physicalConnectionsService, 
+                        container -> {
+                            try {
+                                BusinessObjectViewEdge viewEdge = new BusinessObjectViewEdge(container);
+                                viewEdge.getProperties().put(PropertyNames.CONTROL_POINTS, path); //NOI18N
+                                viewEdge.getProperties().put(PropertyNames.COLOR, //NOI18N
+                                    UtilHtml.toHexString(new Color(mem.getClass(container.getClassName()).getColor())));
 
-                            viewMap.addEdge(viewEdge);
-                            viewMap.attachSourceNode(viewEdge, viewMap.getNode(source));
-                            viewMap.attachTargetNode(viewEdge, viewMap.getNode(target));
-                            
-                            mapProvider.addPolyline(container, source, target, path, viewEdge.getProperties());
-                            dirty = true;
-                        } catch (MetadataObjectNotFoundException ex) {
-                            new SimpleNotification(
-                                ts.getTranslatedString("module.general.messages.error"), 
-                                ex.getLocalizedMessage()
-                            ).open();
+                                viewMap.addEdge(viewEdge);
+                                viewMap.attachSourceNode(viewEdge, viewMap.getNode(source));
+                                viewMap.attachTargetNode(viewEdge, viewMap.getNode(target));
+
+                                mapProvider.addPolyline(container, source, target, path, viewEdge.getProperties());
+                                dirty = true;
+                            } catch (MetadataObjectNotFoundException ex) {
+                                new SimpleNotification(
+                                    ts.getTranslatedString("module.general.messages.error"), 
+                                    ex.getLocalizedMessage()
+                                ).open();
+                            }
                         }
-                    }
-                );
-                dialogNewContainer.open();
-                dialogNewContainer.addOpenedChangeListener(event -> {
-                    if (!event.isOpened() && cmdDeleteDummyEdge != null)
-                        cmdDeleteDummyEdge.execute();
-                });
+                    );
+                    dialogNewContainer.open();
+                    dialogNewContainer.addOpenedChangeListener(event -> {
+                        if (!event.isOpened() && cmdDeleteDummyEdge != null)
+                            cmdDeleteDummyEdge.execute();
+                    });
+                }
             });
             
             outsidePlantTools.setDeleteMarkerCommand(ospNode -> {
@@ -340,27 +397,32 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
             });
             
             outsidePlantTools.setDeletePolylineCommand(ospEdge -> {
-                ConfirmDialog confirmDialog = new ConfirmDialog(ts, 
-                    ts.getTranslatedString("module.ospman.dialog.title.delete-connection"), 
-                    new Span(ts.getTranslatedString("module.ospman.dialog.content.delete-connection")), 
-                    ts.getTranslatedString("module.general.messages.ok"), () -> {
-                        try {
-                            Session session = UI.getCurrent().getSession().getAttribute(Session.class);
-                            physicalConnectionsService.deletePhysicalConnection(
-                                    ospEdge.getBusinessObject().getClassName(),
-                                    ospEdge.getBusinessObject().getId(),
-                                    session.getUser().getUserName());
-                            mapProvider.removePolyline(ospEdge.getBusinessObject());
-                            dirty = true;
-                        } catch (IllegalStateException | InventoryException ex) {
-                            new SimpleNotification(
-                                ts.getTranslatedString("module.general.messages.error"), 
-                                ex.getMessage()
-                            ).open();
+                if (physicalConnectionsService == null)
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), 
+                            ts.getTranslatedString("module.general.messages.can-not-use-tool-in-context")).open();
+                else {
+                    ConfirmDialog confirmDialog = new ConfirmDialog(ts, 
+                        ts.getTranslatedString("module.ospman.dialog.title.delete-connection"), 
+                        new Span(ts.getTranslatedString("module.ospman.dialog.content.delete-connection")), 
+                        ts.getTranslatedString("module.general.messages.ok"), () -> {
+                            try {
+                                Session session = UI.getCurrent().getSession().getAttribute(Session.class);
+                                physicalConnectionsService.deletePhysicalConnection(
+                                        ospEdge.getBusinessObject().getClassName(),
+                                        ospEdge.getBusinessObject().getId(),
+                                        session.getUser().getUserName());
+                                mapProvider.removePolyline(ospEdge.getBusinessObject());
+                                dirty = true;
+                            } catch (IllegalStateException | InventoryException ex) {
+                                new SimpleNotification(
+                                    ts.getTranslatedString("module.general.messages.error"), 
+                                    ex.getMessage()
+                                ).open();
+                            }
                         }
-                    }
-                );
-                confirmDialog.open();
+                    );
+                    confirmDialog.open();
+                }
             });
             
             outsidePlantTools.setSaveOspViewCommand(() -> {
@@ -515,11 +577,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
                                 this.viewMap.addEdge(anEdge);
                                 this.viewMap.attachSourceNode(anEdge, sourceNode);
                                 this.viewMap.attachTargetNode(anEdge, targetNode);
-                            } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
-                                new SimpleNotification(
-                                    ts.getTranslatedString("module.general.messages.error"), 
-                                    String.format("The object of class %s and id %s could not be found", objectClass, objectId)
-                                ).open();
+                            } catch (InventoryException ex) {
+                                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
                             }
                         } else {
                             if (reader.getName().equals(qLabel)) {
@@ -541,10 +600,9 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
             }
             reader.close();
         } catch (Exception ex) {
-            new SimpleNotification(
-                ts.getTranslatedString("module.general.messages.error"), 
-                String.format("An unexpected error appeared while parsing the OSP view: " + ex.getLocalizedMessage())
-            ).open();
+            Logger.getLogger(OutsidePlantView.class.toString()).log(Level.SEVERE, ex.getMessage());
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), 
+                    ts.getTranslatedString("module.general.messages.unexpected-error")).open();
         }
     }
     

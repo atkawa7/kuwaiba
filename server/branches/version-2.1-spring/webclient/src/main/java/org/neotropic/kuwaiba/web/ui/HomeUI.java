@@ -16,7 +16,8 @@
 
 package org.neotropic.kuwaiba.web.ui;
 
-import com.neotropic.kuwaiba.modules.commercial.ospman.widgets.SimpleMapDashboardWidget;
+import com.neotropic.kuwaiba.modules.commercial.ospman.widgets.AllBuildingsMapWidget;
+import com.neotropic.kuwaiba.modules.commercial.ospman.widgets.EmptyMapDashboardWidget;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -29,7 +30,6 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
-import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -63,11 +63,6 @@ public class HomeUI extends VerticalLayout implements BeforeEnterObserver {
      */
     @Autowired
     private MetadataEntityManager mem;
-    /**
-     * Reference to the Physical Connection Service.
-     */
-    @Autowired
-    private PhysicalConnectionsService physicalConnectionsService;
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
@@ -82,6 +77,6 @@ public class HomeUI extends VerticalLayout implements BeforeEnterObserver {
         setSpacing(false);
         
         getUI().ifPresent(ui -> ui.getPage().setTitle(ts.getTranslatedString("module.login.ui.home")));
-        add(new SimpleMapDashboardWidget(aem, bem, mem, physicalConnectionsService, ts, resourceFactory));
+        add(new AllBuildingsMapWidget(aem, bem, mem, ts, resourceFactory));
     }
 }
