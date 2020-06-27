@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import org.neotropic.kuwaiba.core.apis.integration.AbstractCommercialModule;
+import org.neotropic.kuwaiba.core.apis.integration.modules.AbstractCommercialModule;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Pool;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;

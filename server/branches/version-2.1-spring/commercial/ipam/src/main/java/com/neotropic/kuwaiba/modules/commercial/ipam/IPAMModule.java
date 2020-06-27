@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import org.neotropic.kuwaiba.core.apis.integration.AbstractCommercialModule;
+import org.neotropic.kuwaiba.core.apis.integration.modules.AbstractCommercialModule;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Pool;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
@@ -52,18 +52,6 @@ public class IPAMModule extends AbstractCommercialModule {
     */
     @Autowired
     private TranslationService ts;
-    /**
-     * The MetadataEntityManager instance
-     */
-    private MetadataEntityManager mem;
-    /**
-     * The BusinessEntityManager instance
-     */
-    private BusinessEntityManager bem;
-    /**
-     * The ApplicationEntityManager instance
-     */
-    private ApplicationEntityManager aem;
     /**
      * This relationship is used to connect a GenericCommunicationElement with
      * a subnet's IP address 

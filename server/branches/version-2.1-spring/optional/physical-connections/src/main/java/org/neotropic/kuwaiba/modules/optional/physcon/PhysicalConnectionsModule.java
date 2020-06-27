@@ -16,7 +16,7 @@
 
 package org.neotropic.kuwaiba.modules.optional.physcon;
 
-import org.neotropic.kuwaiba.core.apis.integration.AbstractModule;
+import org.neotropic.kuwaiba.core.apis.integration.modules.AbstractModule;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
