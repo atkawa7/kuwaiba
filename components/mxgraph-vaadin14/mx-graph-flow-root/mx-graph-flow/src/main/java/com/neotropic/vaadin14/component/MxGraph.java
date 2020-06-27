@@ -15,8 +15,10 @@
  */
 package com.neotropic.vaadin14.component;
 
+import com.google.gson.Gson;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.shared.Registration;
@@ -30,7 +32,7 @@ import java.util.ListIterator;
  */
 @Tag("mx-graph")
 @JsModule("./mx-graph/mx-graph.js")
-public class MxGraph extends Component {
+public class MxGraph extends Component implements HasComponents {
     private static final String PROPERTY_GRID = "grid";
     private static final String PROPERTY_WIDTH = "width";
     private static final String PROPERTY_HEIGHT = "height";
@@ -39,10 +41,14 @@ public class MxGraph extends Component {
     
     private List<MxGraphNode> nodes;
     private List<MxGraphEdge> edges;
+    private List<MxGraphLayer> layers;
+    private List<MxCellStyle> styles;
     
     public MxGraph() {
         nodes = new ArrayList();
         edges = new ArrayList();
+        layers = new ArrayList();
+        styles = new ArrayList();
     }
     
      public String getGrid() {
@@ -59,6 +65,7 @@ public class MxGraph extends Component {
         
     public void setWidth(String prop) {
         getElement().setProperty(PROPERTY_WIDTH, prop);
+        getElement().getStyle().set(PROPERTY_WIDTH, prop);
     }
     
     public String getHeight() {
@@ -67,6 +74,7 @@ public class MxGraph extends Component {
         
     public void setHeight(String prop) {
         getElement().setProperty(PROPERTY_HEIGHT, prop);
+        getElement().getStyle().set(PROPERTY_HEIGHT, prop);
     }
        
     public Registration addClickEdgeListener(ComponentEventListener<MxGraphClickEdgeEvent> clickEdgeListener) {
@@ -86,17 +94,30 @@ public class MxGraph extends Component {
     }
     
     public void addCell(MxGraphCell mxGraphCell) {
-        getElement().appendChild(mxGraphCell.getElement());     
+        getElement().appendChild(mxGraphCell.getElement());    
+        add(mxGraphCell);
     }
    
     public void addNode(MxGraphNode graphNode) {
         nodes.add(graphNode);
-        getElement().appendChild(graphNode.getElement());     
+        add(graphNode);
+//        getElement().appendChild(graphNode.getElement());     
     }
     
     public void addEdge(MxGraphEdge graphEdge) {
         edges.add(graphEdge);
-        getElement().appendChild(graphEdge.getElement());     
+        add(graphEdge);
+//        getElement().appendChild(graphEdge.getElement());     
+    }
+    public void addLayer(MxGraphLayer graphLayer) {
+        layers.add(graphLayer);
+        getElement().appendChild(graphLayer.getElement());     
+    }
+    public void addCellStyle(MxCellStyle style) {
+        if (styles.contains(style))
+            styles.remove(style);
+        styles.add(style);     
+        getElement().callJsFunction("addCellStyle", style.getName(), style.getAsJson());
     }
 
     public List<MxGraphNode> getNodes() {
@@ -114,10 +135,20 @@ public class MxGraph extends Component {
     public void setEdges(List<MxGraphEdge> edges) {
         this.edges = edges;
     }
+
+    public List<MxGraphLayer> getLayers() {
+        return layers;
+    }
+
+    public void setLayers(List<MxGraphLayer> layers) {
+        this.layers = layers;
+    }
     
     public void setFullSize() {
         setWidth("100%");
         setHeight("100%");
+        getElement().getStyle().set(PROPERTY_WIDTH, "100%");
+        getElement().getStyle().set(PROPERTY_HEIGHT, "100%");
     }
     
     public boolean getIsCellEditable() {
@@ -176,6 +207,19 @@ public class MxGraph extends Component {
     public void removeEdge(MxGraphEdge edge) {
         getElement().removeChild(edge.getElement());
         edges.remove(edge);
+    }
+    
+    public void removeLayer(MxGraphLayer layer) {
+        getElement().removeChild(layer.getElement());
+        layers.remove(layer);
+    }
+    
+     public void executeStackLayout(String cellId, Boolean horizontal, Integer spacing ) {
+       getElement().callJsFunction("executeStackLayout", cellId , horizontal , spacing );
+    }
+     
+    public void alignCells(String alignType, String [] cellIds, Integer coordinate) {
+       getElement().callJsFunction("alignCells", alignType , new Gson().toJson(cellIds), coordinate);
     }
 
  

@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.Synchronize;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
@@ -33,12 +34,13 @@ import java.util.List;
  */
 @Tag("mx-graph-cell")
 @JsModule("./mx-graph/mx-graph-cell.js")
-public class MxGraphCell extends Component {
+public class MxGraphCell extends Component implements HasComponents {
     
     public static final String PROPERTY_UUID = "uuid";   
     public static final String PROPERTY_SOURCE = "source";
     public static final String PROPERTY_TARGET = "target";   
     public static final String PROPERTY_EDGE = "edge";
+    public static final String PROPERTY_LAYER = "layer";
     public static final String PROPERTY_VERTEX = "vertex";
     public static final String PROPERTY_SOURCE_LABEL = "sourceLabel";
     public static final String PROPERTY_TARGET_LABEL = "targetLabel";
@@ -56,7 +58,10 @@ public class MxGraphCell extends Component {
     public static final String PROPERTY_FONT_COLOR = "fontColor";
     public static final String PROPERTY_CURVED = "curved";
     public static final String PROPERTY_DASHED = "dashed";
-    
+    public static final String PROPERTY_CELL_LAYER = "cellLayer";
+    public static final String PROPERTY_CELL_PARENT = "cellParent";
+    public static final String PROPERTY_STYLE_NAME = "styleName";
+        
     public MxGraphCell() {
     }
     
@@ -72,16 +77,16 @@ public class MxGraphCell extends Component {
         return getElement().getProperty(PROPERTY_SOURCE);
     }
         
-    public void setSource(String prop) {
-        getElement().setProperty(PROPERTY_SOURCE, prop);
+    public void setSource(String sourceId) {
+        getElement().setProperty(PROPERTY_SOURCE, sourceId);
     }
     
     public String getTarget() {
         return getElement().getProperty(PROPERTY_TARGET);
     }
         
-    public void setTarget(String prop) {
-        getElement().setProperty(PROPERTY_TARGET, prop);
+    public void setTarget(String targetId){
+        getElement().setProperty(PROPERTY_TARGET, targetId);
     }
     
     public String getIsVertex() {
@@ -99,6 +104,31 @@ public class MxGraphCell extends Component {
     public void setIsEdge(boolean prop) {
         getElement().setProperty(PROPERTY_EDGE, prop);
     }
+    
+    public boolean getIsLayer() {
+        return getElement().getProperty(PROPERTY_LAYER,false);
+    }
+        
+    public void setIsLayer(boolean layerId) {
+        getElement().setProperty(PROPERTY_LAYER, layerId);
+    }
+    
+    public String getCellLayer() {
+        return getElement().getProperty(PROPERTY_CELL_LAYER);
+    }
+        
+    public void setCellLayer(String layerId) {
+        getElement().setProperty(PROPERTY_CELL_LAYER, layerId);
+    }
+    
+    public String getCellParent() {
+        return getElement().getProperty(PROPERTY_CELL_PARENT);
+    }
+        
+    public void setCellParent(String cellId) {
+        getElement().setProperty(PROPERTY_CELL_PARENT, cellId);
+    }
+    
     @Synchronize(property = "targetLabel", value = "target-label-changed")
     public String getTargetLabel() {
         return getElement().getProperty(PROPERTY_TARGET_LABEL);
@@ -147,6 +177,7 @@ public class MxGraphCell extends Component {
     public void setHeight(int prop) {
         getElement().setProperty(PROPERTY_HEIGHT, prop);
     }
+    
     @Synchronize(property = "x", value = "x-changed")
     public int getX() {
         return getElement().getProperty(PROPERTY_X, 0);
@@ -248,11 +279,32 @@ public class MxGraphCell extends Component {
         getElement().setProperty(PROPERTY_CURVED, prop ? "1" : "0");
     }
     
+    public String getStyleName() {
+        return getElement().getProperty(PROPERTY_STYLE_NAME);
+    }
+        
+    public void setStyleName(String prop) {
+        getElement().setProperty(PROPERTY_STYLE_NAME, prop);
+    }
+    
+    public void setFillColor(String prop) {
+        getElement().setProperty(MxConstants.STYLE_FILLCOLOR, prop);
+    }
+    
+    public void setShape(String prop) {
+        getElement().setProperty(MxConstants.STYLE_SHAPE, prop);
+    }
+    
     public void setGeometry(int x, int y, int width, int height) {
         setX(x);
         setY(y);
         setHeight(height);
         setWidth(width);
+    }
+    
+    public void addCell(MxGraphCell mxGraphCell) {
+//        getElement().appendChild(mxGraphCell.getElement());   
+        add(mxGraphCell);
     }
     
     public Registration addClickEdgeListener(ComponentEventListener<MxGraphClickEdgeEvent> clickEdgeListener) {
@@ -263,11 +315,15 @@ public class MxGraphCell extends Component {
         return super.addListener(MxGraphCellPositionChanged .class, eventListener);
     }
     
-     public void addPoint(MxGraphPoint mxGraphPoint) {
+    public void addPoint(MxGraphPoint mxGraphPoint) {
         getElement().appendChild(mxGraphPoint.getElement());     
     }
      
-     public void updatePosition() {
+    public void updatePosition() {
          getElement().callJsFunction("updatePosition");
+     }
+     
+    public void toggleVisibility() {
+         getElement().callJsFunction("toggleVisibility");
      }
 }
