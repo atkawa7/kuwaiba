@@ -1,14 +1,19 @@
 package com.neotropic.vaadin14.component.spring;
 
+import com.neotropic.vaadin14.component.MxCellStyle;
+import com.neotropic.vaadin14.component.MxConstants;
 import com.neotropic.vaadin14.component.MxGraph;
 import com.neotropic.vaadin14.component.MxGraphCell;
 import com.neotropic.vaadin14.component.MxGraphCellPositionChanged;
 import com.neotropic.vaadin14.component.MxGraphCellUnselectedEvent;
 import com.neotropic.vaadin14.component.MxGraphClickEdgeEvent;
+import com.neotropic.vaadin14.component.MxGraphLayer;
+import com.neotropic.vaadin14.component.MxGraphNode;
 import com.neotropic.vaadin14.component.MxGraphPoint;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
@@ -28,7 +33,6 @@ public class MainView extends VerticalLayout {
         mxGraph.setWidth("400px");
         mxGraph.setHeight("400px");
        
-       
         Button addButton = new Button("Add Cell"); // (3)
 
         addButton.addClickListener(click -> {
@@ -39,10 +43,19 @@ public class MainView extends VerticalLayout {
      }
   );
         
-          MxGraphCell nodeA = new MxGraphCell();          
-          MxGraphCell nodeB = new MxGraphCell();
-          MxGraphCell edge = new MxGraphCell();
+        MxGraphCell nodeA = new MxGraphCell();          
+        MxGraphCell nodeB = new MxGraphCell();
+        MxGraphCell nodeC = new MxGraphNode();
+        MxGraphCell nodeD = new MxGraphNode();
+        MxGraphCell edge = new MxGraphCell();
+        MxGraphLayer layerEdge = new MxGraphLayer();
+        MxGraphLayer layerNodes = new MxGraphLayer();
           
+        MxCellStyle customStyle = new MxCellStyle("customStyle");
+        customStyle.addProperty(MxConstants.STYLE_SHAPE, MxConstants.SHAPE_RECTANGLE);
+        customStyle.addProperty(MxConstants.STYLE_STROKECOLOR, "red");
+        customStyle.addProperty(MxConstants.STYLE_FILLCOLOR, "blue");
+                              
         nodeA.addCellPositionChangedListener(new ComponentEventListener<MxGraphCellPositionChanged>() {
             @Override
             public void onComponentEvent(MxGraphCellPositionChanged t) {
@@ -74,22 +87,33 @@ public class MainView extends VerticalLayout {
         
         Button addVerticesEdge = new Button("Add Demo Vertices Edge"); // (3)
 
-        addVerticesEdge.addClickListener(click -> {
-     // (1)
-
-          
-          nodeA.setUuid("1");
+          layerNodes.setUuid("layerNodes");
+          nodeA.setUuid("nodeA");
           nodeA.setImage("images/press32.png");
           nodeA.setLabel("Press");
           nodeA.setGeometry(20, 100, 80, 20);
           nodeA.setIsVertex(true);
-          nodeB.setUuid("2");
+          nodeA.setCellLayer(layerNodes.getUuid());
+          nodeB.setUuid("nodeB");
           nodeB.setImage("images/print32.png");
           nodeB.setLabel("print");
-          nodeB.setGeometry(200, 100, 80, 20);
+          nodeB.setGeometry(200, 100, 80, 200);
           nodeB.setIsVertex(true);
+          nodeB.setCellLayer(layerNodes.getUuid());
+          nodeC.setUuid("nodeC");
+          nodeC.setLabel("Sub Cell");
+          nodeC.setGeometry(10, 30, 30, 60); 
+          nodeC.setCellParent("nodeB");
+          nodeD.setUuid("nodeD");
+          nodeD.setLabel("Sub Cell 2");
+          nodeD.setGeometry(10, 30, 30, 60); 
+          nodeD.setCellParent("nodeB");
 
-          nodeB.setUuid("2");
+          
+         //set the edge layer
+          layerEdge.setUuid("edgeLayer");
+          
+        //set ethe edge info          
           edge.setIsEdge(true);
           edge.setSourceLabel("Source Label");
           edge.setTargetLabel("Target Label");
@@ -102,6 +126,9 @@ public class MainView extends VerticalLayout {
           edge.setIsCurved(true);
           edge.setIsDashed(true);
 //          edge.setFontColor("white");
+          edge.setCellLayer("edgeLayer");
+
+         
 
          // ArrayList<Point> points = new ArrayList<>();
           JsonArray points = Json.createArray();
@@ -118,29 +145,32 @@ public class MainView extends VerticalLayout {
 
           edge.setPoints(points.toJson());
        
+          add(mxGraph);
+          mxGraph.addLayer(layerNodes);     // remember the order in which objects are added
+          mxGraph.addLayer(layerEdge);     
           mxGraph.addCell(nodeA);
           mxGraph.addCell(nodeB);
+          mxGraph.addCell(nodeC);
+          mxGraph.addCell(nodeD);
           mxGraph.addCell(edge);
-     }
-  );
-          Button addPoint = new Button("Add Demo Point Edge"); // (3)
+//          nodeB.addCell(nodeC); // add the nodeC as children of the nodeB
+//          nodeB.addCell(nodeD); // add the nodeC as children of the nodeB
 
-        addPoint.addClickListener(click -> {
-     // (1)
-          MxGraphPoint pointA = new MxGraphPoint();          
 
-          pointA.setX(105);
-          pointA.setY(50);
-
-         
-          edge.addPoint(pointA);
-
-          
-     }
-  );              
+//          Button addPoint = new Button("Add Demo Point Edge"); // (3)
+//
+//        addPoint.addClickListener(click -> {
+//     // (1)
+//          MxGraphPoint pointA = new MxGraphPoint();          
+//          pointA.setX(105);
+//          pointA.setY(50);        
+//          edge.addPoint(pointA);
+//    
+//     }
+//  );               
         mxGraph.setGrid("images/grid.gif");
         
-        Button btnPointsChanged = new Button("Show Updated Data", click -> {      
+        Button btnShowObjectsData = new Button("Show Updated Data", click -> {      
 
           Notification.show("Points edge: "+ edge.getPoints());
           Notification.show("Position Vertex Press: X: " + nodeA.getX() + " Y: " + nodeA.getY());         
@@ -154,13 +184,31 @@ public class MainView extends VerticalLayout {
 
           
         
-     });
+     }); 
         
-        add(mxGraph);
-        add(btnPointsChanged);
-        add(addButton);
-        add(addVerticesEdge);
-        add(addPoint);
+     Button btnToggleVisivilityEdgeLager = new Button("Hide/Show Edge Layer", evt -> {
+         layerEdge.toggleVisibility();
+     });
+     
+     Button btnToggleVisivilityNodesLager = new Button("Hide/Show Nodes Layer", evt -> {
+         layerNodes.toggleVisibility();
+     });
+     
+     Button btnToggleLayoutNodePrint = new Button("Toggle Vertical/horizontal Layout Node Print", evt -> {
+         mxGraph.executeStackLayout("nodeB", true, 10);
+     });
+     
+     Button btnCustomStyle = new Button("Add Custom Style to Sheet", evt -> {
+         mxGraph.addCellStyle(customStyle);
+     });
+     
+      Button btnCustomStyleNode = new Button("Add Custom Style to Node Print", evt -> {
+         nodeB.setStyleName("customStyle");
+     });
+
+     add(new HorizontalLayout(addVerticesEdge, btnToggleVisivilityNodesLager, btnToggleVisivilityEdgeLager, btnShowObjectsData, btnToggleLayoutNodePrint));
+     add(new HorizontalLayout(btnCustomStyle, btnCustomStyleNode));
+//        add(addButton);
     }
 
 }
