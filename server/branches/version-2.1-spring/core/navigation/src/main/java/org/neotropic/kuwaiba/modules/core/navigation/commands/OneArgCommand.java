@@ -16,7 +16,7 @@
 package org.neotropic.kuwaiba.modules.core.navigation.commands;
 
 /**
- * A command which has one argument
+ * A command with a single argument
  * @param <T> The type of argument
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */

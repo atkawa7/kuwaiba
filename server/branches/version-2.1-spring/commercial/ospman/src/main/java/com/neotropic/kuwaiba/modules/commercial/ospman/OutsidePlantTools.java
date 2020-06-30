@@ -37,8 +37,10 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import java.util.Arrays;
 import java.util.List;
+import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.commands.FourArgsCommand;
 import org.neotropic.kuwaiba.modules.core.navigation.commands.OneArgCommand;
@@ -67,9 +69,8 @@ public class OutsidePlantTools extends HorizontalLayout {
     private OneArgCommand<OSPNode> cmdDeleteMarker;
     private OneArgCommand<OSPEdge> cmdDeletePolyline;
     
-    public OutsidePlantTools(BusinessEntityManager bem, 
-        TranslationService translationService, 
-        AbstractMapProvider mapProvider, ToolRegister toolRegister) {
+    public OutsidePlantTools(AbstractMapProvider mapProvider, ToolRegister toolRegister, 
+                MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem, TranslationService translationService) {
         
         this.translationService = translationService;
         ToolHand toolHand = new ToolHand();
@@ -161,7 +162,7 @@ public class OutsidePlantTools extends HorizontalLayout {
                 
                 if (event instanceof NodeInfoWindowRequestEvent) {
                     NodeInfoWindowRequestEvent theEvent = (NodeInfoWindowRequestEvent) event;
-                    NodeInfoWindowContent content = new NodeInfoWindowContent(theEvent.getOspNode(), container, translationService, bem);
+                    NodeInfoWindowContent content = new NodeInfoWindowContent(theEvent.getOspNode(), container, translationService, mem, aem, bem);
                     content.setDeleteNodeCommand(cmdDeleteMarker);
                     container.setInfoWindowContent(content);
                     container.openInfoWindow(theEvent.getOspNode().getBusinessObject());

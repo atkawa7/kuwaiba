@@ -339,7 +339,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
         if (mapProvider instanceof ToolRegister && 
             mapProvider.getComponent() instanceof HasComponents) {
             
-            OutsidePlantTools outsidePlantTools = new OutsidePlantTools(bem, ts, (AbstractMapProvider) mapProvider, (ToolRegister) mapProvider);
+            // TODO: Por qu
+            OutsidePlantTools outsidePlantTools = new OutsidePlantTools((AbstractMapProvider) mapProvider, (ToolRegister) mapProvider, mem, aem, bem, ts);
             ((HasComponents) mapProvider.getComponent()).add(outsidePlantTools);
             
             outsidePlantTools.setAddmarkerCommand((businessObject, position) -> {
