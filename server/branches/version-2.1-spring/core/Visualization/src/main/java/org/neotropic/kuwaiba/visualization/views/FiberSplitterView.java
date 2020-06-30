@@ -20,12 +20,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObject;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.visualization.api.AbstractDetailedView;
 import org.neotropic.util.visual.views.AbstractViewEdge;
 import org.neotropic.util.visual.views.AbstractViewNode;
@@ -92,11 +94,11 @@ public class FiberSplitterView extends AbstractDetailedView {
     public Component getAsComponent() throws InvalidArgumentException {
 
         if (businessObject != null) {
-            int widthPort = 50, heightPort = 40, startY = 30, widthMain = 240, spacingGroup = 20;
+            int widthPort = 50, heightPort = 40, widthExternalPort= 30, heightExternalPort=30, startY = 30, widthMain = 240, spacingGroup = 20;
             VerticalLayout lytGraph = new VerticalLayout();
             mxGraph = new MxGraph();
             mxGraph.setWidth("670px");
-            mxGraph.setHeight("300px");
+            mxGraph.setHeight("100%");
             mxGraph.setGrid("img/grid.gif");
             lytGraph.add(mxGraph);
             MxGraphNode mainBox = new MxGraphNode();
@@ -149,15 +151,19 @@ public class FiberSplitterView extends AbstractDetailedView {
                     inLinks = bem.getSpecialAttribute(inPort.getClassName(), inPort.getId(), "endpointB");
                 
                 if (inLinks != null && inLinks.size() > 0) {
-                    ClassMetadata theClass = mem.getClass(inLinks.get(0).getClassName());
-                    String hexColor = String.format("#%06x", (0xFFFFFF & theClass.getColor()));
+                    BusinessObject theWholeLink = bem.getObject(inLinks.get(0).getClassName(), inLinks.get(0).getId());
+                    String hexColor;
+                    if (theWholeLink.getAttributes().containsKey(Constants.PROPERTY_COLOR) && theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR) != null)
+                        hexColor =  (String) theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR);//String.format("#%06x", (0xFFFFFF & (int) theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR)));
+                    else
+                        hexColor = "steelblue";  //default color
                     nodeIn.setFillColor(hexColor);
                     startIn = new MxGraphNode();
                     startIn.setUuid("s1");
                     startIn.setLabel("");
-                    startIn.setGeometry(10, startY + (int) (((lstMirrors.size() / 2.0) * heightPort) - (heightPort / 2)), heightPort, heightPort);
+                    startIn.setGeometry(10, startY + (int) (((lstMirrors.size() / 2.0) * heightPort) - (heightPort / 2) + ((heightPort - heightExternalPort)/2)), widthExternalPort, heightExternalPort);
                     startIn.setFillColor("white");
-                    startIn.setShape(MxConstants.SHAPE_ELLIPSE);
+//                    startIn.setShape(MxConstants.SHAPE_ELLIPSE);
                     edgeIn = new MxGraphEdge();
                     edgeIn.setSource("s1");
                     edgeIn.setTarget("in");
@@ -180,7 +186,6 @@ public class FiberSplitterView extends AbstractDetailedView {
                     edgeMirror.setSource("in");
                     edgeMirror.setTarget("out" + i);
                     edgeMirror.setStrokeWidth(1);
-                    edgeMirror.setLabel("mirrorMultiple");
                     mxGraph.addEdge(edgeMirror);
                     if (outPort != null) {
                         nodeOut.setLabel(outPort.getName());
@@ -189,15 +194,19 @@ public class FiberSplitterView extends AbstractDetailedView {
                             outLinks = bem.getSpecialAttribute(outPort.getClassName(), outPort.getId(), "endpointB");
                         
                         if (outLinks != null && outLinks.size() > 0) {
-                            ClassMetadata theClass = mem.getClass(outLinks.get(0).getClassName());
-                            String hexColor = String.format("#%06x", (0xFFFFFF & theClass.getColor()));
+                            BusinessObject theWholeLink = bem.getObject(outLinks.get(0).getClassName(), outLinks.get(0).getId());
+                            String hexColor;
+                            if (theWholeLink.getAttributes().containsKey(Constants.PROPERTY_COLOR) && theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR) != null)
+                                hexColor =  (String) theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR);//String.format("#%06x", (0xFFFFFF & (int) theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR)));
+                            else
+                                hexColor = "steelblue";  //default color
                             nodeOut.setFillColor(hexColor);
                             endOut = new MxGraphNode();
                             endOut.setUuid("e" + i);
                             endOut.setLabel("");
-                            endOut.setGeometry(600, startY + (heightPort) * (i - 1), heightPort, heightPort);
+                            endOut.setGeometry(600, startY + (heightPort) * (i - 1) + ((heightPort - heightExternalPort)/2), widthExternalPort, heightExternalPort);
                             endOut.setFillColor("white");
-                            endOut.setShape(MxConstants.SHAPE_ELLIPSE);
+//                            endOut.setShape(MxConstants.SHAPE_ELLIPSE);
                             edgeOut = new MxGraphEdge();
                             edgeOut.setSource("out" + i);
                             edgeOut.setTarget("e" + i);
