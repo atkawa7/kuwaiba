@@ -35,7 +35,7 @@ class MxGraph extends PolymerElement {
         }
       </style>
       <div id="graphContainer" 
-      style="overflow:hidden;width:[[width]];height:[[height]];background:url([[grid]])">
+      style="overflow:scroll;width:[[width]];height:[[height]];min-height:300px;background:url([[grid]])">
       </div>
       <slot></slot>
     `;
