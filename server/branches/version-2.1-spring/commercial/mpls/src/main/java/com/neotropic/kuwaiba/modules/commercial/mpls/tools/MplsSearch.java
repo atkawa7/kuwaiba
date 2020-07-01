@@ -83,7 +83,7 @@ public class MplsSearch extends Div {
                         lytContent.setPadding(false);
                         lytContent.setMargin(false);
                         
-                        List<BusinessObjectLight> lstEquipmentsSearch = bem.getObjectsWithFilterLight(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, Constants.PROPERTY_NAME, event.getValue());              
+                        List<BusinessObjectLight> lstEquipmentsSearch = bem.getSuggestedObjectsWithFilter(event.getValue(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, 10);              
                         if (!lstEquipmentsSearch.isEmpty()) {
                             
                             Grid<BusinessObjectLight> gridEquipments = new Grid();

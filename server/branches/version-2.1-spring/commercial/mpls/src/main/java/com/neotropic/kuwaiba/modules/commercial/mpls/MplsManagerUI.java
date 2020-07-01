@@ -41,7 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * to different functionalities are presented in a single place.
  * @author Orlando Paz {@literal <Orlando.Paz@kuwaiba.org>}
  */
-@Route(value = "mpls", layout = MplsLayout.class)
+@Route(value = "mpls-networks", layout = MplsLayout.class)
 public class MplsManagerUI extends VerticalLayout {
 
     @Autowired

@@ -27,12 +27,14 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermit
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 
 /**
  * This class implements the functionality corresponding to the MPLS module
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
+@Component
 public class MplsModule extends AbstractCommercialModule {
     
     /*
