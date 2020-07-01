@@ -13,11 +13,14 @@ import com.neotropic.vaadin14.component.MxGraphNode;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObject;
@@ -103,14 +106,13 @@ public class FiberSplitterView extends AbstractDetailedView {
             lytGraph.add(mxGraph);
             MxGraphNode mainBox = new MxGraphNode();
             mainBox.setUuid("main");
-            mainBox.setLabel("Fiber Splitter");
+            mainBox.setLabel(businessObject.getName());
             mainBox.setGeometry(220, startY, widthMain, 100);
             mxGraph.addNode(mainBox);
             try {
                 LinkedHashMap<BusinessObjectLight, BusinessObjectLight> mapPorts = new LinkedHashMap<>();
                 List<BusinessObjectLight> lstOpticalPorts = bem.getChildrenOfClassLight(businessObject.getId(), businessObject.getClassName(), "OpticalPort", -1);
-                lstOpticalPorts.stream().sorted((object1, object2) -> object1.getName().compareTo(object2.getName()));
-
+                lstOpticalPorts = lstOpticalPorts.stream().sorted((object1, object2) -> object1.getName().compareTo(object2.getName())).collect(Collectors.toList());
                 BusinessObjectLight inPort = null;
                 for (BusinessObjectLight port : lstOpticalPorts) {
                     if (port.getName().toLowerCase().startsWith("in")) {
@@ -145,6 +147,7 @@ public class FiberSplitterView extends AbstractDetailedView {
                 nodeIn.setLabel(inPort.getName());
                 nodeIn.setGeometry(0, (int) (((lstMirrors.size() / 2.0) * heightPort) - (heightPort / 2)), widthPort, heightPort);
                 nodeIn.setCellParent("main");
+                nodeIn.setVerticalLabelPosition(MxConstants.ALIGN_MIDDLE);
                 mxGraph.addNode(nodeIn);
                 List<BusinessObjectLight> inLinks = bem.getSpecialAttribute(inPort.getClassName(), inPort.getId(), "endpointA");
                 if (inLinks == null || inLinks.isEmpty()) 
@@ -163,6 +166,7 @@ public class FiberSplitterView extends AbstractDetailedView {
                     startIn.setLabel("");
                     startIn.setGeometry(10, startY + (int) (((lstMirrors.size() / 2.0) * heightPort) - (heightPort / 2) + ((heightPort - heightExternalPort)/2)), widthExternalPort, heightExternalPort);
                     startIn.setFillColor("white");
+                    startIn.setVerticalLabelPosition(MxConstants.ALIGN_MIDDLE);
 //                    startIn.setShape(MxConstants.SHAPE_ELLIPSE);
                     edgeIn = new MxGraphEdge();
                     edgeIn.setSource("s1");
@@ -181,6 +185,7 @@ public class FiberSplitterView extends AbstractDetailedView {
                     nodeOut.setUuid("out" + i);
                     nodeOut.setGeometry(0, heightPort * (i - 1), widthPort, heightPort);
                     nodeOut.setCellParent("gout");
+                    nodeOut.setVerticalLabelPosition(MxConstants.ALIGN_MIDDLE);
                     mxGraph.addNode(nodeOut);
                     edgeMirror = new MxGraphEdge();
                     edgeMirror.setSource("in");
@@ -206,6 +211,7 @@ public class FiberSplitterView extends AbstractDetailedView {
                             endOut.setLabel("");
                             endOut.setGeometry(600, startY + (heightPort) * (i - 1) + ((heightPort - heightExternalPort)/2), widthExternalPort, heightExternalPort);
                             endOut.setFillColor("white");
+                            nodeOut.setVerticalLabelPosition(MxConstants.ALIGN_MIDDLE);
 //                            endOut.setShape(MxConstants.SHAPE_ELLIPSE);
                             edgeOut = new MxGraphEdge();
                             edgeOut.setSource("out" + i);
