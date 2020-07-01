@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: true
+OpenIDE-Module: com.neotropic.inventory.modules.sdh/1
+OpenIDE-Module-Implementation-Version: 1
+OpenIDE-Module-Localizing-Bundle: com/neotropic/inventory/modules/sdh/Bundle.properties
+OpenIDE-Module-Requires: org.openide.windows.WindowManager
+

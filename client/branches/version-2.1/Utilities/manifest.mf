@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.inventory.utilities/1
+OpenIDE-Module-Implementation-Version: 1
+OpenIDE-Module-Localizing-Bundle: org/inventory/utilities/Bundle.properties
+OpenIDE-Module-Requires: 
+  org.openide.windows.IOProvider,
+  org.openide.windows.WindowManager
+
