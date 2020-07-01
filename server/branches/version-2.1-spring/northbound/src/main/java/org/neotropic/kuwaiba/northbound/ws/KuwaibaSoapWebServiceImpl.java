@@ -17,7 +17,6 @@
 package org.neotropic.kuwaiba.northbound.ws;
 
 import com.neotropic.kuwaiba.modules.commercial.sdh.SDHContainerLinkDefinition;
-import com.neotropic.kuwaiba.modules.commercial.sdh.SDHModule;
 import com.neotropic.kuwaiba.modules.commercial.sdh.SDHPosition;
 import com.neotropic.kuwaiba.modules.commercial.sdh.persistence.SdhService;
 import java.util.ArrayList;

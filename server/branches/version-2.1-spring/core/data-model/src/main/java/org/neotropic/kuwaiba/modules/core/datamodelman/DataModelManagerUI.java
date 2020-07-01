@@ -608,7 +608,7 @@ public class DataModelManagerUI extends VerticalLayout {
         tblClassAttributes.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         tblClassAttributes.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         tblClassAttributes.addColumn(AttributeMetadata::getName)
-                .setHeader(ts.getTranslatedString("module.general.labels.attributenamme"))
+                .setHeader(ts.getTranslatedString("module.general.labels.attributename"))
                 .setKey(ts.getTranslatedString("module.general.labels.name"));
         
         tblClassAttributes.addItemClickListener(ev -> {

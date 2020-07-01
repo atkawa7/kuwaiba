@@ -99,8 +99,6 @@ public class NodeInfoWindowContent extends VerticalLayout {
                         }
                 });
                 
-                
-                
                 VerticalLayout lytContent = new VerticalLayout(tblContents);
                 lytContent.addClassName("widgets-layout-dialog-list");
                 wdwContents.add(lytContent);

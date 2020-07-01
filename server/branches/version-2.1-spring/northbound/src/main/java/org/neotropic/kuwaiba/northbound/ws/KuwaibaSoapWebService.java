@@ -169,7 +169,7 @@ public interface KuwaibaSoapWebService {
             @WebParam(name = "username")String username,
             @WebParam(name = "password")String password,
             @WebParam(name = "firstName")String firstName,
-            @WebParam(name = "LastName")String lastName,
+            @WebParam(name = "lastName")String lastName,
             @WebParam(name = "enabled")boolean enabled,
             @WebParam(name = "type") int type,
             @WebParam(name = "email") String email,
