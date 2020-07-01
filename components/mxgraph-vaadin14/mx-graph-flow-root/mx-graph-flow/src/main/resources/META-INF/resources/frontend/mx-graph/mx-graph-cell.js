@@ -175,6 +175,10 @@ class MxGraphCell extends PolymerElement {
       shape: {
           type: String,
           value: 'rectangle'
+      },
+      verticalLabelPosition: {
+          type: String,
+          value : 'bottom'
       }
     };
   }
@@ -234,7 +238,7 @@ class MxGraphCell extends PolymerElement {
     try {
       if (this.vertex) {  //if the cell is a vertex then create a new one
         console.log("CREATING VERTEX");
-        var imageStyle =  ';shape=' +this.shape + ';autosize=1;image='.concat(this.image);
+        var imageStyle =  ';shape=' +this.shape + ';verticalLabelPosition=' + this.verticalLabelPosition + ';autosize=1;image='.concat(this.image);
         this.cell = this.graph.insertVertex(parentObject, this.uuid ? this.uuid : null, 
                                             this.label, this.x, this.y, this.width, this.height,
               'verticalAlign=top' + imageStyle +

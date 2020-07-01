@@ -295,6 +295,10 @@ public class MxGraphCell extends Component implements HasComponents {
         getElement().setProperty(MxConstants.STYLE_SHAPE, prop);
     }
     
+     public void setVerticalLabelPosition(String prop) {
+        getElement().setProperty(MxConstants.STYLE_VERTICAL_LABEL_POSITION, prop);
+    }
+    
     public void setGeometry(int x, int y, int width, int height) {
         setX(x);
         setY(y);
