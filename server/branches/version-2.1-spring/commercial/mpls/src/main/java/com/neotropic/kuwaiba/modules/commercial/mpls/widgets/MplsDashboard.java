@@ -423,7 +423,7 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
         cbxSourceObject.addValueChangeListener(listener -> {
             if (listener.getValue() != null && listener.getValue().equals(selectedTargetEquipment)) {
                 cbxSourceObject.setValue(null);
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpls.must-select-different-equipments")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpls.must-select-different-devices")).open();
                 return;
             }
             selectedSourceEquipment = listener.getValue();
@@ -434,7 +434,7 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
         cbxTargetObject.addValueChangeListener(listener -> {
             if (listener.getValue() != null && listener.getValue().equals(selectedSourceEquipment)) {
                 cbxTargetObject.setValue(null);
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpls.must-select-different-equipments")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpls.must-select-different-devices")).open();
                 return;
             }
             selectedTargetEquipment = listener.getValue();

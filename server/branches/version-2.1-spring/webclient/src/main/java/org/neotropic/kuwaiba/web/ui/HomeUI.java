@@ -17,7 +17,6 @@
 package org.neotropic.kuwaiba.web.ui;
 
 import com.neotropic.kuwaiba.modules.commercial.ospman.widgets.AllBuildingsMapWidget;
-import com.neotropic.kuwaiba.modules.commercial.ospman.widgets.EmptyMapDashboardWidget;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
