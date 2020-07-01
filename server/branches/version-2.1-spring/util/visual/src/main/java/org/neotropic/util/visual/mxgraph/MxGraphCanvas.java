@@ -16,6 +16,7 @@
 
 package org.neotropic.util.visual.mxgraph;
 
+import com.neotropic.vaadin14.component.MxConstants;
 import com.neotropic.vaadin14.component.MxGraph;
 import com.neotropic.vaadin14.component.MxGraphCell;
 import com.neotropic.vaadin14.component.MxGraphCellSelectedEvent;
@@ -203,6 +204,7 @@ public class MxGraphCanvas<N, E> {
             newNode.setHeight(Constants.DEFAULT_ICON_HEIGHT);
             newNode.setX((xCoordinate)); //The position is scaled
             newNode.setY((yCoordinate));
+            newNode.setShape(MxConstants.SHAPE_IMAGE);
             nodes.put(node, newNode);
             mxGraph.addNode(newNode);
             mxGraph.refreshGraph();
