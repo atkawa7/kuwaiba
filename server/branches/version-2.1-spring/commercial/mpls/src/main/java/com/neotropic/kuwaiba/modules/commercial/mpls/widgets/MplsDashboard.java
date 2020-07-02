@@ -287,6 +287,7 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
         });
         mplsView.getMxgraphCanvas().setComObjectUnselected(() -> {
             selectedObject = null;
+            updatePropertySheet();
             mplsTools.setSelectionToolsEnabled(false);
         });
         mplsView.getMxgraphCanvas().setComObjectDeleted(() -> {
@@ -820,7 +821,16 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
                 bem.updateObject(selectedObject.getClassName(), selectedObject.getId(), attributes);
                 updatePropertySheet();
                 saveCurrentView();
-                resetDashboard();
+                
+                //special case when the name is updated the label must be refreshed in the canvas
+                if (property.getName().equals(Constants.PROPERTY_NAME)) {
+                    if (MxGraphCell.PROPERTY_VERTEX.equals(mplsView.getMxgraphCanvas().getSelectedCellType())){
+                        mplsView.getMxgraphCanvas().getNodes().get(selectedObject).setLabel((String) property.getValue());
+                    } else {
+                        mplsView.getMxgraphCanvas().getEdges().get(selectedObject).setLabel((String) property.getValue());
+                    }
+                     mplsView.getMxgraphCanvas().getMxGraph().refreshGraph();
+                }
 
                 new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
             }
