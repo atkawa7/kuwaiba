@@ -105,7 +105,7 @@ class MxGraphCell extends PolymerElement {
         type: String,
         value: '',
         notify: true,
-        observer: 'fireCellLabelChanged'  // listener called when the value is changed
+        observer: 'cellLabelChanged'  // listener called when the value is changed
       },
       width: {
         type: Number,
@@ -397,6 +397,13 @@ updatePosition() {
 
 toggleVisibility() {
     this.graph.getModel().setVisible(this.cell, !this.graph.getModel().isVisible(this.cell));
+}
+
+cellLabelChanged() {
+    if (this.graph) {
+        this.graph.model.setValue(this.cell, this.label);    
+        this.fireCellLabelChanged();
+    }
 }
 
 // Custom Events
