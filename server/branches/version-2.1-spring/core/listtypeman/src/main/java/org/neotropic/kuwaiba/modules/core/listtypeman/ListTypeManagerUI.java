@@ -27,6 +27,7 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -60,6 +61,7 @@ import org.neotropic.kuwaiba.modules.core.listtypeman.actions.DeleteListTypeItem
 import org.neotropic.kuwaiba.modules.core.listtypeman.actions.NewListTypeItemVisualAction;
 import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
 import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyValueConverter;
+import org.neotropic.util.visual.general.BoldLabel;
 import org.neotropic.util.visual.properties.PropertySheet;
 import org.neotropic.util.visual.properties.PropertySheet.IPropertyValueChangedListener;
 import org.neotropic.util.visual.notifications.SimpleNotification;
@@ -114,6 +116,8 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
      * object to save the selected list type item
      */
     private BusinessObjectLight currentListTypeItem;
+    
+    private Label lblCurrentListType;
     
     /**
      * button used to create a new item with the list type preselected
@@ -200,8 +204,13 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
         lytListTypes.setWidth("25%");    
         buildListTypeGrid();  
         
+        lblCurrentListType = new BoldLabel();
+        FlexLayout lytSubtitle = new FlexLayout();
+        lytSubtitle.setWidthFull();
+        lytSubtitle.setJustifyContentMode(JustifyContentMode.BETWEEN);
         H4 headerListTypeItems = new H4(ts.getTranslatedString("module.listtypeman.listtypeitems"));
-        VerticalLayout lytListTypeItems = new VerticalLayout(headerListTypeItems, btnAddListTypeItemSec, tblListTypeItems); 
+        lytSubtitle.add(headerListTypeItems, lblCurrentListType);
+        VerticalLayout lytListTypeItems = new VerticalLayout(lytSubtitle, btnAddListTypeItemSec, tblListTypeItems); 
 //        lytListTypeItems.setClassName("width30p");
         lytListTypeItems.setWidth("30%");
         buildListTypeItemsGrid();
@@ -263,6 +272,7 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
                 btnAddListTypeItemSec.setEnabled(true);
                 lytPropertySheet.setVisible(false);
                 currentListType = ev.getItem();
+                lblCurrentListType.setText(currentListType.getName());
                 loadListTypeItems(ev.getItem());
             } catch (InvalidArgumentException | MetadataObjectNotFoundException ex) {
                 
