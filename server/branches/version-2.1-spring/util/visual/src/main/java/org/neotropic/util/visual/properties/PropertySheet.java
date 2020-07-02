@@ -17,6 +17,8 @@ package org.neotropic.util.visual.properties;
 
 
 import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.KeyDownEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.grid.Grid;
@@ -26,6 +28,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import elemental.json.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
@@ -74,21 +77,31 @@ public class PropertySheet extends Grid<AbstractProperty> {
             lytValue.add(lblValue);
             
             if (!property.isReadOnly() &&  property.supportsInplaceEditor()) {
+                
+                Button btnEdit = new Button(new Icon(VaadinIcon.CHECK_CIRCLE_O));
+                Button btnCancel = new Button(new Icon(VaadinIcon.CLOSE_SMALL));              
                 AbstractField editField = property.getInplaceEditor();
                 // if the property doesnt have a binder, then  set the value manually
                 if (!property.hasBinder())
-                    editField.setValue(property.getValue() == null ? "" : property.getValue());
-
-                Button btnEdit = new Button(new Icon(VaadinIcon.CHECK_CIRCLE_O));
-                btnEdit.addClassName("icon-button");
-                Button btnCancel = new Button(new Icon(VaadinIcon.CLOSE_SMALL));
+                    editField.setValue(property.getValue().equals(AbstractProperty.NULL_LABEL) ? "" : property.getValue());
+               
+                btnEdit.addClassName("icon-button");             
                 btnCancel.addClassName("icon-button");
                 HorizontalLayout hlytEditField = new HorizontalLayout(editField, btnEdit, btnCancel);
-
                 hlytEditField.setVisible(false);
                 hlytEditField.setPadding(false);
                 hlytEditField.setSpacing(true);
                 hlytEditField.setAlignItems(FlexComponent.Alignment.CENTER);
+                
+                editField.getElement().addEventListener("keydown", event ->
+                {   
+                    JsonObject data =  event.getEventData();
+                    if (13 == data.getNumber("event.which")) 
+                            btnEdit.click();                  
+                    if (27 == data.getNumber("event.which")) 
+                            btnCancel.click();
+                    
+                }).addEventData("event.which");
 
                 btnEdit.addClickListener(e -> {
                     lblValue.setVisible(true);
