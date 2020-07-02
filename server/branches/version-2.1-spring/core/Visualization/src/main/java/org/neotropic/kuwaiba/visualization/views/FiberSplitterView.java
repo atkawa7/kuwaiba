@@ -124,7 +124,8 @@ public class FiberSplitterView extends AbstractDetailedView {
                     return new Label("The FiberSplitter has no input port");
                 
                 List<BusinessObjectLight> lstMirrors = bem.getSpecialAttribute(inPort.getClassName(), inPort.getId(), "mirrorMultiple");
-
+                lstMirrors = lstMirrors.stream().sorted((object1, object2) -> object1.getName().compareTo(object2.getName())).collect(Collectors.toList());
+                
                 int i = 1;
                 MxGraphNode groupOutPorts;
                 MxGraphNode nodeIn;
