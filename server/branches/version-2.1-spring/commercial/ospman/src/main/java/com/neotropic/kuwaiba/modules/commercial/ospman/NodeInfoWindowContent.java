@@ -74,7 +74,7 @@ public class NodeInfoWindowContent extends VerticalLayout {
                             case "SpliceBox":
                                 wdwContents.close();
                                 Dialog wdwSpliceBoxDetailedView = new Dialog();
-                                SpliceBoxView viewSpliceBox = new SpliceBoxView(ev.getItem(), bem, aem, mem);
+                                SpliceBoxView viewSpliceBox = new SpliceBoxView(ev.getItem(), bem, aem, mem, ts);
                                 try {
                                     wdwSpliceBoxDetailedView.add(viewSpliceBox.getAsComponent());
                                 } catch(InvalidArgumentException ex) {
@@ -85,7 +85,7 @@ public class NodeInfoWindowContent extends VerticalLayout {
                             case "FiberSplitter":
                                 wdwContents.close();
                                 Dialog wdwSplitterDetailedView = new Dialog();
-                                FiberSplitterView viewSplitter = new FiberSplitterView(ev.getItem(), bem, aem, mem);
+                                FiberSplitterView viewSplitter = new FiberSplitterView(ev.getItem(), bem, aem, mem, ts);
                                 try {
                                     wdwSplitterDetailedView.add(viewSplitter.getAsComponent());
                                 } catch(InvalidArgumentException ex) {
