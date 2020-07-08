@@ -1,15 +1,14 @@
 package com.neotropic.vaadin14.component.spring;
 
-import com.neotropic.vaadin14.component.MxCellStyle;
-import com.neotropic.vaadin14.component.MxConstants;
-import com.neotropic.vaadin14.component.MxGraph;
-import com.neotropic.vaadin14.component.MxGraphCell;
-import com.neotropic.vaadin14.component.MxGraphCellPositionChanged;
-import com.neotropic.vaadin14.component.MxGraphCellUnselectedEvent;
-import com.neotropic.vaadin14.component.MxGraphClickEdgeEvent;
-import com.neotropic.vaadin14.component.MxGraphLayer;
-import com.neotropic.vaadin14.component.MxGraphNode;
-import com.neotropic.vaadin14.component.MxGraphPoint;
+import com.neotropic.flow.component.mxgraph.MxCellStyle;
+import com.neotropic.flow.component.mxgraph.MxConstants;
+import com.neotropic.flow.component.mxgraph.MxGraph;
+import com.neotropic.flow.component.mxgraph.MxGraphCell;
+import com.neotropic.flow.component.mxgraph.MxGraphCellPositionChanged;
+import com.neotropic.flow.component.mxgraph.MxGraphCellUnselectedEvent;
+import com.neotropic.flow.component.mxgraph.MxGraphClickEdgeEvent;
+import com.neotropic.flow.component.mxgraph.MxGraphLayer;
+import com.neotropic.flow.component.mxgraph.MxGraphNode;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
@@ -146,9 +145,12 @@ public class MainView extends VerticalLayout {
           edge.setPoints(points.toJson());
        
           add(mxGraph);
+          mxGraph.refreshGraph();
           mxGraph.addLayer(layerNodes);     // remember the order in which objects are added
-          mxGraph.addLayer(layerEdge);     
+          mxGraph.addLayer(layerEdge);    
+          
           mxGraph.addCell(nodeA);
+          mxGraph.executeStackLayout("nodeA", Boolean.TRUE, 1);
           mxGraph.addCell(nodeB);
           mxGraph.addCell(nodeC);
           mxGraph.addCell(nodeD);

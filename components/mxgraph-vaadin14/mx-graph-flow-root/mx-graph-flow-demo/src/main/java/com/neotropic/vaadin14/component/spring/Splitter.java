@@ -1,11 +1,11 @@
 package com.neotropic.vaadin14.component.spring;
 
-import com.neotropic.vaadin14.component.MxCellStyle;
-import com.neotropic.vaadin14.component.MxConstants;
-import com.neotropic.vaadin14.component.MxGraph;
-import com.neotropic.vaadin14.component.MxGraphCell;
-import com.neotropic.vaadin14.component.MxGraphEdge;
-import com.neotropic.vaadin14.component.MxGraphNode;
+import com.neotropic.flow.component.mxgraph.MxCellStyle;
+import com.neotropic.flow.component.mxgraph.MxConstants;
+import com.neotropic.flow.component.mxgraph.MxGraph;
+import com.neotropic.flow.component.mxgraph.MxGraphCell;
+import com.neotropic.flow.component.mxgraph.MxGraphEdge;
+import com.neotropic.flow.component.mxgraph.MxGraphNode;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import org.springframework.beans.factory.annotation.Autowired;
