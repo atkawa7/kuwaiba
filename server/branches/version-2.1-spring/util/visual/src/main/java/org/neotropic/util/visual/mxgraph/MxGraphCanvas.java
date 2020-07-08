@@ -16,15 +16,15 @@
 
 package org.neotropic.util.visual.mxgraph;
 
-import com.neotropic.vaadin14.component.MxConstants;
-import com.neotropic.vaadin14.component.MxGraph;
-import com.neotropic.vaadin14.component.MxGraphCell;
-import com.neotropic.vaadin14.component.MxGraphCellSelectedEvent;
-import com.neotropic.vaadin14.component.MxGraphCellUnselectedEvent;
-import com.neotropic.vaadin14.component.MxGraphDeleteCellSelectedEvent;
-import com.neotropic.vaadin14.component.MxGraphEdge;
-import com.neotropic.vaadin14.component.MxGraphNode;
-import com.neotropic.vaadin14.component.Point;
+import com.neotropic.flow.component.mxgraph.MxConstants;
+import com.neotropic.flow.component.mxgraph.MxGraph;
+import com.neotropic.flow.component.mxgraph.MxGraphCell;
+import com.neotropic.flow.component.mxgraph.MxGraphCellSelectedEvent;
+import com.neotropic.flow.component.mxgraph.MxGraphCellUnselectedEvent;
+import com.neotropic.flow.component.mxgraph.MxGraphDeleteCellSelectedEvent;
+import com.neotropic.flow.component.mxgraph.MxGraphEdge;
+import com.neotropic.flow.component.mxgraph.MxGraphNode;
+import com.neotropic.flow.component.mxgraph.Point;
 import com.vaadin.flow.server.Command;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -132,14 +132,17 @@ public class MxGraphCanvas<N, E> {
     }
     
     public MxGraphCanvas() {
-        initGraph();
-    }   
+        initGraph("100%", "100%");
+    }  
     
-    private void initGraph() {       
+    public MxGraphCanvas(String width, String height) {
+        initGraph(width, height);
+    } 
+    
+    private void initGraph(String width, String height) {       
        mxGraph = new MxGraph();
-       mxGraph.setFullSize();
-       mxGraph.getElement().getStyle().set("height", "100%");
-       mxGraph.getElement().getStyle().set("width", "100%");
+       mxGraph.setWidth(width);
+       mxGraph.setHeight(height);    
        mxGraph.setGrid("img/grid.gif");
        nodes = new HashMap<>();
        edges = new HashMap<>();     
@@ -182,7 +185,7 @@ public class MxGraphCanvas<N, E> {
         return targetEdgeNodes.get(edge);
     }
     /**
-     * Creates a new node in the canvas
+     * Create and add a new node in the canvas
      * @param node the object that represent the node
      * @param nodeId the node id
      * @param xCoordinate the x coordinate in the canvas
@@ -211,6 +214,18 @@ public class MxGraphCanvas<N, E> {
             return newNode;
         }
         return null;
+    }
+    /**
+     * add the given node in the canvas     
+     * @param node he object that represents the node
+     * @param mxgraphNode the new mxGraphNode
+     */
+    public void addNode(N node, MxGraphNode mxgraphNode) {
+        if (!nodes.containsKey(node)) {       
+            nodes.put(node, mxgraphNode);
+            mxGraph.addNode(mxgraphNode);
+            mxGraph.refreshGraph();
+        }
     }
     /**
      * creates a new edge in the canvas
@@ -246,6 +261,18 @@ public class MxGraphCanvas<N, E> {
             return newEdge;       
         }        
         return null;
+    }
+      /**
+     * add the given edge in the canvas     
+     * @param edge he object that represents the edge
+     * @param mxgraphEdge the new mxgraphCell
+     */
+    public void addEdge(E edge, MxGraphEdge mxgraphEdge) {
+        if (!edges.containsKey(edge)) {       
+            edges.put(edge, mxgraphEdge);
+            mxGraph.addEdge(mxgraphEdge);
+            mxGraph.refreshGraph();
+        }
     }
     /**
      * Removes a node from the canvas
