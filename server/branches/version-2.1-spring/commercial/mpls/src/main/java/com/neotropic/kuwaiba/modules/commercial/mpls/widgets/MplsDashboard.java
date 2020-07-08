@@ -23,8 +23,7 @@ import com.neotropic.kuwaiba.modules.commercial.mpls.actions.NewMplsViewVisualAc
 import com.neotropic.kuwaiba.modules.commercial.mpls.persistence.MplsConnectionDefinition;
 import com.neotropic.kuwaiba.modules.commercial.mpls.persistence.MplsService;
 import com.neotropic.kuwaiba.modules.commercial.mpls.tools.MplsTools;
-import com.neotropic.vaadin14.component.MxGraph;
-import com.neotropic.vaadin14.component.MxGraphCell;
+import com.neotropic.flow.component.mxgraph.MxGraphCell;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.UI;
@@ -89,11 +88,8 @@ import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyValueCon
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewEdge;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
-import org.neotropic.kuwaiba.visualization.views.FiberSplitterView;
-import org.neotropic.kuwaiba.visualization.views.SpliceBoxView;
 import org.neotropic.util.visual.dialog.ConfirmDialog;
 import org.neotropic.util.visual.general.BoldLabel;
-import org.neotropic.util.visual.mxgraph.MxGraphCanvas;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.properties.AbstractProperty;
 import org.neotropic.util.visual.properties.PropertySheet;
@@ -253,7 +249,7 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
     }
 
     private void createContent() {  
-               
+           
         Button btnOpenView = new Button(new Icon(VaadinIcon.FOLDER_OPEN_O), ev -> {
              openListMplsViewDialog();
         });
@@ -884,5 +880,5 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
             new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.edge-already-included")).open();                   
         
     }
-      
+        
 }

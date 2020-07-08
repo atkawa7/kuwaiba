@@ -17,20 +17,20 @@
 package com.neotropic.kuwaiba.modules.commercial.mpls;
 
 import com.neotropic.kuwaiba.modules.commercial.mpls.widgets.MplsDashboard;
-import com.neotropic.vaadin14.component.MxGraphEdge;
-import com.neotropic.vaadin14.component.MxGraphNode;
-import com.neotropic.vaadin14.component.Point;
+import com.neotropic.flow.component.mxgraph.MxGraphEdge;
+import com.neotropic.flow.component.mxgraph.MxGraphNode;
+import com.neotropic.flow.component.mxgraph.Point;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.server.StreamResourceRegistry;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.namespace.QName;
@@ -68,11 +68,29 @@ import org.neotropic.kuwaiba.core.apis.integration.views.ViewMap;
  */
 public class MplsView extends AbstractView<BusinessObjectLight, Component> {
     
+    /**
+     * Reference to the main canvas of the view
+     */
     private MxGraphCanvas<BusinessObjectLight, BusinessObjectLight> mxgraphCanvas;
+    /**
+     * Reference to the translation service.
+     */
     private TranslationService ts;
+    /**
+     * Reference to the Application Entity Manager
+     */
     private ApplicationEntityManager aem;
+    /**
+     * Reference to the Business Entity Manager
+     */
     private BusinessEntityManager bem;
+    /**
+     * Reference to the Metadata Entity Manager
+     */
     private MetadataEntityManager mem;
+    /**
+     * Utility class that help to load resources like icons and images
+     */
     private ResourceFactory resourceFactory;
 
     public MxGraphCanvas<BusinessObjectLight, BusinessObjectLight> getMxgraphCanvas() {
@@ -204,7 +222,7 @@ public class MplsView extends AbstractView<BusinessObjectLight, Component> {
 
             return this.mxgraphCanvas.getMxGraph();
         } catch (Exception ex) {
-            return new Label(String.format("An unexpected error occurred while loading the MPLS view: %s", ex.getLocalizedMessage()));
+            return new Label(String.format(ts.getTranslatedString("module.mpls.unexpected-error-loading-view"), ex.getLocalizedMessage()));
         }
     }
 
@@ -216,14 +234,13 @@ public class MplsView extends AbstractView<BusinessObjectLight, Component> {
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         List<BusinessObjectLight> emptySides = new ArrayList<>();
 //      <editor-fold defaultstate="collapsed" desc="Uncomment this for debugging purposes. This outputs the XML view as a file">
-        try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_ MPLS_VIEW .xml")) {
-            fos.write(structure);
-        } catch(Exception e) { }
+//        try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_ MPLS_VIEW .xml")) {
+//            fos.write(structure);
+//        } catch(Exception e) { }
 //      </editor-fold>
         QName qNode = new QName("node"); //NOI18N
         QName qEdge = new QName("edge"); //NOI18N
         QName qControlPoint = new QName("controlpoint"); //NOI18N
-//        BusinessObjectLight emptyObj;
         try {
             ByteArrayInputStream bais = new ByteArrayInputStream(structure);
             XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
@@ -239,7 +256,7 @@ public class MplsView extends AbstractView<BusinessObjectLight, Component> {
                         String objectId = reader.getElementText();
                         //this side is connected
                         BusinessObjectLight lol = bem.getObjectLight(objectClass, objectId);
-                        if (lol != null){
+                        if (lol != null) {
                            String uri = StreamResourceRegistry.getURI(resourceFactory.getClassIcon(lol.getClassName())).toString();       
                            
                            Properties props = new Properties();
@@ -248,11 +265,8 @@ public class MplsView extends AbstractView<BusinessObjectLight, Component> {
                            props.put("y", yCoordinate );
                            addNode(lol, props);
                         }
-                        else if(objectId.equals("-1")){// we create an empty side
-//                            emptyObj = new LocalObjectLight(UUID.randomUUID().toString() + "-" + (objectId), null, null);
-//                            emptySides.add(emptyObj);
-//                            Widget widget = addNode(emptyObj);
-//                            widget.setPreferredLocation(new java.awt.Point(xCoordinate, yCoordinate));
+                        else if(objectId.equals("-1")) { // we create an empty side
+                            emptySides.add(new BusinessObjectLight("", UUID.randomUUID().toString() + "-" + (objectId), ""));
                         }
                     }else {
                         if (reader.getName().equals(qEdge)){
@@ -315,9 +329,6 @@ public class MplsView extends AbstractView<BusinessObjectLight, Component> {
                                 props.put("sourceLabel", endPointA == null ? "" : endPointA.getName());
                                 props.put("targetLabel", endPointB == null ? "" : endPointB.getName());
                                 addEdge(mplsLink, aSideObject, bSideObject, props);
-                            } else {
-//                                fireChangeEvent(new ActionEvent(this, SCENE_CHANGE, "connectionAutomaticallyRemoved")); //NOI18N
-//                                NotificationUtil.getInstance().showSimplePopup("Load view", NotificationUtil.INFO_MESSAGE, String.format("Connection of class %s and id %s could not be found and was removed from the view", className, mplsLinkId));
                             }
                         }
                     }
@@ -416,7 +427,7 @@ public class MplsView extends AbstractView<BusinessObjectLight, Component> {
             aNode.getProperties().put("x", entry.getValue().getX());
             aNode.getProperties().put("y", entry.getValue().getY());
             this.viewMap.getNodes().add(aNode);
-        };
+        }
         
         for (Map.Entry<BusinessObjectLight, MxGraphEdge> entry : mxgraphCanvas.getEdges().entrySet()) {
             BusinessObjectViewEdge anEdge = new BusinessObjectViewEdge(entry.getKey());
@@ -427,7 +438,7 @@ public class MplsView extends AbstractView<BusinessObjectLight, Component> {
             this.viewMap.getEdges().add(anEdge);
             this.viewMap.attachSourceNode(anEdge, new BusinessObjectViewNode(mxgraphCanvas.findSourceEdgeObject(entry.getKey())));
             this.viewMap.attachTargetNode(anEdge, new BusinessObjectViewNode(mxgraphCanvas.findTargetEdgeObject(entry.getKey())));
-        };
+        }
     }
 
     @Override

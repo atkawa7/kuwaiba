@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2020 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package com.neotropic.kuwaiba.modules.commercial.mpls.persistence;
 
 import java.util.Arrays;
@@ -112,11 +113,11 @@ public class MplsService {
             String endpointBClassName, String endpointBId, 
             HashMap<String, String> attributesToBeSet, String userName) throws InvalidArgumentException {
         if (bem == null || mem == null)
-            throw new InvalidArgumentException("Can't reach the backend. Contact your administrator");
+            throw new InvalidArgumentException(ts.getTranslatedString("module.general.messages.unexpected-error"));
         String newConnectionId = null;
         try {
             if (!mem.isSubclassOf("GenericLogicalConnection", Constants.CLASS_MPLSLINK))
-                throw new InvalidArgumentException(String.format("Class %s is not subclass of GenericLogicalConnection", Constants.CLASS_MPLSLINK));
+                throw new InvalidArgumentException(String.format(ts.getTranslatedString("module.mpls.not-generic-connection-subclass"), Constants.CLASS_MPLSLINK));
             
             BusinessObject communicationsEquipmentA, communicationsEquipmentB;
             //at least one side should be not null to create the MPLS link
@@ -129,7 +130,7 @@ public class MplsService {
                 communicationsEquipmentA= bem.getFirstParentOfClass(endpointAClassName, endpointAId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
             
                 if (communicationsEquipmentA == null)
-                    throw new InvalidArgumentException(String.format("The specified port (%s : %s) doesn't seem to be located in a communications equipment", endpointAClassName, endpointAId));
+                    throw new InvalidArgumentException(String.format(ts.getTranslatedString("module.mpls.port-not-located-in-communications-equipment"), endpointAClassName, endpointAId));
              
                 if(mem.isSubclassOf(Constants.CLASS_GENERICPORT, endpointAClassName)){
                     String endPointName = bem.getAttributeValueAsString(endpointAClassName, endpointAId, Constants.PROPERTY_NAME);
@@ -137,7 +138,7 @@ public class MplsService {
                     aem.createGeneralActivityLogEntry(userName, ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s[%s] - %s - %s", attributesToBeSet.get(Constants.PROPERTY_NAME), RELATIONSHIP_MPLSLINK, RELATIONSHIP_MPLSENDPOINTB, endPointName));
                 }
                 else 
-                    throw new InvalidArgumentException(String.format("%s is not subClass of GenericPort, can not be endpoint of a mplsLink", endpointAClassName));
+                    throw new InvalidArgumentException(String.format(ts.getTranslatedString("module.mpls.not-subclass-genericport-cant-be-endpoint"), endpointAClassName));
                 //besides the reletionship of the MPLS link with its endpoints, we create a direct relatioship between the mplsLink and the device 
                 //this relationships helps to easily check the mplsLink in a device and to creates a simple MPLS map
                 bem.createSpecialRelationship(communicationsEquipmentA.getClassName(), communicationsEquipmentA.getId(), Constants.CLASS_MPLSLINK, newConnectionId, RELATIONSHIP_MPLSLINK, false);
@@ -148,7 +149,7 @@ public class MplsService {
                 communicationsEquipmentB  = bem.getFirstParentOfClass(endpointBClassName, endpointBId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
            
                 if (communicationsEquipmentB == null)
-                    throw new InvalidArgumentException(String.format("The specified port (%s : %s) doesn't seem to be located in a communications equipment", endpointBClassName, endpointBId));
+                    throw new InvalidArgumentException(String.format(ts.getTranslatedString("module.mpls.port-not-located-in-communications-equipment"), endpointBClassName, endpointBId));
             
                 if(mem.isSubclassOf(Constants.CLASS_GENERICPORT, endpointBClassName)){
                     String endPointName = bem.getAttributeValueAsString(endpointBClassName, endpointBId, Constants.PROPERTY_NAME);
@@ -173,6 +174,7 @@ public class MplsService {
                     bem.deleteObject(Constants.CLASS_MPLSLINK, newConnectionId, true);
                 } catch (Exception ex) {
                     Logger.getLogger(MplsService.class.getName()).log(Level.SEVERE, null, ex);
+                    throw new InvalidArgumentException(ts.getTranslatedString("module.general.messages.unexpected-error"));
                 } 
             }
 
@@ -192,11 +194,11 @@ public class MplsService {
      */
     public void deleteMPLSLink(String linkId, boolean forceDelete, String userName) throws InvalidArgumentException{
         if (bem == null || mem == null)
-            throw new InvalidArgumentException("Can't reach the backend. Contact your administrator");
+            throw new InvalidArgumentException(ts.getTranslatedString("module.general.messages.unexpected-error"));
         try{
             BusinessObjectLight mplsLink =  bem.getObjectLight(Constants.CLASS_MPLSLINK, linkId);
             if (!mplsLink.getClassName().equals(Constants.CLASS_MPLSLINK)) //NOI18N
-                    throw new InvalidArgumentException(String.format("Only links of class MPLSLink can be deleted, class: %s can be deleted", mplsLink.getClassName()));
+                    throw new InvalidArgumentException(ts.getTranslatedString("module.mpls.only-mpls-links-can-be-deleted"));
 
             bem.deleteObject(mplsLink.getClassName(), linkId, forceDelete);
             aem.createGeneralActivityLogEntry(userName, ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, String.format("%s deleted", mplsLink, Constants.CLASS_MPLSLINK));
@@ -215,7 +217,7 @@ public class MplsService {
             throws InvalidArgumentException 
     {
         if (bem == null || mem == null)
-            throw new InvalidArgumentException("Can't reach the backend. Contact your administrator");
+            throw new InvalidArgumentException(ts.getTranslatedString("module.general.messages.unexpected-error"));
         try{
             BusinessObject mplsLink = bem.getObject(Constants.CLASS_MPLSLINK, connectionId);
            
@@ -279,13 +281,13 @@ public class MplsService {
                 if (linksIds[i] != null)
                     mplsLink = bem.getObjectLight(Constants.CLASS_MPLSLINK, linksIds[i]);
                 if(mplsLink != null && !mplsLink.getClassName().equals(Constants.CLASS_MPLSLINK)) //NOI18N
-                    throw new InvalidArgumentException(String.format("Class %s is not an MPLS link", mplsLink.getClassName()));
+                    throw new InvalidArgumentException(String.format(ts.getTranslatedString("module.mpls.class-is-not-a-mpls-link"), mplsLink.getClassName()));
                 if (sideAClassNames[i] != null && !mem.isSubclassOf(Constants.CLASS_GENERICPORT, sideAClassNames[i])) //NOI18N
-                    throw new InvalidArgumentException(String.format("Class %s is not a port", sideAClassNames[i]));
+                    throw new InvalidArgumentException(String.format(ts.getTranslatedString("module.mpls.class-is-not-a-port"), sideAClassNames[i]));
                 if (sideBClassNames[i] != null && !mem.isSubclassOf(Constants.CLASS_GENERICPORT, sideBClassNames[i])) //NOI18N
-                    throw new InvalidArgumentException(String.format("Class %s is not a port", sideBClassNames[i]));
+                    throw new InvalidArgumentException(String.format(ts.getTranslatedString("module.mpls.class-is-not-a-port"), sideBClassNames[i]));
                 if (Objects.equals(sideAIds[i], sideBIds[i]))
-                    throw new InvalidArgumentException("Can not connect a port to itself");
+                    throw new InvalidArgumentException(ts.getTranslatedString("module.mpls.cant-connect-port-itself"));
 
                 if(mplsLink != null){
                     String endpointAName = RELATIONSHIP_MPLSENDPOINTA, endpointBName = RELATIONSHIP_MPLSENDPOINTB;
@@ -295,12 +297,12 @@ public class MplsService {
 
                     if (!aEndpointList.isEmpty()){
                         if (Objects.equals(aEndpointList.get(0).getId(), sideAIds[i]) || Objects.equals(aEndpointList.get(0).getId(), sideBIds[i]))
-                            throw new InvalidArgumentException("The link is already related to at least one of the endpoints");
+                            throw new InvalidArgumentException(ts.getTranslatedString("module.mpls.link-endpoint-already-related"));
                     }
 
                     if (!bEndpointList.isEmpty()){
                         if (Objects.equals(bEndpointList.get(0).getId(), sideAIds[i]) || Objects.equals(bEndpointList.get(0).getId(), sideBIds[i]))
-                            throw new InvalidArgumentException("The link is already related to at least one of the endpoints");
+                            throw new InvalidArgumentException(ts.getTranslatedString("module.mpls.link-endpoint-already-related"));
                     }
 
                     if (sideAIds[i] != null && sideAClassNames[i] != null) {
@@ -315,12 +317,12 @@ public class MplsService {
                             aem.createGeneralActivityLogEntry(userName, ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format("%s - %s",  sideAIds[i], mplsLink.getName()));
                         }
                         else
-                            throw new InvalidArgumentException(String.format("Link %s already has an endpoint A", bem.getObjectLight(mplsLink.getClassName(), mplsLink.getId())));
+                            throw new InvalidArgumentException(String.format(ts.getTranslatedString("module.mpls.link-already-has-endpointa"), bem.getObjectLight(mplsLink.getClassName(), mplsLink.getId())));
                     }
                     if (sideBIds[i] != null && sideBClassNames[i] != null) {
                         if (!bem.getSpecialAttribute(sideBClassNames[i], sideBIds[i], endpointBName).isEmpty() || //NOI18N
                             !bem.getSpecialAttribute(sideBClassNames[i], sideBIds[i], endpointAName).isEmpty()) //NOI18N
-                            throw new InvalidArgumentException(String.format("The selected endpoint %s is already connected", bem.getObjectLight(sideBClassNames[i], sideBIds[i])));
+                            throw new InvalidArgumentException(String.format(ts.getTranslatedString("module.mpls.selected-endpoint-already-connecte"), bem.getObjectLight(sideBClassNames[i], sideBIds[i])));
 
                         if (bEndpointList.isEmpty()) {
                             aem.checkRelationshipByAttributeValueBusinessRules(mplsLink.getClassName(), mplsLink.getId(), sideBClassNames[i], sideBIds[i]);
@@ -329,7 +331,7 @@ public class MplsService {
                             aem.createGeneralActivityLogEntry(userName, ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, String.format(" %s - %s", mplsLink.getName(), sideBIds[i]));
                         }
                         else
-                            throw new InvalidArgumentException(String.format("Link %s already has an endpoint B", bem.getObjectLight(mplsLink.getClassName(), mplsLink.getId())));
+                            throw new InvalidArgumentException(String.format(ts.getTranslatedString("module.mpls.link-already-has-endpointb"), bem.getObjectLight(mplsLink.getClassName(), mplsLink.getId())));
                     }
                 }
             }
@@ -348,7 +350,7 @@ public class MplsService {
      */
     public void disconnectMPLSLink(String connectionId, int sideToDisconnect, String userName) throws InvalidArgumentException{
         if (bem == null || mem == null)
-            throw new InvalidArgumentException("Can't reach the backend. Contact your administrator");
+            throw new InvalidArgumentException(ts.getTranslatedString("module.general.messages.unexpected-error"));
         try{
             String  affectedProperties = "", oldValues = "";
             switch (sideToDisconnect) {
@@ -378,12 +380,12 @@ public class MplsService {
                     oldValues += endpointB.getId() + " ";
                     break;
                 default:
-                    throw new InvalidArgumentException(String.format("Wrong side to disconnect option"));
+                    throw new InvalidArgumentException(String.format(ts.getTranslatedString("module.mpls.wrong-side-disconnect-option")));
             }
             aem.createObjectActivityLogEntry(userName, Constants.CLASS_MPLSLINK, connectionId, 
                 ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
                 affectedProperties, oldValues, "", ""); //NOI18N
-        } catch(Exception ex){
+        } catch(Exception ex) {
             throw new InvalidArgumentException(ex.getMessage());
         }
     }

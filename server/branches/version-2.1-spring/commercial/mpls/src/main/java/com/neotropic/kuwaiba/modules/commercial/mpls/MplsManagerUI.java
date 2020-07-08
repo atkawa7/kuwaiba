@@ -73,7 +73,7 @@ public class MplsManagerUI extends VerticalLayout {
     
     @Autowired
     private ResourceFactory resourceFactory;
-    
+ 
     private MplsDashboard dashboard; 
    
     public MplsManagerUI() {
@@ -111,5 +111,5 @@ public class MplsManagerUI extends VerticalLayout {
                
         add(dashboard);
     }
-
+    
 }
