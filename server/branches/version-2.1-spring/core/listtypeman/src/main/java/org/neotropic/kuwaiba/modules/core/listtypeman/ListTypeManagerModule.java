@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2020 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,11 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package org.neotropic.kuwaiba.modules.core.listtypeman;
 import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.modules.AbstractModule;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionRegistry;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
