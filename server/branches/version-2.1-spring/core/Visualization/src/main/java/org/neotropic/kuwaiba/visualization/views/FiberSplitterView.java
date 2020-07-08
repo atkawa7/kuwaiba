@@ -1,15 +1,24 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *  Copyright 2010-2020 Neotropic SAS <contact@neotropic.co>.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       https://apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-
 package org.neotropic.kuwaiba.visualization.views;
 
-import com.neotropic.vaadin14.component.MxConstants;
-import com.neotropic.vaadin14.component.MxGraph;
-import com.neotropic.vaadin14.component.MxGraphEdge;
-import com.neotropic.vaadin14.component.MxGraphNode;
+import com.neotropic.flow.component.mxgraph.MxConstants;
+import com.neotropic.flow.component.mxgraph.MxGraph;
+import com.neotropic.flow.component.mxgraph.MxGraphEdge;
+import com.neotropic.flow.component.mxgraph.MxGraphNode;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.util.LinkedHashMap;
@@ -31,27 +40,45 @@ import org.neotropic.kuwaiba.core.apis.integration.views.AbstractDetailedView;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewEdge;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewNode;
 import org.neotropic.kuwaiba.core.apis.integration.views.ViewEventListener;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 
 /**
  * View for graphic visualization of fiber splitter equipment
  * @author Orlando Paz  {@literal <orlando.paz@kuwaiba.org>} 
  */
 public class FiberSplitterView extends AbstractDetailedView<BusinessObjectLight, VerticalLayout> {
-
+   
+    /**
+     * Reference to the main canvas of the view
+     */
     private MxGraph mxGraph;
-    private BusinessEntityManager bem;
+    /**
+     * Reference to the translation service.
+     */
+    private TranslationService ts;
+    /**
+     * Reference to the Application Entity Manager
+     */
     private ApplicationEntityManager aem;
+    /**
+     * Reference to the Business Entity Manager
+     */
+    private BusinessEntityManager bem;
+    /**
+     * Reference to the Metadata Entity Manager
+     */
     private MetadataEntityManager mem;
-    
+     
     public FiberSplitterView(BusinessObjectLight businessObject) {
         super(businessObject);
     }
     
-    public FiberSplitterView(BusinessObjectLight businessObject, BusinessEntityManager bem, ApplicationEntityManager aem, MetadataEntityManager mem) {
+    public FiberSplitterView(BusinessObjectLight businessObject, BusinessEntityManager bem, ApplicationEntityManager aem, MetadataEntityManager mem, TranslationService ts) {
         this(businessObject);
         this.bem = bem;  
         this.aem = aem;
         this.mem = mem;
+        this.ts = ts;
     }
 
     @Override
@@ -61,12 +88,12 @@ public class FiberSplitterView extends AbstractDetailedView<BusinessObjectLight,
 
     @Override
     public String getName() {
-        return "fiber-splitter-view";
+        return ts.getTranslatedString("module.visualization.fiber-splitter-view-name");
     }
 
     @Override
     public String getDescription() {
-        return "View for graphic visualization of splitter equipment";
+        return ts.getTranslatedString(ts.getTranslatedString("module.visualization.fiber-splitter-view-description"));
     }
 
     @Override
@@ -117,7 +144,7 @@ public class FiberSplitterView extends AbstractDetailedView<BusinessObjectLight,
                     }
                 }
                 if (inPort == null) 
-                    return new VerticalLayout(new Label("The FiberSplitter has no input port"));
+                    return new VerticalLayout(new Label(ts.getTranslatedString("module.visualization.fiber-splitter-view-no-input-port")));
                 
                 List<BusinessObjectLight> lstMirrors = bem.getSpecialAttribute(inPort.getClassName(), inPort.getId(), "mirrorMultiple");
                 lstMirrors = lstMirrors.stream().sorted((object1, object2) -> object1.getName().compareTo(object2.getName())).collect(Collectors.toList());
@@ -230,7 +257,7 @@ public class FiberSplitterView extends AbstractDetailedView<BusinessObjectLight,
 
             return lytGraph;
         }
-        return new VerticalLayout(new Label("The view has no business object associated"));
+        return new VerticalLayout(new Label(ts.getTranslatedString("module.visualization.view.no-business-object-associated")));
     }
 
     @Override

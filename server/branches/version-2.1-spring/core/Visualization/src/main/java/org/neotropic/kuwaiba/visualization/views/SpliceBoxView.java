@@ -1,20 +1,27 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *  Copyright 2010-2020 Neotropic SAS <contact@neotropic.co>.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       https://apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.neotropic.kuwaiba.visualization.views;
 
-import com.neotropic.vaadin14.component.MxConstants;
-import com.neotropic.vaadin14.component.MxGraph;
-import com.neotropic.vaadin14.component.MxGraphEdge;
-import com.neotropic.vaadin14.component.MxGraphNode;
-import com.vaadin.flow.component.Component;
+import com.neotropic.flow.component.mxgraph.MxConstants;
+import com.neotropic.flow.component.mxgraph.MxGraph;
+import com.neotropic.flow.component.mxgraph.MxGraphEdge;
+import com.neotropic.flow.component.mxgraph.MxGraphNode;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Properties;
@@ -28,13 +35,13 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractDetailedView;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewEdge;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewNode;
 import org.neotropic.kuwaiba.core.apis.integration.views.ViewEventListener;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 
 /**
  * View for graphic visualization of splice box equipment
@@ -42,20 +49,37 @@ import org.neotropic.kuwaiba.core.apis.integration.views.ViewEventListener;
  */
 public class SpliceBoxView extends AbstractDetailedView<BusinessObjectLight, VerticalLayout> {
 
-    MxGraph mxGraph;
-    private BusinessEntityManager bem;
+    /**
+     * Reference to the main canvas of the view
+     */
+    private MxGraph mxGraph;
+    /**
+     * Reference to the translation service.
+     */
+    private TranslationService ts;
+    /**
+     * Reference to the Application Entity Manager
+     */
     private ApplicationEntityManager aem;
+    /**
+     * Reference to the Business Entity Manager
+     */
+    private BusinessEntityManager bem;
+    /**
+     * Reference to the Metadata Entity Manager
+     */
     private MetadataEntityManager mem;
     
     public SpliceBoxView(BusinessObjectLight businessObject) {
         super(businessObject);
     }
     
-    public SpliceBoxView(BusinessObjectLight businessObject, BusinessEntityManager bem, ApplicationEntityManager aem, MetadataEntityManager mem) {
+    public SpliceBoxView(BusinessObjectLight businessObject, BusinessEntityManager bem, ApplicationEntityManager aem, MetadataEntityManager mem, TranslationService ts) {
         this(businessObject);
         this.bem = bem;  
         this.aem = aem;
         this.mem = mem;
+        this.ts = ts;
     }
 
     @Override
@@ -65,12 +89,12 @@ public class SpliceBoxView extends AbstractDetailedView<BusinessObjectLight, Ver
 
     @Override
     public String getName() {
-        return "splice-box-view";
+        return ts.getTranslatedString("module.visualization.splice-box-view-name");
     }
 
     @Override
     public String getDescription() {
-        return "View for graphic visualization of splice box equipment";
+        return ts.getTranslatedString("module.visualization.splice-box-view-description");
     }
 
     @Override
@@ -124,7 +148,7 @@ public class SpliceBoxView extends AbstractDetailedView<BusinessObjectLight, Ver
                     }
                 }
                 if (mapPorts.isEmpty()) {
-                    return new VerticalLayout(new Label("The SpliceBox has no input ports"));
+                    return new VerticalLayout(new Label(ts.getTranslatedString("module.visualization.splice-box-view-no-input-ports")));
                 }
                 int i = 1;
                 MxGraphNode groupPort;
@@ -230,7 +254,7 @@ public class SpliceBoxView extends AbstractDetailedView<BusinessObjectLight, Ver
             }
             return lytGraph;
         }
-        return new VerticalLayout(new Label("The view has no business object associated"));
+        return new VerticalLayout(new Label(ts.getTranslatedString("module.visualization.view.no-business-object-associated")));
     }
 
     @Override
