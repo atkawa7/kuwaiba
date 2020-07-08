@@ -16,6 +16,7 @@
 
 package org.neotropic.kuwaiba.web.ui;
 
+import com.neotropic.flow.component.MxGraphApi;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
@@ -82,6 +83,9 @@ public class MainLayout extends FlexLayout implements RouterLayout {
         add(this.lytHeader);
         add(this.lytContent);
         add(this.lytFooter);
+        
+        MxGraphApi mxgraphApi = new MxGraphApi();
+        add(mxgraphApi);
     }
     
     @Override
