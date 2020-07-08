@@ -25,6 +25,7 @@ import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -107,16 +108,17 @@ public class LoginUI extends VerticalLayout implements BeforeEnterObserver {
      * Used to create the log in form
      * @return a form layout holding the needed fields to authenticate
      */
-    private FormLayout buildLoginForm() {        
+    private VerticalLayout buildLoginForm() {        
         txtUsername = new TextField();
-        txtUsername.setWidth("18em");
+        txtUsername.setWidthFull();
         txtUsername.focus();
         
         txtPassword = new PasswordField();
-        txtPassword.setWidth("18em");
+        txtPassword.setWidthFull();
         
         Icon loginIcon = new Icon(VaadinIcon.SIGN_IN);
         btnLogin = new Button(ts.getTranslatedString("module.login.ui.login"), loginIcon);
+        btnLogin.setWidthFull();
         
         // This is used to press Enter instead of clicking the button
         btnLogin.addClickShortcut(Key.ENTER);
@@ -143,18 +145,25 @@ public class LoginUI extends VerticalLayout implements BeforeEnterObserver {
              });
         });
         
-        FormLayout lytForm = new FormLayout();
-        lytForm.addFormItem(txtUsername, ts.getTranslatedString("module.login.ui.user"));
-        lytForm.addFormItem(txtPassword, ts.getTranslatedString("module.login.ui.password"));
-        lytForm.add(btnLogin);
-        lytForm.setSizeFull();
+        VerticalLayout lytForm = new VerticalLayout();
+        Label lblUser = new Label(ts.getTranslatedString("module.login.ui.user"));
+        lblUser.setWidth("100px");
+        lblUser.getElement().getStyle().set("margin", "auto");
         
+        Label lblPassword = new Label(ts.getTranslatedString("module.login.ui.password"));
+        lblPassword.setWidth("100px");
+        lblPassword.getElement().getStyle().set("margin", "auto");
+        
+        HorizontalLayout lytUser = new HorizontalLayout(lblUser, txtUsername);
+        HorizontalLayout lytPassword = new HorizontalLayout(lblPassword, txtPassword);
+        lytForm.add(lytUser, lytPassword, btnLogin);
+        lytForm.setWidth("300px");
         return lytForm;
      }
     
     private VerticalLayout buildLoginFooter() {
-        Image imgLogo = new Image("img/neotropic_logo.png", "Neotropic SAS Logo");
-        Div lblCopyright = new Div(new Html("<span style=\"font-size:small\">Copyright 2010-2020 <a target=\"blank\" href=\"http://www.neotropic.co\">Neotropic SAS</a></span>"));
+        Image imgLogo = new Image("img/neotropic_logo.png", "Neotropic SAS - Network Management, Data Analysis and Free Software ");
+        Div lblCopyright = new Div(new Html("<span style=\"font-size:small\">Copyright 2010-2020 <a target=\"_blank\" href=\"https://www.neotropic.co\">Neotropic SAS</a> - Network Management, Data Analysis and Free Software</span>"));
         VerticalLayout lytFooter = new VerticalLayout(new HorizontalLayout(), imgLogo, lblCopyright); 
         lytFooter.setAlignItems(Alignment.CENTER);
         return lytFooter;

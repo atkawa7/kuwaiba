@@ -17,13 +17,13 @@ package com.neotropic.kuwaiba.modules.commercial.ospman;
 
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.DialogDeleteOSPView;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.DialogNewContainer;
-import org.neotropic.util.visual.views.AbstractView;
-import org.neotropic.util.visual.views.AbstractViewEdge;
-import org.neotropic.util.visual.views.AbstractViewNode;
+import org.neotropic.kuwaiba.core.apis.integration.views.AbstractView;
+import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewEdge;
+import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewNode;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewEdge;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
-import org.neotropic.util.visual.views.ViewEventListener;
-import org.neotropic.util.visual.views.ViewMap;
+import org.neotropic.kuwaiba.core.apis.integration.views.ViewEventListener;
+import org.neotropic.kuwaiba.core.apis.integration.views.ViewMap;
 import org.neotropic.util.visual.views.util.UtilHtml;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
@@ -71,7 +71,7 @@ import org.neotropic.util.visual.tools.ToolRegister;
  * Places a set of selected elements on a map and allows the user to connect and explore them.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
+public class OutsidePlantView extends AbstractView<BusinessObjectLight, Component> {
     /**
      * Checks if an outside plant view has modifications to save
      */
@@ -339,7 +339,6 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
         if (mapProvider instanceof ToolRegister && 
             mapProvider.getComponent() instanceof HasComponents) {
             
-            // TODO: Por qu
             OutsidePlantTools outsidePlantTools = new OutsidePlantTools((AbstractMapProvider) mapProvider, (ToolRegister) mapProvider, mem, aem, bem, ts);
             ((HasComponents) mapProvider.getComponent()).add(outsidePlantTools);
             
@@ -504,7 +503,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight> {
     
     @Override
     public void buildWithBusinessObject(BusinessObjectLight businessObject) {
-        throw new UnsupportedOperationException("This view can not be built from an object. Use buildWithSavedView instead."); 
+        throw new UnsupportedOperationException("This view can not be built from an object. Use buildWithSavedView instead"); 
     }
 
     @Override

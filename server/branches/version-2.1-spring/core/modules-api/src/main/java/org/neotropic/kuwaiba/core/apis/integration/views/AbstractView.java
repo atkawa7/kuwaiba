@@ -13,9 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.neotropic.util.visual.views;
+package org.neotropic.kuwaiba.core.apis.integration.views;
 
-import com.vaadin.flow.component.Component;
 import java.util.Properties;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 
@@ -23,8 +22,9 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentExc
  * Defines the behavior of views that can be plugged and played such as End to End views.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  * @param <T>The type of the object used to build the view. For example, in an Object View, 
+ * @param <C> The class of the visual component returned by this view.
  */
-public abstract class AbstractView<T> {
+public abstract class AbstractView<T, C> {
     /**
      * The default view map. This view map must be created when either {@link  #buildEmptyView()} or {@link  #buildWithBusinessObject(java.lang.Object)} is called.
      */
@@ -76,11 +76,11 @@ public abstract class AbstractView<T> {
      */
     public abstract byte[] getAsImage();
     /**
-     * Gets an embeddable  Vaadin component that can be rendered in a dashboard.It most likely will have to be called after calling {@link #build()} or {@link #build(java.lang.Object)}.
+     * Gets an embeddable visual component that can be rendered in a dashboard.It most likely will have to be called after calling {@link #build()} or {@link #build(java.lang.Object)}.
      * @return An embeddable component (Panel, VerticalLayout, etc)
      * @throws org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException If the component could not be created for some reason (most likely, misconfiguration).
      */
-    public abstract Component getAsComponent() throws InvalidArgumentException;
+    public abstract C getAsComponent() throws InvalidArgumentException;
     /**
      * Exports the view as a ViewMap (a representation of the view as a set of Java objects related to each other). It most likely will have to be called after calling {@link #build() } or {@link  #build(java.lang.Object) }.
      * @return The view map of the view.

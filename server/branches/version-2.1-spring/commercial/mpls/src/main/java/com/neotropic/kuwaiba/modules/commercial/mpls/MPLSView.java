@@ -15,7 +15,6 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.server.StreamResourceRegistry;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,17 +46,17 @@ import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewEdge;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
 import org.neotropic.util.visual.mxgraph.MxGraphCanvas;
 import org.neotropic.util.visual.notifications.SimpleNotification;
-import org.neotropic.util.visual.views.AbstractView;
-import org.neotropic.util.visual.views.AbstractViewEdge;
-import org.neotropic.util.visual.views.AbstractViewNode;
-import org.neotropic.util.visual.views.ViewEventListener;
-import org.neotropic.util.visual.views.ViewMap;
+import org.neotropic.kuwaiba.core.apis.integration.views.AbstractView;
+import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewEdge;
+import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewNode;
+import org.neotropic.kuwaiba.core.apis.integration.views.ViewEventListener;
+import org.neotropic.kuwaiba.core.apis.integration.views.ViewMap;
 
 /**
  * Custom view implementation for MPLS view module with a mxgraph component as canvas.
  * @author Orlando Paz  {@literal <orlando.paz@kuwaiba.org>} 
  */
-public class MPLSView extends AbstractView<BusinessObjectLight> {
+public class MPLSView extends AbstractView<BusinessObjectLight, Component> {
     
     private MxGraphCanvas<BusinessObjectLight, BusinessObjectLight> mxgraphCanvas;
     private TranslationService ts;
@@ -230,7 +229,7 @@ public class MPLSView extends AbstractView<BusinessObjectLight> {
                         String objectId = reader.getElementText();
                         //this side is connected
                         BusinessObjectLight lol = bem.getObjectLight(objectClass, objectId);
-                        if (lol != null){
+                        if (lol != null) {
                            String uri = StreamResourceRegistry.getURI(resourceFactory.getClassIcon(lol.getClassName())).toString();       
                            
                            Properties props = new Properties();

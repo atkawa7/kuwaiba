@@ -13,32 +13,33 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.neotropic.util.visual.views;
+package org.neotropic.kuwaiba.core.apis.integration.views;
+
 
 import java.util.Objects;
 import java.util.Properties;
 
 /**
- * The super class of all classes used to represent nodes inside views.
+ * Represents an edge in an AbstractView. An edge might represent a business object or simply a line. Subclasses should be implemented depending on what the line (edge) is representing.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
- * @param <N> The type of the business object represented by this node.
+ * @param <E> The type of the object represented by this line
  */
-public class AbstractViewNode<N> {
+public abstract class AbstractViewEdge<E> {
     /**
      * The object behind the edge is know as its id and should be unique among the existing edges.
      */
-    private N identifier;
+    private E identifier;
     /**
      * Properties associated to the edge. These properties can be used, among other things, to render it.
      */
     private Properties properties;
     
-    public AbstractViewNode(N identifier) {
+    public AbstractViewEdge(E identifier) {
         this.identifier = identifier;
         this.properties = new Properties();
     }
     
-    public N getIdentifier() {
+    public E getIdentifier() {
         return identifier;
     }
 
@@ -52,10 +53,10 @@ public class AbstractViewNode<N> {
     
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof AbstractViewNode))
+        if (!(obj instanceof AbstractViewEdge))
             return false;
         
-        return identifier.equals(((AbstractViewNode)obj).getIdentifier());
+        return identifier.equals(((AbstractViewEdge)obj).getIdentifier());
     }
 
     @Override

@@ -31,16 +31,16 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotF
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
-import org.neotropic.kuwaiba.visualization.api.AbstractDetailedView;
-import org.neotropic.util.visual.views.AbstractViewEdge;
-import org.neotropic.util.visual.views.AbstractViewNode;
-import org.neotropic.util.visual.views.ViewEventListener;
+import org.neotropic.kuwaiba.core.apis.integration.views.AbstractDetailedView;
+import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewEdge;
+import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewNode;
+import org.neotropic.kuwaiba.core.apis.integration.views.ViewEventListener;
 
 /**
  * View for graphic visualization of splice box equipment
  * @author Orlando Paz  {@literal <orlando.paz@kuwaiba.org>} 
  */
-public class SpliceBoxView extends AbstractDetailedView {
+public class SpliceBoxView extends AbstractDetailedView<BusinessObjectLight, VerticalLayout> {
 
     MxGraph mxGraph;
     private BusinessEntityManager bem;
@@ -94,7 +94,7 @@ public class SpliceBoxView extends AbstractDetailedView {
     }
 
     @Override
-    public Component getAsComponent() throws InvalidArgumentException {
+    public VerticalLayout getAsComponent() throws InvalidArgumentException {
 
         if (businessObject != null) {
             int widthPort = 60, heightPort = 50, startY = 30, widthExternalPort= 30, heightExternalPort=30;
@@ -124,7 +124,7 @@ public class SpliceBoxView extends AbstractDetailedView {
                     }
                 }
                 if (mapPorts.isEmpty()) {
-                    return new Label("The SpliceBox has no input ports");
+                    return new VerticalLayout(new Label("The SpliceBox has no input ports"));
                 }
                 int i = 1;
                 MxGraphNode groupPort;
@@ -230,7 +230,7 @@ public class SpliceBoxView extends AbstractDetailedView {
             }
             return lytGraph;
         }
-        return new Label("The view has no business object associated");
+        return new VerticalLayout(new Label("The view has no business object associated"));
     }
 
     @Override

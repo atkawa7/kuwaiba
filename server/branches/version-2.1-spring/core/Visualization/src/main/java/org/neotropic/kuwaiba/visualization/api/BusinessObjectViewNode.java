@@ -16,7 +16,7 @@
 package org.neotropic.kuwaiba.visualization.api;
 
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
-import org.neotropic.util.visual.views.AbstractViewNode;
+import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewNode;
 
 /**
  * A node that represents a business, inventory object.

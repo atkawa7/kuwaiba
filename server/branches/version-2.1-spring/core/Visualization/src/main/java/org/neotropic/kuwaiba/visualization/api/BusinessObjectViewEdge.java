@@ -16,8 +16,8 @@
 package org.neotropic.kuwaiba.visualization.api;
 
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
-import org.neotropic.util.visual.views.AbstractViewEdge;
-import org.neotropic.util.visual.views.AbstractViewNode;
+import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewEdge;
+import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewNode;
 
 /**
  * An edge that represents a business, inventory object.

@@ -56,17 +56,17 @@ import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewEdge;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
 import org.neotropic.util.visual.mxgraph.MxGraphCanvas;
 import org.neotropic.util.visual.notifications.SimpleNotification;
-import org.neotropic.util.visual.views.AbstractView;
-import org.neotropic.util.visual.views.AbstractViewEdge;
-import org.neotropic.util.visual.views.AbstractViewNode;
-import org.neotropic.util.visual.views.ViewEventListener;
-import org.neotropic.util.visual.views.ViewMap;
+import org.neotropic.kuwaiba.core.apis.integration.views.AbstractView;
+import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewEdge;
+import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewNode;
+import org.neotropic.kuwaiba.core.apis.integration.views.ViewEventListener;
+import org.neotropic.kuwaiba.core.apis.integration.views.ViewMap;
 
 /**
  * Custom view implementation for MPLS view module with a mxgraph component as canvas.
  * @author Orlando Paz  {@literal <orlando.paz@kuwaiba.org>} 
  */
-public class MplsView extends AbstractView<BusinessObjectLight> {
+public class MplsView extends AbstractView<BusinessObjectLight, Component> {
     
     private MxGraphCanvas<BusinessObjectLight, BusinessObjectLight> mxgraphCanvas;
     private TranslationService ts;

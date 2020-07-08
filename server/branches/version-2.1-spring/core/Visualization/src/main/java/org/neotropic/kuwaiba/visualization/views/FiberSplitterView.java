@@ -10,11 +10,8 @@ import com.neotropic.vaadin14.component.MxConstants;
 import com.neotropic.vaadin14.component.MxGraph;
 import com.neotropic.vaadin14.component.MxGraphEdge;
 import com.neotropic.vaadin14.component.MxGraphNode;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Properties;
@@ -28,21 +25,20 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
-import org.neotropic.kuwaiba.visualization.api.AbstractDetailedView;
-import org.neotropic.util.visual.views.AbstractViewEdge;
-import org.neotropic.util.visual.views.AbstractViewNode;
-import org.neotropic.util.visual.views.ViewEventListener;
+import org.neotropic.kuwaiba.core.apis.integration.views.AbstractDetailedView;
+import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewEdge;
+import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewNode;
+import org.neotropic.kuwaiba.core.apis.integration.views.ViewEventListener;
 
 /**
  * View for graphic visualization of fiber splitter equipment
  * @author Orlando Paz  {@literal <orlando.paz@kuwaiba.org>} 
  */
-public class FiberSplitterView extends AbstractDetailedView {
+public class FiberSplitterView extends AbstractDetailedView<BusinessObjectLight, VerticalLayout> {
 
-    MxGraph mxGraph;
+    private MxGraph mxGraph;
     private BusinessEntityManager bem;
     private ApplicationEntityManager aem;
     private MetadataEntityManager mem;
@@ -94,7 +90,7 @@ public class FiberSplitterView extends AbstractDetailedView {
     }
 
     @Override
-    public Component getAsComponent() throws InvalidArgumentException {
+    public VerticalLayout getAsComponent() throws InvalidArgumentException {
 
         if (businessObject != null) {
             int widthPort = 50, heightPort = 40, widthExternalPort= 30, heightExternalPort=30, startY = 30, widthMain = 240, spacingGroup = 20;
@@ -121,7 +117,7 @@ public class FiberSplitterView extends AbstractDetailedView {
                     }
                 }
                 if (inPort == null) 
-                    return new Label("The FiberSplitter has no input port");
+                    return new VerticalLayout(new Label("The FiberSplitter has no input port"));
                 
                 List<BusinessObjectLight> lstMirrors = bem.getSpecialAttribute(inPort.getClassName(), inPort.getId(), "mirrorMultiple");
                 lstMirrors = lstMirrors.stream().sorted((object1, object2) -> object1.getName().compareTo(object2.getName())).collect(Collectors.toList());
@@ -222,23 +218,19 @@ public class FiberSplitterView extends AbstractDetailedView {
                             mxGraph.addNode(endOut);
                             mxGraph.addEdge(edgeOut);
                         } else 
-                            nodeOut.setFillColor("gray"); //doenst have a end point
+                            nodeOut.setFillColor("gray"); //doesn't have an endpoint
                         
                     } else // doesnt have a mirror port
                         nodeOut.setFillColor("black");
-                    
-
                     i++;
                 }
-
             } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
                 Logger.getLogger(FiberSplitterView.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             return lytGraph;
         }
-        return new Label("The view has no business object associated");
-
+        return new VerticalLayout(new Label("The view has no business object associated"));
     }
 
     @Override

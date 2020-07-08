@@ -43,7 +43,7 @@ import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.Nod
 import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolRegisterEvents.NodePositionChangedEvent;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolset.ToolBounceMarker;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OspToolset.ToolChangeMapCenter;
-import org.neotropic.util.visual.views.ViewEventListener;
+import org.neotropic.kuwaiba.core.apis.integration.views.ViewEventListener;
 import elemental.json.Json;
 import elemental.json.JsonObject;
 import java.util.ArrayList;

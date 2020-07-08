@@ -14,26 +14,24 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.visualization.api;
-
-import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
-import org.neotropic.util.visual.views.AbstractView;
+package org.neotropic.kuwaiba.core.apis.integration.views;
 
 /**
  * Class-specific views.These views work in a similar way to class-level reports: They 
  * are graphical representations spawned directly from the object they are launched from and are 
- * defined per-class basis. In this category fits views for racks, splice boxes and fiber splitters.
+ * defined per-class basis.In this category fits views for racks, splice boxes and fiber splitters.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  * @param <T> The business class that represents the nodes and/or connections in the view.
+ * @param <C> The visual component to be returned with the rendered view so it can be embedded.
  */
-public abstract class AbstractDetailedView<T> extends AbstractView {
+public abstract class AbstractDetailedView<T, C> extends AbstractView {
     /**
      * The business object that will be used as parameter to generate the view. Its class 
      * should match that returned by{@link appliesTo}.
      */
-    protected BusinessObjectLight businessObject;
+    protected T businessObject;
 
-    public AbstractDetailedView(BusinessObjectLight businessObject) {
+    public AbstractDetailedView(T businessObject) {
         this.businessObject = businessObject;
     }
     
@@ -44,11 +42,11 @@ public abstract class AbstractDetailedView<T> extends AbstractView {
      */
     public abstract String appliesTo();
 
-    public BusinessObjectLight getBusinessObject() {
+    public T getBusinessObject() {
         return businessObject;
     }
 
-    public void setBusinessObject(BusinessObjectLight businessObject) {
+    public void setBusinessObject(T businessObject) {
         this.businessObject = businessObject;
     }
 }

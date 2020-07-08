@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.neotropic.util.visual.views;
+package org.neotropic.kuwaiba.core.apis.integration.views;
 
 /**
  * Interface to be implemented by those interested in receiving notifications about events related to views.
