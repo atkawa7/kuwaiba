@@ -179,6 +179,11 @@ class MxGraphCell extends PolymerElement {
       verticalLabelPosition: {
           type: String,
           value : 'bottom'
+      },
+      movable: {         
+        type: String, 
+        value: '1',
+        observer: 'movableChanged' 
       }
     };
   }
@@ -238,13 +243,15 @@ class MxGraphCell extends PolymerElement {
     try {
       if (this.vertex) {  //if the cell is a vertex then create a new one
         console.log("CREATING VERTEX");
-        var imageStyle =  ';shape=' +this.shape + ';verticalLabelPosition=' + this.verticalLabelPosition + ';autosize=1;image='.concat(this.image);
+        var imageStyle =  ';shape=' +this.shape + ';verticalLabelPosition=' + this.verticalLabelPosition + ';image='.concat(this.image);
         this.cell = this.graph.insertVertex(parentObject, this.uuid ? this.uuid : null, 
                                             this.label, this.x, this.y, this.width, this.height,
               'verticalAlign=top' + imageStyle +
              ';fontStyle=1;labelPadding=5' +
             ';labelBackgroundColor=' + this.labelBackgroundColor +                
             ';fillColor=' + (this.fillColor ? this.fillColor : '#CCC') +                
+            ';movable=' + this.movable +   
+              ';strokeColor=' + this.strokeColor  + 
             ';fontColor=' + this.fontColor);
       } else if (this.layer) { 
           console.log("CREATIN LAYER");
@@ -322,6 +329,7 @@ class MxGraphCell extends PolymerElement {
       // Updates the display
     this.graph.getModel().endUpdate();
     this.graph.refresh();
+    this.fireCellAdded();
     }
 
   }
@@ -429,6 +437,11 @@ cellLabelChanged() {
     console.log("Cell Label Changed fired");
   }
   
+   //This method dispatches a custom event when the graph is loaded
+    fireCellAdded() {
+        this.dispatchEvent(new CustomEvent('cell-added', {detail: {kicked: true}}));
+    }
+  
   styleChanged() {
       if (this.graph) {
           var style = this.graph.getStylesheet().getCellStyle(this.styleName, null);
@@ -437,6 +450,18 @@ cellLabelChanged() {
               cs[0] = this.cell;             
               this.graph.setCellStyle(this.styleName, cs);
         }
+      }
+  }
+  
+  movableChanged() {
+      if (this.graph) {
+         this.graph.setCellStyles(mxConstants.STYLE_MOVABLE, this.movable, [this.cell])
+      }
+  }
+  
+  setMovable(movable) {
+      if (this.graph) {
+         this.graph.setCellStyles(mxConstants.STYLE_MOVABLE, movable, [this.cell])
       }
   }
 

@@ -16,8 +16,7 @@
  */
 
 import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
-import {mxGraphApi} from './mx-graph-api.js';
-
+import {mxGraphApiLoader} from './mx-graph-api-loader.js';
 /**
  * `my-element`
  * my-element
@@ -35,7 +34,7 @@ class MxGraph extends PolymerElement {
         }
       </style>
       <div id="graphContainer" 
-      style="overflow:scroll;width:[[width]];height:[[height]];min-height:300px;background:url([[grid]])">
+      style="overflow:scroll;width:[[width]];height:[[height]];min-height:300px;background:url([[grid]]);max-width:[[maxWidth]];max-height:[[maxHeight]]">
       </div>
       <slot></slot>
     `;
@@ -67,6 +66,12 @@ class MxGraph extends PolymerElement {
             height: {
                 type: String,
                 value: '400px'
+            },
+            maxWidth: {
+                type: String
+            },
+            maxHeight: {
+                type: String
             },
             cellsMovable: {
                 type: Boolean,
@@ -104,9 +109,13 @@ class MxGraph extends PolymerElement {
     ready() {
         super.ready();
         console.log("READY")
-        new mxGraphApi().load().then(() => {
-            this.initMxGraph()
-        })
+        if (window.mxgraphLoaded) 
+            this.initMxGraph();
+        else {
+            new mxGraphApiLoader().load().then(() => {
+                this.initMxGraph();
+            });
+        }
     }
 
     //called then the mxGraph library has been loaded and initialize the grap object
@@ -354,6 +363,7 @@ class MxGraph extends PolymerElement {
 
 
         }
+        this.fireGraphLoaded();
     }
     ;
             // Get the polymer object that represents the cell with the porvided idCell. 
@@ -371,7 +381,20 @@ class MxGraph extends PolymerElement {
     }
     ;
             // fired when some children tag is added.
-            tagAdded(mutations) {
+    waitForGraph(func, args) {
+
+            var _this = this;
+            console.log("WAITING FOR GRAPH")
+            setTimeout(() => {
+
+                func.bind(this)(args);
+
+            }, 1000);
+        
+
+    }
+            // fired when some children tag is added.
+    tagAdded(mutations) {
 
         console.log("tagAdded Method")
 
@@ -384,7 +407,7 @@ class MxGraph extends PolymerElement {
 
                 this.updateChildren(mutations);
 
-            }, 1500);
+            }, 500);
         }
 
     }
@@ -425,30 +448,62 @@ class MxGraph extends PolymerElement {
         }, this);
     }
 
-    executeStackLayout(cellId, horizontal, spacing) {
-        if (!this.stackLayout) {
-            this.stackLayout = new mxStackLayout(this.graph, horizontal, spacing);
-        } else {
-            this.stackLayout.horizontal = horizontal;
-            this.stackLayout.spacing = spacing;
-        }
-        this.stackLayout.resizeParent = true;
+    executeStackLayout(cellId, horizontal, spacing, marginTop, marginRight, marginBottom, marginLeft) {
+        if (this.graph) {
+            if (!this.stackLayout) {
+                this.stackLayout = new mxStackLayout(this.graph, horizontal, spacing);
+            } else {
+                this.stackLayout.horizontal = horizontal;
+                this.stackLayout.spacing = spacing;
+            }
+            this.stackLayout.marginTop = marginTop;
+            this.stackLayout.marginRight = marginRight;
+            this.stackLayout.marginBottom = marginBottom;
+            this.stackLayout.marginLeft = marginLeft;
+            this.stackLayout.resizeParent = true;
+            this.stackLayout.resizeParentMax = true;
 
-        var cell = this.graph.model.getCell(cellId);
-        if (cell)
-            this.stackLayout.execute(cell);
+            var cell = this.graph.model.getCell(cellId);
+            if (cell)
+                this.stackLayout.execute(cell);
+        }  else {
+            var _this = this;
+            setTimeout( this.waitForGraph(() => {_this.executeStackLayout(cellId, horizontal, spacing, marginTop, marginRight, marginBottom, marginLeft);}, 2500));
+        }
     }
     
     alignCells(align, cellIds, coordinate) {
-        if (this.graph && align && cellIds) {
-            var cells = JSON.parse(cellIds); 
-            var cellsArray = new Array();
-            for (const id of cells) {
-                var cell = this.graph.model.getCell(id); 
-                cellsArray.push(cell);
-            }          
-            this.alignMxGraphCells(align, cellsArray, coordinate);        
-        }
+        if (this.graph) {
+            if (align && cellIds) {
+                var cells = JSON.parse(cellIds); 
+                var cellsArray = new Array();
+                for (const id of cells) {
+                    var cell = this.graph.model.getCell(id); 
+                    cellsArray.push(cell);
+                }          
+                this.alignMxGraphCells(align, cellsArray, coordinate); 
+           }
+        } else 
+            this.waitForGraph(() => {
+                this.alignCells(align, cellIds, coordinate)
+            });       
+    }
+    
+    setCellsMovableStyle(align, cellIds, coordinate) {
+        if (this.graph) {
+            if (align && cellIds) {
+                var cells = JSON.parse(cellIds); 
+                var cellsArray = new Array();
+                for (const id of cells) {
+                    var cell = this.graph.model.getCell(id); 
+                    cellsArray.push(cell);
+                }          
+                this.alignMxGraphCells(align, cellsArray, coordinate); 
+           }
+        } else 
+            this.waitForGraph(() => {
+                this.alignCells(align, cellIds, coordinate)
+            });       
     }
 
     addCellStyle(name, jsonProperties) {
@@ -479,15 +534,25 @@ class MxGraph extends PolymerElement {
     fireDeleteCellSelected() {
         this.dispatchEvent(new CustomEvent('delete-cell-selected', {detail: {kicked: true}}));
     }
+    
+     //This method dispatches a custom event when the graph is loaded
+    fireGraphLoaded() {
+        this.dispatchEvent(new CustomEvent('graph-loaded', {detail: {kicked: true}}));
+    }
 
     //this method remove all cells(vertex and edges) in the graph
     removeAllCells() {
-        this.graph.removeCells(this.graph.getChildVertices(this.graph.getDefaultParent()));
+        if (this.graph)
+            this.graph.removeCells(this.graph.getChildVertices(this.graph.getDefaultParent()));
+        
     }
 
     //this method refresh all objects in the graph
     refreshGraph() {
-        this.graph.refresh();
+        if (this.graph)
+            this.graph.refresh();
+        else 
+            this.waitForGraph(this.refreshGraph);
     }
     
     alignMxGraphCells(align, cells, param) {
