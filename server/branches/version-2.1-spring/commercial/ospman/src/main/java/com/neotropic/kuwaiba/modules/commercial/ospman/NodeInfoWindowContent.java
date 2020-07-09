@@ -95,7 +95,7 @@ public class NodeInfoWindowContent extends VerticalLayout {
                                 break;
                             default:
                                 new SimpleNotification(ts.getTranslatedString("module.general.messages.information"), 
-                                        "The selected object does not have any detailed view").open();
+                                        ts.getTranslatedString("module.ospman.messages.no-detailed-view")).open();
                         }
                 });
                 

@@ -95,11 +95,6 @@
             <version>2.3.2-1</version>
 	</dependency>
         <dependency>
-            <groupId>org.neotropic.util</groupId>
-            <artifactId>visual</artifactId>
-            <version>2.1</version>
-        </dependency>
-        <dependency>
             <groupId>org.neotropic.kuwaiba</groupId>
             <artifactId>serviceman</artifactId>
             <version>2.1</version>

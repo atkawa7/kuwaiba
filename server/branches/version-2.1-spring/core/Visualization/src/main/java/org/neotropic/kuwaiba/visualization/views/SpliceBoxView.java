@@ -74,7 +74,8 @@ public class SpliceBoxView extends AbstractDetailedView<BusinessObjectLight, Ver
         super(businessObject);
     }
     
-    public SpliceBoxView(BusinessObjectLight businessObject, BusinessEntityManager bem, ApplicationEntityManager aem, MetadataEntityManager mem, TranslationService ts) {
+    public SpliceBoxView(BusinessObjectLight businessObject, BusinessEntityManager bem, ApplicationEntityManager aem, 
+            MetadataEntityManager mem, TranslationService ts) {
         this(businessObject);
         this.bem = bem;  
         this.aem = aem;

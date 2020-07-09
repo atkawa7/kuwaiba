@@ -16,7 +16,7 @@
 
 package org.neotropic.kuwaiba.web.ui;
 
-import com.neotropic.flow.component.MxGraphApi;
+import com.neotropic.flow.component.mxgraph.MxGraphApi;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;

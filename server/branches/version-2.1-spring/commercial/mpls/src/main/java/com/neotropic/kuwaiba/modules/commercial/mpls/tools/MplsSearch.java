@@ -120,7 +120,7 @@ public class MplsSearch extends Div {
                                 return hly;
                             }));
                          
-                            lytContent.add(new BoldLabel(ts.getTranslatedString("module.mpls.equipments")), gridEquipments);                          
+                            lytContent.add(new BoldLabel(ts.getTranslatedString("module.mpls.equipment")), gridEquipments);                          
                         }
 
                         List<BusinessObjectLight> lstMPLSLinksSearch = bem.getObjectsWithFilterLight(Constants.CLASS_MPLSLINK, Constants.PROPERTY_NAME, event.getValue());

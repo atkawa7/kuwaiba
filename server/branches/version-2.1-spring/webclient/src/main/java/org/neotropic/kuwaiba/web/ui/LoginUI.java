@@ -22,7 +22,6 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.StyleSheet;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
@@ -148,23 +147,30 @@ public class LoginUI extends VerticalLayout implements BeforeEnterObserver {
         VerticalLayout lytForm = new VerticalLayout();
         Label lblUser = new Label(ts.getTranslatedString("module.login.ui.user"));
         lblUser.setWidth("100px");
-        lblUser.getElement().getStyle().set("margin", "auto");
+        lblUser.getElement().getStyle().set("margin-top", "1.5em");
         
         Label lblPassword = new Label(ts.getTranslatedString("module.login.ui.password"));
         lblPassword.setWidth("100px");
-        lblPassword.getElement().getStyle().set("margin", "auto");
+        lblPassword.getElement().getStyle().set("margin-top", "1.5em");
         
         HorizontalLayout lytUser = new HorizontalLayout(lblUser, txtUsername);
+        lytUser.setWidthFull();
         HorizontalLayout lytPassword = new HorizontalLayout(lblPassword, txtPassword);
+        lytPassword.setWidthFull();
         lytForm.add(lytUser, lytPassword, btnLogin);
-        lytForm.setWidth("300px");
+        lytForm.setWidth("700px");
         return lytForm;
      }
     
     private VerticalLayout buildLoginFooter() {
         Image imgLogo = new Image("img/neotropic_logo.png", "Neotropic SAS - Network Management, Data Analysis and Free Software ");
-        Div lblCopyright = new Div(new Html("<span style=\"font-size:small\">Copyright 2010-2020 <a target=\"_blank\" href=\"https://www.neotropic.co\">Neotropic SAS</a> - Network Management, Data Analysis and Free Software</span>"));
-        VerticalLayout lytFooter = new VerticalLayout(new HorizontalLayout(), imgLogo, lblCopyright); 
+        Div divCopyright = new Div(new Html("<span style=\"font-size:x-small\">Copyright 2010-2020 <a target=\"_blank\" href=\"https://www.neotropic.co\">Neotropic SAS</a></span>"));
+        Div divExtra = new Div(new Html("<span style=\"font-size:x-small\">Network Management, Data Analysis and Free Software</span>"));
+        
+        VerticalLayout lytFooter = new VerticalLayout(imgLogo, divCopyright, divExtra);
+        lytFooter.setPadding(false);
+        lytFooter.setSpacing(false);
+        lytFooter.setSizeFull();
         lytFooter.setAlignItems(Alignment.CENTER);
         return lytFooter;
     }

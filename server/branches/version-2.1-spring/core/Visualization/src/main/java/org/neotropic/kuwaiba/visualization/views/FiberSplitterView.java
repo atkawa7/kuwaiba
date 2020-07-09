@@ -73,7 +73,8 @@ public class FiberSplitterView extends AbstractDetailedView<BusinessObjectLight,
         super(businessObject);
     }
     
-    public FiberSplitterView(BusinessObjectLight businessObject, BusinessEntityManager bem, ApplicationEntityManager aem, MetadataEntityManager mem, TranslationService ts) {
+    public FiberSplitterView(BusinessObjectLight businessObject, BusinessEntityManager bem, ApplicationEntityManager aem, 
+            MetadataEntityManager mem, TranslationService ts) {
         this(businessObject);
         this.bem = bem;  
         this.aem = aem;
