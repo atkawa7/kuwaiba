@@ -133,7 +133,7 @@ class MxGraph extends PolymerElement {
         } else
         {
             // Disables the built-in context menu
-//            mxEvent.disableContextMenu(this.$.graphContainer);
+            mxEvent.disableContextMenu(this.$.graphContainer);
 
             //var model = new mxGraphModel(new mxCell());
             // Creates the graph inside the given container
@@ -160,13 +160,26 @@ class MxGraph extends PolymerElement {
                 console.log("CLICK")
                 console.log(evt)
 
-                if (cell != null && _this.graph.getModel().isEdge(cell)) {
-
+                if (cell) {
                     var cellObject = _this.getCellObjectById(cell.id);
-                    cellObject.fireClickEdge();
-                    console.log("CLICK on EDGE")
+                    cellObject.fireClickCell();
+                    console.log("CLICK on Cell")
+                    
+                } else {
+                    _this.fireClickGraph(evt.properties.event.layerX, evt.properties.event.layerY);
                 }
             });
+            // fire right click event
+            this.graph.popupMenuHandler.factoryMethod = function(menu, cell, evt) {
+                if (cell) {
+                    var cellObject = _this.getCellObjectById(cell.id);
+                    if (cell.edge || cell.vertex){
+                          cellObject.fireRightClickCell(); 
+                    }
+                } else {
+                    _this.fireRightClickGraph(evt.layerX, evt.layerY);
+                }   
+            }
 
 //          detect delete key to fire delete object event
             var keyHandler = new mxKeyHandler(this.graph);
@@ -229,8 +242,7 @@ class MxGraph extends PolymerElement {
                     var cellObject = _this.getCellObjectById(cell.id);
                     
                     if (cellObject && cellObject.animateOnSelect && _this.graph.getModel().isVertex(cell)) {
-                        var state = _this.graph.view.getState(cell);
-			state.shape.node.classList.remove('cell-animated');
+                        cellObject.stopAnimation();  
                     }
                 }
                 console.log("CELL UNSELECTED :" + cell.id + " is Vertex : " + _this.graph.getModel().isVertex(cell));
@@ -245,17 +257,10 @@ class MxGraph extends PolymerElement {
                     var cellObject = _this.getCellObjectById(cell.id);
                     
                     if (cellObject && cellObject.animateOnSelect && _this.graph.getModel().isVertex(cell)) {
-                        var state = _this.graph.view.getState(cell);
-			state.shape.node.classList.add('cell-animated');
-                    }
-                    
+                        cellObject.startAnimation();                  
+                    }                  
                 }
-//                var geo = graph.getCellGeometry(v1);
-//		geo = geo.clone();
-//		geo.x += 180 * mult;				
-//                graph.getModel().setGeometry(v1, geo);
-           
-                
+                          
                 console.log("CELL SELECTED :" + cell.id + " is Vertex : " + _this.graph.getModel().isVertex(cell));
             }
             //allow custom logic when editing in edges labels
@@ -535,9 +540,13 @@ class MxGraph extends PolymerElement {
         }
     }
 
-//This method dispatches a custom event when any edge its clicked
-    fireClickEdge() {
-        this.dispatchEvent(new CustomEvent('click-edge', {detail: {kicked: true}}));
+//This method dispatches a custom event when the graph canvas is clicked (not fired on clicks in any vertex, edge, layer )
+    fireClickGraph(x, y) {
+        this.dispatchEvent(new CustomEvent('click-graph', {detail: {kicked: true, x:x , y:y}}));
+    }
+    //This method dispatches a custom event when right click is detected
+    fireRightClickGraph(x, y) {
+        this.dispatchEvent(new CustomEvent('right-click-graph', {detail: {kicked: true, x:x , y:y}}));
     }
 
     //This method dispatches a custom event when any edge its clicked

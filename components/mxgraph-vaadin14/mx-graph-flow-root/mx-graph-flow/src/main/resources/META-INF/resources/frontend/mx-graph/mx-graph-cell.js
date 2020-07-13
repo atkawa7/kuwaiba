@@ -28,9 +28,9 @@ class MxGraphCell extends PolymerElement {
   static get template() {
     return html`<style>
          .cell-animated {
-           -webkit-animation:bounce-cell 1s infinite;
+           animation:bounce-cell 1s infinite;
         }
-         @-webkit-keyframes bounce-cell {
+         @keyframes bounce-cell {
              0%       { transform: translateY(-3px); }
 	     25%, 75% {  transform: translateY(-7px); }
 	     50%      {  transform: translateY(-10px); }
@@ -273,12 +273,12 @@ class MxGraphCell extends PolymerElement {
     
             
       } else if (this.layer) { 
-          console.log("CREATIN LAYER");
+          console.log("CREATINGLAYER");
           var newLayer = new mxCell();
           newLayer.id = this.uuid;
           this.cell = this.graph.getModel().add(this.graph.getModel().getRoot(), newLayer);
       } else if (this.edge) {  //if the cell is an edge then create it.
-        console.log("CREATIN EDGE");
+        console.log("CREATING EDGE");
         if(this.source && this.target) {
                   
           var sourceNode = this.graph.model.getCell(this.source);
@@ -435,9 +435,14 @@ cellLabelChanged() {
 
 // Custom Events
 
-  fireClickEdge() {
-    this.dispatchEvent(new CustomEvent('click-edge', { detail: { kicked: true } }));
-    console.log("click-edge fired");
+  fireClickCell() {
+    this.dispatchEvent(new CustomEvent('click-cell', { detail: { kicked: true } }));
+    console.log("click-cell fired");
+  }
+  
+  fireRightClickCell() {
+    this.dispatchEvent(new CustomEvent('right-click-cell', { detail: { kicked: true } }));
+    console.log("right-click-cell fired");
   }
 
   fireCellPositionChanged(){
@@ -484,10 +489,14 @@ cellLabelChanged() {
       }
   }
   
-  animate() {
+  startAnimation() {
       var state = this.graph.view.getState(this.cell);
-      state.shape.node.getElementsByTagName('rect')[0].setAttribute('class', 'cell-animated');		
       state.shape.node.classList.add('cell-animated');
+  }
+  
+  stopAnimation() {
+     var state = this.graph.view.getState(this.cell);
+     state.shape.node.classList.remove('cell-animated'); 
   }
 }
 

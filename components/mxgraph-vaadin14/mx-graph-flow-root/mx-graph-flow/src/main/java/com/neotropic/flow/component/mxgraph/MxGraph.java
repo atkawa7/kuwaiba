@@ -108,8 +108,12 @@ public class MxGraph extends Component implements HasComponents {
         getElement().setProperty(PROPERTY_OVERFLOW, prop);
     }
        
-    public Registration addClickEdgeListener(ComponentEventListener<MxGraphClickEdgeEvent> clickEdgeListener) {
-        return super.addListener(MxGraphClickEdgeEvent.class, clickEdgeListener);
+    public Registration addClickGraphListener(ComponentEventListener<MxGraphClickGraphEvent> clickListener) {
+        return super.addListener(MxGraphClickGraphEvent.class, clickListener);
+    }
+    
+    public Registration addRightClickGraphListener(ComponentEventListener<MxGraphRightClickGraphEvent> clickListener) {
+        return super.addListener(MxGraphRightClickGraphEvent.class, clickListener);
     }
     
     public Registration addCellUnselectedListener(ComponentEventListener<MxGraphCellUnselectedEvent> eventListener) {

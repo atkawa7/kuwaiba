@@ -328,8 +328,12 @@ public class MxGraphCell extends Component implements HasComponents {
         add(mxGraphCell);
     }
     
-    public Registration addClickEdgeListener(ComponentEventListener<MxGraphClickEdgeEvent> clickEdgeListener) {
-        return super.addListener(MxGraphClickEdgeEvent.class, clickEdgeListener);
+    public Registration addClickEdgeListener(ComponentEventListener<MxGraphClickCellEvent> clickListener) {
+        return super.addListener(MxGraphClickCellEvent.class, clickListener);
+    }
+    
+    public Registration addRightClickEdgeListener(ComponentEventListener<MxGraphRightClickCellEvent> clickEdgeListener) {
+        return super.addListener(MxGraphRightClickCellEvent.class, clickEdgeListener);
     }
     
     public Registration addCellPositionChangedListener(ComponentEventListener<MxGraphCellPositionChanged> eventListener) {
