@@ -7,6 +7,7 @@ import com.neotropic.flow.component.mxgraph.MxGraphCell;
 import com.neotropic.flow.component.mxgraph.MxGraphCellPositionChanged;
 import com.neotropic.flow.component.mxgraph.MxGraphCellUnselectedEvent;
 import com.neotropic.flow.component.mxgraph.MxGraphClickEdgeEvent;
+import com.neotropic.flow.component.mxgraph.MxGraphEdge;
 import com.neotropic.flow.component.mxgraph.MxGraphLayer;
 import com.neotropic.flow.component.mxgraph.MxGraphNode;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -42,11 +43,12 @@ public class MainView extends VerticalLayout {
      }
   );
         
-        MxGraphCell nodeA = new MxGraphCell();          
-        MxGraphCell nodeB = new MxGraphCell();
-        MxGraphCell nodeC = new MxGraphNode();
-        MxGraphCell nodeD = new MxGraphNode();
-        MxGraphCell edge = new MxGraphCell();
+        MxGraphNode nodeA = new MxGraphNode();          
+        MxGraphNode nodeB = new MxGraphNode();
+        MxGraphNode nodeContainer = new MxGraphNode();
+        MxGraphNode nodeC = new MxGraphNode();
+        MxGraphNode nodeD = new MxGraphNode();
+        MxGraphEdge edge = new MxGraphEdge();
         MxGraphLayer layerEdge = new MxGraphLayer();
         MxGraphLayer layerNodes = new MxGraphLayer();
           
@@ -54,6 +56,10 @@ public class MainView extends VerticalLayout {
         customStyle.addProperty(MxConstants.STYLE_SHAPE, MxConstants.SHAPE_RECTANGLE);
         customStyle.addProperty(MxConstants.STYLE_STROKECOLOR, "red");
         customStyle.addProperty(MxConstants.STYLE_FILLCOLOR, "blue");
+        MxCellStyle customStyle2 = new MxCellStyle("customStyle2");
+        customStyle2.addProperty(MxConstants.STYLE_SHAPE, MxConstants.SHAPE_HEXAGON);
+        customStyle2.addProperty(MxConstants.STYLE_STROKECOLOR, "green");
+        customStyle2.addProperty(MxConstants.STYLE_FILLCOLOR, "orange");
                               
         nodeA.addCellPositionChangedListener(new ComponentEventListener<MxGraphCellPositionChanged>() {
             @Override
@@ -82,38 +88,41 @@ public class MainView extends VerticalLayout {
                Notification.show("Cell Unselected Id:" + t.getCellId() + " is Vertex:" + t.isVertex());
             }
         });
-        
-        
-        Button addVerticesEdge = new Button("Add Demo Vertices Edge"); // (3)
 
+         // only set an id to the layers
           layerNodes.setUuid("layerNodes");
+          
           nodeA.setUuid("nodeA");
+          nodeA.setShape(MxConstants.SHAPE_IMAGE);
           nodeA.setImage("images/press32.png");
           nodeA.setLabel("Press");
           nodeA.setGeometry(20, 100, 80, 20);
-          nodeA.setIsVertex(true);
           nodeA.setCellLayer(layerNodes.getUuid());
           nodeB.setUuid("nodeB");
           nodeB.setImage("images/print32.png");
+          nodeB.setShape(MxConstants.SHAPE_IMAGE);
           nodeB.setLabel("print");
-          nodeB.setGeometry(200, 100, 80, 200);
-          nodeB.setIsVertex(true);
+          nodeB.setGeometry(200, 100, 80, 20);
           nodeB.setCellLayer(layerNodes.getUuid());
+          nodeContainer.setUuid("nodeContainer");
+          nodeContainer.setLabel("Container");
+          nodeContainer.setGeometry(300, 100, 80, 200);
+          nodeContainer.setCellLayer(layerNodes.getUuid());
+          nodeContainer.setAnimateOnSelect(true);
           nodeC.setUuid("nodeC");
           nodeC.setLabel("Sub Cell");
           nodeC.setGeometry(10, 30, 30, 60); 
-          nodeC.setCellParent("nodeB");
+          nodeC.setCellParent("nodeContainer");
           nodeD.setUuid("nodeD");
           nodeD.setLabel("Sub Cell 2");
           nodeD.setGeometry(10, 30, 30, 60); 
-          nodeD.setCellParent("nodeB");
+          nodeD.setCellParent("nodeContainer");
 
           
          //set the edge layer
           layerEdge.setUuid("edgeLayer");
           
         //set ethe edge info          
-          edge.setIsEdge(true);
           edge.setSourceLabel("Source Label");
           edge.setTargetLabel("Target Label");
           edge.setSource(nodeA.getUuid());
@@ -145,19 +154,22 @@ public class MainView extends VerticalLayout {
           edge.setPoints(points.toJson());
        
           add(mxGraph);
+                mxGraph.addGraphLoadedListener(evt -> { // always add styles, executeLayouts, align cells etc 
+                                                        //when the graph is already loaded
+                mxGraph.addCellStyle(customStyle);
+                mxGraph.addCellStyle(customStyle2);
+          });
           mxGraph.refreshGraph();
           mxGraph.addLayer(layerNodes);     // remember the order in which objects are added
-          mxGraph.addLayer(layerEdge);    
+          mxGraph.addLayer(layerEdge);     // add layers first that his childrens
           
-          mxGraph.addCell(nodeA);
+          mxGraph.addNode(nodeA);
           mxGraph.executeStackLayout("nodeA", Boolean.TRUE, 1);
-          mxGraph.addCell(nodeB);
-          mxGraph.addCell(nodeC);
-          mxGraph.addCell(nodeD);
-          mxGraph.addCell(edge);
-//          nodeB.addCell(nodeC); // add the nodeC as children of the nodeB
-//          nodeB.addCell(nodeD); // add the nodeC as children of the nodeB
-
+          mxGraph.addNode(nodeB);
+          mxGraph.addNode(nodeContainer);
+          mxGraph.addNode(nodeC);
+          mxGraph.addNode(nodeD);
+          mxGraph.addEdge(edge);
 
 //          Button addPoint = new Button("Add Demo Point Edge"); // (3)
 //
@@ -181,11 +193,7 @@ public class MainView extends VerticalLayout {
           Notification.show("label Vertex Print: " + nodeB.getLabel());
           Notification.show("label edge: " + edge.getLabel());
           Notification.show("Source label edge: " + edge.getSourceLabel());
-          Notification.show("Target label edge: " + edge.getTargetLabel());
-
-
-          
-        
+          Notification.show("Target label edge: " + edge.getTargetLabel());   
      }); 
         
      Button btnToggleVisivilityEdgeLager = new Button("Hide/Show Edge Layer", evt -> {
@@ -196,21 +204,25 @@ public class MainView extends VerticalLayout {
          layerNodes.toggleVisibility();
      });
      
-     Button btnToggleLayoutNodePrint = new Button("Toggle Vertical/horizontal Layout Node Print", evt -> {
-         mxGraph.executeStackLayout("nodeB", true, 10);
-     });
-     
-     Button btnCustomStyle = new Button("Add Custom Style to Sheet", evt -> {
-         mxGraph.addCellStyle(customStyle);
-     });
-     
-      Button btnCustomStyleNode = new Button("Add Custom Style to Node Print", evt -> {
-         nodeB.setStyleName("customStyle");
+     Button btnToggleLayoutNodePrint = new Button("Execute Horizontal Layout in Container node", evt -> {
+         mxGraph.executeStackLayout("nodeContainer", true, 10);
      });
 
-     add(new HorizontalLayout(addVerticesEdge, btnToggleVisivilityNodesLager, btnToggleVisivilityEdgeLager, btnShowObjectsData, btnToggleLayoutNodePrint));
-     add(new HorizontalLayout(btnCustomStyle, btnCustomStyleNode));
-//        add(addButton);
+     Button btnCustomStyle1Node = new Button("Add Custom Style 1 to Node Print", evt -> {
+         nodeB.setStyleName("customStyle");
+     });
+      
+     Button btnCustomStyle2Node = new Button("Add Custom Style 2 to Node Print", evt -> {
+         nodeB.setStyleName("customStyle2");
+     });
+     
+     Button btnRemoveContainerNode = new Button("Remove Container Node", evt -> {
+         mxGraph.removeNode(nodeContainer);
+     });
+
+     add(new HorizontalLayout(btnToggleVisivilityNodesLager, btnToggleVisivilityEdgeLager, btnShowObjectsData, btnToggleLayoutNodePrint));
+     add(new HorizontalLayout(btnCustomStyle1Node, btnCustomStyle2Node, btnRemoveContainerNode));
+
     }
 
 }

@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 
-@Route(value = "splice")
+@Route(value = "splicebox")
 public class SpliceBox extends VerticalLayout {
 
     public SpliceBox(@Autowired MessageBean bean) {
@@ -134,6 +134,11 @@ public class SpliceBox extends VerticalLayout {
         mxGraph.addCell(startInB);
         mxGraph.addCell(endOutA);
         mxGraph.addCell(endOutB);
+        endOutB.addCellAddedListener(evt -> { // when the last cell is added, then execute the layouts
+            mxGraph.executeStackLayout("main", false, 1);
+            mxGraph.executeStackLayout("g1", true, 1);
+            mxGraph.executeStackLayout("g2", true, 1);
+        });
         mxGraph.addEdge(edgeInA);
         mxGraph.addEdge(edgeInB);
         mxGraph.addEdge(edgeOutA);
@@ -142,19 +147,9 @@ public class SpliceBox extends VerticalLayout {
         });     
         mxGraph.setGrid("images/grid.gif");
         
-     
-      
-    Button btnSetLayout = new Button("Execute Layouts", evt -> {
-         mxGraph.executeStackLayout("main", false, 1);
-         mxGraph.executeStackLayout("g1", true, 1);
-         mxGraph.executeStackLayout("g2", true, 1);
-     });
-        
-
      mxGraph.addCell(mainBox);
      add(mxGraph);  
      add(new HorizontalLayout(addDemo));
-     add(new HorizontalLayout(btnSetLayout));
 //        add(addButton);
     }
 

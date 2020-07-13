@@ -138,22 +138,16 @@ public class Splitter extends VerticalLayout {
         mxGraph.addCell(endOutB);  
         mxGraph.addEdge(edgeOutA); 
         mxGraph.addEdge(edgeOutB); 
-//        mxGraph.executeStackLayout("gepout", false, 20);
-//        mxGraph.executeStackLayout("g2", false, 20);
-//        mxGraph.executeStackLayout("main", true, 20);
-//        mxGraph.addEdge(edgeOutC); 
 
-//        mxGraph.addCell(endOutC);
-
+        edgeOutB.addCellAddedListener(eventListener -> {
+             mxGraph.executeStackLayout("gepout", false, 20);
+             mxGraph.executeStackLayout("g2", false, 20);
+             mxGraph.executeStackLayout("main", true, 100);
+        });
         
         });     
         mxGraph.setGrid("images/grid.gif");
             
-    Button btnSetLayout = new Button("Execute Layouts", evt -> {
-        mxGraph.executeStackLayout("gepout", false, 20);
-        mxGraph.executeStackLayout("g2", false, 20);
-        mxGraph.executeStackLayout("main", true, 100);
-     });
     
      Button btnAlign = new Button("Align middle", evt -> {
         mxGraph.alignCells(MxConstants.ALIGN_MIDDLE, new String [] {"s1" , "main", "gepout"}, null);
@@ -162,8 +156,7 @@ public class Splitter extends VerticalLayout {
         
      add(mxGraph);  
      mxGraph.addCell(mainBox);
-     add(new HorizontalLayout(addDemo));
-     add(new HorizontalLayout(btnSetLayout, btnAlign));
+     add(new HorizontalLayout(addDemo, btnAlign));
 //        add(addButton);
     }
 
