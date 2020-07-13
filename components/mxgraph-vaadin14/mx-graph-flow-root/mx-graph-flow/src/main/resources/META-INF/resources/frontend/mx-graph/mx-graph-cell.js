@@ -26,7 +26,17 @@ import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
  */
 class MxGraphCell extends PolymerElement {
   static get template() {
-    return html`<slot></slot>`;
+    return html`<style>
+         .cell-animated {
+           -webkit-animation:bounce-cell 1s infinite;
+        }
+         @-webkit-keyframes bounce-cell {
+             0%       { transform: translateY(-3px); }
+	     25%, 75% {  transform: translateY(-7px); }
+	     50%      {  transform: translateY(-10px); }
+	     100%     { transform: translateY(0);}
+    }
+            </style> <slot></slot>`;
   }
 
   static get properties() {
@@ -184,6 +194,10 @@ class MxGraphCell extends PolymerElement {
         type: String, 
         value: '1',
         observer: 'movableChanged' 
+      },
+      animateOnSelect: {
+          type: Boolean,
+          value: false
       }
     };
   }
@@ -243,16 +257,21 @@ class MxGraphCell extends PolymerElement {
     try {
       if (this.vertex) {  //if the cell is a vertex then create a new one
         console.log("CREATING VERTEX");
-        var imageStyle =  ';shape=' +this.shape + ';verticalLabelPosition=' + this.verticalLabelPosition + ';image='.concat(this.image);
+        var imageStyle =   this.image ? ';image='.concat(this.image) : '';
         this.cell = this.graph.insertVertex(parentObject, this.uuid ? this.uuid : null, 
                                             this.label, this.x, this.y, this.width, this.height,
               'verticalAlign=top' + imageStyle +
              ';fontStyle=1;labelPadding=5' +
+             ';shape=' + this.shape +
+             ';verticalLabelPosition=' + this.verticalLabelPosition + 
             ';labelBackgroundColor=' + this.labelBackgroundColor +                
             ';fillColor=' + (this.fillColor ? this.fillColor : '#CCC') +                
             ';movable=' + this.movable +   
               ';strokeColor=' + this.strokeColor  + 
-            ';fontColor=' + this.fontColor);
+            ';fontColor=' + this.fontColor
+            + imageStyle) ;
+    
+            
       } else if (this.layer) { 
           console.log("CREATIN LAYER");
           var newLayer = new mxCell();
@@ -464,8 +483,12 @@ cellLabelChanged() {
          this.graph.setCellStyles(mxConstants.STYLE_MOVABLE, movable, [this.cell])
       }
   }
-
-
+  
+  animate() {
+      var state = this.graph.view.getState(this.cell);
+      state.shape.node.getElementsByTagName('rect')[0].setAttribute('class', 'cell-animated');		
+      state.shape.node.classList.add('cell-animated');
+  }
 }
 
 window.customElements.define('mx-graph-cell', MxGraphCell);

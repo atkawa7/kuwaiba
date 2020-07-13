@@ -34,7 +34,7 @@ class MxGraph extends PolymerElement {
         }
       </style>
       <div id="graphContainer" 
-      style="overflow:scroll;width:[[width]];height:[[height]];min-height:300px;background:url([[grid]]);max-width:[[maxWidth]];max-height:[[maxHeight]]">
+      style="overflow:[[overflow]];width:[[width]];height:[[height]];min-height:300px;background:url([[grid]]);max-width:[[maxWidth]];max-height:[[maxHeight]]">
       </div>
       <slot></slot>
     `;
@@ -72,6 +72,10 @@ class MxGraph extends PolymerElement {
             },
             maxHeight: {
                 type: String
+            },
+            overflow: {
+                type: String,
+                value : 'auto'
             },
             cellsMovable: {
                 type: Boolean,
@@ -129,7 +133,7 @@ class MxGraph extends PolymerElement {
         } else
         {
             // Disables the built-in context menu
-            mxEvent.disableContextMenu(this.$.graphContainer);
+//            mxEvent.disableContextMenu(this.$.graphContainer);
 
             //var model = new mxGraphModel(new mxCell());
             // Creates the graph inside the given container
@@ -222,6 +226,12 @@ class MxGraph extends PolymerElement {
                 cellUnselected.apply(this, arguments);
                 if (cell) {
                     _this.fireCellUnselected(cell.id, _this.graph.getModel().isVertex(cell));
+                    var cellObject = _this.getCellObjectById(cell.id);
+                    
+                    if (cellObject && cellObject.animateOnSelect && _this.graph.getModel().isVertex(cell)) {
+                        var state = _this.graph.view.getState(cell);
+			state.shape.node.classList.remove('cell-animated');
+                    }
                 }
                 console.log("CELL UNSELECTED :" + cell.id + " is Vertex : " + _this.graph.getModel().isVertex(cell));
             }
@@ -231,8 +241,21 @@ class MxGraph extends PolymerElement {
             mxGraphSelectionModel.prototype.cellAdded = function (cell) {
                 cellSelected.apply(this, arguments);
                 if (cell) {
-                    _this.fireCellSelected(cell.id, _this.graph.getModel().isVertex(cell));
+                    _this.fireCellSelected(cell.id, _this.graph.getModel().isVertex(cell));  
+                    var cellObject = _this.getCellObjectById(cell.id);
+                    
+                    if (cellObject && cellObject.animateOnSelect && _this.graph.getModel().isVertex(cell)) {
+                        var state = _this.graph.view.getState(cell);
+			state.shape.node.classList.add('cell-animated');
+                    }
+                    
                 }
+//                var geo = graph.getCellGeometry(v1);
+//		geo = geo.clone();
+//		geo.x += 180 * mult;				
+//                graph.getModel().setGeometry(v1, geo);
+           
+                
                 console.log("CELL SELECTED :" + cell.id + " is Vertex : " + _this.graph.getModel().isVertex(cell));
             }
             //allow custom logic when editing in edges labels
@@ -371,9 +394,7 @@ class MxGraph extends PolymerElement {
         var cell;
         this.cells.forEach(function (cellObject) {
             if (cellObject.cell.id == idCell) {
-
                 cell = cellObject;
-
             }
 
         }, this);
@@ -509,7 +530,8 @@ class MxGraph extends PolymerElement {
     addCellStyle(name, jsonProperties) {
         if (this.graph && jsonProperties && jsonProperties.length > 0) {
             var styleProps = JSON.parse(jsonProperties);
-            this.graph.getStylesheet().putCellStyle(name, styleProps);
+            if (!this.isEmpty(styleProps))
+                this.graph.getStylesheet().putCellStyle(name, styleProps);
         }
     }
 
@@ -545,6 +567,11 @@ class MxGraph extends PolymerElement {
         if (this.graph)
             this.graph.removeCells(this.graph.getChildVertices(this.graph.getDefaultParent()));
         
+    }
+    
+    // test if the given object is null
+    isEmpty(obj) {
+        return Object.keys(obj).length === 0;
     }
 
     //this method refresh all objects in the graph

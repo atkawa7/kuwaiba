@@ -26,6 +26,7 @@ import com.vaadin.flow.shared.Registration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 /**
  * 
@@ -41,6 +42,7 @@ public class MxGraph extends Component implements HasComponents {
     private static final String PROPERTY_MAX_HEIGHT = "maxHeight";
     private static final String PROPERTY_CELLS_MOVABLE = "cellsMovable";
     private static final String PROPERTY_CELLS_EDITABLE = "cellsEditable";
+    private static final String PROPERTY_OVERFLOW = "overflow";
     
     private List<MxGraphNode> nodes;
     private List<MxGraphEdge> edges;
@@ -96,6 +98,14 @@ public class MxGraph extends Component implements HasComponents {
     public void setMaxHeight(String prop) {
         getElement().setProperty(PROPERTY_MAX_HEIGHT, prop);
         getElement().getStyle().set("max-height", prop);
+    }
+    
+    public String getOverflow() {
+        return getElement().getProperty(PROPERTY_OVERFLOW);
+    }
+        
+    public void setOverflow(String prop) {
+        getElement().setProperty(PROPERTY_OVERFLOW, prop);
     }
        
     public Registration addClickEdgeListener(ComponentEventListener<MxGraphClickEdgeEvent> clickEdgeListener) {
@@ -227,6 +237,26 @@ public class MxGraph extends Component implements HasComponents {
     public void removeNode(MxGraphNode node) {
         getElement().removeChild(node.getElement());
         nodes.remove(node);
+        
+        for (MxGraphNode mxNode : nodes) {  // delete childrens
+            String parentNodeId = mxNode.getCellParent();
+            if (parentNodeId != null && parentNodeId.equals(node.getUuid()))
+               removeNode(mxNode); 
+        }
+        
+         //delete edges related to the object
+        List<MxGraphEdge> edgesToDelete = new ArrayList<>();
+        
+        for (MxGraphEdge edge : edges) {
+            if ((edge.getSource() != null && edge.getSource().equals(node.getUuid())) || 
+                (edge.getTarget() != null && edge.getTarget().equals(node.getUuid())))  {
+                edgesToDelete.add(edge);
+            }
+        }
+        
+        for (MxGraphEdge edge : edgesToDelete) {   
+            removeEdge(edge);
+        }    
     }
     
     public void removeEdge(MxGraphEdge edge) {
@@ -237,10 +267,16 @@ public class MxGraph extends Component implements HasComponents {
     public void removeLayer(MxGraphLayer layer) {
         getElement().removeChild(layer.getElement());
         layers.remove(layer);
+        
+        for (MxGraphNode node : nodes) {
+            String layerNode = node.getCellLayer();
+            if (layerNode != null && layerNode.equals(layer.getUuid()))
+               removeNode(node); 
+        }
     }
     
     public void executeStackLayout(String cellId, Boolean horizontal, Integer spacing ) {
-       getElement().callJsFunction("executeStackLayout", cellId , horizontal , spacing );
+       executeStackLayout(cellId, horizontal, spacing,  0, 0 , 0, 0);
     }
     
     public void executeStackLayout(String cellId, Boolean horizontal, Integer spacing, Integer marginTop, Integer marginRight, Integer marginBottom, Integer marginLeft) {
@@ -248,7 +284,7 @@ public class MxGraph extends Component implements HasComponents {
     }
     
     public void executeStackLayout(String cellId, Boolean horizontal, Integer spacing, Integer margin) {
-       getElement().callJsFunction("executeStackLayout", cellId , horizontal , spacing, margin, margin, margin, margin);
+       executeStackLayout( cellId , horizontal , spacing, margin, margin, margin, margin);
     }
      
     public void alignCells(String alignType, String [] cellIds, Integer coordinate) {

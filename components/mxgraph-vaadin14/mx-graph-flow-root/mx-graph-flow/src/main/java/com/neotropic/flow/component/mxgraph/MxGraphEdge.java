@@ -21,7 +21,7 @@ package com.neotropic.flow.component.mxgraph;
  *
  * @author Orlando Paz Duarte {@literal <orlando.paz@kuwaiba.org>}
  */
-public class MxGraphEdge extends MxGraphCell{
+public class MxGraphEdge extends MxGraphCell {
 
     public MxGraphEdge() {
         super();

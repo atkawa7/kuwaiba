@@ -61,6 +61,7 @@ public class MxGraphCell extends Component implements HasComponents {
     public static final String PROPERTY_CELL_LAYER = "cellLayer";
     public static final String PROPERTY_CELL_PARENT = "cellParent";
     public static final String PROPERTY_STYLE_NAME = "styleName";
+    public static final String PROPERTY_ANIMATE_ON_SELECT = "animateOnSelect";
         
     public MxGraphCell() {
     }
@@ -309,6 +310,10 @@ public class MxGraphCell extends Component implements HasComponents {
     
     public void setMovable(Boolean prop) {
            getElement().callJsFunction("setMovable", prop ? "1" : "0");
+    }
+    
+    public void setAnimateOnSelect(boolean prop) {
+        getElement().setProperty(PROPERTY_ANIMATE_ON_SELECT, prop);
     }
     
     public void setGeometry(int x, int y, int width, int height) {
