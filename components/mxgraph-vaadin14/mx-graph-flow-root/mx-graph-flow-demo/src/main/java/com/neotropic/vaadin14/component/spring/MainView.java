@@ -6,7 +6,7 @@ import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.neotropic.flow.component.mxgraph.MxGraphCell;
 import com.neotropic.flow.component.mxgraph.MxGraphCellPositionChanged;
 import com.neotropic.flow.component.mxgraph.MxGraphCellUnselectedEvent;
-import com.neotropic.flow.component.mxgraph.MxGraphClickEdgeEvent;
+import com.neotropic.flow.component.mxgraph.MxGraphClickCellEvent;
 import com.neotropic.flow.component.mxgraph.MxGraphEdge;
 import com.neotropic.flow.component.mxgraph.MxGraphLayer;
 import com.neotropic.flow.component.mxgraph.MxGraphNode;
@@ -37,11 +37,17 @@ public class MainView extends VerticalLayout {
 
         addButton.addClickListener(click -> {
      // (1)
-     MxGraphCell mxGraphCell = new MxGraphCell();
-     
-     mxGraph.addCell(mxGraphCell);
-     }
-  );
+            MxGraphCell mxGraphCell = new MxGraphCell();
+            mxGraph.addCell(mxGraphCell);
+        });
+        
+        mxGraph.addClickGraphListener((t) -> {
+              Notification.show("Graph Clicked on X: " + t.getX()+ " Y: " + t.getY());
+        });
+        
+        mxGraph.addRightClickGraphListener((t) -> {
+              Notification.show("Right Click Graph on X: " + t.getX()+ " Y: " + t.getY());
+        });
         
         MxGraphNode nodeA = new MxGraphNode();          
         MxGraphNode nodeB = new MxGraphNode();
@@ -60,6 +66,10 @@ public class MainView extends VerticalLayout {
         customStyle2.addProperty(MxConstants.STYLE_SHAPE, MxConstants.SHAPE_HEXAGON);
         customStyle2.addProperty(MxConstants.STYLE_STROKECOLOR, "green");
         customStyle2.addProperty(MxConstants.STYLE_FILLCOLOR, "orange");
+        
+        nodeA.addRightClickEdgeListener(t-> {
+             Notification.show("Right Click Graph on X:Cell :" + nodeA.getLabel());
+        });
                               
         nodeA.addCellPositionChangedListener(new ComponentEventListener<MxGraphCellPositionChanged>() {
             @Override
@@ -75,9 +85,9 @@ public class MainView extends VerticalLayout {
             }
         });
         
-        edge.addClickEdgeListener(new ComponentEventListener<MxGraphClickEdgeEvent>() {
+        edge.addClickEdgeListener(new ComponentEventListener<MxGraphClickCellEvent>() {
             @Override
-            public void onComponentEvent(MxGraphClickEdgeEvent t) {
+            public void onComponentEvent(MxGraphClickCellEvent t) {
                 Notification.show("mxgraph click edge");
             }
         });
