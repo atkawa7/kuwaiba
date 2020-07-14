@@ -27,6 +27,7 @@ import com.vaadin.flow.shared.Registration;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * 
@@ -61,9 +62,11 @@ public class MxGraphCell extends Component implements HasComponents {
     public static final String PROPERTY_CELL_LAYER = "cellLayer";
     public static final String PROPERTY_CELL_PARENT = "cellParent";
     public static final String PROPERTY_STYLE_NAME = "styleName";
+    public static final String PROPERTY_RAW_STYLE = "rawStyle";
     public static final String PROPERTY_ANIMATE_ON_SELECT = "animateOnSelect";
         
     public MxGraphCell() {
+        setUuid(UUID.randomUUID().toString());
     }
     
     public String getUuid() {
@@ -286,6 +289,14 @@ public class MxGraphCell extends Component implements HasComponents {
         
     public void setStyleName(String prop) {
         getElement().setProperty(PROPERTY_STYLE_NAME, prop);
+    }
+    
+    public String getRawStyle() {
+        return getElement().getProperty(PROPERTY_RAW_STYLE);
+    }
+        
+    public void setRawStyle(String prop) {
+        getElement().setProperty(PROPERTY_RAW_STYLE, prop);
     }
     
     public void setFillColor(String prop) {

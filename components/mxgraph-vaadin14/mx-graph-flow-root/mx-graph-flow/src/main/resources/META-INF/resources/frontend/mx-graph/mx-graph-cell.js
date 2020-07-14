@@ -43,7 +43,7 @@ class MxGraphCell extends PolymerElement {
     return {
       uuid: {
         type: String,
-        value: Math.random() + ''
+        value: null
       },
       cell: {           // reference to the cell that represents the Polymer Object MxGraphCell
         type: Object,
@@ -173,10 +173,16 @@ class MxGraphCell extends PolymerElement {
           type: String,
           value : null
       },
-      styleName: {
+      styleName: { // name of the style in the styleSheet
           type: String,
           value : null,
-          observer: 'styleChanged' 
+          observer: 'styleNameChanged' 
+      },
+      rawStyle: { // intented to assign raw styles without using the styleSheet 
+               // example posible value:  'strokeColor=red;shape=ellipse' 
+          type: String,
+          value : null,
+          observer: 'rawStyleChanged' 
       },
       fillColor: {
         type: String,
@@ -271,7 +277,14 @@ class MxGraphCell extends PolymerElement {
             ';fontColor=' + this.fontColor
             + imageStyle) ;
     
-            
+      if (this.rawStyle) {
+          this.rawStyleChanged();
+      }
+    
+      if (this.styleName) {
+          this.styleNameChanged();
+      }
+              
       } else if (this.layer) { 
           console.log("CREATINGLAYER");
           var newLayer = new mxCell();
@@ -466,14 +479,22 @@ cellLabelChanged() {
         this.dispatchEvent(new CustomEvent('cell-added', {detail: {kicked: true}}));
     }
   
-  styleChanged() {
-      if (this.graph) {
+  styleNameChanged() {
+      if (this.graph && this.cell) {
           var style = this.graph.getStylesheet().getCellStyle(this.styleName, null);
           if (style) {
               var cs= new Array();
               cs[0] = this.cell;             
               this.graph.setCellStyle(this.styleName, cs);
         }
+      }
+  }
+  
+   rawStyleChanged() {
+      if (this.graph && this.cell) {        
+              var cs= new Array();
+              cs[0] = this.cell;             
+              this.graph.setCellStyle(this.cell.style + ';' + this.rawStyle, cs);       
       }
   }
   
@@ -498,6 +519,7 @@ cellLabelChanged() {
      var state = this.graph.view.getState(this.cell);
      state.shape.node.classList.remove('cell-animated'); 
   }
+  
 }
 
 window.customElements.define('mx-graph-cell', MxGraphCell);
