@@ -123,6 +123,9 @@ public class MainView extends VerticalLayout {
           nodeC.setLabel("Sub Cell");
           nodeC.setGeometry(10, 30, 30, 60); 
           nodeC.setCellParent("nodeContainer");
+          nodeC.setShape(MxConstants.SHAPE_ELLIPSE);
+          //in this way we can append some style properties to the current cell style without using the stylesheet
+          nodeC.setRawStyle(MxConstants.STYLE_STROKECOLOR  + "=" + "red;" + MxConstants.STYLE_STROKEWIDTH + "=" + 3);
           nodeD.setUuid("nodeD");
           nodeD.setLabel("Sub Cell 2");
           nodeD.setGeometry(10, 30, 30, 60); 
@@ -164,10 +167,10 @@ public class MainView extends VerticalLayout {
           edge.setPoints(points.toJson());
        
           add(mxGraph);
-                mxGraph.addGraphLoadedListener(evt -> { // always add styles, executeLayouts, align cells etc 
-                                                        //when the graph is already loaded
+          mxGraph.addGraphLoadedListener(evt -> { // always add styles, executeLayouts, align cells etc                                                         //when the graph is already loaded
                 mxGraph.addCellStyle(customStyle);
                 mxGraph.addCellStyle(customStyle2);
+//                nodeB.setStyleName("customStyle");
           });
           mxGraph.refreshGraph();
           mxGraph.addLayer(layerNodes);     // remember the order in which objects are added
