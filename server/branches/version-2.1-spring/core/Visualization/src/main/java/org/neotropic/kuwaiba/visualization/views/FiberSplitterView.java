@@ -127,6 +127,7 @@ public class FiberSplitterView extends AbstractDetailedView<BusinessObjectLight,
             mxGraph.setWidth("670px");
             mxGraph.setHeight("100%");
             mxGraph.setGrid("img/grid.gif");
+            mxGraph.setOverflow("scroll");
             lytGraph.add(mxGraph);
             MxGraphNode mainBox = new MxGraphNode();
             mainBox.setUuid("main");

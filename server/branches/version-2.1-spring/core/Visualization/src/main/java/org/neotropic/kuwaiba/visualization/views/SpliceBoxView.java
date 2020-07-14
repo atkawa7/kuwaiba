@@ -127,6 +127,7 @@ public class SpliceBoxView extends AbstractDetailedView<BusinessObjectLight, Ver
             mxGraph = new MxGraph();
             mxGraph.setWidth("600px");
             mxGraph.setHeight("100%");
+            mxGraph.setOverflow("scroll");
             mxGraph.setGrid("img/grid.gif");
             lytGraph.add(mxGraph);
             MxGraphNode mainBox = new MxGraphNode();

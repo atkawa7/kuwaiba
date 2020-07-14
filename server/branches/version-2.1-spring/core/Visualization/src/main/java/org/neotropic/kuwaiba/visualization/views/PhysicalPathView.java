@@ -136,7 +136,9 @@ public class PhysicalPathView extends AbstractDetailedView<BusinessObjectLight, 
             int widthPort = 60, heightPort = 50, startY = 30, widthExternalPort= 30, heightExternalPort=30;
             VerticalLayout lytGraph = new VerticalLayout();
             mxGraph = new MxGraphCanvas("100%", "100%");
+            mxGraph.getMxGraph().setOverflow("scroll");
             lytGraph.add(mxGraph.getMxGraph());
+            
             MxGraphNode mainBox = new MxGraphNode();
             mainBox.setUuid("main");
             mainBox.setFillColor("none");
