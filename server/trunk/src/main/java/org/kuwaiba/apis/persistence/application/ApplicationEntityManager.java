@@ -1629,6 +1629,81 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the pool could not be found
      */
     public void deleteConfigurationVariablesPool(String poolId) throws ApplicationObjectNotFoundException;
+    
+    // <editor-fold desc="Proxies" defaultstate="collapsed">
+    /**
+     * Creates an inventory proxy. Inventory proxies are used to integrate third party-applications with Kuwaiba. Sometimes these applications must refer to 
+     * assets managed by Kuwaiba from another perspective (financial, for example). In these applications, multiple Kuwaiba inventory assets might be represented by
+     * a single entity (e.g. a router with slots, boards and ports might just be something like "standard network device"). Proxies are used to map multiple inventory 
+     * elements into a single entity. It's a sort of "impedance matching" between systems that refer to the same real world object from different perspectives.
+     * @param proxyPoolId The parent pool id.
+     * @param proxyClass The proxy class. Must be subclass of GenericProxy.
+     * @param attributes The set of initial attributes. If no attribute <code>name</code> is specified, an empty string will be used.
+     * @return The id of the newly created proxy.
+     * @throws ApplicationObjectNotFoundException If the parent pool could not be found.
+     * @throws InvalidArgumentException If any of the initial attributes could not be mapped.
+     * @throws MetadataObjectNotFoundException If the proxy class could not be found.
+     */
+    public String createProxy(String proxyPoolId, String proxyClass, HashMap<String, String> attributes) 
+            throws ApplicationObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException;
+    /**
+     * Deletes a proxy and delete its association with the related inventory objects. These objects will remain untouched.
+     * @param proxyClass The class of the proxy.
+     * @param proxyId The id of the proxy
+     * @throws ApplicationObjectNotFoundException If the proxy could not be found.
+     * @throws MetadataObjectNotFoundException If the proxy class could not be found.
+     */
+    public void deleteProxy(String proxyClass, String proxyId) throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException;
+    /**
+     * Updates one or many proxy attributes.
+     * @param proxyId The parent pool id,
+     * @param proxyClass The class of the proxy.
+     * @param attributes The set of initial attributes. If no attribute <code>name</code> is specified, an empty string will be used.
+     * @throws ApplicationObjectNotFoundException If the parent pool could not be found.
+     * @throws InvalidArgumentException If any of the initial attributes could not be mapped.
+     * @throws MetadataObjectNotFoundException If the proxy class could not be found.
+     */
+    public void updateProxy(String proxyClass, String proxyId, HashMap<String, String> attributes) 
+            throws ApplicationObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException;
+    
+    /**
+     * Creates a proxy pool.
+     * @param name The name of the pool.
+     * @param description The description of the pool
+     * @return The id of the newly created proxy.
+     */
+    public String createProxyPool(String name, String description);
+    /**
+     * Updates an attribute of a proxy pool.
+     * @param proxyPoolId The id of the pool to be updated.
+     * @param attributeName The name of the pool attribute to be updated. Valid values are "name" and "description"
+     * @param attributeValue The value of the attribute. Null values will be ignored.
+     * @throws ApplicationObjectNotFoundException If the pool could not be found.
+     * @throws InvalidArgumentException If an unknown attribute name is provided.
+     */
+    public void updateProxyPool(String proxyPoolId, String attributeName, String attributeValue) 
+            throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    
+    /**
+     * Deletes a proxy pool.
+     * @param proxyPoolId The id of the pool.
+     * @throws ApplicationObjectNotFoundException If the pool could not be found.
+     */
+    public void deleteProxyPool(String proxyPoolId) throws ApplicationObjectNotFoundException;
+    
+    /**
+     * Retrieves the list of pools of proxies.
+     * @return The available pools of inventory proxies.
+     */
+    public List<Pool> getProxyPools();
+    /**
+     * Gets the list of inventory proxies in a given pool.
+     * @param poolId The id of the parent pool.
+     * @return The proxies
+     * @throws ApplicationObjectNotFoundException If the parent pool could not be found. 
+     */
+    public List<InventoryProxy> getProxiesInPool(String poolId) throws ApplicationObjectNotFoundException;
+// </editor-fold>
     //<editor-fold desc="Validators" defaultstate="collapsed">
     /**
      * Creates a validator definition. 

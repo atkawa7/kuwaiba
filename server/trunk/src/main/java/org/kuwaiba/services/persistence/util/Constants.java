@@ -194,6 +194,14 @@ public class Constants {
      */
     public static final String LABEL_VALIDATOR_DEFINITIONS = "validatorDefinitions";
     /**
+     * Proxies.
+     */
+    public static final String LABEL_PROXIES = "proxies";
+    /**
+     * Proxies.
+     */
+    public static final String LABEL_PROXY_POOLS = "proxyPools";
+    /**
      * Label used for file attachments
      */
     public static final String LABEL_ATTACHMENTS = "attachments";
@@ -430,7 +438,10 @@ public class Constants {
      * Class GenericVirtualPort possible children of a physical port
      */
     public static final String CLASS_GENERICVIRTUALPORT = "GenericVirtualPort";
-    
+    /**
+     * Proxies used to integrate Kuwaiba to other platforms.
+     */
+    public static final String CLASS_GENERICPROXY = "GenericProxy";
     /**
      * Class SFPPort 
      */

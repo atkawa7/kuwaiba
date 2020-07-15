@@ -62,6 +62,7 @@ import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.FavoritesFolder;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.GroupProfileLight;
+import org.kuwaiba.apis.persistence.application.InventoryProxy;
 import org.kuwaiba.apis.persistence.application.Pool;
 import org.kuwaiba.apis.persistence.application.Privilege;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
@@ -204,6 +205,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      */
     private Label processInstanceLabel;
     /**
+     * Proxies Label.
+     */
+    private Label proxiesLabel;
+    /**
+     * Proxy Pool Label.
+     */
+    private Label proxyPoolsLabel;
+    /**
      * The label that contains the configuration variables pools
      */
     private Label configurationVariablesPools;
@@ -266,6 +275,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         configurationVariablesPools = Label.label(Constants.LABEL_CONFIG_VARIABLES_POOLS);
         configurationVariables = Label.label(Constants.LABEL_CONFIG_VARIABLES);
         validatorDefinitions = Label.label(Constants.LABEL_VALIDATOR_DEFINITIONS);
+        proxiesLabel = Label.label(Constants.LABEL_PROXIES);
+        proxyPoolsLabel = Label.label(Constants.LABEL_PROXY_POOLS);
         
         try (Transaction tx = graphDb.beginTx()) {
             
@@ -4596,7 +4607,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
     @Override
     public String createConfigurationVariablesPool(String name, String description) throws InvalidArgumentException {
-        
         if (name == null || name.trim().isEmpty())
             throw  new InvalidArgumentException("The name of the configuration variables pool can not be empty");
         
@@ -4738,6 +4748,141 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     //</editor-fold>
+    
+    // <editor-fold desc="Proxies" defaultstate="collapsed">
+    @Override
+    public String createProxy(String proxyPoolId, String proxyClass, HashMap<String, String> attributes) 
+            throws ApplicationObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            if (!mem.isSubclassOf(Constants.CLASS_GENERICPROXY, proxyClass))
+                throw new MetadataObjectNotFoundException(String.format("Class %s is not an inventory proxy", proxyClass));         
+
+            ClassMetadata proxyMetadata = mem.getClass(proxyClass);
+            
+            Node parentPoolNode = graphDb.findNode(poolLabel, Constants.PROPERTY_UUID, proxyPoolId);
+            if (parentPoolNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Proxy pool with id %s could not be found", proxyPoolId));
+            
+            Node proxyNode = graphDb.createNode(proxiesLabel);
+            proxyNode.createRelationshipTo(parentPoolNode, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);
+            
+            proxyNode.setProperty(Constants.PROPERTY_NAME, ""); // By default the proxy name is an empty string
+            for (String attributeName : attributes.keySet()) {
+                // TODO: Handle list type attributes
+                if (!proxyMetadata.hasAttribute(attributeName))
+                    throw new InvalidArgumentException(String.format("Attribute %s not found in class %s", attributeName, proxyClass));
+                AttributeMetadata attributeMetadata = proxyMetadata.getAttribute(attributeName);
+                proxyNode.setProperty(attributeName, Util.getRealValue(attributes.get(attributeName), attributeMetadata.getType()));
+            }
+            
+            String uuid = UUID.randomUUID().toString();
+            proxyNode.setProperty(Constants.PROPERTY_UUID, uuid);
+            
+            tx.success();
+            return uuid;
+        }
+    }
+    
+    @Override
+    public void deleteProxy(String proxyClass, String proxyId) throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            if (!mem.isSubclassOf(Constants.CLASS_GENERICPROXY, proxyClass))
+                throw new MetadataObjectNotFoundException(String.format("Class %s is not an inventory proxy", proxyClass));          
+            
+            Node proxyNode = graphDb.findNode(proxiesLabel, Constants.PROPERTY_UUID, proxyId);
+            if (proxyNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Proxy with id %s could not be found", proxyId));
+            
+            proxyNode.getRelationships().forEach( aRelationship -> aRelationship.delete() );
+            proxyNode.delete();
+            
+            tx.success();
+        }
+    }
+    
+    @Override
+    public void updateProxy(String proxyClass, String proxyId, HashMap<String, String> attributes) 
+            throws ApplicationObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            if (!mem.isSubclassOf(Constants.CLASS_GENERICPROXY, proxyClass))
+                throw new MetadataObjectNotFoundException(String.format("Class %s is not an inventory proxy", proxyClass));
+            
+            Node proxyNode = graphDb.findNode(proxiesLabel, Constants.PROPERTY_UUID, proxyId);
+            if (proxyNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Proxy with id %s could not be found", proxyId));
+            
+            ClassMetadata proxyMetadata = mem.getClass(proxyClass);
+            for (String attributeName : attributes.keySet()) {
+                // TODO: Handle list type attributes
+                if (!proxyMetadata.hasAttribute(attributeName))
+                    throw new InvalidArgumentException(String.format("Attribute %s not found in class %s", attributeName, proxyClass));
+                
+                if (attributes.get(attributeName) == null) {
+                    if (attributeName.equals(Constants.PROPERTY_NAME))
+                        throw new InvalidArgumentException("A proxy name can not be null");
+                    else {
+                        if (proxyNode.hasProperty(attributeName))
+                            proxyNode.removeProperty(attributeName);
+                    }
+                } else {
+                    AttributeMetadata attributeMetadata = proxyMetadata.getAttribute(attributeName);
+                    proxyNode.setProperty(attributeName, Util.getRealValue(attributes.get(attributeName), attributeMetadata.getType()));
+                }
+            }
+            
+            tx.success();
+        }
+    }
+
+    @Override
+    public String createProxyPool(String name, String description) {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node newProxyPoolNode = graphDb.createNode(poolLabel, proxyPoolsLabel);
+            newProxyPoolNode.setProperty(Constants.PROPERTY_NAME, name == null ? "" : name);
+            newProxyPoolNode.setProperty(Constants.PROPERTY_DESCRIPTION, description == null ? "" : description);
+            newProxyPoolNode.setProperty(Constants.PROPERTY_CLASS_NAME, "ProxyPool");
+            newProxyPoolNode.setProperty(Constants.PROPERTY_TYPE, POOL_TYPE_MODULE_ROOT);
+            
+            String uuid = UUID.randomUUID().toString();
+            newProxyPoolNode.setProperty(Constants.PROPERTY_UUID, uuid);
+            tx.success();
+            return uuid;
+        }
+    }
+
+    @Override
+    public void updateProxyPool(String proxyPoolId, String attributeName, String attributeValue) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void deleteProxyPool(String proxyPoolId) throws ApplicationObjectNotFoundException {
+        
+    }
+    
+    @Override
+    public List<Pool> getProxyPools() {
+        try (Transaction tx = graphDb.beginTx()) {
+            List<Pool> proxyPools = new ArrayList<>();
+            graphDb.findNodes(proxiesLabel).forEachRemaining( aProxyPoolNode -> {
+                Map<String, Object> poolProperties = aProxyPoolNode.getProperties(Constants.PROPERTY_UUID, Constants.PROPERTY_NAME, 
+                        Constants.PROPERTY_DESCRIPTION, Constants.PROPERTY_CLASS_NAME);
+                proxyPools.add(new Pool((String)aProxyPoolNode.getProperty(Constants.PROPERTY_UUID), 
+                                        (String)aProxyPoolNode.getProperty(Constants.PROPERTY_NAME), 
+                                        (String)aProxyPoolNode.getProperty(Constants.PROPERTY_DESCRIPTION),
+                                        "ProxyPool", POOL_TYPE_MODULE_ROOT));
+            });
+            
+            tx.success();
+            return proxyPools;
+        }
+    }
+    
+    @Override
+    public List<InventoryProxy> getProxiesInPool(String poolId) throws ApplicationObjectNotFoundException {
+        return null;
+    }
+    // </editor-fold>
     
     //<editor-fold desc="Validators" defaultstate="collapsed">
     @Override
