@@ -112,6 +112,9 @@ class MxGraph extends PolymerElement {
 
     ready() {
         super.ready();
+        this.addEventListener('mouseover', () => {
+            this.dispatchEvent(new CustomEvent('mx-graph-mouse-over'));
+        });
         console.log("READY")
         if (window.mxgraphLoaded) 
             this.initMxGraph();

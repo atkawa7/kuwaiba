@@ -132,6 +132,10 @@ public class MxGraph extends Component implements HasComponents {
         return super.addListener(MxGraphDeleteCellSelectedEvent.class, eventListener);
     }
     
+    public Registration addMouseOverEvent(ComponentEventListener<MxGraphMouseOverEvent> mouseOverEvent) {
+        return addListener(MxGraphMouseOverEvent.class, mouseOverEvent);
+    }
+    
     public void addCell(MxGraphCell mxGraphCell) {
         getElement().appendChild(mxGraphCell.getElement());    
         add(mxGraphCell);
