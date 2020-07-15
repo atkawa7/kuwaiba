@@ -21,7 +21,7 @@ import {FlattenedNodesObserver} from '@polymer/polymer/lib/utils/flattened-nodes
  * `<overlay-view>`
  * @customElement
  * @polymer
- * 
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 class OverlayView extends PolymerElement {
   static get is() {
@@ -66,15 +66,17 @@ class OverlayView extends PolymerElement {
       this._bounds = bounds;
       this._map = map;
       this._div = null;
-      this.setMap(map)
+      this.setMap(map);
     }
     var _this = this;
+
     MyOverlay.prototype.onAdd = function() {
       this._div = _this._div;
-
-      this.getPanes().overlayLayer.appendChild(this._div);
+      this.getPanes().overlayMouseTarget.appendChild(this._div);
     }
+
     MyOverlay.prototype.draw = function() {
+      _this.projection = this.getProjection();
       var overlayProjection = this.getProjection();
       
       var sw = overlayProjection.fromLatLngToDivPixel(this._bounds.getSouthWest());
@@ -84,9 +86,20 @@ class OverlayView extends PolymerElement {
       div.style.position = 'absolute';
       div.style.left = sw.x + 'px';
       div.style.top = ne.y + 'px';
-      div.style.width = (ne.x - sw.x) + 'px';
-      div.style.height = (sw.y - ne.y) + 'px';
+      var width = ne.x - sw.x;
+      var height = sw.y - ne.y;
+      div.style.width = width + 'px';
+      div.style.height = height + 'px';
+
+      _this.dispatchEvent(new CustomEvent('overlay-view-width-changed', 
+        {
+          detail: {
+            width: width
+          }
+        }
+      ));         
     }
+    
     MyOverlay.prototype.onRemove = function() {
       this._div.parentNode.removeChild(this._div);
       this._div = null;
@@ -94,6 +107,8 @@ class OverlayView extends PolymerElement {
 
     this._observer = new FlattenedNodesObserver(this, info => {
       info.addedNodes.forEach(value => {
+        this._div = value;
+
         this.overlay = new MyOverlay(
           new google.maps.LatLngBounds(
             {lat: this.bounds.south, lng: this.bounds.west}, 
@@ -101,11 +116,18 @@ class OverlayView extends PolymerElement {
           ), 
           map
         );
-        this._div = value;
       });
       info.removedNodes.forEach(value => {
       });
     });
+  }
+  
+  fromLatLngToDivPixel(lat, lng) {
+    if (this.projection) {
+      var pixel = this.projection.fromLatLngToDivPixel(new google.maps.LatLng({lat: lat, lng: lng}));
+      return {x: pixel.x, y: pixel.y};
+    }
+    return null;
   }
 
   removed() {

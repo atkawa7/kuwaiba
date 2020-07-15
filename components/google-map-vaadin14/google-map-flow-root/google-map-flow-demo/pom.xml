@@ -116,6 +116,11 @@
             <version>1.0</version>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>com.neotropic.flow.component</groupId>
+            <artifactId>mx-graph-flow</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 
     <build>

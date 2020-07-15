@@ -16,11 +16,14 @@
 package com.neotropic.flow.component.googlemap;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
+import com.vaadin.flow.shared.Registration;
 import elemental.json.Json;
 import elemental.json.JsonObject;
+import java.util.function.Consumer;
 
 /**
  *
@@ -49,5 +52,20 @@ public class OverlayView extends Component implements HasComponents {
             getElement().setPropertyJson(Constants.Property.BOUNDS, bounds.toJson());
         else
             getElement().setPropertyJson(Constants.Property.BOUNDS, Json.createNull());
+    }
+    
+    public void fromLatLngToDivPixel(LatLng latLng, Consumer<Point> consumer) {
+        getElement()
+            .executeJs("return this.fromLatLngToDivPixel($0, $1)", latLng.getLat(), latLng.getLng())
+            .then(JsonObject.class, point -> {
+                consumer.accept(new Point(
+                    point.getNumber(Constants.Property.X), 
+                    point.getNumber(Constants.Property.Y)
+                ));
+            });
+    }
+    
+    public Registration addWidthChangedListener(ComponentEventListener<GoogleMapEvent.OverlayViewWidthChangedEvent> listener) {
+        return addListener(GoogleMapEvent.OverlayViewWidthChangedEvent.class, listener);
     }
 }

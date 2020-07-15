@@ -69,6 +69,8 @@ public class Constants {
         public static String FILL_COLOR = "fillColor"; //NOI18N
         public static String FILL_OPACITY = "fillOpacity"; //NOI18N
         public static String STROKE_POSITION = "strokePosition"; //NOI18N
+        public static String X = "x"; //NOI18N
+        public static String Y = "y"; //NOI18N
     }
     
     public static class Default {

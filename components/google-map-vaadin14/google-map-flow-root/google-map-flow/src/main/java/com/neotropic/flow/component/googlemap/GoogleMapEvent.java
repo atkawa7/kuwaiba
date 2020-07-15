@@ -403,7 +403,7 @@ public class GoogleMapEvent {
         }
     }
     //</editor-fold>
-    //<editor-fold desc="Rectangle" defaultstate="collapsed">
+    //<editor-fold desc="Rectangle Events" defaultstate="collapsed">
     @DomEvent("rectangle-bounds-changed")
     public static class RectangleBoundsChangedEvent extends ComponentEvent<GoogleMapRectangle> {
 
@@ -640,6 +640,22 @@ public class GoogleMapEvent {
         
         public double getLng() {
             return lng;
+        }
+    }
+    //</editor-fold>
+    //<editor-fold desc="Overlay View Events" defaultstate="collapsed">
+    @DomEvent("overlay-view-width-changed")
+    public static class OverlayViewWidthChangedEvent extends ComponentEvent<OverlayView> {
+        private final double width;
+        
+        public OverlayViewWidthChangedEvent(OverlayView source, boolean fromClient, 
+            @EventData("event.detail.width") double width) {
+            super(source, fromClient);
+            this.width = width;
+        }
+        
+        public double getWidth() {
+            return width;
         }
     }
     //</editor-fold>

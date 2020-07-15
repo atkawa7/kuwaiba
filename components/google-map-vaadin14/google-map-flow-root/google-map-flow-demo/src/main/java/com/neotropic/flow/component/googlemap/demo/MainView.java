@@ -38,6 +38,7 @@ import elemental.json.JsonObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -598,13 +599,19 @@ public class MainView extends VerticalLayout {
                 } catch (InterruptedException ex) {
                     Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                getUI().get().access(new Command() {
-                    @Override
-                    public void execute() {
-                        label.getStyle().set("background", "transparent"); //NOI18N
-                        getUI().get().push();
-                    }
-                });
+                try {
+                    getUI().get().access(new Command() {
+                        @Override
+                        public void execute() {
+                            label.getStyle().set("background", "transparent"); //NOI18N
+                            try {
+                                getUI().get().push();
+                            } catch(NoSuchElementException ex) {
+                            }
+                        }
+                    });
+                } catch(NoSuchElementException ex) {
+                }
             }
         }).start();
     }
