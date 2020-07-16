@@ -172,6 +172,15 @@ class MxGraph extends PolymerElement {
                     _this.fireClickGraph(evt.properties.event.layerX, evt.properties.event.layerY);
                 }
             });
+            this.graph.addListener(mxEvent.FIRE_MOUSE_EVENT, function (sender, evt) {
+   
+//                console.log("MOUSE_MOVE")
+//                console.log(evt)
+               if (evt.properties.eventName === 'mouseMove') {
+                   _this.fireMouseMoveGraph(evt.properties.event.graphX, evt.properties.event.graphY);
+               }
+                
+            });
             // fire right click event
             this.graph.popupMenuHandler.factoryMethod = function(menu, cell, evt) {
                 if (cell) {
@@ -547,6 +556,11 @@ class MxGraph extends PolymerElement {
     fireClickGraph(x, y) {
         this.dispatchEvent(new CustomEvent('click-graph', {detail: {kicked: true, x:x , y:y}}));
     }
+//This method dispatches a custom event when the mouse is moved over the graph
+    fireMouseMoveGraph(x, y) {
+        this.dispatchEvent(new CustomEvent('mouse-move-graph', {detail: {kicked: true, x:x , y:y}}));
+    }
+    
     //This method dispatches a custom event when right click is detected
     fireRightClickGraph(x, y) {
         this.dispatchEvent(new CustomEvent('right-click-graph', {detail: {kicked: true, x:x , y:y}}));

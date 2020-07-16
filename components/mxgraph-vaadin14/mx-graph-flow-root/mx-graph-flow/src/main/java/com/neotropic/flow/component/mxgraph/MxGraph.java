@@ -112,6 +112,10 @@ public class MxGraph extends Component implements HasComponents {
         return super.addListener(MxGraphClickGraphEvent.class, clickListener);
     }
     
+    public Registration addMouseMoveGraphListener(ComponentEventListener<MxGraphMouseMoveGraphEvent> clickListener) {
+        return super.addListener(MxGraphMouseMoveGraphEvent.class, clickListener);
+    }
+    
     public Registration addRightClickGraphListener(ComponentEventListener<MxGraphRightClickGraphEvent> clickListener) {
         return super.addListener(MxGraphRightClickGraphEvent.class, clickListener);
     }
