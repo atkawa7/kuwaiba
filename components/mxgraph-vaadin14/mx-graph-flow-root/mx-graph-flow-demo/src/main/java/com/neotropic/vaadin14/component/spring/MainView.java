@@ -49,6 +49,11 @@ public class MainView extends VerticalLayout {
               Notification.show("Right Click Graph on X: " + t.getX()+ " Y: " + t.getY());
         });
         
+        mxGraph.addMouseMoveGraphListener((t) -> {
+              //Notification.show("Right Click Graph on X: " + t.getX()+ " Y: " + t.getY());
+              System.out.println("MOuse Move at X :" + t.getX()+ " Y: " + t.getY());
+        });
+        
         MxGraphNode nodeA = new MxGraphNode();          
         MxGraphNode nodeB = new MxGraphNode();
         MxGraphNode nodeContainer = new MxGraphNode();
