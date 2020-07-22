@@ -15,18 +15,22 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman.widgets;
 
+import com.neotropic.kuwaiba.modules.commercial.ospman.OspView;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OutsidePlantView;
 import com.neotropic.kuwaiba.modules.commercial.ospman.actions.NewOspViewAction;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.DialogDeleteOSPView;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.neotropic.kuwaiba.core.apis.integration.dashboards.AbstractDashboard;
 import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
@@ -47,6 +51,7 @@ import org.neotropic.util.visual.notifications.SimpleNotification;
  * The visual entry point to the Outside Plan Module.
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
+@CssImport(value = "css/ospman.css")
 public class OutsidePlantManagerDashboard extends VerticalLayout implements AbstractDashboard {
     /**
      * Reference to the translation service.
@@ -112,16 +117,22 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
     
     private void init() {
         removeAll();
+//        try {
+//            OspView ospView = new OspView(aem, ts);
+//            add(ospView.getAsComponent());
+//        } catch (InvalidArgumentException ex) {
+//            Logger.getLogger(OutsidePlantManagerDashboard.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         lytQuickActions = new HorizontalLayout(buildQuickActionsMenu());
         lytQuickActions.setWidthFull();
-        
+
         lytContent = new VerticalLayout();
         lytContent.setPadding(false);
         lytContent.setMargin(false);
         lytContent.setSizeFull();
-        
+
         lytContent.add(new EmptyMapDashboardWidget(aem, bem, mem, ts, resourceFactory));
-        
+
         add(lytQuickActions, lytContent);
     }
     
