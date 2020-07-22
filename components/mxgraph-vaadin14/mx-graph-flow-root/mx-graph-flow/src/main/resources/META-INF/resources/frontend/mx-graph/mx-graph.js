@@ -34,7 +34,7 @@ class MxGraph extends PolymerElement {
         }
       </style>
       <div id="graphContainer" 
-      style="overflow:[[overflow]];width:[[width]];height:[[height]];min-height:300px;background:url([[grid]]);max-width:[[maxWidth]];max-height:[[maxHeight]]">
+      style="overflow:[[overflow]];width:[[width]];height:[[height]];min-height:300px;max-width:[[maxWidth]];max-height:[[maxHeight]]">
       </div>
       <slot></slot>
     `;
@@ -56,8 +56,7 @@ class MxGraph extends PolymerElement {
             },
             // background image path
             grid: {
-                type: String,
-                value: ''
+                type: String
             },
             width: {
                 type: String,
@@ -68,10 +67,12 @@ class MxGraph extends PolymerElement {
                 value: '400px'
             },
             maxWidth: {
-                type: String
+                type: String,
+                value: '100%'
             },
             maxHeight: {
-                type: String
+                type: String,
+                value: '100%'
             },
             overflow: {
                 type: String,
@@ -127,6 +128,8 @@ class MxGraph extends PolymerElement {
 
     //called then the mxGraph library has been loaded and initialize the grap object
     initMxGraph() {
+        if (this.grid)
+            this.$.graphContainer.style.background = 'url(' + this.grid + ')';
         // Checks if the browser is supported
         console.log("initMxGraph")
         if (!mxClient.isBrowserSupported())
