@@ -1698,11 +1698,12 @@ public interface ApplicationEntityManager {
     public List<Pool> getProxyPools();
     /**
      * Gets the list of inventory proxies in a given pool.
-     * @param poolId The id of the parent pool.
+     * @param proxyPoolId The id of the parent pool.
      * @return The proxies
      * @throws ApplicationObjectNotFoundException If the parent pool could not be found. 
+     * @throws InvalidArgumentException If the object in the database can not be mapped into an InvetoryProxy instance.
      */
-    public List<InventoryProxy> getProxiesInPool(String poolId) throws ApplicationObjectNotFoundException;
+    public List<InventoryProxy> getProxiesInPool(String proxyPoolId) throws ApplicationObjectNotFoundException, InvalidArgumentException;
 // </editor-fold>
     //<editor-fold desc="Validators" defaultstate="collapsed">
     /**

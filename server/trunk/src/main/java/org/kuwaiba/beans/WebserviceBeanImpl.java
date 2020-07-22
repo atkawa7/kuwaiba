@@ -117,6 +117,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinitio
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConfigurationVariable;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteInventoryProxy;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteKpi;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteKpiAction;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteKpiResult;
@@ -4030,8 +4031,114 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(ex.getMessage());
         }
     }
-    // </editor-fold>
+
+    @Override
+    public String createProxy(String proxyPoolId, String proxyClass, List<StringPair> attributes, 
+            String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("createProxy", ipAddress, sessionId);
+            
+            HashMap<String, String> attributesAsHashMap = new HashMap<>();
+            attributes.stream().map(anAttribute -> attributesAsHashMap.put(anAttribute.getKey(), anAttribute.getValue()));
+            
+            String proxyId = aem.createProxy(proxyPoolId, proxyClass, attributesAsHashMap);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, String.format("Created proxy with id %s", proxyId));
+            
+            return proxyId;
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteProxy(String proxyClass, String proxyId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("deleteProxy", ipAddress, sessionId);
+            aem.deleteProxy(proxyClass, proxyId);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, String.format("Proxy with id %s", proxyId));
+            
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void updateProxy(String proxyClass, String proxyId, List<StringPair> attributes, 
+            String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("updateProxy", ipAddress, sessionId);
+            
+            HashMap<String, String> attributesAsHashMap = new HashMap<>();
+            attributes.stream().map(anAttribute -> attributesAsHashMap.put(anAttribute.getKey(), anAttribute.getValue()));
+            
+            aem.updateProxy(proxyClass, proxyId, attributesAsHashMap);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, String.format("Updated proxy with id %s", proxyId));
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public String createProxyPool(String name, String description, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("createProxyPool", ipAddress, sessionId);
+            String proxyPoolId = aem.createProxyPool(name, description);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, String.format("Create proxy pool %s with id %s", name, proxyPoolId));
+            return proxyPoolId;
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void updateProxyPool(String proxyPoolId, String attributeName, String attributeValue, 
+            String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("updateProxyPool", ipAddress, sessionId);
+            aem.updateProxyPool(proxyPoolId, attributeName, attributeValue);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, String.format("Updated proxy pool with id %s", proxyPoolId));
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteProxyPool(String proxyPoolId, String ipAddress, String sessionId) throws ServerSideException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<RemotePool> getProxyPools(String ipAddress, String sessionId) throws ServerSideException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<RemoteInventoryProxy> getProxiesInPool(String proxyPoolId, String ipAddress, String sessionId) throws ServerSideException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
+    
+    // </editor-fold>
     //<editor-fold desc="Validators" defaultstate="collapsed">
 
     @Override

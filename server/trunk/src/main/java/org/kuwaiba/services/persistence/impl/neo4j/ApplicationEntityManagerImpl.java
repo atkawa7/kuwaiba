@@ -4852,12 +4852,36 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
     @Override
     public void updateProxyPool(String proxyPoolId, String attributeName, String attributeValue) throws ApplicationObjectNotFoundException, InvalidArgumentException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (Transaction tx = graphDb.beginTx()) {
+            Node proxyPoolNode = graphDb.findNode(proxyPoolsLabel, Constants.PROPERTY_UUID, proxyPoolId);
+            if (proxyPoolNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A proxy pool with id %s could not be found", proxyPoolId));
+            
+            switch (attributeName) {
+                case Constants.PROPERTY_NAME:
+                case Constants.PROPERTY_DESCRIPTION:
+                    proxyPoolNode.setProperty(attributeName, attributeValue);
+                    break;
+                default:
+                    throw new InvalidArgumentException(String.format("Property %s is not supported by this pool", attributeName));
+            }
+            tx.success();
+        }
     }
 
     @Override
     public void deleteProxyPool(String proxyPoolId) throws ApplicationObjectNotFoundException {
-        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node proxyPoolNode = graphDb.findNode(proxyPoolsLabel, Constants.PROPERTY_UUID, proxyPoolId);
+            if (proxyPoolNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A proxy pool with id %s could not be found", proxyPoolId));
+            
+            // On purpose, we only release the RELATED_TO_SPECIAL relationships. If anything is related to the proxy via other relationship types, this method 
+            // will fail (technically, someone could try to manipulate the containment hierarchy to create children under a proxy, for example).
+            proxyPoolNode.getRelationships(RelTypes.RELATED_TO_SPECIAL).forEach( aRelationship -> aRelationship.delete() );
+            proxyPoolNode.delete();
+            tx.success();
+        }
     }
     
     @Override
@@ -4879,8 +4903,21 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public List<InventoryProxy> getProxiesInPool(String poolId) throws ApplicationObjectNotFoundException {
-        return null;
+    public List<InventoryProxy> getProxiesInPool(String proxyPoolId) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node proxyPoolNode = graphDb.findNode(proxyPoolsLabel, Constants.PROPERTY_UUID, proxyPoolId);
+            if (proxyPoolNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A proxy pool with id %s could not be found", proxyPoolId));
+            
+            List<InventoryProxy> res = new ArrayList<>();
+            Iterable<Relationship> proxyRelationships = proxyPoolNode.getRelationships(RelTypes.CHILD_OF_SPECIAL);
+            while (proxyRelationships.iterator().hasNext()) {
+                Node proxyNode = proxyRelationships.iterator().next().getStartNode();
+                res.add((InventoryProxy)createObjectFromNode(proxyNode));
+            }
+            tx.success();
+            return res;
+        }
     }
     // </editor-fold>
     

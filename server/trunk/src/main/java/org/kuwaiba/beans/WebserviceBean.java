@@ -40,6 +40,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteBusinessRule;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConfigurationVariable;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteContact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFavoritesFolder;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteInventoryProxy;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteKpiResult;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObjectLight;
@@ -678,7 +679,7 @@ public interface WebserviceBean {
     public RemoteKpiResult executeActivityKpiAction(String kpiActionName, RemoteArtifact remoteArtifact, long processDefinitionId, long activityDefinitionId, String ipAddress, String sessionId) throws ServerSideException;
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="Configuration Values">
+    //<editor-fold defaultstate="collapsed" desc="Configuration Variables">
     public long createConfigurationVariable(String configVariablesPoolId, String name, String description, int type, boolean masked, String valueDefinition, String ipAddress, String sessionId) throws ServerSideException;
     public void updateConfigurationVariable(String name, String propertyToUpdate, String newValue, String ipAddress, String sessionId) throws ServerSideException;
     public void deleteConfigurationVariable(String name, String ipAddress, String sessionId) throws ServerSideException;
@@ -690,6 +691,18 @@ public interface WebserviceBean {
     public void updateConfigurationVariablesPool(String poolId, String propertyToUpdate, String value, String ipAddress, String sessionId) throws ServerSideException;
     public void deleteConfigurationVariablesPool(String poolId, String ipAddress, String sessionId) throws ServerSideException;
     //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Proxies">
+    public String createProxy(String proxyPoolId, String proxyClass, List<StringPair> attributes, String ipAddress, String sessionId) throws ServerSideException;
+    public void deleteProxy(String proxyClass, String proxyId, String ipAddress, String sessionId) throws ServerSideException;
+    public void updateProxy(String proxyClass, String proxyId, List<StringPair> attributes, String ipAddress, String sessionId) throws ServerSideException;
+    public String createProxyPool(String name, String description, String ipAddress, String sessionId) throws ServerSideException;
+    public void updateProxyPool(String proxyPoolId, String attributeName, String attributeValue, String ipAddress, String sessionId) throws ServerSideException;
+    public void deleteProxyPool(String proxyPoolId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemotePool> getProxyPools(String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteInventoryProxy> getProxiesInPool(String proxyPoolId, String ipAddress, String sessionId) throws ServerSideException;
+    //</editor-fold>
+    
     //<editor-fold desc="Validators" defaultstate="collapsed">
     public long createValidatorDefinition(String name, String description, String classToBeApplied, String script, boolean enabled, String ipAddress, String sessionId) 
             throws ServerSideException;

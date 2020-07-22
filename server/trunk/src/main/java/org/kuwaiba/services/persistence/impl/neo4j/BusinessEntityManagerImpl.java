@@ -3559,7 +3559,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * @param instance The object as a Node instance.
      * @param classMetadata The class metadata to map the node's properties into a RemoteBussinessObject.
      * @return The business object.
-     * @throws InvalidArgumentException If an attribute value can't be mapped into value.
+     * @throws InvalidArgumentException If an attribute value can't be mapped into an object value.
      */
     private BusinessObject createObjectFromNode(Node instance, ClassMetadata classMetadata) throws InvalidArgumentException {
         

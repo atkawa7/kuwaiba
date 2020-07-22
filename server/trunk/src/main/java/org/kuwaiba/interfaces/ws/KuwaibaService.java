@@ -23,6 +23,7 @@ import com.neotropic.kuwaiba.scheduling.JobManager;
 import com.neotropic.kuwaiba.sync.model.SyncAction;
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
+import java.util.HashMap;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -32,7 +33,12 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
+import org.kuwaiba.apis.persistence.application.InventoryProxy;
+import org.kuwaiba.apis.persistence.application.Pool;
+import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
+import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.util.Constants;
 import org.kuwaiba.apis.persistence.util.StringPair;
@@ -2292,6 +2298,107 @@ public class KuwaibaService {
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
+    }
+    
+    /**
+     * Creates an inventory proxy. Inventory proxies are used to integrate third party-applications with Kuwaiba. Sometimes these applications must refer to 
+     * assets managed by Kuwaiba from another perspective (financial, for example). In these applications, multiple Kuwaiba inventory assets might be represented by
+     * a single entity (e.g. a router with slots, boards and ports might just be something like "standard network device"). Proxies are used to map multiple inventory 
+     * elements into a single entity. It's a sort of "impedance matching" between systems that refer to the same real world object from different perspectives.
+     * @param proxyPoolId The parent pool id.
+     * @param proxyClass The proxy class. Must be subclass of GenericProxy.
+     * @param attributes The set of initial attributes. If no attribute <code>name</code> is specified, an empty string will be used.
+     * @param sessionId Session token.
+     * @return The id of the newly created proxy.
+     * @throws ServerSideException If the parent pool could not be found or if any of the initial attributes could not be mapped or 
+     * if the proxy class could not be found.
+     */
+    @WebMethod(operationName = "createProxy")
+    public String createProxy(@WebParam(name = "proxyPoolId")String proxyPoolId, @WebParam(name = "proxyClass")String proxyClass, 
+            @WebParam(name = "attributes")List<StringPair> attributes, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        return "";
+    }
+    
+    /**
+     * Deletes a proxy and delete its association with the related inventory objects. These objects will remain untouched.
+     * @param proxyClass The class of the proxy.
+     * @param proxyId The id of the proxy
+     * @param sessionId Session token.
+     * @throws ServerSideException If the proxy could not be found or if the proxy class could not be found.
+     */
+    @WebMethod(operationName = "deleteProxy")
+    public void deleteProxy(@WebParam(name = "proxyClass")String proxyClass, @WebParam(name = "proxyId")String proxyId, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {}
+    
+    /**
+     * Updates one or many proxy attributes.
+     * @param proxyId The parent pool id,
+     * @param proxyClass The class of the proxy.
+     * @param attributes The set of initial attributes. If no attribute <code>name</code> is specified, an empty string will be used.
+     * @param sessionId Session token.
+     * @throws ServerSideException If the parent pool could not be found or if any of the initial attributes could not be mapped or 
+     * if the proxy class could not be found.
+     */
+    @WebMethod(operationName = "updateProxy")
+    public void updateProxy(@WebParam(name = "proxyClass")String proxyClass, @WebParam(name = "proxyId")String proxyId, 
+            @WebParam(name = "attributes")List<StringPair> attributes, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {}
+    
+    /**
+     * Creates a proxy pool.
+     * @param name The name of the pool.
+     * @param description The description of the pool.
+     * @param sessionId Session token.
+     * @throws ServerSideException In case something unexpected happened.
+     * @return The id of the newly created proxy.
+     */
+    @WebMethod(operationName = "createProxyPool")
+    public String createProxyPool(@WebParam(name = "name")String name, 
+            @WebParam(name = "description")String description, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        return "";
+    }
+    
+    /**
+     * Updates an attribute of a proxy pool.
+     * @param proxyPoolId The id of the pool to be updated.
+     * @param attributeName The name of the pool attribute to be updated. Valid values are "name" and "description"
+     * @param attributeValue The value of the attribute. Null values will be ignored.
+     * @param sessionId Session token.
+     * @throws ServerSideException If the pool could not be found or if an unknown attribute name is provided.
+     */
+    @WebMethod(operationName = "updateProxyPool")
+    public void updateProxyPool(@WebParam(name = "proxyPoolId")String proxyPoolId, @WebParam(name = "attributeName")String attributeName, 
+            @WebParam(name = "attributeValue")String attributeValue, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {}
+    
+    /**
+     * Deletes a proxy pool.
+     * @param proxyPoolId The id of the pool.
+     * @param sessionId Session token.
+     * @throws ServerSideException If the pool could not be found.
+     */
+    @WebMethod(operationName = "deleteProxyPool")
+    public void deleteProxyPool(@WebParam(name = "proxyPoolId")String proxyPoolId, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {}
+    
+    /**
+     * Retrieves the list of pools of proxies.
+     * @return The available pools of inventory proxies.
+     * @param sessionId Session token.
+     * @throws ServerSideException If case something unexpected happened.
+     */
+    @WebMethod(operationName = "getProxyPools")
+    public List<Pool> getProxyPools(@WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        return null;
+    }
+    /**
+     * Gets the list of inventory proxies in a given pool.
+     * @param proxyPoolId The id of the parent pool.
+     * @param sessionId Session token.
+     * @return The proxies
+     * @throws ServerSideException If the parent pool could not be found or if the object in the database can not be mapped into an InventoryProxy instance.
+     */
+     @WebMethod(operationName = "getProxiesInPool")
+    public List<InventoryProxy> getProxiesInPool(@WebParam(name = "proxyPoolId")String proxyPoolId, 
+            @WebParam(name = "sessionId")String sessionId)throws ServerSideException {
+        return null;
     }
     //</editor-fold>
     
