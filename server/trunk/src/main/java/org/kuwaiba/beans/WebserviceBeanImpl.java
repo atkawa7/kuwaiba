@@ -4124,17 +4124,47 @@ public class WebserviceBeanImpl implements WebserviceBean {
 
     @Override
     public void deleteProxyPool(String proxyPoolId, String ipAddress, String sessionId) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("deleteProxyPool", ipAddress, sessionId);
+            aem.deleteProxyPool(proxyPoolId);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, String.format("Deleted proxy pool with id %s", proxyPoolId));
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
     }
 
     @Override
     public List<RemotePool> getProxyPools(String ipAddress, String sessionId) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("getProxyPools", ipAddress, sessionId);
+            List<RemotePool> res = new ArrayList<>();
+            aem.getProxyPools().forEach( aPool -> res.add(new RemotePool(aPool) ));
+            return res;
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
     }
 
     @Override
     public List<RemoteInventoryProxy> getProxiesInPool(String proxyPoolId, String ipAddress, String sessionId) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("getProxiesInPool", ipAddress, sessionId);
+            List<RemoteInventoryProxy> res = new ArrayList<>();
+            aem.getProxiesInPool(proxyPoolId).forEach( aProxy -> res.add(new RemoteInventoryProxy(aProxy)) );
+            return res;
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
     }
     
     

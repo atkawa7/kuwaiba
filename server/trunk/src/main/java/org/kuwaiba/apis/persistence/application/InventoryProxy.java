@@ -27,7 +27,7 @@ import org.kuwaiba.apis.persistence.business.BusinessObject;
  */
 public class InventoryProxy extends BusinessObject {
 
-    public InventoryProxy(String className, String id, String name) {
-        super(className, id, name);
+    public InventoryProxy(BusinessObject proxyObject) {
+        super(proxyObject.getClassName(), proxyObject.getId(), proxyObject.getName(), proxyObject.getAttributes());
     }
 }

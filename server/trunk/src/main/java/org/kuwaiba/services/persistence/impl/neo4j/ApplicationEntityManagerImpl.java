@@ -4757,6 +4757,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (!mem.isSubclassOf(Constants.CLASS_GENERICPROXY, proxyClass))
                 throw new MetadataObjectNotFoundException(String.format("Class %s is not an inventory proxy", proxyClass));         
 
+            Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, proxyClass);
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", proxyClass));
+            
             ClassMetadata proxyMetadata = mem.getClass(proxyClass);
             
             Node parentPoolNode = graphDb.findNode(poolLabel, Constants.PROPERTY_UUID, proxyPoolId);
@@ -4765,6 +4769,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             Node proxyNode = graphDb.createNode(proxiesLabel);
             proxyNode.createRelationshipTo(parentPoolNode, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);
+            proxyNode.createRelationshipTo(classNode, RelTypes.INSTANCE_OF);
             
             proxyNode.setProperty(Constants.PROPERTY_NAME, ""); // By default the proxy name is an empty string
             for (String attributeName : attributes.keySet()) {
@@ -4888,7 +4893,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public List<Pool> getProxyPools() {
         try (Transaction tx = graphDb.beginTx()) {
             List<Pool> proxyPools = new ArrayList<>();
-            graphDb.findNodes(proxiesLabel).forEachRemaining( aProxyPoolNode -> {
+            graphDb.findNodes(proxyPoolsLabel).forEachRemaining( aProxyPoolNode -> {
                 Map<String, Object> poolProperties = aProxyPoolNode.getProperties(Constants.PROPERTY_UUID, Constants.PROPERTY_NAME, 
                         Constants.PROPERTY_DESCRIPTION, Constants.PROPERTY_CLASS_NAME);
                 proxyPools.add(new Pool((String)aProxyPoolNode.getProperty(Constants.PROPERTY_UUID), 
@@ -4910,11 +4915,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new ApplicationObjectNotFoundException(String.format("A proxy pool with id %s could not be found", proxyPoolId));
             
             List<InventoryProxy> res = new ArrayList<>();
-            Iterable<Relationship> proxyRelationships = proxyPoolNode.getRelationships(RelTypes.CHILD_OF_SPECIAL);
-            while (proxyRelationships.iterator().hasNext()) {
-                Node proxyNode = proxyRelationships.iterator().next().getStartNode();
-                res.add((InventoryProxy)createObjectFromNode(proxyNode));
-            }
+            for (Relationship rel : proxyPoolNode.getRelationships(RelTypes.CHILD_OF_SPECIAL))
+                res.add(new InventoryProxy(createObjectFromNode(rel.getStartNode())));
+            
             tx.success();
             return res;
         }

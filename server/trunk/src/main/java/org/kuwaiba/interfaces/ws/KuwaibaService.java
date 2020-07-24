@@ -23,7 +23,6 @@ import com.neotropic.kuwaiba.scheduling.JobManager;
 import com.neotropic.kuwaiba.sync.model.SyncAction;
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
-import java.util.HashMap;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -33,12 +32,7 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
-import org.kuwaiba.apis.persistence.application.InventoryProxy;
-import org.kuwaiba.apis.persistence.application.Pool;
-import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
-import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.util.Constants;
 import org.kuwaiba.apis.persistence.util.StringPair;
@@ -85,6 +79,7 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConfigurationVariable;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteInventoryProxy;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationProvider;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidator;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidatorDefinition;
@@ -2316,7 +2311,16 @@ public class KuwaibaService {
     @WebMethod(operationName = "createProxy")
     public String createProxy(@WebParam(name = "proxyPoolId")String proxyPoolId, @WebParam(name = "proxyClass")String proxyClass, 
             @WebParam(name = "attributes")List<StringPair> attributes, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
-        return "";
+        try {
+            return wsBean.createProxy(proxyPoolId, proxyClass, attributes, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createProxy: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
     }
     
     /**
@@ -2328,7 +2332,18 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "deleteProxy")
     public void deleteProxy(@WebParam(name = "proxyClass")String proxyClass, @WebParam(name = "proxyId")String proxyId, 
-            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {}
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.deleteProxy(proxyClass, proxyId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteProxy: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
     
     /**
      * Updates one or many proxy attributes.
@@ -2341,7 +2356,18 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "updateProxy")
     public void updateProxy(@WebParam(name = "proxyClass")String proxyClass, @WebParam(name = "proxyId")String proxyId, 
-            @WebParam(name = "attributes")List<StringPair> attributes, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {}
+            @WebParam(name = "attributes")List<StringPair> attributes, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.updateProxy(proxyClass, proxyId, attributes, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateProxy: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
     
     /**
      * Creates a proxy pool.
@@ -2354,7 +2380,16 @@ public class KuwaibaService {
     @WebMethod(operationName = "createProxyPool")
     public String createProxyPool(@WebParam(name = "name")String name, 
             @WebParam(name = "description")String description, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
-        return "";
+        try {
+            return wsBean.createProxyPool(name, description, getIPAddress(), sessionId);
+        } catch(Exception e) {
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createProxyPool: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
     }
     
     /**
@@ -2367,7 +2402,18 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "updateProxyPool")
     public void updateProxyPool(@WebParam(name = "proxyPoolId")String proxyPoolId, @WebParam(name = "attributeName")String attributeName, 
-            @WebParam(name = "attributeValue")String attributeValue, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {}
+            @WebParam(name = "attributeValue")String attributeValue, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.updateProxyPool(proxyPoolId, attributeName, attributeValue, getIPAddress(), sessionId);
+        } catch(Exception e) {
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateProxyPool: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
     
     /**
      * Deletes a proxy pool.
@@ -2376,7 +2422,19 @@ public class KuwaibaService {
      * @throws ServerSideException If the pool could not be found.
      */
     @WebMethod(operationName = "deleteProxyPool")
-    public void deleteProxyPool(@WebParam(name = "proxyPoolId")String proxyPoolId, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {}
+    public void deleteProxyPool(@WebParam(name = "proxyPoolId")String proxyPoolId, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.deleteProxyPool(proxyPoolId, getIPAddress(), sessionId);
+        } catch(Exception e) {
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteProxyPool: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
     
     /**
      * Retrieves the list of pools of proxies.
@@ -2385,8 +2443,17 @@ public class KuwaibaService {
      * @throws ServerSideException If case something unexpected happened.
      */
     @WebMethod(operationName = "getProxyPools")
-    public List<Pool> getProxyPools(@WebParam(name = "sessionId")String sessionId) throws ServerSideException {
-        return null;
+    public List<RemotePool> getProxyPools(@WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getProxyPools(getIPAddress(), sessionId);
+        } catch(Exception e) {
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getProxyPools: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
     }
     /**
      * Gets the list of inventory proxies in a given pool.
@@ -2396,9 +2463,18 @@ public class KuwaibaService {
      * @throws ServerSideException If the parent pool could not be found or if the object in the database can not be mapped into an InventoryProxy instance.
      */
      @WebMethod(operationName = "getProxiesInPool")
-    public List<InventoryProxy> getProxiesInPool(@WebParam(name = "proxyPoolId")String proxyPoolId, 
+    public List<RemoteInventoryProxy> getProxiesInPool(@WebParam(name = "proxyPoolId")String proxyPoolId, 
             @WebParam(name = "sessionId")String sessionId)throws ServerSideException {
-        return null;
+        try {
+            return wsBean.getProxiesInPool(proxyPoolId, getIPAddress(), sessionId);
+        } catch(Exception e) {
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getProxiesInPool: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
     }
     //</editor-fold>
     
