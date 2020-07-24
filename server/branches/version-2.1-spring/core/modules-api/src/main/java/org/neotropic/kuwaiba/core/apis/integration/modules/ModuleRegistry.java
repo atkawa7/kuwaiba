@@ -17,6 +17,7 @@
 package org.neotropic.kuwaiba.core.apis.integration.modules;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import org.springframework.stereotype.Service;
 
 /**
@@ -32,7 +33,7 @@ public class ModuleRegistry {
     private HashMap<String, AbstractModule> registeredModules;
     
     public ModuleRegistry() {
-        this.registeredModules = new HashMap<>();
+        this.registeredModules = new LinkedHashMap<>();
     }
 
     public void registerModule(AbstractModule module) {
