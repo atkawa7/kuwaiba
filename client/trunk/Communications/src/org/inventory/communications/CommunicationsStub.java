@@ -79,6 +79,7 @@ import com.neotropic.inventory.modules.sync.LocalSyncAction;
 import com.neotropic.inventory.modules.sync.LocalSyncProvider;
 import java.util.LinkedHashMap;
 import org.inventory.communications.core.LocalConfigurationVariable;
+import org.inventory.communications.core.LocalInventoryProxy;
 import org.inventory.communications.core.LocalMPLSConnectionDetails;
 import org.inventory.communications.core.LocalValidator;
 import org.inventory.communications.core.LocalValidatorDefinition;
@@ -105,6 +106,7 @@ import org.inventory.communications.wsclient.RemoteConfigurationVariable;
 import org.inventory.communications.wsclient.RemoteContact;
 import org.inventory.communications.wsclient.RemoteFileObject;
 import org.inventory.communications.wsclient.RemoteFileObjectLight;
+import org.inventory.communications.wsclient.RemoteInventoryProxy;
 import org.inventory.communications.wsclient.RemoteLogicalConnectionDetails;
 import org.inventory.communications.wsclient.RemoteMPLSConnectionDetails;
 import org.inventory.communications.wsclient.RemoteObject;
@@ -6127,6 +6129,145 @@ public class CommunicationsStub {
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return false;
+        }
+    }
+    //</editor-fold>
+    //<editor-fold desc="Proxies" defaultstate="collapsed">
+    /**
+     * Creates an inventory proxy. Inventory proxies are used to integrate third party-applications with Kuwaiba. Sometimes these applications must refer to 
+     * assets managed by Kuwaiba from another perspective (financial, for example). In these applications, multiple Kuwaiba inventory assets might be represented by
+     * a single entity (e.g. a router with slots, boards and ports might just be something like "standard network device"). Proxies are used to map multiple inventory 
+     * elements into a single entity. It's a sort of "impedance matching" between systems that refer to the same real world object from different perspectives.
+     * @param proxyPoolId The parent pool id.
+     * @param proxyClass The proxy class. Must be subclass of GenericProxy.
+     * @param attributes The set of initial attributes. If no attribute <code>name</code> is specified, an empty string will be used.
+     * @return The id of the newly created proxy. Null otherwise.
+     */
+    public String createProxy(String proxyPoolId, String proxyClass, HashMap<String, String> attributes) {
+        try {
+            List<StringPair> attributesAsStringPairs = new ArrayList<>();
+            attributes.forEach( (attributeName, attributeValue) -> attributesAsStringPairs.add(new StringPair(attributeName, attributeValue)) );
+            return service.createProxy(proxyPoolId, proxyClass, attributesAsStringPairs, session.getSessionId());
+            
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    /**
+     * Deletes a proxy and delete its association with the related inventory objects. These objects will remain untouched.
+     * @param proxyClass The class of the proxy.
+     * @param proxyId The id of the proxy
+     * @return Success of failure.
+     */
+    public boolean deleteProxy(String proxyClass, String proxyId) {
+        try {
+            service.deleteProxy(proxyClass, proxyId, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    /**
+     * Updates one or many proxy attributes. Only one attribute can be update at a time.
+     * @param proxyId The parent pool id,
+     * @param proxyClass The class of the proxy.
+     * @param attributeName The name of the attribute to update.
+     * @param attributeValue The value of the new attribute.
+     * @return Success of failure.
+     */
+    public boolean updateProxy(String proxyClass, String proxyId, String attributeName, String attributeValue) {
+        try {
+            List<StringPair> attributesAsStringPairs = new ArrayList<>();
+            attributesAsStringPairs.add(new StringPair(attributeName, attributeValue));
+            service.updateProxy(proxyClass, proxyId, attributesAsStringPairs, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Creates a proxy pool.
+     * @param name The name of the pool.
+     * @param description The description of the pool
+     * @return The id of the newly created proxy.
+     */
+    public String createProxyPool(String name, String description) {
+        try {
+            return service.createProxyPool(name, description, session.getSessionId());
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    /**
+     * Updates an attribute of a proxy pool.
+     * @param proxyPoolId The id of the pool to be updated.
+     * @param attributeName The name of the pool attribute to be updated. Valid values are "name" and "description"
+     * @param attributeValue The value of the attribute. Null values will be ignored.
+     * @return Success or failure.
+     */
+    public boolean updateProxyPool(String proxyPoolId, String attributeName, String attributeValue) {
+        try {
+            service.updateProxyPool(proxyPoolId, attributeName, attributeValue, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Deletes a proxy pool.
+     * @param proxyPoolId The id of the pool.
+     * @return Success or failure.
+     */
+    public boolean deleteProxyPool(String proxyPoolId) {
+        try {
+            service.deleteProxyPool(proxyPoolId, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Retrieves the list of pools of proxies.
+     * @return The available pools of inventory proxies. NUll otherwise.
+     */
+    public List<LocalPool> getProxyPools() {
+        try {
+            List<RemotePool> remoteProxyPools = service.getProxyPools(session.getSessionId());
+            List<LocalPool> res = new ArrayList<>();
+            remoteProxyPools.forEach( aRemotePool -> res.add(new LocalPool(aRemotePool.getId(), 
+                    aRemotePool.getName(), aRemotePool.getClassName(), aRemotePool.getDescription(), aRemotePool.getType())));
+            return res;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    /**
+     * Gets the list of inventory proxies in a given pool.
+     * @param proxyPoolId The id of the parent pool.
+     * @return The proxies or null in case of error.
+     */
+    public List<LocalInventoryProxy> getProxiesInPool(String proxyPoolId) {
+        try {
+            List<RemoteInventoryProxy> remoteProxies = service.getProxiesInPool(proxyPoolId, session.getSessionId());
+            List<LocalInventoryProxy> res = new ArrayList<>();
+            remoteProxies.forEach( aRemoteProxy -> {
+                LocalClassMetadata classMetadata = getMetaForClass(aRemoteProxy.getClassName(), false);
+                res.add(new LocalInventoryProxy(aRemoteProxy.getClassName(), aRemoteProxy.getId(), aRemoteProxy.getAttributes(), classMetadata));
+            });
+            return res;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
         }
     }
     //</editor-fold>

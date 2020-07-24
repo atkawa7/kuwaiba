@@ -13,10 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.core.config.variables;
+package org.neotropic.kuwaiba.integration.proxies;
 
-import org.inventory.core.services.api.behaviors.Refreshable;
-import org.kuwaiba.core.config.variables.nodes.ConfigurationVariablesRootNode;
+import javax.security.auth.RefreshFailedException;
+import javax.security.auth.Refreshable;
+import org.neotropic.kuwaiba.integration.proxies.nodes.ProxyRootNode;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -27,40 +28,39 @@ import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
 /**
- * Main TopComponent for the Configuration Variables module.
- * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
+ * Top component which displays something.
  */
 @ConvertAsProperties(
-        dtd = "-//org.kuwaiba.core.config.variables//ConfigurationVariables//EN",
+        dtd = "-//org.neotropic.kuwaiba.integration.proxies//Proxy//EN",
         autostore = false
 )
 @TopComponent.Description(
-        preferredID = "ConfigurationVariablesTopComponent",
-        iconBase="org/kuwaiba/core/config/res/variables.png", 
+        preferredID = "ProxyTopComponent",
+        //iconBase="SET/PATH/TO/ICON/HERE", 
         persistenceType = TopComponent.PERSISTENCE_NEVER
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
-@ActionID(category = "Window", id = "org.kuwaiba.core.config.variables.ConfigurationVariablesTopComponent")
-@ActionReference(path = "Menu/Tools/Configuration")
+@ActionID(category = "Window", id = "org.neotropic.kuwaiba.integration.proxies.ProxyTopComponent")
+@ActionReference(path = "Menu/Tools/Integration" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
-        displayName = "#CTL_ConfigurationVariablesAction",
-        preferredID = "ConfigurationVariablesTopComponent"
+        displayName = "#CTL_ProxyAction",
+        preferredID = "ProxyTopComponent"
 )
 @Messages({
-    "CTL_ConfigurationVariablesAction=Configuration Variables",
-    "CTL_ConfigurationVariablesTopComponent=Configuration Variables",
-    "HINT_ConfigurationVariablesTopComponent=Create and Edit Configuration Variables"
+    "CTL_ProxyAction=Inventory Proxy Manager",
+    "CTL_ProxyTopComponent=Inventory Proxy Manager",
+    "HINT_ProxyTopComponent=Manage proxy elements that can group inventory objects when integrating Kuwaiba with third party applications"
 })
-public final class ConfigurationVariablesTopComponent extends TopComponent 
-        implements ExplorerManager.Provider, Refreshable {
-
-    private ExplorerManager em = new ExplorerManager();
+public final class ProxyTopComponent extends TopComponent 
+                implements ExplorerManager.Provider, Refreshable {
     
-    public ConfigurationVariablesTopComponent() {
+    private ExplorerManager em = new ExplorerManager();
+
+    public ProxyTopComponent() {
         initComponents();
         initCustomComponents();
-        setName(Bundle.CTL_ConfigurationVariablesTopComponent());
-        setToolTipText(Bundle.HINT_ConfigurationVariablesTopComponent());
+        setName(Bundle.CTL_ProxyTopComponent());
+        setToolTipText(Bundle.HINT_ProxyTopComponent());
 
     }
 
@@ -77,9 +77,10 @@ public final class ConfigurationVariablesTopComponent extends TopComponent
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
+    
     @Override
     public void componentOpened() {
-        em.setRootContext(new ConfigurationVariablesRootNode());
+        em.setRootContext(new ProxyRootNode());
     }
 
     @Override
@@ -99,19 +100,23 @@ public final class ConfigurationVariablesTopComponent extends TopComponent
         // TODO read your settings according to their version
     }
 
-    private void initCustomComponents() {
-        associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
-        add(new BeanTreeView());
-    }
-
     @Override
     public ExplorerManager getExplorerManager() {
         return em;
     }
 
     @Override
-    public void refresh() {
-        componentClosed();
-        componentOpened();
+    public boolean isCurrent() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void refresh() throws RefreshFailedException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void initCustomComponents() {
+        associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
+        add(new BeanTreeView());
     }
 }

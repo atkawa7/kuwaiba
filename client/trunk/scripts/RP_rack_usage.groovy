@@ -1,7 +1,6 @@
 /**
  * Calculates the occupation of a given rack using some of the new user-defined reporting capabilities.
  * Neotropic SAS - version 1.1
- * Parameters: None
  */
 import org.neo4j.graphdb.Direction;
 import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;

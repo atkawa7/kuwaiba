@@ -47,9 +47,9 @@ public class RelateToProjectAction extends GenericObjectNodeAction implements Co
     @Override
     public void actionPerformed(ActionEvent e) {
         List<LocalObjectLight> projects = ProjectsModuleService.getAllProjects();
-        if (projects == null) {
+        if (projects == null)
             JOptionPane.showMessageDialog(null, "This database seems outdated. Contact your administrator to apply the necessary patches to use the Projects module", I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
-        } else {
+        else {
             if (projects.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "There are no projects created. Create at least one using the Projects Module", 
                     I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
@@ -88,8 +88,7 @@ public class RelateToProjectAction extends GenericObjectNodeAction implements Co
                     String projectClass = ((LocalObjectLight) selectedValue).getClassName();
                     
                     if (CommunicationsStub.getInstance().associateObjectToProject(projectClass, projectId, objClassName, objId)) {
-                        
-                        JOptionPane.showMessageDialog(null, String.format("%s added to project %s", selectedObject, selectedValue));
+                        JOptionPane.showMessageDialog(null, String.format("%s related to project %s", selectedObject, selectedValue));
                         frame.dispose();
                     } else
                         JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), I18N.gm("error"), JOptionPane.ERROR_MESSAGE);

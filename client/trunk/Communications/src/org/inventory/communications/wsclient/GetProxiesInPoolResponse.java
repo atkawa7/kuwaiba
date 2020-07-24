@@ -6,23 +6,22 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for remoteObject complex type.
+ * <p>Java class for getProxiesInPoolResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="remoteObject">
+ * &lt;complexType name="getProxiesInPoolResponse">
  *   &lt;complexContent>
- *     &lt;extension base="{http://ws.interfaces.kuwaiba.org/}remoteObjectLight">
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="attributes" type="{http://ws.interfaces.kuwaiba.org/}stringPair" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://ws.interfaces.kuwaiba.org/}remoteInventoryProxy" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
- *     &lt;/extension>
+ *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
@@ -30,47 +29,41 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "remoteObject", propOrder = {
-    "attributes"
+@XmlType(name = "getProxiesInPoolResponse", propOrder = {
+    "_return"
 })
-@XmlSeeAlso({
-    RemoteInventoryProxy.class,
-    RemoteContact.class
-})
-public class RemoteObject
-    extends RemoteObjectLight
-{
+public class GetProxiesInPoolResponse {
 
-    @XmlElement(nillable = true)
-    protected List<StringPair> attributes;
+    @XmlElement(name = "return")
+    protected List<RemoteInventoryProxy> _return;
 
     /**
-     * Gets the value of the attributes property.
+     * Gets the value of the return property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the attributes property.
+     * This is why there is not a <CODE>set</CODE> method for the return property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getAttributes().add(newItem);
+     *    getReturn().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link StringPair }
+     * {@link RemoteInventoryProxy }
      * 
      * 
      */
-    public List<StringPair> getAttributes() {
-        if (attributes == null) {
-            attributes = new ArrayList<StringPair>();
+    public List<RemoteInventoryProxy> getReturn() {
+        if (_return == null) {
+            _return = new ArrayList<RemoteInventoryProxy>();
         }
-        return this.attributes;
+        return this._return;
     }
 
 }
