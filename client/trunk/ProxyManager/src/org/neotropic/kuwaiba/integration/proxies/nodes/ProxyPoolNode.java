@@ -47,7 +47,7 @@ public class ProxyPoolNode extends AbstractNode {
     public Action[] getActions(boolean context) {
         return new Action[] { ProxiesActionFactory.getAddProxyAction(), 
                               null,
-                              ProxiesActionFactory.getDeleteProxyAction()};
+                              ProxiesActionFactory.getDeleteProxyPoolAction()};
     }
 
     @Override

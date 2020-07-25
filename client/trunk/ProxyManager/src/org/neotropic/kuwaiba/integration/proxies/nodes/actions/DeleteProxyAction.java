@@ -17,26 +17,18 @@
 package org.neotropic.kuwaiba.integration.proxies.nodes.actions;
 
 import java.awt.event.ActionEvent;
-import java.util.HashMap;
-import java.util.List;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalInventoryProxy;
-import org.inventory.communications.core.LocalPool;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.neotropic.kuwaiba.integration.proxies.nodes.ProxyNode;
 import org.neotropic.kuwaiba.integration.proxies.nodes.ProxyPoolNode;
 import org.openide.util.Utilities;
 
 /**
- *
+ * Deletes an inventory proxy. Related objects are left untouched.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class DeleteProxyAction extends GenericInventoryAction {

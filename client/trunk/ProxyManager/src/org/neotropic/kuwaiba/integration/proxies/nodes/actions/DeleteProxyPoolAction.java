@@ -17,8 +17,16 @@
 package org.neotropic.kuwaiba.integration.proxies.nodes.actions;
 
 import java.awt.event.ActionEvent;
+import javax.swing.JOptionPane;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalInventoryProxy;
+import org.inventory.communications.core.LocalPool;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
+import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.neotropic.kuwaiba.integration.proxies.nodes.ProxyPoolNode;
+import org.neotropic.kuwaiba.integration.proxies.nodes.ProxyRootNode;
+import org.openide.util.Utilities;
 
 /**
  * Deletes a proxy pool and the proxies within.
@@ -37,7 +45,16 @@ public class DeleteProxyPoolAction extends GenericInventoryAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this proxy pool? Related projects and inventory elements will remain untouched", 
+                "Delete Proxy Pool", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.CANCEL_OPTION)
+            return;
+        
+        ProxyPoolNode selectedNode = Utilities.actionsGlobalContext().lookup(ProxyPoolNode.class);
+        if (selectedNode != null) {
+            if (CommunicationsStub.getInstance().deleteProxyPool(selectedNode.getLookup().lookup(LocalPool.class).getId()))
+                ((ProxyRootNode.ProxiesRootChildren)selectedNode.getParentNode().getChildren()).addNotify();
+            else
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        }
     }
-
 }

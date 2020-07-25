@@ -47,7 +47,7 @@ public class DateTypeProperty extends PropertySupport.ReadWrite<Date> {
     @Override
     public void setValue(Date value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         try {
-            listener.vetoableChange(new PropertyChangeEvent(this, getName(), getValue(), value));
+            listener.vetoableChange(new PropertyChangeEvent(this, getName(), getValue(), String.valueOf(value.getTime())));
             this.value = value;
         } catch (PropertyVetoException ex) {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getLocalizedMessage());

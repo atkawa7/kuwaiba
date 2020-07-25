@@ -51,7 +51,7 @@ public class SingleListTypeProperty extends PropertySupport.ReadWrite<LocalObjec
     @Override
     public void setValue(LocalObjectListItem t) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         try {
-            this.listener.vetoableChange(new PropertyChangeEvent(this, getName(), value, t));
+            this.listener.vetoableChange(new PropertyChangeEvent(this, getName(), value, t == null ? null : t.getId()));
             value = t;
         } catch (PropertyVetoException ex) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 

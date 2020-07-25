@@ -21,7 +21,6 @@ import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalValidator;
 import org.inventory.core.services.utils.MenuScroller;
@@ -61,14 +60,8 @@ public class ActionsGroup extends GenericObjectNodeAction implements Presenter.P
     @Override
     public void actionPerformed(ActionEvent e) {
         GenericObjectNodeAction action = (GenericObjectNodeAction) getValue(((JMenuItem) e.getSource()).getName());
-        
-        if (action != null) {
-            ObjectNode node = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
-            List<LocalObjectLight> objects = new ArrayList<>();
-            objects.add(node.getObject());
-            action.setSelectedObjects(objects);
+        if (action != null)
             action.actionPerformed(e);
-        }
     }
 
     @Override

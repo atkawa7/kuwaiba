@@ -83,7 +83,7 @@ public class RelateToServiceAction extends GenericObjectNodeAction implements Co
             
             if (selectedValue == null)
                 JOptionPane.showMessageDialog(null, "Select a service from the list");
-            else{
+            else {
                 List<String> classNames = new ArrayList<>();
                 List<String> objectIds = new ArrayList<>();
                 for(LocalObjectLight selectedObject : selectedObjects){
@@ -96,7 +96,7 @@ public class RelateToServiceAction extends GenericObjectNodeAction implements Co
                     ((LocalObjectLight) selectedValue).getClassName(),
                     ((LocalObjectLight) selectedValue).getId())){
                         JOptionPane.showMessageDialog(null, String.format(selectedObjects.size() > 1 ? 
-                                "%s obejcts were related to service %s" : "%s object was related to service %s", selectedObjects.size(), selectedValue));
+                                "%s objects were related to service %s" : "%s object was related to service %s", selectedObjects.size(), selectedValue));
                         frame.dispose();
                 }
                 else 

@@ -39,6 +39,14 @@ public class ProxiesActionFactory {
      * The deletes configuration variables pool action
      */
     private static DeleteProxyPoolAction deleteProxyPoolAction;
+    /**
+     * Relates a proxy to an existing project.
+     */
+    private static RelateProxyToProjectAction relateProxyToProjectAction;
+    /**
+     * Releases a proxy from an existing project.
+     */
+    private static ReleaseProxyFromProjectAction releaseProxyFromProject;
     
     /**
      * Returns a singleton instance of AddProxyAction.
@@ -70,5 +78,13 @@ public class ProxiesActionFactory {
      */
     public static GenericInventoryAction getDeleteProxyPoolAction() {
         return deleteProxyPoolAction == null ? deleteProxyPoolAction = new DeleteProxyPoolAction() : deleteProxyPoolAction;
+    }
+    
+    public static GenericInventoryAction getRelateProxyToProjectAction() {
+        return relateProxyToProjectAction == null ? relateProxyToProjectAction = new RelateProxyToProjectAction() : relateProxyToProjectAction;
+    }
+    
+    public static GenericInventoryAction getReleaseProxyFromProject() {
+        return releaseProxyFromProject == null ? releaseProxyFromProject = new ReleaseProxyFromProjectAction() : releaseProxyFromProject;
     }
 }

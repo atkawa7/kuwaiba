@@ -20,6 +20,7 @@ import java.beans.VetoableChangeListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.openide.nodes.PropertySupport;
 

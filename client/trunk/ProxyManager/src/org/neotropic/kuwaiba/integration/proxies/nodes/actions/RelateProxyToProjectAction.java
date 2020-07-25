@@ -12,58 +12,49 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package com.neotropic.inventory.modules.projects.actions;
+package org.neotropic.kuwaiba.integration.proxies.nodes.actions;
 
-import com.neotropic.inventory.modules.projects.ProjectsModuleService;
 import java.awt.event.ActionEvent;
+import java.util.Collection;
 import java.util.List;
-import java.util.ResourceBundle;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalInventoryProxy;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
-import org.inventory.communications.core.LocalValidator;
 import org.inventory.core.services.api.actions.ComposedAction;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.api.windows.SelectValueFrame;
 import org.inventory.core.services.i18n.I18N;
-import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
-import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.openide.util.lookup.ServiceProvider;
+import org.openide.util.Utilities;
 
 /**
- * Action to relate an object to a Project
- * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
+ * Action to relate an inventory proxy to a project.
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-@ActionsGroupType(group=ActionsGroupType.Group.RELATE_TO)
-@ServiceProvider(service=GenericObjectNodeAction.class)
-public class RelateToProjectAction extends GenericObjectNodeAction implements ComposedAction {
-    private final ResourceBundle bundle;
-    
-    public RelateToProjectAction() {
-        bundle = ProjectsModuleService.bundle;
-        putValue(NAME, bundle.getString("ACTION_NAME_RELATE_TO_PROJECT"));        
+public class RelateProxyToProjectAction extends GenericInventoryAction implements ComposedAction {
+    private Collection<? extends LocalInventoryProxy> selectedObjects;
+    public RelateProxyToProjectAction() {
+        putValue(NAME, "Relate to Project...");        
     }
         
     @Override
     public void actionPerformed(ActionEvent e) {
-        List<LocalObjectLight> projects = ProjectsModuleService.getAllProjects();
+        selectedObjects = Utilities.actionsGlobalContext().lookupAll(LocalInventoryProxy.class);
+        List<LocalObjectLight> projects = CommunicationsStub.getInstance().getAllProjects();
         if (projects == null)
-            JOptionPane.showMessageDialog(null, "This database seems outdated. Contact your administrator to apply the necessary patches to use the Projects module", I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else {
             if (projects.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "There are no projects created. Create at least one using the Projects Module", 
                     I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             } else {
-                SelectValueFrame projectsFrame = new SelectValueFrame(ProjectsModuleService.bundle.getString("LBL_TITLE_AVAILABLE_PROJECTS"), ProjectsModuleService.bundle.getString("LBL_INSTRUCTIONS_SELECT_PROJECTS"), "Create Relationship", projects);
+                SelectValueFrame projectsFrame = new SelectValueFrame("Available Projects", "Select a project from the list", "Create Relationship", projects);
                 projectsFrame.addListener(this);
                 projectsFrame.setVisible(true);
             }
         }
-    }
-
-    @Override
-    public LocalValidator[] getValidators() {
-        return null; //Enable this action for any object
     }
 
     @Override
@@ -80,7 +71,6 @@ public class RelateToProjectAction extends GenericObjectNodeAction implements Co
             if (selectedValue == null)
                 JOptionPane.showMessageDialog(null, "Select a project from the list");
             else {
-                boolean allGood = true;
                 for (LocalObjectLight selectedObject : selectedObjects) {
                     String objId = selectedObject.getId();
                     String objClassName = selectedObject.getClassName();
@@ -88,28 +78,13 @@ public class RelateToProjectAction extends GenericObjectNodeAction implements Co
                     String projectId = ((LocalObjectLight) selectedValue).getId();
                     String projectClass = ((LocalObjectLight) selectedValue).getClassName();
                     
-                    if (CommunicationsStub.getInstance().associateObjectToProject(projectClass, projectId, objClassName, objId))
+                    if (CommunicationsStub.getInstance().associateObjectToProject(projectClass, projectId, objClassName, objId)) {
+                        JOptionPane.showMessageDialog(null, String.format("%s related to project %s", selectedObject, selectedValue));
                         frame.dispose();
-                    else {
+                    } else
                         JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
-                        allGood = false;
-                    }
                 }
-                
-                if (allGood)
-                    JOptionPane.showMessageDialog(null, String.format("%s successfully related to project %s", 
-                            selectedObjects.size() == 1 ? "Object" : "Objects", selectedValue));
             }
         }
-    }
-
-    @Override
-    public String[] appliesTo() {
-        return null; //Enable this action for any object
-    }
-    
-    @Override
-    public int numberOfNodes() {
-        return -1;
     }
 }

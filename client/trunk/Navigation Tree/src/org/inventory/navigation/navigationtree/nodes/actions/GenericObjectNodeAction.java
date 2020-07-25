@@ -16,12 +16,12 @@
 package org.inventory.navigation.navigationtree.nodes.actions;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalValidator;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
-import org.openide.util.Lookup;
 import org.openide.util.Utilities;
 
 
@@ -35,16 +35,13 @@ public abstract class GenericObjectNodeAction extends GenericInventoryAction {
         
     @Override
     public boolean isEnabled() {
-        Lookup.Result<? extends ObjectNode> selectedObjectNode = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class);
+        Collection<? extends ObjectNode> selectedObjectNodes = Utilities.actionsGlobalContext().lookupAll(ObjectNode.class);
         
-        if (selectedObjectNode == null)
+        if (selectedObjectNodes == null || selectedObjectNodes.isEmpty())
             return false;
         
         selectedObjects = new ArrayList<>();
-        
-        for (ObjectNode selectedNode : selectedObjectNode.allInstances())
-            selectedObjects.add(selectedNode.getObject());
-        
+        selectedObjectNodes.forEach( aSelectedNode -> selectedObjects.add(aSelectedNode.getObject()));
         return numberOfNodes() == -1 ? !selectedObjects.isEmpty() : selectedObjects.size() == numberOfNodes();
     }
     

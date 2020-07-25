@@ -29,6 +29,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ActionsGroupType {
-    public enum Group {OPEN_VIEW, RELATE_TO, RELEASE_FROM, MIRROR_PORT, DIAGNOSTICS, DEVICE_CONFIGURATION }
+    public enum Group { OPEN_VIEW, RELATE_TO, RELEASE_FROM, MIRROR_PORT, DIAGNOSTICS, DEVICE_CONFIGURATION }
     Group group();
 }

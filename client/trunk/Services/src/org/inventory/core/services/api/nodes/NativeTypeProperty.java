@@ -51,7 +51,7 @@ public class NativeTypeProperty extends PropertySupport.ReadWrite {
             return;
         
         try {
-            this.listener.vetoableChange(new PropertyChangeEvent(this, getName(), value, t));
+            this.listener.vetoableChange(new PropertyChangeEvent(this, getName(), value, String.valueOf(t)));
             this.value = t;
         } catch (PropertyVetoException ex) {
             NotificationUtil.getInstance().showSimplePopup("Error", 

@@ -5175,6 +5175,26 @@ public class CommunicationsStub {
     }
     
     /**
+     * Gets all the projects in the database.
+     * @return The list of projects.
+     */
+    public List<LocalObjectLight> getAllProjects() {
+        try {
+            List<RemoteObjectLight> remoteProjects = service.getAllProjects(session.getSessionId());
+            
+            List<LocalObjectLight> projects = new ArrayList<>();
+            
+            for (RemoteObjectLight remoteProject : remoteProjects)
+                projects.add(new LocalObjectLight(remoteProject.getId(), remoteProject.getName(), remoteProject.getClassName()));
+            
+            return projects;                                    
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
      * Creates a Project Pool
      * @param name Project name
      * @param description Project description
@@ -6237,7 +6257,7 @@ public class CommunicationsStub {
     
     /**
      * Retrieves the list of pools of proxies.
-     * @return The available pools of inventory proxies. NUll otherwise.
+     * @return The available pools of inventory proxies. Null otherwise.
      */
     public List<LocalPool> getProxyPools() {
         try {
@@ -6251,6 +6271,7 @@ public class CommunicationsStub {
             return null;
         }
     }
+    
     /**
      * Gets the list of inventory proxies in a given pool.
      * @param proxyPoolId The id of the parent pool.
@@ -6268,6 +6289,64 @@ public class CommunicationsStub {
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
+        }
+    }
+    
+    /**
+     * Gets all proxies in the database.
+     * @return The list of proxies.
+     */
+    public List<LocalInventoryProxy> getAllProxies() {
+        try {
+            List<RemoteInventoryProxy> remoteProxies = service.getAllProxies(session.getSessionId());
+            List<LocalInventoryProxy> res = new ArrayList<>();
+            remoteProxies.forEach( aRemoteProxy -> {
+                LocalClassMetadata classMetadata = getMetaForClass(aRemoteProxy.getClassName(), false);
+                res.add(new LocalInventoryProxy(aRemoteProxy.getClassName(), aRemoteProxy.getId(), aRemoteProxy.getAttributes(), classMetadata));
+            });
+            return res;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Associates an inventory object to an inventory proxy.
+     * @param objectClass The class of the object.
+     * @param objectId The id of the object.
+     * @param proxyClass The class of the proxy.
+     * @param proxyId The id of the proxy.
+     * @return false If the inventory object could not be found.
+     *               If the proxy could not be found.
+     *               If the two entities are already related.
+     */
+    public boolean associateObjectToProxy(String objectClass, String objectId, String proxyClass, String proxyId) {
+        try {
+            service.associateObjectToProxy(objectClass, objectId, proxyClass, proxyId, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Releases an inventory previously related to an inventory proxy.
+     * @param objectClass The class of the object.
+     * @param objectId The id of the object.
+     * @param proxyClass The class of the proxy.
+     * @param proxyId The id of the proxy.
+     * @return false If the inventory object could not be found or
+     *         of the proxy could not be found.
+     */
+    public boolean releaseObjectFromProxy(String objectClass, String objectId, String proxyClass, String proxyId) {
+        try {
+            service.releaseObjectFromProxy(objectClass, objectId, proxyClass, proxyId, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
         }
     }
     //</editor-fold>
