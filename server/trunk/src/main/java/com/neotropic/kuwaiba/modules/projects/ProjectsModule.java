@@ -327,6 +327,20 @@ public class ProjectsModule implements GenericCommercialModule {
     }
     
     /**
+     * Fetches all projects in the database. This implementation retrieves all instances of subclasses of GenericProject, even if they were not 
+     * created using the Projects Module. TODO: Add labels to project instances and change the instances fetched here and page results.
+     * @return The list of existing projects.
+     * @throws InvalidArgumentException If any of the project nodes could not be mapped into a Java object or if the class GenericProject does not exist.
+     */
+    public List<BusinessObjectLight> getAllProjects() throws InvalidArgumentException {
+        try {
+            return bem.getObjectsOfClassLight(Constants.CLASS_GENERICPROJECT, -1);
+        } catch (MetadataObjectNotFoundException ex) {
+            throw new InvalidArgumentException(ex.getLocalizedMessage());
+        }
+    }
+    
+    /**
      * Creates a Project Pool
      * @param name Project Pool name
      * @param description Project Pool description

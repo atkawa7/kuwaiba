@@ -2462,7 +2462,7 @@ public class KuwaibaService {
      * @return The proxies
      * @throws ServerSideException If the parent pool could not be found or if the object in the database can not be mapped into an InventoryProxy instance.
      */
-     @WebMethod(operationName = "getProxiesInPool")
+    @WebMethod(operationName = "getProxiesInPool")
     public List<RemoteInventoryProxy> getProxiesInPool(@WebParam(name = "proxyPoolId")String proxyPoolId, 
             @WebParam(name = "sessionId")String sessionId)throws ServerSideException {
         try {
@@ -2472,6 +2472,79 @@ public class KuwaibaService {
                 throw e;
             else {
                 System.out.println("[KUWAIBA] An unexpected error occurred in getProxiesInPool: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Gets all the inventory proxies in the database.
+     * @param sessionId Session token.
+     * @return The list of inventory proxy objects.
+     * @throws ServerSideException If any proxy node could not be mapped into a Java object.
+     */
+    @WebMethod(operationName = "getAllProxies")
+    public List<RemoteInventoryProxy> getAllProxies(@WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getAllProxies(getIPAddress(), sessionId);
+        } catch(Exception e) {
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getAllProxies: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Associates an inventory object to an inventory proxy.
+     * @param objectClass The class of the object.
+     * @param objectId The id of the object.
+     * @param proxyClass The class of the proxy.
+     * @param proxyId The id of the proxy.
+     * @param sessionId Session token.
+     * @throws ServerSideException If the inventory object could not be found or
+     *                             if the proxy could not be found or
+     *                             if the two entities are already related.
+     */
+    @WebMethod(operationName = "associateObjectToProxy")
+    public void associateObjectToProxy(@WebParam(name = "objectClass")String objectClass, @WebParam(name = "objectId")String objectId, 
+            @WebParam(name = "proxyClass")String proxyClass, @WebParam(name = "proxyId")String proxyId, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.associateObjectToProxy(objectClass, objectId, proxyClass, proxyId, getIPAddress(), sessionId);
+        } catch(Exception e) {
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in associateObjectToProxy: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+
+    /**
+     * Releases an inventory previously related to an inventory proxy.
+     * @param objectClass The class of the object.
+     * @param objectId The id of the object.
+     * @param proxyClass The class of the proxy.
+     * @param proxyId The id of the proxy.
+     * @param sessionId Session token.
+     * @throws ServerSideException If the inventory object could not be found or 
+     *                             if the proxy could not be found.
+     */
+    @WebMethod(operationName = "releaseObjectFromProxy")
+    public void releaseObjectFromProxy(@WebParam(name = "objectClass")String objectClass, @WebParam(name = "objectId")String objectId, 
+            @WebParam(name = "proxyClass")String proxyClass, @WebParam(name = "proxyId")String proxyId, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.releaseObjectFromProxy(objectClass, objectId, proxyClass, proxyId, getIPAddress(), sessionId);
+        } catch(Exception e) {
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in releaseObjectFromProxy: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -8302,6 +8375,20 @@ public class KuwaibaService {
                 throw ex;
             else {
                 System.out.println("[KUWAIBA] An unexpected error occurred in getProjectsAssociateToObject: " + ex.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }      
+    }
+    
+    @WebMethod(operationName = "getAllProjects")
+    public List<RemoteObjectLight> getAllProjects(@WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getAllProjects(getIPAddress(), sessionId);
+        } catch (Exception ex) {
+            if (ex instanceof ServerSideException)
+                throw ex;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getAllProjects: " + ex.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }      

@@ -4042,7 +4042,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             aem.validateWebServiceCall("createProxy", ipAddress, sessionId);
             
             HashMap<String, String> attributesAsHashMap = new HashMap<>();
-            attributes.stream().map(anAttribute -> attributesAsHashMap.put(anAttribute.getKey(), anAttribute.getValue()));
+            attributes.stream().forEach( anAttribute -> attributesAsHashMap.put(anAttribute.getKey(), anAttribute.getValue()) );
             
             String proxyId = aem.createProxy(proxyPoolId, proxyClass, attributesAsHashMap);
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
@@ -4080,7 +4080,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             aem.validateWebServiceCall("updateProxy", ipAddress, sessionId);
             
             HashMap<String, String> attributesAsHashMap = new HashMap<>();
-            attributes.stream().map(anAttribute -> attributesAsHashMap.put(anAttribute.getKey(), anAttribute.getValue()));
+            attributes.stream().forEach( anAttribute -> attributesAsHashMap.put(anAttribute.getKey(), anAttribute.getValue()) );
             
             aem.updateProxy(proxyClass, proxyId, attributesAsHashMap);
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
@@ -4167,6 +4167,48 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
     }
     
+    @Override
+    public List<RemoteInventoryProxy> getAllProxies(String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("getAllProxies", ipAddress, sessionId);
+            List<RemoteInventoryProxy> res = new ArrayList<>();
+            aem.getAllProxies().forEach( aProxy -> res.add(new RemoteInventoryProxy(aProxy)) );
+            return res;
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void associateObjectToProxy(String objectClass, String objectId, String proxyClass, String proxyId, 
+            String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("associateObjectToProxy", ipAddress, sessionId);
+            aem.associateObjectToProxy(objectClass, objectId, proxyClass, proxyId);
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void releaseObjectFromProxy(String objectClass, String objectId, String proxyClass, String proxyId, 
+            String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("releaseObjectFromProxy", ipAddress, sessionId);
+            aem.releaseObjectFromProxy(objectClass, objectId, proxyClass, proxyId);
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
     
     // </editor-fold>
     //<editor-fold desc="Validators" defaultstate="collapsed">
@@ -5433,6 +5475,21 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
             return RemoteObjectLight.toRemoteObjectLightArray(projectsModule.getProjectsInProjectPool(poolId, limit));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<RemoteObjectLight> getAllProjects(String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("getAllProjects", ipAddress, sessionId);
+            
+            ProjectsModule projectsModule = (ProjectsModule) aem.getCommercialModule("Projects Module"); //NOI18N                        
+            return RemoteObjectLight.toRemoteObjectLightArray(projectsModule.getAllProjects());
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

@@ -582,6 +582,7 @@ public interface WebserviceBean {
         public String addActivity(String parentId, String parentClassName, String className, String attributeNames[], String attributeValues[], String ipAddress, String sessionId) throws ServerSideException;
         public void deleteActivity(String className, String oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
         public List<RemoteObjectLight> getProjectsInProjectPool(String poolId, int limit, String ipAddress, String sessionId) throws ServerSideException;
+        public List<RemoteObjectLight> getAllProjects(String ipAddress, String sessionId) throws ServerSideException;
         public List<RemoteObjectLight> getProjectResurces(String projectClass, String projectId, String ipAddress, String sessionId) throws ServerSideException;
         public List<RemoteObjectLight> getProjectActivities(String projectClass, String projectId, String ipAddress, String sessionId) throws ServerSideException;
         public void associateObjectsToProject(String projectClass, String projectId, String[] objectClass, String[] objectId, String ipAddress, String sessionId) throws ServerSideException;
@@ -701,6 +702,9 @@ public interface WebserviceBean {
     public void deleteProxyPool(String proxyPoolId, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemotePool> getProxyPools(String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteInventoryProxy> getProxiesInPool(String proxyPoolId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteInventoryProxy> getAllProxies(String ipAddress, String sessionId) throws ServerSideException;
+    public void associateObjectToProxy(String objectClass, String objectId, String proxyClass, String proxyId, String ipAddress, String sessionId) throws ServerSideException;
+    public void releaseObjectFromProxy(String objectClass, String objectId, String proxyClass, String proxyId, String ipAddress, String sessionId) throws ServerSideException;
     //</editor-fold>
     
     //<editor-fold desc="Validators" defaultstate="collapsed">

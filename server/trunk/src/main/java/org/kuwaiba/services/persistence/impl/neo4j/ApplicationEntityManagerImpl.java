@@ -4767,7 +4767,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (parentPoolNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Proxy pool with id %s could not be found", proxyPoolId));
             
-            Node proxyNode = graphDb.createNode(proxiesLabel);
+            Node proxyNode = graphDb.createNode(proxiesLabel, inventoryObjectLabel);
             proxyNode.createRelationshipTo(parentPoolNode, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);
             proxyNode.createRelationshipTo(classNode, RelTypes.INSTANCE_OF);
             
@@ -4779,6 +4779,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 AttributeMetadata attributeMetadata = proxyMetadata.getAttribute(attributeName);
                 proxyNode.setProperty(attributeName, Util.getRealValue(attributes.get(attributeName), attributeMetadata.getType()));
             }
+            proxyNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
             
             String uuid = UUID.randomUUID().toString();
             proxyNode.setProperty(Constants.PROPERTY_UUID, uuid);
@@ -4818,20 +4819,39 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             ClassMetadata proxyMetadata = mem.getClass(proxyClass);
             for (String attributeName : attributes.keySet()) {
-                // TODO: Handle list type attributes
                 if (!proxyMetadata.hasAttribute(attributeName))
                     throw new InvalidArgumentException(String.format("Attribute %s not found in class %s", attributeName, proxyClass));
                 
-                if (attributes.get(attributeName) == null) {
-                    if (attributeName.equals(Constants.PROPERTY_NAME))
-                        throw new InvalidArgumentException("A proxy name can not be null");
-                    else {
-                        if (proxyNode.hasProperty(attributeName))
-                            proxyNode.removeProperty(attributeName);
+                if (AttributeMetadata.isPrimitive(proxyMetadata.getAttribute(attributeName).getType())) {
+                    if (attributes.get(attributeName) == null) {
+                        if (attributeName.equals(Constants.PROPERTY_NAME))
+                            throw new InvalidArgumentException("A proxy name can not be null");
+                        else {
+                            if (proxyNode.hasProperty(attributeName))
+                                proxyNode.removeProperty(attributeName);
+                        }
+                    } else {
+                        AttributeMetadata attributeMetadata = proxyMetadata.getAttribute(attributeName);
+                        proxyNode.setProperty(attributeName, Util.getRealValue(attributes.get(attributeName), attributeMetadata.getType()));
                     }
-                } else {
-                    AttributeMetadata attributeMetadata = proxyMetadata.getAttribute(attributeName);
-                    proxyNode.setProperty(attributeName, Util.getRealValue(attributes.get(attributeName), attributeMetadata.getType()));
+                } else { // It's a list type
+                    proxyNode.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO).forEach( aListTypeItemRel -> {
+                        if (aListTypeItemRel.hasProperty(Constants.PROPERTY_NAME) && 
+                                aListTypeItemRel.getProperty(Constants.PROPERTY_NAME).equals(attributeName))
+                            aListTypeItemRel.delete();
+                    });
+                    
+                    if (attributes.get(attributeName) != null) {
+                        String[] listTypeItemIds = attributes.get(attributeName).split(";");
+                        for (String listTypeItemId : listTypeItemIds) {
+                            Node listTypeItemNode = graphDb.findNode(listTypeItemLabel, Constants.PROPERTY_UUID, listTypeItemId);
+                            if (listTypeItemNode == null)
+                                throw new MetadataObjectNotFoundException(String.format("List type item of class %s with id %s not found", 
+                                        proxyMetadata.getAttribute(attributeName).getType(), listTypeItemId));
+                            proxyNode.createRelationshipTo(listTypeItemNode, RelTypes.RELATED_TO).setProperty(Constants.PROPERTY_NAME, attributeName);
+                        }
+                        
+                    }
                 }
             }
             
@@ -4881,9 +4901,15 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (proxyPoolNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A proxy pool with id %s could not be found", proxyPoolId));
             
-            // On purpose, we only release the RELATED_TO_SPECIAL relationships. If anything is related to the proxy via other relationship types, this method 
-            // will fail (technically, someone could try to manipulate the containment hierarchy to create children under a proxy, for example).
-            proxyPoolNode.getRelationships(RelTypes.RELATED_TO_SPECIAL).forEach( aRelationship -> aRelationship.delete() );
+            proxyPoolNode.getRelationships(RelTypes.CHILD_OF_SPECIAL).forEach( aChildOfSpecialRelationship -> {
+                Node aProxyNode = aChildOfSpecialRelationship.getStartNode();
+                // On purpose, we only release the RELATED_TO_SPECIAL and CHILD_OF relationships. If anything is related to the proxy via other relationship types, this method 
+                // will fail (technically, someone could try to manipulate the containment hierarchy to create children under a proxy, for example).
+                aProxyNode.getRelationships(RelTypes.RELATED_TO_SPECIAL).forEach( aRelationship -> aRelationship.delete() );
+                aProxyNode.getRelationships(RelTypes.CHILD_OF_SPECIAL).forEach( aRelationship -> aRelationship.delete() );
+                aProxyNode.delete();
+            });
+            
             proxyPoolNode.delete();
             tx.success();
         }
@@ -4902,6 +4928,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                                         "ProxyPool", POOL_TYPE_MODULE_ROOT));
             });
             
+            Collections.sort(proxyPools);
             tx.success();
             return proxyPools;
         }
@@ -4917,11 +4944,81 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             List<InventoryProxy> res = new ArrayList<>();
             for (Relationship rel : proxyPoolNode.getRelationships(RelTypes.CHILD_OF_SPECIAL))
                 res.add(new InventoryProxy(createObjectFromNode(rel.getStartNode())));
-            
+
+            Collections.sort(res);
             tx.success();
             return res;
         }
     }
+    
+    @Override
+    public List<InventoryProxy> getAllProxies() throws InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            List<InventoryProxy> res = new ArrayList<>();
+            graphDb.findNodes(proxiesLabel).forEachRemaining( aProxyNode -> {
+                try {
+                    res.add(new InventoryProxy(createObjectFromNode(aProxyNode)));
+                } catch (InvalidArgumentException ex) {
+                    Exceptions.printStackTrace(ex); //Should not happen
+                }
+            });
+
+            Collections.sort(res);
+            tx.success();
+            return res;
+        }
+    }
+
+    @Override
+    public void associateObjectToProxy(String objectClass, String objectId, String proxyClass, String proxyId) 
+            throws BusinessObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node objectNode = graphDb.findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, objectId);
+            if (objectNode == null || !objectNode.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).
+                    getEndNode().getProperty(Constants.PROPERTY_NAME).equals(objectClass))
+                throw new BusinessObjectNotFoundException(objectClass, objectId);
+            
+            boolean hasRelationship = false;
+            for (Relationship aRelationship : objectNode.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO_SPECIAL)) {
+                if (aRelationship.getProperty(Constants.PROPERTY_NAME).equals("hasProxy") && 
+                        aRelationship.getEndNode().getProperty(Constants.PROPERTY_UUID).equals(proxyId))
+                    hasRelationship = true;
+            }
+            
+            if (hasRelationship)
+                throw new InvalidArgumentException(String.format("The object of class %s and id %s is already related to the proxy of class %s and id %s", 
+                                objectClass, objectId, proxyClass, proxyId));
+                        
+            Node proxyNode = graphDb.findNode(proxiesLabel, Constants.PROPERTY_UUID, proxyId);
+            if (proxyNode == null || !proxyNode.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).
+                    getEndNode().getProperty(Constants.PROPERTY_NAME).equals(proxyClass))
+                throw new BusinessObjectNotFoundException(proxyClass, proxyId);
+            
+            Relationship rel = objectNode.createRelationshipTo(proxyNode, RelTypes.RELATED_TO_SPECIAL);
+            rel.setProperty(Constants.PROPERTY_NAME, "hasProxy");
+            
+            tx.success();
+        }
+    }
+
+    @Override
+    public void releaseObjectFromProxy(String objectClass, String objectId, String proxyClass, String proxyId) throws BusinessObjectNotFoundException, ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node objectNode = graphDb.findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, objectId);
+            if (objectNode == null || !objectNode.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).
+                    getEndNode().getProperty(Constants.PROPERTY_NAME).equals(objectClass))
+                throw new BusinessObjectNotFoundException(objectClass, objectId);
+            
+            for (Relationship aRelationship : objectNode.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO_SPECIAL)) {
+                if (aRelationship.getProperty(Constants.PROPERTY_NAME).equals("hasProxy") && 
+                        aRelationship.getEndNode().getProperty(Constants.PROPERTY_UUID).equals(proxyId))
+                    aRelationship.delete();
+            }
+            
+            tx.success();
+        }
+    }
+    
     // </editor-fold>
     
     //<editor-fold desc="Validators" defaultstate="collapsed">

@@ -1704,6 +1704,36 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException If the object in the database can not be mapped into an InvetoryProxy instance.
      */
     public List<InventoryProxy> getProxiesInPool(String proxyPoolId) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    /**
+     * Gets all the inventory proxies in the database.
+     * @return The list of inventory proxy objects.
+     * @throws InvalidArgumentException If any proxy node could not be mapped into a Java object.
+     */
+    public List<InventoryProxy> getAllProxies() throws InvalidArgumentException;
+    /**
+     * Associates an inventory object to an inventory proxy.
+     * @param objectClass The class of the object.
+     * @param objectId The id of the object.
+     * @param proxyClass The class of the proxy.
+     * @param proxyId The id of the proxy.
+     * @throws BusinessObjectNotFoundException If the inventory object could not be found.
+     * @throws ApplicationObjectNotFoundException If the proxy could not be found.
+     * @throws InvalidArgumentException If the two entities are already related.
+     */
+    public void associateObjectToProxy(String objectClass, String objectId, String proxyClass, String proxyId) 
+            throws BusinessObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
+    
+    /**
+     * Releases an inventory previously related to an inventory proxy.
+     * @param objectClass The class of the object.
+     * @param objectId The id of the object.
+     * @param proxyClass The class of the proxy.
+     * @param proxyId The id of the proxy.
+     * @throws BusinessObjectNotFoundException If the inventory object could not be found.
+     * @throws ApplicationObjectNotFoundException If the proxy could not be found.
+     */
+    public void releaseObjectFromProxy(String objectClass, String objectId, String proxyClass, String proxyId)
+            throws BusinessObjectNotFoundException, ApplicationObjectNotFoundException;
 // </editor-fold>
     //<editor-fold desc="Validators" defaultstate="collapsed">
     /**

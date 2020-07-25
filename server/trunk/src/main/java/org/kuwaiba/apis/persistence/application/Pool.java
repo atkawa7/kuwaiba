@@ -20,7 +20,7 @@ package org.kuwaiba.apis.persistence.application;
  * A POJO representation of a pool
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class Pool {
+public class Pool implements Comparable<Pool>{
     /**
      * Pool id
      */
@@ -88,5 +88,10 @@ public class Pool {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    @Override
+    public int compareTo(Pool o) {
+        return getName().compareTo(o.getName());
     }
 }
