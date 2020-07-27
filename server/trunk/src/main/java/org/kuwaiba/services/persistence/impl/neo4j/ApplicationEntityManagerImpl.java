@@ -4906,7 +4906,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 // On purpose, we only release the RELATED_TO_SPECIAL and CHILD_OF relationships. If anything is related to the proxy via other relationship types, this method 
                 // will fail (technically, someone could try to manipulate the containment hierarchy to create children under a proxy, for example).
                 aProxyNode.getRelationships(RelTypes.RELATED_TO_SPECIAL).forEach( aRelationship -> aRelationship.delete() );
-                aProxyNode.getRelationships(RelTypes.CHILD_OF_SPECIAL).forEach( aRelationship -> aRelationship.delete() );
+                aProxyNode.getSingleRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).delete();
+                aProxyNode.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).delete();
                 aProxyNode.delete();
             });
             
