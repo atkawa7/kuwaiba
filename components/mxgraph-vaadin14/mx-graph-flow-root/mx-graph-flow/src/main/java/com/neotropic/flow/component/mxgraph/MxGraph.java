@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasComponents;
+import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
@@ -34,7 +35,7 @@ import java.util.Map;
  */
 @Tag("mx-graph")
 @JsModule("./mx-graph/mx-graph.js")
-public class MxGraph extends Component implements HasComponents {
+public class MxGraph extends Component implements HasComponents, HasStyle {
     private static final String PROPERTY_GRID = "grid";
     private static final String PROPERTY_WIDTH = "width";
     private static final String PROPERTY_HEIGHT = "height";
@@ -50,6 +51,7 @@ public class MxGraph extends Component implements HasComponents {
     private List<MxCellStyle> styles;
     
     public MxGraph() {
+        super();
         nodes = new ArrayList();
         edges = new ArrayList();
         layers = new ArrayList();
