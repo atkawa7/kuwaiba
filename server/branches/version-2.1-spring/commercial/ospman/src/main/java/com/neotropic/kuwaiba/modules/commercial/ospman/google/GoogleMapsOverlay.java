@@ -23,6 +23,7 @@ import com.neotropic.kuwaiba.modules.commercial.ospman.GeoCoordinate;
 import com.neotropic.kuwaiba.modules.commercial.ospman.GeoPoint;
 import com.neotropic.kuwaiba.modules.commercial.ospman.MapOverlay;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
@@ -32,27 +33,71 @@ import java.util.function.Consumer;
 public class GoogleMapsOverlay implements MapOverlay {
     private final GeoBounds bounds;
     private OverlayView overlayView;
+    /**
+     * The map overlay width
+     */
     private Double width;
+    /**
+     * The map overlay title
+     */
+    private String title;
+    /**
+     * The map overlay scale
+     */
+    private double scale;
+    /**
+     * Is map overlay enabled?
+     */
+    private boolean enabled;
+    /**
+     * The map overlay id
+     */
+    private String id;
     
     public GoogleMapsOverlay(GeoBounds bounds) {
         this.bounds = bounds;
+        this.id = UUID.randomUUID().toString();
     }
-    
+    @Override
+    public String getId() {
+        return id;
+    }
+    @Override
+    public String getTitle() {
+        return title;
+    }
+    @Override
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    @Override
+    public double getScale() {
+        return scale;
+    }
+    @Override
+    public void setScale(double scale) {
+        this.scale = scale;
+    }
+    @Override
+    public boolean getEnabled() {
+        return enabled;
+    }
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
     @Override
     public GeoBounds getBounds() {
         return bounds;
     }
-    
     @Override
     public Double getWidth() {
         return width;
     }
-    
+    @Override
     public void setWidth(double width) {
         this.width = width;
     }
-    
-
     @Override
     public OverlayView getComponent() {
         if (overlayView == null) {
@@ -65,7 +110,6 @@ public class GoogleMapsOverlay implements MapOverlay {
         }
         return overlayView;
     }
-
     @Override
     public void getProjectionFromLatLngToDivPixel(GeoCoordinate latLng, Consumer<GeoPoint> pixelConsumer) {
         Objects.requireNonNull(latLng);
@@ -74,12 +118,10 @@ public class GoogleMapsOverlay implements MapOverlay {
             pixelConsumer.accept(new GeoPoint(point.getX(), point.getY()));
         });
     }
-
     @Override
     public void getProjectionFromDivPixelToLatLng(GeoPoint pixel, Consumer<GeoCoordinate> latLngConsumer) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
     @Override
     public void addWidthChangedConsumer(Consumer<Double> widthChangedConsumer) {
         Objects.requireNonNull(widthChangedConsumer);

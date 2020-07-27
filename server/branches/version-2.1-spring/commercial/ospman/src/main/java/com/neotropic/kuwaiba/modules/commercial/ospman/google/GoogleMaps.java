@@ -156,9 +156,10 @@ public class GoogleMaps implements Map {
             drawingManager.setDrawingMode(OverlayType.MARKER);
             if (drawingMarkerComplete != null)
                 drawingManager.addDrawingManagerMarkerCompleteListener(event -> {
-                    drawingMarkerComplete.accept(new GeoCoordinate(event.getLat(), event.getLng()));
                     drawingManager.setDrawingMode(null);
                     event.unregisterListener();
+                    
+                    drawingMarkerComplete.accept(new GeoCoordinate(event.getLat(), event.getLng()));
                 });
         }
     }
@@ -170,12 +171,13 @@ public class GoogleMaps implements Map {
             drawingManager.setDrawingMode(OverlayType.POLYLINE);
             if (drawingPolylineComplete != null)
                 drawingManager.addDrawingManagerPolylineCompleteListener(event -> {
+                    drawingManager.setDrawingMode(null);
+                    event.unregisterListener();
+                    
                     List<GeoCoordinate> coordinates = new ArrayList();
                     for (LatLng latLng : event.getPath())
                         coordinates.add(new GeoCoordinate(latLng.getLat(), latLng.getLng()));
                     drawingPolylineComplete.accept(coordinates);
-                    drawingManager.setDrawingMode(null);
-                    event.unregisterListener();
                 });
         }
     }

@@ -17,13 +17,23 @@ package com.neotropic.kuwaiba.modules.commercial.ospman;
 
 import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.function.Consumer;
@@ -52,22 +62,24 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
     /**
      * Reference to the translation service.
      */
-    private TranslationService ts;
+    private final TranslationService ts;
     /**
      * Reference to the Application Entity Manager
      */
-    private ApplicationEntityManager aem;
+    private final ApplicationEntityManager aem;
     
-    private HashMap<MapOverlay, MxGraph> overlays;
-    private HashMap<MxGraph, Boolean> graphLoaded;
-    private Div div;
+    private final List<MapOverlay> overlays;
     
-    //private List<MapOverlay> overlays;
+    private final HashMap<MapOverlay, MxGraph> mapOverlays;
+    private final HashMap<MxGraph, Boolean> graphLoaded;
+    private Div component;
+    private MapOverlay selectedOverlay;
     
     public OspView(ApplicationEntityManager aem, TranslationService ts) {
         this.aem = aem;
         this.ts = ts;
-        this.overlays = new HashMap();
+        this.overlays = new ArrayList();
+        this.mapOverlays = new LinkedHashMap();
         this.graphLoaded = new HashMap();
     }
     
@@ -107,18 +119,196 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
         for (Tab tab : enableTabs)
             tab.setEnabled(true);
     }
+    
+    private void addOverlay(GeoBounds bounds) {
+        MapOverlay newOverlay = map.createOverlay(bounds);
+        newOverlay.setEnabled(true);
+        
+        MxGraph newGraph = new MxGraph();
+        newGraph.setFullSize();
+        newGraph.setOverflow(null);
+        
+        newOverlay.getComponent().add(newGraph);
+        
+        overlays.add(newOverlay);
+        mapOverlays.put(newOverlay, newGraph);
+        graphLoaded.put(newGraph, false);
 
+        Consumer<Double> setGraphScaleConsumer = width -> {
+            newGraph.getElement().executeJs("this.graph.view.setScale($0 / $1)", width, newOverlay.getWidth()); //NOI18N
+        };
+
+        newGraph.addGraphLoadedListener(graphLoadedEvent-> {
+            newGraph.getElement().executeJs("mxUtils.getCurrentStyle = () => {return null;}").then(nil -> {  //NOI18N
+                if (newOverlay.getWidth() != null)
+                    setGraphScaleConsumer.accept(newOverlay.getWidth());
+                graphLoaded.put(newGraph, true);
+            });
+        });
+        newOverlay.addWidthChangedConsumer(width -> {
+            if (newOverlay.getWidth() == null)
+                newOverlay.setWidth(width);
+            if (graphLoaded.get(newGraph))
+                setGraphScaleConsumer.accept(width);
+        });
+        if (selectedOverlay != null)
+            mapOverlays.get(selectedOverlay).getStyle().set("outline", "none"); //NOI18N
+        selectedOverlay = newOverlay;
+        newGraph.getStyle().set("outline", "1px solid black"); //NOI18N
+    }
+    
+    private void setDrawingHandMode(Tabs tabs, Tab tab) {
+        if (map != null) {
+            map.setHandMode();
+            tabs.setSelectedTab(tab);
+        }
+    }
+    
+    private void setDrawingOverlayMode(Tabs tabs, Tab tabHand, Tab tabMarker, Tab tabPolyline) {
+        if (map != null)
+            map.setDrawingOverlayMode(bounds -> {
+                addOverlay(bounds);
+                setDrawingHandMode(tabs, tabHand);
+                tabMarker.setEnabled(true);
+                tabPolyline.setEnabled(true);
+            });
+    }
+    
+    private void setDrawingMarkerMode() {
+        if (map != null)
+            map.setDrawingMarkerMode(coordinate -> {
+                setDrawingMarkerMode();
+            });
+    }
+    
+    private void setDrawingPolylineMode() {
+        if (map != null)
+            map.setDrawingPolylineMode(coordinates -> {
+                setDrawingPolylineMode();
+            });
+    }
+    
+    private void drawingOverlayMode(Tabs tabs, Tab tabHand, Tab tabMarker, Tab tabPolyline) {
+        Dialog dialog = new Dialog();
+        dialog.setCloseOnEsc(false);
+        dialog.setCloseOnOutsideClick(false);
+        dialog.setWidth("50%");
+        dialog.setHeight("50%");
+        
+        Grid<MapOverlay> grid = new Grid();
+        grid.setSizeFull();
+        grid.setItems(overlays);
+        
+        grid.addSelectionListener(event -> {
+            MapOverlay newSelectedOverlay = null;
+            if (event.getFirstSelectedItem().isPresent()) {
+                newSelectedOverlay = event.getFirstSelectedItem().get();
+                tabMarker.setEnabled(true);
+                tabPolyline.setEnabled(true);
+            } else {
+                tabMarker.setEnabled(false);
+                tabPolyline.setEnabled(false);
+            }
+            /**
+             * Removes the outline to the selected overlay
+             */
+            if (selectedOverlay != null)
+                mapOverlays.get(selectedOverlay).getStyle().set("outline", "none"); //NOI18N
+            
+            selectedOverlay = newSelectedOverlay;
+            /**
+             * Adds the outline to the selected overlay
+             */
+            if (selectedOverlay != null)
+                mapOverlays.get(selectedOverlay).getStyle().set("outline", "1px solid black"); //NOI18N
+        });
+        
+        if (selectedOverlay != null)
+            grid.select(selectedOverlay);
+        
+        Button btnNewOverlay = new Button(ts.getTranslatedString("module.ospman.add-overlay"), new Icon(VaadinIcon.PLUS));
+        btnNewOverlay.addClickListener(clickEvent -> {
+            setDrawingOverlayMode(tabs, tabHand, tabMarker, tabPolyline);
+            dialog.close();
+        });
+        grid.addComponentColumn(MapOverlayComponent::new);
+        
+        VerticalLayout lytDialog = new VerticalLayout();
+        lytDialog.setSizeFull();
+        
+        VerticalLayout lytVertical = new VerticalLayout();
+        lytVertical.add(btnNewOverlay);
+        lytVertical.add(grid);
+        
+        HorizontalLayout lytHorizontal = new HorizontalLayout();
+        Button btnClose = new Button(ts.getTranslatedString("module.general.messages.close"));
+        btnClose.addClickListener(clickEvent -> {
+            dialog.close();
+            setDrawingHandMode(tabs, tabHand);
+        });
+        lytHorizontal.add(btnClose);
+        lytDialog.add(lytVertical);
+        lytDialog.add(lytHorizontal);
+        lytDialog.expand(lytVertical);
+        lytDialog.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, lytHorizontal);
+        
+        dialog.add(lytDialog);
+        dialog.open();
+    }
+    
+    private class MapOverlayComponent extends HorizontalLayout {
+        private MxGraph graph;
+        
+        public MapOverlayComponent(MapOverlay mapOverlay) {
+            setGraph(mapOverlay);
+            setMapOverlay(mapOverlay, graph);
+        }
+        
+        public MxGraph getGraph() {
+            return graph;
+        }
+        
+        public void setGraph(MapOverlay mapOverlay) {
+            if (mapOverlays.containsKey(mapOverlay))
+                this.graph = mapOverlays.get(mapOverlay);
+        }
+        
+        private void setMapOverlay(MapOverlay mapOverlay, MxGraph graph) {
+            Checkbox chkEnabled = new Checkbox();
+            chkEnabled.addValueChangeListener(event -> {
+                mapOverlay.setEnabled(event.getValue());
+                if (mapOverlay.getEnabled()) {
+                    graph.setVisible(true);
+                }
+                else
+                    graph.setVisible(false);
+            });
+            chkEnabled.setValue(mapOverlay.getEnabled());
+            add(chkEnabled);
+            if (mapOverlay.getTitle() != null)
+                add(new Label(mapOverlay.getTitle()));
+            else
+                add(new Label(ts.getTranslatedString("module.ospman.untitled-overlay")));
+//            Button btnEdit = new Button(new Icon(VaadinIcon.PENCIL));
+//            Button btnDelete = new Button(new Icon(VaadinIcon.TRASH));
+//            add(btnEdit);
+//            add(btnDelete);
+        }
+    }
+    
     @Override
     public Component getAsComponent() throws InvalidArgumentException {
         if (map == null) {
+            String generalMapsProvider = null;
             try {
-                Class mapClass = Class.forName((String) aem.getConfigurationVariableValue("general.maps.provider"));
+                generalMapsProvider = (String) aem.getConfigurationVariableValue("general.maps.provider");
+                Class mapClass = Class.forName(generalMapsProvider);
                 if (Map.class.isAssignableFrom(mapClass)) {
                     map = (Map) mapClass.getDeclaredConstructor().newInstance();
                     map.createComponent(aem, ts);
                     if (map.getComponent() != null) {
-                        div = new Div();
-                        div.setClassName("ospman-div");
+                        component = new Div();
+                        component.setClassName("ospman-div");
                         Tabs tabs = new Tabs();
                         tabs.addClassName("ospman-tabs");
                         tabs.setAutoselect(false);
@@ -166,67 +356,39 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
                         tabs.addSelectedChangeListener(selectedChangeEvent -> {
                             if (selectedChangeEvent.getSelectedTab().equals(tabNewOspView)) {
                                 disableEnableTabs(
-                                    Arrays.asList(),
-                                    Arrays.asList(tabSaveOspView, tabDeleteOspView, tabHand, tabOverlay, tabMarker, tabPolyline)
+                                    Arrays.asList(tabMarker, tabPolyline),
+                                    Arrays.asList(tabSaveOspView, tabDeleteOspView, tabHand, tabOverlay)
                                 );
+                                tabs.setSelectedTab(tabHand);
                             } else if (selectedChangeEvent.getSelectedTab().equals(tabOpenOspView)) {
-
+                                tabs.setSelectedTab(selectedChangeEvent.getPreviousTab());
                             } else if (selectedChangeEvent.getSelectedTab().equals(tabSaveOspView)) {
-
+                                tabs.setSelectedTab(selectedChangeEvent.getPreviousTab());
                             } else if (selectedChangeEvent.getSelectedTab().equals(tabDeleteOspView)) {
-
-                            } else if (selectedChangeEvent.getSelectedTab().equals(tabHand)) {
+                                tabs.setSelectedTab(selectedChangeEvent.getPreviousTab());
+                            } else if (selectedChangeEvent.getSelectedTab().equals(tabHand))
                                 map.setHandMode();
-                            } else if (selectedChangeEvent.getSelectedTab().equals(tabOverlay)) {
-                                map.setDrawingOverlayMode(bounds -> {
-                                    MxGraph graph = new MxGraph();
-                                    graph.getElement().getStyle().set("background", "black");
-                                    graph.setFullSize();
-                                    graph.setOverflow("");
-                                    
-                                    graphLoaded.put(graph, false);
-                                    
-                                    MapOverlay overlay = map.createOverlay(bounds);
-                                    overlay.getComponent().add(graph);
-                                    overlays.put(overlay, graph);
-                                    
-                                    Consumer<Double> setGraphScaleConsumer = width -> {
-                                        graph.getElement().executeJs("this.graph.view.setScale($0 / $1)", width, overlay.getWidth());
-                                    };
-                                    
-                                    graph.addGraphLoadedListener(graphLoadedEvent-> {
-                                        graph.getElement().executeJs("mxUtils.getCurrentStyle = () => {return null;}").then(nill -> {
-                                            if (overlay.getWidth() != null)
-                                                setGraphScaleConsumer.accept(overlay.getWidth());
-                                            graphLoaded.put(graph, true);
-                                        });
-                                    });
-                                    overlay.addWidthChangedConsumer(width -> {
-                                        if (overlay.getWidth() == null)
-                                            overlay.setWidth(width);
-                                        if (graphLoaded.get(graph))
-                                            setGraphScaleConsumer.accept(width);
-                                    });
-                                });
-                            } else if (selectedChangeEvent.getSelectedTab().equals(tabMarker)) {
-                                map.setDrawingMarkerMode(coordinate -> {
-                                    
-                                });
-                            } else if (selectedChangeEvent.getSelectedTab().equals(tabPolyline)) {
-                                map.setDrawingPolylineMode(coordinates -> {
-                                    
-                                });
-                            }
+                            else if (selectedChangeEvent.getSelectedTab().equals(tabOverlay)) {
+                                drawingOverlayMode(tabs, tabHand, tabMarker, tabPolyline);
+                            } else if (selectedChangeEvent.getSelectedTab().equals(tabMarker))
+                                setDrawingMarkerMode();
+                            else if (selectedChangeEvent.getSelectedTab().equals(tabPolyline))
+                                setDrawingPolylineMode();
                         });
-                        div.add(tabs);
-                        div.add(map.getComponent());
+                        component.add(tabs);
+                        component.add(map.getComponent());
                     }
                 } else {
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.error"), 
-                        String.format("Class %s is not a valid map provider", mapClass.getCanonicalName())
+                        String.format(ts.getTranslatedString("module.ospman.not-valid-map-provider"), mapClass.getCanonicalName())
                     ).open();
                 }
+            } catch (ClassNotFoundException ex) {
+                new SimpleNotification(
+                    ts.getTranslatedString("module.general.messages.error"), 
+                    String.format(ts.getTranslatedString("module.ospman.not-valid-map-provider"), generalMapsProvider)
+                ).open();
             } catch (InventoryException ex) {
                 new SimpleNotification(
                     ts.getTranslatedString("module.general.messages.error"), 
@@ -241,9 +403,8 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
             }
         }
         else
-            return div;
-////            return map.getComponent();
-        return div;
+            return component;
+        return component;
     }
 
     @Override

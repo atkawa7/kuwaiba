@@ -24,6 +24,41 @@ import java.util.function.Consumer;
  */
 public interface MapOverlay {
     /**
+     * Gets the map overlay id
+     * @return the id
+     */
+    String getId();
+    /**
+     * Gets the map overlay title
+     * @return the title
+     */
+    String getTitle();
+    /**
+     * Set the map overlay title
+     * @param title map overlay title
+     */
+    void setTitle(String title);
+    /**
+     * Gets the map overlay scale
+     * @return the scale
+     */
+    double getScale();
+    /**
+     * Set the map overlay scale
+     * @param scale map overlay scale
+     */
+    void setScale(double scale);
+    /**
+     * Gets if the map overlay is enabled
+     * @return enabled
+     */
+    boolean getEnabled();
+    /**
+     * Set if the map overlay is enabled
+     * @param enabled Map overlay enabled
+     */
+    void setEnabled(boolean enabled);
+    /**
      * Gets a rectangle representation in geographical coordinates from 
      * southwest and northeast.
      * @return A rectangle representation in geographical coordinates
