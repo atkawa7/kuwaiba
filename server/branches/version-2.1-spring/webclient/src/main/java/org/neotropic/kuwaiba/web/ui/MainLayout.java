@@ -21,12 +21,15 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.StyleSheet;
+import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.RouterLayout;
 import java.util.Objects;
+import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleRegistry;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,11 +60,11 @@ public class MainLayout extends FlexLayout implements RouterLayout {
     @Autowired
     private TranslationService ts;
     /**
-     * Reference to the menu builder service.
+     * Reference to the module registry.
      */
     @Autowired
-    private MenuBuilderService menuBuilderService;
-
+    private ModuleRegistry moduleRegistry;
+    
     public MainLayout() {
         setId("main-layout");
         setSizeFull();
@@ -88,6 +91,19 @@ public class MainLayout extends FlexLayout implements RouterLayout {
         add(mxgraphApi);
     }
     
+    public MenuBar buildMenu(Session session) {
+        MenuBar mnuNewBar = new MenuBar();
+        mnuNewBar.setWidthFull();
+        
+        mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.home"), ev -> UI.getCurrent().navigate("home"));
+        this.moduleRegistry.getModules().values().stream().forEach( aModule -> {
+            mnuNewBar.addItem(aModule.getName(), ev -> UI.getCurrent().navigate(aModule.getId()));
+        });
+        mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.logout"), ev -> UI.getCurrent().navigate("logout"));
+
+        return mnuNewBar;
+    }
+    
     @Override
     public void onAttach(AttachEvent ev) {
         this.lytHeader.removeAll();
@@ -98,7 +114,7 @@ public class MainLayout extends FlexLayout implements RouterLayout {
                 ui.navigate("");
             else {
                 this.lytHeader.removeAll();
-                this.lytHeader.add(menuBuilderService.buildMenuForSession(ui.getSession().getAttribute(Session.class)));
+                this.lytHeader.add(buildMenu(ui.getSession().getAttribute(Session.class)));
             }
             
         });
