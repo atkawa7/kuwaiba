@@ -49,7 +49,8 @@ public class DialogNewContainer extends Dialog {
     public DialogNewContainer(BusinessObjectLight source, BusinessObjectLight target, 
         TranslationService ts, ApplicationEntityManager aem, BusinessEntityManager bem, MetadataEntityManager mem, 
         PhysicalConnectionsService physicalConnectionService, Consumer<BusinessObjectLight> containerConsumer) {
-        
+        setCloseOnEsc(false);
+        setCloseOnOutsideClick(false);
         try {
             FormLayout formLayout = new FormLayout();
             
@@ -62,11 +63,12 @@ public class DialogNewContainer extends Dialog {
             cmbClass.setItems(mem.getSubClassesLight(Constants.CLASS_GENERICPHYSICALCONTAINER, false, false));
             
             ComboBox<TemplateObjectLight> cmbTemplate = new ComboBox();
+            cmbTemplate.setItemLabelGenerator(TemplateObjectLight::getName);
             cmbTemplate.setPlaceholder(ts.getTranslatedString("module.ospman.placeholder.select-container-template"));
             cmbClass.addValueChangeListener(event -> {
                 try {
                     cmbTemplate.clear();
-                    cmbTemplate.setItems(aem.getTemplatesForClass(cmbClass.getClassName()));
+                    cmbTemplate.setItems(aem.getTemplatesForClass(event.getValue().getName()));
                 } catch (MetadataObjectNotFoundException ex) {
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.error"), 

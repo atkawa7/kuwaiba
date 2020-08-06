@@ -22,8 +22,6 @@ import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntity
 import org.neotropic.kuwaiba.core.apis.persistence.application.FileObject;
 import org.neotropic.kuwaiba.core.apis.persistence.application.FileObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Pool;
-import org.neotropic.kuwaiba.core.apis.persistence.application.Validator;
-import org.neotropic.kuwaiba.core.apis.persistence.application.ValidatorDefinition;
 import org.neotropic.kuwaiba.core.apis.persistence.application.reporting.InventoryReport;
 import org.neotropic.kuwaiba.core.apis.persistence.application.reporting.ReportMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.application.reporting.ReportMetadataLight;
@@ -40,7 +38,6 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotF
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermittedException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.AttributeMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
-import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.apis.persistence.util.StringPair;
@@ -58,7 +55,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
