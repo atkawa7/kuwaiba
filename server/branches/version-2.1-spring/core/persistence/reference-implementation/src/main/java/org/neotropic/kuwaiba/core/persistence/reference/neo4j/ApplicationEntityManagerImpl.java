@@ -992,7 +992,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new ApplicationObjectNotFoundException(String.format("A list type with id %s could not be found", listTypeItemId));
             
             if (listTypeItemNode.hasRelationship(RelTypes.INSTANCE_OF) && 
-                    listTypeItemNode.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME).equals(listTypeClassName))
+                    !listTypeItemNode.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME).equals(listTypeClassName))
                 throw new MetadataObjectNotFoundException(String.format("Class %s does not match that of the given list type item", listTypeClassName));
 
             tx.success();
