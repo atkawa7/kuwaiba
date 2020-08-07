@@ -1,6 +1,8 @@
 /**
- * This scripts deletes the orphans SyncDatasourceConfigurations, those that remains after the device related with was deleted
+ * This scripts deletes the orphans SyncDatasourceConfigurations. Due to a bug in version 2.0.1, the data source configurations related to an object remained
+ * after deleting such object.
  * Neotropic SAS - version 2.0
+ * Parameters: None
  */
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Result;
@@ -16,11 +18,11 @@ try {
 	List<Node> nodes = Iterators.asList(physicalNodeColumn);
 	if(nodes.isEmpty()){
 		nodes.each{node ->
-			taskResult.getMessages().add(TaskResult.createInformationMessage(String.format("The SyncDatasource with id %s was removed", nodeId)));
+			taskResult.getMessages().add(TaskResult.createInformationMessage(String.format("The data source condiguration with id %s was removed", nodeId)));
 		}
 	}
 	else
-		taskResult.getMessages().add(TaskResult.createErrorMessage("Non SyncDatasource were deleted"));
+		taskResult.getMessages().add(TaskResult.createErrorMessage("No data source configurations were deleted"));
 	return taskResult;
 
 } catch (Exception e) {

@@ -1,6 +1,8 @@
 /**
- * Set all attribute metadata noCopy property to false. This is a patch that should be used migrating from Kuwaiba v 2.0.1 to 2.0.2. After 
- * running it (with the flag commitOnExecute set to true in the Task Manager task), restart the server or rebuild the class metadata cache
+ * Sets all attribute metadata noCopy property to false. The noCopy property 
+ * was ignored until version 2.0.1 and many classes in the default data model
+ * had it set to true, causing object copy operations to not copy certain
+ * attributes. After running it (with the flag commitOnExecute set to true in the Task Manager task), restart the server or rebuild the class metadata cache
  * by modifying the datamodel (i.e. creating and deleting a class).
  * Neotropic SAS - version 1.0
  * Parameters: None

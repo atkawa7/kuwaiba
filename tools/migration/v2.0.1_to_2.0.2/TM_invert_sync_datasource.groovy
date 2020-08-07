@@ -4,6 +4,7 @@
  * the direction of this relationships was (SyncDsConf)-[HAS_CONFIGURATION]->(device)
  * the correct direction is (SyncDsConf)<-[HAS_CONFIGURATION]-(device)
  * Neotropic SAS - version 1.0
+ * Parameters: None
  */
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Result;
