@@ -3302,8 +3302,7 @@ public interface KuwaibaSoapWebService {
      * Creates multiple template elements using a given name pattern
      * @param templateElementClassName The class name of the new set of template elements
      * @param templateElementParentClassName The parent class name of the new set of template elements
-     * @param templateElementParentId The parent id of the new set of template elements
-     * @param numberOfTemplateElements The number of template elements
+     * @param templateElementParentId The parent id of the new set of template elements     
      * @param templateElementNamePattern Name pattern of the new set of template elements
      * @param sessionId Session id token
      * @return An array of ids for the new template elements
@@ -3316,8 +3315,7 @@ public interface KuwaibaSoapWebService {
     public String[] createBulkTemplateElement(
         @WebParam(name = "templateElementClass") String templateElementClassName, 
         @WebParam(name = "templateElementParentClassName") String templateElementParentClassName, 
-        @WebParam(name = "templateElementParentId") String templateElementParentId, 
-        @WebParam(name = "numberOfTemplateElements") int numberOfTemplateElements, 
+        @WebParam(name = "templateElementParentId") String templateElementParentId,         
         @WebParam(name = "templateElementNamePattern") String templateElementNamePattern, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException;
     
@@ -3325,8 +3323,7 @@ public interface KuwaibaSoapWebService {
      * Creates multiple special template elements using a given name pattern
      * @param stElementClass The class name of the new set of special template elements
      * @param stElementParentClassName The parent class name of the new set of special template elements
-     * @param stElementParentId The parent id of the new set of special template elements
-     * @param numberOfTemplateElements The number of template elements
+     * @param stElementParentId The parent id of the new set of special template elements     
      * @param stElementNamePattern Name pattern of the new set of special template elements
      * @param sessionId Session id token
      * @return An array if ids for the new special template elements
@@ -3339,8 +3336,7 @@ public interface KuwaibaSoapWebService {
     public String[] createBulkSpecialTemplateElement(
         @WebParam(name = "stElementClass") String stElementClass, 
         @WebParam(name = "stElementParentClassName") String stElementParentClassName, 
-        @WebParam(name = "stElementParentId") String stElementParentId, 
-        @WebParam(name = "numberOfTemplateElements") int numberOfTemplateElements, 
+        @WebParam(name = "stElementParentId") String stElementParentId,         
         @WebParam(name = "stElementNamePattern") String stElementNamePattern, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException;
     

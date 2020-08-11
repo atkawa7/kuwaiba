@@ -4628,7 +4628,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     }
 
     @Override
-    public String[] createBulkTemplateElement(String templateElementClassName, String templateElementParentClassName, String templateElementParentId, int numberOfTemplateElements, String templateElementNamePattern, String sessionId) throws ServerSideException {
+    public String[] createBulkTemplateElement(String templateElementClassName, String templateElementParentClassName, String templateElementParentId, String templateElementNamePattern, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
@@ -4638,7 +4638,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
-                String.format("%s new templates elements of class %s", numberOfTemplateElements, templateElementClassName));            
+                String.format("new templates elements of class %s", templateElementClassName));            
             return ids;            
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -4650,7 +4650,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     }
 
     @Override
-    public String[] createBulkSpecialTemplateElement(String stElementClass, String stElementParentClassName, String stElementParentId, int numberOfTemplateElements, String stElementNamePattern, String sessionId) throws ServerSideException {
+    public String[] createBulkSpecialTemplateElement(String stElementClass, String stElementParentClassName, String stElementParentId, String stElementNamePattern, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
@@ -4660,7 +4660,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
-                String.format("%s new special templates elements of class %s", numberOfTemplateElements, stElementClass));  
+                String.format("new special templates elements of class %s", stElementClass));  
             return ids;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
