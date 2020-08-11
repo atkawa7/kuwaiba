@@ -1025,7 +1025,6 @@ public interface ApplicationEntityManager extends AbstractEntityManager {
      * @param templateElementClassName The class name of the new set of template elements
      * @param templateElementParentClassName The parent class name of the new set of template elements
      * @param templateElementParentId The parent id of the new set of template elements
-     * @param numberOfTemplateElements The number of template elements
      * @param templateElementNamePattern Name pattern of the new set of template elements
      * @return An array of ids for the new template elements
      * @throws MetadataObjectNotFoundException If the parent class name or the template element class name cannot be found
@@ -1034,7 +1033,7 @@ public interface ApplicationEntityManager extends AbstractEntityManager {
      * @throws InvalidArgumentException If the given pattern to generate the name has less possibilities that the number of template elements to be created
      */
     public String[] createBulkTemplateElement(String templateElementClassName, String templateElementParentClassName, 
-            String templateElementParentId, int numberOfTemplateElements, String templateElementNamePattern)
+            String templateElementParentId, String templateElementNamePattern)
         throws MetadataObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException, InvalidArgumentException;
     
     /**
@@ -1051,7 +1050,7 @@ public interface ApplicationEntityManager extends AbstractEntityManager {
      * @throws InvalidArgumentException If the given pattern to generate the name has less possibilities that the number of special template elements to be created
      */
     public String[] createBulkSpecialTemplateElement(String stElementClass, String stElementParentClassName, 
-            String stElementParentId, int numberOfTemplateElements, String stElementNamePattern) 
+            String stElementParentId, String stElementNamePattern) 
         throws OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
     /**
      * Updates the value of an attribute of a template element.
