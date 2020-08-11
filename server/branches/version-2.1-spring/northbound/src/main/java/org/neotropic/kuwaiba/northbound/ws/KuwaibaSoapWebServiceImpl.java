@@ -4634,7 +4634,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         try {
             aem.validateCall("createBulkTemplateElement", "127.0.0.1", sessionId);
             String[] ids = aem.createBulkTemplateElement(templateElementClassName, templateElementParentClassName, 
-                    templateElementParentId, numberOfTemplateElements, templateElementNamePattern);
+                    templateElementParentId, templateElementNamePattern);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
@@ -4656,7 +4656,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         try {
             aem.validateCall("createBulkSpecialTemplateElement", "127.0.0.1", sessionId);
             String[] ids = aem.createBulkSpecialTemplateElement(stElementClass, stElementParentClassName, 
-                    stElementParentId, numberOfTemplateElements, stElementNamePattern);
+                    stElementParentId, stElementNamePattern);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
