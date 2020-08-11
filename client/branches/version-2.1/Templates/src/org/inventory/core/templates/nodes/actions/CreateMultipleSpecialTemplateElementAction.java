@@ -19,7 +19,6 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
@@ -47,32 +46,20 @@ public final class CreateMultipleSpecialTemplateElementAction extends CreateTemp
         txtNamePattern.setName("txtNamePattern"); //NOI18N
         txtNamePattern.setColumns(20);
         
-        JSpinner spinnerNumberOfObjects = new JSpinner();
-        spinnerNumberOfObjects.setName("spinnerNumberOfObjects"); //NOI18N
-        spinnerNumberOfObjects.setValue(1);
         
         JComplexDialogPanel saveDialog = new JComplexDialogPanel(
-            new String[] {I18N.gm("name_pattern"), I18N.gm("number_of_template_elements")}, new JComponent[] {txtNamePattern, spinnerNumberOfObjects});
+            new String[] {I18N.gm("name_pattern")}, new JComponent[] {txtNamePattern});
         
         if (JOptionPane.showConfirmDialog(null, saveDialog, 
                 I18N.gm("template_element_create_multiple_special_action") + " [" + ((JMenuItem) e.getSource()).getName() + "]", 
                 JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             String namePattern = ((JTextField)saveDialog.getComponent("txtNamePattern")).getText();
-            int numberOfObjects = 0;
-            Object spinnerValue= ((JSpinner)saveDialog.getComponent("spinnerNumberOfObjects")).getValue();
-            if (spinnerValue instanceof Integer) {
-                numberOfObjects = (Integer) spinnerValue;
-                if (numberOfObjects <= 0) {
-                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                        NotificationUtil.ERROR_MESSAGE, I18N.gm("number_greater_than_zero"));
-                    return;
-                }
-            }                        
+                                              
             TemplateElementNode selectedNode = Utilities.actionsGlobalContext().lookup(TemplateElementNode.class);
             LocalObjectLight selectedObject = selectedNode.getLookup().lookup(LocalObjectLight.class);
             
             List<LocalObjectLight> specialTemplateElements = CommunicationsStub.getInstance().createBulkSpecialTemplateElement(
-                ((JMenuItem)e.getSource()).getName(), selectedObject.getClassName(), selectedObject.getId(), numberOfObjects, namePattern);
+                ((JMenuItem)e.getSource()).getName(), selectedObject.getClassName(), selectedObject.getId(), namePattern);
             
             if (specialTemplateElements == null) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
