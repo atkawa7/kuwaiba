@@ -4150,7 +4150,6 @@ public class CommunicationsStub {
      * @param templateElementClassName The class name of the new set of template elements
      * @param templateElementParentClassName The parent class name of the new set of template elements
      * @param templateElementParentId The parent id of the new set of template elements
-     * @param numberOfTemplateElements The number of template elements
      * @param templateElementNamePattern Name pattern of the new set of template elements
      * @return A list of new template elements or null 
      *         If the parent class name or the template element class name cannot be found
@@ -4159,10 +4158,10 @@ public class CommunicationsStub {
      *         If the given pattern to generate the name has less possibilities that the number of template elements to be created
      */
     public List<LocalObjectLight> createBulkTemplateElement(String templateElementClassName, 
-            String templateElementParentClassName, String templateElementParentId, int numberOfTemplateElements, String templateElementNamePattern) {
+            String templateElementParentClassName, String templateElementParentId, String templateElementNamePattern) {
         try {
             List<LocalObjectLight> result = new ArrayList<>();
-            List<String> ids = service.createBulkTemplateElement(templateElementClassName, templateElementParentClassName, templateElementParentId, numberOfTemplateElements, templateElementNamePattern, session.getSessionId());
+            List<String> ids = service.createBulkTemplateElement(templateElementClassName, templateElementParentClassName, templateElementParentId, templateElementNamePattern, session.getSessionId());
             /*
             TODO: createBulkTemplateElement should return RemoteObjectLight instances instead of merely ids, so we can save so many calls to 
             getTemplateElement
@@ -4185,7 +4184,6 @@ public class CommunicationsStub {
      * @param stElementClass The class name of the new set of special template elements
      * @param stElementParentClassName The parent class name of the new set of special template elements
      * @param stElementParentId The parent id of the new set of special template elements
-     * @param numberOfTemplateElements The number of template elements
      * @param stElementNamePattern Name pattern of the new set of special template elements
      * @return A list of new special template elements or null
      *         If the parent class name or the special template element class name cannot be found
@@ -4194,10 +4192,10 @@ public class CommunicationsStub {
      *         If the given pattern to generate the name has less possibilities that the number of special template elements to be created
      */
     public List<LocalObjectLight> createBulkSpecialTemplateElement(String stElementClass, String stElementParentClassName, 
-            String stElementParentId, int numberOfTemplateElements, String stElementNamePattern) {
+            String stElementParentId, String stElementNamePattern) {
         try {
             List<LocalObjectLight> result = new ArrayList<>();
-            List<String> ids = service.createBulkSpecialTemplateElement(stElementClass, stElementParentClassName, stElementParentId, numberOfTemplateElements, stElementNamePattern, session.getSessionId());
+            List<String> ids = service.createBulkSpecialTemplateElement(stElementClass, stElementParentClassName, stElementParentId, stElementNamePattern, session.getSessionId());
             /*
             TODO: createBulkSpecialTemplateElement should return RemoteObjectLight instances instead of merely ids, so we can save so many calls to 
             getTemplateElement

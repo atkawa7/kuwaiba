@@ -19,7 +19,6 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="templateElementClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="templateElementParentClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="templateElementParentId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="numberOfTemplateElements" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="templateElementNamePattern" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -35,7 +34,6 @@ import javax.xml.bind.annotation.XmlType;
     "templateElementClass",
     "templateElementParentClassName",
     "templateElementParentId",
-    "numberOfTemplateElements",
     "templateElementNamePattern",
     "sessionId"
 })
@@ -44,7 +42,6 @@ public class CreateBulkTemplateElement {
     protected String templateElementClass;
     protected String templateElementParentClassName;
     protected String templateElementParentId;
-    protected int numberOfTemplateElements;
     protected String templateElementNamePattern;
     protected String sessionId;
 
@@ -118,22 +115,6 @@ public class CreateBulkTemplateElement {
      */
     public void setTemplateElementParentId(String value) {
         this.templateElementParentId = value;
-    }
-
-    /**
-     * Gets the value of the numberOfTemplateElements property.
-     * 
-     */
-    public int getNumberOfTemplateElements() {
-        return numberOfTemplateElements;
-    }
-
-    /**
-     * Sets the value of the numberOfTemplateElements property.
-     * 
-     */
-    public void setNumberOfTemplateElements(int value) {
-        this.numberOfTemplateElements = value;
     }
 
     /**
