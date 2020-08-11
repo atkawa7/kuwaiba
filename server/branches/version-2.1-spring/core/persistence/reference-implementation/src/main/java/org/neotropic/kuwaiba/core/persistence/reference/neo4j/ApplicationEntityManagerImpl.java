@@ -2879,7 +2879,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public String[] createBulkTemplateElement(String templateElementClassName, String templateElementParentClassName, 
-            String templateElementParentId, int numberOfTemplateElements, String templateElementNamePattern) 
+            String templateElementParentId, String templateElementNamePattern) 
         throws MetadataObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException, InvalidArgumentException {
         
         boolean isPossibleChildren = false;
@@ -2916,14 +2916,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (parentNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Parent object %s of class %s not found", templateElementParentId, templateElementParentClassName));
             
-            DynamicNameGenerator dynamicName = new DynamicNameGenerator(templateElementNamePattern);
-            if (dynamicName.getNumberOfDynamicNames() < numberOfTemplateElements) 
-                throw new InvalidArgumentException("The given pattern to generate the name has "
-                        + "less possibilities than the number of objects to be created");
+            DynamicNameGenerator dynamicName = new DynamicNameGenerator(templateElementNamePattern);            
+            String res[] = new String[dynamicName.getNumberOfDynamicNames()];
             
-            String res[] = new String[numberOfTemplateElements];
-            
-            for (int i = 0; i < numberOfTemplateElements; i++) {
+            for (int i = 0; i < dynamicName.getNumberOfDynamicNames(); i++) {
                 String templateElementName = dynamicName.getDynamicNames().get(i);
                 
                 String uuid = UUID.randomUUID().toString();
@@ -2938,13 +2934,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 
                 res[i] = uuid;
             }            
-            tx.success();
+            tx.success();            
             return res;
         }
     }
         
     @Override
-    public String[] createBulkSpecialTemplateElement(String stElementClass, String stElementParentClassName, String stElementParentId, int numberOfTemplateElements, String stElementNamePattern) 
+    public String[] createBulkSpecialTemplateElement(String stElementClass, String stElementParentClassName, String stElementParentId, String stElementNamePattern) 
         throws OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
         
         boolean isPossibleSpecialChildren = false;
@@ -2982,13 +2978,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new ApplicationObjectNotFoundException(String.format("Parent object %s of class %s not found", stElementParentId, stElementParentClassName));
             
             DynamicNameGenerator dynamicName = new DynamicNameGenerator(stElementNamePattern);
-            if (dynamicName.getNumberOfDynamicNames() < numberOfTemplateElements) 
-                throw new InvalidArgumentException("The given pattern to generate the name has "
-                        + "less possibilities that the number of objects to be created");
-                   
-            String res[] = new String[numberOfTemplateElements];
             
-            for (int i = 0; i < numberOfTemplateElements; i++) {
+            String res[] = new String[dynamicName.getNumberOfDynamicNames()];
+            
+            for (int i = 0; i < dynamicName.getNumberOfDynamicNames(); i++) {
                 String stElementName = dynamicName.getDynamicNames().get(i);
 
                 String uuid = UUID.randomUUID().toString();
