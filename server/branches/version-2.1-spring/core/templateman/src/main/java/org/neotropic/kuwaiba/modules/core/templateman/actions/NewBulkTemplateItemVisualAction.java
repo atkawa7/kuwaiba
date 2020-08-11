@@ -23,6 +23,7 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.server.Command;
 import java.util.List;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionException;
@@ -78,13 +79,16 @@ public class NewBulkTemplateItemVisualAction extends AbstractVisualAction<Dialog
     @Override
     public Dialog getVisualComponent(ModuleActionParameterSet parameters) {
         try {
-            TextField txtName = new TextField(ts.getTranslatedString("module.general.labels.name"));
+            Label lblDialogName = new Label(ts.getTranslatedString("module.templateman.actions.addItemMultiple-template.description"));
+            TextField txtName = new TextField(ts.getTranslatedString("module.general.labels.patternname"));
             Button btnOK = new Button(ts.getTranslatedString("module.general.labels.create"));
             ComboBox<ClassMetadataLight> cbxPossibleChildren = new ComboBox<>();            
             Dialog wdwNewListTypeItem = new Dialog();            
             //define elements behavior
-            txtName.setRequiredIndicatorVisible(true);            
-            txtName.setSizeFull();            
+            txtName.setSizeFull();
+            txtName.setRequiredIndicatorVisible(true);
+            txtName.setValueChangeMode(ValueChangeMode.EAGER);
+            txtName.setPlaceholder(ts.getTranslatedString("module.templateman.component.txt.special-item.placeholder"));                        
             btnOK.setEnabled(false);
             btnOK.addClickListener(e -> {                
                 try {
@@ -108,7 +112,7 @@ public class NewBulkTemplateItemVisualAction extends AbstractVisualAction<Dialog
             List<ClassMetadataLight> possibleChildren = mem.getPossibleChildrenNoRecursive((String) parameters.get("parentClassName"));            
             cbxPossibleChildren.setItems(possibleChildren);
             cbxPossibleChildren.setLabel(ts.getTranslatedString("module.templateman.component.cbx.template-item.label"));
-            cbxPossibleChildren.setItemLabelGenerator(ClassMetadataLight::getName);
+            cbxPossibleChildren.setItemLabelGenerator(element-> !element.getDisplayName().isEmpty() ? element.getDisplayName() : element.getName());
             //validation listeners
             txtName.addValueChangeListener((e) -> {
                 btnOK.setEnabled(!txtName.isEmpty() && cbxPossibleChildren.getValue() != null );                
@@ -122,7 +126,7 @@ public class NewBulkTemplateItemVisualAction extends AbstractVisualAction<Dialog
 
             FormLayout lytTextFields = new FormLayout(cbxPossibleChildren, txtName);
             HorizontalLayout lytMoreButtons = new HorizontalLayout(btnOK, btnCancel);
-            VerticalLayout lytMain = new VerticalLayout(lytTextFields, lytMoreButtons);
+            VerticalLayout lytMain = new VerticalLayout(lblDialogName, lytTextFields, lytMoreButtons);
             lytMain.setSizeFull();
             wdwNewListTypeItem.add(lytMain);
             return wdwNewListTypeItem;

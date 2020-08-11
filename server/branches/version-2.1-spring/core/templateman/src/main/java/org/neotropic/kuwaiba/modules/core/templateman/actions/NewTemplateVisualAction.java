@@ -22,6 +22,7 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.server.Command;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionException;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionParameter;
@@ -67,9 +68,12 @@ public class NewTemplateVisualAction extends AbstractVisualAction<Dialog> {
     @Override
     public Dialog getVisualComponent(ModuleActionParameterSet parameters) {
         try {            
+            Label lblDialogName = new Label(ts.getTranslatedString("module.templateman.actions.add-template.description"));
             TextField txtName = new TextField(ts.getTranslatedString("module.general.labels.name"));
-            txtName.setRequiredIndicatorVisible(true);
             txtName.setSizeFull();
+            txtName.setRequiredIndicatorVisible(true);
+            txtName.setValueChangeMode(ValueChangeMode.EAGER);
+            
 
             Dialog wdwNewListTypeItem = new Dialog();
 
@@ -106,7 +110,7 @@ public class NewTemplateVisualAction extends AbstractVisualAction<Dialog> {
 
             FormLayout lytTextFields = new FormLayout(txtName);
             HorizontalLayout lytMoreButtons = new HorizontalLayout(btnOK, btnCancel);
-            VerticalLayout lytMain = new VerticalLayout(lytTextFields, lytMoreButtons);
+            VerticalLayout lytMain = new VerticalLayout(lblDialogName, lytTextFields, lytMoreButtons);
             lytMain.setSizeFull();
 
             wdwNewListTypeItem.add(lytMain);

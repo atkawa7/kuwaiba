@@ -227,7 +227,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
      * template selected
      */
     private TemplateObjectLight selectedTemplate;
-    
+
     /**
      * Reference to the Application Entity Manager.
      */
@@ -269,7 +269,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
      */
     @Autowired
     private NewTemplateItemVisualAction newTemplateItemVisualAction;
-    
+
     /**
      * Create bulk Templates
      */
@@ -287,7 +287,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
      */
     @Autowired
     private NewTemplateSpecialItemVisualAction newTemplateSpecialItemVisualAction;
-    
+
     /**
      * Create a new Template visual
      */
@@ -424,8 +424,14 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
         txtFilterListTypeName.setSuffixComponent(icon);
         txtFilterListTypeName.setWidthFull();
         txtFilterListTypeName.addValueChangeListener(event -> classesDataProvider.addFilter(
-                element -> StringUtils.containsIgnoreCase(element.getName(),
-                        txtFilterListTypeName.getValue())));
+                element -> {
+                    return StringUtils.containsIgnoreCase(
+                            element.getName(), txtFilterListTypeName.getValue())
+                    || StringUtils.containsIgnoreCase(
+                            element.getDisplayName(), txtFilterListTypeName.getValue()
+                    );
+                }
+        ));
     }
 
     /**
@@ -656,7 +662,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
         MenuItem mnuRemoveChildsTemplateItem = menuBar.addItem(removeItem, e -> deleteStructureItem(selectedItem));
         mnuRemoveChildsTemplateItem.getElement().getThemeList().add("BUTTON_SMALL");
         mnuRemoveChildsTemplateItem.getElement().setProperty("title",
-                String.format("%s", ts.getTranslatedString("module.templateman.actions.deleteItem-template.description")));       
+                String.format("%s", ts.getTranslatedString("module.templateman.actions.deleteItem-template.description")));
 
         MenuItem mnuEditChildsTemplateItem = menuBar.addItem(editItem, e -> editStructureItem(selectedItem));
         mnuEditChildsTemplateItem.getElement().getThemeList().add("BUTTON_SMALL");
@@ -785,7 +791,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
                 new ModuleActionParameter("commandClose", refreshChildAction)
         )).open();
     }
-    
+
     /**
      * Creates a new Structure item, based in allowed content.
      *
@@ -817,7 +823,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
                 new ModuleActionParameter("commandClose", refreshChildAction)
         )).open();
     }
-    
+
     /**
      * Creates bulk Structure special item, based in allowed content.
      *
@@ -850,7 +856,6 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
         )).open();
     }
 
-   
     /**
      * Create template data provider and refresh items
      *
