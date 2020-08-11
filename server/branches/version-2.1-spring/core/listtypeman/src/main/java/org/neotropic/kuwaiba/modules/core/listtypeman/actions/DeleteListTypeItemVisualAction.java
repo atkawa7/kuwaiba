@@ -76,6 +76,7 @@ public class DeleteListTypeItemVisualAction extends AbstractVisualAction<Dialog>
         ConfirmDialog wdwDeleteListTypeItem = new ConfirmDialog(ts.getTranslatedString("module.general.labels.confirmation"),
                 ts.getTranslatedString("module.general.labels.confirmdeletemessage"),
                 ts.getTranslatedString("module.general.labels.delete"));
+        
         wdwDeleteListTypeItem.getBtnConfirm().addClickListener((ev) -> {
             try {
                 deleteListTypeItemAction.getCallback().execute(new ModuleActionParameterSet(
