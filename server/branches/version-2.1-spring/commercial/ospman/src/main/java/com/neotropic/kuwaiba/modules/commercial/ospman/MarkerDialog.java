@@ -32,6 +32,7 @@ import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewNode;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 
@@ -46,7 +47,8 @@ public class MarkerDialog extends PaperDialog {
     
     public MarkerDialog(Component positionTarget, 
         ApplicationEntityManager aem, 
-        BusinessEntityManager bem, TranslationService ts, 
+        BusinessEntityManager bem,
+        MetadataEntityManager mem, TranslationService ts, 
         List<AbstractViewNode> nodes, Consumer<BusinessObjectLight> consumerAddMarker) {
         
         Objects.requireNonNull(positionTarget);
@@ -76,7 +78,7 @@ public class MarkerDialog extends PaperDialog {
         grid.addThemeVariants(GridVariant.LUMO_NO_ROW_BORDERS);
         grid.setMaxWidth(WIDTH);
         grid.setMinWidth(WIDTH);
-        grid.addComponentColumn(item -> new MarkerComponentColumn(ts, item, nodesMap.get(item.getId()), this, consumerAddMarker));
+        grid.addComponentColumn(item -> new MarkerComponentColumn(ts, mem, item, nodesMap.get(item.getId()), this, consumerAddMarker));
         add(grid);
         
         txtFilter.getStyle().set("margin", "0px");

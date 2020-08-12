@@ -63,6 +63,10 @@ public class GoogleMapsOverlay implements MapOverlay {
         return id;
     }
     @Override
+    public void setId(String id) {
+        this.id = id;
+    }
+    @Override
     public String getTitle() {
         return title;
     }

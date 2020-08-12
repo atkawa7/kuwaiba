@@ -29,6 +29,11 @@ public interface MapOverlay {
      */
     String getId();
     /**
+     * Set the map overlay id
+     * @param id the map overlay id
+     */
+    void setId(String id);
+    /**
      * Gets the map overlay title
      * @return the title
      */

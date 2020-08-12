@@ -26,8 +26,13 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewNode;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
+import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 
 /**
@@ -36,7 +41,8 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
  */
 public class MarkerComponentColumn extends HorizontalLayout {
     public MarkerComponentColumn(
-        TranslationService ts, 
+        TranslationService ts,
+        MetadataEntityManager mem,
         BusinessObjectLight businessObject, 
         AbstractViewNode<BusinessObjectLight> node, 
         PaperDialog paperDialog, 
@@ -56,8 +62,15 @@ public class MarkerComponentColumn extends HorizontalLayout {
         lyt.setSpacing(false);
 
         Label lblName = new Label(businessObject.getName());
-        Emphasis empClass = new Emphasis(businessObject.getClassName());
-
+        Emphasis empClass;
+        try {
+            ClassMetadata classMetadata = mem.getClass(businessObject.getClassName());
+            empClass = new Emphasis(
+                classMetadata.getDisplayName() != null ? classMetadata.getDisplayName() : classMetadata.getName()
+            );
+        } catch (MetadataObjectNotFoundException ex) {
+            empClass = new Emphasis(businessObject.getClassName());
+        }
         lyt.add(lblName, empClass);
 
         Button btnAdd = new Button(new Icon(VaadinIcon.PLUS));

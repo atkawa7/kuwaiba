@@ -117,25 +117,25 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
     
     private void init() {
         removeAll();
-//        try {
-//            OspView ospView = new OspView(aem, bem, mem, ts, resourceFactory, physicalConnectionService);
-//            ospView.buildEmptyView();
-//            if (ospView.getAsComponent() != null)
-//                add(ospView.getAsComponent());
-//        } catch (InvalidArgumentException ex) {
-//            Logger.getLogger(OutsidePlantManagerDashboard.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-        lytQuickActions = new HorizontalLayout(buildQuickActionsMenu());
-        lytQuickActions.setWidthFull();
-
-        lytContent = new VerticalLayout();
-        lytContent.setPadding(false);
-        lytContent.setMargin(false);
-        lytContent.setSizeFull();
-
-        lytContent.add(new EmptyMapDashboardWidget(aem, bem, mem, ts, resourceFactory));
-
-        add(lytQuickActions, lytContent);
+        try {
+            OspView ospView = new OspView(aem, bem, mem, ts, resourceFactory, physicalConnectionService);
+            ospView.buildEmptyView();
+            if (ospView.getAsComponent() != null)
+                add(ospView.getAsComponent());
+        } catch (InvalidArgumentException ex) {
+            Logger.getLogger(OutsidePlantManagerDashboard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+//        lytQuickActions = new HorizontalLayout(buildQuickActionsMenu());
+//        lytQuickActions.setWidthFull();
+//
+//        lytContent = new VerticalLayout();
+//        lytContent.setPadding(false);
+//        lytContent.setMargin(false);
+//        lytContent.setSizeFull();
+//
+//        lytContent.add(new EmptyMapDashboardWidget(aem, bem, mem, ts, resourceFactory));
+//
+//        add(lytQuickActions, lytContent);
     }
     
     private MenuBar buildQuickActionsMenu() {

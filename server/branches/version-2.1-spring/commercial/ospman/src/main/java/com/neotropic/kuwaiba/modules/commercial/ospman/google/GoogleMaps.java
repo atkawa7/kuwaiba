@@ -123,6 +123,24 @@ public class GoogleMaps implements Map {
         return null;
     }
     
+    public GeoCoordinate getCenter() {
+        return new GeoCoordinate(googleMap.getCenterLat(), googleMap.getCenterLng());
+    }
+    
+    public void setCenter(GeoCoordinate center) {
+        googleMap.setCenterLat(center.getLatitude());
+        googleMap.setCenterLng(center.getLongitude());
+    }
+    
+    public double getZoom() {
+        return googleMap.getZoom();
+    }
+    
+    public void setZoom(double zoom) {
+        googleMap.setZoom(zoom);
+    }
+    
+    @Override
     public void setHandMode() {
         if (drawingManager != null)
             drawingManager.setDrawingMode(null);

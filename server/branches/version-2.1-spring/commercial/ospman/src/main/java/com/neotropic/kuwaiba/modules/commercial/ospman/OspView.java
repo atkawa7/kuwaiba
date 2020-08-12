@@ -19,18 +19,23 @@ import com.neotropic.flow.component.mxgraph.MxConstants;
 import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.neotropic.flow.component.mxgraph.MxGraphCell;
 import com.neotropic.flow.component.mxgraph.Point;
+import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.DialogDeleteOSPView;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.DialogNewContainer;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.server.Command;
 import com.vaadin.flow.server.StreamResourceRegistry;
 import elemental.json.Json;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
 import java.awt.Color;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,8 +50,11 @@ import javafx.util.Pair;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractView;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewEdge;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewNode;
@@ -65,6 +73,7 @@ import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewEdge;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
+import org.neotropic.util.visual.dialog.ConfirmDialog;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.views.util.UtilHtml;
 
@@ -73,6 +82,34 @@ import org.neotropic.util.visual.views.util.UtilHtml;
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class OspView extends AbstractView<BusinessObjectLight, Component> {
+    private final String TAG_VIEW = "view"; //NOI18N
+    private final String TAG_CLASS = "class"; //NOI18N
+    private final String TAG_CENTER = "center"; //NOI18N
+    private final String TAG_ZOOM = "zoom"; //NOI18N
+    private final String TAG_OVERLAYS = "overlays"; //NOI18N
+    private final String TAG_OVERLAY = "overlay"; //NOI18N
+    private final String TAG_NODES = "nodes"; //NOI18N
+    private final String TAG_NODE = "node"; //NOI18N
+    private final String TAG_EDGES = "edges"; //NOI18N
+    private final String TAG_EDGE = "edge"; //NOI18N
+    private final String TAG_COORDINATE = "coordinate"; //NOI18N
+    private final String TAG_CONTROL_POINT = "controlPoint"; //NOI18N
+
+    private final String ATTR_LAT = "lat"; //NOI18N
+    private final String ATTR_LON = "lng"; //NOI18N
+    private final String ATTR_ID = "id"; //NOI18N
+    private final String ATTR_CLASS = "class"; //NOI18N
+    private final String ATTR_TITLE = "title"; //NOI18N
+    private final String ATTR_ENABLED = "enabled"; //NOI18N
+    private final String ATTR_SELECTED = "selected"; //NOI18N
+    private final String ATTR_OVERLAY_ID = "overlayid"; //NOI18N
+    private final String ATTR_A_SIDE_ID = "asideid"; //NOI18N
+    private final String ATTR_A_SIDE_CLASS = "asideclass"; //NOI18N
+    private final String ATTR_B_SIDE_ID = "bsideid"; //NOI18N
+    private final String ATTR_B_SIDE_CLASS = "bsideclass"; //NOI18N
+    private final String ATTR_WIDTH = "width"; //NOI18N
+    private final String ATTR_VERSION = "version"; ///NOI18N
+        
     private class PropertyNames {
         public static final String LAT = "lat"; //NOI18N
         public static final String LON = "lon"; //NOI18N
@@ -81,6 +118,8 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
         public static final String OVERLAY_ID = "overlayId"; //NOI18N
         public static final String CENTER = "center"; //NOI18N
         public static final String ZOOM = "zoom"; //NOI18N
+        public static final String POSITION = "position"; //NOI18N
+        public static final String OVERLAY = "overlay"; //NOI18N
     }
     /**
      * Map in the Outside Plant View
@@ -104,6 +143,7 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
     private final PhysicalConnectionsService physicalConnectionsService;
     
     private final List<MapOverlay> overlays;
+    private final HashMap<String, MapOverlay> overlayIds = new HashMap();
     
     private final HashMap<MapOverlay, MxGraph> mapOverlays;
     private final HashMap<MxGraph, Boolean> graphLoaded;
@@ -168,6 +208,7 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
     }
     
     /**
+     * <pre>{@code
      * <view version="">
      *  <class>OSPView</class>
      *  <center lon="" lat=""></center>
@@ -187,69 +228,46 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
      *   </edge>
      *  </edge>
      * </view>
+     * }</pre>
      */    
     @Override
     public byte[] getAsXml() {
-        final String TAG_VIEW = "view"; //NOI18N
-        final String TAG_CLASS = "class"; //NOI18N
-        final String TAG_CENTER = "center"; //NOI18N
-        final String TAG_ZOOM = "zoom"; //NOI18N
-        final String TAG_OVERLAYS = "overlays"; //NOI18N
-        final String TAG_OVERLAY = "overlay"; //NOI18N
-        final String TAG_NODES = "nodes"; //NOI18N
-        final String TAG_NODE = "node"; //NOI18N
-        final String TAG_EDGES = "edges"; //NOI18N
-        final String TAG_EDGE = "edge"; //NOI18N
-        final String TAG_COORDINATE = "coordinate"; //NOI18N
-        final String TAG_CONTROL_POINT = "controlPoint"; //NOI18N
+        final QName tagView = new QName(TAG_VIEW);
+        final QName tagClass = new QName(TAG_CLASS);
+        final QName tagCenter = new QName(TAG_CENTER);
+        final QName tagZoom = new QName(TAG_ZOOM);
+        final QName tagOverlays = new QName(TAG_OVERLAYS);
+        final QName tagOverlay = new QName(TAG_OVERLAY);
+        final QName tagNodes = new QName(TAG_NODES);
+        final QName tagNode = new QName(TAG_NODE);
+        final QName tagEdges = new QName(TAG_EDGES);
+        final QName tagEdge = new QName(TAG_EDGE);
+        final QName tagCoordinate = new QName(TAG_COORDINATE);
+        final QName tagControlpoint = new QName(TAG_CONTROL_POINT);
+
+        final QName attrLon = new QName(ATTR_LON);
+        final QName attrLat = new QName(ATTR_LAT);
+        final QName attrId = new QName(ATTR_ID);
+        final QName attrTitle = new QName(ATTR_TITLE);
+        final QName attrEnabled = new QName(ATTR_ENABLED);
+        final QName attrSelected = new QName(ATTR_SELECTED);
+        final QName attrWidth = new QName(ATTR_WIDTH);
+        final QName attrClass = new QName(ATTR_CLASS);
+        final QName attrOverlayId = new QName(ATTR_OVERLAY_ID);
+        final QName attrAsideId = new QName(ATTR_A_SIDE_ID);
+        final QName attrAsideClass = new QName(ATTR_A_SIDE_CLASS);
+        final QName attrBsideId = new QName(ATTR_B_SIDE_ID);
+        final QName attrBsideClass = new QName(ATTR_B_SIDE_CLASS);
+        final QName attrVersion = new QName(ATTR_VERSION);
         
-        final String ATTR_LAT = "lat"; //NOI18N
-        final String ATTR_LON = "lng"; //NOI18N
-        final String ATTR_ID = "id"; //NOI18N
-        final String ATTR_CLASS = "class"; //NOI18N
-        final String ATTR_TITLE = "title"; //NOI18N
-        final String ATTR_ENABLED = "enabled"; //NOI18N
-        final String ATTR_SELECTED = "selected"; //NOI18N
-        final String ATTR_OVERLAY_ID = "overlayid"; //NOI18N
-        final String ATTR_A_SIDE_ID = "asideid"; //NOI18N
-        final String ATTR_A_SIDE_CLASS = "asideclass"; //NOI18N
-        final String ATTR_B_SIDE_ID = "bsideid"; //NOI18N
-        final String ATTR_B_SIDE_CLASS = "bsideclass"; //NOI18N
-        final String ATTR_WIDTH = "width"; //NOI18N
-        final String ATTR_VERSION = "version"; ///NOI18N
+        viewMap.getProperties().put(PropertyNames.CENTER, map.getCenter());
+        viewMap.getProperties().put(PropertyNames.ZOOM, map.getZoom());
+        
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
             XMLEventWriter xmlew = xmlof.createXMLEventWriter(baos);
             XMLEventFactory xmlef = XMLEventFactory.newInstance();
-            
-            final QName tagView = new QName(TAG_VIEW);
-            final QName tagClass = new QName(TAG_CLASS);
-            final QName tagCenter = new QName(TAG_CENTER);
-            final QName tagZoom = new QName(TAG_ZOOM);
-            final QName tagOverlays = new QName(TAG_OVERLAYS);
-            final QName tagOverlay = new QName(TAG_OVERLAY);
-            final QName tagNodes = new QName(TAG_NODES);
-            final QName tagNode = new QName(TAG_NODE);
-            final QName tagEdges = new QName(TAG_EDGES);
-            final QName tagEdge = new QName(TAG_EDGE);
-            final QName tagCoordinate = new QName(TAG_COORDINATE);
-            final QName tagControlpoint = new QName(TAG_CONTROL_POINT);
-            
-            final QName attrLon = new QName(ATTR_LON);
-            final QName attrLat = new QName(ATTR_LAT);
-            final QName attrId = new QName(ATTR_ID);
-            final QName attrTitle = new QName(ATTR_TITLE);
-            final QName attrEnabled = new QName(ATTR_ENABLED);
-            final QName attrSelected = new QName(ATTR_SELECTED);
-            final QName attrWidth = new QName(ATTR_WIDTH);
-            final QName attrClass = new QName(ATTR_CLASS);
-            final QName attrOverlayId = new QName(ATTR_OVERLAY_ID);
-            final QName attrAsideId = new QName(ATTR_A_SIDE_ID);
-            final QName attrAsideClass = new QName(ATTR_A_SIDE_CLASS);
-            final QName attrBsideId = new QName(ATTR_B_SIDE_ID);
-            final QName attrBsideClass = new QName(ATTR_B_SIDE_CLASS);
-            final QName attrVersion = new QName(ATTR_VERSION);
             
             xmlew.add(xmlef.createStartElement(tagView, null, null));
             xmlew.add(xmlef.createAttribute(attrVersion, OutsidePlantConstants.VIEW_VERSION));
@@ -271,7 +289,8 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
             for (MapOverlay overlay : overlays) {
                 xmlew.add(xmlef.createStartElement(tagOverlay, null, null));
                 xmlew.add(xmlef.createAttribute(attrId, overlay.getId()));
-                xmlew.add(xmlef.createAttribute(attrTitle, overlay.getTitle()));
+                if (overlay.getTitle() != null)
+                    xmlew.add(xmlef.createAttribute(attrTitle, overlay.getTitle()));
                 xmlew.add(xmlef.createAttribute(attrWidth, String.valueOf(overlay.getWidth())));
                 if (overlay.getEnabled())
                     xmlew.add(xmlef.createAttribute(attrEnabled, String.valueOf(true)));
@@ -344,10 +363,14 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
     }
     
     private void disableEnableTabs(List<Tab> disableTabs, List<Tab> enableTabs) {
-        for (Tab tab : disableTabs)
-            tab.setEnabled(false);
-        for (Tab tab : enableTabs)
-            tab.setEnabled(true);
+        if (disableTabs != null) {
+            for (Tab tab : disableTabs)
+                tab.setEnabled(false);
+        }
+        if (enableTabs != null) {
+            for (Tab tab : enableTabs)
+                tab.setEnabled(true);
+        }
     }
     
     private void addOverlay(GeoBounds bounds) {
@@ -361,6 +384,7 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
         newOverlay.getComponent().add(newGraph);
         
         overlays.add(newOverlay);
+        overlayIds.put(newOverlay.getId(), newOverlay);
         mapOverlays.put(newOverlay, newGraph);
         graphLoaded.put(newGraph, false);
 
@@ -384,6 +408,49 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
         selectOverlay(newOverlay);
     }
     
+    private void addOverlay(String id, String title, Double width0, boolean enabled, boolean selected, GeoBounds bounds, byte[] view) {
+        MapOverlay newOverlay = map.createOverlay(bounds);
+        newOverlay.setId(id);
+        newOverlay.setTitle(title);
+        newOverlay.setEnabled(enabled);
+        
+        MxGraph newGraph = new MxGraph();
+        newGraph.setFullSize();
+        newGraph.setOverflow(null);
+        
+        newOverlay.getComponent().add(newGraph);
+        
+        overlays.add(newOverlay);
+        overlayIds.put(newOverlay.getId(), newOverlay);
+        mapOverlays.put(newOverlay, newGraph);
+        graphLoaded.put(newGraph, false);
+
+        Consumer<Double> setGraphScaleConsumer = width -> {
+            newGraph.getElement().executeJs("this.graph.view.setScale($0 / $1)", width, newOverlay.getWidth()); //NOI18N
+            overlayReady(id, view);
+        };
+
+        newGraph.addGraphLoadedListener(graphLoadedEvent-> {
+            newGraph.getElement().executeJs("mxUtils.getCurrentStyle = () => {return null;}").then(nil -> {  //NOI18N
+                if (newOverlay.getWidth() != null)
+                    setGraphScaleConsumer.accept(newOverlay.getWidth());
+                graphLoaded.put(newGraph, true);
+            });
+        });
+        newOverlay.addWidthChangedConsumer(width -> {
+            if (newOverlay.getWidth() == null) {
+                if (width0 != null)
+                    newOverlay.setWidth(width0);
+                else
+                    newOverlay.setWidth(width);
+            }
+            if (graphLoaded.get(newGraph))
+                setGraphScaleConsumer.accept(width);
+        });
+        if (selected)
+            selectOverlay(newOverlay);
+    }
+    
     private void setDrawingHandMode(Tabs tabs, Tab tab) {
         if (map != null) {
             map.setHandMode();
@@ -405,7 +472,8 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
         if (map != null)
             map.setDrawingMarkerMode(coordinate -> {
                 Properties properties = new Properties();
-                properties.put("position", coordinate); //NOI18N
+                properties.put(PropertyNames.POSITION, coordinate);
+                properties.put(PropertyNames.OVERLAY, selectedOverlay);
                 addNode(businessObject, properties);
             });
     }
@@ -438,6 +506,7 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
                                 points.remove(points.length() - 1);
                                 points.remove(0);
                                 properties.put("points", points.toJson()); //NOI18N
+                                properties.put(PropertyNames.OVERLAY, selectedOverlay);
                                 addEdge(container, source, target, properties);
                             } catch (MetadataObjectNotFoundException ex) {
                                 new SimpleNotification(
@@ -460,7 +529,7 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
             mapOverlays.get(this.selectedOverlay).getStyle().set("outline", "none"); //NOI18N
         this.selectedOverlay = selectedOverlay;
         if (this.selectedOverlay != null)
-            mapOverlays.get(selectedOverlay).getStyle().set("outline", "1px solid black"); //NOI18N
+            mapOverlays.get(selectedOverlay).getStyle().set("outline", "2px dotted red"); //NOI18N
     }
     
     public Component getAsComponent() throws InvalidArgumentException {
@@ -549,11 +618,31 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
                                     );
                                     componentTabs.setSelectedTab(tabHand);
                                 } else if (selectedTab.equals(tabOpenOspView)) {
+                                    disableEnableTabs(null, Arrays.asList(
+                                        tabSaveOspView, tabDeleteOspView, tabHand, tabOverlay, tabMarker, tabPolyline, tabWire
+                                    ));
                                     componentTabs.setSelectedTab(selectedChangeEvent.getPreviousTab());
+                                    OspViewDialog ospViewDialog = new OspViewDialog(tabOpenOspView, aem, ts, viewObject -> {
+                                        getProperties().put(Constants.PROPERTY_ID, viewObject.getId());
+                                        getProperties().put(Constants.PROPERTY_NAME, viewObject.getName());
+                                        getProperties().put(Constants.PROPERTY_DESCRIPTION, viewObject.getDescription());
+                                        buildWithSavedView(viewObject.getStructure());
+                                    });
+                                    componentTabs.add(ospViewDialog);
+                                    ospViewDialog.open();
                                 } else if (selectedTab.equals(tabSaveOspView)) {
                                     componentTabs.setSelectedTab(selectedChangeEvent.getPreviousTab());
+                                    if (viewMap.getNodes().isEmpty()) {
+                                        new SimpleNotification(
+                                            ts.getTranslatedString("module.general.messages.information"), 
+                                            ts.getTranslatedString("module.ospman.empty-view")
+                                        ).open();
+                                    }
+                                    else
+                                        saveOspView();
                                 } else if (selectedTab.equals(tabDeleteOspView)) {
                                     componentTabs.setSelectedTab(selectedChangeEvent.getPreviousTab());
+                                    deleteOspView();
                                 } else if (selectedTab.equals(tabHand))
                                     map.setHandMode();
                                 else if (selectedTab.equals(tabOverlay)) {
@@ -568,7 +657,7 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
                                 } else if (selectedTab.equals(tabMarker)) {
                                     componentTabs.setSelectedTab(tabHand);
                                     MarkerDialog markerDialog = new MarkerDialog(
-                                        tabMarker, aem, bem, ts, viewMap.getNodes(), 
+                                        tabMarker, aem, bem, mem, ts, viewMap.getNodes(), 
                                         businessObject -> setDrawingMarkerMode(businessObject)
                                     );
                                     componentTabs.add(markerDialog);
@@ -615,10 +704,161 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
             return component;
         return component;
     }
-
+    
+    /**
+     * <pre>{@code
+     * <view version="">
+     *  <class>OSPView</class>
+     *  <center lon="" lat=""></center>
+     *  <zoom>0</zoom>
+     *  <overlays>
+     *   <overlay id="" title="" scale="" enabled="" selected="">
+     *    <coordinate lat="" lng=""></coordinate>
+     *    <coordinate lat="" lng=""></coordinate>
+     *   <overlay/>
+     *  </overlays>
+     *  <nodes>
+     *   <node lon="" lat="" class="businessObjectClass" overlayid="">businessObjectId</node>
+     *  </nodes>
+     *  <edge>
+     *   <edge id="" class="" asideid="" asideclass="" bsideid="" bsideclass="" overlayid="">
+     *    <controlpoint lon="" lat=""></controlpoint>
+     *   </edge>
+     *  </edge>
+     * </view>
+     * }</pre>
+     */
     @Override
     public void buildWithSavedView(byte[] view) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            QName tagView = new QName(TAG_VIEW);
+            QName tagCenter = new QName(TAG_CENTER);
+            QName tagZoom = new QName(TAG_ZOOM);
+            QName tagOverlay = new QName(TAG_OVERLAY);
+            QName tagNode = new QName(TAG_NODE);
+            QName tagEdge = new QName(TAG_EDGE);
+            QName tagCoordinate = new QName(TAG_COORDINATE);
+            QName tagControlPoint = new QName(TAG_CONTROL_POINT);
+            
+            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+            ByteArrayInputStream bais = new ByteArrayInputStream(view);
+            XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
+            while (reader.hasNext()) {
+                reader.next();
+                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
+                    if (tagView.equals(reader.getName())) {
+                        String version = reader.getAttributeValue(null, ATTR_VERSION);
+                        if (!OutsidePlantConstants.VIEW_VERSION.equals(version)) {
+                            new SimpleNotification(
+                                ts.getTranslatedString("module.general.messages.error"), 
+                                String.format(
+                                    ts.getTranslatedString("module.ospman.view.update-view-version"), 
+                                    version, OutsidePlantConstants.VIEW_VERSION)
+                            ).open();
+                            break;
+                        }
+                    } else if (tagCenter.equals(reader.getName())) {
+                        double lat = Double.valueOf(reader.getAttributeValue(null, ATTR_LAT));
+                        double lon = Double.valueOf(reader.getAttributeValue(null, ATTR_LON));
+                        GeoCoordinate mapCenter = new GeoCoordinate(lat, lon);
+                        viewMap.getProperties().put(PropertyNames.CENTER, mapCenter);
+                        map.setCenter(mapCenter);
+                    } else if (tagZoom.equals(reader.getName())) {
+                        double zoom = Double.valueOf(reader.getElementText());
+                        viewMap.getProperties().put(PropertyNames.ZOOM, zoom);
+                        map.setZoom(zoom);
+                    } else if (tagOverlay.equals(reader.getName())) {
+                        String overlayId = reader.getAttributeValue(null, ATTR_ID);
+                        String overlayTitle = reader.getAttributeValue(null, ATTR_TITLE);
+                        double overlayWidth = Double.valueOf(reader.getAttributeValue(null, ATTR_WIDTH));
+                        boolean enabled = Boolean.valueOf(reader.getAttributeValue(null, ATTR_ENABLED));
+                        boolean selected = Boolean.valueOf(reader.getAttributeValue(null, ATTR_SELECTED));
+                        
+                        List<GeoCoordinate> coordinates = new ArrayList();
+                        while (true) {
+                            reader.nextTag();
+                            if (tagCoordinate.equals(reader.getName())) {
+                                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
+                                    coordinates.add(new GeoCoordinate(
+                                        Double.valueOf(reader.getAttributeValue(null, ATTR_LAT)), 
+                                        Double.valueOf(reader.getAttributeValue(null, ATTR_LON))
+                                    ));
+                                }
+                            }
+                            else
+                                break;
+                        }
+                        addOverlay(overlayId, overlayTitle, overlayWidth, enabled, selected, 
+                            new GeoBounds(coordinates.get(1), coordinates.get(0)), view
+                        );
+                    }
+//                    } else if (tagNode.equals(reader.getName())) {
+//                        try {
+//                            String objectClass = reader.getAttributeValue(null, ATTR_CLASS);
+//                            double lat = Double.valueOf(reader.getAttributeValue(null, ATTR_LAT));
+//                            double lon = Double.valueOf(reader.getAttributeValue(null, ATTR_LON));
+//                            String overlayId = reader.getAttributeValue(null, ATTR_OVERLAY_ID);
+//                            String objectId = reader.getElementText();
+//                            
+//                            Properties properties = new Properties();
+//                            properties.put(PropertyNames.POSITION, new GeoCoordinate(lat, lon));
+//                            properties.put(PropertyNames.OVERLAY, overlayIds.get(overlayId));
+//                            addNode(bem.getObjectLight(objectClass, objectId), properties);
+//                        } catch (InventoryException ex) {
+//                            new SimpleNotification(
+//                                ts.getTranslatedString("module.general.messages.error"), 
+//                                ex.getLocalizedMessage()
+//                            ).open();
+//                        }
+//                    } else if (tagEdge.equals(reader.getName())) {
+//                        try {
+//                            String objectId = reader.getAttributeValue(null, ATTR_ID);
+//                            String objectClass = reader.getAttributeValue(null, ATTR_CLASS);
+//                            String aSideId = reader.getAttributeValue(null, ATTR_A_SIDE_ID);
+//                            String aSideClass = reader.getAttributeValue(null, ATTR_A_SIDE_CLASS);
+//                            String bSideId = reader.getAttributeValue(null, ATTR_B_SIDE_ID);
+//                            String bSideClass = reader.getAttributeValue(null, ATTR_B_SIDE_CLASS);
+//                            String overlayId = reader.getAttributeValue(null, ATTR_OVERLAY_ID);
+//
+//                            List<GeoCoordinate> controlPoints = new ArrayList();
+//                            while (true) {
+//                                reader.nextTag();
+//                                if (tagControlPoint.equals(reader.getName())) {
+//                                    if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
+//                                        controlPoints.add(new GeoCoordinate(
+//                                            Double.valueOf(reader.getAttributeValue(null, ATTR_LAT)), 
+//                                            Double.valueOf(reader.getAttributeValue(null, ATTR_LON))
+//                                        ));
+//                                    }
+//                                }
+//                                else
+//                                    break;
+//                            }
+//                            Properties properties = new Properties();
+//                            properties.put(PropertyNames.CONTROL_POINTS, controlPoints);
+//                            properties.put(PropertyNames.COLOR, UtilHtml.toHexString(new Color(mem.getClass(objectClass).getColor())));
+//                            properties.put(PropertyNames.OVERLAY, overlayIds.get(overlayId));
+//                            addEdge(
+//                                    bem.getObjectLight(objectClass, objectId),
+//                                    bem.getObjectLight(aSideClass, aSideId),
+//                                    bem.getObjectLight(bSideClass, bSideId), properties);
+//                        } catch (InventoryException ex) {
+//                            new SimpleNotification(
+//                                ts.getTranslatedString("module.general.messages.error"), 
+//                                ex.getLocalizedMessage()
+//                            ).open();
+//                        }
+//                    }
+                }
+            }
+            reader.close();
+        } catch (XMLStreamException ex) {
+            Logger.getLogger(OspView.class.getName()).log(Level.SEVERE, null, ex);
+            new SimpleNotification(
+                ts.getTranslatedString("module.general.messages.error"), 
+                ts.getTranslatedString("module.general.messages.unexpected-error")
+            ).open();
+        }
     }
 
     @Override
@@ -662,14 +902,15 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
             newNode.getProperties().put(PropertyNames.LAT, position.getLatitude());
             newNode.getProperties().put(PropertyNames.LON, position.getLongitude());
             this.viewMap.addNode(newNode);
-            if (selectedOverlay != null) {
-                newNode.getProperties().put(PropertyNames.OVERLAY_ID, selectedOverlay.getId());
-                MxGraph graph = mapOverlays.get(selectedOverlay);
+            MapOverlay overlay = (MapOverlay) properties.get("overlay");
+            if (overlay != null) {
+                newNode.getProperties().put(PropertyNames.OVERLAY_ID, overlay.getId());
+                MxGraph graph = mapOverlays.get(overlay);
                 
-                selectedOverlay.getProjectionFromLatLngToDivPixel(selectedOverlay.getBounds().getSouthwest(), sw -> {
-                    selectedOverlay.getProjectionFromLatLngToDivPixel(selectedOverlay.getBounds().getNortheast(), ne -> {
+                overlay.getProjectionFromLatLngToDivPixel(overlay.getBounds().getSouthwest(), sw -> {
+                    overlay.getProjectionFromLatLngToDivPixel(overlay.getBounds().getNortheast(), ne -> {
                         graph.getElement().executeJs("return this.graph.view.scale").then(Double.class, scale -> {
-                            selectedOverlay.getProjectionFromLatLngToDivPixel(position, point -> {
+                            overlay.getProjectionFromLatLngToDivPixel(position, point -> {
                                 double x = (point.getX() - sw.getX()) / scale;
                                 double y = (point.getY() - ne.getY()) / scale;
                                 MxGraphCell vertex = new MxGraphCell();
@@ -688,6 +929,7 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
                                     vertex.setRawStyle(rawStyle);
                                 vertex.addRightClickEdgeListener(event -> openNodeDialog(newNode));
                                 graph.addCell(vertex);
+                                graph.refreshGraph();
                                 
                                 mapNodeVertex.put(newNode, vertex);
                                 mapVertexNode.put(vertex, newNode);
@@ -733,23 +975,48 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
             this.viewMap.addEdge(newEdge);
             this.viewMap.attachSourceNode(newEdge, sourceNode);
             this.viewMap.attachTargetNode(newEdge, targetNode);
-            if (selectedOverlay != null) {
-                newEdge.getProperties().put(PropertyNames.OVERLAY_ID, selectedOverlay.getId());
-                MxGraph graph = mapOverlays.get(selectedOverlay);
-                MxGraphCell edge = new MxGraphCell();
-                edge.setUuid(businessObject.getId());
-                edge.setLabel(businessObject.getName());
-                edge.setIsEdge(true);
-                edge.setStrokeWidth(1);
-                edge.setStrokeColor(properties.getProperty(PropertyNames.COLOR));
-                edge.setSource(sourceBusinessObject.getId());
-                edge.setTarget(targetBusinessObject.getId());
-                edge.setPoints(properties.getProperty("points")); //NOI18N
-                edge.addRightClickEdgeListener(event -> openEdgeDialog(newEdge));
-                graph.addCell(edge);
+            MapOverlay overlay = (MapOverlay) properties.get(PropertyNames.OVERLAY);
+            if (overlay != null) {
+                newEdge.getProperties().put(PropertyNames.OVERLAY_ID, overlay.getId());
+                MxGraph graph = mapOverlays.get(overlay);
                 
-                mapEdgeVertex.put(newEdge, edge);
-                mapVertexEdge.put(edge, newEdge);
+                List<GeoCoordinate> coordinates = new ArrayList((List<GeoCoordinate>) properties.get(PropertyNames.CONTROL_POINTS));
+                overlay.getProjectionFromLatLngToDivPixel(overlay.getBounds().getSouthwest(), sw -> {
+                    overlay.getProjectionFromLatLngToDivPixel(overlay.getBounds().getNortheast(), ne -> {
+                        graph.getElement().executeJs("return this.graph.view.scale").then(Double.class, scale -> {
+                            List<Point> newPoints = new ArrayList();
+                            setPoints(overlay, newPoints, coordinates, 
+                                new Point(sw.getX(), sw.getY()), 
+                                new Point(ne.getX(), ne.getY()), 
+                                scale, () -> {
+                                    JsonArray points = Json.createArray();
+                                    for (int i = 0; i < newPoints.size(); i++) {
+                                        JsonObject point = Json.createObject();
+                                        point.put("x", newPoints.get(i).getX()); //NOI18N
+                                        point.put("y", newPoints.get(i).getY()); //NOI18N
+                                        points.set(i, point);
+                                    }
+                                    points.remove(points.length() - 1);
+                                    points.remove(0);
+                                    
+                                    MxGraphCell edge = new MxGraphCell();
+                                    edge.setUuid(businessObject.getId());
+                                    edge.setLabel(businessObject.getName());
+                                    edge.setIsEdge(true);
+                                    edge.setStrokeWidth(1);
+                                    edge.setStrokeColor(properties.getProperty(PropertyNames.COLOR));
+                                    edge.setSource(sourceBusinessObject.getId());
+                                    edge.setTarget(targetBusinessObject.getId());
+                                    edge.setPoints(points.toJson());
+                                    edge.addRightClickEdgeListener(event -> openEdgeDialog(newEdge));
+                                    graph.addCell(edge);
+                                    graph.refreshGraph();
+                                    mapEdgeVertex.put(newEdge, edge);
+                                    mapVertexEdge.put(edge, newEdge);
+                            });
+                        });
+                    });
+                });
             }
             return newEdge;
         }
@@ -779,7 +1046,7 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
         
     private void openNodeDialog(BusinessObjectViewNode viewNode) {
         if (viewNode != null) {
-            DialogNode dialog = new DialogNode(viewNode, ts);
+            DialogNode dialog = new DialogNode(viewNode, aem, bem, mem, ts, physicalConnectionsService);
             dialog.open();
         }
     }
@@ -791,14 +1058,165 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
                 List<BusinessObjectViewEdge> edges = new ArrayList();
                 for (MxGraphCell edge : wiresHelper.getEdges())
                     edges.add(mapVertexEdge.get(edge));
-                DialogWires dialog = new DialogWires(edges, bem, ts);
+                DialogWires dialog = new DialogWires(edges, aem, bem, mem, ts);
                 wiresHelper.cancel();
                 wiresHelper.start();
+                dialog.getElement().getThemeList().add("widthfull");
                 dialog.open();
                 return;
             }
             DialogEdge dialog = new DialogEdge(viewEdge, ts);
             dialog.open();
         }
+    }
+    
+    private void saveOspView() {
+        FormLayout fly = new FormLayout();
+        TextField txtName = new TextField();
+        txtName.setRequiredIndicatorVisible(true);
+        txtName.setValue(this.getProperties().getProperty(Constants.PROPERTY_NAME) == null ? 
+            "" : this.getProperties().getProperty(Constants.PROPERTY_NAME));
+        TextField txtDescription = new TextField();
+        txtDescription.setValue(this.getProperties().getProperty(Constants.PROPERTY_DESCRIPTION) == null ? 
+            "" : this.getProperties().getProperty(Constants.PROPERTY_DESCRIPTION));
+        fly.addFormItem(txtName, ts.getTranslatedString("module.general.labels.name"));
+        fly.addFormItem(txtDescription, ts.getTranslatedString("module.general.labels.description"));
+
+        ConfirmDialog confirmDialog = new ConfirmDialog(ts, 
+            ts.getTranslatedString("module.ospman.save-view"), fly, 
+            ts.getTranslatedString("module.general.messages.ok"), () -> {
+                try {
+                    if (this.properties.get(Constants.PROPERTY_ID).equals(-1)) {
+                        long newOSPViewId = aem.createOSPView(txtName.getValue(), txtDescription.getValue(), this.getAsXml());
+                        this.getProperties().put(Constants.PROPERTY_ID, newOSPViewId);
+                    } else {
+                        aem.updateOSPView((long) this.getProperties().get(Constants.PROPERTY_ID), 
+                            txtName.getValue(), txtDescription.getValue(), this.getAsXml());
+                    }
+                    this.getProperties().put(Constants.PROPERTY_NAME, txtName.getValue());
+                    this.getProperties().put(Constants.PROPERTY_DESCRIPTION, txtDescription.getValue());
+                    new SimpleNotification(
+                        ts.getTranslatedString("module.general.messages.success"), 
+                        ts.getTranslatedString("module.ospman.view-saved")
+                    ).open();
+                } catch (InventoryException ex) {
+                    new SimpleNotification(
+                        ts.getTranslatedString("module.general.messages.error"), 
+                        ex.getLocalizedMessage()
+                    ).open();
+                }
+            }
+        );
+        confirmDialog.open();
+    }
+    
+    private void deleteOspView() {
+        DialogDeleteOSPView confirmDialog = new DialogDeleteOSPView((long) this.getProperties().get(Constants.PROPERTY_ID), ts, aem, null);
+        confirmDialog.open();
+    }
+    
+    private void overlayReady(String overlayReadyId, byte[] view) {
+        try {
+            QName tagView = new QName(TAG_VIEW);
+            QName tagCenter = new QName(TAG_CENTER);
+            QName tagZoom = new QName(TAG_ZOOM);
+            QName tagOverlay = new QName(TAG_OVERLAY);
+            QName tagNode = new QName(TAG_NODE);
+            QName tagEdge = new QName(TAG_EDGE);
+            QName tagCoordinate = new QName(TAG_COORDINATE);
+            QName tagControlPoint = new QName(TAG_CONTROL_POINT);
+            
+            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+            ByteArrayInputStream bais = new ByteArrayInputStream(view);
+            XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
+            while (reader.hasNext()) {
+                reader.next();
+                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
+                    if (tagNode.equals(reader.getName())) {
+                        try {
+                            String overlayId = reader.getAttributeValue(null, ATTR_OVERLAY_ID);
+                            if (overlayReadyId.equals(overlayId)) {
+                                String objectClass = reader.getAttributeValue(null, ATTR_CLASS);
+                                double lat = Double.valueOf(reader.getAttributeValue(null, ATTR_LAT));
+                                double lon = Double.valueOf(reader.getAttributeValue(null, ATTR_LON));                            
+                                String objectId = reader.getElementText();
+
+                                Properties properties = new Properties();
+                                properties.put(PropertyNames.POSITION, new GeoCoordinate(lat, lon));
+                                properties.put(PropertyNames.OVERLAY, overlayIds.get(overlayId));
+                                addNode(bem.getObjectLight(objectClass, objectId), properties);
+                            }
+                        } catch (InventoryException ex) {
+                            new SimpleNotification(
+                                ts.getTranslatedString("module.general.messages.error"), 
+                                ex.getLocalizedMessage()
+                            ).open();
+                        }
+                    } else if (tagEdge.equals(reader.getName())) {
+                        try {
+                            String overlayId = reader.getAttributeValue(null, ATTR_OVERLAY_ID);
+                            if (overlayReadyId.equals(overlayId)) {
+                                String objectId = reader.getAttributeValue(null, ATTR_ID);
+                                String objectClass = reader.getAttributeValue(null, ATTR_CLASS);
+                                String aSideId = reader.getAttributeValue(null, ATTR_A_SIDE_ID);
+                                String aSideClass = reader.getAttributeValue(null, ATTR_A_SIDE_CLASS);
+                                String bSideId = reader.getAttributeValue(null, ATTR_B_SIDE_ID);
+                                String bSideClass = reader.getAttributeValue(null, ATTR_B_SIDE_CLASS);
+
+
+                                List<GeoCoordinate> controlPoints = new ArrayList();
+                                while (true) {
+                                    reader.nextTag();
+                                    if (tagControlPoint.equals(reader.getName())) {
+                                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
+                                            controlPoints.add(new GeoCoordinate(
+                                                Double.valueOf(reader.getAttributeValue(null, ATTR_LAT)), 
+                                                Double.valueOf(reader.getAttributeValue(null, ATTR_LON))
+                                            ));
+                                        }
+                                    }
+                                    else
+                                        break;
+                                }
+                                Properties properties = new Properties();
+                                properties.put(PropertyNames.CONTROL_POINTS, controlPoints);
+                                properties.put(PropertyNames.COLOR, UtilHtml.toHexString(new Color(mem.getClass(objectClass).getColor())));
+                                properties.put(PropertyNames.OVERLAY, overlayIds.get(overlayId));
+                                
+                                addEdge(
+                                        bem.getObjectLight(objectClass, objectId),
+                                        bem.getObjectLight(aSideClass, aSideId),
+                                        bem.getObjectLight(bSideClass, bSideId), properties);
+                            }
+                        } catch (InventoryException ex) {
+                            new SimpleNotification(
+                                ts.getTranslatedString("module.general.messages.error"), 
+                                ex.getLocalizedMessage()
+                            ).open();
+                        }
+                    }
+                }
+            }
+            reader.close();
+        } catch (XMLStreamException ex) {
+            Logger.getLogger(OspView.class.getName()).log(Level.SEVERE, null, ex);
+            new SimpleNotification(
+                ts.getTranslatedString("module.general.messages.error"), 
+                ts.getTranslatedString("module.general.messages.unexpected-error")
+            ).open();
+        }
+    }
+    
+    private void setPoints(MapOverlay mapOverlay, List<Point> points, List<GeoCoordinate> coordinates, Point sw, Point ne, double scale, Command cmd) {
+        if (points != null && !coordinates.isEmpty()) {
+            mapOverlay.getProjectionFromLatLngToDivPixel(coordinates.remove(0), point -> {
+                double x = (point.getX() - sw.getX()) / scale;
+                double y = (point.getY() - ne.getY()) / scale;
+                points.add(new Point(x, y));
+                setPoints(mapOverlay, points, coordinates, sw, ne, scale, cmd);
+            });
+        }
+        else
+            cmd.execute();
     }
 }

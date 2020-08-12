@@ -43,6 +43,26 @@ public interface Map {
      */
     MapOverlay createOverlay(GeoBounds bounds);
     /**
+     * Gets the map center
+     * @return map center
+     */
+    GeoCoordinate getCenter();
+    /**
+     * Set map center
+     * @param center map center
+     */
+    void setCenter(GeoCoordinate center);
+    /**
+     * Gets the map zoom
+     * @return map zoom
+     */
+    double getZoom();
+    /**
+     * Set the map zoom
+     * @param zoom map zoom
+     */
+    void setZoom(double zoom);
+    /**
      * Set the map hand mode.
      */
     void setHandMode();

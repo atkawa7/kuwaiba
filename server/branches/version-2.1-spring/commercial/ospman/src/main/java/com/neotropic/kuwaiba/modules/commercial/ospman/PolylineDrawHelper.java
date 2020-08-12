@@ -85,7 +85,6 @@ public class PolylineDrawHelper {
                                 });
                             });
                         });
-
                     });
                 } else if (target == null) {
                     target = vertex;
