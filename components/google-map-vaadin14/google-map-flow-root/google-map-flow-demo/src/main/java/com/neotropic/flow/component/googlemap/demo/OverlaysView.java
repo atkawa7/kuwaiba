@@ -112,9 +112,13 @@ public class OverlaysView extends VerticalLayout {
                 drawingManager.setDrawingMode(OverlayType.RECTANGLE);
                 
                 registrationRectangle = drawingManager.addDrawingManagerRectangleCompleteListener(theEvent -> {
-                    mxGraph = new MxGraph();                    
+                    mxGraph = new MxGraph();   
+                    mxGraph.getElement().getStyle().set("outline", "1px solid  black");
                     mxGraph.setFullSize();
                     mxGraph.setOverflow("");
+                    mxGraph.addMouseOverEvent(mouseOverEvent -> {
+                        //System.out.println(">>> mxGraph mouse over event");
+                    });
                     
                     mxGraph.addCellSelectedListener(cellSelected -> {
                         Iterator<Component> components = cellSelected.getSource().getChildren().iterator();
