@@ -20,13 +20,13 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.contextmenu.MenuItem;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.menubar.MenuBar;
-import com.vaadin.flow.component.menubar.MenuBarVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
@@ -558,7 +558,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
         addSpecialItem.setColor(BLUE_COLOR);
         //add menu sub items and properties
         mnuAddChildTemplateItems.setWidthFull();
-        mnuAddChildTemplateItems.addThemeVariants(MenuBarVariant.LUMO_TERTIARY_INLINE);
+        mnuAddChildTemplateItems.setThemeName("tertiary-inline");
         mnuAddChildsTemplateItem = mnuAddChildTemplateItems.addItem(addItem);
         mnuAddChildsTemplateItem.getElement().getThemeList().add("BUTTON_SMALL");
         mnuAddChildsTemplateItem.getElement().setProperty("title",
@@ -571,7 +571,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
         tblChildsTemplate.setHeightFull();
         tblChildsTemplate.addHierarchyColumn(TemplateObjectLight::getName)
                 .setHeader(String.format("%s", ts.getTranslatedString("module.templateman.items")));
-        tblChildsTemplate.addComponentColumn(this::buildChildTemplateItemsOptions);
+        tblChildsTemplate.addComponentColumn(this::buildChildTemplateItemsOptions).setTextAlign(ColumnTextAlign.END);
 
         this.lytvChildTemplate.add(tblChildsTemplate, mnuAddChildTemplateItems);
     }
@@ -628,50 +628,43 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
         Icon editItem = new Icon(VaadinIcon.EDIT);
         btnEditChildsTemplateItem = new Button();
         //element properties
-        menuBar.setWidthFull();
-        menuBar.addThemeVariants(MenuBarVariant.LUMO_TERTIARY_INLINE);
-        addItem.setSize(ICON_INLINE_SIZE);
-        addSpecialItem.setColor(BLUE_COLOR);
-        addSpecialItem.setSize(ICON_INLINE_SIZE);
-        removeItem.setSize(ICON_INLINE_SIZE);
+        menuBar.setWidthFull();        
+        menuBar.getElement().getThemeList().add("short-icons");        
+        addSpecialItem.setColor(BLUE_COLOR);                
         removeItem.setColor(RED_COLOR);
-        editItem.setSize(ICON_INLINE_SIZE);
+        
         //add sub items
-        MenuItem mnuAddChildsTemplateItem = menuBar.addItem(addItem);
-        mnuAddChildsTemplateItem.getElement().getThemeList().add("BUTTON_SMALL");
-        mnuAddChildsTemplateItem.getElement().setProperty("title",
+        MenuItem smnuAddChildsTemplateItem = menuBar.addItem(addItem);        
+        smnuAddChildsTemplateItem.getElement().setProperty("title",
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.addItem-template.description")));
-        mnuAddChildsTemplateItem.getSubMenu().addItem(
+        smnuAddChildsTemplateItem.getSubMenu().addItem(
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.addItem-template.description")),
                 e -> newStructureItem(selectedItem));
-        mnuAddChildsTemplateItem.getSubMenu().addItem(
+        smnuAddChildsTemplateItem.getSubMenu().addItem(
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.addItemMultiple-template.description")),
                 e -> newBulkStructureItem(selectedItem));
 
-        MenuItem mnuAddSpecialChildsTemplateItem = menuBar.addItem(addSpecialItem);
-        mnuAddSpecialChildsTemplateItem.getElement().getThemeList().add("BUTTON_SMALL");
-        mnuAddSpecialChildsTemplateItem.getElement().setProperty("title",
+        MenuItem smnuAddSpecialChildsTemplateItem = menuBar.addItem(addSpecialItem);
+        //smnuAddSpecialChildsTemplateItem.getElement().getThemeList().add("BUTTON_SMALL");
+        smnuAddSpecialChildsTemplateItem.getElement().setProperty("title",
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.addSpecialItem-template.description")));
-        mnuAddSpecialChildsTemplateItem.getSubMenu().addItem(
+        smnuAddSpecialChildsTemplateItem.getSubMenu().addItem(
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.addSpecialItem-template.description")),
                 e -> newStructureSpecialItem(selectedItem));
-        mnuAddSpecialChildsTemplateItem.getSubMenu().addItem(
+        smnuAddSpecialChildsTemplateItem.getSubMenu().addItem(
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.addSpecialItemMultiple-template.description")),
                 e -> newBulkStructureSpecialItem(selectedItem));
 
-        MenuItem mnuRemoveChildsTemplateItem = menuBar.addItem(removeItem, e -> deleteStructureItem(selectedItem));
-        mnuRemoveChildsTemplateItem.getElement().getThemeList().add("BUTTON_SMALL");
-        mnuRemoveChildsTemplateItem.getElement().setProperty("title",
+        MenuItem smnuRemoveChildsTemplateItem = menuBar.addItem(removeItem, e -> deleteStructureItem(selectedItem));
+        //smnuRemoveChildsTemplateItem.getElement().getThemeList().add("BUTTON_SMALL");
+        smnuRemoveChildsTemplateItem.getElement().setProperty("title",
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.deleteItem-template.description")));
 
-        MenuItem mnuEditChildsTemplateItem = menuBar.addItem(editItem, e -> editStructureItem(selectedItem));
-        mnuEditChildsTemplateItem.getElement().getThemeList().add("BUTTON_SMALL");
-        mnuEditChildsTemplateItem.getElement().setProperty("title",
+        MenuItem smnuEditChildsTemplateItem = menuBar.addItem(editItem, e -> editStructureItem(selectedItem));
+        //smnuEditChildsTemplateItem.getElement().getThemeList().add("BUTTON_SMALL");
+        smnuEditChildsTemplateItem.getElement().setProperty("title",
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.editItem-template.description")));
-
-        menuBar.getItems().forEach(
-                item -> item.getChildren().findFirst().ifPresent(icon -> icon
-                .getElement().getStyle().set("margin", "0 0px")));
+        
         return menuBar;
     }
 
@@ -690,28 +683,6 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
 
     @Override
     public void updatePropertyChanged(AbstractProperty property) {
-        System.out.println("actualice algo");
-        /*
-        try {
-            if (currentListTypeItem != null) {
-                
-                HashMap<String, String> attributes = new HashMap<>();
-                attributes.put(property.getName(), PropertyValueConverter.getAsStringToPersist(property));
-
-                bem.updateObject(currentListTypeItem.getClassName(), currentListTypeItem.getId(), attributes);
-
-                loadListTypeItems(currentListType);               
-                tblListTypeItems.select(currentListTypeItem);
-
-                updatePropertySheet();
-
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
-            }
-        } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException
-                | OperationNotPermittedException | InvalidArgumentException ex) {
-            Logger.getLogger(ListTypeManagerUI.class.getName()).log(Level.SEVERE, null, ex);
-        }
-         */
     }
 
     @Override
@@ -768,12 +739,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
      * @param object;TemplateObjectLight; parent structure item
      */
     private void editStructureItem(TemplateObjectLight object) {
-        /*
-        this.newTemplateItemVisualAction.getVisualComponent(new ModuleActionParameterSet(
-                new ModuleActionParameter("className", object.getName())
-        )).open();
-        childsTemplateDataProvider.refreshAll();
-         */
+        updatePropertySheet(object);
     }
 
     /**
@@ -854,6 +820,8 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
                 new ModuleActionParameter("className", object.getName()),
                 new ModuleActionParameter("commandClose", refreshChildAction)
         )).open();
+        //reset focus to father , in case selected element is in property sheet focus
+        updatePropertySheet(selectedTemplate);
     }
 
     /**

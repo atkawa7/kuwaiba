@@ -21,6 +21,7 @@ import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
@@ -43,20 +44,21 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @StyleSheet("css/main.css")
 @StyleSheet("css/main-layout.css")
+@CssImport(value = "./styles/vaadin-menu-bar-buttons.css", themeFor = "vaadin-menu-bar")
 public class TemplateManagerLayout extends FlexLayout implements RouterLayout {
 
     /**
      * Header component.
      */
-    private HorizontalLayout lytHeader;
+    private final HorizontalLayout lytHeader;
     /**
      * Content to be injected.
      */
-    private VerticalLayout lytContent;
+    private final VerticalLayout lytContent;
     /**
      * Footer content.
      */
-    private VerticalLayout lytFooter;
+    private final VerticalLayout lytFooter;
 
     /**
      * translation service
