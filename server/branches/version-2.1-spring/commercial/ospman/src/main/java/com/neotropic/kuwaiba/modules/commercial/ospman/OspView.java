@@ -37,16 +37,17 @@ import elemental.json.JsonObject;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.util.Pair;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -63,6 +64,7 @@ import org.neotropic.kuwaiba.core.apis.integration.views.ViewMap;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -133,13 +135,21 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
      * Reference to the Application Entity Manager
      */
     private final ApplicationEntityManager aem;
-    
+    /**
+     * Reference to the Business Entity Manager
+     */
     private final BusinessEntityManager bem;
-    
+    /**
+     * Reference to the Metadata Entity Manager
+     */
     private final MetadataEntityManager mem;
-    
+    /**
+     * Reference to the Resource Factory
+     */
     private final ResourceFactory resourceFactory;
-    
+    /**
+     * Reference to the Physical Connections Service
+     */
     private final PhysicalConnectionsService physicalConnectionsService;
     
     private final List<MapOverlay> overlays;
@@ -150,10 +160,10 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
     private Div component;
     private MapOverlay selectedOverlay;
     
-    private HashMap<BusinessObjectViewNode, MxGraphCell> mapNodeVertex = new HashMap();
-    private HashMap<MxGraphCell, BusinessObjectViewNode> mapVertexNode = new HashMap();
-    private HashMap<BusinessObjectViewEdge, MxGraphCell> mapEdgeVertex = new HashMap();
-    private HashMap<MxGraphCell, BusinessObjectViewEdge> mapVertexEdge = new HashMap();
+    private final HashMap<BusinessObjectViewNode, MxGraphCell> mapNodeVertex = new HashMap();
+    private final HashMap<MxGraphCell, BusinessObjectViewNode> mapVertexNode = new HashMap();
+    private final HashMap<BusinessObjectViewEdge, MxGraphCell> mapEdgeVertex = new HashMap();
+    private final HashMap<MxGraphCell, BusinessObjectViewEdge> mapVertexEdge = new HashMap();
     
     private PolylineDrawHelper polylineDrawHelper;
     private WiresHelper wiresHelper;
@@ -165,8 +175,8 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
         Polyline,
         Wire
     }
-    private HashMap<Tab, Tool> tabs = new HashMap();
-    private HashMap<Tool, Tab> tools = new HashMap();
+    final private HashMap<Tab, Tool> tabs = new HashMap();
+    final private HashMap<Tool, Tab> tools = new HashMap();
     private Tab selectedTab;
     
     public OspView(
@@ -363,14 +373,10 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
     }
     
     private void disableEnableTabs(List<Tab> disableTabs, List<Tab> enableTabs) {
-        if (disableTabs != null) {
-            for (Tab tab : disableTabs)
-                tab.setEnabled(false);
-        }
-        if (enableTabs != null) {
-            for (Tab tab : enableTabs)
-                tab.setEnabled(true);
-        }
+        if (disableTabs != null)
+            disableTabs.forEach(tab -> tab.setEnabled(false));
+        if (enableTabs != null)
+            enableTabs.forEach(tab -> tab.setEnabled(true));
     }
     
     private void addOverlay(GeoBounds bounds) {
@@ -471,10 +477,10 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
     private void setDrawingMarkerMode(BusinessObjectLight businessObject) {
         if (map != null)
             map.setDrawingMarkerMode(coordinate -> {
-                Properties properties = new Properties();
-                properties.put(PropertyNames.POSITION, coordinate);
-                properties.put(PropertyNames.OVERLAY, selectedOverlay);
-                addNode(businessObject, properties);
+                Properties nodeProperties = new Properties();
+                nodeProperties.put(PropertyNames.POSITION, coordinate);
+                nodeProperties.put(PropertyNames.OVERLAY, selectedOverlay);
+                addNode(businessObject, nodeProperties);
             });
     }
     
@@ -492,9 +498,9 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
                         source, target, ts, aem, bem, mem, physicalConnectionsService, 
                         container -> {
                             try {
-                                Properties properties = new Properties();
-                                properties.put(PropertyNames.CONTROL_POINTS, coordinates);
-                                properties.put(PropertyNames.COLOR, UtilHtml.toHexString(new Color(mem.getClass(container.getClassName()).getColor())));
+                                Properties edgeProperties = new Properties();
+                                edgeProperties.put(PropertyNames.CONTROL_POINTS, coordinates);
+                                edgeProperties.put(PropertyNames.COLOR, UtilHtml.toHexString(new Color(mem.getClass(container.getClassName()).getColor())));
                                                                 
                                 JsonArray points = Json.createArray();
                                 for (int i = 0; i < graphPoints.size(); i++) {
@@ -505,9 +511,9 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
                                 }
                                 points.remove(points.length() - 1);
                                 points.remove(0);
-                                properties.put("points", points.toJson()); //NOI18N
-                                properties.put(PropertyNames.OVERLAY, selectedOverlay);
-                                addEdge(container, source, target, properties);
+                                edgeProperties.put("points", points.toJson()); //NOI18N
+                                edgeProperties.put(PropertyNames.OVERLAY, selectedOverlay);
+                                addEdge(container, source, target, edgeProperties);
                             } catch (MetadataObjectNotFoundException ex) {
                                 new SimpleNotification(
                                     ts.getTranslatedString("module.general.messages.error"), 
@@ -532,6 +538,7 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
             mapOverlays.get(selectedOverlay).getStyle().set("outline", "2px dotted red"); //NOI18N
     }
     
+    @Override
     public Component getAsComponent() throws InvalidArgumentException {
         if (map == null) {
             String generalMapsProvider = null;
@@ -692,7 +699,10 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
                     ts.getTranslatedString("module.general.messages.error"), 
                     ex.getLocalizedMessage()
                 ).open();
-            } catch (Exception ex) {
+            } catch (IllegalAccessException | IllegalArgumentException | 
+                InstantiationException | NoSuchMethodException | 
+                SecurityException | InvocationTargetException  ex) {
+                
                 Logger.getLogger(OutsidePlantView.class.toString()).log(Level.SEVERE, ex.getLocalizedMessage());
                 new SimpleNotification(
                     ts.getTranslatedString("module.general.messages.error"), 
@@ -735,11 +745,8 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
             QName tagCenter = new QName(TAG_CENTER);
             QName tagZoom = new QName(TAG_ZOOM);
             QName tagOverlay = new QName(TAG_OVERLAY);
-            QName tagNode = new QName(TAG_NODE);
-            QName tagEdge = new QName(TAG_EDGE);
             QName tagCoordinate = new QName(TAG_COORDINATE);
-            QName tagControlPoint = new QName(TAG_CONTROL_POINT);
-            
+                        
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
             ByteArrayInputStream bais = new ByteArrayInputStream(view);
             XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
@@ -792,63 +799,6 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
                             new GeoBounds(coordinates.get(1), coordinates.get(0)), view
                         );
                     }
-//                    } else if (tagNode.equals(reader.getName())) {
-//                        try {
-//                            String objectClass = reader.getAttributeValue(null, ATTR_CLASS);
-//                            double lat = Double.valueOf(reader.getAttributeValue(null, ATTR_LAT));
-//                            double lon = Double.valueOf(reader.getAttributeValue(null, ATTR_LON));
-//                            String overlayId = reader.getAttributeValue(null, ATTR_OVERLAY_ID);
-//                            String objectId = reader.getElementText();
-//                            
-//                            Properties properties = new Properties();
-//                            properties.put(PropertyNames.POSITION, new GeoCoordinate(lat, lon));
-//                            properties.put(PropertyNames.OVERLAY, overlayIds.get(overlayId));
-//                            addNode(bem.getObjectLight(objectClass, objectId), properties);
-//                        } catch (InventoryException ex) {
-//                            new SimpleNotification(
-//                                ts.getTranslatedString("module.general.messages.error"), 
-//                                ex.getLocalizedMessage()
-//                            ).open();
-//                        }
-//                    } else if (tagEdge.equals(reader.getName())) {
-//                        try {
-//                            String objectId = reader.getAttributeValue(null, ATTR_ID);
-//                            String objectClass = reader.getAttributeValue(null, ATTR_CLASS);
-//                            String aSideId = reader.getAttributeValue(null, ATTR_A_SIDE_ID);
-//                            String aSideClass = reader.getAttributeValue(null, ATTR_A_SIDE_CLASS);
-//                            String bSideId = reader.getAttributeValue(null, ATTR_B_SIDE_ID);
-//                            String bSideClass = reader.getAttributeValue(null, ATTR_B_SIDE_CLASS);
-//                            String overlayId = reader.getAttributeValue(null, ATTR_OVERLAY_ID);
-//
-//                            List<GeoCoordinate> controlPoints = new ArrayList();
-//                            while (true) {
-//                                reader.nextTag();
-//                                if (tagControlPoint.equals(reader.getName())) {
-//                                    if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
-//                                        controlPoints.add(new GeoCoordinate(
-//                                            Double.valueOf(reader.getAttributeValue(null, ATTR_LAT)), 
-//                                            Double.valueOf(reader.getAttributeValue(null, ATTR_LON))
-//                                        ));
-//                                    }
-//                                }
-//                                else
-//                                    break;
-//                            }
-//                            Properties properties = new Properties();
-//                            properties.put(PropertyNames.CONTROL_POINTS, controlPoints);
-//                            properties.put(PropertyNames.COLOR, UtilHtml.toHexString(new Color(mem.getClass(objectClass).getColor())));
-//                            properties.put(PropertyNames.OVERLAY, overlayIds.get(overlayId));
-//                            addEdge(
-//                                    bem.getObjectLight(objectClass, objectId),
-//                                    bem.getObjectLight(aSideClass, aSideId),
-//                                    bem.getObjectLight(bSideClass, bSideId), properties);
-//                        } catch (InventoryException ex) {
-//                            new SimpleNotification(
-//                                ts.getTranslatedString("module.general.messages.error"), 
-//                                ex.getLocalizedMessage()
-//                            ).open();
-//                        }
-//                    }
                 }
             }
             reader.close();
@@ -876,19 +826,19 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
         this.getProperties().put(Constants.PROPERTY_NAME, "");
         this.getProperties().put(Constants.PROPERTY_DESCRIPTION, "");
         
-        Double mapCenterLatitude = OutsidePlantConstants.DEFAULT_CENTER_LATITUDE;;
+        Double mapCenterLatitude = OutsidePlantConstants.DEFAULT_CENTER_LATITUDE;
         Double mapCenterLongitude = OutsidePlantConstants.DEFAULT_CENTER_LONGITUDE;
         
         try {
             mapCenterLatitude = (double) aem.getConfigurationVariableValue("widgets.simplemap.centerLatitude"); //NOI18N
             mapCenterLongitude = (double) aem.getConfigurationVariableValue("widgets.simplemap.centerLongitude"); //NOI18N
-        } catch(Exception ex) {
+        } catch(ApplicationObjectNotFoundException | InvalidArgumentException ex) {
             //Nothing to do
         }
         this.viewMap.getProperties().put("center", new GeoCoordinate(mapCenterLatitude, mapCenterLongitude));
         try {
             this.viewMap.getProperties().put("zoom", aem.getConfigurationVariableValue("widgets.simplemap.zoom")); //NOI18N
-        } catch(Exception ex) {
+        } catch(ApplicationObjectNotFoundException | InvalidArgumentException ex) {
             this.viewMap.getProperties().put("zoom", OutsidePlantConstants.DEFAULT_ZOOM); //NOI18N
         }
     }
@@ -918,13 +868,13 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
                                 vertex.setLabel(businessObject.getName());
                                 vertex.setGeometry((int) x, (int) y, 24, 24);
                                 vertex.setIsVertex(true);
-                                List<Pair<String, String>> listRawStyle = new ArrayList();
-                                listRawStyle.add(new Pair(
+                                LinkedHashMap<String, String> styles = new LinkedHashMap();
+                                styles.put(
                                     MxConstants.STYLE_IMAGE, 
-                                    StreamResourceRegistry.getURI(resourceFactory.getClassIcon(businessObject.getClassName())).toString())
+                                    StreamResourceRegistry.getURI(resourceFactory.getClassIcon(businessObject.getClassName())).toString()
                                 );
-                                listRawStyle.add(new Pair(MxConstants.STYLE_SHAPE, MxConstants.SHAPE_IMAGE));
-                                String rawStyle = getRawStyle(listRawStyle);
+                                styles.put(MxConstants.STYLE_SHAPE, MxConstants.SHAPE_IMAGE);
+                                String rawStyle = getRawStyle(styles);
                                 if (rawStyle != null)
                                     vertex.setRawStyle(rawStyle);
                                 vertex.addRightClickEdgeListener(event -> openNodeDialog(newNode));
@@ -942,21 +892,6 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
         }
         else
             return node;
-    }
-    
-    private String getRawStyle(List<Pair<String, String>> list) {
-        if (list != null && !list.isEmpty()) {
-            StringBuilder rawStyleBuilder = new StringBuilder();
-            for (int i = 0; i < list.size(); i++) {
-                Pair<String, String> pair = list.get(i);
-                if (i < list.size() - 1)
-                    rawStyleBuilder.append(String.format("%s=%s;", pair.getKey(), pair.getValue()));
-                else
-                    rawStyleBuilder.append(String.format("%s=%s", pair.getKey(), pair.getValue()));
-            }
-            return rawStyleBuilder.toString();
-        }
-        return null;
     }
     
     @Override
@@ -1056,8 +991,9 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
             if (selectedTab != null && tabs.containsKey(selectedTab) && 
                 Tool.Wire.equals(tabs.get(selectedTab))) {
                 List<BusinessObjectViewEdge> edges = new ArrayList();
-                for (MxGraphCell edge : wiresHelper.getEdges())
-                    edges.add(mapVertexEdge.get(edge));
+                wiresHelper.getEdges().forEach(edge -> 
+                    edges.add(mapVertexEdge.get(edge))
+                );
                 DialogWires dialog = new DialogWires(edges, aem, bem, mem, ts);
                 wiresHelper.cancel();
                 wiresHelper.start();                
@@ -1116,13 +1052,8 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
     
     private void overlayReady(String overlayReadyId, byte[] view) {
         try {
-            QName tagView = new QName(TAG_VIEW);
-            QName tagCenter = new QName(TAG_CENTER);
-            QName tagZoom = new QName(TAG_ZOOM);
-            QName tagOverlay = new QName(TAG_OVERLAY);
             QName tagNode = new QName(TAG_NODE);
             QName tagEdge = new QName(TAG_EDGE);
-            QName tagCoordinate = new QName(TAG_COORDINATE);
             QName tagControlPoint = new QName(TAG_CONTROL_POINT);
             
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -1140,10 +1071,10 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
                                 double lon = Double.valueOf(reader.getAttributeValue(null, ATTR_LON));                            
                                 String objectId = reader.getElementText();
 
-                                Properties properties = new Properties();
-                                properties.put(PropertyNames.POSITION, new GeoCoordinate(lat, lon));
-                                properties.put(PropertyNames.OVERLAY, overlayIds.get(overlayId));
-                                addNode(bem.getObjectLight(objectClass, objectId), properties);
+                                Properties nodeProperties = new Properties();
+                                nodeProperties.put(PropertyNames.POSITION, new GeoCoordinate(lat, lon));
+                                nodeProperties.put(PropertyNames.OVERLAY, overlayIds.get(overlayId));
+                                addNode(bem.getObjectLight(objectClass, objectId), nodeProperties);
                             }
                         } catch (InventoryException ex) {
                             new SimpleNotification(
@@ -1177,15 +1108,14 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
                                     else
                                         break;
                                 }
-                                Properties properties = new Properties();
-                                properties.put(PropertyNames.CONTROL_POINTS, controlPoints);
-                                properties.put(PropertyNames.COLOR, UtilHtml.toHexString(new Color(mem.getClass(objectClass).getColor())));
-                                properties.put(PropertyNames.OVERLAY, overlayIds.get(overlayId));
+                                Properties edgeProperties = new Properties();
+                                edgeProperties.put(PropertyNames.CONTROL_POINTS, controlPoints);
+                                edgeProperties.put(PropertyNames.COLOR, UtilHtml.toHexString(new Color(mem.getClass(objectClass).getColor())));
+                                edgeProperties.put(PropertyNames.OVERLAY, overlayIds.get(overlayId));
                                 
-                                addEdge(
-                                        bem.getObjectLight(objectClass, objectId),
+                                addEdge(bem.getObjectLight(objectClass, objectId),
                                         bem.getObjectLight(aSideClass, aSideId),
-                                        bem.getObjectLight(bSideClass, bSideId), properties);
+                                        bem.getObjectLight(bSideClass, bSideId), edgeProperties);
                             }
                         } catch (InventoryException ex) {
                             new SimpleNotification(
@@ -1205,7 +1135,7 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
             ).open();
         }
     }
-    
+    //<editor-fold desc="Helpers" defaultstate="collapsed">
     private void setPoints(MapOverlay mapOverlay, List<Point> points, List<GeoCoordinate> coordinates, Point sw, Point ne, double scale, Command cmd) {
         if (points != null && !coordinates.isEmpty()) {
             mapOverlay.getProjectionFromLatLngToDivPixel(coordinates.remove(0), point -> {
@@ -1218,4 +1148,20 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
         else
             cmd.execute();
     }
+    
+    private String getRawStyle(LinkedHashMap<String, String> styles) {
+        if (styles != null && !styles.isEmpty()) {
+            Entry<String, String>[] entries = styles.entrySet().toArray(new Entry[0]);
+            StringBuilder rawStyleBuilder = new StringBuilder();
+            for (int i = 0; i < entries.length; i++) {
+                if (i < entries.length - 1)
+                    rawStyleBuilder.append(String.format("%s=%s;", entries[i].getKey(), entries[i].getValue()));
+                else
+                    rawStyleBuilder.append(String.format("%s=%s", entries[i].getKey(), entries[i].getValue()));
+            }
+            return rawStyleBuilder.toString();
+        }
+        return null;
+    }
+    //</editor-fold>
 }
