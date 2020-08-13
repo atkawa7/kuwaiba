@@ -19,11 +19,11 @@ limitations under the License.
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 
-:host([theme~="osp-width-70-vw"]) [part="overlay"] {
-    width: 70vw;
+[part="overlay"] {
+    max-width: none;
 }
 
-:host([theme~="osp-width-70-vw"]) [part="content"] {
+[part="content"] {
     padding: 8px 24px;
     min-width: 0;
 }

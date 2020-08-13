@@ -15,14 +15,13 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman;
 
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Emphasis;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.treegrid.TreeGrid;
@@ -54,14 +53,13 @@ import org.neotropic.util.visual.notifications.SimpleNotification;
  * 
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
+@CssImport(value = "css/custom-vaadin-dialog-overlay.css", themeFor="vaadin-dialog-overlay")
 public class DialogWires extends Dialog {
     
     public DialogWires(List<BusinessObjectViewEdge> edges, 
         ApplicationEntityManager aem, BusinessEntityManager bem, MetadataEntityManager mem,
         TranslationService ts) {
         
-//        VerticalLayout lytWires = new VerticalLayout();
-//        lytWires.setWidthFull();
         TreeGrid<WireElement> treeGrid = new TreeGrid();
         treeGrid.setWidth("50%");
         treeGrid.addThemeVariants(
@@ -95,7 +93,7 @@ public class DialogWires extends Dialog {
             roots.add(new WireElement(edge.getIdentifier(), aem, bem, mem));
         
         treeGrid.addColumn(templateRenderer).setHeader(ts.getTranslatedString("module.ospman.containers.containers"));
-//        treeGrid.addColumn(item -> item.getClassDisplayName()).setHeader(ts.getTranslatedString("module.ospman.containers.type"));
+        
         treeGrid.addComponentColumn(item -> {
             if (roots.contains(item)) {
                 try {
@@ -104,7 +102,7 @@ public class DialogWires extends Dialog {
                         PhysicalConnectionsService.RELATIONSHIP_ENDPOINTA
                     );
                     if (!endpointsA.isEmpty())
-                        return getColumnComponent(endpointsA.get(0), mem);
+                        return getColumnComponent(endpointsA.get(0));
                 } catch (InventoryException ex) {
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.error"), 
@@ -122,7 +120,7 @@ public class DialogWires extends Dialog {
                         PhysicalConnectionsService.RELATIONSHIP_ENDPOINTB
                     );
                     if (!endpointsB.isEmpty())
-                        return getColumnComponent(endpointsB.get(0), mem);
+                        return getColumnComponent(endpointsB.get(0));
                 } catch (InventoryException ex) {
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.error"), 
@@ -134,8 +132,7 @@ public class DialogWires extends Dialog {
         }).setHeader(ts.getTranslatedString("module.ospman.containers.endpointb"));        
         treeGrid.setDataProvider(getDataProvider(new WireElementService(roots, aem, bem, mem, ts)));
         treeGrid.setSelectionMode(Grid.SelectionMode.MULTI);
-//        lytWires.add(treeGrid);
-        
+                
         Grid<BusinessObjectLight> tbl = new Grid();
         tbl.setWidth("50%");
         tbl.addColumn(item -> item.getName()).setHeader(ts.getTranslatedString("module.ospman.containers.containers"));
@@ -145,53 +142,25 @@ public class DialogWires extends Dialog {
             event.getValue().forEach(wireElement -> tblItems.add(wireElement.getBusinessObject()));
             tbl.setItems(tblItems);
         });
-        //setWidthFull();
-//        setResizable(true)
-        //getElement().getStyle().set("width", "70%");
-        //setWidth("calc(100vw - (4*var(--lumo-space-m)))");
-        //setResizable(true);
         HorizontalLayout lyt = new HorizontalLayout();
-        //lyt.setWidth("70%");
         lyt.setSpacing(false);
         lyt.setPadding(false);
         lyt.setMargin(false);
         lyt.setSizeFull();
         lyt.add(treeGrid);
         lyt.add(tbl);
-//        setWidth("70vw");
-        //setHeight("calc(100vh - (2*var(--lumo-space-m)))");
-        //setWidth("calc(100vw - (4*var(--lumo-space-m)))");
-        /*
-dialog.getElement().getNode().addAttachListener(() -> {
-  dialog.getElement().executeJs("this.$.overlay.$.overlay.style[$0]=$1", ElementConstants.STYLE_MAX_HEIGHT, "95vh");
-  dialog.getElement().executeJs("this.$.overlay.$.overlay.style[$0]=$1", ElementConstants.STYLE_MAX_WIDTH, "95vw");
-});
-         */
-//        getElement().getNode().addAttachListener(() -> {
-//            getElement().executeJs("this.$.overlay.$.overlay.style[$0]=$1", "width", "70vw");
-//        });
-        //setWidth("100vw + browser");        
+        getElement().getThemeList().add("osp-width-70-vw");
         add(lyt);
-        //getElement().executeJs("vaadin.forceLayout()");
-        //add(lytWires);
-        //add(tbl);
-        
     }
     
-    private VerticalLayout getColumnComponent(BusinessObjectLight businessObject, MetadataEntityManager mem) throws MetadataObjectNotFoundException {
+    private VerticalLayout getColumnComponent(BusinessObjectLight businessObject) throws MetadataObjectNotFoundException {
         VerticalLayout lyt = new VerticalLayout();
         lyt.setMargin(false);
         lyt.setPadding(false);
         lyt.setSpacing(false);
         
         Label lblName = new Label(businessObject.getName());
-        
-//        ClassMetadata classMetadata = mem.getClass(businessObject.getClassName());
-//        Emphasis empClass = new Emphasis(classMetadata.getDisplayName() != null && !classMetadata.getDisplayName().isEmpty() ? 
-//            classMetadata.getDisplayName() : classMetadata.getName());
-        
         lyt.add(lblName);
-//        lyt.add(empClass);
         return lyt;
     }
     

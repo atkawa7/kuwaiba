@@ -1060,8 +1060,7 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
                     edges.add(mapVertexEdge.get(edge));
                 DialogWires dialog = new DialogWires(edges, aem, bem, mem, ts);
                 wiresHelper.cancel();
-                wiresHelper.start();
-                dialog.getElement().getThemeList().add("widthfull");
+                wiresHelper.start();                
                 dialog.open();
                 return;
             }
