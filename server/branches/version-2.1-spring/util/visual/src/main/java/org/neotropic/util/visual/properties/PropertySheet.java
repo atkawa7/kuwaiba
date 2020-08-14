@@ -48,6 +48,16 @@ public class PropertySheet extends Grid<AbstractProperty> {
     
     private Button currentBtnCancelInEditProperty;
     
+    private boolean readOnly;
+
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+     
     public PropertySheet(TranslationService ts) {
         this.ts = ts;
         addClassName("grid-compact");
@@ -76,7 +86,7 @@ public class PropertySheet extends Grid<AbstractProperty> {
             lblValue.setWidthFull();
             lytValue.add(lblValue);
             
-            if (!property.isReadOnly() &&  property.supportsInplaceEditor()) {
+            if (!property.isReadOnly() && !readOnly && property.supportsInplaceEditor()) {
                 
                 Button btnEdit = new Button(new Icon(VaadinIcon.CHECK_CIRCLE_O));
                 Button btnCancel = new Button(new Icon(VaadinIcon.CLOSE_SMALL));              
@@ -158,7 +168,7 @@ public class PropertySheet extends Grid<AbstractProperty> {
                 .setKey("value").setFlexGrow(5);
         
         addComponentColumn((property) -> {
-            if (!property.isReadOnly() && property.supportsAdvancedEditor()) {
+            if (!property.isReadOnly() && !readOnly && property.supportsAdvancedEditor()) {
                  Button btnAdvancedEditor = new Button("...", ev -> {
                      AdvancedEditorDialog dialog = new AdvancedEditorDialog(property);
                      dialog.getAccept().addClickListener(clickEv -> {
