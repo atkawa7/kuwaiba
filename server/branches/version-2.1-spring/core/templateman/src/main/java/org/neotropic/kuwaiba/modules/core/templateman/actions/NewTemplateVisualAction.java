@@ -16,6 +16,7 @@
 package org.neotropic.kuwaiba.modules.core.templateman.actions;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
@@ -42,11 +43,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class NewTemplateVisualAction extends AbstractVisualAction<Dialog> {
+
     /**
      * Close action command
      */
-    private Command commandClose ;
-    
+    private Command commandClose;
+
     /**
      * Reference to the translation service.
      */
@@ -67,32 +69,35 @@ public class NewTemplateVisualAction extends AbstractVisualAction<Dialog> {
 
     @Override
     public Dialog getVisualComponent(ModuleActionParameterSet parameters) {
-        try {            
-            Label lblDialogName = new Label(ts.getTranslatedString("module.templateman.actions.add-template.description"));
+        try {
+            Label lblDialogName = new Label(ts.getTranslatedString("module.templateman.component.dialog.new-template.description"));
             TextField txtName = new TextField(ts.getTranslatedString("module.general.labels.name"));
+            Button btnOK = new Button();
+            Dialog wdwNewListTypeItem = new Dialog();
+            HorizontalLayout lytMoreButtons = new HorizontalLayout();
+            FormLayout lytTextFields = new FormLayout();
+            VerticalLayout lytMain = new VerticalLayout();
+            Label lblMessages = new Label();
+            //define elements behavior
+            lytMain.setSizeFull();
             txtName.setSizeFull();
             txtName.setRequiredIndicatorVisible(true);
             txtName.setValueChangeMode(ValueChangeMode.EAGER);
-            
-
-            Dialog wdwNewListTypeItem = new Dialog();
-
-            // To show errors or warnings related to the input parameters.
-            Label lblMessages = new Label();
-
-            Button btnOK = new Button(ts.getTranslatedString("module.general.labels.create"), (e) -> {
+            btnOK.setText(ts.getTranslatedString("module.general.labels.create"));
+            btnOK.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            btnOK.addClickListener((e) -> {
                 try {
                     commandClose = (Command) parameters.get("commandClose");
                     newTemplateItemAction.getCallback().execute(new ModuleActionParameterSet(
                             new ModuleActionParameter<>("className", (String) parameters.get("className")),
-                             new ModuleActionParameter<>("name", txtName.getValue())
+                            new ModuleActionParameter<>("name", txtName.getValue())
                     ));
 
                     fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
                             ts.getTranslatedString("module.templateman.actions.new-template-item.ui.item-created-success"), NewTemplateAction.class));
                     wdwNewListTypeItem.close();
                     //refresh related grid
-                   commandClose.execute();
+                    commandClose.execute();
                 } catch (ModuleActionException ex) {
                     fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_ERROR,
                             ex.getMessage(), NewTemplateAction.class));
@@ -101,20 +106,23 @@ public class NewTemplateVisualAction extends AbstractVisualAction<Dialog> {
 
             btnOK.setEnabled(false);
             txtName.addValueChangeListener((e) -> {
-                btnOK.setEnabled(!txtName.isEmpty());
+                boolean enable = !txtName.isEmpty();
+                btnOK.setEnabled(enable);
+                if (enable) {
+                    btnOK.setClassName("primary-button");
+                } else {
+                    btnOK.removeClassName("primary-button");
+                }
             });
 
             Button btnCancel = new Button(ts.getTranslatedString("module.general.messages.cancel"), (e) -> {
                 wdwNewListTypeItem.close();
             });
-
-            FormLayout lytTextFields = new FormLayout(txtName);
-            HorizontalLayout lytMoreButtons = new HorizontalLayout(btnOK, btnCancel);
-            VerticalLayout lytMain = new VerticalLayout(lblDialogName, lytTextFields, lytMoreButtons);
-            lytMain.setSizeFull();
+            lytTextFields.add(txtName);
+            lytMoreButtons.add(btnOK, btnCancel);
+            lytMain.add(lblDialogName, lytTextFields, lytMoreButtons);
 
             wdwNewListTypeItem.add(lytMain);
-
             return wdwNewListTypeItem;
         } catch (Exception ex) {
             fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_ERROR,
@@ -130,15 +138,15 @@ public class NewTemplateVisualAction extends AbstractVisualAction<Dialog> {
 
     /**
      * Receive action from parent layout, in this case refresh grid
-     * 
-     * @return commandClose;Command; refresh action 
+     *
+     * @return commandClose;Command; refresh action
      */
     public Command getCommandClose() {
         return commandClose;
     }
 
     /**
-     * @param commandClose;Command; refresh action 
+     * @param commandClose;Command; refresh action
      */
     public void setCommandClose(Command commandClose) {
         this.commandClose = commandClose;

@@ -16,6 +16,7 @@
 package org.neotropic.kuwaiba.modules.core.templateman.actions;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -50,8 +51,8 @@ public class NewBulkTemplateSpecialItemVisualAction extends AbstractVisualAction
     /**
      * Close action command
      */
-    private Command commandClose ;
-    
+    private Command commandClose;
+
     /**
      * Reference to the translation service.
      */
@@ -69,67 +70,93 @@ public class NewBulkTemplateSpecialItemVisualAction extends AbstractVisualAction
      */
     @Autowired
     protected ApplicationEntityManager aem;
-    
+
     /**
      * Reference to the Metadata Entity Manager.
      */
     @Autowired
     private MetadataEntityManager mem;
-   
+
     @Override
     public Dialog getVisualComponent(ModuleActionParameterSet parameters) {
         try {
-            Label lblDialogName = new Label(ts.getTranslatedString("module.templateman.actions.addSpecialItemMultiple-template.description"));
+            Label lblDialogName = new Label(ts.getTranslatedString("module.templateman.component.dialog.new-template-item-multiple.description"));
             TextField txtName = new TextField(ts.getTranslatedString("module.general.labels.patternname"));
             Dialog wdwNewListTypeItem = new Dialog();
-            Button btnOK = new Button(ts.getTranslatedString("module.general.labels.create"));
+            Button btnOK = new Button();
             ComboBox<ClassMetadataLight> cbxPossibleSpecialChildren = new ComboBox<>();
+            HorizontalLayout lytMoreButtons = new HorizontalLayout();
+            FormLayout lytTextFields = new FormLayout();
+            VerticalLayout lytMain = new VerticalLayout();
             //define elements behavior
+            lytMain.setSizeFull();
             txtName.setSizeFull();
             txtName.setRequiredIndicatorVisible(true);
             txtName.setValueChangeMode(ValueChangeMode.EAGER);
-            txtName.setPlaceholder(ts.getTranslatedString("module.templateman.component.txt.special-item.placeholder"));            
+            txtName.setPlaceholder(ts.getTranslatedString("module.templateman.component.txt.special-item.placeholder"));
             btnOK.setEnabled(false);
-            btnOK.addClickListener(e -> {
-                try {
-                    commandClose = (Command) parameters.get("commandClose");
-                    newBulkTemplateSpecialItemAction.getCallback().execute(new ModuleActionParameterSet(
-                            new ModuleActionParameter<>("tsElementclass", cbxPossibleSpecialChildren.getValue().getName()),
-                            new ModuleActionParameter<>("tsElementParentClassName", (String) parameters.get("parentClassName")),
-                            new ModuleActionParameter<>("tsElementParentId", (String) parameters.get("parentId")),
-                            new ModuleActionParameter<>("tsElementName", txtName.getValue())
-                    ));
-                    fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
-                            ts.getTranslatedString("module.templateman.actions.new-template-specialitem.ui.item-created-success"), NewTemplateAction.class));
-                    wdwNewListTypeItem.close();
-                    //refresh related grid
-                   commandClose.execute();
-                } catch (ModuleActionException ex) {
-                    fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_ERROR,
-                            ex.getMessage(), NewTemplateAction.class));
-                }
-            });
+            btnOK.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            String parentClassName = (String) parameters.get("parentClassName");
+
             List<ClassMetadataLight> possibleSpecialChildren = mem.getPossibleSpecialChildrenNoRecursive((String) parameters.get("parentClassName"));
-            cbxPossibleSpecialChildren.setItems(possibleSpecialChildren);
-            cbxPossibleSpecialChildren.setLabel(ts.getTranslatedString("module.templateman.component.cbx.template-item.label"));
-            cbxPossibleSpecialChildren.setItemLabelGenerator(element-> !element.getDisplayName().isEmpty() ? element.getDisplayName() : element.getName());
-            //validation listeners
-            txtName.addValueChangeListener((e) -> {
-                btnOK.setEnabled(!txtName.isEmpty() && cbxPossibleSpecialChildren.getValue() != null );                
-            });            
-            cbxPossibleSpecialChildren.addValueChangeListener((e) -> {
-                btnOK.setEnabled(!txtName.isEmpty() && cbxPossibleSpecialChildren.getValue() != null );                
-            });
-            Button btnCancel = new Button(ts.getTranslatedString("module.general.messages.cancel"), (e) -> {
-                wdwNewListTypeItem.close();
-            });
-            FormLayout lytTextFields = new FormLayout(cbxPossibleSpecialChildren, txtName);
-            HorizontalLayout lytMoreButtons = new HorizontalLayout(btnOK, btnCancel);
-            VerticalLayout lytMain = new VerticalLayout(lblDialogName, lytTextFields, lytMoreButtons);
-            lytMain.setSizeFull();
+            if (!possibleSpecialChildren.isEmpty()) {
+                cbxPossibleSpecialChildren.setItems(possibleSpecialChildren);
+                cbxPossibleSpecialChildren.setLabel(ts.getTranslatedString("module.templateman.component.cbx.template-item.label"));
+                cbxPossibleSpecialChildren.setItemLabelGenerator(element -> !element.getDisplayName().isEmpty() ? element.getDisplayName() : element.getName());
+                //validation listeners
+                btnOK.setText(ts.getTranslatedString("module.general.labels.create"));
+                btnOK.addClickListener(e -> {
+                    try {
+                        commandClose = (Command) parameters.get("commandClose");
+                        newBulkTemplateSpecialItemAction.getCallback().execute(new ModuleActionParameterSet(
+                                new ModuleActionParameter<>("tsElementclass", cbxPossibleSpecialChildren.getValue().getName()),
+                                new ModuleActionParameter<>("tsElementParentClassName", parentClassName),
+                                new ModuleActionParameter<>("tsElementParentId", (String) parameters.get("parentId")),
+                                new ModuleActionParameter<>("tsElementName", txtName.getValue())
+                        ));
+                        fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
+                                ts.getTranslatedString("module.templateman.actions.new-template-specialitem.ui.item-created-success"), NewTemplateAction.class));
+                        wdwNewListTypeItem.close();
+                        //refresh related grid
+                        commandClose.execute();
+                    } catch (ModuleActionException ex) {
+                        fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_ERROR,
+                                ex.getMessage(), NewTemplateAction.class));
+                    }
+                });
+                txtName.addValueChangeListener((e) -> {
+                    boolean enable = !txtName.isEmpty() && cbxPossibleSpecialChildren.getValue() != null;
+                    btnOK.setEnabled(enable);
+                    if (enable) {
+                        btnOK.setClassName("primary-button");
+                    } else
+                         btnOK.removeClassName("primary-button");                    
+                });
+                cbxPossibleSpecialChildren.addValueChangeListener((e) -> {
+                    boolean enable = !txtName.isEmpty() && cbxPossibleSpecialChildren.getValue() != null;
+                    btnOK.setEnabled(enable);
+                    if (enable) {
+                        btnOK.setClassName("primary-button");
+                    } else
+                         btnOK.removeClassName("primary-button");
+                });
+                Button btnCancel = new Button(ts.getTranslatedString("module.general.messages.cancel"), (e) -> {
+                    wdwNewListTypeItem.close();
+                });
+                lytTextFields.add(cbxPossibleSpecialChildren, txtName);
+                lytMoreButtons.add(btnOK, btnCancel);
+                lytMain.add(lblDialogName, lytTextFields, lytMoreButtons);
+
+            } else {
+                Label lblNoClassAvailable = new Label(String.format("The containment configuration does not allow instances of class %s to have children.", parentClassName));
+                lytMoreButtons.add(btnOK);
+                btnOK.setText(ts.getTranslatedString("module.general.messages.ok"));
+                btnOK.setEnabled(true);
+                btnOK.addClickListener(event -> wdwNewListTypeItem.close());
+                lytMain.add(lblDialogName, lblNoClassAvailable, lytMoreButtons);
+            }
 
             wdwNewListTypeItem.add(lytMain);
-
             return wdwNewListTypeItem;
         } catch (Exception ex) {
             fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_ERROR,
@@ -145,15 +172,15 @@ public class NewBulkTemplateSpecialItemVisualAction extends AbstractVisualAction
 
     /**
      * Receive action from parent layout, in this case refresh grid
-     * 
-     * @return commandClose;Command; refresh action 
+     *
+     * @return commandClose;Command; refresh action
      */
     public Command getCommandClose() {
         return commandClose;
     }
 
     /**
-     * @param commandClose;Command; refresh action 
+     * @param commandClose;Command; refresh action
      */
     public void setCommandClose(Command commandClose) {
         this.commandClose = commandClose;

@@ -20,7 +20,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.contextmenu.MenuItem;
-import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.H4;
@@ -40,6 +39,8 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.Command;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,6 +52,7 @@ import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionComplet
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.TemplateObject;
 import org.neotropic.kuwaiba.core.apis.persistence.application.TemplateObjectLight;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
@@ -58,6 +60,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
+import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyValueConverter;
 import org.neotropic.kuwaiba.modules.core.templateman.actions.DeleteTemplateItemVisualAction;
 import org.neotropic.kuwaiba.modules.core.templateman.actions.DeleteTemplateSubItemVisualAction;
 import org.neotropic.kuwaiba.modules.core.templateman.actions.DeleteTemplateVisualAction;
@@ -116,16 +119,6 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
     private ListDataProvider<TemplateObjectLight> templatesDataProvider;
 
     /**
-     * Add new template
-     */
-    private Button btnAddChildsTemplate;
-
-    /*
-     * Remove selected template
-     */
-    private Button btnRemoveChildsTemplate;
-
-    /**
      * Grid to list class attributes
      */
     private final TreeGrid<TemplateObjectLight> tblChildsTemplate;
@@ -152,31 +145,6 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
      * multiple special item
      */
     private MenuItem mnuAddSpecialChildsTemplateItem;
-
-    /**
-     * Add new template child item
-     */
-    private Button btnAddChildsTemplateItem;
-
-    /*
-     * Remove selected template child item
-     */
-    private Button btnRemoveChildsTemplateItem;
-
-    /**
-     * Add new special template child
-     */
-    private Button btnAddSpecialChildsTemplateItem;
-
-    /*
-     * Remove selected special template child
-     */
-    private Button btnRemoveSpecialChildsTemplateItem;
-
-    /*
-     * Edit selected template child item
-     */
-    private Button btnEditChildsTemplateItem;
 
     /**
      * Grid for tblChildsTemplate and it options
@@ -216,17 +184,38 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
     /**
      * refresh template grid action
      */
-    Command refreshTemplateAction;
+    private Command refreshTemplateAction;
 
     /**
      * refresh template child grid action
      */
-    Command refreshChildAction;
+    private Command refreshChildAction;
 
     /**
-     * template selected
+     * Class selected
+     */
+    private ClassMetadataLight selectedClass;
+
+    /**
+     * Template selected
      */
     private TemplateObjectLight selectedTemplate;
+
+    /**
+     * Template item selected
+     */
+    private TemplateObjectLight selectedTemplateItem;
+
+    /**
+     * Property to edit is for child
+     */
+    private boolean editChild;
+
+    /**
+     * Reference to the Business Entity Manager.
+     */
+    @Autowired
+    private BusinessEntityManager bem;
 
     /**
      * Reference to the Application Entity Manager.
@@ -314,6 +303,11 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
         createContent();
     }
 
+    /**
+     * Fired when a dialog or other action finish
+     *
+     * @param ev
+     */
     @Override
     public void actionCompleted(ActionCompletedListener.ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
@@ -330,11 +324,10 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
         SplitLayout classesLayout = new SplitLayout();
         SplitLayout templateLayout = new SplitLayout();
         //create action for close dialog
-
         refreshChildAction = () -> {
             childsTemplateDataProvider.refreshAll();
         };
-        //register visaula ctions       
+        //register visual actions       
         this.newTemplateVisualAction.registerActionCompletedLister(this);
         this.deleteTemplateVisualAction.registerActionCompletedLister(this);
         this.newTemplateItemVisualAction.registerActionCompletedLister(this);
@@ -378,12 +371,14 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
 
         tblClasses.asSingleSelect().addValueChangeListener(event -> {
             if (event.getValue() != null) {
+                selectedClass = event.getValue();
                 updateTemplateGrid(event.getValue());
+                updatePropertySheet(event.getValue());
             } else {
                 btnAddTemplate.setEnabled(false);
                 btnRemoveTemplate.setEnabled(false);
             }
-            updatePropertySheet(event.getValue());
+
         });
         //define listers and data providers
         try {
@@ -439,19 +434,31 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
      */
     private void buildTemplateGrid() {
         HorizontalLayout lythButton = new HorizontalLayout();
-        Icon icnAddTemplate = new Icon(VaadinIcon.PLUS);
-        Icon icnRemoveTemplate = new Icon(VaadinIcon.TRASH);
-        btnAddTemplate = new Button();
-        btnRemoveTemplate = new Button();
+        btnAddTemplate = new Button(String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template.name")));
+        btnRemoveTemplate = new Button(String.format("%s", ts.getTranslatedString("module.templateman.actions.delete-template.name")));
         //set element properties
-        btnAddTemplate.setIcon(icnAddTemplate);
+        btnAddTemplate.setIcon(new Icon(VaadinIcon.PLUS));
         btnAddTemplate.setEnabled(false);
         btnAddTemplate.getElement().setProperty("title",
-                String.format("%s", ts.getTranslatedString("module.templateman.actions.add-template.description")));
-        btnRemoveTemplate.setIcon(icnRemoveTemplate);
+                String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template.description")));
+        btnAddTemplate.addClickListener(clickEvent -> {
+            this.newTemplateVisualAction.getVisualComponent(new ModuleActionParameterSet(
+                    new ModuleActionParameter("className", selectedClass.getName()),
+                    new ModuleActionParameter("commandClose", refreshTemplateAction)
+            )).open();
+        });
+
+        btnRemoveTemplate.setIcon(new Icon(VaadinIcon.TRASH));
         btnRemoveTemplate.setEnabled(false);
         btnRemoveTemplate.getElement().setProperty("title",
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.delete-template.description")));
+        btnRemoveTemplate.addClickListener(clickEvent -> {
+            this.deleteTemplateVisualAction.getVisualComponent(new ModuleActionParameterSet(
+                    new ModuleActionParameter("templateItem", selectedTemplate),
+                    new ModuleActionParameter("commandClose", refreshTemplateAction)
+            )).open();
+        });
+
         tblTemplates.setHeightFull();
         tblTemplates.setSelectionMode(Grid.SelectionMode.SINGLE);
         tblTemplates.addColumn(TemplateObjectLight::getName)
@@ -460,22 +467,13 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
 
         tblTemplates.asSingleSelect().addValueChangeListener(event -> {
             if (event.getValue() != null) {
+                this.selectedTemplate = event.getValue();
                 updateChildTemplateItemsGrid(event.getValue());
                 //update grid and load property sheet                
                 updatePropertySheet(event.getValue());
-                //remove template dialog                
                 btnRemoveTemplate.setEnabled(true);
-                icnRemoveTemplate.setColor(RED_COLOR);
-                btnRemoveTemplate.setIcon(icnRemoveTemplate);
-                btnRemoveTemplate.addClickListener(clickEvent -> {
-                    this.deleteTemplateVisualAction.getVisualComponent(new ModuleActionParameterSet(
-                            new ModuleActionParameter("templateItem", event.getValue()),
-                            new ModuleActionParameter("commandClose", refreshTemplateAction)
-                    )).open();
-                });
             } else {
-                icnRemoveTemplate.setColor("");
-                btnRemoveTemplate.setIcon(icnRemoveTemplate);
+                this.selectedTemplate = null;
                 btnRemoveTemplate.setEnabled(false);
             }
         });
@@ -495,27 +493,18 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
      * search
      */
     private void updateTemplateGrid(ClassMetadataLight object) {
-
         if (object != null) {
             refreshTemplates(object);
             btnAddTemplate.setEnabled(true);
-            //add new template dialog
+            //create action when dialog finish
             refreshTemplateAction = () -> {
                 refreshTemplates(object);
             };
-            btnAddTemplate.addClickListener(clickEvent -> {
-                this.newTemplateVisualAction.getVisualComponent(new ModuleActionParameterSet(
-                        new ModuleActionParameter("className", object.getName()),
-                        new ModuleActionParameter("commandClose", refreshTemplateAction)
-                )).open();
-            });
         } else {
-            btnAddTemplate.getIcon().getElement().removeProperty("color");
             tblTemplates.setItems(new ArrayList<>());
             btnAddTemplate.setEnabled(false);
             btnRemoveTemplate.setEnabled(false);
         }
-
     }
 
     /**
@@ -552,27 +541,44 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
      */
     private void buildChildTemplateGrid() {
         mnuAddChildTemplateItems = new MenuBar();
-        Icon addItem = new Icon(VaadinIcon.PLUS);
-        Icon addSpecialItem = new Icon(VaadinIcon.PLUS);
-        //elements properties
-        addSpecialItem.setColor(BLUE_COLOR);
-        //add menu sub items and properties
+
+        //elements properties        
         mnuAddChildTemplateItems.setWidthFull();
-        mnuAddChildTemplateItems.setThemeName("tertiary-inline");
-        mnuAddChildsTemplateItem = mnuAddChildTemplateItems.addItem(addItem);
+        mnuAddChildTemplateItems.setClassName("menu-additem");
+
+        mnuAddChildsTemplateItem = mnuAddChildTemplateItems.addItem(
+                new Button(String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-item.name")),
+                        new Icon(VaadinIcon.PLUS)));
         mnuAddChildsTemplateItem.getElement().getThemeList().add("BUTTON_SMALL");
         mnuAddChildsTemplateItem.getElement().setProperty("title",
-                String.format("%s", ts.getTranslatedString("module.templateman.actions.addItem-template.description")));
+                String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-item.description")));
+        mnuAddChildsTemplateItem.getSubMenu().addItem(
+                String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-item-sigle.name")),
+                e -> newStructureItem());
+        mnuAddChildsTemplateItem.getSubMenu().addItem(
+                String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-item-multiple.name")),
+                e -> newBulkStructureItem());
         mnuAddChildsTemplateItem.setEnabled(false);
-        mnuAddSpecialChildsTemplateItem = mnuAddChildTemplateItems.addItem(addSpecialItem);
+
+        mnuAddSpecialChildsTemplateItem = mnuAddChildTemplateItems.addItem(
+                new Button(String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-special-item.name")),
+                        new Icon(VaadinIcon.ASTERISK)));
         mnuAddSpecialChildsTemplateItem.getElement().getThemeList().add("BUTTON_SMALL");
         mnuAddSpecialChildsTemplateItem.getElement().setProperty("title",
-                String.format("%s", ts.getTranslatedString("module.templateman.actions.addSpecialItem-template.description")));
+                String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-special-item.description")));
+        mnuAddSpecialChildsTemplateItem.getSubMenu().addItem(
+                String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-item-sigle.name")),
+                e -> newStructureSpecialItem());
+        mnuAddSpecialChildsTemplateItem.getSubMenu().addItem(
+                String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-item-multiple.name")),
+                e -> newBulkStructureSpecialItem());
+        mnuAddSpecialChildsTemplateItem.setEnabled(false);
+
         tblChildsTemplate.setHeightFull();
         tblChildsTemplate.addHierarchyColumn(TemplateObjectLight::getName)
                 .setHeader(String.format("%s", ts.getTranslatedString("module.templateman.items")));
-        tblChildsTemplate.addComponentColumn(this::buildChildTemplateItemsOptions).setTextAlign(ColumnTextAlign.END);
 
+        tblChildsTemplate.addComponentColumn(this::buildChildTemplateItemsOptions);
         this.lytvChildTemplate.add(tblChildsTemplate, mnuAddChildTemplateItems);
     }
 
@@ -589,22 +595,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
             updatePropertySheet(object);
             //enable menu buttons            
             mnuAddChildsTemplateItem.setEnabled(true);
-            mnuAddChildsTemplateItem.getSubMenu().removeAll();
-            mnuAddChildsTemplateItem.getSubMenu().addItem(
-                    String.format("%s", ts.getTranslatedString("module.templateman.actions.addItem-template.description")),
-                    e -> newStructureItem(object));
-            mnuAddChildsTemplateItem.getSubMenu().addItem(
-                    String.format("%s", ts.getTranslatedString("module.templateman.actions.addItemMultiple-template.description")),
-                    e -> newBulkStructureItem(object));
-
             mnuAddSpecialChildsTemplateItem.setEnabled(true);
-            mnuAddSpecialChildsTemplateItem.getSubMenu().removeAll();
-            mnuAddSpecialChildsTemplateItem.getSubMenu().addItem(
-                    String.format("%s", ts.getTranslatedString("module.templateman.actions.addSpecialItem-template.description")),
-                    e -> newStructureSpecialItem(object));
-            mnuAddSpecialChildsTemplateItem.getSubMenu().addItem(
-                    String.format("%s", ts.getTranslatedString("module.templateman.actions.addSpecialItemMultiple-template.description")),
-                    e -> newBulkStructureSpecialItem(object));
         } else {
             mnuAddChildsTemplateItem.setEnabled(false);
             mnuAddSpecialChildsTemplateItem.setEnabled(false);
@@ -619,52 +610,39 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
      */
     private Component buildChildTemplateItemsOptions(TemplateObjectLight selectedItem) {
         MenuBar menuBar = new MenuBar();
-        Icon addItem = new Icon(VaadinIcon.PLUS);
-        btnAddChildsTemplateItem = new Button();
-        Icon addSpecialItem = new Icon(VaadinIcon.PLUS);
-        btnAddSpecialChildsTemplateItem = new Button();
-        Icon removeItem = new Icon(VaadinIcon.TRASH);
-        btnRemoveChildsTemplateItem = new Button();
-        Icon editItem = new Icon(VaadinIcon.EDIT);
-        btnEditChildsTemplateItem = new Button();
         //element properties
-        menuBar.setWidthFull();        
-        menuBar.getElement().getThemeList().add("short-icons");        
-        addSpecialItem.setColor(BLUE_COLOR);                
-        removeItem.setColor(RED_COLOR);
-        
+        menuBar.setWidthFull();
+        menuBar.getElement().getThemeList().add("short-icons");
+
         //add sub items
-        MenuItem smnuAddChildsTemplateItem = menuBar.addItem(addItem);        
+        MenuItem smnuAddChildsTemplateItem = menuBar.addItem(new Icon(VaadinIcon.PLUS));
         smnuAddChildsTemplateItem.getElement().setProperty("title",
-                String.format("%s", ts.getTranslatedString("module.templateman.actions.addItem-template.description")));
+                String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-item.description")));
         smnuAddChildsTemplateItem.getSubMenu().addItem(
-                String.format("%s", ts.getTranslatedString("module.templateman.actions.addItem-template.description")),
-                e -> newStructureItem(selectedItem));
+                String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-item-sigle.name")),
+                e -> newStructureItem(selectedItem, true));
         smnuAddChildsTemplateItem.getSubMenu().addItem(
-                String.format("%s", ts.getTranslatedString("module.templateman.actions.addItemMultiple-template.description")),
-                e -> newBulkStructureItem(selectedItem));
+                String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-item-multiple.name")),
+                e -> newBulkStructureItem(selectedItem, true));
 
-        MenuItem smnuAddSpecialChildsTemplateItem = menuBar.addItem(addSpecialItem);
-        //smnuAddSpecialChildsTemplateItem.getElement().getThemeList().add("BUTTON_SMALL");
+        MenuItem smnuAddSpecialChildsTemplateItem = menuBar.addItem(new Icon(VaadinIcon.ASTERISK));
         smnuAddSpecialChildsTemplateItem.getElement().setProperty("title",
-                String.format("%s", ts.getTranslatedString("module.templateman.actions.addSpecialItem-template.description")));
+                String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-special-item.description")));
         smnuAddSpecialChildsTemplateItem.getSubMenu().addItem(
-                String.format("%s", ts.getTranslatedString("module.templateman.actions.addSpecialItem-template.description")),
-                e -> newStructureSpecialItem(selectedItem));
+                String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-item-sigle.name")),
+                e -> newStructureSpecialItem(selectedItem, true));
         smnuAddSpecialChildsTemplateItem.getSubMenu().addItem(
-                String.format("%s", ts.getTranslatedString("module.templateman.actions.addSpecialItemMultiple-template.description")),
-                e -> newBulkStructureSpecialItem(selectedItem));
+                String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-item-multiple.name")),
+                e -> newBulkStructureSpecialItem(selectedItem, true));
 
-        MenuItem smnuRemoveChildsTemplateItem = menuBar.addItem(removeItem, e -> deleteStructureItem(selectedItem));
-        //smnuRemoveChildsTemplateItem.getElement().getThemeList().add("BUTTON_SMALL");
+        MenuItem smnuRemoveChildsTemplateItem = menuBar.addItem(new Icon(VaadinIcon.TRASH), e -> deleteStructureItem(selectedItem));
         smnuRemoveChildsTemplateItem.getElement().setProperty("title",
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.deleteItem-template.description")));
 
-        MenuItem smnuEditChildsTemplateItem = menuBar.addItem(editItem, e -> editStructureItem(selectedItem));
-        //smnuEditChildsTemplateItem.getElement().getThemeList().add("BUTTON_SMALL");
+        MenuItem smnuEditChildsTemplateItem = menuBar.addItem(new Icon(VaadinIcon.EDIT), e -> editStructureItem(selectedItem));
         smnuEditChildsTemplateItem.getElement().setProperty("title",
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.editItem-template.description")));
-        
+
         return menuBar;
     }
 
@@ -672,29 +650,12 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
      * Create display property sheet
      */
     private void buildPropertySheetLayout() {
-        propertysheet = new PropertySheet(ts, new ArrayList<>(), "");
         H4 headerPropertySheet = new H4(ts.getTranslatedString("module.propertysheet.labels.header"));
+        propertysheet = new PropertySheet(ts, new ArrayList<>(), "");
         lytvPropertySheet = new VerticalLayout(headerPropertySheet, propertysheet);
-
-        propertysheet.addPropertyValueChangedListener(this);
         lytvPropertySheet.setWidth("45%");
+        propertysheet.addPropertyValueChangedListener(this);
 
-    }
-
-    @Override
-    public void updatePropertyChanged(AbstractProperty property) {
-    }
-
-    @Override
-    public void onDetach(DetachEvent ev) {
-        this.newTemplateVisualAction.unregisterListener(this);
-        this.newBulkTemplateItemVisualAction.unregisterListener(this);
-        this.deleteTemplateVisualAction.unregisterListener(this);
-        this.newTemplateItemVisualAction.unregisterListener(this);
-        this.deleteTemplateItemVisualAction.unregisterListener(this);
-        this.newTemplateSpecialItemVisualAction.unregisterListener(this);
-        this.newBulkTemplateSpecialItemVisualAction.unregisterListener(this);
-        this.deleteTemplateSubItemVisualAction.unregisterListener(this);
     }
 
     /**
@@ -707,6 +668,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
             ClassMetadata objectFull = mem.getClass(object.getId());
             if (objectFull != null) {
                 propertysheet.setItems(PropertyFactory.generalPropertiesFromClass(objectFull));
+                propertysheet.setReadOnly(true);
             }
         } catch (InventoryException ex) {
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
@@ -725,6 +687,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
             TemplateObject objectFull = aem.getTemplateElement(object.getClassName(), object.getId());
             if (objectFull != null) {
                 propertysheet.setItems(PropertyFactory.propertiesFromTemplateObject(objectFull, ts, aem, mem));
+                propertysheet.setReadOnly(false);
             }
         } catch (InventoryException ex) {
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
@@ -739,71 +702,148 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
      * @param object;TemplateObjectLight; parent structure item
      */
     private void editStructureItem(TemplateObjectLight object) {
+        this.selectedTemplateItem = object;
+        editChild = true;
         updatePropertySheet(object);
     }
 
     /**
-     * Creates a new Structure item, based in allowed content.
-     *
-     * @param object;TemplateObjectLight; parent structure item
+     * Creates a new template item, based in allowed content. 
      */
-    private void newStructureItem(TemplateObjectLight object) {
-        this.refreshChildAction = () -> {
-            refreshStructure(selectedTemplate);
-        };
-        this.newTemplateItemVisualAction.getVisualComponent(new ModuleActionParameterSet(
-                new ModuleActionParameter("parentClassName", object.getClassName()),
-                new ModuleActionParameter("parentId", object.getId()),
-                new ModuleActionParameter("commandClose", refreshChildAction)
-        )).open();
+    private void newStructureItem() {
+        newStructureItem(null, false);
     }
 
     /**
-     * Creates a new Structure item, based in allowed content.
+     * Creates a new template item, based in allowed content. if element is
+     * first in hierarchy , template element is take as father, if no it is a
+     * sub item, parent is item above it.
      *
-     * @param object;TemplateObjectLight; parent structure item
+     * @param isSubItem;boolean; true if element is a sub item
+     * @param childElement;TemplateObjectLight; sub item element
      */
-    private void newBulkStructureItem(TemplateObjectLight object) {
+    private void newStructureItem(TemplateObjectLight childElement, boolean isSubItem) {
         this.refreshChildAction = () -> {
             refreshStructure(selectedTemplate);
         };
-        this.newBulkTemplateItemVisualAction.getVisualComponent(new ModuleActionParameterSet(
-                new ModuleActionParameter("parentClassName", object.getClassName()),
-                new ModuleActionParameter("parentId", object.getId()),
-                new ModuleActionParameter("commandClose", refreshChildAction)
-        )).open();
+        if (!isSubItem) {
+            this.newTemplateItemVisualAction.getVisualComponent(new ModuleActionParameterSet(
+                    new ModuleActionParameter("parentClassName", selectedTemplate.getClassName()),
+                    new ModuleActionParameter("parentId", selectedTemplate.getId()),
+                    new ModuleActionParameter("commandClose", refreshChildAction)
+            )).open();
+        } else {
+            this.newTemplateItemVisualAction.getVisualComponent(new ModuleActionParameterSet(
+                    new ModuleActionParameter("parentClassName", childElement.getClassName()),
+                    new ModuleActionParameter("parentId", childElement.getId()),
+                    new ModuleActionParameter("commandClose", childElement)
+            )).open();
+        }
     }
 
     /**
-     * Creates a new Structure special item, based in allowed content.
      *
-     * @param object;TemplateObjectLight; parent structure item
+     * Creates massive template items, based in allowed content. 
      */
-    private void newStructureSpecialItem(TemplateObjectLight object) {
-        this.refreshChildAction = () -> {
-            refreshStructure(selectedTemplate);
-        };
-        this.newTemplateSpecialItemVisualAction.getVisualComponent(new ModuleActionParameterSet(
-                new ModuleActionParameter("parentClassName", object.getClassName()),
-                new ModuleActionParameter("parentId", object.getId()),
-                new ModuleActionParameter("commandClose", refreshChildAction)
-        )).open();
+    private void newBulkStructureItem() {
+        newBulkStructureItem(null, false);
     }
 
     /**
-     * Creates bulk Structure special item, based in allowed content.
      *
-     * @param object;TemplateObjectLight; parent structure item
+     * Creates massive template items, based in allowed content. if element is
+     * first in hierarchy , template element is take as father, if no it is a
+     * sub item, parent is item above it.
+     *
+     * @param isSubItem;boolean; true if element is a sub item,
+     * @param childElement;TemplateObjectLight; sub item element
      */
-    private void newBulkStructureSpecialItem(TemplateObjectLight object) {
+    private void newBulkStructureItem(TemplateObjectLight childElement, boolean isSubItem) {
         this.refreshChildAction = () -> {
             refreshStructure(selectedTemplate);
         };
-        this.newBulkTemplateSpecialItemVisualAction.getVisualComponent(new ModuleActionParameterSet(
-                new ModuleActionParameter("parentClassName", object.getClassName()),
-                new ModuleActionParameter("parentId", object.getId()),
-                new ModuleActionParameter("commandClose", refreshChildAction)
-        )).open();
+        if (!isSubItem) {
+            this.newBulkTemplateItemVisualAction.getVisualComponent(new ModuleActionParameterSet(
+                    new ModuleActionParameter("parentClassName", selectedTemplate.getClassName()),
+                    new ModuleActionParameter("parentId", selectedTemplate.getId()),
+                    new ModuleActionParameter("commandClose", refreshChildAction)
+            )).open();
+        } else {
+            this.newBulkTemplateItemVisualAction.getVisualComponent(new ModuleActionParameterSet(
+                    new ModuleActionParameter("parentClassName", childElement.getClassName()),
+                    new ModuleActionParameter("parentId", childElement.getId()),
+                    new ModuleActionParameter("commandClose", refreshChildAction)
+            )).open();
+        }
+    }
+
+    /**
+     * Creates a new template special item, based in allowed content
+     */
+    private void newStructureSpecialItem() {
+        newStructureSpecialItem(null, false);
+    }
+    
+    /**
+     * Creates a new template special item, based in allowed content. if element
+     * is first in hierarchy , template element is take as father, if no it is a
+     * sub item, parent is item above it.
+     *
+     * @param isSubItem;TemplateObjectLight; true if element is a sub item
+     * @param childElement;TemplateObjectLight; sub item element
+     */
+    private void newStructureSpecialItem(TemplateObjectLight childElement, boolean isSubItem) {
+        this.refreshChildAction = () -> {
+            refreshStructure(selectedTemplate);
+        };
+        if (!isSubItem) {
+            this.newTemplateSpecialItemVisualAction.getVisualComponent(new ModuleActionParameterSet(
+                    new ModuleActionParameter("parentClassName", selectedTemplate.getClassName()),
+                    new ModuleActionParameter("parentId", selectedTemplate.getId()),
+                    new ModuleActionParameter("commandClose", refreshChildAction)
+            )).open();
+        } else {
+            this.newTemplateSpecialItemVisualAction.getVisualComponent(new ModuleActionParameterSet(
+                    new ModuleActionParameter("parentClassName", childElement.getClassName()),
+                    new ModuleActionParameter("parentId", childElement.getId()),
+                    new ModuleActionParameter("commandClose", refreshChildAction)
+            )).open();
+        }
+    }
+
+    /**
+     *
+     * Creates massive template special item, based in allowed content.
+     */
+    private void newBulkStructureSpecialItem() {
+        newBulkStructureSpecialItem(null, false);
+    }
+    
+    /**
+     *
+     * Creates massive template special item, based in allowed content. if
+     * element is first in hierarchy , template element is take as father, if no
+     * it is a sub item, parent is item above it.
+     *
+     * @param isSubItem;TemplateObjectLight; true if element is a sub item,
+     */
+    private void newBulkStructureSpecialItem(TemplateObjectLight childElement, boolean isSubItem) {
+        this.refreshChildAction = () -> {
+            refreshStructure(selectedTemplate);
+        };
+        if (!isSubItem) {
+            this.newBulkTemplateSpecialItemVisualAction.getVisualComponent(new ModuleActionParameterSet(
+                    new ModuleActionParameter("parentClassName", selectedTemplate.getClassName()),
+                    new ModuleActionParameter("parentId", selectedTemplate.getId()),
+                    new ModuleActionParameter("commandClose", refreshChildAction)
+            )).open();
+        } else {
+            this.newBulkTemplateSpecialItemVisualAction.getVisualComponent(new ModuleActionParameterSet(
+                    new ModuleActionParameter("parentClassName", childElement.getClassName()),
+                    new ModuleActionParameter("parentId", childElement.getId()),
+                    new ModuleActionParameter("commandClose", refreshChildAction)
+            )).open();
+        }
     }
 
     /**
@@ -890,5 +930,42 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
         };
         tblChildsTemplate.setDataProvider(childsTemplateDataProvider);
         tblChildsTemplate.getDataProvider().refreshAll();
+    }
+
+    @Override
+    public void updatePropertyChanged(AbstractProperty property) {
+        try {
+            String[] attributesNames = {property.getName()};
+            String[] attributesValues = {property.getValue().toString()};
+
+            if (!editChild) {//update first containment child               
+                aem.updateTemplateElement(selectedTemplate.getClassName(), selectedTemplate.getId(),
+                        attributesNames, attributesValues);
+                refreshTemplates(selectedClass);
+                tblTemplates.select(selectedTemplate);
+            } else {//update lower containment child
+                aem.updateTemplateElement(selectedTemplateItem.getClassName(), selectedTemplateItem.getId(),
+                        attributesNames, attributesValues);
+                refreshStructure(selectedTemplate);
+                tblChildsTemplate.select(selectedTemplateItem);
+                editChild = false;
+            }
+
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
+        } catch (Exception ex) {
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage()).open();
+        }
+    }
+
+    @Override
+    public void onDetach(DetachEvent ev) {
+        this.newTemplateVisualAction.unregisterListener(this);
+        this.newBulkTemplateItemVisualAction.unregisterListener(this);
+        this.deleteTemplateVisualAction.unregisterListener(this);
+        this.newTemplateItemVisualAction.unregisterListener(this);
+        this.deleteTemplateItemVisualAction.unregisterListener(this);
+        this.newTemplateSpecialItemVisualAction.unregisterListener(this);
+        this.newBulkTemplateSpecialItemVisualAction.unregisterListener(this);
+        this.deleteTemplateSubItemVisualAction.unregisterListener(this);
     }
 }

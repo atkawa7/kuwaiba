@@ -44,6 +44,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @StyleSheet("css/main.css")
 @StyleSheet("css/main-layout.css")
+@StyleSheet(value = "css/tepman.css")
 @CssImport(value = "./styles/vaadin-menu-bar-buttons.css", themeFor = "vaadin-menu-bar")
 public class TemplateManagerLayout extends FlexLayout implements RouterLayout {
 
