@@ -13,7 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.neotropic.kuwaiba.core.apis.persistence.metadata;
 
 import java.io.Serializable;
@@ -21,9 +20,11 @@ import java.util.Objects;
 
 /**
  * Contains the basic meta data information about a class
+ *
  * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
-public class ClassMetadataLight implements Serializable{
+public class ClassMetadataLight implements Serializable {
+
     /**
      * ClassMetada's Id
      */
@@ -33,11 +34,12 @@ public class ClassMetadataLight implements Serializable{
      */
     private String name;
     /**
-     *  Classmetada's displayName
+     * Classmetada's displayName
      */
     private String displayName;
     /**
-     * Instances of this class can have views associated (this going to be "true" for all subclasses of ViewableObject)
+     * Instances of this class can have views associated (this going to be
+     * "true" for all subclasses of ViewableObject)
      */
     private Boolean viewable;
     /**
@@ -46,19 +48,19 @@ public class ClassMetadataLight implements Serializable{
      */
     private Boolean _abstract;
     /**
-     *  Is this class a list type (Vendor, LocationOwner, OpticalLinkType, etc)
+     * Is this class a list type (Vendor, LocationOwner, OpticalLinkType, etc)
      */
     private Boolean listType;
     /**
-     *  Parent ClassMetada name
+     * Parent ClassMetada name
      */
     private String parentClassName;
     /**
-     *  Icon to show in trees and lists
+     * Icon to show in trees and lists
      */
     private byte[] smallIcon;
     /**
-     *  Color assigned to the instances when displayed
+     * Color assigned to the instances when displayed
      */
     private int color;
     /**
@@ -66,7 +68,8 @@ public class ClassMetadataLight implements Serializable{
      */
     private Boolean inDesign;
     /**
-     *  Shows if this is a core class (the ones provided in the official release) or a custom one
+     * Shows if this is a core class (the ones provided in the official release)
+     * or a custom one
      */
     private Boolean custom;
     /**
@@ -74,10 +77,10 @@ public class ClassMetadataLight implements Serializable{
      */
     private Boolean administrative;
 
-    public ClassMetadataLight(){
+    public ClassMetadataLight() {
     }
     
-    public ClassMetadataLight(long id, String name, String displayName){
+    public ClassMetadataLight(long id, String name, String displayName) {
         this.id = id;
         this.name = name;
         this.displayName = displayName;
@@ -91,8 +94,7 @@ public class ClassMetadataLight implements Serializable{
         this.administrative = administrative;
     }
 
-    
-    public ClassMetadataLight(long id, String name, boolean viewable, boolean _abstract, 
+    public ClassMetadataLight(long id, String name, boolean viewable, boolean _abstract,
             boolean listType, String parentClassName, boolean inDesign, boolean custom, boolean administrative) {
         this.id = id;
         this.name = name;
@@ -104,7 +106,7 @@ public class ClassMetadataLight implements Serializable{
         this.custom = custom;
         this.administrative = administrative;
     }
-        
+
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
     public long getId() {
         return id;
@@ -145,7 +147,7 @@ public class ClassMetadataLight implements Serializable{
     public void setName(String name) {
         this.name = name;
     }
-   
+
     public String getParentClassName() {
         return parentClassName;
     }
@@ -161,7 +163,7 @@ public class ClassMetadataLight implements Serializable{
     public void setSmallIcon(byte[] smallIcon) {
         this.smallIcon = smallIcon;
     }
-    
+
     public Boolean isInDesign() {
         return inDesign;
     }
@@ -177,7 +179,7 @@ public class ClassMetadataLight implements Serializable{
     public void setCustom(Boolean custom) {
         this.custom = custom;
     }
-    
+
     public String getDisplayName() {
         return displayName;
     }
@@ -185,7 +187,7 @@ public class ClassMetadataLight implements Serializable{
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
-    
+
     public Boolean isAdministrative() {
         return administrative;
     }
@@ -193,6 +195,7 @@ public class ClassMetadataLight implements Serializable{
     public void setAdministrative(Boolean administrative) {
         this.administrative = administrative;
     }
+
     public int getColor() {
         return color;
     }
@@ -201,12 +204,13 @@ public class ClassMetadataLight implements Serializable{
         this.color = color;
     }
     // </editor-fold>
-    
+
     @Override
     public boolean equals(Object obj) {
-        if(obj != null && obj instanceof ClassMetadataLight)
-            return id == ((ClassMetadataLight)obj).getId();
-        
+        if (obj != null && obj instanceof ClassMetadataLight) {
+            return id == ((ClassMetadataLight) obj).getId();
+        }
+
         return false;
     }
 
@@ -217,9 +221,9 @@ public class ClassMetadataLight implements Serializable{
         hash = 59 * hash + Objects.hashCode(this.name);
         return hash;
     }
-    
+
     @Override
-    public String toString(){
-        return getName();
+    public String toString() {
+        return displayName == null || displayName.isEmpty() ? name : displayName;
     }
 }
