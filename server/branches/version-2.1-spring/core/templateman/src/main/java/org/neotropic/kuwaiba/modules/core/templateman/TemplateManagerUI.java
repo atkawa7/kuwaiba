@@ -39,8 +39,6 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.Command;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,7 +50,8 @@ import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionComplet
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.TemplateObject;
 import org.neotropic.kuwaiba.core.apis.persistence.application.TemplateObjectLight;
-import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.ApplicationObjectNotFoundException;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
@@ -60,7 +59,6 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
-import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyValueConverter;
 import org.neotropic.kuwaiba.modules.core.templateman.actions.DeleteTemplateItemVisualAction;
 import org.neotropic.kuwaiba.modules.core.templateman.actions.DeleteTemplateSubItemVisualAction;
 import org.neotropic.kuwaiba.modules.core.templateman.actions.DeleteTemplateVisualAction;
@@ -211,12 +209,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
      */
     private boolean editChild;
 
-    /**
-     * Reference to the Business Entity Manager.
-     */
-    @Autowired
-    private BusinessEntityManager bem;
-
+  
     /**
      * Reference to the Application Entity Manager.
      */
@@ -453,10 +446,14 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
         btnRemoveTemplate.getElement().setProperty("title",
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.delete-template.description")));
         btnRemoveTemplate.addClickListener(clickEvent -> {
+            Command deleteTemplateAction = () -> {//refresh template grid and refres property sheet
+                refreshTemplates(selectedClass);
+                updatePropertySheet(selectedClass);
+            };
             this.deleteTemplateVisualAction.getVisualComponent(new ModuleActionParameterSet(
                     new ModuleActionParameter("templateItem", selectedTemplate),
-                    new ModuleActionParameter("commandClose", refreshTemplateAction)
-            )).open();
+                    new ModuleActionParameter("commandClose", deleteTemplateAction)
+            )).open();            
         });
 
         tblTemplates.setHeightFull();
@@ -469,8 +466,6 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
             if (event.getValue() != null) {
                 this.selectedTemplate = event.getValue();
                 updateChildTemplateItemsGrid(event.getValue());
-                //update grid and load property sheet                
-                updatePropertySheet(event.getValue());
                 btnRemoveTemplate.setEnabled(true);
             } else {
                 this.selectedTemplate = null;
@@ -540,15 +535,15 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
      * Create display form and set action listeners
      */
     private void buildChildTemplateGrid() {
-        mnuAddChildTemplateItems = new MenuBar();
-
+        mnuAddChildTemplateItems = new MenuBar();       
+        Button add = new Button(String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-item.name")),
+                        new Icon(VaadinIcon.PLUS)); 
+        add.setClassName("menu-button");
         //elements properties        
-        mnuAddChildTemplateItems.setWidthFull();
-        mnuAddChildTemplateItems.setClassName("menu-additem");
+        mnuAddChildTemplateItems.setWidthFull();      
 
         mnuAddChildsTemplateItem = mnuAddChildTemplateItems.addItem(
-                new Button(String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-item.name")),
-                        new Icon(VaadinIcon.PLUS)));
+                add);
         mnuAddChildsTemplateItem.getElement().getThemeList().add("BUTTON_SMALL");
         mnuAddChildsTemplateItem.getElement().setProperty("title",
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-item.description")));
@@ -635,11 +630,13 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-item-multiple.name")),
                 e -> newBulkStructureSpecialItem(selectedItem, true));
 
-        MenuItem smnuRemoveChildsTemplateItem = menuBar.addItem(new Icon(VaadinIcon.TRASH), e -> deleteStructureItem(selectedItem));
+        MenuItem smnuRemoveChildsTemplateItem = menuBar.addItem(
+                new Icon(VaadinIcon.TRASH), e -> deleteStructureItem(selectedItem));
         smnuRemoveChildsTemplateItem.getElement().setProperty("title",
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.deleteItem-template.description")));
 
-        MenuItem smnuEditChildsTemplateItem = menuBar.addItem(new Icon(VaadinIcon.EDIT), e -> editStructureItem(selectedItem));
+        MenuItem smnuEditChildsTemplateItem = menuBar.addItem(
+                new Icon(VaadinIcon.EDIT), e -> editStructureItem(selectedItem));
         smnuEditChildsTemplateItem.getElement().setProperty("title",
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.editItem-template.description")));
 
@@ -719,7 +716,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
      * first in hierarchy , template element is take as father, if no it is a
      * sub item, parent is item above it.
      *
-     * @param isSubItem;boolean; true if element is a sub item
+     * @param isSubItem;Boolean; true if element is a sub item
      * @param childElement;TemplateObjectLight; sub item element
      */
     private void newStructureItem(TemplateObjectLight childElement, boolean isSubItem) {
@@ -755,7 +752,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
      * first in hierarchy , template element is take as father, if no it is a
      * sub item, parent is item above it.
      *
-     * @param isSubItem;boolean; true if element is a sub item,
+     * @param isSubItem;Boolean; true if element is a sub item,
      * @param childElement;TemplateObjectLight; sub item element
      */
     private void newBulkStructureItem(TemplateObjectLight childElement, boolean isSubItem) {
@@ -852,16 +849,16 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
      * @param object;TemplateObjectLight; parent template item
      */
     private void deleteStructureItem(TemplateObjectLight object) {
-        this.refreshChildAction = () -> {
+        Command deleteChildAction = () -> {
             refreshStructure(selectedTemplate);
+            //reset focus to father , in case selected element is in property sheet focus
+            updatePropertySheet(selectedTemplate);
         };
         this.deleteTemplateItemVisualAction.getVisualComponent(new ModuleActionParameterSet(
                 new ModuleActionParameter("templateItem", object),
                 new ModuleActionParameter("className", object.getName()),
-                new ModuleActionParameter("commandClose", refreshChildAction)
-        )).open();
-        //reset focus to father , in case selected element is in property sheet focus
-        updatePropertySheet(selectedTemplate);
+                new ModuleActionParameter("commandClose", deleteChildAction)
+        )).open();               
     }
 
     /**
@@ -952,7 +949,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
             }
 
             new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
-        } catch (Exception ex) {
+        } catch (ApplicationObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException ex) {
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage()).open();
         }
     }
