@@ -535,15 +535,13 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
      * Create display form and set action listeners
      */
     private void buildChildTemplateGrid() {
-        mnuAddChildTemplateItems = new MenuBar();       
-        Button add = new Button(String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-item.name")),
-                        new Icon(VaadinIcon.PLUS)); 
-        add.setClassName("menu-button");
+        mnuAddChildTemplateItems = new MenuBar();
         //elements properties        
-        mnuAddChildTemplateItems.setWidthFull();      
+        mnuAddChildTemplateItems.setWidthFull();
 
         mnuAddChildsTemplateItem = mnuAddChildTemplateItems.addItem(
-                add);
+                new Button(String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-item.name")),
+                        new Icon(VaadinIcon.PLUS)));
         mnuAddChildsTemplateItem.getElement().getThemeList().add("BUTTON_SMALL");
         mnuAddChildsTemplateItem.getElement().setProperty("title",
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-item.description")));
