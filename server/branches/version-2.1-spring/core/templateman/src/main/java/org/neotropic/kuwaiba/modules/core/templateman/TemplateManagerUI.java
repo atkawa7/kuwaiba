@@ -35,13 +35,16 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery;
+import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.Command;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionParameter;
@@ -209,7 +212,6 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
      */
     private boolean editChild;
 
-  
     /**
      * Reference to the Application Entity Manager.
      */
@@ -356,9 +358,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
     private void buildMainClassesGrid() {
         tblClasses.setHeightFull();
         tblClasses.setSelectionMode(Grid.SelectionMode.SINGLE);
-        tblClasses.addColumn(item -> {
-            return !item.getDisplayName().isEmpty() ? item.getDisplayName() : item.getName();
-        })
+        tblClasses.addColumn(ClassMetadataLight::toString)
                 .setHeader(String.format("%s", ts.getTranslatedString("module.templateman.clases")))
                 .setKey(ts.getTranslatedString("module.general.labels.name"));
 
@@ -371,7 +371,6 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
                 btnAddTemplate.setEnabled(false);
                 btnRemoveTemplate.setEnabled(false);
             }
-
         });
         //define listers and data providers
         try {
@@ -390,6 +389,10 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
      */
     private void buildClasessItemsGrid() throws MetadataObjectNotFoundException {
         List<ClassMetadataLight> allClassesLight = mem.getAllClassesLight(false, false);
+        //order alphabetically
+        allClassesLight.stream().sorted(Comparator.comparing(ClassMetadataLight::toString))
+                .collect(Collectors.toList());
+
         this.classesDataProvider = new ListDataProvider<>(allClassesLight);
         tblClasses.setDataProvider(classesDataProvider);
 
@@ -453,7 +456,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
             this.deleteTemplateVisualAction.getVisualComponent(new ModuleActionParameterSet(
                     new ModuleActionParameter("templateItem", selectedTemplate),
                     new ModuleActionParameter("commandClose", deleteTemplateAction)
-            )).open();            
+            )).open();
         });
 
         tblTemplates.setHeightFull();
@@ -572,6 +575,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
                 .setHeader(String.format("%s", ts.getTranslatedString("module.templateman.items")));
 
         tblChildsTemplate.addComponentColumn(this::buildChildTemplateItemsOptions);
+        tblChildsTemplate.addSelectionListener(this::editStructureItem);        
         this.lytvChildTemplate.add(tblChildsTemplate, mnuAddChildTemplateItems);
     }
 
@@ -633,11 +637,12 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
         smnuRemoveChildsTemplateItem.getElement().setProperty("title",
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.deleteItem-template.description")));
 
+        /*
         MenuItem smnuEditChildsTemplateItem = menuBar.addItem(
                 new Icon(VaadinIcon.EDIT), e -> editStructureItem(selectedItem));
         smnuEditChildsTemplateItem.getElement().setProperty("title",
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.editItem-template.description")));
-
+         */
         return menuBar;
     }
 
@@ -694,16 +699,31 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
     /**
      * Creates a new Structure item, based in allowed content.
      *
-     * @param object;TemplateObjectLight; parent structure item
+     * @param se;SelectionEvent; event of click in expandable item grid
      */
-    private void editStructureItem(TemplateObjectLight object) {
-        this.selectedTemplateItem = object;
-        editChild = true;
-        updatePropertySheet(object);
+    private void editStructureItem(SelectionEvent<Grid<TemplateObjectLight>, TemplateObjectLight> se) {
+        TemplateObjectLight templateObjectLight = se.getFirstSelectedItem().orElse(null);
+        if (templateObjectLight != null) {
+            editChild = true;
+            updatePropertySheet(templateObjectLight);
+        }
     }
 
     /**
-     * Creates a new template item, based in allowed content. 
+     * Creates a new Structure item, based in allowed content.
+     *
+     * @param object;TemplateObjectLight; parent structure item
+     */
+    private void editStructureItem(TemplateObjectLight templateObjectLight) {
+        
+        if (templateObjectLight != null) {
+            editChild = true;
+            updatePropertySheet(templateObjectLight);
+        }
+    }
+
+    /**
+     * Creates a new template item, based in allowed content.
      */
     private void newStructureItem() {
         newStructureItem(null, false);
@@ -738,7 +758,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
 
     /**
      *
-     * Creates massive template items, based in allowed content. 
+     * Creates massive template items, based in allowed content.
      */
     private void newBulkStructureItem() {
         newBulkStructureItem(null, false);
@@ -778,7 +798,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
     private void newStructureSpecialItem() {
         newStructureSpecialItem(null, false);
     }
-    
+
     /**
      * Creates a new template special item, based in allowed content. if element
      * is first in hierarchy , template element is take as father, if no it is a
@@ -813,7 +833,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
     private void newBulkStructureSpecialItem() {
         newBulkStructureSpecialItem(null, false);
     }
-    
+
     /**
      *
      * Creates massive template special item, based in allowed content. if
@@ -856,7 +876,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
                 new ModuleActionParameter("templateItem", object),
                 new ModuleActionParameter("className", object.getName()),
                 new ModuleActionParameter("commandClose", deleteChildAction)
-        )).open();               
+        )).open();
     }
 
     /**
@@ -914,6 +934,9 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
             protected Stream<TemplateObjectLight> fetchChildrenFromBackEnd(HierarchicalQuery<TemplateObjectLight, Void> query) {
                 //load normal and special children and gorus both to be display
                 if (query.getParent() != null) {
+                    //update property sheet
+                    editStructureItem(query.getParent());
+                    
                     List<TemplateObjectLight> allInnerChildsTemplateLight = new ArrayList<>();
                     allInnerChildsTemplateLight.addAll(aem.getTemplateElementChildren(query.getParent().getClassName(), query.getParent().getId()));
                     allInnerChildsTemplateLight.addAll(aem.getTemplateSpecialElementChildren(query.getParent().getClassName(), query.getParent().getId()));
@@ -963,4 +986,5 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
         this.newBulkTemplateSpecialItemVisualAction.unregisterListener(this);
         this.deleteTemplateSubItemVisualAction.unregisterListener(this);
     }
+
 }

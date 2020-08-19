@@ -115,7 +115,7 @@ public class NewBulkTemplateItemVisualAction extends AbstractVisualAction<Dialog
                                 new ModuleActionParameter<>("templateElementName", txtName.getValue())
                         ));
                         fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
-                                ts.getTranslatedString("module.templateman.actions.new-template-item.ui.item-created-success"), NewTemplateAction.class));
+                                ts.getTranslatedString("module.templateman.actions.new-template-item.multiple-item-created-success"), NewTemplateAction.class));
                         wdwNewListTypeItem.close();
                         //refresh related grid
                         getCommandClose().execute();

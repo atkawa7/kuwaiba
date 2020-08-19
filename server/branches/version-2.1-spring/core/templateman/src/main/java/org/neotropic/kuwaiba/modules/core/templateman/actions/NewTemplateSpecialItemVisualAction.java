@@ -34,6 +34,7 @@ import org.neotropic.kuwaiba.core.apis.integration.modules.actions.AbstractActio
 import org.neotropic.kuwaiba.core.apis.integration.modules.actions.AbstractVisualAction;
 import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
@@ -156,7 +157,7 @@ public class NewTemplateSpecialItemVisualAction extends AbstractVisualAction<Dia
             
             wdwNewListTypeItem.add(lytMain);
             return wdwNewListTypeItem;
-        } catch (Exception ex) {
+        } catch (MetadataObjectNotFoundException ex) {
             fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_ERROR,
                     ex.getMessage(), NewTemplateAction.class));
             return new Dialog(new Label(ex.getMessage()));

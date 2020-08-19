@@ -115,7 +115,7 @@ public class NewBulkTemplateSpecialItemVisualAction extends AbstractVisualAction
                                 new ModuleActionParameter<>("tsElementName", txtName.getValue())
                         ));
                         fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
-                                ts.getTranslatedString("module.templateman.actions.new-template-specialitem.ui.item-created-success"), NewTemplateAction.class));
+                                ts.getTranslatedString("module.templateman.actions.new-template-specialitem.multiple.item-created-success"), NewTemplateAction.class));
                         wdwNewListTypeItem.close();
                         //refresh related grid
                         commandClose.execute();

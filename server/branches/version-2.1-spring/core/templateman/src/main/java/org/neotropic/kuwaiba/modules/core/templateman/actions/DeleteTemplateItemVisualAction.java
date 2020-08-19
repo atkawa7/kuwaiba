@@ -81,7 +81,7 @@ public class DeleteTemplateItemVisualAction extends AbstractVisualAction<Dialog>
                             new ModuleActionParameter<>("oid", seletedTemplateItem.getId())));
 
                     fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
-                            ts.getTranslatedString("module.templateman.actions.delete-template-item.ui.item-created-success"), DeleteTemplateAction.class));
+                            ts.getTranslatedString("module.templateman.actions.delete-template.ui.item-created-success"), DeleteTemplateAction.class));
                     wdwDeleteTemplateItem.close();
                     //refresh related grid
                     getCommandClose().execute();
