@@ -3859,7 +3859,8 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
                                                        atrbMtdt.isMandatory(),
                                                        atrbMtdt.isMultiple(),
                                                        atrbMtdt.getDescription(), 
-                                                       atrbMtdt.getOrder());
+                                                       atrbMtdt.getOrder(),
+                                                       atrbMtdt.isNoCopy());
             return atrbInfo;
          } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -3887,7 +3888,8 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
                                                        atrbMtdt.isMandatory(),
                                                        atrbMtdt.isMultiple(),
                                                        atrbMtdt.getDescription(), 
-                                                       atrbMtdt.getOrder());
+                                                       atrbMtdt.getOrder(),
+                                                       atrbMtdt.isNoCopy());
             return attrInfo;
 
          } catch (InventoryException ex) {

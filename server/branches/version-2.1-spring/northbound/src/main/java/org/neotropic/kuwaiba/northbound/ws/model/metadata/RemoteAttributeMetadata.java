@@ -91,7 +91,7 @@ public class RemoteAttributeMetadata implements Serializable {
     }
 
     public RemoteAttributeMetadata(String name, String displayName, String type, 
-            Boolean administrative, Boolean visible, Boolean unique, Boolean mandatory, Boolean multiple, String description, Integer order) {
+            Boolean administrative, Boolean visible, Boolean unique, Boolean mandatory, Boolean multiple, String description, Integer order, Boolean noCopy) {
         this.name = name;
         this.displayName = displayName;
         this.type = type;
@@ -102,6 +102,7 @@ public class RemoteAttributeMetadata implements Serializable {
         this.description = description;
         this.order = order;
         this.multiple = multiple;
+        this.noCopy = noCopy;
     }
 
     public RemoteAttributeMetadata(long id, String name, 
@@ -269,7 +270,7 @@ public class RemoteAttributeMetadata implements Serializable {
         for (AttributeMetadata toBeWrapped1 : toBeWrapped) 
             res.add(new RemoteAttributeMetadata(toBeWrapped1.getName(), toBeWrapped1.getDisplayName(), toBeWrapped1.getType(), 
                     toBeWrapped1.isAdministrative(), toBeWrapped1.isVisible(), toBeWrapped1.isUnique(), toBeWrapped1.isMandatory(), 
-                    toBeWrapped1.isMultiple(), toBeWrapped1.getDescription(), toBeWrapped1.getOrder()));
+                    toBeWrapped1.isMultiple(), toBeWrapped1.getDescription(), toBeWrapped1.getOrder(), toBeWrapped1.isNoCopy()));
         
         return res;
     }
