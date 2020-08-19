@@ -16,7 +16,13 @@
 
 package org.neotropic.kuwaiba.core.apis.integration.views;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,100 +31,97 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ViewRegistry {
-//    /**
-//     * The list of registered actions.
-//     */
-//    private List<AbstractVisualInventoryAction> actions;
-//    /**
-//     * All registered actions grouped by instances of what class are they applicable to.
-//     */
-//    private HashMap<String, List<AbstractVisualInventoryAction>> actionsByApplicableClass;
-//    /**
-//     * All registered actions grouped by the module they are provided by.
-//     */
-//    private HashMap<String, List<AbstractVisualInventoryAction>> actionsByModule;
-//    /**
-//     * Reference to the MetadataEntityManager to access the data model cache.
-//     */
-//    @Autowired
-//    private MetadataEntityManager mem;
-//    
-//    public ActionRegistry() {
-//        this.actions = new ArrayList<>();
-//        this.actionsByApplicableClass = new HashMap<>();
-//        this.actionsByModule = new HashMap<>();
-//    }
-//    
-//    /**
-//     * Checks what actions are associated to a given inventory class. For example, 
-//     * NewCustomer and DeleteCustomer are part of the returned list if <code>filter</code> is
-//     * GenericCustomer. Note that the difference between this method and {@link #getActionsApplicableToRecursive(java.lang.String) } is 
-//     * that this method will return the actions whose appliesTo matches exactly with the provided filter, while the latter 
-//     * might match even subclasses of the appliesTo return value.
-//     * @param filter The class to be evaluated.
-//     * @return The actions that can be executed from an instance of the given class or superclass.
-//     */
-//    public List<AbstractVisualInventoryAction> getActionsApplicableTo(String filter) {
-//        return this.actionsByApplicableClass.containsKey(filter) ? this.actionsByApplicableClass.get(filter) : new ArrayList<>();
-//    }
-//    
-//    /**
-//     * Checks what actions are associated to a given inventory class. For example, 
-//     * NewCustomer and DeleteCustomer are part of the returned list if <code>filter</code> is
-//     * CorporateCustomer.
-//     * @param filter The class to be evaluated.
-//     * @return The actions that can be executed from an instance of the given class or superclass.
-//     */
-//    public List<AbstractVisualInventoryAction> getActionsApplicableToRecursive(String filter) {
-//        return this.actions.stream().filter((anAction) -> {
-//            try {
-//                return anAction.appliesTo() == null ? false : mem.isSubclassOf(filter, anAction.appliesTo());
-//            } catch (MetadataObjectNotFoundException ex) { // No existing (or cached) classes will be ignored
-//                return false;
-//            }
-//        }).collect(Collectors.toList());
-//    }
-//    
-//    
-//    
-//    /**
-//     * Adds an action to the registry.This method also feeds the action map cache structure, which is a hash map which keys are 
-// all the possible super classes the actions are applicable to and the keys are the corresponding actions.
-//     * @param moduleId The id of the module this action is provided by. The id is returned by AbstractModule.getId().
-//     * @param action The action to be added. Duplicated action ids are allowed, as long as the duplicate can be used 
-//     * to overwrite default behaviors, for example, if an object (say a connection) has a specific delete routine  that should 
-//     * be executed instead of the general purpose delete action, both actions should have the same id, and the renderer should 
-//     * override the default action with the specific one.
-//     */
-//    public void registerAction(String moduleId, AbstractVisualInventoryAction action) {
-//        this.actions.add(action);
-//        
-//        if (!this.actionsByModule.containsKey(moduleId))
-//            this.actionsByModule.put(moduleId, new ArrayList<>());
-//        this.actionsByModule.get(moduleId).add(action);
-//
-//        String applicableTo = action.appliesTo() == null ? "" : action.appliesTo(); // Actions not applicable to any particular class are classified under an empty string key
-//        
-//        if (!this.actionsByApplicableClass.containsKey(applicableTo))
-//            this.actionsByApplicableClass.put(applicableTo, new ArrayList<>());
-//        
-//        this.actionsByApplicableClass.get(applicableTo).add(action);
-//    }
-//    
-//    /**
-//     * Returns all registered actions.
-//     * @return All registered actions.
-//     */
-//    public List<AbstractVisualInventoryAction> getAllActions() {
-//        return this.actions;
-//    }
-//
-//    /**
-//     * Returns all actions registered by a particular module.
-//     * @param moduleId The id of the module. Usually the strings that comes from calling AbstractModule.getId().
-//     * @return The list of actions, even if none registered for the given module (in that case, an empty array will be returned).
-//     */
-//    public List<AbstractVisualInventoryAction> getActionsForModule(String moduleId) {
-//        return this.actionsByModule.containsKey(moduleId) ? this.actionsByModule.get(moduleId) : new ArrayList<>();
-//    }
+    /**
+     * The list of registered detailed views.
+     */
+    private List<AbstractDetailedView> detailedViews;
+    /**
+     * All registered views grouped by instances of what class are they applicable to.
+     */
+    private HashMap<String, List<AbstractDetailedView>> viewsByApplicableClass;
+    /**
+     * All registered views grouped by the module they are provided by.
+     */
+    private HashMap<String, List<AbstractDetailedView>> viewsByModule;
+    /**
+     * Reference to the MetadataEntityManager to access the data model cache.
+     */
+    @Autowired
+    private MetadataEntityManager mem;
+    
+    public ViewRegistry() {
+        this.detailedViews = new ArrayList<>();
+        this.viewsByApplicableClass = new HashMap<>();
+        this.viewsByModule = new HashMap<>();
+    }
+    
+    /**
+     * Checks what views are associated to a given inventory class. For example, a rack view 
+     * NewCustomer and DeleteCustomer are part of the returned list if <code>filter</code> is
+     * GenericCustomer. Note that the difference between this method and {@link #getActionsApplicableToRecursive(java.lang.String) } is 
+     * that this method will return the actions whose appliesTo matches exactly with the provided filter, while the latter 
+     * might match even subclasses of the appliesTo return value.
+     * @param filter The class to be evaluated.
+     * @return The actions that can be executed from an instance of the given class or superclass.
+     */
+    public List<AbstractDetailedView> getDetailedViewsApplicableTo(String filter) {
+        return this.viewsByApplicableClass.containsKey(filter) ? this.viewsByApplicableClass.get(filter) : new ArrayList<>();
+    }
+    
+    /**
+     * Checks what actions are associated to a given inventory class. For example, 
+     * NewCustomer and DeleteCustomer are part of the returned list if <code>filter</code> is
+     * CorporateCustomer.
+     * @param filter The class to be evaluated.
+     * @return The actions that can be executed from an instance of the given class or superclass.
+     */
+    public List<AbstractDetailedView> getDetailedViewsApplicableToRecursive(String filter) {
+        return this.detailedViews.stream().filter((anAction) -> {
+            try {
+                return anAction.appliesTo() == null ? false : mem.isSubclassOf(filter, anAction.appliesTo());
+            } catch (MetadataObjectNotFoundException ex) { // No existing (or cached) classes will be ignored
+                return false;
+            }
+        }).collect(Collectors.toList());
+    }
+    
+    
+    
+    /**
+     * Adds a detailed view to the registry. This method also feeds the detailed view map cache structure, which is a hash map which keys are 
+     * all the possible super classes the detailed views are applicable to and the keys are the corresponding detailed views.
+     * @param moduleId The id of the module this detailed view is provided by. The id is returned by AbstractModule.getId().
+     * @param view The action to be added. Duplicated view ids are not allowed.
+     */
+    public void registerView(String moduleId, AbstractDetailedView view) {
+        this.detailedViews.add(view);
+        
+        if (!this.viewsByModule.containsKey(moduleId))
+            this.viewsByModule.put(moduleId, new ArrayList<>());
+        this.viewsByModule.get(moduleId).add(view);
+
+        String applicableTo = view.appliesTo() == null ? "" : view.appliesTo(); 
+        
+        if (!this.viewsByApplicableClass.containsKey(applicableTo))
+            this.viewsByApplicableClass.put(applicableTo, new ArrayList<>());
+        
+        this.viewsByApplicableClass.get(applicableTo).add(view);
+    }
+    
+    /**
+     * Returns all registered detailed views.
+     * @return All registered detailed views.
+     */
+    public List<AbstractDetailedView> getAllDetailedViews() {
+        return this.detailedViews;
+    }
+
+    /**
+     * Returns all detailed views registered by a particular module.
+     * @param moduleId The id of the module. Usually the strings that comes from calling AbstractModule.getId().
+     * @return The list of detailed views, even if none registered for the given module (in that case, an empty array will be returned).
+     */
+    public List<AbstractDetailedView> getActionsForModule(String moduleId) {
+        return this.viewsByModule.containsKey(moduleId) ? this.viewsByModule.get(moduleId) : new ArrayList<>();
+    }
 }

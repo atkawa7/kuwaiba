@@ -40,10 +40,8 @@ import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionComplet
 import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionRegistry;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionParameter;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionParameterSet;
-import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
-import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.DeleteCustomerVisualAction;

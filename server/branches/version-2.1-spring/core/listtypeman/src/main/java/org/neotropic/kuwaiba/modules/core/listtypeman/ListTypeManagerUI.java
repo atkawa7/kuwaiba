@@ -257,7 +257,7 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
     }
 
     private void buildListTypeGrid() throws InvalidArgumentException, MetadataObjectNotFoundException {
-        //build list type grid
+        // Build list type grid
         List<ClassMetadataLight> listTypes = mem.getSubClassesLight(Constants.CLASS_GENERICOBJECTLIST, false, false);
         ListDataProvider<ClassMetadataLight> dataProvider = new ListDataProvider<>(listTypes);
         tblListTypes.setDataProvider(dataProvider);
@@ -292,9 +292,9 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
     }
     
     /**
-     * create a new input field to filter list types in the header row
-     * @param dataProvider data provider to filter
-     * @return the new input field filter
+     * Create a new input field to filter list types in the header row.
+     * @param dataProvider Data provider to filter.
+     * @return The new input field filter.
      */
     private TextField createTxtFieldListTypeName(ListDataProvider<ClassMetadataLight> dataProvider) {
         TextField txtListTypeName = new TextField(ts.getTranslatedString("module.general.labels.filter"), ts.getTranslatedString("module.general.labels.filterplaceholder"));
@@ -311,7 +311,6 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
         
         Button btnUsages = new Button(ts.getTranslatedString("module.listtypeman.uses"),
                 new Icon(VaadinIcon.SPLIT), ev -> {
-
             try {
                 List<BusinessObjectLight> listTypeItemUses = aem.getListTypeItemUses(listTypeItem.getClassName(), listTypeItem.getId(), -1);
                 

@@ -1584,11 +1584,11 @@ public interface ApplicationEntityManager extends AbstractEntityManager {
      */
     public ConfigurationVariable getConfigurationVariable(String name) throws ApplicationObjectNotFoundException;
     /**
-     * Retrieves only the value of a configuration variable. Masked values are returned as null. Unexisting variables will be returned as null.
-     * @param name The name of the variable. Masked values are returned as null. Unexisting variables will be returned as null.
+     * Retrieves only the value of a configuration variable. Masked values are returned as null.
+     * @param name The name of the variable. Masked values are returned as null.
      * @return The value of the variable as a java object/data type. The numbers are returned as floats. The arrays and matrixes are returned as <code>ArrayList{@literal <String>}</code> and <code>ArrayList<ArrayList{@literal <String>}</code> instances respectively
      * @throws InvalidArgumentException If the value of the variable could not be successfully translated into a java type variable
-     * @throws org.neotropic.kuwaiba.core.apis.persistence.exceptions.ApplicationObjectNotFoundException If no configuration variable with that name could be found.
+     * @throws ApplicationObjectNotFoundException If no configuration variable with that name could be found.
      */
     public Object getConfigurationVariableValue(String name) throws InvalidArgumentException, ApplicationObjectNotFoundException;
     /**

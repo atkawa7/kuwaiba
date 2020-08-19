@@ -109,6 +109,16 @@ public interface MetadataEntityManager extends AbstractEntityManager {
             throws MetadataObjectNotFoundException;
     
     /**
+     * Retrieves the superclasses of a given class up to InventoryObject.
+     * @param className The class to be evaluated.
+     * @param includeSelf If the result should include the the very class that was provided in <code>className</code> parameter
+     * @return The list of super classes.
+     * @throws MetadataObjectNotFoundException If the class provided could not be found
+     */
+    public List<ClassMetadataLight> getSuperClassesLight(String className, boolean includeSelf) 
+            throws MetadataObjectNotFoundException;
+    
+    /**
      * Get the child count given the parent class name
      * @param className parent class Name
      * @return Count of children 

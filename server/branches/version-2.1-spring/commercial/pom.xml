@@ -8,14 +8,15 @@
     </parent>
     
     <name>Commercial Modules</name>
-    <description>Modules with licenses other than open source ones</description>
+    <description>Modules with licenses other than OSI approved</description>
     <artifactId>commercial</artifactId>
     <packaging>pom</packaging>
     <modules>
         <module>sdh</module>
         <module>ipam</module>
         <module>mpls</module>
-        <module>projects</module>
+        <module>planning</module>
         <module>ospman</module>
+        <module>impact</module>
     </modules>
 </project>

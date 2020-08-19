@@ -556,8 +556,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
     @Override
     public List<ClassMetadataLight> getSubClassesLightNoRecursive(String className, 
-            boolean includeAbstractClasses, boolean includeSelf) 
-            throws MetadataObjectNotFoundException {
+            boolean includeAbstractClasses, boolean includeSelf) throws MetadataObjectNotFoundException {
         ClassMetadata aClass = cm.getClass(className);
         if (aClass == null)
             throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.", className));
@@ -607,6 +606,29 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         }
         cm.putSubclassesNorecursive(className, subclasses);
         return classManagerResultList;
+    }
+    
+    @Override
+    public List<ClassMetadataLight> getSuperClassesLight(String className, boolean includeSelf) throws MetadataObjectNotFoundException {
+        List<ClassMetadataLight> res = new ArrayList<>();
+        String cypherQuery = "MATCH path = (aClass:classes)-[:EXTENDS*]->(topClass{name:\"" + Constants.CLASS_INVENTORYOBJECT + "\"}) "
+                + "WHERE aClass.name = {className} RETURN nodes(path) AS superClasses";
+        
+        try(Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+            HashMap<String, Object> parameters = new HashMap<>();
+            parameters.put("className", className);
+            Result result = connectionManager.getConnectionHandler().execute(cypherQuery, parameters);
+            if (!result.hasNext())
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.", className));
+            else {
+                ResourceIterator<List<Node>> superClasses = result.columnAs("superClasses");
+                superClasses.next().stream().forEach((aSuperClassNode) -> {
+                    res.add(Util.createClassMetadataLightFromNode(aSuperClassNode));
+                });
+                tx.success();
+                return res;
+            }
+        }
     }
     
     @Override
