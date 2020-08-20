@@ -72,8 +72,7 @@ public class StringProperty extends AbstractProperty<String>{
     public AbstractField getInplaceEditor() {
         if (masked) {
             PasswordField passwordField = new PasswordField();
-            passwordField.setWidthFull();
-            passwordField.setMinHeight("300px");
+            passwordField.setSizeFull();
             passwordField.setRevealButtonVisible(false);
             return passwordField;
         } else {
@@ -85,7 +84,7 @@ public class StringProperty extends AbstractProperty<String>{
 
     @Override
     public String getAsString() {
-        return getValue() == null || getValue().isEmpty() ? getDefaultValue() : getValue();
+        return getValue() == null || getValue().isEmpty() ? getDefaultValue() : masked ? "***********" : getValue();
     }
     
     @Override
