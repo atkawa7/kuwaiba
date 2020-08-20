@@ -330,6 +330,21 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         }
     }
 
+    /**
+     * Creates a new inventory object for a domain specific model (where the standard containment rules don't apply)
+     * @param className Name of the class which this object will be instantiated from
+     * @param parentClassName Parent object class name
+     * @param parentOid Parent's oid
+     * @param attributes Attributes to be set by default in the new object. It's a HashMap where the keys are the attribute names and the values, the values for such attributes.
+     * Note that binary type attributes can't be set here.
+     * @param templateId The id of the template to be used to create this object. This id was probably retrieved by {@link ApplicationEntityManager.getTemplatesForClass(String)} before. Use a null or empty string to not use a template.
+     * @return The id of the new object.
+     * @throws MetadataObjectNotFoundException Thrown if the object's class can't be found
+     * @throws BusinessObjectNotFoundException Thrown if the parent id is not found
+     * @throws OperationNotPermittedException If the update can't be performed due to a format issue
+     * @throws InvalidArgumentException If any of the attribute values has an invalid value or format.
+     * @throws ApplicationObjectNotFoundException If the specified template could not be found.
+     */
     @Override
     public String createSpecialObject(String className, String parentClassName, String parentOid, HashMap<String,String> attributes, String templateId)
             throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
@@ -346,6 +361,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         
         if (classMetadata.isAbstract())
             throw new OperationNotPermittedException("Can not create objects of abstract classes");
+        
+        if (!mem.getPossibleSpecialChildren(parentClassName).contains(classMetadata))
+            throw new OperationNotPermittedException(String.format("An instance of class %s can't be created as child of %s", className, parentClassName == null ? Constants.NODE_DUMMYROOT : parentClassName));
         
         try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             Node classNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, className);
