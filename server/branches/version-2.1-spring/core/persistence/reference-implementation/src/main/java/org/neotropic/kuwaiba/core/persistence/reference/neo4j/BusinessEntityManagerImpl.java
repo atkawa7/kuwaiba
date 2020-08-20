@@ -489,7 +489,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public String[] createBulkObjects(String className, String parentClassName, String parentOid, int numberOfObjects, String namePattern) 
+    public String[] createBulkObjects(String className, String parentClassName, String parentOid, String namePattern) 
         throws MetadataObjectNotFoundException, OperationNotPermittedException, BusinessObjectNotFoundException, InvalidArgumentException {
         
         if (parentOid == null)
@@ -533,16 +533,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             if (parentNode == null)
                 throw new BusinessObjectNotFoundException(parentClassName, parentOid);
             
-            DynamicNameGenerator dynamicName = new DynamicNameGenerator(namePattern);
-            if (dynamicName.getNumberOfDynamicNames() < numberOfObjects) {
-                throw new InvalidArgumentException("The given pattern to generate the name has "
-                        + "less possibilities that the number of objects to be created");
-            }
-            String res[] = new String[numberOfObjects];
+            DynamicNameGenerator dynamicName = new DynamicNameGenerator(namePattern);                                   
+            String res[] = new String[dynamicName.getNumberOfDynamicNames()];
             
             List<StringPair> createdMirrorPorts = new ArrayList<>();
             
-            for (int i = 0; i < numberOfObjects; i++) {
+            for (int i = 0; i < dynamicName.getNumberOfDynamicNames(); i++) {
                 Node newObject = createObject(classNode, myClass, null);
                 newObject.setProperty(Constants.PROPERTY_NAME, dynamicName.getDynamicNames().get(i));
                 
