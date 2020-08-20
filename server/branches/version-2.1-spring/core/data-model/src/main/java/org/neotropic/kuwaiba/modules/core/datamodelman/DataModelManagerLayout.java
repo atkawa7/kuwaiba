@@ -22,7 +22,6 @@ import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.StyleSheet;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -35,7 +34,7 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- *
+ * The standard layout to be applied in this module.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @StyleSheet("css/main.css")
@@ -103,7 +102,7 @@ public class DataModelManagerLayout extends FlexLayout implements RouterLayout {
     @Override
     public void onAttach(AttachEvent ev) {
         this.lytHeader.removeAll();
-        this.lytFooter.add(new Html("Copyright <a href=\"https://www.neotropic.co\" target=\"_blank\">Neotropic SAS</a> 2010 - 2020"));
+        this.lytFooter.add(new Html("<span>Copyright <a href=\"https://www.neotropic.co\" target=\"_blank\">Neotropic SAS</a> 2010 - 2020</span>"));
         
         getUI().ifPresent( ui -> { // If there isn't any active session, redirect to the login ui
             if (ui.getSession().getAttribute(Session.class) == null)

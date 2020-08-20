@@ -6993,9 +6993,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
                 artifactDefinition.getDefinition(), artifactDefinition.getPreconditionsScript(), artifactDefinition.getPostconditionsScript(), 
                 artifactDefinition.isPrintable(), artifactDefinition.getPrintableTemplate(), artifactDefinition.getExternalScripts()
             );
-                        
             remoteArtifactDefinition.setSharedInformation(artifactDefinition.getSharedInformation());
-                        
             return remoteArtifactDefinition;
             
         } catch(InventoryException ex) {
@@ -7047,17 +7045,14 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         try {
             aem.validateCall("associatePhysicalNodeToWarehouse", "127.0.0.1", sessionId);
             
-            if (mem.isSubclassOf("Warehouse", warehouseClass) || mem.isSubclassOf("VirtualWarehouse", warehouseClass)) { //NOI18N
-                
-            
+            if (mem.isSubclassOf("GenericWarehouse", warehouseClass)) { //NOI18N
                 bem.createSpecialRelationship(warehouseClass, warehouseId, objectClass, objectId, "warehouseHas", true); //NOI18N
-
                 aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), warehouseClass, warehouseId, 
                     ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
                     "warehouseHas", "", objectId, ""); //NOI18N
             }
             else
-                throw new ServerSideException(String.format("Class %s is not a Warehouse or VirtualWarehouse", warehouseClass));
+                throw new ServerSideException(String.format("Class %s is not an instance of a subclass of GenericWarehouse", warehouseClass));
             
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -7075,9 +7070,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         
         try {
             String affectedProperties = "", newValues = "";
-            
             aem.validateCall("associatesPhysicalNodeToWarehouse", "127.0.0.1", sessionId);
-            
             if (mem.isSubclassOf("Warehouse", warehouseClass) || mem.isSubclassOf("VirtualWarehouse", warehouseClass)) { //NOI18N
                 
                 for (int i = 0; i < objectId.length; i++) {
@@ -7108,11 +7101,9 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         try {
             aem.validateCall("releasePhysicalNodeFromWarehouse", "127.0.0.1", sessionId);
             bem.releaseSpecialRelationship(warehouseClass, warehouseId, targetId, "warehouseHas"); //NOI18N
-            
             aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), warehouseClass, warehouseId, 
                 ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
                 "warehouseHas", targetId, "", "Release object from service"); //NOI18N
-            
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 

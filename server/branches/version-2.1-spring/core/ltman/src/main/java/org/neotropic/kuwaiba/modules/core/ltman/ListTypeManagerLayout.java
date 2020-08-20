@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.modules.optional.serviceman;
+package org.neotropic.kuwaiba.modules.core.ltman;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
@@ -34,12 +34,12 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- *
+ * The standard layout to be applied in this module.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @StyleSheet("css/main.css")
 @StyleSheet("css/main-layout.css")
-public class ServiceManagerLayout extends FlexLayout implements RouterLayout {
+public class ListTypeManagerLayout extends FlexLayout implements RouterLayout {
     /**
      * Header component.
      */
@@ -63,7 +63,7 @@ public class ServiceManagerLayout extends FlexLayout implements RouterLayout {
     @Autowired
     private ModuleRegistry moduleRegistry;
 
-    public ServiceManagerLayout() {
+    public ListTypeManagerLayout() {
         setId("main-layout");
         setSizeFull();
         this.lytHeader = new HorizontalLayout();

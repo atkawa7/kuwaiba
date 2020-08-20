@@ -3258,7 +3258,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     // Helpers
     /**
-     * recursive method used to generate a single "class" node (see the <a href="http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_describe_the_data_model">wiki</a> for details)
+     * recursive method used to generate a single "class" node.
      * @param classNode Node representing the class to be added
      * @param paretTag Parent to attach the new class node
      */

@@ -109,7 +109,7 @@ public class MainLayout extends FlexLayout implements RouterLayout {
     @Override
     public void onAttach(AttachEvent ev) {
         this.lytHeader.removeAll();
-        this.lytFooter.add(new Html("Copyright <a href=\"https://www.neotropic.co\" target=\"_blank\">Neotropic SAS</a> 2010 - 2020"));
+        this.lytFooter.add(new Html("<span>Copyright <a href=\"https://www.neotropic.co\" target=\"_blank\">Neotropic SAS</a> 2010 - 2020</span>"));
         
         getUI().ifPresent( ui -> { // If there isn't any active session, redirect to the login ui
             if (ui.getSession().getAttribute(Session.class) == null)

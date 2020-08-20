@@ -5089,10 +5089,10 @@ public interface KuwaibaSoapWebService {
         
         // <editor-fold defaultstate="collapsed" desc="Warehouse Module">
         /**
-         * Gets the warehouse module root pools
-         * @param sessionId Session token
-         * @return the warehouse module root pools
-         * @throws ServerSideException If the class Warehouse or VirtualWatehouse not exist
+         * Gets the warehouse module root pools.
+         * @param sessionId Session token.
+         * @return the warehouse module root pools.
+         * @throws ServerSideException If the class GenericWarehouse does not exist.
          */
         @WebMethod(operationName = "getWarehouseRootPools")
         public List<RemotePool> getWarehouseRootPools(
