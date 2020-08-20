@@ -1997,7 +1997,6 @@ public interface KuwaibaSoapWebService {
      * @param className The class name for the new objects
      * @param parentClassName The parent class name for the new objects
      * @param parentOid The object id of the parent
-     * @param numberOfObjects Number of objects to be created
      * @param namePattern A pattern to create the names for the new objects
      * @param sessionId Session id token
      * @return A list of ids for the new objects
@@ -2013,7 +2012,6 @@ public interface KuwaibaSoapWebService {
         @WebParam(name = "className") String className, 
         @WebParam(name = "parentClassName") String parentClassName, 
         @WebParam(name = "parentOid") String parentOid, 
-        @WebParam(name = "numberOfObjects") int numberOfObjects, 
         @WebParam(name = "namePattern") String namePattern, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException;
     

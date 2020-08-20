@@ -2686,16 +2686,16 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     }
 
     @Override
-    public String[] createBulkObjects(String className, String parentClassName, String parentOid, int numberOfObjects, String namePattern, String sessionId) throws ServerSideException {
+    public String[] createBulkObjects(String className, String parentClassName, String parentOid, String namePattern, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
             aem.validateCall("createBulkObjects", "127.0.0.1", sessionId);
             
-            String[] newObjects = bem.createBulkObjects(className, parentClassName, parentOid, numberOfObjects, namePattern);
+            String[] newObjects = bem.createBulkObjects(className, parentClassName, parentOid, namePattern);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
-                    String.format("%s new objects of class %s", numberOfObjects, className));
+                    String.format("new objects of class %s", className));
             
             return newObjects;
 
