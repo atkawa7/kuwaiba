@@ -9,6 +9,7 @@
     <name>Physical Connections</name>
     <description>Provides tools and services that allow the creation of physical connections (optical, electrical and power-related)</description>
     <artifactId>physical-connections</artifactId>
+    <version>2.1</version>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>

@@ -417,6 +417,28 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
+    public void addSpecialObjectToObject(String specialObjectClass, String specialObjectId, String objectClass, String objectId) 
+        throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException {
+        if (specialObjectId == null)
+            throw new BusinessObjectNotFoundException(specialObjectClass, specialObjectId);
+        if (objectId == null)
+            throw new BusinessObjectNotFoundException(objectClass, objectId);
+        if (specialObjectId.equals(objectId))
+            throw new OperationNotPermittedException("An object can not be related to itself");
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+            Node specialObjectNode = getInstanceOfClass(specialObjectClass, specialObjectId);
+            for (Relationship rel : specialObjectNode.getRelationships(RelTypes.RELATED_TO_SPECIAL)) {
+                String otherNodeUuid = rel.getOtherNode(specialObjectNode).hasProperty(Constants.PROPERTY_UUID) ? (String) rel.getOtherNode(specialObjectNode).getProperty(Constants.PROPERTY_UUID) : null;
+                
+                if (otherNodeUuid != null && otherNodeUuid.equals(objectId))
+                    throw new OperationNotPermittedException("These elements are already related");
+            }
+            Node objectNode = getInstanceOfClass(objectClass, objectId);
+            specialObjectNode.createRelationshipTo(objectNode, RelTypes.CHILD_OF_SPECIAL);
+        }            
+    }
+    
+    @Override
     public String createHeadlessObject(String className, HashMap<String, String> attributes, String templateId)
             throws OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
         

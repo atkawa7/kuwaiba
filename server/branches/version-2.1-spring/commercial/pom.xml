@@ -17,6 +17,7 @@
         <module>mpls</module>
         <module>planning</module>
         <module>ospman</module>
+        <module>warehousesman</module>
         <module>impact</module>
     </modules>
 </project>

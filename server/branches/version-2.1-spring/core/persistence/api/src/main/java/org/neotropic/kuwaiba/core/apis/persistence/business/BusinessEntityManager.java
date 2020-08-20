@@ -93,6 +93,16 @@ public interface BusinessEntityManager extends AbstractEntityManager {
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, ApplicationObjectNotFoundException;
     
     /**
+     * Adds an special object to an object
+     * (specialObject)-[CHILD_OF_SPECIAL]->(object)
+     * @param specialObjectClass Special object class name
+     * @param specialObjectId Special Object Id
+     * @param objectClass Object class
+     * @param objectId Object id
+     */
+    public void addSpecialObjectToObject(String specialObjectClass, String specialObjectId, String objectClass, String objectId) 
+        throws BusinessObjectNotFoundException,OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException;
+    /**
      * Creates an object without parent. This might be particularly useful for complex models. Use it carefully to avoid leaving orphan objects. 
      * Always provide custom methods to delete 
      * @param className The class name of the object to be created.

@@ -19,6 +19,7 @@ package org.neotropic.kuwaiba.northbound.ws;
 import com.neotropic.kuwaiba.modules.commercial.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.commercial.sdh.SDHPosition;
 import com.neotropic.kuwaiba.modules.commercial.sdh.persistence.SdhService;
+import com.neotropic.kuwaiba.modules.commercial.warehouses.persistence.WarehousesService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -77,6 +78,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLightL
 import org.neotropic.kuwaiba.core.apis.persistence.business.Contact;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.AttributeMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
@@ -167,7 +169,9 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     private SdhService sdhService;
     @Autowired
     private PhysicalConnectionsService physicalConnectionsService;
-        
+    @Autowired
+    private WarehousesService warehouseService;
+    
     @Override
     public RemoteSession createSession(String username, String password, int sessionType) throws ServerSideException {
         try {
@@ -7024,7 +7028,16 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
 
     @Override
     public List<RemotePool> getWarehouseRootPools(String sessionId) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (bem == null || aem == null)
+            throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
+        try {
+            aem.validateCall("getWarehouseRootPools", "127.0.0.1", sessionId);
+            List<RemotePool> rootPools = new ArrayList();
+            warehouseService.getWarehouseRootPools().forEach(rootPool -> rootPools.add(new RemotePool(rootPool)));
+            return rootPools;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getLocalizedMessage());
+        }
     }
 
     @Override
