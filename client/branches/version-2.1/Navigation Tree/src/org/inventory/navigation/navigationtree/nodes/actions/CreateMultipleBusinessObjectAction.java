@@ -67,28 +67,14 @@ public final class CreateMultipleBusinessObjectAction extends GenericObjectNodeA
         JTextField txtNamePattern = new JTextField();
         txtNamePattern.setName("txtNamePattern"); //NOI18N
         txtNamePattern.setColumns(20);
-        
-        JSpinner spinnerNumberOfObjects = new JSpinner();
-        spinnerNumberOfObjects.setName("spinnerNumberOfObjects"); //NOI18N
-        spinnerNumberOfObjects.setValue(1);
-        
+                
         JComplexDialogPanel saveDialog = new JComplexDialogPanel(
-            new String[] {"Name Pattern", "Number of Objects"}, new JComponent[] {txtNamePattern, spinnerNumberOfObjects});
+            new String[] {"Name Pattern"}, new JComponent[] {txtNamePattern});
         
         if (JOptionPane.showConfirmDialog(null, saveDialog, 
                 "New Multiple Objects of [" + ((JMenuItem) e.getSource()).getName() + "]", 
                 JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             String namePattern = ((JTextField)saveDialog.getComponent("txtNamePattern")).getText();
-            int numberOfObjects = 0;
-            Object spinnerValue= ((JSpinner)saveDialog.getComponent("spinnerNumberOfObjects")).getValue();
-            if (spinnerValue instanceof Integer) {
-                numberOfObjects = (Integer) spinnerValue;
-                if (numberOfObjects <= 0) {
-                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                        NotificationUtil.ERROR_MESSAGE, "The number of objects must be greater than 0");
-                    return;
-                }
-            }
             
             AbstractNode node = Utilities.actionsGlobalContext().lookup(RootObjectNode.class);
             if (node == null)
@@ -98,7 +84,6 @@ public final class CreateMultipleBusinessObjectAction extends GenericObjectNodeA
                 ((JMenuItem) e.getSource()).getName(), 
                 node instanceof RootObjectNode ? null : ((ObjectNode) node).getObject().getClassName(), 
                 node instanceof RootObjectNode ? "-1" : ((ObjectNode) node).getObject().getId(), 
-                numberOfObjects, 
                 namePattern);
             
             if (newObjects == null)
