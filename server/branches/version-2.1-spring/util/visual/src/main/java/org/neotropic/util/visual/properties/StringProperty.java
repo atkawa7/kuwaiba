@@ -16,6 +16,7 @@
 package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
@@ -27,6 +28,8 @@ import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
  */
 public class StringProperty extends AbstractProperty<String>{
 
+    private boolean masked = false;
+    
     public StringProperty(String name, String displayName, String description, String value) {
         super(name, displayName, description, value);
         setType(Constants.DATA_TYPE_STRING);
@@ -37,12 +40,27 @@ public class StringProperty extends AbstractProperty<String>{
         setType(Constants.DATA_TYPE_STRING);
     }
     
+    public StringProperty(String name, String displayName, String description, String value, boolean readOnly, boolean masked) {
+        super(name, displayName, description, value, readOnly);
+        setType(Constants.DATA_TYPE_STRING);
+        this.masked = masked;
+    }
+    
     @Override
     public AbstractField getAdvancedEditor() {
-        TextArea txtArea = new TextArea(this.getName(), this.getValue(), "...");  
-        txtArea.setWidthFull();
-        txtArea.setMinHeight("300px");
-        return txtArea;
+        if (masked) {
+            PasswordField passwordField = new PasswordField(this.getName(), "...");
+            passwordField.setWidthFull();
+            passwordField.setValue(this.getValue());
+            passwordField.setMinHeight("300px");
+            passwordField.setRevealButtonVisible(false);
+            return passwordField;
+        } else {
+            TextArea txtArea = new TextArea(this.getName(), this.getValue(), "...");  
+            txtArea.setWidthFull();
+            txtArea.setMinHeight("300px");
+            return txtArea;
+        }
     }
 
     @Override
@@ -52,9 +70,17 @@ public class StringProperty extends AbstractProperty<String>{
 
     @Override
     public AbstractField getInplaceEditor() {
-        TextField txtPropertyEditor = new TextField();
-        txtPropertyEditor.setSizeFull();
-        return txtPropertyEditor;
+        if (masked) {
+            PasswordField passwordField = new PasswordField();
+            passwordField.setWidthFull();
+            passwordField.setMinHeight("300px");
+            passwordField.setRevealButtonVisible(false);
+            return passwordField;
+        } else {
+            TextField txtPropertyEditor = new TextField();
+            txtPropertyEditor.setSizeFull();
+            return txtPropertyEditor;
+        }
     }
 
     @Override
