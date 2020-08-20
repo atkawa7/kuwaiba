@@ -125,7 +125,6 @@ public interface BusinessEntityManager extends AbstractEntityManager {
      * @param className The class name for the new objects
      * @param parentClassName The parent class name for the new objects
      * @param parentOid The object id of the parent
-     * @param numberOfObjects Number of objects to be created
      * @param namePattern A pattern to create the names for the new objects
      * @return An arrays of ids for the new objects
      * @throws MetadataObjectNotFoundException If the className or the parentClassName can not be found.
@@ -135,7 +134,7 @@ public interface BusinessEntityManager extends AbstractEntityManager {
      *                                        If the className is not in design or are abstract.
      *                                        If the className is not an InventoryObject.
      */
-    public String[] createBulkObjects(String className, String parentClassName, String parentOid, int numberOfObjects, String namePattern) 
+    public String[] createBulkObjects(String className, String parentClassName, String parentOid, String namePattern) 
         throws MetadataObjectNotFoundException, OperationNotPermittedException, BusinessObjectNotFoundException, InvalidArgumentException;
     /**
      * Creates multiple special objects using a given name pattern
