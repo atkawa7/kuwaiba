@@ -2646,8 +2646,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public List<Pool> getPoolsInObject(String objectClassName, String objectId, String poolClass) throws BusinessObjectNotFoundException, InvalidArgumentException {
-        
+    public List<Pool> getPoolsInObject(String objectClassName, String objectId, String poolClass) throws 
+            BusinessObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException {
         try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             List<Pool> pools  = new ArrayList<>();
             Node objectNode = connectionManager.getConnectionHandler().findNode(inventoryObjectLabel, Constants.PROPERTY_UUID, objectId);
@@ -2659,8 +2659,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 if (containmentRelationship.hasProperty(Constants.PROPERTY_NAME) && 
                         Constants.REL_PROPERTY_POOL.equals(containmentRelationship.getProperty(Constants.PROPERTY_NAME))) {
                     Node poolNode = containmentRelationship.getStartNode();
-                    if (poolClass != null) { //We will return only those matching with the specified class name
-                        if (poolClass.equals((String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME)))
+                    if (poolClass != null) { // We will return only those matching with the specified class name or any of its subclasses
+                        if (mem.isSubclassOf(poolClass, (String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME)))
                             pools.add(Util.createPoolFromNode(poolNode));
                     } else
                         pools.add(Util.createPoolFromNode(poolNode));

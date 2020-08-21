@@ -903,8 +903,9 @@ public interface KuwaibaSoapWebService {
      * @param poolClass Type of the pools that are to be retrieved (that is, the class of the objects contained within the pool)
      * @param sessionId Session id.
      * @return A list of children pools.
-     * @throws ServerSideException If the user is not allowed to invoke the method
-     *                             If the parent object can not be found
+     * @throws ServerSideException If the user is not allowed to invoke the method or 
+     *                             if the parent object can not be found or 
+     *                             if the argument <code>poolClass</code> is not a valid class.
      */
     @WebMethod(operationName = "getPoolsInObject")
     public List<RemotePool> getPoolsInObject(@WebParam(name = "objectClassName")String objectClassName, 

@@ -1159,7 +1159,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         if (aem == null)
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
-            aem.validateCall("createPoolItem", "", sessionId);
+            aem.validateCall("createPoolItem", "127.0.0.1", sessionId);
             Map<String, String> attributes = IntStream.range(0, attributeNames.length).boxed()
              .collect(Collectors.toMap(i -> attributeNames[i], i -> attributeValues[i]));
             

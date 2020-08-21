@@ -923,9 +923,10 @@ public interface BusinessEntityManager extends AbstractEntityManager {
      * @return A set of pools
      * @throws BusinessObjectNotFoundException If the parent object can not be found
      * @throws InvalidArgumentException If a pool does not have uuid
+     * @throws MetadataObjectNotFoundException If the argument poolClass is not a valid class.
      */
     public List<Pool> getPoolsInObject(String objectClassName, String objectId, String poolClass) 
-        throws BusinessObjectNotFoundException, InvalidArgumentException;
+        throws BusinessObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException;
     /**
      * Retrieves the pools associated to a particular pool
      * @param parentPoolId The parent pool id
