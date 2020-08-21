@@ -2169,13 +2169,12 @@ public class CommunicationsStub {
      * @param className The class name for the new objects
      * @param parentClassName The parent class name for the new objects
      * @param parentOid The object id of the parent
-     * @param numberOfObjects Number of objects to be created
      * @param namePattern A pattern to create the names for the new objects
      * @return A list of new objects or null if occur an error
      */
-    public List<LocalObjectLight> createBulkObjects(String className, String parentClassName, String parentOid, int numberOfObjects, String namePattern) {
+    public List<LocalObjectLight> createBulkObjects(String className, String parentClassName, String parentOid, String namePattern) {
         try {
-            List<String> ids = service.createBulkObjects(className, parentClassName, parentOid, numberOfObjects, namePattern, session.getSessionId());
+            List<String> ids = service.createBulkObjects(className, parentClassName, parentOid, namePattern, session.getSessionId());
             
             List<LocalObjectLight> newObjects = new ArrayList<>();
             
