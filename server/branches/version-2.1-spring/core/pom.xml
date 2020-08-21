@@ -22,5 +22,6 @@
         <module>navigation</module>
         <module>Visualization</module>
         <module>templateman</module>
+        <module>configman</module>
     </modules>
 </project>

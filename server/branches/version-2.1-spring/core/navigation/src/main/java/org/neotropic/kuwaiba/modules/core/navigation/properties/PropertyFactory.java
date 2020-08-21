@@ -15,13 +15,12 @@
  */
 package org.neotropic.kuwaiba.modules.core.navigation.properties;
 
-import groovyjarjarantlr4.v4.tool.Attribute;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.application.ConfigurationVariable;
 import org.neotropic.kuwaiba.core.apis.persistence.application.TemplateObject;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObject;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
@@ -358,6 +357,37 @@ public class PropertyFactory {
                 readOnlyAttribute);
         objectProperties.add(property);
 
+        return objectProperties;
+    }
+    
+        public static List<AbstractProperty> propertiesFromConfigurationVariable(ConfigurationVariable configurationVariable){
+        ArrayList<AbstractProperty> objectProperties = new ArrayList<>();
+        AbstractProperty property;
+        
+        property = new StringProperty(Constants.PROPERTY_NAME,
+                                      Constants.PROPERTY_NAME, Constants.PROPERTY_NAME, 
+                                      configurationVariable.getName()==null || configurationVariable.getName().isEmpty() ?
+                                            AbstractProperty.NULL_LABEL : configurationVariable.getName());
+        objectProperties.add(property);
+        
+        property = new StringProperty(Constants.PROPERTY_DESCRIPTION,
+                                      Constants.PROPERTY_DESCRIPTION, Constants.PROPERTY_DESCRIPTION, 
+                                      configurationVariable.getDescription()==null || configurationVariable.getDescription().isEmpty() ?
+                                            AbstractProperty.NULL_LABEL : configurationVariable.getDescription());
+        objectProperties.add(property);
+        
+        property = new StringProperty(Constants.PROPERTY_VALUE,
+                                      Constants.PROPERTY_VALUE, Constants.PROPERTY_VALUE, 
+                                      configurationVariable.getValueDefinition()==null || configurationVariable.getValueDefinition().isEmpty() ?
+                                            AbstractProperty.NULL_LABEL : configurationVariable.getValueDefinition(),
+                                      false, configurationVariable.isMasked());
+        objectProperties.add(property);
+        
+        property = new BooleanProperty(Constants.PROPERTY_MASKED,
+                                      Constants.PROPERTY_MASKED, Constants.PROPERTY_MASKED, 
+                                      configurationVariable.isMasked());
+        objectProperties.add(property);
+        
         return objectProperties;
     }
 }

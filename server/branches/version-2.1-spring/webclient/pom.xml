@@ -108,7 +108,12 @@
             <groupId>org.neotropic.kuwaiba</groupId>
             <artifactId>listtypeman</artifactId>
             <version>2.1</version>
-        </dependency>  
+        </dependency>
+        <dependency>
+            <groupId>org.neotropic.kuwaiba</groupId>
+            <artifactId>configman</artifactId>
+            <version>2.1</version>
+        </dependency>   
         <dependency>
             <groupId>org.neotropic.kuwaiba</groupId>
             <artifactId>templateman</artifactId>
