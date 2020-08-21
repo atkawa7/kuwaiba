@@ -19,7 +19,7 @@ package org.neotropic.kuwaiba.northbound.ws;
 import com.neotropic.kuwaiba.modules.commercial.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.commercial.sdh.SDHPosition;
 import com.neotropic.kuwaiba.modules.commercial.sdh.persistence.SdhService;
-import com.neotropic.kuwaiba.modules.commercial.warehouses.persistence.WarehousesService;
+import com.neotropic.kuwaiba.modules.commercial.whman.persistence.WarehousesService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -78,7 +78,6 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLightL
 import org.neotropic.kuwaiba.core.apis.persistence.business.Contact;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.AttributeMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
