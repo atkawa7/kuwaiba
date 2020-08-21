@@ -664,7 +664,7 @@ public class DataModelManagerUI extends VerticalLayout {
                             attributeMetadataToUpdate.setUnique((Boolean)property.getValue());
                             break;
                         case Constants.PROPERTY_MULTIPLE:
-                            attributeMetadataToUpdate.setVisible((Boolean)property.getValue());
+                            attributeMetadataToUpdate.setMultiple((Boolean)property.getValue());
                             break;                     
                         case Constants.PROPERTY_VISIBLE:
                             attributeMetadataToUpdate.setVisible((Boolean)property.getValue());
@@ -681,11 +681,16 @@ public class DataModelManagerUI extends VerticalLayout {
                     }
                                       
                     mem.setAttributeProperties(selectedClass.getId(), attributeMetadataToUpdate);
-                    updatePropertySheetClassAttributes();
+                    // Refresh Objects
+                    selectedAttribute = mem.getAttribute(selectedClass.getId(), selectedAttribute.getId());
+                    updateGridClassAttributes(selectedClass);
+                    // Update Property Sheet
+                    updatePropertySheetClassAttributes();                  
                     new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
                 }
             }catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException
                     | InvalidArgumentException ex) {
+                new SimpleNotification("", ex.getMessage()).open();
                 Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         });     
