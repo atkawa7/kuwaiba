@@ -9,7 +9,7 @@
     
     <name>Template manager</name>
     <description>Template manager</description>
-    
+    <version>2.1</version>
     <artifactId>templateman</artifactId>
     <packaging>jar</packaging>
     

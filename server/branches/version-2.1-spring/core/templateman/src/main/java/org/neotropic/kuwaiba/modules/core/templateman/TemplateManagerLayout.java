@@ -39,7 +39,8 @@ import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- *
+ * Template layout, display main page in four resizable vertical segments. 
+ * 
  * @author Hardy Ryan Chingal Martinez {@literal <ryan.chingal@kuwaiba.org>}
  */
 @StyleSheet("css/main.css")

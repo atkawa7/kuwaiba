@@ -76,8 +76,7 @@ import org.neotropic.util.visual.properties.PropertySheet;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Main for the Template manager module. This class manages how the pages
- * corresponding to different functionalities are presented in a single place.
+ * Main UI for template manager module, initialize all display elements and business logic.
  *
  * @author Hardy Ryan Chingal Martinez {@literal <ryan.chingal@kuwaiba.org>}
  */
