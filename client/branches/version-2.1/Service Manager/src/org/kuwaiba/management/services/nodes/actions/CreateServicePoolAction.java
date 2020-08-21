@@ -52,9 +52,7 @@ public class CreateServicePoolAction extends GenericInventoryAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        
         Iterator<? extends CustomerNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(CustomerNode.class).allInstances().iterator();
-            
         if (!selectedNodes.hasNext())
             return;
         

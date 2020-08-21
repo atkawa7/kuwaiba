@@ -34,12 +34,12 @@ import org.openide.util.actions.Presenter;
  *
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class NewWarehoseAction extends GenericInventoryAction implements Presenter.Popup {
+public class NewWarehouseAction extends GenericInventoryAction implements Presenter.Popup {
     
     private PoolNode poolNode;
     private CommunicationsStub com;
 
-    public NewWarehoseAction(PoolNode node) {
+    public NewWarehouseAction(PoolNode node) {
         this.poolNode = node;
         //putValue(NAME, "New Warehouse");
         com = CommunicationsStub.getInstance();

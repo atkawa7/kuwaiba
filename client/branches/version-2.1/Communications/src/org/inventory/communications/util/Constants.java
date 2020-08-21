@@ -47,6 +47,7 @@ public class Constants {
      * Name for the class InventoryObject
      */
     public static final String CLASS_INVENTORYOBJECT = "InventoryObject";
+    public static final String CLASS_CONFIGURATIONITEM = "ConfigurationItem";
     /**
      * Name for the class GenericObjectList
      */

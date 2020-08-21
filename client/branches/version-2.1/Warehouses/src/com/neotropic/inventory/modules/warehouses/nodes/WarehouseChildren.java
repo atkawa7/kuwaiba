@@ -27,7 +27,7 @@ import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
 /**
- *
+ * The children of a warehouse node.
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class WarehouseChildren extends Children.Keys<LocalPool> {
@@ -37,7 +37,7 @@ public class WarehouseChildren extends Children.Keys<LocalPool> {
         LocalObjectLight warehouse = ((WarehouseNode) this.getNode()).getObject();
         
         List<LocalPool> warehousePools = CommunicationsStub.getInstance().
-            getPoolsInObject(warehouse.getClassName(), warehouse.getId(), Constants.CLASS_INVENTORYOBJECT);
+            getPoolsInObject(warehouse.getClassName(), warehouse.getId(), Constants.CLASS_CONFIGURATIONITEM);
         
         if (warehousePools == null) {
             setKeys(Collections.EMPTY_LIST);

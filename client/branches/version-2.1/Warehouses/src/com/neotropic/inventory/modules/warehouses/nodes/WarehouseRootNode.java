@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPool;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -35,10 +36,17 @@ public class WarehouseRootNode extends AbstractNode {
     
     public static class WarehouseRootNodeChildren extends Children.Keys<LocalPool> {
         
+        @Override
         public void addNotify() {
-            List<LocalPool> pools = CommunicationsStub.getInstance().getWarehouseRootPool();
-            Collections.sort(pools);
-            setKeys(pools);
+            List<LocalPool> pools = CommunicationsStub.getInstance().getWarehouseRootPools();
+            if (pools == null) {
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                setKeys(Collections.EMPTY_LIST);
+            } else {
+                Collections.sort(pools);
+                setKeys(pools);
+            }
+            
         }
         
         @Override

@@ -5206,16 +5206,13 @@ public class CommunicationsStub {
      * Gets the warehouse module root pools
      * @return the warehouse module root pools, or null if the class Warehouse or VirtualWatehouse not exist
      */
-    public List<LocalPool> getWarehouseRootPool() {        
+    public List<LocalPool> getWarehouseRootPools() {        
         try {
             List<LocalPool> res = new ArrayList();
-            
             List<RemotePool> rootPools = service.getWarehouseRootPools(session.getSessionId());
-            
             for (RemotePool rootPool : rootPools)
                 res.add(new LocalPool(rootPool.getId(), rootPool.getName(), rootPool.getClassName(), rootPool.getDescription(), rootPool.getType()));
             return res;
-                        
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;

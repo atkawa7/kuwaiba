@@ -16,7 +16,7 @@
 package com.neotropic.inventory.modules.warehouses.nodes;
 
 import com.neotropic.inventory.modules.warehouses.nodes.actions.NewVirtualWarehouseAction;
-import com.neotropic.inventory.modules.warehouses.nodes.actions.NewWarehoseAction;
+import com.neotropic.inventory.modules.warehouses.nodes.actions.NewWarehouseAction;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalPool;
 import org.inventory.communications.util.Constants;
@@ -36,7 +36,7 @@ public class WarehouseRootPoolNode extends PoolNode {
     @Override
     public Action[] getActions(boolean context) {
         if (Constants.CLASS_WAREHOUSE.equals(getPool().getClassName()))
-            return new Action[] {new NewWarehoseAction(this)};
+            return new Action[] {new NewWarehouseAction(this)};
                 
         if (Constants.CLASS_VIRTUALWAREHOUSE.equals(getPool().getClassName()))
             return new Action[] {new NewVirtualWarehouseAction(this)};

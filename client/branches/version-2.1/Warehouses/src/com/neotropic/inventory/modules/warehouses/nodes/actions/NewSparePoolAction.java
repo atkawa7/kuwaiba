@@ -41,18 +41,18 @@ import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 
 /**
- *
+ * Creates a pool to place spare parts of the same type.
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class NewWarehousePoolAction extends GenericInventoryAction implements Presenter.Popup {
-    private static NewWarehousePoolAction instance;
+public class NewSparePoolAction extends GenericInventoryAction implements Presenter.Popup {
+    private static NewSparePoolAction instance;
         
-    private NewWarehousePoolAction() {
-////        putValue(NAME, "New Warehouse Pool");
+    private NewSparePoolAction() {
+        putValue(NAME, "New Spare Pool");
     }
     
-    public static NewWarehousePoolAction getInstance() {
-        return instance == null ? instance = new NewWarehousePoolAction() : instance;
+    public static NewSparePoolAction getInstance() {
+        return instance == null ? instance = new NewSparePoolAction() : instance;
     }
 
     @Override
@@ -80,7 +80,7 @@ public class NewWarehousePoolAction extends GenericInventoryAction implements Pr
                 new JComponent []{txtName, txtDescription});
         
         if (JOptionPane.showConfirmDialog(null, pnlMyDialog,
-                "Create Warehouse Pool",
+                "Create Spare Pool",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
             
             LocalObjectLight newPool = CommunicationsStub.getInstance().createPoolInObject(customerNode.getObject().getClassName(), 
@@ -93,15 +93,15 @@ public class NewWarehousePoolAction extends GenericInventoryAction implements Pr
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             else {
                 ((WarehouseChildren)customerNode.getChildren()).addNotify();
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, "Warehouse Pool Created");
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, "Spare Pool Created");
             }
         }
     }
     
     @Override
     public JMenuItem getPopupPresenter() {
-        JMenu mnuPossibleChildren = new JMenu("New Warehouse Pool");
-        List<LocalClassMetadataLight> items = CommunicationsStub.getInstance().getLightSubclasses(Constants.CLASS_INVENTORYOBJECT, true, true);
+        JMenu mnuPossibleChildren = new JMenu("New Spare Pool");
+        List<LocalClassMetadataLight> items = CommunicationsStub.getInstance().getLightSubclasses(Constants.CLASS_CONFIGURATIONITEM, true, true);
 
         if (items == null) {
             mnuPossibleChildren.setEnabled(false);

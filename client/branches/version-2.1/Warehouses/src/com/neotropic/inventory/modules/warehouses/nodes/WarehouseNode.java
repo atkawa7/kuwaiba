@@ -15,7 +15,7 @@
  */
 package com.neotropic.inventory.modules.warehouses.nodes;
 
-import com.neotropic.inventory.modules.warehouses.nodes.actions.NewWarehousePoolAction;
+import com.neotropic.inventory.modules.warehouses.nodes.actions.NewSparePoolAction;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
@@ -33,6 +33,6 @@ public class WarehouseNode extends ObjectNode {
     
     @Override
     public Action[] getActions(boolean context) {
-        return new Action[] {NewWarehousePoolAction.getInstance()};
+        return new Action[] {NewSparePoolAction.getInstance()};
     }
 }
