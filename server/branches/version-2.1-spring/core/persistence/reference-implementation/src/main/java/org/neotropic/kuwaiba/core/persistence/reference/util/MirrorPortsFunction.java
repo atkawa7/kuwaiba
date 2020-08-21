@@ -52,9 +52,12 @@ public class MirrorPortsFunction extends DynamicSectionFunction {
     @Override
     public List<String> getPossibleValues() {
         List<String> dynamicSections = new ArrayList();
-        dynamicSections.add(Integer.toString(parameter1));
-        dynamicSections.add(Integer.toString(parameter2));
-
+        
+        for (int c = parameter1; c <= parameter2; c++){
+            dynamicSections.add( c + "-front");
+            dynamicSections.add( c + "-back");
+        }
+        
         return dynamicSections;
     }
 }
