@@ -435,6 +435,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             }
             Node objectNode = getInstanceOfClass(objectClass, objectId);
             specialObjectNode.createRelationshipTo(objectNode, RelTypes.CHILD_OF_SPECIAL);
+            tx.success();
         }            
     }
     

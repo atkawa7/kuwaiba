@@ -34,6 +34,9 @@ public class OutsidePlantManagerModule extends AbstractCommercialModule {
      * The module id.
      */
     private static final String MODULE_ID = "ospman"; //NOI18N
+    /**
+     * Reference to the Translation Service
+     */
     @Autowired
     private TranslationService ts;
     /**

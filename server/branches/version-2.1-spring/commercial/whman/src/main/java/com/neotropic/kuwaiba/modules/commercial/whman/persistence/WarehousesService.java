@@ -25,6 +25,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentExc
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,13 +51,19 @@ public class WarehousesService {
     @Autowired
     private MetadataEntityManager mem;
     /**
+     * Reference to the Translation Service
+     */
+    @Autowired
+    private TranslationService ts;
+    /**
      * Relationship used to assign a Warehouse or VirtualWarehouse to a GenericLocation
      */
-    public static final String RELATIONSHIP_HASWAREHOUSE = "hasWarehouse";
+    public static final String RELATIONSHIP_WAREHOUSE_HAS = "warehouseHas"; //NOI18N
     
     @PostConstruct
     public void init() {
-        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_HASWAREHOUSE, "Has Warehouse");
+        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_WAREHOUSE_HAS, 
+            ts.getTranslatedString("module.warehousesman.special-relationship.warehouse-has.display-name"));
     }
         
     /**
