@@ -13,8 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.modules.commercial.ospman;
+package com.neotropic.kuwaiba.modules.commercial.ospman.helpers;
 
+import com.neotropic.kuwaiba.modules.commercial.ospman.provider.GeoCoordinate;
+import com.neotropic.kuwaiba.modules.commercial.ospman.provider.MapOverlay;
 import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.neotropic.flow.component.mxgraph.MxGraphCell;
 import com.neotropic.flow.component.mxgraph.Point;
@@ -26,23 +28,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import com.neotropic.kuwaiba.modules.commercial.ospman.provider.MapProvider;
 
 /**
- *
+ * Help to storage the overlay, source, target and edge points/coordinates
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class PolylineDrawHelper {
+public class HelperEdgeDraw {
     private MxGraphCell source;
     private List<GeoCoordinate> coordinates;
     private List<Point> points;
     private MxGraphCell target;
-    private final Map map;
+    private final MapProvider map;
     private final MapOverlay mapOverlay;
     private final MxGraph graph;
     private Registration selectListener;
-    private Consumer<PolylineDrawHelper> consumer;
+    private Consumer<HelperEdgeDraw> consumer;
     
-    public PolylineDrawHelper(Map map, MapOverlay mapOverlay, MxGraph graph, Consumer<PolylineDrawHelper> consumer) {
+    public HelperEdgeDraw(MapProvider map, MapOverlay mapOverlay, MxGraph graph, Consumer<HelperEdgeDraw> consumer) {
         Objects.requireNonNull(map);
         Objects.requireNonNull(mapOverlay);
         Objects.requireNonNull(graph);

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.modules.commercial.ospman;
+package com.neotropic.kuwaiba.modules.commercial.ospman.helpers;
 
 import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.neotropic.flow.component.mxgraph.MxGraphCell;
@@ -28,12 +28,12 @@ import java.util.Objects;
  * Wires builder helper
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class WiresHelper {
+public class HelperContainerSelector {
     private final MxGraph graph;
     private Registration selectedListener;
     private final List<MxGraphCell> edges = new ArrayList();
     
-    public WiresHelper(MxGraph graph) {
+    public HelperContainerSelector(MxGraph graph) {
         Objects.requireNonNull(graph);
         this.graph = graph;
     }

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.modules.commercial.ospman;
+package com.neotropic.kuwaiba.modules.commercial.ospman.dialogs;
 
 import com.neotropic.flow.component.paperdialog.PaperDialog;
 import com.vaadin.flow.component.button.Button;
@@ -26,8 +26,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewNode;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -39,8 +37,8 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
  * Component used for the marker rendering
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class MarkerComponentColumn extends HorizontalLayout {
-    public MarkerComponentColumn(
+public class ComponentColumnMarker extends HorizontalLayout {
+    public ComponentColumnMarker(
         TranslationService ts,
         MetadataEntityManager mem,
         BusinessObjectLight businessObject, 

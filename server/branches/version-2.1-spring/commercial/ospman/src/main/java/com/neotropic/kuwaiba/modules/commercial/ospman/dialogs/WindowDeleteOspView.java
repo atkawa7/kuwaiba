@@ -27,9 +27,9 @@ import org.neotropic.util.visual.notifications.SimpleNotification;
  * Dialog to confirm the delete of an outside plant view
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class DialogDeleteOSPView extends ConfirmDialog {
+public class WindowDeleteOspView extends ConfirmDialog {
     
-    public DialogDeleteOSPView(long ospViewId, TranslationService ts, ApplicationEntityManager aem, Command cmdDeleted) {
+    public WindowDeleteOspView(long ospViewId, TranslationService ts, ApplicationEntityManager aem, Command cmdDeleted) {
         super(ts, 
             ts.getTranslatedString("module.general.labels.confirmation"),                         
             new H3(ts.getTranslatedString("module.ospman.delete-view")), 

@@ -30,9 +30,9 @@ import org.neotropic.util.visual.notifications.SimpleNotification;
  *
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class PhysicalConnectionsDialog extends Dialog {
+public class WindowPhysicalConnections extends Dialog {
     
-    public PhysicalConnectionsDialog(BusinessObjectLight businessObject, TranslationService ts, BusinessEntityManager bem) {
+    public WindowPhysicalConnections(BusinessObjectLight businessObject, TranslationService ts, BusinessEntityManager bem) {
         VerticalLayout vlyContainer = new VerticalLayout();
 
         Grid<BusinessObjectLight> grdPort = new Grid();

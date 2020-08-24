@@ -29,6 +29,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
+import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -62,6 +63,11 @@ public class HomeUI extends VerticalLayout implements BeforeEnterObserver {
      */
     @Autowired
     private MetadataEntityManager mem;
+    /**
+     * Reference to the Physical Connections Service
+     */
+    @Autowired
+    private PhysicalConnectionsService physicalConnectionsService;
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
@@ -76,6 +82,6 @@ public class HomeUI extends VerticalLayout implements BeforeEnterObserver {
         setSpacing(false);
         
         getUI().ifPresent(ui -> ui.getPage().setTitle(ts.getTranslatedString("module.login.ui.home")));
-        add(new AllBuildingsMapWidget(aem, bem, mem, ts, resourceFactory));
+        add(new AllBuildingsMapWidget(aem, bem, mem, ts, resourceFactory, physicalConnectionsService));
     }
 }

@@ -13,8 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.modules.commercial.ospman;
+package com.neotropic.kuwaiba.modules.commercial.ospman.dialogs;
 
+import com.neotropic.kuwaiba.modules.commercial.ospman.provider.MapOverlay;
 import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.neotropic.flow.component.paperdialog.PaperDialog;
 import com.vaadin.flow.component.Component;
@@ -31,10 +32,10 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
  * Dialog to show map overlay information
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class OverlayDialog extends PaperDialog {
+public class DialogOverlay extends PaperDialog {
     private final String WIDTH = "350px";
     
-    public OverlayDialog(Component positionTarget, TranslationService ts, 
+    public DialogOverlay(Component positionTarget, TranslationService ts, 
         MapOverlay selectedOverlay,
         HashMap<MapOverlay, MxGraph> overlays, 
         Command cmdAddOverlay, 
@@ -49,7 +50,7 @@ public class OverlayDialog extends PaperDialog {
             Grid<MapOverlay> grid = new Grid();
             grid.setMinWidth(WIDTH);
             grid.setMaxWidth(WIDTH);
-            grid.addComponentColumn(overlay -> new OverlayComponentColumn(overlay, overlays.get(overlay), ts));
+            grid.addComponentColumn(overlay -> new ComponentColumnOverlay(overlay, overlays.get(overlay), ts));
             grid.setItems(overlays.keySet());
             grid.addSelectionListener(event -> {
                 if (event.getFirstSelectedItem().isPresent())

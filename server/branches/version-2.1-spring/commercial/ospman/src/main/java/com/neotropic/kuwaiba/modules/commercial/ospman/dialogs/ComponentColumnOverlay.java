@@ -13,8 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.modules.commercial.ospman;
+package com.neotropic.kuwaiba.modules.commercial.ospman.dialogs;
 
+import com.neotropic.kuwaiba.modules.commercial.ospman.provider.MapOverlay;
 import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Label;
@@ -25,8 +26,8 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
  * Component used for the map overlay rendering
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class OverlayComponentColumn extends HorizontalLayout {
-    public OverlayComponentColumn(MapOverlay overlay, MxGraph graph, TranslationService ts) {
+public class ComponentColumnOverlay extends HorizontalLayout {
+    public ComponentColumnOverlay(MapOverlay overlay, MxGraph graph, TranslationService ts) {
         Checkbox chkEnabled = new Checkbox();
         Label lblTitle = new Label();
         

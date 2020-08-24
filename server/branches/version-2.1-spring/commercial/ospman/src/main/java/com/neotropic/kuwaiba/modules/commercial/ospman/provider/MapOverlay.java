@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.modules.commercial.ospman;
+package com.neotropic.kuwaiba.modules.commercial.ospman.provider;
 
 import com.vaadin.flow.component.HasComponents;
 import java.util.function.Consumer;
@@ -43,16 +43,6 @@ public interface MapOverlay {
      * @param title map overlay title
      */
     void setTitle(String title);
-    /**
-     * Gets the map overlay scale
-     * @return the scale
-     */
-    double getScale();
-    /**
-     * Set the map overlay scale
-     * @param scale map overlay scale
-     */
-    void setScale(double scale);
     /**
      * Gets if the map overlay is enabled
      * @return enabled

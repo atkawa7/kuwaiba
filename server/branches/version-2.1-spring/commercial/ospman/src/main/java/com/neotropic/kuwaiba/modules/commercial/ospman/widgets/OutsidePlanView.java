@@ -13,14 +13,26 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.modules.commercial.ospman;
+package com.neotropic.kuwaiba.modules.commercial.ospman.widgets;
 
+import com.neotropic.kuwaiba.modules.commercial.ospman.helpers.HelperEdgeDraw;
+import com.neotropic.kuwaiba.modules.commercial.ospman.helpers.HelperContainerSelector;
+import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.DialogOverlay;
+import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.DialogOspViews;
+import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.DialogMarker;
+import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.WindowContainers;
+import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.WindowNode;
+import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.WindowEdge;
+import com.neotropic.kuwaiba.modules.commercial.ospman.provider.GeoCoordinate;
+import com.neotropic.kuwaiba.modules.commercial.ospman.provider.GeoBounds;
+import com.neotropic.kuwaiba.modules.commercial.ospman.provider.MapOverlay;
 import com.neotropic.flow.component.mxgraph.MxConstants;
 import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.neotropic.flow.component.mxgraph.MxGraphCell;
 import com.neotropic.flow.component.mxgraph.Point;
-import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.DialogDeleteOSPView;
-import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.DialogNewContainer;
+import com.neotropic.kuwaiba.modules.commercial.ospman.persistence.OutsidePlanService;
+import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.WindowDeleteOspView;
+import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.WindowNewContainer;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
@@ -78,12 +90,13 @@ import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
 import org.neotropic.util.visual.dialog.ConfirmDialog;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.views.util.UtilHtml;
+import com.neotropic.kuwaiba.modules.commercial.ospman.provider.MapProvider;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class OspView extends AbstractView<BusinessObjectLight, Component> {
+public class OutsidePlanView extends AbstractView<BusinessObjectLight, Component> {
     private final String TAG_VIEW = "view"; //NOI18N
     private final String TAG_CLASS = "class"; //NOI18N
     private final String TAG_CENTER = "center"; //NOI18N
@@ -126,7 +139,7 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
     /**
      * Map in the Outside Plant View
      */
-    private Map map;
+    private MapProvider map;
     /**
      * Reference to the translation service.
      */
@@ -165,8 +178,8 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
     private final HashMap<BusinessObjectViewEdge, MxGraphCell> mapEdgeVertex = new HashMap();
     private final HashMap<MxGraphCell, BusinessObjectViewEdge> mapVertexEdge = new HashMap();
     
-    private PolylineDrawHelper polylineDrawHelper;
-    private WiresHelper wiresHelper;
+    private HelperEdgeDraw polylineDrawHelper;
+    private HelperContainerSelector wiresHelper;
     
     enum Tool {
         Hand,
@@ -178,20 +191,23 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
     final private HashMap<Tab, Tool> tabs = new HashMap();
     final private HashMap<Tool, Tab> tools = new HashMap();
     private Tab selectedTab;
+    private final boolean viewTools;
     
-    public OspView(
+    public OutsidePlanView(
         ApplicationEntityManager aem, 
         BusinessEntityManager bem, 
         MetadataEntityManager mem, 
         TranslationService ts, 
         ResourceFactory resourceFactory,
-        PhysicalConnectionsService physicalConnectionsService) {
+        PhysicalConnectionsService physicalConnectionsService, 
+        boolean viewTools) {
         this.aem = aem;
         this.bem = bem;
         this.mem = mem;
         this.ts = ts;
         this.resourceFactory = resourceFactory;
         this.physicalConnectionsService = physicalConnectionsService;
+        this.viewTools = viewTools;
         this.overlays = new ArrayList();
         this.mapOverlays = new LinkedHashMap();
         this.graphLoaded = new HashMap();
@@ -280,7 +296,7 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
             XMLEventFactory xmlef = XMLEventFactory.newInstance();
             
             xmlew.add(xmlef.createStartElement(tagView, null, null));
-            xmlew.add(xmlef.createAttribute(attrVersion, OutsidePlantConstants.VIEW_VERSION));
+            xmlew.add(xmlef.createAttribute(attrVersion, OutsidePlanService.VIEW_VERSION));
             
             xmlew.add(xmlef.createStartElement(tagClass, null, null));
             xmlew.add(xmlef.createCharacters("OSPView")); //NOI18N
@@ -488,13 +504,13 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
         if (map != null) {
             if (selectedOverlay != null) {
                 MxGraph graph = mapOverlays.get(selectedOverlay);
-                polylineDrawHelper = new PolylineDrawHelper(map, selectedOverlay, graph, helper-> {
+                polylineDrawHelper = new HelperEdgeDraw(map, selectedOverlay, graph, helper-> {
                     BusinessObjectLight source = (BusinessObjectLight) mapVertexNode.get(helper.getSource()).getIdentifier();
                     BusinessObjectLight target = (BusinessObjectLight) mapVertexNode.get(helper.getTarget()).getIdentifier();
                     List<GeoCoordinate> coordinates = helper.getCoordintates();
                     List<Point> graphPoints = helper.getPoints();
                     
-                    DialogNewContainer dialogNewContainer = new DialogNewContainer(
+                    WindowNewContainer dialogNewContainer = new WindowNewContainer(
                         source, target, ts, aem, bem, mem, physicalConnectionsService, 
                         container -> {
                             try {
@@ -545,142 +561,145 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
             try {
                 generalMapsProvider = (String) aem.getConfigurationVariableValue("general.maps.provider");
                 Class mapClass = Class.forName(generalMapsProvider);
-                if (Map.class.isAssignableFrom(mapClass)) {
-                    map = (Map) mapClass.getDeclaredConstructor().newInstance();
+                if (MapProvider.class.isAssignableFrom(mapClass)) {
+                    map = (MapProvider) mapClass.getDeclaredConstructor().newInstance();
                     map.createComponent(aem, ts);
                     if (map.getComponent() != null) {
                         component = new Div();
                         component.setClassName("ospman-div");
-                        Tabs componentTabs = new Tabs();
-                        componentTabs.addClassName("ospman-tabs");
-                        componentTabs.setAutoselect(false);
                         
-                        Tab tabNewOspView = new Tab(new Icon(VaadinIcon.FILE_ADD));
-                        tabNewOspView.setClassName("ospman-tab");
-                        
-                        Tab tabOpenOspView = new Tab(new Icon(VaadinIcon.FILE_SEARCH));
-                        tabOpenOspView.setClassName("ospman-tab");
-                        
-                        Tab tabSaveOspView = new Tab(new Icon(VaadinIcon.SAFE));
-                        tabSaveOspView.setClassName("ospman-tab");
-                        
-                        Tab tabDeleteOspView = new Tab(new Icon(VaadinIcon.FILE_REMOVE));
-                        tabDeleteOspView.setClassName("ospman-tab");
-                        
-                        Tab tabHand = new Tab(new Icon(VaadinIcon.HAND));
-                        tabHand.setClassName("ospman-tab");
-                        
-                        Tab tabOverlay = new Tab(new Icon(VaadinIcon.SQUARE_SHADOW));
-                        tabOverlay.setClassName("ospman-tab");
-                        
-                        Tab tabMarker = new Tab(new Icon(VaadinIcon.MAP_MARKER));
-                        tabMarker.setClassName("ospman-tab");
-                        
-                        Tab tabPolyline = new Tab(new Icon(VaadinIcon.PLUG));
-                        tabPolyline.setClassName("ospman-tab");
-                        
-                        Tab tabWire = new Tab(new Icon(VaadinIcon.DOT_CIRCLE));
-                        tabWire.setClassName("ospman-tab");
-                        
-                        disableEnableTabs(
-                            Arrays.asList(tabSaveOspView, tabDeleteOspView, tabHand, tabOverlay, tabMarker, tabPolyline, tabWire),
-                            Arrays.asList()
-                        );
-                        
-                        componentTabs.add(
-                            tabNewOspView, 
-                            tabOpenOspView, 
-                            tabSaveOspView, 
-                            tabDeleteOspView, 
-                            tabHand, 
-                            tabOverlay, 
-                            tabMarker, 
-                            tabPolyline,
-                            tabWire
-                        );
-                        tabs.put(tabHand, Tool.Hand);
-                        tabs.put(tabOverlay, Tool.Overlay);
-                        tabs.put(tabMarker, Tool.Marker);
-                        tabs.put(tabPolyline, Tool.Polyline);
-                        tabs.put(tabWire, Tool.Wire);
-                        
-                        tools.put(Tool.Hand, tabHand);
-                        tools.put(Tool.Overlay, tabOverlay);
-                        tools.put(Tool.Marker, tabMarker);
-                        tools.put(Tool.Polyline, tabPolyline);
-                        tools.put(Tool.Wire, tabWire);
-                        
-                        componentTabs.addSelectedChangeListener(selectedChangeEvent -> {
-                            if (polylineDrawHelper != null)
-                                polylineDrawHelper.cancel();
-                            if (wiresHelper != null)
-                                wiresHelper.cancel();
-                            
-                            selectedTab = selectedChangeEvent.getSelectedTab();
-                            if (selectedTab != null) {
-                                if (selectedTab.equals(tabNewOspView)) {
-                                    disableEnableTabs(
-                                        Arrays.asList(tabMarker, tabPolyline),
-                                        Arrays.asList(tabSaveOspView, tabDeleteOspView, tabHand, tabOverlay, tabWire)
-                                    );
-                                    componentTabs.setSelectedTab(tabHand);
-                                } else if (selectedTab.equals(tabOpenOspView)) {
-                                    disableEnableTabs(null, Arrays.asList(
-                                        tabSaveOspView, tabDeleteOspView, tabHand, tabOverlay, tabMarker, tabPolyline, tabWire
-                                    ));
-                                    componentTabs.setSelectedTab(selectedChangeEvent.getPreviousTab());
-                                    OspViewDialog ospViewDialog = new OspViewDialog(tabOpenOspView, aem, ts, viewObject -> {
-                                        getProperties().put(Constants.PROPERTY_ID, viewObject.getId());
-                                        getProperties().put(Constants.PROPERTY_NAME, viewObject.getName());
-                                        getProperties().put(Constants.PROPERTY_DESCRIPTION, viewObject.getDescription());
-                                        buildWithSavedView(viewObject.getStructure());
-                                    });
-                                    componentTabs.add(ospViewDialog);
-                                    ospViewDialog.open();
-                                } else if (selectedTab.equals(tabSaveOspView)) {
-                                    componentTabs.setSelectedTab(selectedChangeEvent.getPreviousTab());
-                                    if (viewMap.getNodes().isEmpty()) {
-                                        new SimpleNotification(
-                                            ts.getTranslatedString("module.general.messages.information"), 
-                                            ts.getTranslatedString("module.ospman.empty-view")
-                                        ).open();
+                        if (viewTools) {
+                            Tabs componentTabs = new Tabs();
+                            componentTabs.addClassName("ospman-tabs");
+                            componentTabs.setAutoselect(false);
+
+                            Tab tabNewOspView = new Tab(new Icon(VaadinIcon.FILE_ADD));
+                            tabNewOspView.setClassName("ospman-tab");
+
+                            Tab tabOpenOspView = new Tab(new Icon(VaadinIcon.FILE_SEARCH));
+                            tabOpenOspView.setClassName("ospman-tab");
+
+                            Tab tabSaveOspView = new Tab(new Icon(VaadinIcon.SAFE));
+                            tabSaveOspView.setClassName("ospman-tab");
+
+                            Tab tabDeleteOspView = new Tab(new Icon(VaadinIcon.FILE_REMOVE));
+                            tabDeleteOspView.setClassName("ospman-tab");
+
+                            Tab tabHand = new Tab(new Icon(VaadinIcon.HAND));
+                            tabHand.setClassName("ospman-tab");
+
+                            Tab tabOverlay = new Tab(new Icon(VaadinIcon.SQUARE_SHADOW));
+                            tabOverlay.setClassName("ospman-tab");
+
+                            Tab tabMarker = new Tab(new Icon(VaadinIcon.MAP_MARKER));
+                            tabMarker.setClassName("ospman-tab");
+
+                            Tab tabPolyline = new Tab(new Icon(VaadinIcon.PLUG));
+                            tabPolyline.setClassName("ospman-tab");
+
+                            Tab tabWire = new Tab(new Icon(VaadinIcon.DOT_CIRCLE));
+                            tabWire.setClassName("ospman-tab");
+
+                            disableEnableTabs(
+                                Arrays.asList(tabSaveOspView, tabDeleteOspView, tabHand, tabOverlay, tabMarker, tabPolyline, tabWire),
+                                Arrays.asList()
+                            );
+
+                            componentTabs.add(
+                                tabNewOspView, 
+                                tabOpenOspView, 
+                                tabSaveOspView, 
+                                tabDeleteOspView, 
+                                tabHand, 
+                                tabOverlay, 
+                                tabMarker, 
+                                tabPolyline,
+                                tabWire
+                            );
+                            tabs.put(tabHand, Tool.Hand);
+                            tabs.put(tabOverlay, Tool.Overlay);
+                            tabs.put(tabMarker, Tool.Marker);
+                            tabs.put(tabPolyline, Tool.Polyline);
+                            tabs.put(tabWire, Tool.Wire);
+
+                            tools.put(Tool.Hand, tabHand);
+                            tools.put(Tool.Overlay, tabOverlay);
+                            tools.put(Tool.Marker, tabMarker);
+                            tools.put(Tool.Polyline, tabPolyline);
+                            tools.put(Tool.Wire, tabWire);
+
+                            componentTabs.addSelectedChangeListener(selectedChangeEvent -> {
+                                if (polylineDrawHelper != null)
+                                    polylineDrawHelper.cancel();
+                                if (wiresHelper != null)
+                                    wiresHelper.cancel();
+
+                                selectedTab = selectedChangeEvent.getSelectedTab();
+                                if (selectedTab != null) {
+                                    if (selectedTab.equals(tabNewOspView)) {
+                                        disableEnableTabs(
+                                            Arrays.asList(tabMarker, tabPolyline),
+                                            Arrays.asList(tabSaveOspView, tabDeleteOspView, tabHand, tabOverlay, tabWire)
+                                        );
+                                        componentTabs.setSelectedTab(tabHand);
+                                    } else if (selectedTab.equals(tabOpenOspView)) {
+                                        disableEnableTabs(null, Arrays.asList(
+                                            tabSaveOspView, tabDeleteOspView, tabHand, tabOverlay, tabMarker, tabPolyline, tabWire
+                                        ));
+                                        componentTabs.setSelectedTab(selectedChangeEvent.getPreviousTab());
+                                        DialogOspViews ospViewDialog = new DialogOspViews(tabOpenOspView, aem, ts, viewObject -> {
+                                            getProperties().put(Constants.PROPERTY_ID, viewObject.getId());
+                                            getProperties().put(Constants.PROPERTY_NAME, viewObject.getName());
+                                            getProperties().put(Constants.PROPERTY_DESCRIPTION, viewObject.getDescription());
+                                            buildWithSavedView(viewObject.getStructure());
+                                        });
+                                        componentTabs.add(ospViewDialog);
+                                        ospViewDialog.open();
+                                    } else if (selectedTab.equals(tabSaveOspView)) {
+                                        componentTabs.setSelectedTab(selectedChangeEvent.getPreviousTab());
+                                        if (viewMap.getNodes().isEmpty()) {
+                                            new SimpleNotification(
+                                                ts.getTranslatedString("module.general.messages.information"), 
+                                                ts.getTranslatedString("module.ospman.empty-view")
+                                            ).open();
+                                        }
+                                        else
+                                            saveOspView();
+                                    } else if (selectedTab.equals(tabDeleteOspView)) {
+                                        componentTabs.setSelectedTab(selectedChangeEvent.getPreviousTab());
+                                        deleteOspView();
+                                    } else if (selectedTab.equals(tabHand))
+                                        map.setHandMode();
+                                    else if (selectedTab.equals(tabOverlay)) {
+                                        componentTabs.setSelectedTab(tabHand);
+                                        DialogOverlay overlayDialog = new DialogOverlay(
+                                            tabOverlay, ts, selectedOverlay, mapOverlays, 
+                                            () -> setDrawingOverlayMode(componentTabs, tabHand, tabMarker, tabPolyline), 
+                                            overlay -> selectOverlay(overlay)
+                                        );
+                                        componentTabs.add(overlayDialog);
+                                        overlayDialog.open();
+                                    } else if (selectedTab.equals(tabMarker)) {
+                                        componentTabs.setSelectedTab(tabHand);
+                                        DialogMarker markerDialog = new DialogMarker(
+                                            tabMarker, aem, bem, mem, ts, viewMap.getNodes(), 
+                                            businessObject -> setDrawingMarkerMode(businessObject)
+                                        );
+                                        componentTabs.add(markerDialog);
+                                        markerDialog.open();
                                     }
-                                    else
-                                        saveOspView();
-                                } else if (selectedTab.equals(tabDeleteOspView)) {
-                                    componentTabs.setSelectedTab(selectedChangeEvent.getPreviousTab());
-                                    deleteOspView();
-                                } else if (selectedTab.equals(tabHand))
-                                    map.setHandMode();
-                                else if (selectedTab.equals(tabOverlay)) {
-                                    componentTabs.setSelectedTab(tabHand);
-                                    OverlayDialog overlayDialog = new OverlayDialog(
-                                        tabOverlay, ts, selectedOverlay, mapOverlays, 
-                                        () -> setDrawingOverlayMode(componentTabs, tabHand, tabMarker, tabPolyline), 
-                                        overlay -> selectOverlay(overlay)
-                                    );
-                                    componentTabs.add(overlayDialog);
-                                    overlayDialog.open();
-                                } else if (selectedTab.equals(tabMarker)) {
-                                    componentTabs.setSelectedTab(tabHand);
-                                    MarkerDialog markerDialog = new MarkerDialog(
-                                        tabMarker, aem, bem, mem, ts, viewMap.getNodes(), 
-                                        businessObject -> setDrawingMarkerMode(businessObject)
-                                    );
-                                    componentTabs.add(markerDialog);
-                                    markerDialog.open();
-                                }
-                                else if (selectedTab.equals(tabPolyline))
-                                    setDrawingPolylineMode();
-                                else if (selectedTab.equals(tabWire)) {
-                                    if (selectedOverlay != null) {
-                                        wiresHelper = new WiresHelper(mapOverlays.get(selectedOverlay));
-                                        wiresHelper.start();
+                                    else if (selectedTab.equals(tabPolyline))
+                                        setDrawingPolylineMode();
+                                    else if (selectedTab.equals(tabWire)) {
+                                        if (selectedOverlay != null) {
+                                            wiresHelper = new HelperContainerSelector(mapOverlays.get(selectedOverlay));
+                                            wiresHelper.start();
+                                        }
                                     }
                                 }
-                            }
-                        });
-                        component.add(componentTabs);
+                            });
+                            component.add(componentTabs);
+                        }
                         component.add(map.getComponent());
                     }
                 } else {
@@ -703,7 +722,7 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
                 InstantiationException | NoSuchMethodException | 
                 SecurityException | InvocationTargetException  ex) {
                 
-                Logger.getLogger(OutsidePlantView.class.toString()).log(Level.SEVERE, ex.getLocalizedMessage());
+                Logger.getLogger(OutsidePlanView.class.toString()).log(Level.SEVERE, ex.getLocalizedMessage());
                 new SimpleNotification(
                     ts.getTranslatedString("module.general.messages.error"), 
                     ts.getTranslatedString("module.general.messages.unexpected-error")
@@ -755,12 +774,12 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
                 if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
                     if (tagView.equals(reader.getName())) {
                         String version = reader.getAttributeValue(null, ATTR_VERSION);
-                        if (!OutsidePlantConstants.VIEW_VERSION.equals(version)) {
+                        if (!OutsidePlanService.VIEW_VERSION.equals(version)) {
                             new SimpleNotification(
                                 ts.getTranslatedString("module.general.messages.error"), 
                                 String.format(
                                     ts.getTranslatedString("module.ospman.view.update-view-version"), 
-                                    version, OutsidePlantConstants.VIEW_VERSION)
+                                    version, OutsidePlanService.VIEW_VERSION)
                             ).open();
                             break;
                         }
@@ -803,7 +822,7 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
             }
             reader.close();
         } catch (XMLStreamException ex) {
-            Logger.getLogger(OspView.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OutsidePlanView.class.getName()).log(Level.SEVERE, null, ex);
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"), 
                 ts.getTranslatedString("module.general.messages.unexpected-error")
@@ -826,8 +845,8 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
         this.getProperties().put(Constants.PROPERTY_NAME, "");
         this.getProperties().put(Constants.PROPERTY_DESCRIPTION, "");
         
-        Double mapCenterLatitude = OutsidePlantConstants.DEFAULT_CENTER_LATITUDE;
-        Double mapCenterLongitude = OutsidePlantConstants.DEFAULT_CENTER_LONGITUDE;
+        Double mapCenterLatitude = OutsidePlanService.DEFAULT_CENTER_LATITUDE;
+        Double mapCenterLongitude = OutsidePlanService.DEFAULT_CENTER_LONGITUDE;
         
         try {
             mapCenterLatitude = (double) aem.getConfigurationVariableValue("widgets.simplemap.centerLatitude"); //NOI18N
@@ -839,7 +858,7 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
         try {
             this.viewMap.getProperties().put("zoom", aem.getConfigurationVariableValue("widgets.simplemap.zoom")); //NOI18N
         } catch(ApplicationObjectNotFoundException | InvalidArgumentException ex) {
-            this.viewMap.getProperties().put("zoom", OutsidePlantConstants.DEFAULT_ZOOM); //NOI18N
+            this.viewMap.getProperties().put("zoom", OutsidePlanService.DEFAULT_ZOOM); //NOI18N
         }
     }
 
@@ -877,7 +896,10 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
                                 String rawStyle = getRawStyle(styles);
                                 if (rawStyle != null)
                                     vertex.setRawStyle(rawStyle);
-                                vertex.addRightClickEdgeListener(event -> openNodeDialog(newNode));
+                                vertex.addRightClickEdgeListener(event -> {
+                                    if (viewTools)
+                                        openNodeDialog(newNode);
+                                });
                                 graph.addCell(vertex);
                                 graph.refreshGraph();
                                 
@@ -943,7 +965,10 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
                                     edge.setSource(sourceBusinessObject.getId());
                                     edge.setTarget(targetBusinessObject.getId());
                                     edge.setPoints(points.toJson());
-                                    edge.addRightClickEdgeListener(event -> openEdgeDialog(newEdge));
+                                    edge.addRightClickEdgeListener(event -> {
+                                        if (viewTools)
+                                            openEdgeDialog(newEdge);
+                                    });
                                     graph.addCell(edge);
                                     graph.refreshGraph();
                                     mapEdgeVertex.put(newEdge, edge);
@@ -981,7 +1006,7 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
         
     private void openNodeDialog(BusinessObjectViewNode viewNode) {
         if (viewNode != null) {
-            DialogNode dialog = new DialogNode(viewNode, aem, bem, mem, ts, physicalConnectionsService);
+            WindowNode dialog = new WindowNode(viewNode, aem, bem, mem, ts, physicalConnectionsService);
             dialog.open();
         }
     }
@@ -994,13 +1019,13 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
                 wiresHelper.getEdges().forEach(edge -> 
                     edges.add(mapVertexEdge.get(edge))
                 );
-                DialogWires dialog = new DialogWires(edges, aem, bem, mem, ts);
+                WindowContainers dialog = new WindowContainers(edges, aem, bem, mem, ts);
                 wiresHelper.cancel();
                 wiresHelper.start();                
                 dialog.open();
                 return;
             }
-            DialogEdge dialog = new DialogEdge(viewEdge, ts);
+            WindowEdge dialog = new WindowEdge(viewEdge, ts);
             dialog.open();
         }
     }
@@ -1046,7 +1071,7 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
     }
     
     private void deleteOspView() {
-        DialogDeleteOSPView confirmDialog = new DialogDeleteOSPView((long) this.getProperties().get(Constants.PROPERTY_ID), ts, aem, null);
+        WindowDeleteOspView confirmDialog = new WindowDeleteOspView((long) this.getProperties().get(Constants.PROPERTY_ID), ts, aem, null);
         confirmDialog.open();
     }
     
@@ -1128,7 +1153,7 @@ public class OspView extends AbstractView<BusinessObjectLight, Component> {
             }
             reader.close();
         } catch (XMLStreamException ex) {
-            Logger.getLogger(OspView.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OutsidePlanView.class.getName()).log(Level.SEVERE, null, ex);
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"), 
                 ts.getTranslatedString("module.general.messages.unexpected-error")

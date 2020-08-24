@@ -15,7 +15,6 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman;
 
-import com.neotropic.kuwaiba.modules.commercial.ospman.actions.NewOspViewAction;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
@@ -39,11 +38,6 @@ public class OutsidePlantManagerUI extends VerticalLayout {
      * The main dashboard.
      */
     private OutsidePlantManagerDashboard dashboard;
-    /**
-     * Reference to the actions that creates outside plant views.
-     */
-    @Autowired
-    private NewOspViewAction actNewOspView;
     /**
      * Reference to the translation service.
      */
@@ -78,9 +72,13 @@ public class OutsidePlantManagerUI extends VerticalLayout {
     @Override
     public void onAttach(AttachEvent ev) {
         setSizeFull();
+        setMargin(false);
+        setPadding(false);
+        setSpacing(false);
+        
         getUI().ifPresent( ui -> ui.getPage().setTitle(ts.getTranslatedString("module.ospman.title")));
         
-        this.dashboard = new OutsidePlantManagerDashboard(ts, resourceFactory, aem, bem, mem, physicalConnectionService, actNewOspView);
+        this.dashboard = new OutsidePlantManagerDashboard(ts, resourceFactory, aem, bem, mem, physicalConnectionService);
         add(this.dashboard);
     }
 }

@@ -44,9 +44,9 @@ import org.neotropic.util.visual.notifications.SimpleNotification;
  * Dialog to create a new container connection
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class DialogNewContainer extends Dialog {
+public class WindowNewContainer extends Dialog {
     
-    public DialogNewContainer(BusinessObjectLight source, BusinessObjectLight target, 
+    public WindowNewContainer(BusinessObjectLight source, BusinessObjectLight target, 
         TranslationService ts, ApplicationEntityManager aem, BusinessEntityManager bem, MetadataEntityManager mem, 
         PhysicalConnectionsService physicalConnectionService, Consumer<BusinessObjectLight> containerConsumer) {
         setCloseOnEsc(false);
@@ -111,7 +111,7 @@ public class DialogNewContainer extends Dialog {
                 }
             });
             btnOk.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-            btnOk.setClassName("primary-button");
+            btnOk.setClassName("primary-button"); //NOI18N
             buttons.add(btnCancel, btnOk);
             
             content.add(formLayout, buttons);

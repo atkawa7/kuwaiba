@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.modules.commercial.ospman;
+package com.neotropic.kuwaiba.modules.commercial.ospman.dialogs;
 
 import com.neotropic.flow.component.paperdialog.PaperDialog;
 import com.vaadin.flow.component.Component;
@@ -40,12 +40,12 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
  * The dialog to show markers information
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class MarkerDialog extends PaperDialog {
+public class DialogMarker extends PaperDialog {
     private final String WIDTH = "350px";
     private final int MIN_FILTER_LENGTH = 3;    
     private LinkedHashMap<String, AbstractViewNode> nodesMap = new LinkedHashMap();
     
-    public MarkerDialog(Component positionTarget, 
+    public DialogMarker(Component positionTarget, 
         ApplicationEntityManager aem, 
         BusinessEntityManager bem,
         MetadataEntityManager mem, TranslationService ts, 
@@ -78,14 +78,14 @@ public class MarkerDialog extends PaperDialog {
         grid.addThemeVariants(GridVariant.LUMO_NO_ROW_BORDERS);
         grid.setMaxWidth(WIDTH);
         grid.setMinWidth(WIDTH);
-        grid.addComponentColumn(item -> new MarkerComponentColumn(ts, mem, item, nodesMap.get(item.getId()), this, consumerAddMarker));
+        grid.addComponentColumn(item -> new ComponentColumnMarker(ts, mem, item, nodesMap.get(item.getId()), this, consumerAddMarker));
         add(grid);
         
-        txtFilter.getStyle().set("margin", "0px");
-        txtFilter.getStyle().set("padding", "0px");
+        txtFilter.getStyle().set("margin", "0px"); //NOI18N
+        txtFilter.getStyle().set("padding", "0px"); //NOI18N
         
-        grid.getStyle().set("margin", "0px");
-        grid.getStyle().set("padding", "0px");
+        grid.getStyle().set("margin", "0px"); //NOI18N
+        grid.getStyle().set("padding", "0px"); //NOI18N
         
         txtFilter.addValueChangeListener(event -> {
             if (event.getValue().length() >= MIN_FILTER_LENGTH) {

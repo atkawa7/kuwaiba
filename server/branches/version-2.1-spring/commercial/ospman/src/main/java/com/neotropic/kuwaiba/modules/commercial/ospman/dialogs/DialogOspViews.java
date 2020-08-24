@@ -13,18 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.modules.commercial.ospman;
+package com.neotropic.kuwaiba.modules.commercial.ospman.dialogs;
 
 import com.neotropic.flow.component.paperdialog.PaperDialog;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.shared.Registration;
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ViewObject;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ViewObjectLight;
@@ -37,11 +34,11 @@ import org.neotropic.util.visual.notifications.SimpleNotification;
  *
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>} 
  */
-public class OspViewDialog extends PaperDialog {
+public class DialogOspViews extends PaperDialog {
     private final String WIDTH = "350px";
     private Registration registration;
     
-    public OspViewDialog(Component positionTarget, ApplicationEntityManager aem, TranslationService ts, Consumer<ViewObject> consumerSelectedView) {
+    public DialogOspViews(Component positionTarget, ApplicationEntityManager aem, TranslationService ts, Consumer<ViewObject> consumerSelectedView) {
         Objects.requireNonNull(positionTarget);
         try {
             positionTarget(positionTarget);

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.modules.commercial.ospman;
+package com.neotropic.kuwaiba.modules.commercial.ospman.provider;
 
 import com.vaadin.flow.component.Component;
 import java.util.List;
@@ -25,7 +25,7 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
  * Operations to implement a map in the Outside Plant module.
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public interface Map {
+public interface MapProvider {
     /**
      * Create a component that represents a map.
      * @param ts The Translation Service

@@ -13,9 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.modules.commercial.ospman;
+package com.neotropic.kuwaiba.modules.commercial.ospman.dialogs;
 
-import static com.neotropic.kuwaiba.modules.commercial.ospman.OutsidePlanService.SPECIAL_RELATIONSHIP_OSPMAN_HAS_PATH;
+import static com.neotropic.kuwaiba.modules.commercial.ospman.persistence.OutsidePlanService.SPECIAL_RELATIONSHIP_OSPMAN_HAS_PATH;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -61,7 +61,7 @@ import org.neotropic.util.visual.notifications.SimpleNotification;
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @CssImport(value = "css/custom-vaadin-dialog-overlay.css", themeFor="vaadin-dialog-overlay")
-public class DialogWires extends Dialog {
+public class WindowContainers extends Dialog {
     private final String ATTR_COLOR = "color"; //NOI18N
     private final String ATTR_VALUE = "value"; //NOI18N
     
@@ -84,7 +84,7 @@ public class DialogWires extends Dialog {
     private ClassMetadataLight containerClass;
     private TemplateObjectLight containerTemplate;
     
-    public DialogWires(List<BusinessObjectViewEdge> edges, 
+    public WindowContainers(List<BusinessObjectViewEdge> edges, 
         ApplicationEntityManager aem, BusinessEntityManager bem, MetadataEntityManager mem,
         TranslationService ts) {
         
