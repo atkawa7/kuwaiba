@@ -70,4 +70,12 @@ public class DynamicSectionFunctionFactory {
             return new MirrorPortsFunction(dynamicSection);
         return null;
     }
+    
+    public static MirrorSplicePortsFunction getMirrorSplicePortsPairing(String dynamicSection)
+            throws InvalidArgumentException {
+        
+        if (isDynamicSectionFunction(MirrorSplicePortsFunction.FUNCTION_PATTERN, dynamicSection))
+            return new MirrorSplicePortsFunction(dynamicSection);
+        return null;
+    }
 }

@@ -29,10 +29,9 @@ import java.util.regex.Pattern;
  */
 public class MirrorPortsFunction extends DynamicSectionFunction {
 
-    public static final String FUNCTION_PATTERN = "mirror\\([0-9]+,[0-9]+\\)(-splice)?";
+    public static final String FUNCTION_PATTERN = "mirror\\([0-9]+,[0-9]+\\)";
     protected int parameter1;
     protected int parameter2;
-    protected boolean isSplice;
 
     protected MirrorPortsFunction(String functionPattern, String dynamicSection) throws InvalidArgumentException {
         super(functionPattern, dynamicSection);
@@ -42,7 +41,6 @@ public class MirrorPortsFunction extends DynamicSectionFunction {
         this(FUNCTION_PATTERN, dynamicSectionFunction);
 
         Pattern pattern = Pattern.compile("[0-9]+,[0-9]+");
-        Pattern patternSplice = Pattern.compile("-splice");
         Matcher matcher = pattern.matcher(dynamicSectionFunction);
         if (matcher.find()) {
             parameter1 = Integer.parseInt(matcher.group().split(",")[0]);
@@ -52,25 +50,14 @@ public class MirrorPortsFunction extends DynamicSectionFunction {
                 throw new InvalidArgumentException("Dynamic section function malformed \"" + dynamicSectionFunction + "\" the parameter " + parameter1 + " greater than or equal to " + parameter2);
             }
         }
-        Matcher matchSplice = patternSplice.matcher(dynamicSectionFunction);
-        if (matchSplice.find()) {
-            isSplice = true;
-        }
     }
 
     @Override
     public List<String> getPossibleValues() {
         List<String> dynamicSections = new ArrayList();
-        if (!isSplice) {
-            for (int c = parameter1; c <= parameter2; c++) {
-                dynamicSections.add(c + "-front");
-                dynamicSections.add(c + "-back");
-            }
-        } else {
-            for (int c = parameter1; c <= parameter2; c++) {
-                dynamicSections.add( c + "-IN");
-                dynamicSections.add( c + "-OUT");
-            }
+        for (int c = parameter1; c <= parameter2; c++) {
+            dynamicSections.add(c + "-front");
+            dynamicSections.add(c + "-back");
         }
         return dynamicSections;
     }

@@ -167,6 +167,8 @@ public class DynamicNameGenerator {
                 functions.put(dynamicSection, function);
             } else if ((function = DynamicSectionFunctionFactory.getMirrorPortsPairing(dynamicSection)) != null) {
                 functions.put(dynamicSection, function);               
+            } else if ((function = DynamicSectionFunctionFactory.getMirrorSplicePortsPairing(dynamicSection)) != null) {
+                functions.put(dynamicSection, function);               
             } else {
                 throw new InvalidArgumentException(String.format("Function %s not defined", dynamicSection));
             }

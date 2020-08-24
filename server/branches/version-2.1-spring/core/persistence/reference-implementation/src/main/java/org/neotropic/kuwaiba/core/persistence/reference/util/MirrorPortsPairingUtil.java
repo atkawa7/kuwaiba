@@ -15,11 +15,7 @@
 
 package org.neotropic.kuwaiba.core.persistence.reference.util;
 
-import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermittedException;
 import org.neotropic.kuwaiba.core.apis.persistence.util.StringPair;
 import java.util.ArrayList;
 import java.util.List;
