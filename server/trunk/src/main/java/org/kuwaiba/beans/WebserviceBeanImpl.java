@@ -30,6 +30,7 @@ import com.neotropic.kuwaiba.modules.views.ViewModule;
 import com.neotropic.kuwaiba.modules.warehouse.WarehouseModule;
 import com.neotropic.kuwaiba.scheduling.BackgroundJob;
 import com.neotropic.kuwaiba.scheduling.JobManager;
+import static com.neotropic.kuwaiba.sync.connectors.snmp.vlan.CiscoVlansSynchronizer.RELATIONSHIP_PORT_BELONGS_TO_VLAN;
 import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
 import com.neotropic.kuwaiba.sync.model.SyncAction;
 import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
@@ -5109,6 +5110,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
     }
     
+    @Deprecated
     @Override
     public void relateSubnetToVlan(String id, String className, String vlanId, String ipAddress, String sessionId) throws ServerSideException{
         try{
@@ -5154,6 +5156,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
     }
 
+    @Deprecated
     @Override
     public void releaseSubnetFromVlan(String vlanId, String id, String ipAddress, String sessionId) throws ServerSideException{
         try{
@@ -7123,4 +7126,50 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }        
     }
     //</editor-fold>
+    
+    //<editor-fold desc="special explorer actions for VLANs" defaultstate="collapsed">
+    @Override
+    public void relatePortsToVlan(List<String> portsIds, List<String> portsClassNames, 
+            String vlanId, String ipAddress, String sessionId) 
+            throws ServerSideException
+    {
+         if (bem == null || aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("relatePortsToVlan", ipAddress, sessionId);
+            
+            if(portsIds.size() == portsClassNames.size()){
+                for (int i = 0; i < portsIds.size(); i++){
+                    bem.createSpecialRelationship(Constants.CLASS_VLAN, vlanId, portsClassNames.get(i), portsIds.get(i), RELATIONSHIP_PORT_BELONGS_TO_VLAN, true);
+                
+                    aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VLAN, vlanId, 
+                        ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                        RELATIONSHIP_PORT_BELONGS_TO_VLAN, "", portsIds.get(i), "Relate port to VLAN"); //NOI18N
+                }
+            }
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
         }
+    }
+    
+    @Override
+    public void releasePortsFromVlan(List<String> portsIds, String vlanId,
+            String ipAddress, String sessionId) throws ServerSideException
+    {
+        if (bem == null || aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("releasePortsFromVlan", ipAddress, sessionId);
+            for (String portId : portsIds) {
+                bem.releaseSpecialRelationship(Constants.CLASS_VLAN, vlanId, portId, RELATIONSHIP_PORT_BELONGS_TO_VLAN); //NOI18N
+                       
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), 
+                    Constants.CLASS_VLAN, vlanId, ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                RELATIONSHIP_PORT_BELONGS_TO_VLAN, portId, "", "Release object from VLAN"); //NOI18N  
+            }
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    //</editor-fold>    
+}

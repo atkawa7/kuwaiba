@@ -99,8 +99,8 @@ public class IPAMModule implements GenericCommercialModule{
     }
 
     @Override
-    public ModuleType getModuleType() {
-        return ModuleType.TYPE_PERPETUAL_LICENSE;
+    public GenericCommercialModule.ModuleType getModuleType() {
+        return GenericCommercialModule.ModuleType.TYPE_PERPETUAL_LICENSE;
     }
 
     @Override
@@ -379,6 +379,7 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws MetadataObjectNotFoundException If any of the classes provided can not be found
      * @throws InvalidArgumentException If the subnet/vlan do not have uuid
      */
+    @Deprecated
     public void relateSubnetToVLAN(String subnetId, String className, String vlanId)
         throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException
     {
@@ -394,6 +395,7 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws MetadataObjectNotFoundException If any of the classes provided can not be found
      * @throws InvalidArgumentException If the subnet/vlan do not have uuid
      */
+    @Deprecated
     public void releaseSubnetFromVLAN(String subnetId, String vlanId)
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException
     {

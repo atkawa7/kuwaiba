@@ -547,7 +547,9 @@ public interface WebserviceBean {
         public String addIPAddress(String id, String parentClassName, List<StringPair> attributesToBeUpdated, String ipAddress, String sessionId) throws ServerSideException;
         public void removeIP(String[] ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
         public void relateIPtoPort(String id, String deviceClassName, String deviceId, String ipAddress, String sessionId) throws ServerSideException;
+        @Deprecated
         public void relateSubnetToVlan(String id, String className, String vlanId, String ipAddress, String sessionId) throws ServerSideException;
+        @Deprecated
         public void releaseSubnetFromVlan(String vlanId, String id, String ipAddress, String sessionId) throws ServerSideException;
         public void relateSubnetToVrf(String id, String className, String vrfId, String ipAddress, String sessionId) throws ServerSideException;
         public void releasePortFromIP(String deviceClassName, String deviceId, String id, String ipAddress, String sessionId) throws ServerSideException;
@@ -725,5 +727,10 @@ public interface WebserviceBean {
     public long getObjectChildrenCount(String className, String oid, String ipAddress, String sessionId) throws ServerSideException;
     
     public List<RemoteObjectLight> getObjectChildren(String className, String oid, long skip, long limit, String ipAddress, String sessionId) throws ServerSideException;
+    //</editor-fold>
+        
+    //<editor-fold desc="special explorer actions for VLANs" defaultstate="collapsed">
+        public void relatePortsToVlan(List<String> portsIds, List<String> portsClassNames, String vlanId, String ipAddress, String sessionId) throws ServerSideException;
+        public void releasePortsFromVlan(List<String> portsIds, String vlanId, String ipAddress, String sessionId) throws ServerSideException;
     //</editor-fold>
 }

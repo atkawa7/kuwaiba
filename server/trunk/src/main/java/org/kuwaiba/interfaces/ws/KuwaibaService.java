@@ -7592,6 +7592,7 @@ public class KuwaibaService {
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
      */
+    @Deprecated
     @WebMethod(operationName = "relateSubnetToVlan")
     public void relateSubnetToVlan (
             @WebParam(name = "id")String id,
@@ -7619,6 +7620,7 @@ public class KuwaibaService {
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime    
      */
+    @Deprecated
     @WebMethod(operationName = "releaseSubnetFromVlan")
     public void releaseSubnetFromVlan (
             @WebParam(name = "subnetId")String subnetId,
@@ -7626,6 +7628,58 @@ public class KuwaibaService {
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try{
             wsBean.releaseSubnetFromVlan(vlanId, subnetId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in releaseSubnetFromVlan: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+        /**
+     * Creates a relation between a set of ports and a VLAN
+     * TODO: check the model, there are redundant relationships
+     * @param portsIds the ports ids
+     * @param portsClassNames the ports classnames
+     * @param vlanId VLAN id
+     * @param sessionId Session token
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
+     */
+    @WebMethod(operationName = "relatePortsToVlan")
+    public void relatePortsToVlan (
+            @WebParam(name = "portsIds")List<String> portsIds,
+            @WebParam(name = "portsClassNames")List<String> portsClassNames,
+            @WebParam(name = "vlanId")String vlanId,
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try{
+            wsBean.relatePortsToVlan(portsIds, portsClassNames, vlanId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in relateSubnetToVlan: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Releases the relation between a set of ports and a VLAN, this method is also using 
+     * TODO: check the model there are redundant relationships 
+     * @param portsIds the ports ids to release
+     * @param vlanId the VLAN id
+     * @param sessionId Session token
+     * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime    
+     */
+    @WebMethod(operationName = "releasePortsFromVlan")
+    public void releasePortsFromVlan (
+            @WebParam(name = "portsIds")List<String> portsIds,
+            @WebParam(name = "vlanId")String vlanId,
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try{
+            wsBean.releasePortsFromVlan(portsIds, vlanId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
