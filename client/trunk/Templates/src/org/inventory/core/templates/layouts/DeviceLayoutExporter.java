@@ -94,8 +94,20 @@ public class DeviceLayoutExporter {
     
     private String prepareStructure(byte[] structure) {
         String strStructure = new String(structure);
-        strStructure = strStructure.replaceFirst("<view version=\"", "");
-        strStructure = strStructure.replaceFirst("</view>", "");
+        
+        int beginIndex = strStructure.indexOf("<view");
+        int endIndex = strStructure.indexOf(">");
+        /**
+         * substring = <view version=".*">
+         * Do not use a regex the target is only delete the tag view
+         */
+        String substring = null;
+        if (beginIndex != -1 && endIndex != -1)
+            substring = strStructure.substring(beginIndex, endIndex + 1);
+        if (substring != null) {
+            strStructure = strStructure.replaceFirst(substring, "");
+            strStructure = strStructure.replaceFirst("</view>", "");
+        }
         return strStructure;
     }
     
