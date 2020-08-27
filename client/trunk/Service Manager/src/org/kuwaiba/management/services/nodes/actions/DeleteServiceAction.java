@@ -62,7 +62,7 @@ class DeleteServiceAction extends GenericInventoryAction {
                 parents.add(selectedNode.getParentNode());
             }
                         
-            if (CommunicationsStub.getInstance().deleteObjects(classNames, oids)){
+            if (CommunicationsStub.getInstance().deleteObjects(classNames, oids, false)){
                 
                 for (Node parent : parents)
                     ((ServicePoolNode.ServicePoolChildren)parent.getChildren()).addNotify();
