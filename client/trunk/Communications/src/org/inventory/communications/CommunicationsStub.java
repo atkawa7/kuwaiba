@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2020 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -2006,9 +2006,9 @@ public class CommunicationsStub {
      * @param oids object ids
      * @return Success or failure
      */
-    public boolean deleteObjects(List<String> classNames, List<String> oids){
+    public boolean deleteObjects(List<String> classNames, List<String> oids, boolean releaseRelationships){
         try {
-            service.deleteObjects(classNames, oids, true, this.session.getSessionId());
+            service.deleteObjects(classNames, oids, releaseRelationships, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -6556,4 +6556,32 @@ public class CommunicationsStub {
     }
     
     //</editor-fold>
+    
+     public boolean relatePortsToVLAN(List<LocalObjectLight> ports, String vlanId){
+        try{
+            List<String> portsIds = new ArrayList<>();
+            List<String> portsClassNames = new ArrayList<>();
+            
+            for (LocalObjectLight port : ports) {
+                portsIds.add(port.getId());
+                portsClassNames.add(port.getClassName());
+            }
+            service.relatePortsToVlan(portsIds, portsClassNames, vlanId, this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    public boolean releasePortFromVLAN(String portId, String vlanId){
+        try{
+            List<String> portsIds = Arrays.asList(portId);
+            service.releasePortsFromVlan(portsIds, vlanId, this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
 }
