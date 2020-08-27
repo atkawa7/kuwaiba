@@ -158,7 +158,7 @@ public class CommunicationsStub {
                                                                     "VC4", "VC4-04", "VC4-16", "VC4-07", "VC4-64", "VC4TributaryLink", "VC12TributaryLink", "VC3TributaryLink",
                                                                     "STM1", "STM4", "STM16", "STM64", "STM256",
                                                                     "WireContainer", "WirelessContainer",
-                                                                    "Provider","BGPPeer", "VFI",
+                                                                    "Provider","BGPPeer", "VFI", "VLAN",
                                                                     "CorporateCustomer", "TelecomOperator", "Provider", "HomeCustomer",
                                                                     "Subnet", "BillingContact", "TechnicalContact", "CommercialContact", "BridgeDomain" };
     
@@ -2006,9 +2006,9 @@ public class CommunicationsStub {
      * @param oids object ids
      * @return Success or failure
      */
-    public boolean deleteObjects(List<String> classNames, List<String> oids, boolean releaseRelationships){
+    public boolean deleteObjects(List<String> classNames, List<String> oids){
         try {
-            service.deleteObjects(classNames, oids, releaseRelationships, this.session.getSessionId());
+            service.deleteObjects(classNames, oids, false, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -4902,7 +4902,7 @@ public class CommunicationsStub {
                 return false;
             }
         }
-        
+       
         /**
         * Disconnects a side or both sides of a mpls link connection
         * @param connectionId Id of the connection to be edited
@@ -6557,7 +6557,13 @@ public class CommunicationsStub {
     
     //</editor-fold>
     
-     public boolean relatePortsToVLAN(List<LocalObjectLight> ports, String vlanId){
+    /**
+     * Releate a set of ports to a VLAN
+     * @param ports a set of ports
+     * @param vlanId the VLAN id
+     * @return tru if the ports were related to the VLAN
+     */
+    public boolean relatePortsToVLAN(List<LocalObjectLight> ports, String vlanId){
         try{
             List<String> portsIds = new ArrayList<>();
             List<String> portsClassNames = new ArrayList<>();
@@ -6574,6 +6580,12 @@ public class CommunicationsStub {
         }
     }
     
+    /**
+     * Release the relationship between a port and a VLAN
+     * @param portId the port id
+     * @param vlanId the VLAN id
+     * @return true if the relationship was released
+     */
     public boolean releasePortFromVLAN(String portId, String vlanId){
         try{
             List<String> portsIds = Arrays.asList(portId);
@@ -6584,4 +6596,24 @@ public class CommunicationsStub {
             return false;
         }
     }
+    
+    /**
+     * Deletes a set ob selected VLANs
+     * @param oids the ids of the VLANs to be deleted
+     * @return true if the VLANs were deleted, false if not
+     */
+    public boolean deleteVLANs(List<String> oids){
+        try {
+            List<String> vlansClassNames = new ArrayList<>();
+            for (String oid : oids) {
+                vlansClassNames.add(Constants.CLASS_VLAN);
+            }
+            service.deleteObjects(vlansClassNames, oids, true, this.session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+
 }
