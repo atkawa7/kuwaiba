@@ -34,32 +34,23 @@ import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAc
 import org.openide.nodes.Node;
 import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  * Action that deletes an spacial object business, for now it is restricted only 
  * to VLANs 
  * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
-public class DeleteSpecialBusinessObjectAction extends GenericObjectNodeAction 
-    implements Presenter.Popup 
+@ServiceProvider(service=GenericObjectNodeAction.class)
+public class DeleteVlanObjectAction extends GenericObjectNodeAction  implements Presenter.Popup 
 {
-    private static DeleteSpecialBusinessObjectAction instance;
     private final JMenuItem popupPresenter;
     
-    private DeleteSpecialBusinessObjectAction() {
-        popupPresenter = new JMenuItem(getName(), ImageIconResource.WARNING_ICON);
+    public DeleteVlanObjectAction() {
+        popupPresenter = new JMenuItem(I18N.gm("delete"), ImageIconResource.WARNING_ICON);
         popupPresenter.addActionListener(this);
     }
-    
-    public static DeleteSpecialBusinessObjectAction getInstance() {
-        return instance == null ? instance = new DeleteSpecialBusinessObjectAction() : instance;
-    }
-
-    @Override
-    public LocalPrivilege getPrivilege() {
-        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SPECIAL_EXPLORERS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
-    }
-
+   
     @Override
     public void actionPerformed(ActionEvent e) {
         if(JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this object? (all children will be removed as well)", 
@@ -82,7 +73,7 @@ public class DeleteSpecialBusinessObjectAction extends GenericObjectNodeAction
                     parents.add(selectedNode.getParentNode());
             }
                         
-            if (CommunicationsStub.getInstance().deleteObjects(classNames, oids, true)){
+            if (CommunicationsStub.getInstance().deleteVLANs(oids)){
                 for (Node parent : parents) {
                     if (AbstractChildren.class.isInstance(parent.getChildren()))
                         ((AbstractChildren)parent.getChildren()).addNotify();
@@ -112,11 +103,12 @@ public class DeleteSpecialBusinessObjectAction extends GenericObjectNodeAction
     }
     
     @Override
-    public int numberOfNodes() {
-        return 1;
+    public LocalPrivilege getPrivilege() {
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SPECIAL_EXPLORERS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
     
-    public String getName() {
-        return I18N.gm("delete"); //NOI18N
+    @Override
+    public int numberOfNodes() {
+        return -1;
     }
 }

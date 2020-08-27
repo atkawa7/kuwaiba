@@ -21,6 +21,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.ActionGroupActionsFactory;
 import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
+import org.inventory.navigation.navigationtree.nodes.actions.DeleteBusinessObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.navigation.special.children.nodes.actions.CreateSpecialBusinessObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.EditObjectAction;
@@ -28,7 +29,9 @@ import org.inventory.navigation.navigationtree.nodes.actions.UpdateNodeAction;
 import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
 import org.inventory.navigation.special.children.nodes.actions.CreateMultipleSpecialBusinessObjectAction;
 import org.inventory.navigation.special.children.nodes.actions.CreateSpecialBusinessObjectFromTemplateAction;
+import org.inventory.navigation.special.children.nodes.actions.DeleteVlanObjectAction;
 import org.openide.util.Lookup;
+import org.openide.util.actions.SystemAction;
 
 /**
  * It's like an ObjectNode, but you can filter what actions would be shown. Its children
