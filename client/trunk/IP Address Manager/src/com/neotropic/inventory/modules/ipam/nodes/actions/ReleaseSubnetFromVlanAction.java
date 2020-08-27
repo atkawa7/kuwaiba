@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
+import static javax.swing.Action.NAME;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
@@ -38,6 +39,7 @@ import org.openide.util.Utilities;
  * Releases a relation between a VRF and a VLAN
  * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
+@Deprecated
 public class ReleaseSubnetFromVlanAction  extends GenericInventoryAction implements ComposedAction {
     
     private static ReleaseSubnetFromVlanAction instance;

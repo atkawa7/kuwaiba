@@ -23,8 +23,6 @@ import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 import com.neotropic.inventory.modules.ipam.nodes.actions.DeleteSubnetAction;
 import com.neotropic.inventory.modules.ipam.nodes.actions.RelateSubnetToVFRAction;
-import com.neotropic.inventory.modules.ipam.nodes.actions.RelateSubnetToVlanAction;
-import com.neotropic.inventory.modules.ipam.nodes.actions.ReleaseSubnetFromVlanAction;
 import com.neotropic.inventory.modules.ipam.nodes.actions.ReleaseSubnetFromVFRAction;
 import com.neotropic.inventory.modules.ipam.nodes.properties.GeneralProperty;
 import com.neotropic.inventory.modules.ipam.nodes.properties.NotEditableProperty;
@@ -72,8 +70,8 @@ public class SubnetNode extends ObjectNode {
             null,
             Lookup.getDefault().lookup(RelateToServiceAction.class),
             Lookup.getDefault().lookup(ReleaseFromServiceAction.class),
-            RelateSubnetToVlanAction.getInstance(),
-            ReleaseSubnetFromVlanAction.getInstance(),
+            //RelateSubnetToVlanAction.getInstance(),
+            //ReleaseSubnetFromVlanAction.getInstance(),
             RelateSubnetToVFRAction.getInstance(),
             ReleaseSubnetFromVFRAction.getInstance(),
             null,

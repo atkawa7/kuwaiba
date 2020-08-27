@@ -37,6 +37,7 @@ import org.openide.util.Utilities;
  * Relates a subnet with a VLAN
  * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
+@Deprecated
 public class RelateSubnetToVlanAction extends GenericInventoryAction {
     
     private static RelateSubnetToVlanAction instance;
