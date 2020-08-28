@@ -77,7 +77,7 @@ public final class DeleteBusinessObjectAction extends CallbackSystemAction {
                     parents.add(selectedNode.getParentNode());
             }
                         
-            if (CommunicationsStub.getInstance().deleteObjects(classNames, oids, false)){
+            if (CommunicationsStub.getInstance().deleteObjects(classNames, oids)){
                 for (Node parent : parents) {
                     if (AbstractChildren.class.isInstance(parent.getChildren()))
                         ((AbstractChildren)parent.getChildren()).addNotify();
