@@ -2803,7 +2803,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     }
                 }
             }
-            tx.success();
             return pools;
         }
     }
