@@ -20,7 +20,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -36,7 +35,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalFileObject;
+import org.inventory.communications.core.LocalFileObjectLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.views.LocalObjectView;
@@ -57,7 +56,7 @@ public class DeviceLayoutImporter {
     private final byte[] structure;
     private final List<String> layouts;
     private final List<LocalObjectLight> objects;
-    private final List<LocalFileObject> icons;
+    private final HashMap<LocalObjectLight, String> icons;
     private final HashMap<LocalObjectLight, LocalObjectListItem> localMap;
     private final LocalObjectListItem deviceModel;
     private final DeviceLayoutScene scene;
@@ -67,7 +66,7 @@ public class DeviceLayoutImporter {
         this.structure = structure;        
         this.layouts = new ArrayList();
         this.objects = new ArrayList();
-        this.icons = new ArrayList();
+        this.icons = new HashMap();
         this.localMap = new HashMap();
         this.deviceModel = deviceModel;
         this.scene = scene;
@@ -246,8 +245,12 @@ public class DeviceLayoutImporter {
     
     private void importCustomShapes(List<LocalObjectLight> customShapesToImport) {
         for (LocalObjectLight customShape : customShapesToImport) {
-            LocalObjectListItem localCustomShape = getLocalCustomShape(customShape);
+            String strIcon = null;
+            if (icons.containsKey(customShape))
+                strIcon = icons.get(customShape);
             
+            LocalObjectListItem localCustomShape = getLocalCustomShape(customShape);
+                        
             if (getLocalCustomShape(customShape) != null) {
                 localMap.put(customShape, getLocalCustomShape(customShape));                
             } else {
@@ -262,18 +265,39 @@ public class DeviceLayoutImporter {
                 // Calling newly to getLocalCustomShape method to update the cache
                 getLocalCustomShape(customShape);
             }
-            int customShapeIdx = objects.indexOf(customShape);
-            LocalFileObject customShapeIcon = icons.get(customShapeIdx);            
-            String customShapeIconEncode = customShapeIcon.getName() + ";/;" + "-" + ";/;" + DatatypeConverter.printBase64Binary(customShapeIcon.getFile());
-                        
             HashMap<String, Object> attributesToUpdate = new HashMap<>();
             attributesToUpdate.put(Constants.PROPERTY_NAME, customShape.getName());
-            attributesToUpdate.put(Constants.PROPERTY_ICON, customShapeIconEncode);
-
+            
             if(!CommunicationsStub.getInstance().updateObject(localCustomShape.getClassName(), 
                     localCustomShape.getId(), attributesToUpdate)) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            }
+            
+            if (strIcon != null) {
+                String[] arrayIcon = strIcon.split(";/;");
+                if (arrayIcon.length == 3) {
+                    List<LocalFileObjectLight> files = CommunicationsStub.getInstance().getFilesForObject(localCustomShape.getClassName(), localCustomShape.getId());
+                    if (files != null) {
+                        for (LocalFileObjectLight file : files) {
+                            if (file.getTags() != null && file.getTags().contains("icon")) { //NOI18N
+                                if(!CommunicationsStub.getInstance().detachFileFromObject(file.getFileOjectId(), localCustomShape.getClassName(), localCustomShape.getId()))
+                                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                                        NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                            }
+                        }
+                        String fileName = arrayIcon[0];
+                        String fileContent = arrayIcon[2];
+                        LocalFileObjectLight file = CommunicationsStub.getInstance().attachFileToObject(
+                            fileName, "icon", DatatypeConverter.parseBase64Binary(fileContent), localCustomShape.getClassName(), localCustomShape.getId()); //NOI18N
+                        if (file == null)
+                            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                    } else {
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                            NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                    }
+                }
             }
         }
         
@@ -338,11 +362,8 @@ public class DeviceLayoutImporter {
     private LocalObjectListItem getLocalCustomShape(LocalObjectLight customShape) {
         List<LocalObjectListItem> localCustomShapes = CommunicationsStub.getInstance().getList(Constants.CLASS_CUSTOMSHAPE, false, true);
         
-        if (localCustomShapes == null) {
-            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        if (localCustomShapes == null)
             return null;
-        }
         
         for (LocalObjectListItem localCustomShape : localCustomShapes) {
             if (localCustomShape.getName().equals(customShape.getName()))
@@ -369,11 +390,18 @@ public class DeviceLayoutImporter {
                         String className = reader.getAttributeValue(null, Constants.PROPERTY_CLASSNAME);
                         String name = reader.getAttributeValue(null, Constants.PROPERTY_NAME);
                         
-                        objects.add(new LocalObjectLight(id, name, className));
-                    }
-                    if (reader.getName().equals(tagIcon)) {
-                        String strIcon = reader.getElementText();
-                        icons.add(new LocalFileObject(0l, "-", new Date().getTime(), "", new byte[0]));
+                        LocalObjectLight customShape = new LocalObjectLight(id, name, className);
+                        objects.add(customShape);
+                        
+                        while(true) {
+                            reader.nextTag();
+                            if (reader.getName().equals(tagIcon)) {
+                                if(reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                                    icons.put(customShape, reader.getElementText());
+                            }
+                            else
+                                break;
+                        }
                     }
                     if (reader.getName().equals(tagDevice)) {
                         String id = reader.getAttributeValue(null, Constants.PROPERTY_ID);
