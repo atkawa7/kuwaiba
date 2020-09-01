@@ -17,12 +17,14 @@
 package org.inventory.core.templates.layouts.customshapes.nodes.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.List;
 import static javax.swing.Action.NAME;
 import static javax.swing.Action.SMALL_ICON;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalFileObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
@@ -71,15 +73,30 @@ public class DeleteCustomShapeAction extends GenericInventoryAction implements P
             I18N.gm("confirm_dialog_dlt_custom_shape_title"), 
             JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             
-            if (CommunicationsStub.getInstance().deleteListTypeItem(customShape.getClassName(), customShape.getId(), false)) {
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), 
-                    NotificationUtil.INFO_MESSAGE, I18N.gm("custom_shape_deleted_successfully"));
-                ((AbstractChildren) node.getParentNode().getChildren()).addNotify();
-                //Refresh cache
-                CommunicationsStub.getInstance().getList(customShape.getClassName(), false, true);
-            } else
+            List<LocalFileObjectLight> files = CommunicationsStub.getInstance().getFilesForObject(customShape.getClassName(), customShape.getId());
+            if (files != null) {
+                files.forEach(file -> {
+                    if (file.getTags() != null && file.getTags().contains("icon")) { //NOI18N
+                        if (!CommunicationsStub.getInstance().detachFileFromObject(file.getFileOjectId(), customShape.getClassName(), customShape.getId())) {
+                            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                        }
+                    }
+                });
+
+                if (CommunicationsStub.getInstance().deleteListTypeItem(customShape.getClassName(), customShape.getId(), false)) {
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), 
+                        NotificationUtil.INFO_MESSAGE, I18N.gm("custom_shape_deleted_successfully"));
+                    ((AbstractChildren) node.getParentNode().getChildren()).addNotify();
+                    //Refresh cache
+                    CommunicationsStub.getInstance().getList(customShape.getClassName(), false, true);
+                } else
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                        NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            } else {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            }
         }
     }
 

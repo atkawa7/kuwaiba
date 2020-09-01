@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalFileObject;
+import org.inventory.communications.core.LocalFileObjectLight;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.util.Constants;
@@ -98,6 +100,21 @@ public class DeviceLayoutPalette {
                 return new Shape[0];
             }
             Image icon = Utils.getIconFromByteArray(null, Color.BLACK, 30, 30);
+            
+            List<LocalFileObjectLight> files = CommunicationsStub.getInstance().getFilesForObject(item.getClassName(), item.getId());
+            if (files != null) {
+                for (LocalFileObjectLight file : files) {
+                    if (file.getTags() != null && file.getTags().contains("icon")) { //NOI18N
+                        LocalFileObject theFile = CommunicationsStub.getInstance().getFile(file.getFileOjectId(), item.getClassName(), item.getId());
+                        if (theFile != null && theFile.getFile() != null)
+                            icon = Utils.getIconFromByteArray(theFile.getFile(), Color.BLACK, 30, 30);
+                        break;
+                    }
+                }
+            } else {
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            }
             CustomShape customShape = new CustomShape(item, icon);
             customShape.setName(item.getDisplayName() != null ? item.getDisplayName() : item.getName());
             items.add(customShape);

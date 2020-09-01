@@ -16,13 +16,12 @@
  */
 package org.inventory.core.templates.layouts;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import javax.xml.bind.DatatypeConverter;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalFileObject;
-import org.inventory.communications.core.LocalObject;
+import org.inventory.communications.core.LocalFileObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
@@ -43,7 +42,21 @@ public class DeviceLayoutExporter {
     public DeviceLayoutExporter(DeviceLayoutScene scene) {
         this.scene = scene;
     }
-    
+    /**
+     * <pre>{@code
+     * <view version="1.1">
+     *  <device className="" id="" name="">
+     *      <customShape className="" id="" name="">
+     *          <!-- 
+     *           The dash (-) is to preserve compatibility with old views 
+     *           that used that place to place the file extension 
+     *          -->
+     *          <icon>%s;/;-;/;%s</icon>
+     *      </customShape>
+     *  </device>
+     * </view>
+     * }</pre>
+     */
     public String getAsXMl() {
         HashMap<LocalObjectListItem, String> customShapes = new HashMap();
         
@@ -68,16 +81,23 @@ public class DeviceLayoutExporter {
         for (LocalObjectListItem customShape : customShapes.keySet()) {
             result += "<customShape " + Constants.PROPERTY_CLASSNAME + "=\"" + customShape.getClassName() + "\" "+ Constants.PROPERTY_ID +"=\"" + customShape.getId() + "\" " + Constants.PROPERTY_NAME + "=\"" + customShape.getName() + "\">";
             
-            LocalObject customShapeObj = CommunicationsStub.getInstance().getObjectInfo(customShape.getClassName(), customShape.getId());
-            if (customShapeObj == null) {
+            List<LocalFileObjectLight> files = CommunicationsStub.getInstance().getFilesForObject(customShape.getClassName(), customShape.getId());
+            if (files == null) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return null;
             }
-            LocalFileObject localFileObject = new LocalFileObject(0l, "-", new Date().getTime(), "", new byte[0]);
-            byte[] byteIcon = localFileObject.getFile();
-            if (byteIcon.length > 0)
-                result += "<icon>" + localFileObject.getName() + ";/;" + "-" + ";/;" + DatatypeConverter.printBase64Binary(byteIcon) + "</icon>";
+            for (LocalFileObjectLight fileObjectLight : files) {
+                if (fileObjectLight.getTags() != null && fileObjectLight.getTags().contains("icon")) { //NOI18N
+                    LocalFileObject fileObject = CommunicationsStub.getInstance().getFile(fileObjectLight.getFileOjectId(), customShape.getClassName(), customShape.getId());
+                    if (fileObject != null && fileObject.getFile() != null) {
+                        byte[] byteIcon = fileObject.getFile();
+                        if (byteIcon.length > 0)
+                            result += "<icon>" + fileObject.getName() + ";/;" + "-" + ";/;" + DatatypeConverter.printBase64Binary(byteIcon) + "</icon>";
+                    }
+                    break;
+                }
+            }
             String customShapeStrStructure = customShapes.get(customShape);
             
             if (!customShapeStrStructure.equals(""))

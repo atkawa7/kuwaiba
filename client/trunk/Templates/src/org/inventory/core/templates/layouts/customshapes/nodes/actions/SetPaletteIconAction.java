@@ -22,7 +22,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -30,11 +30,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.xml.bind.DatatypeConverter;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalFileObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.LocalPrivilege;
-import org.inventory.communications.util.Constants;
 import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.imports.filters.ImageFileFilter;
@@ -96,28 +95,29 @@ public class SetPaletteIconAction extends GenericInventoryAction {
                             NotificationUtil.ERROR_MESSAGE, "The size of the icon must be equal or less than 33x33");
                         return;
                     }
-
                     try {
-                        byte [] byteArray = Utils.getByteArrayFromFile(fileChooser.getSelectedFile());
+                        List<LocalFileObjectLight> files = CommunicationsStub.getInstance().getFilesForObject(customShape.getClassName(), customShape.getId());
+                        if (files != null) {
+                            files.forEach(file -> {
+                                if (file.getTags() != null && file.getTags().contains("icon")) { //NOI18N
+                                    if(!CommunicationsStub.getInstance().detachFileFromObject(file.getFileOjectId(), customShape.getClassName(), customShape.getId()))
+                                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                                            NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                                }
+                            });
+                            byte [] byteArray = Utils.getByteArrayFromFile(fileChooser.getSelectedFile());
 
-                        String fileName = fileChooser.getSelectedFile().getName();
-                        String fileExtension = imgFileFilter.getExtension(fileChooser.getSelectedFile());
-
-                        String byteArrayEncode = DatatypeConverter.printBase64Binary(byteArray);
-
-////                        String iconAttributeValue = fileName + ";/;" +  fileExtension + ";/;" + byteArrayEncode;
-////
-////                        HashMap<String, Object> attributesToUpdate = new HashMap<>();
-////                        attributesToUpdate.put(Constants.PROPERTY_ICON, iconAttributeValue);
-////
-//                        if(!CommunicationsStub.getInstance().updateObject(customShape.getClassName(), 
-//                                customShape.getId(), attributesToUpdate)) {
-//                            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-//                                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-//                        } else {
-//                            NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
-//                                NotificationUtil.INFO_MESSAGE, "The icon was set successfully");
-//                        }                     
+                            String fileName = fileChooser.getSelectedFile().getName();
+                            //String fileExtension = imgFileFilter.getExtension(fileChooser.getSelectedFile());
+                            LocalFileObjectLight attachedFile = CommunicationsStub.getInstance().attachFileToObject(fileName, "icon", byteArray, customShape.getClassName(), customShape.getId()); //NOI18N
+                            if (attachedFile == null) {
+                                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                            }
+                        } else {
+                            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                        }
                     } catch (IOException ex) {
                         Exceptions.printStackTrace(ex);
                     }
