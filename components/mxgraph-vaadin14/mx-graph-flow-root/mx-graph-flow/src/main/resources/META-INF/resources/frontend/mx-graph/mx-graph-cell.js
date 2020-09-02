@@ -1,6 +1,6 @@
 /** 
 @license
-Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
+Copyright 2010-2020 Neotropic SAS <contact@neotropic.co>.
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License. 
@@ -142,7 +142,7 @@ class MxGraphCell extends PolymerElement {
         value: 1
       },
       labelBackgroundColor: {
-        type: Number,
+        type: String,
         value: 'white'
       },
       perimeterSpacing: {
@@ -196,6 +196,10 @@ class MxGraphCell extends PolymerElement {
           type: String,
           value : 'bottom'
       },
+      labelPosition: {
+          type: String,
+          value : 'bottom'
+      },
       movable: {         
         type: String, 
         value: '1',
@@ -204,6 +208,14 @@ class MxGraphCell extends PolymerElement {
       animateOnSelect: {
           type: Boolean,
           value: false
+      },
+      fontSize : {
+          type: Number,
+          value : 10
+      },
+      selectable: {
+          type: Boolean,
+          value: true
       }
     };
   }
@@ -213,13 +225,13 @@ class MxGraphCell extends PolymerElement {
   constructor() {
     super();
     console.log("Constructor: mxgraphCell")
-    this._pointObserver = new MutationObserver(this.tagAdded.bind(this));
-    this._pointObserver.observe(this, { childList: true});
+//    this._pointObserver = new MutationObserver(this.tagAdded.bind(this));
+//    this._pointObserver.observe(this, { childList: true});
   }
 
   ready() {
     super.ready();
-    console.log("Ready: mxgraphCell")
+    //console.log("Ready: mxgraphCell")
 //    console.log("adding Observer")
   }
 
@@ -244,13 +256,12 @@ class MxGraphCell extends PolymerElement {
     if (this.graph && this.graph instanceof mxGraph) {
       this._graphReady();
     } 
-
-
   }
  //  the cell is initialized with the initial parameters
   _graphReady() {
     console.log("FUNCTION _graphReady");
-    
+    var t0 = performance.now()
+    var t1;
     var parentObject;
     if (this.cellLayer)
         parentObject = this.graph.getModel().getCell(this.cellLayer);
@@ -259,10 +270,12 @@ class MxGraphCell extends PolymerElement {
     } else {
         parentObject = this.graph.getDefaultParent();
     }
-    this.graph.getModel().beginUpdate();
+    t1 = performance.now()
+    console.log("part 1 " + (t1 - t0) + " milliseconds.")
     try {
       if (this.vertex) {  //if the cell is a vertex then create a new one
         console.log("CREATING VERTEX");
+//        t0 = performance.now();
         var imageStyle =   this.image ? ';image='.concat(this.image) : '';
         this.cell = this.graph.insertVertex(parentObject, this.uuid ? this.uuid : null, 
                                             this.label, this.x, this.y, this.width, this.height,
@@ -270,12 +283,17 @@ class MxGraphCell extends PolymerElement {
              ';fontStyle=1;labelPadding=5' +
              ';shape=' + this.shape +
              ';verticalLabelPosition=' + this.verticalLabelPosition + 
+             ';labelPosition=' + this.labelPosition + 
             ';labelBackgroundColor=' + this.labelBackgroundColor +                
             ';fillColor=' + (this.fillColor ? this.fillColor : '#CCC') +                
             ';movable=' + this.movable +   
               ';strokeColor=' + this.strokeColor  + 
+              ';fontSize=' + this.fontSize  + 
             ';fontColor=' + this.fontColor
             + imageStyle) ;
+//    t1 = performance.now();
+//    console.log("part 2 after insert vertex " + (t1 - t0) + " milliseconds.");
+
     
       if (this.rawStyle) {
           this.rawStyleChanged();
@@ -359,9 +377,13 @@ class MxGraphCell extends PolymerElement {
     }
     finally {
       // Updates the display
-    this.graph.getModel().endUpdate();
-    this.graph.refresh();
+    
+    t1 = performance.now()
+    console.log("part 2 after insert end update " + (t1 - t0) + " milliseconds.")
+    //this.graph.refresh();
     this.fireCellAdded();
+    t1 = performance.now()
+    console.log("Call to Create vertex took " + (t1 - t0) + " milliseconds.")
     }
 
   }
@@ -429,6 +451,40 @@ class MxGraphCell extends PolymerElement {
      
 }
 
+addOverlayButton(buttonId,  label, urlImage, hAlign, vAlign, offsetX, offsetY)
+    {
+        if (this.cell) {
+	var overlay = new mxCellOverlay(new mxImage(urlImage, 16, 16), label, hAlign, vAlign);
+	overlay.cursor = 'hand';
+        if (!offsetX)
+            offsetX = 0;
+        if (!offsetY)
+            offsetY = 0;
+        overlay.offset = new mxPoint(offsetX, offsetY);
+	overlay.addListener(mxEvent.CLICK, mxUtils.bind(this, function(sender, evt)
+	{
+            this.fireClickOverlayButton(buttonId);
+	}));
+	
+	this.graph.addCellOverlay(this.cell, overlay);
+    }
+   };
+    
+setChildrenCellPosition(cellId, position) {
+    if (this.cell && position >= 0 && this.cell.children.length > position) {
+        var theCell;
+        this.cell.children.forEach(function (children) {
+           if (children.id === cellId)
+           theCell = children;
+        });
+        if (theCell) {   
+            var index = this.cell.children.indexOf(theCell);
+            this.cell.children.splice(index, 1);
+            this.cell.children.splice(position, 0, theCell);
+        }
+    }
+}
+
 updatePosition() {
     this.cell.geometry.x = this.x;
     this.cell.geometry.y = this.y;
@@ -459,23 +515,33 @@ cellLabelChanged() {
   }
 
   fireCellPositionChanged(){
-    this.dispatchEvent(new CustomEvent('cell-position-changed', {detail: {kicked: true}}));
-    console.log("cell-position-changed fired");
-
+    if (this.cell) {
+        this.dispatchEvent(new CustomEvent('cell-position-changed', {detail: {kicked: true}}));
+        console.log("cell-position-changed fired");
+    }
   }
   
   fireEdgePointsChanged() {
-    this.dispatchEvent(new CustomEvent('edge-points-changed', {detail: {kicked: true}}));
-    console.log("edge-points-changed fired");
+    if (this.cell) {
+        this.dispatchEvent(new CustomEvent('edge-points-changed', {detail: {kicked: true}}));
+        console.log("edge-points-changed fired");
+    }
   }
   
   fireCellLabelChanged() {
-    this.dispatchEvent(new CustomEvent('cell-label-changed', {detail: {kicked: true}}));
-    console.log("Cell Label Changed fired");
+    if (this.cell) {
+        this.dispatchEvent(new CustomEvent('cell-label-changed', {detail: {kicked: true}}));
+        console.log("Cell Label Changed fired");
+    }
+  }
+  
+  fireClickOverlayButton(buttonId) {
+    this.dispatchEvent(new CustomEvent('click-overlay-button', { detail: { kicked: true, buttonId:buttonId} }));
+    console.log("click-overlay-button fired");
   }
   
    //This method dispatches a custom event when the graph is loaded
-    fireCellAdded() {
+  fireCellAdded() {
         this.dispatchEvent(new CustomEvent('cell-added', {detail: {kicked: true}}));
     }
   
@@ -506,7 +572,10 @@ cellLabelChanged() {
   
   setMovable(movable) {
       if (this.graph) {
-         this.graph.setCellStyles(mxConstants.STYLE_MOVABLE, movable, [this.cell])
+         var t0 = performance.now();
+         this.graph.setCellStyles(mxConstants.STYLE_MOVABLE, movable, [this.cell]);
+         var t1 = performance.now()
+         console.log("Set movable took " + (t1 - t0) + " milliseconds.")
       }
   }
   
@@ -519,7 +588,7 @@ cellLabelChanged() {
      var state = this.graph.view.getState(this.cell);
      state.shape.node.classList.remove('cell-animated'); 
   }
-  
+    
 }
 
 window.customElements.define('mx-graph-cell', MxGraphCell);

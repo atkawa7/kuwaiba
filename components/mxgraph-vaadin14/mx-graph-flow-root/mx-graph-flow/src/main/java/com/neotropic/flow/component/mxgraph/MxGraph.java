@@ -20,14 +20,14 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasStyle;
+import com.vaadin.flow.component.Synchronize;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
-import com.vaadin.flow.component.dependency.NpmPackage;
+import com.vaadin.flow.component.page.PendingJavaScriptResult;
 import com.vaadin.flow.shared.Registration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 
 /**
  * 
@@ -39,11 +39,20 @@ public class MxGraph extends Component implements HasComponents, HasStyle {
     private static final String PROPERTY_GRID = "grid";
     private static final String PROPERTY_WIDTH = "width";
     private static final String PROPERTY_HEIGHT = "height";
+    private static final String PROPERTY_OUTLINE_WIDTH = "outlineWidth";
+    private static final String PROPERTY_OUTLINE_HEIGHT = "outlineHeight";
     private static final String PROPERTY_MAX_WIDTH = "maxWidth";
     private static final String PROPERTY_MAX_HEIGHT = "maxHeight";
     private static final String PROPERTY_CELLS_MOVABLE = "cellsMovable";
     private static final String PROPERTY_CELLS_EDITABLE = "cellsEditable";
     private static final String PROPERTY_OVERFLOW = "overflow";
+    private static final String PROPERTY_ROTATION = "rotationEnabled";
+    private static final String PROPERTY_HAS_OUTLINE = "hasOutline";
+    private static final String PROPERTY_BEGIN_UPDATE_ON_INIT = "beginUpdateOnInit";
+    private static final String PROPERTY_SCALE = "scale";
+    private static final String PROPERTY_TRANSLATIONX = "translationX";
+    private static final String PROPERTY_TRANSLATIONY = "translationY";
+    private static final int DEFAULT_OUTLINE_WIDTH = 200;
     
     private List<MxGraphNode> nodes;
     private List<MxGraphEdge> edges;
@@ -72,7 +81,7 @@ public class MxGraph extends Component implements HasComponents, HasStyle {
         
     public void setWidth(String prop) {
         getElement().setProperty(PROPERTY_WIDTH, prop);
-        getElement().getStyle().set(PROPERTY_WIDTH, prop);
+//        getElement().getStyle().set(PROPERTY_WIDTH, prop);
     }
     
     public String getHeight() {
@@ -81,7 +90,7 @@ public class MxGraph extends Component implements HasComponents, HasStyle {
         
     public void setHeight(String prop) {
         getElement().setProperty(PROPERTY_HEIGHT, prop);
-        getElement().getStyle().set(PROPERTY_HEIGHT, prop);
+//        getElement().getStyle().set(PROPERTY_HEIGHT, prop);
     }
     
     public String getMaxWidth() {
@@ -216,6 +225,58 @@ public class MxGraph extends Component implements HasComponents, HasStyle {
         getElement().setProperty(PROPERTY_CELLS_MOVABLE, prop);
     }
     
+    public void setOutlineWidth(String prop) {
+        getElement().setProperty(PROPERTY_OUTLINE_WIDTH, prop);
+    }
+    
+    public void setOutlineHeight(String prop) {
+        getElement().setProperty(PROPERTY_OUTLINE_HEIGHT, prop);
+    }
+    
+    public void setRotationEnabled(boolean prop) {
+        getElement().setProperty(PROPERTY_ROTATION, prop);
+    }
+    
+    public void setHasOutline(boolean prop) {
+        getElement().setProperty(PROPERTY_HAS_OUTLINE, prop);
+    }
+    
+    public void setBeginUpdateOnInit(boolean prop) {
+        getElement().setProperty(PROPERTY_BEGIN_UPDATE_ON_INIT, prop);
+    }
+    
+    public void setScale(double prop) {
+        getElement().setProperty(PROPERTY_SCALE, prop);
+    }
+    @Synchronize(property = PROPERTY_SCALE, value = "scale-changed")
+    public double getScale() {
+        return getElement().getProperty(PROPERTY_SCALE, 1.0);
+    }
+    
+     public void setTranslationX(int prop) {
+        getElement().setProperty(PROPERTY_TRANSLATIONX, prop);
+    }
+    
+    public int getTranslationX() {
+        return getElement().getProperty(PROPERTY_TRANSLATIONX, 0);
+    }
+    
+     public void setTranslationY(int prop) {
+        getElement().setProperty(PROPERTY_TRANSLATIONY, prop);
+    }
+    
+    public int getTranslationY() {
+        return getElement().getProperty(PROPERTY_TRANSLATIONY, 0);
+    }
+    
+    public void zoomIn() {
+        getElement().callJsFunction("zoomIn");
+    }
+        
+    public void zoomOut() {
+        getElement().callJsFunction("zoomOut");
+    }
+    
     public void removeIncompleteEdges() {
         
         ListIterator<MxGraphEdge> edgesIterator = edges.listIterator();
@@ -300,9 +361,33 @@ public class MxGraph extends Component implements HasComponents, HasStyle {
     public void executeStackLayout(String cellId, Boolean horizontal, Integer spacing, Integer margin) {
        executeStackLayout( cellId , horizontal , spacing, margin, margin, margin, margin);
     }
+    
+    public void executePartitionLayout(String cellId, Boolean horizontal, Integer spacing, Integer border) {
+       executePartitionLayout(cellId, horizontal, spacing,  border, true);
+    }
+    
+    public void executePartitionLayout(String cellId, Boolean horizontal, Integer spacing, Integer border, Boolean resizeVertices ) {
+       getElement().callJsFunction("executePartitionLayout", cellId , horizontal , spacing, border, resizeVertices);
+    }
      
     public void alignCells(String alignType, String [] cellIds, Integer coordinate) {
        getElement().callJsFunction("alignCells", alignType , new Gson().toJson(cellIds), coordinate);
+    }
+    
+    public void enablePanning(Boolean enablePanning) {
+       getElement().callJsFunction("enablePanning", enablePanning);
+    }
+    
+    public void beginUpdate() {
+       getElement().callJsFunction("beginUpdate");
+    }
+    
+    public void endUpdate() {
+       getElement().callJsFunction("endUpdate");
+    }
+    
+    public void setCellsMovable(boolean value) {
+       getElement().callJsFunction("setCellsMovable", value);
     }
 
  

@@ -1,6 +1,6 @@
 /** 
  @license
- Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
+ Copyright 2010-2020 Neotropic SAS <contact@neotropic.co>.
  
  Licensed under the Apache License, Version 2.0 (the "License"); 
  you may not use this file except in compliance with the License. 
@@ -34,7 +34,10 @@ class MxGraph extends PolymerElement {
         }
       </style>
       <div id="graphContainer" 
-      style="overflow:[[overflow]];width:[[width]];height:[[height]];min-height:300px;max-width:[[maxWidth]];max-height:[[maxHeight]]">
+      style="overflow:[[overflow]];width:[[width]];height:[[height]];min-height:300px;max-width:[[maxWidth]];max-height:[[maxHeight]];float:left;">
+      </div>
+       <div id="outlineContainer"
+        style="display:[[displayOutline]];width:[[outlineWidth]];height:[[outlineHeight]];position:relative;float:left;overflow:hidden;background:transparent;border-style:solid;border-color:black;">
       </div>
       <slot></slot>
     `;
@@ -89,7 +92,47 @@ class MxGraph extends PolymerElement {
             stackLayout: {
                 type: Object,
                 value: null
+            },
+            partitionLayout: {
+                type: Object,
+                value: null
+            },
+            rotationEnabled : {
+                type: Boolean,
+                value : false
+            },
+            hasOutline :  {
+                type: Boolean, 
+                value: false
+            },
+            displayOutline: {
+                type: String,
+                value : 'none'
+            },
+            outlineHeight: {
+                type: String,
+                value: '140px'
+            },
+            outlineWidth: {
+                type: String,
+                value: '200px'
+            },
+            beginUpdateOnInit: {
+                type: Boolean,
+                value: false
+            },
+            scale: {
+                type: Number,
+                value: 1.0,
+                notify: true
+            },
+            translationX: {
+                type: Number
+            },
+            translationY: {
+                type: Number
             }
+            
         }
     }
 
@@ -116,7 +159,7 @@ class MxGraph extends PolymerElement {
         this.addEventListener('mouseover', () => {
             this.dispatchEvent(new CustomEvent('mx-graph-mouse-over'));
         });
-        console.log("READY")
+        console.log("READY MXGraph")
         if (window.mxgraphLoaded) 
             this.initMxGraph();
         else {
@@ -140,10 +183,15 @@ class MxGraph extends PolymerElement {
         {
             // Disables the built-in context menu
             mxEvent.disableContextMenu(this.$.graphContainer);
-
+         
             //var model = new mxGraphModel(new mxCell());
             // Creates the graph inside the given container
             this.graph = new mxGraph(this.$.graphContainer);
+            if (this.hasOutline) {
+                var outln = new mxOutline(this.graph, this.$.outlineContainer);
+                this.displayOutline = 'inherit';
+            } else 
+                this.$.outlineContainer.style.display = 'none';
             // Enables rubberband selection
             //new mxRubberband(this.graph);
             //this.graph.setConnectable(true);
@@ -151,30 +199,62 @@ class MxGraph extends PolymerElement {
 
             mxGraph.prototype.cellsEditable = this.cellsEditable;
             mxGraph.prototype.cellsMovable = this.cellsMovable;
+            
+            // Set scale
+            this.graph.view.setScale(this.scale);
+            if (this.translationX)
+                this.graph.view.translation.x = this.translationX;
+            if (this.translationY)
+                this.graph.view.translation.y = this.translationY;
+            
+            //enable panning
+//            this.graph.panningHandler.ignoreCell = true;
+            this.graph.setPanning(true);
 
             //enable adding and removing control points. 
             mxEdgeHandler.prototype.addEnabled = true;
             mxEdgeHandler.prototype.removeEnabled = true;
-
+            mxVertexHandler.prototype.rotationEnabled = this.rotationEnabled;
             this.graph.getSelectionModel().setSingleSelection(true);
 
 
             var _this = this;
             // here add handles for general click events in the graph
             this.graph.addListener(mxEvent.CLICK, function (sender, evt) {
+                if (evt.properties.event.button > 0)
+                    return;
                 var cell = evt.getProperty('cell');
                 console.log("CLICK")
                 console.log(evt)
 
                 if (cell) {
                     var cellObject = _this.getCellObjectById(cell.id);
-                    cellObject.fireClickCell();
-                    console.log("CLICK on Cell")
-                    
+                    if (cellObject) {
+                        cellObject.fireClickCell();
+                        console.log("CLICK on Cell")
+                    }
                 } else {
                     _this.fireClickGraph(evt.properties.event.layerX, evt.properties.event.layerY);
                 }
             });
+            mxEventSource.isEventsEnabled = function() {
+               return true;  
+            };
+            this.graph.view.addListener(mxEvent.SCALE, function (sender, evt) {
+                _this.scale = evt.properties.scale;
+            });
+//            this.graph.view.addListener(mxEvent.SCALE_AND_TRANSLATE, function (sender, evt) {
+//                this.scale = this.graph.view.scale;
+//            });
+//            this.graph.view.addListener(mxEvent.TRANSLATE, function (sender, evt) {
+//                this.scale = this.graph.view.scale;
+//            });
+//            this.graph.addListener(mxEvent.MOVE_END, function (sender, evt) {
+//                this.scale = this.graph.view.scale;
+//            });
+//            this.graph.addListener(mxEvent.PAN_END, function (sender, evt) {
+//                this.scale = this.graph.view.scale;
+//            });
             this.graph.addListener(mxEvent.FIRE_MOUSE_EVENT, function (sender, evt) {
    
 //                console.log("MOUSE_MOVE")
@@ -265,19 +345,21 @@ class MxGraph extends PolymerElement {
 
             //allow custom logic when select cells
             var cellSelected = mxGraphSelectionModel.prototype.cellAdded;
-            mxGraphSelectionModel.prototype.cellAdded = function (cell) {
-                cellSelected.apply(this, arguments);
+            mxGraphSelectionModel.prototype.cellAdded = function (cell) {              
                 if (cell) {
-                    _this.fireCellSelected(cell.id, _this.graph.getModel().isVertex(cell));  
                     var cellObject = _this.getCellObjectById(cell.id);
-                    
+                    if (cellObject && !cellObject.selectable)
+                        return;
+                    cellSelected.apply(this, arguments);
+                                     
+                    _this.fireCellSelected(cell.id, _this.graph.getModel().isVertex(cell));  
                     if (cellObject && cellObject.animateOnSelect && _this.graph.getModel().isVertex(cell)) {
                         cellObject.startAnimation();                  
                     }                  
                 }
                           
                 console.log("CELL SELECTED :" + cell.id + " is Vertex : " + _this.graph.getModel().isVertex(cell));
-            }
+            }           
             //allow custom logic when editing in edges labels
 //        mxGraph.prototype.isCellEditable = function(	cell	){
 //          return true;
@@ -403,14 +485,19 @@ class MxGraph extends PolymerElement {
 
                 }
             }
-
-
+            
+          
+            
+            if (this.beginUpdateOnInit) {
+                this.beginUpdate();
+            }
+            
         }
         this.fireGraphLoaded();
     }
     ;
             // Get the polymer object that represents the cell with the porvided idCell. 
-            getCellObjectById(idCell) {
+    getCellObjectById(idCell) {
         var cell;
         this.cells.forEach(function (cellObject) {
             if (cellObject.cell.id == idCell) {
@@ -482,15 +569,26 @@ class MxGraph extends PolymerElement {
                             this.graph.removeCells(nodes, false);
                         }
                     }
-                    ;
                 }
-                ;
             });
         }, this);
+    }
+    
+    zoomIn() {
+        if (this.graph) {
+            this.graph.zoomIn();
+        }
+    }
+    
+    zoomOut() {
+        if (this.graph) {
+            this.graph.zoomOut();
+        }
     }
 
     executeStackLayout(cellId, horizontal, spacing, marginTop, marginRight, marginBottom, marginLeft) {
         if (this.graph) {
+            var t0 = performance.now();
             if (!this.stackLayout) {
                 this.stackLayout = new mxStackLayout(this.graph, horizontal, spacing);
             } else {
@@ -507,9 +605,31 @@ class MxGraph extends PolymerElement {
             var cell = this.graph.model.getCell(cellId);
             if (cell)
                 this.stackLayout.execute(cell);
+            var t1 = performance.now()
         }  else {
             var _this = this;
             setTimeout( this.waitForGraph(() => {_this.executeStackLayout(cellId, horizontal, spacing, marginTop, marginRight, marginBottom, marginLeft);}, 2500));
+        }
+    }
+    
+     executePartitionLayout(cellId, horizontal, spacing, border, resizeVertices) {
+        if (this.graph) {
+            if (!this.partitionLayout) {
+                this.partitionLayout = new mxPartitionLayout(this.graph, horizontal, spacing, border);
+            } else {
+                this.partitionLayout.horizontal = horizontal;
+                this.partitionLayout.spacing = spacing;
+                this.partitionLayout.border = border;
+            }
+            
+            this.partitionLayout.resizeVertices = resizeVertices;
+
+            var cell = this.graph.model.getCell(cellId);
+            if (cell)
+                this.partitionLayout.execute(cell);
+        }  else {
+            var _this = this;
+            setTimeout( this.waitForGraph(() => {_this.executePartitionLayout(cellId, horizontal, spacing, marginTop, marginRight, marginBottom, marginLeft);}, 2500));
         }
     }
     
@@ -554,6 +674,36 @@ class MxGraph extends PolymerElement {
                 this.graph.getStylesheet().putCellStyle(name, styleProps);
         }
     }
+    
+    enablePanning(enablePanning) {
+        if (this.graph) {
+            this.graph.panningHandler.useLeftButtonForPanning = enablePanning;
+            this.graph.setPanning(enablePanning);
+        }
+    }
+    
+    setCellsMovable(value) {
+        if (this.graph) {
+            mxGraph.prototype.cellsMovable = value;
+        }
+    }
+    
+    beginUpdate() {
+        if (this.graph) {
+            this.graph.getModel().beginUpdate();
+        }
+    }
+    
+    endUpdate() {
+        if (this.graph) {
+            this.graph.getModel().endUpdate();
+        }
+    }   
+    
+        
+    scaleChanged(newV, oldV) {
+        this.dispatchEvent(new CustomEvent('scale-changed'));
+    }
 
 //This method dispatches a custom event when the graph canvas is clicked (not fired on clicks in any vertex, edge, layer )
     fireClickGraph(x, y) {
@@ -589,6 +739,7 @@ class MxGraph extends PolymerElement {
      //This method dispatches a custom event when the graph is loaded
     fireGraphLoaded() {
         this.dispatchEvent(new CustomEvent('graph-loaded', {detail: {kicked: true}}));
+        console.log("****************************************** graphLoaded-Fired")
     }
 
     //this method remove all cells(vertex and edges) in the graph
@@ -610,7 +761,7 @@ class MxGraph extends PolymerElement {
         else 
             this.waitForGraph(this.refreshGraph);
     }
-    
+      
     alignMxGraphCells(align, cells, param) {
         if (cells == null)
             cells = this.graph.getSelectionCells();      

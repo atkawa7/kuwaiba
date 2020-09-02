@@ -27,6 +27,7 @@ import com.vaadin.flow.shared.Registration;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -64,6 +65,7 @@ public class MxGraphCell extends Component implements HasComponents {
     public static final String PROPERTY_STYLE_NAME = "styleName";
     public static final String PROPERTY_RAW_STYLE = "rawStyle";
     public static final String PROPERTY_ANIMATE_ON_SELECT = "animateOnSelect";
+    public static final String PROPERTY_SELECTABLE = "selectable";
         
     public MxGraphCell() {
         setUuid(UUID.randomUUID().toString());
@@ -244,11 +246,19 @@ public class MxGraphCell extends Component implements HasComponents {
     }
     
     public int getPerimeterSpacing() {
-        return getElement().getProperty(PROPERTY_PERIMETER_SPACING,0);
+        return getElement().getProperty(PROPERTY_PERIMETER_SPACING, 0);
     }
         
     public void setPerimeterSpacing(int prop) {
         getElement().setProperty(PROPERTY_PERIMETER_SPACING, prop);
+    }
+    
+    public int getFontSize() {
+        return getElement().getProperty(MxConstants.STYLE_FONTSIZE, 0);
+    }
+        
+    public void setFontSize(double prop) {
+        getElement().setProperty(MxConstants.STYLE_FONTSIZE, prop);
     }
     
     public String getStrokeColor() {
@@ -302,13 +312,24 @@ public class MxGraphCell extends Component implements HasComponents {
     public void setFillColor(String prop) {
         getElement().setProperty(MxConstants.STYLE_FILLCOLOR, prop);
     }
-    
+     
     public void setShape(String prop) {
         getElement().setProperty(MxConstants.STYLE_SHAPE, prop);
+        if (MxConstants.SHAPE_LABEL.equals(prop)) {
+            setFillColor(MxConstants.NONE);
+            setLabelBackgroundColor(MxConstants.NONE);
+            setStrokeColor(MxConstants.NONE);
+            setLabelPosition(MxConstants.ALIGN_CENTER);
+            setVerticalLabelPosition(MxConstants.ALIGN_CENTER);
+        }
     }
     
      public void setVerticalLabelPosition(String prop) {
         getElement().setProperty(MxConstants.STYLE_VERTICAL_LABEL_POSITION, prop);
+    }
+     
+     public void setLabelPosition(String prop) {
+        getElement().setProperty(MxConstants.STYLE_LABEL_POSITION, prop);
     }
      
     public boolean isMovable() {
@@ -327,6 +348,10 @@ public class MxGraphCell extends Component implements HasComponents {
         getElement().setProperty(PROPERTY_ANIMATE_ON_SELECT, prop);
     }
     
+    public void setIsSelectable(boolean prop) {
+        getElement().setProperty(PROPERTY_SELECTABLE, prop);
+    }
+    
     public void setGeometry(int x, int y, int width, int height) {
         setX(x);
         setY(y);
@@ -339,11 +364,11 @@ public class MxGraphCell extends Component implements HasComponents {
         add(mxGraphCell);
     }
     
-    public Registration addClickEdgeListener(ComponentEventListener<MxGraphClickCellEvent> clickListener) {
+    public Registration addClickCellListener(ComponentEventListener<MxGraphClickCellEvent> clickListener) {
         return super.addListener(MxGraphClickCellEvent.class, clickListener);
     }
     
-    public Registration addRightClickEdgeListener(ComponentEventListener<MxGraphRightClickCellEvent> clickEdgeListener) {
+    public Registration addRightClickCellListener(ComponentEventListener<MxGraphRightClickCellEvent> clickEdgeListener) {
         return super.addListener(MxGraphRightClickCellEvent.class, clickEdgeListener);
     }
     
@@ -353,6 +378,10 @@ public class MxGraphCell extends Component implements HasComponents {
     
     public Registration addCellAddedListener(ComponentEventListener<MxGraphCellAddedEvent> eventListener) {
         return super.addListener(MxGraphCellAddedEvent.class, eventListener);
+    }
+    
+    public Registration addClickOverlayButtonListener(ComponentEventListener<MxGraphCellClickOverlayButton> eventListener) {
+        return super.addListener(MxGraphCellClickOverlayButton.class, eventListener);
     }
     
     public void addPoint(MxGraphPoint mxGraphPoint) {
@@ -366,4 +395,35 @@ public class MxGraphCell extends Component implements HasComponents {
     public void toggleVisibility() {
          getElement().callJsFunction("toggleVisibility");
      }
+    
+    public void addOverlayButton(String buttonId, String label , String urlImage) {
+       addOverlayButton(buttonId , label, urlImage,MxConstants.ALIGN_RIGHT, MxConstants.ALIGN_BOTTOM, 0, 0);
+    }
+    
+    public void addOverlayButton(String buttonId, String label , String urlImage,String hAlign, String vAlign, int offsetX, int offsetY) {
+       getElement().callJsFunction("addOverlayButton", buttonId , label, urlImage,hAlign, vAlign, offsetX, offsetY);
+    }
+    
+    public void setChildrenCellPosition(String cellId, int position) {
+       getElement().callJsFunction("setChildrenCellPosition", cellId , position);
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null)
+           return false;
+        if (!(obj instanceof MxGraphCell)) 
+             return false;
+
+        return ((MxGraphNode) obj).getUuid().equals(getUuid());
+             
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + Objects.hashCode(getUuid());
+        return hash;
+    }
+
 }
