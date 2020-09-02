@@ -26,15 +26,21 @@ import elemental.json.JsonObject;
 @PWA(name = "Project Base for Vaadin Flow with Spring", shortName = "Project Base")
 public class MainView extends VerticalLayout {
 
+    boolean tooglePosition = false;
     public MainView(@Autowired MessageBean bean) {
         
         MxGraph mxGraph = new MxGraph();
   
-        mxGraph.setWidth("400px");
-        mxGraph.setHeight("400px");
-       
+        mxGraph.setWidth("600px");
+        mxGraph.setHeight("500px");
+        mxGraph.setRotationEnabled(true);
+        mxGraph.setHasOutline(true);
+        mxGraph.setOverflow("scroll");
+        mxGraph.setBeginUpdateOnInit(true);
+        mxGraph.setIsCellMovable(false);
         Button addButton = new Button("Add Cell"); // (3)
 
+        
         addButton.addClickListener(click -> {
      // (1)
             MxGraphCell mxGraphCell = new MxGraphCell();
@@ -59,6 +65,7 @@ public class MainView extends VerticalLayout {
         MxGraphNode nodeContainer = new MxGraphNode();
         MxGraphNode nodeC = new MxGraphNode();
         MxGraphNode nodeD = new MxGraphNode();
+        MxGraphNode nodeE = new MxGraphNode();
         MxGraphEdge edge = new MxGraphEdge();
         MxGraphLayer layerEdge = new MxGraphLayer();
         MxGraphLayer layerNodes = new MxGraphLayer();
@@ -72,7 +79,7 @@ public class MainView extends VerticalLayout {
         customStyle2.addProperty(MxConstants.STYLE_STROKECOLOR, "green");
         customStyle2.addProperty(MxConstants.STYLE_FILLCOLOR, "orange");
         
-        nodeA.addRightClickEdgeListener(t-> {
+        nodeA.addRightClickCellListener(t-> {
              Notification.show("Right Click Graph on X:Cell :" + nodeA.getLabel());
         });
                               
@@ -90,7 +97,7 @@ public class MainView extends VerticalLayout {
             }
         });
         
-        edge.addClickEdgeListener(new ComponentEventListener<MxGraphClickCellEvent>() {
+        edge.addClickCellListener(new ComponentEventListener<MxGraphClickCellEvent>() {
             @Override
             public void onComponentEvent(MxGraphClickCellEvent t) {
                 Notification.show("mxgraph click edge");
@@ -111,19 +118,33 @@ public class MainView extends VerticalLayout {
           nodeA.setShape(MxConstants.SHAPE_IMAGE);
           nodeA.setImage("images/press32.png");
           nodeA.setLabel("Press");
-          nodeA.setGeometry(20, 100, 80, 20);
-          nodeA.setCellLayer(layerNodes.getUuid());
+          nodeA.setGeometry(50, 100, 80, 20);
+          nodeA.setCellLayer(layerNodes.getUuid());       
           nodeB.setUuid("nodeB");
           nodeB.setImage("images/print32.png");
           nodeB.setShape(MxConstants.SHAPE_IMAGE);
           nodeB.setLabel("print");
           nodeB.setGeometry(200, 100, 80, 20);
           nodeB.setCellLayer(layerNodes.getUuid());
+          nodeB.setIsSelectable(false);
           nodeContainer.setUuid("nodeContainer");
           nodeContainer.setLabel("Container");
+          nodeContainer.setFillColor(MxConstants.NONE);
           nodeContainer.setGeometry(300, 100, 80, 200);
           nodeContainer.setCellLayer(layerNodes.getUuid());
           nodeContainer.setAnimateOnSelect(true);
+          nodeContainer.addCellAddedListener(eventListener-> {
+            nodeContainer.addOverlayButton("zoomIn", "Zoom In", "images/zoom_in.png", MxConstants.ALIGN_LEFT, MxConstants.ALIGN_TOP, 0, 0); 
+          });
+          nodeContainer.addCellAddedListener(eventListener-> {
+            nodeContainer.addOverlayButton("zoomOut", "Zoom Out", "images/zoom_out.png", MxConstants.ALIGN_LEFT, MxConstants.ALIGN_BOTTOM, 0, 0); 
+          });
+          nodeContainer.addClickOverlayButtonListener(eventListener -> {
+              if (eventListener.getButtonId().equals("zoomIn"))
+                 mxGraph.zoomIn();
+              if (eventListener.getButtonId().equals("zoomOut"))
+                 mxGraph.zoomOut();
+          });
           nodeC.setUuid("nodeC");
           nodeC.setLabel("Sub Cell");
           nodeC.setGeometry(10, 30, 30, 60); 
@@ -132,9 +153,16 @@ public class MainView extends VerticalLayout {
           //in this way we can append some style properties to the current cell style without using the stylesheet
           nodeC.setRawStyle(MxConstants.STYLE_STROKECOLOR  + "=" + "red;" + MxConstants.STYLE_STROKEWIDTH + "=" + 3);
           nodeD.setUuid("nodeD");
+          nodeD.setRawStyle("text");
           nodeD.setLabel("Sub Cell 2");
           nodeD.setGeometry(10, 30, 30, 60); 
           nodeD.setCellParent("nodeContainer");
+          
+          nodeE.setUuid("nodeE");
+          nodeE.setLabel("Sub Cell 2");
+          nodeE.setShape(MxConstants.SHAPE_LABEL);
+          nodeE.setGeometry(10, 30, 30, 60); 
+          nodeE.setCellParent("nodeContainer");
 
           
          //set the edge layer
@@ -171,13 +199,17 @@ public class MainView extends VerticalLayout {
 
           edge.setPoints(points.toJson());
        
-          add(mxGraph);
+          VerticalLayout lytGraph = new VerticalLayout(mxGraph); // Used to create a scroll bar
+          lytGraph.setMaxHeight("400px");
+          add(lytGraph);
           mxGraph.addGraphLoadedListener(evt -> { // always add styles, executeLayouts, align cells etc                                                         //when the graph is already loaded
                 mxGraph.addCellStyle(customStyle);
                 mxGraph.addCellStyle(customStyle2);
 //                nodeB.setStyleName("customStyle");
           });
-          mxGraph.refreshGraph();
+//          mxGraph.refreshGraph();
+
+
           mxGraph.addLayer(layerNodes);     // remember the order in which objects are added
           mxGraph.addLayer(layerEdge);     // add layers first that his childrens
           
@@ -187,8 +219,11 @@ public class MainView extends VerticalLayout {
           mxGraph.addNode(nodeContainer);
           mxGraph.addNode(nodeC);
           mxGraph.addNode(nodeD);
+          mxGraph.addNode(nodeE);
           mxGraph.addEdge(edge);
-
+          edge.addCellAddedListener(evt -> {
+             mxGraph.endUpdate();
+          });
 //          Button addPoint = new Button("Add Demo Point Edge"); // (3)
 //
 //        addPoint.addClickListener(click -> {
@@ -212,6 +247,7 @@ public class MainView extends VerticalLayout {
           Notification.show("label edge: " + edge.getLabel());
           Notification.show("Source label edge: " + edge.getSourceLabel());
           Notification.show("Target label edge: " + edge.getTargetLabel());   
+          Notification.show("Scale: " + mxGraph.getScale());   
      }); 
         
      Button btnToggleVisivilityEdgeLager = new Button("Hide/Show Edge Layer", evt -> {
@@ -223,7 +259,9 @@ public class MainView extends VerticalLayout {
      });
      
      Button btnToggleLayoutNodePrint = new Button("Execute Horizontal Layout in Container node", evt -> {
+         mxGraph.setCellsMovable(true);
          mxGraph.executeStackLayout("nodeContainer", true, 10);
+         mxGraph.setCellsMovable(false);
      });
 
      Button btnCustomStyle1Node = new Button("Add Custom Style 1 to Node Print", evt -> {
@@ -238,9 +276,36 @@ public class MainView extends VerticalLayout {
          mxGraph.removeNode(nodeContainer);
      });
 
+     Button btnZoomIn = new Button("Zoom In", evt -> {
+         mxGraph.zoomIn();
+     });
+     
+     Button btnZoomOut = new Button("Zoom Out", evt -> {
+         mxGraph.zoomOut();
+     });
+     
+     Button btnSetScale = new Button("set Scale 3", evt -> {
+         mxGraph.getScale();
+         mxGraph.setScale(2.5);
+     });
+     
+     Button btnChangeChildrenPos = new Button("Change Children Position", evt -> {
+         if (tooglePosition)
+            nodeContainer.setChildrenCellPosition("nodeC", 0);
+         else
+            nodeContainer.setChildrenCellPosition("nodeD", 0);
+         tooglePosition();
+         mxGraph.executeStackLayout("nodeContainer", true, 10);
+     });
+     
      add(new HorizontalLayout(btnToggleVisivilityNodesLager, btnToggleVisivilityEdgeLager, btnShowObjectsData, btnToggleLayoutNodePrint));
      add(new HorizontalLayout(btnCustomStyle1Node, btnCustomStyle2Node, btnRemoveContainerNode));
+     add(new HorizontalLayout(btnZoomIn, btnZoomOut, btnSetScale, btnChangeChildrenPos));
 
+    }
+    
+    public void tooglePosition() {
+        tooglePosition = !tooglePosition;
     }
 
 }
