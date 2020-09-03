@@ -26,7 +26,10 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.shared.Registration;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -309,6 +312,19 @@ public class MxGraphCell extends Component implements HasComponents {
         getElement().setProperty(PROPERTY_RAW_STYLE, prop);
     }
     
+    public void setRawStyle(LinkedHashMap<String, String> mapStyle) {
+        if (mapStyle != null && !mapStyle.isEmpty()) {
+            StringBuilder styleBuilder = new StringBuilder();
+            List<Entry<String, String>> entries = Arrays.asList(mapStyle.entrySet().toArray(new Entry[0]));
+            entries.forEach(entry -> {
+                styleBuilder.append(String.format("%s=%s", entry.getKey(), entry.getValue()));
+                if (entries.indexOf(entry) < entries.size() - 1)
+                    styleBuilder.append(";");
+            });
+            setRawStyle(styleBuilder.toString());
+        }
+    }
+    
     public void setFillColor(String prop) {
         getElement().setProperty(MxConstants.STYLE_FILLCOLOR, prop);
     }
@@ -395,6 +411,14 @@ public class MxGraphCell extends Component implements HasComponents {
     public void toggleVisibility() {
          getElement().callJsFunction("toggleVisibility");
      }
+    
+    public void overrideStyle() {
+        getElement().executeJs("this.overrideStyle()");
+    }
+    
+    public void updateCellSize() {
+        getElement().executeJs("this.graph.updateCellSize(this.cell, true)");
+    }
     
     public void addOverlayButton(String buttonId, String label , String urlImage) {
        addOverlayButton(buttonId , label, urlImage,MxConstants.ALIGN_RIGHT, MxConstants.ALIGN_BOTTOM, 0, 0);

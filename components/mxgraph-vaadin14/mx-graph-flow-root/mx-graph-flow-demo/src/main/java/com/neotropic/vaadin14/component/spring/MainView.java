@@ -275,7 +275,12 @@ public class MainView extends VerticalLayout {
      Button btnRemoveContainerNode = new Button("Remove Container Node", evt -> {
          mxGraph.removeNode(nodeContainer);
      });
-
+     
+//     mxGraph.setConnectable(true);
+//     mxGraph.addEdgeCompleteListener(event -> {
+//         Notification.show(String.format("sourceId=%s targetId=%s", event.getSourceId(), event.getTargetId()));
+//     });
+     
      Button btnZoomIn = new Button("Zoom In", evt -> {
          mxGraph.zoomIn();
      });

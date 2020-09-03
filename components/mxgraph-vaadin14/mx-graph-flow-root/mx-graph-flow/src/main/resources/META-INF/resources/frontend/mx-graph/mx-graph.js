@@ -93,6 +93,23 @@ class MxGraph extends PolymerElement {
                 type: Object,
                 value: null
             },
+            /**
+             * Specifies if the graph should allow new connections.
+             */
+            connectable: {
+                type: Boolean,
+                value: false,
+                observer: '_connectableChanged'
+            },
+            /**
+             * Sets if any cell may be moved, sized, bended, disconnected, 
+             * edited or selected
+             */
+            cellsLocked: {
+                type: Boolean,
+                value: false,
+                observer: '_cellsLockedChanged'
+            },
             partitionLayout: {
                 type: Object,
                 value: null
@@ -601,8 +618,11 @@ class MxGraph extends PolymerElement {
             this.stackLayout.marginLeft = marginLeft;
             this.stackLayout.resizeParent = true;
             this.stackLayout.resizeParentMax = true;
-
-            var cell = this.graph.model.getCell(cellId);
+            
+            var cell = this.graph.getDefaultParent();
+            if (cellId)
+                cell = this.graph.model.getCell(cellId);
+            
             if (cell)
                 this.stackLayout.execute(cell);
             var t1 = performance.now()
@@ -847,8 +867,39 @@ class MxGraph extends PolymerElement {
 
         return cells;
     };
-    
-
+    /**
+     * Specifies if the graph should allow new connections.
+     * 
+     * @param {boolean} newValue boolean indicating if new connections should be
+     * allowed.
+     * @param {boolean} oldValue boolean indicating if new connections should be
+     * allowed.
+     */
+    _connectableChanged(newValue, oldValue) {
+        if (this.graph) {
+            this.graph.setConnectable(newValue);
+            if (newValue) {
+                if (!this.oldContainerHandlerInsertEdge)
+                    this.oldContainerHandlerInsertEdge = this.graph.connectionHandler.insertEdge;
+                this.graph.connectionHandler.insertEdge = (parent, id, value, source, target, style) => {
+                    this.dispatchEvent(new CustomEvent('edge-complete', 
+                        {
+                            detail: {
+                                sourceId: source ? source.id : null,
+                                targetId: target ? target.id : null
+                            }
+                        }
+                    ));
+                    return null;
+                };
+            } else {
+                if (this.oldContainerHandlerInsertEdge)
+                    this.graph.connectionHandler.insertEdge = this.oldContainerHandlerInsertEdge;
+            }
+        }
+        else
+            this.waitForGraph(() => this._connectableChanged(newValue, oldValue));
+    }
 }
 
 window.customElements.define('mx-graph', MxGraph);

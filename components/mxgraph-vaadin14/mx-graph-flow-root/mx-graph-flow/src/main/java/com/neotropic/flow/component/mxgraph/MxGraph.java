@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasComponents;
+import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.Synchronize;
 import com.vaadin.flow.component.Tag;
@@ -35,7 +36,7 @@ import java.util.ListIterator;
  */
 @Tag("mx-graph")
 @JsModule("./mx-graph/mx-graph.js")
-public class MxGraph extends Component implements HasComponents, HasStyle {
+public class MxGraph extends Component implements HasComponents, HasStyle, HasSize {
     private static final String PROPERTY_GRID = "grid";
     private static final String PROPERTY_WIDTH = "width";
     private static final String PROPERTY_HEIGHT = "height";
@@ -46,6 +47,10 @@ public class MxGraph extends Component implements HasComponents, HasStyle {
     private static final String PROPERTY_CELLS_MOVABLE = "cellsMovable";
     private static final String PROPERTY_CELLS_EDITABLE = "cellsEditable";
     private static final String PROPERTY_OVERFLOW = "overflow";
+    /**
+     * Specifies if the graph should allow new connections
+     */
+    private static final String PROPERTY_CONNECTABLE = "connectable"; //NOI18N
     private static final String PROPERTY_ROTATION = "rotationEnabled";
     private static final String PROPERTY_HAS_OUTLINE = "hasOutline";
     private static final String PROPERTY_BEGIN_UPDATE_ON_INIT = "beginUpdateOnInit";
@@ -118,7 +123,25 @@ public class MxGraph extends Component implements HasComponents, HasStyle {
     public void setOverflow(String prop) {
         getElement().setProperty(PROPERTY_OVERFLOW, prop);
     }
-       
+    /**
+     * Gets boolean indicating if new connections should be allowed.
+     * @return boolean indicating if new connections should be allowed.
+     */
+    public boolean getConnectable() {
+        return getElement().getProperty(PROPERTY_CONNECTABLE, false);
+    }
+    /**
+     * Sets boolean indicating if new connections should be allowed.
+     * @param connectable boolean indicating if new connections should be allowed.
+     */
+    public void setConnectable(boolean connectable) {
+        getElement().setProperty(PROPERTY_CONNECTABLE, connectable);
+    }
+    
+    public void setCellsLocked(boolean cellsLocked) {
+        getElement().executeJs("this.graph.setCellsLocked($0)", cellsLocked);
+    }
+    
     public Registration addClickGraphListener(ComponentEventListener<MxGraphClickGraphEvent> clickListener) {
         return super.addListener(MxGraphClickGraphEvent.class, clickListener);
     }
@@ -149,6 +172,10 @@ public class MxGraph extends Component implements HasComponents, HasStyle {
     
     public Registration addMouseOverEvent(ComponentEventListener<MxGraphMouseOverEvent> mouseOverEvent) {
         return addListener(MxGraphMouseOverEvent.class, mouseOverEvent);
+    }
+    
+    public Registration addEdgeCompleteListener(ComponentEventListener<MxGraphEdgeCompleteEvent> edgeCompleteEvent) {
+        return addListener(MxGraphEdgeCompleteEvent.class, edgeCompleteEvent);
     }
     
     public void addCell(MxGraphCell mxGraphCell) {

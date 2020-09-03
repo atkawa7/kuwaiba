@@ -588,6 +588,13 @@ cellLabelChanged() {
      var state = this.graph.view.getState(this.cell);
      state.shape.node.classList.remove('cell-animated'); 
   }
+  /**
+   * Overrides the current cell style by the raw style.
+   */
+  overrideStyle() {
+    if (this.graph && this.cell)
+      this.graph.setCellStyle(this.rawStyle, [this.cell]);
+  }
     
 }
 
