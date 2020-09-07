@@ -896,7 +896,7 @@ public class OutsidePlanView extends AbstractView<BusinessObjectLight, Component
                                 String rawStyle = getRawStyle(styles);
                                 if (rawStyle != null)
                                     vertex.setRawStyle(rawStyle);
-                                vertex.addRightClickEdgeListener(event -> {
+                                vertex.addRightClickCellListener(event -> {
                                     if (viewTools)
                                         openNodeDialog(newNode);
                                 });
@@ -965,7 +965,7 @@ public class OutsidePlanView extends AbstractView<BusinessObjectLight, Component
                                     edge.setSource(sourceBusinessObject.getId());
                                     edge.setTarget(targetBusinessObject.getId());
                                     edge.setPoints(points.toJson());
-                                    edge.addRightClickEdgeListener(event -> {
+                                    edge.addRightClickCellListener(event -> {
                                         if (viewTools)
                                             openEdgeDialog(newEdge);
                                     });

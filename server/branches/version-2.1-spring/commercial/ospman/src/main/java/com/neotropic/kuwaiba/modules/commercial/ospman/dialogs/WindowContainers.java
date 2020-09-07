@@ -363,7 +363,7 @@ public class WindowContainers extends Dialog {
                     ex.getLocalizedMessage()
                 ).open();
             }
-            return null;
+            return new ArrayList();
         });
         
         treeGrid.addComponentColumn(item -> {
