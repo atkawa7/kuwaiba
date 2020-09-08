@@ -23,5 +23,6 @@
         <module>Visualization</module>
         <module>templateman</module>
         <module>configman</module>
+        <module>taskman</module>
     </modules>
 </project>
