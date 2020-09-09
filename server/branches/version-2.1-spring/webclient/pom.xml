@@ -148,7 +148,13 @@
             <groupId>com.neotropic.kuwaiba.modules.commercial</groupId>
             <artifactId>mpls</artifactId>
             <version>2.1</version>
-        </dependency>         
+        </dependency>
+        <dependency>
+            <groupId>com.neotropic.flow.component</groupId>
+            <artifactId>mx-graph-flow</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+        </dependency>       
     </dependencies>
     <dependencyManagement>
         <dependencies>
