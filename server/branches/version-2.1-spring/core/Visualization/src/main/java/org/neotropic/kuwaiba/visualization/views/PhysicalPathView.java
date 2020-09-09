@@ -79,7 +79,31 @@ public class PhysicalPathView extends AbstractDetailedView<BusinessObjectLight, 
      * Reference to the Physical Connecion Service
      */
     private PhysicalConnectionsService physicalConnectionsService;
-    
+    /**
+     * Width for the mxgraph component
+     */
+    private String componentWidth = "750px";
+    /**
+     * Height for the mxgraph component
+     */
+    private String componentHeight = "100%";
+
+    public String getComponentWidth() {
+        return componentWidth;
+    }
+
+    public void setComponentWidth(String componentWidth) {
+        this.componentWidth = componentWidth;
+    }
+
+    public String getComponentHeight() {
+        return componentHeight;
+    }
+
+    public void setComponentHeight(String componentHeight) {
+        this.componentHeight = componentHeight;
+    }
+     
     public PhysicalPathView(BusinessObjectLight businessObject) {
         super(businessObject);
     }
@@ -133,9 +157,12 @@ public class PhysicalPathView extends AbstractDetailedView<BusinessObjectLight, 
 
         if (businessObject != null) {
                        
-            int widthPort = 60, heightPort = 50, startY = 30, widthExternalPort= 30, heightExternalPort=30;
+            int widthPort = 60, heightPort = 50, startY = 10, widthExternalPort= 30, heightExternalPort=30;
             VerticalLayout lytGraph = new VerticalLayout();
-            mxGraph = new MxGraphCanvas("100%", "100%");
+            mxGraph = new MxGraphCanvas(componentWidth, componentHeight);
+            mxGraph.getMxGraph().setHasOutline(true);
+            mxGraph.getMxGraph().setMaxHeight("400px");
+            mxGraph.getMxGraph().setOutlineHeight("100px");
             mxGraph.getMxGraph().setOverflow("scroll");
             lytGraph.add(mxGraph.getMxGraph());
             
@@ -187,8 +214,8 @@ public class PhysicalPathView extends AbstractDetailedView<BusinessObjectLight, 
                                     if (mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALNODE, ancestors.get(i).getClassName())
                                         || //Only parents up to the first physical node (say a building) will be displayed
                                         i == ancestors.size() - 2) { //Or if the next level is the dummy root
-                                    lastWidget.setCellParent("main");                                   
-                                    break;
+                                        lastWidget.setCellParent("main");                                   
+                                        break;
                                     }
                                     
                                 } else {
