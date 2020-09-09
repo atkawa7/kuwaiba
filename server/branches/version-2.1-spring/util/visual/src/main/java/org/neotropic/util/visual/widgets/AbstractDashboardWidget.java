@@ -64,6 +64,10 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
      * Reference to the translation service.
      */
     protected TranslationService ts;
+    /**
+     * Dialog used to show the content Component
+     */
+    Dialog wdwContent;
 
     /**
      * Use this constructor only for those widgets that won't be accessing the database.
@@ -92,7 +96,15 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
     public void setTitle(String title) {
         this.title = title;
     }
-    
+
+    public Dialog getWdwContent() {
+        return wdwContent;
+    }
+
+    public void setWdwContent(Dialog wdwContent) {
+        this.wdwContent = wdwContent;
+    }
+ 
     /**
      * Flips the current displayed component. That is, instead of the cover component, the component widget will be displayed
      */
@@ -111,7 +123,7 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
      */
     public void launch() {
         if (contentComponent != null) {
-            Dialog wdwContent = new Dialog();
+            wdwContent = new Dialog();
             wdwContent.add(contentComponent);
             wdwContent.open();
         }
@@ -138,6 +150,7 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
         this.coverComponent = divCover;
         add(this.coverComponent);
     }
+    
     public abstract void createContent();
     
     public enum ActiveContent {

@@ -274,6 +274,22 @@ public class MxGraphCanvas<N, E> {
             mxGraph.refreshGraph();
         }
     }
+     /**
+     * add the given edge in the canvas     
+     * @param edge the object that represents the edge
+     * @param sourceNode the object that represents the source node
+     * @param targetNode the object that represents the target node
+     * @param mxgraphEdge the new mxgraphCell
+     */
+    public void addEdge(E edge, N sourceNode, N targetNode, MxGraphEdge mxgraphEdge) {
+        if (!edges.containsKey(edge)) {       
+            edges.put(edge, mxgraphEdge);
+            sourceEdgeNodes.put(edge, sourceNode);
+            targetEdgeNodes.put(edge, targetNode);
+            mxGraph.addEdge(mxgraphEdge);
+            mxGraph.refreshGraph();
+        }
+    }
     /**
      * Removes a node from the canvas
      * @param businessObject the object to be removed
@@ -282,7 +298,7 @@ public class MxGraphCanvas<N, E> {
         
         mxGraph.removeNode(nodes.get(businessObject));
         nodes.remove(businessObject);
-        
+                    
         //delete edges related to the object
         List<E> edgesToDelete = new ArrayList<>();
         
