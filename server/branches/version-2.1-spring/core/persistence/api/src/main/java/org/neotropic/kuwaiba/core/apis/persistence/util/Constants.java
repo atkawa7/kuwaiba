@@ -278,6 +278,18 @@ public class Constants {
     public static final String PROPERTY_PARENT = "parent"; //NOI18N
     public static final String PROPERTY_RELATED_OBJECT = "relatedObject"; //NOI18N
     /**
+     * Property rackUnits
+     */
+    public static final String PROPERTY_RACK_UNITS = "rackUnits";
+    /**
+     * Property numberingAscending
+     */
+    public static final String PROPERTY_RACK_UNITS_NUMBERING = "rackUnitsNumberingDescending";
+    /**
+     * Property startRackUnit
+     */
+    public static final String PROPERTY_POSITION = "position";
+    /**
      * Property SNMP version
      */
     public static final String PROPERTY_SNMP_VERSION = "version";
@@ -543,6 +555,18 @@ public class Constants {
      */
     public static final String CLASS_VIRTUALWAREHOUSE = "VirtualWarehouse"; //NOI18N;
     /**
+     * Class EquipmentModel
+     */
+    public static final String CLASS_EQUIPMENTMODEL = "EquipmentModel"; //NOI18N;
+    /**
+     * Class Slot
+     */
+    public static final String CLASS_SLOT = "Slot"; //NOI18N;   
+    /**
+     * Class Rack
+     */
+    public static String CLASS_RACK = "Rack";
+    /**
      * Dummy root node name
      */
     public static final String NODE_DUMMYROOT = "DummyRoot"; //NOI18N
@@ -674,9 +698,9 @@ public class Constants {
       */
      public static final int MAX_ICON_SIZE_IN_BYTES = 10000;
      
-     public static int DEFAULT_ICON_WIDTH = 24;
+     public static double DEFAULT_ICON_WIDTH = 24;
      
-     public static int DEFAULT_ICON_HEIGHT = 24;
-     
-       
+     public static double DEFAULT_ICON_HEIGHT = 24;
+
+           
 }

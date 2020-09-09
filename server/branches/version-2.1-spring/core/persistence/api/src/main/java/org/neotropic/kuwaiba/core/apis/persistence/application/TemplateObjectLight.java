@@ -79,4 +79,11 @@ public class TemplateObjectLight implements Comparable<TemplateObjectLight> {
     public int compareTo(TemplateObjectLight o) {
         return o.getName().compareTo(name);
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
+    
+    
 }
