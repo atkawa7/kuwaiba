@@ -69,7 +69,19 @@ public class MxGraphCell extends Component implements HasComponents {
     public static final String PROPERTY_RAW_STYLE = "rawStyle";
     public static final String PROPERTY_ANIMATE_ON_SELECT = "animateOnSelect";
     public static final String PROPERTY_SELECTABLE = "selectable";
-        
+    /**
+     * Specifies whether the cell is collapsed.
+     */
+    private static final String PROPERTY_COLLAPSED = "collapsed"; //NOI18N
+    /**
+     * Specifies whether the cell is visible.
+     */
+    private static final String PROPERTY_CELL_VISIBLE = "cellVisible"; //NOI18N
+    /**
+     * Specifies whether the cell is connectable
+     */
+    private static final String PROPERTY_CONNECTABLE = "connectable"; //NOI18N
+    
     public MxGraphCell() {
         setUuid(UUID.randomUUID().toString());
     }
@@ -374,6 +386,48 @@ public class MxGraphCell extends Component implements HasComponents {
         setHeight(height);
         setWidth(width);
     }
+    /**
+     * Gets whether the cell is collapsed.
+     * @return whether the cell is collapsed.
+     */
+    public boolean getCollapsed() {
+        return getElement().getProperty(PROPERTY_COLLAPSED, false);
+    }
+    /**
+     * Sets whether the cell is collapsed.
+     * @param collapsed whether the cell is collapsed.
+     */
+    public void setCollapsed(boolean collapsed) {
+        getElement().setProperty(PROPERTY_COLLAPSED, collapsed);
+    }
+    /**
+     * Gets whether the cell is visible.
+     * @return whether the cell is visible.
+     */
+    public boolean getCellVisible() {
+        return getElement().getProperty(PROPERTY_CELL_VISIBLE, true);
+    }
+    /**
+     * Sets whether the cell is visible.
+     * @param cellVisible whether the cell is visible.
+     */
+    public void setCellVisible(boolean cellVisible) {
+        getElement().setProperty(PROPERTY_CELL_VISIBLE, cellVisible);
+    }
+    /**
+     * Gets whether the cell is connectable.
+     * @return whether the cell is connectable.
+     */
+    public boolean getConnectable() {
+        return getElement().getProperty(PROPERTY_CONNECTABLE, true);
+    }
+    /**
+     * Sets whether the cell is connectable.
+     * @param connectable whether the cell is connectable.
+     */
+    public void setConnectable(boolean connectable) {
+        getElement().setProperty(PROPERTY_CONNECTABLE, connectable);
+    }
     
     public void addCell(MxGraphCell mxGraphCell) {
 //        getElement().appendChild(mxGraphCell.getElement());   
@@ -417,7 +471,11 @@ public class MxGraphCell extends Component implements HasComponents {
     }
     
     public void updateCellSize() {
-        getElement().executeJs("this.graph.updateCellSize(this.cell, true)");
+        getElement().executeJs("this.graph.getModel().beginUpdate(); try { this.graph.updateCellSize(this.cell, true); } finally { this.graph.getModel().endUpdate(); }");
+    }
+    
+    public void updateCellSize(boolean ignoreChildren) {
+        getElement().executeJs("this.graph.getModel().beginUpdate(); try { this.graph.updateCellSize(this.cell, $0); } finally { this.graph.getModel().endUpdate(); }", ignoreChildren);
     }
     
     public void addOverlayButton(String buttonId, String label , String urlImage) {
@@ -430,6 +488,14 @@ public class MxGraphCell extends Component implements HasComponents {
     
     public void setChildrenCellPosition(String cellId, int position) {
        getElement().callJsFunction("setChildrenCellPosition", cellId , position);
+    }
+    
+    public void toggleCell(boolean show, boolean includeEdges) {
+        getElement().executeJs("this.graph.toggleCells($0, [this.cell], $0)", show, includeEdges);
+    }
+    
+    public void setGeometry() {
+        getElement().executeJs("var geo = this.graph.getCellGeometry(this.cell); geo.width = 0; geo.height = 0; this.graph.getModel().setGeometry(this.cell, geo);");
     }
     
     @Override
@@ -449,5 +515,4 @@ public class MxGraphCell extends Component implements HasComponents {
         hash = 17 * hash + Objects.hashCode(getUuid());
         return hash;
     }
-
 }

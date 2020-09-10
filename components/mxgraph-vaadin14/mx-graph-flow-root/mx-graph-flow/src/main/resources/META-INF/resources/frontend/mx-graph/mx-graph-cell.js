@@ -216,6 +216,30 @@ class MxGraphCell extends PolymerElement {
       selectable: {
           type: Boolean,
           value: true
+      },
+      /**
+       * Specifies whether the cell is collapsed.
+       */
+      collapsed: {
+        type: Boolean,
+        value: false,
+        observer: '_collapsedChanged'
+      },
+      /**
+       * Specifies whether the cell is visible
+       */
+      cellVisible: {
+        type: Boolean,
+        value: true,
+        observer: '_cellVisibleChanged'
+      },
+      /**
+       * Specifies whether the cell is connectable
+       */
+      connectable: {
+        type: Boolean,
+        value: true,
+        observer: '_connectableChanged'
       }
     };
   }
@@ -592,10 +616,34 @@ cellLabelChanged() {
    * Overrides the current cell style by the raw style.
    */
   overrideStyle() {
-    if (this.graph && this.cell)
+    if (this.graph && this.cell) {
       this.graph.setCellStyle(this.rawStyle, [this.cell]);
+    }
   }
-    
+  /**
+   * Specifies whether the cell is collapsed
+   */
+  _collapsedChanged(newValue, oldValue) {
+    if (this.graph && this.cell) {
+      this.graph.getModel().setCollapsed(this.cell, newValue);
+    }
+  }
+  /**
+   * Specifies whether the cell is visible
+   */
+  _cellVisibleChanged(newValue, oldValue) {
+    if (this.graph && this.cell) {
+      this.graph.getModel().setVisible(this.cell, newValue);
+    }
+  }
+  /**
+   * Specifies wheter the cell is connectable
+   */
+  _connectableChanged(newValue, oldValue) {
+    if (this.graph && this.cell) {
+      this.cell.connectable = newValue;
+    }
+  }
 }
 
 window.customElements.define('mx-graph-cell', MxGraphCell);

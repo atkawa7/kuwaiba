@@ -24,7 +24,6 @@ import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.Synchronize;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
-import com.vaadin.flow.component.page.PendingJavaScriptResult;
 import com.vaadin.flow.shared.Registration;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +47,7 @@ public class MxGraph extends Component implements HasComponents, HasStyle, HasSi
     private static final String PROPERTY_CELLS_EDITABLE = "cellsEditable";
     private static final String PROPERTY_OVERFLOW = "overflow";
     /**
-     * Specifies if the graph should allow new connections
+     * Specifies if the graph should allow new connections.
      */
     private static final String PROPERTY_CONNECTABLE = "connectable"; //NOI18N
     private static final String PROPERTY_ROTATION = "rotationEnabled";
@@ -416,6 +415,4 @@ public class MxGraph extends Component implements HasComponents, HasStyle, HasSi
     public void setCellsMovable(boolean value) {
        getElement().callJsFunction("setCellsMovable", value);
     }
-
- 
 }

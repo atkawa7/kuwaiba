@@ -344,7 +344,7 @@ class MxGraph extends PolymerElement {
 
                 }
             });
-
+                        
             //allow custom logic when unselect cells
             var cellUnselected = mxGraphSelectionModel.prototype.cellRemoved;
             mxGraphSelectionModel.prototype.cellRemoved = function (cell) {
@@ -356,8 +356,8 @@ class MxGraph extends PolymerElement {
                     if (cellObject && cellObject.animateOnSelect && _this.graph.getModel().isVertex(cell)) {
                         cellObject.stopAnimation();  
                     }
+                    console.log("CELL UNSELECTED :" + cell.id + " is Vertex : " + _this.graph.getModel().isVertex(cell));
                 }
-                console.log("CELL UNSELECTED :" + cell.id + " is Vertex : " + _this.graph.getModel().isVertex(cell));
             }
 
             //allow custom logic when select cells
@@ -373,9 +373,8 @@ class MxGraph extends PolymerElement {
                     if (cellObject && cellObject.animateOnSelect && _this.graph.getModel().isVertex(cell)) {
                         cellObject.startAnimation();                  
                     }                  
+                    console.log("CELL SELECTED :" + cell.id + " is Vertex : " + _this.graph.getModel().isVertex(cell));
                 }
-                          
-                console.log("CELL SELECTED :" + cell.id + " is Vertex : " + _this.graph.getModel().isVertex(cell));
             }           
             //allow custom logic when editing in edges labels
 //        mxGraph.prototype.isCellEditable = function(	cell	){

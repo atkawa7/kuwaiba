@@ -13,9 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.vaadin14.component.spring;
+package com.neotropic.vaadin14.component.spring.splice;
 
 import com.neotropic.flow.component.mxgraph.MxGraph;
+import com.neotropic.flow.component.mxgraph.MxGraphEdge;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.Route;
 import java.util.Arrays;
@@ -35,11 +36,25 @@ public class TreeView extends Div {
         
         MxTree tree = new MxTree(graph, 
             () -> Arrays.asList("a-" + UUID.randomUUID().toString(), "b-" + UUID.randomUUID().toString(), "c-" + UUID.randomUUID().toString()), 
-            key -> Arrays.asList("1-" + UUID.randomUUID().toString(), "2-" + UUID.randomUUID().toString(), "3-" + UUID.randomUUID().toString())
+            key -> Arrays.asList("1-" + UUID.randomUUID().toString(), "2-" + UUID.randomUUID().toString(), "3-" + UUID.randomUUID().toString()), 
+            key -> "!-" + key.toString(),
+            null,
+            key -> key
         );
         tree.addCellAddedListener(event -> 
             graph.executeStackLayout(null, false, 10, 10, 0, 0, 0)
         );
+        
+        graph.setConnectable(true);
+        graph.addEdgeCompleteListener(event -> {
+            MxGraphEdge edge = new MxGraphEdge();
+            edge.setSource(event.getSourceId());
+            edge.setTarget(event.getTargetId());
+            edge.setStrokeWidth(1);
+            edge.setStrokeColor("blue");
+            graph.addEdge(edge);
+        });
+     
         add(graph);
     }
 }
