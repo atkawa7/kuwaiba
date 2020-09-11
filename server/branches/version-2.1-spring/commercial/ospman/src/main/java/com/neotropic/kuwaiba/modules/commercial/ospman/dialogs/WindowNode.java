@@ -33,6 +33,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentExc
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualAction;
 import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.visualization.views.FiberSplitterView;
 import org.neotropic.kuwaiba.visualization.views.PhysicalTreeView;
@@ -46,9 +47,14 @@ import org.neotropic.util.visual.notifications.SimpleNotification;
 public class WindowNode extends Dialog {
     public WindowNode(AbstractViewNode<BusinessObjectLight> node, 
         ApplicationEntityManager aem, BusinessEntityManager bem, MetadataEntityManager mem, 
-        TranslationService ts, PhysicalConnectionsService physicalConnectionsService) {
+        TranslationService ts, PhysicalConnectionsService physicalConnectionsService, 
+        NewBusinessObjectVisualAction newBusinessObjectVisualAction) {
         
         HorizontalLayout lytNodeTools = new HorizontalLayout();
+        lytNodeTools.add(new Button(new Icon(VaadinIcon.ROAD_BRANCH), event -> {
+            close();
+            new WindowMidSpanAccess(node.getIdentifier(), bem, ts, newBusinessObjectVisualAction).open();
+        }));
         lytNodeTools.add(new Button(ts.getTranslatedString("module.ospman.view-node.tool.connect"), new Icon(VaadinIcon.PLUG), 
             event -> {
                 close();

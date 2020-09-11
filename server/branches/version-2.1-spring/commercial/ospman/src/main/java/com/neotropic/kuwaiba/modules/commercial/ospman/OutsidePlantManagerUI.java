@@ -23,6 +23,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import com.neotropic.kuwaiba.modules.commercial.ospman.widgets.OutsidePlantManagerDashboard;
+import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualAction;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,11 @@ public class OutsidePlantManagerUI extends VerticalLayout {
     @Autowired
     private BusinessEntityManager bem;
     /**
+     * Reference to the New Business Object Action.
+     */
+    @Autowired
+    private NewBusinessObjectVisualAction newBusinessObjectVisualAction;
+    /**
      * Reference to the Physical Connection Service.
      */
     @Autowired
@@ -78,7 +84,8 @@ public class OutsidePlantManagerUI extends VerticalLayout {
         
         getUI().ifPresent( ui -> ui.getPage().setTitle(ts.getTranslatedString("module.ospman.title")));
         
-        this.dashboard = new OutsidePlantManagerDashboard(ts, resourceFactory, aem, bem, mem, physicalConnectionService);
+        this.dashboard = new OutsidePlantManagerDashboard(ts, resourceFactory, 
+            aem, bem, mem, physicalConnectionService, newBusinessObjectVisualAction);
         add(this.dashboard);
     }
 }

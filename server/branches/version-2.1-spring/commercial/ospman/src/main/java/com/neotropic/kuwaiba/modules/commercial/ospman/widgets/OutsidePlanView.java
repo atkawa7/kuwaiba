@@ -91,6 +91,7 @@ import org.neotropic.util.visual.dialog.ConfirmDialog;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.views.util.UtilHtml;
 import com.neotropic.kuwaiba.modules.commercial.ospman.provider.MapProvider;
+import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualAction;
 
 /**
  *
@@ -164,6 +165,10 @@ public class OutsidePlanView extends AbstractView<BusinessObjectLight, Component
      * Reference to the Physical Connections Service
      */
     private final PhysicalConnectionsService physicalConnectionsService;
+    /**
+     * Reference to the New Business Object Visual Action
+     */
+    private final NewBusinessObjectVisualAction newBusinessObjectVisualAction;
     
     private final List<MapOverlay> overlays;
     private final HashMap<String, MapOverlay> overlayIds = new HashMap();
@@ -200,6 +205,7 @@ public class OutsidePlanView extends AbstractView<BusinessObjectLight, Component
         TranslationService ts, 
         ResourceFactory resourceFactory,
         PhysicalConnectionsService physicalConnectionsService, 
+        NewBusinessObjectVisualAction newBusinessObjectVisualAction,
         boolean viewTools) {
         this.aem = aem;
         this.bem = bem;
@@ -207,6 +213,7 @@ public class OutsidePlanView extends AbstractView<BusinessObjectLight, Component
         this.ts = ts;
         this.resourceFactory = resourceFactory;
         this.physicalConnectionsService = physicalConnectionsService;
+        this.newBusinessObjectVisualAction = newBusinessObjectVisualAction;
         this.viewTools = viewTools;
         this.overlays = new ArrayList();
         this.mapOverlays = new LinkedHashMap();
@@ -1006,7 +1013,8 @@ public class OutsidePlanView extends AbstractView<BusinessObjectLight, Component
         
     private void openNodeDialog(BusinessObjectViewNode viewNode) {
         if (viewNode != null) {
-            WindowNode dialog = new WindowNode(viewNode, aem, bem, mem, ts, physicalConnectionsService);
+            WindowNode dialog = new WindowNode(viewNode, aem, bem, mem, ts, 
+                physicalConnectionsService, newBusinessObjectVisualAction);
             dialog.open();
         }
     }

@@ -203,8 +203,8 @@ public class MxGraphCanvas<N, E> {
             
             newNode.setUuid(nodeId);
             newNode.setLabel(node.toString());
-            newNode.setWidth(Constants.DEFAULT_ICON_WIDTH);
-            newNode.setHeight(Constants.DEFAULT_ICON_HEIGHT);
+            newNode.setWidth((int) Constants.DEFAULT_ICON_WIDTH);
+            newNode.setHeight((int) Constants.DEFAULT_ICON_HEIGHT);
             newNode.setX((xCoordinate)); //The position is scaled
             newNode.setY((yCoordinate));
             newNode.setShape(MxConstants.SHAPE_IMAGE);

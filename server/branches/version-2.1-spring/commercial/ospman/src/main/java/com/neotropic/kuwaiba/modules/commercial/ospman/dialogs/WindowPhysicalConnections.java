@@ -34,7 +34,7 @@ public class WindowPhysicalConnections extends Dialog {
     
     public WindowPhysicalConnections(BusinessObjectLight businessObject, TranslationService ts, BusinessEntityManager bem) {
         VerticalLayout vlyContainer = new VerticalLayout();
-
+        
         Grid<BusinessObjectLight> grdPort = new Grid();
         DataProvider<BusinessObjectLight, Void> dataProvider = DataProvider.fromCallbacks(
                 query -> { 
@@ -60,9 +60,11 @@ public class WindowPhysicalConnections extends Dialog {
                 },
                 query -> {
                     try {
-                        return bem.getChildrenOfClassLightRecursive(
+                        int size = bem.getChildrenOfClassLightRecursive(
                             businessObject.getId(), businessObject.getClassName(), Constants.CLASS_GENERICPHYSICALPORT, -1
                         ).size();
+                        grdPort.setPageSize(size);
+                        return size;
                     } catch (InventoryException ex) {
                         new SimpleNotification(
                             ts.getTranslatedString("module.general.messages.error"), 
@@ -73,7 +75,8 @@ public class WindowPhysicalConnections extends Dialog {
                 }
         );
         grdPort.setDataProvider(dataProvider);
-
+        grdPort.addColumn(BusinessObjectLight::getName);
+        
         vlyContainer.add(grdPort);
         add(vlyContainer);
     }

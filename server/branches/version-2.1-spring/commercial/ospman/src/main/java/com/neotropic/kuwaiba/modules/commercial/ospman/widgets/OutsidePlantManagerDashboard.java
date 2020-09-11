@@ -25,6 +25,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualAction;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
 import org.neotropic.util.visual.notifications.SimpleNotification;
@@ -59,6 +60,10 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
      * Reference to the Physical Connection Service.
      */
     private final PhysicalConnectionsService physicalConnectionService;
+    /**
+     * Reference to the new business object visual action.
+     */
+    private final NewBusinessObjectVisualAction newBusinessObjectVisualAction;
     
     public OutsidePlantManagerDashboard(
         TranslationService ts, 
@@ -66,7 +71,8 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
         ApplicationEntityManager aem, 
         BusinessEntityManager bem, 
         MetadataEntityManager mem,
-        PhysicalConnectionsService physicalConnectionService) {
+        PhysicalConnectionsService physicalConnectionService, 
+        NewBusinessObjectVisualAction newBusinessObjectVisualAction) {
         
         this.aem = aem;
         this.bem = bem;
@@ -74,6 +80,7 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
         this.ts = ts;
         this.resourceFactory = resourceFactory;
         this.physicalConnectionService = physicalConnectionService;
+        this.newBusinessObjectVisualAction = newBusinessObjectVisualAction;
         setSizeFull();
         setPadding(false);
         setMargin(false);
@@ -89,7 +96,8 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
     private void init() {
         removeAll();
         try {
-            OutsidePlanView ospView = new OutsidePlanView(aem, bem, mem, ts, resourceFactory, physicalConnectionService, true);
+            OutsidePlanView ospView = new OutsidePlanView(aem, bem, mem, ts, resourceFactory, 
+                physicalConnectionService, newBusinessObjectVisualAction, true);
             ospView.buildEmptyView();
             if (ospView.getAsComponent() != null)
                 add(ospView.getAsComponent());
