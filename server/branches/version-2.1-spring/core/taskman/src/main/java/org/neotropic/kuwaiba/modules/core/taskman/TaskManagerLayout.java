@@ -20,6 +20,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
@@ -38,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @StyleSheet("css/main.css")
 @StyleSheet("css/main-layout.css")
+@CssImport("./styles/vaadin-column.css")
 public class TaskManagerLayout extends FlexLayout implements RouterLayout {
     /**
      * Header component.
