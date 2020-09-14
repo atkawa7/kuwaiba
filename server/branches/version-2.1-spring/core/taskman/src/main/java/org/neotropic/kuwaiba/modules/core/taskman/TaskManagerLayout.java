@@ -39,7 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @StyleSheet("css/main.css")
 @StyleSheet("css/main-layout.css")
-@CssImport("./styles/vaadin-column.css")
+@CssImport("./styles/task-manager.css")
 public class TaskManagerLayout extends FlexLayout implements RouterLayout {
     /**
      * Header component.

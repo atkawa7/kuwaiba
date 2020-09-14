@@ -17,7 +17,6 @@ package org.neotropic.kuwaiba.modules.core.taskman;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
-import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -28,9 +27,9 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
@@ -407,7 +406,7 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
      */
     private static Div getResultMessage(ResultMessage result) {
         Div htmlStatus = new Div();
-        Html html;
+        Span html;
 
         HorizontalLayout lytResult = new HorizontalLayout();
         lytResult.setPadding(true);
@@ -415,24 +414,18 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
 
         switch (result.getMessageType()) {
             case ResultMessage.STATUS_SUCCESS:
-                html = new Html("<b>"
-                        + result.getMessage()
-                        + "</b>");
-                htmlStatus.addClassName("success");
+                html = new Span(result.getMessage());   
+                htmlStatus.addClassNames("success", "task-result");
                 htmlStatus.add(html);
                 break;
             case ResultMessage.STATUS_WARNING:
-                html = new Html("<b>"
-                        + result.getMessage()
-                        + "</b>");
-                htmlStatus.addClassName("warning");
+                html = new Span(result.getMessage());  
+                htmlStatus.addClassNames("warning", "task-result");
                 htmlStatus.add(html);
                 break;
             case ResultMessage.STATUS_ERROR:
-                html = new Html("<b>"
-                        + result.getMessage()
-                        + "</b>");
-                htmlStatus.addClassName("error");
+                html = new Span(result.getMessage());  
+                htmlStatus.addClassNames("error", "task-result");
                 htmlStatus.add(html);
                 break;
             default:
@@ -446,17 +439,13 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
      * presented in one place.
      */
     private class TaskForm extends VerticalLayout {
-        private final Task task;
         
         public TaskForm(Task task) {
-            this.task = task;
-            
             String notificationType;
             String executeType;
             
             // Header Task Properties
-            H4 headerMain = new H4(ts.getTranslatedString("module.taskman.task.properties.header-main"));
-            headerMain.setHeight("10%");
+            H4 headerMain = new H4(String.format("%s %s", ts.getTranslatedString("module.taskman.task.properties.header-main"), task.getName()));
             
             Button btnEditScript = new Button(ts.getTranslatedString("module.taskman.task.actions.edit-script.name"), new Icon(VaadinIcon.EDIT));
             btnEditScript.addClickListener(event -> {
@@ -527,17 +516,17 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
                     break;
             }
 
-            ComboBox<ExecutionType> cbxExecutionType = new ComboBox<>(ts.getTranslatedString("module.taskman.task.properties-scheduling.execution-type"));
-            cbxExecutionType.setItems(
+            ComboBox<ExecutionType> cmbExecutionType = new ComboBox<>(ts.getTranslatedString("module.taskman.task.properties-scheduling.execution-type"));
+            cmbExecutionType.setItems(
                     new ExecutionType(ts.getTranslatedString("module.taskman.task.properties-scheduling.execution-type.on-demand"), 0),
                     new ExecutionType(ts.getTranslatedString("module.taskman.task.properties-scheduling.execution-type.system-startup"), 1),
                     new ExecutionType(ts.getTranslatedString("module.taskman.task.properties-scheduling.execution-type.user-login"), 2),
                     new ExecutionType(ts.getTranslatedString("module.taskman.task.properties-scheduling.execution-type.loop"), 3)
             );
-            cbxExecutionType.setValue(new ExecutionType(executeType, task.getSchedule().getExecutionType()));
-            cbxExecutionType.setAllowCustomValue(false);
-            cbxExecutionType.setSizeFull();
-            cbxExecutionType.setWidth("33%");
+            cmbExecutionType.setValue(new ExecutionType(executeType, task.getSchedule().getExecutionType()));
+            cmbExecutionType.setAllowCustomValue(false);
+            cmbExecutionType.setSizeFull();
+            cmbExecutionType.setWidth("33%");
             // End scheduling properties
 
             // Init notification type properties
@@ -559,19 +548,19 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
                     break;
             }
 
-            ComboBox<NotificationType> cbxnotificationType = new ComboBox<>(ts.getTranslatedString("module.taskman.task.properties-notification.type"));
-            cbxnotificationType.setItems(
+            ComboBox<NotificationType> cmbnotificationType = new ComboBox<>(ts.getTranslatedString("module.taskman.task.properties-notification.type"));
+            cmbnotificationType.setItems(
                     new NotificationType(ts.getTranslatedString("module.taskman.task.properties-notification.type.no-notification"), 0),
                     new NotificationType(ts.getTranslatedString("module.taskman.task.properties-notification.type.client-managed"), 1),
                     new NotificationType(ts.getTranslatedString("module.taskman.task.properties-notification.type.email"), 2)
             );
-            cbxnotificationType.setValue(new NotificationType(notificationType, task.getNotificationType().getNotificationType()));
-            cbxnotificationType.setAllowCustomValue(false);
-            cbxnotificationType.setSizeFull();
-            cbxnotificationType.setWidth("33%");
+            cmbnotificationType.setValue(new NotificationType(notificationType, task.getNotificationType().getNotificationType()));
+            cmbnotificationType.setAllowCustomValue(false);
+            cmbnotificationType.setSizeFull();
+            cmbnotificationType.setWidth("33%");
             // End notification type properties
             
-            Button btnSave = new Button(ts.getTranslatedString("module.taskman.task.properties-button.save"));
+            Button btnSave = new Button(ts.getTranslatedString("module.taskman.task.properties-button.save"), new Icon(VaadinIcon.DOWNLOAD));
             btnSave.setAutofocus(true);
             btnSave.addClickListener(event -> {
                 try {
@@ -584,13 +573,13 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
                         Logger.getLogger(TaskManagerUI.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     // Update Task Notification Type
-                    TaskNotificationDescriptor notification =  new TaskNotificationDescriptor(txtEmail.getValue(), cbxnotificationType.getValue().getType());
+                    TaskNotificationDescriptor notification =  new TaskNotificationDescriptor(txtEmail.getValue(), cmbnotificationType.getValue().getType());
                     aem.updateTaskNotificationType(task.getId(), notification);
                     // Update Task Schedule
-                    TaskScheduleDescriptor schedule = new TaskScheduleDescriptor(task.getSchedule().getStartTime(), intEveryxMinutes.getValue(),  cbxExecutionType.getValue().getType());
+                    TaskScheduleDescriptor schedule = new TaskScheduleDescriptor(task.getSchedule().getStartTime(), intEveryxMinutes.getValue(),  cmbExecutionType.getValue().getType());
                     aem.updateTaskSchedule(task.getId(), schedule);
                     
-                    Notification.show(ts.getTranslatedString("module.taskman.task.properties-button.notification-saved"), 5000, Notification.Position.BOTTOM_CENTER);
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.taskman.task.properties-button.notification-saved")).open();
                     loadTasks();
                 } catch (ApplicationObjectNotFoundException ex) {
                     Logger.getLogger(TaskManagerUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -599,9 +588,9 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
             
             HorizontalLayout lytHeaderMain = new HorizontalLayout(headerMain);
             lytHeaderMain.setHeight("50%");
-            lytHeaderMain.setWidth("75%");
+            lytHeaderMain.setWidth("70%");
             lytHeaderMain.setPadding(false);
-            HorizontalLayout lytHeaderButton = new HorizontalLayout(btnEditScript, btnExecuteTask);
+            HorizontalLayout lytHeaderButton = new HorizontalLayout(btnEditScript, btnExecuteTask, btnSave);
             lytHeaderButton.setHeight("50%");
             HorizontalLayout lytHeader = new HorizontalLayout(lytHeaderMain, lytHeaderButton);
             lytHeader.setWidthFull();
@@ -634,21 +623,18 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
             lytGeneralProperties.setMargin(false);
             lytGeneralProperties.setPadding(false);
             
-            HorizontalLayout lytSchedulingProperties = new HorizontalLayout(dateStart, intEveryxMinutes, cbxExecutionType);
+            HorizontalLayout lytSchedulingProperties = new HorizontalLayout(dateStart, intEveryxMinutes, cmbExecutionType);
             lytSchedulingProperties.setWidthFull();
             lytSchedulingProperties.setMargin(false);
             lytSchedulingProperties.setPadding(false);
             
-            HorizontalLayout lytNotificationProperties = new HorizontalLayout(txtEmail, cbxnotificationType);
+            HorizontalLayout lytNotificationProperties = new HorizontalLayout(txtEmail, cmbnotificationType);
             lytNotificationProperties.setWidthFull();
             lytNotificationProperties.setMargin(false);
             lytNotificationProperties.setPadding(false);
                         
-            VerticalLayout lyButtonSave = new VerticalLayout(btnSave);
-            lyButtonSave.setDefaultHorizontalComponentAlignment(Alignment.END);
-
             add(lytHeader, headerGeneral, lytGeneralProperties, headerScheduling, lytSchedulingProperties, 
-                    headerNotificationType, lytNotificationProperties, lytTaskUser_Par, lyButtonSave);
+                    headerNotificationType, lytNotificationProperties, lytTaskUser_Par);
         }
     }
     
@@ -710,11 +696,8 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
      * This class manages updating of the task parameters.
      */
     private class UpdateParameterDialog extends Dialog {
-        private final StringPair parameter; 
 
         private UpdateParameterDialog(StringPair parameter) {
-            this.parameter = parameter;
-            
             TextField txtName = new TextField(ts.getTranslatedString("module.taskman.task.parameters.name"));
             txtName.setValue(parameter.getKey());
             txtName.setEnabled(false);
@@ -736,8 +719,8 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
                     aem.updateTaskParameters(currentTask.getId(), listParameter);
                 } catch (ApplicationObjectNotFoundException ex) {
                     Logger.getLogger(TaskManagerUI.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                Notification.show(ts.getTranslatedString("module.taskman.task.parameters.button.notification-saved"), 5000, Notification.Position.BOTTOM_CENTER);
+                } 
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.taskman.task.parameters.button.notification-saved")).open();  
                 wdwUpdateParameter.close();
                 loadTaskParameters(currentTask);
             });
@@ -765,15 +748,13 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
      * This class manages updating of the task scripts.
      */
     private class UpdateScriptDialog extends Dialog {
-        private final Task task;
-
+        
         private UpdateScriptDialog(Task task) {
-            this.task = task;
-            
             TextArea txtScript = new TextArea(ts.getTranslatedString("module.taskman.task.properties-general.script"));
             txtScript.setValue(task.getScript());
             txtScript.setPlaceholder(ts.getTranslatedString("module.taskman.task.properties-general.script-placeholder"));
             txtScript.setWidthFull();
+            txtScript.setMaxHeight("100%");
             txtScript.addValueChangeListener(event -> {
                task.setScript(txtScript.getValue());
             });
@@ -781,24 +762,25 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
             // Windows to update task script
             Dialog wdwUpdateScript = new Dialog();
             
-            Button btnSave = new Button(ts.getTranslatedString("module.taskman.task.parameters.button.save"));
+            Button btnSave = new Button(ts.getTranslatedString("module.taskman.task.properties-general.script.button.save"));
             btnSave.addClickListener(event -> {
                 try {
                     aem.updateTaskProperties(task.getId(), Constants.PROPERTY_SCRIPT, txtScript.getValue());
                 } catch (ApplicationObjectNotFoundException | InvalidArgumentException ex) {
                     Logger.getLogger(TaskManagerUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                Notification.show("Saved", 5000, Notification.Position.BOTTOM_CENTER);
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.taskman.task.properties-general.script.button.notification-saved")).open();        
                 wdwUpdateScript.close();
                 loadTasks();
             });
 
-            Button btnCancel = new Button((ts.getTranslatedString("module.taskman.task.parameters.button.cancel")),
+            Button btnCancel = new Button((ts.getTranslatedString("module.taskman.task.properties-general.script.button.cancel")),
                     (event) -> {
                         wdwUpdateScript.close();
                     });
             
             VerticalLayout lytUpdateScript = new VerticalLayout(txtScript);
+            lytUpdateScript.setHeightFull();
             HorizontalLayout lytMoreButtons = new HorizontalLayout(btnSave, btnCancel);
             VerticalLayout lytMain = new VerticalLayout(lytUpdateScript, lytMoreButtons);
             lytMain.setSizeFull();
@@ -823,7 +805,7 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
             
             Label headerTask = new Label(String.format("%s %s", ts.getTranslatedString("module.taskman.task.actions.execute-task-result"), task.getName()));
             Dialog wdwTaskNotification = new Dialog();
-            Button btnOk = new Button(ts.getTranslatedString("module.taskman.task.actions.execute-task-result.ok"),
+            Button btnOk = new Button(ts.getTranslatedString("module.taskman.task.actions.execute-task-result.close"),
                     (event) -> {
                         wdwTaskNotification.close();
                     });

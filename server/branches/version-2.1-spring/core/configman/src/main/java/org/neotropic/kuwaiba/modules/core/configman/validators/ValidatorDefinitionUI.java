@@ -20,9 +20,10 @@ import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -268,11 +269,9 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
 
     private class ValidatorDefinitionForm extends VerticalLayout {
 
-        private ValidatorDefinition validator;
-
         public ValidatorDefinitionForm(ValidatorDefinition validator) throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
-            this.validator = validator;
 
+            H4 headerMain = new H4(String.format("%s %s", ts.getTranslatedString("module.configman.validator.header-name"), validator.getName()));
             TextField txtName = new TextField(ts.getTranslatedString("module.configman.validator.label.name"),
                     validator.getName(), ts.getTranslatedString("module.configman.validator.label.name.info"));
             txtName.setRequiredIndicatorVisible(true);
@@ -286,20 +285,33 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
             Checkbox checkEnable = new Checkbox();
             checkEnable.setLabel(ts.getTranslatedString("module.configman.validator.label.enable"));
             checkEnable.setValue(validator.isEnabled());
-            Button btnSave = new Button(ts.getTranslatedString("module.configman.validator.button.name"));
+            Button btnSave = new Button(ts.getTranslatedString("module.configman.validator.button.name"), new Icon(VaadinIcon.DOWNLOAD));
+            btnSave.setAutofocus(true);
             btnSave.addClickListener(event -> {
                 try {
                     aem.updateValidatorDefinition(validator.getId(), txtName.getValue(), txtDescription.getValue(), validator.getClassToBeApplied(), txtScript.getValue(), checkEnable.getValue());
-                    Notification.show(ts.getTranslatedString("module.configman.validator.notification-saved"));
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.configman.validator.notification-saved")).open();
                     objectTree.getDataProvider().refreshAll();
                 } catch (ApplicationObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
                     Logger.getLogger(ValidatorDefinitionUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
+            
+            HorizontalLayout lytHeader = new HorizontalLayout(headerMain);
+            lytHeader.setWidthFull();
+            lytHeader.setPadding(false);
+            lytHeader.setMargin(false);
             VerticalLayout lytButton = new VerticalLayout(btnSave);
             lytButton.setDefaultHorizontalComponentAlignment(Alignment.END);
-
-            add(txtName, txtDescription, checkEnable, txtScript, lytButton);
+            HorizontalLayout lytHeaderMain = new HorizontalLayout(lytHeader, lytButton);
+            lytHeaderMain.setWidthFull();
+            lytHeaderMain.setPadding(false);
+            lytHeaderMain.setMargin(false);
+            VerticalLayout lytProperties = new VerticalLayout(txtName, txtDescription, checkEnable, txtScript);
+            lytProperties.setHeightFull();
+            lytProperties.setMargin(false);
+            
+            add(lytHeaderMain, lytProperties);
         }
     }
 }

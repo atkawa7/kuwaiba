@@ -17,14 +17,18 @@ limitations under the License.
 /* 
     Author     : Mauricio Ruiz {@literal <mauricio.ruiz@kuwaiba.org>}
 */
-.success{
-    background-color: #27AE60;
+.success {
+    background-color: #A6F1A3;
 }
 
-.warning{
-    background-color: #F1C40F;
+.warning {
+    background-color: #FFE996;
 }
 
-.error{
-    background-color: #E74C3C;
+.error {
+    background-color: #F1A3AC;
+}
+
+.task-result {
+    padding-left: 20px;
 }
