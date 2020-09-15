@@ -297,7 +297,7 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
      * @return The new input field filter.
      */
     private TextField createTxtFieldListTypeName(ListDataProvider<ClassMetadataLight> dataProvider) {
-        TextField txtListTypeName = new TextField(ts.getTranslatedString("module.general.labels.filter"), ts.getTranslatedString("module.general.labels.filterplaceholder"));
+        TextField txtListTypeName = new TextField(ts.getTranslatedString("module.general.labels.filter"), ts.getTranslatedString("module.general.labels.filter-placeholder"));
         txtListTypeName.setValueChangeMode(ValueChangeMode.EAGER);
         txtListTypeName.setWidthFull();
         txtListTypeName.addValueChangeListener(event -> dataProvider.addFilter(

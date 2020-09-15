@@ -304,7 +304,7 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
         icon.getElement().setProperty("title", ts.getTranslatedString("module.configvarman.label.filter-configuration-variable-pool"));
         icon.setSize("16px");
         
-        TextField txtPoolName = new TextField(ts.getTranslatedString("module.general.labels.filter"), ts.getTranslatedString("module.general.labels.filterplaceholder"));
+        TextField txtPoolName = new TextField(ts.getTranslatedString("module.general.labels.filter"), ts.getTranslatedString("module.general.labels.filter-placeholder"));
         txtPoolName.setValueChangeMode(ValueChangeMode.EAGER);
         txtPoolName.setWidthFull();
         txtPoolName.setSuffixComponent(icon);

@@ -407,7 +407,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
         icon.setSize(ICON_INLINE_SIZE);
 
         TextField txtFilterListTypeName = new TextField(ts.getTranslatedString("module.general.labels.filter"),
-                ts.getTranslatedString("module.general.labels.filterplaceholder"));
+                ts.getTranslatedString("module.general.labels.filter-placeholder"));
         //properties        
         filterRow.getCell(tblClasses.getColumnByKey(ts.getTranslatedString("module.general.labels.name"))).setComponent(txtFilterListTypeName);
         txtFilterListTypeName.setValueChangeMode(ValueChangeMode.EAGER);
@@ -514,7 +514,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
 
         TextField txtFilterListTypeName = new TextField(
                 ts.getTranslatedString("module.general.labels.filter"),
-                ts.getTranslatedString("module.general.labels.filterplaceholder"));
+                ts.getTranslatedString("module.general.labels.filter-placeholder"));
         //properties        
         filterRow.getCell(tblTemplates.getColumnByKey(
                 ts.getTranslatedString("module.general.labels.name")))

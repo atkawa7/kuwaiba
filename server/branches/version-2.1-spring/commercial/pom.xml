@@ -19,5 +19,6 @@
         <module>ospman</module>
         <module>whman</module>
         <module>impact</module>
+        <module>synchronization</module>
     </modules>
 </project>

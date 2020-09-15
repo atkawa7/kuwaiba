@@ -690,7 +690,7 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
         });
         HeaderRow filterRow = tblViews.appendHeaderRow();
         
-        TextField txtViewNameFilter = new TextField(ts.getTranslatedString("module.general.labels.filter"), ts.getTranslatedString("module.general.labels.filterplaceholder"));
+        TextField txtViewNameFilter = new TextField(ts.getTranslatedString("module.general.labels.filter"), ts.getTranslatedString("module.general.labels.filter-placeholder"));
         txtViewNameFilter.setValueChangeMode(ValueChangeMode.EAGER);
         txtViewNameFilter.setWidthFull();
         txtViewNameFilter.addValueChangeListener(event -> dataProvider.addFilter(

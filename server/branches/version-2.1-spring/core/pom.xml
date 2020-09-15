@@ -24,5 +24,6 @@
         <module>templateman</module>
         <module>configman</module>
         <module>taskman</module>
+        <module>services</module>
     </modules>
 </project>

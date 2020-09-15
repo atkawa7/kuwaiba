@@ -215,17 +215,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         String affectedProperties = "", oldValues = "", newValues = "";
         
         try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
-            
             Node classMetadata = Util.findNodeByLabelAndId(connectionManager.getConnectionHandler(), classLabel, newClassDefinition.getId());
-            
             if (classMetadata == null)
                 throw new MetadataObjectNotFoundException(String.format(
-                        "The class with id %s could not be found. Contact your administrator.", newClassDefinition.getName()));
+                        "The class with id %s could not be found. Contact your administrator.", newClassDefinition.getId()));
             
             String formerName = (String)classMetadata.getProperty(Constants.PROPERTY_NAME);
             
-            if(newClassDefinition.getName() != null){
-                if(newClassDefinition.getName().isEmpty())
+            if (newClassDefinition.getName() != null){
+                if (newClassDefinition.getName().isEmpty())
                     throw new InvalidArgumentException("Class name can not be an empty string");
                 
                 if (!newClassDefinition.getName().matches("^[a-zA-Z0-9_-]*$"))
@@ -714,20 +712,19 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     @Override
     public ClassMetadata getClass(String className) throws MetadataObjectNotFoundException {
         ClassMetadata clmt = cm.getClass(className);
-        
-        if (clmt != null)
-            return clmt;
-        
-        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
-            Node node = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, className);
-            
-            if (node == null)
-                throw new MetadataObjectNotFoundException(String.format(
-                        "Class %s could not be found. Contact your administrator.", className));
-            clmt = Util.createClassMetadataFromNode(node);
-            cm.putClass(clmt);
-            tx.success();
+        if (clmt == null) {
+            try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+                Node node = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, className);
+
+                if (node == null)
+                    throw new MetadataObjectNotFoundException(String.format(
+                            "Class %s could not be found. Contact your administrator.", className));
+                clmt = Util.createClassMetadataFromNode(node);
+                cm.putClass(clmt);
+                tx.success();
+            }
         }
+        
         return clmt;
     }
 

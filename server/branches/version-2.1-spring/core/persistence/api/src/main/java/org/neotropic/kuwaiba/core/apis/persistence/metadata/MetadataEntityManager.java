@@ -86,7 +86,7 @@ public interface MetadataEntityManager extends AbstractEntityManager {
             boolean includeIndesign) throws MetadataObjectNotFoundException;
     
     /**
-     * Gets the subclasses of a given class
+     * Gets the subclasses of a given class recursively.
      * @param className Class name
      * @param includeAbstractClasses Should the list include the abstract subclasses
      * @param includeSelf Should the list include the subclasses and the parent class?

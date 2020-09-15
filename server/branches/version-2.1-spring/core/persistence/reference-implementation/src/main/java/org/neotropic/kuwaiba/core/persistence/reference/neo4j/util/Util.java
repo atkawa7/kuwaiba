@@ -302,7 +302,7 @@ public class Util {
         myClass.setId(classNode.getId());
         myClass.setListType(isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, classNode));
         //Is Viewable if is subclass of
-        myClass.setViewable((Boolean)isSubclassOf(Constants.CLASS_VIEWABLEOBJECT, classNode));
+        myClass.setViewable(isSubclassOf(Constants.CLASS_VIEWABLEOBJECT, classNode));
         //Parent
         if (classNode.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING) != null){
             myClass.setParentClassName(

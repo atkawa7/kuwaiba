@@ -3802,17 +3802,19 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     }
 
     @Override
-    public void setClassProperties(long classId, String className, String displayName, String description, byte[] smallIcon, byte[] icon, int color, Boolean isAbstract, Boolean isInDesign, Boolean isCustom, Boolean isCountable, String sessionId) throws ServerSideException {
+    public void setClassProperties(long classId, String className, String displayName, String description, byte[] smallIcon, 
+            byte[] icon, int color, Boolean isAbstract, Boolean isInDesign, Boolean isCustom, Boolean isCountable, String sessionId) throws ServerSideException {
         if (mem == null)
              throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
             aem.validateCall("setClassProperties", "127.0.0.1", sessionId);
             ClassMetadata cm = new ClassMetadata();
-            
+            cm.setId(classId);
             cm.setName(className);
             cm.setDisplayName(displayName);
             cm.setDescription(description);
             cm.setAbstract(isAbstract);
+            cm.setInDesign(isInDesign);
             cm.setColor(color);
             cm.setCountable(isCountable);
             cm.setCreationDate(Calendar.getInstance().getTimeInMillis());

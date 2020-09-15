@@ -2614,17 +2614,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public List<Pool> getRootPools(String className, int type, boolean includeSubclasses) throws InvalidArgumentException {
         try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             List<Pool> pools  = new ArrayList<>();
-            
             ResourceIterator<Node> poolNodes = connectionManager.getConnectionHandler().findNodes(poolLabel);
-            
             while (poolNodes.hasNext()) {
                 Node poolNode = poolNodes.next();
-                
                 if (!poolNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF_SPECIAL)) { //Root pools don't have parents
                     if ((int)poolNode.getProperty(Constants.PROPERTY_TYPE) == type) {
-                        
-                        //The following conditions could probably normalized, but I think this way,
-                        //the code is a bit more readable
+                        // The following conditions could probably normalized, but I think this way,
+                        // the code is a bit more readable
                         if (className != null) { //We will return only those matching with the specified class name or its subclasses, depending on the value of includeSubclasses
                             String poolClass = (String)poolNode.getProperty(Constants.PROPERTY_CLASS_NAME);
                             if (includeSubclasses) {

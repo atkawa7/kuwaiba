@@ -71,7 +71,7 @@ public class DeleteTemplateItemVisualAction extends AbstractVisualAction<Dialog>
             commandClose = (Command) parameters.get("commandClose");
 
             ConfirmDialog wdwDeleteTemplateItem = new ConfirmDialog(ts.getTranslatedString("module.general.labels.confirmation"),
-                    ts.getTranslatedString("module.general.labels.confirmdeletemessage"),
+                    ts.getTranslatedString("module.general.labels.confirm-delete"),
                     ts.getTranslatedString("module.general.labels.delete"));
 
             wdwDeleteTemplateItem.getBtnConfirm().addClickListener((ev) -> {

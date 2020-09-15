@@ -73,7 +73,7 @@ public class DeleteConfigurationVariablesPoolVisualAction extends AbstractVisual
             selectedConfigurationVariablePool = (Pool) parameters.get("configurationVariablePool");
             
             ConfirmDialog wdwDeleteConfigurationVariablePool = new ConfirmDialog(ts.getTranslatedString("module.general.labels.confirmation"),
-                ts.getTranslatedString("module.general.labels.confirmdeletemessage"),
+                ts.getTranslatedString("module.general.labels.confirm-delete"),
                 ts.getTranslatedString("module.general.labels.delete"));
             
             wdwDeleteConfigurationVariablePool.getBtnConfirm().addClickListener((event) -> { 
