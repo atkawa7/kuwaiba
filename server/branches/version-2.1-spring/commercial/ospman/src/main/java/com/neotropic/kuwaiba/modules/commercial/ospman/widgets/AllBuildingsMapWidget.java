@@ -56,7 +56,7 @@ public class AllBuildingsMapWidget extends AbstractDashboardWidget {
     @Override
     public void createContent() {
         try {
-            OutsidePlanView ospView = new OutsidePlanView(aem, bem, mem, ts, resourceFactory, 
+            OutsidePlantView ospView = new OutsidePlantView(aem, bem, mem, ts, resourceFactory, 
                 physicalConnectionsService, null, false);
             ospView.buildEmptyView();
             if (ospView.getAsComponent() != null)

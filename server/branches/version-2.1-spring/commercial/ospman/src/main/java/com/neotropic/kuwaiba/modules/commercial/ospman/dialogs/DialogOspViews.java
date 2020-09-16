@@ -31,11 +31,14 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
 /**
- *
+ * Shows a list of all the Outside Plant Views available
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>} 
  */
 public class DialogOspViews extends PaperDialog {
     private final String WIDTH = "350px";
+    /**
+     * Registration of grid selection listener
+     */
     private Registration registration;
     
     public DialogOspViews(Component positionTarget, ApplicationEntityManager aem, TranslationService ts, Consumer<ViewObject> consumerSelectedView) {

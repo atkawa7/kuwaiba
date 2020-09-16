@@ -31,7 +31,7 @@ import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnec
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
 /**
- * The visual entry point to the Outside Plan Module.
+ * The visual entry point to the Outside Plant Module.
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @CssImport(value = "css/ospman.css")
@@ -96,7 +96,7 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
     private void init() {
         removeAll();
         try {
-            OutsidePlanView ospView = new OutsidePlanView(aem, bem, mem, ts, resourceFactory, 
+            OutsidePlantView ospView = new OutsidePlantView(aem, bem, mem, ts, resourceFactory, 
                 physicalConnectionService, newBusinessObjectVisualAction, true);
             ospView.buildEmptyView();
             if (ospView.getAsComponent() != null)

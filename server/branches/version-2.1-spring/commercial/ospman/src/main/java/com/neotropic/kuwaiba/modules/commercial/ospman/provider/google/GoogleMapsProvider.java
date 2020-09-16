@@ -19,7 +19,7 @@ import com.neotropic.flow.component.googlemap.DrawingManager;
 import com.neotropic.flow.component.googlemap.GoogleMap;
 import com.neotropic.flow.component.googlemap.LatLng;
 import com.neotropic.flow.component.googlemap.OverlayType;
-import com.neotropic.kuwaiba.modules.commercial.ospman.persistence.OutsidePlanService;
+import com.neotropic.kuwaiba.modules.commercial.ospman.persistence.OutsidePlantService;
 import com.neotropic.kuwaiba.modules.commercial.ospman.provider.GeoBounds;
 import com.neotropic.kuwaiba.modules.commercial.ospman.provider.GeoCoordinate;
 import com.neotropic.kuwaiba.modules.commercial.ospman.provider.MapOverlay;
@@ -68,13 +68,13 @@ public class GoogleMapsProvider implements MapProvider {
         try {
             mapCenterLat = (double) aem.getConfigurationVariableValue("widgets.simplemap.centerLatitude"); //NOI18N
         } catch (InventoryException ex) {
-            mapCenterLat = OutsidePlanService.DEFAULT_CENTER_LATITUDE;
+            mapCenterLat = OutsidePlantService.DEFAULT_CENTER_LATITUDE;
         }
         
         try {
             mapCenterLng = (double) aem.getConfigurationVariableValue("widgets.simplemap.centerLongitude"); //NOI18N
         } catch (InventoryException ex) {
-            mapCenterLng = OutsidePlanService.DEFAULT_CENTER_LONGITUDE;
+            mapCenterLng = OutsidePlantService.DEFAULT_CENTER_LONGITUDE;
         }
         
         properties.put(PROPERTY_CENTER, new GeoCoordinate(mapCenterLat, mapCenterLng)); //NOI18N
@@ -82,7 +82,7 @@ public class GoogleMapsProvider implements MapProvider {
         try {
             properties.put(PROPERTY_ZOOM, aem.getConfigurationVariableValue("widgets.simplemap.zoom")); //NOI18N
         } catch (InventoryException ex) {
-            properties.put(PROPERTY_ZOOM, OutsidePlanService.DEFAULT_ZOOM);
+            properties.put(PROPERTY_ZOOM, OutsidePlantService.DEFAULT_ZOOM);
         }
         
         return properties;

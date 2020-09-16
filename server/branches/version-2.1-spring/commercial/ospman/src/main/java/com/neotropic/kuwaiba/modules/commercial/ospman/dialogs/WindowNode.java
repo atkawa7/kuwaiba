@@ -53,7 +53,7 @@ public class WindowNode extends Dialog {
         HorizontalLayout lytNodeTools = new HorizontalLayout();
         lytNodeTools.add(new Button(new Icon(VaadinIcon.ROAD_BRANCH), event -> {
             close();
-            new WindowMidSpanAccess(node.getIdentifier(), bem, ts, newBusinessObjectVisualAction).open();
+            new WindowMidSpanAccess(node.getIdentifier(), aem, bem, mem, ts, newBusinessObjectVisualAction).open();
         }));
         lytNodeTools.add(new Button(ts.getTranslatedString("module.ospman.view-node.tool.connect"), new Icon(VaadinIcon.PLUG), 
             event -> {

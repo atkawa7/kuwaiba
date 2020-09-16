@@ -22,11 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * Service to manage the persistence operations in the Outside Plan Manager Module
+ * Service to manage the persistence operations in the Outside Plant Manager Module
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @Service
-public class OutsidePlanService {
+public class OutsidePlantService {
     // A set of constants (mostly default values) used in the Outside Plant module.
     /**
      * Default map center latitude. This value is used when the configuration variable <code>widgets.simplemap.centerLatitude</code> can not be found or it's not a number.

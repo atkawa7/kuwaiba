@@ -15,7 +15,7 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman.dialogs;
 
-import static com.neotropic.kuwaiba.modules.commercial.ospman.persistence.OutsidePlanService.SPECIAL_RELATIONSHIP_OSPMAN_HAS_PATH;
+import static com.neotropic.kuwaiba.modules.commercial.ospman.persistence.OutsidePlantService.SPECIAL_RELATIONSHIP_OSPMAN_HAS_PATH;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;

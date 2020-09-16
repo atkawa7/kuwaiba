@@ -30,7 +30,7 @@ import com.neotropic.flow.component.mxgraph.MxConstants;
 import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.neotropic.flow.component.mxgraph.MxGraphCell;
 import com.neotropic.flow.component.mxgraph.Point;
-import com.neotropic.kuwaiba.modules.commercial.ospman.persistence.OutsidePlanService;
+import com.neotropic.kuwaiba.modules.commercial.ospman.persistence.OutsidePlantService;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.WindowDeleteOspView;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.WindowNewContainer;
 import com.vaadin.flow.component.Component;
@@ -94,10 +94,10 @@ import com.neotropic.kuwaiba.modules.commercial.ospman.provider.MapProvider;
 import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualAction;
 
 /**
- *
+ * Graphically displays Outside Plant elements on a map.
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class OutsidePlanView extends AbstractView<BusinessObjectLight, Component> {
+public class OutsidePlantView extends AbstractView<BusinessObjectLight, Component> {
     private final String TAG_VIEW = "view"; //NOI18N
     private final String TAG_CLASS = "class"; //NOI18N
     private final String TAG_CENTER = "center"; //NOI18N
@@ -198,7 +198,7 @@ public class OutsidePlanView extends AbstractView<BusinessObjectLight, Component
     private Tab selectedTab;
     private final boolean viewTools;
     
-    public OutsidePlanView(
+    public OutsidePlantView(
         ApplicationEntityManager aem, 
         BusinessEntityManager bem, 
         MetadataEntityManager mem, 
@@ -303,7 +303,7 @@ public class OutsidePlanView extends AbstractView<BusinessObjectLight, Component
             XMLEventFactory xmlef = XMLEventFactory.newInstance();
             
             xmlew.add(xmlef.createStartElement(tagView, null, null));
-            xmlew.add(xmlef.createAttribute(attrVersion, OutsidePlanService.VIEW_VERSION));
+            xmlew.add(xmlef.createAttribute(attrVersion, OutsidePlantService.VIEW_VERSION));
             
             xmlew.add(xmlef.createStartElement(tagClass, null, null));
             xmlew.add(xmlef.createCharacters("OSPView")); //NOI18N
@@ -729,7 +729,7 @@ public class OutsidePlanView extends AbstractView<BusinessObjectLight, Component
                 InstantiationException | NoSuchMethodException | 
                 SecurityException | InvocationTargetException  ex) {
                 
-                Logger.getLogger(OutsidePlanView.class.toString()).log(Level.SEVERE, ex.getLocalizedMessage());
+                Logger.getLogger(OutsidePlantView.class.toString()).log(Level.SEVERE, ex.getLocalizedMessage());
                 new SimpleNotification(
                     ts.getTranslatedString("module.general.messages.error"), 
                     ts.getTranslatedString("module.general.messages.unexpected-error")
@@ -781,12 +781,11 @@ public class OutsidePlanView extends AbstractView<BusinessObjectLight, Component
                 if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
                     if (tagView.equals(reader.getName())) {
                         String version = reader.getAttributeValue(null, ATTR_VERSION);
-                        if (!OutsidePlanService.VIEW_VERSION.equals(version)) {
+                        if (!OutsidePlantService.VIEW_VERSION.equals(version)) {
                             new SimpleNotification(
                                 ts.getTranslatedString("module.general.messages.error"), 
-                                String.format(
-                                    ts.getTranslatedString("module.ospman.view.update-view-version"), 
-                                    version, OutsidePlanService.VIEW_VERSION)
+                                String.format(ts.getTranslatedString("module.ospman.view.update-view-version"), 
+                                    version, OutsidePlantService.VIEW_VERSION)
                             ).open();
                             break;
                         }
@@ -829,7 +828,7 @@ public class OutsidePlanView extends AbstractView<BusinessObjectLight, Component
             }
             reader.close();
         } catch (XMLStreamException ex) {
-            Logger.getLogger(OutsidePlanView.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OutsidePlantView.class.getName()).log(Level.SEVERE, null, ex);
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"), 
                 ts.getTranslatedString("module.general.messages.unexpected-error")
@@ -852,8 +851,8 @@ public class OutsidePlanView extends AbstractView<BusinessObjectLight, Component
         this.getProperties().put(Constants.PROPERTY_NAME, "");
         this.getProperties().put(Constants.PROPERTY_DESCRIPTION, "");
         
-        Double mapCenterLatitude = OutsidePlanService.DEFAULT_CENTER_LATITUDE;
-        Double mapCenterLongitude = OutsidePlanService.DEFAULT_CENTER_LONGITUDE;
+        Double mapCenterLatitude = OutsidePlantService.DEFAULT_CENTER_LATITUDE;
+        Double mapCenterLongitude = OutsidePlantService.DEFAULT_CENTER_LONGITUDE;
         
         try {
             mapCenterLatitude = (double) aem.getConfigurationVariableValue("widgets.simplemap.centerLatitude"); //NOI18N
@@ -865,7 +864,7 @@ public class OutsidePlanView extends AbstractView<BusinessObjectLight, Component
         try {
             this.viewMap.getProperties().put("zoom", aem.getConfigurationVariableValue("widgets.simplemap.zoom")); //NOI18N
         } catch(ApplicationObjectNotFoundException | InvalidArgumentException ex) {
-            this.viewMap.getProperties().put("zoom", OutsidePlanService.DEFAULT_ZOOM); //NOI18N
+            this.viewMap.getProperties().put("zoom", OutsidePlantService.DEFAULT_ZOOM); //NOI18N
         }
     }
 
@@ -1161,7 +1160,7 @@ public class OutsidePlanView extends AbstractView<BusinessObjectLight, Component
             }
             reader.close();
         } catch (XMLStreamException ex) {
-            Logger.getLogger(OutsidePlanView.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OutsidePlantView.class.getName()).log(Level.SEVERE, null, ex);
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"), 
                 ts.getTranslatedString("module.general.messages.unexpected-error")

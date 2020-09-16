@@ -27,7 +27,7 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
 /**
- *
+ * Shows all the ports in the node
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class WindowPhysicalConnections extends Dialog {

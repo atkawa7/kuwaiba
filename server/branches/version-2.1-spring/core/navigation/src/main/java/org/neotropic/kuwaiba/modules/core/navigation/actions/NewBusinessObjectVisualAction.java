@@ -28,6 +28,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import java.util.Arrays;
 import java.util.HashMap;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionException;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionParameter;
@@ -84,8 +85,15 @@ public class NewBusinessObjectVisualAction extends AbstractVisualInventoryAction
         Dialog wdwNewBusinessObject = new Dialog();
         if (businessObject != null) {
             try {
-                H4 hdnTitle = new H4(String.format("%s | %s", newBusinessObjectAction.getDisplayName(), businessObject.getName()));
-                                
+                H4 hdnTitle = new H4(newBusinessObjectAction.getDisplayName());
+                
+                ComboBox<BusinessObjectLight> cmbParent = new ComboBox(ts.getTranslatedString("module.navigation.actions.new-business-object.ui.parent"));
+                cmbParent.setItems(Arrays.asList(businessObject));
+                cmbParent.setValue(businessObject);
+                cmbParent.setEnabled(false);
+                cmbParent.setRequiredIndicatorVisible(true);
+                cmbParent.setItemLabelGenerator(BusinessObjectLight::getName);
+                
                 TextField txtName = new TextField(ts.getTranslatedString("module.navigation.actions.new-business-object.ui.object-name"));
                 txtName.setErrorMessage(ts.getTranslatedString("module.navigation.actions.new-business-object.ui.empty-name"));
                 txtName.setClearButtonVisible(true);
@@ -103,7 +111,7 @@ public class NewBusinessObjectVisualAction extends AbstractVisualInventoryAction
                 cmbTemplate.setEnabled(false);
                 cmbTemplate.setItemLabelGenerator(TemplateObjectLight::getName);
                 
-                FormLayout lytFields = new FormLayout(txtName, cmbClass, cmbTemplate);
+                FormLayout lytFields = new FormLayout(cmbParent, txtName, cmbClass, cmbTemplate);
                 
                 Button btnCancel = new Button(ts.getTranslatedString("module.general.messages.cancel"), event -> wdwNewBusinessObject.close());
                 Button btnOk = new Button(ts.getTranslatedString("module.general.messages.ok"));
