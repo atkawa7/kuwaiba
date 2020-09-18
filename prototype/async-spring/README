@@ -1,0 +1,5 @@
+This demo showcases how to lunch multiple jobs (threads) on a server and keep track of them from a client, polling periodically a RESTful webservice.
+
+To test it, start the server and then the client and take a look at the respective messages in the output window. 
+You can tune some variables, such as the max number of threads available or up to how many CPU cores to use in the 
+server's application.properties file
