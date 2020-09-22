@@ -240,6 +240,13 @@ class MxGraphCell extends PolymerElement {
         type: Boolean,
         value: true,
         observer: '_connectableChanged'
+      },
+      /**
+       * Tooltip for the cell
+       */
+      tooltip: {
+        type: String,
+        observer: '_tooltipChanged'
       }
     };
   }
@@ -318,7 +325,9 @@ class MxGraphCell extends PolymerElement {
 //    t1 = performance.now();
 //    console.log("part 2 after insert vertex " + (t1 - t0) + " milliseconds.");
 
-    
+      // By default sets the cell tooltip value to null
+      this.cell.getTooltip = () => null;
+      
       if (this.rawStyle) {
           this.rawStyleChanged();
       }
@@ -642,6 +651,14 @@ cellLabelChanged() {
   _connectableChanged(newValue, oldValue) {
     if (this.graph && this.cell) {
       this.cell.connectable = newValue;
+    }
+  }
+  /**
+   * Sets the cell getTooltip function
+   */
+  _tooltipChanged(newValue, oldValue) {
+    if (this.graph && this.cell) {
+      this.cell.getTooltip = () => newValue;
     }
   }
 }

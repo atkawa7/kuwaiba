@@ -4,6 +4,7 @@ class mxGraphApiLoader {
     load() {
         if (!this.promise) {
             this.promise = new Promise(resolve => {
+                window.mxBasePath = './MXGRAPH/';
                 this.resolve = resolve;
                 const script = document.createElement('script');
                 script.src = './MXGRAPH/mxClient.min.js';

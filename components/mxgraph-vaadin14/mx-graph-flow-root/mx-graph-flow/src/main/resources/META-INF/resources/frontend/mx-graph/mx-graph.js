@@ -148,8 +148,14 @@ class MxGraph extends PolymerElement {
             },
             translationY: {
                 type: Number
+            },
+            /**
+             * Specifies if tooltips should be enabled.
+             */
+            tooltips: {
+                type: Boolean,
+                observer: '_tooltipsChanged'
             }
-            
         }
     }
 
@@ -898,6 +904,16 @@ class MxGraph extends PolymerElement {
         }
         else
             this.waitForGraph(() => this._connectableChanged(newValue, oldValue));
+    }
+    /**
+     * Specifies if tooltips should be enabled.
+     */
+    _tooltipsChanged(newValue, oldValue) {
+        if (this.graph) {
+            this.graph.setTooltips(newValue);            
+        } else {
+            this.waitForGraph(() => this._tooltipsChanged(newValue, oldValue));
+        }
     }
 }
 

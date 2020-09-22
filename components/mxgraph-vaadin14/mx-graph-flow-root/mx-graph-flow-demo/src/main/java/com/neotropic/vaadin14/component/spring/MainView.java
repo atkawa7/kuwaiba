@@ -21,6 +21,7 @@ import com.vaadin.flow.server.PWA;
 import elemental.json.Json;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
+import java.util.UUID;
 
 @Route
 @PWA(name = "Project Base for Vaadin Flow with Spring", shortName = "Project Base")
@@ -30,6 +31,7 @@ public class MainView extends VerticalLayout {
     public MainView(@Autowired MessageBean bean) {
         
         MxGraph mxGraph = new MxGraph();
+        mxGraph.setTooltips(true);
   
         mxGraph.setWidth("600px");
         mxGraph.setHeight("500px");
@@ -134,6 +136,7 @@ public class MainView extends VerticalLayout {
           nodeContainer.setCellLayer(layerNodes.getUuid());
           nodeContainer.setAnimateOnSelect(true);
           nodeContainer.addCellAddedListener(eventListener-> {
+            nodeContainer.setTooltip(UUID.randomUUID().toString());
             nodeContainer.addOverlayButton("zoomIn", "Zoom In", "images/zoom_in.png", MxConstants.ALIGN_LEFT, MxConstants.ALIGN_TOP, 0, 0); 
           });
           nodeContainer.addCellAddedListener(eventListener-> {

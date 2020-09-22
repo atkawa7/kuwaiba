@@ -81,6 +81,10 @@ public class MxGraphCell extends Component implements HasComponents {
      * Specifies whether the cell is connectable
      */
     private static final String PROPERTY_CONNECTABLE = "connectable"; //NOI18N
+    /**
+     * Tooltip for the cell
+     */
+    private static final String PROPERTY_TOOLTIP = "tooltip"; //NOI18N
     
     public MxGraphCell() {
         setUuid(UUID.randomUUID().toString());
@@ -427,6 +431,20 @@ public class MxGraphCell extends Component implements HasComponents {
      */
     public void setConnectable(boolean connectable) {
         getElement().setProperty(PROPERTY_CONNECTABLE, connectable);
+    }
+    /**
+     * Gets the tooltip for the cell
+     * @return The tooltip for the cell
+     */
+    public String getTooltip() {
+        return getElement().getProperty(PROPERTY_TOOLTIP, null);
+    }
+    /**
+     * Sets the tooltip for the cell
+     * @param tooltip Tooltip for the cell
+     */
+    public void setTooltip(String tooltip) {
+        getElement().setProperty(PROPERTY_TOOLTIP, tooltip);
     }
     
     public void addCell(MxGraphCell mxGraphCell) {

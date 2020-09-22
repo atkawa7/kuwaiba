@@ -57,6 +57,10 @@ public class MxGraph extends Component implements HasComponents, HasStyle, HasSi
     private static final String PROPERTY_TRANSLATIONX = "translationX";
     private static final String PROPERTY_TRANSLATIONY = "translationY";
     private static final int DEFAULT_OUTLINE_WIDTH = 200;
+    /**
+     * Specifies if tooltips should be enabled
+     */
+    private static final String PROPERTY_TOOLTIPS = "tooltips"; //NOI18N
     
     private List<MxGraphNode> nodes;
     private List<MxGraphEdge> edges;
@@ -135,6 +139,20 @@ public class MxGraph extends Component implements HasComponents, HasStyle, HasSi
      */
     public void setConnectable(boolean connectable) {
         getElement().setProperty(PROPERTY_CONNECTABLE, connectable);
+    }
+    /**
+     * Gets if the tooltips are enabled
+     * @return If the tooltips are enabled
+     */
+    public boolean getTooltips() {
+        return getElement().getProperty(PROPERTY_TOOLTIPS, false);
+    }
+    /**
+     * Sets if the tooltips should be enabled
+     * @param enabled Specifies if the tooltips should be enabled
+     */
+    public void setTooltips(boolean enabled) {
+        getElement().setProperty(PROPERTY_TOOLTIPS, enabled);
     }
     
     public void setCellsLocked(boolean cellsLocked) {
