@@ -8,9 +8,7 @@
     </parent>
     
     <name>Configuration Manager</name>
-    <description>Configuration Variables and Validators
-    </description>
-    
+    <description>Configuration Variables and Validators</description>
     <artifactId>configman</artifactId>
     <packaging>jar</packaging>
     
@@ -34,7 +32,6 @@
        <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-spring-boot-starter</artifactId>
-            <version>${vaadin.version}</version>
         </dependency>
         <dependency>
             <groupId>org.neotropic.util</groupId>
@@ -69,6 +66,4 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    
-    
 </project>

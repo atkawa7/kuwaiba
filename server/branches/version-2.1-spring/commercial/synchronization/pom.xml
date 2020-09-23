@@ -7,5 +7,7 @@
         <version>2.1</version>
     </parent>
     <artifactId>synchronization</artifactId>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
+    <name>Synchronization Framework</name>
+    <description>Keep you inventory up-to-date by fetching information from live sources like devices and NMS, finding differences and dealing with them</description>
 </project>
