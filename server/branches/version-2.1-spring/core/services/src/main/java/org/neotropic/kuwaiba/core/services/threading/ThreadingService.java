@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import org.neotropic.kuwaiba.core.apis.persistence.application.UserProfileLight;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -71,11 +72,23 @@ public class ThreadingService {
             return anEntry.getKey().getId().equals(jobId) ? anEntry : null;
         });
         if (aThreadEntry == null)
-            throw new IllegalArgumentException(jobId);
+            throw new IllegalArgumentException(String.format(ts.getTranslatedString("apis.services.threading.messages.job-not-found"), jobId));
         else {
             aThreadEntry.getKey().setState(ManagedJobDescriptor.STATE_END_KILLED);
             aThreadEntry.getKey().setEndTime(Calendar.getInstance().getTimeInMillis());
             aThreadEntry.getValue().cancel(true);
         }
+    }
+    
+    /**
+     * Registers and starts a job.
+     * @param theJob The job to be started.
+     * @param theDescriptor The descriptor that will be used
+     * @throws IllegalArgumentException If the job could not be started, most likely because of its state. Also, if <code>theDescriptor</code> 
+     * is a job that already exists in the table.
+     */
+    public void startJob(ManagedJobDescriptor theDescriptor, CompletableFuture theJob) throws IllegalArgumentException {
+        if (this.jobTable.contains(theDescriptor))
+            throw new IllegalArgumentException(ts.getTranslatedString(""));
     }
 }

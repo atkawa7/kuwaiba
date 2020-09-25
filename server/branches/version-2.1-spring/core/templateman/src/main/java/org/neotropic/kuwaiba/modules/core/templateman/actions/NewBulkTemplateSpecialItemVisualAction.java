@@ -81,7 +81,7 @@ public class NewBulkTemplateSpecialItemVisualAction extends AbstractVisualAction
     public Dialog getVisualComponent(ModuleActionParameterSet parameters) {
         try {
             Label lblDialogName = new Label(ts.getTranslatedString("module.templateman.component.dialog.new-template-item-multiple.description"));
-            TextField txtName = new TextField(ts.getTranslatedString("module.general.labels.patternname"));
+            TextField txtName = new TextField(ts.getTranslatedString("module.general.labels.pattern-name"));
             Dialog wdwNewListTypeItem = new Dialog();
             Button btnOK = new Button();
             ComboBox<ClassMetadataLight> cbxPossibleSpecialChildren = new ComboBox<>();

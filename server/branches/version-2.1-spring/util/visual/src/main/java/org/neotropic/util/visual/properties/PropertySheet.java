@@ -77,7 +77,7 @@ public class PropertySheet extends Grid<AbstractProperty> {
                     ? property.toString() : property.getDescription());
             lytName.add(lblName, lblType);
             return lytName;
-        }).setHeader(ts.getTranslatedString("module.general.labels.attributename")).setKey("name").setFlexGrow(3);
+        }).setHeader(ts.getTranslatedString("module.general.labels.attribute-name")).setKey("name").setFlexGrow(3);
         
         addComponentColumn((property) -> {
             VerticalLayout lytValue = new VerticalLayout();
