@@ -740,7 +740,32 @@ public interface BusinessEntityManager extends AbstractEntityManager {
      */
     public boolean hasRelationship(String objectClass, String objectId, String relationshipName, int numberOfRelationships) 
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
-
+    /**
+     * Check if an object has a given has special attributes
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @param attributeNames Attribute names 
+     * @return True if the object has special attributes
+     */
+    public boolean hasSpecialAttribute(String objectClass, String objectId, String attributeName) 
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
+    /**
+     * Counts if an object has children
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @return Number of children
+     */
+    public long countChildren(String objectClass, String objectId)
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
+    /**
+     * Counts if an object has special children
+     * @param objectClass
+     * @param objectId
+     * @return Number of special children
+     */
+    public long countSpecialChildren(String objectClass, String objectId)
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
+    
     /**
      * Releases all the relationships with the given names associated to the object provided. If no relationships with such names exist, the method 
      * will do nothing. <b>Use this method with extreme care, you can seriously affect the relational integrity of the system</b>

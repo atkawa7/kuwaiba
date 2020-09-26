@@ -1821,6 +1821,76 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
+    public boolean hasSpecialAttribute(String objectClass, String objectId, String attributeName) 
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
+        
+        if (objectId == null)
+            throw new InvalidArgumentException("The object id cannot be null");
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+            HashMap<String, Object> params = new HashMap<>();
+            params.put("className", objectClass); //NOI18N
+            params.put("objectId", objectId); //NOI18N
+            params.put("attributeName", attributeName); //NOI18N
+            StringBuilder queryBuilder = new StringBuilder();
+            queryBuilder.append("MATCH (class:classes {name: $className})<-[:INSTANCE_OF]-(object:inventoryObjects {_uuid: $objectId})-[:RELATED_TO_SPECIAL {name: $attributeName}]-() "); //NOI18N
+            queryBuilder.append("RETURN count(*) > 0 AS hasSpecialAtribute"); //NOI18N
+            Result result = connectionManager.getConnectionHandler().execute(queryBuilder.toString(), params);
+            while (result.hasNext()) {
+                tx.success();
+                return (Boolean) result.next().get("hasSpecialAtribute"); //NOI18N
+            }
+            tx.success();
+            throw new BusinessObjectNotFoundException(objectClass, objectId);
+        }
+    }
+    
+    @Override
+    public long countChildren(String objectClass, String objectId) 
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
+        
+        if (objectId == null)
+            throw new InvalidArgumentException("The object id cannot be null");
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+            HashMap<String, Object> params = new HashMap<>();
+            params.put("className", objectClass); //NOI18N
+            params.put("objectId", objectId); //NOI18N
+            StringBuilder queryBuilder = new StringBuilder();
+            queryBuilder.append("MATCH (class:classes {name: $className})<-[:INSTANCE_OF]-(object:inventoryObjects {_uuid: $objectId})<-[:CHILD_OF]-() "); //NOI18N
+            queryBuilder.append("RETURN count(*) AS children"); //NOI18N
+            Result result = connectionManager.getConnectionHandler().execute(queryBuilder.toString(), params);
+            while (result.hasNext()) {
+                tx.success();
+                return (long) result.next().get("children"); //NOI18N
+            }
+            tx.success();
+            throw new BusinessObjectNotFoundException(objectClass, objectId);
+        }
+    }
+    
+    @Override
+    public long countSpecialChildren(String objectClass, String objectId) 
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
+        
+        if (objectId == null)
+            throw new InvalidArgumentException("The object id cannot be null");
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+            HashMap<String, Object> params = new HashMap<>();
+            params.put("className", objectClass); //NOI18N
+            params.put("objectId", objectId); //NOI18N
+            StringBuilder queryBuilder = new StringBuilder();
+            queryBuilder.append("MATCH (class:classes {name:$className})<-[:INSTANCE_OF]-(object:inventoryObjects {_uuid:$objectId})<-[:CHILD_OF_SPECIAL]-() "); //NOI18N
+            queryBuilder.append("RETURN count(*) AS specialChildren"); //NOI18N
+            Result result = connectionManager.getConnectionHandler().execute(queryBuilder.toString(), params);
+            while (result.hasNext()) {
+                tx.success();
+                return (long) result.next().get("specialChildren"); //NOI18N
+            }
+            tx.success();
+            throw new BusinessObjectNotFoundException(objectClass, objectId);
+        }
+    }
+    
+    @Override
     public void releaseRelationships(String objectClass, String objectId, List<String> relationshipsToRelease) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             Node object = getInstanceOfClass(objectClass, objectId);
@@ -2770,31 +2840,25 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * @throws BusinessObjectNotFoundException if the object could not be found
      * @throws InvalidArgumentException If the object id is null
      */
-    public Node getInstanceOfClass(String className, String oid) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException{
-        
+    public Node getInstanceOfClass(String className, String oid) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException {
         if (oid == null)
             throw new InvalidArgumentException("The object id cannot be null");
-        //if any of the parameters is null, return the dummy root
-        if (className == null || className.equals(Constants.NODE_DUMMYROOT))
-            return connectionManager.getConnectionHandler().findNode(specialNodeLabel, Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
-        
-        Node classNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, className);
-
-        if (classNode == null)
-            throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
-
-        Iterable<Relationship> iterableInstances = classNode.getRelationships(RelTypes.INSTANCE_OF);
-        Iterator<Relationship> instances = iterableInstances.iterator();
-
-        while (instances.hasNext()) {
-            Node otherSide = instances.next().getStartNode();
-            
-            String otherSideUuid = otherSide.hasProperty(Constants.PROPERTY_UUID) ? otherSide.getProperty(Constants.PROPERTY_UUID).toString() : null;
-            if (oid.equals(otherSideUuid))
-                return otherSide;
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+            HashMap<String, Object> params = new HashMap<>();
+            params.put("className", className); //NOI18N
+            params.put("objectId", oid); //NOI18N
+            StringBuilder queryBuilder = new StringBuilder();
+            if (className == null || className.equals(Constants.NODE_DUMMYROOT))
+                queryBuilder.append("MATCH (specialNode:specialNodes {name: 'DummyRoot'})<-[:CHILD_OF]-(object:inventoryObjects {_uuid: $objectId}) RETURN object"); //NOI18N
+            queryBuilder.append("MATCH (class:classes {name: $className})<-[:INSTANCE_OF]-(object:inventoryObjects{_uuid: $objectId}) RETURN object"); //NOI18N
+            Result result = connectionManager.getConnectionHandler().execute(queryBuilder.toString(), params);
+            while (result.hasNext()) {
+                tx.success();
+                return (Node) result.next().get("object"); //NOI18N
+            }
+            tx.success();
+            throw new BusinessObjectNotFoundException(className, oid);
         }
-        throw new BusinessObjectNotFoundException(className, oid);
-        
     }
     /**
      * Boiler-plate code. Gets a particular instance given the class name and the oid

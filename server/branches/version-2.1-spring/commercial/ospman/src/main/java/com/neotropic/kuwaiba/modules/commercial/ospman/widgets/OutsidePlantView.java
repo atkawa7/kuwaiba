@@ -55,7 +55,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -498,6 +497,13 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
     }
     
     private void setDrawingMarkerMode(BusinessObjectLight businessObject) {
+        if (selectedOverlay == null) {
+            new SimpleNotification(
+                ts.getTranslatedString("module.general.messages.warning"), 
+                ts.getTranslatedString("module.ospman.view.select-overlay")
+            ).open();
+            return;
+        }
         if (map != null)
             map.setDrawingMarkerMode(coordinate -> {
                 Properties nodeProperties = new Properties();
@@ -508,48 +514,53 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
     }
     
     private void setDrawingPolylineMode() {
+        if (selectedOverlay == null) {
+            new SimpleNotification(
+                ts.getTranslatedString("module.general.messages.warning"), 
+                ts.getTranslatedString("module.ospman.view.select-overlay")
+            ).open();
+            return;
+        }
         if (map != null) {
-            if (selectedOverlay != null) {
-                MxGraph graph = mapOverlays.get(selectedOverlay);
-                polylineDrawHelper = new HelperEdgeDraw(map, selectedOverlay, graph, helper-> {
-                    BusinessObjectLight source = (BusinessObjectLight) mapVertexNode.get(helper.getSource()).getIdentifier();
-                    BusinessObjectLight target = (BusinessObjectLight) mapVertexNode.get(helper.getTarget()).getIdentifier();
-                    List<GeoCoordinate> coordinates = helper.getCoordintates();
-                    List<Point> graphPoints = helper.getPoints();
-                    
-                    WindowNewContainer dialogNewContainer = new WindowNewContainer(
-                        source, target, ts, aem, bem, mem, physicalConnectionsService, 
-                        container -> {
-                            try {
-                                Properties edgeProperties = new Properties();
-                                edgeProperties.put(PropertyNames.CONTROL_POINTS, coordinates);
-                                edgeProperties.put(PropertyNames.COLOR, UtilHtml.toHexString(new Color(mem.getClass(container.getClassName()).getColor())));
-                                                                
-                                JsonArray points = Json.createArray();
-                                for (int i = 0; i < graphPoints.size(); i++) {
-                                    JsonObject point = Json.createObject();
-                                    point.put("x", graphPoints.get(i).getX()); //NOI18N
-                                    point.put("y", graphPoints.get(i).getY()); //NOI18N
-                                    points.set(i, point);
-                                }
-                                points.remove(points.length() - 1);
-                                points.remove(0);
-                                edgeProperties.put("points", points.toJson()); //NOI18N
-                                edgeProperties.put(PropertyNames.OVERLAY, selectedOverlay);
-                                addEdge(container, source, target, edgeProperties);
-                            } catch (MetadataObjectNotFoundException ex) {
-                                new SimpleNotification(
-                                    ts.getTranslatedString("module.general.messages.error"), 
-                                    ex.getLocalizedMessage()
-                                ).open();
+            MxGraph graph = mapOverlays.get(selectedOverlay);
+            polylineDrawHelper = new HelperEdgeDraw(map, selectedOverlay, graph, helper-> {
+                BusinessObjectLight source = (BusinessObjectLight) mapVertexNode.get(helper.getSource()).getIdentifier();
+                BusinessObjectLight target = (BusinessObjectLight) mapVertexNode.get(helper.getTarget()).getIdentifier();
+                List<GeoCoordinate> coordinates = helper.getCoordintates();
+                List<Point> graphPoints = helper.getPoints();
+
+                WindowNewContainer dialogNewContainer = new WindowNewContainer(
+                    source, target, ts, aem, bem, mem, physicalConnectionsService, 
+                    container -> {
+                        try {
+                            Properties edgeProperties = new Properties();
+                            edgeProperties.put(PropertyNames.CONTROL_POINTS, coordinates);
+                            edgeProperties.put(PropertyNames.COLOR, UtilHtml.toHexString(new Color(mem.getClass(container.getClassName()).getColor())));
+
+                            JsonArray points = Json.createArray();
+                            for (int i = 0; i < graphPoints.size(); i++) {
+                                JsonObject point = Json.createObject();
+                                point.put("x", graphPoints.get(i).getX()); //NOI18N
+                                point.put("y", graphPoints.get(i).getY()); //NOI18N
+                                points.set(i, point);
                             }
+                            points.remove(points.length() - 1);
+                            points.remove(0);
+                            edgeProperties.put("points", points.toJson()); //NOI18N
+                            edgeProperties.put(PropertyNames.OVERLAY, selectedOverlay);
+                            addEdge(container, source, target, edgeProperties);
+                        } catch (MetadataObjectNotFoundException ex) {
+                            new SimpleNotification(
+                                ts.getTranslatedString("module.general.messages.error"), 
+                                ex.getLocalizedMessage()
+                            ).open();
                         }
-                    );
-                    dialogNewContainer.open();
-                    setDrawingPolylineMode();
-                });
-                polylineDrawHelper.start();
-            }
+                    }
+                );
+                dialogNewContainer.open();
+                setDrawingPolylineMode();
+            });
+            polylineDrawHelper.start();
         }
     }
     
@@ -899,9 +910,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                                     StreamResourceRegistry.getURI(resourceFactory.getClassIcon(businessObject.getClassName())).toString()
                                 );
                                 styles.put(MxConstants.STYLE_SHAPE, MxConstants.SHAPE_IMAGE);
-                                String rawStyle = getRawStyle(styles);
-                                if (rawStyle != null)
-                                    vertex.setRawStyle(rawStyle);
+                                styles.put(MxConstants.STYLE_RESIZABLE, String.valueOf(0));
+                                vertex.setRawStyle(styles);
                                 vertex.addRightClickCellListener(event -> {
                                     if (viewTools)
                                         openNodeDialog(newNode);
@@ -1179,21 +1189,6 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         }
         else
             cmd.execute();
-    }
-    
-    private String getRawStyle(LinkedHashMap<String, String> styles) {
-        if (styles != null && !styles.isEmpty()) {
-            Entry<String, String>[] entries = styles.entrySet().toArray(new Entry[0]);
-            StringBuilder rawStyleBuilder = new StringBuilder();
-            for (int i = 0; i < entries.length; i++) {
-                if (i < entries.length - 1)
-                    rawStyleBuilder.append(String.format("%s=%s;", entries[i].getKey(), entries[i].getValue()));
-                else
-                    rawStyleBuilder.append(String.format("%s=%s", entries[i].getKey(), entries[i].getValue()));
-            }
-            return rawStyleBuilder.toString();
-        }
-        return null;
     }
     //</editor-fold>
 }

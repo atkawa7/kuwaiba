@@ -108,6 +108,12 @@ public class MxTree<T> extends MxGraphNode {
         ANGLE_RIGHT_STYLE.put(MxConstants.STYLE_IMAGE_WIDTH, String.valueOf(TOGGLE_WIDTH));
         ANGLE_RIGHT_STYLE.put(MxConstants.STYLE_IMAGE_HEIGHT, String.valueOf(TOGGLE_HEIGHT));
     }
+    private final LinkedHashMap<String, String> LEAF_STYLE = new LinkedHashMap();
+    {
+        LEAF_STYLE.put(MxConstants.STYLE_SHAPE, MxConstants.SHAPE_RECTANGLE);
+        LEAF_STYLE.put(MxConstants.STYLE_FILLCOLOR, MxConstants.NONE);
+        LEAF_STYLE.put(MxConstants.STYLE_STROKECOLOR, MxConstants.NONE);
+    }
     // </editor-fold>
     private final MxGraph graph;
     private final HashMap<T, MxGraphNode> nodes = new HashMap();
@@ -119,12 +125,13 @@ public class MxTree<T> extends MxGraphNode {
     private final Function<T, String> functionId;
     private final Function<T, String> functionLabel;
     private final BiFunction<T, MxGraph, MxGraphNode> funcGetLabelNode;
+    private final Function<T, Boolean> funcLeaf;
     
     public MxTree(MxGraph graph,
         Supplier<List<T>> supplierRoots, Function<T, List<T>> functionChildren,
         Function<T, String> functionLabel,
         BiFunction<T, MxGraph, MxGraphNode> funcGetLabelNode,
-        Function<T, String> functionId) {
+        Function<T, String> functionId, Function<T, Boolean> funcLeaf) {
         
         super();
         this.graph = graph;
@@ -132,6 +139,7 @@ public class MxTree<T> extends MxGraphNode {
         this.functionLabel = functionLabel;
         this.funcGetLabelNode = funcGetLabelNode;
         this.functionId = functionId;
+        this.funcLeaf = funcLeaf;
         
         setRawStyle(RECTANGLE_STYLE);
         setIsSelectable(false);
@@ -215,55 +223,67 @@ public class MxTree<T> extends MxGraphNode {
     private void addToggleNode(T key, MxGraphNode node, MxGraphNode keyNode) {
         ToggleNode toggleNode = new ToggleNode();
         toggleNode.setGeometry(0, 0, TOGGLE_WIDTH, TOGGLE_HEIGHT);
-        toggleNode.setRawStyle(ANGLE_RIGHT_STYLE);
         toggleNode.setCellParent(keyNode.getUuid());
         
-        toggleNode.addCellAddedListener(event -> {
-            graph.setCellsLocked(false);
-            toggleNode.overrideStyle();
-            toggleNode.setConnectable(false);
-            graph.setCellsLocked(true);
-            
-            event.unregisterListener();
-        });
-        toggleNode.addClickCellListener(event -> {
-            
-            if (toggleNode.checked()) {
+        if (!leaf(key)) {
+            toggleNode.setRawStyle(ANGLE_RIGHT_STYLE);
+            toggleNode.addCellAddedListener(event -> {
                 graph.setCellsLocked(false);
-                toggleNode.cheked(false);
-                toggleNode.setRawStyle(ANGLE_RIGHT_STYLE);
                 toggleNode.overrideStyle();
-                
-                collapseRecursively(key);
-                expandRecursively(key);
-                                
+                toggleNode.setConnectable(false);
                 graph.setCellsLocked(true);
-            } else {
-                toggleNode.cheked(true);
-                toggleNode.setRawStyle(ANGLE_DOWN_STYLE);
-                toggleNode.overrideStyle();
-                
-                if (functionChildren != null && subtreeNodes.get(key) == null) {
-                    
-                    List<T> keyChildren = functionChildren.apply(key);
-                    if (keyChildren != null) {
-                        keyChildren.forEach(child -> {
-                            parents.put(child, key);
-                                                        
-                            MxGraphNode subtreeNode = subtreeNodes.get(key);
-                            if (subtreeNode == null) {
-                                addSubtreeNode(key, node);
-                                subtreeNode = subtreeNodes.get(key);
-                            }
-                            addNode(child, subtreeNode);
-                        });
+
+                event.unregisterListener();
+            });
+            toggleNode.addClickCellListener(event -> {
+
+                if (toggleNode.checked()) {
+                    graph.setCellsLocked(false);
+                    toggleNode.cheked(false);
+                    toggleNode.setRawStyle(ANGLE_RIGHT_STYLE);
+                    toggleNode.overrideStyle();
+
+                    collapseRecursively(key);
+                    expandRecursively(key);
+
+                    graph.setCellsLocked(true);
+                } else {
+                    toggleNode.cheked(true);
+                    toggleNode.setRawStyle(ANGLE_DOWN_STYLE);
+                    toggleNode.overrideStyle();
+
+                    if (functionChildren != null && subtreeNodes.get(key) == null) {
+
+                        List<T> keyChildren = functionChildren.apply(key);
+                        if (keyChildren != null) {
+                            keyChildren.forEach(child -> {
+                                parents.put(child, key);
+
+                                MxGraphNode subtreeNode = subtreeNodes.get(key);
+                                if (subtreeNode == null) {
+                                    addSubtreeNode(key, node);
+                                    subtreeNode = subtreeNodes.get(key);
+                                }
+                                addNode(child, subtreeNode);
+                            });
+                        }
                     }
+                    graph.setCellsLocked(false);
+                    expand(key);
+                    graph.setCellsLocked(true);
                 }
+            });
+        } else {
+            toggleNode.setIsSelectable(false);
+            toggleNode.setRawStyle(LEAF_STYLE);
+            toggleNode.addCellAddedListener(event -> {
                 graph.setCellsLocked(false);
-                expand(key);
+                toggleNode.overrideStyle();
+                toggleNode.setConnectable(false);
                 graph.setCellsLocked(true);
-            }
-        });
+                event.unregisterListener();
+            });
+        }
         graph.add(toggleNode);
         
         buildLabelNode(key, keyNode);
@@ -385,6 +405,10 @@ public class MxTree<T> extends MxGraphNode {
             return keyLabel;
         }
         return keyLabel;
+    }
+    
+    private boolean leaf(T key) {
+        return key != null && funcLeaf != null ? funcLeaf.apply(key) : false;
     }
     /**
      * A toggle node

@@ -46,7 +46,7 @@ public class MxTreeLabel extends MxGraphNode {
     {
         COLOR_STYLE.put(MxConstants.STYLE_SHAPE, MxConstants.SHAPE_ELLIPSE);
         COLOR_STYLE.put(MxConstants.STYLE_FILLCOLOR, MxConstants.NONE);
-        COLOR_STYLE.put(MxConstants.STYLE_STROKECOLOR, MxConstants.NONE);
+        COLOR_STYLE.put(MxConstants.STYLE_STROKECOLOR, "#A9A9A9");
     }
     LinkedHashMap<String, String> LABEL_STYLE = new LinkedHashMap();
     {

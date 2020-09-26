@@ -80,6 +80,12 @@ public class MxSpliceBox<T> extends MxGraphNode {
         PORT_NODE_STYLE.put(MxConstants.STYLE_FONTCOLOR, FONT_COLOR);
         PORT_NODE_STYLE.put(MxConstants.STYLE_FONTSIZE, "10");
     }
+    private final LinkedHashMap<String, String> NULL_PORT_STYLE = new LinkedHashMap();
+    {
+        NULL_PORT_STYLE.put(MxConstants.STYLE_SHAPE, MxConstants.SHAPE_RECTANGLE);
+        NULL_PORT_STYLE.put(MxConstants.STYLE_FILLCOLOR, MxConstants.NONE);
+        NULL_PORT_STYLE.put(MxConstants.STYLE_STROKECOLOR, MxConstants.NONE);
+    }
     //</editor-fold>
     /**
      * Port in/out set.
@@ -102,14 +108,23 @@ public class MxSpliceBox<T> extends MxGraphNode {
      * If is null all the ports are connectable
      */
     private final Function<T, Boolean> funcGetPortConnectable;
+    /**
+     * Function to get a port node
+     */
+    private final Function<T, MxGraphNode> funcGetPortNode;
+    /**
+     * Function to get the port tooltip
+     */
+    private final Function<T, String> funcGetPortTooltip;
     
     private final MxGraph graph;
     private MxGraphNode portInSetNode;
     private MxGraphNode portOutSetNode;
+    private int portsOutAdded = 0;
     
     public MxSpliceBox(MxGraph graph, LinkedHashMap<T, T> portsInOut, String spliceBoxLabel, String spliceBoxColor, 
         Function<T, String> funcGetPortLabel, Function<T, String> funcGetPortId, Function<T, String> funcGetPortColor,
-        Function<T, Boolean> funcGetPortConnectable) {
+        Function<T, Boolean> funcGetPortConnectable, Function<T, MxGraphNode> funcGetPortNode, Function<T, String> funcGetPortTooltip) {
         super();
         Objects.requireNonNull(graph);
         Objects.requireNonNull(portsInOut);
@@ -119,6 +134,8 @@ public class MxSpliceBox<T> extends MxGraphNode {
         this.funcGetPortId = funcGetPortId;
         this.funcGetPortColor = funcGetPortColor;
         this.funcGetPortConnectable = funcGetPortConnectable;
+        this.funcGetPortNode = funcGetPortNode;
+        this.funcGetPortTooltip = funcGetPortTooltip;
         
         if (spliceBoxLabel != null)
             setLabel(spliceBoxLabel);
@@ -193,6 +210,8 @@ public class MxSpliceBox<T> extends MxGraphNode {
             graph.setCellsLocked(false);
             portInNode.overrideStyle();
             portInNode.setConnectable(getPortConnectable(portIn));
+            portInNode.setTooltip(getPortTooltip(portIn));
+                
             graph.setCellsLocked(true);
             addPortOutNode(portOut);
             //The cell is added only once, eliminating the unnecessary listener.
@@ -209,9 +228,10 @@ public class MxSpliceBox<T> extends MxGraphNode {
             graph.setCellsLocked(false);
             portOutNode.overrideStyle();
             portOutNode.setConnectable(getPortConnectable(portOut));
+            portOutNode.setTooltip(getPortTooltip(portOut));
             
-            Object[] theOutPorts = portsInOut.values().toArray();
-            if (portOut.equals(theOutPorts[theOutPorts.length - 1])) {
+            portsOutAdded++;
+            if (portsOutAdded == portsInOut.size()) {
                 graph.executeStackLayout(portInSetNode.getUuid(), false, SPACING);
                 graph.executeStackLayout(portOutSetNode.getUuid(), false, SPACING);   
                 graph.executeStackLayout(this.getUuid(), true, SPACING, MARGIN * 3, MARGIN, MARGIN, MARGIN);
@@ -224,9 +244,13 @@ public class MxSpliceBox<T> extends MxGraphNode {
     }
     
     private MxGraphNode getPortNode(T port) {
-        Objects.requireNonNull(port);
+        MxGraphNode portNode = null;
+        if (port != null && funcGetPortNode != null)
+            portNode = funcGetPortNode.apply(port);
         
-        MxGraphNode portNode = new MxGraphNode();
+        if (portNode == null)
+            portNode = new MxGraphNode();
+                
         portNode.setGeometry(0, 0, LABEL_WIDTH, LABEL_HEIGHT);
                 
         String portId = getPortId(port);
@@ -237,7 +261,7 @@ public class MxSpliceBox<T> extends MxGraphNode {
         if (label != null)
             portNode.setLabel(label);
         
-        LinkedHashMap<String, String> rawStyle = new LinkedHashMap(PORT_NODE_STYLE);
+        LinkedHashMap<String, String> rawStyle = new LinkedHashMap(port != null ? PORT_NODE_STYLE : NULL_PORT_STYLE);
         String portColor = getPortColor(port);
         if (portColor != null)
             rawStyle.put(MxConstants.STYLE_FILLCOLOR, portColor);
@@ -247,13 +271,7 @@ public class MxSpliceBox<T> extends MxGraphNode {
     }
     
     private String getPortId(T port) {
-        String portId = null;
-        if (port != null && funcGetPortId != null) {
-            portId = funcGetPortId.apply(port);
-            if (portId != null)
-                return portId;
-        }
-        return portId;
+        return port != null && funcGetPortId != null ? funcGetPortId.apply(port) : null;
     }
     
     private String getPortColor(T port) {
@@ -280,6 +298,13 @@ public class MxSpliceBox<T> extends MxGraphNode {
     }
     
     private Boolean getPortConnectable(T port) {
-        return port != null && funcGetPortConnectable != null ? funcGetPortConnectable.apply(port) : true;
+        if (port == null)
+            return false;
+        else
+            return funcGetPortConnectable != null ? funcGetPortConnectable.apply(port) : true;
+    }
+    
+    private String getPortTooltip(T port) {
+        return port != null && funcGetPortTooltip != null ? funcGetPortTooltip.apply(port) : null;
     }
 }

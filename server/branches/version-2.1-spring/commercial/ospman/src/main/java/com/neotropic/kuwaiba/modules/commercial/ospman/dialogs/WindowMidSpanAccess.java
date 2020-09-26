@@ -90,123 +90,139 @@ public class WindowMidSpanAccess extends Dialog implements ActionCompletedListen
 
     @Override
     public void open() {
-        final String width = "256px";
-        H4 lblTitle = new H4(ts.getTranslatedString("module.ospman.mid-span-access.title"));
-        lblTitle.setWidth(width);
-        
-        ComboBox<BusinessObjectLight> cmbLocation = new ComboBox(ts.getTranslatedString("module.ospman.mid-span-access.location"));
-        cmbLocation.setRequiredIndicatorVisible(true);
-        cmbLocation.setWidth(width);
-        cmbLocation.setItems(Arrays.asList(node));
-        cmbLocation.setValue(node);
-        cmbLocation.setItemLabelGenerator(BusinessObjectLight::getName);
-        cmbLocation.setEnabled(false);
-        
-        cmbCable = new ComboBox(ts.getTranslatedString("module.ospman.mid-span-access.cable"));
-        cmbCable.setRequiredIndicatorVisible(true);
-        cmbCable.setWidth(width);
-        cmbCable.setItemLabelGenerator(cable -> cable.getName());
-        cmbCable.setRenderer(new ComponentRenderer<>(cable -> {
-            Label lblName = new Label(cable.getName());
-            Emphasis lblClassName = new Emphasis(cable.getClassName());
-            VerticalLayout lytCable = new VerticalLayout(lblName, lblClassName);
-            lytCable.setMargin(false);
-            lytCable.setPadding(false);
-            lytCable.setSpacing(false);
-            return lytCable;
-        }));
-        
-        cmbCable.addFocusListener(event -> {
-            if (cablesDataProvider != null) {
-                if (cmbCable.isOpened())
-                    cmbCable.getDataProvider().refreshAll();
-            }
-            else
-                setCablesDataPovider();
-        });        
+        try {
+            if (bem.hasSpecialAttribute(node.getClassName(), node.getId(), "endpointA") || //NOI18N
+            bem.hasSpecialAttribute(node.getClassName(), node.getId(), "endpointB")) { //NOI18N
                 
-        cmbDevice = new ComboBox(ts.getTranslatedString("module.ospman.mid-span-access.device"));
-        cmbDevice.setRequiredIndicatorVisible(true);
-        cmbDevice.setWidth(width);
-        cmbDevice.setItemLabelGenerator(device -> device.getName());
-        cmbDevice.setEnabled(false);
-        cmbDevice.setRenderer(new ComponentRenderer<>(device -> {
-            Label lblName = new Label(device.getName());
-            Emphasis lblClassName = new Emphasis(device.getClassName());
-            VerticalLayout lytDevice = new VerticalLayout(lblName, lblClassName);
-            lytDevice.setMargin(false);
-            lytDevice.setPadding(false);
-            lytDevice.setSpacing(false);
-            return lytDevice;
-         }));
-        
-        cmbDevice.addFocusListener(event -> {
-            if (devicesDataProvider != null) {
-                if (cmbDevice.isOpened())
-                    cmbDevice.getDataProvider().refreshAll();
-            }
-            else
-                setDevicesDataProvider();
-        });
-                
-        Button btnNewDevice = new Button(new Icon(VaadinIcon.PLUS), event -> {
-            newBusinessObjectVisualAction.getVisualComponent(new ModuleActionParameterSet(
-                new ModuleActionParameter(NewBusinessObjectVisualAction.PARAM_BUSINESS_OBJECT, node))
-            ).open();
-        });
-        btnNewDevice.setWidth("16px");
-        btnNewDevice.setEnabled(false);
-        
-        cmbCable.addValueChangeListener(event -> {
-            if (event.getValue() != null) {
-                cmbDevice.setEnabled(true);
-                btnNewDevice.setEnabled(true);
-                
-                if (cmbCable.getValue() != null && cmbDevice.getValue() != null)
-                    updateOspLocationView();
-            } else {
-                cmbDevice.setValue(null);
+                final String width = "256px";
+                H4 lblTitle = new H4(ts.getTranslatedString("module.ospman.mid-span-access.title"));
+                lblTitle.setWidth(width);
+
+                ComboBox<BusinessObjectLight> cmbLocation = new ComboBox(ts.getTranslatedString("module.ospman.mid-span-access.location"));
+                cmbLocation.setRequiredIndicatorVisible(true);
+                cmbLocation.setWidth(width);
+                cmbLocation.setItems(Arrays.asList(node));
+                cmbLocation.setValue(node);
+                cmbLocation.setItemLabelGenerator(BusinessObjectLight::getName);
+                cmbLocation.setEnabled(false);
+
+                cmbCable = new ComboBox(ts.getTranslatedString("module.ospman.mid-span-access.cable"));
+                cmbCable.setRequiredIndicatorVisible(true);
+                cmbCable.setWidth(width);
+                cmbCable.setItemLabelGenerator(cable -> cable.getName());
+                cmbCable.setRenderer(new ComponentRenderer<>(cable -> {
+                    Label lblName = new Label(cable.getName());
+                    Emphasis lblClassName = new Emphasis(cable.getClassName());
+                    VerticalLayout lytCable = new VerticalLayout(lblName, lblClassName);
+                    lytCable.setMargin(false);
+                    lytCable.setPadding(false);
+                    lytCable.setSpacing(false);
+                    return lytCable;
+                }));
+
+                cmbCable.addFocusListener(event -> {
+                    if (cablesDataProvider != null) {
+                        if (cmbCable.isOpened())
+                            cmbCable.getDataProvider().refreshAll();
+                    }
+                    else
+                        setCablesDataPovider();
+                });        
+
+                cmbDevice = new ComboBox(ts.getTranslatedString("module.ospman.mid-span-access.device"));
+                cmbDevice.setRequiredIndicatorVisible(true);
+                cmbDevice.setWidth(width);
+                cmbDevice.setItemLabelGenerator(device -> device.getName());
                 cmbDevice.setEnabled(false);
+                cmbDevice.setRenderer(new ComponentRenderer<>(device -> {
+                    Label lblName = new Label(device.getName());
+                    Emphasis lblClassName = new Emphasis(device.getClassName());
+                    VerticalLayout lytDevice = new VerticalLayout(lblName, lblClassName);
+                    lytDevice.setMargin(false);
+                    lytDevice.setPadding(false);
+                    lytDevice.setSpacing(false);
+                    return lytDevice;
+                 }));
+
+                cmbDevice.addFocusListener(event -> {
+                    if (devicesDataProvider != null) {
+                        if (cmbDevice.isOpened())
+                            cmbDevice.getDataProvider().refreshAll();
+                    }
+                    else
+                        setDevicesDataProvider();
+                });
+
+                Button btnNewDevice = new Button(new Icon(VaadinIcon.PLUS), event -> {
+                    newBusinessObjectVisualAction.getVisualComponent(new ModuleActionParameterSet(
+                        new ModuleActionParameter(NewBusinessObjectVisualAction.PARAM_BUSINESS_OBJECT, node))
+                    ).open();
+                });
+                btnNewDevice.setWidth("16px");
                 btnNewDevice.setEnabled(false);
+
+                cmbCable.addValueChangeListener(event -> {
+                    if (event.getValue() != null) {
+                        cmbDevice.setEnabled(true);
+                        btnNewDevice.setEnabled(true);
+
+                        if (cmbCable.getValue() != null && cmbDevice.getValue() != null)
+                            updateOspLocationView();
+                    } else {
+                        cmbDevice.setValue(null);
+                        cmbDevice.setEnabled(false);
+                        btnNewDevice.setEnabled(false);
+                    }
+                });        
+                Button btnClose = new Button(ts.getTranslatedString("module.general.messages.close"), event -> close());
+
+                HorizontalLayout lytRow3 = new HorizontalLayout(cmbDevice, btnNewDevice);
+                lytRow3.setSpacing(false);
+                lytRow3.setMargin(false);
+                lytRow3.setPadding(false);
+
+                VerticalLayout lytRow4 = new VerticalLayout();
+                lytRow4.setSizeFull();
+
+                VerticalLayout lytSelector = new VerticalLayout(lblTitle, cmbLocation, cmbCable, lytRow3, lytRow4, btnClose);
+                lytSelector.setWidth("282px");
+                lytSelector.setHeightFull();
+                lytSelector.setSpacing(false);
+                lytSelector.setMargin(false);
+                lytSelector.setPadding(false);
+                lytSelector.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, btnClose);
+
+                divLocation = new Div();
+                divLocation.setSizeFull();
+                divLocation.getStyle().set("border-style", "solid"); //NOI18N
+                divLocation.getStyle().set("border-width", "1px"); //NOI18N
+                divLocation.getStyle().set("border-color", "var(--paper-grey-900)"); //NOI18N
+
+                cmbDevice.addValueChangeListener(event -> {
+                    if (cmbCable.getValue() != null && cmbDevice.getValue() != null)
+                        updateOspLocationView();
+                });
+
+                HorizontalLayout lytMain = new HorizontalLayout(lytSelector, divLocation);
+                lytMain.setSpacing(false);
+                lytMain.setMargin(false);
+                lytMain.setPadding(false);
+                lytMain.setSizeFull();
+                add(lytMain);
+                this.newBusinessObjectVisualAction.registerActionCompletedLister(this);
+                super.open();
+            } else {
+                new SimpleNotification(
+                    ts.getTranslatedString("module.general.messages.error"),
+                    ts.getTranslatedString("module.ospman.mid-span-access.there-are-no-cables")
+                ).open();
             }
-        });        
-        Button btnClose = new Button(ts.getTranslatedString("module.general.messages.close"), event -> close());
-        
-        HorizontalLayout lytRow3 = new HorizontalLayout(cmbDevice, btnNewDevice);
-        lytRow3.setSpacing(false);
-        lytRow3.setMargin(false);
-        lytRow3.setPadding(false);
-
-        VerticalLayout lytRow4 = new VerticalLayout();
-        lytRow4.setSizeFull();
-
-        VerticalLayout lytSelector = new VerticalLayout(lblTitle, cmbLocation, cmbCable, lytRow3, lytRow4, btnClose);
-        lytSelector.setWidth("282px");
-        lytSelector.setHeightFull();
-        lytSelector.setSpacing(false);
-        lytSelector.setMargin(false);
-        lytSelector.setPadding(false);
-        lytSelector.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, btnClose);
-        
-        divLocation = new Div();
-        divLocation.setSizeFull();
-        divLocation.getStyle().set("border-style", "solid"); //NOI18N
-        divLocation.getStyle().set("border-width", "1px"); //NOI18N
-        divLocation.getStyle().set("border-color", "var(--paper-grey-900)"); //NOI18N
-        
-        cmbDevice.addValueChangeListener(event -> {
-            if (cmbCable.getValue() != null && cmbDevice.getValue() != null)
-                updateOspLocationView();
-        });
-        
-        HorizontalLayout lytMain = new HorizontalLayout(lytSelector, divLocation);
-        lytMain.setSpacing(false);
-        lytMain.setMargin(false);
-        lytMain.setPadding(false);
-        lytMain.setSizeFull();
-        add(lytMain);
-        this.newBusinessObjectVisualAction.registerActionCompletedLister(this);
-        super.open();
+        } catch (InventoryException ex) {
+            new SimpleNotification(
+                ts.getTranslatedString("module.general.messages.error"),
+                ex.getLocalizedMessage()
+            ).open();
+        }
     }
 
     @Override
