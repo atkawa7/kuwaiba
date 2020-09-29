@@ -20,7 +20,8 @@ import java.util.Calendar;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import org.neotropic.kuwaiba.core.apis.persistence.application.UserProfileLight;
+import java.util.concurrent.Executor;
+import java.util.function.Supplier;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,11 +34,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class ThreadingService {
     /**
-     * Reference to the translation service.
-     */
-    @Autowired
-    private TranslationService ts;
-    /**
      * The number of registered jobs after which a parallel access to the table will be attempted.
      */
     public static int PARALLEL_LIMIT = 50;
@@ -46,7 +42,17 @@ public class ThreadingService {
      * are cleaned up periodically or are removed from the table when whomever started it 
      */
     private ConcurrentHashMap<ManagedJobDescriptor, CompletableFuture> jobTable;
-
+    /**
+     * Reference to the translation service.
+     */
+    @Autowired
+    private TranslationService ts;
+    /**
+     * The default task executor instance configured at startup. Check the application.properties file for entries with the prefix services.threading.
+     */
+    @Autowired
+    private Executor taskExecutor;
+    
     public ThreadingService() {
         this.jobTable = new ConcurrentHashMap<>();
     }
@@ -74,6 +80,9 @@ public class ThreadingService {
         if (aThreadEntry == null)
             throw new IllegalArgumentException(String.format(ts.getTranslatedString("apis.services.threading.messages.job-not-found"), jobId));
         else {
+            if (aThreadEntry.getKey().getState() != ManagedJobDescriptor.STATE_RUNNING)
+                throw new IllegalArgumentException(ts.getTranslatedString("apis.services.threading.messages.job-not-running"));
+            
             aThreadEntry.getKey().setState(ManagedJobDescriptor.STATE_END_KILLED);
             aThreadEntry.getKey().setEndTime(Calendar.getInstance().getTimeInMillis());
             aThreadEntry.getValue().cancel(true);
@@ -87,8 +96,13 @@ public class ThreadingService {
      * @throws IllegalArgumentException If the job could not be started, most likely because of its state. Also, if <code>theDescriptor</code> 
      * is a job that already exists in the table.
      */
-    public void startJob(ManagedJobDescriptor theDescriptor, CompletableFuture theJob) throws IllegalArgumentException {
+    public void startJob(ManagedJobDescriptor theDescriptor, Supplier theJob) throws IllegalArgumentException {
         if (this.jobTable.contains(theDescriptor))
-            throw new IllegalArgumentException(ts.getTranslatedString(""));
+            throw new IllegalArgumentException(String.format(ts.getTranslatedString("apis.services.threading.messages.job-already-exists"), theDescriptor.getId()));
+        if (theDescriptor.getState() != ManagedJobDescriptor.STATE_CREATED)
+            throw new IllegalArgumentException(String.format(ts.getTranslatedString("apis.services.threading.messages.job-can-not-restart"), theDescriptor.getId()));
+        
+        this.jobTable.put(theDescriptor, CompletableFuture.supplyAsync(theJob, taskExecutor));
+        theDescriptor.setState(ManagedJobDescriptor.STATE_RUNNING);
     }
 }

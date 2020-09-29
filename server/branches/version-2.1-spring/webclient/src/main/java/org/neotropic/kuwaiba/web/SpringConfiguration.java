@@ -17,14 +17,22 @@
 package org.neotropic.kuwaiba.web;
 
 import com.vaadin.flow.spring.annotation.EnableVaadin;
+import java.util.concurrent.Executor;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  * The Spring basic automated configuration file. 
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Configuration
+@EnableAsync
 // Spring beans
 @ComponentScan(basePackages = { "org.neotropic.kuwaiba.core", // Core services and utilities
                                 "org.neotropic.kuwaiba.modules", // Core and optional modules
@@ -35,4 +43,43 @@ import org.springframework.context.annotation.Configuration;
 @EnableVaadin(value = { "org.neotropic.kuwaiba.modules",  // UIs for core and optional modules
                         "com.neotropic.kuwaiba.modules", // UIs for commercial modules
                         "org.neotropic.kuwaiba.web.ui"}) // General purpose UIs
-public class SpringConfiguration { }
+public class SpringConfiguration { 
+    /**
+     * Max number of threads.
+     */
+    @Value("${max_threads}")
+    private int maxThreads;
+    /**
+     * Max number of CPU cores to be used (if available).
+     */
+    @Value("${max_cores}")
+    private int maxCores;
+    /**
+     * Max size of the queue of tasks to be executed.
+     */
+    @Value("${queue_size}")
+    private int queueSize;
+    /**
+     * Reference to the translation service.
+     */
+    @Autowired
+    private TranslationService ts;
+    
+    /**
+     * Configures the default threading behavior through an Executor instance. Configuration 
+     * parameters can be found in the application.properties file with the prefix services.threading
+     * @return An instance of executor with the configuration specified in the properties file. 
+     */
+    @Bean (name = "taskExecutor")
+    public Executor taskExecutor() {
+        System.out.println(String.format(ts.getTranslatedString("module.general.messages.thread-executor-initialized"), 
+                maxCores, maxThreads, queueSize));
+        final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(maxCores);
+        executor.setMaxPoolSize(maxThreads);
+        executor.setQueueCapacity(queueSize);
+        executor.setThreadNamePrefix("kuwaiba-thread-");
+        executor.initialize();
+        return executor;
+    }
+}
