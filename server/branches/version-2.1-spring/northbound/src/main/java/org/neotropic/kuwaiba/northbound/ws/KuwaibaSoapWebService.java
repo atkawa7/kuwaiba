@@ -4109,7 +4109,7 @@ public interface KuwaibaSoapWebService {
      * @throws ServerSideException if there are not IPAM root nodes or if can't get the pools of a subnet pool
      */
     @WebMethod(operationName = "getSubnetPools")
-    public RemotePool[] getSubnetPools(@WebParam(name = "parentId") String parentId,
+    public List<RemotePool> getSubnetPools(@WebParam(name = "parentId") String parentId,
             @WebParam(name = "className") String className,
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException;
     

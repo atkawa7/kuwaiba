@@ -16,9 +16,11 @@
 
 package org.neotropic.kuwaiba.northbound.ws;
 
-import com.neotropic.kuwaiba.modules.commercial.sdh.SDHContainerLinkDefinition;
-import com.neotropic.kuwaiba.modules.commercial.sdh.SDHPosition;
-import com.neotropic.kuwaiba.modules.commercial.sdh.persistence.SdhService;
+import com.neotropic.kuwaiba.modules.commercial.ipam.IpamModule;
+import com.neotropic.kuwaiba.modules.commercial.ipam.IpamModuleService;
+import com.neotropic.kuwaiba.modules.commercial.sdh.SdhModuleService;
+import com.neotropic.kuwaiba.modules.commercial.sdh.api.SdhContainerLinkDefinition;
+import com.neotropic.kuwaiba.modules.commercial.sdh.api.SdhPosition;
 import com.neotropic.kuwaiba.modules.commercial.whman.persistence.WarehousesService;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -165,7 +167,9 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     private TranslationService ts;
     //Modules
     @Autowired
-    private SdhService sdhService;
+    private SdhModuleService sdhService;
+    @Autowired
+    private IpamModuleService ipamService;
     @Autowired
     private PhysicalConnectionsService physicalConnectionsService;
     @Autowired
@@ -5438,9 +5442,9 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public String createSDHContainerLink(String classNameEndpointA, String idEndpointA, String classNameEndpointB, String idEndpointB, String linkType, List<RemoteSDHPosition> positions, String defaultName, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("createSDHContainerLink", "127.0.0.1", sessionId);
-            List<SDHPosition> remotePositions = new ArrayList<>();
+            List<SdhPosition> remotePositions = new ArrayList<>();
             for (RemoteSDHPosition position : positions)
-                remotePositions.add(new SDHPosition(position.getLinkClass(), position.getLinkId(), position.getPosition()));
+                remotePositions.add(new SdhPosition(position.getLinkClass(), position.getLinkId(), position.getPosition()));
             
             String SDHContainerLinkId = sdhService.createSDHContainerLink(classNameEndpointA, idEndpointA, 
                     classNameEndpointB, idEndpointB, linkType, remotePositions, defaultName);
@@ -5463,10 +5467,10 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         try {
             aem.validateCall("createSDHTributaryLink", "127.0.0.1", sessionId);
             
-            List<SDHPosition> remotePositions = new ArrayList<>();
+            List<SdhPosition> remotePositions = new ArrayList<>();
             
             for (RemoteSDHPosition position : positions)
-                remotePositions.add(new SDHPosition(position.getLinkClass(), position.getLinkId(), position.getPosition()));
+                remotePositions.add(new SdhPosition(position.getLinkClass(), position.getLinkId(), position.getPosition()));
             
             String SDHTributaryLinkId = sdhService.createSDHTributaryLink(classNameEndpointA, idEndpointA, classNameEndpointB, 
                     idEndpointB, linkType, remotePositions, defaultName);
@@ -5586,11 +5590,11 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public List<RemoteSDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, String transportLinkId, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("getSDHTransportLinkStructure", "127.0.0.1", sessionId);
-            List<SDHContainerLinkDefinition> containerLinks = sdhService.getSDHTransportLinkStructure(transportLinkClass, transportLinkId);
+            List<SdhContainerLinkDefinition> containerLinks = sdhService.getSDHTransportLinkStructure(transportLinkClass, transportLinkId);
             
             List<RemoteSDHContainerLinkDefinition> res = new ArrayList<>();
             
-            for (SDHContainerLinkDefinition containerLink : containerLinks)
+            for (SdhContainerLinkDefinition containerLink : containerLinks)
                 res.add(new RemoteSDHContainerLinkDefinition(containerLink));
             
             return res;
@@ -5607,10 +5611,10 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public List<RemoteSDHContainerLinkDefinition> getSDHContainerLinkStructure(String containerLinkClass, String containerLinkId, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("getSDHContainerLinkStructure", "127.0.0.1", sessionId);
-            List<SDHContainerLinkDefinition> containerLinks = sdhService.getSDHContainerLinkStructure(containerLinkClass, containerLinkId);
+            List<SdhContainerLinkDefinition> containerLinks = sdhService.getSDHContainerLinkStructure(containerLinkClass, containerLinkId);
             List<RemoteSDHContainerLinkDefinition> res = new ArrayList<>();
             
-            for (SDHContainerLinkDefinition containerLink : containerLinks)
+            for (SdhContainerLinkDefinition containerLink : containerLinks)
                 res.add(new RemoteSDHContainerLinkDefinition(containerLink));
             
             return res;
@@ -5624,14 +5628,14 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     }
 
     @Override
-    public RemotePool[] getSubnetPools(String parentId, String className, String sessionId) throws ServerSideException {
+    public List<RemotePool> getSubnetPools(String parentId, String className, String sessionId) throws ServerSideException {
         try {
-//            aem.validateCall("getSubnetPools", "127.0.0.1", sessionId);
-//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-//            return RemotePool.toRemotePoolArray(ipamModule.getSubnetPools(parentId, className));
-            return null;
-//        } catch (InventoryException ex) {
-//            throw new ServerSideException(ex.getMessage());
+            aem.validateCall("getSubnetPools", "127.0.0.1", sessionId);
+            return ipamService.getSubnetPools(parentId, className).stream().map(aPool -> new RemotePool(aPool)).
+                    collect(Collectors.toList());
+                
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
             Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
                     String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "getSDHContainerLinkStructure"), ex);
@@ -5642,12 +5646,10 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     @Override
     public List<RemoteObjectLight> getSubnets(String poolId, int limit, String sessionId) throws ServerSideException {
         try {
-//            aem.validateCall("getSubnets", "127.0.0.1", sessionId);
-//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-//            return RemoteObjectLight.toRemoteObjectLightArray(ipamModule.getSubnets(limit, poolId));
-            return null;
-//        } catch (InventoryException ex) {
-//            throw new ServerSideException(ex.getMessage());
+            aem.validateCall("getSubnets", "127.0.0.1", sessionId);
+            return RemoteObjectLight.toRemoteObjectLightArray(ipamService.getSubnets(limit, poolId));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
             Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
                     String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "getSubnets"), ex);
@@ -5658,17 +5660,15 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     @Override
     public String createSubnetPool(String parentId, String subnetPoolName, String subnetPoolDescription, String className, String sessionId) throws ServerSideException {
         try {
-//            aem.validateCall("createSubnetPool", "127.0.0.1", sessionId);
-//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-//            String subnetPoolId = ipamModule.createSubnetsPool(parentId, subnetPoolName, subnetPoolDescription, className);
-            return null;
-//            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
-//                String.format("Created Subnet Pool %s [%s]", subnetPoolName, className));
-//            
-//            return subnetPoolId;            
-//        } catch (InventoryException ex) {
-//            throw new ServerSideException(ex.getMessage());
+            aem.validateCall("createSubnetPool", "127.0.0.1", sessionId);
+            String subnetPoolId = ipamService.createSubnetsPool(parentId, subnetPoolName, subnetPoolDescription, className);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Created Subnet Pool %s [%s]", subnetPoolName, className));
+            
+            return subnetPoolId;            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
             Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
                     String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "createSubnetPool"), ex);
@@ -5680,25 +5680,23 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public String createSubnet(String poolId, String className, List<StringPair> attributes, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("createSubnet", "127.0.0.1", sessionId);
-//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-//            
-//            String[] attributeNames = new String[attributes.size()];
-//            String[] attributeValues = new String[attributes.size()];
-//            
-//            for (int i = 0; i < attributes.size(); i++) {
-//                attributeNames[i] = attributes.get(i).getKey();
-//                attributeValues[i] = attributes.get(i).getValue();
-//            }
-//                
-//            String subnetId = ipamModule.createSubnet(id, className, attributeNames, attributeValues);
-//            
-//            String subnameName = bem.getObjectLight(className, subnetId).getName();
-//            
-//            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
-//                String.format("Created subnet %s", subnameName));
-//            return subnetId;
-            return null;
+            
+            String[] attributeNames = new String[attributes.size()];
+            String[] attributeValues = new String[attributes.size()];
+            
+            for (int i = 0; i < attributes.size(); i++) {
+                attributeNames[i] = attributes.get(i).getKey();
+                attributeValues[i] = attributes.get(i).getValue();
+            }
+                
+            String subnetId = ipamService.createSubnet(poolId, className, attributeNames, attributeValues);
+            
+            String subnameName = bem.getObjectLight(className, subnetId).getName();
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Created subnet %s", subnameName));
+            return subnetId;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5712,12 +5710,11 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void deleteSubnetPools(String[] ids, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("deleteSubnetPools", "127.0.0.1", sessionId);
-//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-//            ipamModule.deleteSubnetPools(ids);
-//            
-//            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-//                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
-//                String.format("Deleted %s subnet pools", ids.length));
+            ipamService.deleteSubnetPools(ids);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
+                String.format("Deleted %s subnet pools", ids.length));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5731,12 +5728,11 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void deleteSubnets(String className, List<String> oids, boolean releaseRelationships, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("deleteSubnets", "127.0.0.1", sessionId);
-//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-//            ipamModule.deleteSubnets(className, ids, releaseRelationships);
-//            
-//            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-//                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
-//                String.format("Deleted %s subnets", ids.size()));
+            ipamService.deleteSubnets(className, oids, releaseRelationships);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
+                String.format("Deleted %s subnets", oids.size()));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5750,9 +5746,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public RemoteObject getSubnet(String id, String className, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("getSubnet", "127.0.0.1", sessionId);
-//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-//            return new RemoteObject(ipamModule.getSubnet(className, id));
-            return null;
+            return new RemoteObject(ipamService.getSubnet(className, id));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5766,9 +5760,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public RemotePool getSubnetPool(String subnetPoolId, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("getSubnetPool", "127.0.0.1", sessionId);
-//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-//            return ipamModule.getSubnetPool(subnetPoolId);
-            return null;
+            return new RemotePool(ipamService.getSubnetPool(subnetPoolId));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5782,21 +5774,19 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public String addIPAddress(String id, String parentClassName, List<StringPair> attributesToBeUpdated, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("addIPAddress", "127.0.0.1", sessionId);
-//            HashMap<String, String> attributes = new HashMap<>();
-//            
-//            for (StringPair attribute : attributesToBeUpdated)
-//                attributes.put(attribute.getKey(), attribute.getValue());
-//            
-//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-//            String ipAddressId = ipamModule.addIPAddress(id, parentClassName, attributes);
-//                        
-//            String ipAddressName = bem.getObjectLight(Constants.CLASS_IP_ADDRESS, ipAddressId).getName();
-//            
-//            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
-//                String.format("Created IP Address %s", ipAddressName));
-//            return ipAddressId;
-            return null;
+            HashMap<String, String> attributes = new HashMap<>();
+            
+            for (StringPair attribute : attributesToBeUpdated)
+                attributes.put(attribute.getKey(), attribute.getValue());
+            
+            String ipAddressId = ipamService.addIPAddress(id, parentClassName, attributes);
+                        
+            String ipAddressName = bem.getObjectLight(Constants.CLASS_IP_ADDRESS, ipAddressId).getName();
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Created IP Address %s", ipAddressName));
+            return ipAddressId;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5810,12 +5800,11 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void removeIP(String[] oids, boolean releaseRelationships, String sessionId) throws ServerSideException {
         try {
             aem.validateCall("removeIP", "127.0.0.1", sessionId);
-//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N            
-//            ipamModule.removeIP(ids, releaseRelationships);
-//            
-//            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
-//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
-//                String.format("Removed %s IP Addresses", ids.length));
+            ipamService.removeIP(oids, releaseRelationships);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Removed %s IP Addresses", oids.length));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5829,9 +5818,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public List<RemoteObjectLight> getSubnetUsedIps(String id, int limit, String className, String sessionId) throws ServerSideException {
         try{
             aem.validateCall("getSubnetUsedIps", "127.0.0.1", sessionId);
-//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-//            return RemoteObjectLight.toRemoteObjectLightArray(ipamModule.getSubnetUsedIps(id, className));
-            return null;
+            return RemoteObjectLight.toRemoteObjectLightArray(ipamService.getSubnetUsedIps(id, className));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5845,9 +5832,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public List<RemoteObjectLight> getSubnetsInSubnet(String id, int limit, String className, String sessionId) throws ServerSideException {
         try{
             aem.validateCall("getSubnetsInSubnet", "127.0.0.1", sessionId);
-//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-//            return RemoteObjectLight.toRemoteObjectLightArray(ipamModule.getSubnetsInSubnet(id, className));
-            return null;
+            return RemoteObjectLight.toRemoteObjectLightArray(ipamService.getSubnetsInSubnet(id, className));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5861,12 +5846,11 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void relateSubnetToVlan(String id, String className, String vlanId, String sessionId) throws ServerSideException {
         try{
             aem.validateCall("relateSubnetToVLAN", "127.0.0.1", sessionId);
-//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-//            ipamModule.relateSubnetToVLAN(id, className, vlanId);
-//            
-//            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VLAN, vlanId, 
-//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
-//                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN, "", id, "");
+            ipamService.relateSubnetToVLAN(id, className, vlanId);
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VLAN, vlanId, 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                    IpamModule.RELATIONSHIP_IPAMBELONGSTOVLAN, "", id, "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5880,12 +5864,11 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void releaseSubnetFromVlan(String subnetId, String vlanId, String sessionId) throws ServerSideException {
         try{
             aem.validateCall("releaseSubnetFromVLAN", "127.0.0.1", sessionId);
-//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-//            ipamModule.releaseSubnetFromVLAN(vlanId, id);
-//            
-//            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VLAN, vlanId, 
-//                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
-//                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN, id, "", "");
+            ipamService.releaseSubnetFromVLAN(subnetId, vlanId);
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VLAN, vlanId, 
+                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                IpamModule.RELATIONSHIP_IPAMBELONGSTOVLAN, subnetId, "", "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5899,12 +5882,11 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void releaseSubnetFromVRF(String subnetId, String vrfId, String sessionId) throws ServerSideException {
         try{
             aem.validateCall("releaseSubnetFromVRF", "127.0.0.1", sessionId);
-//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-//            ipamModule.releaseSubnetFromVRF(subnetId, vrfId);
-//            
-//            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VRF_INSTANCE, vrfId, 
-//                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
-//                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVRFINSTACE, subnetId, "", "");
+            ipamService.releaseSubnetFromVRF(subnetId, vrfId);
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VRF_INSTANCE, vrfId, 
+                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                IpamModule.RELATIONSHIP_IPAMBELONGSTOVRFINSTACE, subnetId, "", "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5918,12 +5900,11 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void relateSubnetToVrf(String id, String className, String vrfId, String sessionId) throws ServerSideException {
         try{
             aem.validateCall("relateSubnetToVRF", "127.0.0.1", sessionId);
-//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-//            ipamModule.relateSubnetToVRF(id, className, vrfId);
-//            
-//            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VRF_INSTANCE, vrfId, 
-//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
-//                IPAMModule.RELATIONSHIP_IPAMBELONGSTOVRFINSTACE, "", id, "");
+            ipamService.relateSubnetToVRF(id, className, vrfId);
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), Constants.CLASS_VRF_INSTANCE, vrfId, 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                IpamModule.RELATIONSHIP_IPAMBELONGSTOVRFINSTACE, "", id, "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5934,15 +5915,14 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     }
 
     @Override
-    public void relateIPtoPort(String id, String portClassName, String portId, String sessionId) throws ServerSideException {
+    public void relateIPtoPort(String ipId, String portClassName, String portId, String sessionId) throws ServerSideException {
         try{
             aem.validateCall("relateIPtoDevice", "127.0.0.1", sessionId);
-//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-//            ipamModule.relateIPtoPort(ipId, portClassName, portId);
-//            
-//            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), portClassName, portId,
-//                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
-//                IPAMModule.RELATIONSHIP_IPAMHASADDRESS, "", ipId, "");
+            ipamService.relateIPtoPort(ipId, portClassName, portId);
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), portClassName, portId,
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                IpamModule.RELATIONSHIP_IPAMHASADDRESS, "", ipId, "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -5956,8 +5936,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public boolean itOverlaps(String networkIp, String broadcastIp, String sessionId) throws ServerSideException {
         try{
             aem.validateCall("itOverlaps", "127.0.0.1", sessionId);
-//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-//            ipamModule.itOverlaps(networkIp, broadcastIp);
+            ipamService.itOverlaps(networkIp, broadcastIp);
             return false;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -5972,12 +5951,11 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     public void releasePortFromIP(String deviceClassName, String deviceId, String id, String sessionId) throws ServerSideException {
         try{
             aem.validateCall("releasePortFromIP", "127.0.0.1", sessionId);
-//            IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-//            ipamModule.releasePortFromIP(deviceClassName, deviceId, id);
-//            
-//            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), deviceClassName, deviceId,
-//                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
-//                IPAMModule.RELATIONSHIP_IPAMHASADDRESS, id, "", "");
+            ipamService.releasePortFromIP(deviceClassName, deviceId, id);
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), deviceClassName, deviceId,
+                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                IpamModule.RELATIONSHIP_IPAMHASADDRESS, id, "", "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 

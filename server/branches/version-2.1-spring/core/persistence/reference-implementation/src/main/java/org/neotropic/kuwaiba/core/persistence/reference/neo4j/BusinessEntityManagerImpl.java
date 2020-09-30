@@ -2707,7 +2707,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     }
                 }
             }
-            tx.success();
+            //tx.success();
             return pools;
         }
     }

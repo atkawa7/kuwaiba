@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2020 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,16 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package com.neotropic.kuwaiba.modules.commercial.ipam;
 
-
+import static com.neotropic.kuwaiba.modules.commercial.ipam.IpamModule.RELATIONSHIP_IPAMBELONGSTOVLAN;
+import static com.neotropic.kuwaiba.modules.commercial.ipam.IpamModule.RELATIONSHIP_IPAMBELONGSTOVRFINSTACE;
+import static com.neotropic.kuwaiba.modules.commercial.ipam.IpamModule.RELATIONSHIP_IPAMHASADDRESS;
+import static com.neotropic.kuwaiba.modules.commercial.ipam.IpamModule.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import org.neotropic.kuwaiba.core.apis.integration.modules.AbstractCommercialModule;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Pool;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
@@ -38,107 +41,61 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermit
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.northbound.ws.model.application.RemotePool;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
- * IP address manager module
- * @author Adrian Martinez {@literal <adrian.martinez@kuwaiba.org>}
+ * The logic behind the IPAM module.
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-public class IPAMModule extends AbstractCommercialModule {
-
-    /*
-     translation service
-    */
+@Service
+public class IpamModuleService {
+    /**
+     * Reference to the Translation Service
+     */
     @Autowired
     private TranslationService ts;
     /**
-     * This relationship is used to connect a GenericCommunicationElement with
-     * a subnet's IP address 
+     * Reference to the Application Entity Manager
      */
-    public static final String RELATIONSHIP_IPAMHASADDRESS = "ipamHasIpAddress";
+    @Autowired
+    private ApplicationEntityManager aem;
     /**
-     * This relationship is used to connect a VLAN with a Subnet
+     * Reference to the Business Entity Manager
      */
-    public static final String RELATIONSHIP_IPAMBELONGSTOVLAN = "ipamBelongsToVlan";
+    @Autowired
+    private BusinessEntityManager bem;
     /**
-     * This relationship is used to relate a VRF with a Subnet
+     * Reference to the Metadata Entity Manager
      */
-    public static final String RELATIONSHIP_IPAMBELONGSTOVRFINSTACE = "ipamBelongsToVrfInstance";
-    /**
-     * TODO: place this relationships in other place
-     * This relationship is used to relate a network element with extra logical configuration
-     */
-    public static final String RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE = "ipamportrelatedtointerface";
-    
-    @Override
-    public String getName() {
-        return ts.getTranslatedString("module.ipam.name");
-    }
-
-    @Override
-    public String getDescription() {
-        return ts.getTranslatedString("module.ipam.description");
-    }
-
-    @Override
-    public String getVersion() {
-        return "1.0";
-    }
-
-    @Override
-    public String getVendor() {
-        return "Neotropic SAS <contact@neotropic.co>";
-    }
-
-    @Override
-    public String getCategory() {
-        return "network/transport";
-    }
-
-    @Override
-    public ModuleType getModuleType() {
-        return ModuleType.TYPE_PERPETUAL_LICENSE;
-    }
-
-    @Override
-    public void configureModule(MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem) {
-        this.aem = aem;
-        this.mem = mem;
-        this.bem = bem;
-        //Registers the display names
-        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_IPAMBELONGSTOVLAN, "Belongs to a VLAN");
-        this.mem.setSpecialRelationshipDisplayName(RELATIONSHIP_IPAMHASADDRESS, "Element's IP Address");
-    }
+    @Autowired
+    private MetadataEntityManager mem;
     
     /**
      * Get the default pool nodes for IPv4 and IPv6 subnets
      * @return default pool for IPv4 and IPv6
      * @throws NotAuthorizedException 
      */
-    private List<RemotePool> getDefaultIPAMRootNodes() throws NotAuthorizedException, MetadataObjectNotFoundException, InvalidArgumentException{
+    private List<Pool> getDefaultIPAMRootNodes() throws NotAuthorizedException, MetadataObjectNotFoundException, InvalidArgumentException{
         List<Pool> ipv4RootPools = bem.getRootPools(Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
         List<Pool> ipv6RootPools = bem.getRootPools(Constants.CLASS_SUBNET_IPV6, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
         
-        List<RemotePool> rootSubnetPools = new ArrayList<>();
+        List<Pool> rootSubnetPools = new ArrayList<>();
         if(ipv4RootPools.isEmpty() || ipv6RootPools.isEmpty()){
             createRootNodes();
             ipv4RootPools = bem.getRootPools(Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
             ipv6RootPools = bem.getRootPools(Constants.CLASS_SUBNET_IPV6, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
         }
         
-        for (Pool rootPool : ipv4RootPools) 
-            rootSubnetPools.add(new RemotePool(rootPool));
-        
-        for (Pool rootPool : ipv6RootPools) 
-            rootSubnetPools.add(new RemotePool(rootPool));
+        rootSubnetPools.addAll(ipv4RootPools);
+        rootSubnetPools.addAll(ipv6RootPools);
         
         return rootSubnetPools;
     }
     
     /**
-     * Create the IPv4 and IPv6 default nodes if they don't exists.
-     * @throws MetadataObjectNotFoundException If the class IPv4 o IPv6 doesn't exists
+     * Create the IPv4 and IPv6 default nodes if they don't exist.
+     * @throws MetadataObjectNotFoundException If the class IPAddress don't exist
      * @throws NotAuthorizedException If the user is not authorized to create pool nodes
      */
     private void createRootNodes() throws MetadataObjectNotFoundException, NotAuthorizedException{
@@ -196,10 +153,10 @@ public class IPAMModule extends AbstractCommercialModule {
      * @throws NotAuthorizedException If the user is not authorized to use the IPAM module
      * @throws InvalidArgumentException It the subnet pool does not have uuid
      */
-    public RemotePool getSubnetPool(String oid) throws NotAuthorizedException, InvalidArgumentException, 
+    public Pool getSubnetPool(String oid) throws NotAuthorizedException, InvalidArgumentException, 
             ApplicationObjectNotFoundException
     {
-        return new RemotePool(bem.getPool(oid));
+        return bem.getPool(oid);
     }
     
     /**
@@ -212,17 +169,13 @@ public class IPAMModule extends AbstractCommercialModule {
      * @throws MetadataObjectNotFoundException if there are not IPAM root nodes
      * @throws InvalidArgumentException If the parent does not have uuid
      */
-    public List<RemotePool> getSubnetPools(String parentId, String className) 
+    public List<Pool> getSubnetPools(String parentId, String className) 
             throws NotAuthorizedException, ApplicationObjectNotFoundException, InvalidArgumentException, 
-            MetadataObjectNotFoundException 
-    {
-        List<RemotePool> remotePools = new ArrayList<>();
+            MetadataObjectNotFoundException {
         if("-1".equals(parentId) && className == null)
             return getDefaultIPAMRootNodes();
         
-        for (Pool pool : bem.getPoolsInPool(parentId, className)) 
-            remotePools.add(new RemotePool(pool));
-        return remotePools;
+        return bem.getPoolsInPool(parentId, className);
     }
    
     /**
@@ -537,12 +490,4 @@ public class IPAMModule extends AbstractCommercialModule {
     public boolean itOverlaps(String networkIp, String broadcastIp){
         return false;
     }
-
-    @Override
-    public void validate() throws OperationNotPermittedException { }
-
-    @Override
-    public String getId() {
-        return "ipam-networks";}
-
 }

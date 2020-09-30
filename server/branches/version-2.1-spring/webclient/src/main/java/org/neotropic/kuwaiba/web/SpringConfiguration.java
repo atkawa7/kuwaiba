@@ -47,17 +47,17 @@ public class SpringConfiguration {
     /**
      * Max number of threads.
      */
-    @Value("${max_threads}")
+    @Value("${services.threading.max-threads}")
     private int maxThreads;
     /**
      * Max number of CPU cores to be used (if available).
      */
-    @Value("${max_cores}")
+    @Value("${services.threading.max-cores}")
     private int maxCores;
     /**
      * Max size of the queue of tasks to be executed.
      */
-    @Value("${queue_size}")
+    @Value("${services.threading.queue-size}")
     private int queueSize;
     /**
      * Reference to the translation service.

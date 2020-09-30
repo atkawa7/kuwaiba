@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Component
-public class SDHModule extends AbstractCommercialModule {
+public class SdhModule extends AbstractCommercialModule {
        
     /**
     * translation service

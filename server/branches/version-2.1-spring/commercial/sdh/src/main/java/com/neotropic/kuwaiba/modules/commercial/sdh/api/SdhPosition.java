@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.modules.commercial.sdh;
+package com.neotropic.kuwaiba.modules.commercial.sdh.api;
 
 import java.io.Serializable;
 
@@ -21,7 +21,7 @@ import java.io.Serializable;
  * It's a simple class representing a single position used by a container within a transport link
  * @author Charles Edward Bedon Cortazar{@literal <charles.bedon@kuwaiba.org>}
  */
-public class SDHPosition implements Serializable {
+public class SdhPosition implements Serializable {
     /**
      * Id of the connection being used (a TransportLink or a ContainerLink)
      */
@@ -35,7 +35,7 @@ public class SDHPosition implements Serializable {
      */
     private int position;
 
-    public SDHPosition(String connectionClass, String connectionId, int position) {
+    public SdhPosition(String connectionClass, String connectionId, int position) {
         this.connectionId = connectionId;
         this.connectionClass = connectionClass;
         this.position = position;

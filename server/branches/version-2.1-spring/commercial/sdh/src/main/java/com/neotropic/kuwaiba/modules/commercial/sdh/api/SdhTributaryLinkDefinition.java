@@ -1,4 +1,4 @@
-/*
+/**
  *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,57 +13,45 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.modules.commercial.sdh;
+package com.neotropic.kuwaiba.modules.commercial.sdh.api;
 
+import java.io.Serializable;
 import java.util.List;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 
 /**
- * Instances of this class define a container
- * @author Charles Edward Bedon Cortazar{@literal <charles.bedon@kuwaiba.org>}
- */
-public class SDHContainerLinkDefinition {
+  * Instances of this class define a tributary link
+  * @author Charles Edward Bedon Cortazar{@literal <charles.bedon@kuwaiba.org>}
+*/
+public class SdhTributaryLinkDefinition implements Serializable {
     /**
-     * Container object
+     * Link object
      */
-    private BusinessObjectLight container;
+    private BusinessObjectLight link;
 
-    /**
-     * Is this container structured?
-     */
-    private boolean structured;
     /**
      * The positions used by the container
      */
-    private List<SDHPosition> positions;
+    private List<SdhPosition> positions;
 
-    public SDHContainerLinkDefinition(BusinessObjectLight container, boolean structured, List<SDHPosition> positions) {
-        this.container = container;
-        this.structured = structured;
+    public SdhTributaryLinkDefinition(BusinessObjectLight link, List<SdhPosition> positions) {
+        this.link = link;
         this.positions = positions;
     }       
 
     public BusinessObjectLight getContainerName() {
-        return container;
+        return link;
     }
 
-    public void setContainerName(BusinessObjectLight container) {
-        this.container = container;
+    public void setContainerName(BusinessObjectLight link) {
+        this.link = link;
     }
 
-    public List<SDHPosition> getPositions() {
+    public List<SdhPosition> getPositions() {
         return positions;
     }
 
-    public void setPositions(List<SDHPosition> positions) {
+    public void setPositions(List<SdhPosition> positions) {
         this.positions = positions;
     }
-
-    public BusinessObjectLight getContainer() {
-        return container;
-    }
-
-    public boolean isStructured() {
-        return structured;
-    }        
 }
