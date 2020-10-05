@@ -335,9 +335,9 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                             MxGraphNode lastRackUnit = rackUnit; // to evade static reference
                             int units = deviceRackUnits;
                             rackUnit.addCellAddedListener(evtAdded -> {
-                                lastRackUnit.addOverlayButton("moveUp", ts.getTranslatedString("module.visualization.rack-view-move-up"), "img/arrow_up.png", MxConstants.ALIGN_RIGHT, MxConstants.ALIGN_TOP, 0, 10);                                
-                                lastRackUnit.addOverlayButton("moveDown", ts.getTranslatedString("module.visualization.rack-view-move-down"), "img/arrow_down.png", MxConstants.ALIGN_RIGHT, MxConstants.ALIGN_BOTTOM, 0, -10);                                
-                                lastRackUnit.addOverlayButton("move", ts.getTranslatedString("module.visualization.rack-view-move-to-position"), "img/move-unit.png", MxConstants.ALIGN_RIGHT, MxConstants.ALIGN_BOTTOM, 15, -(unitHeight * units) / 2);                                
+                                lastRackUnit.addOverlayButton("moveUp", ts.getTranslatedString("module.visualization.rack-view-move-up"), "images/arrow_up.png", MxConstants.ALIGN_RIGHT, MxConstants.ALIGN_TOP, 0, 10);                                
+                                lastRackUnit.addOverlayButton("moveDown", ts.getTranslatedString("module.visualization.rack-view-move-down"), "images/arrow_down.png", MxConstants.ALIGN_RIGHT, MxConstants.ALIGN_BOTTOM, 0, -10);                                
+                                lastRackUnit.addOverlayButton("move", ts.getTranslatedString("module.visualization.rack-view-move-to-position"), "images/move-unit.png", MxConstants.ALIGN_RIGHT, MxConstants.ALIGN_BOTTOM, 15, -(unitHeight * units) / 2);                                
                             });
                             rackUnit.addClickOverlayButtonListener(evt -> {
                                 switch (evt.getButtonId()) {
@@ -422,7 +422,7 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                         MxGraphNode currentDeviceNode = deviceNode;
                         int units = deviceRackUnits;
                         deviceNode.addCellAddedListener(evtAdded -> {
-                            currentDeviceNode.addOverlayButton("showPorts", ts.getTranslatedString("module.visualization.rack-view-show-ports"), "img/view_port.png", MxConstants.ALIGN_RIGHT, MxConstants.ALIGN_CENTER, 35, -(unitHeight * units) / 2);                            
+                            currentDeviceNode.addOverlayButton("showPorts", ts.getTranslatedString("module.visualization.rack-view-show-ports"), "images/view_port.png", MxConstants.ALIGN_RIGHT, MxConstants.ALIGN_CENTER, 35, -(unitHeight * units) / 2);                            
                         });
                         
                         deviceNode.addClickOverlayButtonListener(evt -> {
@@ -848,7 +848,7 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                                             
                                             nodeShape.setLabel("");
                                             nodeShape.addCellAddedListener(eventListener -> {
-                                                nodeShape.addOverlayButton("showContent", ts.getTranslatedString("module.visualization.rack-view-show-content"), "img/show-slot.png", MxConstants.ALIGN_CENTER, MxConstants.ALIGN_CENTER, 0, -8);                                                
+                                                nodeShape.addOverlayButton("showContent", ts.getTranslatedString("module.visualization.rack-view-show-content"), "images/show-slot.png", MxConstants.ALIGN_CENTER, MxConstants.ALIGN_CENTER, 0, -8);                                                
                                             });
                                             nodeShape.addClickOverlayButtonListener(evt -> {
                                                 if (evt.getButtonId().equals("showContent")) {

@@ -16,7 +16,6 @@
 package org.neotropic.kuwaiba.visualization.widgets;
 
 import com.neotropic.flow.component.mxgraph.MxGraph;
-import com.neotropic.flow.component.mxgraph.MxGraphCell;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
@@ -27,7 +26,6 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -187,11 +185,11 @@ public class RackViewWidget extends AbstractDashboardWidget implements PropertyS
             lytInfo.setMargin(false);
             lytInfo.setWidth("220px");
             
-            Image imgMoveUp = new Image("img/arrow_up.png", "");
-            Image imgMoveDown = new Image("img/arrow_down.png", "");
-            Image imgMove = new Image("img/move-unit.png", "");
-            Image imgShowPorts = new Image("img/view_port.png", "");
-            Image imgShowSlotContent = new Image("img/show-slot.png", "");
+            Image imgMoveUp = new Image("images/arrow_up.png", "");
+            Image imgMoveDown = new Image("images/arrow_down.png", "");
+            Image imgMove = new Image("images/move-unit.png", "");
+            Image imgShowPorts = new Image("images/view_port.png", "");
+            Image imgShowSlotContent = new Image("images/show-slot.png", "");
             Label moveUpInfo = new Label(ts.getTranslatedString("module.visualization.rack-view-move-up-info"));
             Label moveDownInfo = new Label(ts.getTranslatedString("module.visualization.rack-view-move-down-info"));
             Label moveInfo = new Label(ts.getTranslatedString("module.visualization.rack-view-move-to-position"));
