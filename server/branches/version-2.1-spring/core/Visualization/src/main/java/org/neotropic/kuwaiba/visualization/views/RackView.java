@@ -590,7 +590,7 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                     }
                     mxGraph.executeStackLayout(rackNode.getUuid(), false, heightSeparator);
                     mxGraph.executeStackLayout(mainBox.getUuid(), true, 5);
-//                    mxGraph.setCellsMovable(false);
+                    mxGraph.setCellsMovable(false);
                     mxGraph.endUpdate();
                     
                 });

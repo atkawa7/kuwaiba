@@ -16,10 +16,15 @@
 
 package org.neotropic.kuwaiba.visualization.views;
 
+import com.neotropic.flow.component.mxgraph.MxConstants;
 import com.neotropic.flow.component.mxgraph.MxGraphEdge;
 import com.neotropic.flow.component.mxgraph.MxGraphNode;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -31,6 +36,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractDetailedView;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewEdge;
@@ -134,13 +140,31 @@ public class PhysicalTreeView extends AbstractDetailedView<BusinessObjectLight, 
     public Component getAsComponent() throws InvalidArgumentException {
 
         if (businessObject != null) {
-                       
-            int widthPort = 60, heightPort = 50, startY = 30, widthExternalPort= 30, heightExternalPort=30;
-            VerticalLayout lytGraph = new VerticalLayout();
+                
+            Button btnZoomIn = new Button(new Icon(VaadinIcon.PLUS), evt -> {
+                    mxGraph.getMxGraph().zoomIn();
+                });
+            btnZoomIn.getElement().setProperty("title", ts.getTranslatedString("module.visualization.rack-view-zoom-in"));
+                
+            Button btnZoomOut = new Button(new Icon(VaadinIcon.MINUS), evt -> {
+                    mxGraph.getMxGraph().zoomOut();
+                });
+            btnZoomIn.getElement().setProperty("title", ts.getTranslatedString("module.visualization.rack-view-zoom-out"));
+             
+            int widthPort = 25, heightPort = 25, startY = 30, widthExternalPort= 30, heightExternalPort=30;
+            HorizontalLayout lytGraph = new HorizontalLayout();
+            lytGraph.setSpacing(false);
+            lytGraph.setMargin(false);
             mxGraph = new MxGraphCanvas("100%", "100%");
-            mxGraph.getMxGraph().setMaxHeight("500px");
+            mxGraph.getMxGraph().setMaxHeight("400px");
+            mxGraph.getMxGraph().setMaxWidth("1050px");
             mxGraph.getMxGraph().setOverflow("scroll");
-            lytGraph.add(mxGraph.getMxGraph());
+            mxGraph.getMxGraph().setHasOutline(true);
+            mxGraph.getMxGraph().setOutlineHeight("100px");
+            
+            VerticalLayout lytActions = new VerticalLayout(btnZoomIn, btnZoomOut);
+            lytActions.setPadding(false);
+            lytGraph.add(lytActions, mxGraph.getMxGraph());
             MxGraphNode mainBox = new MxGraphNode();
             mainBox.setUuid("main");
             mainBox.setFillColor("none");
@@ -155,7 +179,6 @@ public class PhysicalTreeView extends AbstractDetailedView<BusinessObjectLight, 
                 ListOrderedMap parentNodesToAdd = new ListOrderedMap() ; // aux list due to the nodes must be added in reverse order
                 LinkedHashMap<BusinessObjectLight, MxGraphEdge> edgesToAdd = new LinkedHashMap<>() ; 
                 HashMap<BusinessObjectLight, List<BusinessObjectLight>> physicalTree = physicalConnectionsService.getPhysicalTree(businessObject.getClassName(), businessObject.getId());
-            
                 for (Entry<BusinessObjectLight, List<BusinessObjectLight>> entryTree : physicalTree.entrySet()) {
                     if (!mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALLINK, entryTree.getKey().getClassName())) { //It's a port
                         List<BusinessObjectLight> ancestors = bem.getParents(entryTree.getKey().getClassName(), entryTree.getKey().getId());
@@ -166,13 +189,24 @@ public class PhysicalTreeView extends AbstractDetailedView<BusinessObjectLight, 
                             lastPortMxNode = new MxGraphNode();
                             lastPortMxNode.setUuid(entryTree.getKey().getId());
                             lastPortMxNode.setFillColor(hexColor);
+                            lastPortMxNode.setShape(MxConstants.SHAPE_ELLIPSE);
                             lastPortMxNode.setLabel(entryTree.getKey().toString());
                             lastPortMxNode.setGeometry(0, 0, widthPort, heightPort);
-//                            lastPortMxNode.setCellParent("gp" + i);
                             portNodesToAdd.put(entryTree.getKey(), lastPortMxNode);
                             if (lastConnectionMxEdge != null && lastConnectionEntry != null) {
                                 if (lastConnectionEntry.getValue().stream().filter(obj -> obj.equals(entryTree.getKey())).findAny().isPresent())
                                     lastConnectionMxEdge.setTarget(lastPortMxNode.getUuid());   // if the port is the other endpoint of the last edge
+                            }
+                            if (entryTree.getValue() != null && entryTree.getValue().size() > 0 && 
+                                    !mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALLINK, entryTree.getValue().get(0).getClassName())) { //It's a port
+                                for (BusinessObjectLight portMirror : entryTree.getValue()) {
+                                    MxGraphEdge mirrorMxEdge = new MxGraphEdge();
+                                    mirrorMxEdge.setSource(entryTree.getKey().getId());                        
+                                    mirrorMxEdge.setTarget(portMirror.getId());                        
+                                    mirrorMxEdge.setStrokeWidth(1);
+                                    mirrorMxEdge.setIsDashed(Boolean.TRUE); 
+                                    edgesToAdd.put(new BusinessObjectLight("", mirrorMxEdge.getUuid(), ""), mirrorMxEdge);
+                                }
                             }
                             lastConnectionMxEdge = null;
                             lastConnectionEntry = null;
@@ -187,15 +221,18 @@ public class PhysicalTreeView extends AbstractDetailedView<BusinessObjectLight, 
                                     newParent.setLabel(ancestors.get(i).toString());
                                     newParent.setGeometry(0, 0, widthPort*(i+2), heightPort*(i+2));
                                     newParent.setFillColor(hexColor);
-                                    lastWidget.setCellParent(ancestors.get(i).getId());                                   
+                                    // Validation to put the in nodes in the left side in all devices
+                                    lastWidget.setCellParent(ancestors.get(i).getId());    
                                     lastWidget = newParent;
                                     parentNodesToAdd.put(i, ancestors.get(i), lastWidget);
-                                    if (mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALNODE, ancestors.get(i).getClassName())
-                                        || //Only parents up to the first physical node (say a building) will be displayed
-                                        i == ancestors.size() - 2) { //Or if the next level is the dummy root
-                                    lastWidget.setCellParent("main"); 
+                                    // Commented segment because at the moment due to the change in the structure 
+//                                    of the view, the parents will no longer be traversed until looking for an object of type
+//                                    if ( mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALNODE, ancestors.get(i).getClassName())
+//                                        || //Only parents up to the first physical node (say a building) will be displayed
+//                                        i == ancestors.size() - 2) { //Or if the next level is the dummy root
+//                                    lastWidget.setCellParent("main"); 
                                     break;
-                                    }
+//                                    }
                                     
                                 } else {
                                     lastWidget.setCellParent(ancestors.get(i).getId());
@@ -208,6 +245,7 @@ public class PhysicalTreeView extends AbstractDetailedView<BusinessObjectLight, 
                             lastConnectionMxEdge = new MxGraphEdge();
                             lastConnectionMxEdge.setSource(lastPortMxNode.getUuid());                        
                             lastConnectionMxEdge.setStrokeWidth(1);
+                            lastConnectionMxEdge.setEdgeStyle(MxConstants.EDGESTYLE_SIDETOSIDE);
                             lastConnectionMxEdge.setLabel(entryTree.getKey().toString());  
                             edgesToAdd.put(entryTree.getKey(), lastConnectionMxEdge);
                             lastConnectionEntry = entryTree;
@@ -215,41 +253,133 @@ public class PhysicalTreeView extends AbstractDetailedView<BusinessObjectLight, 
                         }
                     }
                 }
-                
+                ListOrderedMap mapContainerNodes = new ListOrderedMap(); // Used to align main cells in the middle
                 List<BusinessObjectLight> reverseOrderedKeys = new ArrayList<>(parentNodesToAdd.keySet());
                 Collections.reverse(reverseOrderedKeys);
-                for (int i = 0; i<reverseOrderedKeys.size(); i++) { 
-                    BusinessObjectLight key = reverseOrderedKeys.get(i);            
-                    if (i == (reverseOrderedKeys.size() - 1)) { // when the last cell is added, then execute the layouts
-                        ((MxGraphNode) parentNodesToAdd.get(key)).addCellAddedListener(eventListener -> {
-                          List<BusinessObjectLight> parentNodesKeys = new ArrayList<>(parentNodesToAdd.keySet());
-                          for (BusinessObjectLight node : parentNodesKeys) {  
-                                 if (portNodesToAdd.values().stream().filter(item -> node.getId().equals(item.getCellParent())).findAny().isPresent())
-                                    mxGraph.getMxGraph().executeStackLayout(node.getId(), true, 50,20);
-                                 else
-                                    mxGraph.getMxGraph().executeStackLayout(node.getId(), true, 150,20);
-                            }
-                          mxGraph.getMxGraph().executeStackLayout("main", false, 100, 20);  
-                            // when the cells are in the right place, then disable movement for inner cells
-                          for (MxGraphNode node : portNodesToAdd.values()) 
-                               node.setMovable(false);
-                          List<MxGraphNode> parentNodesValue = new ArrayList<>(parentNodesToAdd.values());
-                          for (MxGraphNode node : parentNodesValue) {  
-                              if (!mainBox.getUuid().equals(node.getCellParent())) // only let movable main nodes
-                                  node.setMovable(false);
-                          }
-                          mainBox.setMovable(false);
-                        });
-                    }
-                    mxGraph.addNode(key, (MxGraphNode) parentNodesToAdd.get(key));
+                MxGraphNode nodeContainer, lastNodeContainer = null;
+                ArrayList<MxGraphNode> lstContainerNodes = new ArrayList<>();
+                for (int i = 0; i < reverseOrderedKeys.size(); i++) { 
+                   
+                    BusinessObjectLight key = reverseOrderedKeys.get(i);   
+                    MxGraphNode node = (MxGraphNode) parentNodesToAdd.get(key);
+                    
+                    nodeContainer = new MxGraphNode();
+                    nodeContainer.setUuid("container"+ (mapContainerNodes.size() + 1));
+                    nodeContainer.setFillColor(MxConstants.NONE);
+                    nodeContainer.setStrokeColor(MxConstants.NONE);
+                    nodeContainer.setCellParent("main"); 
+                    nodeContainer.setGeometry(0, 0, widthPort, heightPort);
+                    node.setCellParent(nodeContainer.getUuid());
+                    
+                    if (mapContainerNodes.size() < 2) {  // First Two devices                  
+                        lstContainerNodes.add(node);
+                        mapContainerNodes.put(nodeContainer, lstContainerNodes);
+                        mxGraph.addNode(new BusinessObjectLight("", nodeContainer.getUuid(), ""), nodeContainer);
+                        lastNodeContainer = nodeContainer;
+                        lstContainerNodes = new ArrayList<>();
+                    } else if (lstContainerNodes.isEmpty()) {
+                            lstContainerNodes.add(node);
+                            mapContainerNodes.put(nodeContainer, lstContainerNodes);
+                            mxGraph.addNode(new BusinessObjectLight("", nodeContainer.getUuid(), ""), nodeContainer);               
+                            lastNodeContainer = nodeContainer;
+                    } else {
+                        boolean hasConnection = false; // Boolean to know if the current node (device) must be in a new container
+                                                       // (if has not any connection with the previous container) or
+                                                       // the node must be in the current container (has any connection )
+                        List<MxGraphNode> nodePorts = portNodesToAdd.values().stream().filter(item -> item.getCellParent().equals(node.getUuid())).collect(Collectors.toList()); 
+                        for (MxGraphNode cn : (ArrayList<MxGraphNode>) mapContainerNodes.getValue(mapContainerNodes.size() - 2)) {
+                             List<MxGraphNode> containerNodePorts = portNodesToAdd.values().stream().filter(item -> item.getCellParent().equals(cn.getUuid())).collect(Collectors.toList());                        
+                             for (MxGraphNode cnp: containerNodePorts) {
+                                 List<BusinessObjectLight> lstLinks = physicalTree.get(new BusinessObjectLight("", cnp.getUuid(), ""));
+                                 if (lstLinks != null && lstLinks.size() == 1) { // if the port has a connection 
+                                     List<BusinessObjectLight> lstOtherPort = physicalTree.get(new BusinessObjectLight("", lstLinks.get(0).getId(), ""));
+                                     if (lstOtherPort != null && !lstOtherPort.isEmpty()) {
+                                       if(nodePorts.stream().filter(item -> lstOtherPort.get(0).getId().equals(item.getUuid())).findAny().isPresent())
+                                           hasConnection = true;
+                                 }
+                             }
+                           }
+                        }
+                      if (hasConnection) {
+                          node.setCellParent(lastNodeContainer.getUuid());
+                          lstContainerNodes.add(node);
+                      } else {
+                          lstContainerNodes = new ArrayList<>();
+                          lstContainerNodes.add(node);
+                          mapContainerNodes.put(nodeContainer, lstContainerNodes);
+                          mxGraph.addNode(new BusinessObjectLight("", nodeContainer.getUuid(), ""), nodeContainer);               
+                          lastNodeContainer = nodeContainer;
+                      }                     
+                  }
+                mxGraph.addNode(key, node);
+                // Now add the nodes to organize the device content
+                MxGraphNode nodeContent = new MxGraphNode(); // Node used to put the device content
+                nodeContent.setUuid("leftContent-"+ node.getUuid());
+                nodeContent.setFillColor(MxConstants.NONE);
+                nodeContent.setStrokeColor(MxConstants.NONE);
+                nodeContent.setCellParent(node.getUuid()); 
+                nodeContent.setGeometry(0, 0, 1, 1);
+                
+                mxGraph.addNode(new BusinessObjectLight("", nodeContent.getUuid(), ""), nodeContent);
+                
+                nodeContent = new MxGraphNode();
+                nodeContent.setUuid("rightContent-"+ node.getUuid());
+                nodeContent.setFillColor(MxConstants.NONE);
+                nodeContent.setStrokeColor(MxConstants.NONE);
+                nodeContent.setCellParent(node.getUuid()); 
+                nodeContent.setGeometry(0, 0, 1, 1);
+                mxGraph.addNode(new BusinessObjectLight("", nodeContent.getUuid(), ""), nodeContent);
+                
                 }
-                for (BusinessObjectLight key : portNodesToAdd.keySet()) 
-                    mxGraph.addNode(key, portNodesToAdd.get(key)); 
+                for (BusinessObjectLight key : portNodesToAdd.keySet()) {
+                    MxGraphNode node = portNodesToAdd.get(key);
+                    if (node.getLabel() != null && node.getLabel().toLowerCase().startsWith("in")) {
+                        node.setCellParent("leftContent-" + node.getCellParent());  
+                    } else {
+                        node.setCellParent("rightContent-" + node.getCellParent());    
+                    } 
+                    mxGraph.addNode(key, node);
+                }
                 
                 for (BusinessObjectLight key : edgesToAdd.keySet()) 
                     mxGraph.addEdge(key, edgesToAdd.get(key)); 
-                              
-
+                
+                MxGraphNode dummyNode = new MxGraphNode();
+                dummyNode.setUuid("dummyNode");
+                dummyNode.setGeometry(0, 0, 0, 0);
+                mxGraph.addNode(new BusinessObjectLight("", "dummyNode", ""), dummyNode);
+                //  execute the layout and disable moving when the last cell is added
+                dummyNode.addCellAddedListener(eventListener -> {
+                    List<BusinessObjectLight> parentNodesKeys = new ArrayList<>(parentNodesToAdd.keySet());
+                    int spacing;
+                    for (BusinessObjectLight node : parentNodesKeys) {
+                        if (portNodesToAdd.values().stream().filter(item -> 
+                                ("leftContent-" + node.getId()).equals(item.getCellParent())).findAny().isPresent()) 
+                           spacing = 50;
+                        else 
+                           spacing = 0;
+                        
+                        mxGraph.getMxGraph().executeStackLayout("leftContent-" + node.getId(), false, 20, 20);
+                        mxGraph.getMxGraph().executeStackLayout("rightContent-" + node.getId(), false, 20, 20);
+                        mxGraph.getMxGraph().executeStackLayout(node.getId(), true, spacing, 20);
+                        mxGraph.getMxGraph().alignCells(MxConstants.ALIGN_MIDDLE, new String[] {"leftContent-" + node.getId(), "rightContent-" + node.getId()});
+                   
+                    }
+                    for (MxGraphNode node : (List<MxGraphNode>) mapContainerNodes.keyList())
+                        mxGraph.getMxGraph().executeStackLayout(node.getUuid(), false, 20, 20);
+                    mxGraph.getMxGraph().executeStackLayout("main", true, 150, 20);
+                    mxGraph.getMxGraph().alignCells(MxConstants.ALIGN_MIDDLE, ((List<MxGraphNode>) mapContainerNodes.keyList()).stream().map(item -> item.getUuid()).collect(Collectors.toList()).toArray(new String[0]));
+//                     when the cells are in the right place, then disable movement for inner cells
+                    for (MxGraphNode node : portNodesToAdd.values()) {
+                        node.setMovable(false);
+                    }
+                    List<MxGraphNode> parentNodesValue = new ArrayList<>(parentNodesToAdd.values());
+                    for (MxGraphNode node : parentNodesValue) {
+                        if (!mainBox.getUuid().equals(node.getCellParent())) // only let movable main nodes
+                            node.setMovable(false);                       
+                    }
+                    mainBox.setMovable(false);                  
+                });
             } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | IllegalStateException | ApplicationObjectNotFoundException ex) {
                 Logger.getLogger(PhysicalTreeView.class.getName()).log(Level.SEVERE, null, ex);
             }
