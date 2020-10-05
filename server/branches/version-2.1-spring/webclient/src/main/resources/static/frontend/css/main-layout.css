@@ -140,6 +140,21 @@
     width: 100%;
 }
 
+.width100px {
+    width: 100px; 
+}
+
+.width200px {
+    width: 200px; 
+}
+
+.width300px {
+    width: 300px; 
+}
+.width400px {
+    width: 400px; 
+}
+
 .width500px {
     width: 500px; 
 }
@@ -147,6 +162,11 @@
 .text-secondary {
     color: #B3B0B0;
     font-size: .8em;
+}
+
+.text-secondary-b {
+    color: #8A7C7C;
+    font-size: .9em;
 }
 
 a.text-secondary {
@@ -211,4 +231,27 @@ paper-swatch-picker paper-icon-button {
 .hintMplsView {
     font-style: italic;
     font-size: .9em;
+}
+
+/* Rack View */
+
+.lytInfoIcons {
+    margin-top: 30px;
+}
+.lytInfoIcons img {
+    height: 16px;
+    width: 16px;
+}
+
+.lytInfoIcons label {
+    font-size: 0.8em;
+}
+
+/* Report Module*/
+
+.scriptBox {
+    border: 1px lavender solid;
+    padding: 3px;
+    min-height: 400px;
+    max-height: 400px;
 }
