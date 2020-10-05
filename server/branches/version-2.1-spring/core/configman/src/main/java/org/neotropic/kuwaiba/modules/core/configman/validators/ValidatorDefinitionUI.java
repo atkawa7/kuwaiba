@@ -15,6 +15,8 @@
  */
 package org.neotropic.kuwaiba.modules.core.configman.validators;
 
+import com.neotropic.flow.component.aceeditor.AceEditor;
+import com.neotropic.flow.component.aceeditor.AceMode;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.button.Button;
@@ -279,9 +281,11 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
             TextField txtDescription = new TextField(ts.getTranslatedString("module.configman.validator.label.description"),
                     validator.getDescription() == null ? "" : validator.getDescription(), ts.getTranslatedString("module.configman.validator.label.description.info"));
             txtDescription.setWidth("33%");
-            TextArea txtScript = new TextArea(ts.getTranslatedString("module.configman.validator.label.script"),
-                    validator.getScript() == null ? "" : validator.getScript(), ts.getTranslatedString("module.configman.validator.label.script.info"));
-            txtScript.setWidthFull();
+            AceEditor editorScript = new AceEditor();
+            editorScript.setMode(AceMode.groovy);
+            editorScript.setValue(validator.getScript());
+//            TextArea txtScript = new TextArea(ts.getTranslatedString("module.configman.validator.label.script"),
+//                    validator.getScript() == null ? "" : validator.getScript(), ts.getTranslatedString("module.configman.validator.label.script.info"));          
             Checkbox checkEnable = new Checkbox();
             checkEnable.setLabel(ts.getTranslatedString("module.configman.validator.label.enable"));
             checkEnable.setValue(validator.isEnabled());
@@ -289,7 +293,7 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
             btnSave.setAutofocus(true);
             btnSave.addClickListener(event -> {
                 try {
-                    aem.updateValidatorDefinition(validator.getId(), txtName.getValue(), txtDescription.getValue(), validator.getClassToBeApplied(), txtScript.getValue(), checkEnable.getValue());
+                    aem.updateValidatorDefinition(validator.getId(), txtName.getValue(), txtDescription.getValue(), validator.getClassToBeApplied(), editorScript.getValue(), checkEnable.getValue());
                     new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.configman.validator.notification-saved")).open();
                     objectTree.getDataProvider().refreshAll();
                 } catch (ApplicationObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
@@ -307,7 +311,7 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
             lytHeaderMain.setWidthFull();
             lytHeaderMain.setPadding(false);
             lytHeaderMain.setMargin(false);
-            VerticalLayout lytProperties = new VerticalLayout(txtName, txtDescription, checkEnable, txtScript);
+            VerticalLayout lytProperties = new VerticalLayout(txtName, txtDescription, checkEnable, editorScript);
             lytProperties.setHeightFull();
             lytProperties.setMargin(false);
             
