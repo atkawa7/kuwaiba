@@ -15,6 +15,8 @@
  */
 package org.neotropic.kuwaiba.modules.core.taskman;
 
+import com.neotropic.flow.component.aceeditor.AceEditor;
+import com.neotropic.flow.component.aceeditor.AceMode;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.button.Button;
@@ -750,13 +752,13 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
     private class UpdateScriptDialog extends Dialog {
         
         private UpdateScriptDialog(Task task) {
-            TextArea txtScript = new TextArea(ts.getTranslatedString("module.taskman.task.properties-general.script"));
-            txtScript.setValue(task.getScript());
-            txtScript.setPlaceholder(ts.getTranslatedString("module.taskman.task.properties-general.script-placeholder"));
-            txtScript.setWidthFull();
-            txtScript.setMaxHeight("100%");
-            txtScript.addValueChangeListener(event -> {
-               task.setScript(txtScript.getValue());
+            AceEditor editorScript = new AceEditor();
+            editorScript.setMode(AceMode.groovy);
+            editorScript.setValue(task.getScript());
+//            TextArea txtScript = new TextArea(ts.getTranslatedString("module.taskman.task.properties-general.script"));
+//            txtScript.setPlaceholder(ts.getTranslatedString("module.taskman.task.properties-general.script-placeholder"));
+            editorScript.addAceEditorValueChangedListener(clickListener -> { 
+                task.setScript(editorScript.getValue());
             });
             
             // Windows to update task script
@@ -765,7 +767,7 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
             Button btnSave = new Button(ts.getTranslatedString("module.taskman.task.properties-general.script.button.save"));
             btnSave.addClickListener(event -> {
                 try {
-                    aem.updateTaskProperties(task.getId(), Constants.PROPERTY_SCRIPT, txtScript.getValue());
+                    aem.updateTaskProperties(task.getId(), Constants.PROPERTY_SCRIPT, editorScript.getValue());
                 } catch (ApplicationObjectNotFoundException | InvalidArgumentException ex) {
                     Logger.getLogger(TaskManagerUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -777,12 +779,11 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
             Button btnCancel = new Button((ts.getTranslatedString("module.taskman.task.properties-general.script.button.cancel")),
                     (event) -> {
                         wdwUpdateScript.close();
-                    });
+                    });                       
             
-            VerticalLayout lytUpdateScript = new VerticalLayout(txtScript);
-            lytUpdateScript.setHeightFull();
             HorizontalLayout lytMoreButtons = new HorizontalLayout(btnSave, btnCancel);
-            VerticalLayout lytMain = new VerticalLayout(lytUpdateScript, lytMoreButtons);
+            VerticalLayout lytMain = new VerticalLayout(editorScript, lytMoreButtons);
+            lytMain.setMargin(false);
             lytMain.setSizeFull();
             lytMain.setHeightFull();
             
