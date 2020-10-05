@@ -29,8 +29,4 @@ public class MxGraphApi extends Component {
     
     public MxGraphApi() {
     }
-
-//    public Registration addClickEdgeListener(ComponentEventListener<MxGraphClickEdgeEvent> clickEdgeListener) {
-//        return super.addListener(MxGraphClickEdgeEvent.class, clickEdgeListener);
-//    }
 }

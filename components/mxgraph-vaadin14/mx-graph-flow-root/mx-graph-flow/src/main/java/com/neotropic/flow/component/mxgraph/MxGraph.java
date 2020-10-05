@@ -107,7 +107,7 @@ public class MxGraph extends Component implements HasComponents, HasStyle, HasSi
     
     public void setMaxWidth(String prop) {
         getElement().setProperty(PROPERTY_MAX_WIDTH, prop);
-        getElement().getStyle().set("max-width", prop);
+//        getElement().getStyle().set("max-width", prop);
     }
     
     public String getMaxHeight() {
@@ -116,7 +116,7 @@ public class MxGraph extends Component implements HasComponents, HasStyle, HasSi
         
     public void setMaxHeight(String prop) {
         getElement().setProperty(PROPERTY_MAX_HEIGHT, prop);
-        getElement().getStyle().set("max-height", prop);
+//        getElement().getStyle().set("max-height", prop);
     }
     
     public String getOverflow() {
@@ -416,6 +416,10 @@ public class MxGraph extends Component implements HasComponents, HasStyle, HasSi
      
     public void alignCells(String alignType, String [] cellIds, Integer coordinate) {
        getElement().callJsFunction("alignCells", alignType , new Gson().toJson(cellIds), coordinate);
+    }
+    
+    public void alignCells(String alignType, String [] cellIds) {
+        alignCells(alignType, cellIds, null);
     }
     
     public void enablePanning(Boolean enablePanning) {

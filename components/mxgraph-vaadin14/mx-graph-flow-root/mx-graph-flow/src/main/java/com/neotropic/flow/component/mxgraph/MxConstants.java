@@ -1583,6 +1583,13 @@ public class MxConstants {
 	 * for the STYLE_EDGE style.
 	 */
 	public static String EDGESTYLE_SIDETOSIDE = "sideToSideEdgeStyle";
+        /**
+	 * Variable = EDGESTYLE_SIDETOSIDE
+	 * 
+	 * Name of the side to side edge style. Can be used as a string value
+	 * for the STYLE_EDGE style.
+	 */
+	public static String EDGESTYLE_ISOMETRIC = "isometricEdgeStyle";
 
 	/**
 	 * Variable = EDGESTYLE_TOPTOBOTTOM

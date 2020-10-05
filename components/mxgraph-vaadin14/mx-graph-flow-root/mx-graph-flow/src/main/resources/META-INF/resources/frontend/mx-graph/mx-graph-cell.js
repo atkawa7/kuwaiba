@@ -196,6 +196,10 @@ class MxGraphCell extends PolymerElement {
           type: String,
           value : 'bottom'
       },
+      verticalAlign: {
+          type: String,
+          value : 'top'
+      },
       labelPosition: {
           type: String,
           value : 'bottom'
@@ -216,6 +220,9 @@ class MxGraphCell extends PolymerElement {
       selectable: {
           type: Boolean,
           value: true
+      },
+      edgeStyle: {
+          type: Boolean
       },
       /**
        * Specifies whether the cell is collapsed.
@@ -310,8 +317,8 @@ class MxGraphCell extends PolymerElement {
         var imageStyle =   this.image ? ';image='.concat(this.image) : '';
         this.cell = this.graph.insertVertex(parentObject, this.uuid ? this.uuid : null, 
                                             this.label, this.x, this.y, this.width, this.height,
-              'verticalAlign=top' + imageStyle +
-             ';fontStyle=1;labelPadding=5' +
+              'verticalAlign=' +  this.verticalAlign + imageStyle +
+             ';labelPadding=5' +
              ';shape=' + this.shape +
              ';verticalLabelPosition=' + this.verticalLabelPosition + 
              ';labelPosition=' + this.labelPosition + 
@@ -350,14 +357,15 @@ class MxGraphCell extends PolymerElement {
                 
           // create the edge and assign the reference
           this.cell = this.graph.insertEdge(parentObject, this.uuid ? this.uuid : null, this.label, sourceNode, targetNode,
-          'fontStyle=1;endArrow=none;orthogonalLoop=1;labelPadding=5\
-            ;perimeterSpacing=' + this.perimeterSpacing +
+          'fontStyle=1;endArrow=none;orthogonalLoop=1;labelPadding=5'+
+            ';perimeterSpacing=' + this.perimeterSpacing +
             ';strokeWidth=' + this.strokeWidth + 
             ';labelBackgroundColor=' + this.labelBackgroundColor +
             ';strokeColor=' + this.strokeColor  +           
             ';dashed=' + this.dashed  +           
             ';curved=' + this.curved  +           
             ';rounded=1'  +           
+             ((this.edgeStyle) ? (';edgeStyle=' + this.edgeStyle) : '')  +           
             ';fontColor=' + this.fontColor );
 
         
@@ -591,7 +599,7 @@ cellLabelChanged() {
   
    rawStyleChanged() {
       if (this.graph && this.cell) {        
-              var cs= new Array();
+              var cs = new Array();
               cs[0] = this.cell;             
               this.graph.setCellStyle(this.cell.style + ';' + this.rawStyle, cs);       
       }
@@ -605,10 +613,7 @@ cellLabelChanged() {
   
   setMovable(movable) {
       if (this.graph) {
-         var t0 = performance.now();
          this.graph.setCellStyles(mxConstants.STYLE_MOVABLE, movable, [this.cell]);
-         var t1 = performance.now()
-         console.log("Set movable took " + (t1 - t0) + " milliseconds.")
       }
   }
   

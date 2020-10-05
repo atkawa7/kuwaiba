@@ -187,36 +187,36 @@ public class MxGraphCell extends Component implements HasComponents {
         getElement().setProperty(PROPERTY_LABEL, prop);
     }
     
-    public int getWidth() {
-        return getElement().getProperty(PROPERTY_WIDTH,0);
+    public double getWidth() {
+        return getElement().getProperty(PROPERTY_WIDTH,0d);
     }
         
-    public void setWidth(int prop) {
+    public void setWidth(double prop) {
         getElement().setProperty(PROPERTY_WIDTH, prop);
     }
     
-    public int getHeight() {
-        return getElement().getProperty(PROPERTY_HEIGHT,0);
+    public double getHeight() {
+        return getElement().getProperty(PROPERTY_HEIGHT,0d);
     }
         
-    public void setHeight(int prop) {
+    public void setHeight(double prop) {
         getElement().setProperty(PROPERTY_HEIGHT, prop);
     }
     
     @Synchronize(property = "x", value = "x-changed")
-    public int getX() {
-        return getElement().getProperty(PROPERTY_X, 0);
+    public double getX() {
+        return getElement().getProperty(PROPERTY_X, 0d);
     }
         
-    public void setX(int prop) {
+    public void setX(double prop) {
         getElement().setProperty(PROPERTY_X, prop);
     }
     @Synchronize(property = "y", value = "y-changed")
-    public int getY() {
-        return getElement().getProperty(PROPERTY_Y,0);
+    public double getY() {
+        return getElement().getProperty(PROPERTY_Y,0d);
     }
         
-    public void setY(int prop) {
+    public void setY(double prop) {
         getElement().setProperty(PROPERTY_Y, prop);
     }
     
@@ -320,6 +320,10 @@ public class MxGraphCell extends Component implements HasComponents {
         getElement().setProperty(PROPERTY_STYLE_NAME, prop);
     }
     
+    public void setEdgeStyle(String prop) {
+        getElement().setProperty(MxConstants.STYLE_EDGE, prop);
+    }
+    
     public String getRawStyle() {
         return getElement().getProperty(PROPERTY_RAW_STYLE);
     }
@@ -352,12 +356,25 @@ public class MxGraphCell extends Component implements HasComponents {
             setLabelBackgroundColor(MxConstants.NONE);
             setStrokeColor(MxConstants.NONE);
             setLabelPosition(MxConstants.ALIGN_CENTER);
-            setVerticalLabelPosition(MxConstants.ALIGN_CENTER);
+            setVerticalLabelPosition(MxConstants.ALIGN_CENTER);    
+            setVerticalAlign(MxConstants.ALIGN_MIDDLE);
         }
     }
     
-     public void setVerticalLabelPosition(String prop) {
+    public void setVerticalLabelPosition(String prop) {
+        if (prop != null) {
+             if (prop.equals(MxConstants.ALIGN_TOP))
+                 setVerticalAlign(MxConstants.ALIGN_BOTTOM);
+             if (prop.contains(MxConstants.ALIGN_BOTTOM))
+                 setVerticalAlign(MxConstants.ALIGN_TOP);
+             if (prop.equals(MxConstants.ALIGN_CENTER) || prop.equals(MxConstants.ALIGN_MIDDLE))
+                 setVerticalAlign(MxConstants.ALIGN_MIDDLE);
+        }
         getElement().setProperty(MxConstants.STYLE_VERTICAL_LABEL_POSITION, prop);
+    }
+     
+    public void setVerticalAlign(String prop) {
+        getElement().setProperty(MxConstants.STYLE_VERTICAL_ALIGN, prop);
     }
      
      public void setLabelPosition(String prop) {

@@ -305,7 +305,7 @@ class MxGraph extends PolymerElement {
             {
                 if (_this.graph.isEnabled())
                 {
-                    // _this.graph.removeCells(); // direct delete disables, instead event is fired
+                    // _this.graph.removeCells(); // direct removing disabled, instead event is fired
                 }
                 if (_this.graph.getSelectionCell()) { // just single selection is supported
                     _this.fireDeleteCellSelected();
@@ -628,8 +628,23 @@ class MxGraph extends PolymerElement {
             if (cellId)
                 cell = this.graph.model.getCell(cellId);
             
-            if (cell)
+            if (cell) {
                 this.stackLayout.execute(cell);
+                if (cell.children) {                  
+                    var geo = cell.geometry;
+                    if (horizontal) {
+                        var max = Math.max.apply(Math, cell.children.map(function(o){ return o.geometry.height;}));
+                        if (geo.height < max) 
+                            geo.height = max + marginTop + marginBottom;                                                 
+                    } else {
+                        var max = Math.max.apply(Math, cell.children.map(function(o){ return o.geometry.width;}))
+                        if (geo.width < max)
+                            geo.width = max + marginLeft + marginRight;
+                    }
+                    this.graph.model.setGeometry(cell, geo);
+                    this.graph.refresh();
+                }
+            }
             var t1 = performance.now()
         }  else {
             var _this = this;
@@ -794,6 +809,7 @@ class MxGraph extends PolymerElement {
         if (cells != null && cells.length > 1) {
             // Finds the required coordinate for the alignment
             if (param == null) {
+               
                 for (var i = 0; i < cells.length; i++) {
                     var state = this.graph.view.getState(cells[i]);
 
@@ -807,8 +823,7 @@ class MxGraph extends PolymerElement {
                             } else if (align == mxConstants.ALIGN_TOP) {
                                 param = state.y;
                             } else if (align == mxConstants.ALIGN_MIDDLE) {
-                                param = state.y + state.height / 2;
-                                break;
+                                param = state.y + state.height / 2;                            
                             } else if (align == mxConstants.ALIGN_BOTTOM) {
                                 param = state.y + state.height;
                             } else {
@@ -822,6 +837,8 @@ class MxGraph extends PolymerElement {
                                 param = Math.min(param, state.y);
                             } else if (align == mxConstants.ALIGN_BOTTOM) {
                                 param = Math.max(param, state.y + state.height);
+                            } else if (align == mxConstants.ALIGN_MIDDLE) {
+                                param = Math.max(param, state.y + state.height / 2);                            
                             } else {
                                 param = Math.min(param, state.x);
                             }
