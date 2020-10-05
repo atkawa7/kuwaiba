@@ -25,5 +25,6 @@
         <module>configman</module>
         <module>taskman</module>
         <module>services</module>
+        <module>reports</module>
     </modules>
 </project>
