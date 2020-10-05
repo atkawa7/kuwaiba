@@ -52,8 +52,15 @@ public class BasicTree<T extends AbstractNode> extends TreeGrid<T> {
         template.append("</vaadin-grid-tree-toggle>");
         
         TemplateRenderer<T> renderer = TemplateRenderer.<T> of (template.toString());
-        renderer.withProperty("leaf", item -> false);
-        renderer.withProperty("icon", item -> StreamResourceRegistry.getURI(iconGenerator.apply(item)).toString());
+        renderer.withProperty("leaf", item -> item instanceof AbstractNode ? !item.isHasChildren() : false);
+        renderer.withProperty("icon", item -> { 
+            if (item instanceof AbstractNode) {
+                AbstractNode itemNode = (AbstractNode) item;
+                if (itemNode.getIconUrl() != null && !itemNode.getIconUrl().isEmpty())
+                    return itemNode.getIconUrl();
+             }
+            return StreamResourceRegistry.getURI(iconGenerator.apply(item)).toString();
+            });
         renderer.withProperty("name", item -> item.getClassName());
         
         addColumn(renderer);

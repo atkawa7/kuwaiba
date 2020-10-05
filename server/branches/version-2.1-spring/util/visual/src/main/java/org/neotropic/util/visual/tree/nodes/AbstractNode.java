@@ -34,14 +34,24 @@ public abstract class AbstractNode<T> {
     protected String displayName;
     
     protected String className;
+    /*
+      url for main icon
+    */
+    protected String iconUrl;
+    /*
+      Specifies if the node has children. Used to show/hide the leaf
+    */
+    protected boolean hasChildren = true;
 
     public AbstractNode(T object) {
         this.object = object;
+        hasChildren = true;
     }
     
     public AbstractNode(T object, String className) {
         this.object = object;
         this.className = className;
+        hasChildren = true;
     }
 
     public String getDisplayName() {
@@ -59,8 +69,22 @@ public abstract class AbstractNode<T> {
     public void setClassName(String className) {
         this.className = className;
     }
-    
-    
+
+    public String getIconUrl() {
+        return iconUrl;
+    }
+
+    public void setIconUrl(String iconUrl) {
+        this.iconUrl = iconUrl;
+    }
+
+    public boolean isHasChildren() {
+        return hasChildren;
+    }
+
+    public void setHasChildren(boolean hasChildren) {
+        this.hasChildren = hasChildren;
+    }
 
     /**
      * Retrieves the business object behind the node
