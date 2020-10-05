@@ -89,7 +89,7 @@ public class MxGraph extends Component implements HasComponents, HasStyle, HasSi
         
     public void setWidth(String prop) {
         getElement().setProperty(PROPERTY_WIDTH, prop);
-//        getElement().getStyle().set(PROPERTY_WIDTH, prop);
+        getElement().getStyle().set(PROPERTY_WIDTH, prop);
     }
     
     public String getHeight() {
@@ -98,7 +98,7 @@ public class MxGraph extends Component implements HasComponents, HasStyle, HasSi
         
     public void setHeight(String prop) {
         getElement().setProperty(PROPERTY_HEIGHT, prop);
-//        getElement().getStyle().set(PROPERTY_HEIGHT, prop);
+        getElement().getStyle().set(PROPERTY_HEIGHT, prop);
     }
     
     public String getMaxWidth() {
