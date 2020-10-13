@@ -37,7 +37,7 @@ public class ManagedJob {
    /**
     * The job is stopped. 
     */
-   public static final int STATE_STOPPED = 3;
+   public static final int STATE_CREATED = 3;
    /**
     * The job ended with error. 
     */
@@ -68,7 +68,7 @@ public class ManagedJob {
    public ManagedJob() {
        this.id = UUID.randomUUID().toString();
        this.messages = new ArrayList<>();
-       this.state = STATE_STOPPED;
+       this.state = STATE_CREATED;
        this.progress = 0;
    }
 
