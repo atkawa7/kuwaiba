@@ -22,6 +22,7 @@ import com.vaadin.flow.component.Synchronize;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.shared.Registration;
+import elemental.json.JsonObject;
 import elemental.json.JsonValue;
 
 /**
@@ -151,6 +152,11 @@ public class GoogleMap extends Component implements HasComponents {
     public void setMinHeight(String height) {
         getElement().setProperty(Constants.Property.MIN_HEIGHT, height);
     }
+    @Synchronize(property="bounds", value="map-bounds-changed")
+    public LatLngBounds getBounds() {
+        JsonObject bounds = (JsonObject) getElement().getPropertyRaw(Constants.Property.BOUNDS);
+        return bounds != null ? new LatLngBounds(bounds) : null;
+    }
     
     public void newMarker(GoogleMapMarker googleMapMarker) {
         add(googleMapMarker);
@@ -238,6 +244,10 @@ public class GoogleMap extends Component implements HasComponents {
     
     public Registration addMapZoomChangedListener(ComponentEventListener<GoogleMapEvent.MapZoomChangedEvent> listener) {
         return addListener(GoogleMapEvent.MapZoomChangedEvent.class, listener);
+    }
+    
+    public Registration addMapBoundsChanged(ComponentEventListener<GoogleMapEvent.MapBoundsChangedEvent> listener) {
+        return addListener(GoogleMapEvent.MapBoundsChangedEvent.class, listener);
     }
 }
 

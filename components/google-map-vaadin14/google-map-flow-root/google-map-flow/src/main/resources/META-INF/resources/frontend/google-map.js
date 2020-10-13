@@ -152,6 +152,9 @@ class GoogleMap extends PolymerElement {
       styles: {
         type: Array,
         observer: '_stylesChanged'
+      },
+      bounds: {
+        type: Object
       }
     };
   }
@@ -259,6 +262,10 @@ class GoogleMap extends PolymerElement {
       _this.dispatchEvent(new CustomEvent('map-right-click', 
         {detail: {lat: lat, lng: lng}}));
     });
+    this.map.addListener('bounds_changed', event => {
+      this.bounds = this.map.getBounds().toJSON();
+      this.dispatchEvent(new CustomEvent('map-bounds-changed'));
+    })
     var _this = this;
     this._observer = new FlattenedNodesObserver(this, (info) => {      
       _this._processAddedNodes(info.addedNodes);

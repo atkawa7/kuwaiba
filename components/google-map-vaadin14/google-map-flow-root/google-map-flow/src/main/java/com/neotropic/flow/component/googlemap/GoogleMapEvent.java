@@ -131,6 +131,13 @@ public class GoogleMapEvent {
             super(source, fromClient);
         }
     }
+    
+    @DomEvent("map-bounds-changed")
+    public static class MapBoundsChangedEvent extends ComponentEvent<GoogleMap> {
+        public MapBoundsChangedEvent(GoogleMap source, boolean fromClient) {
+            super(source, fromClient);
+        }
+    }
     //</editor-fold>
     //<editor-fold desc="Marker Events" defaultstate="collapsed">
     @DomEvent("marker-click")
