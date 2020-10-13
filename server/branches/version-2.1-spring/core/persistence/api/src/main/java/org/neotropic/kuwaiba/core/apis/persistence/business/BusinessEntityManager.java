@@ -744,7 +744,7 @@ public interface BusinessEntityManager extends AbstractEntityManager {
      * Check if an object has a given has special attributes
      * @param objectClass Object class
      * @param objectId Object id
-     * @param attributeNames Attribute names 
+     * @param attributeName Attribute name
      * @return True if the object has special attributes
      */
     public boolean hasSpecialAttribute(String objectClass, String objectId, String attributeName) 

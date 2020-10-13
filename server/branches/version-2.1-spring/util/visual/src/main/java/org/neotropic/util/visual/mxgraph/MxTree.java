@@ -17,8 +17,14 @@ package org.neotropic.util.visual.mxgraph;
 
 import com.neotropic.flow.component.mxgraph.MxConstants;
 import com.neotropic.flow.component.mxgraph.MxGraph;
+import com.neotropic.flow.component.mxgraph.MxGraphClickCellEvent;
 import com.neotropic.flow.component.mxgraph.MxGraphNode;
+import com.vaadin.flow.component.ComponentEvent;
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.shared.Registration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -74,12 +80,18 @@ public class MxTree<T> extends MxGraphNode {
     private final int CHARACTER_LIMIT = 30;
     private final int LABEL_WIDTH = 210;
     private final int LABEL_HEIGHT = 16;
+    private final String IMG_ANGLE_DOWN = "img/angle-down.svg"; //NOI18N
+    private final String IMG_ANGLE_RIGHT = "img/angle-right.svg"; //NOI18N
+    private final int FONT_SIZE = 10;
+    private final String FOLDABLE = String.valueOf(0);
+    private final String RESIZABLE = String.valueOf(0);
     
     private final LinkedHashMap<String, String> RECTANGLE_STYLE = new LinkedHashMap();
     {
         RECTANGLE_STYLE.put(MxConstants.STYLE_SHAPE, MxConstants.SHAPE_RECTANGLE);
         RECTANGLE_STYLE.put(MxConstants.STYLE_FILLCOLOR, MxConstants.NONE);
         RECTANGLE_STYLE.put(MxConstants.STYLE_STROKECOLOR, MxConstants.NONE);
+        RECTANGLE_STYLE.put(MxConstants.STYLE_FOLDABLE, FOLDABLE);
     }
     private final LinkedHashMap<String, String> LABEL_STYLE = new LinkedHashMap();
     {
@@ -87,40 +99,50 @@ public class MxTree<T> extends MxGraphNode {
         LABEL_STYLE.put(MxConstants.STYLE_FILLCOLOR, MxConstants.NONE);
         LABEL_STYLE.put(MxConstants.STYLE_STROKECOLOR, MxConstants.NONE);
         LABEL_STYLE.put(MxConstants.STYLE_FONTCOLOR, FONT_COLOR);
-        LABEL_STYLE.put(MxConstants.STYLE_FONTSIZE, "10");
+        LABEL_STYLE.put(MxConstants.STYLE_FONTSIZE, String.valueOf(FONT_SIZE));
         LABEL_STYLE.put(MxConstants.STYLE_ALIGN, MxConstants.ALIGN_LEFT);
+        LABEL_STYLE.put(MxConstants.STYLE_FOLDABLE, FOLDABLE);
     }
     private final LinkedHashMap<String, String> ANGLE_DOWN_STYLE = new LinkedHashMap();
     {
         ANGLE_DOWN_STYLE.put(MxConstants.STYLE_SHAPE, MxConstants.SHAPE_IMAGE);
         ANGLE_DOWN_STYLE.put(MxConstants.STYLE_STROKECOLOR, MxConstants.NONE);
         ANGLE_DOWN_STYLE.put(MxConstants.STYLE_FILLCOLOR, MxConstants.NONE);
-        ANGLE_DOWN_STYLE.put(MxConstants.STYLE_IMAGE, "img/angle-down.svg"); //NOI18N
+        ANGLE_DOWN_STYLE.put(MxConstants.STYLE_IMAGE, IMG_ANGLE_DOWN);
         ANGLE_DOWN_STYLE.put(MxConstants.STYLE_IMAGE_WIDTH, String.valueOf(TOGGLE_WIDTH));
         ANGLE_DOWN_STYLE.put(MxConstants.STYLE_IMAGE_HEIGHT, String.valueOf(TOGGLE_HEIGHT));
+        ANGLE_DOWN_STYLE.put(MxConstants.STYLE_FOLDABLE, FOLDABLE);
+        ANGLE_DOWN_STYLE.put(MxConstants.STYLE_RESIZABLE, RESIZABLE);
     }
     private final LinkedHashMap<String, String> ANGLE_RIGHT_STYLE = new LinkedHashMap();
     {
         ANGLE_RIGHT_STYLE.put(MxConstants.STYLE_SHAPE, MxConstants.SHAPE_IMAGE);
         ANGLE_RIGHT_STYLE.put(MxConstants.STYLE_STROKECOLOR, MxConstants.NONE);
         ANGLE_RIGHT_STYLE.put(MxConstants.STYLE_FILLCOLOR, MxConstants.NONE);
-        ANGLE_RIGHT_STYLE.put(MxConstants.STYLE_IMAGE, "img/angle-right.svg"); //NOI18N
+        ANGLE_RIGHT_STYLE.put(MxConstants.STYLE_IMAGE, IMG_ANGLE_RIGHT);
         ANGLE_RIGHT_STYLE.put(MxConstants.STYLE_IMAGE_WIDTH, String.valueOf(TOGGLE_WIDTH));
         ANGLE_RIGHT_STYLE.put(MxConstants.STYLE_IMAGE_HEIGHT, String.valueOf(TOGGLE_HEIGHT));
+        ANGLE_RIGHT_STYLE.put(MxConstants.STYLE_FOLDABLE, FOLDABLE);
+        ANGLE_RIGHT_STYLE.put(MxConstants.STYLE_RESIZABLE, RESIZABLE);
     }
     private final LinkedHashMap<String, String> LEAF_STYLE = new LinkedHashMap();
     {
         LEAF_STYLE.put(MxConstants.STYLE_SHAPE, MxConstants.SHAPE_RECTANGLE);
         LEAF_STYLE.put(MxConstants.STYLE_FILLCOLOR, MxConstants.NONE);
         LEAF_STYLE.put(MxConstants.STYLE_STROKECOLOR, MxConstants.NONE);
+        LEAF_STYLE.put(MxConstants.STYLE_FOLDABLE, FOLDABLE);
+        LEAF_STYLE.put(MxConstants.STYLE_RESIZABLE, RESIZABLE);
     }
     // </editor-fold>
     private final MxGraph graph;
     private final HashMap<T, MxGraphNode> nodes = new HashMap();
     private final HashMap<T, MxGraphNode> keyNodes = new HashMap();
     private final HashMap<T, MxGraphNode> subtreeNodes = new HashMap();
+    private final HashMap<T, ToggleNode> toogleNodes = new HashMap();
     
+    private List<T> roots;
     private final LinkedHashMap<T, T> parents = new LinkedHashMap();
+    private final LinkedHashMap<T, List<T>> children = new LinkedHashMap();
     private final Function<T, List<T>> functionChildren; 
     private final Function<T, String> functionId;
     private final Function<T, String> functionLabel;
@@ -152,10 +174,10 @@ public class MxTree<T> extends MxGraphNode {
             
             event.unregisterListener();
         });
-        graph.add(this);
+        graph.addCell(this);
         
         if (supplierRoots != null) {
-            List<T> roots = supplierRoots.get();
+            this.roots = supplierRoots.get();
             if (roots != null)
                 roots.forEach(root -> addNode(root, this));
         }
@@ -177,7 +199,7 @@ public class MxTree<T> extends MxGraphNode {
             
             event.unregisterListener();
         });
-        graph.add(node);
+        graph.addCell(node);
         addKeyNode(key, node);
     }
     
@@ -197,7 +219,7 @@ public class MxTree<T> extends MxGraphNode {
             
             event.unregisterListener();
         });
-        graph.add(keyNode);
+        graph.addCell(keyNode);
         addToggleNode(key, node, keyNode);
     }
     
@@ -217,11 +239,12 @@ public class MxTree<T> extends MxGraphNode {
             
             event.unregisterListener();
         });
-        graph.add(subtreeNode);
+        graph.addCell(subtreeNode);
     }
     
     private void addToggleNode(T key, MxGraphNode node, MxGraphNode keyNode) {
         ToggleNode toggleNode = new ToggleNode();
+        toogleNodes.put(key, toggleNode);
         toggleNode.setGeometry(0, 0, TOGGLE_WIDTH, TOGGLE_HEIGHT);
         toggleNode.setCellParent(keyNode.getUuid());
         
@@ -242,20 +265,25 @@ public class MxTree<T> extends MxGraphNode {
                     toggleNode.cheked(false);
                     toggleNode.setRawStyle(ANGLE_RIGHT_STYLE);
                     toggleNode.overrideStyle();
-
+                    graph.setCellsLocked(true);
+                    
+                    graph.setCellsLocked(false);
                     collapseRecursively(key);
                     expandRecursively(key);
-
+                    collapse(key, children.get(key), true);
                     graph.setCellsLocked(true);
                 } else {
+                    graph.setCellsLocked(false);
                     toggleNode.cheked(true);
                     toggleNode.setRawStyle(ANGLE_DOWN_STYLE);
                     toggleNode.overrideStyle();
-
+                    graph.setCellsLocked(true);
+                    
                     if (functionChildren != null && subtreeNodes.get(key) == null) {
 
                         List<T> keyChildren = functionChildren.apply(key);
                         if (keyChildren != null) {
+                            children.put(key, keyChildren);
                             keyChildren.forEach(child -> {
                                 parents.put(child, key);
 
@@ -268,8 +296,13 @@ public class MxTree<T> extends MxGraphNode {
                             });
                         }
                     }
+                    else {
+                        graph.setCellsLocked(false);
+                        fireExpandEventRecursively(key, true);
+                        graph.setCellsLocked(true);
+                    }
                     graph.setCellsLocked(false);
-                    expand(key);
+                    expandNode(key);
                     graph.setCellsLocked(true);
                 }
             });
@@ -284,12 +317,12 @@ public class MxTree<T> extends MxGraphNode {
                 event.unregisterListener();
             });
         }
-        graph.add(toggleNode);
+        graph.addCell(toggleNode);
         
         buildLabelNode(key, keyNode);
     }
     
-    private MxGraphNode getLabelNode(T key) {
+    private MxGraphNode getLabelNode(T key, List<Boolean> defaultLabelNode) {
         MxGraphNode labelNode = funcGetLabelNode != null ? funcGetLabelNode.apply(key, graph) : null;
         if (labelNode == null) {
             labelNode = new MxGraphNode();
@@ -302,11 +335,14 @@ public class MxTree<T> extends MxGraphNode {
             if (label != null)
                 labelNode.setLabel(label);
         }
+        else
+            defaultLabelNode.set(0, false);
         return labelNode;
     }
     
     private void buildLabelNode(T key, MxGraphNode keyNode) {
-        MxGraphNode labelNode = getLabelNode(key);
+        List<Boolean> defaultLabelNode = Arrays.asList(true);
+        MxGraphNode labelNode = getLabelNode(key, defaultLabelNode);
         labelNode.setCellParent(keyNode.getUuid());
         labelNode.addCellAddedListener(event -> {
             graph.setCellsLocked(false);
@@ -315,15 +351,34 @@ public class MxTree<T> extends MxGraphNode {
                 labelNode.overrideStyle();
             
             executeLayoutToKey(key);
-            
+            T parent = parents.get(key);
+            if (parent != null) {
+                List<T> theChildren = children.get(parent);
+                //If is the last children fire the tree expand event
+                if (theChildren != null && !theChildren.isEmpty() && theChildren.get(theChildren.size() - 1).equals(key))
+                    expand(key, theChildren, true);
+            }
+            // If is the last root fire the tree add event
+            if (roots != null && !roots.isEmpty() && roots.get(roots.size() - 1).equals(key))
+                fireTreeAddEndEvent(roots);
             graph.setCellsLocked(true);
-            
             event.unregisterListener();
         });
-        graph.add(labelNode);
+        if (defaultLabelNode.get(0))
+            graph.addCell(labelNode);
     }
-    
-    private void expand(T key) {
+    private void fireExpandEventRecursively(T parent, boolean fromClient) {
+        if (parent != null) {
+            List<T> theChildren = children.get(parent);
+            if (theChildren != null) {
+                expand(parent, theChildren, fromClient);
+                ToggleNode toggleNode = toogleNodes.get(parent);
+                if (toggleNode != null && toggleNode.checked())
+                    theChildren.forEach(child -> fireExpandEventRecursively(child, fromClient));
+            }
+        }
+    }
+    private void expandNode(T key) {
         MxGraphNode subtreeNode = subtreeNodes.get(key);
         if (subtreeNode != null && subtreeNode.getCollapsed()) {
             subtreeNode.setCollapsed(false);
@@ -357,7 +412,7 @@ public class MxTree<T> extends MxGraphNode {
             parent = parents.get(parent);
         }
         Collections.reverse(keyParents);
-        keyParents.forEach(keyParent -> expand(keyParent));
+        keyParents.forEach(keyParent -> expandNode(keyParent));
     }
     
     private void executeLayoutToKey(T key) {
@@ -406,9 +461,31 @@ public class MxTree<T> extends MxGraphNode {
         }
         return keyLabel;
     }
-    
+    public void expand(T key) {
+        MxGraphNode toogleNode = toogleNodes.get(key);
+        if (toogleNode != null)
+            ComponentUtil.fireEvent(toogleNode, new MxGraphClickCellEvent(toogleNode, false));
+    }
     private boolean leaf(T key) {
         return key != null && funcLeaf != null ? funcLeaf.apply(key) : false;
+    }
+    public void expand(T parent, List<T> children, boolean fromClient) {
+        fireEvent(new ExpandEvent<T>(this, fromClient, parent, children));
+    }
+    public void collapse(T parent, List<T> children, boolean fromClient) {
+        fireEvent(new CollapseEvent<T>(this, fromClient, parent, children));
+    }
+    private void fireTreeAddEndEvent(List<T> roots) {
+        fireEvent(new TreeAddEndEvent(this, true, roots));
+    }
+    public Registration addExpandListener(ComponentEventListener<ExpandEvent<T>> listener) {
+        return addListener(ExpandEvent.class, (ComponentEventListener) listener);
+    }
+    public Registration addCollapseListener(ComponentEventListener<CollapseEvent<T>> listener) {
+        return addListener(CollapseEvent.class, (ComponentEventListener) listener);
+    }
+    public Registration addTreeAddEndListener(ComponentEventListener<TreeAddEndEvent<T>> listener) {
+        return addListener(TreeAddEndEvent.class, (ComponentEventListener) listener);
     }
     /**
      * A toggle node
@@ -426,6 +503,58 @@ public class MxTree<T> extends MxGraphNode {
         
         public boolean checked() {
             return checked;
+        }
+    }
+    /**
+     * MxTree Expand Event
+     */
+    public class ExpandEvent<T> extends ComponentEvent<MxTree> {
+        private T parent;
+        private List<T> children;
+        
+        public ExpandEvent(MxTree source, boolean fromClient, T parent, List<T> children) {
+            super(source, fromClient);
+            this.parent = parent;
+            this.children = children;
+        }
+        public T getParent() {
+            return parent;
+        }
+        public List<T> getChildren() {
+            return children;
+        }
+    }
+    /**
+     * MxTree Collapse Event
+     */
+    public class CollapseEvent<T> extends ComponentEvent<MxTree> {
+        private T parent;
+        private List<T> children;
+        
+        public CollapseEvent(MxTree source, boolean fromClient, T parent, List<T> children) {
+            super(source, fromClient);
+            this.parent = parent;
+            this.children = children;
+        }
+        public T getParent() {
+            return parent;
+        }
+        public List<T> getChildren() {
+            return children;
+        }
+    }
+    /**
+     * Event to fired when tree is loaded
+     */
+    public class TreeAddEndEvent<T> extends ComponentEvent<MxTree> {
+        private List<T> roots;
+        
+        public TreeAddEndEvent(MxTree source, boolean fromClient, List<T> roots) {
+            super(source, fromClient);
+            this.roots = roots;
+        }
+        public List<T> getRoots() {
+            return roots;
         }
     }
 }

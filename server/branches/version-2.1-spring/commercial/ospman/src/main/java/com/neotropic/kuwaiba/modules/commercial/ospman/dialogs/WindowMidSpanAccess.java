@@ -251,7 +251,7 @@ public class WindowMidSpanAccess extends Dialog implements ActionCompletedListen
     
     private void updateOspLocationView() {
         divLocation.removeAll();
-        OspLocationView ospLocationView = new OspLocationView(cmbCable.getValue(), cmbDevice.getValue(), aem, bem, mem, ts);
+        OspLocationView ospLocationView = new OspLocationView(node, cmbCable.getValue(), cmbDevice.getValue(), aem, bem, mem, ts);
         divLocation.add(ospLocationView);
     }
         

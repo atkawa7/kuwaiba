@@ -18,7 +18,9 @@ package org.neotropic.util.visual.mxgraph;
 import com.neotropic.flow.component.mxgraph.MxConstants;
 import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.neotropic.flow.component.mxgraph.MxGraphNode;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -50,10 +52,12 @@ public class MxSpliceBox<T> extends MxGraphNode {
     private final int LABEL_WIDTH = 210;
     private final int LABEL_HEIGHT = 40;
     private final int SPACING = 10;
-    private final int MARGIN = SPACING;
+    private final int MARGIN_TOP_BOTTOM = SPACING;
+    private final int MARGIN_LEFT_RIGHT = 28;
     private final String STROKE_COLOR = "#000000";
     private final String FILL_COLOR = "#C0C0C0";
     private final String FONT_COLOR = "#000000";
+    private final String FOLDABLE = String.valueOf(0);
     private final LinkedHashMap<String, String> SPLICE_BOX_NODE_STYLE = new LinkedHashMap();
     {
         SPLICE_BOX_NODE_STYLE.put(MxConstants.STYLE_SHAPE, MxConstants.SHAPE_RECTANGLE);
@@ -63,12 +67,14 @@ public class MxSpliceBox<T> extends MxGraphNode {
         SPLICE_BOX_NODE_STYLE.put(MxConstants.STYLE_FILLCOLOR, FILL_COLOR);
         SPLICE_BOX_NODE_STYLE.put(MxConstants.STYLE_FONTCOLOR, FONT_COLOR);
         SPLICE_BOX_NODE_STYLE.put(MxConstants.STYLE_FONTSIZE, "10");
+        SPLICE_BOX_NODE_STYLE.put(MxConstants.STYLE_FOLDABLE, FOLDABLE);
     }
     private final LinkedHashMap<String, String> PORT_SET_NODE_STYLE = new LinkedHashMap();
     {
         PORT_SET_NODE_STYLE.put(MxConstants.STYLE_SHAPE, MxConstants.SHAPE_RECTANGLE);
         PORT_SET_NODE_STYLE.put(MxConstants.STYLE_FILLCOLOR, MxConstants.NONE);
         PORT_SET_NODE_STYLE.put(MxConstants.STYLE_STROKECOLOR, MxConstants.NONE);
+        PORT_SET_NODE_STYLE.put(MxConstants.STYLE_FOLDABLE, FOLDABLE);
     }
     private final LinkedHashMap<String, String> PORT_NODE_STYLE = new LinkedHashMap();
     {
@@ -79,12 +85,14 @@ public class MxSpliceBox<T> extends MxGraphNode {
         PORT_NODE_STYLE.put(MxConstants.STYLE_FILLCOLOR, FILL_COLOR);
         PORT_NODE_STYLE.put(MxConstants.STYLE_FONTCOLOR, FONT_COLOR);
         PORT_NODE_STYLE.put(MxConstants.STYLE_FONTSIZE, "10");
+        PORT_NODE_STYLE.put(MxConstants.STYLE_FOLDABLE, FOLDABLE);
     }
     private final LinkedHashMap<String, String> NULL_PORT_STYLE = new LinkedHashMap();
     {
         NULL_PORT_STYLE.put(MxConstants.STYLE_SHAPE, MxConstants.SHAPE_RECTANGLE);
         NULL_PORT_STYLE.put(MxConstants.STYLE_FILLCOLOR, MxConstants.NONE);
         NULL_PORT_STYLE.put(MxConstants.STYLE_STROKECOLOR, MxConstants.NONE);
+        NULL_PORT_STYLE.put(MxConstants.STYLE_FOLDABLE, FOLDABLE);
     }
     //</editor-fold>
     /**
@@ -140,8 +148,8 @@ public class MxSpliceBox<T> extends MxGraphNode {
         if (spliceBoxLabel != null)
             setLabel(spliceBoxLabel);
         setGeometry(0, 0, 
-            2 * MARGIN + 2 * LABEL_WIDTH + SPACING, 
-            4 * MARGIN + portsInOut.size() * LABEL_HEIGHT + (portsInOut.size() - 1) * SPACING
+            2 * MARGIN_LEFT_RIGHT + 2 * LABEL_WIDTH + SPACING, 
+            4 * MARGIN_TOP_BOTTOM + portsInOut.size() * LABEL_HEIGHT + (portsInOut.size() - 1) * SPACING
         );
         if (spliceBoxColor != null)
             SPLICE_BOX_NODE_STYLE.put(MxConstants.STYLE_FILLCOLOR, spliceBoxColor);
@@ -149,15 +157,17 @@ public class MxSpliceBox<T> extends MxGraphNode {
         
         addCellAddedListener(event -> {
             graph.setCellsLocked(false);
+            
             setIsSelectable(false);
             setConnectable(false);
             overrideStyle();
-            addPortInSetNode();
+            
             graph.setCellsLocked(true);
             //The cell is added only once, eliminating the unnecessary listener.
             event.unregisterListener();
         });
         graph.addNode(this);
+        addPortInSetNode();
     }
     
     private void addPortInSetNode() {
@@ -170,15 +180,17 @@ public class MxSpliceBox<T> extends MxGraphNode {
         
         portInSetNode.addCellAddedListener(event -> {
             graph.setCellsLocked(false);
+            
             portInSetNode.setIsSelectable(false);
             portInSetNode.setConnectable(false);
             portInSetNode.overrideStyle();
-            addPortOutSetNode();
+            
             graph.setCellsLocked(true);
             //The cell is added only once, eliminating the unnecessary listener.
             event.unregisterListener();
         });
-        graph.addNode(portInSetNode);
+        graph.addCell(portInSetNode);
+        addPortOutSetNode();
     }
     
     private void addPortOutSetNode() {
@@ -191,81 +203,86 @@ public class MxSpliceBox<T> extends MxGraphNode {
         
         portOutSetNode.addCellAddedListener(event -> {
             graph.setCellsLocked(false);
+            
             portOutSetNode.setIsSelectable(false);
             portOutSetNode.setConnectable(false);
             portOutSetNode.overrideStyle();
             graph.setCellsLocked(true);
-            portsInOut.forEach((inPort, outPort) -> addPortInNode(inPort, outPort));
+            
             //The cell is added only once, eliminating the unnecessary listener.
             event.unregisterListener();
         });
-        graph.addNode(portOutSetNode);
+        graph.addCell(portOutSetNode);
+        portsInOut.forEach((inPort, outPort) -> addPortInNode(inPort, outPort));
     }
     
     private void addPortInNode(T portIn, T portOut) {
-        MxGraphNode portInNode = getPortNode(portIn);
+        List<Boolean> defaultPort = Arrays.asList(true);
+        MxGraphNode portInNode = getPortNode(portIn, defaultPort);
         portInNode.setCellParent(portInSetNode.getUuid());
-        
-        portInNode.addCellAddedListener(event -> {
-            graph.setCellsLocked(false);
-            portInNode.overrideStyle();
-            portInNode.setConnectable(getPortConnectable(portIn));
-            portInNode.setTooltip(getPortTooltip(portIn));
-                
-            graph.setCellsLocked(true);
-            addPortOutNode(portOut);
-            //The cell is added only once, eliminating the unnecessary listener.
-            event.unregisterListener();
-        });
-        graph.addNode(portInNode);
+        if (defaultPort.get(0))
+            graph.addNode(portInNode);
+        addPortOutNode(portOut);
     }
     
     private void addPortOutNode(T portOut) {
-        MxGraphNode portOutNode = getPortNode(portOut);
+        List<Boolean> defaultPort = Arrays.asList(true);
+        MxGraphNode portOutNode = getPortNode(portOut, defaultPort);
         portOutNode.setCellParent(portOutSetNode.getUuid());
         
         portOutNode.addCellAddedListener(event -> {
             graph.setCellsLocked(false);
-            portOutNode.overrideStyle();
-            portOutNode.setConnectable(getPortConnectable(portOut));
-            portOutNode.setTooltip(getPortTooltip(portOut));
             
             portsOutAdded++;
             if (portsOutAdded == portsInOut.size()) {
                 graph.executeStackLayout(portInSetNode.getUuid(), false, SPACING);
                 graph.executeStackLayout(portOutSetNode.getUuid(), false, SPACING);   
-                graph.executeStackLayout(this.getUuid(), true, SPACING, MARGIN * 3, MARGIN, MARGIN, MARGIN);
+                graph.executeStackLayout(this.getUuid(), true, SPACING, MARGIN_TOP_BOTTOM * 3, MARGIN_LEFT_RIGHT, MARGIN_TOP_BOTTOM, MARGIN_LEFT_RIGHT);
             }
             graph.setCellsLocked(true);
             //The cell is added only once, eliminating the unnecessary listener.
             event.unregisterListener();
         });
-        graph.addNode(portOutNode);
+        if (defaultPort.get(0))
+            graph.addNode(portOutNode);
     }
     
-    private MxGraphNode getPortNode(T port) {
+    private MxGraphNode getPortNode(T port, List<Boolean> deafultPort) {
         MxGraphNode portNode = null;
         if (port != null && funcGetPortNode != null)
             portNode = funcGetPortNode.apply(port);
-        
-        if (portNode == null)
+                
+        if (portNode == null) {
             portNode = new MxGraphNode();
+            portNode.setGeometry(0, 0, LABEL_WIDTH, LABEL_HEIGHT);
+            
+            String portId = getPortId(port);
+            if (portId != null)
+                portNode.setUuid(portId);
+
+            String label = getPortLabel(port);
+            if (label != null)
+                portNode.setLabel(label);
+            
+            LinkedHashMap<String, String> rawStyle = new LinkedHashMap(port != null ? PORT_NODE_STYLE : NULL_PORT_STYLE);
+            String portColor = getPortColor(port);
+            if (portColor != null)
+                rawStyle.put(MxConstants.STYLE_FILLCOLOR, portColor);
+            portNode.setRawStyle(rawStyle);
+            
+            portNode.addCellAddedListener(event -> {
+                graph.setCellsLocked(false);
                 
-        portNode.setGeometry(0, 0, LABEL_WIDTH, LABEL_HEIGHT);
+                event.getSource().overrideStyle();
+                event.getSource().setConnectable(getPortConnectable(port));
+                event.getSource().setTooltip(getPortTooltip(port));
                 
-        String portId = getPortId(port);
-        if (portId != null)
-            portNode.setUuid(portId);
-        
-        String label = getPortLabel(port);
-        if (label != null)
-            portNode.setLabel(label);
-        
-        LinkedHashMap<String, String> rawStyle = new LinkedHashMap(port != null ? PORT_NODE_STYLE : NULL_PORT_STYLE);
-        String portColor = getPortColor(port);
-        if (portColor != null)
-            rawStyle.put(MxConstants.STYLE_FILLCOLOR, portColor);
-        portNode.setRawStyle(rawStyle);
+                graph.setCellsLocked(true);
+                event.unregisterListener();
+            });
+        }
+        else
+            deafultPort.set(0, false);
         
         return portNode;
     }

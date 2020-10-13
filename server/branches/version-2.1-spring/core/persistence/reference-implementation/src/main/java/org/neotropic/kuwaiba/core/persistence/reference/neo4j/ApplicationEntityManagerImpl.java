@@ -2716,7 +2716,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     scriptParameters.put(property.replace("PARAM_", ""), (String)taskNode.getProperty(property));
             }
             
-            environmentParameters.setVariable("connectionManager.getConnectionHandler()", connectionManager.getConnectionHandler()); //NOI18N
+            environmentParameters.setVariable("connectionHandler", connectionManager.getConnectionHandler()); //NOI18N
             environmentParameters.setVariable("inventoryObjectLabel", inventoryObjectLabel);
             environmentParameters.setVariable("classLabel", classLabel); //NOI18N
             environmentParameters.setVariable("TaskResult", TaskResult.class); //NOI18N

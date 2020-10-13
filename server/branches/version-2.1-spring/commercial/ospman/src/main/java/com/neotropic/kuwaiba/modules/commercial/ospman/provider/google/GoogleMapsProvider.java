@@ -18,6 +18,7 @@ package com.neotropic.kuwaiba.modules.commercial.ospman.provider.google;
 import com.neotropic.flow.component.googlemap.DrawingManager;
 import com.neotropic.flow.component.googlemap.GoogleMap;
 import com.neotropic.flow.component.googlemap.LatLng;
+import com.neotropic.flow.component.googlemap.LatLngBounds;
 import com.neotropic.flow.component.googlemap.OverlayType;
 import com.neotropic.kuwaiba.modules.commercial.ospman.persistence.OutsidePlantService;
 import com.neotropic.kuwaiba.modules.commercial.ospman.provider.GeoBounds;
@@ -125,6 +126,28 @@ public class GoogleMapsProvider implements MapProvider {
     
     public GeoCoordinate getCenter() {
         return new GeoCoordinate(googleMap.getCenterLat(), googleMap.getCenterLng());
+    }
+    
+    public GeoBounds getBounds() {
+        LatLngBounds bounds = googleMap.getBounds();
+        if (bounds != null) {
+            return new GeoBounds(
+                new GeoCoordinate(bounds.getNorthEast().getLat(), bounds.getNorthEast().getLng()), 
+                new GeoCoordinate(bounds.getSouthWest().getLat(), bounds.getSouthWest().getLng())
+            );
+        }
+        return null;
+    }
+    
+    public void getBounds(Consumer<GeoBounds> consumer) {
+        if (getBounds() != null) {
+            consumer.accept(getBounds());
+        } else {
+            googleMap.addMapBoundsChanged(event -> {
+                event.unregisterListener();
+                consumer.accept(getBounds());
+            });
+        }
     }
     
     public void setCenter(GeoCoordinate center) {

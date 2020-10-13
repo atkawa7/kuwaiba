@@ -51,7 +51,7 @@ public class WindowNode extends Dialog {
         NewBusinessObjectVisualAction newBusinessObjectVisualAction) {
         
         HorizontalLayout lytNodeTools = new HorizontalLayout();
-        lytNodeTools.add(new Button(new Icon(VaadinIcon.ROAD_BRANCH), event -> {
+        lytNodeTools.add(new Button(ts.getTranslatedString("module.ospman.mid-span-access.title"), new Icon(VaadinIcon.ROAD_BRANCH), event -> {
             close();
             new WindowMidSpanAccess(node.getIdentifier(), aem, bem, mem, ts, newBusinessObjectVisualAction).open();
         }));

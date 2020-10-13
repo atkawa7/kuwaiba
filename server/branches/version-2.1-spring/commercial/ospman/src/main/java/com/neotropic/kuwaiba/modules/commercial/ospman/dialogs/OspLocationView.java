@@ -20,16 +20,18 @@ import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.neotropic.flow.component.mxgraph.MxGraphEdge;
 import com.neotropic.flow.component.mxgraph.MxGraphNode;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.FiberWrapperNode.FiberNode;
+import com.neotropic.kuwaiba.modules.commercial.ospman.persistence.OutsidePlantService;
 import com.vaadin.flow.component.html.Label;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
-import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObject;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -42,7 +44,6 @@ import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectNode;
 import org.neotropic.util.visual.dialog.ConfirmDialog;
 import org.neotropic.util.visual.mxgraph.MxSpliceBox;
 import org.neotropic.util.visual.mxgraph.MxTree;
-import org.neotropic.util.visual.mxgraph.MxTreeLabel;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.views.util.UtilHtml;
 
@@ -51,23 +52,56 @@ import org.neotropic.util.visual.views.util.UtilHtml;
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class OspLocationView extends MxGraph {
-    private final String ATTR_COLOR = "color"; //NOI18N
-    private final String ATTR_VALUE = "value"; //NOI18N
     /**
      * Reference to the Translation Service
      */
     private final TranslationService ts;
+    /**
+     * Reference to the Application Entity Manager
+     */
+    private final ApplicationEntityManager aem;
+    /**
+     * Reference to the Business Entity Manager
+     */
+    private final BusinessEntityManager bem;
+    /**
+     * Rereference to the Metadata Entity Manager
+     */
+    private final MetadataEntityManager mem;
     
-    public OspLocationView(BusinessObjectLight cable, BusinessObjectLight device,
+    private final String FOLDABLE = String.valueOf(0);
+    
+    private final LinkedHashMap<String, String> EDGE_STYLE = new LinkedHashMap();
+    {
+        EDGE_STYLE.put(MxConstants.STYLE_STROKEWIDTH, String.valueOf(FiberWrapperNode.FIBER_HEIGHT - 2));
+        EDGE_STYLE.put(MxConstants.STYLE_ENDARROW, MxConstants.NONE);
+        EDGE_STYLE.put(MxConstants.STYLE_STARTARROW, MxConstants.NONE);
+        EDGE_STYLE.put(MxConstants.STYLE_EDGE, MxConstants.EDGESTYLE_ENTITY_RELATION);
+        EDGE_STYLE.put(MxConstants.STYLE_FOLDABLE, FOLDABLE);
+    }
+    private final String IN = "in"; //NOI18N
+    private final String OUT = "out"; //NOI18N
+    private final BusinessObjectLight location;
+    private final Consumer<BusinessObjectLight> consumerReleaseFiber;
+    
+    public OspLocationView(BusinessObjectLight location, BusinessObjectLight cable, BusinessObjectLight device,
         ApplicationEntityManager aem, BusinessEntityManager bem, MetadataEntityManager mem, TranslationService ts) {
         super();
         Objects.requireNonNull(cable);
         Objects.requireNonNull(device);
         Objects.requireNonNull(ts);
+        setOverrideCurrentStyle(true);
         this.ts = ts;
+        this.aem = aem;
+        this.bem = bem;
+        this.mem = mem;
+        this.location = location;
         setSizeFull();
         setConnectable(true);
         setTooltips(true);
+        consumerReleaseFiber = (fiber) -> {
+            new SimpleNotification("", "").open();
+        };
         
         MxTree<BusinessObjectLight> tree = new MxTree<>(
             this, 
@@ -86,30 +120,17 @@ public class OspLocationView extends MxGraph {
             BusinessObjectLight::getName,
             (node, graph) -> {
                 try {
-                    ClassMetadata itemClass = mem.getClass(node.getClassName());
-                    if (itemClass.hasAttribute(ATTR_COLOR)) {
-                        ClassMetadata colorClass = mem.getClass(itemClass.getType(ATTR_COLOR));
-                        if (colorClass.hasAttribute(ATTR_VALUE)) {
-                            BusinessObject itemObject = bem.getObject(node.getClassName(), node.getId());
-                            String colorId = (String) itemObject.getAttributes().get(ATTR_COLOR);
-                            if (colorId != null) {
-                                BusinessObject colorObject = aem.getListTypeItem(itemClass.getType(ATTR_COLOR), colorId);
-                                String colorValue = (String) colorObject.getAttributes().get(ATTR_VALUE);
-                                if (colorValue != null) {
-                                    if (mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONTAINER, node.getClassName()))
-                                        return new MxTreeLabel(graph, node.getId(), node.getName(), colorValue);
-                                    if (mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALLINK, node.getClassName())) {
-                                        FiberWrapperNode fiberNode = new FiberWrapperNode(graph, node, null, null, colorValue);
-                                        fiberNode.addFiberRightClickListener(event -> cutFiber(fiberNode));
-                                        return fiberNode;
-                                    }
-                                }
-                            }
-                        }
+                    String color = FiberWrapperNode.getColor(node, aem, bem, mem, ts);
+                    if (mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONTAINER, node.getClassName()))
+                        return new CableNode(graph, node, color);
+                    if (mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALLINK, node.getClassName())) {
+                        FiberWrapperNode fiberNode = new FiberWrapperNode(graph, node, null, null, color, bem, ts);
+                        fiberNode.addFiberRightClickListener(event -> cutFiber(fiberNode));
+                        return fiberNode;
                     }
-                } catch (InventoryException ex) {
+                } catch (MetadataObjectNotFoundException ex) {
                     new SimpleNotification(
-                        ts.getTranslatedString("module.general.messages.error"), //NOI18N
+                        ts.getTranslatedString("module.general.messages.error"), 
                         ex.getLocalizedMessage()
                     ).open();
                 }
@@ -129,7 +150,10 @@ public class OspLocationView extends MxGraph {
             }
         );
         tree.addCellAddedListener(event -> excecuteLayout());
-        
+        tree.addTreeAddEndListener(event -> {
+            if (event.getRoots() != null && !event.getRoots().isEmpty())
+                tree.expand(cable);
+        });
         LinkedHashMap<BusinessObjectLight, BusinessObjectLight> ports = new LinkedHashMap();
         try {
             List<BusinessObjectLight> devicePorts = bem.getChildrenOfClassLight(
@@ -139,7 +163,7 @@ public class OspLocationView extends MxGraph {
             if (devicePorts.size() > 1) {
                 for (int i = 0; i < devicePorts.size(); i++) {
                     BusinessObjectLight port = devicePorts.get(i);
-                    if (port.getName().toLowerCase().startsWith("in")) { //NOI18N
+                    if (port.getName().toLowerCase().startsWith(IN)) { //NOI18N
                         List<BusinessObjectLight> mirrors = bem.getSpecialAttribute(port.getClassName(), port.getId(), "mirror"); //NOI18N
                         BusinessObjectLight mirror = null;
                         if (!mirrors.isEmpty())
@@ -165,38 +189,15 @@ public class OspLocationView extends MxGraph {
                 ex.getLocalizedMessage()
             ).open();
         }
-        MxSpliceBox<BusinessObjectLight> spliceBox = new MxSpliceBox<>(
-            this, 
-            ports,
-            device.getName(),
-            deviceClass != null ? UtilHtml.toHexString(new Color(deviceClass.getColor())) : null,
-            BusinessObjectLight::getName,
-            BusinessObjectLight::getId,
+        MxSpliceBox<BusinessObjectLight> spliceBox = new MxSpliceBox<>(this, ports,
+            device.getName(), deviceClass != null ? UtilHtml.toHexString(new Color(deviceClass.getColor())) : null,
+            null, null, null, null, 
             port -> {
-                ClassMetadata portClass = null;
-                try {
-                    portClass = mem.getClass(port.getClassName());
-                } catch (MetadataObjectNotFoundException ex) {
-                    new SimpleNotification(
-                        ts.getTranslatedString("module.general.messages.error"),
-                        ex.getLocalizedMessage()
-                    ).open();
-                }
-                return portClass != null ? UtilHtml.toHexString(new Color(portClass.getColor())) : null;
-            }, 
-            port -> {
-                try {
-                    return bem.getSpecialAttribute(port.getClassName(), port.getId(), "endpoitA").isEmpty(); //NOI18N
-                } catch (InventoryException ex) {
-                    new SimpleNotification(
-                        ts.getTranslatedString("module.general.messages.error"),
-                        ex.getLocalizedMessage()
-                    ).open();
-                }
-                return false;
-            }, 
-            port -> new PortNode(port),
-            BusinessObjectLight::getName
+                PortNode portNode = new PortNode(port, this, aem, bem, mem, ts);
+                portNode.addRightClickCellListener(event -> new WindowPortTools(port, bem, ts, consumerReleaseFiber).open());
+                return portNode;
+            },  
+            null
         );
         spliceBox.addCellAddedListener(event -> excecuteLayout());
         
@@ -208,63 +209,216 @@ public class OspLocationView extends MxGraph {
                 getPortNode(sourceNode, targetNode)
             );
         });
+        tree.addExpandListener(event -> expandFibers(event.getParent(), event.getChildren(), ports));
+        tree.addCollapseListener(event -> collapsedFibers(event.getParent()));
     }
-    
+    private void collapsedFibers(BusinessObjectLight parent) {
+        if (parent == null)
+            return;
+        MxBusinessObjectNode parentNode = findNode(parent);
+        if (parentNode == null)
+            return;
+        for (MxGraphEdge edge : getEdges()) {
+            if (edge instanceof MxBusinessObjectEdge) {
+                MxBusinessObjectEdge fiberEdge = (MxBusinessObjectEdge) edge;
+                if (fiberEdge.getBusinessObject() != null) {
+                    try {
+                        List<BusinessObjectLight> parents = bem.getParents(fiberEdge.getBusinessObject().getClassName(), fiberEdge.getBusinessObject().getId());
+                        if (parents.contains(parent))
+                            fiberEdge.setSource(parentNode.getUuid());
+                    } catch (InventoryException ex) {
+                        new SimpleNotification(
+                            ts.getTranslatedString("module.general.messages.error"),
+                            ex.getLocalizedMessage()
+                        ).open();
+                    }
+                }
+            }
+        }
+    }
+    private void expandFibers(BusinessObjectLight parent, List<BusinessObjectLight> children, LinkedHashMap<BusinessObjectLight, BusinessObjectLight> ports) {
+        if (parent == null || children == null || ports == null)
+            return;
+        ports.forEach((key, value) -> {
+            expandFiber(key, children);
+            expandFiber(value, children);
+        });
+    }
+    private void expandFiber(BusinessObjectLight port, List<BusinessObjectLight> children) {
+        if (port == null || children == null)
+            return;
+        if (children.isEmpty())
+            return;
+        MxBusinessObjectNode businessObjectNode = findNode(port);
+        if (!(businessObjectNode instanceof PortNode))
+            return;
+        PortNode portNode = (PortNode) businessObjectNode;
+        BusinessObjectLight fiber = portNode.getFiber();
+        if (fiber == null)
+            return;
+        
+        try {
+            BusinessObjectLight fiberParent = null;
+            for (BusinessObjectLight child : children) {
+                if (child.getId().equals(fiber.getId())) {
+                    fiberParent = child;
+                    break;
+                }
+            }
+            if (fiberParent == null) {
+                List<BusinessObjectLight> parents = bem.getParents(fiber.getClassName(), fiber.getId());
+                for (BusinessObjectLight child : children) {
+                    for (BusinessObjectLight parent : parents) {
+                        if (child.getId().equals(parent.getId())) {
+                            fiberParent = child;
+                            break;
+                        }
+                    }
+                    if (fiberParent != null)
+                        break;
+                }
+            }
+            if (fiberParent != null) {
+                MxBusinessObjectNode fiberParentNode = findNode(fiberParent);
+                
+                MxBusinessObjectEdge fiberEdge = findEdge(fiber);
+                if (fiberEdge == null) {
+                    fiberEdge = new FiberEdge(fiber);
+                    
+                    LinkedHashMap<String, String> edgeStyle = new LinkedHashMap(EDGE_STYLE);
+                    String color = FiberWrapperNode.getColor(fiber, aem, bem, mem, ts);
+                    if (color != null)
+                        edgeStyle.put(MxConstants.STYLE_STROKECOLOR, color);
+                    fiberEdge.setRawStyle(edgeStyle);
+                    fiberEdge.setSource(fiberParentNode.getUuid());
+                    fiberEdge.setTarget(portNode.getUuid());
+
+                    fiberEdge.addCellAddedListener(event -> {
+                        setCellsLocked(false);
+                        event.getSource().overrideStyle();
+                        event.getSource().setTooltip(fiber.getName());
+                        setCellsLocked(true);
+                    });
+////                    fiberEdge.addRightClickCellListener(event -> new SimpleNotification("","").open());
+                    addEdge(fiberEdge);
+                } else {
+                    this.setCellsLocked(true);
+                    fiberEdge.setSource(fiberParentNode.getUuid());
+                    this.setCellsLocked(false);
+                }
+            }
+        } catch (InventoryException ex) {
+            new SimpleNotification(
+                ts.getTranslatedString("module.general.messages.error"),
+                ex.getLocalizedMessage()
+            ).open();
+        }
+    }
     private void cutFiber(FiberWrapperNode fiberNode) {
         new ConfirmDialog(ts,
             ts.getTranslatedString("module.ospman.mid-span-access.confirmation.cut-fiber.title"), 
             new Label(ts.getTranslatedString("module.ospman.mid-span-access.confirmation.cut-fiber.text")),
             ts.getTranslatedString("module.general.messages.ok"), 
             () -> {
-                fiberNode.cutFiber(fiberNode.getBusinessObject(), fiberNode.getBusinessObject(), true);
+                try {
+                    BusinessObjectLight fiber = fiberNode.getBusinessObject();
+                    BusinessObjectLight fiberParent = bem.getParent(fiber.getClassName(), fiber.getId());
+                    
+                    HashMap<String, String[]> objects = new HashMap();
+                    objects.put(fiber.getClassName(), new String[] {fiber.getId()});
+                    
+                    String[] newFibersId = bem.copySpecialObjects(fiberParent.getClassName(), fiberParent.getId(), objects, false);
+                    if (newFibersId.length == 1) {
+                        BusinessObjectLight newFiber = bem.getObject(fiber.getClassName(), newFibersId[0]);
+                        
+                        bem.createSpecialRelationship(
+                            fiber.getClassName(), fiber.getId(), 
+                            location.getClassName(), location.getId(), 
+                            OutsidePlantService.SPECIAL_RELATIONSHIP_OSPMAN_HAS_LOCATION, true);
+                        fiberNode.cutFiber(fiber, newFiber, true);
+                    } else {
+                        for (String newFiberId : newFibersId)
+                            bem.deleteObject(fiber.getClassName(), newFiberId, true);
+                        throw new InventoryException(
+                            ts.getTranslatedString(
+                                String.format("module.ospman.copy-fiber.error", fiber.getId())
+                            )
+                        );
+                    }
+                } catch (InventoryException ex) {
+                    new SimpleNotification(
+                        ts.getTranslatedString("module.general.messages.error"), 
+                        ex.getLocalizedMessage()
+                    ).open();
+                }
+                
             }).open();
     }    
     private void spliceFiber(FiberNode fiberNode, PortNode portNode) {
         if (fiberNode == null && portNode == null)
             return;
         
+        LinkedHashMap<String, String> edgeStyle = new LinkedHashMap(EDGE_STYLE);
+        edgeStyle.put(MxConstants.STYLE_STROKECOLOR, fiberNode.getFillColor());
+        
         new ConfirmDialog(ts,
             ts.getTranslatedString("module.ospman.mid-span-access.confirmation.splice-fiber.title"), 
             new Label(ts.getTranslatedString("module.ospman.mid-span-access.confirmation.splice-fiber.text")),
             ts.getTranslatedString("module.general.messages.ok"), 
             () -> {
-                LinkedHashMap<String, String> edgeStyle = new LinkedHashMap();
-                edgeStyle.put(MxConstants.STYLE_STROKEWIDTH, String.valueOf(FiberWrapperNode.FIBER_HEIGHT - 2));
-                edgeStyle.put(MxConstants.STYLE_ENDARROW, MxConstants.NONE);
-                edgeStyle.put(MxConstants.STYLE_STARTARROW, MxConstants.NONE);
-                edgeStyle.put(MxConstants.STYLE_EDGE, MxConstants.EDGESTYLE_ENTITY_RELATION);
-                edgeStyle.put(MxConstants.STYLE_STROKECOLOR, fiberNode.getFillColor());
-                
-                LinkedHashMap<String, String> nodeStyle = new LinkedHashMap();
-                nodeStyle.put(MxConstants.STYLE_FILL_OPACITY, String.valueOf(25));
-                nodeStyle.put(MxConstants.STYLE_STROKECOLOR, fiberNode.getFillColor());
-                
-                fiberNode.setRawStyle(nodeStyle);
-                fiberNode.setConnectable(false);
-                
-                portNode.setRawStyle(nodeStyle);
-                portNode.setConnectable(false);
-                
-                MxBusinessObjectEdge fiberEdge = new MxBusinessObjectEdge(fiberNode.getBusinessObject());
-                fiberEdge.setRawStyle(edgeStyle);
-                fiberEdge.setSource(fiberNode.getUuid());
-                fiberEdge.setTarget(portNode.getUuid());
-                
-                fiberEdge.addCellAddedListener(fiberEvent -> {
-                    setCellsLocked(false);
-                    MxBusinessObjectEdge cell = (MxBusinessObjectEdge) fiberEvent.getSource();
-                    cell.overrideStyle();
-                    cell.setTooltip(cell.getBusinessObject() != null ? cell.getBusinessObject().getName() : null);
-                    setCellsLocked(true);
-                    fiberEvent.unregisterListener();
-                });
-                addEdge(fiberEdge);
-            }).open();
+                try {
+                    BusinessObjectLight fiberObject = fiberNode.getBusinessObject();
+                    BusinessObjectLight portObject = portNode.getBusinessObject();
+                    
+                    String specialRelationshipName = null;
+                    if (portObject.getName().startsWith(IN)) {
+                        specialRelationshipName = PortNode.SPECIAL_ATTR_ENDPOINT_B;
+                    } else if (portObject.getName().startsWith(OUT)) {
+                        specialRelationshipName = PortNode.SPECIAL_ATTR_ENDPOINT_A;
+                    } else {
+                        new SimpleNotification(
+                            ts.getTranslatedString("module.general.messages.warning"), 
+                            ts.getTranslatedString("module.ospman.warning.port-name")
+                        ).open();
+                        return;
+                    }
+                    bem.createSpecialRelationship(
+                        fiberObject.getClassName(), fiberObject.getId(),
+                        portObject.getClassName(), portObject.getId(),
+                        specialRelationshipName, true
+                    );
+                    MxBusinessObjectEdge fiberEdge = new FiberEdge(fiberObject);
+                    fiberEdge.setRawStyle(edgeStyle);
+                    fiberEdge.setSource(fiberNode.getUuid());
+                    fiberEdge.setTarget(portNode.getUuid());
+
+                    fiberEdge.addCellAddedListener(fiberEvent -> {
+                        setCellsLocked(false);
+
+                        MxBusinessObjectEdge cell = (MxBusinessObjectEdge) fiberEvent.getSource();
+                        cell.overrideStyle();
+                        cell.setTooltip(cell.getBusinessObject() != null ? cell.getBusinessObject().getName() : null);
+
+                        setCellsLocked(true);
+                        fiberEvent.unregisterListener();
+                    });
+                    addEdge(fiberEdge);
+////                    fiberEdge.addRightClickCellListener(event -> new SimpleNotification("", "").open());
+                    fiberNode.spliceFiber();
+                    portNode.setFiber(fiberObject);
+                } catch (InventoryException ex) {
+                    new SimpleNotification(
+                        ts.getTranslatedString("module.general.messages.error"), 
+                        ex.getLocalizedMessage()
+                    ).open();
+                }
+            }
+        ).open();
     }
     // <editor-fold defaultstate="collapsed" desc="Helpers">
     private void excecuteLayout() {
         setCellsLocked(false);
-        executeStackLayout(null, true, 350, 50);
+        executeStackLayout(null, true, 200, 50);
         setCellsLocked(true);
     }
     private MxBusinessObjectNode findNode(String nodeUuid) {
@@ -276,11 +430,26 @@ public class OspLocationView extends MxGraph {
         }
         return null;
     }
-    private MxBusinessObjectEdge findEdge(String edgeUuid) {
-        if (edgeUuid != null) {
+    private MxBusinessObjectNode findNode(BusinessObjectLight object) {
+        if (object != null) {
+            for (MxGraphNode node : getNodes()) {
+                if (node instanceof MxBusinessObjectNode && 
+                    ((MxBusinessObjectNode) node).getBusinessObject() != null && 
+                    ((MxBusinessObjectNode) node).getBusinessObject().getId().equals(object.getId())) {
+                    return (MxBusinessObjectNode) node;
+                }
+            }
+        }
+        return null;
+    }
+    private MxBusinessObjectEdge findEdge(BusinessObjectLight businessObject) {
+        if (businessObject != null) {
             for (MxGraphEdge edge : getEdges()) {
-                if (edge instanceof MxBusinessObjectEdge && edgeUuid.equals(edge.getUuid()))
+                if (edge instanceof MxBusinessObjectEdge && 
+                    ((MxBusinessObjectEdge) edge).getBusinessObject() != null && 
+                    ((MxBusinessObjectEdge) edge).getBusinessObject().getId().equals(businessObject.getId())) {
                     return (MxBusinessObjectEdge) edge;
+                }
             }
         }
         return null;
@@ -304,12 +473,4 @@ public class OspLocationView extends MxGraph {
         return null;
     }
     // </editor-fold>
-    /**
-     * Class to port node in the splice box
-     */
-    private class PortNode extends MxBusinessObjectNode {
-        public PortNode(BusinessObjectLight businessObject) {
-            super(businessObject);
-        }
-    }
 }

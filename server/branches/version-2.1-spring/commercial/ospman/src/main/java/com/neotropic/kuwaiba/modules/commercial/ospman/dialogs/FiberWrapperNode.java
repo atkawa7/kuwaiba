@@ -21,9 +21,18 @@ import com.neotropic.flow.component.mxgraph.MxGraphRightClickCellEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.shared.Registration;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Objects;
+import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObject;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
+import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
+import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectNode;
+import org.neotropic.util.visual.notifications.SimpleNotification;
 
 /**
  * The fiber node is a set of nodes like shown below.
@@ -52,29 +61,53 @@ import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectNode;
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class FiberWrapperNode extends MxBusinessObjectNode {
-    private final String COLOR_LIGHT_GREY = "LightGrey";
-    private final String COLOR_WHITE = "White";
+    public static final String ATTR_ENDPOINT_A = "endpointA"; //NOI18N
+    public static final String ATTR_ENDPOINT_B = "endpointB"; //NOI18N
+    public static final int FIBER_HEIGHT = 6;
+    public static final int FIBER_FILL_OPACITY = 100;
+    public static final int FIBER_SPLICED_FILL_OPACITY = 25;
+    public static final String ATTR_COLOR = "color"; //NOI18N
+    public static final String ATTR_VALUE = "value"; //NOI18N
+    public static final String INFO_OVERLAY_ID = "info"; //NOI18N
+    public static final int INFO_WIDTH = 16;
+    public static final int INFO_HEIGHT = INFO_WIDTH;
+    public static final int INFO_SPACING = 6;
+    public static final String INFO_IMG = "img/info-circle-o.svg"; //NOI18N
+    public static final String COLOR_LIGHT_GREY = "LightGrey"; //NOI18N
+    private final String COLOR_WHITE = "White"; //NOI18N
     private final int HEIGHT = 16;
     private final int FIBER_WIDTH = 100;
-    public static final int FIBER_HEIGHT = 6;
     private final int CUT_WIDTH = 4;
     private final int MARGIN_TOP_BOTTOM = (HEIGHT - FIBER_HEIGHT) / 2;
+    private final String FOLDABLE = String.valueOf(0);
     private final LinkedHashMap<String, String> NODE_STYLE = new LinkedHashMap();
     {
         NODE_STYLE.put(MxConstants.STYLE_SHAPE, MxConstants.SHAPE_RECTANGLE);
         NODE_STYLE.put(MxConstants.STYLE_FILLCOLOR, MxConstants.NONE);
         NODE_STYLE.put(MxConstants.STYLE_STROKECOLOR, MxConstants.NONE);
+        NODE_STYLE.put(MxConstants.STYLE_FOLDABLE, FOLDABLE);
     }
     private final LinkedHashMap<String, String> FIBER_STYLE = new LinkedHashMap(NODE_STYLE);
     
     private final MxGraph graph;
     private String color;
-    private MxBusinessObjectNode fiberNode;
-    private MxBusinessObjectNode fiberANode;
-    private MxBusinessObjectNode fiberBNode;
+    private FiberNode fiberNode;
+    private FiberNode fiberANode;
+    private FiberNode fiberBNode;
     private Registration registrationFiber;
+    /**
+     * Reference to the Business Entity Manager
+     */
+    private final BusinessEntityManager bem;
+    /**
+     * Reference to the Translation Service
+     */
+    private final TranslationService ts;
+    
+    public FiberWrapperNode(MxGraph graph,
+        BusinessObjectLight fiberObject, BusinessObjectLight fiberAObject, BusinessObjectLight fiberBObject,
+        String color, BusinessEntityManager bem, TranslationService ts) {
         
-    public FiberWrapperNode(MxGraph graph, BusinessObjectLight fiberObject, BusinessObjectLight fiberAObject, BusinessObjectLight fiberBObject, String color) {
         super(fiberObject);
         if (graph == null)
             Objects.requireNonNull(graph);
@@ -88,6 +121,8 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
             FIBER_STYLE.put(MxConstants.STYLE_FILLCOLOR, this.color);
         }
         this.graph = graph;
+        this.bem = bem;
+        this.ts = ts;
         setGeometry(0, 0, FIBER_WIDTH, HEIGHT);
         setRawStyle(NODE_STYLE);
         
@@ -99,8 +134,6 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
             
             if (fiberObject != null)
                 graph.executeStackLayout(this.getUuid(), true, 0, MARGIN_TOP_BOTTOM, 0, MARGIN_TOP_BOTTOM, 0);
-            else
-                cutFiber(fiberAObject, fiberBObject, false);
             
             graph.setCellsLocked(true);
             event.unregisterListener();
@@ -108,20 +141,22 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
         
         addCellAddedListener(event -> {
             graph.setCellsLocked(false);
+            
             this.overrideStyle();
             this.setIsSelectable(false);
             this.setConnectable(false);
-            graph.addNode(fiberNode);
+            
             graph.setCellsLocked(true);
             event.unregisterListener();
         });
-        graph.addNode(this);
+        graph.addCell(this);
+        graph.addNode(fiberNode);
+        if (fiberObject == null)
+            cutFiber(fiberAObject, fiberBObject, false);
     }
-    
     public String getColor() {
         return color;
     }
-    
     public void cutFiber(BusinessObjectLight fiberAObject, BusinessObjectLight fiberBObject, boolean newCut) {
         Objects.requireNonNull(fiberAObject);
         Objects.requireNonNull(fiberBObject);
@@ -139,29 +174,54 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
         fiberANode = new FiberCutObjectNode(fiberAObject);
         fiberANode.setCellParent(fiberNode.getUuid());
         
-        fiberANode.addCellAddedListener(fiberAEvent -> {
+        fiberBNode = new FiberCutObjectNode(fiberBObject);
+        fiberBNode.setCellParent(fiberNode.getUuid());
+
+        fiberBNode.addCellAddedListener(event -> {
             graph.setCellsLocked(false);
-            
-            fiberBNode = new FiberCutObjectNode(fiberBObject);
-            fiberBNode.setCellParent(fiberNode.getUuid());
-            
-            fiberBNode.addCellAddedListener(fiberBEvent -> {
-                graph.setCellsLocked(false);
-                graph.executeStackLayout(fiberNode.getUuid(), false, CUT_WIDTH);
-                graph.executeStackLayout(this.getUuid(), true, 0);
-                graph.setCellsLocked(true);
-                fiberBEvent.unregisterListener();
-            });
-            graph.addNode(fiberBNode);
-            
+            graph.executeStackLayout(fiberNode.getUuid(), false, CUT_WIDTH);
+            graph.executeStackLayout(this.getUuid(), true, 0);
             graph.setCellsLocked(true);
-            fiberAEvent.unregisterListener();
+            event.unregisterListener();
         });
         graph.addNode(fiberANode);
+        graph.addNode(fiberBNode);
     }
     
     public Registration addFiberRightClickListener(ComponentEventListener<MxGraphRightClickCellEvent> event) {
         return registrationFiber = fiberNode.addRightClickCellListener(event);
+    }
+    /**
+     * Gets the fiber color
+     * @param fiber A fiber
+     * @param aem Reference to the Application Entity Manager
+     * @param bem Reference to the Business Entity Manager
+     * @param mem Reference to the Metadata Entity Manager
+     * @param ts Reference to the Translation Service
+     * @return the fiber color
+     */
+    public static String getColor(BusinessObjectLight fiber, 
+        ApplicationEntityManager aem, BusinessEntityManager bem, MetadataEntityManager mem, TranslationService ts) {
+        try {
+            ClassMetadata fiberClass = mem.getClass(fiber.getClassName());
+            if (fiberClass.hasAttribute(ATTR_COLOR)) {
+                ClassMetadata colorClass = mem.getClass(fiberClass.getType(ATTR_COLOR));
+                if (colorClass.hasAttribute(ATTR_VALUE)) {
+                    BusinessObject fiberObject = bem.getObject(fiber.getClassName(), fiber.getId());
+                    String colorId = (String) fiberObject.getAttributes().get(ATTR_COLOR);
+                    if (colorId != null) {
+                        BusinessObject colorObject = aem.getListTypeItem(fiberClass.getType(ATTR_COLOR), colorId);
+                        return (String) colorObject.getAttributes().get(ATTR_VALUE);
+                    }
+                }
+            }
+        } catch (InventoryException ex) {
+            new SimpleNotification(
+                ts.getTranslatedString("module.general.messages.error"), //NOI18N
+                ex.getLocalizedMessage()
+            ).open();
+        }
+        return null;
     }
     /**
      * Fiber Node to get style information
@@ -177,11 +237,45 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
         public String getStrokeColor() {
             return FIBER_STYLE.get(MxConstants.STYLE_STROKECOLOR);
         }
+        protected void spliceFiber() {
+            LinkedHashMap<String, String> fiberStyle = new LinkedHashMap(FIBER_STYLE);
+            if (this.getBusinessObject() != null) {
+                try {
+                    BusinessObjectLight fiberObject = this.getBusinessObject();
+                    List<BusinessObjectLight> endpointA = bem.getSpecialAttribute(
+                        fiberObject.getClassName(), fiberObject.getId(), ATTR_ENDPOINT_A);
+                    List<BusinessObjectLight> endpointB = bem.getSpecialAttribute(
+                        fiberObject.getClassName(), fiberObject.getId(), ATTR_ENDPOINT_B);
+                    if (!endpointA.isEmpty() || !endpointB.isEmpty()) {
+                        if (!endpointA.isEmpty()) {
+                            this.addOverlayButton(INFO_OVERLAY_ID, String.format("%s %s",
+                                ts.getTranslatedString("module.ospman.mid-span-access.fiber.endpoint-a"), endpointA.get(0).getName()),
+                                INFO_IMG, MxConstants.ALIGN_LEFT, MxConstants.ALIGN_MIDDLE, (INFO_WIDTH/2 + INFO_SPACING) * -1, 0, INFO_WIDTH, INFO_HEIGHT);
+                        }
+                        if (!endpointB.isEmpty()) {
+                            this.addOverlayButton(INFO_OVERLAY_ID, String.format("%s %s",
+                                ts.getTranslatedString("module.ospman.mid-span-access.fiber.endpoint-b"), endpointB.get(0).getName()),
+                                INFO_IMG, MxConstants.ALIGN_RIGHT, MxConstants.ALIGN_MIDDLE, INFO_WIDTH/2 + INFO_SPACING, 0, INFO_WIDTH, INFO_HEIGHT);
+                        }
+                        fiberStyle.put(MxConstants.STYLE_FILL_OPACITY, String.valueOf(FIBER_SPLICED_FILL_OPACITY));
+                        fiberStyle.put(MxConstants.STYLE_STROKECOLOR, this.getFillColor());
+                        setIsSelectable(false);
+                        setConnectable(false);
+                    }
+                } catch (InventoryException ex) {
+                    new SimpleNotification(
+                        ts.getTranslatedString("module.general.messages.error"), 
+                        ex.getLocalizedMessage()
+                    ).open();
+                }
+            }
+            setRawStyle(fiberStyle);
+        }
     }
     /**
      * Fiber Object as MxGraph Node
      */
-    public class FiberObjectNode extends FiberNode {
+    private class FiberObjectNode extends FiberNode {
         public FiberObjectNode(BusinessObjectLight fiberObject) {
             super(fiberObject);
             setGeometry(0, 0, FIBER_WIDTH, FIBER_HEIGHT);
@@ -189,7 +283,7 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
                 graph.setCellsLocked(false);
                 
                 if (fiberObject != null) {
-                    setRawStyle(FIBER_STYLE);
+                    spliceFiber();
                     setTooltip(fiberObject.getName());
                 } else {
                     setRawStyle(NODE_STYLE);
@@ -206,16 +300,17 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
     /**
      * Cut Fiber Object as MxGraph Node
      */
-    public class FiberCutObjectNode extends FiberNode {
+    private class FiberCutObjectNode extends FiberNode {
         public FiberCutObjectNode(BusinessObjectLight fiberObject) {
             super(fiberObject);
             setGeometry(0, 0, FIBER_WIDTH, FIBER_HEIGHT);
-            setRawStyle(FIBER_STYLE);
-            
             addCellAddedListener(event -> {
                 graph.setCellsLocked(false);
-                overrideStyle();
+                
+                spliceFiber();
                 setTooltip(fiberObject.getName());
+                overrideStyle();
+                
                 graph.setCellsLocked(true);
                 event.unregisterListener();
             });

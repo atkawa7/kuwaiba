@@ -48,6 +48,17 @@ public interface MapProvider {
      */
     GeoCoordinate getCenter();
     /**
+     * Gets the lat/lng of the current viewport
+     * @return map bounds
+     */
+    GeoBounds getBounds();
+    /**
+     * Gets the lat/lng of the current viewport
+     * @param consumer
+     * @return map bounds
+     */
+    void getBounds(Consumer<GeoBounds> consumer);
+    /**
      * Set map center
      * @param center map center
      */

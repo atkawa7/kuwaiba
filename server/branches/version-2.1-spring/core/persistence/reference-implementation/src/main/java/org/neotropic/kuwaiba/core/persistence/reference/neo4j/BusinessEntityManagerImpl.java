@@ -2613,7 +2613,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             Binding environmentParameters = new Binding();
             environmentParameters.setVariable("instanceNode", instanceNode); //NOI18N
-            environmentParameters.setVariable("connectionManager.getConnectionHandler()", connectionManager.getConnectionHandler()); //NOI18N
+            environmentParameters.setVariable("connectionHandler", connectionManager.getConnectionHandler()); //NOI18N
             environmentParameters.setVariable("inventoryObjectLabel", inventoryObjectLabel);            
             environmentParameters.setVariable("classLabel", classLabel); //NOI18N
             
@@ -2656,7 +2656,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             Binding environmentParameters = new Binding();
             environmentParameters.setVariable("parameters", scriptParameters); //NOI18N
-            environmentParameters.setVariable("connectionManager.getConnectionHandler()", connectionManager.getConnectionHandler()); //NOI18N
+            environmentParameters.setVariable("connectionHandler", connectionManager.getConnectionHandler()); //NOI18N
             environmentParameters.setVariable("inventoryObjectLabel", inventoryObjectLabel); //NOI18N
             environmentParameters.setVariable("classLabel", classLabel); //NOI18N
             

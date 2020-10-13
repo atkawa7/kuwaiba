@@ -406,6 +406,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         newOverlay.setEnabled(true);
         
         MxGraph newGraph = new MxGraph();
+        newGraph.setOverrideCurrentStyle(true);
         newGraph.setFullSize();
         newGraph.setOverflow(null);
         
@@ -443,6 +444,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         newOverlay.setEnabled(enabled);
         
         MxGraph newGraph = new MxGraph();
+        newGraph.setOverrideCurrentStyle(true);
         newGraph.setFullSize();
         newGraph.setOverflow(null);
         
@@ -494,6 +496,13 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                 tabMarker.setEnabled(true);
                 tabPolyline.setEnabled(true);
             });
+    }
+    
+    private void addOverlay(GeoBounds bounds, Tabs tabs, Tab tabHand, Tab tabMarker, Tab tabPolyline) {
+        addOverlay(bounds);
+        setDrawingHandMode(tabs, tabHand);
+        tabMarker.setEnabled(true);
+        tabPolyline.setEnabled(true);
     }
     
     private void setDrawingMarkerMode(BusinessObjectLight businessObject) {
@@ -660,6 +669,9 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                                             Arrays.asList(tabSaveOspView, tabDeleteOspView, tabHand, tabOverlay, tabWire)
                                         );
                                         componentTabs.setSelectedTab(tabHand);
+                                        map.getBounds(bounds -> 
+                                            addOverlay(bounds, componentTabs, tabHand, tabMarker, tabPolyline)
+                                        );
                                     } else if (selectedTab.equals(tabOpenOspView)) {
                                         disableEnableTabs(null, Arrays.asList(
                                             tabSaveOspView, tabDeleteOspView, tabHand, tabOverlay, tabMarker, tabPolyline, tabWire
@@ -718,7 +730,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                             });
                             component.add(componentTabs);
                         }
-                        component.add(map.getComponent());
+                        component.add(map.getComponent());                        
                     }
                 } else {
                     new SimpleNotification(

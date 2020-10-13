@@ -49,9 +49,13 @@ public class OutsidePlantService {
      */
     public static String VIEW_VERSION = "2.1";
     /**
-     * Special relationship to assign a Generic Container with another Generic Container.
+     * Special relationship to assign a Generic Physical Container with another Generic Physical Container.
      */
     public static final String SPECIAL_RELATIONSHIP_OSPMAN_HAS_PATH = "ospmanHasPath"; //NOI18N
+    /**
+     * Special relationship to assign a Generic Physical Link with a Location (manhole, hand hole, ...)
+     */
+    public static final String SPECIAL_RELATIONSHIP_OSPMAN_HAS_LOCATION = "ospmanHasLocation"; //NOI18N
     /**
      * Reference to the Metadata Entity Manager.
      */
@@ -68,5 +72,8 @@ public class OutsidePlantService {
         mem.setSpecialRelationshipDisplayName(
             SPECIAL_RELATIONSHIP_OSPMAN_HAS_PATH, 
             ts.getTranslatedString("module.ospman.special-relationship.ospman-has-path.display-name"));
+        mem.setSpecialRelationshipDisplayName(
+            SPECIAL_RELATIONSHIP_OSPMAN_HAS_LOCATION, 
+            ts.getTranslatedString("module.ospman.special-relationship.ospman-has-location.display-name"));
     }
 }
