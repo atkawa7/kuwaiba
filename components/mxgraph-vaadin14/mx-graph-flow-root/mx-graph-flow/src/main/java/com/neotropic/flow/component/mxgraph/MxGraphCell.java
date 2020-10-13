@@ -518,7 +518,11 @@ public class MxGraphCell extends Component implements HasComponents {
     }
     
     public void addOverlayButton(String buttonId, String label , String urlImage,String hAlign, String vAlign, int offsetX, int offsetY) {
-       getElement().callJsFunction("addOverlayButton", buttonId , label, urlImage,hAlign, vAlign, offsetX, offsetY);
+        addOverlayButton(buttonId, label , urlImage, hAlign, vAlign, offsetX, offsetY, 16, 16);
+    }
+    
+    public void addOverlayButton(String buttonId, String label , String urlImage,String hAlign, String vAlign, int offsetX, int offsetY, int width, int height) {
+       getElement().callJsFunction("addOverlayButton", buttonId , label, urlImage,hAlign, vAlign, offsetX, offsetY, width, height);
     }
     
     public void setChildrenCellPosition(String cellId, int position) {

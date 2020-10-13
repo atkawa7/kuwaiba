@@ -61,6 +61,7 @@ public class MxGraph extends Component implements HasComponents, HasStyle, HasSi
      * Specifies if tooltips should be enabled
      */
     private static final String PROPERTY_TOOLTIPS = "tooltips"; //NOI18N
+    private static final String PROPERTY_OVERRIDE_CURRENT_STYLE = "overrideCurrentStyle"; //NOI18N
     
     private List<MxGraphNode> nodes;
     private List<MxGraphEdge> edges;
@@ -153,6 +154,14 @@ public class MxGraph extends Component implements HasComponents, HasStyle, HasSi
      */
     public void setTooltips(boolean enabled) {
         getElement().setProperty(PROPERTY_TOOLTIPS, enabled);
+    }
+    
+    public boolean getOverrideCurrentStyle() {
+        return getElement().getProperty(PROPERTY_OVERRIDE_CURRENT_STYLE, false);
+    }
+    
+    public void setOverrideCurrentStyle(boolean enabled) {
+        getElement().setProperty(PROPERTY_OVERRIDE_CURRENT_STYLE, enabled);
     }
     
     public void setCellsLocked(boolean cellsLocked) {

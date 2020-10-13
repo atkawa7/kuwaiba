@@ -81,7 +81,8 @@ class MxGraphCell extends PolymerElement {
       },
       source: {       // uuid of the source vertex
         type: String,
-        value: null
+        value: null,
+        observer: '_sourceChanged'
       },
       sourceLabel: {
         type: String,
@@ -90,7 +91,8 @@ class MxGraphCell extends PolymerElement {
       },
       target: {       // uuid of the target vertex
         type: String,
-        value: null
+        value: null,
+        observer: '_targetChanged'
       },
       targetLabel: {
         type: String,
@@ -492,10 +494,10 @@ class MxGraphCell extends PolymerElement {
      
 }
 
-addOverlayButton(buttonId,  label, urlImage, hAlign, vAlign, offsetX, offsetY)
+addOverlayButton(buttonId,  label, urlImage, hAlign, vAlign, offsetX, offsetY, width, height)
     {
         if (this.cell) {
-	var overlay = new mxCellOverlay(new mxImage(urlImage, 16, 16), label, hAlign, vAlign);
+	var overlay = new mxCellOverlay(new mxImage(urlImage, width, height), label, hAlign, vAlign);
 	overlay.cursor = 'hand';
         if (!offsetX)
             offsetX = 0;
@@ -665,6 +667,33 @@ cellLabelChanged() {
     if (this.graph && this.cell) {
       this.cell.getTooltip = () => newValue;
     }
+  }
+  /**
+   * Updates the current edge source.
+   * @param {string} newValue - The UUID of the new source cell.
+   * @param {string} oldValue - The UUID of the old source cell.
+   */
+  _sourceChanged(newValue, oldValue) {
+      if (this.graph && this.cell)
+          this._connectCell(this.graph.model.getCell(newValue), true);
+  }
+  /**
+   * Updates the current edge target.
+   * @param {string} newValue - The UUID of the new target cell.
+   * @param {string} oldValue - The UUID of the old target cell.
+   */
+  _targetChanged(newValue, oldValue) {
+      if (this.graph && this.cell)
+          this._connectCell(this.graph.model.getCell(newValue), false);
+  }
+  /**
+   * Connect the specified end of the current edge to the given terminal.
+   * @param {MxCell} terminal - Whose terminal should be updated.
+   * @param {boolean} source - Indicating if the new terminal is the source or target.
+   */
+  _connectCell(terminal, source) {
+      if (this.graph && this.cell && terminal)
+          this.graph.connectCell(this.cell, terminal, source);
   }
 }
 

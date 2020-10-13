@@ -155,6 +155,10 @@ class MxGraph extends PolymerElement {
             tooltips: {
                 type: Boolean,
                 observer: '_tooltipsChanged'
+            },
+            overrideCurrentStyle: {
+                type: Boolean,
+                observer: '_overrideCurrentStyleChanged'
             }
         }
     }
@@ -205,7 +209,7 @@ class MxGraph extends PolymerElement {
         } else
         {
             // Disables the built-in context menu
-            mxEvent.disableContextMenu(this.$.graphContainer);
+            mxEvent.disableContextMenu(this.$.graphContainer);            
          
             //var model = new mxGraphModel(new mxCell());
             // Creates the graph inside the given container
@@ -632,17 +636,19 @@ class MxGraph extends PolymerElement {
                 this.stackLayout.execute(cell);
                 if (cell.children) {                  
                     var geo = cell.geometry;
-                    if (horizontal) {
-                        var max = Math.max.apply(Math, cell.children.map(function(o){ return o.geometry.height;}));
-                        if (geo.height < max) 
-                            geo.height = max + marginTop + marginBottom;                                                 
-                    } else {
-                        var max = Math.max.apply(Math, cell.children.map(function(o){ return o.geometry.width;}))
-                        if (geo.width < max)
-                            geo.width = max + marginLeft + marginRight;
+                    if (geo) {
+                        if (horizontal) {
+                            var max = Math.max.apply(Math, cell.children.map(function(o){ return o.geometry.height;}));
+                            if (geo.height < max) 
+                                geo.height = max + marginTop + marginBottom;                                                 
+                        } else {
+                            var max = Math.max.apply(Math, cell.children.map(function(o){ return o.geometry.width;}))
+                            if (geo.width < max)
+                                geo.width = max + marginLeft + marginRight;
+                        }
+                        this.graph.model.setGeometry(cell, geo);
+                        this.graph.refresh();
                     }
-                    this.graph.model.setGeometry(cell, geo);
-                    this.graph.refresh();
                 }
             }
             var t1 = performance.now()
@@ -930,6 +936,22 @@ class MxGraph extends PolymerElement {
             this.graph.setTooltips(newValue);            
         } else {
             this.waitForGraph(() => this._tooltipsChanged(newValue, oldValue));
+        }
+    }
+    _overrideCurrentStyleChanged(newValue, oldValue) {
+        if (this.graph) {
+            if (newValue) {
+                if (!this._currentStyle) {
+                    this._currentStyle = mxUtils.getCurrentStyle;
+                    mxUtils.getCurrentStyle = () => {return null;}
+                }
+            } else {
+                if (this._currentStyle) {
+                    mxUtils.getCurrentStyle = this._currentStyle;
+                }
+            }
+        } else {
+            this.waitForGraph(() => this._overrideCurrentStyleChanged(newValue, oldValue));
         }
     }
 }
