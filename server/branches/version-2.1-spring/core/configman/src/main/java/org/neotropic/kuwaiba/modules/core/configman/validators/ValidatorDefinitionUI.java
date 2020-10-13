@@ -22,13 +22,14 @@ import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H4;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider;
@@ -273,49 +274,113 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
 
         public ValidatorDefinitionForm(ValidatorDefinition validator) throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
 
-            H4 headerMain = new H4(String.format("%s %s", ts.getTranslatedString("module.configman.validator.header-name"), validator.getName()));
-            TextField txtName = new TextField(ts.getTranslatedString("module.configman.validator.label.name"),
-                    validator.getName(), ts.getTranslatedString("module.configman.validator.label.name.info"));
-            txtName.setRequiredIndicatorVisible(true);
-            txtName.setWidth("33%");
-            TextField txtDescription = new TextField(ts.getTranslatedString("module.configman.validator.label.description"),
-                    validator.getDescription() == null ? "" : validator.getDescription(), ts.getTranslatedString("module.configman.validator.label.description.info"));
-            txtDescription.setWidth("33%");
+            H4 headerMain = new H4(String.format("%s %s", validator.getName(), ts.getTranslatedString("module.configman.validator.header-name")));
+            
+            Label lblScript = new Label(ts.getTranslatedString("module.configman.validator.label.script"));
             AceEditor editorScript = new AceEditor();
             editorScript.setMode(AceMode.groovy);
             editorScript.setValue(validator.getScript());
-//            TextArea txtScript = new TextArea(ts.getTranslatedString("module.configman.validator.label.script"),
-//                    validator.getScript() == null ? "" : validator.getScript(), ts.getTranslatedString("module.configman.validator.label.script.info"));          
-            Checkbox checkEnable = new Checkbox();
-            checkEnable.setLabel(ts.getTranslatedString("module.configman.validator.label.enable"));
-            checkEnable.setValue(validator.isEnabled());
-            Button btnSave = new Button(ts.getTranslatedString("module.configman.validator.button.name"), new Icon(VaadinIcon.DOWNLOAD));
+            editorScript.addAceEditorValueChangedListener(event -> { 
+                validator.setScript(editorScript.getValue());
+            });
+            
+            Button btnSave = new Button(ts.getTranslatedString("module.configman.validator.properties-general.button-save"), new Icon(VaadinIcon.DOWNLOAD));
             btnSave.setAutofocus(true);
             btnSave.addClickListener(event -> {
                 try {
-                    aem.updateValidatorDefinition(validator.getId(), txtName.getValue(), txtDescription.getValue(), validator.getClassToBeApplied(), editorScript.getValue(), checkEnable.getValue());
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.configman.validator.notification-saved")).open();
+                    aem.updateValidatorDefinition(validator.getId(), validator.getName(), validator.getDescription(), validator.getClassToBeApplied(), editorScript.getValue(), validator.isEnabled());
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.configman.validator.properties-script.notification-saved")).open();
                     objectTree.getDataProvider().refreshAll();
                 } catch (ApplicationObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
                     Logger.getLogger(ValidatorDefinitionUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
             
+            Button btnEditProperties = new Button(ts.getTranslatedString("module.configman.validator.properties-general.button-edit-properties"), new Icon(VaadinIcon.EDIT));
+            btnEditProperties.addClickListener(event -> {
+                UpdatePropertiesDialog scriptDialog = new UpdatePropertiesDialog(validator);
+                add(scriptDialog);
+            });
+               
             HorizontalLayout lytHeader = new HorizontalLayout(headerMain);
             lytHeader.setWidthFull();
             lytHeader.setPadding(false);
             lytHeader.setMargin(false);
-            VerticalLayout lytButton = new VerticalLayout(btnSave);
-            lytButton.setDefaultHorizontalComponentAlignment(Alignment.END);
+            HorizontalLayout lytButton = new HorizontalLayout(btnEditProperties, btnSave);
+            lytButton.setAlignItems(Alignment.END);
             HorizontalLayout lytHeaderMain = new HorizontalLayout(lytHeader, lytButton);
             lytHeaderMain.setWidthFull();
             lytHeaderMain.setPadding(false);
             lytHeaderMain.setMargin(false);
-            VerticalLayout lytProperties = new VerticalLayout(txtName, txtDescription, checkEnable, editorScript);
-            lytProperties.setHeightFull();
-            lytProperties.setMargin(false);
+            VerticalLayout lytScript = new VerticalLayout(lblScript, editorScript);
+            lytScript.setHeightFull();
+            lytScript.setMargin(false);
             
-            add(lytHeaderMain, lytProperties);
+            add(lytHeaderMain, lytScript);
         }
     }
+    private class UpdatePropertiesDialog extends Dialog {
+        private UpdatePropertiesDialog(ValidatorDefinition validator) {
+            H4 header = new H4(ts.getTranslatedString("module.configman.validator.header-properties"));
+            
+            TextField txtName = new TextField(ts.getTranslatedString("module.configman.validator.label.name"),
+                    validator.getName(), ts.getTranslatedString("module.configman.validator.label.name.info"));
+            txtName.setRequiredIndicatorVisible(true);
+            txtName.setWidthFull();
+            txtName.addValueChangeListener(event -> {
+                validator.setName(txtName.getValue());
+            });
+            
+            TextField txtDescription = new TextField(ts.getTranslatedString("module.configman.validator.label.description"),
+                    validator.getDescription() == null ? "" : validator.getDescription(), ts.getTranslatedString("module.configman.validator.label.description.info"));
+            txtDescription.setWidthFull();
+            txtDescription.addValueChangeListener(event -> {
+               validator.setDescription(txtDescription.getValue());
+            });
+            
+            Checkbox checkEnable = new Checkbox();
+            checkEnable.setLabel(ts.getTranslatedString("module.configman.validator.label.enable"));
+            checkEnable.setValue(validator.isEnabled());
+            checkEnable.addValueChangeListener(event -> {
+                validator.setEnabled(checkEnable.getValue());
+            });
+            
+            // Windows to update validator properties
+            Dialog wdwUpdateProperties = new Dialog();
+            
+            Button btnSave = new Button(ts.getTranslatedString("module.configman.validator.properties-general.button-save"), new Icon(VaadinIcon.DOWNLOAD));
+            //btnSave.setAutofocus(true);
+            btnSave.addClickListener(event -> {
+                try {
+                    aem.updateValidatorDefinition(validator.getId(), txtName.getValue(), txtDescription.getValue(), validator.getClassToBeApplied(), validator.getScript(), checkEnable.getValue());
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.configman.validator.properties-general.notification-saved")).open();
+                    objectTree.getDataProvider().refreshAll();
+                    wdwUpdateProperties.close();
+                } catch (ApplicationObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
+                    Logger.getLogger(ValidatorDefinitionUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+            
+            Button btnCancel = new Button(ts.getTranslatedString("module.configman.validator.properties-general.button-cancel"), new Icon(VaadinIcon.CLOSE_SMALL));
+            btnCancel.addClickListener(event -> {
+                        wdwUpdateProperties.close();
+            });
+            
+            HorizontalLayout lytMoreButtons = new HorizontalLayout(btnSave, btnCancel);
+            VerticalLayout lytProperties = new VerticalLayout(header, txtName, txtDescription, checkEnable);
+            lytProperties.setMargin(false);
+            lytProperties.setSizeFull();
+            lytProperties.setHeight("90%");
+            VerticalLayout lytMain = new VerticalLayout(lytProperties, lytMoreButtons);
+            lytMain.setMargin(false);
+            lytMain.setSizeFull();
+            lytMain.setHeightFull();
+            
+            wdwUpdateProperties.add(lytMain);
+            wdwUpdateProperties.setWidth("50%");
+            wdwUpdateProperties.setHeightFull();
+            
+            wdwUpdateProperties.open();
+        }
+    }  
 }
