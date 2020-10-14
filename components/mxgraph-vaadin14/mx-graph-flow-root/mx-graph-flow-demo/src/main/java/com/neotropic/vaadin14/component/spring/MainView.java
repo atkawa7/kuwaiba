@@ -33,13 +33,13 @@ public class MainView extends VerticalLayout {
         MxGraph mxGraph = new MxGraph();
         mxGraph.setTooltips(true);
   
-        mxGraph.setWidth("600px");
-        mxGraph.setHeight("500px");
+        mxGraph.setWidth("700px");
+        mxGraph.setHeight("400px");
         mxGraph.setRotationEnabled(true);
-        mxGraph.setHasOutline(true);
+//        mxGraph.setHasOutline(true);
         mxGraph.setOverflow("scroll");
         mxGraph.setBeginUpdateOnInit(true);
-        mxGraph.setIsCellMovable(false);
+//        mxGraph.setIsCellMovable(false);
         Button addButton = new Button("Add Cell"); // (3)
 
         
@@ -128,11 +128,11 @@ public class MainView extends VerticalLayout {
           nodeB.setLabel("print");
           nodeB.setGeometry(200, 100, 80, 20);
           nodeB.setCellLayer(layerNodes.getUuid());
-          nodeB.setIsSelectable(false);
+//          nodeB.setIsSelectable(false);
           nodeContainer.setUuid("nodeContainer");
           nodeContainer.setLabel("Container");
           nodeContainer.setFillColor(MxConstants.NONE);
-          nodeContainer.setGeometry(300, 100, 80, 200);
+          nodeContainer.setGeometry(300, 100, 60, 100);
           nodeContainer.setCellLayer(layerNodes.getUuid());
           nodeContainer.setAnimateOnSelect(true);
           nodeContainer.addCellAddedListener(eventListener-> {
@@ -150,7 +150,7 @@ public class MainView extends VerticalLayout {
           });
           nodeC.setUuid("nodeC");
           nodeC.setLabel("Sub Cell");
-          nodeC.setGeometry(10, 30, 30, 60); 
+          nodeC.setGeometry(10, 0, 30, 60); 
           nodeC.setCellParent("nodeContainer");
           nodeC.setShape(MxConstants.SHAPE_ELLIPSE);
           //in this way we can append some style properties to the current cell style without using the stylesheet
@@ -158,15 +158,15 @@ public class MainView extends VerticalLayout {
           nodeD.setUuid("nodeD");
           nodeD.setRawStyle("text");
           nodeD.setLabel("Sub Cell 2");
-          nodeD.setGeometry(10, 30, 30, 60); 
+          nodeD.setGeometry(10, 0, 30, 60); 
           nodeD.setCellParent("nodeContainer");
+          nodeD.setVerticalLabelPosition(MxConstants.ALIGN_TOP);
           
           nodeE.setUuid("nodeE");
           nodeE.setLabel("Sub Cell 2");
           nodeE.setShape(MxConstants.SHAPE_LABEL);
-          nodeE.setGeometry(10, 30, 30, 60); 
+          nodeE.setGeometry(10, 30, 30, 20); 
           nodeE.setCellParent("nodeContainer");
-
           
          //set the edge layer
           layerEdge.setUuid("edgeLayer");
@@ -222,7 +222,7 @@ public class MainView extends VerticalLayout {
           mxGraph.addNode(nodeContainer);
           mxGraph.addNode(nodeC);
           mxGraph.addNode(nodeD);
-          mxGraph.addNode(nodeE);
+          mxGraph.addNode(nodeE);               
           mxGraph.addEdge(edge);
           edge.addCellAddedListener(evt -> {
              mxGraph.endUpdate();
@@ -261,10 +261,13 @@ public class MainView extends VerticalLayout {
          layerNodes.toggleVisibility();
      });
      
-     Button btnToggleLayoutNodePrint = new Button("Execute Horizontal Layout in Container node", evt -> {
-         mxGraph.setCellsMovable(true);
-         mxGraph.executeStackLayout("nodeContainer", true, 10);
-         mxGraph.setCellsMovable(false);
+     
+     Button btnExecLayoutNodeContainer = new Button("Execute Horizontal Layout in Container node", evt -> {
+//         mxGraph.setCellsMovable(true);
+//         mxGraph.executeStackLayout("nodeContainer", false, 10);
+         mxGraph.executeStackLayout("nodeContainer", true, 10,30);
+         mxGraph.alignCells(MxConstants.ALIGN_CENTER, new String [] {"nodeContainer"}, 0);
+//         mxGraph.setCellsMovable(false);
      });
 
      Button btnCustomStyle1Node = new Button("Add Custom Style 1 to Node Print", evt -> {
@@ -292,9 +295,20 @@ public class MainView extends VerticalLayout {
          mxGraph.zoomOut();
      });
      
-     Button btnSetScale = new Button("set Scale 3", evt -> {
-         mxGraph.getScale();
-         mxGraph.setScale(2.5);
+     Button btnAlignCenter = new Button("Align Cells Center", evt -> {
+         mxGraph.alignCells(MxConstants.ALIGN_MIDDLE, new String [] {"nodeA", "nodeB", "nodeContainer"});
+     });
+     
+     Button btnAlignBottom = new Button("Align Cells Bottm", evt -> {
+         mxGraph.alignCells(MxConstants.ALIGN_BOTTOM, new String [] {"nodeA", "nodeB", "nodeContainer"});
+     });
+    
+     Button btnRemoveOverlayButton = new Button("Remove Zoom In Overlay", evt -> {
+         nodeContainer.removeOverlayButton("zoomIn");
+     });
+     
+     Button btnRemoveOverlayButtons = new Button("Remove all Overlay buttons", evt -> {
+         nodeContainer.removeOverlayButtons();
      });
      
      Button btnChangeChildrenPos = new Button("Change Children Position", evt -> {
@@ -306,9 +320,9 @@ public class MainView extends VerticalLayout {
          mxGraph.executeStackLayout("nodeContainer", true, 10);
      });
      
-     add(new HorizontalLayout(btnToggleVisivilityNodesLager, btnToggleVisivilityEdgeLager, btnShowObjectsData, btnToggleLayoutNodePrint));
-     add(new HorizontalLayout(btnCustomStyle1Node, btnCustomStyle2Node, btnRemoveContainerNode));
-     add(new HorizontalLayout(btnZoomIn, btnZoomOut, btnSetScale, btnChangeChildrenPos));
+     add(new HorizontalLayout(btnToggleVisivilityNodesLager, btnToggleVisivilityEdgeLager, btnExecLayoutNodeContainer, btnShowObjectsData));
+     add(new HorizontalLayout(btnCustomStyle1Node, btnCustomStyle2Node, btnRemoveContainerNode, btnChangeChildrenPos));
+     add(new HorizontalLayout(btnZoomIn, btnZoomOut, btnAlignBottom, btnAlignCenter, btnRemoveOverlayButton, btnRemoveOverlayButtons));
 
     }
     
