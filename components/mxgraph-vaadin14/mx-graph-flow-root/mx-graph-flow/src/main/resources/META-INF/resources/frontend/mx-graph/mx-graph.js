@@ -224,8 +224,10 @@ class MxGraph extends PolymerElement {
             //this.graph.setConnectable(true);
             this.graph.setAllowDanglingEdges(false);
 
-            mxGraph.prototype.cellsEditable = this.cellsEditable;
-            mxGraph.prototype.cellsMovable = this.cellsMovable;
+            this.graph.setCellsEditable(this.cellsEditable);
+            //mxGraph.prototype.cellsEditable = this.cellsEditable;
+            this.graph.setCellsMovable(this.cellsMovable);
+            //mxGraph.prototype.cellsMovable = this.cellsMovable;
             
             // Set scale
             this.graph.view.setScale(this.scale);
@@ -389,8 +391,10 @@ class MxGraph extends PolymerElement {
             });
                         
             //allow custom logic when unselect cells
-            var cellUnselected = mxGraphSelectionModel.prototype.cellRemoved;
-            mxGraphSelectionModel.prototype.cellRemoved = function (cell) {
+            var cellUnselected = this.graph.getSelectionModel().cellRemoved;
+            //var cellUnselected = mxGraphSelectionModel.prototype.cellRemoved;
+            //mxGraphSelectionModel.prototype.cellRemoved = function (cell) {
+            this.graph.getSelectionModel().cellRemoved = function (cell) {
                 cellUnselected.apply(this, arguments);
                 if (cell) {
                     _this.fireCellUnselected(cell.id, _this.graph.getModel().isVertex(cell));
@@ -404,8 +408,10 @@ class MxGraph extends PolymerElement {
             }
 
             //allow custom logic when select cells
-            var cellSelected = mxGraphSelectionModel.prototype.cellAdded;
-            mxGraphSelectionModel.prototype.cellAdded = function (cell) {              
+            var cellSelected = this.graph.getSelectionModel().cellAdded;
+            //var cellSelected = mxGraphSelectionModel.prototype.cellAdded;
+            //mxGraphSelectionModel.prototype.cellAdded = function (cell) {
+            this.graph.getSelectionModel().cellAdded = function (cell) {
                 if (cell) {
                     var cellObject = _this.getCellObjectById(cell.id);
                     if (cellObject && !cellObject.selectable)
@@ -424,8 +430,10 @@ class MxGraph extends PolymerElement {
 //          return true;
 //        }
             //Handler for labelChanged events fired when some label was edited.
-            var labelChanged = mxGraph.prototype.labelChanged;
-            mxGraph.prototype.labelChanged = function (cell, value, evt) {
+            var labelChanged = this.graph.labelChanged;
+//            var labelChanged = mxGraph.prototype.labelChanged;
+//            mxGraph.prototype.labelChanged = function (cell, value, evt) {
+            this.graph.labelChanged = function (cell, value, evt) {
                 labelChanged.apply(this, arguments);
                 // if the cell is an edge label
                 if (_this.graph.getModel().isEdge(cell.parent)) {
@@ -763,7 +771,8 @@ class MxGraph extends PolymerElement {
     
     setCellsMovable(value) {
         if (this.graph) {
-            mxGraph.prototype.cellsMovable = value;
+            this.graph.setCellsMovable(value);
+            //mxGraph.prototype.cellsMovable = value;
         }
     }
     

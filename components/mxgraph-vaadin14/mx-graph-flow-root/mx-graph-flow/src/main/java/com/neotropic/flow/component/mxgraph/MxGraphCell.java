@@ -556,9 +556,7 @@ public class MxGraphCell extends Component implements HasComponents {
            return false;
         if (!(obj instanceof MxGraphCell)) 
              return false;
-
-        return ((MxGraphNode) obj).getUuid().equals(getUuid());
-             
+        return ((MxGraphCell) obj).getUuid().equals(getUuid());
     }
 
     @Override
