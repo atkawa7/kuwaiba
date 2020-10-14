@@ -49,16 +49,16 @@ public class PortNode extends MxBusinessObjectNode {
     public static final String SPECIAL_ATTR_ENDPOINT_A = "endpointA"; //NOI18N
     public static final String SPECIAL_ATTR_ENDPOINT_B = "endpointB"; //NOI18N
     
-    private LinkedHashMap<String, String> portStyle = new LinkedHashMap();
+    private LinkedHashMap<String, String> PORT_STYLE = new LinkedHashMap();
     {
-        portStyle.put(MxConstants.STYLE_SHAPE, MxConstants.SHAPE_RECTANGLE);
-        portStyle.put(MxConstants.STYLE_ALIGN, MxConstants.ALIGN_LEFT);
-        portStyle.put(MxConstants.STYLE_SPACING_LEFT, String.valueOf(SPACING_LEFT));
-        portStyle.put(MxConstants.STYLE_FONTCOLOR, FONT_COLOR);
-        portStyle.put(MxConstants.STYLE_FONTSIZE, String.valueOf(FONT_SIZE));
-        portStyle.put(MxConstants.STYLE_FILLCOLOR, MxConstants.NONE);
-        portStyle.put(MxConstants.STYLE_STROKECOLOR, MxConstants.NONE);
-        portStyle.put(MxConstants.STYLE_FOLDABLE, FOLDABLE);
+        PORT_STYLE.put(MxConstants.STYLE_SHAPE, MxConstants.SHAPE_RECTANGLE);
+        PORT_STYLE.put(MxConstants.STYLE_ALIGN, MxConstants.ALIGN_LEFT);
+        PORT_STYLE.put(MxConstants.STYLE_SPACING_LEFT, String.valueOf(SPACING_LEFT));
+        PORT_STYLE.put(MxConstants.STYLE_FONTCOLOR, FONT_COLOR);
+        PORT_STYLE.put(MxConstants.STYLE_FONTSIZE, String.valueOf(FONT_SIZE));
+        PORT_STYLE.put(MxConstants.STYLE_FILLCOLOR, MxConstants.NONE);
+        PORT_STYLE.put(MxConstants.STYLE_STROKECOLOR, MxConstants.NONE);
+        PORT_STYLE.put(MxConstants.STYLE_FOLDABLE, FOLDABLE);
     }
     /**
      * Reference to the Application Entity Manager
@@ -81,6 +81,10 @@ public class PortNode extends MxBusinessObjectNode {
      */
     private BusinessObjectLight fiber;
     
+    private LinkedHashMap<String, String> portStyle = new LinkedHashMap(PORT_STYLE);
+    
+    private final MxGraph graph;
+    
     public PortNode(BusinessObjectLight port, MxGraph graph,
         ApplicationEntityManager aem, BusinessEntityManager bem, MetadataEntityManager mem, TranslationService ts) {
         
@@ -89,6 +93,7 @@ public class PortNode extends MxBusinessObjectNode {
         this.bem = bem;
         this.mem = mem;
         this.ts = ts;
+        this.graph = graph;
         setFiber();
         setGeometry(0, 0, WIDTH, HEIGHT);
         setRawStyle(portStyle);
@@ -110,6 +115,18 @@ public class PortNode extends MxBusinessObjectNode {
             event.unregisterListener();
         });
         graph.addNode(this);
+    }
+    public void releasePort() {
+        graph.setCellsLocked(false);
+        portStyle = new LinkedHashMap(PORT_STYLE);
+        portStyle.put(MxConstants.STYLE_FILLCOLOR, getPortColor());
+        setRawStyle(portStyle);
+        overrideStyle();
+        removeOverlayButtons();
+        setIsSelectable(true);
+        setConnectable(true);
+        setFiber(null);
+        graph.setCellsLocked(true);
     }
     public void spliceFiber() {
         if (fiber == null)

@@ -20,6 +20,7 @@ import com.neotropic.flow.component.mxgraph.MxGraphEdge;
 import com.neotropic.flow.component.mxgraph.MxGraphNode;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -103,13 +104,9 @@ public class PhysicalPathView extends AbstractDetailedView<BusinessObjectLight, 
     public void setComponentHeight(String componentHeight) {
         this.componentHeight = componentHeight;
     }
-     
-    public PhysicalPathView(BusinessObjectLight businessObject) {
-        super(businessObject);
-    }
     
     public PhysicalPathView(BusinessObjectLight businessObject, BusinessEntityManager bem, ApplicationEntityManager aem, MetadataEntityManager mem, TranslationService ts, PhysicalConnectionsService physicalConnectionsService) {
-        this(businessObject);
+        super(businessObject);
         this.bem = bem;  
         this.aem = aem;
         this.mem = mem;
@@ -159,12 +156,14 @@ public class PhysicalPathView extends AbstractDetailedView<BusinessObjectLight, 
                        
             int widthPort = 60, heightPort = 50, startY = 10, widthExternalPort= 30, heightExternalPort=30;
             VerticalLayout lytGraph = new VerticalLayout();
+            lytGraph.setSizeFull();
             mxGraph = new MxGraphCanvas(componentWidth, componentHeight);
             mxGraph.getMxGraph().setHasOutline(true);
             mxGraph.getMxGraph().setMaxHeight("400px");
             mxGraph.getMxGraph().setOutlineHeight("100px");
             mxGraph.getMxGraph().setOverflow("scroll");
             lytGraph.add(mxGraph.getMxGraph());
+            lytGraph.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, lytGraph);
             
             MxGraphNode mainBox = new MxGraphNode();
             mainBox.setUuid("main");

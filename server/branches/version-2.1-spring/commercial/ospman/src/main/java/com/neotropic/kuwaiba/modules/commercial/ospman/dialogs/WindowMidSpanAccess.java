@@ -65,11 +65,12 @@ public class WindowMidSpanAccess extends Dialog implements ActionCompletedListen
     private final BusinessEntityManager bem;
     private final MetadataEntityManager mem;
     private final TranslationService ts;
+    private final PhysicalConnectionsService physicalConnectionsService;
     private final NewBusinessObjectVisualAction newBusinessObjectVisualAction;
     
     public WindowMidSpanAccess(BusinessObjectLight node,
         ApplicationEntityManager aem, BusinessEntityManager bem, MetadataEntityManager mem, TranslationService ts, 
-        NewBusinessObjectVisualAction newBusinessObjectVisualAction) {
+        NewBusinessObjectVisualAction newBusinessObjectVisualAction, PhysicalConnectionsService physicalConnectionsService) {
         
         super();
         Objects.requireNonNull(node);
@@ -80,6 +81,7 @@ public class WindowMidSpanAccess extends Dialog implements ActionCompletedListen
         this.bem = bem;
         this.mem = mem;
         this.ts = ts;
+        this.physicalConnectionsService = physicalConnectionsService;
         this.newBusinessObjectVisualAction = newBusinessObjectVisualAction;
         
         setCloseOnEsc(false);
@@ -251,7 +253,7 @@ public class WindowMidSpanAccess extends Dialog implements ActionCompletedListen
     
     private void updateOspLocationView() {
         divLocation.removeAll();
-        OspLocationView ospLocationView = new OspLocationView(node, cmbCable.getValue(), cmbDevice.getValue(), aem, bem, mem, ts);
+        OspLocationView ospLocationView = new OspLocationView(node, cmbCable.getValue(), cmbDevice.getValue(), aem, bem, mem, ts, physicalConnectionsService);
         divLocation.add(ospLocationView);
     }
         

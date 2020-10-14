@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
@@ -39,6 +39,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectEdge;
 import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectNode;
 import org.neotropic.util.visual.dialog.ConfirmDialog;
@@ -65,10 +66,10 @@ public class OspLocationView extends MxGraph {
      */
     private final BusinessEntityManager bem;
     /**
-     * Rereference to the Metadata Entity Manager
+     * Reference to the Metadata Entity Manager
      */
     private final MetadataEntityManager mem;
-    
+        
     private final String FOLDABLE = String.valueOf(0);
     
     private final LinkedHashMap<String, String> EDGE_STYLE = new LinkedHashMap();
@@ -82,10 +83,11 @@ public class OspLocationView extends MxGraph {
     private final String IN = "in"; //NOI18N
     private final String OUT = "out"; //NOI18N
     private final BusinessObjectLight location;
-    private final Consumer<BusinessObjectLight> consumerReleaseFiber;
+    private final BiConsumer<List<BusinessObjectLight>, String> consumerReleaseFiber;
     
     public OspLocationView(BusinessObjectLight location, BusinessObjectLight cable, BusinessObjectLight device,
-        ApplicationEntityManager aem, BusinessEntityManager bem, MetadataEntityManager mem, TranslationService ts) {
+        ApplicationEntityManager aem, BusinessEntityManager bem, MetadataEntityManager mem, TranslationService ts,
+        PhysicalConnectionsService physicalConnectionsService) {
         super();
         Objects.requireNonNull(cable);
         Objects.requireNonNull(device);
@@ -99,10 +101,37 @@ public class OspLocationView extends MxGraph {
         setSizeFull();
         setConnectable(true);
         setTooltips(true);
-        consumerReleaseFiber = (fiber) -> {
-            new SimpleNotification("", "").open();
+        consumerReleaseFiber = (portFiber, specialAttrName) -> {
+            ConfirmDialog confirmDialog = new ConfirmDialog(ts, 
+                ts.getTranslatedString("module.general.labels.confirmation"),
+                new Label(ts.getTranslatedString("module.ospman.port-tools.tool.release-port.confirm")), 
+                ts.getTranslatedString("module.general.messages.ok"), () -> {
+                BusinessObjectLight port = portFiber.get(0);
+                BusinessObjectLight fiber = portFiber.get(1);
+                    
+                MxBusinessObjectNode portNode = findNode(port);
+                MxBusinessObjectEdge fiberEdge = findEdge(fiber);
+                if (portNode instanceof PortNode && fiberEdge instanceof FiberEdge) {
+                    removeEdge(fiberEdge);
+                    ((PortNode) portNode).releasePort();
+                    
+                    MxBusinessObjectNode fiberNode = findNode(fiber);
+                    if (fiberNode instanceof FiberNode)
+                        ((FiberNode) fiberNode).releaseFiber();
+                    try {
+                        bem.releaseSpecialRelationship(
+                            port.getClassName(), port.getId(),
+                            fiber.getId(), specialAttrName);
+                    } catch (InventoryException ex) {
+                        new SimpleNotification(
+                            ts.getTranslatedString("module.general.messages.error"), 
+                            ex.getLocalizedMessage()
+                        ).open();
+                    }
+                }
+            });
+            confirmDialog.open();
         };
-        
         MxTree<BusinessObjectLight> tree = new MxTree<>(
             this, 
             () -> Arrays.asList(cable), 
@@ -194,7 +223,7 @@ public class OspLocationView extends MxGraph {
             null, null, null, null, 
             port -> {
                 PortNode portNode = new PortNode(port, this, aem, bem, mem, ts);
-                portNode.addRightClickCellListener(event -> new WindowPortTools(port, bem, ts, consumerReleaseFiber).open());
+                portNode.addRightClickCellListener(event -> new WindowPortTools(port, aem, bem, mem, ts, physicalConnectionsService, consumerReleaseFiber).open());
                 return portNode;
             },  
             null
@@ -299,7 +328,6 @@ public class OspLocationView extends MxGraph {
                         event.getSource().setTooltip(fiber.getName());
                         setCellsLocked(true);
                     });
-////                    fiberEdge.addRightClickCellListener(event -> new SimpleNotification("","").open());
                     addEdge(fiberEdge);
                 } else {
                     this.setCellsLocked(true);
@@ -403,7 +431,6 @@ public class OspLocationView extends MxGraph {
                         fiberEvent.unregisterListener();
                     });
                     addEdge(fiberEdge);
-////                    fiberEdge.addRightClickCellListener(event -> new SimpleNotification("", "").open());
                     fiberNode.spliceFiber();
                     portNode.setFiber(fiberObject);
                 } catch (InventoryException ex) {

@@ -88,12 +88,8 @@ public class PhysicalTreeView extends AbstractDetailedView<BusinessObjectLight, 
      */
     private PhysicalConnectionsService physicalConnectionsService;
     
-    public PhysicalTreeView(BusinessObjectLight businessObject) {
+    public PhysicalTreeView(BusinessObjectLight businessObject, BusinessEntityManager bem, ApplicationEntityManager aem, MetadataEntityManager mem, TranslationService ts, PhysicalConnectionsService physicalConnectionsService) {
         super(businessObject);
-    }
-    
-     public PhysicalTreeView(BusinessObjectLight businessObject, BusinessEntityManager bem, ApplicationEntityManager aem, MetadataEntityManager mem, TranslationService ts, PhysicalConnectionsService physicalConnectionsService) {
-        this(businessObject);
         this.bem = bem;  
         this.aem = aem;
         this.mem = mem;
@@ -153,6 +149,7 @@ public class PhysicalTreeView extends AbstractDetailedView<BusinessObjectLight, 
              
             int widthPort = 25, heightPort = 25, startY = 30, widthExternalPort= 30, heightExternalPort=30;
             HorizontalLayout lytGraph = new HorizontalLayout();
+            lytGraph.setSizeFull();
             lytGraph.setSpacing(false);
             lytGraph.setMargin(false);
             mxGraph = new MxGraphCanvas("100%", "100%");
@@ -164,7 +161,8 @@ public class PhysicalTreeView extends AbstractDetailedView<BusinessObjectLight, 
             
             VerticalLayout lytActions = new VerticalLayout(btnZoomIn, btnZoomOut);
             lytActions.setPadding(false);
-            lytGraph.add(lytActions, mxGraph.getMxGraph());
+            lytGraph.add(lytActions);
+            lytGraph.addAndExpand(mxGraph.getMxGraph());
             MxGraphNode mainBox = new MxGraphNode();
             mainBox.setUuid("main");
             mainBox.setFillColor("none");

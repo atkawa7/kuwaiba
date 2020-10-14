@@ -21,6 +21,7 @@ import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.neotropic.flow.component.mxgraph.MxGraphEdge;
 import com.neotropic.flow.component.mxgraph.MxGraphNode;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,15 +33,15 @@ import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntity
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObject;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractDetailedView;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewEdge;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewNode;
 import org.neotropic.kuwaiba.core.apis.integration.views.ViewEventListener;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
+import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 
 /**
@@ -70,13 +71,9 @@ public class SpliceBoxView extends AbstractDetailedView<BusinessObjectLight, Ver
      */
     private MetadataEntityManager mem;
     
-    public SpliceBoxView(BusinessObjectLight businessObject) {
-        super(businessObject);
-    }
-    
     public SpliceBoxView(BusinessObjectLight businessObject, BusinessEntityManager bem, ApplicationEntityManager aem, 
             MetadataEntityManager mem, TranslationService ts) {
-        this(businessObject);
+        super(businessObject);
         this.bem = bem;  
         this.aem = aem;
         this.mem = mem;
@@ -124,12 +121,14 @@ public class SpliceBoxView extends AbstractDetailedView<BusinessObjectLight, Ver
         if (businessObject != null) {
             int widthPort = 60, heightPort = 50, startY = 30, widthExternalPort= 30, heightExternalPort=30;
             VerticalLayout lytGraph = new VerticalLayout();
+            lytGraph.setSizeFull();
             mxGraph = new MxGraph();
             mxGraph.setWidth("600px");
             mxGraph.setHeight("100%");
             mxGraph.setOverflow("scroll");
             mxGraph.setGrid("img/grid.gif");
             lytGraph.add(mxGraph);
+            lytGraph.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, mxGraph);
             MxGraphNode mainBox = new MxGraphNode();
             mainBox.setUuid("main");
             mainBox.setLabel(businessObject.getName());
@@ -181,12 +180,21 @@ public class SpliceBoxView extends AbstractDetailedView<BusinessObjectLight, Ver
                         inLinks = bem.getSpecialAttribute(inPort.getClassName(), inPort.getId(), "endpointB");
                     
                     if (inLinks != null && inLinks.size() > 0) {
-                         BusinessObject theWholeLink = bem.getObject(inLinks.get(0).getClassName(), inLinks.get(0).getId());
-                            String hexColor;
-                            if (theWholeLink.getAttributes().containsKey(Constants.PROPERTY_COLOR) && theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR) != null)
-                               hexColor =  (String) theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR);//String.format("#%06x", (0xFFFFFF & (int) theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR)));
-                            else
-                                hexColor = "steelblue";  //default color
+                        BusinessObject theWholeLink = bem.getObject(inLinks.get(0).getClassName(), inLinks.get(0).getId());
+                        String hexColor = null;
+                        if (theWholeLink.getAttributes().containsKey(Constants.PROPERTY_COLOR)) {
+                            hexColor = theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR) instanceof String ? (String) theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR) : null;
+                            if (hexColor != null) {
+                                ClassMetadata classInLink = mem.getClass(inLinks.get(0).getClassName());
+                                String colorType = classInLink.getType(Constants.PROPERTY_COLOR);
+                                if(mem.isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, colorType)) {
+                                    BusinessObject colorObject = aem.getListTypeItem(colorType, hexColor);
+                                    hexColor = colorObject.getAttributes().containsKey("value") && colorObject.getAttributes().get("value") instanceof String ? (String) colorObject.getAttributes().get("value") : null; //NOI18N
+                                }
+                            }
+                        }
+                        if (hexColor == null)
+                            hexColor = "steelblue";  //default color
                         nodeIn.setFillColor(hexColor);
                         startIn = new MxGraphNode();
                         startIn.setUuid("s" + i);
@@ -220,11 +228,20 @@ public class SpliceBoxView extends AbstractDetailedView<BusinessObjectLight, Ver
                             outLinks = bem.getSpecialAttribute(outPort.getClassName(), outPort.getId(), "endpointB");
                         }
                         if (outLinks != null && outLinks.size() > 0) {
-                            BusinessObject theWholeLink = bem.getObject(outLinks.get(0).getClassName(), outLinks.get(0).getId());
-                            String hexColor;
-                            if (theWholeLink.getAttributes().containsKey(Constants.PROPERTY_COLOR) && theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR) != null)
-                                hexColor =  (String) theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR);//String.format("#%06x", (0xFFFFFF & (int) theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR)));
-                            else
+                            BusinessObject theWholeLink = bem.getObject(inLinks.get(0).getClassName(), inLinks.get(0).getId());
+                            String hexColor = null;
+                            if (theWholeLink.getAttributes().containsKey(Constants.PROPERTY_COLOR)) {
+                                hexColor = theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR) instanceof String ? (String) theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR) : null;
+                                if (hexColor != null) {
+                                    ClassMetadata classInLink = mem.getClass(inLinks.get(0).getClassName());
+                                    String colorType = classInLink.getType(Constants.PROPERTY_COLOR);
+                                    if(mem.isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, colorType)) {
+                                        BusinessObject colorObject = aem.getListTypeItem(colorType, hexColor);
+                                        hexColor = colorObject.getAttributes().containsKey("value") && colorObject.getAttributes().get("value") instanceof String ? (String) colorObject.getAttributes().get("value") : null; //NOI18N
+                                    }
+                                }
+                            }
+                            if (hexColor == null)
                                 hexColor = "steelblue";  //default color
                             nodeOut.setFillColor(hexColor);
                             endOut = new MxGraphNode();
@@ -251,7 +268,7 @@ public class SpliceBoxView extends AbstractDetailedView<BusinessObjectLight, Ver
                     i++;
                 }
 
-            } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
+            } catch (InventoryException ex) {
                 Logger.getLogger(SpliceBoxView.class.getName()).log(Level.SEVERE, null, ex);
             }
             return lytGraph;

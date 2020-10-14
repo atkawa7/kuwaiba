@@ -20,6 +20,7 @@ import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.neotropic.flow.component.mxgraph.MxGraphEdge;
 import com.neotropic.flow.component.mxgraph.MxGraphNode;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -68,14 +69,10 @@ public class FiberSplitterView extends AbstractDetailedView<BusinessObjectLight,
      * Reference to the Metadata Entity Manager
      */
     private MetadataEntityManager mem;
-     
-    public FiberSplitterView(BusinessObjectLight businessObject) {
-        super(businessObject);
-    }
     
     public FiberSplitterView(BusinessObjectLight businessObject, BusinessEntityManager bem, ApplicationEntityManager aem, 
             MetadataEntityManager mem, TranslationService ts) {
-        this(businessObject);
+        super(businessObject);
         this.bem = bem;  
         this.aem = aem;
         this.mem = mem;
@@ -123,12 +120,14 @@ public class FiberSplitterView extends AbstractDetailedView<BusinessObjectLight,
         if (businessObject != null) {
             int widthPort = 50, heightPort = 40, widthExternalPort= 30, heightExternalPort=30, startY = 30, widthMain = 240, spacingGroup = 20;
             VerticalLayout lytGraph = new VerticalLayout();
+            lytGraph.setSizeFull();
             mxGraph = new MxGraph();
             mxGraph.setWidth("670px");
             mxGraph.setHeight("100%");
             mxGraph.setGrid("img/grid.gif");
             mxGraph.setOverflow("scroll");
             lytGraph.add(mxGraph);
+            lytGraph.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, mxGraph);
             MxGraphNode mainBox = new MxGraphNode();
             mainBox.setUuid("main");
             mainBox.setLabel(businessObject.getName());

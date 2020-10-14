@@ -15,14 +15,18 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman.dialogs;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.treegrid.TreeGrid;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewNode;
@@ -31,11 +35,14 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualAction;
 import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.visualization.views.FiberSplitterView;
+import org.neotropic.kuwaiba.visualization.views.PhysicalPathView;
 import org.neotropic.kuwaiba.visualization.views.PhysicalTreeView;
 import org.neotropic.kuwaiba.visualization.views.SpliceBoxView;
 import org.neotropic.util.visual.notifications.SimpleNotification;
@@ -50,22 +57,16 @@ public class WindowNode extends Dialog {
         TranslationService ts, PhysicalConnectionsService physicalConnectionsService, 
         NewBusinessObjectVisualAction newBusinessObjectVisualAction) {
         
+        
         HorizontalLayout lytNodeTools = new HorizontalLayout();
         lytNodeTools.add(new Button(ts.getTranslatedString("module.ospman.mid-span-access.title"), new Icon(VaadinIcon.ROAD_BRANCH), event -> {
             close();
-            new WindowMidSpanAccess(node.getIdentifier(), aem, bem, mem, ts, newBusinessObjectVisualAction).open();
+            new WindowMidSpanAccess(node.getIdentifier(), aem, bem, mem, ts, newBusinessObjectVisualAction, physicalConnectionsService).open();
         }));
-        lytNodeTools.add(new Button(ts.getTranslatedString("module.ospman.view-node.tool.connect"), new Icon(VaadinIcon.PLUG), 
-            event -> {
-                close();
-                WindowPhysicalConnections dialog = new WindowPhysicalConnections(node.getIdentifier(), ts, bem);
-                dialog.open();
-            }
-        ));
         lytNodeTools.add(new Button(ts.getTranslatedString("module.ospman.view-node.tool.view-content"), new Icon(VaadinIcon.EYE),
             event -> {
                 close();
-                new ViewDialog(node.getIdentifier(), aem, bem, mem, ts, physicalConnectionsService).open();
+                new ViewsWindow(node.getIdentifier(), aem, bem, mem, ts, physicalConnectionsService).open();
             }
         ));
         lytNodeTools.add(new Button(ts.getTranslatedString("module.ospman.view-node.tool.remove"), new Icon(VaadinIcon.TRASH), 
@@ -76,62 +77,112 @@ public class WindowNode extends Dialog {
         add(lytNodeTools);
     }
     
-    private class ViewDialog extends Dialog {
-        public ViewDialog(BusinessObjectLight businessObject, 
+    private class ViewsWindow extends Dialog {
+        
+        public ViewsWindow(BusinessObjectLight businessObject, 
             ApplicationEntityManager aem, BusinessEntityManager bem, MetadataEntityManager mem,
             TranslationService ts, PhysicalConnectionsService physicalConnectionsService) {
-            
+            super();
+            setWidth("70%");
             try {
-                Grid<BusinessObjectLight> tblContents = new Grid<>();
-                tblContents.setItems(bem.getObjectChildren(
-                    businessObject.getClassName(), businessObject.getId(), -1));
-                tblContents.addColumn(BusinessObjectLight::getName).setHeader(
+                TreeGrid<BusinessObjectLight> tblContents = new TreeGrid<>();
+                tblContents.setItems(
+                    bem.getObjectChildren(businessObject.getClassName(), businessObject.getId(), -1),
+                    item -> {
+                        try {
+                            return bem.getChildrenOfClassLightRecursive(
+                                item.getId(), item.getClassName(), 
+                                Constants.CLASS_GENERICPHYSICALPORT, -1
+                            );
+                        } catch (InventoryException ex) {
+                            return Collections.EMPTY_LIST;
+                        }
+                    }
+                );
+                tblContents.addHierarchyColumn(BusinessObjectLight::getName).setHeader(
                     ts.getTranslatedString("module.ospman.containers.name"));
                 tblContents.addColumn(BusinessObjectLight::getClassName).setHeader(
                     ts.getTranslatedString("module.ospman.containers.type"));
-                tblContents.addItemClickListener((ev) -> {
-                    switch (ev.getItem().getClassName()) {
-                            case "SpliceBox": //NOI18N
-                                close();
-                                Dialog wdwSpliceBoxDetailedView = new Dialog();
-                                SpliceBoxView viewSpliceBox = new SpliceBoxView(ev.getItem(), bem, aem, mem, ts);
+                tblContents.addComponentColumn(item -> {
+                    try {
+                        if (mem.isSubclassOf("SpliceBox", item.getClassName())) { //NOI18N
+                            return new Button(ts.getTranslatedString("module.ospman.views.splice-box"), event -> {
                                 try {
-                                    wdwSpliceBoxDetailedView.add(viewSpliceBox.getAsComponent());
-                                } catch(InvalidArgumentException ex) {
-                                    wdwSpliceBoxDetailedView.add(new Label(ex.getLocalizedMessage()));
-                                }
-                                wdwSpliceBoxDetailedView.open();
-                                break;
-                            case "FiberSplitter": //NOI18N
-                                close();
-                                Dialog wdwSplitterDetailedView = new Dialog();
-                                FiberSplitterView viewSplitter = new FiberSplitterView(ev.getItem(), bem, aem, mem, ts);
-                                try {
-                                    wdwSplitterDetailedView.add(viewSplitter.getAsComponent());
-                                } catch(InvalidArgumentException ex) {
-                                    wdwSplitterDetailedView.add(new Label(ex.getLocalizedMessage()));
-                                }
-                                wdwSplitterDetailedView.open();
-                                break;
-                            case "OpticalPort": //NOI18N
-                                close();
-                                Dialog wdwPhysicalView = new Dialog();
-                                //PhysicalPathView physicalPathView = new PhysicalPathView(businessObject, bem, aem, mem, ts, physicalConnectionsService);
-                                PhysicalTreeView physicalTreeView = new PhysicalTreeView(businessObject, bem, aem, mem, ts, physicalConnectionsService);
-                                try {
-                                    wdwPhysicalView.add(physicalTreeView.getAsComponent());
+                                    SpliceBoxView spliceBoxView = new SpliceBoxView(item, bem, aem, mem, ts);
+                                    new ViewWindow(
+                                        ts.getTranslatedString("module.ospman.views.splice-box"), 
+                                        spliceBoxView.getAsComponent(), 
+                                        ts
+                                    ).open();
                                 } catch (InvalidArgumentException ex) {
-                                    wdwPhysicalView.add(new Label(ex.getLocalizedMessage()));
+                                    new SimpleNotification(
+                                            ts.getTranslatedString("module.general.messages.error"),
+                                            ex.getLocalizedMessage()
+                                    ).open();
                                 }
-                                wdwPhysicalView.open();
-                                break;
-                            default:
-                                new SimpleNotification(ts.getTranslatedString("module.general.messages.information"), 
-                                        ts.getTranslatedString("module.ospman.messages.no-detailed-view")).open();
+                            });
+                        } else if (mem.isSubclassOf("FiberSplitter", item.getClassName())) { //NOI18N
+                            return new Button(ts.getTranslatedString("module.ospman.views.splitter"), event -> {
+                                try {
+                                    FiberSplitterView fiberSplitterView = new FiberSplitterView(item, bem, aem, mem, ts);
+                                    new ViewWindow(
+                                        ts.getTranslatedString("module.ospman.views.splitter"), 
+                                        fiberSplitterView.getAsComponent(), 
+                                        ts
+                                    ).open();
+                                } catch (InvalidArgumentException ex) {
+                                    new SimpleNotification(
+                                            ts.getTranslatedString("module.general.messages.error"),
+                                            ex.getLocalizedMessage()
+                                    ).open();
+                                }
+                            });
+                        } else if (mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALPORT, item.getClassName())) {
+                            return new HorizontalLayout(
+                                    new Button(ts.getTranslatedString("module.ospman.views.physical-path"), event -> {
+                                        try {
+                                            PhysicalPathView physicalPathView = new PhysicalPathView(item, bem, aem, mem, ts, physicalConnectionsService);
+                                            new ViewWindow(
+                                                ts.getTranslatedString("module.ospman.views.physical-path"), 
+                                                physicalPathView.getAsComponent(), 
+                                                ts
+                                            ).open();
+                                        } catch (InvalidArgumentException ex) {
+                                            new SimpleNotification(
+                                                    ts.getTranslatedString("module.general.messages.error"),
+                                                    ex.getLocalizedMessage()
+                                            ).open();
+                                        }
+                                    }),
+                                    new Button(ts.getTranslatedString("module.ospman.views.physical-tree"), event -> {
+                                        try {
+                                            PhysicalTreeView physicalTreeView = new PhysicalTreeView(item, bem, aem, mem, ts, physicalConnectionsService);
+                                            new ViewWindow(
+                                                ts.getTranslatedString("module.ospman.views.physical-tree"), 
+                                                physicalTreeView.getAsComponent(), 
+                                                ts
+                                            ).open();
+                                        } catch (InvalidArgumentException ex) {
+                                            new SimpleNotification(
+                                                    ts.getTranslatedString("module.general.messages.error"),
+                                                    ex.getLocalizedMessage()
+                                            ).open();
+                                        }
+                                    })
+                            );
                         }
-                });
+                    } catch (MetadataObjectNotFoundException ex) {
+                        new SimpleNotification(
+                                ts.getTranslatedString("module.general.messages.error"),
+                                ex.getLocalizedMessage()
+                        ).open();
+                    }
+                    return new Div();
+                }).setHeader(ts.getTranslatedString("module.ospman.views.views"));
                 
-                VerticalLayout lytContent = new VerticalLayout(tblContents);
+                Button btnClose = new Button(ts.getTranslatedString("module.general.messages.close"), event -> this.close());
+                VerticalLayout lytContent = new VerticalLayout(tblContents, btnClose);
+                lytContent.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, btnClose);
                 lytContent.addClassName("widgets-layout-dialog-list");
                 add(lytContent);
             } catch(InventoryException ex) {
@@ -140,6 +191,25 @@ public class WindowNode extends Dialog {
                 add(new Label(ts.getTranslatedString("module.general.messages.unexpected-error")));
                 Logger.getLogger(WindowNode.class.toString()).log(Level.SEVERE, ex.getLocalizedMessage());
             }
+        }
+    }
+    
+    private class ViewWindow extends Dialog {
+        public ViewWindow(String title, Component viewComponent, TranslationService ts) {
+            super();
+            setWidth("80%");
+            setHeight("80%");
+            Label lblTitle = new Label(title);
+            Button btnClose = new Button(ts.getTranslatedString("module.general.messages.close"), event -> this.close());
+            VerticalLayout lytView = new VerticalLayout(lblTitle, viewComponent, btnClose);
+            lytView.setSizeFull();
+            lytView.setSpacing(false);
+            lytView.setPadding(false);
+            lytView.setMargin(false);
+            lytView.setHorizontalComponentAlignment(
+                FlexComponent.Alignment.CENTER, lblTitle, viewComponent, btnClose
+            );
+            add(lytView);
         }
     }
 }

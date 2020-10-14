@@ -74,7 +74,7 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
     public static final int INFO_SPACING = 6;
     public static final String INFO_IMG = "img/info-circle-o.svg"; //NOI18N
     public static final String COLOR_LIGHT_GREY = "LightGrey"; //NOI18N
-    private final String COLOR_WHITE = "White"; //NOI18N
+    public static final String COLOR_WHITE = "White"; //NOI18N
     private final int HEIGHT = 16;
     private final int FIBER_WIDTH = 100;
     private final int CUT_WIDTH = 4;
@@ -211,7 +211,9 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
                     String colorId = (String) fiberObject.getAttributes().get(ATTR_COLOR);
                     if (colorId != null) {
                         BusinessObject colorObject = aem.getListTypeItem(fiberClass.getType(ATTR_COLOR), colorId);
-                        return (String) colorObject.getAttributes().get(ATTR_VALUE);
+                        String color = (String) colorObject.getAttributes().get(ATTR_VALUE);
+                        if (color != null)
+                            return color.toLowerCase().equals(COLOR_WHITE.toLowerCase()) ? COLOR_LIGHT_GREY : color;
                     }
                 }
             }
@@ -236,6 +238,14 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
         }
         public String getStrokeColor() {
             return FIBER_STYLE.get(MxConstants.STYLE_STROKECOLOR);
+        }
+        public void releaseFiber() {
+            LinkedHashMap<String, String> fiberStyle = new LinkedHashMap(FIBER_STYLE);
+            setRawStyle(fiberStyle); 
+            overrideStyle();            
+            removeOverlayButtons();
+            setIsSelectable(true);
+            setConnectable(true);
         }
         protected void spliceFiber() {
             LinkedHashMap<String, String> fiberStyle = new LinkedHashMap(FIBER_STYLE);
