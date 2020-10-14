@@ -340,7 +340,8 @@ class MxGraphCell extends PolymerElement {
             ';movable=' + this.movable +   
               ';strokeColor=' + this.strokeColor  + 
               ';fontSize=' + this.fontSize  + 
-            ';fontColor=' + this.fontColor
+            ';fontColor=' + this.fontColor +
+            ';foldable=0'
             + imageStyle) ;
 //    t1 = performance.now();
 //    console.log("part 2 after insert vertex " + (t1 - t0) + " milliseconds.");

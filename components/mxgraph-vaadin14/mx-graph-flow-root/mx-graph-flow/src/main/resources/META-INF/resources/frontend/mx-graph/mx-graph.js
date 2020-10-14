@@ -567,7 +567,7 @@ class MxGraph extends PolymerElement {
     getCellObjectById(idCell) {
         var cell;
         this.cells.forEach(function (cellObject) {
-            if (cellObject.cell.id == idCell) {
+            if (cellObject && cellObject.cell && cellObject.cell.id == idCell) {
                 cell = cellObject;
             }
 
