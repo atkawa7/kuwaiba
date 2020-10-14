@@ -204,21 +204,18 @@ public class MxGraph extends Component implements HasComponents, HasStyle, HasSi
         return addListener(MxGraphEdgeCompleteEvent.class, edgeCompleteEvent);
     }
     
-    public void addCell(MxGraphCell mxGraphCell) {
-        getElement().appendChild(mxGraphCell.getElement());    
+    public void addCell(MxGraphCell mxGraphCell) {  
         add(mxGraphCell);
     }
    
     public void addNode(MxGraphNode graphNode) {
         nodes.add(graphNode);
-        add(graphNode);
-//        getElement().appendChild(graphNode.getElement());     
+        add(graphNode);  
     }
     
     public void addEdge(MxGraphEdge graphEdge) {
         edges.add(graphEdge);
-        add(graphEdge);
-//        getElement().appendChild(graphEdge.getElement());     
+        add(graphEdge); 
     }
     public void addLayer(MxGraphLayer graphLayer) {
         layers.add(graphLayer);

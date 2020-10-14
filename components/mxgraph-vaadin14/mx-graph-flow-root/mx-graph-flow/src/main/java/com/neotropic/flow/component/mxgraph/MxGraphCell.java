@@ -186,7 +186,7 @@ public class MxGraphCell extends Component implements HasComponents {
     public void setLabel(String prop) {
         getElement().setProperty(PROPERTY_LABEL, prop);
     }
-    
+    @Synchronize(property = "width", value = "width-changed")
     public double getWidth() {
         return getElement().getProperty(PROPERTY_WIDTH,0d);
     }
@@ -194,7 +194,7 @@ public class MxGraphCell extends Component implements HasComponents {
     public void setWidth(double prop) {
         getElement().setProperty(PROPERTY_WIDTH, prop);
     }
-    
+    @Synchronize(property = "height", value = "height-changed")
     public double getHeight() {
         return getElement().getProperty(PROPERTY_HEIGHT,0d);
     }
@@ -271,7 +271,7 @@ public class MxGraphCell extends Component implements HasComponents {
     public void setPerimeterSpacing(int prop) {
         getElement().setProperty(PROPERTY_PERIMETER_SPACING, prop);
     }
-    
+    @Synchronize(property = "fontSize", value = "font-size-changed")
     public int getFontSize() {
         return getElement().getProperty(MxConstants.STYLE_FONTSIZE, 0);
     }
@@ -279,7 +279,7 @@ public class MxGraphCell extends Component implements HasComponents {
     public void setFontSize(double prop) {
         getElement().setProperty(MxConstants.STYLE_FONTSIZE, prop);
     }
-    
+    @Synchronize(property = "strokeColor", value = "stroke-color-changed")
     public String getStrokeColor() {
         return getElement().getProperty(PROPERTY_STROKE_COLOR);
     }
@@ -288,6 +288,7 @@ public class MxGraphCell extends Component implements HasComponents {
         getElement().setProperty(PROPERTY_STROKE_COLOR, prop);
     }
     
+    @Synchronize(property = "fontColor", value = "font-color-changed")
     public String getFontColor() {
         return getElement().getProperty(PROPERTY_FONT_COLOR);
     }
@@ -359,6 +360,10 @@ public class MxGraphCell extends Component implements HasComponents {
             setVerticalLabelPosition(MxConstants.ALIGN_CENTER);    
             setVerticalAlign(MxConstants.ALIGN_MIDDLE);
         }
+    }
+    
+    public String getShape() {
+        return getElement().getProperty(MxConstants.STYLE_SHAPE);
     }
     
     public void setVerticalLabelPosition(String prop) {
@@ -523,6 +528,14 @@ public class MxGraphCell extends Component implements HasComponents {
     
     public void addOverlayButton(String buttonId, String label , String urlImage,String hAlign, String vAlign, int offsetX, int offsetY, int width, int height) {
        getElement().callJsFunction("addOverlayButton", buttonId , label, urlImage,hAlign, vAlign, offsetX, offsetY, width, height);
+    }
+    
+    public void removeOverlayButton(String buttonId) {
+        getElement().callJsFunction("removeOverlayButton", buttonId);
+    }
+    
+    public void removeOverlayButtons() {
+        getElement().callJsFunction("removeOverlayButtons");
     }
     
     public void setChildrenCellPosition(String cellId, int position) {

@@ -121,11 +121,13 @@ class MxGraphCell extends PolymerElement {
       },
       width: {
         type: Number,
-        value: 80
+        value: 80,
+        notify: true
       },
       height: {
         type: Number,
-        value: 30
+        value: 30,
+         notify: true,   
       },
       x: {         // position on the x axis.
         type: Number,
@@ -141,11 +143,13 @@ class MxGraphCell extends PolymerElement {
       },
       strokeWidth: {
         type: Number,
-        value: 1
+        value: 1,
+        notify: true
       },
       labelBackgroundColor: {
         type: String,
-        value: 'white'
+        value: 'white',
+        notify: true
       },
       perimeterSpacing: {
         type: Number,
@@ -153,19 +157,23 @@ class MxGraphCell extends PolymerElement {
       },
       strokeColor: {
         type: String,
-        value: 'black'
+        value: 'black',
+        notify: true
       },
       fontColor : {
         type: String,
-        value: 'black'
+        value: 'black',
+        notify: true
       },
       dashed: {
         type: String,
-        value: '0'
+        value: '0',
+        notify: true
       },
       curved: {
         type: String,
-        value: '0'
+        value: '0',
+        notify: true
       },
       cellParent: {
         type: String,
@@ -188,11 +196,13 @@ class MxGraphCell extends PolymerElement {
       },
       fillColor: {
         type: String,
-        value: null
+        value: null,
+        notify: true
       },
       shape: {
           type: String,
-          value: 'rectangle'
+          value: 'rectangle',
+          notify: true
       },
       verticalLabelPosition: {
           type: String,
@@ -217,7 +227,8 @@ class MxGraphCell extends PolymerElement {
       },
       fontSize : {
           type: Number,
-          value : 10
+          value : 10,
+        notify: true
       },
       selectable: {
           type: Boolean,
@@ -499,6 +510,7 @@ addOverlayButton(buttonId,  label, urlImage, hAlign, vAlign, offsetX, offsetY, w
         if (this.cell) {
 	var overlay = new mxCellOverlay(new mxImage(urlImage, width, height), label, hAlign, vAlign);
 	overlay.cursor = 'hand';
+        overlay.id = buttonId;
         if (!offsetX)
             offsetX = 0;
         if (!offsetY)
@@ -512,6 +524,28 @@ addOverlayButton(buttonId,  label, urlImage, hAlign, vAlign, offsetX, offsetY, w
 	this.graph.addCellOverlay(this.cell, overlay);
     }
    };
+   
+removeOverlayButton(buttonId) {
+       if (this.graph) {
+           var overlays = this.graph.getCellOverlays(this.cell);
+           if (overlays) {
+             var theOverlay;
+             overlays.forEach(function (overlay) {
+             if (overlay.id === buttonId)
+                 theOverlay = overlay;
+             });
+             if (theOverlay) {
+                this.graph.removeCellOverlay(this.cell, theOverlay);
+             }         
+           }
+       }
+   }
+   
+removeOverlayButtons() {
+       if (this.graph) {         
+           this.graph.removeCellOverlays(this.cell);
+       }
+   }
     
 setChildrenCellPosition(cellId, position) {
     if (this.cell && position >= 0 && this.cell.children.length > position) {

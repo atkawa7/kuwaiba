@@ -332,26 +332,59 @@ class MxGraph extends PolymerElement {
                             var cellObject = _this.getCellObjectById(cellMoved.id);
 
                             if (cellObject) {
-
                                 cellObject.x += dx;
                                 cellObject.y += dy;
-
                             }
-
                             console.log("VERTEX WITH ID " + cellMoved.id + " MOVED")
 
                         } else if (_this.graph.getModel().isEdge(cellMoved)) {
 
                             var cellObject = _this.getCellObjectById(cellMoved.id);
-
                             if (cellObject) {
-
-                                cellObject.points = JSON.stringify(cellMoved.geometry.points);
-
+                                cellObject.points = JSON.stringify(cellMoved.geometry.points);                               
                             }
                         }
                     });
 
+                }
+            });
+                  
+            // Called when any cell is resized
+            this.graph.addListener(mxEvent.CELLS_RESIZED, function (sender, evt) {
+                var cellsResized = evt.getProperty('cells');
+                console.log("CELLS_RESIZED")
+                console.log(evt)
+
+                if (cellsResized) {
+                    cellsResized.forEach(function (cellResized) {
+                        if (_this.graph.getModel().isVertex(cellResized)) {
+
+                            var cellObject = _this.getCellObjectById(cellResized.id);
+                            if (cellObject) {
+                                cellObject.width = cellResized.geometry.width;
+                                cellObject.height = cellResized.geometry.height;
+                                cellObject.x = cellResized.geometry.x;
+                                cellObject.y = cellResized.geometry.y;
+                            }
+                            console.log("VERTEX WITH ID " + cellResized.id + " Resized")
+                        } 
+                    });
+
+                }
+            });
+            
+            // Called when any cell label is changed
+            this.graph.addListener(mxEvent.LABEL_CHANGED, function (sender, evt) {
+                var cell = evt.getProperty('cell');
+                console.log("LABEL_CHANGED")
+                console.log(evt)
+
+                if (cell) {
+                    var cellObject = _this.getCellObjectById(cell.id);
+                    if (cellObject) {
+                        cellObject.label = cell.value;
+                    }
+                    console.log("CELL LABEL WITH ID " + cell.id + " CHANGED")
                 }
             });
                         
