@@ -386,16 +386,12 @@ class MxGraphCell extends PolymerElement {
            // if there are control points, add them to the edge
           if(this.points && this.points.length > 0) {
             var arrayPoints = JSON.parse(this.points); 
-            if (! this.cell.geometry.points ) {
-              this.cell.geometry.points = [];
-            } 
-            arrayPoints.forEach(function(point)  {
-                        
-              this.cell.geometry.points.push(new mxPoint(point.x,point.y));
-                     
-            },this)
             
-
+            var anArray = [];
+            arrayPoints.forEach(function(point)  {
+              anArray.push(new mxPoint(point.x,point.y));
+            },this);
+            this.cell.geometry.points = anArray;            
           }    
 
           var _this = this
@@ -729,6 +725,14 @@ cellLabelChanged() {
   _connectCell(terminal, source) {
       if (this.graph && this.cell && terminal)
           this.graph.connectCell(this.cell, terminal, source);
+  }
+  /**
+   * Moves the cell to the front or back
+   * @param {boolean} back - Specifies if the cell should be moved to back.
+   */
+  orderCell(back) {
+      if (this.graph && this.cell)
+          this.graph.orderCells(back, [this.cell]);
   }
 }
 

@@ -549,6 +549,13 @@ public class MxGraphCell extends Component implements HasComponents {
     public void setGeometry() {
         getElement().executeJs("var geo = this.graph.getCellGeometry(this.cell); geo.width = 0; geo.height = 0; this.graph.getModel().setGeometry(this.cell, geo);");
     }
+    /**
+     * Moves the cell to the front or back
+     * @param back Specifies if the cell should be moved to back.
+     */
+    public void orderCell(boolean back) {
+        getElement().executeJs("this.orderCell($0)", back);
+    }
     
     @Override
     public boolean equals(Object obj) {
