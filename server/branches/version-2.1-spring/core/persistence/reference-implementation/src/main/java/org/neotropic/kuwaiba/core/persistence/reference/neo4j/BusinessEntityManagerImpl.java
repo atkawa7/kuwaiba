@@ -362,9 +362,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         if (classMetadata.isAbstract())
             throw new OperationNotPermittedException("Can not create objects of abstract classes");
         
-        if (!mem.getPossibleSpecialChildren(parentClassName).contains(classMetadata))
-            throw new OperationNotPermittedException(String.format("An instance of class %s can't be created as child of %s", className, parentClassName == null ? Constants.NODE_DUMMYROOT : parentClassName));
-        
         try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             Node classNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, className);
             
@@ -596,9 +593,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         if (myClass == null)
             throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
         
-        if (!mem.getPossibleSpecialChildren(parentClassName).contains(myClass))
-            throw new OperationNotPermittedException(String.format("An instance of class %s can't be created as child of %s", className, parentClassName == null ? Constants.NODE_DUMMYROOT : parentClassName));
-
         if (!mem.isSubclassOf(Constants.CLASS_INVENTORYOBJECT, className))
             throw new OperationNotPermittedException(String.format("Class %s is not an business class", className));
         

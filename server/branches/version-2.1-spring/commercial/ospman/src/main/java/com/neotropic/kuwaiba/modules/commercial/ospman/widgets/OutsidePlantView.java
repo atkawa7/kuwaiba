@@ -91,6 +91,8 @@ import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.views.util.UtilHtml;
 import com.neotropic.kuwaiba.modules.commercial.ospman.provider.MapProvider;
 import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualAction;
+import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectEdge;
+import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectNode;
 
 /**
  * Graphically displays Outside Plant elements on a map.
@@ -911,7 +913,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                             overlay.getProjectionFromLatLngToDivPixel(position, point -> {
                                 double x = (point.getX() - sw.getX()) / scale;
                                 double y = (point.getY() - ne.getY()) / scale;
-                                MxGraphCell vertex = new MxGraphCell();
+                                MxBusinessObjectNode vertex = new MxBusinessObjectNode(businessObject);
                                 vertex.setUuid(businessObject.getId());
                                 vertex.setLabel(businessObject.getName());
                                 vertex.setGeometry((int) x, (int) y, 24, 24);
@@ -928,8 +930,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                                     if (viewTools)
                                         openNodeDialog(newNode);
                                 });
-                                graph.addCell(vertex);
-                                graph.refreshGraph();
+                                graph.addNode(vertex);
                                 
                                 mapNodeVertex.put(newNode, vertex);
                                 mapVertexNode.put(vertex, newNode);
@@ -974,31 +975,26 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                                 new Point(sw.getX(), sw.getY()), 
                                 new Point(ne.getX(), ne.getY()), 
                                 scale, () -> {
-                                    JsonArray points = Json.createArray();
-                                    for (int i = 0; i < newPoints.size(); i++) {
-                                        JsonObject point = Json.createObject();
-                                        point.put("x", newPoints.get(i).getX()); //NOI18N
-                                        point.put("y", newPoints.get(i).getY()); //NOI18N
-                                        points.set(i, point);
-                                    }
-                                    points.remove(points.length() - 1);
-                                    points.remove(0);
-                                    
-                                    MxGraphCell edge = new MxGraphCell();
+                                    newPoints.remove(newPoints.size() - 1);
+                                    newPoints.remove(0);
+                                    MxBusinessObjectEdge edge = new MxBusinessObjectEdge(businessObject);
+                                    edge.setPoints(newPoints);
                                     edge.setUuid(businessObject.getId());
                                     edge.setLabel(businessObject.getName());
-                                    edge.setIsEdge(true);
                                     edge.setStrokeWidth(1);
                                     edge.setStrokeColor(properties.getProperty(PropertyNames.COLOR));
                                     edge.setSource(sourceBusinessObject.getId());
                                     edge.setTarget(targetBusinessObject.getId());
-                                    edge.setPoints(points.toJson());
+                                    
                                     edge.addRightClickCellListener(event -> {
                                         if (viewTools)
                                             openEdgeDialog(newEdge);
                                     });
-                                    graph.addCell(edge);
-                                    graph.refreshGraph();
+                                    edge.addCellAddedListener(event -> {
+                                        edge.orderCell(true);
+                                        event.unregisterListener();
+                                    });
+                                    graph.addEdge(edge);
                                     mapEdgeVertex.put(newEdge, edge);
                                     mapVertexEdge.put(edge, newEdge);
                             });

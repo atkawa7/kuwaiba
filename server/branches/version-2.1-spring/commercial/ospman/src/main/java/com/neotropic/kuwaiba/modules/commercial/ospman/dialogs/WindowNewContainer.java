@@ -25,6 +25,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import java.util.Objects;
 import java.util.function.Consumer;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
@@ -33,6 +34,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermittedException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
@@ -45,10 +47,40 @@ import org.neotropic.util.visual.notifications.SimpleNotification;
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class WindowNewContainer extends Dialog {
+    /**
+     * Source Location
+     */
+    public final BusinessObjectLight source;
+    /**
+     * Target Location
+     */
+    public final BusinessObjectLight target;
+    /**
+     * Reference to the Business Entity Manager
+     */
+    public final BusinessEntityManager bem;
+    /**
+     * Reference to the Translation Service
+     */
+    public final TranslationService ts;
     
     public WindowNewContainer(BusinessObjectLight source, BusinessObjectLight target, 
         TranslationService ts, ApplicationEntityManager aem, BusinessEntityManager bem, MetadataEntityManager mem, 
         PhysicalConnectionsService physicalConnectionService, Consumer<BusinessObjectLight> containerConsumer) {
+        Objects.requireNonNull(source);
+        Objects.requireNonNull(target);
+        Objects.requireNonNull(ts);
+        Objects.requireNonNull(aem);
+        Objects.requireNonNull(bem);
+        Objects.requireNonNull(mem);
+        Objects.requireNonNull(physicalConnectionService);
+        Objects.requireNonNull(containerConsumer);
+        
+        this.source = source;
+        this.target = target;
+        this.bem = bem;
+        this.ts = ts;
+        
         setCloseOnEsc(false);
         setCloseOnOutsideClick(false);
         try {
@@ -108,6 +140,7 @@ public class WindowNewContainer extends Dialog {
                         ts.getTranslatedString("module.general.messages.error"), 
                         ex.getMessage()
                     ).open();
+                    close();
                 }
             });
             btnOk.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -122,6 +155,24 @@ public class WindowNewContainer extends Dialog {
         } catch (InventoryException ex) {
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"), 
+                ex.getLocalizedMessage()
+            ).open();
+        }
+    }
+
+    @Override
+    public void open() {
+        try {
+            BusinessObjectLight parent = bem.getCommonParent(
+                source.getClassName(), source.getId(), 
+                target.getClassName(), target.getId()
+            );
+            if (parent == null || Constants.DUMMY_ROOT.equals(parent.getName()))
+                throw new OperationNotPermittedException(ts.getTranslatedString("module.physcon.messages.no-common-parent"));
+            super.open();
+        } catch (InventoryException ex) {
+            new SimpleNotification(
+                ts.getTranslatedString("module.general.messages.error"),
                 ex.getLocalizedMessage()
             ).open();
         }

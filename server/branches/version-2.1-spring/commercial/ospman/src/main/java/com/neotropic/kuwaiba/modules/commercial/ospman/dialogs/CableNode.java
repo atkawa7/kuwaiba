@@ -30,6 +30,8 @@ import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectNode;
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class CableNode extends MxBusinessObjectNode {
+    private final String FONT_COLOR = "Black";
+    private final String FONT_SIZE = String.valueOf(11);
     private final String STROKE_COLOR = "#A9A9A9";
     private final int WIDTH = 16;
     private final int HEIGHT = WIDTH;
@@ -41,6 +43,10 @@ public class CableNode extends MxBusinessObjectNode {
         COLOR_STYLE.put(MxConstants.STYLE_FILLCOLOR, MxConstants.NONE);
         COLOR_STYLE.put(MxConstants.STYLE_STROKECOLOR, STROKE_COLOR);
         COLOR_STYLE.put(MxConstants.STYLE_FOLDABLE, FOLDABLE);
+        COLOR_STYLE.put(MxConstants.STYLE_LABEL_POSITION, MxConstants.ALIGN_MIDDLE);
+        COLOR_STYLE.put(MxConstants.STYLE_VERTICAL_LABEL_POSITION, MxConstants.ALIGN_BOTTOM);
+        COLOR_STYLE.put(MxConstants.STYLE_FONTCOLOR, FONT_COLOR);
+        COLOR_STYLE.put(MxConstants.STYLE_FONTSIZE, FONT_SIZE);
     }
     
     public CableNode(MxGraph graph, BusinessObjectLight businessObject, String color) {
@@ -48,6 +54,7 @@ public class CableNode extends MxBusinessObjectNode {
         Objects.requireNonNull(graph);
         Objects.requireNonNull(businessObject);
         setGeometry(0, 0, WIDTH, HEIGHT);
+        setLabel(businessObject.getName());
         LinkedHashMap<String, String> rawStyle = new LinkedHashMap(COLOR_STYLE);
         if (color != null)
             rawStyle.put(MxConstants.STYLE_FILLCOLOR, color);

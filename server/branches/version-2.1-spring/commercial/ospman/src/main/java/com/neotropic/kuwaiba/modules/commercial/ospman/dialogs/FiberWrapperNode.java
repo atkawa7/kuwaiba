@@ -61,6 +61,8 @@ import org.neotropic.util.visual.notifications.SimpleNotification;
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class FiberWrapperNode extends MxBusinessObjectNode {
+    private final String FONT_COLOR = "Black";
+    private final String FONT_SIZE = String.valueOf(11);
     public static final String ATTR_ENDPOINT_A = "endpointA"; //NOI18N
     public static final String ATTR_ENDPOINT_B = "endpointB"; //NOI18N
     public static final int FIBER_HEIGHT = 6;
@@ -88,7 +90,12 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
         NODE_STYLE.put(MxConstants.STYLE_FOLDABLE, FOLDABLE);
     }
     private final LinkedHashMap<String, String> FIBER_STYLE = new LinkedHashMap(NODE_STYLE);
-    
+    {
+        FIBER_STYLE.put(MxConstants.STYLE_LABEL_POSITION, MxConstants.ALIGN_MIDDLE);
+        FIBER_STYLE.put(MxConstants.STYLE_VERTICAL_LABEL_POSITION, MxConstants.ALIGN_BOTTOM);
+        FIBER_STYLE.put(MxConstants.STYLE_FONTCOLOR, FONT_COLOR);
+        FIBER_STYLE.put(MxConstants.STYLE_FONTSIZE, FONT_SIZE);
+    }
     private final MxGraph graph;
     private String color;
     private FiberNode fiberNode;
@@ -288,6 +295,7 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
     private class FiberObjectNode extends FiberNode {
         public FiberObjectNode(BusinessObjectLight fiberObject) {
             super(fiberObject);
+            setLabel(fiberObject.getName());
             setGeometry(0, 0, FIBER_WIDTH, FIBER_HEIGHT);
             addCellAddedListener(event -> {
                 graph.setCellsLocked(false);
@@ -313,6 +321,7 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
     private class FiberCutObjectNode extends FiberNode {
         public FiberCutObjectNode(BusinessObjectLight fiberObject) {
             super(fiberObject);
+            setLabel(fiberObject.getName());
             setGeometry(0, 0, FIBER_WIDTH, FIBER_HEIGHT);
             addCellAddedListener(event -> {
                 graph.setCellsLocked(false);

@@ -60,6 +60,7 @@ public class PhysicalConnectionsService {
     /**
      * The Translation Service instance.
      */
+    @Autowired
     private TranslationService ts;
     /**
      * The Persistence Service instance.
