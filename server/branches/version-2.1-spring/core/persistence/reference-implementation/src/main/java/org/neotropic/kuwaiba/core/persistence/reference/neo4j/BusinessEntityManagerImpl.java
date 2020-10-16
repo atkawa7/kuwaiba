@@ -70,6 +70,7 @@ import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.helpers.collection.Iterators;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.core.persistence.reference.extras.caching.CacheManager;
 import org.neotropic.kuwaiba.core.persistence.reference.neo4j.util.ObjectGraphMappingService;
 import org.neotropic.kuwaiba.core.persistence.reference.neo4j.util.Util;
@@ -141,6 +142,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     @Autowired
     private ObjectGraphMappingService ogmService;
+    
+    @Autowired
+    private TranslationService ts;
     /**
      * Main constructor. It receives references to the other entity managers
      */
@@ -986,7 +990,49 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             }
         }
     }
-
+    
+    @Override
+    public boolean isParent(String parentClass, String parentId, String childClass, String childId) throws InvalidArgumentException {
+        if (parentClass == null)
+            throw new InvalidArgumentException(ts.getTranslatedString("apis.persistence.bem.messages.is-parent.parent-class"));
+        if (parentId == null)
+            throw new InvalidArgumentException(ts.getTranslatedString("apis.persistence.bem.messages.is-parent.parent-id"));
+        if (childClass == null)
+            throw new InvalidArgumentException(ts.getTranslatedString("apis.persistence.bem.messages.is-parent.child-class"));
+        if (childId == null)
+            throw new InvalidArgumentException(ts.getTranslatedString("apis.persistence.bem.messages.is-parent.child-id"));
+        
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+            final String paramParentClass = "parentClass"; //NOI18N
+            final String paramParentId = "parentId"; //NOI18N
+            final String paramChildClass = "childId"; //NOI18N
+            final String paramChildId = "childClass"; //NOI18N
+            final String columnIsParent = "isParent"; //NOI18N
+            
+            StringBuilder queryBuilder = new StringBuilder();
+            queryBuilder.append("MATCH").append("\n"); //NOI18N
+            queryBuilder.append(String.format("(parentClass:classes {name: $%s})", paramParentClass)); //NOI18N
+            queryBuilder.append("<-[:INSTANCE_OF]-"); //NOI18N
+            queryBuilder.append(String.format("(parent:inventoryObjects {_uuid: $%s})", paramParentId)); //NOI18N
+            queryBuilder.append("<-[:CHILD_OF|:CHILD_OF_SPECIAL*]-"); //NOI18N
+            queryBuilder.append(String.format("(child:inventoryObjects {_uuid: $%s})", paramChildId)); //NOI18N
+            queryBuilder.append("-[:INSTANCE_OF]->"); //NOI18N
+            queryBuilder.append(String.format("(childClass:classes {name: $%s})", paramChildClass)).append("\n"); //NOI18N
+            queryBuilder.append("RETURN").append("\n"); //NOI18N
+            queryBuilder.append(String .format("count(DISTINCT parent) = 1 AS %s", columnIsParent)); //NOI18N
+            
+            HashMap<String, Object> parameters = new HashMap();
+            parameters.put(paramParentClass, parentClass);
+            parameters.put(paramParentId, parentId);
+            parameters.put(paramChildClass, childClass);
+            parameters.put(paramChildId, childId);
+            
+            Result queryResult = connectionManager.getConnectionHandler().execute(queryBuilder.toString(), parameters);
+            
+            return queryResult.hasNext() ? (boolean) queryResult.next().get(columnIsParent) : false;
+        }
+    }
+    
     @Override
     public void deleteObjects(HashMap<String, List<String>> objects, boolean releaseRelationships)
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException {

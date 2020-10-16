@@ -28,7 +28,6 @@ import com.neotropic.kuwaiba.modules.commercial.ospman.provider.GeoBounds;
 import com.neotropic.kuwaiba.modules.commercial.ospman.provider.MapOverlay;
 import com.neotropic.flow.component.mxgraph.MxConstants;
 import com.neotropic.flow.component.mxgraph.MxGraph;
-import com.neotropic.flow.component.mxgraph.MxGraphCell;
 import com.neotropic.flow.component.mxgraph.Point;
 import com.neotropic.kuwaiba.modules.commercial.ospman.persistence.OutsidePlantService;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.WindowDeleteOspView;
@@ -171,18 +170,18 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
      */
     private final NewBusinessObjectVisualAction newBusinessObjectVisualAction;
     
-    private final List<MapOverlay> overlays;
+    private final List<MapOverlay> overlays = new ArrayList();
     private final HashMap<String, MapOverlay> overlayIds = new HashMap();
     
-    private final HashMap<MapOverlay, MxGraph> mapOverlays;
-    private final HashMap<MxGraph, Boolean> graphLoaded;
+    private final HashMap<MapOverlay, MxGraph> mapOverlays = new LinkedHashMap();
+    private final HashMap<MxGraph, Boolean> graphLoaded = new HashMap();
     private Div component;
     private MapOverlay selectedOverlay;
     
-    private final HashMap<BusinessObjectViewNode, MxGraphCell> mapNodeVertex = new HashMap();
-    private final HashMap<MxGraphCell, BusinessObjectViewNode> mapVertexNode = new HashMap();
-    private final HashMap<BusinessObjectViewEdge, MxGraphCell> mapEdgeVertex = new HashMap();
-    private final HashMap<MxGraphCell, BusinessObjectViewEdge> mapVertexEdge = new HashMap();
+    private final HashMap<BusinessObjectViewNode, MxBusinessObjectNode> mapNodeVertex = new HashMap();
+    private final HashMap<MxBusinessObjectNode, BusinessObjectViewNode> mapVertexNode = new HashMap();
+    private final HashMap<BusinessObjectViewEdge, MxBusinessObjectEdge> mapEdgeVertex = new HashMap();
+    private final HashMap<MxBusinessObjectEdge, BusinessObjectViewEdge> mapVertexEdge = new HashMap();
     
     private HelperEdgeDraw polylineDrawHelper;
     private HelperContainerSelector wiresHelper;
@@ -192,10 +191,15 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         Overlay,
         Marker,
         Polyline,
-        Wire
+        Wire,
+        NewView,
+        OpenView,
+        SaveView,
+        DeleteView
     }
     final private HashMap<Tab, Tool> tabs = new HashMap();
     final private HashMap<Tool, Tab> tools = new HashMap();
+    private Tabs componentTabs;
     private Tab selectedTab;
     private final boolean viewTools;
     
@@ -216,9 +220,6 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         this.physicalConnectionsService = physicalConnectionsService;
         this.newBusinessObjectVisualAction = newBusinessObjectVisualAction;
         this.viewTools = viewTools;
-        this.overlays = new ArrayList();
-        this.mapOverlays = new LinkedHashMap();
-        this.graphLoaded = new HashMap();
     }
     
     @Override
@@ -594,11 +595,12 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                     map = (MapProvider) mapClass.getDeclaredConstructor().newInstance();
                     map.createComponent(aem, ts);
                     if (map.getComponent() != null) {
-                        component = new Div();
-                        component.setClassName("ospman-div");
-                        
+                        if (component == null) {
+                            component = new Div();
+                            component.setClassName("ospman-div");
+                        }
                         if (viewTools) {
-                            Tabs componentTabs = new Tabs();
+                            componentTabs = new Tabs();
                             componentTabs.addClassName("ospman-tabs");
                             componentTabs.setAutoselect(false);
 
@@ -650,12 +652,20 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                             tabs.put(tabMarker, Tool.Marker);
                             tabs.put(tabPolyline, Tool.Polyline);
                             tabs.put(tabWire, Tool.Wire);
+                            tabs.put(tabNewOspView, Tool.NewView);
+                            tabs.put(tabOpenOspView, Tool.OpenView);
+                            tabs.put(tabSaveOspView, Tool.SaveView);
+                            tabs.put(tabDeleteOspView, Tool.DeleteView);
 
                             tools.put(Tool.Hand, tabHand);
                             tools.put(Tool.Overlay, tabOverlay);
                             tools.put(Tool.Marker, tabMarker);
                             tools.put(Tool.Polyline, tabPolyline);
                             tools.put(Tool.Wire, tabWire);
+                            tools.put(Tool.NewView, tabNewOspView);
+                            tools.put(Tool.OpenView, tabOpenOspView);
+                            tools.put(Tool.SaveView, tabSaveOspView);
+                            tools.put(Tool.DeleteView, tabDeleteOspView);
 
                             componentTabs.addSelectedChangeListener(selectedChangeEvent -> {
                                 if (polylineDrawHelper != null)
@@ -666,24 +676,43 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                                 selectedTab = selectedChangeEvent.getSelectedTab();
                                 if (selectedTab != null) {
                                     if (selectedTab.equals(tabNewOspView)) {
+                                        buildEmptyView();
+                                        try {
+                                            getAsComponent();
+                                        } catch (InvalidArgumentException ex) {
+                                            new SimpleNotification(
+                                                ts.getTranslatedString("module.general.messages.error"), 
+                                                ex.getLocalizedMessage()
+                                            ).open();
+                                        }
                                         disableEnableTabs(
-                                            Arrays.asList(tabMarker, tabPolyline),
-                                            Arrays.asList(tabSaveOspView, tabDeleteOspView, tabHand, tabOverlay, tabWire)
+                                            Arrays.asList(tools.get(Tool.Marker), tools.get(Tool.Polyline)),
+                                            Arrays.asList(tools.get(Tool.SaveView), tools.get(Tool.DeleteView), tools.get(Tool.Hand), tools.get(Tool.Overlay), tools.get(Tool.Wire))
                                         );
-                                        componentTabs.setSelectedTab(tabHand);
+                                        componentTabs.setSelectedTab(tools.get(Tool.Hand));
                                         map.getBounds(bounds -> 
-                                            addOverlay(bounds, componentTabs, tabHand, tabMarker, tabPolyline)
+                                            addOverlay(bounds, componentTabs, tools.get(Tool.Hand), tools.get(Tool.Marker), tools.get(Tool.Polyline))
                                         );
                                     } else if (selectedTab.equals(tabOpenOspView)) {
-                                        disableEnableTabs(null, Arrays.asList(
-                                            tabSaveOspView, tabDeleteOspView, tabHand, tabOverlay, tabMarker, tabPolyline, tabWire
-                                        ));
-                                        componentTabs.setSelectedTab(selectedChangeEvent.getPreviousTab());
+                                        //componentTabs.setSelectedTab(selectedChangeEvent.getPreviousTab());
                                         DialogOspViews ospViewDialog = new DialogOspViews(tabOpenOspView, aem, ts, viewObject -> {
+                                            buildEmptyView();
                                             getProperties().put(Constants.PROPERTY_ID, viewObject.getId());
                                             getProperties().put(Constants.PROPERTY_NAME, viewObject.getName());
                                             getProperties().put(Constants.PROPERTY_DESCRIPTION, viewObject.getDescription());
+                                            try {
+                                                getAsComponent();
+                                            } catch (InvalidArgumentException ex) {
+                                                new SimpleNotification(
+                                                    ts.getTranslatedString("module.general.messages.error"), 
+                                                    ex.getLocalizedMessage()
+                                                ).open();
+                                            }
                                             buildWithSavedView(viewObject.getStructure());
+                                            
+                                            disableEnableTabs(null, Arrays.asList(
+                                                tools.get(Tool.SaveView), tools.get(Tool.DeleteView), tools.get(Tool.Hand), tools.get(Tool.Overlay), tools.get(Tool.Marker), tools.get(Tool.Polyline), tools.get(Tool.Wire)
+                                            ));
                                         });
                                         componentTabs.add(ospViewDialog);
                                         ospViewDialog.open();
@@ -872,6 +901,27 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
             this.viewMap = new ViewMap();
         else
             this.viewMap.clear();
+        
+        map = null;
+        overlays.clear();
+        overlayIds.clear();
+        mapOverlays.clear();
+        graphLoaded.clear();
+        selectedOverlay = null;
+        mapNodeVertex.clear();
+        mapVertexNode.clear();
+        mapEdgeVertex.clear();
+        mapVertexEdge.clear();
+        polylineDrawHelper = null;
+        wiresHelper = null;
+        tabs.clear();
+        tools.clear();
+        componentTabs = null;
+        selectedTab = null;
+        
+        if (component != null)
+            component.removeAll();
+        
         this.getProperties().put(Constants.PROPERTY_ID, -1);
         this.getProperties().put(Constants.PROPERTY_NAME, "");
         this.getProperties().put(Constants.PROPERTY_DESCRIPTION, "");
@@ -1096,7 +1146,9 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
     }
     
     private void deleteOspView() {
-        WindowDeleteOspView confirmDialog = new WindowDeleteOspView((long) this.getProperties().get(Constants.PROPERTY_ID), ts, aem, null);
+        WindowDeleteOspView confirmDialog = new WindowDeleteOspView((long) this.getProperties().get(Constants.PROPERTY_ID), ts, aem, 
+            () -> componentTabs.setSelectedTab(tools.get(Tool.NewView))
+        );
         confirmDialog.open();
     }
     

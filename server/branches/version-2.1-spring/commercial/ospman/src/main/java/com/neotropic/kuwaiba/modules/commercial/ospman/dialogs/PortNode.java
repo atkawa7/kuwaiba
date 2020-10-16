@@ -85,6 +85,8 @@ public class PortNode extends MxBusinessObjectNode {
     
     private final MxGraph graph;
     
+    private String fiberColor;
+    
     public PortNode(BusinessObjectLight port, MxGraph graph,
         ApplicationEntityManager aem, BusinessEntityManager bem, MetadataEntityManager mem, TranslationService ts) {
         
@@ -116,6 +118,9 @@ public class PortNode extends MxBusinessObjectNode {
         });
         graph.addNode(this);
     }
+    public String getFiberColor() {
+        return fiberColor;
+    }
     public void releasePort() {
         graph.setCellsLocked(false);
         portStyle = new LinkedHashMap(PORT_STYLE);
@@ -133,7 +138,7 @@ public class PortNode extends MxBusinessObjectNode {
             return;
         setIsSelectable(false);
         setConnectable(false);
-        String fiberColor = FiberWrapperNode.getColor(getFiber(), aem, bem, mem, ts);
+        fiberColor = FiberWrapperNode.getColor(getFiber(), aem, bem, mem, ts);
         portStyle.put(MxConstants.STYLE_FILLCOLOR, getPortColor());
         portStyle.put(MxConstants.STYLE_STROKECOLOR, fiberColor != null ? fiberColor : FiberWrapperNode.COLOR_LIGHT_GREY);
         portStyle.put(MxConstants.STYLE_FILL_OPACITY, String.valueOf(FiberWrapperNode.FIBER_SPLICED_FILL_OPACITY));

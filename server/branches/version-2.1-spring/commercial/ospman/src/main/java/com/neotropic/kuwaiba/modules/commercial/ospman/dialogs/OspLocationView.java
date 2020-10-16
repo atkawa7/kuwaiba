@@ -69,8 +69,6 @@ public class OspLocationView extends MxGraph {
      * Reference to the Metadata Entity Manager
      */
     private final MetadataEntityManager mem;
-        
-    private final String FOLDABLE = String.valueOf(0);
     
     private final LinkedHashMap<String, String> EDGE_STYLE = new LinkedHashMap();
     {
@@ -78,7 +76,6 @@ public class OspLocationView extends MxGraph {
         EDGE_STYLE.put(MxConstants.STYLE_ENDARROW, MxConstants.NONE);
         EDGE_STYLE.put(MxConstants.STYLE_STARTARROW, MxConstants.NONE);
         EDGE_STYLE.put(MxConstants.STYLE_EDGE, MxConstants.EDGESTYLE_ENTITY_RELATION);
-        EDGE_STYLE.put(MxConstants.STYLE_FOLDABLE, FOLDABLE);
     }
     private final String IN = "in"; //NOI18N
     private final String OUT = "out"; //NOI18N
@@ -153,7 +150,7 @@ public class OspLocationView extends MxGraph {
                     if (mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALCONTAINER, node.getClassName()))
                         return new CableNode(graph, node, color);
                     if (mem.isSubclassOf(Constants.CLASS_GENERICPHYSICALLINK, node.getClassName())) {
-                        FiberWrapperNode fiberNode = new FiberWrapperNode(graph, node, null, null, color, bem, ts);
+                        FiberWrapperNode fiberNode = new FiberWrapperNode(graph, node, color, bem, ts);
                         fiberNode.addFiberRightClickListener(event -> cutFiber(fiberNode));
                         return fiberNode;
                     }
@@ -252,8 +249,7 @@ public class OspLocationView extends MxGraph {
                 MxBusinessObjectEdge fiberEdge = (MxBusinessObjectEdge) edge;
                 if (fiberEdge.getBusinessObject() != null) {
                     try {
-                        List<BusinessObjectLight> parents = bem.getParents(fiberEdge.getBusinessObject().getClassName(), fiberEdge.getBusinessObject().getId());
-                        if (parents.contains(parent))
+                        if (bem.isParent(parent.getClassName(), parent.getId(), fiberEdge.getBusinessObject().getClassName(), fiberEdge.getBusinessObject().getId()))
                             fiberEdge.setSource(parentNode.getUuid());
                     } catch (InventoryException ex) {
                         new SimpleNotification(
@@ -290,32 +286,28 @@ public class OspLocationView extends MxGraph {
             BusinessObjectLight fiberParent = null;
             for (BusinessObjectLight child : children) {
                 if (child.getId().equals(fiber.getId())) {
+                    // The fiber parent are the same fiber
                     fiberParent = child;
                     break;
                 }
             }
             if (fiberParent == null) {
-                List<BusinessObjectLight> parents = bem.getParents(fiber.getClassName(), fiber.getId());
                 for (BusinessObjectLight child : children) {
-                    for (BusinessObjectLight parent : parents) {
-                        if (child.getId().equals(parent.getId())) {
-                            fiberParent = child;
-                            break;
-                        }
-                    }
-                    if (fiberParent != null)
+                    if (bem.isParent(child.getClassName(), child.getId(), fiber.getClassName(), fiber.getId())) {
+                        fiberParent = child;
                         break;
+                    }
                 }
             }
             if (fiberParent != null) {
                 MxBusinessObjectNode fiberParentNode = findNode(fiberParent);
-                
                 MxBusinessObjectEdge fiberEdge = findEdge(fiber);
+                
                 if (fiberEdge == null) {
                     fiberEdge = new FiberEdge(fiber);
                     
                     LinkedHashMap<String, String> edgeStyle = new LinkedHashMap(EDGE_STYLE);
-                    String color = FiberWrapperNode.getColor(fiber, aem, bem, mem, ts);
+                    String color = portNode.getFiberColor();
                     if (color != null)
                         edgeStyle.put(MxConstants.STYLE_STROKECOLOR, color);
                     fiberEdge.setRawStyle(edgeStyle);
@@ -358,12 +350,15 @@ public class OspLocationView extends MxGraph {
                     String[] newFibersId = bem.copySpecialObjects(fiberParent.getClassName(), fiberParent.getId(), objects, false);
                     if (newFibersId.length == 1) {
                         BusinessObjectLight newFiber = bem.getObject(fiber.getClassName(), newFibersId[0]);
-                        
+                        HashMap<String, String> attrs = new HashMap();
+                        attrs.put(Constants.PROPERTY_NAME, fiber.getName());
+                        bem.updateObject(newFiber.getClassName(), newFiber.getId(), attrs);
+                        newFiber.setName(fiber.getName());
                         bem.createSpecialRelationship(
                             fiber.getClassName(), fiber.getId(), 
                             location.getClassName(), location.getId(), 
                             OutsidePlantService.SPECIAL_RELATIONSHIP_OSPMAN_HAS_LOCATION, true);
-                        fiberNode.cutFiber(fiber, newFiber, true);
+                        fiberNode.cutFiber(fiber, newFiber);
                     } else {
                         for (String newFiberId : newFibersId)
                             bem.deleteObject(fiber.getClassName(), newFiberId, true);
@@ -381,13 +376,13 @@ public class OspLocationView extends MxGraph {
                 }
                 
             }).open();
-    }    
+    }
     private void spliceFiber(FiberNode fiberNode, PortNode portNode) {
         if (fiberNode == null && portNode == null)
             return;
         
         LinkedHashMap<String, String> edgeStyle = new LinkedHashMap(EDGE_STYLE);
-        edgeStyle.put(MxConstants.STYLE_STROKECOLOR, fiberNode.getFillColor());
+        edgeStyle.put(MxConstants.STYLE_STROKECOLOR, fiberNode.getColor());
         
         new ConfirmDialog(ts,
             ts.getTranslatedString("module.ospman.mid-span-access.confirmation.splice-fiber.title"), 

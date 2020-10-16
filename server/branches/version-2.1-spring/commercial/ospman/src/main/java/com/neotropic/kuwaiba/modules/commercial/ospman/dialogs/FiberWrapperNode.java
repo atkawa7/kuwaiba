@@ -20,6 +20,8 @@ import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.neotropic.flow.component.mxgraph.MxGraphRightClickCellEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.shared.Registration;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
@@ -95,6 +97,7 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
         FIBER_STYLE.put(MxConstants.STYLE_VERTICAL_LABEL_POSITION, MxConstants.ALIGN_BOTTOM);
         FIBER_STYLE.put(MxConstants.STYLE_FONTCOLOR, FONT_COLOR);
         FIBER_STYLE.put(MxConstants.STYLE_FONTSIZE, FONT_SIZE);
+        FIBER_STYLE.put(MxConstants.STYLE_FOLDABLE, FOLDABLE);
     }
     private final MxGraph graph;
     private String color;
@@ -112,28 +115,23 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
     private final TranslationService ts;
     
     public FiberWrapperNode(MxGraph graph,
-        BusinessObjectLight fiberObject, BusinessObjectLight fiberAObject, BusinessObjectLight fiberBObject,
+        BusinessObjectLight fiberObject,
         String color, BusinessEntityManager bem, TranslationService ts) {
-        
         super(fiberObject);
-        if (graph == null)
-            Objects.requireNonNull(graph);
-        
-        if (fiberObject == null) {
-            Objects.requireNonNull(fiberAObject);
-            Objects.requireNonNull(fiberBObject);
-        }
-        if (color != null) {
-            this.color = color.toLowerCase().equals(COLOR_WHITE.toLowerCase()) ? COLOR_LIGHT_GREY : color;
-            FIBER_STYLE.put(MxConstants.STYLE_FILLCOLOR, this.color);
-        }
+        Objects.requireNonNull(graph);
+        Objects.requireNonNull(fiberObject);
         this.graph = graph;
+        this.color = color;
         this.bem = bem;
         this.ts = ts;
+        
+        if (color != null)
+            FIBER_STYLE.put(MxConstants.STYLE_FILLCOLOR, color);
+
         setGeometry(0, 0, FIBER_WIDTH, HEIGHT);
         setRawStyle(NODE_STYLE);
         
-        fiberNode = new FiberObjectNode(fiberObject);
+        fiberNode = new FiberObjectNode(fiberObject, color);
         fiberNode.setCellParent(this.getUuid());
 
         fiberNode.addCellAddedListener(event -> {
@@ -158,30 +156,27 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
         });
         graph.addCell(this);
         graph.addNode(fiberNode);
-        if (fiberObject == null)
-            cutFiber(fiberAObject, fiberBObject, false);
     }
     public String getColor() {
         return color;
     }
-    public void cutFiber(BusinessObjectLight fiberAObject, BusinessObjectLight fiberBObject, boolean newCut) {
+    public void cutFiber(BusinessObjectLight fiberAObject, BusinessObjectLight fiberBObject) {
         Objects.requireNonNull(fiberAObject);
         Objects.requireNonNull(fiberBObject);
         if (registrationFiber != null)
             registrationFiber.remove();
                 
-        if (newCut) {
-            fiberNode.setIsSelectable(false);
-            fiberNode.setConnectable(false);
-            fiberNode.setRawStyle(NODE_STYLE);
-            fiberNode.overrideStyle();
-            fiberNode.setTooltip(null);
-            fiberNode.setBusinessObject(null);
-        }
-        fiberANode = new FiberCutObjectNode(fiberAObject);
+        fiberNode.setIsSelectable(false);
+        fiberNode.setConnectable(false);
+        fiberNode.setRawStyle(NODE_STYLE);
+        fiberNode.overrideStyle();
+        fiberNode.setTooltip(null);
+        fiberNode.setBusinessObject(null);
+        
+        fiberANode = new FiberCutObjectNode(fiberAObject, getColor());
         fiberANode.setCellParent(fiberNode.getUuid());
         
-        fiberBNode = new FiberCutObjectNode(fiberBObject);
+        fiberBNode = new FiberCutObjectNode(fiberBObject, getColor());
         fiberBNode.setCellParent(fiberNode.getUuid());
 
         fiberBNode.addCellAddedListener(event -> {
@@ -236,15 +231,13 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
      * Fiber Node to get style information
      */
     public class FiberNode extends MxBusinessObjectNode {
-        
-        public FiberNode(BusinessObjectLight businessObject) {
+        private final String color;        
+        public FiberNode(BusinessObjectLight businessObject, String color) {
             super(businessObject);
+            this.color = color;
         }
-        public String getFillColor() {
-            return FIBER_STYLE.get(MxConstants.STYLE_FILLCOLOR);
-        }
-        public String getStrokeColor() {
-            return FIBER_STYLE.get(MxConstants.STYLE_STROKECOLOR);
+        public String getColor() {
+            return color;
         }
         public void releaseFiber() {
             LinkedHashMap<String, String> fiberStyle = new LinkedHashMap(FIBER_STYLE);
@@ -259,11 +252,12 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
             if (this.getBusinessObject() != null) {
                 try {
                     BusinessObjectLight fiberObject = this.getBusinessObject();
-                    List<BusinessObjectLight> endpointA = bem.getSpecialAttribute(
-                        fiberObject.getClassName(), fiberObject.getId(), ATTR_ENDPOINT_A);
-                    List<BusinessObjectLight> endpointB = bem.getSpecialAttribute(
-                        fiberObject.getClassName(), fiberObject.getId(), ATTR_ENDPOINT_B);
+                    HashMap<String, List<BusinessObjectLight>> endpoints = bem.getSpecialAttributes(fiberObject.getClassName(), fiberObject.getId(), ATTR_ENDPOINT_A, ATTR_ENDPOINT_B);
+                    List<BusinessObjectLight> endpointA = endpoints.containsKey(ATTR_ENDPOINT_A) ? endpoints.get(ATTR_ENDPOINT_A) : Collections.EMPTY_LIST;
+                    List<BusinessObjectLight> endpointB = endpoints.containsKey(ATTR_ENDPOINT_B) ? endpoints.get(ATTR_ENDPOINT_B) : Collections.EMPTY_LIST;
+                    
                     if (!endpointA.isEmpty() || !endpointB.isEmpty()) {
+                        
                         if (!endpointA.isEmpty()) {
                             this.addOverlayButton(INFO_OVERLAY_ID, String.format("%s %s",
                                 ts.getTranslatedString("module.ospman.mid-span-access.fiber.endpoint-a"), endpointA.get(0).getName()),
@@ -275,7 +269,7 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
                                 INFO_IMG, MxConstants.ALIGN_RIGHT, MxConstants.ALIGN_MIDDLE, INFO_WIDTH/2 + INFO_SPACING, 0, INFO_WIDTH, INFO_HEIGHT);
                         }
                         fiberStyle.put(MxConstants.STYLE_FILL_OPACITY, String.valueOf(FIBER_SPLICED_FILL_OPACITY));
-                        fiberStyle.put(MxConstants.STYLE_STROKECOLOR, this.getFillColor());
+                        fiberStyle.put(MxConstants.STYLE_STROKECOLOR, getColor());
                         setIsSelectable(false);
                         setConnectable(false);
                     }
@@ -293,8 +287,8 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
      * Fiber Object as MxGraph Node
      */
     private class FiberObjectNode extends FiberNode {
-        public FiberObjectNode(BusinessObjectLight fiberObject) {
-            super(fiberObject);
+        public FiberObjectNode(BusinessObjectLight fiberObject, String color) {
+            super(fiberObject, color);
             setLabel(fiberObject.getName());
             setGeometry(0, 0, FIBER_WIDTH, FIBER_HEIGHT);
             addCellAddedListener(event -> {
@@ -319,8 +313,8 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
      * Cut Fiber Object as MxGraph Node
      */
     private class FiberCutObjectNode extends FiberNode {
-        public FiberCutObjectNode(BusinessObjectLight fiberObject) {
-            super(fiberObject);
+        public FiberCutObjectNode(BusinessObjectLight fiberObject, String color) {
+            super(fiberObject, color);
             setLabel(fiberObject.getName());
             setGeometry(0, 0, FIBER_WIDTH, FIBER_HEIGHT);
             addCellAddedListener(event -> {

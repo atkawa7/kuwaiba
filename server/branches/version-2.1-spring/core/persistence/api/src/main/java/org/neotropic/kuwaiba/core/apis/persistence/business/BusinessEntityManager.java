@@ -339,6 +339,15 @@ public interface BusinessEntityManager extends AbstractEntityManager {
         throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
     
     /**
+     * Gets true if the given parent has the given child (according to the special and standard containment hierarchy)
+     * @param parentClass Parent Class Name
+     * @param parentId Parent Id
+     * @param childClass Child Class Name
+     * @param childId Child Id
+     * @return True if the given parent has the given child (according to the special and standard containment hierarchy)
+     */
+    public boolean isParent(String parentClass, String parentId, String childClass, String childId) throws InvalidArgumentException;
+    /**
      * Checks recursively if it's safe to delete a single object
      * @param className Object's class name
      * @param oid Objects oid
