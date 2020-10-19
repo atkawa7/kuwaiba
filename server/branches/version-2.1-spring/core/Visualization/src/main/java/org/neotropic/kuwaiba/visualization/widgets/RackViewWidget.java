@@ -45,7 +45,7 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
 import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyValueConverter;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
-import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
+import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.visualization.views.RackView;
 import org.neotropic.util.visual.general.BoldLabel;
 import org.neotropic.util.visual.notifications.SimpleNotification;

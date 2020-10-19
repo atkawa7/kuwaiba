@@ -29,7 +29,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
-import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
+import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

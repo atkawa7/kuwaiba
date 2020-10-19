@@ -19,7 +19,6 @@ import com.neotropic.flow.component.mxgraph.MxConstants;
 import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.neotropic.flow.component.mxgraph.MxGraphNode;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.charts.model.HorizontalAlign;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
@@ -69,15 +68,14 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.ApplicationObjectN
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermittedException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
+import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
 import org.neotropic.util.visual.general.BoldLabel;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.views.util.UtilHtml;
 
 /**
- * Rack view, shows the front view of the rack
- *
+ * Rack view, shows the front view of the rack the way it should look like in the real world.
  * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
 public class RackView extends AbstractDetailedView<BusinessObjectLight, VerticalLayout> {
@@ -103,7 +101,7 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
      */
     private MetadataEntityManager mem;
     /**
-     * Reference to the Physical Connecion Service
+     * Reference to the Physical Connection Service
      */
     private PhysicalConnectionsService physicalConnectionsService;
     /*

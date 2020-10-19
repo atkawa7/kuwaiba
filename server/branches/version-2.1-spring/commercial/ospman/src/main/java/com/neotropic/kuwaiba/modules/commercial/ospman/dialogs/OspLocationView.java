@@ -20,7 +20,7 @@ import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.neotropic.flow.component.mxgraph.MxGraphEdge;
 import com.neotropic.flow.component.mxgraph.MxGraphNode;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.FiberWrapperNode.FiberNode;
-import com.neotropic.kuwaiba.modules.commercial.ospman.persistence.OutsidePlantService;
+import com.neotropic.kuwaiba.modules.commercial.ospman.OutsidePlantService;
 import com.vaadin.flow.component.html.Label;
 import java.awt.Color;
 import java.util.Arrays;
@@ -39,7 +39,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
+import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectEdge;
 import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectNode;
 import org.neotropic.util.visual.dialog.ConfirmDialog;
@@ -84,7 +84,7 @@ public class OspLocationView extends MxGraph {
     
     public OspLocationView(BusinessObjectLight location, BusinessObjectLight cable, BusinessObjectLight device,
         ApplicationEntityManager aem, BusinessEntityManager bem, MetadataEntityManager mem, TranslationService ts,
-        PhysicalConnectionsService physicalConnectionsService) {
+            PhysicalConnectionsService physicalConnectionsService) {
         super();
         Objects.requireNonNull(cable);
         Objects.requireNonNull(device);
@@ -220,7 +220,8 @@ public class OspLocationView extends MxGraph {
             null, null, null, null, 
             port -> {
                 PortNode portNode = new PortNode(port, this, aem, bem, mem, ts);
-                portNode.addRightClickCellListener(event -> new WindowPortTools(port, aem, bem, mem, ts, physicalConnectionsService, consumerReleaseFiber).open());
+                portNode.addRightClickCellListener(event -> new WindowPortTools(port, aem, bem, mem, ts, 
+                        physicalConnectionsService, consumerReleaseFiber).open());
                 return portNode;
             },  
             null

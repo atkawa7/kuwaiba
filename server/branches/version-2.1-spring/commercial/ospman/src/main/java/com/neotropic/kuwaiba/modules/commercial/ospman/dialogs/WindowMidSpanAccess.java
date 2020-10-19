@@ -46,7 +46,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualAction;
-import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
+import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
 /**

@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import org.neotropic.kuwaiba.core.apis.persistence.application.sync.AbstractSyncProvider;
-import org.neotropic.kuwaiba.core.apis.persistence.application.sync.SynchronizationGroup;
+import org.neotropic.kuwaiba.modules.commercial.sync.api.AbstractSyncProvider;
+import org.neotropic.kuwaiba.modules.commercial.sync.api.SynchronizationGroup;
 
 /**
  * Wrapper of SynchronizationGroup

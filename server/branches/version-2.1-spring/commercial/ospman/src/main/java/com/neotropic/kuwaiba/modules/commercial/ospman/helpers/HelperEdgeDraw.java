@@ -15,8 +15,8 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman.helpers;
 
-import com.neotropic.kuwaiba.modules.commercial.ospman.provider.GeoCoordinate;
-import com.neotropic.kuwaiba.modules.commercial.ospman.provider.MapOverlay;
+import com.neotropic.kuwaiba.modules.commercial.ospman.GeoCoordinate;
+import com.neotropic.kuwaiba.modules.commercial.ospman.MapOverlay;
 import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.neotropic.flow.component.mxgraph.MxGraphCell;
 import com.neotropic.flow.component.mxgraph.Point;
@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
-import com.neotropic.kuwaiba.modules.commercial.ospman.provider.MapProvider;
+import com.neotropic.kuwaiba.modules.commercial.ospman.MapProvider;
 
 /**
  * Help to storage the overlay, source, target and edge points/coordinates

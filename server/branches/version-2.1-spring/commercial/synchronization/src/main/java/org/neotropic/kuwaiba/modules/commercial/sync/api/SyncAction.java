@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.neotropic.kuwaiba.core.apis.persistence.application.sync;
+package org.neotropic.kuwaiba.modules.commercial.sync.api;
 
 
 /**

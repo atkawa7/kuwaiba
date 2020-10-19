@@ -18,7 +18,6 @@ package org.neotropic.kuwaiba.visualization.api.wizard;
 
 
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.charts.model.HorizontalAlign;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.notification.Notification;
@@ -52,7 +51,7 @@ import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicIconGenerator;
 import org.neotropic.kuwaiba.modules.core.navigation.navtree.NavigationTree;
 import org.neotropic.kuwaiba.modules.core.navigation.navtree.nodes.InventoryObjectNode;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
-import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
+import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.util.visual.wizard.Wizard;
 
 

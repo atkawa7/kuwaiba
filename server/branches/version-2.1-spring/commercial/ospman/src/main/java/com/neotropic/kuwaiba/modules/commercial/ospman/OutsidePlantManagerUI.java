@@ -25,7 +25,7 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import com.neotropic.kuwaiba.modules.commercial.ospman.widgets.OutsidePlantManagerDashboard;
 import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualAction;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
-import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
+import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

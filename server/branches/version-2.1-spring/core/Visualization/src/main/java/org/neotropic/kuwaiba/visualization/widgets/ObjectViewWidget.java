@@ -42,7 +42,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
-import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
+import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.visualization.api.wizard.NewPhysicalConnectionWizard;
 import org.neotropic.kuwaiba.visualization.views.ObjectView;
 import org.neotropic.util.visual.notifications.SimpleNotification;
@@ -93,9 +93,7 @@ public class ObjectViewWidget extends AbstractDashboardWidget {
                 saveView();
             });
             Button btnConnect = new Button(ts.getTranslatedString("module.visualization.object-view-connect"), new Icon(VaadinIcon.CONNECT), (selectedItem) -> {
-
                 Dialog dlgSelectRootObjects = new Dialog();
-
                 ComboBox<AbstractViewNode> cmbASideRoot = new ComboBox<>("A Side", objectView.getAsViewMap().getNodes());
                 cmbASideRoot.setAllowCustomValue(false);
                 cmbASideRoot.setLabel(ts.getTranslatedString("module.visualization.object-view-select-a-side"));

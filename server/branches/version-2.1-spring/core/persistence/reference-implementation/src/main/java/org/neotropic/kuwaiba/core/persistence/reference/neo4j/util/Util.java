@@ -26,8 +26,6 @@ import org.neotropic.kuwaiba.core.apis.persistence.application.TaskScheduleDescr
 import org.neotropic.kuwaiba.core.apis.persistence.application.UserProfile;
 import org.neotropic.kuwaiba.core.apis.persistence.application.UserProfileLight;
 import org.neotropic.kuwaiba.core.apis.persistence.application.processman.ProcessInstance;
-import org.neotropic.kuwaiba.core.apis.persistence.application.sync.SyncDataSourceConfiguration;
-import org.neotropic.kuwaiba.core.apis.persistence.application.sync.SynchronizationGroup;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
@@ -63,7 +61,6 @@ import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Result;
-import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.kernel.impl.traversal.MonoDirectionalTraversalDescription;
 import org.neotropic.kuwaiba.core.persistence.reference.extras.caching.CacheManager;
@@ -338,7 +335,7 @@ public class Util {
         attribute.setVisible((Boolean)attributeNode.getProperty(Constants.PROPERTY_VISIBLE));
         attribute.setAdministrative((Boolean)attributeNode.getProperty(Constants.PROPERTY_ADMINISTRATIVE));
         attribute.setNoCopy((Boolean)attributeNode.getProperty(Constants.PROPERTY_NO_COPY));
-        attribute.setMandatory(attributeNode.hasProperty(Constants.PROPERTY_MANDATORY) ? (Boolean)attributeNode.getProperty(Constants.PROPERTY_MANDATORY) : false );
+        attribute.setMandatory(attributeNode.hasProperty(Constants.PROPERTY_MANDATORY) ? (boolean)attributeNode.getProperty(Constants.PROPERTY_MANDATORY) : false );
         attribute.setUnique((Boolean)attributeNode.getProperty(Constants.PROPERTY_UNIQUE));
         attribute.setId(attributeNode.getId());
         attribute.setOrder(attributeNode.hasProperty(Constants.PROPERTY_ORDER) ? (int)attributeNode.getProperty(Constants.PROPERTY_ORDER) : 1000);
@@ -360,9 +357,7 @@ public class Util {
     }
     
     public static BusinessObjectLight createRemoteObjectLightFromPoolNode (Node instance) {
-        
-        return new BusinessObjectLight(
-            String.format("Pool of %s", instance.getProperty(Constants.PROPERTY_CLASS_NAME)), 
+        return new BusinessObjectLight(String.format("Pool of %s", instance.getProperty(Constants.PROPERTY_CLASS_NAME)), 
             instance.hasProperty(Constants.PROPERTY_UUID) ? (String) instance.getProperty(Constants.PROPERTY_UUID) : null, 
             (String)instance.getProperty(Constants.PROPERTY_NAME));
     }
@@ -624,64 +619,6 @@ public class Util {
         GenericObjectList listType = new GenericObjectList(listTypeNodeUuid, 
                 (String)listTypeNode.getProperty(Constants.PROPERTY_NAME));
         return listType;
-    }
-    
-    
-    /**
-     * Converts a node representing a Node into a SynchronizationGroup object
-     * @param syncGroupNode The source node
-     * @return A SynchronizationGroup object built from the source node information
-     * @throws InvalidArgumentException if some element of the list of 
-     * syncDataSourceConfiguration has more paramNames than paramValues
-     * @throws MetadataObjectNotFoundException
-     * @throws UnsupportedPropertyException
-     */
-    public static SynchronizationGroup createSyncGroupFromNode(Node syncGroupNode)  
-            throws InvalidArgumentException, MetadataObjectNotFoundException, UnsupportedPropertyException {    
-        
-        if (!syncGroupNode.hasProperty(Constants.PROPERTY_NAME))
-            throw new InvalidArgumentException(String.format("The sync group with id %s is malformed. Check its properties", syncGroupNode.getId()));
-
-        List<SyncDataSourceConfiguration> syncDataSourceConfiguration = new ArrayList<>();
-
-        for(Relationship rel : syncGroupNode.getRelationships(Direction.INCOMING, RelTypes.BELONGS_TO_GROUP))
-            syncDataSourceConfiguration.add(createSyncDataSourceConfigFromNode(rel.getStartNode()));
-
-        return  new SynchronizationGroup(syncGroupNode.getId(),
-                (String)syncGroupNode.getProperty(Constants.PROPERTY_NAME),
-                syncDataSourceConfiguration);
-    }
-
-    /**
-     * Converts a node to a SyncDataSourceConfiguration object
-     * @param syncDataSourceConfigNode The source node
-     * @return A SyncDataSourceConfiguration object built from the source node information
-     * @throws InvalidArgumentException if the size of the list of paramNames and paramValues are not the same 
-     * @throws UnsupportedPropertyException if any property of the sync data source node is malformed or if there is an error with the relationship between the syncNode an it InventoryObjectNode
-     */
-    public static SyncDataSourceConfiguration createSyncDataSourceConfigFromNode(Node syncDataSourceConfigNode) throws UnsupportedPropertyException, InvalidArgumentException{   
-        
-        if (!syncDataSourceConfigNode.hasProperty(Constants.PROPERTY_NAME))
-            throw new UnsupportedPropertyException(String.format("The sync configuration with id %s is malformed. Its name is empty", syncDataSourceConfigNode.getId()));
-        
-        if(!syncDataSourceConfigNode.hasRelationship(RelTypes.HAS_CONFIGURATION))
-            throw new UnsupportedPropertyException(String.format("The sync configuration with id %s is malformed. It is not related to any inventory object", syncDataSourceConfigNode.getId()));
-        
-        Node inventoryObjectNode = syncDataSourceConfigNode.getSingleRelationship(RelTypes.HAS_CONFIGURATION, Direction.OUTGOING).getStartNode();
-
-        HashMap<String, String> parameters = new HashMap<>();
-        String configName = "";
-      
-        for (String property : syncDataSourceConfigNode.getPropertyKeys()) {
-            if (property.equals(Constants.PROPERTY_NAME))
-                configName = (String)syncDataSourceConfigNode.getProperty(property);
-            if(property.equals("deviceId") && !((String)syncDataSourceConfigNode.getProperty(property)).equals(inventoryObjectNode.getProperty(Constants.PROPERTY_UUID)))
-                throw new UnsupportedPropertyException(String.format("The sync configuration with id %s is malformed. It seems to be incorrectly related to a network device", inventoryObjectNode.getId()));   
-            else
-                parameters.put(property, (String)syncDataSourceConfigNode.getProperty(property));
-        }
-            
-        return  new SyncDataSourceConfiguration(syncDataSourceConfigNode.getId(), configName, parameters);
     }
     
     /**
@@ -1095,17 +1032,13 @@ public class Util {
      * @return The node or null if no node with with that label and id could be found
      */
     public static Node findNodeByLabelAndId(GraphDatabaseService graphDb, Label label, long id) {
-        try (Transaction tx = graphDb.beginTx()) {
-            
-            String cypherQuery = "MATCH (node:" + label.name() + ") " +
-                                 "WHERE id(node) = " + id + " " +
-                                 "RETURN node";
-            
-            Result result = graphDb.execute(cypherQuery);
-            ResourceIterator<Node> node = result.columnAs("node");
-            
-            tx.success();
-            return node.hasNext() ? node.next() : null;
-        }
+        String cypherQuery = "MATCH (node:" + label.name() + ") " +
+                             "WHERE id(node) = " + id + " " +
+                             "RETURN node";
+
+        Result result = graphDb.execute(cypherQuery);
+        ResourceIterator<Node> node = result.columnAs("node");
+
+        return node.hasNext() ? node.next() : null;
     }
 }

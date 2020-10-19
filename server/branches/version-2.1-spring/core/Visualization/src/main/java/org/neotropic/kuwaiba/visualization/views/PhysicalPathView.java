@@ -41,12 +41,12 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotF
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
-import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractDetailedView;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewEdge;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewNode;
 import org.neotropic.kuwaiba.core.apis.integration.views.ViewEventListener;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.util.visual.mxgraph.MxGraphCanvas;
 
 
@@ -77,7 +77,7 @@ public class PhysicalPathView extends AbstractDetailedView<BusinessObjectLight, 
      */
     private MetadataEntityManager mem;
     /**
-     * Reference to the Physical Connecion Service
+     * Reference to the Physical Connection Service
      */
     private PhysicalConnectionsService physicalConnectionsService;
     /**

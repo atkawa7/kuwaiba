@@ -15,7 +15,7 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman.dialogs;
 
-import com.neotropic.kuwaiba.modules.commercial.ospman.provider.MapOverlay;
+import com.neotropic.kuwaiba.modules.commercial.ospman.MapOverlay;
 import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Label;

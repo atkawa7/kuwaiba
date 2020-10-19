@@ -53,7 +53,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
+import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.util.visual.mxgraph.MxGraphCanvas;
 
 
@@ -84,7 +84,7 @@ public class PhysicalTreeView extends AbstractDetailedView<BusinessObjectLight, 
      */
     private MetadataEntityManager mem;
     /**
-     * Reference to the Physical Connecion Service
+     * Reference to the Physical Connection Service
      */
     private PhysicalConnectionsService physicalConnectionsService;
     

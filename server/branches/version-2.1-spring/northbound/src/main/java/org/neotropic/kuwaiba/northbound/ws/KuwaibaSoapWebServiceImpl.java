@@ -70,9 +70,6 @@ import org.neotropic.kuwaiba.core.apis.persistence.application.processman.Artifa
 import org.neotropic.kuwaiba.core.apis.persistence.application.processman.ArtifactDefinition;
 import org.neotropic.kuwaiba.core.apis.persistence.application.processman.ProcessDefinition;
 import org.neotropic.kuwaiba.core.apis.persistence.application.reporting.ReportMetadataLight;
-import org.neotropic.kuwaiba.core.apis.persistence.application.sync.AbstractSyncProvider;
-import org.neotropic.kuwaiba.core.apis.persistence.application.sync.SyncDataSourceConfiguration;
-import org.neotropic.kuwaiba.core.apis.persistence.application.sync.SynchronizationGroup;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObject;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
@@ -87,7 +84,11 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.apis.persistence.util.StringPair;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
+import org.neotropic.kuwaiba.modules.commercial.sync.SynchronizationService;
+import org.neotropic.kuwaiba.modules.commercial.sync.api.AbstractSyncProvider;
+import org.neotropic.kuwaiba.modules.commercial.sync.api.SyncDataSourceConfiguration;
+import org.neotropic.kuwaiba.modules.commercial.sync.api.SynchronizationGroup;
+import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.northbound.ws.model.application.ApplicationLogEntry;
 import org.neotropic.kuwaiba.northbound.ws.model.application.GroupInfo;
 import org.neotropic.kuwaiba.northbound.ws.model.application.GroupInfoLight;
@@ -172,6 +173,8 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     private IpamModuleService ipamService;
     @Autowired
     private PhysicalConnectionsService physicalConnectionsService;
+    @Autowired
+    private SynchronizationService synchronizationService;
     @Autowired
     private WarehousesService warehouseService;
     
@@ -5749,7 +5752,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             return new RemoteObject(ipamService.getSubnet(className, id));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
-        } catch (Exception ex) { // Unexpected error. Log the stach trace and 
+        } catch (Exception ex) { // Unexpected error. Log the stack trace and re throw the exception
             Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
                     String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "getSubnet"), ex);
             throw new ServerSideException(ex.getMessage());
@@ -6566,7 +6569,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
                     try {
                         Class providerClass = Class.forName((String) configVariableValue);
                         if (AbstractSyncProvider.class.isAssignableFrom(providerClass)) {
-                            AbstractSyncProvider syncProvider = (AbstractSyncProvider)providerClass.newInstance();
+                            AbstractSyncProvider syncProvider = (AbstractSyncProvider)providerClass.getDeclaredConstructor().newInstance();
                             map.put(configVariable.getName(), new RemoteSynchronizationProvider(syncProvider.getId(), syncProvider.getDisplayName(), syncProvider.isAutomated()));
                         }
                     } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
@@ -6599,7 +6602,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         try {
             aem.validateCall("createSynchronizationDataSourceConfig", "127.0.0.1", sessionId);
             //TODO: audit entry
-            return aem.createSyncDataSourceConfig(objectId, syncGroupId, name, parameters);
+            return synchronizationService.createSyncDataSourceConfig(objectId, syncGroupId, name, parameters);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -6616,7 +6619,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         try {
             aem.validateCall("createSynchronizationGroup", "127.0.0.1", sessionId);
             //TODO: audit entry
-            return aem.createSyncGroup(name);
+            return synchronizationService.createSyncGroup(name);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -6632,7 +6635,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
             aem.validateCall("updateSyncDataSourceConfiguration", "127.0.0.1", sessionId);
-            aem.updateSyncGroup(syncGroupId, syncGroupProperties);
+            synchronizationService.updateSyncGroup(syncGroupId, syncGroupProperties);
             //TODO: audit entry
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -6649,7 +6652,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
             aem.validateCall("getSynchronizationGroup", "127.0.0.1", sessionId);
-            return new RemoteSynchronizationGroup(aem.getSyncGroup(syncGroupId));
+            return new RemoteSynchronizationGroup(synchronizationService.getSyncGroup(syncGroupId));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         } catch (Exception ex) { // Unexpected error. Log the stach trace and 
@@ -6665,8 +6668,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
             aem.validateCall("getSynchronizationGroups", "127.0.0.1", sessionId);
-
-            List<SynchronizationGroup> syncGroups = aem.getSyncGroups();
+            List<SynchronizationGroup> syncGroups = synchronizationService.getSyncGroups();
             return RemoteSynchronizationGroup.toArray(syncGroups);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -6683,9 +6685,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
             aem.validateCall("getSyncDataSourceConfigurations", "127.0.0.1", sessionId);
-
-            SyncDataSourceConfiguration syncDataSourceConfiguration = aem.getSyncDataSourceConfiguration(objectId);
-            
+            SyncDataSourceConfiguration syncDataSourceConfiguration = synchronizationService.getSyncDataSourceConfiguration(objectId);
             List<StringPair> params = new ArrayList<>();
             for(String key : syncDataSourceConfiguration.getParameters().keySet())
                 params.add(new StringPair(key, syncDataSourceConfiguration.getParameters().get(key)));
@@ -6708,10 +6708,8 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
             aem.validateCall("getSyncDataSourceConfigurations", "127.0.0.1", sessionId);
-
             List<RemoteSynchronizationConfiguration> RemoteSynchronizationConfigurations = new ArrayList<>();
-
-            List<SyncDataSourceConfiguration> syncDataSourceConfigurations = aem.getSyncDataSourceConfigurations(syncGroupId);
+            List<SyncDataSourceConfiguration> syncDataSourceConfigurations = synchronizationService.getSyncDataSourceConfigurations(syncGroupId);
 
             for (SyncDataSourceConfiguration syncDataSourceConfiguration : syncDataSourceConfigurations) {
                 List<StringPair> params = new ArrayList<>();
@@ -6738,7 +6736,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
             aem.validateCall("updateSyncDataSourceConfiguration", "127.0.0.1", sessionId);
-            aem.updateSyncDataSourceConfig(syncDataSourceConfigId, parameters);
+            synchronizationService.updateSyncDataSourceConfig(syncDataSourceConfigId, parameters);
             //TODO: audit entry
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -6755,7 +6753,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
             aem.validateCall("deleteSynchronizationGroup", "127.0.0.1", sessionId);
-            aem.deleteSynchronizationGroup(syncGroupId);
+            synchronizationService.deleteSynchronizationGroup(syncGroupId);
             //TODO: audit entry
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -6772,7 +6770,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
             aem.validateCall("deleteSynchronizationDataSourceConfig", "127.0.0.1", sessionId);
-            aem.deleteSynchronizationDataSourceConfig(syncDataSourceConfigId);
+            synchronizationService.deleteSynchronizationDataSourceConfig(syncDataSourceConfigId);
             //TODO: audit entry
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -6785,12 +6783,11 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
 
     @Override
     public void copySyncDataSourceConfiguration(long syncGroupId, long[] syncDataSourceConfigurationIds, String sessionId) throws ServerSideException {
-        if (aem == null || bem == null || mem == null)
+        if (aem == null)
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
             aem.validateCall("copySyncDataSourceConfiguration", "127.0.0.1", sessionId);
-            
-            aem.copySyncDataSourceConfiguration(syncGroupId, syncDataSourceConfigurationIds);
+            synchronizationService.copySyncDataSourceConfiguration(syncGroupId, syncDataSourceConfigurationIds);
             //TODO: audit entry
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -6803,11 +6800,11 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
 
     @Override
     public void releaseSyncDataSourceConfigFromSyncGroup(long syncGroupId, long[] syncDataSourceConfigurationIds, String sessionId) throws ServerSideException {
-        if (aem == null || bem == null || mem == null)
+        if (aem == null)
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
             aem.validateCall("releaseSyncDataSourceConfigFromSyncGroup", "127.0.0.1", sessionId);
-            aem.releaseSyncDataSourceConfigFromSyncGroup(syncGroupId, syncDataSourceConfigurationIds);
+            synchronizationService.releaseSyncDataSourceConfigFromSyncGroup(syncGroupId, syncDataSourceConfigurationIds);
             //TODO: audit entry
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -6819,12 +6816,12 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     }
 
     @Override
-    public void moveSyncDataSourceConfiguration(long oldSyncGroupId, long newSyncGroupId, long[] syncDataSourceConfigurationIds, String sessionId) throws ServerSideException {
+    public void moveSyncDataSourceConfiguration(long newSyncGroupId, long[] syncDataSourceConfigurationIds, String sessionId) throws ServerSideException {
         if (aem == null || bem == null || mem == null)
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
             aem.validateCall("moveSyncDataSourceConfiguration", "127.0.0.1", sessionId);
-            aem.moveSyncDataSourceConfiguration(oldSyncGroupId, newSyncGroupId, syncDataSourceConfigurationIds);
+            synchronizationService.moveSyncDataSourceConfiguration(newSyncGroupId, syncDataSourceConfigurationIds);
             //TODO: audit entry
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());

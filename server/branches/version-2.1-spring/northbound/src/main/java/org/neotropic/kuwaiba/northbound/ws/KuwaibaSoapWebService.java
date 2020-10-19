@@ -4953,7 +4953,6 @@ public interface KuwaibaSoapWebService {
 
         /**
          * Moves a sync data source configuration from a sync group to another sync group
-         * @param oldSyncGroupId The Sync Group Id target to related
          * @param newSyncGroupId The Sync Group Id target to release
          * @param syncDataSourceConfigurationIds Set of sync data source configuration ids
          * @param sessionId Session token
@@ -4962,7 +4961,6 @@ public interface KuwaibaSoapWebService {
          */
         @WebMethod(operationName = "moveSyncDataSourceConfiguration")
         public void moveSyncDataSourceConfiguration(
-            @WebParam(name="oldSyncGroupId") long oldSyncGroupId, 
             @WebParam(name="newSyncGroupId") long newSyncGroupId, 
             @WebParam(name="syncDataSourceConfiguration") long[] syncDataSourceConfigurationIds, 
             @WebParam(name="sessionId") String sessionId) throws ServerSideException;

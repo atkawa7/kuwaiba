@@ -32,7 +32,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentExc
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
+import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.visualization.views.PhysicalPathView;
 import org.neotropic.kuwaiba.visualization.views.PhysicalTreeView;
 import org.neotropic.util.visual.notifications.SimpleNotification;
@@ -50,7 +50,7 @@ public class WindowPortTools extends Dialog {
         BusinessEntityManager bem,
         MetadataEntityManager mem,
         TranslationService ts,
-        PhysicalConnectionsService physicalConnectionsService,
+            PhysicalConnectionsService physicalConnectionsService,
         BiConsumer<List<BusinessObjectLight>, String> consumerReleaseFiber
         ) {
         super();

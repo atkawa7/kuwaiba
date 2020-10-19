@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
-import java.util.function.Supplier;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +35,11 @@ public class ThreadingService {
     /**
      * The number of registered jobs after which a parallel access to the table will be attempted.
      */
-    public static int PARALLEL_LIMIT = 50;
+    public static final int PARALLEL_LIMIT = 50;
+    /**
+     * Max number of jobs that can be managed by the threading service at once.
+     */
+    public static final int TABLE_SIZE = 100;
     /**
      * The list of jobs created (new, not yet running), running, or finished (with error, successfully or killed). The latter 
      * are cleaned up periodically or are removed from the table when whomever started it 
@@ -92,17 +95,45 @@ public class ThreadingService {
     /**
      * Registers and starts a job.
      * @param theJob The job to be started.
-     * @param theDescriptor The descriptor that will be used
      * @throws IllegalArgumentException If the job could not be started, most likely because of its state. Also, if <code>theDescriptor</code> 
-     * is a job that already exists in the table.
+     * is a job that already exists in the table, or if {@link #TABLE_SIZE} limit has been reached.
      */
-    public void startJob(ManagedJobDescriptor theDescriptor, Supplier theJob) throws IllegalArgumentException {
-        if (this.jobTable.contains(theDescriptor))
-            throw new IllegalArgumentException(String.format(ts.getTranslatedString("apis.services.threading.messages.job-already-exists"), theDescriptor.getId()));
-        if (theDescriptor.getState() != ManagedJobDescriptor.STATE_CREATED)
-            throw new IllegalArgumentException(String.format(ts.getTranslatedString("apis.services.threading.messages.job-can-not-restart"), theDescriptor.getId()));
+    public void startJob(ManagedJob theJob) throws IllegalArgumentException {
+        if (this.jobTable.size() >= TABLE_SIZE)
+            throw new IllegalArgumentException(String.format(
+                    ts.getTranslatedString("apis.services.threading.messages.job-limit-reached"), TABLE_SIZE));
+        if (this.jobTable.contains(theJob.getDescriptor()))
+            throw new IllegalArgumentException(String.format(
+                    ts.getTranslatedString("apis.services.threading.messages.job-already-exists"), theJob.getDescriptor().getId()));
+        if (theJob.getDescriptor().getState() != ManagedJobDescriptor.STATE_CREATED)
+            throw new IllegalArgumentException(String.format(
+                    ts.getTranslatedString("apis.services.threading.messages.job-can-not-restart"), theJob.getDescriptor().getId()));
         
-        this.jobTable.put(theDescriptor, CompletableFuture.supplyAsync(theJob, taskExecutor));
-        theDescriptor.setState(ManagedJobDescriptor.STATE_RUNNING);
+        theJob.getDescriptor().setState(ManagedJobDescriptor.STATE_RUNNING);
+        this.jobTable.put(theJob.getDescriptor(), CompletableFuture.supplyAsync(theJob, taskExecutor));
+    }
+    
+    /**
+     * Removes all jobs in the current job list.
+     * @throws IllegalArgumentException If at least one job is running. If that's the case, no 
+     */
+    public synchronized  void clearJobs() throws IllegalArgumentException {
+        for (ManagedJobDescriptor aJobDescriptor : jobTable.keySet()) {
+            if (aJobDescriptor.getState() == ManagedJobDescriptor.STATE_RUNNING)
+                throw new IllegalArgumentException(ts.getTranslatedString("apis.services.threading.messages.can-not-clean-job-table"));
+        }
+        
+        this.jobTable.clear();
+    }
+    
+    /**
+     * Removes all jobs in the current job list, provided that they are not running.
+     * @throws IllegalArgumentException If at least one job is running. If that's the case, no 
+     */
+    public synchronized  void clearCompletedJobs() throws IllegalArgumentException {
+        jobTable.keySet().forEach((aJobDescriptor) -> {
+            if (aJobDescriptor.getState() != ManagedJobDescriptor.STATE_RUNNING)
+                jobTable.remove(aJobDescriptor);
+        });
     }
 }

@@ -40,7 +40,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualAction;
-import org.neotropic.kuwaiba.modules.optional.physcon.persistence.PhysicalConnectionsService;
+import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.visualization.views.FiberSplitterView;
 import org.neotropic.kuwaiba.visualization.views.PhysicalPathView;
 import org.neotropic.kuwaiba.visualization.views.PhysicalTreeView;
