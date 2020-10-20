@@ -96,7 +96,10 @@ public class ClassLevelReportWidget extends AbstractDashboardWidget {
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage()).open();
         }
     }
-    
+    /**
+     * Executes the given report and creates a downloadable file 
+     * @param selectedReport 
+     */
     private void executeInventoryReport(ReportMetadataLight selectedReport) {
         try {
             byte[] reportBody = bem.executeClassLevelReport(businessObject.getClassName(), businessObject.getId(), 

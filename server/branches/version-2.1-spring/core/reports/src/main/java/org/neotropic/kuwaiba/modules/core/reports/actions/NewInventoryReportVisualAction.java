@@ -72,7 +72,7 @@ public class NewInventoryReportVisualAction extends AbstractVisualAction<Dialog>
     public Dialog getVisualComponent(ModuleActionParameterSet parameters) {
              
         TextField txtName = new TextField(ts.getTranslatedString("module.general.labels.name"));
-        TextField txtDescription = new TextField(ts.getTranslatedString("module.general.labels.name"));
+        TextField txtDescription = new TextField(ts.getTranslatedString("module.general.labels.description"));
         txtName.setRequiredIndicatorVisible(true);
         txtName.setSizeFull();
         txtDescription.setSizeFull();

@@ -81,7 +81,7 @@ public class NewClassReportVisualAction extends AbstractVisualAction<Dialog> {
                
         BoldLabel lblPClass = new BoldLabel(String.format("%s: %s", ts.getTranslatedString("module.report.class"), seletedClass.getName()));       
         TextField txtName = new TextField(ts.getTranslatedString("module.general.labels.name"));
-        TextField txtDescription = new TextField(ts.getTranslatedString("module.general.labels.name"));
+        TextField txtDescription = new TextField(ts.getTranslatedString("module.general.labels.description"));
         txtName.setRequiredIndicatorVisible(true);
         txtName.setSizeFull();
         txtDescription.setSizeFull();

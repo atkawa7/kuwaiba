@@ -164,29 +164,49 @@ public class ReportsUI extends VerticalLayout {
      * Object to save the select task parameter
      */
     private StringPair currentParameter;
-    
+    /**
+     * Field to edit the report name
+     */
     TextField txtName;
-    
+     /**
+     * Field to edit the report description
+     */
     TextArea txtDescription;
-    
+    /**
+     * check to set enable/disable the report
+     */
     Checkbox chckEnabled;
-    
+    /**
+     * AceEditor instance to edit the script
+     */
     AceEditor editorScript;
-       
-    Button btnAddParameter;
-    
+    /**
+     * layout enclosing the parameter report actions and data grid
+     */
     VerticalLayout lytParameters;
-    
+    /**
+     * Button instance to execute the save report action
+     */
     Button btnSaveReport;
-    
+    /**
+     * Button instance to execute the run report action
+     */
     Button btnRunReport;
-    
+    /**
+     * Button instance to execute the delete report action
+     */
     Button btnDeleteReport;
-    
+    /**
+    * Layout enclosing the report content
+    */
     VerticalLayout lytReportContent;
-    
+    /**
+     * boolean to know the type of the selected report
+     */
     boolean isClassLevelCurrentReport;
-    
+    /*
+     label to show the report name
+    */
     H4 lblReportNameTitle;
 
     /**
@@ -210,9 +230,17 @@ public class ReportsUI extends VerticalLayout {
      */
     ActionCompletedListener listenerDeleteReportAction;
   
-    
+    /**
+     * Reference to the selected class
+     */
     ClassMetadataLight selectedClass;
+    /**
+     * Reference to the selected report
+     */
     ReportMetadataLight selectedReport;
+    /**
+     * Reference to the selected node, when any class level report is selected
+     */
     AbstractNode selectedTreeNode;
     public ReportsUI() {
         super();
@@ -262,17 +290,19 @@ public class ReportsUI extends VerticalLayout {
         this.newClassReportVisualAction.registerActionCompletedLister(listenerNewClassReportAction);
         
         listenerNewInventoryReportAction = (ActionCompletedListener.ActionCompletedEvent ev) -> {          
-            try {
-                updateInventoryReports();
-                showActionCompledMessages(ev);      
-            } catch (ApplicationObjectNotFoundException ex) {
-                Logger.getLogger(ReportsUI.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            updateInventoryReports();
+            showActionCompledMessages(ev);
         };
         this.newInventoryReportVisualAction.registerActionCompletedLister(listenerNewInventoryReportAction);
         
         listenerDeleteReportAction = (ActionCompletedListener.ActionCompletedEvent ev) -> {          
-            updateReportContent(false);
+            resetView();
+            selectedReport = null;
+            lytReportContent.setVisible(false);
+            if (isClassLevelCurrentReport)
+                 treeClassLevelReports.getDataProvider().refreshAll();
+            else 
+                 updateInventoryReports();
             showActionCompledMessages(ev);
         }; 
         this.deleteReportVisualAction.registerActionCompletedLister(listenerDeleteReportAction);
@@ -342,7 +372,7 @@ public class ReportsUI extends VerticalLayout {
         txtDescription.setHeight("100px");
         txtDescription.setWidthFull();
         chckEnabled = new Checkbox(ts.getTranslatedString("module.report.enabled"));
-        btnAddParameter = new Button(this.newParameterVisualAction.getModuleAction().getDisplayName(), new Icon(VaadinIcon.PLUS),
+        Button btnAddParameter = new Button(this.newParameterVisualAction.getModuleAction().getDisplayName(), new Icon(VaadinIcon.PLUS),
                 (event) -> {
                      this.newParameterVisualAction.getVisualComponent(new ModuleActionParameterSet(
                       new ModuleActionParameter("report", selectedReport))).open();
@@ -352,7 +382,7 @@ public class ReportsUI extends VerticalLayout {
         lytReportInfo.setWidth("500px");
         HorizontalLayout lytDlgReportInfoContent = new HorizontalLayout(lytReportInfo, lytParameters);
         Dialog dlgReportInfo = new Dialog(lytDlgReportInfoContent);
-        Button btnSaveReportInfo = new Button(ts.getTranslatedString("module.general.messages.save"), new Icon(VaadinIcon.PLUS),  evt -> {
+        Button btnSaveReportInfo = new Button(ts.getTranslatedString("module.general.messages.save"), new Icon(VaadinIcon.DOWNLOAD),  evt -> {
             saveCurrentReport();
             dlgReportInfo.close();
         });
@@ -361,16 +391,19 @@ public class ReportsUI extends VerticalLayout {
         });
         dlgReportInfo.add(new HorizontalLayout(btnSaveReportInfo, btnCancelReportInfo));
          
-        Button btnEditReport = new Button(ts.getTranslatedString("module.general.messages.edit"), new Icon(VaadinIcon.EDIT),  evt -> {
+        Button btnEditReport = new Button(ts.getTranslatedString("module.report.edit-properties"), new Icon(VaadinIcon.EDIT),  evt -> {
             dlgReportInfo.open();
         });
-        btnSaveReport = new Button(ts.getTranslatedString("module.general.messages.save"), new Icon(VaadinIcon.PLUS),  evt -> {
+        btnSaveReport = new Button(ts.getTranslatedString("module.general.messages.save"), new Icon(VaadinIcon.DOWNLOAD),  evt -> {
             saveCurrentReport();
         });
-        btnDeleteReport = new Button(ts.getTranslatedString("module.report.delete-report.name"), new Icon(VaadinIcon.TRASH), evt -> {
-            deleteCurrentReport();
+        btnDeleteReport = new Button(this.deleteReportVisualAction.getModuleAction().getDisplayName(), new Icon(VaadinIcon.TRASH),
+                (event) -> {
+                     this.deleteReportVisualAction.getVisualComponent(new ModuleActionParameterSet(
+                      new ModuleActionParameter("report", selectedReport))).open();
         });
-        btnRunReport = new Button(ts.getTranslatedString("module.report.execute"), new Icon(VaadinIcon.PLAY), evt -> {
+        btnRunReport = new Button(ts.getTranslatedString("module.report.save-and-execute"), new Icon(VaadinIcon.PLAY), evt -> {
+            saveCurrentReport();
             runReport();
         });
         HorizontalLayout lytReportActions = new HorizontalLayout();
@@ -402,6 +435,9 @@ public class ReportsUI extends VerticalLayout {
         add(splitLayout);
     }
 
+    /**
+     * Initialize the class report tree
+     */
     private void initializeClassReportsTree() {
         try {
             List<ClassMetadataLight> inventoryObjectClasses = mem.getSubClassesLight(Constants.CLASS_INVENTORYOBJECT, true, true);
@@ -435,10 +471,13 @@ public class ReportsUI extends VerticalLayout {
             }    
         });
         } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
             Logger.getLogger(ReportsUI.class.getName()).log(Level.SEVERE, null, ex);
         }     
     }
-    
+    /**
+     * Initialize the parameters grid
+     */
     private void buildTaskParametersGrid() { 
         tblParameters.addColumn(StringPair::getKey)
                 .setHeader(ts.getTranslatedString("module.report.parameters.name"));
@@ -467,7 +506,7 @@ public class ReportsUI extends VerticalLayout {
             tblInventoryReports.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
             tblInventoryReports.addThemeVariants(GridVariant.LUMO_NO_BORDER);
             tblInventoryReports.addColumn(ReportMetadataLight::getName)
-                    .setHeader(ts.getTranslatedString("module.general.labels.attributename"))
+                    .setHeader(ts.getTranslatedString("module.general.labels.name"))
                     .setKey(ts.getTranslatedString("module.general.labels.name"));
             
             tblInventoryReports.addItemClickListener((ItemClickEvent<ReportMetadataLight> ev) -> {
@@ -493,17 +532,29 @@ public class ReportsUI extends VerticalLayout {
                 tblInventoryReports.setItems(Arrays.asList(ev.getValue()));
             });
         } catch (ApplicationObjectNotFoundException ex) {
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
             Logger.getLogger(ReportsUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    private void updateInventoryReports() throws ApplicationObjectNotFoundException {
-        List<ReportMetadataLight> inventoryReports = bem.getInventoryLevelReports(true);
-        tblInventoryReports.setItems(inventoryReports);
-        tblInventoryReports.getDataProvider().refreshAll();
-        cbxFilterInventoryReports.setItems(inventoryReports);
+    /**
+     * Update the grid that shows the inventory reports
+     * @throws ApplicationObjectNotFoundException 
+     */
+    private void updateInventoryReports() {
+        try {
+            List<ReportMetadataLight> inventoryReports = bem.getInventoryLevelReports(true);
+            tblInventoryReports.setItems(inventoryReports);
+            tblInventoryReports.getDataProvider().refreshAll();
+            cbxFilterInventoryReports.setItems(inventoryReports);
+        } catch (ApplicationObjectNotFoundException ex) {
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+            Logger.getLogger(ReportsUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-
+    /**
+     * Update the report content with the current selected report
+     * @param classLevelReport boolean to know if the current report is a  class level report
+     */
     private void updateReportContent(boolean classLevelReport) {
          if (selectedReport != null) {
              try {
@@ -528,11 +579,14 @@ public class ReportsUI extends VerticalLayout {
                      btnRunReport.setVisible(true);
                  }
              } catch (ApplicationObjectNotFoundException ex) {
+                 new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
                  Logger.getLogger(ReportsUI.class.getName()).log(Level.SEVERE, null, ex);
              }
          } 
     }
-
+    /**
+     * Save the selected report with the current data
+     */
     private void saveCurrentReport() {
         if (selectedReport != null) {
             try {
@@ -547,23 +601,7 @@ public class ReportsUI extends VerticalLayout {
                     tblInventoryReports.getDataProvider().refreshItem(selectedReport);
                 new SimpleNotification("", ts.getTranslatedString("module.report.report-saved")).open();
             } catch (ApplicationObjectNotFoundException | InvalidArgumentException ex) {
-                Logger.getLogger(ReportsUI.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
-    private void deleteCurrentReport() {
-        if (selectedReport != null) {
-            try {
-                bem.deleteReport(selectedReport.getId());
-                resetView();
-                lytReportContent.setVisible(false);
-                if (isClassLevelCurrentReport)
-                    treeClassLevelReports.getDataProvider().refreshAll();
-                else 
-                    tblInventoryReports.getDataProvider().refreshAll();
-                new SimpleNotification("", ts.getTranslatedString("module.report.report-deleted")).open();
-            } catch (ApplicationObjectNotFoundException ex) {
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
                 Logger.getLogger(ReportsUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -585,13 +623,16 @@ public class ReportsUI extends VerticalLayout {
                     else
                         executeInventoryReport(rep.getParameters());
                 } catch (ApplicationObjectNotFoundException ex) {
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
                     Logger.getLogger(ReportsUI.class.getName()).log(Level.SEVERE, null, ex);
-                }
-       
+                }       
             } 
         } 
     }
-
+    /**
+     * Create a new dialog to show the parameters when any inventory report is executed
+     * @param parameters the list of parameters
+     */
     private void createDlgExecInventoryReport(List<StringPair> parameters) {
         
         VerticalLayout lytContent = new VerticalLayout();
@@ -632,6 +673,7 @@ public class ReportsUI extends VerticalLayout {
             final StreamRegistration registration = VaadinSession.getCurrent().getResourceRegistry().registerResource(resource);
             UI.getCurrent().getPage().open(registration.getResourceUri().toString());
         } catch (ApplicationObjectNotFoundException | InvalidArgumentException ex) {
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
             Logger.getLogger(ReportsUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     } 
