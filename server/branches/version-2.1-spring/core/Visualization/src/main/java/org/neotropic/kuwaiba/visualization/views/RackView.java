@@ -236,11 +236,12 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                 lytGraph.setSpacing(false);
                 lytGraph.setPadding(false);
                 mxGraph = new MxGraph();
-                mxGraph.setWidth("800px");
+                mxGraph.setWidth("800px");               
                 mxGraph.setHeight("530px");
                 mxGraph.setOverflow("scroll");
                 mxGraph.setGrid("img/grid.gif");
                 mxGraph.setHasOutline(true);
+                mxGraph.setOutlineWidth("100px");
                 mxGraph.setBeginUpdateOnInit(true);
                 mxGraph.addGraphLoadedListener(eventListener -> {
                     mxGraph.enablePanning(true);

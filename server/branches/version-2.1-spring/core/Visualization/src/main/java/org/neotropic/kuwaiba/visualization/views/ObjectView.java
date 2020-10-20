@@ -208,8 +208,8 @@ public class ObjectView extends AbstractDetailedView<BusinessObjectLight, Vertic
                     // add start control point to desktop client compatibility
                     QName qnameControlpoint = new QName("controlpoint");
                     xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
-                    xmlew.add(xmlef.createAttribute(new QName("x"), ((Integer) viewMap.getNode(sourceObject).getProperties().get("x")).toString()));
-                    xmlew.add(xmlef.createAttribute(new QName("y"), ((Integer) viewMap.getNode(sourceObject).getProperties().get("y")).toString()));
+                    xmlew.add(xmlef.createAttribute(new QName("x"), ((Double) viewMap.getNode(sourceObject).getProperties().get("x")).intValue() + ""));
+                    xmlew.add(xmlef.createAttribute(new QName("y"), ((Double) viewMap.getNode(sourceObject).getProperties().get("y")).intValue() + ""));
                     xmlew.add(xmlef.createEndElement(qnameControlpoint, null));
                     for (Point point : cPoints) {                     
                         qnameControlpoint = new QName("controlpoint");
@@ -221,8 +221,8 @@ public class ObjectView extends AbstractDetailedView<BusinessObjectLight, Vertic
                     // add end control point to desktop client compatibility
                     qnameControlpoint = new QName("controlpoint");
                     xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
-                    xmlew.add(xmlef.createAttribute(new QName("x"), ((Integer) viewMap.getNode(targetObject).getProperties().get("x")).toString()));
-                    xmlew.add(xmlef.createAttribute(new QName("y"), ((Integer) viewMap.getNode(targetObject).getProperties().get("y")).toString()));
+                    xmlew.add(xmlef.createAttribute(new QName("x"), ((Double) viewMap.getNode(targetObject).getProperties().get("x")).intValue() + ""));
+                    xmlew.add(xmlef.createAttribute(new QName("y"), ((Double) viewMap.getNode(targetObject).getProperties().get("y")).intValue() + ""));
                     xmlew.add(xmlef.createEndElement(qnameControlpoint, null));
                 }
                 
@@ -262,7 +262,6 @@ public class ObjectView extends AbstractDetailedView<BusinessObjectLight, Vertic
                    
         MxGraphNode node;
         MxGraphEdge edge;
-          
         for (AbstractViewNode bObject : viewMap.getNodes()) {
             node = new MxGraphNode();
             node.setUuid(((BusinessObjectLight)bObject.getIdentifier()).getId());
@@ -299,6 +298,14 @@ public class ObjectView extends AbstractDetailedView<BusinessObjectLight, Vertic
                     }
                 }
         }
+        MxGraphNode dummyNode = new MxGraphNode();
+        dummyNode.setGeometry(0, 0, 0, 0);
+        dummyNode.setMovable(false);
+        mxGraph.getMxGraph().addNode(dummyNode);
+            //  execute the layout and disable moving when the last cell is added
+        dummyNode.addCellAddedListener(eventListener -> {
+            mxGraph.getMxGraph().refreshGraph();
+        });
         return lytObjectView;
     }
 

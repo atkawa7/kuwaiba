@@ -145,7 +145,7 @@ public class PhysicalTreeView extends AbstractDetailedView<BusinessObjectLight, 
             Button btnZoomOut = new Button(new Icon(VaadinIcon.MINUS), evt -> {
                     mxGraph.getMxGraph().zoomOut();
                 });
-            btnZoomIn.getElement().setProperty("title", ts.getTranslatedString("module.visualization.rack-view-zoom-out"));
+            btnZoomOut.getElement().setProperty("title", ts.getTranslatedString("module.visualization.rack-view-zoom-out"));
              
             int widthPort = 25, heightPort = 25, startY = 30, widthExternalPort= 30, heightExternalPort=30;
             HorizontalLayout lytGraph = new HorizontalLayout();
