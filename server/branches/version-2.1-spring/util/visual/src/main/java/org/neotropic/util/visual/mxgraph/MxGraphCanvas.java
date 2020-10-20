@@ -143,7 +143,7 @@ public class MxGraphCanvas<N, E> {
        mxGraph = new MxGraph();
        mxGraph.setWidth(width);
        mxGraph.setHeight(height);    
-       mxGraph.setGrid("img/grid.gif");
+//       mxGraph.setGrid("img/grid.gif");
        nodes = new HashMap<>();
        edges = new HashMap<>();     
        sourceEdgeNodes = new HashMap<>();
@@ -210,7 +210,7 @@ public class MxGraphCanvas<N, E> {
             newNode.setShape(MxConstants.SHAPE_IMAGE);
             nodes.put(node, newNode);
             mxGraph.addNode(newNode);
-            mxGraph.refreshGraph();
+//            mxGraph.refreshGraph();
             return newNode;
         }
         return null;
@@ -224,7 +224,7 @@ public class MxGraphCanvas<N, E> {
         if (!nodes.containsKey(node)) {       
             nodes.put(node, mxgraphNode);
             mxGraph.addNode(mxgraphNode);
-            mxGraph.refreshGraph();
+//            mxGraph.refreshGraph();
         }
     }
     /**
@@ -257,7 +257,7 @@ public class MxGraphCanvas<N, E> {
             sourceEdgeNodes.put(edgeObject, sourceObject);
             targetEdgeNodes.put(edgeObject, targetObject);
             mxGraph.addEdge(newEdge);
-            mxGraph.refreshGraph();
+//            mxGraph.refreshGraph();
             return newEdge;       
         }        
         return null;
@@ -287,7 +287,7 @@ public class MxGraphCanvas<N, E> {
             sourceEdgeNodes.put(edge, sourceNode);
             targetEdgeNodes.put(edge, targetNode);
             mxGraph.addEdge(mxgraphEdge);
-            mxGraph.refreshGraph();
+//            mxGraph.refreshGraph();
         }
     }
     /**
