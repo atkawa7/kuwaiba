@@ -27,8 +27,10 @@ import com.vaadin.flow.shared.Registration;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.UUID;
@@ -324,9 +326,22 @@ public class MxGraphCell extends Component implements HasComponents {
     public void setEdgeStyle(String prop) {
         getElement().setProperty(MxConstants.STYLE_EDGE, prop);
     }
-    
+    @Synchronize(property = "rawStyle", value = "raw-style-changed")
     public String getRawStyle() {
         return getElement().getProperty(PROPERTY_RAW_STYLE);
+    }
+    
+    public HashMap<String, String> getRawStyleAsMap() {
+        String style = getRawStyle();
+        HashMap<String, String> map = new HashMap<>();
+        if (style != null && !style.isEmpty()) {
+            String[] keyValuePairs = style.split(";"); 
+            for(String pair : keyValuePairs) {
+                String[] entry = pair.split("=");                   
+                map.put(entry[0].trim(), entry[1].trim());          
+            }
+        }
+        return map;
     }
         
     public void setRawStyle(String prop) {
@@ -470,7 +485,6 @@ public class MxGraphCell extends Component implements HasComponents {
     }
     
     public void addCell(MxGraphCell mxGraphCell) {
-//        getElement().appendChild(mxGraphCell.getElement());   
         add(mxGraphCell);
     }
     
@@ -508,6 +522,10 @@ public class MxGraphCell extends Component implements HasComponents {
     
     public void overrideStyle() {
         getElement().executeJs("this.overrideStyle()");
+    }
+    
+    public void addRayStyleToCurrent() {
+        getElement().executeJs("this.addRayStyleToCurrent()");
     }
     
     public void updateCellSize() {
@@ -555,6 +573,10 @@ public class MxGraphCell extends Component implements HasComponents {
      */
     public void orderCell(boolean back) {
         getElement().executeJs("this.orderCell($0)", back);
+    }
+    
+    public void setStyle(String key, String value) {
+        getElement().callJsFunction("setStyle", key, value);
     }
     
     @Override

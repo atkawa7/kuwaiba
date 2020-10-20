@@ -59,7 +59,8 @@ class MxGraph extends PolymerElement {
             },
             // background image path
             grid: {
-                type: String
+                type: String,    
+                observer: '_gridChanged'
             },
             width: {
                 type: String,
@@ -199,8 +200,7 @@ class MxGraph extends PolymerElement {
 
     //called then the mxGraph library has been loaded and initialize the grap object
     initMxGraph() {
-        if (this.grid)
-            this.$.graphContainer.style.background = 'url(' + this.grid + ')';
+        this._gridChanged();           
         // Checks if the browser is supported
         console.log("initMxGraph")
         if (!mxClient.isBrowserSupported())
@@ -559,12 +559,44 @@ class MxGraph extends PolymerElement {
             if (this.beginUpdateOnInit) {
                 this.beginUpdate();
             }
-            
+           mxStackLayout.prototype.updateParentGeometry = function(parent, pgeo, last)
+            {
+                    var horizontal = this.isHorizontal();
+                    var model = this.graph.getModel();	
+
+                    var pgeo2 = pgeo.clone();
+
+                            var tmp = last.x + last.width + this.marginRight + this.border;
+                            if (this.resizeParentMax)
+                            {
+                                    pgeo2.width = Math.max(pgeo2.width, tmp);
+                            }
+                            else
+                            {
+                                    pgeo2.width = tmp;
+                            }
+                            var tmp = last.y + last.height + this.marginBottom + this.border;
+
+                            if (this.resizeParentMax)
+                            {
+                                    pgeo2.height = Math.max(pgeo2.height, tmp);
+                            }
+                            else
+                            {
+                                    pgeo2.height = tmp;
+                            }
+
+                    if (pgeo.x != pgeo2.x || pgeo.y != pgeo2.y ||
+                            pgeo.width != pgeo2.width || pgeo.height != pgeo2.height)
+                    {
+                            model.setGeometry(parent, pgeo2);
+                    }
+            };
         }
         this.fireGraphLoaded();
     }
     ;
-            // Get the polymer object that represents the cell with the porvided idCell. 
+    // Get the polymer object that represents the cell with the porvided idCell. 
     getCellObjectById(idCell) {
         var cell;
         this.cells.forEach(function (cellObject) {
@@ -849,6 +881,14 @@ class MxGraph extends PolymerElement {
             this.graph.refresh();
         else 
             this.waitForGraph(this.refreshGraph);
+    }
+    
+    _gridChanged() {
+        if (this.grid)
+            this.$.graphContainer.style.background = 'url(' + this.grid + ')';
+        else
+            this.$.graphContainer.style.background = 'none';
+
     }
       
     alignMxGraphCells(align, cells, param) {

@@ -189,10 +189,12 @@ class MxGraphCell extends PolymerElement {
           observer: 'styleNameChanged' 
       },
       rawStyle: { // intented to assign raw styles without using the styleSheet 
-               // example posible value:  'strokeColor=red;shape=ellipse' 
+               // example posible value:  'strokeColor=red;shape=ellipse' , 
+               // call addRawStyletoCurrent or overrideStlye to asign the style
+               
           type: String,
           value : null,
-          observer: 'rawStyleChanged' 
+          notify: true
       },
       fillColor: {
         type: String,
@@ -350,8 +352,9 @@ class MxGraphCell extends PolymerElement {
       this.cell.getTooltip = () => null;
       
       if (this.rawStyle) {
-          this.rawStyleChanged();
-      }
+          this.addRawStyleToCurrent();
+      } else 
+          this.rawStyle = this.cell.style;
     
       if (this.styleName) {
           this.styleNameChanged();
@@ -382,7 +385,14 @@ class MxGraphCell extends PolymerElement {
              ((this.edgeStyle) ? (';edgeStyle=' + this.edgeStyle) : '')  +           
             ';fontColor=' + this.fontColor );
 
-        
+           if (this.rawStyle) {
+                this.addRawStyleToCurrent();
+            } else 
+           this.rawStyle = this.cell.style;
+       
+            if (this.styleName) {
+                this.styleNameChanged();
+            }
            // if there are control points, add them to the edge
           if(this.points && this.points.length > 0) {
             var arrayPoints = JSON.parse(this.points); 
@@ -543,6 +553,13 @@ removeOverlayButtons() {
            this.graph.removeCellOverlays(this.cell);
        }
    }
+   
+ setStyle(key, value) {
+     if (this.cell && this.graph && key) {
+         mxUtils.setCellStyles(this.graph.model, [this.cell], key, value);
+         this.rawStyle = this.cell.style;
+     }
+ }
     
 setChildrenCellPosition(cellId, position) {
     if (this.cell && position >= 0 && this.cell.children.length > position) {
@@ -629,12 +646,18 @@ cellLabelChanged() {
         }
       }
   }
-  
-   rawStyleChanged() {
-      if (this.graph && this.cell) {        
-              var cs = new Array();
-              cs[0] = this.cell;             
-              this.graph.setCellStyle(this.cell.style + ';' + this.rawStyle, cs);       
+  /**
+   * Adds the styles in rawStyle to the current cell style.
+   */
+  addRawStyleToCurrent() {
+      if (this.graph && this.cell && this.rawStyle) {        
+                var keyValuePairs = this.rawStyle.split(";"); 
+                var _this = this;
+                keyValuePairs.forEach(function(pair)  {
+                    var entry = pair.split("="); 
+                    if (entry && entry.length === 2)
+                        _this.setStyle(entry[0], entry[1]);
+                });
       }
   }
   
