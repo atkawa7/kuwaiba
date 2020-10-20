@@ -119,7 +119,7 @@ public class NewTemplateVisualAction extends AbstractVisualAction<Dialog> {
                 wdwNewListTypeItem.close();
             });
             lytTextFields.add(txtName);
-            lytMoreButtons.add(btnOK, btnCancel);
+            lytMoreButtons.add(btnCancel, btnOK);
             lytMain.add(lblDialogName, lytTextFields, lytMoreButtons);
 
             wdwNewListTypeItem.add(lytMain);

@@ -365,6 +365,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
             if (event.getValue() != null) {
                 selectedClass = event.getValue();
                 updateTemplateGrid(event.getValue());
+                updateChildTemplateItemsGrid(null);
                 updatePropertySheet(event.getValue());
             } else {
                 btnAddTemplate.setEnabled(false);
@@ -594,7 +595,8 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
             mnuAddSpecialChildsTemplateItem.setEnabled(true);
         } else {
             mnuAddChildsTemplateItem.setEnabled(false);
-            mnuAddSpecialChildsTemplateItem.setEnabled(false);
+            mnuAddSpecialChildsTemplateItem.setEnabled(false);            
+            refreshStructure(null);
         }
     }
 
@@ -636,12 +638,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
         smnuRemoveChildsTemplateItem.getElement().setProperty("title",
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.deleteItem-template.description")));
 
-        /*
-        MenuItem smnuEditChildsTemplateItem = menuBar.addItem(
-                new Icon(VaadinIcon.EDIT), e -> editStructureItem(selectedItem));
-        smnuEditChildsTemplateItem.getElement().setProperty("title",
-                String.format("%s", ts.getTranslatedString("module.templateman.actions.editItem-template.description")));
-         */
+        
         return menuBar;
     }
 
@@ -902,8 +899,10 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
     private void refreshStructure(TemplateObjectLight object) {
         //create fisrt call data
         List<TemplateObjectLight> allChildsTemplateLight = new ArrayList<>();
-        allChildsTemplateLight.addAll(aem.getTemplateElementChildren(object.getClassName(), object.getId()));
-        allChildsTemplateLight.addAll(aem.getTemplateSpecialElementChildren(object.getClassName(), object.getId()));
+        if (object != null) {
+            allChildsTemplateLight.addAll(aem.getTemplateElementChildren(object.getClassName(), object.getId()));
+            allChildsTemplateLight.addAll(aem.getTemplateSpecialElementChildren(object.getClassName(), object.getId()));
+        }
         childsTemplateDataProvider = new AbstractBackEndHierarchicalDataProvider<TemplateObjectLight, Void>() {
             //count parent elements
             @Override

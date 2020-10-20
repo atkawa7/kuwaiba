@@ -144,12 +144,13 @@ public class NewTemplateSpecialItemVisualAction extends AbstractVisualAction<Dia
                     wdwNewListTypeItem.close();
                 });
                 lytTextFields.add(cbxPossibleSpecialChildren, txtName);
-                lytMoreButtons.add(btnOK, btnCancel);
+                lytMoreButtons.add(btnCancel, btnOK);
                 lytMain.add(lblDialogName, lytTextFields, lytMoreButtons);
             } else {
                 Label lblNoClassAvailable = new Label(String.format("The containment configuration does not allow instances of class %s to have children.", parentClassName));
                 lytMoreButtons.add(btnOK);
                 btnOK.setText(ts.getTranslatedString("module.general.messages.ok"));
+                btnOK.setClassName("primary-button");
                 btnOK.setEnabled(true);
                 btnOK.addClickListener(event -> wdwNewListTypeItem.close());
                 lytMain.add(lblDialogName, lblNoClassAvailable, lytMoreButtons);
