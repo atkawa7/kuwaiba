@@ -144,6 +144,11 @@
             <version>2.1</version>
         </dependency>
         <dependency>
+            <groupId>org.neotropic.kuwaiba</groupId>
+            <artifactId>topoman</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
             <groupId>com.neotropic.kuwaiba.modules.commercial</groupId>
             <artifactId>ospman</artifactId>
             <version>2.1</version>
@@ -152,7 +157,7 @@
             <groupId>com.neotropic.kuwaiba.modules.commercial</groupId>
             <artifactId>mpls</artifactId>
             <version>2.1</version>
-        </dependency>
+        </dependency>      
         <dependency>
             <groupId>com.neotropic.flow.component</groupId>
             <artifactId>mx-graph-flow</artifactId>
