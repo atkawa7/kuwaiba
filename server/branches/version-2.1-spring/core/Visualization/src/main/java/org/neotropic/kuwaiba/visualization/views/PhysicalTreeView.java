@@ -154,13 +154,13 @@ public class PhysicalTreeView extends AbstractDetailedView<BusinessObjectLight, 
             lytGraph.setMargin(false);
             mxGraph = new MxGraphCanvas("100%", "100%");
             mxGraph.getMxGraph().setMaxHeight("400px");
-            mxGraph.getMxGraph().setMaxWidth("1050px");
             mxGraph.getMxGraph().setOverflow("scroll");
             mxGraph.getMxGraph().setHasOutline(true);
             mxGraph.getMxGraph().setOutlineHeight("100px");
             
             VerticalLayout lytActions = new VerticalLayout(btnZoomIn, btnZoomOut);
             lytActions.setPadding(false);
+            lytActions.setWidth("30px");
             lytGraph.add(lytActions);
             lytGraph.addAndExpand(mxGraph.getMxGraph());
             MxGraphNode mainBox = new MxGraphNode();

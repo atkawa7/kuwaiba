@@ -83,7 +83,7 @@ public class PhysicalPathView extends AbstractDetailedView<BusinessObjectLight, 
     /**
      * Width for the mxgraph component
      */
-    private String componentWidth = "750px";
+    private String componentWidth = "100%";
     /**
      * Height for the mxgraph component
      */
