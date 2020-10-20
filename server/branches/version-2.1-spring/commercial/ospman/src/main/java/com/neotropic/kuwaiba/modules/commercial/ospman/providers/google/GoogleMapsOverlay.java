@@ -18,6 +18,7 @@ package com.neotropic.kuwaiba.modules.commercial.ospman.providers.google;
 import com.neotropic.flow.component.googlemap.LatLng;
 import com.neotropic.flow.component.googlemap.LatLngBounds;
 import com.neotropic.flow.component.googlemap.OverlayView;
+import com.neotropic.flow.component.googlemap.Point;
 import com.neotropic.kuwaiba.modules.commercial.ospman.GeoBounds;
 import com.neotropic.kuwaiba.modules.commercial.ospman.GeoCoordinate;
 import com.neotropic.kuwaiba.modules.commercial.ospman.GeoPoint;
@@ -106,13 +107,19 @@ public class GoogleMapsOverlay implements MapOverlay {
     public void getProjectionFromLatLngToDivPixel(GeoCoordinate latLng, Consumer<GeoPoint> pixelConsumer) {
         Objects.requireNonNull(latLng);
         Objects.requireNonNull(pixelConsumer);
-        overlayView.fromLatLngToDivPixel(new LatLng(latLng.getLatitude(), latLng.getLongitude()), point -> {
-            pixelConsumer.accept(new GeoPoint(point.getX(), point.getY()));
-        });
+        overlayView.fromLatLngToDivPixel(
+            new LatLng(latLng.getLatitude(), latLng.getLongitude()), 
+            point -> pixelConsumer.accept(new GeoPoint(point.getX(), point.getY()))
+        );
     }
     @Override
     public void getProjectionFromDivPixelToLatLng(GeoPoint pixel, Consumer<GeoCoordinate> latLngConsumer) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Objects.requireNonNull(pixel);
+        Objects.requireNonNull(latLngConsumer);
+        overlayView.fromDivPixelToLatLng(
+            new Point(pixel.getX(), pixel.getY()), 
+            latLng -> latLngConsumer.accept(new GeoCoordinate(latLng.getLat(), latLng.getLng()))
+        );
     }
     @Override
     public void addWidthChangedConsumer(Consumer<Double> widthChangedConsumer) {

@@ -104,7 +104,4 @@ public class ConfirmDialog extends Dialog {
     public void setBtnConfirm(Button btnConfirm) {
         this.btnConfirm = btnConfirm;
     }
-    
-    
-
 }

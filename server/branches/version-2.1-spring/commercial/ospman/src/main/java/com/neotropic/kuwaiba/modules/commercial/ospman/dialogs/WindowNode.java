@@ -26,6 +26,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.treegrid.TreeGrid;
+import com.vaadin.flow.server.Command;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -55,7 +56,7 @@ public class WindowNode extends Dialog {
     public WindowNode(AbstractViewNode<BusinessObjectLight> node, 
         ApplicationEntityManager aem, BusinessEntityManager bem, MetadataEntityManager mem, 
         TranslationService ts, PhysicalConnectionsService physicalConnectionsService, 
-        NewBusinessObjectVisualAction newBusinessObjectVisualAction) {
+        NewBusinessObjectVisualAction newBusinessObjectVisualAction, Command cmdDeleteNode) {
         
         
         HorizontalLayout lytNodeTools = new HorizontalLayout();
@@ -71,6 +72,8 @@ public class WindowNode extends Dialog {
         ));
         lytNodeTools.add(new Button(ts.getTranslatedString("module.ospman.view-node.tool.remove"), new Icon(VaadinIcon.TRASH), 
             event -> {
+                if (cmdDeleteNode != null)
+                    cmdDeleteNode.execute();
                 close();
             }
         ));

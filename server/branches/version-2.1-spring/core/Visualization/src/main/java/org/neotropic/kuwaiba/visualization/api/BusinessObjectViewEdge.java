@@ -17,7 +17,6 @@ package org.neotropic.kuwaiba.visualization.api;
 
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewEdge;
-import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewNode;
 
 /**
  * An edge that represents a business, inventory object.
@@ -38,8 +37,8 @@ public class BusinessObjectViewEdge extends AbstractViewEdge<BusinessObjectLight
         if (obj instanceof BusinessObjectLight)
             return getIdentifier().equals(obj);
         
-        if (obj instanceof AbstractViewNode)
-            return getIdentifier().equals(((AbstractViewNode)obj).getIdentifier());
+        if (obj instanceof AbstractViewEdge)
+            return getIdentifier().equals(((AbstractViewEdge)obj).getIdentifier());
         
         return false;
     }

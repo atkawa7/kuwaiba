@@ -29,16 +29,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import com.neotropic.kuwaiba.modules.commercial.ospman.MapProvider;
+import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectNode;
 
 /**
  * Help to storage the overlay, source, target and edge points/coordinates
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class HelperEdgeDraw {
-    private MxGraphCell source;
+    private MxBusinessObjectNode source;
     private List<GeoCoordinate> coordinates;
     private List<Point> points;
-    private MxGraphCell target;
+    private MxBusinessObjectNode target;
     private final MapProvider map;
     private final MapOverlay mapOverlay;
     private final MxGraph graph;
@@ -59,13 +60,15 @@ public class HelperEdgeDraw {
         cancel();
         selectListener = graph.addCellSelectedListener(event -> {
             Iterator<Component> children = graph.getChildren().iterator();
-            MxGraphCell vertex = null;
+            MxBusinessObjectNode vertex = null;
             while (children.hasNext()) {
                 Component child = children.next();
                 if (child instanceof MxGraphCell) {
                     MxGraphCell cell = (MxGraphCell) child;
-                    if ("true".equals(cell.getIsVertex()) && event.getCellId().equals(cell.getUuid()))
-                        vertex = cell;
+                    if ("true".equals(cell.getIsVertex()) && event.getCellId().equals(cell.getUuid())) {
+                        if (cell instanceof MxBusinessObjectNode)
+                            vertex = (MxBusinessObjectNode) cell;
+                    }
                 }
             }
             if (vertex != null) {
@@ -109,7 +112,7 @@ public class HelperEdgeDraw {
         map.setHandMode();
     }
     
-    public MxGraphCell getSource() {
+    public MxBusinessObjectNode getSource() {
         return source;
     }
     
@@ -121,7 +124,7 @@ public class HelperEdgeDraw {
         return points;
     }
     
-    public MxGraphCell getTarget() {
+    public MxBusinessObjectNode getTarget() {
         return target;
     }
     

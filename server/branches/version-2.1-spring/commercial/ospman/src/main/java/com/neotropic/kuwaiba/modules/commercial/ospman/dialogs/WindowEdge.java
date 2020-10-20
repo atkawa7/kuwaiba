@@ -20,6 +20,7 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.server.Command;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewEdge;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
@@ -29,9 +30,11 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class WindowEdge extends Dialog {
-    public WindowEdge(AbstractViewEdge<BusinessObjectLight> edge, TranslationService ts) {
+    public WindowEdge(AbstractViewEdge<BusinessObjectLight> edge, TranslationService ts, Command cmdDeleteEdge) {
         HorizontalLayout lytEdgeTools = new HorizontalLayout();
         lytEdgeTools.add(new Button(ts.getTranslatedString("module.ospman.view-edge.tool.remove"), new Icon(VaadinIcon.TRASH), event -> {
+            if (cmdDeleteEdge != null)
+                cmdDeleteEdge.execute();
             close();
         }));
         add(lytEdgeTools);

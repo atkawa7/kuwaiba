@@ -15,6 +15,7 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman.widgets;
 
+import com.neotropic.flow.component.googlemap.LatLng;
 import com.neotropic.kuwaiba.modules.commercial.ospman.helpers.HelperEdgeDraw;
 import com.neotropic.kuwaiba.modules.commercial.ospman.helpers.HelperContainerSelector;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.DialogOverlay;
@@ -32,6 +33,7 @@ import com.neotropic.flow.component.mxgraph.Point;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OutsidePlantService;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.WindowDeleteOspView;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.WindowNewContainer;
+import com.neotropic.kuwaiba.modules.commercial.ospman.GeoPoint;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
@@ -89,6 +91,8 @@ import org.neotropic.util.visual.dialog.ConfirmDialog;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.views.util.UtilHtml;
 import com.neotropic.kuwaiba.modules.commercial.ospman.MapProvider;
+import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.component.html.Label;
 import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualAction;
 import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectEdge;
 import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectNode;
@@ -137,6 +141,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         public static final String POSITION = "position"; //NOI18N
         public static final String OVERLAY = "overlay"; //NOI18N
     }
+    
+    private static final String LOADING = "_loading";
     /**
      * Map in the Outside Plant View
      */
@@ -584,6 +590,28 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
             mapOverlays.get(selectedOverlay).getStyle().set("outline", "2px dotted red"); //NOI18N
     }
     
+    public void newOspView(boolean init) {
+        if (!init) {
+            buildEmptyView();
+            try {
+                getAsComponent();
+            } catch (InvalidArgumentException ex) {
+                new SimpleNotification(
+                    ts.getTranslatedString("module.general.messages.error"), 
+                    ex.getLocalizedMessage()
+                ).open();
+            }
+        }
+        map.getBounds(bounds -> {
+            disableEnableTabs(
+                Arrays.asList(tools.get(Tool.Marker), tools.get(Tool.Polyline)),
+                Arrays.asList(tools.get(Tool.SaveView), tools.get(Tool.DeleteView), tools.get(Tool.Hand), tools.get(Tool.Overlay), tools.get(Tool.Wire))
+            );
+            componentTabs.setSelectedTab(tools.get(Tool.Hand));
+            addOverlay(bounds, componentTabs, tools.get(Tool.Hand), tools.get(Tool.Marker), tools.get(Tool.Polyline));
+        });
+    }
+    
     @Override
     public Component getAsComponent() throws InvalidArgumentException {
         if (map == null) {
@@ -602,40 +630,49 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                         if (viewTools) {
                             componentTabs = new Tabs();
                             componentTabs.addClassName("ospman-tabs");
-                            componentTabs.setAutoselect(false);
-
-                            Tab tabNewOspView = new Tab(new Icon(VaadinIcon.FILE_ADD));
+                            
+                            Icon iconNewOspView = new Icon(VaadinIcon.FILE_ADD);
+                            
+                            Tab tabNewOspView = new Tab(iconNewOspView);
                             tabNewOspView.setClassName("ospman-tab");
-
+                            tabNewOspView.getElement().setAttribute("title", ts.getTranslatedString("module.ospman.tools.osp-view.new"));
+                            
                             Tab tabOpenOspView = new Tab(new Icon(VaadinIcon.FILE_SEARCH));
                             tabOpenOspView.setClassName("ospman-tab");
+                            tabOpenOspView.getElement().setAttribute("title", ts.getTranslatedString("module.ospman.tools.osp-view.open"));
 
                             Tab tabSaveOspView = new Tab(new Icon(VaadinIcon.SAFE));
                             tabSaveOspView.setClassName("ospman-tab");
+                            tabSaveOspView.getElement().setAttribute("title", ts.getTranslatedString("module.ospman.tools.osp-view.save"));
 
                             Tab tabDeleteOspView = new Tab(new Icon(VaadinIcon.FILE_REMOVE));
                             tabDeleteOspView.setClassName("ospman-tab");
+                            tabDeleteOspView.getElement().setAttribute("title", ts.getTranslatedString("module.ospman.tools.osp-view.delete"));
 
                             Tab tabHand = new Tab(new Icon(VaadinIcon.HAND));
                             tabHand.setClassName("ospman-tab");
+                            tabHand.getElement().setAttribute("title", ts.getTranslatedString("module.ospman.tools.hand"));
 
                             Tab tabOverlay = new Tab(new Icon(VaadinIcon.SQUARE_SHADOW));
                             tabOverlay.setClassName("ospman-tab");
+                            tabOverlay.getElement().setAttribute("title", ts.getTranslatedString("module.ospman.tools.overlay"));
 
                             Tab tabMarker = new Tab(new Icon(VaadinIcon.MAP_MARKER));
                             tabMarker.setClassName("ospman-tab");
+                            tabMarker.getElement().setAttribute("title", ts.getTranslatedString("module.ospman.tools.marker"));
 
                             Tab tabPolyline = new Tab(new Icon(VaadinIcon.PLUG));
                             tabPolyline.setClassName("ospman-tab");
+                            tabPolyline.getElement().setAttribute("title", ts.getTranslatedString("module.ospman.tools.polyline"));
 
                             Tab tabWire = new Tab(new Icon(VaadinIcon.DOT_CIRCLE));
                             tabWire.setClassName("ospman-tab");
+                            tabWire.getElement().setAttribute("title", ts.getTranslatedString("module.ospman.tools.wire"));
 
                             disableEnableTabs(
                                 Arrays.asList(tabSaveOspView, tabDeleteOspView, tabHand, tabOverlay, tabMarker, tabPolyline, tabWire),
                                 Arrays.asList()
                             );
-
                             componentTabs.add(
                                 tabNewOspView, 
                                 tabOpenOspView, 
@@ -646,7 +683,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                                 tabMarker, 
                                 tabPolyline,
                                 tabWire
-                            );
+                            );                            
                             tabs.put(tabHand, Tool.Hand);
                             tabs.put(tabOverlay, Tool.Overlay);
                             tabs.put(tabMarker, Tool.Marker);
@@ -676,25 +713,9 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                                 selectedTab = selectedChangeEvent.getSelectedTab();
                                 if (selectedTab != null) {
                                     if (selectedTab.equals(tabNewOspView)) {
-                                        buildEmptyView();
-                                        try {
-                                            getAsComponent();
-                                        } catch (InvalidArgumentException ex) {
-                                            new SimpleNotification(
-                                                ts.getTranslatedString("module.general.messages.error"), 
-                                                ex.getLocalizedMessage()
-                                            ).open();
-                                        }
-                                        disableEnableTabs(
-                                            Arrays.asList(tools.get(Tool.Marker), tools.get(Tool.Polyline)),
-                                            Arrays.asList(tools.get(Tool.SaveView), tools.get(Tool.DeleteView), tools.get(Tool.Hand), tools.get(Tool.Overlay), tools.get(Tool.Wire))
-                                        );
-                                        componentTabs.setSelectedTab(tools.get(Tool.Hand));
-                                        map.getBounds(bounds -> 
-                                            addOverlay(bounds, componentTabs, tools.get(Tool.Hand), tools.get(Tool.Marker), tools.get(Tool.Polyline))
-                                        );
+                                        newOspView(false);
                                     } else if (selectedTab.equals(tabOpenOspView)) {
-                                        //componentTabs.setSelectedTab(selectedChangeEvent.getPreviousTab());
+                                        componentTabs.setSelectedTab(tools.get(Tool.Hand));
                                         DialogOspViews ospViewDialog = new DialogOspViews(tabOpenOspView, aem, ts, viewObject -> {
                                             buildEmptyView();
                                             getProperties().put(Constants.PROPERTY_ID, viewObject.getId());
@@ -709,7 +730,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                                                 ).open();
                                             }
                                             buildWithSavedView(viewObject.getStructure());
-                                            
+                                                                                        
                                             disableEnableTabs(null, Arrays.asList(
                                                 tools.get(Tool.SaveView), tools.get(Tool.DeleteView), tools.get(Tool.Hand), tools.get(Tool.Overlay), tools.get(Tool.Marker), tools.get(Tool.Polyline), tools.get(Tool.Wire)
                                             ));
@@ -717,7 +738,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                                         componentTabs.add(ospViewDialog);
                                         ospViewDialog.open();
                                     } else if (selectedTab.equals(tabSaveOspView)) {
-                                        componentTabs.setSelectedTab(selectedChangeEvent.getPreviousTab());
+                                        componentTabs.setSelectedTab(tabHand);
                                         if (viewMap.getNodes().isEmpty()) {
                                             new SimpleNotification(
                                                 ts.getTranslatedString("module.general.messages.information"), 
@@ -727,7 +748,6 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                                         else
                                             saveOspView();
                                     } else if (selectedTab.equals(tabDeleteOspView)) {
-                                        componentTabs.setSelectedTab(selectedChangeEvent.getPreviousTab());
                                         deleteOspView();
                                     } else if (selectedTab.equals(tabHand))
                                         map.setHandMode();
@@ -760,6 +780,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                                 }
                             });
                             component.add(componentTabs);
+                            newOspView(true);
                         }
                         component.add(map.getComponent());                        
                     }
@@ -978,7 +999,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                                 vertex.setRawStyle(styles);
                                 vertex.addRightClickCellListener(event -> {
                                     if (viewTools)
-                                        openNodeDialog(newNode);
+                                        openWindowNode(newNode);
                                 });
                                 graph.addNode(vertex);
                                 
@@ -1020,33 +1041,39 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                 overlay.getProjectionFromLatLngToDivPixel(overlay.getBounds().getSouthwest(), sw -> {
                     overlay.getProjectionFromLatLngToDivPixel(overlay.getBounds().getNortheast(), ne -> {
                         graph.getElement().executeJs("return this.graph.view.scale").then(Double.class, scale -> {
-                            List<Point> newPoints = new ArrayList();
-                            setPoints(overlay, newPoints, coordinates, 
-                                new Point(sw.getX(), sw.getY()), 
-                                new Point(ne.getX(), ne.getY()), 
-                                scale, () -> {
-                                    newPoints.remove(newPoints.size() - 1);
-                                    newPoints.remove(0);
-                                    MxBusinessObjectEdge edge = new MxBusinessObjectEdge(businessObject);
-                                    edge.setPoints(newPoints);
-                                    edge.setUuid(businessObject.getId());
-                                    edge.setLabel(businessObject.getName());
-                                    edge.setStrokeWidth(1);
-                                    edge.setStrokeColor(properties.getProperty(PropertyNames.COLOR));
-                                    edge.setSource(sourceBusinessObject.getId());
-                                    edge.setTarget(targetBusinessObject.getId());
-                                    
-                                    edge.addRightClickCellListener(event -> {
-                                        if (viewTools)
-                                            openEdgeDialog(newEdge);
-                                    });
-                                    edge.addCellAddedListener(event -> {
-                                        edge.orderCell(true);
-                                        event.unregisterListener();
-                                    });
-                                    graph.addEdge(edge);
-                                    mapEdgeVertex.put(newEdge, edge);
-                                    mapVertexEdge.put(edge, newEdge);
+                            // Delaying the edge addition
+                            overlay.getProjectionFromLatLngToDivPixel(new GeoCoordinate(0.0, 0.0), dummy -> {
+                                List<Point> newPoints = new ArrayList();
+                                setPoints(overlay, newPoints, new ArrayList(coordinates), 
+                                    new Point(sw.getX(), sw.getY()), 
+                                    new Point(ne.getX(), ne.getY()), 
+                                    scale, () -> {
+                                        if (!properties.containsKey(LOADING)) {
+                                            newPoints.remove(newPoints.size() - 1);
+                                            newPoints.remove(0);
+                                        }
+                                        MxBusinessObjectEdge edge = new MxBusinessObjectEdge(businessObject);
+                                        if (!newPoints.isEmpty())
+                                            edge.setPoints(newPoints);
+                                        edge.setUuid(businessObject.getId());
+                                        edge.setLabel(businessObject.getName());
+                                        edge.setStrokeWidth(1);
+                                        edge.setStrokeColor(properties.getProperty(PropertyNames.COLOR));
+                                        edge.setSource(sourceBusinessObject.getId());
+                                        edge.setTarget(targetBusinessObject.getId());
+
+                                        edge.addRightClickCellListener(event -> {
+                                            if (viewTools)
+                                                openWindowEdge(newEdge);
+                                        });
+                                        edge.addCellAddedListener(event -> {
+                                            edge.orderCell(true);
+                                            event.unregisterListener();
+                                        });
+                                        graph.addEdge(edge);
+                                        mapEdgeVertex.put(newEdge, edge);
+                                        mapVertexEdge.put(edge, newEdge);
+                                });
                             });
                         });
                     });
@@ -1060,12 +1087,50 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
 
     @Override
     public void removeNode(BusinessObjectLight businessObject) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        AbstractViewNode node = viewMap.getNode(businessObject);
+        if (node instanceof BusinessObjectViewNode) {
+            BusinessObjectViewNode objectNode = (BusinessObjectViewNode) node;
+            String overlayId = (String) objectNode.getProperties().get(PropertyNames.OVERLAY_ID);
+            MapOverlay overlay = overlayIds.get(overlayId);
+            MxGraph graph = mapOverlays.get(overlay);
+            MxBusinessObjectNode objectVertex = mapNodeVertex.get(objectNode);
+            if (graph != null && objectVertex != null) {
+                
+                List<BusinessObjectLight> edgesToRemove = new ArrayList();
+                mapVertexEdge.forEach((vertex, edge) -> {
+                    if (businessObject.getId().equals(vertex.getSource()) || 
+                        businessObject.getId().equals(vertex.getTarget())) {
+                        
+                        edgesToRemove.add(edge.getIdentifier());
+                    }
+                });
+                edgesToRemove.forEach(edge -> removeEdge(edge));
+                graph.removeNode(objectVertex);
+                
+                viewMap.getNodes().remove(objectNode);
+                mapNodeVertex.remove(objectNode);
+                mapVertexNode.remove(objectVertex);
+            }
+        }
     }
 
     @Override
     public void removeEdge(BusinessObjectLight businessObject) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        AbstractViewEdge edge = viewMap.getEdge(businessObject);
+        if (edge instanceof BusinessObjectViewEdge) {
+            BusinessObjectViewEdge objectEdge = (BusinessObjectViewEdge) edge;
+            String overlayId = (String) objectEdge.getProperties().getProperty(PropertyNames.OVERLAY_ID);
+            MapOverlay overlay = overlayIds.get(overlayId);
+            MxGraph graph = mapOverlays.get(overlay);
+            MxBusinessObjectEdge objectVertex = mapEdgeVertex.get(objectEdge);
+            if (graph != null && objectVertex != null) {
+                graph.removeEdge(objectVertex);
+                
+                viewMap.getEdges().remove(objectEdge);
+                mapEdgeVertex.remove(objectEdge);
+                mapVertexEdge.remove(objectVertex);
+            }
+        }
     }
 
     @Override
@@ -1078,15 +1143,23 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
         
-    private void openNodeDialog(BusinessObjectViewNode viewNode) {
+    private void openWindowNode(BusinessObjectViewNode viewNode) {
         if (viewNode != null) {
-            WindowNode dialog = new WindowNode(viewNode, aem, bem, mem, ts, 
-                physicalConnectionsService, newBusinessObjectVisualAction);
-            dialog.open();
+            WindowNode wdwNode = new WindowNode(viewNode, aem, bem, mem, ts, 
+                physicalConnectionsService, newBusinessObjectVisualAction,
+                () -> {
+                    new ConfirmDialog(ts, 
+                        new Label(String.format(ts.getTranslatedString("module.ospman.view-node.tool.remove.confirm"), viewNode.getIdentifier().getName())), 
+                        ts.getTranslatedString("module.general.messages.ok"), 
+                        () -> removeNode(viewNode.getIdentifier())
+                    ).open();
+                }
+            );
+            wdwNode.open();
         }
     }
     
-    private void openEdgeDialog(BusinessObjectViewEdge viewEdge) {
+    private void openWindowEdge(BusinessObjectViewEdge viewEdge) {
         if (viewEdge != null) {
             if (selectedTab != null && tabs.containsKey(selectedTab) && 
                 Tool.Wire.equals(tabs.get(selectedTab))) {
@@ -1094,14 +1167,22 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                 wiresHelper.getEdges().forEach(edge -> 
                     edges.add(mapVertexEdge.get(edge))
                 );
-                WindowContainers dialog = new WindowContainers(edges, aem, bem, mem, ts);
+                WindowContainers wdwContainer = new WindowContainers(edges, aem, bem, mem, ts);
                 wiresHelper.cancel();
                 wiresHelper.start();                
-                dialog.open();
+                wdwContainer.open();
                 return;
             }
-            WindowEdge dialog = new WindowEdge(viewEdge, ts);
-            dialog.open();
+            WindowEdge wdwEdge = new WindowEdge(viewEdge, ts, 
+                () -> {
+                    new ConfirmDialog(ts, 
+                        new Label(String.format(ts.getTranslatedString("module.ospman.view-edge.tool.remove.confirm"), viewEdge.getIdentifier().getName())), 
+                        ts.getTranslatedString("module.general.messages.ok"), 
+                        () -> removeEdge(viewEdge.getIdentifier())
+                    ).open();
+                }
+            );
+            wdwEdge.open();
         }
     }
     
@@ -1120,26 +1201,28 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         ConfirmDialog confirmDialog = new ConfirmDialog(ts, 
             ts.getTranslatedString("module.ospman.save-view"), fly, 
             ts.getTranslatedString("module.general.messages.ok"), () -> {
-                try {
-                    if (this.properties.get(Constants.PROPERTY_ID).equals(-1)) {
-                        long newOSPViewId = aem.createOSPView(txtName.getValue(), txtDescription.getValue(), this.getAsXml());
-                        this.getProperties().put(Constants.PROPERTY_ID, newOSPViewId);
-                    } else {
-                        aem.updateOSPView((long) this.getProperties().get(Constants.PROPERTY_ID), 
-                            txtName.getValue(), txtDescription.getValue(), this.getAsXml());
+                getAsXml(structure -> {
+                    try {
+                        if (this.properties.get(Constants.PROPERTY_ID).equals(-1)) {
+                            long newOSPViewId = aem.createOSPView(txtName.getValue(), txtDescription.getValue(), structure);
+                            this.getProperties().put(Constants.PROPERTY_ID, newOSPViewId);
+                        } else {
+                            aem.updateOSPView((long) this.getProperties().get(Constants.PROPERTY_ID), 
+                                txtName.getValue(), txtDescription.getValue(), structure);
+                        }
+                        this.getProperties().put(Constants.PROPERTY_NAME, txtName.getValue());
+                        this.getProperties().put(Constants.PROPERTY_DESCRIPTION, txtDescription.getValue());
+                        new SimpleNotification(
+                            ts.getTranslatedString("module.general.messages.success"), 
+                            ts.getTranslatedString("module.ospman.view-saved")
+                        ).open();
+                    } catch (InventoryException ex) {
+                        new SimpleNotification(
+                            ts.getTranslatedString("module.general.messages.error"), 
+                            ex.getLocalizedMessage()
+                        ).open();
                     }
-                    this.getProperties().put(Constants.PROPERTY_NAME, txtName.getValue());
-                    this.getProperties().put(Constants.PROPERTY_DESCRIPTION, txtDescription.getValue());
-                    new SimpleNotification(
-                        ts.getTranslatedString("module.general.messages.success"), 
-                        ts.getTranslatedString("module.ospman.view-saved")
-                    ).open();
-                } catch (InventoryException ex) {
-                    new SimpleNotification(
-                        ts.getTranslatedString("module.general.messages.error"), 
-                        ex.getLocalizedMessage()
-                    ).open();
-                }
+                });
             }
         );
         confirmDialog.open();
@@ -1214,6 +1297,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                                 edgeProperties.put(PropertyNames.CONTROL_POINTS, controlPoints);
                                 edgeProperties.put(PropertyNames.COLOR, UtilHtml.toHexString(new Color(mem.getClass(objectClass).getColor())));
                                 edgeProperties.put(PropertyNames.OVERLAY, overlayIds.get(overlayId));
+                                edgeProperties.put(LOADING, true);
                                 
                                 addEdge(bem.getObjectLight(objectClass, objectId),
                                         bem.getObjectLight(aSideClass, aSideId),
@@ -1249,6 +1333,92 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         }
         else
             cmd.execute();
+    }
+    
+    private void setPoints(List<GeoCoordinate> inout, MapOverlay mapOverlay, List<Point> points, Command cmd) {
+        if (inout != null && points != null && !points.isEmpty() && mapOverlay != null) {
+            Point point = points.remove(0);
+            
+            MxGraph graph = mapOverlays.get(mapOverlay);
+            
+            mapOverlay.getProjectionFromLatLngToDivPixel(mapOverlay.getBounds().getSouthwest(), sw -> {
+                mapOverlay.getProjectionFromLatLngToDivPixel(mapOverlay.getBounds().getNortheast(), ne -> {
+                    graph.getElement().executeJs("return this.graph.view.scale").then(Double.class, scale -> {
+                        double x = sw.getX() + point.getX() * scale;
+                        double y = ne.getY() + point.getY() * scale;
+                        
+                        mapOverlay.getProjectionFromDivPixelToLatLng(new GeoPoint(x, y), coordinate -> {
+                            inout.add(coordinate);
+                            setPoints(inout, mapOverlay, points, cmd);
+                        });
+                    });
+                });
+            });
+
+        } else if (cmd != null) {
+            cmd.execute();
+        }
+    }
+    private void getAsXml(Consumer<byte[]> consumer) {
+        updateNodes(new ArrayList(viewMap.getNodes()), new ArrayList(viewMap.getEdges()), consumer);
+    }
+    private void updateNodes(List<AbstractViewNode> viewNodeCopies, List<AbstractViewEdge> viewEdgeCopies, Consumer<byte[]> consumer) {
+        if (!viewNodeCopies.isEmpty()) {
+            AbstractViewNode viewNode = viewNodeCopies.remove(0);
+            if (viewNode instanceof BusinessObjectViewNode) {
+                BusinessObjectViewNode objectViewNode = (BusinessObjectViewNode) viewNode;
+                String overlayId = (String) objectViewNode.getProperties().get(PropertyNames.OVERLAY_ID);
+
+                MxBusinessObjectNode objectNode = mapNodeVertex.get(objectViewNode);
+                MapOverlay overlay = overlayIds.get(overlayId);
+                MxGraph graph = mapOverlays.get(overlay);
+
+                if (objectNode != null && overlay != null && graph != null) {
+                    overlay.getProjectionFromLatLngToDivPixel(overlay.getBounds().getSouthwest(), sw -> {
+                        overlay.getProjectionFromLatLngToDivPixel(overlay.getBounds().getNortheast(), ne -> {
+                            graph.getElement().executeJs("return this.graph.view.scale").then(Double.class, scale -> {
+                                double x = sw.getX() + objectNode.getX() * scale;
+                                double y = ne.getY() + objectNode.getY() * scale;
+                                
+                                overlay.getProjectionFromDivPixelToLatLng(new GeoPoint(x, y), coordinate -> {
+                                    objectViewNode.getProperties().put(PropertyNames.LAT, coordinate.getLatitude());
+                                    objectViewNode.getProperties().put(PropertyNames.LON, coordinate.getLongitude());
+
+                                    updateNodes(viewNodeCopies, viewEdgeCopies, consumer);
+                                });
+                            });
+                        });
+                    });
+                }
+            }
+        } else {
+            updateEdges(viewEdgeCopies, consumer);
+        }
+    }
+    private void updateEdges(List<AbstractViewEdge> viewEdgeCopies, Consumer<byte[]> consumer) {
+        if (!viewEdgeCopies.isEmpty()) {
+            AbstractViewEdge viewEdge = viewEdgeCopies.remove(0);
+            if (viewEdge instanceof BusinessObjectViewEdge) {
+                BusinessObjectViewEdge objectViewEdge = (BusinessObjectViewEdge) viewEdge;
+                String overlayId = objectViewEdge.getProperties().getProperty(PropertyNames.OVERLAY_ID);
+                
+                MxBusinessObjectEdge objectEdge = mapEdgeVertex.get(objectViewEdge);
+                MapOverlay overlay = overlayIds.get(overlayId);
+                
+                if (objectEdge != null && overlay != null) {
+                    List<GeoCoordinate> coordinates = new ArrayList();
+                    setPoints(coordinates, overlay, new ArrayList(objectEdge.getPointList()), 
+                        () -> {
+                            objectViewEdge.getProperties().put(PropertyNames.CONTROL_POINTS, coordinates);
+                            
+                            updateEdges(viewEdgeCopies, consumer);
+                        }
+                    );
+                }
+            }
+        } else {
+            consumer.accept(getAsXml());
+        }
     }
     //</editor-fold>
 }
