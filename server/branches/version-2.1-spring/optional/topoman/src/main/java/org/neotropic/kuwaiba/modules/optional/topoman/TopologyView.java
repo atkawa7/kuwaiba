@@ -119,9 +119,9 @@ public class TopologyView extends AbstractView<BusinessObjectLight, Component> {
         this.mem = mem;
         this.ts = ts;
         this.resourceFactory = resourceFactory;
-        mxgraphCanvas = new MxGraphCanvas("100%", "380px");
+        mxgraphCanvas = new MxGraphCanvas("100%", "90%");
         mxgraphCanvas.getMxGraph().setConnectable(true);
-        mxgraphCanvas.getMxGraph().setConnectable(true);
+        mxgraphCanvas.getMxGraph().setOutlineHeight("100px");
         mxgraphCanvas.getMxGraph().setOverflow("scroll");
         mxgraphCanvas.getMxGraph().setGrid("");
         mxgraphCanvas.getMxGraph().setHasOutline(true);
