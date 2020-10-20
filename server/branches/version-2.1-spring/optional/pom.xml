@@ -17,5 +17,6 @@
         <module>serviceman</module>
         <module>physical-connections</module>
         <module>reporting</module>
+        <module>topoman</module>
     </modules>
 </project>
