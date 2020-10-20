@@ -62,7 +62,7 @@ public class MplsTools extends HorizontalLayout {
             fireEvent(new NewObjectEvent(this, false, (BusinessObjectLight) evt.getObject()));
         });
      
-        btnSaveView = new Button(new Icon(VaadinIcon.LEVEL_DOWN_BOLD), evt -> {
+        btnSaveView = new Button(new Icon(VaadinIcon.DOWNLOAD), evt -> {
             fireEvent(new SaveViewEvent(this, false));
         });
         btnSaveView.getElement().setProperty("title", ts.getTranslatedString("module.mpls.save-view"));
