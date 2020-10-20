@@ -65,6 +65,17 @@ public class OverlayView extends Component implements HasComponents {
             });
     }
     
+    public void fromDivPixelToLatLng(Point point, Consumer<LatLng> consumer) {
+        getElement()
+            .executeJs("return this.fromDivPixelToLatLng($0, $1)", point.getX(), point.getY())
+            .then(JsonObject.class, latLng -> {
+                consumer.accept(new LatLng(
+                    latLng.getNumber(Constants.Property.LAT),
+                    latLng.getNumber(Constants.Property.LNG)
+                ));
+            });
+    }
+    
     public Registration addWidthChangedListener(ComponentEventListener<GoogleMapEvent.OverlayViewWidthChangedEvent> listener) {
         return addListener(GoogleMapEvent.OverlayViewWidthChangedEvent.class, listener);
     }

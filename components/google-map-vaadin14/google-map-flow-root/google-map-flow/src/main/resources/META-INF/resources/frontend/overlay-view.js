@@ -129,6 +129,14 @@ class OverlayView extends PolymerElement {
     }
     return null;
   }
+  
+  fromDivPixelToLatLng(x, y) {
+    if (this.projection) {
+      var latLng = this.projection.fromDivPixelToLatLng(new google.maps.Point(x, y));
+      return {lat: latLng.lat(), lng: latLng.lng()}
+    }
+    return null;
+  }
 
   removed() {
     if (this.overlay)
