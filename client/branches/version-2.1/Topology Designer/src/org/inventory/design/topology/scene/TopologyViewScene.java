@@ -279,6 +279,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
         QName qNode = new QName("node"); //NOI18N
+        QName qView = new QName("view"); //NOI18N
         QName qEdge = new QName("edge"); //NOI18N
         QName qControlPoint = new QName("controlpoint"); //NOI18N
         QName qPolygon = new QName("polygon"); //NOI18N
@@ -291,7 +292,14 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
             while (reader.hasNext()){
                 int event = reader.next();
                 if (event == XMLStreamConstants.START_ELEMENT) {
-                    if (reader.getName().equals(qNode)){
+                    if (reader.getName().equals(qView)) {
+                         Double version = Double.valueOf(reader.getAttributeValue(null, "version"));
+                         if (version != null && version >= 2) {
+                              NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.ERROR_MESSAGE, "The view you are opening was saved using the web client and cannot be opened here");
+                              clear();
+                              break;
+                         }
+                    } else if (reader.getName().equals(qNode)) {
                         String objectClass = reader.getAttributeValue(null, "class");
 
                         int x = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
