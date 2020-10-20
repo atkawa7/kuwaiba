@@ -191,8 +191,8 @@ public class MplsView extends AbstractView<BusinessObjectLight, Component> {
                 for (Point point : (List<Point>)edgeEntry.getProperties().get("controlPoints")) {
                     QName qnameControlpoint = new QName("controlpoint");
                     xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
-                    xmlew.add(xmlef.createAttribute(new QName("x"), Double.toString(point.getX())));
-                    xmlew.add(xmlef.createAttribute(new QName("y"), Double.toString(point.getY())));
+                    xmlew.add(xmlef.createAttribute(new QName("x"), ((int) point.getX()) + ""));
+                    xmlew.add(xmlef.createAttribute(new QName("y"), ((int) point.getY()) + ""));
                     xmlew.add(xmlef.createEndElement(qnameControlpoint, null));
                 }
                 xmlew.add(xmlef.createEndElement(qnameEdge, null));
@@ -335,6 +335,14 @@ public class MplsView extends AbstractView<BusinessObjectLight, Component> {
                 }
             }
             reader.close();
+            MxGraphNode dummyNode = new MxGraphNode();
+            dummyNode.setGeometry(0, 0, 0, 0);
+            dummyNode.setMovable(false);
+            mxgraphCanvas.getMxGraph().addNode(dummyNode);
+                //  execute the layout and disable moving when the last cell is added
+            dummyNode.addCellAddedListener(eventListener -> {
+                mxgraphCanvas.getMxGraph().refreshGraph();
+            });
         } catch (NumberFormatException | XMLStreamException ex) {
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.mpls.view-corrupted")).open();
              Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
@@ -432,8 +440,8 @@ public class MplsView extends AbstractView<BusinessObjectLight, Component> {
         for (Map.Entry<BusinessObjectLight, MxGraphEdge> entry : mxgraphCanvas.getEdges().entrySet()) {
             BusinessObjectViewEdge anEdge = new BusinessObjectViewEdge(entry.getKey());
             anEdge.getProperties().put("controlPoints", entry.getValue().getPointList());
-            anEdge.getProperties().put("sourceLabel", entry.getValue().getSourceLabel());
-            anEdge.getProperties().put("targetLabel", entry.getValue().getTargetLabel());
+            anEdge.getProperties().put("sourceLabel", entry.getValue().getSourceLabel() == null ? "" : entry.getValue().getSourceLabel());
+            anEdge.getProperties().put("targetLabel", entry.getValue().getTargetLabel() == null ? "" : entry.getValue().getTargetLabel());
             
             this.viewMap.getEdges().add(anEdge);
             this.viewMap.attachSourceNode(anEdge, new BusinessObjectViewNode(mxgraphCanvas.findSourceEdgeObject(entry.getKey())));
