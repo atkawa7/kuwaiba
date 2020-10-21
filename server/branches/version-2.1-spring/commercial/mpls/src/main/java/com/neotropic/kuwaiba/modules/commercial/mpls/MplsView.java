@@ -159,8 +159,8 @@ public class MplsView extends AbstractView<BusinessObjectLight, Component> {
             for ( AbstractViewNode nodeEntry : viewMap.getNodes()) {
                 QName qnameNode = new QName("node");
                 xmlew.add(xmlef.createStartElement(qnameNode, null, null));
-                xmlew.add(xmlef.createAttribute(new QName("x"), ((Integer) nodeEntry.getProperties().get("x")).toString()));
-                xmlew.add(xmlef.createAttribute(new QName("y"), ((Integer) nodeEntry.getProperties().get("y")).toString()));
+                xmlew.add(xmlef.createAttribute(new QName("x"), ((Double) nodeEntry.getProperties().get("x")).toString()));
+                xmlew.add(xmlef.createAttribute(new QName("y"), ((Double) nodeEntry.getProperties().get("y")).toString()));
                 xmlew.add(xmlef.createAttribute(new QName("class"),  ((BusinessObjectLight)nodeEntry.getIdentifier()).getClassName())); //NOI18N
                 xmlew.add(xmlef.createCharacters( ((BusinessObjectLight) nodeEntry.getIdentifier()).getId())); //NOI18N
                 xmlew.add(xmlef.createEndElement(qnameNode, null));
@@ -291,7 +291,7 @@ public class MplsView extends AbstractView<BusinessObjectLight, Component> {
                                 }
                                 if(!bSideId.equals("-1"))
                                     bSideObject = new BusinessObjectLight(bSideClass, bSideId, null);
-                                else{
+                                else {
                                     bSideObject = emptySides.remove(0);
                                     endPointA = bSideObject;
                                 }            
