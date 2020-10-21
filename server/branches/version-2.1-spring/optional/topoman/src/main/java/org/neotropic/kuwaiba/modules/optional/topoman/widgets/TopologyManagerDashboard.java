@@ -337,6 +337,8 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
         initializeTblViews();   
 
         VerticalLayout lytDashboard = new VerticalLayout(lytTools, topologyView.getAsComponent());
+        setMarginPaddingLayout(lytDashboard, false);
+        lytDashboard.setSpacing(false);
         lytDashboard.setWidth("80%");
                
         //properties  
