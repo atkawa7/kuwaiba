@@ -240,6 +240,8 @@ class MxGraph extends PolymerElement {
             //enable panning
 //            this.graph.panningHandler.ignoreCell = true;
             this.graph.setPanning(true);
+            this.graph.panningHandler.useLeftButtonForPanning = true;
+				  
 
             //enable adding and removing control points. 
             mxEdgeHandler.prototype.addEnabled = true;
