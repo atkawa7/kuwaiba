@@ -140,7 +140,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         public static final String OVERLAY = "overlay"; //NOI18N
     }
     
-    private static final String LOADING = "_loading";
+    private static final String LOADING = "_loading"; //NOI18N
     /**
      * Map in the Outside Plant View
      */
@@ -429,10 +429,12 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         };
 
         newGraph.addGraphLoadedListener(graphLoadedEvent-> {
-            newGraph.getElement().executeJs("mxUtils.getCurrentStyle = () => {return null;}").then(nil -> {  //NOI18N
-                if (newOverlay.getWidth() != null)
-                    setGraphScaleConsumer.accept(newOverlay.getWidth());
-                graphLoaded.put(newGraph, true);
+            newGraph.getElement().executeJs("mxUtils.getCurrentStyle = () => {return null;}").then(nil0 -> {  //NOI18N
+                newGraph.getElement().executeJs("this.graph.cellRenderer.getTextScale = function(state) {return Math.min(1, state.view.scale)}").then(nil1 -> {
+                    if (newOverlay.getWidth() != null)
+                        setGraphScaleConsumer.accept(newOverlay.getWidth());
+                    graphLoaded.put(newGraph, true);
+                });
             });
         });
         newOverlay.addWidthChangedConsumer(width -> {
@@ -469,9 +471,11 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
 
         newGraph.addGraphLoadedListener(graphLoadedEvent-> {
             newGraph.getElement().executeJs("mxUtils.getCurrentStyle = () => {return null;}").then(nil -> {  //NOI18N
-                if (newOverlay.getWidth() != null)
-                    setGraphScaleConsumer.accept(newOverlay.getWidth());
-                graphLoaded.put(newGraph, true);
+                newGraph.getElement().executeJs("this.graph.cellRenderer.getTextScale = function(state) {return Math.min(1, state.view.scale)}").then(nil1 -> {
+                    if (newOverlay.getWidth() != null)
+                        setGraphScaleConsumer.accept(newOverlay.getWidth());
+                    graphLoaded.put(newGraph, true);
+                });
             });
         });
         newOverlay.addWidthChangedConsumer(width -> {
@@ -639,7 +643,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                             tabOpenOspView.setClassName("ospman-tab");
                             tabOpenOspView.getElement().setAttribute("title", ts.getTranslatedString("module.ospman.tools.osp-view.open"));
 
-                            Tab tabSaveOspView = new Tab(new Icon(VaadinIcon.SAFE));
+                            Tab tabSaveOspView = new Tab(new Icon(VaadinIcon.DOWNLOAD));
                             tabSaveOspView.setClassName("ospman-tab");
                             tabSaveOspView.getElement().setAttribute("title", ts.getTranslatedString("module.ospman.tools.osp-view.save"));
 
@@ -1055,7 +1059,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                                             edge.setPoints(newPoints);
                                         edge.setUuid(businessObject.getId());
                                         edge.setLabel(businessObject.getName());
-                                        edge.setStrokeWidth(1);
+                                        edge.setStrokeWidth(0);
                                         edge.setStrokeColor(properties.getProperty(PropertyNames.COLOR));
                                         edge.setSource(sourceBusinessObject.getId());
                                         edge.setTarget(targetBusinessObject.getId());

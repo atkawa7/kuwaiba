@@ -2,10 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.5.RELEASE</version>
-        <relativePath/>
+        <groupId>org.neotropic.kuwaiba</groupId>
+        <artifactId>version-2.1-spring</artifactId>
+        <version>2.1</version>
     </parent>
     
     <name>Web Client</name>
@@ -19,7 +18,6 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <vaadin.version>14.3.3</vaadin.version>
     </properties>
     
     <pluginRepositories>
@@ -140,8 +138,6 @@
         <dependency>
             <groupId>com.neotropic.flow.component</groupId>
             <artifactId>mx-graph-flow</artifactId>
-            <version>1.0</version>
-            <type>jar</type>
         </dependency>       
     </dependencies>
     <dependencyManagement>

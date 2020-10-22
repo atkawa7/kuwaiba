@@ -13,7 +13,6 @@
     <description>Build geographically-aware view with your outside plant infrastructure</description>
 
     <properties>
-        <vaadin.version>14.3.3</vaadin.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -93,7 +92,6 @@
             <groupId>com.vaadin</groupId>
             <!-- Replace artifactId with vaadin-core to use only free components -->
             <artifactId>vaadin</artifactId>
-            <version>${vaadin.version}</version>
             <exclusions>
                 <!-- Webjars are only needed when running in Vaadin 13 compatibility mode in V14.
                      Your add-on can support npm in the same version mode and V13 compatiblity mode at the same time,
@@ -140,13 +138,10 @@
         <dependency>
             <groupId>com.neotropic.flow.component</groupId>
             <artifactId>paper-dialog-flow</artifactId>
-            <version>1.0.0</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.neotropic.flow.component</groupId>
             <artifactId>google-maps-flow</artifactId>
-            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>org.neotropic.kuwaiba</groupId>

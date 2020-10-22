@@ -34,7 +34,7 @@ import org.neotropic.util.visual.notifications.SimpleNotification;
  * The visual entry point to the Outside Plant Module.
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-@CssImport(value = "css/ospman.css")
+@CssImport(value = "./css/ospman.css")
 public class OutsidePlantManagerDashboard extends VerticalLayout implements AbstractDashboard {
     /**
      * Reference to the translation service.

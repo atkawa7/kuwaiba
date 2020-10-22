@@ -36,8 +36,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-@StyleSheet("css/main.css")
-@StyleSheet("css/main-layout.css")
+@StyleSheet("./css/main.css")
+@StyleSheet("./css/main-layout.css")
 public class OutsidePlantManagerLayout extends FlexLayout implements RouterLayout {
     /**
      * Header component.

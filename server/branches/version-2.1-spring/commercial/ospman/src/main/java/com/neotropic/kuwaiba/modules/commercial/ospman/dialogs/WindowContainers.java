@@ -60,7 +60,7 @@ import org.neotropic.util.visual.notifications.SimpleNotification;
  * Dialog to select the parents to the wire path
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-@CssImport(value = "css/custom-vaadin-dialog-overlay.css", themeFor="vaadin-dialog-overlay")
+@CssImport(value = "./css/custom-vaadin-dialog-overlay.css", themeFor="vaadin-dialog-overlay")
 public class WindowContainers extends Dialog {
     private final String ATTR_COLOR = "color"; //NOI18N
     private final String ATTR_VALUE = "value"; //NOI18N
