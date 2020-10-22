@@ -73,7 +73,7 @@ public class MplsLayout extends FlexLayout implements RouterLayout {
      
         this.lytHeader.setId("main-layout-header");
         this.lytHeader.setWidthFull();
-        this.lytHeader.setAlignItems(Alignment.END);
+        
         
         this.lytContent.setId("main-layout-content");
         
@@ -83,7 +83,7 @@ public class MplsLayout extends FlexLayout implements RouterLayout {
         
         add(this.lytHeader);
         add(this.lytContent);
-        add(this.lytFooter);
+        //add(this.lytFooter);
     }
     
     public MenuBar buildMenu(Session session) {

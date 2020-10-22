@@ -72,9 +72,10 @@ public class OutsidePlantManagerLayout extends FlexLayout implements RouterLayou
      
         this.lytHeader.setId("main-layout-header");
         this.lytHeader.setWidthFull();
-        this.lytHeader.setAlignItems(Alignment.END);
+        
         
         this.lytContent.setId("main-layout-content");
+        this.lytContent.setSizeFull();
         
         this.lytFooter.setId("main-layout-footer");
         this.lytFooter.setAlignItems(Alignment.CENTER);
@@ -82,7 +83,7 @@ public class OutsidePlantManagerLayout extends FlexLayout implements RouterLayou
         
         add(this.lytHeader);
         add(this.lytContent);
-        add(this.lytFooter);
+        //add(this.lytFooter);
     }
     
     public MenuBar buildMenu(Session session) {

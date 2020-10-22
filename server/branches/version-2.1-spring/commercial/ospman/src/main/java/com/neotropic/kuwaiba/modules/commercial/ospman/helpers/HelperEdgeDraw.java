@@ -15,8 +15,8 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman.helpers;
 
-import com.neotropic.kuwaiba.modules.commercial.ospman.GeoCoordinate;
-import com.neotropic.kuwaiba.modules.commercial.ospman.MapOverlay;
+import com.neotropic.kuwaiba.modules.commercial.ospman.api.GeoCoordinate;
+import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapOverlay;
 import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.neotropic.flow.component.mxgraph.MxGraphCell;
 import com.neotropic.flow.component.mxgraph.Point;
@@ -28,11 +28,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
-import com.neotropic.kuwaiba.modules.commercial.ospman.MapProvider;
+import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapProvider;
 import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectNode;
 
 /**
- * Help to storage the overlay, source, target and edge points/coordinates
+ * Helps to store the overlay, source, target and edge points/coordinates.
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class HelperEdgeDraw {

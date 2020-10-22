@@ -21,9 +21,9 @@ import com.neotropic.flow.component.googlemap.LatLng;
 import com.neotropic.flow.component.googlemap.LatLngBounds;
 import com.neotropic.flow.component.googlemap.OverlayType;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OutsidePlantService;
-import com.neotropic.kuwaiba.modules.commercial.ospman.GeoBounds;
-import com.neotropic.kuwaiba.modules.commercial.ospman.GeoCoordinate;
-import com.neotropic.kuwaiba.modules.commercial.ospman.MapOverlay;
+import com.neotropic.kuwaiba.modules.commercial.ospman.api.GeoBounds;
+import com.neotropic.kuwaiba.modules.commercial.ospman.api.GeoCoordinate;
+import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapOverlay;
 import com.vaadin.flow.component.Component;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +34,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntity
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.util.visual.notifications.SimpleNotification;
-import com.neotropic.kuwaiba.modules.commercial.ospman.MapProvider;
+import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapProvider;
 
 /**
  * Map implementation to Google Maps

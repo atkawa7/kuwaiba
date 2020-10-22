@@ -15,7 +15,6 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman.widgets;
 
-import com.neotropic.flow.component.googlemap.LatLng;
 import com.neotropic.kuwaiba.modules.commercial.ospman.helpers.HelperEdgeDraw;
 import com.neotropic.kuwaiba.modules.commercial.ospman.helpers.HelperContainerSelector;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.DialogOverlay;
@@ -24,16 +23,16 @@ import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.DialogMarker;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.WindowContainers;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.WindowNode;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.WindowEdge;
-import com.neotropic.kuwaiba.modules.commercial.ospman.GeoCoordinate;
-import com.neotropic.kuwaiba.modules.commercial.ospman.GeoBounds;
-import com.neotropic.kuwaiba.modules.commercial.ospman.MapOverlay;
+import com.neotropic.kuwaiba.modules.commercial.ospman.api.GeoCoordinate;
+import com.neotropic.kuwaiba.modules.commercial.ospman.api.GeoBounds;
+import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapOverlay;
 import com.neotropic.flow.component.mxgraph.MxConstants;
 import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.neotropic.flow.component.mxgraph.Point;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OutsidePlantService;
+import com.neotropic.kuwaiba.modules.commercial.ospman.api.GeoPoint;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.WindowDeleteOspView;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.WindowNewContainer;
-import com.neotropic.kuwaiba.modules.commercial.ospman.GeoPoint;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
@@ -90,8 +89,7 @@ import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
 import org.neotropic.util.visual.dialog.ConfirmDialog;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.views.util.UtilHtml;
-import com.neotropic.kuwaiba.modules.commercial.ospman.MapProvider;
-import com.vaadin.flow.component.ComponentUtil;
+import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapProvider;
 import com.vaadin.flow.component.html.Label;
 import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualAction;
 import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectEdge;

@@ -65,28 +65,7 @@
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-spring-boot-starter</artifactId>
         </dependency>
-        
-        <!-- Home made components -->
-        <!-- To create views. A wrapper for the mx-graph library -->
-        <!--<dependency>
-            <groupId>org.neotropic.vaadin14.component</groupId>
-            <artifactId>mx-graph-flow</artifactId>
-            <version>1.0</version>
-            <type>jar</type>
-        </dependency>-->
-        <!-- Google Maps support -->
-        <!--<dependency>
-            <groupId>com.neotropic.vaadin14.component</groupId>
-            <artifactId>google-map-flow</artifactId>
-            <version>1.0</version>
-        </dependency>-->
-        
-        <!-- Visual API for reporting purposes -->
-        <!--<dependency>
-            <groupId>org.codeartisans.thirdparties.swing</groupId>
-            <artifactId>org-netbeans-api-visual</artifactId>
-            <version>2.23.1</version>
-        </dependency>-->
+
         <!-- JAX-WS (SOAP-based web service support) -->
         <dependency>
             <groupId>com.sun.xml.ws</groupId>

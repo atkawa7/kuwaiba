@@ -1,5 +1,4 @@
 /* Power user interface layout */
-/*  */
 #main-layout {
     display: flex;
     min-height: 100vh;
@@ -12,10 +11,9 @@
 
 #main-layout-content {
     font-size: small;
-    height: 100%;
-    width: 100%;
-    padding: 2px;
-    margin: 2px;
+    height: 98%;
+    width: 98%;
+    padding: 5px;
 }
 
 #main-layout-footer {

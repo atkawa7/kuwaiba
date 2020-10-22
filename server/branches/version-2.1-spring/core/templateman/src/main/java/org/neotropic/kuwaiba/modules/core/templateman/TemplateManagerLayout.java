@@ -84,7 +84,7 @@ public class TemplateManagerLayout extends FlexLayout implements RouterLayout {
 
         this.lytHeader.setId("main-layout-header");
         this.lytHeader.setWidthFull();
-        this.lytHeader.setAlignItems(Alignment.END);
+        
 
         this.lytContent.setId("main-layout-content");
 
@@ -94,7 +94,7 @@ public class TemplateManagerLayout extends FlexLayout implements RouterLayout {
 
         add(this.lytHeader);
         add(this.lytContent);
-        add(this.lytFooter);
+        //add(this.lytFooter);
     }
 
     @Override

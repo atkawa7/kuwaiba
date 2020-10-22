@@ -15,7 +15,7 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman.dialogs;
 
-import com.neotropic.kuwaiba.modules.commercial.ospman.MapOverlay;
+import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapOverlay;
 import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.neotropic.flow.component.paperdialog.PaperDialog;
 import com.vaadin.flow.component.Component;

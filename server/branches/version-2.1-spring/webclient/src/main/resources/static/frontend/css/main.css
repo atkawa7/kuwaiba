@@ -7,22 +7,26 @@
 body {
     /* Overrides the default material colors */
     --primary-color: #88AA00;
-    --material-primary-color: var(--primary-color, #88AA00) !important;
-    --material-primary-text-color: var(--primary-color, #777777) !important;
+    /*--material-primary-color: var(--primary-color, #88AA00) !important;*/
+    --material-primary-color: #237AC5 !important;
+    /*--material-primary-text-color: var(--primary-color, #777777) !important;*/
+    --material-primary-text-color: #191C18 !important;
     --material-font-family: 'ubuntu-r' !important;
-    --material-body-font-size: small;  
-    --material-small-font-size: small;
+    --material-body-font-size: 9pt;  
+    --material-small-font-size: 8pt;
+    --material-button-font-size: 8pt;
+    --material-caption-font-size: 8pt;
+    --material-icon-font-size: 8pt;
 }
 
 /* Inherited styles */
 vaadin-radio-group {
-    font-size: small;
     padding: 0px;
     margin: 0px;
 }
 
 vaadin-text-field vaadin-password-field {
-    font-size: small;
+    font-size: 9pt;
 }
 
 vaadin-context-menu-item {
@@ -42,11 +46,16 @@ vaadin-button {
     min-width: 30px;  
 }
 
-/*compact accordion component*/
+/* Compact accordion component */
 .vaadin-accordion-panel[part="content"] {
     padding: 0px;
 }
-/*remove margin on icon buttons with the class icon-button*/
+
+.vaadin-accordion-panel[part="summary"] {
+    min-height: 40px;
+}
+
+/*remove margin in icon buttons with class icon-button*/
 .icon-button [part="prefix"] > iron-icon {
     margin: 0px;
 }

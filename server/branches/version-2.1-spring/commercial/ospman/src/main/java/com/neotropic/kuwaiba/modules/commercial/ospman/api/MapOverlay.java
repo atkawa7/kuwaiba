@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.modules.commercial.ospman;
+package com.neotropic.kuwaiba.modules.commercial.ospman.api;
 
 import com.vaadin.flow.component.HasComponents;
 import java.util.function.Consumer;
