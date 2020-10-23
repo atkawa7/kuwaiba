@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2020 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,7 +36,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class MplsModule extends AbstractCommercialModule {
-    
     /*
      translation service
     */

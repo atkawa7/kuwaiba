@@ -20,7 +20,7 @@
 
         <drivers.dir>${project.basedir}/drivers</drivers.dir>
 
-        <jetty.version>9.4.15.v20190215</jetty.version>
+        <jetty.version>9.4.15.v20200215</jetty.version>
         
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
     </properties>
