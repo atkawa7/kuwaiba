@@ -10,7 +10,6 @@
 }
 
 #main-layout-content {
-    font-size: small;
     height: 98%;
     width: 98%;
     padding: 5px;
@@ -22,6 +21,12 @@
     color: darkgray;
     padding-bottom: 30px;
     padding-top: 10px;
+}
+
+/* To be used for buttons without any space around, like those used in property sheets to lauch detailed editors */
+.compact-button {
+    margin: 0px;
+    padding: 1px;
 }
 
 /* Widgets */

@@ -15,10 +15,7 @@
  */
 package org.neotropic.util.visual.properties;
 
-
 import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.KeyDownEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.grid.Grid;
@@ -65,9 +62,8 @@ public class PropertySheet extends Grid<AbstractProperty> {
         propertyValueChangedListeners = new ArrayList<>();
 
         addComponentColumn((property) -> {
-            VerticalLayout lytName = new VerticalLayout();
-            lytName.setPadding(false);
-            lytName.setSpacing(false);
+            HorizontalLayout lytName = new HorizontalLayout();
+            lytName.setClassName("property-sheet-name-cell");
             Label lblName = new BoldLabel(property.toString()); 
             Label lblType = new BoldLabel(property.getType()); 
             lblType.setClassName("text-secondary");
@@ -87,7 +83,6 @@ public class PropertySheet extends Grid<AbstractProperty> {
             lytValue.add(lblValue);
             
             if (!property.isReadOnly() && !readOnly && property.supportsInplaceEditor()) {
-                
                 Button btnEdit = new Button(new Icon(VaadinIcon.CHECK_CIRCLE_O));
                 Button btnCancel = new Button(new Icon(VaadinIcon.CLOSE_SMALL));              
                 AbstractField editField = property.getInplaceEditor();
@@ -178,6 +173,7 @@ public class PropertySheet extends Grid<AbstractProperty> {
                      });
                      dialog.open();
                  });
+                 btnAdvancedEditor.setClassName("compact-button");
                  return btnAdvancedEditor;
             }
             return new HorizontalLayout();

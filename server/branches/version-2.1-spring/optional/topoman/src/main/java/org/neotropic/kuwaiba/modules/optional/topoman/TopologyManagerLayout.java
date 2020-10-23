@@ -93,6 +93,7 @@ public class TopologyManagerLayout extends FlexLayout implements RouterLayout {
         this.moduleRegistry.getModules().values().stream().forEach( aModule -> {
             mnuNewBar.addItem(aModule.getName(), ev -> UI.getCurrent().navigate(aModule.getId()));
         });
+        mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.about"), ev -> UI.getCurrent().navigate("about"));
         mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.logout"), ev -> UI.getCurrent().navigate("logout"));
 
         return mnuNewBar;
