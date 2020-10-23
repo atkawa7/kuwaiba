@@ -547,7 +547,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                 BusinessObjectLight source = (BusinessObjectLight) mapVertexNode.get(helper.getSource()).getIdentifier();
                 BusinessObjectLight target = (BusinessObjectLight) mapVertexNode.get(helper.getTarget()).getIdentifier();
                 List<GeoCoordinate> coordinates = helper.getCoordintates();
-                List<Point> graphPoints = helper.getPoints();
+                List<Point> graphPoints = new ArrayList(helper.getPoints());
 
                 WindowNewContainer dialogNewContainer = new WindowNewContainer(
                     source, target, ts, aem, bem, mem, physicalConnectionsService, 
@@ -1203,7 +1203,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         ConfirmDialog confirmDialog = new ConfirmDialog(ts, 
             ts.getTranslatedString("module.ospman.save-view"), fly, 
             ts.getTranslatedString("module.general.messages.ok"), () -> {
-                getAsXml(structure -> {
+                onGetAsXml(structure -> {
                     try {
                         if (this.properties.get(Constants.PROPERTY_ID).equals(-1)) {
                             long newOSPViewId = aem.createOSPView(txtName.getValue(), txtDescription.getValue(), structure);
@@ -1231,6 +1231,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
     }
     
     private void deleteOspView() {
+        if (this.getProperties().get(Constants.PROPERTY_ID) instanceof Integer && (int) this.getProperties().get(Constants.PROPERTY_ID) == -1)
+            return;
         WindowDeleteOspView confirmDialog = new WindowDeleteOspView((long) this.getProperties().get(Constants.PROPERTY_ID), ts, aem, 
             () -> componentTabs.setSelectedTab(tools.get(Tool.NewView))
         );
@@ -1361,10 +1363,20 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
             cmd.execute();
         }
     }
-    private void getAsXml(Consumer<byte[]> consumer) {
-        updateNodes(new ArrayList(viewMap.getNodes()), new ArrayList(viewMap.getEdges()), consumer);
+    /**
+     * Execute a process to get the Outside Plant View as XML.
+     * The process begin with the copy of the nodes and edges in the view
+     * Continue with the update of positions
+     * and finally execute the callback to get the view as XML
+     */
+    private void onGetAsXml(Consumer<byte[]> callbackGetAsXml) {
+        updateNodes(new ArrayList(viewMap.getNodes()), new ArrayList(viewMap.getEdges()), callbackGetAsXml);
     }
-    private void updateNodes(List<AbstractViewNode> viewNodeCopies, List<AbstractViewEdge> viewEdgeCopies, Consumer<byte[]> consumer) {
+    /**
+     * Iterate by the nodes to update the position
+     * and continue with the update of the edges
+     */
+    private void updateNodes(List<AbstractViewNode> viewNodeCopies, List<AbstractViewEdge> viewEdgeCopies, Consumer<byte[]> callbackGetAsXml) {
         if (!viewNodeCopies.isEmpty()) {
             AbstractViewNode viewNode = viewNodeCopies.remove(0);
             if (viewNode instanceof BusinessObjectViewNode) {
@@ -1386,7 +1398,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                                     objectViewNode.getProperties().put(PropertyNames.LAT, coordinate.getLatitude());
                                     objectViewNode.getProperties().put(PropertyNames.LON, coordinate.getLongitude());
 
-                                    updateNodes(viewNodeCopies, viewEdgeCopies, consumer);
+                                    updateNodes(viewNodeCopies, viewEdgeCopies, callbackGetAsXml);
                                 });
                             });
                         });
@@ -1394,10 +1406,14 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                 }
             }
         } else {
-            updateEdges(viewEdgeCopies, consumer);
+            updateEdges(viewEdgeCopies, callbackGetAsXml);
         }
     }
-    private void updateEdges(List<AbstractViewEdge> viewEdgeCopies, Consumer<byte[]> consumer) {
+    /**
+     * Iterate by the edges to update the points
+     * and execute the callback to get the view as XML
+     */
+    private void updateEdges(List<AbstractViewEdge> viewEdgeCopies, Consumer<byte[]> callbackGetAsXml) {
         if (!viewEdgeCopies.isEmpty()) {
             AbstractViewEdge viewEdge = viewEdgeCopies.remove(0);
             if (viewEdge instanceof BusinessObjectViewEdge) {
@@ -1413,13 +1429,13 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                         () -> {
                             objectViewEdge.getProperties().put(PropertyNames.CONTROL_POINTS, coordinates);
                             
-                            updateEdges(viewEdgeCopies, consumer);
+                            updateEdges(viewEdgeCopies, callbackGetAsXml);
                         }
                     );
                 }
             }
         } else {
-            consumer.accept(getAsXml());
+            callbackGetAsXml.accept(getAsXml());
         }
     }
     //</editor-fold>
