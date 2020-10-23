@@ -74,7 +74,7 @@ public class MplsManagerUI extends VerticalLayout implements HasDynamicTitle {
     
     @Autowired
     private ResourceFactory resourceFactory;
- 
+    
     private MplsDashboard dashboard; 
    
     public MplsManagerUI() {
@@ -112,6 +112,6 @@ public class MplsManagerUI extends VerticalLayout implements HasDynamicTitle {
 
     @Override
     public String getPageTitle() {
-        return ts.getTranslatedString("module.listtypeman.title");
+        return ts.getTranslatedString("module.mpls.title");
     }
 }
