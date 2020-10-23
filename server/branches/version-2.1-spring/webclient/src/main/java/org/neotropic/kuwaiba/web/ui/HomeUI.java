@@ -22,6 +22,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
@@ -33,11 +34,11 @@ import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * The home page. It's a dashboard that can be customized with widgets. 
+ * The home page. In the future, it will become a dashboard that can be customized with widgets. 
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Route(value = "home", layout = MainLayout.class)
-public class HomeUI extends VerticalLayout implements BeforeEnterObserver {
+public class HomeUI extends VerticalLayout implements BeforeEnterObserver, HasDynamicTitle {
     /**
      * Reference to the Translation Service.
      */
@@ -81,7 +82,11 @@ public class HomeUI extends VerticalLayout implements BeforeEnterObserver {
         setPadding(false);
         setSpacing(false);
         
-        getUI().ifPresent(ui -> ui.getPage().setTitle(ts.getTranslatedString("module.login.ui.home")));
         add(new AllBuildingsMapWidget(aem, bem, mem, ts, resourceFactory, physicalConnectionsService));
+    }
+
+    @Override
+    public String getPageTitle() {
+        return ts.getTranslatedString("module.login.ui.home");
     }
 }

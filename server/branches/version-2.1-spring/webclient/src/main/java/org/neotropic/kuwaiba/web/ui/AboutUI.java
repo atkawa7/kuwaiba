@@ -19,6 +19,7 @@ package org.neotropic.kuwaiba.web.ui;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
@@ -29,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Route(value = "about", layout = MainLayout.class)
-public class AboutUI extends VerticalLayout {
+public class AboutUI extends VerticalLayout implements HasDynamicTitle {
     /**
      * Reference to the translation service.
      */
@@ -50,5 +51,10 @@ public class AboutUI extends VerticalLayout {
             new Html(ts.getTranslatedString("module.about.labels.third-party-text")),
             new H4(ts.getTranslatedString("module.about.labels.commercial-support-title")),
             new Html(ts.getTranslatedString("module.about.labels.commercial-support-text")));
+    }
+
+    @Override
+    public String getPageTitle() {
+        return ts.getTranslatedString("module.about.title");
     }
 }

@@ -33,6 +33,7 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.material.Material;
@@ -46,7 +47,7 @@ import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Login form
+ * Login form.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Theme(Material.class)
@@ -56,7 +57,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @CssImport(value="./styles/custom-acordion.css", themeFor="vaadin-accordion-panel")
 @CssImport(value="./styles/compact-grid.css", themeFor="vaadin-grid")
 @CssImport(value="./styles/icon-button.css", themeFor="vaadin-button")
-public class LoginUI extends VerticalLayout implements BeforeEnterObserver {
+public class LoginUI extends VerticalLayout implements BeforeEnterObserver, HasDynamicTitle {
     /**
      * User name text field.
      */
@@ -83,7 +84,7 @@ public class LoginUI extends VerticalLayout implements BeforeEnterObserver {
     @Override
     public void onAttach(AttachEvent ev) {
         setSizeFull();
-        HorizontalLayout lytTopFiller =new HorizontalLayout();
+        HorizontalLayout lytTopFiller = new HorizontalLayout();
         lytTopFiller.setSizeFull();
         add(lytTopFiller); // Top filler
         HorizontalLayout lytRightFiller = new HorizontalLayout();
@@ -100,7 +101,6 @@ public class LoginUI extends VerticalLayout implements BeforeEnterObserver {
                 new HorizontalLayout() /* Right filler */);
         lytFooterContent.setSizeFull();
         add(lytFooterContent);
-        getUI().ifPresent( ui -> ui.getPage().setTitle(ts.getTranslatedString("module.login.ui.title")));
     }
     
     /**
@@ -179,5 +179,10 @@ public class LoginUI extends VerticalLayout implements BeforeEnterObserver {
     public void beforeEnter(BeforeEnterEvent event) {
         if (UI.getCurrent().getSession().getAttribute(Session.class) != null) // If there is an active session, redirect to the home page, else, show the login form
             event.forwardTo(HomeUI.class);
+    }
+
+    @Override
+    public String getPageTitle() {
+        return ts.getTranslatedString("module.login.ui.title");
     }
 }

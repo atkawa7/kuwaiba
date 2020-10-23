@@ -42,6 +42,7 @@ import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery;
+import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamRegistration;
 import com.vaadin.flow.server.StreamResource;
@@ -90,9 +91,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Orlando Paz {@literal <Orlando.Paz@kuwaiba.org>}
  */
 @Route(value = "reports", layout = ReportsLayout.class)
-public class ReportsUI extends VerticalLayout {
-
-
+public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
     @Autowired
     private TranslationService ts;
     /**
@@ -251,8 +250,6 @@ public class ReportsUI extends VerticalLayout {
     @Override
     public void onAttach(AttachEvent ev) {
         setSizeFull();
-        getUI().ifPresent( ui -> ui.getPage().setTitle(ts.getTranslatedString("module.report.title")));      
-
         try {
             createContent();
         } catch (InvalidArgumentException | MetadataObjectNotFoundException ex) {
@@ -725,5 +722,10 @@ public class ReportsUI extends VerticalLayout {
                 return t instanceof ClassNode;
             }
         };
+    }
+
+    @Override
+    public String getPageTitle() {
+        return ts.getTranslatedString("module.report.title");
     }
 }

@@ -23,6 +23,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import com.neotropic.kuwaiba.modules.commercial.ospman.widgets.OutsidePlantManagerDashboard;
+import com.vaadin.flow.router.HasDynamicTitle;
 import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualAction;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
@@ -34,7 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @Route(value = "ospman", layout = OutsidePlantManagerLayout.class)
-public class OutsidePlantManagerUI extends VerticalLayout {
+public class OutsidePlantManagerUI extends VerticalLayout implements HasDynamicTitle {
     /**
      * The main dashboard.
      */
@@ -82,10 +83,13 @@ public class OutsidePlantManagerUI extends VerticalLayout {
         setPadding(false);
         setSpacing(false);
         
-        getUI().ifPresent( ui -> ui.getPage().setTitle(ts.getTranslatedString("module.ospman.title")));
-        
         this.dashboard = new OutsidePlantManagerDashboard(ts, resourceFactory, 
             aem, bem, mem, physicalConnectionService, newBusinessObjectVisualAction);
         add(this.dashboard);
+    }
+
+    @Override
+    public String getPageTitle() {
+        return ts.getTranslatedString("module.ospman.title");
     }
 }

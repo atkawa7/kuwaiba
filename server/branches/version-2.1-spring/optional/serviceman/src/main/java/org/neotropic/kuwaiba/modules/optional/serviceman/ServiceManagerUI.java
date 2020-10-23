@@ -33,6 +33,7 @@ import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
+import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import java.util.List;
 import org.neotropic.kuwaiba.core.apis.integration.modules.actions.AbstractVisualInventoryAction;
@@ -61,7 +62,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Route(value = "serviceman", layout = ServiceManagerLayout.class)
-public class ServiceManagerUI extends VerticalLayout implements ActionCompletedListener {
+public class ServiceManagerUI extends VerticalLayout implements ActionCompletedListener, HasDynamicTitle {
         /**
      * Reference to the action that creates customers.
      */
@@ -126,14 +127,11 @@ public class ServiceManagerUI extends VerticalLayout implements ActionCompletedL
     @Autowired
     private ServiceDashboardFactory serviceDashboardFactory;
 
-
     @Override
     public void onAttach(AttachEvent ev) {
         setPadding(false);
         setMargin(false);
         setSizeFull();
-        
-        getUI().ifPresent( ui -> ui.getPage().setTitle(ts.getTranslatedString("module.serviceman.title")));
         
         this.lytQuickActions = new HorizontalLayout(buildQuickActionsMenu());
         this.lytQuickActions.setId("serviceman-quick-actions");
@@ -238,6 +236,11 @@ public class ServiceManagerUI extends VerticalLayout implements ActionCompletedL
     public void replaceContent(Component newContent) {
         this.lytContent.removeAll();
         this.lytContent.add(newContent);
+    }
+
+    @Override
+    public String getPageTitle() {
+        return ts.getTranslatedString("module.serviceman.title");
     }
     
     /**

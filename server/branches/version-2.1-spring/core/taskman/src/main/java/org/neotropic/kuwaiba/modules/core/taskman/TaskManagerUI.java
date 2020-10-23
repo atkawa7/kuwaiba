@@ -39,6 +39,7 @@ import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -77,7 +78,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Mauricio Ruiz {@literal <mauricio.ruiz@kuwaiba.org>}
  */
 @Route(value = "taskman", layout = TaskManagerLayout.class)
-public class TaskManagerUI extends VerticalLayout implements ActionCompletedListener {
+public class TaskManagerUI extends VerticalLayout implements ActionCompletedListener, HasDynamicTitle {
     /**
      * Reference to the Translation Service
      */
@@ -206,7 +207,6 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
         setMargin(false);
         setSpacing(false);
         setPadding(false);
-        getUI().ifPresent(ui -> ui.getPage().setTitle(ts.getTranslatedString("module.taskman.title")));
 
         try {
             createContent();
@@ -429,6 +429,11 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
                 return null;
         }
         return htmlStatus;
+    }
+
+    @Override
+    public String getPageTitle() {
+        return ts.getTranslatedString("module.taskman.title");
     }
              
     /**

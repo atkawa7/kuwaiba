@@ -33,6 +33,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,7 +75,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Route(value = "ltman", layout = ListTypeManagerLayout.class)
-public class ListTypeManagerUI extends VerticalLayout implements ActionCompletedListener, IPropertyValueChangedListener {
+public class ListTypeManagerUI extends VerticalLayout implements ActionCompletedListener, IPropertyValueChangedListener, HasDynamicTitle {
 
     /**
      * the visual action to create a new list type item
@@ -118,16 +119,13 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
     private BusinessObjectLight currentListTypeItem;
     
     private Label lblCurrentListType;
-    
     /**
      * button used to create a new item with the list type preselected
      */
     Button btnAddListTypeItemSec;
-    
      /**
      * the visual action to delete a list type item
      */ 
-    
     VerticalLayout lytPropertySheet;
             
     @Autowired
@@ -145,14 +143,11 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
     @Override
     public void onAttach(AttachEvent ev) {
         setSizeFull();
-        getUI().ifPresent( ui -> ui.getPage().setTitle(ts.getTranslatedString("module.listtypeman.title")));      
-
         try {
             createContent();
         } catch (InvalidArgumentException | MetadataObjectNotFoundException ex) {
             
         }
-        
     }
     
     @Override
@@ -379,5 +374,10 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
                 | OperationNotPermittedException | InvalidArgumentException ex) {
             Logger.getLogger(ListTypeManagerUI.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    @Override
+    public String getPageTitle() {
+        return ts.getTranslatedString("module.listtypeman.title");
     }
 }

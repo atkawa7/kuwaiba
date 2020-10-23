@@ -7,8 +7,8 @@
         <version>2.1</version>
     </parent>
     
-    <name>Template manager</name>
-    <description>Template manager</description>
+    <name>Template Manager</name>
+    <description>Create pre-defined containment structures that can be re-used</description>
     <version>2.1</version>
     <artifactId>templateman</artifactId>
     <packaging>jar</packaging>

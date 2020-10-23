@@ -28,6 +28,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +61,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Mauricio Ruiz {@literal <mauricio.ruiz@kuwaiba.org>}
  */
 @Route(value = "configman", layout = ConfigurationManagerLayout.class)
-public class ConfigurationVariablesUI extends VerticalLayout implements ActionCompletedListener, PropertySheet.IPropertyValueChangedListener {  
+public class ConfigurationVariablesUI extends VerticalLayout implements ActionCompletedListener, 
+        PropertySheet.IPropertyValueChangedListener, HasDynamicTitle {  
     /**
      * Reference to the Translation Service
      */
@@ -155,14 +157,12 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
         setMargin(false);
         setSpacing(false);
         setPadding(false);
-        getUI().ifPresent(ui -> ui.getPage().setTitle(ts.getTranslatedString("module.configvarman.title")));
         
         try {
             createContent();
         } catch (InvalidArgumentException  ex) {
             Logger.getLogger(ConfigurationVariablesUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
     }
 
     @Override
@@ -389,6 +389,11 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
         lyt.setSizeFull();
         
         return lyt;
+    }
+
+    @Override
+    public String getPageTitle() {
+        return ts.getTranslatedString("module.configvarman.title");
     }
 
 }

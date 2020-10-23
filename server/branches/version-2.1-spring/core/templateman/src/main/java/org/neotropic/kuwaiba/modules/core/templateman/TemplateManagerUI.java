@@ -37,6 +37,7 @@ import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.Command;
 import java.util.ArrayList;
@@ -81,7 +82,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Hardy Ryan Chingal Martinez {@literal <ryan.chingal@kuwaiba.org>}
  */
 @Route(value = "tepman", layout = TemplateManagerLayout.class)
-public class TemplateManagerUI extends SplitLayout implements ActionCompletedListener, PropertySheet.IPropertyValueChangedListener {
+public class TemplateManagerUI extends SplitLayout implements ActionCompletedListener, PropertySheet.IPropertyValueChangedListener, HasDynamicTitle {
 
     /**
      * grid to list class attributes
@@ -293,7 +294,6 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
     @Override
     public void onAttach(AttachEvent ev) {
         setSizeFull();
-        getUI().ifPresent(ui -> ui.getPage().setTitle(ts.getTranslatedString("module.templatemantemplateman.title")));
         createContent();
     }
 
@@ -985,4 +985,8 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
         this.deleteTemplateSubItemVisualAction.unregisterListener(this);
     }
 
+    @Override
+    public String getPageTitle() {
+        return ts.getTranslatedString("module.templatemantemplateman.title");
+    }
 }

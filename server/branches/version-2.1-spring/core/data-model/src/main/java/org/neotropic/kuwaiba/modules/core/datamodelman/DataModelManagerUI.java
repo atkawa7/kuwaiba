@@ -44,6 +44,7 @@ import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery;
+import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import java.awt.Color;
@@ -97,9 +98,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Orlando Paz {@literal <Orlando.Paz@kuwaiba.org>}
  */
 @Route(value = "dmman", layout = DataModelManagerLayout.class)
-public class DataModelManagerUI extends VerticalLayout {
-
-
+public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitle{
     @Autowired
     private TranslationService ts;
     /**
@@ -227,14 +226,11 @@ public class DataModelManagerUI extends VerticalLayout {
     @Override
     public void onAttach(AttachEvent ev) {
         setSizeFull();
-        getUI().ifPresent( ui -> ui.getPage().setTitle(ts.getTranslatedString("module.listtypeman.title")));      
-
         try {
             createContent();
         } catch (InvalidArgumentException | MetadataObjectNotFoundException ex) {
             
         }
-        
     }
     
     @Override
@@ -860,5 +856,10 @@ public class DataModelManagerUI extends VerticalLayout {
         } catch (MetadataObjectNotFoundException ex) {
             Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    @Override
+    public String getPageTitle() {
+        return ts.getTranslatedString("module.listtypeman.title");
     }
 }

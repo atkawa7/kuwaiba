@@ -18,6 +18,7 @@ package org.neotropic.kuwaiba.modules.optional.topoman;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,7 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Orlando Paz {@literal <Orlando.Paz@kuwaiba.org>}
  */
 @Route(value = "topoman", layout = TopologyManagerLayout.class)
-public class TopologyManagerUI extends VerticalLayout {
+public class TopologyManagerUI extends VerticalLayout implements HasDynamicTitle {
 
     @Autowired
     private TranslationService ts;
@@ -79,15 +80,12 @@ public class TopologyManagerUI extends VerticalLayout {
     
     @Override
     public void onAttach(AttachEvent ev) {
-        setSizeFull();
-        getUI().ifPresent( ui -> ui.getPage().setTitle(ts.getTranslatedString("module.topoman.name")));      
-
+        setSizeFull();      
         try {
             createContent();
         } catch (InvalidArgumentException | MetadataObjectNotFoundException ex) {
             
         }
-        
     }  
     
     public void showActionCompledMessages(ActionCompletedListener.ActionCompletedEvent ev) {
@@ -109,5 +107,9 @@ public class TopologyManagerUI extends VerticalLayout {
         setSpacing(false);
         add(dashboard);
     }
-    
+
+    @Override
+    public String getPageTitle() {
+        return ts.getTranslatedString("module.topoman.name");
+    }
 }

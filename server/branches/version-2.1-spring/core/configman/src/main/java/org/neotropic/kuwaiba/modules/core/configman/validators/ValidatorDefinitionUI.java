@@ -35,6 +35,7 @@ import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery;
+import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,7 +74,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Mauricio Ruiz {@literal <mauricio.ruiz@kuwaiba.org>}
  */
 @Route(value = "configmanval", layout = ConfigurationManagerLayout.class)
-public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompletedListener {
+public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompletedListener, HasDynamicTitle {
     /**
      * Reference to the Application Entity Manager.
      */
@@ -136,7 +137,6 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
         setMargin(false);
         setSpacing(false);
         setPadding(false);
-        getUI().ifPresent(ui -> ui.getPage().setTitle(ts.getTranslatedString("module.configman.validators.title")));
 
         try {
             createContent();
@@ -268,6 +268,11 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
                 return t instanceof ClassNode;
             }
         };
+    }
+
+    @Override
+    public String getPageTitle() {
+        return ts.getTranslatedString("module.configman.validators.title");
     }
 
     private class ValidatorDefinitionForm extends VerticalLayout {

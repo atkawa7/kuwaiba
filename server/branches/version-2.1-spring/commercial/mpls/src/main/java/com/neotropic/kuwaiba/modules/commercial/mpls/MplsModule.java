@@ -150,6 +150,6 @@ public class MplsModule extends AbstractCommercialModule {
 
     @Override
     public String getId() {
-        return "mpls-networks";
+        return "mpls";
     }
 }
