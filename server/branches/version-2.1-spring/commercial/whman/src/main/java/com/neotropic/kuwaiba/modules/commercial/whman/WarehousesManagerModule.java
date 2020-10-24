@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Manages warehouses
+ * Manages warehouses, spare parts and the workflows associated to them.
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @Component
@@ -84,5 +84,9 @@ public class WarehousesManagerModule extends AbstractModule {
     public ModuleType getModuleType() {
         return ModuleType.TYPE_OPEN_SOURCE;
     }
-    
+
+    @Override
+    public int getCategory() {
+        return CATEGORY_BUSINESS;
+    }
 }

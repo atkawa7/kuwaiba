@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2020 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,22 +13,27 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.neotropic.kuwaiba.modules.core.datamodelman;
+package org.neotropic.kuwaiba.core.configuration.validators;
+
 import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.modules.AbstractModule;
-import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionRegistry;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleRegistry;
+import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionRegistry;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-
 /**
- * The definition of the Data Model Manager module
- * @author Orlando Paz  {@literal <orlando.paz@kuwaiba.org>}
+ * The definition of the Validator Definition module.
+ * @author Mauricio Ruiz {@literal <mauricio.ruiz@kuwaiba.org>}
  */
 @Component
-public class DataModelManagerModule  extends AbstractModule {
+public class ValidatorDefinitionModule extends AbstractModule {
+    /**
+     * Translation service
+     */
+    @Autowired
+    private TranslationService ts;
     /**
      * Reference to the action registry.
      */
@@ -42,26 +47,20 @@ public class DataModelManagerModule  extends AbstractModule {
 
     @PostConstruct
     public void init() {
-        // Register all actions provided by this module
-        
-        // Now register the module itself
+        // Register all actions
+
+        // Now the module itself
         this.moduleRegistry.registerModule(this);
     }
-    
-     /**
-    * translation service
-    */
-    @Autowired
-    private TranslationService ts;
-    
+
     @Override
     public String getName() {
-        return ts.getTranslatedString("module.datamodelman.name");
+        return ts.getTranslatedString("module.configman.validator.name");
     }
 
     @Override
     public String getDescription() {
-        return ts.getTranslatedString("module.datamodelman.description");
+        return ts.getTranslatedString("module.configman.validator.description");
     }
 
     @Override
@@ -73,15 +72,15 @@ public class DataModelManagerModule  extends AbstractModule {
     public String getVendor() {
         return "Neotropic SAS <contact@neotropic.co>";
     }
-    
-     @Override
+
+    @Override
     public String getId() {
-        return "dmman";
+        return "validators";
     }
 
     @Override
-    public ModuleType getModuleType() {
-        return ModuleType.TYPE_OPEN_SOURCE;        
+    public AbstractModule.ModuleType getModuleType() {
+        return AbstractModule.ModuleType.TYPE_OPEN_SOURCE;
     }
 
     @Override

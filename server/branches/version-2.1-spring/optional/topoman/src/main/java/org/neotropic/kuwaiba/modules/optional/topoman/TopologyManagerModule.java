@@ -108,4 +108,9 @@ public class TopologyManagerModule extends AbstractModule {
     public String getId() {
         return "topoman";
     }
+
+    @Override
+    public int getCategory() {
+        return CATEGORY_PLANNING;
+    }
 }

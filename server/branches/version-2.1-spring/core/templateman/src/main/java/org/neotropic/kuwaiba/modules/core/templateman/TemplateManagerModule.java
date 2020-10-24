@@ -23,8 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Register this module in main project and place important information about it.
- * 
+ * Manage pre-defined, reusable containment structures.
  * @author Hardy Ryan Chingal Martinez {@literal <ryan.chingal@kuwaiba.org>}
  */
 @Component
@@ -44,7 +43,7 @@ public class TemplateManagerModule extends AbstractModule {
 
     @Override
     public String getId() {
-        return "tepman";
+        return "templates";
     }
 
     @Override
@@ -81,5 +80,10 @@ public class TemplateManagerModule extends AbstractModule {
 
         // Now the module itself
         this.moduleRegistry.registerModule(this);
+    }
+
+    @Override
+    public int getCategory() {
+        return CATEGORY_ADMINISTRATION;
     }
 }

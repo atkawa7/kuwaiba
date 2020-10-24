@@ -98,7 +98,7 @@ public class SdhModule extends AbstractCommercialModule {
 
     @Override
     public String getVersion() {
-        return "1.2";
+        return "2.1";
     }
     
     @Override
@@ -107,8 +107,8 @@ public class SdhModule extends AbstractCommercialModule {
     }
 
     @Override
-    public String getCategory() {
-        return "advanced/transport";
+    public int getCategory() {
+        return CATEGORY_LOGICAL;
     }
 
     @Override
@@ -137,6 +137,6 @@ public class SdhModule extends AbstractCommercialModule {
     
     @Override
     public String getId() {
-        return "sdh-networks";
+        return "sdh";
     }
 }

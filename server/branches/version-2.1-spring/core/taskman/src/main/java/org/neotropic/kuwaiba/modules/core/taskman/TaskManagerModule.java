@@ -82,4 +82,9 @@ public class TaskManagerModule extends AbstractModule {
     public AbstractModule.ModuleType getModuleType() {
         return AbstractModule.ModuleType.TYPE_OPEN_SOURCE;
     }
+
+    @Override
+    public int getCategory() {
+        return CATEGORY_ADMINISTRATION;
+    }
 }

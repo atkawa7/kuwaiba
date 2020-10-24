@@ -74,11 +74,6 @@ public class IpamModule extends AbstractCommercialModule {
     }
 
     @Override
-    public String getCategory() {
-        return "network/transport";
-    }
-
-    @Override
     public ModuleType getModuleType() {
         return ModuleType.TYPE_PERPETUAL_LICENSE;
     }
@@ -98,6 +93,11 @@ public class IpamModule extends AbstractCommercialModule {
 
     @Override
     public String getId() {
-        return "ipam-networks";}
-
+        return "ipam";
+    }
+    
+    @Override
+    public int getCategory() {
+        return CATEGORY_LOGICAL;
+    }
 }

@@ -16,19 +16,12 @@
 package org.neotropic.kuwaiba.core.apis.integration.modules;
 
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermittedException;
-import org.springframework.stereotype.Service;
 
 /**
  * All third-party commercial modules should inherit from this class.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public abstract class AbstractCommercialModule extends AbstractModule {
-    /**
-     * Gets the module's category. A category helps the user interface t
-     * @return The module's category
-     */
-    public abstract String getCategory();
-    
     /**
      * Says if the module can be used or not (for example, if the license has expired or not) or if there are unmet dependencies.
      * @throws OperationNotPermittedException The reason why the module could not be started.

@@ -13,15 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-package org.neotropic.util.visual.general;
+package org.neotropic.kuwaiba.core.configuration;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
@@ -35,12 +33,13 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * The super class of all flex layouts used in every module of the application.
- * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
+ * The definition of the Configuration Manager layout.
+ * @author Mauricio Ruiz {@literal <mauricio.ruiz@kuwaiba.org>}
  */
 @StyleSheet("css/main.css")
 @StyleSheet("css/main-layout.css")
-public abstract class ModuleLayout extends FlexLayout implements RouterLayout {
+public class ConfigurationManagerLayout extends FlexLayout implements RouterLayout{
+    
     /**
      * Header component.
      */
@@ -57,14 +56,14 @@ public abstract class ModuleLayout extends FlexLayout implements RouterLayout {
      * Reference to the translation service.
      */
     @Autowired
-    protected TranslationService ts;
+    private TranslationService ts;
     /**
      * Reference to the module registry.
      */
     @Autowired
-    protected ModuleRegistry moduleRegistry;
+    private ModuleRegistry moduleRegistry;
 
-    public ModuleLayout() {
+    public ConfigurationManagerLayout() {
         setId("main-layout");
         setSizeFull();
         this.lytHeader = new HorizontalLayout();
@@ -92,14 +91,7 @@ public abstract class ModuleLayout extends FlexLayout implements RouterLayout {
         mnuNewBar.setWidthFull();
         
         mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.home"), ev -> UI.getCurrent().navigate("home"));
-        MenuItem mnuNavigation = mnuNewBar.addItem(ts.getTranslatedString("module.login.menu.navigation"));
-        MenuItem mnuCustomers = mnuNewBar.addItem(ts.getTranslatedString("module.login.menu.customers"));
-        MenuItem mnuPlanning = mnuNewBar.addItem(ts.getTranslatedString("module.login.menu.planning"));
-        MenuItem mnuOthers = mnuNewBar.addItem(ts.getTranslatedString("module.login.menu.others"));
-        MenuItem mnuSettings = mnuNewBar.addItem(ts.getTranslatedString("module.login.menu.settings"));
-        
         this.moduleRegistry.getModules().values().stream().forEach( aModule -> {
-            //switch(aModule.get)
             mnuNewBar.addItem(aModule.getName(), ev -> UI.getCurrent().navigate(aModule.getId()));
         });
         mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.about"), ev -> UI.getCurrent().navigate("about"));
@@ -111,7 +103,7 @@ public abstract class ModuleLayout extends FlexLayout implements RouterLayout {
     @Override
     public void onAttach(AttachEvent ev) {
         this.lytHeader.removeAll();
-        this.lytFooter.add(new Html("<span>Copyright <a href=\"https://www.neotropic.co\" target=\"_blank\">Neotropic SAS</a> 2010 - 2020</span>"));
+        this.lytFooter.add(new Html("Copyright <a href=\"https://www.neotropic.co\" target=\"_blank\">Neotropic SAS</a> 2010 - 2020"));
         
         getUI().ifPresent( ui -> { // If there isn't any active session, redirect to the login ui
             if (ui.getSession().getAttribute(Session.class) == null)

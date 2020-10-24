@@ -59,8 +59,8 @@ public class OutsidePlantManagerModule extends AbstractCommercialModule {
     }
     
     @Override
-    public String getCategory() {
-        return "network/transport";
+    public int getCategory() {
+        return CATEGORY_PHYSICAL;
     }
 
     @Override

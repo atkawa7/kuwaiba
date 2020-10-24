@@ -59,8 +59,8 @@ public class SynchronizationModule extends AbstractCommercialModule {
     }
     
     @Override
-    public String getCategory() {
-        return "commercial/import";
+    public int getCategory() {
+        return CATEGORY_INTEGRATION;
     }
 
     @Override

@@ -26,6 +26,43 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManage
  */
 public abstract class AbstractModule {
     /**
+     * Modules that are used to explore, navigate and search inventory assets.
+     */
+    public static final int CATEGORY_NAVIGATION = 1;
+    /**
+     * Modules that allow to manipulate L1 assets, such as physical connections and 
+     * outside plant infrastructure.
+     */
+    public static final int CATEGORY_PHYSICAL = 2;
+    /**
+     * Modules to manipulate L2/L3 assets, like MPLS, SDH, IP, ISDN, etc.
+     */
+    public static final int CATEGORY_LOGICAL = 3;
+    /**
+     * Modules to manipulate virtualized infrastructure (the likes of IaaS/SaaS).
+     */
+    public static final int CATEGORY_VIRTUALIZATION = 4;
+    /**
+     * Modules to manage administrative aspects of the inventory such as services (as in billed services), customers, contracts. etc.
+     */
+    public static final int CATEGORY_BUSINESS = 5;
+    /**
+     * Modules dedicated to network planning
+     */
+    public static final int CATEGORY_PLANNING = 6;
+    /**
+     * Modules that allow Kuwaiba to communicate with other platforms and devices.
+     */
+    public static final int CATEGORY_INTEGRATION = 7;
+    /**
+     * Modules to manage the data model and configure the system.
+     */
+    public static final int CATEGORY_ADMINISTRATION = 8;
+    /**
+     * Any module not fitting the categories above.
+     */
+    public static final int CATEGORY_OTHER = 100;
+    /**
      * Reference to the metadata entity manager.
      */
     protected MetadataEntityManager mem;
@@ -49,7 +86,11 @@ public abstract class AbstractModule {
      * @return The module's name
      */
     public abstract String getName();
-    
+    /**
+     * Assigns the module a category, so it can be placed in menus and context actions. See CATEGORY_XXX for valid values.
+     * @return The category.
+     */
+    public abstract int getCategory();
     /**
      * Gets the module description
      * @return he module's description

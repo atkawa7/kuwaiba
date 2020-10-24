@@ -84,4 +84,9 @@ public class ListTypeManagerModule  extends AbstractModule {
     public ModuleType getModuleType() {
         return ModuleType.TYPE_OPEN_SOURCE;        
     }
+
+    @Override
+    public int getCategory() {
+        return CATEGORY_ADMINISTRATION;
+    }
 }

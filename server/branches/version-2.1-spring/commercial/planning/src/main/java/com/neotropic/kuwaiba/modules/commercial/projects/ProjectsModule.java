@@ -42,7 +42,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ProjectsModule extends AbstractCommercialModule {
-    
     /**
     * translation service
     */
@@ -77,7 +76,7 @@ public class ProjectsModule extends AbstractCommercialModule {
 
     @Override
     public String getVersion() {
-        return "1.0";
+        return "2.1";
     }
 
     @Override
@@ -86,8 +85,8 @@ public class ProjectsModule extends AbstractCommercialModule {
     }
 
     @Override
-    public String getCategory() {
-        return "planning/projects";
+    public int getCategory() {
+        return CATEGORY_PLANNING;
     }
 
     @Override

@@ -121,8 +121,8 @@ public class MplsModule extends AbstractCommercialModule {
     }
 
     @Override
-    public String getCategory() {
-        return "network/transport";
+    public int getCategory() {
+        return CATEGORY_LOGICAL;
     }
     
     @PostConstruct
