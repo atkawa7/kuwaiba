@@ -413,7 +413,6 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         newOverlay.setEnabled(true);
         
         MxGraph newGraph = new MxGraph();
-        newGraph.setOverrideCurrentStyle(true);
         newGraph.setFullSize();
         newGraph.setOverflow(null);
         
@@ -430,6 +429,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
 
         newGraph.addGraphLoadedListener(graphLoadedEvent-> {
             newGraph.getElement().executeJs("mxUtils.getCurrentStyle = () => {return null;}").then(nil0 -> {  //NOI18N
+                newGraph.enablePanning(false);
                 newGraph.getElement().executeJs("this.graph.cellRenderer.getTextScale = function(state) {return Math.min(1, state.view.scale)}").then(nil1 -> {
                     if (newOverlay.getWidth() != null)
                         setGraphScaleConsumer.accept(newOverlay.getWidth());
@@ -453,7 +453,6 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         newOverlay.setEnabled(enabled);
         
         MxGraph newGraph = new MxGraph();
-        newGraph.setOverrideCurrentStyle(true);
         newGraph.setFullSize();
         newGraph.setOverflow(null);
         
@@ -471,6 +470,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
 
         newGraph.addGraphLoadedListener(graphLoadedEvent-> {
             newGraph.getElement().executeJs("mxUtils.getCurrentStyle = () => {return null;}").then(nil -> {  //NOI18N
+                newGraph.enablePanning(false);
                 newGraph.getElement().executeJs("this.graph.cellRenderer.getTextScale = function(state) {return Math.min(1, state.view.scale)}").then(nil1 -> {
                     if (newOverlay.getWidth() != null)
                         setGraphScaleConsumer.accept(newOverlay.getWidth());
@@ -604,14 +604,20 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                 ).open();
             }
         }
-        map.getBounds(bounds -> {
-            disableEnableTabs(
-                Arrays.asList(tools.get(Tool.Marker), tools.get(Tool.Polyline)),
-                Arrays.asList(tools.get(Tool.SaveView), tools.get(Tool.DeleteView), tools.get(Tool.Hand), tools.get(Tool.Overlay), tools.get(Tool.Wire))
-            );
-            componentTabs.setSelectedTab(tools.get(Tool.Hand));
-            addOverlay(bounds, componentTabs, tools.get(Tool.Hand), tools.get(Tool.Marker), tools.get(Tool.Polyline));
-        });
+        if (getProperties().containsKey("_saved") && (boolean) getProperties().get("_saved")) { //NOI18N
+            getProperties().remove("_saved"); //NOI18N
+            return;
+        }
+        if (init) {
+            map.getBounds(bounds -> {
+                disableEnableTabs(
+                    Arrays.asList(tools.get(Tool.Marker), tools.get(Tool.Polyline)),
+                    Arrays.asList(tools.get(Tool.SaveView), tools.get(Tool.DeleteView), tools.get(Tool.Hand), tools.get(Tool.Overlay), tools.get(Tool.Wire))
+                );
+                componentTabs.setSelectedTab(tools.get(Tool.Hand));
+                addOverlay(bounds, componentTabs, tools.get(Tool.Hand), tools.get(Tool.Marker), tools.get(Tool.Polyline));
+            });
+        }
     }
     
     @Override
@@ -723,6 +729,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                                             getProperties().put(Constants.PROPERTY_ID, viewObject.getId());
                                             getProperties().put(Constants.PROPERTY_NAME, viewObject.getName());
                                             getProperties().put(Constants.PROPERTY_DESCRIPTION, viewObject.getDescription());
+                                            getProperties().put("_saved", true); //NOI18N
                                             try {
                                                 getAsComponent();
                                             } catch (InvalidArgumentException ex) {
@@ -990,7 +997,6 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                                 vertex.setUuid(businessObject.getId());
                                 vertex.setLabel(businessObject.getName());
                                 vertex.setGeometry((int) x, (int) y, 24, 24);
-                                vertex.setIsVertex(true);
                                 LinkedHashMap<String, String> styles = new LinkedHashMap();
                                 styles.put(
                                     MxConstants.STYLE_IMAGE, 
