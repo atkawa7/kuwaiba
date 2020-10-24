@@ -60,6 +60,10 @@ vaadin-button {
     margin: 0px;
 }
 
+.icon-button iron-icon {
+    margin: 0px;
+}
+
 .vaadin-grid[part~="cell"] {
     min-height: 20px;
 }
