@@ -30,11 +30,13 @@ public class LongProperty extends AbstractProperty<Long>{
     public LongProperty(String name, String displayName, String description, Long value) {
         super(name, displayName, description, value);
         setType(Constants.DATA_TYPE_LONG);
+        setHasBinder(true);
     }
 
     public LongProperty(String name, String displayName, String description, Long value, boolean readOnly) {
         super(name, displayName, description, value, readOnly);
         setType(Constants.DATA_TYPE_LONG);
+        setHasBinder(true);
     }  
 
     @Override
