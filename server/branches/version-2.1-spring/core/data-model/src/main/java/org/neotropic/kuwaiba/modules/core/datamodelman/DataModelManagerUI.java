@@ -144,79 +144,81 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
      /**
      * factory to build resources from data source
      */ 
-    TreeGrid<DataModelNode> inventoryObjectTree;
+    private TreeGrid<DataModelNode> inventoryObjectTree;
      /**
      * factory to build resources from data source
      */ 
-    TreeGrid<DataModelNode> genericObjectListTree;       
+    private TreeGrid<DataModelNode> genericObjectListTree;       
     /**
      * sheet for general Attributes
      */     
-    PropertySheet propsheetGeneralAttributes;
+    private PropertySheet propsheetGeneralAttributes;
      /**
      * sheet for class Attributes properties
      */   
-    PropertySheet propsheetClassAttributes;
+    private PropertySheet propsheetClassAttributes;
      /**
      * current selected class 
      */   
-    ClassMetadataLight selectedClass;
+    private ClassMetadataLight selectedClass;
     
-    DataModelNode selectedTreeNode;
+    private DataModelNode selectedTreeNode;
      /**
      * combo filter for inventory tree
      */   
-    ComboBox<ClassMetadataLight> cbxFilterInventoryTree;
+    private ComboBox<ClassMetadataLight> cbxFilterInventoryTree;
      /**
      * combo filter for list type tree
      */   
-    ComboBox<ClassMetadataLight> cbxFilterListTypeTree;
+    private ComboBox<ClassMetadataLight> cbxFilterListTypeTree;
      /**
      * grid to list class attributes
      */   
-    Grid<AttributeMetadata> tblClassAttributes;
+    private Grid<AttributeMetadata> tblClassAttributes;
      /**
      * current selected class attribute
      */   
-    AttributeMetadata selectedAttribute;
+    private AttributeMetadata selectedAttribute;
     /**
      * upload control to class icon
      */
-    Upload uploadIcon;
+    private Upload uploadIcon;
     /**
      * upload control to small class icon
      */
-    Upload uploadSmallIcon;
+    private Upload uploadSmallIcon;
     /**
      * icon class image
      */
-    Image iconImage;
+    private Image iconImage;
     /**
      * upload control to small class icon
      */        
-    Image smallIconImage;  
+    private Image smallIconImage;  
     /**
      * layout to show class attributes property sheet
      */
-    VerticalLayout lytPropSheetClassAttributes;
+    private VerticalLayout lytPropSheetClassAttributes;
     /**
      * contains class icons
      */
-    VerticalLayout lytIcons ;
-    Button btnDeleteAttribute;
-    Button btnDeleteClass;
+    private VerticalLayout lytIcons ;
+    
+    private Button btnDeleteAttribute;
+    
+    private Button btnDeleteClass;
     /**
      * listener to attribute actions
      */
-    ActionCompletedListener listenerAttributeActions;
+    private ActionCompletedListener listenerAttributeActions;
     /**
      * listener to delete class action
      */
-    ActionCompletedListener listenerDeleteClassAction;
+    private ActionCompletedListener listenerDeleteClassAction;
     /**
      * listener to new class action
      */
-    ActionCompletedListener listenerNewClassAction;
+    private ActionCompletedListener listenerNewClassAction;
     
     public DataModelManagerUI() {
         super();
@@ -229,7 +231,8 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
         try {
             createContent();
         } catch (InvalidArgumentException | MetadataObjectNotFoundException ex) {
-            
+             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage()).open();
+             Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);       
         }
     }
     
@@ -504,6 +507,7 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
             propsheetClassAttributes.setItems(PropertyFactory.generalPropertiesFromAttribute(selectedAttribute));
         } catch (Exception ex) {
             Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
         }
     }
     
@@ -630,6 +634,7 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
                 tblClassAttributes.setItems(new ArrayList<>());
         } catch (MetadataObjectNotFoundException ex) {
             Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
         }
     }
 
@@ -860,6 +865,6 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
 
     @Override
     public String getPageTitle() {
-        return ts.getTranslatedString("module.listtypeman.title");
+        return ts.getTranslatedString("module.datamodelman.title");
     }
 }
