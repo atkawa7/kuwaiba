@@ -16,7 +16,7 @@
         <module>processman</module>
         <module>serviceman</module>
         <module>physical-connections</module>
-        <module>reporting</module>
+        <module>reports</module>
         <module>topoman</module>
     </modules>
 </project>
