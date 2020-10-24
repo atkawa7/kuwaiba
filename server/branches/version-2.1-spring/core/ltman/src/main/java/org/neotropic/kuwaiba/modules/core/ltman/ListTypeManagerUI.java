@@ -146,7 +146,8 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
         try {
             createContent();
         } catch (InvalidArgumentException | MetadataObjectNotFoundException ex) {
-            
+            Logger.getLogger(ListTypeManagerUI.class.getName()).log(Level.SEVERE, null, ex);
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
         }
     }
     
@@ -167,6 +168,7 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
                 
             } catch (InvalidArgumentException | MetadataObjectNotFoundException ex) {
                 Logger.getLogger(ListTypeManagerUI.class.getName()).log(Level.SEVERE, null, ex);
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
             }
         } else
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
@@ -248,6 +250,7 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
         } catch (InventoryException ex) {
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
             Logger.getLogger(ListTypeManagerUI.class.getName()).log(Level.SEVERE, null, ex);
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
         }
     }
 
@@ -270,7 +273,8 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
                 lblCurrentListType.setText(currentListType.getName());
                 loadListTypeItems(ev.getItem());
             } catch (InvalidArgumentException | MetadataObjectNotFoundException ex) {
-                
+                Logger.getLogger(ListTypeManagerUI.class.getName()).log(Level.SEVERE, null, ex);
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
             }
         });
         
@@ -361,7 +365,7 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
                 HashMap<String, String> attributes = new HashMap<>();
                 attributes.put(property.getName(), PropertyValueConverter.getAsStringToPersist(property));
 
-                bem.updateObject(currentListTypeItem.getClassName(), currentListTypeItem.getId(), attributes);
+                aem.updateListTypeItem(currentListTypeItem.getClassName(), currentListTypeItem.getId(), attributes);
 
                 loadListTypeItems(currentListType);               
                 tblListTypeItems.select(currentListTypeItem);
