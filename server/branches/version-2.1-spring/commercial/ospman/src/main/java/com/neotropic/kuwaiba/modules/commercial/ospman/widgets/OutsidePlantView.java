@@ -604,17 +604,18 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                 ).open();
             }
         }
+        disableEnableTabs(
+            Arrays.asList(tools.get(Tool.Marker), tools.get(Tool.Polyline)),
+            Arrays.asList(tools.get(Tool.SaveView), tools.get(Tool.DeleteView), tools.get(Tool.Hand), tools.get(Tool.Overlay), tools.get(Tool.Wire))
+        );
+        componentTabs.setSelectedTab(tools.get(Tool.Hand));
+        
         if (getProperties().containsKey("_saved") && (boolean) getProperties().get("_saved")) { //NOI18N
             getProperties().remove("_saved"); //NOI18N
             return;
         }
         if (init) {
             map.getBounds(bounds -> {
-                disableEnableTabs(
-                    Arrays.asList(tools.get(Tool.Marker), tools.get(Tool.Polyline)),
-                    Arrays.asList(tools.get(Tool.SaveView), tools.get(Tool.DeleteView), tools.get(Tool.Hand), tools.get(Tool.Overlay), tools.get(Tool.Wire))
-                );
-                componentTabs.setSelectedTab(tools.get(Tool.Hand));
                 addOverlay(bounds, componentTabs, tools.get(Tool.Hand), tools.get(Tool.Marker), tools.get(Tool.Polyline));
             });
         }
