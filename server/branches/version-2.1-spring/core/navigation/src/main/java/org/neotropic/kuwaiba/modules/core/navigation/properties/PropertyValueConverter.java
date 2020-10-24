@@ -8,6 +8,7 @@ package org.neotropic.kuwaiba.modules.core.navigation.properties;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,9 +45,17 @@ public class PropertyValueConverter {
     
     public static String getLocalDateAsStringToPersist(LocalDate value) {
         if (value != null) {
-        Instant instant = value.atStartOfDay(ZoneId.systemDefault()).toInstant();	
-	long timeInMillis = instant.toEpochMilli();
-        return timeInMillis + "";
+            Instant instant = value.atStartOfDay(ZoneId.systemDefault()).toInstant();	
+            long timeInMillis = instant.toEpochMilli();
+            return timeInMillis + "";
+        } else 
+            return "0";
+    }
+    
+    public static String getLocalDateTimeAsStringToPersist(LocalDateTime value) {
+        if (value != null) {          	
+            long timeInMillis = value.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            return timeInMillis + "";
         } else 
             return "0";
     }
@@ -56,8 +65,9 @@ public class PropertyValueConverter {
         switch (property.getType()) {
 
             case Constants.DATA_TYPE_DATE:
-            case Constants.DATA_TYPE_TIME_STAMP:
                 return getLocalDateAsStringToPersist((LocalDate) property.getValue());
+            case Constants.DATA_TYPE_TIME_STAMP:
+                return getLocalDateTimeAsStringToPersist((LocalDateTime) property.getValue());
             case Constants.DATA_TYPE_OBJECT:
                 return getListTypeAsStringToPersist((BusinessObjectLight) property.getValue());
             case Constants.DATA_TYPE_OBJECT_MULTIPLE:

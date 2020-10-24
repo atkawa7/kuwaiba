@@ -16,6 +16,7 @@
 package org.neotropic.kuwaiba.modules.core.navigation.properties;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,6 +38,7 @@ import org.neotropic.util.visual.properties.DateProperty;
 import org.neotropic.util.visual.properties.DoubleProperty;
 import org.neotropic.util.visual.properties.IntegerProperty;
 import org.neotropic.util.visual.properties.LocalDateProperty;
+import org.neotropic.util.visual.properties.LocalDateTimeProperty;
 import org.neotropic.util.visual.properties.LongProperty;
 import org.neotropic.util.visual.properties.ObjectMultipleProperty;
 import org.neotropic.util.visual.properties.ObjectProperty;
@@ -64,28 +66,37 @@ public class PropertyFactory {
         ClassMetadata classMetadata = mem.getClass(
                 businessObject.getClassName());
         ArrayList<AbstractProperty> objectProperties = new ArrayList<>();
+        HashMap<String, Object> attributes = businessObject.getAttributes();
         classMetadata.getAttributes().stream().forEach(anAttribute -> {
             try {
                 switch (anAttribute.getType()) {
                     case Constants.DATA_TYPE_STRING:
-                        objectProperties.add(new StringProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                anAttribute.getDescription(), (String) businessObject.getAttributes().get(anAttribute.getName())));
+
+                    objectProperties.add(new StringProperty(anAttribute.getName(),
+                            anAttribute.getDisplayName(), anAttribute.getDescription(),
+                            (!attributes.containsKey(anAttribute.getName()) ? null : (String) attributes.get(anAttribute.getName())) ));
                         break;
+                    case Constants.DATA_TYPE_DOUBLE:
                     case Constants.DATA_TYPE_FLOAT:
                         objectProperties.add(new DoubleProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                anAttribute.getDescription(), (Double) businessObject.getAttributes().get(anAttribute.getName())));
+                                anAttribute.getDescription(),
+                                !attributes.containsKey(anAttribute.getName()) ? null :  Double.valueOf((String)attributes.get(anAttribute.getName()))));
                         break;
                     case Constants.DATA_TYPE_INTEGER:
-                        objectProperties.add(new IntegerProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                anAttribute.getDescription(), (Integer) businessObject.getAttributes().get(anAttribute.getName())));
+
+                     objectProperties.add(new IntegerProperty(anAttribute.getName(),
+                            anAttribute.getDisplayName(), anAttribute.getDescription(),
+                            !attributes.containsKey(anAttribute.getName()) ? null : Integer.parseInt((String) attributes.get(anAttribute.getName()))));
                         break;
                     case Constants.DATA_TYPE_BOOLEAN:
                         objectProperties.add(new BooleanProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                anAttribute.getDescription(), (Boolean) businessObject.getAttributes().get(anAttribute.getName())));
+                                anAttribute.getDescription(), 
+                                !attributes.containsKey(anAttribute.getName()) ? false : Boolean.valueOf((String)attributes.get(anAttribute.getName()))));
                         break;
                     case Constants.DATA_TYPE_LONG:
-                        LongProperty aLongProperty = new LongProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                anAttribute.getDescription(), (Long) businessObject.getAttributes().get(anAttribute.getName()));
+                        LongProperty aLongProperty = new LongProperty(anAttribute.getName(), 
+                                anAttribute.getDisplayName(), anAttribute.getDescription(), 
+                                !attributes.containsKey(anAttribute.getName()) ? null : Long.valueOf((String) attributes.get(anAttribute.getName())));
                         //special case for creation date attribute
                         if (Constants.PROPERTY_CREATION_DATE.equals(anAttribute.getName())) {
                             aLongProperty.setReadOnly(true);
@@ -93,21 +104,32 @@ public class PropertyFactory {
                         objectProperties.add(aLongProperty);
                         break;
                     case Constants.DATA_TYPE_DATE:
-                    case Constants.DATA_TYPE_TIME_STAMP:
                         LocalDateProperty aDateProperty = new LocalDateProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                anAttribute.getDescription(), (Long) businessObject.getAttributes().get(anAttribute.getName()));
+                                anAttribute.getDescription(), 
+                                !attributes.containsKey(anAttribute.getName()) ? null : Long.valueOf((String)attributes.get(anAttribute.getName())));
                         aDateProperty.setReadOnly(anAttribute.getName().equals(Constants.PROPERTY_CREATION_DATE));
                         objectProperties.add(aDateProperty);
+                        break;
+                    case Constants.DATA_TYPE_TIME_STAMP:
+                        LocalDateTimeProperty aDateTimeProperty = new LocalDateTimeProperty(anAttribute.getName(), anAttribute.getDisplayName(),
+                                anAttribute.getDescription(),
+                                !attributes.containsKey(anAttribute.getName()) ? null : Long.valueOf((String)attributes.get(anAttribute.getName())));
+                        aDateTimeProperty.setReadOnly(anAttribute.getName().equals(Constants.PROPERTY_CREATION_DATE));
+                        objectProperties.add(aDateTimeProperty);
                         break;
                     case Constants.DATA_TYPE_LIST_TYPE:
                         try {
                         List items = aem.getListTypeItems(anAttribute.getType());
                         if (anAttribute.isMultiple()) {
                             objectProperties.add(new ObjectMultipleProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                    anAttribute.getDescription(), (List<BusinessObjectLight>) businessObject.getAttributes().get(anAttribute.getName()), items));
+                                    anAttribute.getDescription(), 
+                                    !attributes.containsKey(anAttribute.getName()) ? new ArrayList<>() : (List<BusinessObjectLight>) attributes.get(anAttribute.getName()), 
+                                    items));
                         } else {
                             objectProperties.add(new ObjectProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                    anAttribute.getDescription(), (BusinessObjectLight) businessObject.getAttributes().get(anAttribute.getName()), items));
+                                    anAttribute.getDescription(), 
+                                    !attributes.containsKey(anAttribute.getName()) ? null : (BusinessObjectLight) attributes.get(anAttribute.getName()),
+                                    items));
                         }
                     } catch (InventoryException ex) {
                         Logger.getLogger(PropertyFactory.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage());
@@ -115,9 +137,7 @@ public class PropertyFactory {
                     break;
                 }
             } catch (Exception ex) { // Faulty values will be ignored and silently logged
-                Logger.getLogger(PropertyFactory.class.getName()).log(Level.SEVERE,
-                        String.format(ts.getTranslatedString(String.format("module.propertysheet.labels.wrong-data-type", anAttribute.getName(),
-                                businessObject.getId(), businessObject.getAttributes().get(anAttribute.getName())))));
+                Logger.getLogger(PropertyFactory.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage());
             }
         });
 
