@@ -77,7 +77,8 @@ import org.neotropic.util.visual.properties.PropertySheet;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Main UI for template manager module, initialize all display elements and business logic.
+ * Main UI for template manager module, initialize all display elements and
+ * business logic.
  *
  * @author Hardy Ryan Chingal Martinez {@literal <ryan.chingal@kuwaiba.org>}
  */
@@ -364,6 +365,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
         tblClasses.asSingleSelect().addValueChangeListener(event -> {
             if (event.getValue() != null) {
                 selectedClass = event.getValue();
+                editChild = false;
                 updateTemplateGrid(event.getValue());
                 updateChildTemplateItemsGrid(null);
                 updatePropertySheet(event.getValue());
@@ -471,7 +473,9 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
                 updateChildTemplateItemsGrid(event.getValue());
                 btnRemoveTemplate.setEnabled(true);
             } else {
-                this.selectedTemplate = null;
+                if (event.isFromClient()) 
+                    this.selectedTemplate = null;
+                
                 btnRemoveTemplate.setEnabled(false);
             }
         });
@@ -575,7 +579,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
                 .setHeader(String.format("%s", ts.getTranslatedString("module.templateman.items")));
 
         tblChildsTemplate.addComponentColumn(this::buildChildTemplateItemsOptions);
-        tblChildsTemplate.addSelectionListener(this::editStructureItem);        
+        tblChildsTemplate.addSelectionListener(this::editStructureItem);
         this.lytvChildTemplate.add(tblChildsTemplate, mnuAddChildTemplateItems);
     }
 
@@ -595,7 +599,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
             mnuAddSpecialChildsTemplateItem.setEnabled(true);
         } else {
             mnuAddChildsTemplateItem.setEnabled(false);
-            mnuAddSpecialChildsTemplateItem.setEnabled(false);            
+            mnuAddSpecialChildsTemplateItem.setEnabled(false);
             refreshStructure(null);
         }
     }
@@ -638,7 +642,6 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
         smnuRemoveChildsTemplateItem.getElement().setProperty("title",
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.deleteItem-template.description")));
 
-        
         return menuBar;
     }
 
@@ -698,11 +701,15 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
      * @param se;SelectionEvent; event of click in expandable item grid
      */
     private void editStructureItem(SelectionEvent<Grid<TemplateObjectLight>, TemplateObjectLight> se) {
-        TemplateObjectLight templateObjectLight = se.getFirstSelectedItem().orElse(null);
-        if (templateObjectLight != null) {
+        
+        if (se.getFirstSelectedItem().orElse(null) != null) {
             editChild = true;
-            updatePropertySheet(templateObjectLight);
-        }
+            selectedTemplateItem = se.getFirstSelectedItem().orElse(null);
+            updatePropertySheet(selectedTemplateItem);
+        }else
+            if(se.isFromClient())
+                selectedTemplateItem = null;
+        
     }
 
     /**
@@ -711,7 +718,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
      * @param object;TemplateObjectLight; parent structure item
      */
     private void editStructureItem(TemplateObjectLight templateObjectLight) {
-        
+
         if (templateObjectLight != null) {
             editChild = true;
             updatePropertySheet(templateObjectLight);
@@ -885,7 +892,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
             List<TemplateObjectLight> allTemplatesLight = aem.getTemplatesForClass(object.getName());
             this.templatesDataProvider = new ListDataProvider<>(allTemplatesLight);
             tblTemplates.setDataProvider(templatesDataProvider);
-            this.templatesDataProvider.refreshAll();
+            this.templatesDataProvider.refreshAll();            
         } catch (MetadataObjectNotFoundException ex) {
             Logger.getLogger(TemplateManagerLayout.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -934,7 +941,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
                 if (query.getParent() != null) {
                     //update property sheet
                     editStructureItem(query.getParent());
-                    
+
                     List<TemplateObjectLight> allInnerChildsTemplateLight = new ArrayList<>();
                     allInnerChildsTemplateLight.addAll(aem.getTemplateElementChildren(query.getParent().getClassName(), query.getParent().getId()));
                     allInnerChildsTemplateLight.addAll(aem.getTemplateSpecialElementChildren(query.getParent().getClassName(), query.getParent().getId()));
@@ -958,13 +965,14 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
                 aem.updateTemplateElement(selectedTemplate.getClassName(), selectedTemplate.getId(),
                         attributesNames, attributesValues);
                 refreshTemplates(selectedClass);
-                tblTemplates.select(selectedTemplate);
+                tblTemplates.asSingleSelect().setValue(selectedTemplate);
+                
             } else {//update lower containment child
                 aem.updateTemplateElement(selectedTemplateItem.getClassName(), selectedTemplateItem.getId(),
                         attributesNames, attributesValues);
                 refreshStructure(selectedTemplate);
-                tblChildsTemplate.select(selectedTemplateItem);
-                editChild = false;
+                tblChildsTemplate.asSingleSelect().setValue(selectedTemplateItem);
+                
             }
 
             new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
@@ -987,6 +995,6 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
 
     @Override
     public String getPageTitle() {
-        return ts.getTranslatedString("module.templatemantemplateman.title");
+        return ts.getTranslatedString("module.templateman.title");
     }
 }
