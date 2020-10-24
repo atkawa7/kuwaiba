@@ -269,6 +269,14 @@ class MxGraphCell extends PolymerElement {
       tooltip: {
         type: String,
         observer: '_tooltipChanged'
+      },
+      usePortToConnect: {
+         type: Boolean,
+         value: false 
+      },
+      resizable: {
+        type: String,
+        value: '1'
       }
     };
   }
@@ -340,6 +348,7 @@ class MxGraphCell extends PolymerElement {
             ';labelBackgroundColor=' + this.labelBackgroundColor +                
             ';fillColor=' + (this.fillColor ? this.fillColor : '#CCC') +                
             ';movable=' + this.movable +   
+             ';resizable=' + this.resizable  +    
               ';strokeColor=' + this.strokeColor  + 
               ';fontSize=' + this.fontSize  + 
             ';fontColor=' + this.fontColor +
@@ -358,6 +367,10 @@ class MxGraphCell extends PolymerElement {
     
       if (this.styleName) {
           this.styleNameChanged();
+      }
+      
+      if (this.usePortToConnect) {
+         this.addConnectableOverlayPort();
       }
               
       } else if (this.layer) { 
@@ -380,7 +393,7 @@ class MxGraphCell extends PolymerElement {
             ';labelBackgroundColor=' + this.labelBackgroundColor +
             ';strokeColor=' + this.strokeColor  +           
             ';dashed=' + this.dashed  +           
-            ';curved=' + this.curved  +           
+            ';curved=' + this.curved  +                  
             ';rounded=1'  +           
              ((this.edgeStyle) ? (';edgeStyle=' + this.edgeStyle) : '')  +           
             ';fontColor=' + this.fontColor );
@@ -576,6 +589,14 @@ setChildrenCellPosition(cellId, position) {
     }
 }
 
+setSelfPosition(position) {
+    if (this.cell && position >= 0 && this.cell.parent.children.length > position) {        
+            var index = this.cell.parent.children.indexOf(this.cell);
+            this.cell.parent.children.splice(index, 1);
+            this.cell.parent.children.splice(position, 0, this.cell);      
+    }
+}
+
 updatePosition() {
     this.cell.geometry.x = this.x;
     this.cell.geometry.y = this.y;
@@ -757,6 +778,29 @@ cellLabelChanged() {
       if (this.graph && this.cell)
           this.graph.orderCells(back, [this.cell]);
   }
+  
+  addConnectableOverlayPort() {
+        // Creates a new overlay with an image and a tooltip
+        var overlay = new mxCellOverlay(new mxImage('MXGRAPH/images/connector.gif', 16, 16), 'Add outgoing');
+        overlay.cursor = 'hand';
+        var _this = this;
+       
+        overlay.addListener('pointerdown', function (sender, eo)
+        {
+            var evt2 = eo.getProperty('event');
+            var state = eo.getProperty('state');
+
+            var pt = mxUtils.convertPoint(_this.graph.container,
+                    mxEvent.getClientX(evt2), mxEvent.getClientY(evt2));
+            _this.graph.connectionHandler.start(state, pt.x, pt.y);
+            _this.graph.isMouseDown = true;
+            _this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt2);
+            mxEvent.consume(evt2);
+        });
+
+        // Sets the overlay for the cell in the graph
+        this.graph.addCellOverlay(this.cell, overlay);
+    }
 }
 
 window.customElements.define('mx-graph-cell', MxGraphCell);

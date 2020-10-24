@@ -445,4 +445,8 @@ public class MxGraph extends Component implements HasComponents, HasStyle, HasSi
     public void setCellsMovable(boolean value) {
        getElement().callJsFunction("setCellsMovable", value);
     }
+    
+    public void setChildrenCellPosition(String cellId, int position) {
+       getElement().callJsFunction("setChildrenCellPosition", cellId , position);
+    }
 }

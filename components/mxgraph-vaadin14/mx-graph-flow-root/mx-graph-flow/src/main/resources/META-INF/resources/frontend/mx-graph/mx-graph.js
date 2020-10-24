@@ -275,22 +275,10 @@ class MxGraph extends PolymerElement {
             this.graph.view.addListener(mxEvent.SCALE, function (sender, evt) {
                 _this.scale = evt.properties.scale;
             });
-//            this.graph.view.addListener(mxEvent.SCALE_AND_TRANSLATE, function (sender, evt) {
-//                this.scale = this.graph.view.scale;
-//            });
-//            this.graph.view.addListener(mxEvent.TRANSLATE, function (sender, evt) {
-//                this.scale = this.graph.view.scale;
-//            });
-//            this.graph.addListener(mxEvent.MOVE_END, function (sender, evt) {
-//                this.scale = this.graph.view.scale;
-//            });
-//            this.graph.addListener(mxEvent.PAN_END, function (sender, evt) {
-//                this.scale = this.graph.view.scale;
-//            });
+
             this.graph.addListener(mxEvent.FIRE_MOUSE_EVENT, function (sender, evt) {
    
-//                console.log("MOUSE_MOVE")
-//                console.log(evt)
+//             console.log("MOUSE_MOVE")
                if (evt.properties.eventName === 'mouseMove') {
                    _this.fireMouseMoveGraph(evt.properties.event.graphX, evt.properties.event.graphY);
                }
@@ -353,6 +341,20 @@ class MxGraph extends PolymerElement {
 
                 }
             });
+            
+            this.graph.connectionHandler.addListener(mxEvent.CONNECT, function(sender, evt)
+                {
+                  var edge = evt.getProperty('cell');
+                  var source = this.graph.getModel().getTerminal(edge, true);
+                  var target = this.graph.getModel().getTerminal(edge, false);
+
+                  var style = this.graph.getCellStyle(edge);
+                  var sourcePortId = style[mxConstants.STYLE_SOURCE_PORT];
+                  var targetPortId = style[mxConstants.STYLE_TARGET_PORT];
+
+                  mxLog.show();
+                  mxLog.debug('connect', edge, source.id, target.id, sourcePortId, targetPortId);
+                });
                   
             // Called when any cell is resized
             this.graph.addListener(mxEvent.CELLS_RESIZED, function (sender, evt) {
@@ -556,8 +558,37 @@ class MxGraph extends PolymerElement {
                 }
             }
             
-          
-            
+           var mxCellRendererInstallCellOverlayListeners = mxCellRenderer.prototype.installCellOverlayListeners;
+	   mxCellRenderer.prototype.installCellOverlayListeners = function (state, overlay, shape)
+            {
+                mxCellRendererInstallCellOverlayListeners.apply(this, arguments);
+
+                mxEvent.addListener(shape.node, (mxClient.IS_POINTER) ? 'pointerdown' : 'mousedown', function (evt)
+                {
+                    overlay.fireEvent(new mxEventObject('pointerdown', 'event', evt, 'state', state));
+                });
+
+                if (!mxClient.IS_POINTER && mxClient.IS_TOUCH)
+                {
+                    mxEvent.addListener(shape.node, 'touchstart', function (evt)
+                    {
+                        overlay.fireEvent(new mxEventObject('pointerdown', 'event', evt, 'state', state));
+                    });
+                }
+            };
+
+            this.graph.connectionHandler.connect = (source, target, evt, dropTarget) => {
+                        console.log(source);
+                        this.dispatchEvent(new CustomEvent('edge-complete', 
+                        {
+                            detail: {
+                                sourceId: source ? source.id : null,
+                                targetId: target ? target.id : null
+                            }
+                        }
+                    ));
+            };
+
             if (this.beginUpdateOnInit) {
                 this.beginUpdate();
             }
@@ -1004,7 +1035,7 @@ class MxGraph extends PolymerElement {
                         }
                     ));
                     return null;
-                };
+                };              
             } else {
                 if (this.oldContainerHandlerInsertEdge)
                     this.graph.connectionHandler.insertEdge = this.oldContainerHandlerInsertEdge;
@@ -1038,6 +1069,20 @@ class MxGraph extends PolymerElement {
         } else {
             this.waitForGraph(() => this._overrideCurrentStyleChanged(newValue, oldValue));
         }
+    }
+    
+    setChildrenCellPosition(cellId, position) {
+        var cell;      
+        this.graph.model.root.children.forEach(function (children) {
+             if (children.id === cellId)
+                 cell = children;
+         });
+        
+         if (cell) {   
+                var index = this.graph.model.root.children.indexOf(cell);
+                this.graph.model.root.children.splice(index, 1);
+                this.graph.model.root.children.splice(position, 0, cell);
+         }   
     }
 }
 

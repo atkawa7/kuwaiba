@@ -71,6 +71,7 @@ public class MxGraphCell extends Component implements HasComponents {
     public static final String PROPERTY_RAW_STYLE = "rawStyle";
     public static final String PROPERTY_ANIMATE_ON_SELECT = "animateOnSelect";
     public static final String PROPERTY_SELECTABLE = "selectable";
+    public static final String PROPERTY_USE_PORT_TO_CONNECT = "usePortToConnect";
     /**
      * Specifies whether the cell is collapsed.
      */
@@ -397,8 +398,12 @@ public class MxGraphCell extends Component implements HasComponents {
         getElement().setProperty(MxConstants.STYLE_VERTICAL_ALIGN, prop);
     }
      
-     public void setLabelPosition(String prop) {
+    public void setLabelPosition(String prop) {
         getElement().setProperty(MxConstants.STYLE_LABEL_POSITION, prop);
+    }
+    
+    public void setUsePortToConnect(Boolean prop) {
+        getElement().setProperty(PROPERTY_USE_PORT_TO_CONNECT, prop);
     }
      
     public boolean isMovable() {
@@ -407,6 +412,10 @@ public class MxGraphCell extends Component implements HasComponents {
         
     public void setIsMovable(Boolean prop) {
         getElement().setProperty(MxConstants.STYLE_MOVABLE, prop ? "1" : "0");
+    }
+    
+    public void setIsResizable(Boolean prop) {
+        getElement().setProperty(MxConstants.STYLE_RESIZABLE, prop ? "1" : "0");
     }
     
     public void setMovable(Boolean prop) {
@@ -558,6 +567,10 @@ public class MxGraphCell extends Component implements HasComponents {
     
     public void setChildrenCellPosition(String cellId, int position) {
        getElement().callJsFunction("setChildrenCellPosition", cellId , position);
+    }
+    
+    public void setSelfPosition(int position) {
+       getElement().callJsFunction("setSelfPosition" , position);
     }
     
     public void toggleCell(boolean show, boolean includeEdges) {
