@@ -102,6 +102,7 @@ import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.helpers.collection.Iterators;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.persistence.reference.extras.caching.CacheManager;
 import org.neotropic.kuwaiba.core.persistence.reference.neo4j.util.Util;
 import org.neotropic.kuwaiba.core.persistence.reference.util.DynamicNameGenerator;
@@ -209,6 +210,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      */
     @Autowired
     private MetadataEntityManager mem;
+    /**
+     * Reference to the metadata entity manager
+     */
+    @Autowired
+    private BusinessEntityManagerImpl bem;
     /**
      * Database connection manager instance.
      */
@@ -1179,6 +1185,22 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             }
             tx.success();
             return new ChangeDescriptor(affectedProperties, oldValues, newValues, null);
+        }
+    }
+    
+    @Override
+    public ChangeDescriptor updateListTypeItem(String className, String oid, HashMap<String, String> attributes) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException {
+        ClassMetadata classMetadata = mem.getClass(className);
+        if (classMetadata == null)
+            throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
+        
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+            Node instance = getInstanceOfClass(className, oid);
+
+            ChangeDescriptor changes = bem.updateObject(instance, classMetadata, attributes);
+            tx.success();
+            
+            return changes;
         }
     }
     

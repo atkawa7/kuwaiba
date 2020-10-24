@@ -3028,7 +3028,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         return newObject;       
     }
     
-    private ChangeDescriptor updateObject(Node instance, ClassMetadata classMetadata, HashMap<String, String> attributes) throws InvalidArgumentException, MetadataObjectNotFoundException {
+    public ChangeDescriptor updateObject(Node instance, ClassMetadata classMetadata, HashMap<String, String> attributes) throws InvalidArgumentException, MetadataObjectNotFoundException {
         String oldValues = "", newValues = "", affectedProperties = "";
 
         for (String attributeName : attributes.keySet()) {

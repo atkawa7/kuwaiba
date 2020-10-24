@@ -357,6 +357,23 @@ public interface ApplicationEntityManager extends AbstractEntityManager {
         throws MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException;
     
     /**
+     * Updates an list type item attributes. Note that you can't set binary attributes through this
+     * method. Use setBinaryAttributes instead.
+     * @param className Object class name
+     * @param oid Object's oid
+     * @param attributes The attributes to be updated (the key is the attribute name, 
+     * the value is and array with the value -or values in case of MANY TO MANY list type attributes-)
+     * @return The summary of the changes that were made
+     * @throws MetadataObjectNotFoundException If the object class can't be found
+     * @throws BusinessObjectNotFoundException If the object can't be found
+     * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
+     * @throws InvalidArgumentException If any of the names provided does not exist or can't be set using this method or of the value of any of the attributes can not be mapped correctly.
+     */
+    public ChangeDescriptor updateListTypeItem(String className, String oid, HashMap<String, String> attributes)
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException;
+    
+    
+    /**
      * Gets the views related to a list type item, such as the default, rack or equipment views
      * @param listTypeItemId list type item id
      * @param listTypeItemClass list type class name
