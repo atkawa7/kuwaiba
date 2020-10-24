@@ -202,6 +202,7 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
         this.deleteTopologyViewVisualAction = deleteTopologyViewVisualAction;
         setSizeFull();
         setPadding(false);
+        setSpacing(false);
         setMargin(false);
     }
 
@@ -281,40 +282,48 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
         btnSaveView = new Button(new Icon(VaadinIcon.DOWNLOAD), evt -> {
             saveCurrentView();
         });
+        btnSaveView.setClassName("icon-button");
         setButtonTitle(btnSaveView, ts.getTranslatedString("module.general.messages.save"));
         btnRemoveObjectFromView = new Button(new Icon(VaadinIcon.FILE_REMOVE),
                 e -> {
                     deleteSelectedObject(); 
-        }); 
+        });
+        btnRemoveObjectFromView.setClassName("icon-button");
         setButtonTitle(btnRemoveObjectFromView, ts.getTranslatedString("module.topoman.remove-object-from-view"));
         btnAddCloud = new Button(new Icon(VaadinIcon.CLOUD),
                 e -> {
                     addIconNodeToView(URL_IMG_CLOUD);
         }); 
-         setButtonTitle(btnAddCloud, ts.getTranslatedString("module.topoman.add-cloud"));
+        btnAddCloud.setClassName("icon-button");
+        setButtonTitle(btnAddCloud, ts.getTranslatedString("module.topoman.add-cloud"));
         btnAddRectShape = new Button(new Icon(VaadinIcon.THIN_SQUARE),
                 e -> {
                     addShapeNodeToView(MxConstants.SHAPE_RECTANGLE);
         });
+        btnAddRectShape.setClassName("icon-button");
         setButtonTitle(btnAddRectShape, ts.getTranslatedString("module.topoman.add-rectangle"));
         btnAddEllipseShape = new Button(new Icon(VaadinIcon.CIRCLE_THIN),
                 e -> {
                     addShapeNodeToView(MxConstants.SHAPE_ELLIPSE);
         }); 
+        btnAddEllipseShape.setClassName("icon-button");
         setButtonTitle(btnAddEllipseShape, ts.getTranslatedString("module.topoman.add-ellipse"));
         btnAddLabel = new Button(new Icon(VaadinIcon.TEXT_LABEL),
                 e -> {
                     addShapeNodeToView(MxConstants.SHAPE_LABEL);
         }); 
+        btnAddLabel.setClassName("icon-button");
         setButtonTitle(btnAddLabel, ts.getTranslatedString("module.topoman.add-label"));
         Button btnZoomIn = new Button(new Icon(VaadinIcon.PLUS), evt -> {
              topologyView.getMxgraphCanvas().getMxGraph().zoomIn();
         });
+        btnZoomIn.setClassName("icon-button");
         btnZoomIn.getElement().setProperty("title", ts.getTranslatedString("module.visualization.rack-view-zoom-in"));
                 
         Button btnZoomOut = new Button(new Icon(VaadinIcon.MINUS), evt -> {
              topologyView.getMxgraphCanvas().getMxGraph().zoomOut();
-         });   
+         });  
+        btnZoomOut.setClassName("icon-button");
         btnZoomOut.getElement().setProperty("title", ts.getTranslatedString("module.visualization.rack-view-zoom-out"));
         Button btnToogleGrid = new Button(new Icon(VaadinIcon.GRID), evt -> {
              if (topologyView.getMxgraphCanvas().getMxGraph().getGrid() != null &&
@@ -323,11 +332,12 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
              else
                 topologyView.getMxgraphCanvas().getMxGraph().setGrid("");
          }); 
+        btnToogleGrid.setClassName("icon-button");
         btnToogleGrid.getElement().setProperty("title", ts.getTranslatedString("module.topoman.show-hide-grid"));
         
         HorizontalLayout lytTools = new HorizontalLayout(btnNewView, btnOpenView, btnCopyView, 
                                     btnRemoveView, btnSaveView, viewSearch, btnRemoveObjectFromView,btnAddCloud,
-                                    btnAddRectShape, btnAddEllipseShape, btnAddLabel, btnZoomIn, btnZoomOut, btnToogleGrid);
+                                    btnAddRectShape, btnAddEllipseShape, btnAddLabel, btnToogleGrid, btnZoomIn, btnZoomOut);
         lytTools.setAlignItems(Alignment.BASELINE);
         setGeneralToolsEnabled(false);
         setSelectionToolsEnabled(false);

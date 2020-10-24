@@ -119,8 +119,8 @@ public class TopologyView extends AbstractView<BusinessObjectLight, Component> {
         this.mem = mem;
         this.ts = ts;
         this.resourceFactory = resourceFactory;
-        mxgraphCanvas = new MxGraphCanvas("100%", "90%");
-        mxgraphCanvas.getMxGraph().setConnectable(true);
+        mxgraphCanvas = new MxGraphCanvas("100%", "80%");
+//        mxgraphCanvas.getMxGraph().setConnectable(true);
         mxgraphCanvas.getMxGraph().setOutlineHeight("100px");
         mxgraphCanvas.getMxGraph().setOverflow("scroll");
         mxgraphCanvas.getMxGraph().setGrid("");
@@ -482,6 +482,7 @@ public class TopologyView extends AbstractView<BusinessObjectLight, Component> {
                 newMxNode.setHeight(height == null ? ((int) Constants.DEFAULT_ICON_HEIGHT) : height);
                 newMxNode.setX(x);
                 newMxNode.setY(y);
+                newMxNode.setUsePortToConnect(true);
                 if (urlImage == null) {// is a Free shape 
                     newMxNode.setStrokeColor("black");
                     newMxNode.setFillColor(MxConstants.NONE);
@@ -493,9 +494,14 @@ public class TopologyView extends AbstractView<BusinessObjectLight, Component> {
                            mapStyle.put(style, prop);
                     }
                     newMxNode.setRawStyle(mapStyle);
+                    newMxNode.addCellAddedListener(eventListener -> {
+                       newMxNode.setSelfPosition(0);
+                       mxgraphCanvas.getMxGraph().refreshGraph();
+                    });
                 } else {
                     newMxNode.setShape(MxConstants.SHAPE_IMAGE);
                     newMxNode.setImage(urlImage);
+                    newMxNode.setIsResizable(false);
                 }
 
                 mxgraphCanvas.addNode(businessObject, newMxNode);

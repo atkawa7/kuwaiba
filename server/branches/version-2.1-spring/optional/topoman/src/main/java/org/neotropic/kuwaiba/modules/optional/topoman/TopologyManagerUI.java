@@ -110,6 +110,6 @@ public class TopologyManagerUI extends VerticalLayout implements HasDynamicTitle
 
     @Override
     public String getPageTitle() {
-        return ts.getTranslatedString("module.topoman.name");
+        return ts.getTranslatedString("module.topoman.title");
     }
 }
