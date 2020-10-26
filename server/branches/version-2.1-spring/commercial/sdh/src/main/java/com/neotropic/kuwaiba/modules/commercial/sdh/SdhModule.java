@@ -30,7 +30,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class SdhModule extends AbstractCommercialModule {
-       
     /**
     * translation service
     */

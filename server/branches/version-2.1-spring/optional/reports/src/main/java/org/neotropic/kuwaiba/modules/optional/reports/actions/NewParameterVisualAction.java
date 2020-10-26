@@ -65,8 +65,8 @@ public class NewParameterVisualAction extends AbstractVisualAction<Dialog> {
         else
             return null;
 
-        BoldLabel lblReport = new BoldLabel(String.format("%s: %s", ts.getTranslatedString("module.report.report") , selectedReport.getName()));
-        TextField txtParameterName = new TextField(ts.getTranslatedString("module.report.parameters.name"));
+        BoldLabel lblReport = new BoldLabel(String.format("%s: %s", ts.getTranslatedString("module.reporting.report") , selectedReport.getName()));
+        TextField txtParameterName = new TextField(ts.getTranslatedString("module.reporting.parameters.name"));
         txtParameterName.setRequiredIndicatorVisible(true);
         txtParameterName.setSizeFull();
 
@@ -87,7 +87,7 @@ public class NewParameterVisualAction extends AbstractVisualAction<Dialog> {
                     ));
 
                     fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
-                            ts.getTranslatedString(ts.getTranslatedString("module.report.actions.parameter-created")), NewParameterAction.class));
+                            ts.getTranslatedString(ts.getTranslatedString("module.reporting.actions.parameter-created")), NewParameterAction.class));
                     wdwNewTaskParameter.close();
                 }
             } catch (ModuleActionException ex) {

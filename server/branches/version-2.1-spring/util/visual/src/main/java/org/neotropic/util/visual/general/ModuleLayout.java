@@ -33,6 +33,7 @@ import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleRegistry;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.neotropic.kuwaiba.core.apis.integration.modules.AbstractModule;
 
 /**
  * The super class of all flex layouts used in every module of the application.
@@ -75,7 +76,6 @@ public abstract class ModuleLayout extends FlexLayout implements RouterLayout {
         this.lytHeader.setId("main-layout-header");
         this.lytHeader.setWidthFull();
         
-        
         this.lytContent.setId("main-layout-content");
         
         this.lytFooter.setId("main-layout-footer");
@@ -91,19 +91,48 @@ public abstract class ModuleLayout extends FlexLayout implements RouterLayout {
         MenuBar mnuNewBar = new MenuBar();
         mnuNewBar.setWidthFull();
         
-        mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.home"), ev -> UI.getCurrent().navigate("home"));
-        MenuItem mnuNavigation = mnuNewBar.addItem(ts.getTranslatedString("module.login.menu.navigation"));
-        MenuItem mnuCustomers = mnuNewBar.addItem(ts.getTranslatedString("module.login.menu.customers"));
-        MenuItem mnuPlanning = mnuNewBar.addItem(ts.getTranslatedString("module.login.menu.planning"));
-        MenuItem mnuOthers = mnuNewBar.addItem(ts.getTranslatedString("module.login.menu.others"));
-        MenuItem mnuSettings = mnuNewBar.addItem(ts.getTranslatedString("module.login.menu.settings"));
+        mnuNewBar.addItem(ts.getTranslatedString("module.home.menu.home"), ev -> UI.getCurrent().navigate("home"));
+        
+        MenuItem mnuNavigation = mnuNewBar.addItem(ts.getTranslatedString("module.home.menu.navigation"));
+        MenuItem mnuPhysical = mnuNewBar.addItem(ts.getTranslatedString("module.home.menu.physical"));
+        MenuItem mnuLogical = mnuNewBar.addItem(ts.getTranslatedString("module.home.menu.logical"));
+        MenuItem mnuBusiness = mnuNewBar.addItem(ts.getTranslatedString("module.home.menu.business"));
+        MenuItem mnuPlanning = mnuNewBar.addItem(ts.getTranslatedString("module.home.menu.planning"));
+        MenuItem mnuAdministration = mnuNewBar.addItem(ts.getTranslatedString("module.home.menu.administration"));
+        MenuItem mnuOther = mnuNewBar.addItem(ts.getTranslatedString("module.home.menu.other"));
+        MenuItem mnuSettings = mnuNewBar.addItem(ts.getTranslatedString("module.home.menu.settings"));
+        
+        mnuNewBar.addItem(ts.getTranslatedString("module.home.menu.about"), ev -> UI.getCurrent().navigate("about"));
+        mnuNewBar.addItem(ts.getTranslatedString("module.home.menu.logout"), ev -> UI.getCurrent().navigate("logout"));
         
         this.moduleRegistry.getModules().values().stream().forEach( aModule -> {
-            //switch(aModule.get)
-            mnuNewBar.addItem(aModule.getName(), ev -> UI.getCurrent().navigate(aModule.getId()));
+            switch(aModule.getCategory()) {
+                case AbstractModule.CATEGORY_NAVIGATION:
+                    mnuNavigation.getSubMenu().addItem(aModule.getName(), ev -> UI.getCurrent().navigate(aModule.getId()));
+                    break;
+                case AbstractModule.CATEGORY_PHYSICAL:
+                    mnuPhysical.getSubMenu().addItem(aModule.getName(), ev -> UI.getCurrent().navigate(aModule.getId()));
+                    break;
+                case AbstractModule.CATEGORY_LOGICAL:
+                    mnuLogical.getSubMenu().addItem(aModule.getName(), ev -> UI.getCurrent().navigate(aModule.getId()));
+                    break;
+                case AbstractModule.CATEGORY_BUSINESS:
+                    mnuBusiness.getSubMenu().addItem(aModule.getName(), ev -> UI.getCurrent().navigate(aModule.getId()));
+                    break;
+                case AbstractModule.CATEGORY_PLANNING:
+                    mnuPlanning.getSubMenu().addItem(aModule.getName(), ev -> UI.getCurrent().navigate(aModule.getId()));
+                    break;
+                case AbstractModule.CATEGORY_ADMINISTRATION:
+                    mnuAdministration.getSubMenu().addItem(aModule.getName(), ev -> UI.getCurrent().navigate(aModule.getId()));
+                    break;
+                case AbstractModule.CATEGORY_SETTINGS:
+                    mnuSettings.getSubMenu().addItem(aModule.getName(), ev -> UI.getCurrent().navigate(aModule.getId()));
+                    break;
+                case AbstractModule.CATEGORY_OTHER:
+                default:
+                    mnuOther.getSubMenu().addItem(aModule.getName(), ev -> UI.getCurrent().navigate(aModule.getId()));
+            }
         });
-        mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.about"), ev -> UI.getCurrent().navigate("about"));
-        mnuNewBar.addItem(ts.getTranslatedString("module.login.ui.logout"), ev -> UI.getCurrent().navigate("logout"));
 
         return mnuNewBar;
     }

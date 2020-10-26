@@ -51,8 +51,8 @@ public class NewParameterAction extends AbstractAction {
     @PostConstruct
     protected void init() {
         this.id = "report.new-report-parameter";
-        this.displayName = ts.getTranslatedString("module.report.actions.new-report-parameter.name");
-        this.description = ts.getTranslatedString("module.report.actions.new-report-parameter.description");
+        this.displayName = ts.getTranslatedString("module.reporting.actions.new-report-parameter.name");
+        this.description = ts.getTranslatedString("module.reporting.actions.new-report-parameter.description");
         this.order = 1000;
 
         setCallback((parameters) -> {

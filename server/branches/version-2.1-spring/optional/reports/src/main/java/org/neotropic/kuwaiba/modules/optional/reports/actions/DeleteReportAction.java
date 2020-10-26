@@ -49,8 +49,8 @@ public class DeleteReportAction extends AbstractAction {
     @PostConstruct
     protected void init() {
         this.id = "report.delete-report";
-        this.displayName = ts.getTranslatedString("module.report.delete-report.name");
-        this.description = ts.getTranslatedString("module.report.delete-report.description");
+        this.displayName = ts.getTranslatedString("module.reporting.delete-report.name");
+        this.description = ts.getTranslatedString("module.reporting.delete-report.description");
         this.order = 1000;
 
         setCallback((parameters) -> {

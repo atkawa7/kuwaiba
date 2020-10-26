@@ -86,6 +86,6 @@ public class ConfigurationVariablesModule extends AbstractModule {
 
     @Override
     public int getCategory() {
-        return CATEGORY_ADMINISTRATION;
+        return CATEGORY_SETTINGS;
     }
 }

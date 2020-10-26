@@ -50,8 +50,8 @@ public class NewClassReportAction extends AbstractAction {
     @PostConstruct
     protected void init() {
         this.id = "report.new-class-report";
-        this.displayName = ts.getTranslatedString("module.report.actions.new-class-report.name");
-        this.description = ts.getTranslatedString("module.report.actions.new-class-report.description");
+        this.displayName = ts.getTranslatedString("module.reporting.actions.new-class-report.name");
+        this.description = ts.getTranslatedString("module.reporting.actions.new-class-report.description");
         this.order = 1000;
     
         setCallback((parameters) -> {

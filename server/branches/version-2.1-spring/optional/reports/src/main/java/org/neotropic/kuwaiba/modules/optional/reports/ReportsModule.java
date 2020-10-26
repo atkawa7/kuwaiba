@@ -56,12 +56,12 @@ public class ReportsModule  extends AbstractModule {
     
     @Override
     public String getName() {
-        return ts.getTranslatedString("module.report.name");
+        return ts.getTranslatedString("module.reporting.name");
     }
 
     @Override
     public String getDescription() {
-        return ts.getTranslatedString("module.report.description");
+        return ts.getTranslatedString("module.reporting.description");
     }
 
     @Override
@@ -86,6 +86,6 @@ public class ReportsModule  extends AbstractModule {
 
     @Override
     public int getCategory() {
-        return CATEGORY_ADMINISTRATION;
+        return CATEGORY_OTHER;
     }
 }

@@ -87,6 +87,6 @@ public class HomeUI extends VerticalLayout implements BeforeEnterObserver, HasDy
 
     @Override
     public String getPageTitle() {
-        return ts.getTranslatedString("module.login.ui.home");
+        return ts.getTranslatedString("module.home.ui.title");
     }
 }

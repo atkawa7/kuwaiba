@@ -67,7 +67,7 @@ public class DeleteParameterVisualAction extends AbstractVisualAction<Dialog>  {
             return null;
    
         ConfirmDialog wdwDeleteParameter = new ConfirmDialog(ts.getTranslatedString("module.general.labels.confirmation"),
-                ts.getTranslatedString("module.report.confirm-delete-parameter"),
+                ts.getTranslatedString("module.reporting.confirm-delete-parameter"),
                 ts.getTranslatedString("module.general.labels.delete"));
 
         wdwDeleteParameter.getBtnConfirm().addClickListener((event) -> {
@@ -78,7 +78,7 @@ public class DeleteParameterVisualAction extends AbstractVisualAction<Dialog>  {
                 ));
 
                 fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
-                        ts.getTranslatedString(ts.getTranslatedString("module.report.actions.parameter-deleted")), DeleteParameterAction.class));
+                        ts.getTranslatedString(ts.getTranslatedString("module.reporting.actions.parameter-deleted")), DeleteParameterAction.class));
                 wdwDeleteParameter.close();
             } catch (ModuleActionException ex) {
                 fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_ERROR,

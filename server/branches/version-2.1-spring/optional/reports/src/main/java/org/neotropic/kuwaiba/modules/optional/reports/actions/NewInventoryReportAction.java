@@ -51,8 +51,8 @@ public class NewInventoryReportAction extends AbstractAction {
     @PostConstruct
     protected void init() {
         this.id = "report.new-inventory-report";
-        this.displayName = ts.getTranslatedString("module.report.actions.new-inventory-report.name");
-        this.description = ts.getTranslatedString("module.report.actions.new-inventory-report.name.description");
+        this.displayName = ts.getTranslatedString("module.reporting.actions.new-inventory-report.name");
+        this.description = ts.getTranslatedString("module.reporting.actions.new-inventory-report.name.description");
         this.order = 1000;
     
         setCallback((parameters) -> {

@@ -79,7 +79,7 @@ public class NewClassReportVisualAction extends AbstractVisualAction<Dialog> {
         } else
             return null;
                
-        BoldLabel lblPClass = new BoldLabel(String.format("%s: %s", ts.getTranslatedString("module.report.class"), seletedClass.getName()));       
+        BoldLabel lblPClass = new BoldLabel(String.format("%s: %s", ts.getTranslatedString("module.reporting.class"), seletedClass.getName()));       
         TextField txtName = new TextField(ts.getTranslatedString("module.general.labels.name"));
         TextField txtDescription = new TextField(ts.getTranslatedString("module.general.labels.description"));
         txtName.setRequiredIndicatorVisible(true);
@@ -100,7 +100,7 @@ public class NewClassReportVisualAction extends AbstractVisualAction<Dialog> {
                             new ModuleActionParameter<>("description", txtDescription.getValue())));
                     
                     fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
-                            ts.getTranslatedString(ts.getTranslatedString("module.report.actions.report-created")), NewClassReportAction.class));
+                            ts.getTranslatedString(ts.getTranslatedString("module.reporting.actions.report-created")), NewClassReportAction.class));
                     wdwNewReport.close();
                 }
             } catch (ModuleActionException ex) {

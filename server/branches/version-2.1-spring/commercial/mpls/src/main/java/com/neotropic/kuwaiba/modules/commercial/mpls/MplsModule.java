@@ -68,10 +68,10 @@ public class MplsModule extends AbstractCommercialModule {
     private ModuleRegistry moduleRegistry;
     
     @Autowired
-    private DeleteMplsViewVisualAction deleteMPLSViewVisualAction;
+    private DeleteMplsViewVisualAction deleteMplsViewVisualAction;
     
     @Autowired
-    private NewMplsViewVisualAction newMPLSViewVisualAction;
+    private NewMplsViewVisualAction newMplsViewVisualAction;
     //Constants
         /**
      * Class to identify all views made using the MPLS module
@@ -112,7 +112,7 @@ public class MplsModule extends AbstractCommercialModule {
     
     @Override
     public String getVersion() {
-        return "1.0";
+        return "2.1";
     }
     
     @Override

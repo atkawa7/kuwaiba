@@ -13,12 +13,30 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.neotropic.kuwaiba.core.configuration;
+package org.neotropic.kuwaiba.core.configuration.validators.nodes;
 
-import org.neotropic.util.visual.general.ModuleLayout;
+import org.neotropic.kuwaiba.core.apis.integration.modules.actions.AbstractAction;
+import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
+import org.neotropic.util.visual.tree.nodes.AbstractNode;
 
 /**
- * The definition of the Configuration Manager layout.
+ * Represents a class in the node.
  * @author Mauricio Ruiz {@literal <mauricio.ruiz@kuwaiba.org>}
  */
-public class ConfigurationManagerLayout extends ModuleLayout { }
+public class ClassNode extends AbstractNode<ClassMetadataLight> {
+
+    public ClassNode(ClassMetadataLight object) {
+        super(object);
+        className = object.getName();
+    }
+
+    @Override
+    public AbstractAction[] getActions() {
+        return new AbstractAction [0];
+    }
+
+    @Override
+    public void refresh(boolean recursive) {
+    }
+    
+}

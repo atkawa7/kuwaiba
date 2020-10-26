@@ -74,7 +74,7 @@ public class DeleteReportVisualAction extends AbstractVisualAction<Dialog> {
             selectedReport = (ReportMetadataLight) parameters.get("report");      
 
         ConfirmDialog wdwDeleteClass = new ConfirmDialog(ts.getTranslatedString("module.general.labels.confirmation"),
-                ts.getTranslatedString("module.report.confirm-delete"),
+                ts.getTranslatedString("module.reporting.confirm-delete"),
                 ts.getTranslatedString("module.general.labels.delete"));
         wdwDeleteClass.getBtnConfirm().addClickListener((ev) -> {
             try {
@@ -83,7 +83,7 @@ public class DeleteReportVisualAction extends AbstractVisualAction<Dialog> {
                         new ModuleActionParameter<>("report", selectedReport.getId())));
 
                 fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
-                        ts.getTranslatedString("module.report.report-deleted"), DeleteReportAction.class));
+                        ts.getTranslatedString("module.reporting.report-deleted"), DeleteReportAction.class));
                 wdwDeleteClass.close();
             } catch (ModuleActionException ex) {
                 fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_ERROR,

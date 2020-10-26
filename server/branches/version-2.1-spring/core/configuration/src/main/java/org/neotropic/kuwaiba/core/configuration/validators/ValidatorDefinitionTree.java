@@ -20,8 +20,8 @@ import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
 import com.vaadin.flow.server.StreamResourceRegistry;
-import org.neotropic.kuwaiba.core.configuration.nodes.ClassNode;
-import org.neotropic.kuwaiba.core.configuration.nodes.ValidatorDefinitionNode;
+import org.neotropic.kuwaiba.core.configuration.validators.nodes.ClassNode;
+import org.neotropic.kuwaiba.core.configuration.validators.nodes.ValidatorDefinitionNode;
 import org.neotropic.util.visual.icons.IconGenerator;
 import org.neotropic.util.visual.tree.nodes.AbstractNode;
 

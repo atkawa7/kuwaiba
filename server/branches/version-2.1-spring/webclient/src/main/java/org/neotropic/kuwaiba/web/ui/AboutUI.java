@@ -22,6 +22,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import javax.annotation.PostConstruct;
+import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleRegistry;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -36,7 +37,11 @@ public class AboutUI extends VerticalLayout implements HasDynamicTitle {
      */
     @Autowired
     private TranslationService ts;
-    
+    /**
+     * Reference to the module registry. The global register of all active modules.
+     */
+    @Autowired
+    private ModuleRegistry moduleRegistry;
     public AboutUI() {
         setSizeFull();
     }
@@ -50,7 +55,11 @@ public class AboutUI extends VerticalLayout implements HasDynamicTitle {
             new H4(ts.getTranslatedString("module.about.labels.third-party-title")),
             new Html(ts.getTranslatedString("module.about.labels.third-party-text")),
             new H4(ts.getTranslatedString("module.about.labels.commercial-support-title")),
-            new Html(ts.getTranslatedString("module.about.labels.commercial-support-text")));
+            new Html(ts.getTranslatedString("module.about.labels.commercial-support-text")),
+            new H4(ts.getTranslatedString("module.about.labels.active-modules")));
+        this.moduleRegistry.getModules().values().forEach( aModule -> add(new Html("<p><span style=\"font-weight: bold\">" + 
+                aModule.getName() + "</span> " + aModule.getVersion() + " (" + aModule.getVendor() + ")" + "<br>" + 
+                aModule.getDescription() + "</p>")));
     }
 
     @Override

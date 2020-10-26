@@ -55,9 +55,13 @@ public abstract class AbstractModule {
      */
     public static final int CATEGORY_INTEGRATION = 7;
     /**
-     * Modules to manage the data model and configure the system.
+     * Modules to manage the data model.
      */
     public static final int CATEGORY_ADMINISTRATION = 8;
+    /**
+     * General system settings such as validators and conf variables
+     */
+    public static final int CATEGORY_SETTINGS = 9;
     /**
      * Any module not fitting the categories above.
      */

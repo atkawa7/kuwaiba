@@ -40,7 +40,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
                                 "org.neotropic.kuwaiba.northbound.ws", // The SOAP-based web service interface implementation.
                               })
 // Vaadin routes
-@EnableVaadin(value = { "org.neotropic.kuwaiba.modules",  // UIs for core and optional modules
+@EnableVaadin(value = { "org.neotropic.kuwaiba.core.configuration", // General settings 
+                        "org.neotropic.kuwaiba.modules",  // UIs for core and optional modules
                         "com.neotropic.kuwaiba.modules", // UIs for commercial modules
                         "org.neotropic.kuwaiba.web.ui"}) // General purpose UIs
 public class SpringConfiguration { 

@@ -90,7 +90,7 @@ public class NewInventoryReportVisualAction extends AbstractVisualAction<Dialog>
                             new ModuleActionParameter<>("description", txtDescription.getValue())));
                     
                     fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
-                            ts.getTranslatedString("module.report.actions.report-created"), NewClassReportAction.class));
+                            ts.getTranslatedString("module.reporting.actions.report-created"), NewClassReportAction.class));
                     wdwNewReport.close();
                 }
             } catch (ModuleActionException ex) {

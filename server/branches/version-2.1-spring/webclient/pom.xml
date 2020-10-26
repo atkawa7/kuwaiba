@@ -87,11 +87,6 @@
         </dependency>
         <dependency>
             <groupId>org.neotropic.kuwaiba</groupId>
-            <artifactId>configman</artifactId>
-            <version>2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.neotropic.kuwaiba</groupId>
             <artifactId>taskman</artifactId>
             <version>2.1</version>
         </dependency>   
@@ -138,7 +133,12 @@
         <dependency>
             <groupId>com.neotropic.flow.component</groupId>
             <artifactId>mx-graph-flow</artifactId>
-        </dependency>       
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>configuration</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>

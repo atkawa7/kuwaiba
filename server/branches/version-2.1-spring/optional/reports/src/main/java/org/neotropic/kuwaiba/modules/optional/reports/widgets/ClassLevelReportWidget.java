@@ -59,7 +59,7 @@ public class ClassLevelReportWidget extends AbstractDashboardWidget {
         super(mem, aem, bem, ts);
 
         this.businessObject = businessObject;
-        setTitle(ts.getTranslatedString(ts.getTranslatedString("module.report.widget.class-level-report")));
+        setTitle(ts.getTranslatedString(ts.getTranslatedString("module.reporting.widget.class-level-report")));
         createCover();
         coverComponent.addClassName("widgets-colors-magenta");
     }
@@ -68,7 +68,7 @@ public class ClassLevelReportWidget extends AbstractDashboardWidget {
     public void createContent() {
         try {
 
-            BoldLabel lblTitle = new BoldLabel(String.format(ts.getTranslatedString("module.report.widget.class-level-report-available"), businessObject.getClassName()));
+            BoldLabel lblTitle = new BoldLabel(String.format(ts.getTranslatedString("module.reporting.widget.class-level-report-available"), businessObject.getClassName()));
             List<ReportMetadataLight> reports = bem.getClassLevelReports(businessObject.getClassName(), true, false);
           
             Grid<ReportMetadataLight> tblInventoryReports = new Grid();
@@ -78,7 +78,7 @@ public class ClassLevelReportWidget extends AbstractDashboardWidget {
             tblInventoryReports.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
             tblInventoryReports.addThemeVariants(GridVariant.LUMO_NO_BORDER);
             tblInventoryReports.addColumn(ReportMetadataLight::getName)
-                    .setHeader(ts.getTranslatedString(ts.getTranslatedString("module.report.report-name")))
+                    .setHeader(ts.getTranslatedString(ts.getTranslatedString("module.reporting.report-name")))
                     .setKey(ts.getTranslatedString("module.general.labels.name"));          
           
             tblInventoryReports.addItemClickListener(item -> {

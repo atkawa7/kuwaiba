@@ -327,7 +327,7 @@ public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
         Accordion accordion = new Accordion();
         accordion.setSizeFull();
         
-        BoldLabel lblClassReports = new BoldLabel(ts.getTranslatedString("module.report.class-level-reports"));
+        BoldLabel lblClassReports = new BoldLabel(ts.getTranslatedString("module.reporting.class-level-reports"));
         lblClassReports.addClassName("lbl-accordion");
         HorizontalLayout lytSummaryClassTree = new HorizontalLayout(lblClassReports); 
         lytSummaryClassTree.setWidthFull();
@@ -347,7 +347,7 @@ public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
         AccordionPanel apClassTree = new AccordionPanel(lytSummaryClassTree, lytClassReportsTree);
         accordion.add(apClassTree);
                
-        BoldLabel lblInventoryReports = new BoldLabel(ts.getTranslatedString("module.report.Inventory-level-reports"));
+        BoldLabel lblInventoryReports = new BoldLabel(ts.getTranslatedString("module.reporting.Inventory-level-reports"));
         lblInventoryReports.addClassName("lbl-accordion");
         HorizontalLayout lytSummaryInventoryReports = new HorizontalLayout(lblInventoryReports);  
         lytSummaryInventoryReports.setWidthFull(); 
@@ -362,14 +362,14 @@ public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
         AccordionPanel apInventory = new AccordionPanel(lytSummaryInventoryReports, lytInventoryReports);
         accordion.add(apInventory);
   
-//        H4 lblTitle = new H4(ts.getTranslatedString("module.report.report-name")); 
+//        H4 lblTitle = new H4(ts.getTranslatedString("module.reporting.report-name")); 
         lblReportNameTitle = new H4(); 
         txtName = new TextField(ts.getTranslatedString("module.general.labels.name"), ts.getTranslatedString("module.general.labels.name"));
         txtName.setWidthFull();
         txtDescription = new TextArea(ts.getTranslatedString("module.general.labels.description"), ts.getTranslatedString("module.general.labels.description"));
         txtDescription.setHeight("100px");
         txtDescription.setWidthFull();
-        chckEnabled = new Checkbox(ts.getTranslatedString("module.report.enabled"));
+        chckEnabled = new Checkbox(ts.getTranslatedString("module.reporting.enabled"));
         Button btnAddParameter = new Button(this.newParameterVisualAction.getModuleAction().getDisplayName(), new Icon(VaadinIcon.PLUS),
                 (event) -> {
                      this.newParameterVisualAction.getVisualComponent(new ModuleActionParameterSet(
@@ -389,7 +389,7 @@ public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
         });
         dlgReportInfo.add(new HorizontalLayout(btnSaveReportInfo, btnCancelReportInfo));
          
-        Button btnEditReport = new Button(ts.getTranslatedString("module.report.edit-properties"), new Icon(VaadinIcon.EDIT),  evt -> {
+        Button btnEditReport = new Button(ts.getTranslatedString("module.reporting.edit-properties"), new Icon(VaadinIcon.EDIT),  evt -> {
             dlgReportInfo.open();
         });
         btnSaveReport = new Button(ts.getTranslatedString("module.general.messages.save"), new Icon(VaadinIcon.DOWNLOAD),  evt -> {
@@ -400,7 +400,7 @@ public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
                      this.deleteReportVisualAction.getVisualComponent(new ModuleActionParameterSet(
                       new ModuleActionParameter("report", selectedReport))).open();
         });
-        btnRunReport = new Button(ts.getTranslatedString("module.report.save-and-execute"), new Icon(VaadinIcon.PLAY), evt -> {
+        btnRunReport = new Button(ts.getTranslatedString("module.reporting.save-and-execute"), new Icon(VaadinIcon.PLAY), evt -> {
             saveCurrentReport();
             runReport();
         });
@@ -422,7 +422,7 @@ public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
         lytSecContent.setMargin(false);
         lytSecContent.setSpacing(false);
         accordion.close();       
-        VerticalLayout lytTrees = new VerticalLayout(new H4(ts.getTranslatedString(ts.getTranslatedString("module.report.name"))), 
+        VerticalLayout lytTrees = new VerticalLayout(new H4(ts.getTranslatedString(ts.getTranslatedString("module.reporting.name"))), 
                                                 accordion);
         lytTrees.setPadding(false);
         lytTrees.setSizeFull();
@@ -478,7 +478,7 @@ public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
      */
     private void buildTaskParametersGrid() { 
         tblParameters.addColumn(StringPair::getKey)
-                .setHeader(ts.getTranslatedString("module.report.parameters.name"));
+                .setHeader(ts.getTranslatedString("module.reporting.parameters.name"));
         tblParameters.addComponentColumn(evt -> {
           Button btnDeleteParameter = new Button(new Icon(VaadinIcon.TRASH),
                 (event) -> {
@@ -597,7 +597,7 @@ public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
                     treeClassLevelReports.getDataProvider().refreshAll();
                 else 
                     tblInventoryReports.getDataProvider().refreshItem(selectedReport);
-                new SimpleNotification("", ts.getTranslatedString("module.report.report-saved")).open();
+                new SimpleNotification("", ts.getTranslatedString("module.reporting.report-saved")).open();
             } catch (ApplicationObjectNotFoundException | InvalidArgumentException ex) {
                 new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
                 Logger.getLogger(ReportsUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -727,6 +727,6 @@ public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
 
     @Override
     public String getPageTitle() {
-        return ts.getTranslatedString("module.report.title");
+        return ts.getTranslatedString("module.reporting.title");
     }
 }

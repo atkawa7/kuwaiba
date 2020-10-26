@@ -51,8 +51,8 @@ public class DeleteParameterAction extends AbstractAction {
     @PostConstruct
     protected void init() {
         this.id = "report.delete-parameter";
-        this.displayName = ts.getTranslatedString("module.report.actions.delete-report-parameter.name");
-        this.description = ts.getTranslatedString("module.report.actions.delete-report-parameter.description");
+        this.displayName = ts.getTranslatedString("module.reporting.actions.delete-report-parameter.name");
+        this.description = ts.getTranslatedString("module.reporting.actions.delete-report-parameter.description");
         this.order = 1000;
 
         setCallback((parameters) -> {

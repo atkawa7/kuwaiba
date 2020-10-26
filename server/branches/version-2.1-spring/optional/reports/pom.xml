@@ -7,9 +7,8 @@
         <version>2.1</version>
     </parent>
     
-    <name>Reports</name>
-    <description>
-    </description>
+    <name>Reporting</name>
+    <description>Create rich and complex reports using Groovy scripts and the Persistence API</description>
 
     <artifactId>reports</artifactId>
     <packaging>jar</packaging>
