@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2020 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2021 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,12 +37,14 @@ public class NavigationTree<T extends InventoryObjectNode> extends TreeGrid<T> {
             .append(" expanded='{{expanded}}'")
             .append(" level='[[level]]'")
             .append(">")
-            .append("<img")
-            .append(" width='15px'")
-            .append(" height='15px'")
-            .append(" src='[[item.icon]]'")
-            .append(">")
-            .append("<p style='margin: 0 0 0 10px;'>[[item.name]] <span class=\"text-secondary\">[[item.class]]</span></p>")
+            .append("<div class='div-navtree-icon-wrapper'>")
+                .append("<img")
+                .append(" width='15px'")
+                .append(" height='15px'")
+                .append(" src='[[item.icon]]'")
+                .append("/>")
+            .append("</div>")
+            .append("<div>[[item.name]] <span class='text-secondary'>[[item.class]]</span></div>")
             .append("</vaadin-grid-tree-toggle>")
             .toString();
         TemplateRenderer<T> renderer = TemplateRenderer.<T> of (template);

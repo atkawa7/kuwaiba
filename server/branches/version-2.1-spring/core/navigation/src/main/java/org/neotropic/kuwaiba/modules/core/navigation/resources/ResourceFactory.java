@@ -13,7 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.neotropic.kuwaiba.modules.core.navigation.resources;
 
 import com.vaadin.flow.component.notification.Notification;
@@ -61,6 +60,14 @@ public class ResourceFactory extends AbstractResourceFactory {
      * Default icon height (used in navigation trees)
      */
     private static final int DEFAULT_SMALL_ICON_HEIGHT = 12;
+    /**
+     * Default no icon width (used in navigation trees)
+     */
+    private static final int DEFAULT_SMALL_NO_ICON_WIDTH = 10;
+    /**
+     * Default no icon height (used in navigation trees)
+     */
+    private static final int DEFAULT_SMALL_NO_ICON_HEIGHT = 10;
     
     private static ResourceFactory instance;
     /**
@@ -163,7 +170,7 @@ public class ResourceFactory extends AbstractResourceFactory {
                  if (defaultSmallIcons.containsKey(color)) {
                      return defaultSmallIcons.get(color);
                  } else {
-                     StreamResource icon = buildIcon("default" + color + ".png", getIcon(new Color(color), DEFAULT_SMALL_ICON_WIDTH, DEFAULT_SMALL_ICON_HEIGHT));
+                     StreamResource icon = buildIcon("default" + color + ".png", getIcon(new Color(color), DEFAULT_SMALL_NO_ICON_WIDTH, DEFAULT_SMALL_NO_ICON_HEIGHT));
                      VaadinSession.getCurrent().getResourceRegistry().registerResource(icon);
                      defaultSmallIcons.put(color, icon);
                      return icon;
