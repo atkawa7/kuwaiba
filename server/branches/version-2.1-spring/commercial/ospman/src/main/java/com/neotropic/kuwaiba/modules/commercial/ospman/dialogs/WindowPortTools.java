@@ -63,7 +63,7 @@ public class WindowPortTools extends Dialog {
                     List<BusinessObjectLight> endpointsA = endpoints.get(SPECIAL_ATTR_ENDPOINT_A);
                     List<BusinessObjectLight> endpointsB = endpoints.get(SPECIAL_ATTR_ENDPOINT_B);
                     if (endpointsA != null && !endpointsA.isEmpty())
-                        consumerReleaseFiber.accept(Arrays.asList(port, endpointsB.get(0)), SPECIAL_ATTR_ENDPOINT_A);
+                        consumerReleaseFiber.accept(Arrays.asList(port, endpointsA.get(0)), SPECIAL_ATTR_ENDPOINT_A);
                     else if (endpointsB != null && !endpointsB.isEmpty())
                         consumerReleaseFiber.accept(Arrays.asList(port, endpointsB.get(0)), SPECIAL_ATTR_ENDPOINT_B);
                 } catch (InventoryException ex) {
@@ -84,6 +84,7 @@ public class WindowPortTools extends Dialog {
                 lyt.setHorizontalComponentAlignment(Alignment.CENTER, btnClose);
                 
                 Dialog wdwPhysicalPath = new Dialog(lyt);
+                wdwPhysicalPath.setMinWidth("80%");
                 
                 btnClose.addClickListener(btnCloseEvent -> wdwPhysicalPath.close());
                 
@@ -103,6 +104,7 @@ public class WindowPortTools extends Dialog {
                 lyt.setHorizontalComponentAlignment(Alignment.CENTER, btnClose);
                 
                 Dialog wdwPhysicalTree = new Dialog(lyt);
+                wdwPhysicalTree.setMinWidth("80%");
                 
                 btnClose.addClickListener(btnCloseEvent -> wdwPhysicalTree.close());
                 

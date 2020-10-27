@@ -86,8 +86,8 @@ public class WindowMidSpanAccess extends Dialog implements ActionCompletedListen
         
         setCloseOnEsc(false);
         setCloseOnOutsideClick(false);
-        setWidth("90%");
-        setHeight("90%");
+        setMinWidth("90%");
+        setMinHeight("90%");
     }
 
     @Override
@@ -187,11 +187,11 @@ public class WindowMidSpanAccess extends Dialog implements ActionCompletedListen
                 lytRow4.setSizeFull();
 
                 VerticalLayout lytSelector = new VerticalLayout(lblTitle, cmbLocation, cmbCable, lytRow3, lytRow4, btnClose);
-                lytSelector.setWidth("282px");
+                lytSelector.setWidth("300px");
                 lytSelector.setHeightFull();
                 lytSelector.setSpacing(false);
-                lytSelector.setMargin(false);
-                lytSelector.setPadding(false);
+                //lytSelector.setMargin(false);
+                //lytSelector.setPadding(false);
                 lytSelector.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, btnClose);
 
                 divLocation = new Div();
@@ -207,8 +207,8 @@ public class WindowMidSpanAccess extends Dialog implements ActionCompletedListen
 
                 HorizontalLayout lytMain = new HorizontalLayout(lytSelector, divLocation);
                 lytMain.setSpacing(false);
-                lytMain.setMargin(false);
-                lytMain.setPadding(false);
+                //lytMain.setMargin(false);
+                //lytMain.setPadding(false);
                 lytMain.setSizeFull();
                 add(lytMain);
                 this.newBusinessObjectVisualAction.registerActionCompletedLister(this);

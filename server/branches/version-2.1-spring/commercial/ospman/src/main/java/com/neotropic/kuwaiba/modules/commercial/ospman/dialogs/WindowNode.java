@@ -86,7 +86,7 @@ public class WindowNode extends Dialog {
             ApplicationEntityManager aem, BusinessEntityManager bem, MetadataEntityManager mem,
             TranslationService ts, PhysicalConnectionsService physicalConnectionsService) {
             super();
-            setWidth("70%");
+            setMinWidth("70%");
             try {
                 TreeGrid<BusinessObjectLight> tblContents = new TreeGrid<>();
                 tblContents.setItems(
@@ -200,17 +200,24 @@ public class WindowNode extends Dialog {
     private class ViewWindow extends Dialog {
         public ViewWindow(String title, Component viewComponent, TranslationService ts) {
             super();
-            setWidth("80%");
-            setHeight("80%");
+            setMinWidth("80%");
+            //setMinHeight("80%");
             Label lblTitle = new Label(title);
             Button btnClose = new Button(ts.getTranslatedString("module.general.messages.close"), event -> this.close());
+            
+            VerticalLayout lytComponent = new VerticalLayout(viewComponent);
+            lytComponent.setSizeFull();
+            lytComponent.setSpacing(false);
+            lytComponent.setPadding(false);
+            lytComponent.setMargin(false);
+            
             VerticalLayout lytView = new VerticalLayout(lblTitle, viewComponent, btnClose);
             lytView.setSizeFull();
             lytView.setSpacing(false);
             lytView.setPadding(false);
             lytView.setMargin(false);
             lytView.setHorizontalComponentAlignment(
-                FlexComponent.Alignment.CENTER, lblTitle, viewComponent, btnClose
+                FlexComponent.Alignment.CENTER, lblTitle, lytComponent, btnClose
             );
             add(lytView);
         }

@@ -123,8 +123,8 @@ public class SpliceBoxView extends AbstractDetailedView<BusinessObjectLight, Ver
             VerticalLayout lytGraph = new VerticalLayout();
             lytGraph.setSizeFull();
             mxGraph = new MxGraph();
-            mxGraph.setWidth("600px");
-            mxGraph.setHeight("100%");
+            mxGraph.setWidth("100%");
+            //mxGraph.setHeight("100%");
             mxGraph.setOverflow("scroll");
             mxGraph.setGrid("img/grid.gif");
             lytGraph.add(mxGraph);
@@ -228,12 +228,12 @@ public class SpliceBoxView extends AbstractDetailedView<BusinessObjectLight, Ver
                             outLinks = bem.getSpecialAttribute(outPort.getClassName(), outPort.getId(), "endpointB");
                         }
                         if (outLinks != null && outLinks.size() > 0) {
-                            BusinessObject theWholeLink = bem.getObject(inLinks.get(0).getClassName(), inLinks.get(0).getId());
+                            BusinessObject theWholeLink = bem.getObject(outLinks.get(0).getClassName(), outLinks.get(0).getId());
                             String hexColor = null;
                             if (theWholeLink.getAttributes().containsKey(Constants.PROPERTY_COLOR)) {
                                 hexColor = theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR) instanceof String ? (String) theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR) : null;
                                 if (hexColor != null) {
-                                    ClassMetadata classInLink = mem.getClass(inLinks.get(0).getClassName());
+                                    ClassMetadata classInLink = mem.getClass(outLinks.get(0).getClassName());
                                     String colorType = classInLink.getType(Constants.PROPERTY_COLOR);
                                     if(mem.isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, colorType)) {
                                         BusinessObject colorObject = aem.getListTypeItem(colorType, hexColor);

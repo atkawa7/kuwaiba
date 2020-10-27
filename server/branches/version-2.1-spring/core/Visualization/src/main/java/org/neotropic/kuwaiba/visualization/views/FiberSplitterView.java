@@ -41,6 +41,8 @@ import org.neotropic.kuwaiba.core.apis.integration.views.AbstractDetailedView;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewEdge;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewNode;
 import org.neotropic.kuwaiba.core.apis.integration.views.ViewEventListener;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
+import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 
 /**
@@ -122,8 +124,8 @@ public class FiberSplitterView extends AbstractDetailedView<BusinessObjectLight,
             VerticalLayout lytGraph = new VerticalLayout();
             lytGraph.setSizeFull();
             mxGraph = new MxGraph();
-            mxGraph.setWidth("670px");
-            mxGraph.setHeight("100%");
+            mxGraph.setWidth("100%");
+            //mxGraph.setHeight("100%");
             mxGraph.setGrid("img/grid.gif");
             mxGraph.setOverflow("scroll");
             lytGraph.add(mxGraph);
@@ -180,11 +182,26 @@ public class FiberSplitterView extends AbstractDetailedView<BusinessObjectLight,
                 
                 if (inLinks != null && inLinks.size() > 0) {
                     BusinessObject theWholeLink = bem.getObject(inLinks.get(0).getClassName(), inLinks.get(0).getId());
-                    String hexColor;
-                    if (theWholeLink.getAttributes().containsKey(Constants.PROPERTY_COLOR) && theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR) != null)
-                        hexColor =  (String) theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR);//String.format("#%06x", (0xFFFFFF & (int) theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR)));
-                    else
+////                    String hexColor;
+////                    if (theWholeLink.getAttributes().containsKey(Constants.PROPERTY_COLOR) && theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR) != null)
+////                        hexColor =  (String) theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR);//String.format("#%06x", (0xFFFFFF & (int) theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR)));
+////                    else
+////                        hexColor = "steelblue";  //default color
+                    String hexColor = null;
+                    if (theWholeLink.getAttributes().containsKey(Constants.PROPERTY_COLOR)) {
+                        hexColor = theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR) instanceof String ? (String) theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR) : null;
+                        if (hexColor != null) {
+                            ClassMetadata classInLink = mem.getClass(inLinks.get(0).getClassName());
+                            String colorType = classInLink.getType(Constants.PROPERTY_COLOR);
+                            if(mem.isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, colorType)) {
+                                BusinessObject colorObject = aem.getListTypeItem(colorType, hexColor);
+                                hexColor = colorObject.getAttributes().containsKey("value") && colorObject.getAttributes().get("value") instanceof String ? (String) colorObject.getAttributes().get("value") : null; //NOI18N
+                            }
+                        }
+                    }
+                    if (hexColor == null)
                         hexColor = "steelblue";  //default color
+                    
                     nodeIn.setFillColor(hexColor);
                     startIn = new MxGraphNode();
                     startIn.setUuid("s1");
@@ -225,11 +242,26 @@ public class FiberSplitterView extends AbstractDetailedView<BusinessObjectLight,
                         
                         if (outLinks != null && outLinks.size() > 0) {
                             BusinessObject theWholeLink = bem.getObject(outLinks.get(0).getClassName(), outLinks.get(0).getId());
-                            String hexColor;
-                            if (theWholeLink.getAttributes().containsKey(Constants.PROPERTY_COLOR) && theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR) != null)
-                                hexColor =  (String) theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR);//String.format("#%06x", (0xFFFFFF & (int) theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR)));
-                            else
+////                            String hexColor;
+////                            if (theWholeLink.getAttributes().containsKey(Constants.PROPERTY_COLOR) && theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR) != null)
+////                                hexColor =  (String) theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR);//String.format("#%06x", (0xFFFFFF & (int) theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR)));
+////                            else
+////                                hexColor = "steelblue";  //default color
+                            String hexColor = null;
+                            if (theWholeLink.getAttributes().containsKey(Constants.PROPERTY_COLOR)) {
+                                hexColor = theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR) instanceof String ? (String) theWholeLink.getAttributes().get(Constants.PROPERTY_COLOR) : null;
+                                if (hexColor != null) {
+                                    ClassMetadata classInLink = mem.getClass(outLinks.get(0).getClassName());
+                                    String colorType = classInLink.getType(Constants.PROPERTY_COLOR);
+                                    if(mem.isSubclassOf(Constants.CLASS_GENERICOBJECTLIST, colorType)) {
+                                        BusinessObject colorObject = aem.getListTypeItem(colorType, hexColor);
+                                        hexColor = colorObject.getAttributes().containsKey("value") && colorObject.getAttributes().get("value") instanceof String ? (String) colorObject.getAttributes().get("value") : null; //NOI18N
+                                    }
+                                }
+                            }
+                            if (hexColor == null)
                                 hexColor = "steelblue";  //default color
+                            
                             nodeOut.setFillColor(hexColor);
                             endOut = new MxGraphNode();
                             endOut.setUuid("e" + i);
@@ -252,7 +284,7 @@ public class FiberSplitterView extends AbstractDetailedView<BusinessObjectLight,
                         nodeOut.setFillColor("black");
                     i++;
                 }
-            } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
+            } catch (InventoryException ex) {
                 Logger.getLogger(FiberSplitterView.class.getName()).log(Level.SEVERE, null, ex);
             }
 

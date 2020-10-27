@@ -1066,7 +1066,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                                             edge.setPoints(newPoints);
                                         edge.setUuid(businessObject.getId());
                                         edge.setLabel(businessObject.getName());
-                                        edge.setStrokeWidth(0);
+                                        edge.setStrokeWidth(1);
                                         edge.setStrokeColor(properties.getProperty(PropertyNames.COLOR));
                                         edge.setSource(sourceBusinessObject.getId());
                                         edge.setTarget(targetBusinessObject.getId());

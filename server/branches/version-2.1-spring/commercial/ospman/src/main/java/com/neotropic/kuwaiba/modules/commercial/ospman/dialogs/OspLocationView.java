@@ -194,6 +194,11 @@ public class OspLocationView extends MxGraph {
                         BusinessObjectLight mirror = null;
                         if (!mirrors.isEmpty())
                             mirror = mirrors.get(0);
+                        else {
+                            List<BusinessObjectLight> mirrorsMultiple = bem.getSpecialAttribute(port.getClassName(), port.getId(), "mirrorMultiple"); //NOI18N
+                            if (!mirrorsMultiple.isEmpty())
+                                mirror = mirrorsMultiple.get(0);
+                        }
                         ports.put(devicePorts.get(i), mirror);
                     }
                 }

@@ -245,7 +245,7 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
             overrideStyle();            
             removeOverlayButtons();
             setIsSelectable(true);
-            setConnectable(true);
+            //setConnectable(true);
         }
         protected void spliceFiber() {
             LinkedHashMap<String, String> fiberStyle = new LinkedHashMap(FIBER_STYLE);
@@ -271,7 +271,7 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
                         fiberStyle.put(MxConstants.STYLE_FILL_OPACITY, String.valueOf(FIBER_SPLICED_FILL_OPACITY));
                         fiberStyle.put(MxConstants.STYLE_STROKECOLOR, getColor());
                         setIsSelectable(false);
-                        setConnectable(false);
+                        //setConnectable(false);
                     }
                 } catch (InventoryException ex) {
                     new SimpleNotification(
@@ -300,7 +300,7 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
                 } else {
                     setRawStyle(NODE_STYLE);
                     setIsSelectable(false);
-                    setConnectable(false);
+                    //setConnectable(false);
                 }
                 overrideStyle();
 
