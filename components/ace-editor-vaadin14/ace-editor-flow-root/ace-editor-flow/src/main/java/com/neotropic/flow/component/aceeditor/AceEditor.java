@@ -23,7 +23,7 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.shared.Registration;
 
 /**
- * Main component class for ace editor web component
+ * Main component class for ace editor web component test
  * @author Orlando Paz Duarte {@literal <orlando.paz@kuwaiba.org>}
  */
 @Tag("ace-editor")
