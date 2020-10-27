@@ -35,7 +35,7 @@ public class ObjectMultipleProperty extends AbstractProperty<List>{
     public ObjectMultipleProperty(String name, String displayName, String description, List value, List items) {
         super(name, displayName, description, value);
         this.allItems = items;
-        setType(Constants.DATA_TYPE_LIST_TYPE);
+        setType(Constants.DATA_TYPE_OBJECT_MULTIPLE);
     }
 
     public List getListTypes() {

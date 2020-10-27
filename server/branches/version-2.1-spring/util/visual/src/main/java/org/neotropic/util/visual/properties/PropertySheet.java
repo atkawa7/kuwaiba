@@ -88,7 +88,7 @@ public class PropertySheet extends Grid<AbstractProperty> {
                 AbstractField editField = property.getInplaceEditor();
                 // if the property doesnt have a binder, then  set the value manually
                 if (!property.hasBinder())
-                    editField.setValue(property.getValue().equals(AbstractProperty.NULL_LABEL) ? "" : property.getValue());
+                    editField.setValue(property.getAsString().equals(AbstractProperty.NULL_LABEL) ? "" : property.getValue());
                
                 btnEdit.addClassName("icon-button");             
                 btnCancel.addClassName("icon-button");

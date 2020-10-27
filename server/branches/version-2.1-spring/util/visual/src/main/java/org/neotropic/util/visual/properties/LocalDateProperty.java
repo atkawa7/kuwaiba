@@ -19,6 +19,7 @@ package org.neotropic.util.visual.properties;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -29,19 +30,19 @@ import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
  * Support for local-date-type properties
  * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
-public class LocalDateProperty extends AbstractProperty<LocalDateTime> {
+public class LocalDateProperty extends AbstractProperty<LocalDate> {
     /**
      * Default formatter.
      */
-    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("EE MMM dd HH:mm yyyy", Locale.ENGLISH);
+    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH);
 
-    public LocalDateProperty(String name, String displayName, String description, LocalDateTime value) {
+    public LocalDateProperty(String name, String displayName, String description, LocalDate value) {
         super(name, displayName, description, value);
         setType(Constants.DATA_TYPE_DATE);
     }  
     
     public LocalDateProperty(String name, String displayName, String description, long value) {
-        super(name, displayName, description, Instant.ofEpochMilli(value).atZone(ZoneId.systemDefault()).toLocalDateTime());
+        super(name, displayName, description, Instant.ofEpochMilli(value).atZone(ZoneId.systemDefault()).toLocalDate());
          setType(Constants.DATA_TYPE_DATE);
     }
 
@@ -73,8 +74,8 @@ public class LocalDateProperty extends AbstractProperty<LocalDateTime> {
     }
 
     @Override
-    public LocalDateTime getDefaultValue() {
-        return LocalDateTime.now();
+    public LocalDate getDefaultValue() {
+        return LocalDate.now();
     }
 
 }

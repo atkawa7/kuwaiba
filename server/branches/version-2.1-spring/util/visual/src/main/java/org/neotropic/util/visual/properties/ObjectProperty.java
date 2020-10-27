@@ -19,6 +19,7 @@ import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.combobox.ComboBox;
 import java.util.List;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 
 
 /**
@@ -34,6 +35,7 @@ public class ObjectProperty extends AbstractProperty {
     public ObjectProperty(String name, String displayName, String description, Object value, List<Object> listTypes) {
         super(name, displayName, description, value);
         this.items = listTypes;
+        setType(Constants.DATA_TYPE_OBJECT);
     }
     
     public List getItems() {
