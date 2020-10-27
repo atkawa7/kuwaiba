@@ -19,6 +19,15 @@ body {
     --material-icon-font-size: 8pt;
 }
 
+h4 {
+    color: var(--material-primary-color);
+}
+
+a {
+    color: var(--material-primary-color);
+    text-decoration: underline;
+}
+
 /* Inherited styles */
 vaadin-radio-group {
     padding: 0px;

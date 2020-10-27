@@ -21,8 +21,11 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.dependency.StyleSheet;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -91,19 +94,21 @@ public abstract class ModuleLayout extends FlexLayout implements RouterLayout {
         MenuBar mnuNewBar = new MenuBar();
         mnuNewBar.setWidthFull();
         
-        mnuNewBar.addItem(ts.getTranslatedString("module.home.menu.home"), ev -> UI.getCurrent().navigate("home"));
+        mnuNewBar.addItem(new Button(ts.getTranslatedString("module.home.menu.home"), new Icon(VaadinIcon.HOME)), ev -> UI.getCurrent().navigate("home"));
         
-        MenuItem mnuNavigation = mnuNewBar.addItem(ts.getTranslatedString("module.home.menu.navigation"));
-        MenuItem mnuPhysical = mnuNewBar.addItem(ts.getTranslatedString("module.home.menu.physical"));
-        MenuItem mnuLogical = mnuNewBar.addItem(ts.getTranslatedString("module.home.menu.logical"));
-        MenuItem mnuBusiness = mnuNewBar.addItem(ts.getTranslatedString("module.home.menu.business"));
-        MenuItem mnuPlanning = mnuNewBar.addItem(ts.getTranslatedString("module.home.menu.planning"));
-        MenuItem mnuAdministration = mnuNewBar.addItem(ts.getTranslatedString("module.home.menu.administration"));
-        MenuItem mnuOther = mnuNewBar.addItem(ts.getTranslatedString("module.home.menu.other"));
-        MenuItem mnuSettings = mnuNewBar.addItem(ts.getTranslatedString("module.home.menu.settings"));
+        MenuItem mnuNavigation = mnuNewBar.addItem(new Button(ts.getTranslatedString("module.home.menu.navigation"), new Icon(VaadinIcon.GLOBE)));
+        MenuItem mnuPhysical = mnuNewBar.addItem(new Button(ts.getTranslatedString("module.home.menu.physical"), new Icon(VaadinIcon.GRID_BIG)));
+        MenuItem mnuLogical = mnuNewBar.addItem(new Button(ts.getTranslatedString("module.home.menu.logical"), new Icon(VaadinIcon.GRID_BIG_O)));
+        MenuItem mnuBusiness = mnuNewBar.addItem(new Button(ts.getTranslatedString("module.home.menu.business"), new Icon(VaadinIcon.CUBES)));
+        MenuItem mnuPlanning = mnuNewBar.addItem(new Button(ts.getTranslatedString("module.home.menu.planning"), new Icon(VaadinIcon.MAGIC)));
+        MenuItem mnuAdministration = mnuNewBar.addItem(new Button(ts.getTranslatedString("module.home.menu.administration"), new Icon(VaadinIcon.CHART_3D)));
+        MenuItem mnuOther = mnuNewBar.addItem(new Button(ts.getTranslatedString("module.home.menu.other"), new Icon(VaadinIcon.FORM)));
+        MenuItem mnuSettings = mnuNewBar.addItem(new Button(ts.getTranslatedString("module.home.menu.settings"), new Icon(VaadinIcon.COG)));
         
-        mnuNewBar.addItem(ts.getTranslatedString("module.home.menu.about"), ev -> UI.getCurrent().navigate("about"));
-        mnuNewBar.addItem(ts.getTranslatedString("module.home.menu.logout"), ev -> UI.getCurrent().navigate("logout"));
+        mnuNewBar.addItem(new Button(ts.getTranslatedString("module.home.menu.about"), 
+                new Icon(VaadinIcon.TOUCH)), ev -> UI.getCurrent().navigate("about"));
+        mnuNewBar.addItem(new Button(ts.getTranslatedString("module.home.menu.logout"), 
+                new Icon(VaadinIcon.EXIT_O)), ev -> UI.getCurrent().navigate("logout"));
         
         this.moduleRegistry.getModules().values().stream().forEach( aModule -> {
             switch(aModule.getCategory()) {
