@@ -3,7 +3,7 @@
 
     <groupId>com.neotropic.flow.component</groupId>
     <artifactId>paper-toggle-button-flow</artifactId>
-    <version>x.0.0</version>
+    <version>1.0.1</version>
     <name>Paper Toggle Button Flow</name>
     <description>Integration of paper-toggle-button for Vaadin platform</description>
 
