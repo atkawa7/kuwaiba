@@ -32,6 +32,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery;
+import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,7 +64,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 @Route(value = "navman", layout = NavLayout.class)
-public class NavUI extends VerticalLayout implements ActionCompletedListener {
+public class NavUI extends VerticalLayout implements ActionCompletedListener, HasDynamicTitle {
     /**
      * Reference to the action registry.
      */
@@ -261,9 +262,9 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener {
                         try {
                             List<BusinessObjectLight> searchResults = bem.getObjectsOfClassLight(txtSearch.getValue(), -1);
 
-                            if (searchResults.isEmpty()) {
+                            if (searchResults.isEmpty())
                                 lytLocation.add(new Label(ts.getTranslatedString("module.general.messages.no-search-results")));
-                            } else {
+                            else {
                                 lytLocation.removeAll();
                                 NavigationTree navTree = new NavigationTree(getDataProviderSeveral(searchResults), new BasicIconGenerator(resourceFactory));
                                 lytLocation.add(navTree);
@@ -328,9 +329,8 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener {
                                 ex.getMessage()).open();
                         return 0;
                     }
-                } else {
+                } else
                     return 1;
-                }
             }
 
             @Override
@@ -375,9 +375,8 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener {
                                 ex.getMessage()).open();
                         return new ArrayList().stream();
                     }
-                } else {
+                } else
                     return inventoryNodes.stream();
-                }
             }
 
             @Override
@@ -396,9 +395,8 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener {
                                 ex.getMessage()).open();
                         return 0;
                     }
-                } else {
+                } else
                     return inventoryNodes.size();
-                }
             }
 
             @Override
@@ -449,9 +447,9 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener {
                                 ex.getMessage()).open();
                         return new ArrayList().stream();
                     }
-                } else {
+                } else
                     inventoryNodes.stream();
-                }
+                
                 inventoryNodes.stream();
                 return null;
             }
@@ -470,9 +468,8 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener {
                                 ex.getMessage()).open();
                         return 0;
                     }
-                } else {
+                } else
                     return 1;
-                }
             }
 
             @Override
@@ -593,9 +590,9 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener {
                                     getLocalizationPath(obj, null);
                                     
                                     List<BusinessObjectLight> childrenOfClassLight = bem.getChildrenOfClassLightRecursive(obj.getId(), obj.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, 0);
-                                    if (childrenOfClassLight.isEmpty()) {
+                                    if (childrenOfClassLight.isEmpty())
                                         lytNetwork.add(new Label(ts.getTranslatedString("module.general.messages.no-search-results")));
-                                    } else {
+                                    else {
                                         lytNetwork.removeAll();
                                         NavigationTree navTree = new NavigationTree(getDataProviderSeveral(childrenOfClassLight), new BasicIconGenerator(resourceFactory));
                                         lytNetwork.add(navTree);
@@ -676,5 +673,10 @@ private void getLocalizationPath(BusinessObjectLight selectedLocationObj,
             Logger.getLogger(NavUI.class.getName()).log(Level.SEVERE, "locationFilter", ex);
         }
         return locationPossibleChildren;
+    }
+
+    @Override
+    public String getPageTitle() {
+        return ts.getTranslatedString("module.navigation.title");
     }
 }

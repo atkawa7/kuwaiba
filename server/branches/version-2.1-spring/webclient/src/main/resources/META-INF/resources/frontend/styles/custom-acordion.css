@@ -1,10 +1,13 @@
-
+/* Cutomize accordions */
 [part="toggle"] {
     color: white;
 }
 
 div[part="summary"] {
     background-color:var(--material-primary-color);
+    min-height: 40px;
 }
 
-
+div[part="content"] {
+    padding: 0px;
+}
