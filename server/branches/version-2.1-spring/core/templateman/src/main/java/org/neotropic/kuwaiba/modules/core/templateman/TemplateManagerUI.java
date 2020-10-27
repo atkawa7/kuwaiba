@@ -82,6 +82,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author Hardy Ryan Chingal Martinez {@literal <ryan.chingal@kuwaiba.org>}
  */
+
 @Route(value = "templates", layout = TemplateManagerLayout.class)
 public class TemplateManagerUI extends SplitLayout implements ActionCompletedListener, PropertySheet.IPropertyValueChangedListener, HasDynamicTitle {
 
