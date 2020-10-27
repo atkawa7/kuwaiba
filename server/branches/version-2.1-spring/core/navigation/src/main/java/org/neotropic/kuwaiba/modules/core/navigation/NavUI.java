@@ -15,7 +15,6 @@
  */
 package org.neotropic.kuwaiba.modules.core.navigation;
 
-import com.neotropic.flow.component.paperdialog.PaperToggleButton;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.DetachEvent;
@@ -135,8 +134,6 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener {
      * The search bar in the header
      */
     private VerticalLayout lytSearch;
-    //
-    private PaperToggleButton tgbOnlyPorts;
     
     private TextField txtSearch;
     
@@ -620,13 +617,13 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener {
         lytSearch.add(lytLocationButonsFilters);
     }
     
-    private void setupDevices(){
-        tgbOnlyPorts = new PaperToggleButton("Only Ports");
-        tgbOnlyPorts.setClassName("green", true);
-        //only port filter
-        
-        tgbOnlyPorts.addValueChangeListener(ef -> { if(ef.getValue()){ } });
-    }
+//    private void setupDevices(){
+//        tgbOnlyPorts = new PaperToggleButton("Only Ports");
+//        tgbOnlyPorts.setClassName("green", true);
+//        //only port filter
+//        
+//        tgbOnlyPorts.addValueChangeListener(ef -> { if(ef.getValue()){ } });
+//    }
     
     /**
      * Creates/updates the localization path, that shows the whole list 
