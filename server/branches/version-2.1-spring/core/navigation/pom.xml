@@ -21,7 +21,7 @@
         <dependency>
             <groupId>com.neotropic.flow.component</groupId>
             <artifactId>paper-toggle-button-flow</artifactId>
-            <version>x.0.0</version>
+            <version>1.0.1</version>
             <type>jar</type>
         </dependency>
     </dependencies>
