@@ -370,6 +370,10 @@ public class Constants {
      */
     public static final String CLASS_GENERICSERVICE = "GenericService"; //NOI18N
     /**
+     * Class slot
+     */
+    public static final String CLASS_SLOT = "Slot"; //NOI18N
+    /**
      * Class Generic Customer
      */
     public static final String CLASS_GENERICCUSTOMER = "GenericCustomer"; //NOI18N
@@ -558,10 +562,6 @@ public class Constants {
      * Class EquipmentModel
      */
     public static final String CLASS_EQUIPMENTMODEL = "EquipmentModel"; //NOI18N;
-    /**
-     * Class Slot
-     */
-    public static final String CLASS_SLOT = "Slot"; //NOI18N;   
     /**
      * Class Rack
      */
