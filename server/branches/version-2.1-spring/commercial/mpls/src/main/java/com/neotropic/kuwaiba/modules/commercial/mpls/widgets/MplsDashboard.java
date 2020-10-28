@@ -405,7 +405,7 @@ public class MplsDashboard extends VerticalLayout {
         Accordion accordion = new Accordion();
         accordion.setWidthFull();
              
-        BoldLabel lblHelp = new BoldLabel(ts.getTranslatedString("module.mpls.help"));
+        Label lblHelp = new Label(ts.getTranslatedString("module.mpls.help"));
         lblHelp.addClassName("lbl-accordion");
         HorizontalLayout lytSummaryHelp = new HorizontalLayout(lblHelp); 
         lytSummaryHelp.setWidthFull();
@@ -417,7 +417,7 @@ public class MplsDashboard extends VerticalLayout {
         AccordionPanel apHelp = new AccordionPanel(lytSummaryHelp, lytFooterView);
         accordion.add(apHelp);
         
-        BoldLabel lblContext = new BoldLabel(ts.getTranslatedString("module.mpls.context"));
+        Label lblContext = new Label(ts.getTranslatedString("module.mpls.context"));
         lblContext.addClassName("lbl-accordion");
         HorizontalLayout lytSummaryContext = new HorizontalLayout(lblContext); 
         lytSummaryContext.setWidthFull();      

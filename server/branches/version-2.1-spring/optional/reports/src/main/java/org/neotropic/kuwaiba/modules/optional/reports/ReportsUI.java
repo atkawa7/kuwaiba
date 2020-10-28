@@ -31,6 +31,7 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.ItemClickEvent;
 import com.vaadin.flow.component.html.H4;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -79,7 +80,6 @@ import org.neotropic.kuwaiba.modules.optional.reports.actions.NewParameterVisual
 import org.neotropic.kuwaiba.modules.optional.reports.nodes.ReportNode;
 import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicIconGenerator;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
-import org.neotropic.util.visual.general.BoldLabel;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.tree.BasicTree;
@@ -331,7 +331,7 @@ public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
         Accordion accordion = new Accordion();
         accordion.setSizeFull();
         
-        BoldLabel lblClassReports = new BoldLabel(ts.getTranslatedString("module.reporting.class-level-reports"));
+        Label lblClassReports = new Label(ts.getTranslatedString("module.reporting.class-level-reports"));
         lblClassReports.addClassName("lbl-accordion");
         HorizontalLayout lytSummaryClassTree = new HorizontalLayout(lblClassReports); 
         lytSummaryClassTree.setWidthFull();
@@ -352,7 +352,7 @@ public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
         AccordionPanel apClassTree = new AccordionPanel(lytSummaryClassTree, lytClassReportsTree);
         accordion.add(apClassTree);
                
-        BoldLabel lblInventoryReports = new BoldLabel(ts.getTranslatedString("module.reporting.Inventory-level-reports"));
+        Label lblInventoryReports = new Label(ts.getTranslatedString("module.reporting.Inventory-level-reports"));
         lblInventoryReports.addClassName("lbl-accordion");
         HorizontalLayout lytSummaryInventoryReports = new HorizontalLayout(lblInventoryReports);  
         lytSummaryInventoryReports.setWidthFull(); 

@@ -1,11 +1,12 @@
 /* Customized accordions */
 [part="toggle"] {
-    color: white;
+    color: var(--material-primary-color);
 }
 
 div[part="summary"] {
-    background-color:var(--material-primary-color);
+    background-color: rgba(163, 211, 217, 0.2);
     min-height: 40px;
+    box-shadow: none;
 }
 
 div[part="content"] {

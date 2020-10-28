@@ -6,9 +6,10 @@
 
 body {
     /* Overrides the default material colors */
-    --primary-color: #237AC5;
-    /*--material-primary-color: var(--primary-color, #88AA00) !important;*/
-    --material-primary-color: #237AC5 !important;
+    /*--primary-color: #237AC5;*/
+    --primary-color: #A3D3D9;
+    /*--material-primary-color: #237AC5 !important;*/
+    --material-primary-color: #A3D3D9 !important;
     /*--material-primary-text-color: var(--primary-color, #777777) !important;*/
     --material-primary-text-color: #191C18 !important;
     --material-font-family: 'ubuntu-r' !important;
@@ -19,21 +20,23 @@ body {
     --material-icon-font-size: 8pt;
     
     /* Custom palette */
-    --kuwaiba-primary-color: #A3D3D9;
-    --kuwaiba-secondary-color: #8CA62D;
-    --kuwaiba-terciary-color: #F29441;
-    --kuwaiba-quaternary-color: #F2CB07;
-    --kuwaiba-quintenary-color: #D90416;
+    --kuwaiba-primary-color: #A3D3D9; /* Light blue */
+    --kuwaiba-secondary-color: #8CA62D; /* Green */
+    --kuwaiba-terciary-color: #F29441; /* Orange */
+    --kuwaiba-quaternary-color: #F2CB07; /* Yellow */
+    --kuwaiba-quintenary-color: #D90416; /* Red */
     --kuwaiba-primary-text-color: black;
     --kuwaiba-secondary-text-color: white;
+    
+    line-height: 1;
 }
 
 h4 {
-    color: var(--material-primary-color);
+    color: var(--kuwaiba-secondary-color);
 }
 
 a {
-    color: var(--material-primary-color);
+    color: var(--kuwaiba-terciary-color);
     text-decoration: underline;
 }
 
@@ -58,8 +61,12 @@ vaadin-grid-cell-content {
     padding: 2px;
 }
 
-vaadin-menu-bar-button {
-    text-transform: none;
+vaadin-menu-bar {
+    background-color: rgba(163, 211, 217, 0.5);
+}
+
+vaadin-accordion-panel {
+    box-shadow: none !important;
 }
 
 vaadin-button {
@@ -90,6 +97,7 @@ vaadin-button {
     background-color: var(--kuwaiba-primary-color);
     color: var(--kuwaiba-primary-text-color);
     padding: 10px 5px 10px 5px;
+    font-size: small;
 }
 
 .simple-notification-title-info {
@@ -97,6 +105,7 @@ vaadin-button {
     color: var(--kuwaiba-secondary-text-color);
     font-weight: bold;
     background-color: var(--kuwaiba-secondary-color);
+    font-size: small;
 }
 
 .simple-notification-title-warning {
@@ -104,6 +113,7 @@ vaadin-button {
     color: var(--kuwaiba-secondary-text-color);
     font-weight: bold;
     background-color: var(--kuwaiba-terciary-color);
+    font-size: small;
 }
 
 .simple-notification-title-error {
@@ -111,4 +121,5 @@ vaadin-button {
     color: var(--kuwaiba-secondary-text-color);
     font-weight: bold;
     background-color: var(--kuwaiba-quaternary-color);
+    font-size: small;
 }

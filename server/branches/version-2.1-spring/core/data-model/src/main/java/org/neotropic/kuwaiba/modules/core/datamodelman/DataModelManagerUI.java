@@ -311,7 +311,7 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
         Accordion accordion = new Accordion();
         accordion.setSizeFull();
         
-        BoldLabel lblInventoryTree = new BoldLabel(ts.getTranslatedString("module.datamodelman.inventory-classes"));
+        Label lblInventoryTree = new Label(ts.getTranslatedString("module.datamodelman.inventory-classes"));
         lblInventoryTree.addClassName("lbl-accordion");
         HorizontalLayout lytSummaryInventoryTree = new HorizontalLayout(lblInventoryTree); 
         lytSummaryInventoryTree.setWidthFull();
@@ -321,7 +321,7 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
         AccordionPanel apInventoryTree = new AccordionPanel(lytSummaryInventoryTree, lytInventoryTree);
         accordion.add(apInventoryTree);
                
-        BoldLabel lblListType = new BoldLabel(ts.getTranslatedString("module.datamodelman.list-types"));
+        Label lblListType = new Label(ts.getTranslatedString("module.datamodelman.list-types"));
         lblListType.addClassName("lbl-accordion");
         HorizontalLayout lytSummaryListType = new HorizontalLayout(lblListType);  
         lytSummaryListType.setWidthFull();        

@@ -216,8 +216,8 @@ paper-swatch-picker paper-icon-button {
 }
 
 .lbl-accordion {
-    font-size: 1.1em;
-    color: white;
+    font-size: small;
+    color: var(--material-primary-text-color);
 }
 /* vertical line */
 .vl {
