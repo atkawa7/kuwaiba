@@ -16,10 +16,12 @@
 package org.neotropic.kuwaiba.modules.core.navigation.properties;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ConfigurationVariable;
 import org.neotropic.kuwaiba.core.apis.persistence.application.TemplateObject;
@@ -63,8 +65,9 @@ public class PropertyFactory {
      */
     public static List<AbstractProperty> propertiesFromBusinessObject(BusinessObject businessObject, TranslationService ts, ApplicationEntityManager aem,
             MetadataEntityManager mem) throws InventoryException {
-        ClassMetadata classMetadata = mem.getClass(
-                businessObject.getClassName());
+        ClassMetadata classMetadata = mem.getClass(businessObject.getClassName());
+        classMetadata.getAttributes().sort(Comparator.comparing(item -> (item.getOrder() == null ? 0 : item.getOrder())));
+                
         ArrayList<AbstractProperty> objectProperties = new ArrayList<>();
         HashMap<String, Object> attributes = businessObject.getAttributes();
         classMetadata.getAttributes().stream().forEach(anAttribute -> {
@@ -77,59 +80,116 @@ public class PropertyFactory {
                             (!attributes.containsKey(anAttribute.getName()) ? null : (String) attributes.get(anAttribute.getName())) ));
                         break;
                     case Constants.DATA_TYPE_DOUBLE:
-                    case Constants.DATA_TYPE_FLOAT:
+                    case Constants.DATA_TYPE_FLOAT: {
+                        Double value;
+                        if (attributes.containsKey(anAttribute.getName())) {
+                            if (attributes.get(anAttribute.getName()) instanceof String)
+                                value = Double.valueOf( (String) attributes.get(anAttribute.getName()));
+                            else 
+                                value = (Double) attributes.get(anAttribute.getName());
+                        } else
+                            value = null;
                         objectProperties.add(new DoubleProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                anAttribute.getDescription(),
-                                !attributes.containsKey(anAttribute.getName()) ? null :  Double.valueOf((String)attributes.get(anAttribute.getName()))));
+                                anAttribute.getDescription(), value));
                         break;
-                    case Constants.DATA_TYPE_INTEGER:
+                    }
+                    case Constants.DATA_TYPE_INTEGER:{
 
-                     objectProperties.add(new IntegerProperty(anAttribute.getName(),
-                            anAttribute.getDisplayName(), anAttribute.getDescription(),
-                            !attributes.containsKey(anAttribute.getName()) ? null : Integer.parseInt((String) attributes.get(anAttribute.getName()))));
+                        Integer value;
+                        if (attributes.containsKey(anAttribute.getName())) {
+                            if (attributes.get(anAttribute.getName()) instanceof String)
+                                value = Integer.valueOf( (String) attributes.get(anAttribute.getName()));
+                            else 
+                                value = (Integer) attributes.get(anAttribute.getName());
+                        } else
+                            value = null;
+                        objectProperties.add(new IntegerProperty(anAttribute.getName(),
+                            anAttribute.getDisplayName(), anAttribute.getDescription(), value));
                         break;
-                    case Constants.DATA_TYPE_BOOLEAN:
+                    }
+                    case Constants.DATA_TYPE_BOOLEAN: {
+                        Boolean value;
+                        if (attributes.containsKey(anAttribute.getName())) {
+                            if (attributes.get(anAttribute.getName()) instanceof String)
+                                value = Boolean.valueOf( (String) attributes.get(anAttribute.getName()));
+                            else 
+                                value = (Boolean) attributes.get(anAttribute.getName());
+                        } else
+                            value = false;
                         objectProperties.add(new BooleanProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                anAttribute.getDescription(), 
-                                !attributes.containsKey(anAttribute.getName()) ? false : Boolean.valueOf((String)attributes.get(anAttribute.getName()))));
+                                anAttribute.getDescription(), value));
                         break;
-                    case Constants.DATA_TYPE_LONG:
+                    }
+                    case Constants.DATA_TYPE_LONG: {
+                        Long value;
+                        if (attributes.containsKey(anAttribute.getName())) {
+                            if (attributes.get(anAttribute.getName()) instanceof String)
+                                value = Long.valueOf( (String) attributes.get(anAttribute.getName()));
+                            else 
+                                value = (Long) attributes.get(anAttribute.getName());
+                        } else
+                            value = null;
                         LongProperty aLongProperty = new LongProperty(anAttribute.getName(), 
-                                anAttribute.getDisplayName(), anAttribute.getDescription(), 
-                                !attributes.containsKey(anAttribute.getName()) ? null : Long.valueOf((String) attributes.get(anAttribute.getName())));
+                                anAttribute.getDisplayName(), anAttribute.getDescription(), value);
                         //special case for creation date attribute
                         if (Constants.PROPERTY_CREATION_DATE.equals(anAttribute.getName())) {
                             aLongProperty.setReadOnly(true);
                         }
                         objectProperties.add(aLongProperty);
                         break;
-                    case Constants.DATA_TYPE_DATE:
+                    }
+                    case Constants.DATA_TYPE_DATE: {
+                        Long value;
+                        if (attributes.containsKey(anAttribute.getName())) {
+                            if (attributes.get(anAttribute.getName()) instanceof String)
+                                value = Long.valueOf( (String) attributes.get(anAttribute.getName()));
+                            else 
+                                value = (Long) attributes.get(anAttribute.getName());
+                        } else
+                            value = 0l;
                         LocalDateProperty aDateProperty = new LocalDateProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                anAttribute.getDescription(), 
-                                !attributes.containsKey(anAttribute.getName()) ? null : Long.valueOf((String)attributes.get(anAttribute.getName())));
+                                anAttribute.getDescription(), value);
                         aDateProperty.setReadOnly(anAttribute.getName().equals(Constants.PROPERTY_CREATION_DATE));
                         objectProperties.add(aDateProperty);
                         break;
-                    case Constants.DATA_TYPE_TIME_STAMP:
+                    }
+                    case Constants.DATA_TYPE_TIME_STAMP: {
+                        Long value;
+                        if (attributes.containsKey(anAttribute.getName())) {
+                            if (attributes.get(anAttribute.getName()) instanceof String)
+                                value = Long.valueOf( (String) attributes.get(anAttribute.getName()));
+                            else 
+                                value = (Long) attributes.get(anAttribute.getName());
+                        } else
+                            value = 0l;
                         LocalDateTimeProperty aDateTimeProperty = new LocalDateTimeProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                anAttribute.getDescription(),
-                                !attributes.containsKey(anAttribute.getName()) ? null : Long.valueOf((String)attributes.get(anAttribute.getName())));
+                                anAttribute.getDescription(), value);
                         aDateTimeProperty.setReadOnly(anAttribute.getName().equals(Constants.PROPERTY_CREATION_DATE));
                         objectProperties.add(aDateTimeProperty);
                         break;
-                    case Constants.DATA_TYPE_LIST_TYPE:
+                    }
+                    default:
                         try {
-                        List items = aem.getListTypeItems(anAttribute.getType());
+                        List<BusinessObjectLight>  items = aem.getListTypeItems(anAttribute.getType());
+                        List<BusinessObjectLight> selectedItems = new ArrayList<>();
+                        String attributeValue = (String) attributes.get(anAttribute.getName());
+
+                        if (attributeValue != null) {
+                            String[] tokensItems = attributeValue.split(";");
+
+                            for (String token : tokensItems) {
+                                selectedItems.addAll(items.stream().filter(item -> item.getId().equals(token)).collect(Collectors.toList()));
+                            }
+                        }
                         if (anAttribute.isMultiple()) {
                             objectProperties.add(new ObjectMultipleProperty(anAttribute.getName(), anAttribute.getDisplayName(),
                                     anAttribute.getDescription(), 
-                                    !attributes.containsKey(anAttribute.getName()) ? new ArrayList<>() : (List<BusinessObjectLight>) attributes.get(anAttribute.getName()), 
-                                    items));
+                                    new ArrayList<>(selectedItems), new ArrayList<>(items)));
                         } else {
                             objectProperties.add(new ObjectProperty(anAttribute.getName(), anAttribute.getDisplayName(),
                                     anAttribute.getDescription(), 
-                                    !attributes.containsKey(anAttribute.getName()) ? null : (BusinessObjectLight) attributes.get(anAttribute.getName()),
-                                    items));
+                                    selectedItems.size() > 0 ? selectedItems.get(0) : null,
+                                    new ArrayList<>(items)));
                         }
                     } catch (InventoryException ex) {
                         Logger.getLogger(PropertyFactory.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage());
