@@ -48,6 +48,7 @@ import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.visualization.views.RackView;
 import org.neotropic.util.visual.general.BoldLabel;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.properties.AbstractProperty;
 import org.neotropic.util.visual.properties.PropertySheet;
@@ -225,7 +226,8 @@ public class RackViewWidget extends AbstractDashboardWidget implements PropertyS
             contentComponent = lytContent;
 
         } catch (InventoryException ex) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
         }
     }
     
@@ -311,10 +313,12 @@ public class RackViewWidget extends AbstractDashboardWidget implements PropertyS
                 if (property.getName().equals(Constants.PROPERTY_NAME)) {
                     
                 }
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
             
         } catch (InventoryException ex) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ex.getLocalizedMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ex.getLocalizedMessage(), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
         }
     }
 }

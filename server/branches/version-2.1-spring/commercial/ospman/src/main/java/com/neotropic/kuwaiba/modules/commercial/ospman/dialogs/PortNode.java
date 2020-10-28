@@ -31,6 +31,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectNode;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.views.util.UtilHtml;
 
@@ -172,7 +173,8 @@ public class PortNode extends MxBusinessObjectNode {
         } catch (InventoryException ex) {
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"),
-                ex.getLocalizedMessage()
+                ex.getLocalizedMessage(), 
+                AbstractNotification.NotificationType.ERROR, ts
             ).open();
         }
     }
@@ -184,7 +186,8 @@ public class PortNode extends MxBusinessObjectNode {
         } catch (MetadataObjectNotFoundException ex) {
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"),
-                ex.getLocalizedMessage()
+                ex.getLocalizedMessage(), 
+                AbstractNotification.NotificationType.ERROR, ts
             ).open();
             return null;
         }

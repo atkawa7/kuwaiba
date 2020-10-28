@@ -50,6 +50,7 @@ import org.neotropic.kuwaiba.core.configuration.variables.actions.DeleteConfigur
 import org.neotropic.kuwaiba.core.configuration.variables.actions.NewConfigurationVariableVisualAction;
 import org.neotropic.kuwaiba.core.configuration.variables.actions.NewConfigurationVariablesPoolVisualAction;
 import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.properties.PropertySheet;
 import org.neotropic.util.visual.properties.AbstractProperty;
@@ -331,7 +332,8 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
             ConfigurationVariable aWholeConfigurationVariable = aem.getConfigurationVariable(currentConfigVariable.getName());
             propertysheet.setItems(PropertyFactory.propertiesFromConfigurationVariable(aWholeConfigurationVariable));
         } catch (UnsupportedOperationException | ApplicationObjectNotFoundException ex) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
             Logger.getLogger(ConfigurationVariablesUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -340,7 +342,8 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
     public void actionCompleted(ActionCompletedListener.ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
             try {
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
                     
                 if(currentConfigVariablesPool != null){
                     loadConfigurationVariablesPools();
@@ -352,7 +355,8 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
                 Logger.getLogger(ConfigurationVariablesUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else 
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
     }
 
     @Override
@@ -367,7 +371,8 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
                
                updatePropertySheet();
                
-               new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
+               new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
             }
         } catch (UnsupportedOperationException | InvalidArgumentException | ApplicationObjectNotFoundException  ex) {
             Logger.getLogger(ConfigurationVariablesUI.class.getName()).log(Level.SEVERE, null, ex);

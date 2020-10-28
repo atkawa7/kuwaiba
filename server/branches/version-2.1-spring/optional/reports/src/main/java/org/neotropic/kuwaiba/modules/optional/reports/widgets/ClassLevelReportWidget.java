@@ -40,6 +40,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManage
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.optional.reports.ReportsUI;
 import org.neotropic.util.visual.general.BoldLabel;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.widgets.AbstractDashboardWidget;
 
@@ -93,7 +94,8 @@ public class ClassLevelReportWidget extends AbstractDashboardWidget {
             contentComponent = lytContent;
 
         } catch (InventoryException ex) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage(), 
+                    AbstractNotification.NotificationType.ERROR, ts).open();
         }
     }
     /**

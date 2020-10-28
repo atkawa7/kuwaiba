@@ -53,6 +53,7 @@ import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewServicePoolV
 import org.neotropic.kuwaiba.modules.optional.serviceman.actions.NewServiceVisualAction;
 import org.neotropic.kuwaiba.modules.optional.serviceman.widgets.CustomerDashboard;
 import org.neotropic.kuwaiba.modules.optional.serviceman.widgets.ServiceDashboardFactory;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -180,7 +181,8 @@ public class ServiceManagerUI extends VerticalLayout implements ActionCompletedL
                         lytSearchResults.add(tblResults);
                     }
                 } catch (Exception ex) {
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(), 
+                        AbstractNotification.NotificationType.ERROR, ts).open();
                 }
             }
         });
@@ -228,9 +230,11 @@ public class ServiceManagerUI extends VerticalLayout implements ActionCompletedL
     @Override
     public void actionCompleted(ActionCompletedListener.ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS)
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
         else
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
     }
     
     public void replaceContent(Component newContent) {

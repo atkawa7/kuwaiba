@@ -16,6 +16,8 @@
 
 package org.neotropic.util.visual.notifications;
 
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
+
 /**
  * A feedback message displayed after the execution of an action. Subclasses can customize
  * the way they are displayed 
@@ -27,9 +29,17 @@ public abstract class AbstractNotification {
      */
     protected String title;
     /**
-     * Short descriptive text
+     * Short descriptive text.
      */
     protected String text;
+    /**
+     * What kind of information is intended to be displayed.
+     */
+    protected NotificationType type;
+    /**
+     * Reference to the translation service.
+     */
+    protected TranslationService ts;
     /**
      * An optional string with a more detailed information that normally wouldn't fit inside 
      * the notification window. If this value is different from null, a "details" link should 
@@ -37,9 +47,11 @@ public abstract class AbstractNotification {
      */
     protected String details;
 
-    public AbstractNotification(String title, String text) {
+    public AbstractNotification(String title, String text, NotificationType type, TranslationService ts) {
         this.title = title;
         this.text = text;
+        this.type = type;
+        this.ts = ts;
     }
 
     public String getTitle() {
@@ -64,6 +76,14 @@ public abstract class AbstractNotification {
 
     public void setDetails(String details) {
         this.details = details;
+    }
+
+    public NotificationType getType() {
+        return type;
+    }
+
+    public void setType(NotificationType type) {
+        this.type = type;
     }
     
     /**

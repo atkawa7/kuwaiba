@@ -35,6 +35,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManage
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -99,12 +100,14 @@ public class MplsManagerUI extends VerticalLayout implements HasDynamicTitle {
     public void showActionCompledMessages(ActionCompletedListener.ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
             try {                
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();                                          
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.INFO, ts).open();                                          
             } catch (Exception ex) {
                 Logger.getLogger(MplsManagerUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
     }
 
     private void createContent() throws InvalidArgumentException, MetadataObjectNotFoundException {                      

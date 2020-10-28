@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.util.visual.general.BoldLabel;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
 /**
@@ -115,7 +116,8 @@ public class PropertySheet extends Grid<AbstractProperty> {
                     this.getColumnByKey("name").setFlexGrow(3);
                     if (editField.getValue() == null) {
                         new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), 
-                                ts.getTranslatedString("module.general.messages.error-null-value")).open();
+                                ts.getTranslatedString("module.general.messages.error-null-value"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
                         return;
                     }
 

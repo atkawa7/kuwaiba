@@ -44,6 +44,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -170,7 +171,7 @@ public class NewBusinessObjectVisualAction extends AbstractVisualInventoryAction
                             btnOk.setEnabled(false);
                             new SimpleNotification(
                                 ts.getTranslatedString("module.general.messages.error"), 
-                                ex.getMessage()).open();
+                                ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
                         }
                     }
                     else {

@@ -43,6 +43,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntity
 import org.neotropic.kuwaiba.core.apis.persistence.application.Session;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -135,10 +136,12 @@ public class LoginUI extends VerticalLayout implements BeforeEnterObserver, HasD
                     ui.navigate(HomeUI.class);
                 } catch (InventoryException ex) { // User not found is no longer caught. Generic exception for any other unexpected situation
                     new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), 
-                            ts.getTranslatedString("module.login.ui.cant-login")).open();
+                            ts.getTranslatedString("module.login.ui.cant-login"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
                 } catch (Exception ex) {
                     new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), 
-                            ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+                            ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
                     Logger.getLogger(LoginUI.class.getName()).log(Level.SEVERE, ex.getMessage());
                 }
              });

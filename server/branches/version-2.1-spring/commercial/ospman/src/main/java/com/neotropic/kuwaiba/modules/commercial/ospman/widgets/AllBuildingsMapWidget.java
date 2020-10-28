@@ -23,6 +23,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManage
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.widgets.AbstractDashboardWidget;
 
@@ -64,7 +65,8 @@ public class AllBuildingsMapWidget extends AbstractDashboardWidget {
         } catch (InvalidArgumentException ex) {
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"), 
-                ex.getLocalizedMessage()
+                ex.getLocalizedMessage(), 
+                AbstractNotification.NotificationType.ERROR, ts
             ).open();
         }
         /*

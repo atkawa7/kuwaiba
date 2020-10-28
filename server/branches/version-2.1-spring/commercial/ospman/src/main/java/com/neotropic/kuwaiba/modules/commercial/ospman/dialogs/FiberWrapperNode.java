@@ -34,6 +34,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectNode;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
 /**
@@ -222,7 +223,8 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
         } catch (InventoryException ex) {
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"), //NOI18N
-                ex.getLocalizedMessage()
+                ex.getLocalizedMessage(), 
+                AbstractNotification.NotificationType.ERROR, ts
             ).open();
         }
         return null;
@@ -276,7 +278,8 @@ public class FiberWrapperNode extends MxBusinessObjectNode {
                 } catch (InventoryException ex) {
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.error"), 
-                        ex.getLocalizedMessage()
+                        ex.getLocalizedMessage(), 
+                        AbstractNotification.NotificationType.ERROR, ts
                     ).open();
                 }
             }

@@ -71,6 +71,7 @@ import org.neotropic.kuwaiba.modules.optional.topoman.actions.NewTopologyViewVis
 import org.neotropic.kuwaiba.modules.optional.topoman.tools.BasicStyleEditor;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewEdge;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.properties.AbstractProperty;
 import org.neotropic.util.visual.properties.PropertySheet;
@@ -219,11 +220,12 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
     }
 
     public void showActionCompledMessages(ActionCompletedListener.ActionCompletedEvent ev) {
-        if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
-        } else {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
-        }
+        if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS)
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
+        else
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
     }
 
     private void createContent() {
@@ -372,14 +374,12 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
         if (selectedObject != null) {
             if (selectedObject.getClassName().equals(FREE_SHAPE)) {
                 MxGraphNode node = topologyView.getMxgraphCanvas().findMxGraphNode(selectedObject);
-                if (node != null) {
+                if (node != null)
                     styleEditor.update(node);
-                }
             } else if (selectedObject.getClassName().equals("edge")) {
                 MxGraphEdge edge = topologyView.getMxgraphCanvas().findMxGraphEdge(selectedObject);
-                if (edge != null) {
+                if (edge != null)
                     styleEditor.update(edge);
-                }
             }
         } else 
             styleEditor.update(null);
@@ -395,9 +395,8 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
      */
     public void resetDashboard() {
         topologyView.buildEmptyView();
-        if (currentView != null) {
+        if (currentView != null)
             topologyView.buildWithSavedView(currentView.getStructure());
-        }
     }
 
     /**
@@ -408,11 +407,13 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
             if (currentView != null) {
                 aem.updateGeneralView(currentView.getId(), currentView.getName(), currentView.getDescription(), topologyView.getAsXml(), null);
                 currentView.setStructure(topologyView.getAsXml());
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.topoman.view-saved")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.topoman.view-saved"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
             }
         } catch (InvalidArgumentException | ApplicationObjectNotFoundException ex) {
             Logger.getLogger(TopologyManagerDashboard.class.getName()).log(Level.SEVERE, null, ex);
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
         }
 
     }
@@ -424,10 +425,12 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
         if (selectedObject != null) {
             if (MxGraphCell.PROPERTY_VERTEX.equals(topologyView.getMxgraphCanvas().getSelectedCellType())) {
                 topologyView.removeNode(selectedObject);
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.topoman.object-deleted")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.topoman.object-deleted"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
             } else {
                 topologyView.removeEdge(selectedObject);
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.topoman.link-deleted")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.topoman.link-deleted"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
             }
             selectedObject = null;
             setSelectionToolsEnabled(false);
@@ -483,7 +486,8 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
             selectedObject = null;
             setGeneralToolsEnabled(true);
             this.btnRemoveView.setEnabled(true);
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.topoman.actions.view-loaded")).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.topoman.actions.view-loaded"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
         } catch (ApplicationObjectNotFoundException ex) {
             Logger.getLogger(TopologyManagerDashboard.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -575,10 +579,12 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
                     topologyView.getMxgraphCanvas().getMxGraph().refreshGraph();
                 }
 
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
             }
         } catch (InventoryException ex) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ex.getLocalizedMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ex.getLocalizedMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
         }
     }
 
@@ -595,9 +601,9 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
             props.put("x", x);
             props.put("y", y);
             addNode(props, node);
-        } else {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.object-already-included")).open();
-        }
+        } else
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.object-already-included"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
     }
     
     /**
@@ -652,7 +658,8 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
             try {
                 aem.createGeneralView(CLASS_VIEW, currentView.getName() + " Copy", currentView.getDescription(), currentView.getStructure(), null);
                 refreshTopologyViews();
-                new SimpleNotification("", String.format(ts.getTranslatedString("module.topoman.copy-created"), currentView.getName() + " Copy")).open();
+                new SimpleNotification("", String.format(ts.getTranslatedString("module.topoman.copy-created"), currentView.getName() + " Copy"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
             } catch (InvalidArgumentException ex) {
                 Logger.getLogger(TopologyManagerDashboard.class.getName()).log(Level.SEVERE, null, ex);
             }

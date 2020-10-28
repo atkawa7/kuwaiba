@@ -71,6 +71,7 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
 import org.neotropic.util.visual.general.BoldLabel;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.views.util.UtilHtml;
 
@@ -484,7 +485,8 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                                                         dlgPhysicalPath.open();
                                                     } catch (InvalidArgumentException ex) {
                                                         Logger.getLogger(RackView.class.getName()).log(Level.SEVERE, null, ex);
-                                                         new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+                                                         new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                                                            AbstractNotification.NotificationType.ERROR, ts).open();
                                                     }
                                                 });
                                                 btnPhysicalPath.getElement().setProperty("title", ts.getTranslatedString("module.visualization.physical-path-view-show"));     
@@ -598,7 +600,8 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                 return lytGraph;
             } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
                 Logger.getLogger(RackView.class.getName()).log(Level.SEVERE, null, ex);
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
             }
             
         }
@@ -614,12 +617,12 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
     private void moveSegment(MxGraphNode segmentNode, int desiredPosition) {
         
         if (desiredPosition > rackUnits) {
-            new SimpleNotification("", ts.getTranslatedString("module.visualization.rack-view-position-exceeds-units")).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.visualization.rack-view-position-exceeds-units"), 
+                            AbstractNotification.NotificationType.WARNING, ts).open();
             return;
         }        
         if (desiredPosition <= 0) // first position     
             return;
-        
         
         RackSegment rackSegment = rackContent.stream().filter(item -> item.getSegmentNode().equals(segmentNode)).findFirst().get();
         int segmentIndex = rackContent.indexOf(rackSegment);
@@ -655,7 +658,8 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
             emptySegmentsToMove.add(rs);
         }
         if (!unitAvailable) {
-            new SimpleNotification("", ts.getTranslatedString("module.visualization.rack-view-rack-unit-occupied")).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.rack-view-rack-unit-occupied"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
             return;
         }
         
@@ -689,7 +693,8 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
         mxGraph.setCellsMovable(true);
         mxGraph.executeStackLayout(rackNode.getUuid(), false, heightSeparator);
         mxGraph.setCellsMovable(false);
-        new SimpleNotification("", ts.getTranslatedString("module.visualization.rack-view-rack-position-updated")).open();
+        new SimpleNotification(ts.getTranslatedString("module.general.messages.information"), ts.getTranslatedString("module.visualization.rack-view-rack-position-updated"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
     }
     
     private void updateDevicesPosition(int desiredPosition, RackSegment rackSegment) {
@@ -701,7 +706,8 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                 bem.updateObject(item.getClassName(), item.getId(), attributes);
             } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | OperationNotPermittedException | InvalidArgumentException ex) {
                 Logger.getLogger(RackView.class.getName()).log(Level.SEVERE, null, ex);
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
             }
         });
     }
@@ -854,13 +860,15 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                                                     try {
                                                         List<BusinessObjectLight> childrenNodes = bem.getChildrenOfClassLight(theObject.getId(), theObject.getClassName(), Constants.CLASS_SLOT, -1);
                                                         if (name == null || name.isEmpty()) {
-                                                            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.rack-view-rack-slot-name-not-set")).open();
+                                                            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.rack-view-rack-slot-name-not-set"), 
+                                                                AbstractNotification.NotificationType.ERROR, ts).open();
                                                             return;
                                                         }
                                                         
                                                         BusinessObjectLight theSlot = childrenNodes.stream().filter(item -> item.getName().equals(name)).findAny().get();
                                                         if (theSlot == null) {
-                                                            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.rack-view-rack-no-slot-with-name") + name).open();
+                                                            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.rack-view-rack-no-slot-with-name") + name, 
+                                                                AbstractNotification.NotificationType.INFO, ts).open();
                                                             return;
                                                         }
                                                         
@@ -997,11 +1005,13 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
             reader.close();
         } catch (XMLStreamException ex) {
             Logger.getLogger(ObjectView.class.getName()).log(Level.SEVERE, null, ex);
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
             
         } catch (MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
             Logger.getLogger(RackView.class.getName()).log(Level.SEVERE, null, ex);
-             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
         }
     }
     
@@ -1028,12 +1038,12 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
     
     private List<BusinessObject> loadDevices(BusinessObjectLight businessObject) {
         String message = "";
-        
         try {
             BusinessObject rack = bem.getObject(businessObject.getClassName(), businessObject.getId());
             
             if (rack == null) {
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), "Cant find related object").open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), "Cant find related object", 
+                            AbstractNotification.NotificationType.INFO, ts).open();
             } else {
                 Integer objectRackUnits = (Integer) rack.getAttributes().get(Constants.PROPERTY_RACK_UNITS);
                 if (objectRackUnits == null || objectRackUnits <= 0) {
@@ -1086,7 +1096,8 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                                     
                                 }
                             } else 
-                                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.rack-view-rack-cant-find-child-object") + " : " + deviceLight.toString()).open();
+                                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.rack-view-rack-cant-find-child-object") + " : " + deviceLight, 
+                                        AbstractNotification.NotificationType.INFO, ts).open();
                             
                         }
                         if (message.isEmpty()) {
@@ -1110,16 +1121,19 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                             }
                             return devices;
                         } else {
-                            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.rack-view-error-building-view") + message).open();
+                            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.rack-view-error-building-view") + message, 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
                             return null;
                         }
                     }
                 }
             }
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), message).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), message, 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
             return null;
         } catch (BusinessObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException e) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.rack-view-error-building-view") + e).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.rack-view-error-building-view") + e, 
+                            AbstractNotification.NotificationType.INFO, ts).open();
             return null;
         }
     }
@@ -1300,7 +1314,8 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
             }          
             xmlsr.close();
         } catch (XMLStreamException ex) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.rack-view-error-retrieving-layouts")).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.rack-view-error-retrieving-layouts"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
         } catch (InvalidArgumentException | ApplicationObjectNotFoundException ex) {
             Logger.getLogger(RackView.class.getName()).log(Level.SEVERE, null, ex);
         }

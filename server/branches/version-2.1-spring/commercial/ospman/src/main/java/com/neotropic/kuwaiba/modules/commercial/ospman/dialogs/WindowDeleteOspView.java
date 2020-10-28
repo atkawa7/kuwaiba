@@ -21,6 +21,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.commands.Command;
 import org.neotropic.util.visual.dialog.ConfirmDialog;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
 /**
@@ -41,12 +42,14 @@ public class WindowDeleteOspView extends ConfirmDialog {
                     
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.success"),
-                        ts.getTranslatedString("module.ospman.view-deleted")
+                        ts.getTranslatedString("module.ospman.view-deleted"), 
+                        AbstractNotification.NotificationType.INFO, ts
                     ).open();
                 } catch (InventoryException ex) {
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.error"),
-                        ex.getLocalizedMessage()
+                        ex.getLocalizedMessage(), 
+                        AbstractNotification.NotificationType.ERROR, ts
                     ).open();
                 }
             }

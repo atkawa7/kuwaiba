@@ -61,6 +61,7 @@ import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewEdge;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
 import org.neotropic.util.visual.mxgraph.MxGraphCanvas;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.views.util.UtilHtml;
 
@@ -241,7 +242,8 @@ public class ObjectView extends AbstractDetailedView<BusinessObjectLight, Vertic
             return baos.toByteArray();
         } catch (XMLStreamException ex) {
              Logger.getLogger(ObjectView.class.getName()).log(Level.SEVERE, null, ex);
-             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();           
+             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                    AbstractNotification.NotificationType.ERROR, ts).open();           
      
         }
         return null;
@@ -376,7 +378,8 @@ public class ObjectView extends AbstractDetailedView<BusinessObjectLight, Vertic
             reader.close();
         } catch (XMLStreamException ex) {
              Logger.getLogger(ObjectView.class.getName()).log(Level.SEVERE, null, ex);
-             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();           
+             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                    AbstractNotification.NotificationType.INFO, ts).open();           
      
         }
     }
@@ -413,13 +416,15 @@ public class ObjectView extends AbstractDetailedView<BusinessObjectLight, Vertic
                     
                     List<BusinessObjectLight> aSide = bem.getSpecialAttribute(child.getClassName(), child.getId(), "endpointA"); 
                     if (aSide.isEmpty()) {
-                        new SimpleNotification("", String.format(ts.getTranslatedString("module.visualization.object-view-connection-loose-endpoint"), child)).open();
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.information"), String.format(ts.getTranslatedString("module.visualization.object-view-connection-loose-endpoint"), child), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
                         continue;
                     }
 
                     List<BusinessObjectLight> bSide = bem.getSpecialAttribute(child.getClassName(), child.getId(), "endpointB"); //NOI18N
                     if (bSide.isEmpty()) {
-                        new SimpleNotification("", String.format(ts.getTranslatedString("module.visualization.object-connection-with-loose-endpoint"), child)).open();
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.information"), String.format(ts.getTranslatedString("module.visualization.object-connection-with-loose-endpoint"), child), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
                         continue;
                     }
                     //The endpoints of the connections are ports, but the direct children of the selected object are (most likely) communication devices,
@@ -427,7 +432,8 @@ public class ObjectView extends AbstractDetailedView<BusinessObjectLight, Vertic
                     List<BusinessObjectLight> parentsASide = bem.getParents(aSide.get(0).getClassName(), aSide.get(0).getId());
                     int currentObjectIndexASide = parentsASide.indexOf(asLocalBusinessObject);
                     if (currentObjectIndexASide == -1) {
-                        new SimpleNotification("", String.format(ts.getTranslatedString("module.visualization.object-endpoint-a-not-located-in-object"), child)).open();
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.information"), String.format(ts.getTranslatedString("module.visualization.object-endpoint-a-not-located-in-object"), child), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
                         continue;
                     }
                     AbstractViewNode sourceNode = currentObjectIndexASide == 0 ? viewMap.getNode(aSide.get(0)) : viewMap.getNode(parentsASide.get(currentObjectIndexASide - 1));
@@ -435,7 +441,8 @@ public class ObjectView extends AbstractDetailedView<BusinessObjectLight, Vertic
                     List<BusinessObjectLight> parentsBSide = bem.getParents(bSide.get(0).getClassName(), bSide.get(0).getId());
                     int currentObjectIndexBSide = parentsBSide.indexOf(asLocalBusinessObject);
                     if (currentObjectIndexBSide == -1) {
-                        new SimpleNotification("", String.format(ts.getTranslatedString("module.visualization.object-endpoint-b-not-located-in-object"), child)).open();
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.information"), String.format(ts.getTranslatedString("module.visualization.object-endpoint-b-not-located-in-object"), child), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
                         continue;
                     }
                     AbstractViewNode targetNode = currentObjectIndexBSide == 0 ? viewMap.getNode(bSide.get(0)) : viewMap.getNode(parentsBSide.get(currentObjectIndexBSide - 1));
@@ -454,7 +461,8 @@ public class ObjectView extends AbstractDetailedView<BusinessObjectLight, Vertic
             
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | ApplicationObjectNotFoundException | InvalidArgumentException ex) {
              Logger.getLogger(ObjectView.class.getName()).log(Level.SEVERE, null, ex);
-             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();           
+             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();           
      
         }
     }

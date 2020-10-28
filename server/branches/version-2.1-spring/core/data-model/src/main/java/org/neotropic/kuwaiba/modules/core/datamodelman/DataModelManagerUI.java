@@ -88,6 +88,7 @@ import org.neotropic.util.visual.general.BoldLabel;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.properties.AbstractProperty;
 import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.properties.PropertySheet;
 import org.neotropic.util.visual.tree.BasicTree;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -231,7 +232,8 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
         try {
             createContent();
         } catch (InvalidArgumentException | MetadataObjectNotFoundException ex) {
-             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage()).open();
+             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
              Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);       
         }
     }
@@ -247,12 +249,14 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
     public void showActionCompledMessages(ActionCompletedListener.ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
             try {
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();                                          
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();                                          
             } catch (Exception ex) {
                 Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
  
     }
 
@@ -333,7 +337,8 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
                         this.newClassVisualAction.getVisualComponent(new ModuleActionParameterSet(
                         new ModuleActionParameter("parentClass", selectedClass))).open();
                     } else 
-                        new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.datamodelman.messages.class-unselected")).open();
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.datamodelman.messages.class-unselected"), 
+                            AbstractNotification.NotificationType.WARNING, ts).open();
                 });
         btnDeleteClass = new Button(this.deleteClassVisualAction.getModuleAction().getDisplayName(), new Icon(VaadinIcon.TRASH),
                 (event) -> {
@@ -341,7 +346,8 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
                         this.deleteClassVisualAction.getVisualComponent(new ModuleActionParameterSet(
                         new ModuleActionParameter("class", selectedClass))).open();
                     } else 
-                        new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.datamodelman.messages.class-unselected")).open();
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.datamodelman.messages.class-unselected"), 
+                            AbstractNotification.NotificationType.WARNING, ts).open();
                 });
         btnDeleteClass.setEnabled(false);
         HorizontalLayout lylActions = new HorizontalLayout(btnNewClass, btnDeleteClass);
@@ -401,7 +407,8 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
                         this.newAttributeVisualAction.getVisualComponent(new ModuleActionParameterSet(
                         new ModuleActionParameter("class", selectedClass))).open();
                     } else 
-                        new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.datamodelman.messages.class-unselected")).open();
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.datamodelman.messages.class-unselected"), 
+                            AbstractNotification.NotificationType.WARNING, ts).open();
                 });
         btnDeleteAttribute = new Button(this.deleteAttributeVisualAction.getModuleAction().getDisplayName(), new Icon(VaadinIcon.TRASH),
                 (event) -> {
@@ -410,7 +417,8 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
                         new ModuleActionParameter("class", selectedClass),
                         new ModuleActionParameter("attribute", selectedAttribute))).open();
                     } else 
-                        new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.datamodelman.messages.class-unselected")).open();
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.datamodelman.messages.class-unselected"), 
+                            AbstractNotification.NotificationType.WARNING, ts).open();
                 });
         btnDeleteAttribute.setEnabled(false);
         VerticalLayout lytListClassAttributes = new VerticalLayout(new HorizontalLayout(btnNewAttribute, btnDeleteAttribute),
@@ -507,7 +515,8 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
             propsheetClassAttributes.setItems(PropertyFactory.generalPropertiesFromAttribute(selectedAttribute));
         } catch (Exception ex) {
             Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
         }
     }
     
@@ -590,7 +599,8 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
                     genericObjectListTree.getDataProvider().refreshAll();
                     inventoryObjectTree.getDataProvider().refreshAll();
                     updatePropertySheetGeneralAttributes();
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
                 }
             } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException
                     | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
@@ -624,7 +634,6 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
     }
 
     private void updateGridClassAttributes(ClassMetadataLight object) {
-        
         try {
             if (object != null) {
             ClassMetadata classMetadata = mem.getClass(object.getName());
@@ -634,7 +643,8 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
                 tblClassAttributes.setItems(new ArrayList<>());
         } catch (MetadataObjectNotFoundException ex) {
             Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
         }
     }
 
@@ -643,7 +653,6 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
         propsheetClassAttributes.addPropertyValueChangedListener((AbstractProperty<? extends Object> property) -> {
              try {
                 if (selectedAttribute != null && selectedClass != null) {
-                    
                     AttributeMetadata attributeMetadataToUpdate = new AttributeMetadata();
                     attributeMetadataToUpdate.setId(selectedAttribute.getId());
                     attributeMetadataToUpdate.setName(null);
@@ -687,11 +696,12 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
                     updateGridClassAttributes(selectedClass);
                     // Update Property Sheet
                     updatePropertySheetClassAttributes();                  
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
                 }
             }catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException
                     | InvalidArgumentException ex) {
-                new SimpleNotification("", ex.getMessage()).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
                 Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         });     
@@ -785,7 +795,8 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
                     StreamResource resource = new StreamResource("icon", () -> bufferIcon.getInputStream());
                     iconImage.setSrc(resource);
 
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
                 }
             } catch (IOException | ApplicationObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException | BusinessObjectNotFoundException ex) {
                 Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -794,7 +805,7 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
         
         uploadIcon.addFileRejectedListener(listener -> {
                 new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),
-                       listener.getErrorMessage()).open();             
+                       listener.getErrorMessage(), AbstractNotification.NotificationType.ERROR, ts).open();             
             }
         );
         
@@ -825,7 +836,8 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
                     StreamResource resource = new StreamResource("icon", () -> bufferSmallIcon.getInputStream());
                     smallIconImage.setSrc(resource);
 
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
                 }
             } catch (IOException | ApplicationObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException | BusinessObjectNotFoundException ex) {
                 Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -834,7 +846,7 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
         
         uploadSmallIcon.addFileRejectedListener(listener -> {
                      new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),
-                       listener.getErrorMessage()).open();             
+                       listener.getErrorMessage(), AbstractNotification.NotificationType.INFO, ts).open();             
             }
         );
         

@@ -61,6 +61,7 @@ import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewNode;
 import org.neotropic.kuwaiba.core.apis.integration.views.ViewEventListener;
 import org.neotropic.kuwaiba.core.apis.integration.views.ViewMap;
 import org.neotropic.kuwaiba.modules.optional.topoman.tools.BasicStyleEditor;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 
 /**
  * Custom view implementation for Topology view module with a mxgraph component as
@@ -265,7 +266,8 @@ public class TopologyView extends AbstractView<BusinessObjectLight, Component> {
             return baos.toByteArray();
         } catch (XMLStreamException ex) {
             Logger.getLogger(TopologyView.class.getName()).log(Level.SEVERE, null, ex);
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
         }
         return null;
     }
@@ -329,7 +331,8 @@ public class TopologyView extends AbstractView<BusinessObjectLight, Component> {
                             props.put("y", yCoordinate);
                             addNode(lol, props);
                         } else {
-                            new SimpleNotification("", String.format(ts.getTranslatedString("module.topoman.object-not-found"), objectClass, objectId)).open();
+                            new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), String.format(ts.getTranslatedString("module.topoman.object-not-found"), objectClass, objectId), 
+                                AbstractNotification.NotificationType.INFO, ts).open();
                         }
 
                     } else if (reader.getName().equals(qIcon)) { // FREE CLOUDS
@@ -417,9 +420,11 @@ public class TopologyView extends AbstractView<BusinessObjectLight, Component> {
                         props.put("label", label == null ? "" : label);                     
                        
                         AbstractViewEdge viewEdge = addEdge(edge, endPointA, endPointB, props);
-                        if (viewEdge == null) {
-                            new SimpleNotification("", ts.getTranslatedString("module.topoman.enpoint-not-found")).open();
-                        }
+                        if (viewEdge == null)
+                            new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), 
+                                    ts.getTranslatedString("module.topoman.enpoint-not-found"), 
+                                        AbstractNotification.NotificationType.WARNING, ts).open();
+                        
                     }
 
                 }
@@ -434,7 +439,8 @@ public class TopologyView extends AbstractView<BusinessObjectLight, Component> {
                 mxgraphCanvas.getMxGraph().refreshGraph();
             });
         } catch (NumberFormatException | XMLStreamException ex) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.topoman.view-corrupted")).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.topoman.view-corrupted"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
             Logger.getLogger(TopologyView.class.getName()).log(Level.SEVERE, null, ex);
         } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
             Logger.getLogger(TopologyView.class.getName()).log(Level.SEVERE, null, ex);

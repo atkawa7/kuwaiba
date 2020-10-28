@@ -47,6 +47,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManage
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualAction;
 import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
 /**
@@ -216,13 +217,15 @@ public class WindowMidSpanAccess extends Dialog implements ActionCompletedListen
             } else {
                 new SimpleNotification(
                     ts.getTranslatedString("module.general.messages.error"),
-                    ts.getTranslatedString("module.ospman.mid-span-access.there-are-no-cables")
+                    ts.getTranslatedString("module.ospman.mid-span-access.there-are-no-cables"), 
+                    AbstractNotification.NotificationType.ERROR, ts
                 ).open();
             }
         } catch (InventoryException ex) {
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"),
-                ex.getLocalizedMessage()
+                ex.getLocalizedMessage(), 
+                AbstractNotification.NotificationType.ERROR, ts
             ).open();
         }
     }
@@ -260,9 +263,11 @@ public class WindowMidSpanAccess extends Dialog implements ActionCompletedListen
     @Override
     public void actionCompleted(ActionCompletedEvent event) {
         if (event.getStatus() == ActionCompletedEvent.STATUS_SUCCESS)
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), event.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), event.getMessage(), 
+                AbstractNotification.NotificationType.INFO, ts).open();
         else
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), event.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), event.getMessage(), 
+                AbstractNotification.NotificationType.ERROR, ts).open();
     }
     
     private class CableService {
@@ -292,7 +297,8 @@ public class WindowMidSpanAccess extends Dialog implements ActionCompletedListen
             } catch (InventoryException ex) {
                 new SimpleNotification(
                     ts.getTranslatedString("module.general.messages.error"), 
-                    ex.getLocalizedMessage()
+                    ex.getLocalizedMessage(), 
+                    AbstractNotification.NotificationType.ERROR, ts
                 ).open();
             }
             int size = filter.isEmpty() ? cables.size() : filterCables.size();
@@ -322,7 +328,8 @@ public class WindowMidSpanAccess extends Dialog implements ActionCompletedListen
             } catch (InventoryException ex) {
                 new SimpleNotification(
                     ts.getTranslatedString("module.general.messages.error"), 
-                    ex.getLocalizedMessage()
+                    ex.getLocalizedMessage(), 
+                    AbstractNotification.NotificationType.ERROR, ts
                 ).open();
             }
             int size = filter.isEmpty() ? devices.size() : filterDevices.size();

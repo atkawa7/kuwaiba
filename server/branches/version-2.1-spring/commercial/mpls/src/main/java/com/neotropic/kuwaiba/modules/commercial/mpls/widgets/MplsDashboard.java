@@ -88,18 +88,12 @@ import org.neotropic.kuwaiba.modules.core.navigation.navtree.nodes.InventoryObje
 import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
 import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyValueConverter;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
-import org.neotropic.kuwaiba.modules.optional.reports.widgets.ClassLevelReportWidget;
 import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewEdge;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
-import org.neotropic.kuwaiba.visualization.views.RackView;
-import org.neotropic.kuwaiba.visualization.views.PhysicalPathView;
-import org.neotropic.kuwaiba.visualization.views.PhysicalTreeView;
-import org.neotropic.kuwaiba.visualization.views.RackView;
-import org.neotropic.kuwaiba.visualization.widgets.ObjectViewWidget;
-import org.neotropic.kuwaiba.visualization.widgets.RackViewWidget;
 import org.neotropic.util.visual.dialog.ConfirmDialog;
 import org.neotropic.util.visual.general.BoldLabel;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.properties.AbstractProperty;
 import org.neotropic.util.visual.properties.PropertySheet;
@@ -257,9 +251,11 @@ public class MplsDashboard extends VerticalLayout {
     
     public void showActionCompledMessages(ActionCompletedListener.ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) 
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
         else
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
     }
        
     private void createContent() {  
@@ -375,10 +371,12 @@ public class MplsDashboard extends VerticalLayout {
                             mplsView.getMxgraphCanvas().getMxGraph().refreshGraph();
                         }
 
-                        new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
                     }
                 } catch (InventoryException ex) {
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ex.getLocalizedMessage()).open();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
                 }
             }
         };
@@ -493,7 +491,8 @@ public class MplsDashboard extends VerticalLayout {
         cbxSourceObject.addValueChangeListener(listener -> {
             if (listener.getValue() != null && listener.getValue().equals(selectedTargetEquipment)) {
                 cbxSourceObject.setValue(null);
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpls.must-select-different-devices")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpls.must-select-different-devices"), 
+                            AbstractNotification.NotificationType.WARNING, ts).open();
                 return;
             }
             selectedSourceEquipment = listener.getValue();
@@ -504,7 +503,8 @@ public class MplsDashboard extends VerticalLayout {
         cbxTargetObject.addValueChangeListener(listener -> {
             if (listener.getValue() != null && listener.getValue().equals(selectedSourceEquipment)) {
                 cbxTargetObject.setValue(null);
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpls.must-select-different-devices")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpls.must-select-different-devices"), 
+                            AbstractNotification.NotificationType.WARNING, ts).open();
                 return;
             }
             selectedTargetEquipment = listener.getValue();
@@ -530,22 +530,26 @@ public class MplsDashboard extends VerticalLayout {
         Button btnCreateConnection = new Button(ts.getTranslatedString("module.mpls.create-connection"), evt -> {
             
             if (selectedEndPointA == null) {
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpls.must-select-end-point-a")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpls.must-select-end-point-a"), 
+                            AbstractNotification.NotificationType.WARNING, ts).open();
                 return;
             }
             if (selectedEndPointB == null) {
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpls.must-select-end-point-b")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpls.must-select-end-point-b"), 
+                            AbstractNotification.NotificationType.WARNING, ts).open();
                 return;
             }
             try {
 
                 if (!mem.isSubclassOf(Constants.CLASS_GENERICPORT, selectedEndPointA.getClassName())) {
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpls.must-be-genericport-endpointA")).open();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpls.must-be-genericport-endpointA"), 
+                            AbstractNotification.NotificationType.WARNING, ts).open();
                     return;
                 }
 
                 if (!mem.isSubclassOf(Constants.CLASS_GENERICPORT, selectedEndPointB.getClassName())) {
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpls.must-be-genericport-endpointB")).open();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpls.must-be-genericport-endpointB"), 
+                            AbstractNotification.NotificationType.WARNING, ts).open();
                     return;
                 }
 
@@ -555,17 +559,20 @@ public class MplsDashboard extends VerticalLayout {
                 String newTransportLink = mplsService.createMPLSLink(selectedEndPointA.getClassName(), selectedEndPointA.getId(),
                         selectedEndPointB.getClassName(), selectedEndPointB.getId(), attributes, session.getUser().getUserName());
                 if (newTransportLink == null) {
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.mpls.actions.mpls-link-error-creating")).open();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.mpls.actions.mpls-link-error-creating"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
                 } else {
                     BusinessObjectLight mplsLink = bem.getObject(Constants.CLASS_MPLSLINK, newTransportLink);
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.actions.mpls-link-created")).open();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.actions.mpls-link-created"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
                     mplsView.getMxgraphCanvas().addEdge(mplsLink, mplsLink.getId(), selectedSourceEquipment, selectedTargetEquipment, null, selectedEndPointA.getName(), selectedEndPointB.getName());
                     mplsView.syncViewMap();
                     dlgConnection.close();
                 }
             } catch (InvalidArgumentException | MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
                 Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
             } 
             
         });
@@ -644,11 +651,13 @@ public class MplsDashboard extends VerticalLayout {
             if (currentView != null) {
                 aem.updateGeneralView(currentView.getId(), currentView.getName(), currentView.getDescription(), mplsView.getAsXml(), null);
                 currentView.setStructure(mplsView.getAsXml());
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.view-saved")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.view-saved"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
             }
         } catch (InvalidArgumentException | ApplicationObjectNotFoundException ex) {
             Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
         }
           
     }
@@ -679,14 +688,16 @@ public class MplsDashboard extends VerticalLayout {
                     if (deletePermanently)
                         bem.deleteObject(selectedObject.getClassName(), selectedObject.getId(), false);
                     mplsView.removeNode(selectedObject);                                 
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.object-deleted")).open();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.object-deleted"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
                 } else {
                     if (deletePermanently) {
                         Session session = UI.getCurrent().getSession().getAttribute(Session.class);
                         mplsService.deleteMPLSLink(selectedObject.getId(), true, session.getUser().getUserName());       
                     }
                     mplsView.removeEdge(selectedObject);
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.mpls-link-deleted")).open();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.mpls-link-deleted"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
                 }
                 if (deletePermanently)
                         saveCurrentView();     
@@ -694,7 +705,8 @@ public class MplsDashboard extends VerticalLayout {
                 updatePropertySheetObjects();
             } catch (BusinessObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
                 Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage()).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
             }
         }
     }
@@ -740,11 +752,14 @@ public class MplsDashboard extends VerticalLayout {
                }
             }
             if (nodesAdded.size() > 0)    
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), nodesAdded.size() + " Object(s) Added").open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), nodesAdded.size() + " object(s) added", 
+                            AbstractNotification.NotificationType.INFO, ts).open();
             if (mplsLinksAdded.size() > 0)    
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), mplsLinksAdded.size() + " MPLS Link(s) Added").open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), mplsLinksAdded.size() + " MPLS link(s) added", 
+                            AbstractNotification.NotificationType.INFO, ts).open();
             else 
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"),"No MPLS Link found for objects in view").open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), "No MPLS link found for objects in this view", 
+                            AbstractNotification.NotificationType.INFO, ts).open();
         }
         catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException ex) {
             Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
@@ -800,7 +815,8 @@ public class MplsDashboard extends VerticalLayout {
             updatePropertySheetObjects();
             this.btnRemoveView.setEnabled(true);
             updatePropertySheetView();
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.actions.view-loaded")).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.actions.view-loaded"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
         } catch (ApplicationObjectNotFoundException ex) {
             Logger.getLogger(MplsManagerUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -884,7 +900,8 @@ public class MplsDashboard extends VerticalLayout {
             } else 
                 propSheetObjects.clear();
         } catch (InventoryException ex) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
             Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -912,9 +929,11 @@ public class MplsDashboard extends VerticalLayout {
             props.put("x", x);
             props.put("y", y);
             mplsView.addNode(node, props);
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.object-added")).open();                  
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.object-added"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();                  
         } else 
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.object-already-included")).open();                         
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.object-already-included"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();                         
     }
     
     /**
@@ -928,9 +947,11 @@ public class MplsDashboard extends VerticalLayout {
             props.put("sourceLabel", connection.getEndpointA() == null ? "" : connection.getEndpointA().getName());
             props.put("targetLabel", connection.getEndpointB() == null ? "" : connection.getEndpointB().getName());
             mplsView.addEdge(connection.getConnectionObject(), connection.getDeviceA(), connection.getDeviceB(), props);
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.mpls-link-added")).open();                  
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.mpls-link-added"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();                  
         } else 
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.edge-already-included")).open();                   
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.edge-already-included"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();                   
         
     }
         

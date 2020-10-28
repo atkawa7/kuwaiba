@@ -94,6 +94,7 @@ import com.vaadin.flow.component.html.Label;
 import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualAction;
 import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectEdge;
 import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectNode;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 
 /**
  * Graphically displays Outside Plant elements on a map.
@@ -520,7 +521,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         if (selectedOverlay == null) {
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.warning"), 
-                ts.getTranslatedString("module.ospman.view.select-overlay")
+                ts.getTranslatedString("module.ospman.view.select-overlay"), 
+                AbstractNotification.NotificationType.WARNING, ts
             ).open();
             return;
         }
@@ -537,7 +539,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         if (selectedOverlay == null) {
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.warning"), 
-                ts.getTranslatedString("module.ospman.view.select-overlay")
+                ts.getTranslatedString("module.ospman.view.select-overlay"), 
+                AbstractNotification.NotificationType.WARNING, ts
             ).open();
             return;
         }
@@ -572,7 +575,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                         } catch (MetadataObjectNotFoundException ex) {
                             new SimpleNotification(
                                 ts.getTranslatedString("module.general.messages.error"), 
-                                ex.getLocalizedMessage()
+                                ex.getLocalizedMessage(), 
+                                AbstractNotification.NotificationType.ERROR, ts
                             ).open();
                         }
                     }
@@ -600,7 +604,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
             } catch (InvalidArgumentException ex) {
                 new SimpleNotification(
                     ts.getTranslatedString("module.general.messages.error"), 
-                    ex.getLocalizedMessage()
+                    ex.getLocalizedMessage(), 
+                    AbstractNotification.NotificationType.ERROR, ts
                 ).open();
             }
         }
@@ -736,7 +741,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                                             } catch (InvalidArgumentException ex) {
                                                 new SimpleNotification(
                                                     ts.getTranslatedString("module.general.messages.error"), 
-                                                    ex.getLocalizedMessage()
+                                                    ex.getLocalizedMessage(), 
+                                                    AbstractNotification.NotificationType.ERROR, ts
                                                 ).open();
                                             }
                                             buildWithSavedView(viewObject.getStructure());
@@ -752,7 +758,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                                         if (viewMap.getNodes().isEmpty()) {
                                             new SimpleNotification(
                                                 ts.getTranslatedString("module.general.messages.information"), 
-                                                ts.getTranslatedString("module.ospman.empty-view")
+                                                ts.getTranslatedString("module.ospman.empty-view"), 
+                                                AbstractNotification.NotificationType.INFO, ts
                                             ).open();
                                         }
                                         else
@@ -794,21 +801,24 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                         }
                         component.add(map.getComponent());                        
                     }
-                } else {
+                } else 
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.error"), 
-                        String.format(ts.getTranslatedString("module.ospman.not-valid-map-provider"), mapClass.getCanonicalName())
+                        String.format(ts.getTranslatedString("module.ospman.not-valid-map-provider"), mapClass.getCanonicalName()), 
+                        AbstractNotification.NotificationType.ERROR, ts  
                     ).open();
-                }
+                
             } catch (ClassNotFoundException ex) {
                 new SimpleNotification(
                     ts.getTranslatedString("module.general.messages.error"), 
-                    String.format(ts.getTranslatedString("module.ospman.not-valid-map-provider"), generalMapsProvider)
+                    String.format(ts.getTranslatedString("module.ospman.not-valid-map-provider"), generalMapsProvider), 
+                    AbstractNotification.NotificationType.ERROR, ts
                 ).open();
             } catch (InventoryException ex) {
                 new SimpleNotification(
                     ts.getTranslatedString("module.general.messages.error"), 
-                    ex.getLocalizedMessage()
+                    ex.getLocalizedMessage(), 
+                    AbstractNotification.NotificationType.ERROR, ts
                 ).open();
             } catch (IllegalAccessException | IllegalArgumentException | 
                 InstantiationException | NoSuchMethodException | 
@@ -817,7 +827,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                 Logger.getLogger(OutsidePlantView.class.toString()).log(Level.SEVERE, ex.getLocalizedMessage());
                 new SimpleNotification(
                     ts.getTranslatedString("module.general.messages.error"), 
-                    ts.getTranslatedString("module.general.messages.unexpected-error")
+                    ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                    AbstractNotification.NotificationType.ERROR, ts
                 ).open();
             }
         }
@@ -870,7 +881,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                             new SimpleNotification(
                                 ts.getTranslatedString("module.general.messages.error"), 
                                 String.format(ts.getTranslatedString("module.ospman.view.update-view-version"), 
-                                    version, OutsidePlantService.VIEW_VERSION)
+                                    version, OutsidePlantService.VIEW_VERSION), 
+                                AbstractNotification.NotificationType.ERROR, ts
                             ).open();
                             break;
                         }
@@ -916,7 +928,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
             Logger.getLogger(OutsidePlantView.class.getName()).log(Level.SEVERE, null, ex);
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"), 
-                ts.getTranslatedString("module.general.messages.unexpected-error")
+                ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                AbstractNotification.NotificationType.ERROR, ts
             ).open();
         }
     }
@@ -1223,12 +1236,14 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                         this.getProperties().put(Constants.PROPERTY_DESCRIPTION, txtDescription.getValue());
                         new SimpleNotification(
                             ts.getTranslatedString("module.general.messages.success"), 
-                            ts.getTranslatedString("module.ospman.view-saved")
+                            ts.getTranslatedString("module.ospman.view-saved"), 
+                            AbstractNotification.NotificationType.INFO, ts
                         ).open();
                     } catch (InventoryException ex) {
                         new SimpleNotification(
                             ts.getTranslatedString("module.general.messages.error"), 
-                            ex.getLocalizedMessage()
+                            ex.getLocalizedMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts
                         ).open();
                     }
                 });
@@ -1275,7 +1290,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                         } catch (InventoryException ex) {
                             new SimpleNotification(
                                 ts.getTranslatedString("module.general.messages.error"), 
-                                ex.getLocalizedMessage()
+                                ex.getLocalizedMessage(), 
+                                AbstractNotification.NotificationType.ERROR, ts
                             ).open();
                         }
                     } else if (tagEdge.equals(reader.getName())) {
@@ -1317,7 +1333,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                         } catch (InventoryException ex) {
                             new SimpleNotification(
                                 ts.getTranslatedString("module.general.messages.error"), 
-                                ex.getLocalizedMessage()
+                                ex.getLocalizedMessage(), 
+                                AbstractNotification.NotificationType.ERROR, ts
                             ).open();
                         }
                     }
@@ -1328,7 +1345,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
             Logger.getLogger(OutsidePlantView.class.getName()).log(Level.SEVERE, null, ex);
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"), 
-                ts.getTranslatedString("module.general.messages.unexpected-error")
+                ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                AbstractNotification.NotificationType.ERROR, ts
             ).open();
         }
     }

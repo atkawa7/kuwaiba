@@ -69,6 +69,7 @@ import org.neotropic.kuwaiba.modules.core.taskman.actions.NewTaskParameterVisual
 import org.neotropic.kuwaiba.modules.core.taskman.actions.NewTaskUserVisualAction;
 import org.neotropic.kuwaiba.modules.core.taskman.actions.NewTaskVisualAction;
 import org.neotropic.kuwaiba.modules.core.taskman.tools.TaskManagerRenderingTools;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -185,7 +186,8 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
     public void actionCompleted(ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
             try {
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
 
                 if (currentTask != null) {
                     loadTasks();
@@ -198,7 +200,8 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
                 Logger.getLogger(TaskManagerUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
     }
     
     @Override
@@ -673,7 +676,8 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
                     TaskScheduleDescriptor schedule = new TaskScheduleDescriptor(task.getSchedule().getStartTime(), intEveryxMinutes.getValue(),  cmbExecutionType.getValue().getType());
                     aem.updateTaskSchedule(task.getId(), schedule);
                     
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.taskman.task.properties-button.notification-saved")).open();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.taskman.task.properties-button.notification-saved"), 
+                    AbstractNotification.NotificationType.INFO, ts).open();
                     wdwUpdateProperties.close();
                     loadTasks();
                 } catch (ApplicationObjectNotFoundException ex) {
@@ -875,7 +879,8 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
                 } catch (ApplicationObjectNotFoundException ex) {
                     Logger.getLogger(TaskManagerUI.class.getName()).log(Level.SEVERE, null, ex);
                 } 
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.taskman.task.parameters.button.notification-saved")).open();  
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.taskman.task.parameters.button.notification-saved"), 
+                    AbstractNotification.NotificationType.INFO, ts).open();  
                 wdwUpdateParameter.close();
                 loadTaskParameters(currentTask);
             });

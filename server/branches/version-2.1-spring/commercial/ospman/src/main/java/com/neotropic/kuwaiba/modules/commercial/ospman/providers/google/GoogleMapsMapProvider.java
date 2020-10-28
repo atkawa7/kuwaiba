@@ -35,6 +35,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapProvider;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 
 /**
  * Map implementation to Google Maps
@@ -60,7 +61,8 @@ public class GoogleMapsMapProvider implements MapProvider {
         } catch (InventoryException ex) {
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"), 
-                "The configuration variable general.maps.apiKey has not been set. The default map will be used"
+                "The configuration variable general.maps.apiKey has not been set. The default map will be used", 
+                AbstractNotification.NotificationType.ERROR, ts
             ).open();
         }
         double mapCenterLat;

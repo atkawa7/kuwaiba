@@ -26,6 +26,7 @@ import java.util.EventListener;
 import java.util.List;
 import java.util.Properties;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
 
@@ -85,7 +86,8 @@ public class Wizard extends VerticalLayout {
                     fireEvent(new WizardEvent(WizardEvent.TYPE_FINAL_STEP,currentStep.getProperties()));
             } catch (Exception ex) {
                 fireEvent(new WizardEvent(WizardEvent.TYPE_STEP_REJECTED, currentStep.getProperties()));
-                new SimpleNotification("Error", ex.getMessage()).open();
+                new SimpleNotification("Error", ex.getMessage(), 
+                            AbstractNotification.NotificationType.INFO, null).open();
             }
 
         });

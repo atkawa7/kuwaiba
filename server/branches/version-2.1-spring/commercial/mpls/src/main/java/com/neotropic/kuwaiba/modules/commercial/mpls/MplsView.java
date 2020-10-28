@@ -61,6 +61,7 @@ import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewEdge;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewNode;
 import org.neotropic.kuwaiba.core.apis.integration.views.ViewEventListener;
 import org.neotropic.kuwaiba.core.apis.integration.views.ViewMap;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 
 /**
  * Custom view implementation for MPLS view module with a mxgraph component as canvas.
@@ -204,7 +205,8 @@ public class MplsView extends AbstractView<BusinessObjectLight, Component> {
             return baos.toByteArray();
         } catch (XMLStreamException ex) {
             Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();           
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();           
         }
         return null;
     }
@@ -344,7 +346,8 @@ public class MplsView extends AbstractView<BusinessObjectLight, Component> {
                 mxgraphCanvas.getMxGraph().refreshGraph();
             });
         } catch (NumberFormatException | XMLStreamException ex) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.mpls.view-corrupted")).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.mpls.view-corrupted"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
              Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
         } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | ApplicationObjectNotFoundException | InvalidArgumentException ex) {
             Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);

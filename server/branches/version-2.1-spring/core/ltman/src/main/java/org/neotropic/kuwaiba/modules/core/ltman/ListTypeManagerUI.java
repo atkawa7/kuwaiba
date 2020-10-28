@@ -63,6 +63,7 @@ import org.neotropic.kuwaiba.modules.core.ltman.actions.NewListTypeItemVisualAct
 import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
 import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyValueConverter;
 import org.neotropic.util.visual.general.BoldLabel;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.properties.PropertySheet;
 import org.neotropic.util.visual.properties.PropertySheet.IPropertyValueChangedListener;
 import org.neotropic.util.visual.notifications.SimpleNotification;
@@ -147,7 +148,8 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
             createContent();
         } catch (InvalidArgumentException | MetadataObjectNotFoundException ex) {
             Logger.getLogger(ListTypeManagerUI.class.getName()).log(Level.SEVERE, null, ex);
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
         }
     }
     
@@ -161,17 +163,20 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
     public void actionCompleted(ActionCompletedListener.ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
             try {
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
                 
                 if (currentListType != null)
                     loadListTypeItems(currentListType);
                 
             } catch (InvalidArgumentException | MetadataObjectNotFoundException ex) {
                 Logger.getLogger(ListTypeManagerUI.class.getName()).log(Level.SEVERE, null, ex);
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
             }
         } else
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
     }
 
     private void createContent() throws InvalidArgumentException, MetadataObjectNotFoundException {
@@ -248,9 +253,11 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
             BusinessObject aWholeListTypeItem = aem.getListTypeItem(currentListTypeItem.getClassName(), currentListTypeItem.getId());
             propertysheet.setItems(PropertyFactory.propertiesFromBusinessObject(aWholeListTypeItem, ts, aem, mem));
         } catch (InventoryException ex) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
             Logger.getLogger(ListTypeManagerUI.class.getName()).log(Level.SEVERE, null, ex);
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
         }
     }
 
@@ -274,7 +281,8 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
                 loadListTypeItems(ev.getItem());
             } catch (InvalidArgumentException | MetadataObjectNotFoundException ex) {
                 Logger.getLogger(ListTypeManagerUI.class.getName()).log(Level.SEVERE, null, ex);
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
             }
         });
         
@@ -314,7 +322,8 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
                 List<BusinessObjectLight> listTypeItemUses = aem.getListTypeItemUses(listTypeItem.getClassName(), listTypeItem.getId(), -1);
                 
                 if (listTypeItemUses.isEmpty()) {
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.information"), ts.getTranslatedString("module.listtypeman.listtypeitem-not-used")).open();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.information"), ts.getTranslatedString("module.listtypeman.listtypeitem-not-used"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
                 } else {
                     Dialog dlgListTypeItemUses = new Dialog();
                     Grid<BusinessObjectLight> tblListTypeItemUses = new Grid<>();
@@ -372,7 +381,8 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
 
                 updatePropertySheet();
 
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
             }
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException
                 | OperationNotPermittedException | InvalidArgumentException ex) {

@@ -40,10 +40,11 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
 /**
- * Dialog to create a new container connection
+ * Dialog to create a new container connection.
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class WindowNewContainer extends Dialog {
@@ -104,7 +105,8 @@ public class WindowNewContainer extends Dialog {
                 } catch (MetadataObjectNotFoundException ex) {
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.error"), 
-                        ex.getLocalizedMessage()
+                        ex.getLocalizedMessage(), 
+                        AbstractNotification.NotificationType.ERROR, ts
                     ).open();
                 }
             });
@@ -138,7 +140,8 @@ public class WindowNewContainer extends Dialog {
                 } catch (IllegalStateException | InventoryException ex) {
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.error"), 
-                        ex.getMessage()
+                        ex.getMessage(), 
+                        AbstractNotification.NotificationType.ERROR, ts
                     ).open();
                     close();
                 }
@@ -155,7 +158,8 @@ public class WindowNewContainer extends Dialog {
         } catch (InventoryException ex) {
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"), 
-                ex.getLocalizedMessage()
+                ex.getLocalizedMessage(), 
+                AbstractNotification.NotificationType.ERROR, ts
             ).open();
         }
     }
@@ -173,7 +177,8 @@ public class WindowNewContainer extends Dialog {
         } catch (InventoryException ex) {
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"),
-                ex.getLocalizedMessage()
+                ex.getLocalizedMessage(), 
+                AbstractNotification.NotificationType.ERROR, ts
             ).open();
         }
     }

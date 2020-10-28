@@ -54,6 +54,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewEdge;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
 /**
@@ -104,7 +105,8 @@ public class WindowContainers extends Dialog {
         if (rootContainers.isEmpty()) {
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"), 
-                ts.getTranslatedString("module.ospman.containers.error.select-container")
+                ts.getTranslatedString("module.ospman.containers.error.select-container"), 
+                AbstractNotification.NotificationType.ERROR, ts
             ).open();
             return;            
         }
@@ -126,14 +128,16 @@ public class WindowContainers extends Dialog {
             } catch (InventoryException ex) {
                 new SimpleNotification(
                     ts.getTranslatedString("module.general.messages.error"), 
-                    ex.getLocalizedMessage()
+                    ex.getLocalizedMessage(), 
+                    AbstractNotification.NotificationType.ERROR, ts
                 ).open();
             }
         });
         if (!hasPath()) {
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"), 
-                ts.getTranslatedString("module.ospman.containers.path.not-continuous")
+                ts.getTranslatedString("module.ospman.containers.path.not-continuous"), 
+                AbstractNotification.NotificationType.ERROR, ts
             ).open();
         } else {
             init();
@@ -187,12 +191,14 @@ public class WindowContainers extends Dialog {
                 if (containers.isEmpty()) {
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.warning"), 
-                        ts.getTranslatedString("module.ospman.containers.error.select-container")
+                        ts.getTranslatedString("module.ospman.containers.error.select-container"), 
+                        AbstractNotification.NotificationType.WARNING, ts
                     ).open();
                 } else if (!hasPath()) {
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.error"), 
-                        ts.getTranslatedString("module.ospman.containers.path.not-continuous")
+                        ts.getTranslatedString("module.ospman.containers.path.not-continuous"), 
+                        AbstractNotification.NotificationType.ERROR, ts
                     ).open();
                 } else {
                     try {
@@ -224,12 +230,14 @@ public class WindowContainers extends Dialog {
                         }
                         new SimpleNotification(
                             ts.getTranslatedString("module.general.messages.information"), 
-                            ts.getTranslatedString("module.ospman.container.created-successfully")
+                            ts.getTranslatedString("module.ospman.container.created-successfully"), 
+                            AbstractNotification.NotificationType.INFO, ts
                         ).open();
                     } catch (InventoryException ex) {
                         new SimpleNotification(
                             ts.getTranslatedString("module.general.messages.error"), 
-                            ex.getLocalizedMessage()
+                            ex.getLocalizedMessage(), 
+                            AbstractNotification.NotificationType.INFO, ts
                         ).open();
                     }
                     close();
@@ -258,7 +266,8 @@ public class WindowContainers extends Dialog {
         } catch (InventoryException ex) {
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"), 
-                ex.getLocalizedMessage()
+                ex.getLocalizedMessage(), 
+                AbstractNotification.NotificationType.ERROR, ts
             ).open();
         }
     }
@@ -305,7 +314,8 @@ public class WindowContainers extends Dialog {
                 } catch (MetadataObjectNotFoundException ex) {
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.error"), 
-                        ex.getMessage()
+                        ex.getMessage(), 
+                        AbstractNotification.NotificationType.ERROR, ts
                     ).open();
                     cmbContainerTemplate.setEnabled(false);
                 }
@@ -359,8 +369,9 @@ public class WindowContainers extends Dialog {
                 return itemChildren;
             } catch (InventoryException ex) {
                 new SimpleNotification(
-                    ts.getTranslatedString("module.general.messages.error"), //NOI18N
-                    ex.getLocalizedMessage()
+                    ts.getTranslatedString("module.general.messages.error"),
+                    ex.getLocalizedMessage(), 
+                    AbstractNotification.NotificationType.INFO, ts
                 ).open();
             }
             return new ArrayList();
@@ -453,7 +464,8 @@ public class WindowContainers extends Dialog {
         } catch (InventoryException ex) {
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"), //NOI18N
-                ex.getLocalizedMessage()
+                ex.getLocalizedMessage(), 
+                AbstractNotification.NotificationType.INFO, ts
             ).open();
         }
         lytItem.add(new Label(item.getName()));

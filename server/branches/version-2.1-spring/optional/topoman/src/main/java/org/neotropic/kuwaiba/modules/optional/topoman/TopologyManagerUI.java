@@ -33,6 +33,7 @@ import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.kuwaiba.modules.optional.topoman.actions.DeleteTopologyViewVisualAction;
 import org.neotropic.kuwaiba.modules.optional.topoman.actions.NewTopologyViewVisualAction;
 import org.neotropic.kuwaiba.modules.optional.topoman.widgets.TopologyManagerDashboard;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -91,12 +92,14 @@ public class TopologyManagerUI extends VerticalLayout implements HasDynamicTitle
     public void showActionCompledMessages(ActionCompletedListener.ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
             try {                
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();                                          
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();                                          
             } catch (Exception ex) {
                 Logger.getLogger(TopologyManagerUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
     }
 
     private void createContent() throws InvalidArgumentException, MetadataObjectNotFoundException {                      

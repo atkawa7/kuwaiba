@@ -45,6 +45,7 @@ import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectNode;
 import org.neotropic.util.visual.dialog.ConfirmDialog;
 import org.neotropic.util.visual.mxgraph.MxSpliceBox;
 import org.neotropic.util.visual.mxgraph.MxTree;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.views.util.UtilHtml;
 
@@ -122,7 +123,8 @@ public class OspLocationView extends MxGraph {
                     } catch (InventoryException ex) {
                         new SimpleNotification(
                             ts.getTranslatedString("module.general.messages.error"), 
-                            ex.getLocalizedMessage()
+                            ex.getLocalizedMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts
                         ).open();
                     }
                 }
@@ -138,7 +140,8 @@ public class OspLocationView extends MxGraph {
                 } catch (InventoryException ex) {
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.error"), 
-                        ex.getLocalizedMessage()
+                        ex.getLocalizedMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts
                     ).open();
                     return Collections.EMPTY_LIST;
                 }
@@ -157,7 +160,8 @@ public class OspLocationView extends MxGraph {
                 } catch (MetadataObjectNotFoundException ex) {
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.error"), 
-                        ex.getLocalizedMessage()
+                        ex.getLocalizedMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts
                     ).open();
                 }
                 return null;
@@ -169,7 +173,8 @@ public class OspLocationView extends MxGraph {
                 } catch (InventoryException ex) {
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.error"), //NOI18N
-                        ex.getLocalizedMessage()
+                        ex.getLocalizedMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts
                     ).open();
                 }
                 return false;
@@ -208,7 +213,8 @@ public class OspLocationView extends MxGraph {
         } catch (InventoryException ex) {
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"), 
-                ex.getLocalizedMessage()
+                ex.getLocalizedMessage(), 
+                AbstractNotification.NotificationType.ERROR, ts
             ).open();
         }
         ClassMetadata deviceClass = null;
@@ -217,7 +223,8 @@ public class OspLocationView extends MxGraph {
         } catch (MetadataObjectNotFoundException ex) {
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"),
-                ex.getLocalizedMessage()
+                ex.getLocalizedMessage(), 
+                AbstractNotification.NotificationType.ERROR, ts
             ).open();
         }
         MxSpliceBox<BusinessObjectLight> spliceBox = new MxSpliceBox<>(this, ports,
@@ -260,7 +267,8 @@ public class OspLocationView extends MxGraph {
                     } catch (InventoryException ex) {
                         new SimpleNotification(
                             ts.getTranslatedString("module.general.messages.error"),
-                            ex.getLocalizedMessage()
+                            ex.getLocalizedMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts
                         ).open();
                     }
                 }
@@ -336,7 +344,8 @@ public class OspLocationView extends MxGraph {
         } catch (InventoryException ex) {
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"),
-                ex.getLocalizedMessage()
+                ex.getLocalizedMessage(), 
+                AbstractNotification.NotificationType.ERROR, ts
             ).open();
         }
     }
@@ -377,7 +386,8 @@ public class OspLocationView extends MxGraph {
                 } catch (InventoryException ex) {
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.error"), 
-                        ex.getLocalizedMessage()
+                        ex.getLocalizedMessage(), 
+                        AbstractNotification.NotificationType.ERROR, ts
                     ).open();
                 }
                 
@@ -407,7 +417,8 @@ public class OspLocationView extends MxGraph {
                     } else {
                         new SimpleNotification(
                             ts.getTranslatedString("module.general.messages.warning"), 
-                            ts.getTranslatedString("module.ospman.warning.port-name")
+                            ts.getTranslatedString("module.ospman.warning.port-name"), 
+                            AbstractNotification.NotificationType.WARNING, ts
                         ).open();
                         return;
                     }
@@ -437,7 +448,8 @@ public class OspLocationView extends MxGraph {
                 } catch (InventoryException ex) {
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.error"), 
-                        ex.getLocalizedMessage()
+                        ex.getLocalizedMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts
                     ).open();
                 }
             }

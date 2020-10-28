@@ -64,6 +64,7 @@ import org.neotropic.kuwaiba.core.configuration.validators.nodes.ValidatorDefini
 import org.neotropic.kuwaiba.core.configuration.variables.ConfigurationVariablesUI;
 import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicIconGenerator;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.tree.nodes.AbstractNode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -204,13 +205,15 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
     public void actionCompleted(ActionCompletedListener.ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
             try {
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
                 objectTree.getDataProvider().refreshAll();
             } catch (UnsupportedOperationException ex) {
                 Logger.getLogger(ConfigurationVariablesUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else 
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
     }
 
     private void initializeValidatorsTree() throws MetadataObjectNotFoundException, InvalidArgumentException {
@@ -294,7 +297,8 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
             btnSave.addClickListener(event -> {
                 try {
                     aem.updateValidatorDefinition(validator.getId(), validator.getName(), validator.getDescription(), validator.getClassToBeApplied(), editorScript.getValue(), validator.isEnabled());
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.configman.validator.properties-script.notification-saved")).open();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.configman.validator.properties-script.notification-saved"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
                     objectTree.getDataProvider().refreshAll();
                 } catch (ApplicationObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
                     Logger.getLogger(ValidatorDefinitionUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -358,7 +362,8 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
             btnSave.addClickListener(event -> {
                 try {
                     aem.updateValidatorDefinition(validator.getId(), txtName.getValue(), txtDescription.getValue(), validator.getClassToBeApplied(), validator.getScript(), checkEnable.getValue());
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.configman.validator.properties-general.notification-saved")).open();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.configman.validator.properties-general.notification-saved"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
                     objectTree.getDataProvider().refreshAll();
                     wdwUpdateProperties.close();
                 } catch (ApplicationObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {

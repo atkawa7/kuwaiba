@@ -28,6 +28,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.application.ViewObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
 /**
@@ -68,7 +69,8 @@ public class DialogOspViews extends PaperDialog {
                     } catch (ApplicationObjectNotFoundException ex) {
                         new SimpleNotification(
                             ts.getTranslatedString("module.general.messages.error"), 
-                            ex.getLocalizedMessage()
+                            ex.getLocalizedMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts
                         ).open();
                     }
                 }
@@ -79,7 +81,8 @@ public class DialogOspViews extends PaperDialog {
         } catch (InvalidArgumentException ex) {
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"),
-                ex.getLocalizedMessage()
+                ex.getLocalizedMessage(), 
+                AbstractNotification.NotificationType.ERROR, ts
             ).open();
         }
     }

@@ -71,6 +71,7 @@ import org.neotropic.kuwaiba.modules.core.templateman.actions.NewBulkTemplateSpe
 import org.neotropic.kuwaiba.modules.core.templateman.actions.NewTemplateItemVisualAction;
 import org.neotropic.kuwaiba.modules.core.templateman.actions.NewTemplateSpecialItemVisualAction;
 import org.neotropic.kuwaiba.modules.core.templateman.actions.NewTemplateVisualAction;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.properties.AbstractProperty;
 import org.neotropic.util.visual.properties.PropertySheet;
@@ -307,9 +308,11 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
     @Override
     public void actionCompleted(ActionCompletedListener.ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
         } else {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
         }
     }
 
@@ -671,7 +674,8 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
                 propertysheet.setReadOnly(true);
             }
         } catch (InventoryException ex) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(), 
+                    AbstractNotification.NotificationType.ERROR, ts).open();
             Logger.getLogger(TemplateManagerUI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -690,7 +694,8 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
                 propertysheet.setReadOnly(false);
             }
         } catch (InventoryException ex) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(), 
+                    AbstractNotification.NotificationType.ERROR, ts).open();
             Logger.getLogger(TemplateManagerUI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -976,9 +981,11 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
                 
             }
 
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update"), 
+                    AbstractNotification.NotificationType.INFO, ts).open();
         } catch (ApplicationObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException ex) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage(), 
+                    AbstractNotification.NotificationType.ERROR, ts).open();
         }
     }
 

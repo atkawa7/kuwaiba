@@ -45,6 +45,7 @@ import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.visualization.api.wizard.NewPhysicalConnectionWizard;
 import org.neotropic.kuwaiba.visualization.views.ObjectView;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.views.util.UtilHtml;
 import org.neotropic.util.visual.widgets.AbstractDashboardWidget;
@@ -111,12 +112,14 @@ public class ObjectViewWidget extends AbstractDashboardWidget {
                 btnOk.addClickListener((event) -> {
 
                     if (cmbASideRoot.getValue() == null || cmbBSideRoot.getValue() == null) {
-                        new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),ts.getTranslatedString("module.visualization.object-view-select-both-sides")).open();
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.object-view-select-both-sides"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
                         return;
                     }
 
                     if (cmbASideRoot.getValue().equals(cmbBSideRoot.getValue())) {
-                        new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),ts.getTranslatedString("module.visualization.object-view-selected-nodes-different")).open();
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.object-view-selected-nodes-different"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
                         return;
                     }
 
@@ -149,7 +152,8 @@ public class ObjectViewWidget extends AbstractDashboardWidget {
                                     //In case of error, use a default black line
                                 }
                                 objectView.getMxGraph().addEdge(newConnection, aSide, bSide, edge);
-                                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), String.format(ts.getTranslatedString("module.visualization.object-view-connection-created"), newConnection.getName())).open();
+                                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), String.format(ts.getTranslatedString("module.visualization.object-view-connection-created"), newConnection.getName()), 
+                                        AbstractNotification.NotificationType.INFO, ts).open();
                             case Wizard.WizardEvent.TYPE_CANCEL:
                                 dlgWizard.close();
                         }
@@ -181,7 +185,8 @@ public class ObjectViewWidget extends AbstractDashboardWidget {
             contentComponent = lytContent;
 
         } catch (InventoryException ex) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
         }
     }
 
@@ -196,16 +201,19 @@ public class ObjectViewWidget extends AbstractDashboardWidget {
 
                     long viewId = aem.createObjectRelatedView(businessObject.getId(), businessObject.getClassName(), null, null, "ObjectView", viewStructure, null); //NOI18N
                     if (viewId != -1) { //Success
-                        new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.visualization.object-view-view-saved")).open();
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.visualization.object-view-view-saved"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
                     } else {
-                        new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
                     }
                 } else {
                     ViewObject viewObject = aem.getObjectRelatedView(businessObject.getId(),
                             businessObject.getClassName(), objectViews.get(0).getId());
                     aem.updateObjectRelatedView(businessObject.getId(), businessObject.getClassName(),
                             viewObject.getId(), null, null, viewStructure, null);
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.visualization.object-view-view-saved")).open();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.visualization.object-view-view-saved"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
                 }
             } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
                 Logger.getLogger(RackViewWidget.class.getName()).log(Level.SEVERE, null, ex);

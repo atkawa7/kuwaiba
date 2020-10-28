@@ -46,6 +46,7 @@ import org.neotropic.kuwaiba.visualization.views.FiberSplitterView;
 import org.neotropic.kuwaiba.visualization.views.PhysicalPathView;
 import org.neotropic.kuwaiba.visualization.views.PhysicalTreeView;
 import org.neotropic.kuwaiba.visualization.views.SpliceBoxView;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
 /**
@@ -120,7 +121,8 @@ public class WindowNode extends Dialog {
                                 } catch (InvalidArgumentException ex) {
                                     new SimpleNotification(
                                             ts.getTranslatedString("module.general.messages.error"),
-                                            ex.getLocalizedMessage()
+                                            ex.getLocalizedMessage(), 
+                                            AbstractNotification.NotificationType.ERROR, ts
                                     ).open();
                                 }
                             });
@@ -136,7 +138,8 @@ public class WindowNode extends Dialog {
                                 } catch (InvalidArgumentException ex) {
                                     new SimpleNotification(
                                             ts.getTranslatedString("module.general.messages.error"),
-                                            ex.getLocalizedMessage()
+                                            ex.getLocalizedMessage(), 
+                                            AbstractNotification.NotificationType.ERROR, ts
                                     ).open();
                                 }
                             });
@@ -153,7 +156,8 @@ public class WindowNode extends Dialog {
                                         } catch (InvalidArgumentException ex) {
                                             new SimpleNotification(
                                                     ts.getTranslatedString("module.general.messages.error"),
-                                                    ex.getLocalizedMessage()
+                                                    ex.getLocalizedMessage(), 
+                                                    AbstractNotification.NotificationType.ERROR, ts
                                             ).open();
                                         }
                                     }),
@@ -168,7 +172,8 @@ public class WindowNode extends Dialog {
                                         } catch (InvalidArgumentException ex) {
                                             new SimpleNotification(
                                                     ts.getTranslatedString("module.general.messages.error"),
-                                                    ex.getLocalizedMessage()
+                                                    ex.getLocalizedMessage(), 
+                                                    AbstractNotification.NotificationType.ERROR, ts
                                             ).open();
                                         }
                                     })
@@ -177,7 +182,8 @@ public class WindowNode extends Dialog {
                     } catch (MetadataObjectNotFoundException ex) {
                         new SimpleNotification(
                                 ts.getTranslatedString("module.general.messages.error"),
-                                ex.getLocalizedMessage()
+                                ex.getLocalizedMessage(), 
+                                AbstractNotification.NotificationType.ERROR, ts
                         ).open();
                     }
                     return new Div();

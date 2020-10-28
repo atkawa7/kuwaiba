@@ -16,7 +16,12 @@
 
 package org.neotropic.util.visual.notifications;
 
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.H4;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 
 /**
  * Default implementation of a notification component.
@@ -24,16 +29,42 @@ import com.vaadin.flow.component.notification.Notification;
  */
 public class SimpleNotification extends AbstractNotification {
     
-    public SimpleNotification(String title, String text) {
-        super(title, text);
+    public SimpleNotification(String title, String text, NotificationType type, TranslationService ts) {
+        super(title, text, type, ts);
     }
 
     @Override
     public void open() {
-        Notification.show(text, 4000, Notification.Position.BOTTOM_CENTER);
+        Notification notification = new Notification();
+        VerticalLayout lytContent = new VerticalLayout();
+        lytContent.setClassName("simple-notification");
+        H4 lblTitle = new H4(this.title);
+        Label lblText = new Label(this.text);
+        
+        switch (type) {
+            default:
+            case INFO:
+                lblTitle.setClassName("simple-notification-title-info");
+                break;
+            case WARNING:
+                lblTitle.setClassName("simple-notification-title-warning");
+                break;
+            case ERROR:
+                lblTitle.setClassName("simple-notification-title-error");
+                Button btnCopyToClipboard = new Button(ts.getTranslatedString("module.general.labels.copy-to-clipboard"));
+        }
+
+        lytContent.add(lblTitle, lblText);
+        lytContent.addClickListener(e-> notification.close());
+
+        notification.add(lytContent);
+        notification.setDuration(3000);
+        notification.setPosition(Notification.Position.BOTTOM_CENTER);
+        notification.open();
     }
 
     @Override
     public void close() { }
-
+    
+    
 }

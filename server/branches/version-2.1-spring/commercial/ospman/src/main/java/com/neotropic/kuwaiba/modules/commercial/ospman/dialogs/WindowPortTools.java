@@ -35,6 +35,7 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.visualization.views.PhysicalPathView;
 import org.neotropic.kuwaiba.visualization.views.PhysicalTreeView;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 
 /**
@@ -68,7 +69,8 @@ public class WindowPortTools extends Dialog {
                         consumerReleaseFiber.accept(Arrays.asList(port, endpointsB.get(0)), SPECIAL_ATTR_ENDPOINT_B);
                 } catch (InventoryException ex) {
                     new SimpleNotification(
-                        ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()
+                        ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(), 
+                        AbstractNotification.NotificationType.ERROR, ts
                     ).open();
                 }
             }
@@ -91,7 +93,8 @@ public class WindowPortTools extends Dialog {
                 wdwPhysicalPath.open();
                 close();
             } catch (InvalidArgumentException ex) {
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(), 
+                        AbstractNotification.NotificationType.ERROR, ts).open();
             }
         });
         
@@ -111,7 +114,8 @@ public class WindowPortTools extends Dialog {
                 wdwPhysicalTree.open();
                 close();
             } catch (InvalidArgumentException ex) {
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(), 
+                        AbstractNotification.NotificationType.ERROR, ts).open();
             }
         });
         

@@ -73,7 +73,7 @@ public class DeleteTopologyViewVisualAction extends AbstractVisualAction<Dialog>
             viewId = (Long) parameters.get("viewId");
 
             ConfirmDialog wdwDeleteClass = new ConfirmDialog(ts.getTranslatedString("module.general.labels.confirmation"),
-                    ts.getTranslatedString("module.general.delete-permanently-message"),
+                    ts.getTranslatedString("module.general.delete-object-permanently"),
                     ts.getTranslatedString("module.general.messages.ok"));
             wdwDeleteClass.getBtnConfirm().addClickListener((ev) -> {
                 try {

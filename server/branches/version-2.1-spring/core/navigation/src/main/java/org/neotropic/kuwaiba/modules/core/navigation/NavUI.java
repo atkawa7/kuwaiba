@@ -56,6 +56,7 @@ import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicIconGenerator;
 import org.neotropic.kuwaiba.modules.core.navigation.navtree.NavigationTree;
 import org.neotropic.kuwaiba.modules.core.navigation.navtree.nodes.InventoryObjectNode;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -160,9 +161,11 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
     @Override
     public void actionCompleted(ActionCompletedListener.ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
         } else {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
         }
     }
 
@@ -270,7 +273,8 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
                                 lytLocation.add(navTree);
                             }
                         } catch (Exception ex) {
-                            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
+                            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
                         }
                     }
                 }
@@ -306,7 +310,8 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
                     } catch (InvalidArgumentException ex) {
                         new SimpleNotification(
                                 ts.getTranslatedString("module.general.messages.error"),
-                                ex.getMessage()).open();
+                                ex.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
                         return new ArrayList().stream();
                     }
                 } else {
@@ -324,9 +329,8 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
                     try {
                         return (int) bem.getObjectChildrenCount(object.getClassName(), object.getId());
                     } catch (Exception ex) {
-                        new SimpleNotification(
-                                ts.getTranslatedString("module.general.messages.error"),
-                                ex.getMessage()).open();
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),
+                                ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
                         return 0;
                     }
                 } else
@@ -370,9 +374,8 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
                         }
                         return nodes.stream();
                     } catch (InvalidArgumentException ex) {
-                        new SimpleNotification(
-                                ts.getTranslatedString("module.general.messages.error"),
-                                ex.getMessage()).open();
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),
+                                ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
                         return new ArrayList().stream();
                     }
                 } else
@@ -390,9 +393,8 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
                         
                         return (int) bem.getObjectChildrenCount(object.getClassName(), object.getId());
                     } catch (Exception ex) {
-                        new SimpleNotification(
-                                ts.getTranslatedString("module.general.messages.error"),
-                                ex.getMessage()).open();
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),
+                                ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
                         return 0;
                     }
                 } else
@@ -405,9 +407,8 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
                     List<BusinessObjectLight> children = bem.getObjectChildren(node.getClassName(), node.getObject().getId(), 0, 0);
                     return children.size() > 0;
                 } catch (InvalidArgumentException ex) {
-                    new SimpleNotification(
-                            ts.getTranslatedString("module.general.messages.error"),
-                            ex.getMessage()).open();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),
+                            ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
                     return false;
                 }
             }
@@ -444,7 +445,7 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
                     } catch (InvalidArgumentException ex) {
                         new SimpleNotification(
                                 ts.getTranslatedString("module.general.messages.error"),
-                                ex.getMessage()).open();
+                                ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
                         return new ArrayList().stream();
                     }
                 } else
@@ -465,7 +466,7 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
                     } catch (Exception ex) {
                         new SimpleNotification(
                                 ts.getTranslatedString("module.general.messages.error"),
-                                ex.getMessage()).open();
+                                ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
                         return 0;
                     }
                 } else
@@ -478,9 +479,8 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
                     List<BusinessObjectLight> children = bem.getObjectChildren(node.getClassName(), node.getObject().getId(), 0, 0);
                     return children.size() > 0;
                 } catch (InvalidArgumentException ex) {
-                    new SimpleNotification(
-                            ts.getTranslatedString("module.general.messages.error"),
-                            ex.getMessage()).open();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),
+                            ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
                     return false;
                 }
             }
@@ -579,7 +579,8 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
                     List<BusinessObjectLight> searchResults = bem.getObjectsOfClassLight(className, -1);
                     lytLocation.removeAll();
                     if (searchResults.isEmpty())
-                        new SimpleNotification("", ts.getTranslatedString("module.general.messages.no-search-results")).open();
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.information"), ts.getTranslatedString("module.general.messages.no-search-results"), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
                     else {
                         NavigationTree localitationNavTree = new NavigationTree(getDataProviderSeveral(searchResults), new BasicIconGenerator(resourceFactory));
                         localitationNavTree.addSelectionListener(ei -> {
@@ -606,7 +607,8 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
                         lytLocation.add(localitationNavTree);
                     }
                 } catch (Exception ex) {
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
                 }
             });
         }

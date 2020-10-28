@@ -80,6 +80,7 @@ import org.neotropic.kuwaiba.modules.optional.reports.nodes.ReportNode;
 import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicIconGenerator;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.util.visual.general.BoldLabel;
+import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.tree.BasicTree;
 import org.neotropic.util.visual.tree.nodes.AbstractNode;
@@ -254,7 +255,8 @@ public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
             createContent();
         } catch (InvalidArgumentException | MetadataObjectNotFoundException ex) {
              Logger.getLogger(ReportsUI.class.getName()).log(Level.SEVERE, null, ex);
-             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage()).open();
+             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage(), 
+                    AbstractNotification.NotificationType.ERROR, ts).open();
         }        
     }
     
@@ -270,12 +272,14 @@ public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
     public void showActionCompledMessages(ActionCompletedListener.ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
             try {
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage()).open();                                          
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.INFO, ts).open();                                          
             } catch (Exception ex) {
                 Logger.getLogger(ReportsUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
  
     }
 
@@ -338,7 +342,8 @@ public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
                         this.newClassReportVisualAction.getVisualComponent(new ModuleActionParameterSet(
                         new ModuleActionParameter("class", selectedClass))).open();
                     } else 
-                        new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.datamodelman.messages.class-unselected")).open();
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.datamodelman.messages.class-unselected"), 
+                    AbstractNotification.NotificationType.WARNING, ts).open();
                 });
         HorizontalLayout lylActions = new HorizontalLayout(btnNewClassReport);
         VerticalLayout lytClassReportsTree = new VerticalLayout(lylActions, cbxFilterClassReports, treeClassLevelReports);
@@ -469,7 +474,8 @@ public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
             }    
         });
         } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                    AbstractNotification.NotificationType.ERROR, ts).open();
             Logger.getLogger(ReportsUI.class.getName()).log(Level.SEVERE, null, ex);
         }     
     }
@@ -530,7 +536,8 @@ public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
                 tblInventoryReports.setItems(Arrays.asList(ev.getValue()));
             });
         } catch (ApplicationObjectNotFoundException ex) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                    AbstractNotification.NotificationType.ERROR, ts).open();
             Logger.getLogger(ReportsUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -545,7 +552,8 @@ public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
             tblInventoryReports.getDataProvider().refreshAll();
             cbxFilterInventoryReports.setItems(inventoryReports);
         } catch (ApplicationObjectNotFoundException ex) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                    AbstractNotification.NotificationType.ERROR, ts).open();
             Logger.getLogger(ReportsUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -577,7 +585,8 @@ public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
                      btnRunReport.setVisible(true);
                  }
              } catch (ApplicationObjectNotFoundException ex) {
-                 new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+                 new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                    AbstractNotification.NotificationType.ERROR, ts).open();
                  Logger.getLogger(ReportsUI.class.getName()).log(Level.SEVERE, null, ex);
              }
          } 
@@ -597,9 +606,11 @@ public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
                     treeClassLevelReports.getDataProvider().refreshAll();
                 else 
                     tblInventoryReports.getDataProvider().refreshItem(selectedReport);
-                new SimpleNotification("", ts.getTranslatedString("module.reporting.report-saved")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.information"), ts.getTranslatedString("module.reporting.report-saved"), 
+                    AbstractNotification.NotificationType.INFO, ts).open();
             } catch (ApplicationObjectNotFoundException | InvalidArgumentException ex) {
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                    AbstractNotification.NotificationType.ERROR, ts).open();
                 Logger.getLogger(ReportsUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -621,7 +632,8 @@ public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
                     else
                         executeInventoryReport(rep.getParameters());
                 } catch (ApplicationObjectNotFoundException ex) {
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                    AbstractNotification.NotificationType.ERROR, ts).open();
                     Logger.getLogger(ReportsUI.class.getName()).log(Level.SEVERE, null, ex);
                 }       
             } 
@@ -671,7 +683,8 @@ public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
             final StreamRegistration registration = VaadinSession.getCurrent().getResourceRegistry().registerResource(resource);
             UI.getCurrent().getPage().open(registration.getResourceUri().toString());
         } catch (ApplicationObjectNotFoundException | InvalidArgumentException ex) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error")).open();
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
+                    AbstractNotification.NotificationType.INFO, ts).open();
             Logger.getLogger(ReportsUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     } 
