@@ -27,6 +27,8 @@ import com.neotropic.flow.component.mxgraph.MxGraphCell;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.accordion.Accordion;
+import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -86,19 +88,28 @@ import org.neotropic.kuwaiba.modules.core.navigation.navtree.nodes.InventoryObje
 import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
 import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyValueConverter;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
+import org.neotropic.kuwaiba.modules.optional.reports.widgets.ClassLevelReportWidget;
+import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewEdge;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
+import org.neotropic.kuwaiba.visualization.views.RackView;
+import org.neotropic.kuwaiba.visualization.views.PhysicalPathView;
+import org.neotropic.kuwaiba.visualization.views.PhysicalTreeView;
+import org.neotropic.kuwaiba.visualization.views.RackView;
+import org.neotropic.kuwaiba.visualization.widgets.ObjectViewWidget;
+import org.neotropic.kuwaiba.visualization.widgets.RackViewWidget;
 import org.neotropic.util.visual.dialog.ConfirmDialog;
 import org.neotropic.util.visual.general.BoldLabel;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.properties.AbstractProperty;
 import org.neotropic.util.visual.properties.PropertySheet;
+import org.neotropic.util.visual.properties.StringProperty;
 
 /**
  * MPLS Main Dashboard.
  * @author Orlando Paz {@literal <Orlando.Paz@kuwaiba.org>}
  */
-public class MplsDashboard extends VerticalLayout implements PropertySheet.IPropertyValueChangedListener {
+public class MplsDashboard extends VerticalLayout {
     
     private TranslationService ts;
     /**
@@ -183,17 +194,19 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
      */
     private BusinessObjectLight selectedObject;
     /**
-     * main property sheet instance
+     *  property sheet instance for canvas objects
      */
-    PropertySheet propertySheet;
+    PropertySheet propSheetObjects;
+     /**
+     * main property sheet instance for mpls properties
+     */
+    PropertySheet propSheetMPLS;
     /**
      * button to remove views
      */
     Button btnRemoveView;
-    
-    Label lblCurrentViewName;
-    Label lblCurrentViewDescription;
-    VerticalLayout lytViewInfo;
+
+    PhysicalConnectionsService connectionsService;
 
     public ViewObject getCurrentView() {
         return currentView;
@@ -213,13 +226,14 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
     }  
     
     public MplsDashboard(TranslationService ts, MetadataEntityManager mem, ApplicationEntityManager aem, BusinessEntityManager bem, 
-            ResourceFactory resourceFactory, MplsService mplsService, DeleteMplsViewVisualAction deleteMPLSViewVisualAction, 
+            ResourceFactory resourceFactory, PhysicalConnectionsService connectionsService,MplsService mplsService, DeleteMplsViewVisualAction deleteMPLSViewVisualAction, 
             NewMplsViewVisualAction newMPLSViewVisualAction) {
         super();
         this.ts = ts;
         this.mem = mem;
         this.aem = aem;
         this.bem = bem;
+        this.connectionsService = connectionsService;
         this.resourceFactory = resourceFactory;
         this.mplsService = mplsService;
         this.newMPLSViewVisualAction = newMPLSViewVisualAction;
@@ -247,9 +261,9 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
         else
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage()).open();
     }
-
+       
     private void createContent() {  
-           
+
         Button btnOpenView = new Button(new Icon(VaadinIcon.FOLDER_OPEN_O), ev -> {
              openListMplsViewDialog();
         });
@@ -277,13 +291,13 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
             } else {
                  selectedObject = ((BusinessObjectViewEdge) mplsView.getAsViewMap().findEdge(objectId)).getIdentifier();            
             }
-            updatePropertySheet();
+            updatePropertySheetObjects();
             mplsTools.setGeneralToolsEnabled(true);
             mplsTools.setSelectionToolsEnabled(true);
         });
         mplsView.getMxgraphCanvas().setComObjectUnselected(() -> {
             selectedObject = null;
-            updatePropertySheet();
+            updatePropertySheetObjects();
             mplsTools.setSelectionToolsEnabled(false);
         });
         mplsView.getMxgraphCanvas().setComObjectDeleted(() -> {
@@ -335,32 +349,91 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
         
         initializeActions();
         initializeTblViews();
-            
-        Label lblHintControlPoints = new Label(ts.getTranslatedString("module.mpls.hint-create-delete-control-point"));
-        lblHintControlPoints.setClassName("hintMplsView");
-        BoldLabel lblCurrentViewNameTitle = new BoldLabel(ts.getTranslatedString("module.mpls.view-name"));
-        BoldLabel lblCurrentViewDescriptionTitle = new BoldLabel(ts.getTranslatedString("module.mpls.view-description"));
-        lblCurrentViewName = new Label();
-        lblCurrentViewDescription = new Label();
-        
-        HorizontalLayout lytViewName = new HorizontalLayout(lblCurrentViewNameTitle, lblCurrentViewName);
-        HorizontalLayout lytViewDescription = new HorizontalLayout(lblCurrentViewDescriptionTitle, lblCurrentViewDescription);
-        lytViewInfo = new VerticalLayout(lytViewName, lytViewDescription);
-        setMarginPaddingLayout(lytViewInfo, false);
-        lytViewInfo.setVisible(false);
-        
-        HorizontalLayout lytFooterView = new HorizontalLayout(lytViewInfo, lblHintControlPoints);
-        setMarginPaddingLayout(lytFooterView, false);
-       
-        VerticalLayout lytDashboard = new VerticalLayout(lytTools, mplsView.getAsComponent(), lytFooterView);
+                   
+        VerticalLayout lytDashboard = new VerticalLayout(lytTools, mplsView.getAsComponent());
         lytDashboard.setWidth("65%");
         //prop sheet section
+        PropertySheet.IPropertyValueChangedListener listenerPropSheetObjects = new PropertySheet.IPropertyValueChangedListener() {
+            @Override
+            public void updatePropertyChanged(AbstractProperty property) {
+                try {
+                    if (selectedObject != null) {
+                        HashMap<String, String> attributes = new HashMap<>();
+                        attributes.put(property.getName(), PropertyValueConverter.getAsStringToPersist(property));
+
+                        bem.updateObject(selectedObject.getClassName(), selectedObject.getId(), attributes);
+                        updatePropertySheetObjects();
+                        saveCurrentView();
+
+                        //special case when the name is updated the label must be refreshed in the canvas
+                        if (property.getName().equals(Constants.PROPERTY_NAME)) {
+                            if (MxGraphCell.PROPERTY_VERTEX.equals(mplsView.getMxgraphCanvas().getSelectedCellType())) {
+                                mplsView.getMxgraphCanvas().getNodes().get(selectedObject).setLabel((String) property.getValue());
+                            } else {
+                                mplsView.getMxgraphCanvas().getEdges().get(selectedObject).setLabel((String) property.getValue());
+                            }
+                            mplsView.getMxgraphCanvas().getMxGraph().refreshGraph();
+                        }
+
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
+                    }
+                } catch (InventoryException ex) {
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ex.getLocalizedMessage()).open();
+                }
+            }
+        };
         H4 headerListTypes = new H4(ts.getTranslatedString("module.propertysheet.labels.header"));
-        propertySheet = new PropertySheet(ts, new ArrayList<>(), "");
-        propertySheet.addPropertyValueChangedListener(this);
+        propSheetObjects = new PropertySheet(ts, new ArrayList<>(), "");
+        propSheetObjects.addPropertyValueChangedListener(listenerPropSheetObjects);
+        propSheetObjects.addClassName("overflow-y-scroll");
         
-        VerticalLayout lytSheet = new VerticalLayout(headerListTypes, propertySheet);
-        lytSheet.setSpacing(false);
+        PropertySheet.IPropertyValueChangedListener listenerPropSheetMPLS = new PropertySheet.IPropertyValueChangedListener() {
+            @Override
+            public void updatePropertyChanged(AbstractProperty property) {
+                if (currentView != null) {
+                    
+                    if (property.getName().equals(Constants.PROPERTY_NAME))
+                        currentView.setName(property.getAsString());
+                    if (property.getName().equals(Constants.PROPERTY_DESCRIPTION))
+                        currentView.setDescription(property.getAsString());
+                    
+                    saveCurrentView();                  
+                }
+            }
+        };
+        propSheetMPLS = new PropertySheet(ts, new ArrayList<>(), "");
+        propSheetMPLS.addPropertyValueChangedListener(listenerPropSheetMPLS);     
+        
+        Accordion accordion = new Accordion();
+        accordion.setWidthFull();
+             
+        BoldLabel lblHelp = new BoldLabel(ts.getTranslatedString("module.mpls.help"));
+        lblHelp.addClassName("lbl-accordion");
+        HorizontalLayout lytSummaryHelp = new HorizontalLayout(lblHelp); 
+        lytSummaryHelp.setWidthFull();
+        Label lblHintControlPoints = new Label(ts.getTranslatedString("module.mpls.hint-create-delete-control-point"));
+        lblHintControlPoints.setClassName("hintMplsView");           
+        VerticalLayout lytFooterView = new VerticalLayout(lblHintControlPoints);
+        setMarginPaddingLayout(lytFooterView, false);
+        lytFooterView.setSpacing(false);
+        AccordionPanel apHelp = new AccordionPanel(lytSummaryHelp, lytFooterView);
+        accordion.add(apHelp);
+        
+        BoldLabel lblContext = new BoldLabel(ts.getTranslatedString("module.mpls.context"));
+        lblContext.addClassName("lbl-accordion");
+        HorizontalLayout lytSummaryContext = new HorizontalLayout(lblContext); 
+        lytSummaryContext.setWidthFull();      
+        VerticalLayout lytContext = new VerticalLayout();
+        setMarginPaddingLayout(lytContext, false);
+        lytContext.setSpacing(false);
+        AccordionPanel apContext = new AccordionPanel(lytSummaryContext, lytContext);
+        accordion.add(apContext);
+        accordion.close();
+        
+        VerticalLayout lytSheet = new VerticalLayout(new BoldLabel(ts.getTranslatedString("module.mpls.view-properties")),propSheetMPLS,
+                                                 new BoldLabel(ts.getTranslatedString("module.mpls.object-properties")), propSheetObjects, accordion);
+        lytSheet.setFlexGrow(1, propSheetObjects);
+//        lytSheet.setSpacing(false);
         setMarginPaddingLayout(lytSheet, false);
         lytSheet.setWidth("35%");
 
@@ -506,7 +579,7 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
         lytContent.setPadding(false);
         
         dlgConnection.add(new VerticalLayout(lytContent, lytButtons));
-        dlgConnection.setWidth("1100px");
+        dlgConnection.setWidth("80%");
         dlgConnection.open();
     }  
   
@@ -569,9 +642,9 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
     private void saveCurrentView() {
         try {
             if (currentView != null) {
-            aem.updateGeneralView(currentView.getId(), currentView.getName(), currentView.getDescription(), mplsView.getAsXml(), null);
-            currentView.setStructure(mplsView.getAsXml());
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.view-saved")).open();
+                aem.updateGeneralView(currentView.getId(), currentView.getName(), currentView.getDescription(), mplsView.getAsXml(), null);
+                currentView.setStructure(mplsView.getAsXml());
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.view-saved")).open();
             }
         } catch (InvalidArgumentException | ApplicationObjectNotFoundException ex) {
             Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
@@ -618,7 +691,7 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
                 if (deletePermanently)
                         saveCurrentView();     
                 selectedObject = null;              
-                updatePropertySheet();
+                updatePropertySheetObjects();
             } catch (BusinessObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
                 Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
                 new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage()).open();
@@ -720,15 +793,13 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
         try {
             ViewObject view = aem.getGeneralView(item.getId());
             setCurrentView(view);
-            lblCurrentViewName.setText(view.getName());
-            lblCurrentViewDescription.setText(view.getDescription());
-            lytViewInfo.setVisible(true);
             if (wdwMPLSViews != null)
                 this.wdwMPLSViews.close();
             this.mplsTools.setGeneralToolsEnabled(true);
             selectedObject = null;
-            updatePropertySheet();
+            updatePropertySheetObjects();
             this.btnRemoveView.setEnabled(true);
+            updatePropertySheetView();
             new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.actions.view-loaded")).open();
         } catch (ApplicationObjectNotFoundException ex) {
             Logger.getLogger(MplsManagerUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -757,11 +828,9 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
             mplsTools.setSelectionToolsEnabled(false);
             btnRemoveView.setEnabled(false);
             setCurrentView(null);
-            lytViewInfo.setVisible(false);
-            lblCurrentViewName.setText("");
-            lblCurrentViewDescription.setText("");  
             selectedObject = null;
-            updatePropertySheet();
+            updatePropertySheetObjects();
+            updatePropertySheetView();
         };
         this.deleteMPLSViewVisualAction.registerActionCompletedLister(listenerDeleteAction);
         
@@ -772,17 +841,17 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
             showActionCompledMessages(ev);
             mplsTools.setGeneralToolsEnabled(true);
             btnRemoveView.setEnabled(true);
-            lytViewInfo.setVisible(true);
             if (wdwMPLSViews != null)
                 wdwMPLSViews.close();
             selectedObject = null;
-            updatePropertySheet();
+            updatePropertySheetObjects();
+            
             ActionResponse response = ev.getActionResponse();
             try {
                 ViewObject newView = aem.getGeneralView((long) response.get("viewId"));
                 setCurrentView(newView);
-                lblCurrentViewName.setText(newView.getName());
-                lblCurrentViewDescription.setText(newView.getDescription());               
+                updatePropertySheetView();
+                          
             } catch (ApplicationObjectNotFoundException ex) {
                 Logger.getLogger(MplsManagerUI.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -806,46 +875,30 @@ public class MplsDashboard extends VerticalLayout implements PropertySheet.IProp
         wdwMPLSViews.setWidth("600px");
         wdwMPLSViews.open();
     }
-    
-    @Override
-    public void updatePropertyChanged(AbstractProperty property) {
-        try {
-            if (selectedObject != null) {              
-                HashMap<String, String> attributes = new HashMap<>();
-                attributes.put(property.getName(), PropertyValueConverter.getAsStringToPersist(property));
-
-                bem.updateObject(selectedObject.getClassName(), selectedObject.getId(), attributes);
-                updatePropertySheet();
-                saveCurrentView();
-                
-                //special case when the name is updated the label must be refreshed in the canvas
-                if (property.getName().equals(Constants.PROPERTY_NAME)) {
-                    if (MxGraphCell.PROPERTY_VERTEX.equals(mplsView.getMxgraphCanvas().getSelectedCellType())){
-                        mplsView.getMxgraphCanvas().getNodes().get(selectedObject).setLabel((String) property.getValue());
-                    } else {
-                        mplsView.getMxgraphCanvas().getEdges().get(selectedObject).setLabel((String) property.getValue());
-                    }
-                     mplsView.getMxgraphCanvas().getMxGraph().refreshGraph();
-                }
-
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update")).open();
-            }
-        } catch (InventoryException ex) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ex.getLocalizedMessage()).open();
-        }
-    }
-    
-    private void updatePropertySheet() {
+  
+    private void updatePropertySheetObjects() {
         try {        
             if (selectedObject != null) {
                 BusinessObject aWholeListTypeItem = bem.getObject(selectedObject.getClassName(), selectedObject.getId());
-                propertySheet.setItems(PropertyFactory.propertiesFromBusinessObject(aWholeListTypeItem, ts, aem, mem));
+                propSheetObjects.setItems(PropertyFactory.propertiesFromBusinessObject(aWholeListTypeItem, ts, aem, mem));
             } else 
-                propertySheet.clear();
+                propSheetObjects.clear();
         } catch (InventoryException ex) {
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage()).open();
             Logger.getLogger(MplsDashboard.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    private void updatePropertySheetView() {
+        if (currentView != null) {
+            ArrayList<AbstractProperty> viewProperties = new ArrayList<>();
+            viewProperties.add(new StringProperty(Constants.PROPERTY_NAME,
+                    Constants.PROPERTY_NAME, "", currentView.getName()));
+            viewProperties.add(new StringProperty(Constants.PROPERTY_DESCRIPTION,
+                    Constants.PROPERTY_DESCRIPTION, "", currentView.getDescription()));
+            propSheetMPLS.setItems(viewProperties);
+        } else
+            propSheetObjects.clear();
     }
     /**
      * add a single node to the mpls view

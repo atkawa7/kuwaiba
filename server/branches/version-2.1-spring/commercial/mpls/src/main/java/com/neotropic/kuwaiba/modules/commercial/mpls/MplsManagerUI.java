@@ -34,6 +34,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotF
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
+import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -75,6 +76,9 @@ public class MplsManagerUI extends VerticalLayout implements HasDynamicTitle {
     @Autowired
     private ResourceFactory resourceFactory;
     
+    @Autowired
+    private PhysicalConnectionsService physicalConnectionsService;
+ 
     private MplsDashboard dashboard; 
    
     public MplsManagerUI() {
@@ -104,7 +108,7 @@ public class MplsManagerUI extends VerticalLayout implements HasDynamicTitle {
     }
 
     private void createContent() throws InvalidArgumentException, MetadataObjectNotFoundException {                      
-        dashboard = new MplsDashboard(ts, mem, aem, bem, resourceFactory, mplsService, deleteMPLSViewVisualAction, newMPLSViewVisualAction);
+        dashboard = new MplsDashboard(ts, mem, aem, bem, resourceFactory, physicalConnectionsService, mplsService, deleteMPLSViewVisualAction, newMPLSViewVisualAction);
         dashboard.setSizeFull();
                
         add(dashboard);

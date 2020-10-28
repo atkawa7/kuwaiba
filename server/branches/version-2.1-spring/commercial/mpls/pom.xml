@@ -9,7 +9,7 @@
     <groupId>com.neotropic.kuwaiba.modules.commercial</groupId>
     <artifactId>mpls</artifactId>
     <packaging>jar</packaging>
-    
+    <version>2.1</version>
     <name>MPLS Networks</name>
     <description>Tools and services to support for MPLS networks</description>
     <dependencies>
@@ -39,6 +39,11 @@
             <artifactId>Visualization</artifactId>
             <version>2.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.neotropic.kuwaiba</groupId>
+            <artifactId>reports</artifactId>
+            <version>2.1</version>
+        </dependency> 
         <dependency>
             <groupId>org.neotropic.kuwaiba</groupId>
             <artifactId>integration-api</artifactId>
