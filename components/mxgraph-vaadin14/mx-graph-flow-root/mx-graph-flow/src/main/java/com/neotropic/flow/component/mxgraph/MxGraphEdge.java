@@ -16,9 +16,12 @@
 
 package com.neotropic.flow.component.mxgraph;
 
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.shared.Registration;
+
 
 /**
- *
+ * The cell is an edge
  * @author Orlando Paz Duarte {@literal <orlando.paz@kuwaiba.org>}
  */
 public class MxGraphEdge extends MxGraphCell {
@@ -27,5 +30,8 @@ public class MxGraphEdge extends MxGraphCell {
         super();
         setIsEdge(true);
     }
-
+    
+    public Registration addPointsChangedListener(ComponentEventListener<MxGraphEdgePointsChanged> pointsChangedEvent) {
+        return addListener(MxGraphEdgePointsChanged.class, pointsChangedEvent);
+    }
 }
