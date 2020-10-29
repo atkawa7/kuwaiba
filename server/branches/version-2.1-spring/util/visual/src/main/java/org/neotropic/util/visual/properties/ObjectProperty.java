@@ -16,6 +16,7 @@
 package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.component.combobox.ComboBox;
 import java.util.List;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
@@ -32,10 +33,16 @@ public class ObjectProperty extends AbstractProperty {
      */
     List<Object> items;
     
-    public ObjectProperty(String name, String displayName, String description, Object value, List<Object> listTypes) {
+    ItemLabelGenerator itemLabelGenerator;
+    
+    String displayValue;
+    
+    public ObjectProperty(String name, String displayName, String description, Object value, List<Object> items, String type, String displayValue, ItemLabelGenerator itemLabelGenerator) {
         super(name, displayName, description, value);
-        this.items = listTypes;
-        setType(Constants.DATA_TYPE_OBJECT);
+        this.items = items;
+        this.itemLabelGenerator = itemLabelGenerator;
+        this.displayValue = displayValue;
+        setType(type);
     }
     
     public List getItems() {
@@ -61,13 +68,14 @@ public class ObjectProperty extends AbstractProperty {
         ComboBox<Object> cbxListTypes = new ComboBox<>();
         cbxListTypes.setAllowCustomValue(false);
         cbxListTypes.setItems(items);
+        cbxListTypes.setItemLabelGenerator(itemLabelGenerator);
         cbxListTypes.setWidthFull();
         return cbxListTypes;
     }
 
     @Override
     public String getAsString() {
-        return getValue() == null ? AbstractProperty.NULL_LABEL : getValue().toString();
+        return getValue() == null ? AbstractProperty.NULL_LABEL : displayValue;
     }
     
     @Override
