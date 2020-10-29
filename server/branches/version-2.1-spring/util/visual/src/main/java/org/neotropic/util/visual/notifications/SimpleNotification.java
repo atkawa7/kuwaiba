@@ -20,6 +20,8 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 
@@ -36,11 +38,16 @@ public class SimpleNotification extends AbstractNotification {
     @Override
     public void open() {
         Notification notification = new Notification();
-        VerticalLayout lytContent = new VerticalLayout();
-        notification.setThemeName("simple-notification");
+        VerticalLayout lytContent = new VerticalLayout();                      
         H4 lblTitle = new H4(this.title);
         Label lblText = new Label(this.text);
-        Button btnCopyToClipboard = null;
+        Button btnCopyToClipboard = new Button(ts.getTranslatedString("module.general.labels.copy-to-clipboard"));
+        //content properties
+        lytContent.setSpacing(false);
+        lytContent.setPadding(false);
+        lytContent.setMargin(false);
+        lytContent.setWidth("100%");
+        
         switch (type) {
             default:
             case INFO:
@@ -51,17 +58,18 @@ public class SimpleNotification extends AbstractNotification {
                 break;
             case ERROR:
                 lblTitle.setClassName("simple-notification-title-error");
-                btnCopyToClipboard = new Button(ts.getTranslatedString("module.general.labels.copy-to-clipboard"));
+                btnCopyToClipboard.setVisible(true);                
+                
         }
 
-        lytContent.add(lblTitle, lblText);
-        if(btnCopyToClipboard != null)
-            notification.add(btnCopyToClipboard);
-        //lytContent.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
+        lytContent.add(lblTitle, lblText);        
+        lytContent.add(btnCopyToClipboard);
+        lytContent.setHorizontalComponentAlignment(FlexComponent.Alignment.END, btnCopyToClipboard);                
         lytContent.addClickListener(e-> notification.close());
 
+        notification.setThemeName("simple-notification");
         notification.add(lytContent);        
-        notification.setDuration(3000);
+        notification.setDuration(300000);
         notification.setPosition(Notification.Position.BOTTOM_CENTER);
         notification.open();
     }

@@ -105,14 +105,14 @@ vaadin-button {
     padding: 2px;
     color: var(--kuwaiba-secondary-text-color);
     font-weight: bold;
-    background-color: var(--kuwaiba-terciary-color);
+    background-color: var(--kuwaiba-quaternary-color);
     font-size: small;
 }
 
 .simple-notification-title-error {
-    padding: 2px;
+    padding: 1px 10px 1px 10px;
     color: var(--kuwaiba-secondary-text-color);
     font-weight: bold;
-    background-color: var(--kuwaiba-quaternary-color);
+    background-color: var(--kuwaiba-quintenary-color);
     font-size: small;
 }

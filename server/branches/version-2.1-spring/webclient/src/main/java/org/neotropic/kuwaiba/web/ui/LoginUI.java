@@ -58,6 +58,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @CssImport(value="./styles/custom-acordion.css", themeFor="vaadin-accordion-panel")
 @CssImport(value="./styles/compact-grid.css", themeFor="vaadin-grid")
 @CssImport(value="./styles/icon-button.css", themeFor="vaadin-button")
+@CssImport(value="./styles/vaadin-notification-card.css", themeFor = "vaadin-notification-card")
 public class LoginUI extends VerticalLayout implements BeforeEnterObserver, HasDynamicTitle {
     /**
      * User name text field.
