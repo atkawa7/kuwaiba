@@ -30,8 +30,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.NumberField;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -858,16 +856,16 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                                             nodeShape.addClickOverlayButtonListener(evt -> {
                                                 if (evt.getButtonId().equals("showContent")) {
                                                     try {
-                                                        List<BusinessObjectLight> childrenNodes = bem.getChildrenOfClassLight(theObject.getId(), theObject.getClassName(), Constants.CLASS_SLOT, -1);
                                                         if (name == null || name.isEmpty()) {
                                                             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.rack-view-rack-slot-name-not-set"), 
                                                                 AbstractNotification.NotificationType.ERROR, ts).open();
                                                             return;
                                                         }
-                                                        
+                                                        List<BusinessObjectLight> childrenNodes = bem.getChildrenOfClassLight(theObject.getId(), theObject.getClassName(), Constants.CLASS_SLOT, -1);
                                                         BusinessObjectLight theSlot = childrenNodes.stream().filter(item -> item.getName().equals(name)).findAny().get();
                                                         if (theSlot == null) {
-                                                            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.rack-view-rack-no-slot-with-name") + name, 
+                                                            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), 
+                                                                    String.format("%s %s", ts.getTranslatedString("module.visualization.rack-view-rack-no-slot-with-name"), name), 
                                                                 AbstractNotification.NotificationType.INFO, ts).open();
                                                             return;
                                                         }
@@ -1042,7 +1040,7 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
             BusinessObject rack = bem.getObject(businessObject.getClassName(), businessObject.getId());
             
             if (rack == null) {
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), "Cant find related object", 
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.rack-view-cant-find-object"), 
                             AbstractNotification.NotificationType.INFO, ts).open();
             } else {
                 Integer objectRackUnits = (Integer) rack.getAttributes().get(Constants.PROPERTY_RACK_UNITS);
@@ -1096,7 +1094,7 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                                     
                                 }
                             } else 
-                                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.rack-view-rack-cant-find-child-object") + " : " + deviceLight, 
+                                new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), String.format("%s : %s", ts.getTranslatedString("module.visualization.rack-view-rack-cant-find-child-object") , deviceLight), 
                                         AbstractNotification.NotificationType.INFO, ts).open();
                             
                         }
@@ -1121,7 +1119,7 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                             }
                             return devices;
                         } else {
-                            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.rack-view-error-building-view") + message, 
+                            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), String.format("%s %s", ts.getTranslatedString("module.visualization.rack-view-error-building-view") + message), 
                             AbstractNotification.NotificationType.ERROR, ts).open();
                             return null;
                         }
@@ -1249,12 +1247,12 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                 return;
             
 //          <editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
-            try {
-                FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/device_structure" + businessObject.getId() + ".xml");
-                fos.write(structure);
-                fos.close();
-            } catch (IOException e) {
-            }
+//            try {
+//                FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/device_structure" + businessObject.getId() + ".xml");
+//                fos.write(structure);
+//                fos.close();
+//            } catch (IOException e) {
+//            }
 //                     </editor-fold>
 
             layoutDevices = new HashMap();
