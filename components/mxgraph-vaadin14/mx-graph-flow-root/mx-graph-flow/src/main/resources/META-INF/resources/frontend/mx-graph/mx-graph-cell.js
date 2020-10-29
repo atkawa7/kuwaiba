@@ -781,7 +781,7 @@ cellLabelChanged() {
   
   addConnectableOverlayPort() {
         // Creates a new overlay with an image and a tooltip
-        var overlay = new mxCellOverlay(new mxImage('MXGRAPH/images/connector.gif', 16, 16), 'Add outgoing');
+        var overlay = new mxCellOverlay(new mxImage('MXGRAPH/images/plug.png', 16, 16), 'Create Link');
         overlay.cursor = 'hand';
         var _this = this;
        
