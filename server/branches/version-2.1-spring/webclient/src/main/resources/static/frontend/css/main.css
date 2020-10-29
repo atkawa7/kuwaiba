@@ -93,13 +93,6 @@ vaadin-button {
 }
 
 /* Some styles applicable in error, login or logged-in pages*/
-.simple-notification {
-    background-color: var(--kuwaiba-primary-color);
-    color: var(--kuwaiba-primary-text-color);
-    padding: 10px 5px 10px 5px;
-    font-size: small;
-}
-
 .simple-notification-title-info {
     padding: 2px;
     color: var(--kuwaiba-secondary-text-color);

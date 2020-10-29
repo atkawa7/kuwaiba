@@ -37,10 +37,10 @@ public class SimpleNotification extends AbstractNotification {
     public void open() {
         Notification notification = new Notification();
         VerticalLayout lytContent = new VerticalLayout();
-        lytContent.setClassName("simple-notification");
+        notification.setThemeName("simple-notification");
         H4 lblTitle = new H4(this.title);
         Label lblText = new Label(this.text);
-        
+        Button btnCopyToClipboard = null;
         switch (type) {
             default:
             case INFO:
@@ -51,13 +51,16 @@ public class SimpleNotification extends AbstractNotification {
                 break;
             case ERROR:
                 lblTitle.setClassName("simple-notification-title-error");
-                Button btnCopyToClipboard = new Button(ts.getTranslatedString("module.general.labels.copy-to-clipboard"));
+                btnCopyToClipboard = new Button(ts.getTranslatedString("module.general.labels.copy-to-clipboard"));
         }
 
         lytContent.add(lblTitle, lblText);
+        if(btnCopyToClipboard != null)
+            notification.add(btnCopyToClipboard);
+        //lytContent.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
         lytContent.addClickListener(e-> notification.close());
 
-        notification.add(lytContent);
+        notification.add(lytContent);        
         notification.setDuration(3000);
         notification.setPosition(Notification.Position.BOTTOM_CENTER);
         notification.open();
