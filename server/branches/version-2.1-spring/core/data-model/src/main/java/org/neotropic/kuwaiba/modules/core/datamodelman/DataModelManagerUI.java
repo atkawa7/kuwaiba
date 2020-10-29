@@ -512,7 +512,7 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
     
     private void updatePropertySheetClassAttributes() {
         try {           
-            propsheetClassAttributes.setItems(PropertyFactory.generalPropertiesFromAttribute(selectedAttribute));
+            propsheetClassAttributes.setItems(PropertyFactory.generalPropertiesFromAttribute(selectedAttribute, mem));
         } catch (Exception ex) {
             Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
@@ -666,6 +666,10 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
                             break;
                         case Constants.PROPERTY_DESCRIPTION:
                             attributeMetadataToUpdate.setDescription(property.getValue().toString());
+                            break;
+                        case Constants.PROPERTY_TYPE:
+                            if (property.getValue() != null)
+                                 attributeMetadataToUpdate.setType(property.getValue().toString());
                             break;
                         case Constants.PROPERTY_MANDATORY:
                             attributeMetadataToUpdate.setMandatory((Boolean)property.getValue());
