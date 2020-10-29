@@ -30,6 +30,7 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.Command;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -192,10 +193,18 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
         
         btnAddConfigurationVariablePool.getElement().setProperty("title", ts.getTranslatedString("module.configvarman.actions.new-configuration-variable-pool.description"));
 
+        Command deleteVariablesPool = () -> {
+            lytConfigurationVariables.setVisible(false);
+            lytPropertySheet.setVisible(false);
+            btnDeleteConfigurationVariablesPool.setEnabled(false);
+            tblConfigVariablesPool.getDataProvider().refreshAll();
+        };
         btnDeleteConfigurationVariablesPool = new Button(this.deleteConfigurationVariablesPoolVisualAction.getModuleAction().getDisplayName(), new Icon(VaadinIcon.TRASH),
                 (event) -> {
                     this.deleteConfigurationVariablesPoolVisualAction.getVisualComponent(new ModuleActionParameterSet(
-                            new ModuleActionParameter("configurationVariablePool", currentConfigVariablesPool))).open();
+                            new ModuleActionParameter("configurationVariablePool", currentConfigVariablesPool),
+                            new ModuleActionParameter("commandClose", deleteVariablesPool)
+                    )).open();
                 });
         
         btnDeleteConfigurationVariablesPool.getElement().setProperty("title", ts.getTranslatedString("module.configvarman.actions.delete-configuration-variable-pool.description"));
@@ -217,7 +226,7 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
         btnAddConfigVariablesSec.getElement().setProperty("title", ts.getTranslatedString("module.configvarman.actions.new-configuration-variable-sec.description"));
         btnAddConfigVariablesSec.setEnabled(false);
         btnAddConfigVariablesSec.setClassName("align-self-end");
-        
+           
         lytConfigurationVariablesPool = new VerticalLayout(tblConfigVariablesPool, btnAddConfigurationVariable, btnAddConfigurationVariablePool, btnDeleteConfigurationVariablesPool);
         lytConfigurationVariablesPool.setWidth("25%");
         lytConfigurationVariablesPool.setPadding(false);
@@ -245,7 +254,7 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
         lytPropertySheet.setMargin(false);
         lytPropertySheet.setPadding(false);
         lytPropertySheet.setSpacing(false);
-
+        
         lytMainContent.add(lytConfigurationVariablesPool, lytConfigurationVariables, lytPropertySheet);
         add(lytMainContent);
     }
@@ -329,8 +338,8 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
 
     private void updatePropertySheet() {  
         try { 
-            ConfigurationVariable aWholeConfigurationVariable = aem.getConfigurationVariable(currentConfigVariable.getName());
-            propertysheet.setItems(PropertyFactory.propertiesFromConfigurationVariable(aWholeConfigurationVariable));
+             ConfigurationVariable aWholeConfigurationVariable = aem.getConfigurationVariable(currentConfigVariable.getName());
+             propertysheet.setItems(PropertyFactory.propertiesFromConfigurationVariable(aWholeConfigurationVariable));
         } catch (UnsupportedOperationException | ApplicationObjectNotFoundException ex) {
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(), 
                             AbstractNotification.NotificationType.ERROR, ts).open();
@@ -349,7 +358,7 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
                     loadConfigurationVariablesPools();
                     loadConfigurationVariables(currentConfigVariablesPool);
                 } else
-                    loadConfigurationVariablesPools();
+                    loadConfigurationVariablesPools();                    
                
             } catch (UnsupportedOperationException | ApplicationObjectNotFoundException ex) {
                 Logger.getLogger(ConfigurationVariablesUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -382,10 +391,16 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
     private HorizontalLayout createConfigurationVariableActionGrid(ConfigurationVariable configurationVariable) {
         HorizontalLayout lyt;
         
+        Command deleteVariable = () -> {
+            lytPropertySheet.setVisible(false);
+            tblConfigVariables.getDataProvider().refreshAll();
+        };
         Button btnDelete = new Button(new Icon(VaadinIcon.TRASH),
                 (event) -> {
             this.deleteConfigurationVariableVisualAction.getVisualComponent(new ModuleActionParameterSet(
-                    new ModuleActionParameter("configurationVariable", configurationVariable))).open();
+                    new ModuleActionParameter("configurationVariable", configurationVariable),
+                    new ModuleActionParameter("commandClose", deleteVariable)
+            )).open();
         });
         btnDelete.getElement().setProperty("title", ts.getTranslatedString("module.configvarman.actions.delete-configuration-variable.description"));
         

@@ -37,6 +37,7 @@ import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.Command;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -126,6 +127,10 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
      * Combo filter for classes tree
      */
     ComboBox<ClassMetadataLight> cbxFilterTree;
+    /**
+     * Layout of validator definition form
+     */
+    VerticalLayout lytValidatorDefinition;
 
     public ValidatorDefinitionUI() {
         super();
@@ -162,10 +167,16 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
                 });
         btnAddNewValidatorDefinition.setEnabled(true);
 
+        Command deleteValidator = () -> {
+            lytValidatorDefinition.setVisible(false);
+            btnDeleteValidatorDefinition.setEnabled(false);
+        };
         btnDeleteValidatorDefinition = new Button(this.deleteValidatorDefinitionVisualAction.getModuleAction().getDisplayName(), new Icon(VaadinIcon.TRASH),
                 (event) -> {
                     this.deleteValidatorDefinitionVisualAction.getVisualComponent(new ModuleActionParameterSet(
-                            new ModuleActionParameter("validatorDefinition", currentValidator))).open();
+                            new ModuleActionParameter("validatorDefinition", currentValidator),
+                            new ModuleActionParameter("commandClose", deleteValidator) 
+                    )).open();
                 });
         btnDeleteValidatorDefinition.setEnabled(false);
 
@@ -195,6 +206,8 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
 
         VerticalLayout lytInventoryTree = new VerticalLayout(cbxFilterTree, objectTree, btnAddNewValidatorDefinition, btnDeleteValidatorDefinition);
         lytInventoryTree.setPadding(false);
+        lytInventoryTree.setSpacing(false);
+        lytInventoryTree.setMargin(false);
         lytInventoryTree.setHeightFull();
 
         splitLayout.addToPrimary(lytInventoryTree);
@@ -279,12 +292,15 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
     }
 
     private class ValidatorDefinitionForm extends VerticalLayout {
-
         public ValidatorDefinitionForm(ValidatorDefinition validator) throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
-
+            setMargin(false);
+            setPadding(false);
+            setSpacing(false);
+            
             H4 headerMain = new H4(String.format("%s %s", validator.getName(), ts.getTranslatedString("module.configman.validator.header-name")));
             
             Label lblScript = new Label(ts.getTranslatedString("module.configman.validator.label.script"));
+            lblScript.addClassName("bold-font");
             AceEditor editorScript = new AceEditor();
             editorScript.setMode(AceMode.groovy);
             editorScript.setValue(validator.getScript());
@@ -315,8 +331,12 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
             lytHeader.setWidthFull();
             lytHeader.setPadding(false);
             lytHeader.setMargin(false);
+            lytHeader.setSpacing(false);
             HorizontalLayout lytButton = new HorizontalLayout(btnEditProperties, btnSave);
             lytButton.setAlignItems(Alignment.END);
+            lytButton.setSpacing(false);
+            lytButton.setMargin(false);
+            lytButton.setPadding(false);
             HorizontalLayout lytHeaderMain = new HorizontalLayout(lytHeader, lytButton);
             lytHeaderMain.setWidthFull();
             lytHeaderMain.setPadding(false);
@@ -324,8 +344,14 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
             VerticalLayout lytScript = new VerticalLayout(lblScript, editorScript);
             lytScript.setHeightFull();
             lytScript.setMargin(false);
+            lytScript.setSpacing(false);
             
-            add(lytHeaderMain, lytScript);
+            lytValidatorDefinition = new VerticalLayout(lytHeaderMain, lytScript);
+            lytValidatorDefinition.setHeightFull();
+            lytValidatorDefinition.setMargin(false);
+            lytValidatorDefinition.setPadding(false);
+            lytValidatorDefinition.setSpacing(false);
+            add(lytValidatorDefinition);
         }
     }
     private class UpdatePropertiesDialog extends Dialog {

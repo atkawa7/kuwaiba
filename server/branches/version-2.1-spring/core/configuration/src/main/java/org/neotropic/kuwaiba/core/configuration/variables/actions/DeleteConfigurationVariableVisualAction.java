@@ -17,6 +17,7 @@ package org.neotropic.kuwaiba.core.configuration.variables.actions;
 
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.server.Command;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionException;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionParameter;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionParameterSet;
@@ -38,7 +39,11 @@ import org.springframework.stereotype.Component;
  * @author Mauricio Ruiz {@literal <mauricio.ruiz@kuwaiba.org>}
  */
 @Component
-public class DeleteConfigurationVariableVisualAction extends AbstractVisualAction<Dialog>{
+public class DeleteConfigurationVariableVisualAction extends AbstractVisualAction<Dialog> {
+    /**
+     * Close action command
+     */
+    private Command commandClose;
     /**
      * Reference to the translation service.
      */
@@ -71,14 +76,13 @@ public class DeleteConfigurationVariableVisualAction extends AbstractVisualActio
         
         if(parameters.containsKey("configurationVariable")){
             selectedConfigurationVariable = (ConfigurationVariable) parameters.get("configurationVariable");
+            commandClose = (Command) parameters.get("commandClose");
             
             ConfirmDialog wdwDeleteConfigurationVariable = new ConfirmDialog(ts.getTranslatedString("module.general.labels.confirmation"),
-                ts.getTranslatedString("module.general.labels.confirm-delete"),
-                ts.getTranslatedString("module.general.labels.delete"));
+                    String.format("%s %s?", ts.getTranslatedString("module.configvarman.actions.delete-configuration-variable.ui.deleted-confirm"), selectedConfigurationVariable.getName()),
+                    ts.getTranslatedString("module.general.labels.delete"));
             
-            
-            wdwDeleteConfigurationVariable.getBtnConfirm().addClickListener((event) -> {
-                
+            wdwDeleteConfigurationVariable.getBtnConfirm().addClickListener((event) -> {  
                try{
                    deleteConfigurationVariableAction.getCallback().execute(new ModuleActionParameterSet(
                    new ModuleActionParameter<>("name", selectedConfigurationVariable.getName())));
@@ -86,17 +90,15 @@ public class DeleteConfigurationVariableVisualAction extends AbstractVisualActio
                    fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
                         ts.getTranslatedString("module.configvarman.actions.delete-configuration-variable.ui.deleted-success"), DeleteConfigurationVariableAction.class));
                 wdwDeleteConfigurationVariable.close();
-                      
-                           
+                //refresh related grid
+                getCommandClose().execute();    
                }catch(ModuleActionException ex){
                    fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_ERROR,
                         ex.getMessage(), DeleteConfigurationVariableAction.class));
                    wdwDeleteConfigurationVariable.close();
-               }
-            
+               } 
         });
-            return wdwDeleteConfigurationVariable; 
-      
+            return wdwDeleteConfigurationVariable;  
          }else 
             return new Dialog(new Label(ts.getTranslatedString("module.configvarman.error-param-configuration-variable")));
     }
@@ -106,8 +108,19 @@ public class DeleteConfigurationVariableVisualAction extends AbstractVisualActio
        return deleteConfigurationVariableAction;
     }
 
- 
+    /**
+     * refresh grid
+     * @return commandClose;Command; refresh action 
+     */
+    public Command getCommandClose() {
+        return commandClose;
+    }
 
-  
-
+    /**
+     * @param commandClose;Command; refresh action 
+     */
+    public void setCommandClose(Command commandClose) {
+        this.commandClose = commandClose;
+    }
+    
 }

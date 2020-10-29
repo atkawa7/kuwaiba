@@ -17,6 +17,7 @@ package org.neotropic.kuwaiba.core.configuration.validators.actions;
 
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.server.Command;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionException;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionParameter;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionParameterSet;
@@ -36,6 +37,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class DeleteValidatorDefinitionVisualAction extends AbstractVisualAction<Dialog> {
     /**
+     * Close action command
+     */
+    private Command commandClose; 
+    /**
      * Reference to the translation service.
      */
     @Autowired
@@ -52,6 +57,7 @@ public class DeleteValidatorDefinitionVisualAction extends AbstractVisualAction<
 
         if (parameters.containsKey("validatorDefinition")) {
             selectedValidatorDefinition = (ValidatorDefinition) parameters.get("validatorDefinition");
+            commandClose = (Command) parameters.get("commandClose");
 
             ConfirmDialog wdwDeleteValidatorDefinition = new ConfirmDialog(ts.getTranslatedString("module.general.labels.confirmation"),
                     String.format("%s %s?", ts.getTranslatedString("module.configman.validator.actions.delete-validator.confirm-delete-message"), selectedValidatorDefinition.getName()),
@@ -65,6 +71,8 @@ public class DeleteValidatorDefinitionVisualAction extends AbstractVisualAction<
                     fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
                             ts.getTranslatedString("module.configman.validator.actions.delete-validator.ui.deleted-success"), DeleteValidatorDefinitionVisualAction.class));
                     wdwDeleteValidatorDefinition.close();
+                    //refresh related grid
+                    getCommandClose().execute();
                 } catch (ModuleActionException ex) {
                     fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_ERROR,
                             ex.getMessage(), DeleteValidatorDefinitionVisualAction.class));
@@ -79,6 +87,21 @@ public class DeleteValidatorDefinitionVisualAction extends AbstractVisualAction<
     @Override
     public AbstractAction getModuleAction() {
         return deleteValidatorDefinitionAction;
+    }
+    
+    /**
+     * refresh grid
+     * @return commandClose;Command; refresh action 
+     */
+    public Command getCommandClose() {
+        return commandClose;
+    }
+
+    /**
+     * @param commandClose;Command; refresh action 
+     */
+    public void setCommandClose(Command commandClose) {
+        this.commandClose = commandClose;
     }
     
 }

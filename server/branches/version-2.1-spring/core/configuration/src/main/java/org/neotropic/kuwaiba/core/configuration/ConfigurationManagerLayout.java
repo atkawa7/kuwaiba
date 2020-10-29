@@ -15,10 +15,12 @@
  */
 package org.neotropic.kuwaiba.core.configuration;
 
+import com.vaadin.flow.component.dependency.CssImport;
 import org.neotropic.util.visual.general.ModuleLayout;
 
 /**
  * The definition of the Configuration Manager layout.
  * @author Mauricio Ruiz {@literal <mauricio.ruiz@kuwaiba.org>}
  */
+@CssImport("./styles/configuration-manager.css")
 public class ConfigurationManagerLayout extends ModuleLayout { }
