@@ -68,13 +68,14 @@ public class PropertyValueConverter {
                 return getLocalDateAsStringToPersist((LocalDate) property.getValue());
             case Constants.DATA_TYPE_TIME_STAMP:
                 return getLocalDateTimeAsStringToPersist((LocalDateTime) property.getValue());
-            case Constants.DATA_TYPE_OBJECT:
-                return getListTypeAsStringToPersist((BusinessObjectLight) property.getValue());
-            case Constants.DATA_TYPE_OBJECT_MULTIPLE:
-                return getMultipleListTypeAsStringToPersist( new ArrayList<>((Set) property.getValue()));
             default:
-                return property.getValue().toString();
-
+                if (property.getValue() != null) {
+                    if (property.getValue() instanceof BusinessObjectLight)
+                        return getListTypeAsStringToPersist((BusinessObjectLight) property.getValue());
+                    else if (property.getValue() instanceof List)
+                        return getMultipleListTypeAsStringToPersist( new ArrayList<>((Set) property.getValue()));
+                }
+                return null;
         }
     }
     

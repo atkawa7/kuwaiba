@@ -15,7 +15,9 @@
  */
 package org.neotropic.kuwaiba.modules.core.navigation.properties;
 
+import com.vaadin.flow.component.ItemLabelGenerator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -27,9 +29,12 @@ import org.neotropic.kuwaiba.core.apis.persistence.application.ConfigurationVari
 import org.neotropic.kuwaiba.core.apis.persistence.application.TemplateObject;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObject;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.AttributeMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
+import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
@@ -184,12 +189,17 @@ public class PropertyFactory {
                         if (anAttribute.isMultiple()) {
                             objectProperties.add(new ObjectMultipleProperty(anAttribute.getName(), anAttribute.getDisplayName(),
                                     anAttribute.getDescription(), 
-                                    new ArrayList<>(selectedItems), new ArrayList<>(items)));
+                                    new ArrayList<>(selectedItems), new ArrayList<>(items), anAttribute.getType()));
                         } else {
                             objectProperties.add(new ObjectProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                    anAttribute.getDescription(), 
-                                    selectedItems.size() > 0 ? selectedItems.get(0) : null,
-                                    new ArrayList<>(items)));
+                                    anAttribute.getDescription(), (selectedItems.size() > 0 ? selectedItems.get(0) : null),
+                                    new ArrayList<>(items), anAttribute.getType(), (selectedItems.size() > 0 ? selectedItems.get(0).getName() : ""),
+                                    (ItemLabelGenerator) (Object t) -> {
+                                        if (t instanceof BusinessObjectLight) {
+                                            return ((BusinessObjectLight) t).getName();
+                                        }
+                                        return "";
+                            }));
                         }
                     } catch (InventoryException ex) {
                         Logger.getLogger(PropertyFactory.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage());
@@ -291,15 +301,21 @@ public class PropertyFactory {
                             }
                             String listTypeItemId = templateObject.getAttributes().get(anAttribute.getName());
                             if (listTypeItemId != null) {
-                                objectProperties.add(new ObjectProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                        anAttribute.getDescription(), objetcs, items));
+                                objectProperties.add(new ObjectMultipleProperty(anAttribute.getName(), anAttribute.getDisplayName(),
+                                        anAttribute.getDescription(), objetcs, items, anAttribute.getType()));
                             }
                         } else {
                             String listTypeItemId = templateObject.getAttributes().get(anAttribute.getName());
                             if (listTypeItemId != null) {
                                 BusinessObject listTypeItem = aem.getListTypeItem(anAttribute.getType(), listTypeItemId);
                                 objectProperties.add(new ObjectProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                        anAttribute.getDescription(), listTypeItem, items));
+                                        anAttribute.getDescription(), listTypeItem, items, anAttribute.getType(), (listTypeItem != null ? listTypeItem.getName() : ""),
+                                 (ItemLabelGenerator) (Object t) -> {
+                                            if (t instanceof BusinessObjectLight) {
+                                                return ((BusinessObjectLight) t).getName();
+                                            }
+                                            return "";
+                                }));
                             }
                         }
                     } catch (InventoryException ex) {
@@ -365,7 +381,7 @@ public class PropertyFactory {
         return objectProperties;
     }
 
-    public static List<AbstractProperty> generalPropertiesFromAttribute(AttributeMetadata attributeMetadata) {
+    public static List<AbstractProperty> generalPropertiesFromAttribute(AttributeMetadata attributeMetadata, MetadataEntityManager mem) {
 
         ArrayList<AbstractProperty> objectProperties = new ArrayList<>();
         AbstractProperty property;
@@ -393,6 +409,25 @@ public class PropertyFactory {
                 attributeMetadata.getDescription() == null || attributeMetadata.getDescription().isEmpty()
                 ? AbstractProperty.NULL_LABEL : attributeMetadata.getDescription(),
                 readOnlyAttribute);
+        objectProperties.add(property);
+        
+        List<ClassMetadataLight> listTypes = new ArrayList<>();
+        try {
+            listTypes = mem.getSubClassesLight(Constants.CLASS_GENERICOBJECTLIST, false, false);
+        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+            Logger.getLogger(PropertyFactory.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        List<Object> lstListTypes = listTypes.stream().map(ClassMetadataLight::getName).collect(Collectors.toList());
+        List<Object> lstAllTypes  = new ArrayList(Arrays.asList(Constants.DATA_TYPES));
+        lstAllTypes.addAll(lstListTypes);
+        
+        property = new ObjectProperty(Constants.PROPERTY_TYPE,
+                Constants.PROPERTY_TYPE, Constants.PROPERTY_TYPE,
+                attributeMetadata.getType(), lstAllTypes, "", attributeMetadata.getType(), 
+                (ItemLabelGenerator) (Object t) -> {
+                    return t.toString();
+                });
         objectProperties.add(property);
 
         property = new BooleanProperty(Constants.PROPERTY_MANDATORY,
@@ -426,7 +461,7 @@ public class PropertyFactory {
         objectProperties.add(property);
 
         property = new BooleanProperty(Constants.PROPERTY_NO_COPY,
-                Constants.PROPERTY_ADMINISTRATIVE, Constants.PROPERTY_NO_COPY,
+                Constants.PROPERTY_NO_COPY, Constants.PROPERTY_NO_COPY,
                 attributeMetadata.isNoCopy() == null ? false : attributeMetadata.isNoCopy(),
                 readOnlyAttribute);
         objectProperties.add(property);
