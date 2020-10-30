@@ -15,6 +15,7 @@
  */
 package com.neotropic.flow.component.aceeditor;
 
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Synchronize;
@@ -133,4 +134,8 @@ public final class AceEditor extends Component {
             return super.addListener(AceEditorValueChangedEvent.class, clickListener);
         }
 
-}
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        super.onAttach(attachEvent); //To change body of generated methods, choose Tools | Templates.
+        getElement().executeJs("window.dispatchEvent(new Event('resize')); ");
+    }
