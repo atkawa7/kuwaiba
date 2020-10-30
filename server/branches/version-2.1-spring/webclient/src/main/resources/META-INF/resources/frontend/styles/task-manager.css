@@ -32,3 +32,11 @@ limitations under the License.
 .task-result {
     padding-left: 20px;
 }
+
+.header {
+    margin: 0px;
+}
+
+.bold-font {
+    font-weight: bold;
+}

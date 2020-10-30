@@ -18,5 +18,6 @@
         <module>physical-connections</module>
         <module>reports</module>
         <module>topoman</module>
+        <module>taskman</module>
     </modules>
 </project>

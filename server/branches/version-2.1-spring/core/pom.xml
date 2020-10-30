@@ -22,7 +22,6 @@
         <module>navigation</module>
         <module>Visualization</module>
         <module>templateman</module>
-        <module>taskman</module>
         <module>services</module>
         <module>configuration</module>
     </modules>
