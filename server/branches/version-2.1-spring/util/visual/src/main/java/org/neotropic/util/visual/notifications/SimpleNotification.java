@@ -69,7 +69,7 @@ public class SimpleNotification extends AbstractNotification {
 
         notification.setThemeName("simple-notification");
         notification.add(lytContent);        
-        notification.setDuration(300000);
+        notification.setDuration(3000);
         notification.setPosition(Notification.Position.BOTTOM_CENTER);
         notification.open();
     }
