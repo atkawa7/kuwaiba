@@ -176,6 +176,8 @@ public class PropertyFactory {
                     default:
                         try {
                         List<BusinessObjectLight>  items = aem.getListTypeItems(anAttribute.getType());
+                        items.add(0, new BusinessObject("", "", "none"));
+                        
                         List<BusinessObjectLight> selectedItems = new ArrayList<>();
                         String attributeValue = (String) attributes.get(anAttribute.getName());
 
