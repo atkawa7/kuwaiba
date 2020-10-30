@@ -12,3 +12,18 @@ and open the template in the editor.
     padding: 0 0px;       
     text-transform: none;
 }
+
+.menu-templateitem-options {
+    padding: 0 0px;       
+    text-transform: capitalize;
+    background-color: transparent;
+}
+
+.submenu-template-subitem-options {    
+   text-transform: capitalize;
+   background-color: transparent;
+}
+
+.subitem-buttons.options{
+  text-transform: capitalize;  
+}

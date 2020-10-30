@@ -16,22 +16,22 @@ limitations under the License.
 */
 
 /* 
- * Theme style used in TemplateManagerUI to customize template subitems options 
- *  inside tree table
+ * Theme style used in TemplateManagerUI to customize template subitems, aditional options 
+ * like new simple, especial, single and masive
  *
- * Created on : Aug 13, 2020, 11:31:00 AM
+ * Created on : oct 30, 2020
  * Author     : Hardy Ryan Chingal Martinez {@literal <ryan.chingal@kuwaiba.org>}
 */
-:host([theme~="short-icons"]) [part="vaadin-menu-bar"] {
+
+
+:host([theme~="items-option-menu"])  {
+    text-transform : capitalize;
     background-color: transparent;
 }
 
-:host([theme~="short-icons"]) [part="menu-bar-button"] {
+:host([theme~="items-option-menu"]) [part="menu-bar-button"] {
     padding:  3px;
     min-width: 16px;    
     text-transform : capitalize;
     background-color: transparent;
-}
-:host([theme~="short-icons"]) [part="container"] {
-    padding:  0px;
 }

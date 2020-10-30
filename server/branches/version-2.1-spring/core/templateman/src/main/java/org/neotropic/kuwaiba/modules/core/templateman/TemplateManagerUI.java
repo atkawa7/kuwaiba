@@ -547,12 +547,16 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
      */
     private void buildChildTemplateGrid() {
         mnuAddChildTemplateItems = new MenuBar();
-        //elements properties        
+        //elements properties                
+        mnuAddChildTemplateItems.setThemeName("items-option-menu");
         mnuAddChildTemplateItems.setWidthFull();
+        mnuAddChildTemplateItems.setClassName("menu-templateitem-options");
 
-        mnuAddChildsTemplateItem = mnuAddChildTemplateItems.addItem(
-                new Button(String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-item.name")),
-                        new Icon(VaadinIcon.PLUS)));
+        Button btnaddChild = new Button(String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-item.name")),
+                        new Icon(VaadinIcon.PLUS));
+        btnaddChild.setThemeName("subitem-option-button");
+        //btnaddChild.setClassName("subitem-buttons.options");
+        mnuAddChildsTemplateItem = mnuAddChildTemplateItems.addItem(btnaddChild);
         mnuAddChildsTemplateItem.getElement().getThemeList().add("BUTTON_SMALL");
         mnuAddChildsTemplateItem.getElement().setProperty("title",
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-item.description")));
@@ -564,9 +568,10 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
                 e -> newBulkStructureItem());
         mnuAddChildsTemplateItem.setEnabled(false);
 
-        mnuAddSpecialChildsTemplateItem = mnuAddChildTemplateItems.addItem(
-                new Button(String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-special-item.name")),
-                        new Icon(VaadinIcon.ASTERISK)));
+        Button btnaddSpecialChild = new Button(String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-special-item.name")),
+                        new Icon(VaadinIcon.ASTERISK));        
+        btnaddSpecialChild.setThemeName("subitem-option-button");
+        mnuAddSpecialChildsTemplateItem = mnuAddChildTemplateItems.addItem(btnaddSpecialChild);
         mnuAddSpecialChildsTemplateItem.getElement().getThemeList().add("BUTTON_SMALL");
         mnuAddSpecialChildsTemplateItem.getElement().setProperty("title",
                 String.format("%s", ts.getTranslatedString("module.templateman.actions.new-template-special-item.description")));
@@ -619,6 +624,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
         //element properties
         menuBar.setWidthFull();
         menuBar.getElement().getThemeList().add("short-icons");
+        menuBar.setClassName("submenu-template-subitem-options");
 
         //add sub items
         MenuItem smnuAddChildsTemplateItem = menuBar.addItem(new Icon(VaadinIcon.PLUS));

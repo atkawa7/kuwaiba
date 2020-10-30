@@ -25,4 +25,5 @@ import org.neotropic.util.visual.general.ModuleLayout;
  */
 @StyleSheet(value = "css/tepman.css")
 @CssImport(value = "./styles/vaadin-menu-bar-buttons.css", themeFor = "vaadin-menu-bar")
+@CssImport(value = "./styles/tepman-item-menubar-buttons.css", themeFor = "vaadin-menu-bar")
 public class TemplateManagerLayout extends ModuleLayout { }
