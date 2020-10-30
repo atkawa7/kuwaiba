@@ -139,3 +139,4 @@ public final class AceEditor extends Component {
         super.onAttach(attachEvent); //To change body of generated methods, choose Tools | Templates.
         getElement().executeJs("window.dispatchEvent(new Event('resize')); ");
     }
+}
