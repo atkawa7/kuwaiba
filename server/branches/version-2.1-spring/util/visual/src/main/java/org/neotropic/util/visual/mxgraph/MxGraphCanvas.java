@@ -314,7 +314,6 @@ public class MxGraphCanvas<N, E> {
         }
         
         for (E edge : edgesToDelete) {   
-            mxGraph.removeEdge(edges.get(edge));
             edges.remove(edge);
             sourceEdgeNodes.remove(edge);
             targetEdgeNodes.remove(edge);
@@ -328,7 +327,6 @@ public class MxGraphCanvas<N, E> {
         mxGraph.removeEdge(edges.get(businessObject));
         edges.remove(businessObject);
                     
-        edges.remove(businessObject);
         sourceEdgeNodes.remove(businessObject);
         targetEdgeNodes.remove(businessObject);            
     }
