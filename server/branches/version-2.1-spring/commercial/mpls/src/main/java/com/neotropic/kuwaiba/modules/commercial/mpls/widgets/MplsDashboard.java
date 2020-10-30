@@ -383,7 +383,6 @@ public class MplsDashboard extends VerticalLayout {
         H4 headerListTypes = new H4(ts.getTranslatedString("module.propertysheet.labels.header"));
         propSheetObjects = new PropertySheet(ts, new ArrayList<>(), "");
         propSheetObjects.addPropertyValueChangedListener(listenerPropSheetObjects);
-        propSheetObjects.addClassName("overflow-y-scroll");
         
         PropertySheet.IPropertyValueChangedListener listenerPropSheetMPLS = new PropertySheet.IPropertyValueChangedListener() {
             @Override
@@ -404,7 +403,21 @@ public class MplsDashboard extends VerticalLayout {
         
         Accordion accordion = new Accordion();
         accordion.setWidthFull();
-             
+          
+        BoldLabel lblViewProperties = new BoldLabel(ts.getTranslatedString("module.mpls.view-properties"));
+        lblViewProperties.addClassName("lbl-accordion");
+        HorizontalLayout lytSummaryViewProp = new HorizontalLayout(lblViewProperties); 
+        lytSummaryViewProp.setWidthFull();       
+        AccordionPanel apViewProp = new AccordionPanel(lytSummaryViewProp, propSheetMPLS);
+        accordion.add(apViewProp);
+        
+        BoldLabel lblObjectProperties = new BoldLabel(ts.getTranslatedString("module.mpls.object-properties"));
+        lblObjectProperties.addClassName("lbl-accordion");
+        HorizontalLayout lytSummaryObjectProp = new HorizontalLayout(lblObjectProperties); 
+        lytSummaryObjectProp.setWidthFull();       
+        AccordionPanel apObjectProp = new AccordionPanel(lytSummaryObjectProp, propSheetObjects);
+        accordion.add(apObjectProp);
+        
         Label lblHelp = new Label(ts.getTranslatedString("module.mpls.help"));
         lblHelp.addClassName("lbl-accordion");
         HorizontalLayout lytSummaryHelp = new HorizontalLayout(lblHelp); 
@@ -427,15 +440,16 @@ public class MplsDashboard extends VerticalLayout {
         AccordionPanel apContext = new AccordionPanel(lytSummaryContext, lytContext);
         accordion.add(apContext);
         accordion.close();
+        accordion.open(apObjectProp);
         
-        VerticalLayout lytSheet = new VerticalLayout(new BoldLabel(ts.getTranslatedString("module.mpls.view-properties")),propSheetMPLS,
-                                                 new BoldLabel(ts.getTranslatedString("module.mpls.object-properties")), propSheetObjects, accordion);
-        lytSheet.setFlexGrow(1, propSheetObjects);
-//        lytSheet.setSpacing(false);
+        VerticalLayout lytSheet = new VerticalLayout(accordion);
+////        lytSheet.setFlexGrow(1, propSheetObjects);
+        lytSheet.setSpacing(false);
         setMarginPaddingLayout(lytSheet, false);
-        lytSheet.setWidth("35%");
+        lytSheet.setWidth("30%");
+        lytSheet.addClassName("overflow-y-scroll");
 
-        HorizontalLayout lytMain = new HorizontalLayout(lytDashboard, lytSheet);
+        HorizontalLayout lytMain = new HorizontalLayout(lytSheet, lytDashboard);
         lytMain.setSizeFull();
         setMarginPaddingLayout(lytMain, false);
                      
@@ -752,13 +766,17 @@ public class MplsDashboard extends VerticalLayout {
                }
             }
             if (nodesAdded.size() > 0)    
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), nodesAdded.size() + " object(s) added", 
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), nodesAdded.size() == 1 ?
+                            String.format("%s %s", mplsLinksAdded.size(),ts.getTranslatedString("module.mpls.mpls-object-added"))
+                            : String.format("%s %s", mplsLinksAdded.size(),ts.getTranslatedString("module.mpls.mpls-objects-added")), 
                             AbstractNotification.NotificationType.INFO, ts).open();
             if (mplsLinksAdded.size() > 0)    
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), mplsLinksAdded.size() + " MPLS link(s) added", 
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), 
+                          mplsLinksAdded.size() == 1  ? String.format("%s %s", mplsLinksAdded.size(),ts.getTranslatedString("module.mpls.mpls-link-added"))
+                            : String.format("%s %s", mplsLinksAdded.size(),ts.getTranslatedString("module.mpls.mpls-links-added")), 
                             AbstractNotification.NotificationType.INFO, ts).open();
             else 
-                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), "No MPLS link found for objects in this view", 
+                new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.no-link-found"), 
                             AbstractNotification.NotificationType.INFO, ts).open();
         }
         catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException ex) {
@@ -915,7 +933,7 @@ public class MplsDashboard extends VerticalLayout {
                     Constants.PROPERTY_DESCRIPTION, "", currentView.getDescription()));
             propSheetMPLS.setItems(viewProperties);
         } else
-            propSheetObjects.clear();
+            propSheetMPLS.clear();
     }
     /**
      * add a single node to the mpls view
