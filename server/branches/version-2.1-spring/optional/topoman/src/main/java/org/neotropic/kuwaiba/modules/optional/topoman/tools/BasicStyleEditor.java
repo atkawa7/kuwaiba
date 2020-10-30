@@ -223,8 +223,8 @@ public class BasicStyleEditor extends VerticalLayout {
     public void updateControlsVisibility(MxGraphCell cell) {
          if (cell == null){
                vertexControls.stream().forEach(item -> item.setVisible(false));
-                 edgeControls.stream().forEach(item -> item.setVisible(false));
-              return;
+               edgeControls.stream().forEach(item -> item.setVisible(false));
+               return;
          }
          if (cell.getIsEdge()) {
              vertexControls.stream().forEach(item -> item.setVisible(false));

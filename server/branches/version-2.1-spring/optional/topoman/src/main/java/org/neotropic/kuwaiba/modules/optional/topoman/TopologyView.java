@@ -104,7 +104,7 @@ public class TopologyView extends AbstractView<BusinessObjectLight, Component> {
      */
     public final static String ICON = "icon";
 
-    public final static String URL_IMG_CLOUD = "images/cloud32.png";
+    public final static String URL_IMG_CLOUD = "images/cloud64.png";
 
     public MxGraphCanvas<BusinessObjectLight, BusinessObjectLight> getMxgraphCanvas() {
         return mxgraphCanvas;
@@ -355,6 +355,8 @@ public class TopologyView extends AbstractView<BusinessObjectLight, Component> {
                         props.put("imageUrl", URL_IMG_CLOUD);
                         props.put("x", x);
                         props.put("y", y);
+                        props.put("w", 64);
+                        props.put("h", 64);
 
                         if (label != null) {
                             props.put("label", label);

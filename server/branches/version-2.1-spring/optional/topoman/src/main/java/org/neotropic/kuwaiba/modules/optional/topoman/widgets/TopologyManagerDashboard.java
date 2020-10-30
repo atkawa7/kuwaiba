@@ -21,11 +21,14 @@ import com.neotropic.flow.component.mxgraph.MxGraphEdge;
 import com.neotropic.flow.component.mxgraph.MxGraphNode;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
+import com.vaadin.flow.component.accordion.Accordion;
+import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.H4;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -51,6 +54,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntity
 import org.neotropic.kuwaiba.core.apis.persistence.application.ViewObject;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ViewObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObject;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
@@ -59,6 +63,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.NotAuthorizedExcep
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
 import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyValueConverter;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
@@ -71,10 +76,12 @@ import org.neotropic.kuwaiba.modules.optional.topoman.actions.NewTopologyViewVis
 import org.neotropic.kuwaiba.modules.optional.topoman.tools.BasicStyleEditor;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewEdge;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
+import org.neotropic.util.visual.general.BoldLabel;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.properties.AbstractProperty;
 import org.neotropic.util.visual.properties.PropertySheet;
+import org.neotropic.util.visual.properties.StringProperty;
 
 /**
  * Topology designer Main Dashboard.
@@ -152,7 +159,11 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
     /**
      * main property sheet instance
      */
-    PropertySheet propertySheet;
+    PropertySheet propSheetObjects;
+    /**
+     * Prop Sheet for view properties
+     */
+    PropertySheet propSheetTopoView;
     /**
      * button to remove views
      */
@@ -181,7 +192,9 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
     TopologyViewSearch viewSearch;
     
     BasicStyleEditor styleEditor;
-
+    
+    Accordion accordionProperties;
+    
     public ViewObject getCurrentView() {
         return currentView;
     }
@@ -262,13 +275,14 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
             } else {
                  selectedObject = ((BusinessObjectViewEdge) topologyView.getAsViewMap().findEdge(objectId)).getIdentifier();            
             }
-            updateProperties();
+            updateShapeProperties();
             setGeneralToolsEnabled(true);
             setSelectionToolsEnabled(true);
         });
         topologyView.getMxgraphCanvas().setComObjectUnselected(() -> {
             selectedObject = null;
-            updateProperties();
+            updateShapeProperties();
+            updatePropertySheetObjects();
             setSelectionToolsEnabled(false);
         });
         
@@ -351,17 +365,94 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
         VerticalLayout lytDashboard = new VerticalLayout(lytTools, topologyView.getAsComponent());
         setMarginPaddingLayout(lytDashboard, false);
         lytDashboard.setSpacing(false);
-        lytDashboard.setWidth("80%");
+        lytDashboard.setWidth("75%");
                
         //properties  
+         PropertySheet.IPropertyValueChangedListener listenerPropSheetObjects = new PropertySheet.IPropertyValueChangedListener() {
+            @Override
+            public void updatePropertyChanged(AbstractProperty property) {
+                try {
+                    if (selectedObject != null) {
+                        HashMap<String, String> attributes = new HashMap<>();
+                        attributes.put(property.getName(), PropertyValueConverter.getAsStringToPersist(property));
+
+                        bem.updateObject(selectedObject.getClassName(), selectedObject.getId(), attributes);
+                        updatePropertySheetObjects();
+                        saveCurrentView();
+
+                        //special case when the name is updated the label must be refreshed in the canvas
+                        if (property.getName().equals(Constants.PROPERTY_NAME)) {
+                            if (MxGraphCell.PROPERTY_VERTEX.equals(topologyView.getMxgraphCanvas().getSelectedCellType())) {
+                                topologyView.getMxgraphCanvas().getNodes().get(selectedObject).setLabel((String) property.getValue());
+                            } else {
+                                topologyView.getMxgraphCanvas().getEdges().get(selectedObject).setLabel((String) property.getValue());
+                            }
+                            topologyView.getMxgraphCanvas().getMxGraph().refreshGraph();
+                        }
+
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
+                    }
+                } catch (InventoryException ex) {
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(), 
+                            AbstractNotification.NotificationType.ERROR, ts).open();
+                }
+            }
+        };
+        propSheetObjects = new PropertySheet(ts, new ArrayList<>(), "");
+        propSheetObjects.addPropertyValueChangedListener(listenerPropSheetObjects);
+        
+        PropertySheet.IPropertyValueChangedListener listenerPropSheetTopoView = new PropertySheet.IPropertyValueChangedListener() {
+            @Override
+            public void updatePropertyChanged(AbstractProperty property) {
+                if (currentView != null) {
+                    
+                    if (property.getName().equals(Constants.PROPERTY_NAME))
+                        currentView.setName(property.getAsString());
+                    if (property.getName().equals(Constants.PROPERTY_DESCRIPTION))
+                        currentView.setDescription(property.getAsString());                  
+                    saveCurrentView();                  
+                }
+            }
+        };
+        propSheetTopoView = new PropertySheet(ts, new ArrayList<>(), "");
+        propSheetTopoView.addPropertyValueChangedListener(listenerPropSheetTopoView);
+        
+        accordionProperties = new Accordion();
+        accordionProperties.setWidthFull();
+          
+        BoldLabel lblViewProperties = new BoldLabel(ts.getTranslatedString("module.topoman.view-properties"));
+        lblViewProperties.addClassName("lbl-accordion");
+        HorizontalLayout lytSummaryViewProp = new HorizontalLayout(lblViewProperties); 
+        lytSummaryViewProp.setWidthFull();       
+        AccordionPanel apViewProp = new AccordionPanel(lytSummaryViewProp, propSheetTopoView);
+        accordionProperties.add(apViewProp);
+            
+        BoldLabel lblObjectProperties = new BoldLabel(ts.getTranslatedString("module.topoman.object-properties"));
+        lblObjectProperties.addClassName("lbl-accordion");
+        HorizontalLayout lytSummaryObjectProp = new HorizontalLayout(lblObjectProperties); 
+        lytSummaryObjectProp.setWidthFull();       
+        AccordionPanel apObjectProp = new AccordionPanel(lytSummaryObjectProp, propSheetObjects);
+        accordionProperties.add(apObjectProp);
+  
         styleEditor = new BasicStyleEditor(ts);
         styleEditor.updateControlsVisibility(null);
-        VerticalLayout lytProperties = new VerticalLayout(new H4("Properties"), styleEditor);
-        lytProperties.setSpacing(false);
-        setMarginPaddingLayout(lytProperties, false);
-        lytProperties.setWidth("20%");
+        
+        BoldLabel lblStyleEditor = new BoldLabel(ts.getTranslatedString("module.topoman.shape-properties"));
+        lblStyleEditor.addClassName("lbl-accordion");
+        HorizontalLayout lytSummaryStyleEditor = new HorizontalLayout(lblStyleEditor); 
+        lytSummaryObjectProp.setWidthFull();       
+        AccordionPanel apStyleEditor = new AccordionPanel(lytSummaryStyleEditor, styleEditor);
+        accordionProperties.add(apStyleEditor);
+        
+        Label lblHelp = new Label(ts.getTranslatedString("module.topoman.help"));
+        lblHelp.addClassName("lbl-accordion");
+        HorizontalLayout lytSummaryHelp = new HorizontalLayout(lblHelp); 
+        lytSummaryHelp.setWidthFull();           
+        AccordionPanel apHelp = new AccordionPanel(lytSummaryHelp, new Label());
+        accordionProperties.add(apHelp);
 
-        HorizontalLayout lytMain = new HorizontalLayout(lytProperties, lytDashboard);
+        HorizontalLayout lytMain = new HorizontalLayout(accordionProperties, lytDashboard);
         lytMain.setSizeFull();
         setMarginPaddingLayout(lytMain, false);
         setSpacing(false);
@@ -370,16 +461,26 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
         setSizeFull();
     }
 
-    private void updateProperties() {
+    private void updateShapeProperties() {
         if (selectedObject != null) {
             if (selectedObject.getClassName().equals(FREE_SHAPE)) {
                 MxGraphNode node = topologyView.getMxgraphCanvas().findMxGraphNode(selectedObject);
-                if (node != null)
+                if (node != null) {
                     styleEditor.update(node);
+                    accordionProperties.open(2);
+                }
             } else if (selectedObject.getClassName().equals("edge")) {
                 MxGraphEdge edge = topologyView.getMxgraphCanvas().findMxGraphEdge(selectedObject);
-                if (edge != null)
+                if (edge != null) {
                     styleEditor.update(edge);
+                    accordionProperties.open(2);
+                }
+            } else if (!selectedObject.getClassName().equals(ICON)) { // Inventory Node
+                MxGraphNode node = topologyView.getMxgraphCanvas().findMxGraphNode(selectedObject);
+                if (node != null) {
+                    updatePropertySheetObjects();
+                    accordionProperties.open(1);
+                }
             }
         } else 
             styleEditor.update(null);
@@ -484,6 +585,10 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
                 this.wdwTopologyViews.close();
             }
             selectedObject = null;
+            updatePropertySheetView();
+            updatePropertySheetObjects();
+            updateShapeProperties();
+            accordionProperties.open(0);
             setGeneralToolsEnabled(true);
             this.btnRemoveView.setEnabled(true);
             new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.topoman.actions.view-loaded"), 
@@ -523,11 +628,13 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
             if (wdwTopologyViews != null)
                 wdwTopologyViews.close();
             selectedObject = null;
-//            updatePropertySheet();
+            updateShapeProperties();
+            updatePropertySheetObjects();
             ActionResponse response = ev.getActionResponse();
             try {
                 ViewObject newView = aem.getGeneralView((long) response.get("viewId"));
                 setCurrentView(newView);
+                updatePropertySheetView();
                 setGeneralToolsEnabled(true);
             } catch (ApplicationObjectNotFoundException ex) {
                 Logger.getLogger(TopologyManagerDashboard.class.getName()).log(Level.SEVERE, null, ex);
@@ -556,6 +663,32 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
         wdwTopologyViews.add(lytContent);
         wdwTopologyViews.setWidth("600px");
         wdwTopologyViews.open();
+    }
+    
+     private void updatePropertySheetObjects() {
+        try {        
+            if (selectedObject != null) {
+                BusinessObject aWholeListTypeItem = bem.getObject(selectedObject.getClassName(), selectedObject.getId());
+                propSheetObjects.setItems(PropertyFactory.propertiesFromBusinessObject(aWholeListTypeItem, ts, aem, mem));
+            } else 
+                propSheetObjects.clear();
+        } catch (InventoryException ex) {
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
+            Logger.getLogger(TopologyManagerDashboard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void updatePropertySheetView() {
+        if (currentView != null) {
+            ArrayList<AbstractProperty> viewProperties = new ArrayList<>();
+            viewProperties.add(new StringProperty(Constants.PROPERTY_NAME,
+                    Constants.PROPERTY_NAME, "", currentView.getName()));
+            viewProperties.add(new StringProperty(Constants.PROPERTY_DESCRIPTION,
+                    Constants.PROPERTY_DESCRIPTION, "", currentView.getDescription()));
+            propSheetTopoView.setItems(viewProperties);
+        } else
+            propSheetTopoView.clear();
     }
 
     @Override
