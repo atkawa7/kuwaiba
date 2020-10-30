@@ -94,21 +94,51 @@ public abstract class ModuleLayout extends FlexLayout implements RouterLayout {
         MenuBar mnuNewBar = new MenuBar();
         mnuNewBar.setWidthFull();
         
-        mnuNewBar.addItem(new Button(ts.getTranslatedString("module.home.menu.home"), new Icon(VaadinIcon.HOME)), ev -> UI.getCurrent().navigate("home"));
+        Button btnHome = new Button(ts.getTranslatedString("module.home.menu.home"), new Icon(VaadinIcon.HOME));
+        btnHome.setThemeName("main-menubar-button");
+        mnuNewBar.addItem(btnHome, ev -> UI.getCurrent().navigate("home"));
+                
+        Button btnNavigation = new Button(ts.getTranslatedString("module.home.menu.navigation"), new Icon(VaadinIcon.GLOBE));
+        btnNavigation.setThemeName("main-menubar-button");
+        MenuItem mnuNavigation = mnuNewBar.addItem(btnNavigation);
         
-        MenuItem mnuNavigation = mnuNewBar.addItem(new Button(ts.getTranslatedString("module.home.menu.navigation"), new Icon(VaadinIcon.GLOBE)));
-        MenuItem mnuPhysical = mnuNewBar.addItem(new Button(ts.getTranslatedString("module.home.menu.physical"), new Icon(VaadinIcon.GRID_BIG)));
-        MenuItem mnuLogical = mnuNewBar.addItem(new Button(ts.getTranslatedString("module.home.menu.logical"), new Icon(VaadinIcon.GRID_BIG_O)));
-        MenuItem mnuBusiness = mnuNewBar.addItem(new Button(ts.getTranslatedString("module.home.menu.business"), new Icon(VaadinIcon.CUBES)));
-        MenuItem mnuPlanning = mnuNewBar.addItem(new Button(ts.getTranslatedString("module.home.menu.planning"), new Icon(VaadinIcon.MAGIC)));
-        MenuItem mnuAdministration = mnuNewBar.addItem(new Button(ts.getTranslatedString("module.home.menu.administration"), new Icon(VaadinIcon.CHART_3D)));
-        MenuItem mnuOther = mnuNewBar.addItem(new Button(ts.getTranslatedString("module.home.menu.other"), new Icon(VaadinIcon.FORM)));
-        MenuItem mnuSettings = mnuNewBar.addItem(new Button(ts.getTranslatedString("module.home.menu.settings"), new Icon(VaadinIcon.COG)));
+        Button btnPhysical = new Button(ts.getTranslatedString("module.home.menu.physical"), new Icon(VaadinIcon.GRID_BIG));
+        btnPhysical.setThemeName("main-menubar-button");
+        MenuItem mnuPhysical = mnuNewBar.addItem(btnPhysical);
         
-        mnuNewBar.addItem(new Button(ts.getTranslatedString("module.home.menu.about"), 
-                new Icon(VaadinIcon.TOUCH)), ev -> UI.getCurrent().navigate("about"));
-        mnuNewBar.addItem(new Button(ts.getTranslatedString("module.home.menu.logout"), 
-                new Icon(VaadinIcon.EXIT_O)), ev -> UI.getCurrent().navigate("logout"));
+        Button btnLogical = new Button(ts.getTranslatedString("module.home.menu.logical"), new Icon(VaadinIcon.GRID_BIG_O));
+        btnLogical.setThemeName("main-menubar-button");
+        MenuItem mnuLogical = mnuNewBar.addItem(btnLogical);
+        
+        Button btnBusiness = new Button(ts.getTranslatedString("module.home.menu.business"), new Icon(VaadinIcon.CUBES));
+        btnBusiness.setThemeName("main-menubar-button");
+        MenuItem mnuBusiness = mnuNewBar.addItem(btnBusiness);
+        
+        Button btnPlanning = new Button(ts.getTranslatedString("module.home.menu.planning"), new Icon(VaadinIcon.MAGIC));
+        btnPlanning.setThemeName("main-menubar-button");
+        MenuItem mnuPlanning = mnuNewBar.addItem(btnPlanning);
+        
+        Button btnAdministration = new Button(ts.getTranslatedString("module.home.menu.administration"), new Icon(VaadinIcon.CHART_3D));
+        btnAdministration.setThemeName("main-menubar-button");
+        MenuItem mnuAdministration = mnuNewBar.addItem(btnAdministration);
+        
+        Button btnOther = new Button(ts.getTranslatedString("module.home.menu.other"), new Icon(VaadinIcon.FORM));
+        btnOther.setThemeName("main-menubar-button");
+        MenuItem mnuOther = mnuNewBar.addItem(btnOther);
+        
+        Button btnSettings = new Button(ts.getTranslatedString("module.home.menu.settings"), new Icon(VaadinIcon.COG));
+        btnSettings.setThemeName("main-menubar-button");
+        MenuItem mnuSettings = mnuNewBar.addItem(btnSettings);
+        
+        Button btnAbout = new Button(ts.getTranslatedString("module.home.menu.about"), 
+                new Icon(VaadinIcon.TOUCH));
+        btnAbout.setThemeName("main-menubar-button");
+        mnuNewBar.addItem(btnAbout, ev -> UI.getCurrent().navigate("about"));
+        
+        Button btnLogout = new Button(ts.getTranslatedString("module.home.menu.logout"), 
+                new Icon(VaadinIcon.EXIT_O));
+        btnLogout.setThemeName("main-menubar-button");
+        mnuNewBar.addItem(btnLogout, ev -> UI.getCurrent().navigate("logout"));
         
         this.moduleRegistry.getModules().values().stream().forEach( aModule -> {
             switch(aModule.getCategory()) {
