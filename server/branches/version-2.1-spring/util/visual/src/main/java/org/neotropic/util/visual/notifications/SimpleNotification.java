@@ -13,24 +13,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.neotropic.util.visual.notifications;
 
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 
 /**
  * Default implementation of a notification component.
+ *
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class SimpleNotification extends AbstractNotification {
-    
+
     public SimpleNotification(String title, String text, NotificationType type, TranslationService ts) {
         super(title, text, type, ts);
     }
@@ -38,7 +38,7 @@ public class SimpleNotification extends AbstractNotification {
     @Override
     public void open() {
         Notification notification = new Notification();
-        VerticalLayout lytContent = new VerticalLayout();                      
+        VerticalLayout lytContent = new VerticalLayout();
         H4 lblTitle = new H4(this.title);
         Label lblText = new Label(this.text);
         Button btnCopyToClipboard = new Button(ts.getTranslatedString("module.general.labels.copy-to-clipboard"));
@@ -47,7 +47,7 @@ public class SimpleNotification extends AbstractNotification {
         lytContent.setPadding(false);
         lytContent.setMargin(false);
         lytContent.setWidth("100%");
-        
+
         switch (type) {
             default:
             case INFO:
@@ -58,24 +58,40 @@ public class SimpleNotification extends AbstractNotification {
                 break;
             case ERROR:
                 lblTitle.setClassName("simple-notification-title-error");
-                btnCopyToClipboard.setVisible(true);                
-                
+                btnCopyToClipboard.setVisible(true);
+                btnCopyToClipboard.addAttachListener(event -> copyClipboard(event, this.text));
         }
 
-        lytContent.add(lblTitle, lblText);        
+        lytContent.add(lblTitle, lblText);
         lytContent.add(btnCopyToClipboard);
-        lytContent.setHorizontalComponentAlignment(FlexComponent.Alignment.END, btnCopyToClipboard);                
-        lytContent.addClickListener(e-> notification.close());
+        lytContent.setHorizontalComponentAlignment(FlexComponent.Alignment.END, btnCopyToClipboard);
+        lytContent.addClickListener(e -> notification.close());
 
         notification.setThemeName("simple-notification");
-        notification.add(lytContent);        
+        notification.add(lytContent);
         notification.setDuration(3000);
         notification.setPosition(Notification.Position.BOTTOM_CENTER);
         notification.open();
     }
 
     @Override
-    public void close() { }
-    
-    
+    public void close() {
+    }
+
+    private void copyClipboard(AttachEvent event, String errorText) {
+        StringBuilder javascript = new StringBuilder();
+        // JavaScript code in a String
+        javascript.append("    const el = document.createElement('textarea');\n");
+        javascript.append("    el.value = $0;\n");
+        javascript.append("    el.setAttribute('readonly', '');\n");
+        javascript.append("    el.style.position = 'absolute';\n");
+        javascript.append("    el.style.left = '-9999px';\n");
+        javascript.append("    document.body.appendChild(el);\n");
+        javascript.append("    el.select();\n");
+        javascript.append("    document.execCommand('copy');\n");
+        javascript.append("    document.body.removeChild(el);");
+        // call function from script file
+        event.getSource().getElement().executeJs(javascript.toString(), errorText);
+    }
+
 }
