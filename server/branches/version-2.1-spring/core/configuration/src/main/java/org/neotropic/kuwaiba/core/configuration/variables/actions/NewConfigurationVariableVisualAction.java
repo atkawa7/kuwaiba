@@ -15,6 +15,7 @@
  */
 package org.neotropic.kuwaiba.core.configuration.variables.actions;
 
+import com.neotropic.flow.component.paperdialog.PaperToggleButton;
 import java.util.List;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -102,9 +103,10 @@ public class NewConfigurationVariableVisualAction extends AbstractVisualAction<D
 
         TextField txtValue = new TextField(ts.getTranslatedString("module.configvarman.configvar.label.value"));
         txtValue.setSizeFull();
-        
-        Checkbox chxMasked = new Checkbox(ts.getTranslatedString("module.configvarman.configvar.label.masked"));
-        chxMasked.setValue(false);
+                
+        PaperToggleButton btnMasked = new PaperToggleButton(ts.getTranslatedString("module.configvarman.configvar.label.masked"));
+        btnMasked.setChecked(false);
+        btnMasked.setClassName("green", true);
 
         ComboBox<ConfigurationVariableType> cbxTypes = new ComboBox<>(ts.getTranslatedString("module.configvarman.configvar.label.type"));
         cbxTypes.setItems(new ConfigurationVariableType(ts.getTranslatedString("module.configvarman.configvar.type.integer"), 1),
@@ -135,7 +137,7 @@ public class NewConfigurationVariableVisualAction extends AbstractVisualAction<D
                             new ModuleActionParameter<>("name", txtName.getValue()),
                             new ModuleActionParameter<>("description", txtDescription.getValue()),
                             new ModuleActionParameter<>("valueDefinition", txtValue.getValue()),
-                            new ModuleActionParameter<>("masked", chxMasked.getValue()),
+                            new ModuleActionParameter<>("masked", btnMasked.getChecked()),
                             new ModuleActionParameter<>("type", cbxTypes.getValue().getType())             
                     ));
 
@@ -158,16 +160,16 @@ public class NewConfigurationVariableVisualAction extends AbstractVisualAction<D
             wdwNewConfigurationVariableItem.close();
         });
 
-        FormLayout lytAttributes = new FormLayout(cbxConfigurationVariablesPool, txtName, txtDescription, txtValue, cbxTypes, chxMasked);
+        FormLayout lytAttributes = new FormLayout(cbxConfigurationVariablesPool, txtName, txtDescription, txtValue, cbxTypes, btnMasked);
         
         HorizontalLayout lytMoreButtons = new HorizontalLayout(btnOK, btnCancel);
+        lytMoreButtons.setSpacing(false);
         VerticalLayout lytMain = new VerticalLayout(lytAttributes, lytMoreButtons);
         lytMain.setSizeFull();
 
         wdwNewConfigurationVariableItem.add(lytMain);
 
         return wdwNewConfigurationVariableItem;
-
     }
 
     @Override

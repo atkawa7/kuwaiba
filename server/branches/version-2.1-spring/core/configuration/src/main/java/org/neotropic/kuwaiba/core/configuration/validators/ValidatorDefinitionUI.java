@@ -17,6 +17,7 @@ package org.neotropic.kuwaiba.core.configuration.validators;
 
 import com.neotropic.flow.component.aceeditor.AceEditor;
 import com.neotropic.flow.component.aceeditor.AceMode;
+import com.neotropic.flow.component.paperdialog.PaperToggleButton;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.button.Button;
@@ -288,7 +289,7 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
 
     @Override
     public String getPageTitle() {
-        return ts.getTranslatedString("module.configman.validators.title");
+        return ts.getTranslatedString("module.configman.validator.title");
     }
 
     private class ValidatorDefinitionForm extends VerticalLayout {
@@ -298,6 +299,7 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
             setSpacing(false);
             
             H4 headerMain = new H4(String.format("%s %s", validator.getName(), ts.getTranslatedString("module.configman.validator.header-name")));
+            headerMain.setClassName("header");
             
             Label lblScript = new Label(ts.getTranslatedString("module.configman.validator.label.script"));
             lblScript.addClassName("bold-font");
@@ -309,6 +311,7 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
             });
             
             Button btnSave = new Button(ts.getTranslatedString("module.configman.validator.properties-general.button-save"), new Icon(VaadinIcon.DOWNLOAD));
+            btnSave.setClassName("icon-button");
             btnSave.setAutofocus(true);
             btnSave.addClickListener(event -> {
                 try {
@@ -322,6 +325,7 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
             });
             
             Button btnEditProperties = new Button(ts.getTranslatedString("module.configman.validator.properties-general.button-edit-properties"), new Icon(VaadinIcon.EDIT));
+            btnEditProperties.setClassName("icon-button");
             btnEditProperties.addClickListener(event -> {
                 UpdatePropertiesDialog scriptDialog = new UpdatePropertiesDialog(validator);
                 add(scriptDialog);
@@ -372,22 +376,22 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
             txtDescription.addValueChangeListener(event -> {
                validator.setDescription(txtDescription.getValue());
             });
-            
-            Checkbox checkEnable = new Checkbox();
-            checkEnable.setLabel(ts.getTranslatedString("module.configman.validator.label.enable"));
-            checkEnable.setValue(validator.isEnabled());
-            checkEnable.addValueChangeListener(event -> {
-                validator.setEnabled(checkEnable.getValue());
+                        
+            PaperToggleButton btnEnable = new PaperToggleButton(ts.getTranslatedString("module.configman.validator.label.enable"));
+            btnEnable.setChecked(validator.isEnabled());
+            btnEnable.setClassName("green", true);
+            btnEnable.addValueChangeListener(event -> {
+               validator.setEnabled(event.getValue());
             });
             
             // Windows to update validator properties
             Dialog wdwUpdateProperties = new Dialog();
             
             Button btnSave = new Button(ts.getTranslatedString("module.configman.validator.properties-general.button-save"), new Icon(VaadinIcon.DOWNLOAD));
-            //btnSave.setAutofocus(true);
+            btnSave.setAutofocus(true);
             btnSave.addClickListener(event -> {
                 try {
-                    aem.updateValidatorDefinition(validator.getId(), txtName.getValue(), txtDescription.getValue(), validator.getClassToBeApplied(), validator.getScript(), checkEnable.getValue());
+                    aem.updateValidatorDefinition(validator.getId(), txtName.getValue(), txtDescription.getValue(), validator.getClassToBeApplied(), validator.getScript(), validator.isEnabled());
                     new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.configman.validator.properties-general.notification-saved"), 
                             AbstractNotification.NotificationType.INFO, ts).open();
                     objectTree.getDataProvider().refreshAll();
@@ -403,7 +407,8 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
             });
             
             HorizontalLayout lytMoreButtons = new HorizontalLayout(btnSave, btnCancel);
-            VerticalLayout lytProperties = new VerticalLayout(header, txtName, txtDescription, checkEnable);
+            lytMoreButtons.setSpacing(false);
+            VerticalLayout lytProperties = new VerticalLayout(header, txtName, txtDescription, btnEnable);
             lytProperties.setMargin(false);
             lytProperties.setSizeFull();
             lytProperties.setHeight("90%");
@@ -415,7 +420,6 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
             wdwUpdateProperties.add(lytMain);
             wdwUpdateProperties.setWidth("50%");
             wdwUpdateProperties.setHeightFull();
-            
             wdwUpdateProperties.open();
         }
     }  

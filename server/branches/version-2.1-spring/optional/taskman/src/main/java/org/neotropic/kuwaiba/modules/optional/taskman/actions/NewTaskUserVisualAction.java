@@ -118,6 +118,7 @@ public class NewTaskUserVisualAction extends AbstractVisualAction<Dialog>  {
 
         FormLayout lytAttributes = new FormLayout(cbxTask, cbxUsers);
         HorizontalLayout lytMoreButtons = new HorizontalLayout(btnOK, btnCancel);
+        lytMoreButtons.setSpacing(false);
         VerticalLayout lytMain = new VerticalLayout(lytAttributes, lytMoreButtons);
         lytMain.setSizeFull();
 

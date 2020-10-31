@@ -106,6 +106,7 @@ public class NewConfigurationVariablesPoolVisualAction extends AbstractVisualAct
             
             FormLayout lytTextFields = new FormLayout(txtName, txtDescription);
             HorizontalLayout lytMoreButtons = new HorizontalLayout(btnOK, btnCancel);
+            lytMoreButtons.setSpacing(false);
             VerticalLayout lytMain = new VerticalLayout(lytTextFields, lytMoreButtons);
             lytMain.setSizeFull();
             

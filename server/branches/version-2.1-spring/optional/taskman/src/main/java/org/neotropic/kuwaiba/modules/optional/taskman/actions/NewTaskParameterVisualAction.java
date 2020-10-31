@@ -122,6 +122,7 @@ public class NewTaskParameterVisualAction extends AbstractVisualAction<Dialog> {
 
         FormLayout lytAttributes = new FormLayout(cbxTask, txtParameterName, txtParameterValue);
         HorizontalLayout lytMoreButtons = new HorizontalLayout(btnOK, btnCancel);
+        lytMoreButtons.setSpacing(false);
         VerticalLayout lytMain = new VerticalLayout(lytAttributes, lytMoreButtons);
         lytMain.setSizeFull();
 

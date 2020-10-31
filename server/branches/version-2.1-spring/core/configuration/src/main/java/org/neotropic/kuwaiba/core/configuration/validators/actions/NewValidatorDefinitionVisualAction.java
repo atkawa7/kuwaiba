@@ -15,6 +15,7 @@
  */
 package org.neotropic.kuwaiba.core.configuration.validators.actions;
 
+import com.neotropic.flow.component.paperdialog.PaperToggleButton;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -89,9 +90,10 @@ public class NewValidatorDefinitionVisualAction extends AbstractVisualAction<Dia
 
         TextArea txtScript = new TextArea(ts.getTranslatedString("module.configman.validator.label.script"));
         txtScript.setSizeFull();
-
-        Checkbox chxEnable = new Checkbox(ts.getTranslatedString("module.configman.validator.label.enable"));
-        chxEnable.setValue(true);
+        
+        PaperToggleButton btnEnable = new PaperToggleButton(ts.getTranslatedString("module.configman.validator.label.enable"));
+        btnEnable.setChecked(true);
+        btnEnable.setClassName("green", true);
 
         // Windows to create a new Validator Definition
         Dialog wdwNewValidatorDefinition = new Dialog();
@@ -109,7 +111,7 @@ public class NewValidatorDefinitionVisualAction extends AbstractVisualAction<Dia
                             new ModuleActionParameter<>("description", txtDescription.getValue()),
                             new ModuleActionParameter<>("classToBeApplied", cbxClasses.getValue().getName()),
                             new ModuleActionParameter<>("script", txtScript.getValue()),
-                            new ModuleActionParameter<>("enable", chxEnable.getValue())
+                            new ModuleActionParameter<>("enable", btnEnable.getChecked())
                     ));
 
                     fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
@@ -131,8 +133,9 @@ public class NewValidatorDefinitionVisualAction extends AbstractVisualAction<Dia
             wdwNewValidatorDefinition.close();
         });
 
-        VerticalLayout lytAttributes = new VerticalLayout(cbxClasses, txtName, txtDescription, chxEnable);
+        VerticalLayout lytAttributes = new VerticalLayout(cbxClasses, txtName, txtDescription, btnEnable);
         HorizontalLayout lytMoreButtons = new HorizontalLayout(btnOK, btnCancel);
+        lytMoreButtons.setSpacing(false);
         VerticalLayout lytMain = new VerticalLayout(lytAttributes, lytMoreButtons);
         lytMain.setSizeFull();
 

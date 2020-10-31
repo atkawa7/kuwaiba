@@ -23,4 +23,6 @@ import org.neotropic.util.visual.general.ModuleLayout;
  * @author Mauricio Ruiz {@literal <mauricio.ruiz@kuwaiba.org>}
  */
 @CssImport("./styles/configuration-manager.css")
+@CssImport("./styles/toggle-button.css")
+@CssImport("./styles/icon-button.css")
 public class ConfigurationManagerLayout extends ModuleLayout { }
