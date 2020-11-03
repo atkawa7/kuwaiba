@@ -22,6 +22,7 @@ import com.vaadin.flow.component.Synchronize;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.shared.Registration;
+import elemental.json.Json;
 import elemental.json.JsonObject;
 import elemental.json.JsonValue;
 
@@ -128,7 +129,54 @@ public class GoogleMap extends Component implements HasComponents {
     public void setFullscreenControl(boolean fullscreenControl) {
         getElement().setProperty(Constants.Property.FULLSCREEN_CONTROL, fullscreenControl);
     }
-    
+    /**
+     * Gets if false, prevents the map from being dragged.
+     * @return If dragging is enabled.
+     */
+    public boolean getDraggable() {
+        return getElement().getProperty(Constants.Property.DRAGGABLE, true);
+    }
+    /**
+     * Sets if false, prevents the map from being dragged.
+     * @param draggable Dragging is enabled
+     */
+    public void setDraggable(boolean draggable) {
+        getElement().setProperty(Constants.Property.DRAGGABLE, draggable);
+    }
+    /**
+     * Gets the maximum zoom level which will be displayed on the map.
+     * @return The maximum zoom level.
+     */
+    public double getMaxZoom() {
+        return getElement().getProperty(Constants.Property.MAX_ZOOM, 0.0);
+    }
+    /**
+     * Sets the maximum zoom level which will be displayed on the map.
+     * @param maxZoom The maximum zoom level
+     */
+    public void setMaxZoom(Double maxZoom) {
+        if (maxZoom != null)
+            getElement().setProperty(Constants.Property.MAX_ZOOM, maxZoom);
+        else
+            getElement().setPropertyJson(Constants.Property.MAX_ZOOM, Json.createNull());
+    }
+    /**
+     * Gets the minimum zoom level which will be displayed on the map.
+     * @return The minimum zoom level.
+     */
+    public double getMinZoom() {
+        return getElement().getProperty(Constants.Property.MIN_ZOOM, 0.0);
+    }
+    /**
+     * Sets the minimum zoom level which will be displayed on the map.
+     * @param minZoom The minimum zoom level
+     */
+    public void setMinZoom(Double minZoom) {
+        if (minZoom != null)
+            getElement().setProperty(Constants.Property.MIN_ZOOM, minZoom);
+        else
+            getElement().setPropertyJson(Constants.Property.MIN_ZOOM, Json.createNull());
+    }
     public JsonValue getStyles() {
         return (JsonValue) getElement().getPropertyRaw(Constants.Property.STYLES);
     }

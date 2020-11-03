@@ -81,7 +81,7 @@ class OverlayView extends PolymerElement {
       
       var sw = overlayProjection.fromLatLngToDivPixel(this._bounds.getSouthWest());
       var ne = overlayProjection.fromLatLngToDivPixel(this._bounds.getNorthEast());
-
+      
       var div = this._div;
       div.style.position = 'absolute';
       div.style.left = sw.x + 'px';
@@ -89,7 +89,7 @@ class OverlayView extends PolymerElement {
       var width = ne.x - sw.x;
       var height = sw.y - ne.y;
       div.style.width = width + 'px';
-      div.style.height = height + 'px';
+      div.style.height = height + 'px';    
 
       _this.dispatchEvent(new CustomEvent('overlay-view-width-changed', 
         {

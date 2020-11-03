@@ -71,6 +71,8 @@ public class Constants {
         public static String STROKE_POSITION = "strokePosition"; //NOI18N
         public static String X = "x"; //NOI18N
         public static String Y = "y"; //NOI18N
+        public static String MAX_ZOOM = "maxZoom"; //NOI18N
+        public static String MIN_ZOOM = "minZoom"; //NOI18N
     }
     
     public static class Default {

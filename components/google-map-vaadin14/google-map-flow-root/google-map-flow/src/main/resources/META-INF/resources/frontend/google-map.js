@@ -155,6 +155,33 @@ class GoogleMap extends PolymerElement {
       },
       bounds: {
         type: Object
+      },
+      /**
+       * If false, prevents the map from being dragged.
+       * 
+       * @type {boolean}
+       */
+      draggable: {
+        type: Boolean,
+        observer: '_draggableChanged'
+      },
+      /**
+       * The minimum zoom level which will be displayed on the map.
+       * 
+       * @type {number}
+       */
+      maxZoom: {
+        type: Number,
+        observer: '_maxZoomChanged'
+      },
+      /**
+       * The maximum zoom level which will be displayed on the map.
+       * 
+       * @type {number}
+       */
+      minZomm: {
+        type: Number,
+        observer: '_minZoomChanged'
       }
     };
   }
@@ -357,6 +384,33 @@ class GoogleMap extends PolymerElement {
   _stylesChanged(newValue) {
     if (this.map)
       this.map.setOptions({styles: newValue});
+  }
+  /**
+   * Sets if false, prevents the map from being dragged
+   * 
+   * @param {boolean} newValue 
+   */
+  _draggableChanged(newValue) {
+    if (this.map)
+      this.map.setOptions({draggable: newValue});
+  }
+  /**
+   * Sets the maximum zoom level which will be displayed on the map.
+   * 
+   * @param {number} newValue 
+   */
+  _maxZoomChanged(newValue) {
+    if (this.map)
+      this.map.setOptions({maxZoom: newValue});
+  }
+  /**
+   * Sets the minimum zoom level which will be displayed on the map.
+   * 
+   * @param {number} newValue 
+   */
+  _minZoomChanged(newValue) {
+    if (this.map)
+      this.map.setOptions({minZoom: newValue});
   }
 }
 
