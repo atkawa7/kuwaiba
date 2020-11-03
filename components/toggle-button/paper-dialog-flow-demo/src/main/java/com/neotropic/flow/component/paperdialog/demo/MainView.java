@@ -1,13 +1,11 @@
 package com.neotropic.flow.component.paperdialog.demo;
 
-import com.neotropic.flow.component.paperdialog.PaperToggleButton;
+import com.neotropic.flow.component.papertogglebutton.PaperToggleButton;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.PWA;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * A sample Vaadin view class.
@@ -22,10 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * browser tab/window.
  */
 @Route
-@PWA(name = "Vaadin Application",
-        shortName = "Vaadin App",
-        description = "This is an example Vaadin application.",
-        enableInstallPrompt = false)
 @CssImport("./styles/shared-styles.css")
 @CssImport(value = "./styles/vaadin-text-field-styles.css", themeFor = "vaadin-text-field")
 public class MainView extends VerticalLayout {
@@ -35,47 +29,19 @@ public class MainView extends VerticalLayout {
      * <p>
      * Build the initial UI state for the user accessing the application.
      *
-     * @param service The message service. Automatically injected Spring managed bean.
      */
-    public MainView(@Autowired GreetService service) {
-//        Button btnOpenPaperDialog = new Button("Open Paper Dialog");
-//        btnOpenPaperDialog.setWidth("70%");
-        
-//        Button btnClosePaperDialog = new Button("Close Paper Dialog");
-        setSizeFull();
+    public MainView() {
         PaperToggleButton button = new PaperToggleButton();
         button.setSizeFull();
-        button.add("adasdasd");
-        //paperDialog.getElement().appendChild(new Label("aasdasd").getElement());
+        button.add("button");
+        
         button.addValueChangeListener(event -> {
             Dialog d = new Dialog();
-            d.add(new Label("assa" + button.getChecked()));
+            d.add(new Label(Boolean.toString(event.getValue())));
             d.open();
         } );
-        // Configuring the paper dialog to show below of the btnOpenPaperDialog
-//        paperDialog.setNoOverlap(true);
-//        paperDialog.setHorizontalAlign(PaperDialog.HorizontalAlign.LEFT);
-//        paperDialog.setVerticalAlign(PaperDialog.VerticalAlign.TOP);
-//        paperDialog.setMargin(false);        
-//        paperDialog.positionTarget(btnOpenPaperDialog);
-//        paperDialog.setWidth(btnOpenPaperDialog.getWidth());
-//        
-//        paperDialog.add(btnClosePaperDialog);
-//        // Set the dialog-confirm attribute to one of the paper dialog children
-//        paperDialog.dialogConfirm(btnClosePaperDialog);
-//        
-//        btnOpenPaperDialog.addClickListener(event -> paperDialog.open());
         
-        //add(btnOpenPaperDialog);
         add(button);
-//        add(new Label("label 1"));
-//        add(new Label("label 2"));
-//        add(new Label("label 3"));
-//        add(new Label("label 4"));
-//        add(new Label("label 5"));
-//        add(new Label("label 6"));
-//        add(new Label("label 7"));
-//        add(new Label("label 8"));
     }
 
 }
