@@ -49,7 +49,11 @@ public class GoogleMapsMapProvider implements MapProvider {
     
     private GoogleMap googleMap;
     private DrawingManager drawingManager;
-    
+    /**
+     * Set of bounds changed event listeners
+     */
+    private final List<BoundsChangedEventListener> boundsChangedEventListeners = new ArrayList();
+        
     public GoogleMapsMapProvider() {
     }
     
@@ -107,6 +111,13 @@ public class GoogleMapsMapProvider implements MapProvider {
         
         drawingManager = new DrawingManager();
         googleMap.newDrawingManager(drawingManager);
+        
+        googleMap.addMapBoundsChanged(event -> {
+            new ArrayList<>(boundsChangedEventListeners).forEach(listener -> {
+                if (boundsChangedEventListeners.contains(listener))
+                    listener.accept(new BoundsChangedEvent(getBounds(), listener));
+            });
+        });
     }
 
     @Override
@@ -125,11 +136,17 @@ public class GoogleMapsMapProvider implements MapProvider {
         }
         return null;
     }
-    
+    @Override
+    public void removeOverlay(MapOverlay mapOverlay) {
+        Objects.requireNonNull(mapOverlay);
+        if (googleMap != null && mapOverlay instanceof GoogleMapsOverlay)
+            googleMap.removeOverlayView(((GoogleMapsOverlay) mapOverlay).getComponent());
+    }
+    @Override
     public GeoCoordinate getCenter() {
         return new GeoCoordinate(googleMap.getCenterLat(), googleMap.getCenterLng());
     }
-    
+    @Override
     public GeoBounds getBounds() {
         LatLngBounds bounds = googleMap.getBounds();
         if (bounds != null) {
@@ -140,7 +157,7 @@ public class GoogleMapsMapProvider implements MapProvider {
         }
         return null;
     }
-    
+    @Override
     public void getBounds(Consumer<GeoBounds> consumer) {
         if (getBounds() != null) {
             consumer.accept(getBounds());
@@ -151,20 +168,43 @@ public class GoogleMapsMapProvider implements MapProvider {
             });
         }
     }
-    
+    @Override
     public void setCenter(GeoCoordinate center) {
         googleMap.setCenterLat(center.getLatitude());
         googleMap.setCenterLng(center.getLongitude());
     }
-    
+    @Override
     public double getZoom() {
         return googleMap.getZoom();
     }
-    
+    @Override
     public void setZoom(double zoom) {
         googleMap.setZoom(zoom);
     }
-    
+    @Override
+    public boolean getDraggable() {
+        return googleMap.getDraggable();
+    }
+    @Override
+    public void setDraggable(boolean draggable) {
+        googleMap.setDraggable(draggable);
+    }
+    @Override
+    public double getMaxZoom() {
+        return googleMap.getMaxZoom();
+    }
+    @Override
+    public void setMaxZoom(Double maxZoom) {
+        googleMap.setMaxZoom(maxZoom);
+    }
+    @Override
+    public double getMinZoom() {
+        return googleMap.getMinZoom();
+    }
+    @Override
+    public void setMinZoom(Double minZoom) {
+        googleMap.setMinZoom(minZoom);
+    }
     @Override
     public void setHandMode() {
         if (drawingManager != null)
@@ -206,7 +246,6 @@ public class GoogleMapsMapProvider implements MapProvider {
                 });
         }
     }
-    
     @Override    
     public void setDrawingPolylineMode(Consumer<List<GeoCoordinate>> drawingPolylineComplete) {
         if (drawingManager != null) {
@@ -223,5 +262,17 @@ public class GoogleMapsMapProvider implements MapProvider {
                     drawingPolylineComplete.accept(coordinates);
                 });
         }
+    }
+    @Override
+    public void addBoundsChangedEventListener(BoundsChangedEventListener listener) {
+        boundsChangedEventListeners.add(listener);
+    }
+    @Override
+    public void removeBoundsChangedEventListener(BoundsChangedEventListener listener) {
+        boundsChangedEventListeners.removeIf(l -> l.equals(listener));
+    }
+    @Override
+    public void removeAllBoundsChangedEventListener() {
+        boundsChangedEventListeners.clear();
     }
 }

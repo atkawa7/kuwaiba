@@ -43,6 +43,11 @@ public interface MapProvider {
      */
     MapOverlay createOverlay(GeoBounds bounds);
     /**
+     * Removes a map overlay.
+     * @param mapOverlay Map overlay to remove.
+     */
+    void removeOverlay(MapOverlay mapOverlay);
+    /**
      * Gets the map center
      * @return map center
      */
@@ -74,6 +79,36 @@ public interface MapProvider {
      */
     void setZoom(double zoom);
     /**
+     * Gets if false, prevents the map from being dragged.
+     * @return If dragging is enabled.
+     */
+    boolean getDraggable();
+    /**
+     * Sets if false, prevents the map from being dragged.
+     * @param draggable Dragging is enabled
+     */
+    void setDraggable(boolean draggable);
+    /**
+     * Gets the maximum zoom level which will be displayed on the map.
+     * @return The maximum zoom level.
+     */
+    double getMaxZoom();
+    /**
+     * Sets the maximum zoom level which will be displayed on the map.
+     * @param maxZoom The maximum zoom level
+     */
+    void setMaxZoom(Double maxZoom);
+    /**
+     * Gets the minimum zoom level which will be displayed on the map.
+     * @return The minimum zoom level.
+     */
+    double getMinZoom();
+    /**
+     * Sets the minimum zoom level which will be displayed on the map.
+     * @param minZoom The minimum zoom level
+     */
+    void setMinZoom(Double minZoom);
+    /**
      * Set the map hand mode.
      */
     void setHandMode();
@@ -92,4 +127,40 @@ public interface MapProvider {
      * @param drawingPolylineComplete Operation that accepts coordinates
      */
     void setDrawingPolylineMode(Consumer<List<GeoCoordinate>> drawingPolylineComplete);
+    /**
+     * Adds a bounds changed event.
+     * @param listener Callback executed when bounds changed.
+     */
+    public void addBoundsChangedEventListener(BoundsChangedEventListener listener);
+    /**
+     * Removes a bounds changed event.
+     * @param listener Callback executed when bounds changed.
+     */
+    public void removeBoundsChangedEventListener(BoundsChangedEventListener listener);
+    /**
+     * Removes all bounds changed event.
+     */
+    public void removeAllBoundsChangedEventListener();
+    /**
+     * Callback executed when bounds changed.
+     */
+    public interface BoundsChangedEventListener extends Consumer<BoundsChangedEvent> {
+    }
+    public class BoundsChangedEvent {
+        private GeoBounds bounds;
+        private BoundsChangedEventListener listener;
+        
+        public BoundsChangedEvent(GeoBounds bounds, BoundsChangedEventListener listener) {
+            this.bounds = bounds;
+            this.listener = listener;
+        }
+        
+        public BoundsChangedEventListener getListener() {
+            return listener;
+        }
+        
+        public GeoBounds getBounds() {
+            return bounds;
+        }
+    }
 }

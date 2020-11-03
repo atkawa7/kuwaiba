@@ -78,17 +78,15 @@ public class HelperEdgeDraw {
                         this.coordinates = new ArrayList(coordinates);
                         mapOverlay.getProjectionFromLatLngToDivPixel(mapOverlay.getBounds().getSouthwest(), sw -> {
                             mapOverlay.getProjectionFromLatLngToDivPixel(mapOverlay.getBounds().getNortheast(), ne -> {
-                                graph.getElement().executeJs("return this.graph.view.scale").then(Double.class, scale -> {
-                                    List<Point> newPoints = new ArrayList();
-                                    setPoints(newPoints, coordinates, 
-                                        new Point(sw.getX(), sw.getY()), 
-                                        new Point(ne.getX(), ne.getY()), 
-                                        scale, () -> {
-                                            
+                                List<Point> newPoints = new ArrayList();
+                                setPoints(newPoints, coordinates, 
+                                    new Point(sw.getX(), sw.getY()), 
+                                    new Point(ne.getX(), ne.getY()), 
+                                    () -> {
                                         this.points = newPoints;
                                         map.setHandMode();
-                                    });
-                                });
+                                    }
+                                );
                             });
                         });
                     });
@@ -128,13 +126,13 @@ public class HelperEdgeDraw {
         return target;
     }
     
-    private void setPoints(List<Point> points, List<GeoCoordinate> coordinates, Point sw, Point ne, double scale, Command cmd) {
+    private void setPoints(List<Point> points, List<GeoCoordinate> coordinates, Point sw, Point ne, Command cmd) {
         if (points != null && !coordinates.isEmpty()) {
             mapOverlay.getProjectionFromLatLngToDivPixel(coordinates.remove(0), point -> {
-                double x = (point.getX() - sw.getX()) / scale;
-                double y = (point.getY() - ne.getY()) / scale;
+                double x = point.getX() - sw.getX();
+                double y = point.getY() - ne.getY();
                 points.add(new Point(x, y));
-                setPoints(points, coordinates, sw, ne, scale, cmd);
+                setPoints(points, coordinates, sw, ne, cmd);
             });
         }
         else

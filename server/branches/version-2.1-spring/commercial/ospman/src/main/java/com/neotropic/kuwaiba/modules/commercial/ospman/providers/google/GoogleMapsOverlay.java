@@ -23,6 +23,8 @@ import com.neotropic.kuwaiba.modules.commercial.ospman.api.GeoBounds;
 import com.neotropic.kuwaiba.modules.commercial.ospman.api.GeoCoordinate;
 import com.neotropic.kuwaiba.modules.commercial.ospman.api.GeoPoint;
 import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapOverlay;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -50,34 +52,14 @@ public class GoogleMapsOverlay implements MapOverlay {
      * The map overlay id
      */
     private String id;
+    /**
+     * Set of width changed event listeners
+     */
+    private List<WidthChangedEventListener> widthChangedEventListeners = new ArrayList();
     
     public GoogleMapsOverlay(GeoBounds bounds) {
         this.bounds = bounds;
         this.id = UUID.randomUUID().toString();
-    }
-    @Override
-    public String getId() {
-        return id;
-    }
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
-    @Override
-    public String getTitle() {
-        return title;
-    }
-    @Override
-    public void setTitle(String title) {
-        this.title = title;
-    }
-    @Override
-    public boolean getEnabled() {
-        return enabled;
-    }
-    @Override
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
     @Override
     public GeoBounds getBounds() {
@@ -100,6 +82,13 @@ public class GoogleMapsOverlay implements MapOverlay {
                 new LatLng(southwest.getLatitude(), southwest.getLongitude()), 
                 new LatLng(northeast.getLatitude(), northeast.getLongitude()) 
             ));
+            overlayView.addWidthChangedListener(event -> {
+                setWidth(event.getWidth());
+                new ArrayList<>(widthChangedEventListeners).forEach(listener -> {
+                    if (widthChangedEventListeners.contains(listener))
+                        listener.accept(new WidthChangedEvent(event.getWidth(), listener));
+                });
+            });
         }
         return overlayView;
     }
@@ -122,10 +111,15 @@ public class GoogleMapsOverlay implements MapOverlay {
         );
     }
     @Override
-    public void addWidthChangedConsumer(Consumer<Double> widthChangedConsumer) {
-        Objects.requireNonNull(widthChangedConsumer);
-        overlayView.addWidthChangedListener(event -> {
-            widthChangedConsumer.accept(event.getWidth());
-        });
+    public void addWidthChangedEventListener(WidthChangedEventListener listener) {
+        widthChangedEventListeners.add(listener);
+    }
+    @Override
+    public void removeWidthChangedEventListener(WidthChangedEventListener listener) {
+        widthChangedEventListeners.removeIf(l -> l.equals(listener));
+    }
+    @Override
+    public void removeAllWidthChangedEventListener() {
+        widthChangedEventListeners.clear();
     }
 }

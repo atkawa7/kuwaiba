@@ -24,36 +24,6 @@ import java.util.function.Consumer;
  */
 public interface MapOverlay {
     /**
-     * Gets the map overlay id
-     * @return the id
-     */
-    String getId();
-    /**
-     * Set the map overlay id
-     * @param id the map overlay id
-     */
-    void setId(String id);
-    /**
-     * Gets the map overlay title
-     * @return the title
-     */
-    String getTitle();
-    /**
-     * Set the map overlay title
-     * @param title map overlay title
-     */
-    void setTitle(String title);
-    /**
-     * Gets if the map overlay is enabled
-     * @return enabled
-     */
-    boolean getEnabled();
-    /**
-     * Set if the map overlay is enabled
-     * @param enabled Map overlay enabled
-     */
-    void setEnabled(boolean enabled);
-    /**
      * Gets a rectangle representation in geographical coordinates from 
      * southwest and northeast.
      * @return A rectangle representation in geographical coordinates
@@ -87,8 +57,42 @@ public interface MapOverlay {
      */
     void getProjectionFromDivPixelToLatLng(GeoPoint pixel, Consumer<GeoCoordinate> latLngConsumer);
     /**
-     * Adds a operation that accepts a width value
-     * @param widthChangedConsumer 
+     * Adds a width change event.
+     * @param listener Callback executed when width changed.
      */
-    void addWidthChangedConsumer(Consumer<Double> widthChangedConsumer);
+    public void addWidthChangedEventListener(WidthChangedEventListener listener);
+    /**
+     * Removes a width change event.
+     * @param listener Callback executed when width changed.
+     */
+    public void removeWidthChangedEventListener(WidthChangedEventListener listener);
+    /**
+     * Removes all width change event.
+     */
+    public void removeAllWidthChangedEventListener();
+    /**
+     * Callback executed when width changed.
+     */    
+    public interface WidthChangedEventListener extends Consumer<WidthChangedEvent> {
+    }
+    /**
+     * Fired when width changed
+     */
+    public class WidthChangedEvent {
+        private double width;
+        private WidthChangedEventListener listener;
+        
+        public WidthChangedEvent(double width, WidthChangedEventListener listener) {
+            this.width = width;
+            this.listener = listener;
+        }
+        
+        public WidthChangedEventListener getListener() {
+            return listener;
+        }
+        
+        public double getWidth() {
+            return width;
+        }
+    }
 }
