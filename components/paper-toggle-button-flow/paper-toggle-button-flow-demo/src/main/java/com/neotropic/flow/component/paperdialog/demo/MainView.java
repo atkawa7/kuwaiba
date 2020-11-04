@@ -1,6 +1,6 @@
 package com.neotropic.flow.component.paperdialog.demo;
 
-import com.neotropic.flow.component.papertogglebutton.PaperToggleButton;
+import com.neotropic.flow.component.paper.toggle.PaperToggleButton;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Label;
