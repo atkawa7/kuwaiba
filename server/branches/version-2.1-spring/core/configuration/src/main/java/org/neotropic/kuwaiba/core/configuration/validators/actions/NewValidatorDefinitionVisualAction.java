@@ -15,7 +15,7 @@
  */
 package org.neotropic.kuwaiba.core.configuration.validators.actions;
 
-import com.neotropic.flow.component.paperdialog.PaperToggleButton;
+import com.neotropic.flow.component.paper.toggle.PaperToggleButton;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;

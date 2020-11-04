@@ -17,7 +17,7 @@ package org.neotropic.kuwaiba.modules.optional.taskman;
 
 import com.neotropic.flow.component.aceeditor.AceEditor;
 import com.neotropic.flow.component.aceeditor.AceMode;
-import com.neotropic.flow.component.paperdialog.PaperToggleButton;
+import com.neotropic.flow.component.paper.toggle.PaperToggleButton;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.button.Button;
