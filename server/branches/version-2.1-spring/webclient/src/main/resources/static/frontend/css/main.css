@@ -116,3 +116,11 @@ vaadin-button {
     background-color: var(--kuwaiba-quintenary-color);
     font-size: small;
 }
+
+.simple-notification-button-copy {
+    padding: 3px 3px 3px 3px;
+    color: var(--kuwaiba-primary-text-color);            
+    background-color: var(--kuwaiba-primary-color);
+    font-size: small;
+    text-decoration: underline;
+}

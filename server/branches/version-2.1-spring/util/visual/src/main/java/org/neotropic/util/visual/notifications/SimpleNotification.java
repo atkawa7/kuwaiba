@@ -43,6 +43,9 @@ public class SimpleNotification extends AbstractNotification {
         Label lblText = new Label(this.text);
         Button btnCopyToClipboard = new Button(ts.getTranslatedString("module.general.labels.copy-to-clipboard"));
         //content properties
+        btnCopyToClipboard.setClassName("simple-notification-button-copy");
+        btnCopyToClipboard.setVisible(false);
+        btnCopyToClipboard.addAttachListener(event -> copyClipboard(event, this.text));
         lytContent.setSpacing(false);
         lytContent.setPadding(false);
         lytContent.setMargin(false);
@@ -51,15 +54,15 @@ public class SimpleNotification extends AbstractNotification {
         switch (type) {
             default:
             case INFO:
-                lblTitle.setClassName("simple-notification-title-info");
+                lblTitle.setClassName("simple-notification-title-info");                
                 break;
             case WARNING:
                 lblTitle.setClassName("simple-notification-title-warning");
+                btnCopyToClipboard.setVisible(true);               
                 break;
             case ERROR:
                 lblTitle.setClassName("simple-notification-title-error");
                 btnCopyToClipboard.setVisible(true);
-                btnCopyToClipboard.addAttachListener(event -> copyClipboard(event, this.text));
         }
 
         lytContent.add(lblTitle, lblText);
