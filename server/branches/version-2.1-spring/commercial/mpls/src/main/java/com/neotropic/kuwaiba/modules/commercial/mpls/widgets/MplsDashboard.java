@@ -82,7 +82,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.OperationNotPermit
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicIconGenerator;
+import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicTreeNodeIconGenerator;
 import org.neotropic.kuwaiba.modules.core.navigation.navtree.NavigationTree;
 import org.neotropic.kuwaiba.modules.core.navigation.navtree.nodes.InventoryObjectNode;
 import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
@@ -497,8 +497,8 @@ public class MplsDashboard extends VerticalLayout {
         
         HierarchicalDataProvider dataProviderSourceTree = buildHierarchicalDataProvider(new BusinessObjectLight("", "", ""));
         HierarchicalDataProvider dataProviderTargetTree = buildHierarchicalDataProvider(new BusinessObjectLight("", "", ""));
-        TreeGrid<InventoryObjectNode> sourceTree = new NavigationTree(dataProviderSourceTree , new BasicIconGenerator(resourceFactory));
-        TreeGrid<InventoryObjectNode> targetTree = new NavigationTree(dataProviderTargetTree , new BasicIconGenerator(resourceFactory));
+        TreeGrid<InventoryObjectNode> sourceTree = new NavigationTree(dataProviderSourceTree , new BasicTreeNodeIconGenerator(resourceFactory));
+        TreeGrid<InventoryObjectNode> targetTree = new NavigationTree(dataProviderTargetTree , new BasicTreeNodeIconGenerator(resourceFactory));
         sourceTree.setVisible(false);
         targetTree.setVisible(false);
         

@@ -63,7 +63,7 @@ import org.neotropic.kuwaiba.core.configuration.validators.actions.NewValidatorD
 import org.neotropic.kuwaiba.core.configuration.validators.nodes.ClassNode;
 import org.neotropic.kuwaiba.core.configuration.validators.nodes.ValidatorDefinitionNode;
 import org.neotropic.kuwaiba.core.configuration.variables.ConfigurationVariablesUI;
-import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicIconGenerator;
+import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicTreeNodeIconGenerator;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
@@ -231,7 +231,7 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
 
     private void initializeValidatorsTree() throws MetadataObjectNotFoundException, InvalidArgumentException {
         HierarchicalDataProvider dataProvider = ValidatorHierarchicalDataProvider(mem.getSubClassesLight(Constants.CLASS_INVENTORYOBJECT, true, true));
-        objectTree = new ValidatorDefinitionTree(dataProvider, new BasicIconGenerator(resourceFactory));
+        objectTree = new ValidatorDefinitionTree(dataProvider, new BasicTreeNodeIconGenerator(resourceFactory));
         objectTree.addItemClickListener(event -> {
             if (event.getItem() instanceof ValidatorDefinitionNode) {
                 try {

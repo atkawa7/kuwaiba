@@ -15,7 +15,6 @@
  */
 package org.neotropic.kuwaiba.modules.core.navigation;
 
-import com.neotropic.flow.component.papertogglebutton.PaperToggleButton;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;

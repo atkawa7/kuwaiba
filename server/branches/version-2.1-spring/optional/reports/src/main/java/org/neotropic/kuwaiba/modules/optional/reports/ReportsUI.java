@@ -78,7 +78,7 @@ import org.neotropic.kuwaiba.modules.optional.reports.actions.NewClassReportVisu
 import org.neotropic.kuwaiba.modules.optional.reports.actions.NewInventoryReportVisualAction;
 import org.neotropic.kuwaiba.modules.optional.reports.actions.NewParameterVisualAction;
 import org.neotropic.kuwaiba.modules.optional.reports.nodes.ReportNode;
-import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicIconGenerator;
+import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicTreeNodeIconGenerator;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
@@ -446,7 +446,7 @@ public class ReportsUI extends VerticalLayout implements HasDynamicTitle {
             List<ClassMetadataLight> inventoryObjectClasses = mem.getSubClassesLight(Constants.CLASS_INVENTORYOBJECT, true, true);
             HierarchicalDataProvider dataProvider = buildHierarchicalDataProvider(inventoryObjectClasses);
 
-            treeClassLevelReports = new BasicTree(dataProvider, new BasicIconGenerator(resourceFactory));
+            treeClassLevelReports = new BasicTree(dataProvider, new BasicTreeNodeIconGenerator(resourceFactory));
 
             cbxFilterClassReports = new ComboBox<>(ts.getTranslatedString("module.general.labels.filter"));
             cbxFilterClassReports.setWidthFull();
