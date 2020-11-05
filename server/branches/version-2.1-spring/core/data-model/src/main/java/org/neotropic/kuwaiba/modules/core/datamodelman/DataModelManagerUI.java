@@ -82,7 +82,7 @@ import org.neotropic.kuwaiba.modules.core.datamodelman.actions.DeleteAttributeVi
 import org.neotropic.kuwaiba.modules.core.datamodelman.actions.DeleteClassVisualAction;
 import org.neotropic.kuwaiba.modules.core.datamodelman.actions.NewAttributeVisualAction;
 import org.neotropic.kuwaiba.modules.core.datamodelman.actions.NewClassVisualAction;
-import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicIconGenerator;
+import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicTreeNodeIconGenerator;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.util.visual.general.BoldLabel;
 import org.neotropic.util.visual.notifications.SimpleNotification;
@@ -464,7 +464,7 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
     private void initializeInventoryObjectTree() {
         HierarchicalDataProvider dataProvider = buildHierarchicalDataProvider(Constants.CLASS_INVENTORYOBJECT);
         
-        inventoryObjectTree = new BasicTree(dataProvider , new BasicIconGenerator(resourceFactory));
+        inventoryObjectTree = new BasicTree(dataProvider , new BasicTreeNodeIconGenerator(resourceFactory));
         
         List<ClassMetadataLight> inventoryObjectClasses = new ArrayList<>();
         try {
@@ -523,7 +523,7 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
     private void initializeGenericObjectListTree() {
         HierarchicalDataProvider dataProvider = buildHierarchicalDataProvider(Constants.CLASS_GENERICOBJECTLIST);
         
-        genericObjectListTree = new BasicTree(dataProvider , new BasicIconGenerator(resourceFactory));
+        genericObjectListTree = new BasicTree(dataProvider , new BasicTreeNodeIconGenerator(resourceFactory));
         genericObjectListTree.addItemClickListener( item ->  {
             selectedClass = item.getItem().getObject();
             updatePropertySheetGeneralAttributes();
