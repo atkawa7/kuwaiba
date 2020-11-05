@@ -15,12 +15,17 @@
  */
 package org.neotropic.kuwaiba.modules.core.navigation;
 
+import com.neotropic.flow.component.papertogglebutton.PaperToggleButton;
 import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyPressEvent;
+import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -36,7 +41,9 @@ import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,10 +59,16 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicIconGenerator;
+import org.neotropic.kuwaiba.modules.core.navigation.actions.DeleteBusinessObjectVisualAction;
+import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualActionToo;
+import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicBusinessObjectIconGenerator;
+import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicTreeNodeIconGenerator;
 import org.neotropic.kuwaiba.modules.core.navigation.navtree.NavigationTree;
 import org.neotropic.kuwaiba.modules.core.navigation.navtree.nodes.InventoryObjectNode;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
+import org.neotropic.kuwaiba.modules.core.search.BusinessObjectSearchResultRenderer;
+import org.neotropic.kuwaiba.modules.core.search.NavDashboardFactory;
+import org.neotropic.kuwaiba.modules.core.search.SearchResultCallback;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +79,16 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @Route(value = "navman", layout = NavLayout.class)
 public class NavUI extends VerticalLayout implements ActionCompletedListener, HasDynamicTitle {
+    /**
+     * Reference to the action that creates a new Business Object.
+     */
+    @Autowired
+    private NewBusinessObjectVisualActionToo actNewObj;
+    /**
+     * Reference to the action that deletes a Business Object.
+     */
+    @Autowired
+    private DeleteBusinessObjectVisualAction actDeleteObj;
     /**
      * Reference to the action registry.
      */
@@ -104,7 +127,6 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
      * footer to dipslay detail information
      */
     private HorizontalLayout lytDetail;
-    
     /**
      * Location filters
      */
@@ -137,8 +159,9 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
      */
     private VerticalLayout lytSearch;
     
-    private TextField txtSearch;
-    
+    @Autowired
+    private NavDashboardFactory navDashboardFactory;
+        
     @Override
     public void onAttach(AttachEvent ev) {
         setPadding(false);
@@ -150,17 +173,21 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
         setupLayouts();
         setupSearchBar();
         setupLocationHeader();
-
+        
+        this.actNewObj.registerActionCompletedLister(this);
+        this.actDeleteObj.registerActionCompletedLister(this);
     }
 
     @Override
     public void onDetach(DetachEvent ev) {
-
+        this.actNewObj.unregisterListener(this);
+        this.actDeleteObj.unregisterListener(this);
     }
 
     @Override
     public void actionCompleted(ActionCompletedListener.ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
+            //TODO we upate the tables, tree and properties
             new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
                             AbstractNotification.NotificationType.ERROR, ts).open();
         } else {
@@ -169,7 +196,6 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
         }
     }
 
-    
     /**
      * setUp the layouts 
      */
@@ -191,13 +217,13 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
             lytNav.setMargin(false);
             lytNav.setPadding(false);
             lytNav.setSizeFull();
-            lytNav.getStyle().set("background-color", "purple");
+            //lytNav.getStyle().set("background-color", "purple");
         }
         //The rigth colum
         if(lytLocation == null){
             lytLocation = new VerticalLayout();
             lytLocation.setMaxWidth("30%");
-            lytLocation.getStyle().set("background-color", "green");
+            //lytLocation.getStyle().set("background-color", "green");
         }
         //the first row of the rigth column
         if(lytLocationButonsFilters == null){
@@ -214,19 +240,17 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
             lytLocationPath.setHeight("15px");
             lytLocationPath.setWidth("100%");
         }
-        
+        //TODO  add only ports button PaperToggleButton tgbOnlyPorts = new PaperToggleButton("aaaa");
         //Center column
         if(lytNetwork == null){
             lytNetwork = new VerticalLayout();
-            lytNetwork.getStyle().set("background-color", "yellow");
+            //lytNetwork.getStyle().set("background-color", "yellow");
             lytNetwork.setMaxWidth("40%");
             lytNetwork.add(new Span("..."));
         }
-        
         //Location filters and path 
         lblLocationParentsPath = new Label("Location path ...");
         locationButtonsFilters = new ArrayList<>();
-        
         //the main content 
         this.lytContent = new VerticalLayout();
         this.lytContent.setSizeFull();
@@ -238,6 +262,7 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
         lytNav.add(lytNetwork);
         //lytNav.add(lytPropertys);
         this.lytContent.add(lytSearch, lytNav);
+        
         add(this.lytContent);
     }
     
@@ -245,41 +270,69 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
      * Setups the search bar
      */
     private void setupSearchBar(){
-        if(txtSearch == null){
-            Icon searchIcon = new Icon(VaadinIcon.SEARCH);
-            searchIcon.setSize("20px");
-            txtSearch = new TextField();
-            txtSearch.setClassName("search-box-large");
-            txtSearch.setPlaceholder(ts.getTranslatedString("module.general.messages.search"));
-            txtSearch.setPrefixComponent(searchIcon);
-            txtSearch.setClearButtonVisible(true);
-            txtSearch.setTabIndex(0);
-            txtSearch.setWidth("520px");
-            
-            lytSearch.add(txtSearch);
+        TextField txtSearch;
+        Icon searchIcon = new Icon(VaadinIcon.SEARCH);
+        searchIcon.setSize("20px");
+        txtSearch = new TextField();
+        txtSearch.setClassName("search-box-large");
+        txtSearch.setPlaceholder(ts.getTranslatedString("module.general.messages.search"));
+        txtSearch.setPrefixComponent(searchIcon);
+        txtSearch.setClearButtonVisible(true);
+        txtSearch.setTabIndex(0);
+        txtSearch.setWidth("520px");
 
-            txtSearch.addKeyPressListener(new ComponentEventListener<KeyPressEvent>() {
+        lytSearch.add(txtSearch);
+
+        txtSearch.addKeyPressListener(new ComponentEventListener<KeyPressEvent>() {
                 @Override
                 public void onComponentEvent(KeyPressEvent event) {
-                    if (event.getKey().getKeys().get(0).equals(Key.ENTER.getKeys().get(0))) { //Weirdly enough, event.getKey().equals(Key.Enter) ALWAYS returns false
-                        try {
-                            List<BusinessObjectLight> searchResults = bem.getObjectsOfClassLight(txtSearch.getValue(), -1);
-
-                            if (searchResults.isEmpty())
-                                lytLocation.add(new Label(ts.getTranslatedString("module.general.messages.no-search-results")));
-                            else {
-                                lytLocation.removeAll();
-                                NavigationTree navTree = new NavigationTree(getDataProviderSeveral(searchResults), new BasicIconGenerator(resourceFactory));
-                                lytLocation.add(navTree);
-                            }
-                        } catch (Exception ex) {
-                            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(), 
-                            AbstractNotification.NotificationType.ERROR, ts).open();
+            if (event.getKey().getKeys().get(0).equals(Key.ENTER.getKeys().get(0))) { //Weirdly enough, event.getKey().equals(Key.Enter) ALWAYS returns false
+                try {
+                    //TODO if we are searching for class name List<BusinessObjectLight> searchResults = bem.getObjectsOfClassLight(txtSearch.getValue(), -1);
+                    List<BusinessObjectLight> searchResults = bem.getSuggestedObjectsWithFilter(txtSearch.getValue(), Constants.CLASS_INVENTORYOBJECT, -1);
+                    
+                    if (searchResults.isEmpty())
+                        lytLocation.add(new Label(ts.getTranslatedString("module.general.messages.no-search-results")));
+                    else {
+                        Accordion acrClasses = new Accordion();
+                        acrClasses.setWidth("100%");
+                        //we group the results into clases
+                        HashMap<String, List<BusinessObjectLight>> groupedResults = new HashMap<>();
+                        for (BusinessObjectLight obj : searchResults) {
+                            if(groupedResults.get(obj.getClassName()) == null)
+                                groupedResults.put(obj.getClassName(), new ArrayList<>());
+                            
+                            groupedResults.get(obj.getClassName()).add(obj);
                         }
+                        
+                        for (Map.Entry<String, List<BusinessObjectLight>> entry : groupedResults.entrySet()) {
+                            String key = entry.getKey();
+                            List<BusinessObjectLight> objs = entry.getValue();
+                            Grid<BusinessObjectLight> tblResults = new  Grid<>();
+                            tblResults.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
+                            tblResults.addThemeVariants(GridVariant.LUMO_COMPACT);
+                            tblResults.setHeightByRows(true);
+                            tblResults.setItems(objs);
+                            tblResults.addColumn(new BusinessObjectSearchResultRenderer(
+                                            actionRegistry.getActionsForModule(NavModule.MODULE_ID),
+                                            new NavNodeSearchResultCallback(),
+                                            new BasicBusinessObjectIconGenerator(resourceFactory)
+                            ));
+                            acrClasses.add(key + " (" + (objs.size()) + ") ", tblResults);
+                        }
+                        
+                        lytLocation.removeAll();
+                        lytLocation.add(acrClasses);
+                        //NavigationTree navTree = new NavigationTree(getDataProviderSeveral(searchResults), new BasicIconGenerator(resourceFactory));
+                        //lytLocation.add(navTree);
                     }
+                } catch (Exception ex) {
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(),
+                            AbstractNotification.NotificationType.ERROR, ts).open();
                 }
-            });
-        }
+            }
+                }
+        });
     }
     
 //    public void replaceContent(Component newContent) {
@@ -582,7 +635,7 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
                         new SimpleNotification(ts.getTranslatedString("module.general.messages.information"), ts.getTranslatedString("module.general.messages.no-search-results"), 
                             AbstractNotification.NotificationType.ERROR, ts).open();
                     else {
-                        NavigationTree localitationNavTree = new NavigationTree(getDataProviderSeveral(searchResults), new BasicIconGenerator(resourceFactory));
+                        NavigationTree localitationNavTree = new NavigationTree(getDataProviderSeveral(searchResults), new BasicTreeNodeIconGenerator(resourceFactory));
                         localitationNavTree.addSelectionListener(ei -> {
                             Set selectedItems = ei.getAllSelectedItems();
                             for (Object item : selectedItems) {
@@ -595,7 +648,7 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
                                         lytNetwork.add(new Label(ts.getTranslatedString("module.general.messages.no-search-results")));
                                     else {
                                         lytNetwork.removeAll();
-                                        NavigationTree navTree = new NavigationTree(getDataProviderSeveral(childrenOfClassLight), new BasicIconGenerator(resourceFactory));
+                                        NavigationTree navTree = new NavigationTree(getDataProviderSeveral(childrenOfClassLight), new BasicTreeNodeIconGenerator(resourceFactory));
                                         lytNetwork.add(navTree);
                                     }    
                                     break;
@@ -612,7 +665,7 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
                 }
             });
         }
-            
+         
         lytSearch.add(lytLocationButonsFilters);
     }
     
@@ -680,5 +733,12 @@ private void getLocalizationPath(BusinessObjectLight selectedLocationObj,
     @Override
     public String getPageTitle() {
         return ts.getTranslatedString("module.navigation.title");
+    }
+    
+    public class NavNodeSearchResultCallback implements SearchResultCallback<BusinessObjectLight> {
+        @Override
+        public Component buildSearchResultDetailsPage(BusinessObjectLight searchResult) {
+            return navDashboardFactory.build(searchResult);
+        }
     }
 }

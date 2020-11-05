@@ -55,19 +55,19 @@ public class ResourceFactory extends AbstractResourceFactory {
     /**
      * Default icon width (used in navigation trees)
      */
-    private static final int DEFAULT_SMALL_ICON_WIDTH = 12;
+    public static final int DEFAULT_SMALL_ICON_WIDTH = 12;
     /**
      * Default icon height (used in navigation trees)
      */
-    private static final int DEFAULT_SMALL_ICON_HEIGHT = 12;
+    public static final int DEFAULT_SMALL_ICON_HEIGHT = 12;
     /**
      * Default no icon width (used in navigation trees)
      */
-    private static final int DEFAULT_SMALL_NO_ICON_WIDTH = 10;
+    public static final int DEFAULT_SMALL_NO_ICON_WIDTH = 10;
     /**
      * Default no icon height (used in navigation trees)
      */
-    private static final int DEFAULT_SMALL_NO_ICON_HEIGHT = 10;
+    public static final int DEFAULT_SMALL_NO_ICON_HEIGHT = 10;
     
     private static ResourceFactory instance;
     /**
@@ -134,16 +134,12 @@ public class ResourceFactory extends AbstractResourceFactory {
             }
 
             int color = Color.BLACK.getRGB();
-//                if (defaultIcons.containsKey(color))
-//                    return defaultIcons.get(color);
-//                else {
+
             StreamResource icon = buildIcon("default" + color + ".png", getIcon(new Color(color), DEFAULT_ICON_WIDTH, DEFAULT_ICON_HEIGHT));
             VaadinSession.getCurrent().getResourceRegistry().registerResource(icon);
             defaultIcons.put(color, icon);
             return icon;
-//                }
         }
-//        }
     }
        
     @Override

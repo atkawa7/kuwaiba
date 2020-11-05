@@ -17,7 +17,6 @@ package org.neotropic.kuwaiba.modules.core.navigation.actions;
 
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import java.util.HashMap;
 import javax.annotation.PostConstruct;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionException;
 import org.neotropic.kuwaiba.core.apis.integration.modules.actions.AbstractAction;
@@ -30,11 +29,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Create a business object.
- * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
+ * Deletes a business object.
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 @Component
-public class NewBusinessObjectAction extends AbstractAction {
+public class DeleteBusinessObjectAction extends AbstractAction {
     /**
      * New business object action parameter class name.
      */
@@ -68,29 +67,24 @@ public class NewBusinessObjectAction extends AbstractAction {
     
     @PostConstruct
     protected void init() {
-        this.id = "navigation.new-business-object";
-        this.displayName = ts.getTranslatedString("module.navigation.actions.new-business-object.name");
-        this.description = ts.getTranslatedString("module.navigation.actions.new-business-object.description");
-        this.icon = new Icon(VaadinIcon.PLUS);
-        this.order = 1;
+        this.id = "navigation.delete-business-object";
+        this.displayName = ts.getTranslatedString("module.navigation.actions.delete-business-object.name");
+        this.description = ts.getTranslatedString("module.navigation.actions.delete-business-object.description");
+        this.icon = new Icon(VaadinIcon.TRASH);
+        this.order = 2;
         
         setCallback(parameters -> {
             try {
-                String className = (String) parameters.get(PARAM_CLASS_NAME);
                 String parentClassName = (String) parameters.get(PARAM_PARENT_CLASS_NAME);
                 String parentOid = (String) parameters.get(PARAM_PARENT_OID);
-                HashMap<String, String> attributes = (HashMap) parameters.get(PARAM_ATTRIBUTES);
-                String templateId = (String) parameters.get(PARAM_TEMPLATE_ID);
             
-                bem.createObject(className, parentClassName, parentOid, attributes, templateId);
+                bem.deleteObject(parentClassName, parentOid, false);
                 return new ActionResponse();
             } catch (InventoryException ex) {
                 throw new ModuleActionException(ex.getMessage());
             }
         });
     }
-    
-
     
     @Override
     public int getRequiredAccessLevel() {

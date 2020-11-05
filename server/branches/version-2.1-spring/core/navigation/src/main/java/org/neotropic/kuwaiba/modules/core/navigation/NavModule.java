@@ -20,6 +20,8 @@ import org.neotropic.kuwaiba.core.apis.integration.modules.AbstractModule;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleRegistry;
 import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionRegistry;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.modules.core.navigation.actions.DeleteBusinessObjectVisualAction;
+import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualActionToo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,10 +32,44 @@ import org.springframework.stereotype.Component;
 @Component
 public class NavModule extends AbstractModule {
     /**
+     * The module id.
+     */
+    public static final String MODULE_ID = "navman"; 
+    /**
      * translation service
      */
     @Autowired
     private TranslationService ts;
+    /**
+     * Reference to the action that copy a Business Object.
+     */
+    //@Autowired
+    //private CopyVisualAction;
+    /**
+     * Reference to the action that cut a Business Object.
+     */
+    //@Autowired
+    //private CutVisualAction;
+    /**
+     * Reference to the action that paste a Business Object.
+     */
+    //@Autowired
+    //private PasteVisualAction;
+    /**
+     * Reference to the action that opens a tree form the selected Business Object.
+     */
+    //@Autowired
+    //private OpenExplorerVisualAction openExplorerVisualAction;
+    /**
+     * Reference to the action that creates a new Business Object.
+     */
+    @Autowired
+    private NewBusinessObjectVisualActionToo actNewObj;
+    /**
+     * Reference to the action that deletes a Business Object.
+     */
+    @Autowired
+    private DeleteBusinessObjectVisualAction actDeleteObj;
     /**
      * Reference to the action registry.
      */
@@ -47,8 +83,9 @@ public class NavModule extends AbstractModule {
     
     @PostConstruct
     public void init() {
-        // Register all actions
-        
+        // Register all actions provided by this module
+        this.actionRegistry.registerAction(MODULE_ID, actNewObj);
+        this.actionRegistry.registerAction(MODULE_ID, actDeleteObj);
         // Now the module itself
         this.moduleRegistry.registerModule(this);
     }
@@ -75,7 +112,7 @@ public class NavModule extends AbstractModule {
     
      @Override
     public String getId() {
-        return "navman";
+        return MODULE_ID;
     }
 
     @Override

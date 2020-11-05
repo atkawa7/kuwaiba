@@ -27,9 +27,9 @@ import org.neotropic.util.visual.tree.nodes.AbstractNode;
  * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
 
-public class BasicIconGenerator extends IconGenerator<AbstractNode> {
+public class BasicTreeNodeIconGenerator extends IconGenerator<AbstractNode> {
         
-    public BasicIconGenerator(AbstractResourceFactory resourceFactory) {
+    public BasicTreeNodeIconGenerator(AbstractResourceFactory resourceFactory) {
         super(resourceFactory);
     }  
 
