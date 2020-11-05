@@ -88,7 +88,7 @@ public abstract class AbstractVisualAction<W> implements Comparable<AbstractVisu
     public void fireActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent ev) {
         this.listeners.stream().forEach(aListener -> {
                 aListener.actionCompleted(ev);
-            });
+        });
     }
     
     /**

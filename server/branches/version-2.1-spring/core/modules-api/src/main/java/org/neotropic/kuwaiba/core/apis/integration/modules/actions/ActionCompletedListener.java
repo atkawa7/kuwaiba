@@ -13,7 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.neotropic.kuwaiba.core.apis.integration.modules.actions;
 
 /**
@@ -58,22 +57,22 @@ public interface ActionCompletedListener {
         /**
          * The action that generated the event.
          */
-        private Class clazz;
+        private Class class_;
         /**
          * Possible action result.
          */
         private ActionResponse actionResponse;
 
-        public ActionCompletedEvent(int status, String message, Class clazz) {
+        public ActionCompletedEvent(int status, String message, Class class_) {
             this.status= status;
             this.message = message;
-            this.clazz = clazz;
+            this.class_ = class_;
         }
         
-        public ActionCompletedEvent(int status, String message, Class clazz, ActionResponse actionResponse) {
+        public ActionCompletedEvent(int status, String message, Class class_, ActionResponse actionResponse) {
             this.status= status;
             this.message = message;
-            this.clazz = clazz;
+            this.class_ = class_;
             this.actionResponse = actionResponse;
         }
 
@@ -93,12 +92,12 @@ public interface ActionCompletedListener {
             this.status = status;
         }
 
-        public Class getClazz() {
-            return clazz;
+        public Class getClass_() {
+            return class_;
         }
 
-        public void setClazz(Class clazz) {
-            this.clazz = clazz;
+        public void setClass_(Class class_) {
+            this.class_ = class_;
         }
 
         public ActionResponse getActionResponse() {

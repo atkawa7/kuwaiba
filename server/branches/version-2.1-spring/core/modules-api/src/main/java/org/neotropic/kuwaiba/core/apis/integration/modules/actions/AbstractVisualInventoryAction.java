@@ -16,6 +16,8 @@
 
 package org.neotropic.kuwaiba.core.apis.integration.modules.actions;
 
+import javax.swing.Icon;
+
 /**
  * Actions applicable to inventory objects must inherit from this class.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}

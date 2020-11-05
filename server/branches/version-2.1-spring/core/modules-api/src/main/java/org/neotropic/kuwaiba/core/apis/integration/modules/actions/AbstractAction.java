@@ -16,6 +16,7 @@
 
 package org.neotropic.kuwaiba.core.apis.integration.modules.actions;
 
+import com.vaadin.flow.component.icon.Icon;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionException;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionParameterSet;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Privilege;
@@ -38,6 +39,10 @@ public abstract class AbstractAction {
      * A short description of what the action does, mainly to be used as tool text tip.
      */
     protected String description;
+    /**
+     * An icon to represent the action.
+     */
+    protected Icon icon;
     /**
      * This number will be used to position the action in menus (0 is the highest priority/importance). The default value is 1000.
      */
@@ -77,6 +82,14 @@ public abstract class AbstractAction {
 
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    public Icon getIcon() {
+        return icon;
+    }
+
+    public void setIcon(Icon icon) {
+        this.icon = icon;
     }
 
     public void setCallback(ModuleActionCallback callback) {
