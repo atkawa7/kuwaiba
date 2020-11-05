@@ -47,7 +47,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicIconGenerator;
+import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicTreeNodeIconGenerator;
 import org.neotropic.kuwaiba.modules.core.navigation.navtree.NavigationTree;
 import org.neotropic.kuwaiba.modules.core.navigation.navtree.nodes.InventoryObjectNode;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
@@ -285,8 +285,8 @@ public class NewPhysicalConnectionWizard extends Wizard {
                        
             HierarchicalDataProvider dataProviderSourceTree = buildTreeHierarchicalDataProvider((BusinessObjectLight)properties.get("rootASide"));
             HierarchicalDataProvider dataProviderTargetTree = buildTreeHierarchicalDataProvider((BusinessObjectLight)properties.get("rootBSide"));
-            aSideTree = new NavigationTree(dataProviderSourceTree , new BasicIconGenerator(rs));
-            bSideTree = new NavigationTree(dataProviderTargetTree , new BasicIconGenerator(rs));
+            aSideTree = new NavigationTree(dataProviderSourceTree , new BasicTreeNodeIconGenerator(rs));
+            bSideTree = new NavigationTree(dataProviderTargetTree , new BasicTreeNodeIconGenerator(rs));
             
             aSideTree.addItemClickListener( item -> {
                 selectedEndPointA = item.getItem().getObject();
@@ -436,8 +436,8 @@ public class NewPhysicalConnectionWizard extends Wizard {
                     
             HierarchicalDataProvider dataProviderSourceTree = buildTreeHierarchicalDataProvider((BusinessObjectLight)properties.get("rootASide"));
             HierarchicalDataProvider dataProviderTargetTree = buildTreeHierarchicalDataProvider((BusinessObjectLight)properties.get("rootBSide"));
-            aSideTree = new NavigationTree(dataProviderSourceTree , new BasicIconGenerator(rs));
-            bSideTree = new NavigationTree(dataProviderTargetTree , new BasicIconGenerator(rs));
+            aSideTree = new NavigationTree(dataProviderSourceTree , new BasicTreeNodeIconGenerator(rs));
+            bSideTree = new NavigationTree(dataProviderTargetTree , new BasicTreeNodeIconGenerator(rs));
             
             aSideTree.addItemClickListener( item -> {
                 selectedEndPointA = item.getItem().getObject();
