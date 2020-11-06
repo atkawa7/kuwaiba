@@ -121,7 +121,12 @@ class OverlayView extends PolymerElement {
       });
     });
   }
-  
+  /**
+   * Gets the pixel coordinates of the given geographical location.
+   * @param {number} lat - Latitude.
+   * @param {number} lng - Longitude.
+   * @returns {Object} Pixel coordinates {x: 0.0, y: 0.0}.
+   */
   fromLatLngToDivPixel(lat, lng) {
     if (this.projection) {
       var pixel = this.projection.fromLatLngToDivPixel(new google.maps.LatLng({lat: lat, lng: lng}));
@@ -129,11 +134,78 @@ class OverlayView extends PolymerElement {
     }
     return null;
   }
-  
+  /**
+   * Gets the geographical coordinates from pixel coordinates.
+   * @param {number} x - Pixel coordinate x.
+   * @param {number} y - Pixel coordinate y.
+   * @returns {Object} Geographical coordinates {lat: 0.0, lng: 0.0}.
+   */
   fromDivPixelToLatLng(x, y) {
     if (this.projection) {
       var latLng = this.projection.fromDivPixelToLatLng(new google.maps.Point(x, y));
       return {lat: latLng.lat(), lng: latLng.lng()}
+    }
+    return null;
+  }
+  /**
+   * Gets the pixel coordinates of the given geographical location.
+   * @param {Array} geoCoordinates - Geographical coordinates Array [{lat: 0.0, lng: 0.0}, ..].
+   * @returns {Array} Pixel coordinates Array [{x: 0.0, y: 0.0}, ..].
+   */
+  projectionFromLatLngToDivPixel(geoCoordinates) {
+    if (this.projection && geoCoordinates) {
+      var pixelCoordinates = [];
+      geoCoordinates.forEach(geoCoordinate => {
+        var pixelCoordinate = this.projection.fromLatLngToDivPixel(new google.maps.LatLng({lat: geoCoordinate.lat, lng: geoCoordinate.lng}));
+        pixelCoordinates.push({x: pixelCoordinate.x, y: pixelCoordinate.y});
+      });
+      return pixelCoordinates;
+    }
+    return null;
+  }
+  /**
+   * Gets the geographical coordinates from pixel coordinates.
+   * @param {Array} pixelCoordinates - Pixel Array [{x: 0.0, y: 0.0}, ..].
+   * @returns {Array} Geographical coordinates Array [{lat: 0.0, lng: 0.0}, ..].
+   */
+  projectionFromDivPixelToLatLng(pixelCoordinates) {
+    if (this.projection && pixelCoordinates) {
+      var geoCoordinates = [];
+      pixelCoordinates.forEach(pixelCoordinate => {
+        var geoCoordinate = this.projection.fromDivPixelToLatLng(new google.maps.Point(pixelCoordinate.x, pixelCoordinate.y));
+        geoCoordinates.push({lat: geoCoordinate.lat(), lng: geoCoordinate.lng()});
+      });
+      return geoCoordinates;
+    }
+    return null;
+  }
+  /**
+   * Gets the pixel coordinates of the given geographical location.
+   * @param {Array} geoCoordinates - Geographical coordinates Object {"id": [{lat: 0.0, lng: 0.0}, ..] ..}.
+   * @returns {Array} Pixel coordinates Object {"id": [{x: 0.0, y: 0.0}, ..] ..}.
+   */
+  projectionMapFromLatLngToDivPixel(geoCoordinates) {
+    if (this.projection && geoCoordinates) {
+      var pixelCoordinates = {};
+      for (const key in geoCoordinates) {
+        pixelCoordinates[key] = this.projectionFromLatLngToDivPixel(geoCoordinates[key]);
+      }
+      return pixelCoordinates;
+    }
+    return null;
+  }
+  /**
+   * Gets the geographical coordinates from pixel coordinates.
+   * @param {Array} pixelCoordinates - Pixel coordinates Object {"id": [{x: 0.0, y: 0.0}, ..], ..}.
+   * @returns {Array} Geographical coordinates Object {"id": [{lat: 0.0, lng: 0.0}, ..], ..}.
+   */
+  projectionMapFromDivPixelToLatLng(pixelCoordinates) {
+    if (this.projection && pixelCoordinates) {
+      var geoCoordinates = {};
+      for (const key in pixelCoordinates) {
+        geoCoordinates[key] = this.projectionFromDivPixelToLatLng(pixelCoordinates[key]);
+      }
+      return geoCoordinates;
     }
     return null;
   }

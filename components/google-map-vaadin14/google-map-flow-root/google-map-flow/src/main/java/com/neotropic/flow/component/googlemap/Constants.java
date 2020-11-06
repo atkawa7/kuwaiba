@@ -95,4 +95,10 @@ public class Constants {
         public static String SATELLITE = "satellite"; //NOI18N
         public static String TERRAIN = "terrain"; //NOI18N
     }
+    public static class JsonKey {
+        public static String X = "x"; //NOI18N
+        public static String Y = "y"; //NOI18N
+        public static String LAT = "lat"; //NOI18N
+        public static String LNG = "lng"; //NOI18N
+    }
 }
