@@ -14,6 +14,7 @@ The first and only open source network inventory platform for the telecommunicat
 * [Google Maps Component for Vaadin Flow](https://sourceforge.net/p/kuwaiba/code/HEAD/tree/components/google-map-vaadin14/)
 * [Mx Graph Component for Vaadin Flow](https://sourceforge.net/p/kuwaiba/code/HEAD/tree/components/mxgraph-vaadin14/)
 * [Paper Dialog Flow](https://sourceforge.net/p/kuwaiba/code/HEAD/tree/components/paper-dialog-flow-parent/)
+* [Paper Toggle Button Flow](https://sourceforge.net/p/kuwaiba/code/HEAD/tree/components/paper-toggle-button-flow/)
 
 **2. Set the application properties in the Web Client Module**  
 

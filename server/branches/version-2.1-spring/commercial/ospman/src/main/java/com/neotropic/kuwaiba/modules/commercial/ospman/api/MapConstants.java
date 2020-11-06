@@ -32,4 +32,9 @@ public class MapConstants {
      * View Edge property controlPoints
      */
     public static final String PROPERTY_CONTROL_POINTS = "controlPoints"; //NOI18N
+    
+    public static final String CELL_ID = "cellId";
+    public static final String X = "x";
+    public static final String Y = "y";
+    public static final String POINTS = "points";
 }

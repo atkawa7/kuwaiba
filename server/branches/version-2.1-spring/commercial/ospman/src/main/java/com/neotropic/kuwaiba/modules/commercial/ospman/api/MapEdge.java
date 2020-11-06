@@ -44,13 +44,14 @@ public class MapEdge extends MxBusinessObjectEdge {
         Objects.requireNonNull(viewEdge);
         Objects.requireNonNull(source);
         Objects.requireNonNull(target);
-        Objects.requireNonNull(points);
         Objects.requireNonNull(mapOverlay);
         
         setUuid(viewEdge.getIdentifier().getId());
         setLabel(viewEdge.getIdentifier().getName());
         setStrokeWidth(2);
-        setPoints(points);
+        if (points != null)
+            setPoints(points);
+        
         try {
             setStrokeColor(UtilHtml.toHexString(new Color(mem.getClass(viewEdge.getIdentifier().getClassName()).getColor())));
         } catch (MetadataObjectNotFoundException ex) {

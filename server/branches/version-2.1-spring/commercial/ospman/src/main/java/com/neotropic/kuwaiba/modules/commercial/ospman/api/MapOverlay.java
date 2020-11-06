@@ -16,6 +16,8 @@
 package com.neotropic.kuwaiba.modules.commercial.ospman.api;
 
 import com.vaadin.flow.component.HasComponents;
+import java.util.HashMap;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -51,11 +53,35 @@ public interface MapOverlay {
      */
     void getProjectionFromLatLngToDivPixel(GeoCoordinate latLng, Consumer<GeoPoint> pixelConsumer);
     /**
+     * Executes callback to get the pixel coordinates of the given geographical location.
+     * @param geoCoordinates List of geographical coordinates.
+     * @param callback Callback to get the pixel coordinates of the given geographical location.
+     */
+    void getProjectionFromLatLngToDivPixel(List<GeoCoordinate> geoCoordinates, Consumer<List<GeoPoint>> callback);
+    /**
+     * Executes callback to get the pixel coordinates of the given geographical location.
+     * @param geoCoordinates List of geographical coordinates.
+     * @param callback Callback to get the pixel coordinates of the given geographical location.
+     */
+    void getProjectionFromLatLngToDivPixel(HashMap<String, List<GeoCoordinate>> geoCoordinates, Consumer<HashMap<String, List<GeoPoint>>> callback);
+    /**
      * Gets the geographical location of the given pixel coordinates
      * @param pixel pixel coordinates
      * @param latLngConsumer operation that accepts a geographical location
      */
     void getProjectionFromDivPixelToLatLng(GeoPoint pixel, Consumer<GeoCoordinate> latLngConsumer);
+    /**
+     * Executes callback to get the geographical coordinates from pixel coordinates.
+     * @param pixelCoordinates List of pixel coordinates.
+     * @param callback Callback to get the geographical coordinates from pixel coordinates.
+     */
+    void getProjectionFromDivPixelToLatLng(List<GeoPoint> pixelCoordinates, Consumer<List<GeoCoordinate>> callback);
+    /**
+     * Executes callback to get the geographical coordinates from pixel coordinates.
+     * @param pixelCoordinates List of pixel coordinates.
+     * @param callback Callback to get the geographical coordinates from pixel coordinates.
+     */
+    void getProjectionFromDivPixelToLatLng(HashMap<String, List<GeoPoint>> pixelCoordinates, Consumer<HashMap<String, List<GeoCoordinate>>> callback);
     /**
      * Adds a width change event.
      * @param listener Callback executed when width changed.

@@ -24,9 +24,9 @@ import com.neotropic.kuwaiba.modules.commercial.ospman.api.GeoCoordinate;
 import com.neotropic.kuwaiba.modules.commercial.ospman.api.GeoPoint;
 import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapOverlay;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
@@ -41,25 +41,12 @@ public class GoogleMapsOverlay implements MapOverlay {
      */
     private Double width;
     /**
-     * The map overlay title
-     */
-    private String title;
-    /**
-     * Is map overlay enabled?
-     */
-    private boolean enabled;
-    /**
-     * The map overlay id
-     */
-    private String id;
-    /**
      * Set of width changed event listeners
      */
     private List<WidthChangedEventListener> widthChangedEventListeners = new ArrayList();
     
     public GoogleMapsOverlay(GeoBounds bounds) {
         this.bounds = bounds;
-        this.id = UUID.randomUUID().toString();
     }
     @Override
     public GeoBounds getBounds() {
@@ -102,6 +89,56 @@ public class GoogleMapsOverlay implements MapOverlay {
         );
     }
     @Override
+    public void getProjectionFromLatLngToDivPixel(List<GeoCoordinate> geoCoordinates, Consumer<List<GeoPoint>> callback) {
+        Objects.requireNonNull(geoCoordinates);
+        Objects.requireNonNull(callback);
+        List<LatLng> coordinates = new ArrayList();
+        geoCoordinates.forEach(geoCoordinate ->
+            coordinates.add(new LatLng(geoCoordinate.getLatitude(), geoCoordinate.getLongitude()))
+        );
+        overlayView.fromLatLngToDivPixel(coordinates, pixelCoordinates -> {
+            if (pixelCoordinates != null) {
+                List<GeoPoint> points = new ArrayList();
+                pixelCoordinates.forEach(pixelCoordinate -> 
+                    points.add(new GeoPoint(pixelCoordinate.getX(), pixelCoordinate.getY()))
+                );
+                callback.accept(points);
+            }
+            else
+                callback.accept(null);
+        });
+    }
+    @Override
+    public void getProjectionFromLatLngToDivPixel(HashMap<String, List<GeoCoordinate>> geoCoordinates, Consumer<HashMap<String, List<GeoPoint>>> callback) {
+        Objects.requireNonNull(geoCoordinates);
+        Objects.requireNonNull(callback);
+        if (!geoCoordinates.isEmpty()) {
+            HashMap<String, List<LatLng>> coordinates = new HashMap();
+            geoCoordinates.forEach((key, value) -> {
+                if (value != null && !value.isEmpty()) {
+                    List<LatLng> coordinatesList = new ArrayList();
+                    value.forEach(coordinate -> coordinatesList.add(new LatLng(coordinate.getLatitude(), coordinate.getLongitude())));
+                    coordinates.put(key, coordinatesList);
+                }
+            });
+            overlayView.fromLatLngToDivPixel(coordinates, pixelCoordinates -> {
+                if (pixelCoordinates != null) {
+                    HashMap<String, List<GeoPoint>> points = new HashMap();
+                    pixelCoordinates.forEach((key, value) -> {
+                        if (value != null && !value.isEmpty()) {
+                            List<GeoPoint> pointsList = new ArrayList();
+                            value.forEach(point -> pointsList.add(new GeoPoint(point.getX(), point.getY())));
+                            points.put(key, pointsList);
+                        }
+                    });
+                    callback.accept(points);
+                }
+                else
+                    callback.accept(null);
+            });
+        }
+    }
+    @Override
     public void getProjectionFromDivPixelToLatLng(GeoPoint pixel, Consumer<GeoCoordinate> latLngConsumer) {
         Objects.requireNonNull(pixel);
         Objects.requireNonNull(latLngConsumer);
@@ -109,6 +146,57 @@ public class GoogleMapsOverlay implements MapOverlay {
             new Point(pixel.getX(), pixel.getY()), 
             latLng -> latLngConsumer.accept(new GeoCoordinate(latLng.getLat(), latLng.getLng()))
         );
+    }
+    
+    @Override
+    public void getProjectionFromDivPixelToLatLng(List<GeoPoint> pixelCoordinates, Consumer<List<GeoCoordinate>> callback) {
+        Objects.requireNonNull(pixelCoordinates);
+        Objects.requireNonNull(callback);
+        List<Point> points = new ArrayList();
+        pixelCoordinates.forEach(pixelCoordinate -> 
+            points.add(new Point(pixelCoordinate.getX(), pixelCoordinate.getY()))
+        );
+        overlayView.fromDivPixelToLatLng(points, geoCoordinates -> {
+            if (geoCoordinates != null) {
+                List<GeoCoordinate> coordinates = new ArrayList();
+                geoCoordinates.forEach(geoCoordinate -> 
+                    coordinates.add(new GeoCoordinate(geoCoordinate.getLat(), geoCoordinate.getLng()))
+                );
+                callback.accept(coordinates);
+            }
+            else
+                callback.accept(null);
+        });
+    }
+    @Override
+    public void getProjectionFromDivPixelToLatLng(HashMap<String, List<GeoPoint>> pixelCoordinates, Consumer<HashMap<String, List<GeoCoordinate>>> callback) {
+        Objects.requireNonNull(pixelCoordinates);
+        Objects.requireNonNull(callback);
+        if (!pixelCoordinates.isEmpty()) {
+            HashMap<String, List<Point>> points = new HashMap();
+            pixelCoordinates.forEach((key, value) -> {
+                if (value != null && !value.isEmpty()) {
+                    List<Point> pointsList = new ArrayList();
+                    value.forEach(point -> pointsList.add(new Point(point.getX(), point.getY())));
+                    points.put(key, pointsList);
+                }
+            });
+            overlayView.fromDivPixelToLatLng(points, geoCoordinates -> {
+                if (geoCoordinates != null) {
+                    HashMap<String, List<GeoCoordinate>> coordinates = new HashMap();
+                    geoCoordinates.forEach((key, value) -> {
+                        if (value != null && !value.isEmpty()) {
+                            List<GeoCoordinate> coordinatesList = new ArrayList();
+                            value.forEach(coordinate -> coordinatesList.add(new GeoCoordinate(coordinate.getLat(), coordinate.getLng())));
+                            coordinates.put(key, coordinatesList);
+                        }
+                    });
+                    callback.accept(coordinates);
+                }
+                else
+                    callback.accept(null);
+            });
+        }
     }
     @Override
     public void addWidthChangedEventListener(WidthChangedEventListener listener) {

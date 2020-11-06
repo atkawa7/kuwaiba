@@ -18,7 +18,6 @@ package com.neotropic.kuwaiba.modules.commercial.ospman.widgets;
 
 import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapConstants;
 import java.util.List;
-import java.util.Properties;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
@@ -29,6 +28,7 @@ import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
+import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.widgets.AbstractDashboardWidget;
@@ -65,39 +65,36 @@ public class AllBuildingsMapWidget extends AbstractDashboardWidget {
         try {
             OutsidePlantView ospView = new OutsidePlantView(aem, bem, mem, ts, resourceFactory, 
                 physicalConnectionsService, null, false);
-            ospView.setDrawCallback(() -> {
-                try {
-                    List<BusinessObjectLight> allPhysicalLocation = bem.getObjectsOfClassLight(Constants.CLASS_GENERICLOCATION, -1);
-                    allPhysicalLocation.stream().forEach(aPhysicalLocation -> {
-                        try {
-                            String lat = bem.getAttributeValueAsString(aPhysicalLocation.getClassName(), aPhysicalLocation.getId(), "latitude"); //NOI18N
-                            if (lat != null) {
-                            String lng = bem.getAttributeValueAsString(aPhysicalLocation.getClassName(), aPhysicalLocation.getId(), "longitude"); //NOI18N
-                                if (lng != null) {
-                                    Properties properties = new Properties();
-                                    properties.put(MapConstants.ATTR_LAT, Double.valueOf(lat));
-                                    properties.put(MapConstants.ATTR_LON, Double.valueOf(lng));
-                                    ospView.addNode(aPhysicalLocation, properties);
-                                }
-                            }
-
-                        } catch (InventoryException ex) {
-                            new SimpleNotification(
-                                ts.getTranslatedString("module.general.messages.error"), 
-                                ex.getLocalizedMessage(),
-                                AbstractNotification.NotificationType.ERROR, ts
-                            ).open();
-                        }
-                    });
-                } catch (InventoryException ex) {
-                    new SimpleNotification(
-                        ts.getTranslatedString("module.general.messages.error"), 
-                        ex.getLocalizedMessage(),
-                        AbstractNotification.NotificationType.ERROR, ts
-                    ).open();
-                }
-            });
             ospView.buildEmptyView();
+            try {
+                List<BusinessObjectLight> allPhysicalLocation = bem.getObjectsOfClassLight(Constants.CLASS_GENERICLOCATION, -1);
+                allPhysicalLocation.stream().forEach(aPhysicalLocation -> {
+                    try {
+                        String lat = bem.getAttributeValueAsString(aPhysicalLocation.getClassName(), aPhysicalLocation.getId(), "latitude"); //NOI18N
+                        if (lat != null) {
+                        String lng = bem.getAttributeValueAsString(aPhysicalLocation.getClassName(), aPhysicalLocation.getId(), "longitude"); //NOI18N
+                            if (lng != null) {
+                                BusinessObjectViewNode newViewNode = new BusinessObjectViewNode(aPhysicalLocation);
+                                newViewNode.getProperties().put(MapConstants.ATTR_LAT, Double.valueOf(lat));
+                                newViewNode.getProperties().put(MapConstants.ATTR_LON, Double.valueOf(lng));
+                                ospView.getAsViewMap().addNode(newViewNode);
+                            }
+                        }
+                    } catch (InventoryException ex) {
+                        new SimpleNotification(
+                            ts.getTranslatedString("module.general.messages.error"), 
+                            ex.getLocalizedMessage(),
+                            AbstractNotification.NotificationType.ERROR, ts
+                        ).open();
+                    }
+                });
+            } catch (InventoryException ex) {
+                new SimpleNotification(
+                    ts.getTranslatedString("module.general.messages.error"), 
+                    ex.getLocalizedMessage(),
+                    AbstractNotification.NotificationType.ERROR, ts
+                ).open();
+            }
             if (ospView.getAsComponent() != null)
                 add(ospView.getAsComponent());
         } catch (InvalidArgumentException ex) {
