@@ -59,15 +59,15 @@ public class PropertyValueConverter {
         } else 
             return "0";
     }
-    
-    public static String getAsStringToPersist(AbstractProperty property) {
-         
+        
+    public static String getAsStringToPersist(AbstractProperty property) { 
         switch (property.getType()) {
-
             case Constants.DATA_TYPE_DATE:
                 return getLocalDateAsStringToPersist((LocalDate) property.getValue());
             case Constants.DATA_TYPE_TIME_STAMP:
                 return getLocalDateTimeAsStringToPersist((LocalDateTime) property.getValue());
+            case Constants.DATA_TYPE_STRING:
+                return (String) property.getValue();
             default:
                 if (property.getValue() != null) {
                     if (property.getValue() instanceof BusinessObjectLight)

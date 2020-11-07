@@ -20,5 +20,6 @@
         <module>whman</module>
         <module>impact</module>
         <module>synchronization</module>
+        <module>contractman</module>
     </modules>
 </project>

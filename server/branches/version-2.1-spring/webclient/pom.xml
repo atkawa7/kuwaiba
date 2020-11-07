@@ -129,12 +129,17 @@
             <groupId>com.neotropic.kuwaiba.modules.commercial</groupId>
             <artifactId>mpls</artifactId>
             <version>2.1</version>
-        </dependency>     
+        </dependency>    
          <dependency>
             <groupId>org.neotropic.kuwaiba</groupId>
             <artifactId>containmentman</artifactId>
             <version>2.1</version>
         </dependency>  
+        <dependency>
+            <groupId>com.neotropic.kuwaiba.modules.commercial</groupId>
+            <artifactId>contractman</artifactId>
+            <version>2.1</version>
+        </dependency>       
         <dependency>
             <groupId>com.neotropic.flow.component</groupId>
             <artifactId>mx-graph-flow</artifactId>

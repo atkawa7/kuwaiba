@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ConfigurationVariable;
+import org.neotropic.kuwaiba.core.apis.persistence.application.Pool;
 import org.neotropic.kuwaiba.core.apis.persistence.application.TemplateObject;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObject;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
@@ -477,7 +478,7 @@ public class PropertyFactory {
         return objectProperties;
     }
     
-        public static List<AbstractProperty> propertiesFromConfigurationVariable(ConfigurationVariable configurationVariable){
+    public static List<AbstractProperty> propertiesFromConfigurationVariable(ConfigurationVariable configurationVariable) {
         ArrayList<AbstractProperty> objectProperties = new ArrayList<>();
         AbstractProperty property;
         
@@ -503,6 +504,31 @@ public class PropertyFactory {
         property = new BooleanProperty(Constants.PROPERTY_MASKED,
                                       Constants.PROPERTY_MASKED, Constants.PROPERTY_MASKED, 
                                       configurationVariable.isMasked());
+        objectProperties.add(property);
+        
+        return objectProperties;
+    }
+    
+    public static List<AbstractProperty> propertiesFromPool(Pool pool) {
+        ArrayList<AbstractProperty> objectProperties = new ArrayList<>();
+        AbstractProperty property;
+        
+        property = new StringProperty(Constants.PROPERTY_CLASS_NAME,
+                                      Constants.PROPERTY_CLASS_NAME, Constants.PROPERTY_CLASS_NAME,
+                                      pool.getClassName()==null || pool.getClassName().isEmpty() ?
+                                            AbstractProperty.NULL_LABEL : pool.getClassName(), true);
+        objectProperties.add(property);
+        
+        property = new StringProperty(Constants.PROPERTY_NAME,
+                                      Constants.PROPERTY_NAME, Constants.PROPERTY_NAME, 
+                                      pool.getName()==null || pool.getName().isEmpty() ?
+                                            AbstractProperty.NULL_LABEL : pool.getName());
+        objectProperties.add(property);
+        
+        property = new StringProperty(Constants.PROPERTY_DESCRIPTION,
+                                      Constants.PROPERTY_DESCRIPTION, Constants.PROPERTY_DESCRIPTION, 
+                                      pool.getDescription()==null || pool.getDescription().isEmpty() ?
+                                            AbstractProperty.NULL_LABEL : pool.getDescription());
         objectProperties.add(property);
         
         return objectProperties;
