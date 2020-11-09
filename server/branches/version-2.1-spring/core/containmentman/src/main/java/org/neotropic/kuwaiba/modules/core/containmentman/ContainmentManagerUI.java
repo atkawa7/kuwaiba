@@ -15,7 +15,7 @@
  */
 package org.neotropic.kuwaiba.modules.core.containmentman;
 
-import com.neotropic.flow.component.paperdialog.PaperToggleButton;
+import com.neotropic.flow.component.paper.toggle.PaperToggleButton;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ClickEvent;
