@@ -1,4 +1,4 @@
-package com.neotropic.flow.component.paperdialog.demo;
+package com.neotropic.flow.component.paper.dialog.demo;
 
 import java.io.Serializable;
 

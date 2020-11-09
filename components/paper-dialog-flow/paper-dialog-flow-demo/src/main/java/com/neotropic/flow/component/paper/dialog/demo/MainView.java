@@ -1,6 +1,6 @@
-package com.neotropic.flow.component.paperdialog.demo;
+package com.neotropic.flow.component.paper.dialog.demo;
 
-import com.neotropic.flow.component.paperdialog.PaperDialog;
+import com.neotropic.flow.component.paper.dialog.PaperDialog;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
