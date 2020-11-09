@@ -10,7 +10,7 @@
     </properties>
     <name>Paper Toggle Button Parent</name>
     <modules>
-        <module>paper-dialog-flow</module>
-        <module>paper-dialog-flow-demo</module>
+        <module>paper-toggle-button-flow</module>
+        <module>paper-toggle-button-flow-demo</module>
     </modules>
 </project>
