@@ -15,7 +15,7 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.mpls.tools;
 
-import com.neotropic.flow.component.paperdialog.PaperDialog;
+import com.neotropic.flow.component.paper.dialog.PaperDialog;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;

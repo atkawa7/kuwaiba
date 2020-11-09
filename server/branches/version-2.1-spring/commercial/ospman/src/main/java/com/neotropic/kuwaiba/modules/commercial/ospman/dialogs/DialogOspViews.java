@@ -15,7 +15,7 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman.dialogs;
 
-import com.neotropic.flow.component.paperdialog.PaperDialog;
+import com.neotropic.flow.component.paper.dialog.PaperDialog;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;

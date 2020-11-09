@@ -15,7 +15,7 @@
  */
 package org.neotropic.kuwaiba.modules.optional.topoman.widgets;
 
-import com.neotropic.flow.component.paperdialog.PaperDialog;
+import com.neotropic.flow.component.paper.dialog.PaperDialog;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
