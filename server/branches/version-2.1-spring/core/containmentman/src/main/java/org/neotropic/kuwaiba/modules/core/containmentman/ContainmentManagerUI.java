@@ -51,7 +51,6 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.containmentman.api.ClassMetadataLightCustom;
-import org.neotropic.kuwaiba.modules.core.containmentman.general.EContainmentOption;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.springframework.beans.factory.annotation.Autowired;
