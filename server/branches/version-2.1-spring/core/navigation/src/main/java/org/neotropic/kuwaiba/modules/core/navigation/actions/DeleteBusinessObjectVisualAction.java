@@ -83,16 +83,17 @@ public class DeleteBusinessObjectVisualAction extends AbstractVisualInventoryAct
             btnOk.addClickListener(event -> {
                 try {
                     deleteBusinessObjectAction.getCallback().execute(new ModuleActionParameterSet(
-                            new ModuleActionParameter(NewBusinessObjectAction.PARAM_PARENT_CLASS_NAME, businessObject.getClassName()),
-                            new ModuleActionParameter(NewBusinessObjectAction.PARAM_PARENT_OID, businessObject.getId())
+                            new ModuleActionParameter(DeleteBusinessObjectAction.PARAM_OBJECT_CLASS_NAME, businessObject.getClassName()),
+                            new ModuleActionParameter(DeleteBusinessObjectAction.PARAM_OBJECT_OID, businessObject.getId())
                     ));
-                    ActionResponse ar = new ActionResponse();
+                    ActionResponse actionResponse = new ActionResponse();
+                    actionResponse.put(ActionResponse.Action.REMOVE, businessObject);
                                         
                     fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(
                             ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
                             ts.getTranslatedString("module.navigation.actions.delete-business-object.ui.success"),
-                            DeleteBusinessObjectAction.class
-                            )
+                            DeleteBusinessObjectAction.class,
+                            actionResponse)
                     );
                     wdwDeleteBusinessObject.close();
                 } catch (ModuleActionException ex) {

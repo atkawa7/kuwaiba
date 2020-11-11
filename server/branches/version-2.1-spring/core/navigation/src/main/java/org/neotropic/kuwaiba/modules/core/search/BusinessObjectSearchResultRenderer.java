@@ -89,7 +89,7 @@ public class BusinessObjectSearchResultRenderer extends ComponentRenderer<Vertic
         HorizontalLayout lytActions = new HorizontalLayout();
         lytActions.setClassName("search-result-actions");
         actions.stream().forEach( anAction -> {
-            Button btnAction = new Button(anAction.getModuleAction().getDisplayName(), anAction.getModuleAction().getIcon());
+            Button btnAction = new Button(anAction.getModuleAction().getDisplayName());
             btnAction.setClassName("search-result-action-button");
             btnAction.getElement().setProperty("title", anAction.getModuleAction().getDescription());
             btnAction.addClickListener( event -> {

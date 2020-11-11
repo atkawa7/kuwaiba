@@ -18,7 +18,9 @@ package org.neotropic.kuwaiba.modules.core.navigation.actions;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.ShortcutRegistration;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H4;
@@ -27,10 +29,18 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.component.textfield.IntegerField;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionException;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionParameter;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionParameterSet;
@@ -40,7 +50,9 @@ import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionComplet
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.TemplateObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.AttributeMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
@@ -62,6 +74,26 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
      */
     public static String PARAM_BUSINESS_OBJECT = "businessObject"; //NOI18N
     /**
+     * Attributes for the new business object
+     */
+    private HashMap<String, String> attributes;
+    /**
+     * To keep track of the fulfilled mandatory attributes
+     */
+    private HashMap<String, Boolean> mandatoryAttrtsState;
+    /**
+     * To keep the mandatory attributes of the selected class
+     */
+    private List<AttributeMetadata> mandatoryAttributesInSelectedClass;
+    /**
+     * To keep the possible templates of the selected class
+     */
+    private List<TemplateObjectLight> templatesForSelectedClass;
+    /**
+     * 
+     */
+    private Button btnOk;
+    /**
      * Reference to the Application Entity Manager.
      */
     @Autowired
@@ -82,7 +114,6 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
     @Autowired
     private NewBusinessObjectAction newBusinessObjectAction;
     
-    
     /**
      * Creates the visual component for new object visual action
      * Label H4 with the title
@@ -102,56 +133,45 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
      */
     @Override
     public Dialog getVisualComponent(ModuleActionParameterSet parameters) {
-        VerticalLayout lytContent =  new VerticalLayout();
-        lytContent.setSpacing(true);
-        lytContent.setPadding(false);
-        lytContent.setMargin(false);
+        attributes = new HashMap();
+        mandatoryAttrtsState =  new HashMap<>();
+        templatesForSelectedClass = new ArrayList<>();
+        mandatoryAttributesInSelectedClass = new ArrayList<>();
         
-        VerticalLayout lytMandatoryAttributes =  new VerticalLayout();
-        lytMandatoryAttributes.setSpacing(true);
-        lytMandatoryAttributes.setPadding(false);
-        lytMandatoryAttributes.setMargin(false);
+        //options for object creation 
+        String singleObj = ts.getTranslatedString("module.navigation.actions.new-business-object.name");
+        String multipleObj = ts.getTranslatedString("module.navigation.actions.new-multiple-business-object.name");
+        String templateObj = ts.getTranslatedString("module.navigation.actions.new-business-object-from-template.name");
+        
+        HorizontalLayout lytExtraFields =  new HorizontalLayout();
+        lytExtraFields.setWidth("100%");
         
         BusinessObjectLight businessObject = (BusinessObjectLight) parameters.get(PARAM_BUSINESS_OBJECT);
         Dialog wdwNewBusinessObject = new Dialog();
         
         if (businessObject != null) {
             try {
-                HorizontalLayout lytHeader = new HorizontalLayout();
-                lytContent.setSpacing(true);
-                lytContent.setPadding(false);
-                lytContent.setMargin(false);
-        
+                VerticalLayout lytHeader = new VerticalLayout();
+                lytHeader.setWidth("100%");
+                lytHeader.setSpacing(false);
+                lytHeader.setPadding(false);
+                lytHeader.setMargin(false);
                 H4 hdnTitle = new H4(newBusinessObjectAction.getDisplayName());
-                //wdwNewBusinessObject.setLblHeaderTitle(new H4(newBusinessObjectAction.getDisplayName()));
-                Label lblParent = new Label("for: " + businessObject);
-                lytHeader.add(hdnTitle, lblParent);
-                
-                lytContent.add(lblParent);
+                Label lblParent = new Label(businessObject.toString());
                 
                 RadioButtonGroup<String> rdbNewObjtOptions = new RadioButtonGroup<>();
                 rdbNewObjtOptions.setRequired(true);
-                rdbNewObjtOptions.setItems(ts.getTranslatedString("module.navigation.actions.new-business-object.name"),
-                        ts.getTranslatedString("module.navigation.actions.new-multiple-business-object.name"),
-                        ts.getTranslatedString("module.navigation.actions.new-business-object-from-template.name"));
+                rdbNewObjtOptions.setItems(singleObj, multipleObj, templateObj);
                 rdbNewObjtOptions.setValue(ts.getTranslatedString("module.navigation.actions.new-business-object.name"));
-                lytContent.add(rdbNewObjtOptions);
                 
                 ComboBox<ClassMetadataLight> cmbPossibleChildrenClass = new ComboBox(ts.getTranslatedString("module.navigation.actions.new-business-object.ui.object-class"));
-                cmbPossibleChildrenClass.setItems(mem.getPossibleChildrenNoRecursive(businessObject.getClassName()));
+                cmbPossibleChildrenClass.setItems(getChildren(businessObject.getClassName()));
                 cmbPossibleChildrenClass.setRequired(true);
                 cmbPossibleChildrenClass.setEnabled(true);
+                cmbPossibleChildrenClass.setPlaceholder("aaaaaaaaa");
                 cmbPossibleChildrenClass.setItemLabelGenerator(class_ -> 
                     class_.getDisplayName() != null && !class_.getDisplayName().isEmpty() ? class_.getDisplayName() : class_.getName()
                 );
-                lytContent.add(cmbPossibleChildrenClass);
-                lytContent.add(lytMandatoryAttributes);
-                        
-
-                
-                
-                
-                
                 //mandatory fields
                 TextField txtName = new TextField(ts.getTranslatedString("module.navigation.actions.new-business-object.ui.object-name"));
                 txtName.setErrorMessage(ts.getTranslatedString("module.navigation.actions.new-business-object.ui.empty-name"));
@@ -159,20 +179,25 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
                 txtName.setValueChangeMode(ValueChangeMode.EAGER);
                 txtName.setRequiredIndicatorVisible(true);
                 
-                
                 ComboBox<TemplateObjectLight> cmbTemplate = new ComboBox(ts.getTranslatedString("module.navigation.actions.new-business-object.ui.object-template"));
                 cmbTemplate.setEnabled(false);
+                cmbTemplate.setSizeFull();
                 cmbTemplate.setItemLabelGenerator(TemplateObjectLight::getName);
                 
-                FormLayout lytFields = new FormLayout(lblParent, txtName, cmbPossibleChildrenClass, cmbTemplate);
+                TextField txtCommand = new TextField(ts.getTranslatedString("module.navigation.actions.new-multiple-business-object-pattern"));
+                txtCommand.setSizeFull();
+                txtCommand.setPlaceholder("[sequence(x,y)]...");
+                
+                FormLayout lytFields = new FormLayout();
+                lytFields.add(rdbNewObjtOptions, 2);
+                lytFields.add(cmbPossibleChildrenClass);
                 
                 Button btnCancel = new Button(ts.getTranslatedString("module.general.messages.cancel"), event -> wdwNewBusinessObject.close());
-                Button btnOk = new Button(ts.getTranslatedString("module.general.messages.ok"));
+                btnOk = new Button(ts.getTranslatedString("module.general.messages.ok"));
                 ShortcutRegistration btnOkShortcut = btnOk.addClickShortcut(Key.ENTER).listenOn(wdwNewBusinessObject);
                 
                 btnOk.addClickListener(event -> {
                     try {
-                        HashMap<String, String> attributes = new HashMap();
                         attributes.put(Constants.PROPERTY_NAME, txtName.getValue());
                         newBusinessObjectAction.getCallback().execute(new ModuleActionParameterSet(
                                 new ModuleActionParameter(NewBusinessObjectAction.PARAM_CLASS_NAME, cmbPossibleChildrenClass.getValue().getName()),
@@ -199,10 +224,20 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
                 btnOk.setAutofocus(true);
                 btnOk.setEnabled(false);
                 
-                
-//                rdbNewObjtOptions.addValueChangeListener(event -> {
-//                    event.getValue().equals(event)
-//                });
+                rdbNewObjtOptions.addValueChangeListener(event -> {
+                    if(cmbPossibleChildrenClass.getValue() != null){
+                        lytExtraFields.removeAll();
+                        btnOk.setEnabled(false);
+                        if(event.getValue().equals(singleObj))
+                            lytExtraFields.add(createMandatoryAttributes(mandatoryAttributesInSelectedClass));
+                        
+                        else if(event.getValue().equals(multipleObj))
+                            lytExtraFields.add(txtCommand);
+
+                        else if(event.getValue().equals(templateObj))
+                            lytExtraFields.add(cmbTemplate);
+                    }
+                });
                 
                 txtName.addValueChangeListener(event -> {
                     if (event.getValue() != null && !event.getValue().isEmpty()) {
@@ -219,33 +254,43 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
                     }
                 });
                 
-                
-                
-                
-                //TODO class
                 cmbPossibleChildrenClass.addValueChangeListener(event -> {
                     if (event.getValue() != null) {
-                        try {//Mandatory attribtues
-                            List<AttributeMetadata> mandatoryAttributesInClass = mem.getMandatoryAttributesInClass(event.getValue().getName());
-                            lytMandatoryAttributes.removeAll();
-                            lytMandatoryAttributes.add(createMandatoryAttributes(mandatoryAttributesInClass));
+                        try {
+                            lytExtraFields.removeAll();
+                            btnOk.setEnabled(false);
+                            //Templates
+                            templatesForSelectedClass = aem.getTemplatesForClass(event.getValue().getName());
+                            cmbTemplate.setItems(templatesForSelectedClass);
+                            if(!templatesForSelectedClass.isEmpty()){
+                                cmbTemplate.setEnabled(true);
+                                cmbTemplate.setPlaceholder(ts.getTranslatedString("module.navigation.actions.new-business-object-from-template.select-template"));
+                            }
+                            else{
+                                cmbTemplate.setPlaceholder(ts.getTranslatedString("module.navigation.actions.new-business-object-from-template.no-template"));
+                                cmbTemplate.setEnabled(false);
+                            }//end templates
                             
-                            //templates
-                            cmbTemplate.setItems(aem.getTemplatesForClass(event.getValue().getName()));
-                            cmbTemplate.setEnabled(true);
-                            btnOk.setEnabled(true);
-                            
-                            
+                            //Mandatory attribtues
+                            mandatoryAttributesInSelectedClass = mem.getMandatoryAttributesInClass(event.getValue().getName());
+                            if(!mandatoryAttributesInSelectedClass.isEmpty() && 
+                                    rdbNewObjtOptions.getValue().equals(singleObj))
+                                lytExtraFields.add(createMandatoryAttributes(mandatoryAttributesInSelectedClass));
+                            //end mandatory attributes
+                            else if(rdbNewObjtOptions.getValue().equals(templateObj))
+                                lytExtraFields.add(cmbTemplate);
+
+                            else if(rdbNewObjtOptions.getValue().equals(multipleObj))
+                                lytExtraFields.add(txtCommand);
                             
                         } catch (InventoryException ex) {
-                            lytMandatoryAttributes.removeAll();
+                            lytExtraFields.removeAll();
                             cmbTemplate.setValue(null);
                             cmbTemplate.setEnabled(false);
                             btnOk.setEnabled(false);
                             new SimpleNotification(
                                 ts.getTranslatedString("module.general.messages.error"), 
                                 ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
-                            
                         }
                     }
                     else {
@@ -255,9 +300,20 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
                     }
                 });
                 
-                HorizontalLayout lytButtons = new HorizontalLayout(btnCancel,btnOk);
+                cmbTemplate.addValueChangeListener(e ->{
+                    btnOk.setEnabled(e.getValue()!= null);
+                });
                 
-                VerticalLayout lytMain = new VerticalLayout(lytHeader, rdbNewObjtOptions, lytFields, lytButtons);
+                txtCommand.addValueChangeListener(e ->{
+                    btnOk.setEnabled(e.getValue()!= null);
+                });
+                
+                HorizontalLayout lytButtons = new HorizontalLayout(btnCancel, btnOk);
+                
+                VerticalLayout lytMain = new VerticalLayout(hdnTitle,
+                        lblParent,
+                        rdbNewObjtOptions, lytFields, lytExtraFields, lytButtons);
+                lytMain.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, rdbNewObjtOptions);
                 lytMain.setHorizontalComponentAlignment(FlexComponent.Alignment.END, lytButtons);
                 
                 wdwNewBusinessObject.add(lytMain);
@@ -283,18 +339,143 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
     }
     
     //helpers
-    
-    private com.vaadin.flow.component.Component createMandatoryAttributes(List<AttributeMetadata> mandatoryAttributesInClass){
+    /**
+     * Creates a form layout with the mandatory attributes for new object
+     * @param mandatoryAttributesInClass
+     * @return 
+     */
+    private FormLayout createMandatoryAttributes(List<AttributeMetadata> mandatoryAttributesInClass){
         FormLayout lytMandatoryAttributes = new FormLayout();
         mandatoryAttributesInClass.forEach(attr -> {
+            mandatoryAttrtsState.put(attr.getName(), false);
             if(attr.isMandatory() && AttributeMetadata.isPrimitive(attr.getType())){
-                if(attr.getType().equals(String.class)){
+                //String
+                if(attr.getType().equals(String.class.getSimpleName())){
                     TextField txtAttr = new TextField(attr.getName());
+                    txtAttr.setRequiredIndicatorVisible(true);
                     lytMandatoryAttributes.add(txtAttr);
+                    
+                    txtAttr.addValueChangeListener(e ->{
+                        attributes.put(attr.getName(), e.getValue());
+                        mandatoryAttrtsState.put(attr.getName(), true);
+                        canBeSave();
+                    });
+                }//int
+                else if(attr.getType().equals(Integer.class.getSimpleName())){
+                    IntegerField nbfAttr = new IntegerField(attr.getName());
+                    nbfAttr.setHasControls(true);
+                    nbfAttr.setStep(1);
+                    nbfAttr.setValue(0);
+                    nbfAttr.setRequiredIndicatorVisible(true);
+                    lytMandatoryAttributes.add(nbfAttr);
+                    
+                    nbfAttr.addValueChangeListener(e ->{
+                        attributes.put(attr.getName(), e.getValue().toString());
+                        mandatoryAttrtsState.put(attr.getName(), true);
+                        canBeSave();
+                    });
+                }//float and long
+                else if(attr.getType().equals(Float.class.getSimpleName()) || attr.getType().equals(Long.class.getSimpleName())){
+                    NumberField nbfAttr = new NumberField(attr.getName());
+                    nbfAttr.setValue(0.0);
+                    nbfAttr.setRequiredIndicatorVisible(true);
+                    lytMandatoryAttributes.add(nbfAttr);
+                    
+                    nbfAttr.addValueChangeListener(e ->{
+                        attributes.put(attr.getName(), e.getValue().toString());
+                        mandatoryAttrtsState.put(attr.getName(), true);
+                        canBeSave();
+                    });
+                }//boolean
+                else if(attr.getType().equals(Boolean.class.getSimpleName())){
+                    Checkbox cbxAttr = new Checkbox(attr.getName());
+                    cbxAttr.setRequiredIndicatorVisible(true);
+                    lytMandatoryAttributes.add(cbxAttr);
+                    
+                    cbxAttr.addValueChangeListener(e ->{
+                        attributes.put(attr.getName(), e.getValue().toString());
+                        mandatoryAttrtsState.put(attr.getName(), true);
+                        canBeSave();
+                    });
+                }//Date
+                else if(attr.getType().equals(Date.class.getSimpleName())){
+                    DatePicker dtpAttr = new DatePicker(attr.getName());
+                    dtpAttr.setRequiredIndicatorVisible(true);
+                    lytMandatoryAttributes.add(dtpAttr);
+                    
+                    dtpAttr.addValueChangeListener(e ->{
+                        //attributes.put(attr.getName(), dtpAttr.getValue().to);
+                        //mandatoryAttrtsState.put(attr.getName(), true);
+                        //canBeSave();
+                    });
+                }//timesptap
+                else if(attr.getType().equals("Timestamp")){
+                    TimePicker tmpAttr = new TimePicker(attr.getName());
+                    tmpAttr.setRequiredIndicatorVisible(true);
+                    lytMandatoryAttributes.add(tmpAttr);
+
+                    tmpAttr.addValueChangeListener(e ->{
+                        
+                        attributes.put(attr.getName(), Long.toString(e.getValue().toNanoOfDay()));
+                        mandatoryAttrtsState.put(attr.getName(), tmpAttr.getValue() != null);
+                        canBeSave();
+                    });
+                }
+            }
+            else{//ListTypes
+                try {
+                    List<BusinessObjectLight> listTypeItems = aem.getListTypeItems(attr.getType());
+                    ComboBox<BusinessObjectLight> cbxListType = new ComboBox<>(attr.getName());
+                    cbxListType.setAllowCustomValue(false);
+                    cbxListType.setRequiredIndicatorVisible(true);
+                    cbxListType.setItems(listTypeItems);
+                    cbxListType.setItemLabelGenerator(listTypeItem -> listTypeItem.getName());
+                    lytMandatoryAttributes.add(cbxListType);
+                    
+                    cbxListType.addValueChangeListener(e ->{
+                        attributes.put(attr.getName(), e.getValue().getId());
+                        mandatoryAttrtsState.put(attr.getName(), cbxListType.getValue() != null);
+                        canBeSave();
+                    });
+                } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+                    Logger.getLogger(NewBusinessObjectVisualActionToo.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
     
         return lytMandatoryAttributes;
+    }
+
+    /**
+     * Gets the possible children removing the the abstract classes and 
+     * adding the children of those abstract classes
+     * @param className the class name to get its possible children
+     * @return the list of possible children
+     * @throws MetadataObjectNotFoundException 
+     */
+    private List<ClassMetadataLight> getChildren(String className) throws MetadataObjectNotFoundException, InvalidArgumentException {
+        List<ClassMetadataLight> possibleChildrenWithoutAbstracts = new ArrayList<>();
+        List<ClassMetadataLight> possibleChildrenNoRecursive = mem.getPossibleChildrenNoRecursive(className);
+        for (ClassMetadataLight classMetadata : possibleChildrenNoRecursive) {
+            if(classMetadata.isAbstract())
+                possibleChildrenWithoutAbstracts.addAll(mem.getSubClassesLight(classMetadata.getName(), false, false));
+            else
+                possibleChildrenWithoutAbstracts.add(classMetadata);
+        }
+        return possibleChildrenWithoutAbstracts;
+    }
+    
+    /**
+     * checks if every mandatory attribute has a value and enables or disables 
+     * the ok button
+     */
+    private void canBeSave(){
+        for (Map.Entry<String, Boolean> entry : mandatoryAttrtsState.entrySet()) {
+            if(!entry.getValue()){
+                btnOk.setEnabled(false);
+                return;
+            }
+        }
+        btnOk.setEnabled(true);
     }
 }

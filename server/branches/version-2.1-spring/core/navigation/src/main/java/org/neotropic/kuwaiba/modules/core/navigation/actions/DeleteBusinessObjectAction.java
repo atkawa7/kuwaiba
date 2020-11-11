@@ -35,25 +35,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class DeleteBusinessObjectAction extends AbstractAction {
     /**
-     * New business object action parameter class name.
-     */
-    public static String PARAM_CLASS_NAME = "className"; //NOI18N
-    /**
-     * New business object action parameter parent class name.
-     */
-    public static String PARAM_PARENT_CLASS_NAME = "parentClassName"; //NOI18N
-    /**
      * New business object action parameter id.
      */
-    public static String PARAM_PARENT_OID = "id"; //NOI18N
-    /**
-     * New business object action parameter attributes.
-     */
-    public static String PARAM_ATTRIBUTES = "attributes"; //NOI18N
+    public static String PARAM_OBJECT_OID = "id"; //NOI18N
     /**
      * New business object action parameter template id.
      */
-    public static String PARAM_TEMPLATE_ID = "templateId"; //NOI18N
+    public static String PARAM_OBJECT_CLASS_NAME = "class"; //NOI18N
     /**
      * Reference to the Business Entity Manager.
      */
@@ -75,10 +63,10 @@ public class DeleteBusinessObjectAction extends AbstractAction {
         
         setCallback(parameters -> {
             try {
-                String parentClassName = (String) parameters.get(PARAM_PARENT_CLASS_NAME);
-                String parentOid = (String) parameters.get(PARAM_PARENT_OID);
+                String className = (String) parameters.get(PARAM_OBJECT_CLASS_NAME);
+                String id = (String) parameters.get(PARAM_OBJECT_OID);
             
-                bem.deleteObject(parentClassName, parentOid, false);
+                bem.deleteObject(className, id, false);
                 return new ActionResponse();
             } catch (InventoryException ex) {
                 throw new ModuleActionException(ex.getMessage());
