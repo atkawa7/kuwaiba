@@ -327,8 +327,8 @@ class MxGraph extends PolymerElement {
                             var cellObject = _this.getCellObjectById(cellMoved.id);
 
                             if (cellObject) {
-                                cellObject.x += dx;
-                                cellObject.y += dy;
+                                cellObject.x = cellMoved.geometry.x;
+                                cellObject.y = cellMoved.geometry.y;
                             }
                             console.log("VERTEX WITH ID " + cellMoved.id + " MOVED")
 
