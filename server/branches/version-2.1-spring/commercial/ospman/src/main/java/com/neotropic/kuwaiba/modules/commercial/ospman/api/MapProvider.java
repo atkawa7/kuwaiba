@@ -38,10 +38,9 @@ public interface MapProvider {
     Component getComponent();
     /**
      * Creates a map overlay.
-     * @param bounds A rectangle in geographical coordinates
      * @return A map overlay
      */
-    MapOverlay createOverlay(GeoBounds bounds);
+    MapOverlay createOverlay();
     /**
      * Removes a map overlay.
      * @param mapOverlay Map overlay to remove.
@@ -58,12 +57,6 @@ public interface MapProvider {
      */
     GeoBounds getBounds();
     /**
-     * Gets the lat/lng of the current viewport
-     * @param consumer
-     * @return map bounds
-     */
-    void getBounds(Consumer<GeoBounds> consumer);
-    /**
      * Set map center
      * @param center map center
      */
@@ -78,36 +71,6 @@ public interface MapProvider {
      * @param zoom map zoom
      */
     void setZoom(double zoom);
-    /**
-     * Gets if false, prevents the map from being dragged.
-     * @return If dragging is enabled.
-     */
-    boolean getDraggable();
-    /**
-     * Sets if false, prevents the map from being dragged.
-     * @param draggable Dragging is enabled
-     */
-    void setDraggable(boolean draggable);
-    /**
-     * Gets the maximum zoom level which will be displayed on the map.
-     * @return The maximum zoom level.
-     */
-    double getMaxZoom();
-    /**
-     * Sets the maximum zoom level which will be displayed on the map.
-     * @param maxZoom The maximum zoom level
-     */
-    void setMaxZoom(Double maxZoom);
-    /**
-     * Gets the minimum zoom level which will be displayed on the map.
-     * @return The minimum zoom level.
-     */
-    double getMinZoom();
-    /**
-     * Sets the minimum zoom level which will be displayed on the map.
-     * @param minZoom The minimum zoom level
-     */
-    void setMinZoom(Double minZoom);
     /**
      * Set the map hand mode.
      */
@@ -128,39 +91,46 @@ public interface MapProvider {
      */
     void setDrawingPolylineMode(Consumer<List<GeoCoordinate>> drawingPolylineComplete);
     /**
-     * Adds a bounds changed event.
-     * @param listener Callback executed when bounds changed.
+     * Js Expression to lock the map.
+     * Only the parameter $0 are reserved to be used by the expression.
+     * The parameter $0 is { @link #getComponent() }
+     * @return Java Script expression to lock Map
      */
-    public void addBoundsChangedEventListener(BoundsChangedEventListener listener);
+    String jsExpressionLockMap();
     /**
-     * Removes a bounds changed event.
-     * @param listener Callback executed when bounds changed.
+     * Js Expression to unlock the map.
+     * Only the parameter $0 are reserved to be use by the expression.
+     * The parameter $0 is { @link #getComponent() }
+     * @return Java Script expression to unlock map
      */
-    public void removeBoundsChangedEventListener(BoundsChangedEventListener listener);
+    String jsExpressionUnlockMap();
     /**
-     * Removes all bounds changed event.
+     * Adds an idle event listener.
+     * @param listener Callback executed when idle.
      */
-    public void removeAllBoundsChangedEventListener();
+    void addIdleEventListener(IdleEventListener listener);
     /**
-     * Callback executed when bounds changed.
+     * Removes an idle event listener.
+     * @param listener Callback executed when idle.
      */
-    public interface BoundsChangedEventListener extends Consumer<BoundsChangedEvent> {
+    void removeIdleEventListener(IdleEventListener listener);
+    /**
+     * Removes all idle event listener.
+     */
+    void removeAllIdleEventListener();
+    /**
+     * Callback executed when idle.
+     */
+    public interface IdleEventListener extends Consumer<IdleEvent> {
     }
-    public class BoundsChangedEvent {
-        private GeoBounds bounds;
-        private BoundsChangedEventListener listener;
+    public class IdleEvent {
+        private IdleEventListener listener;
         
-        public BoundsChangedEvent(GeoBounds bounds, BoundsChangedEventListener listener) {
-            this.bounds = bounds;
+        public IdleEvent(IdleEventListener listener) {
             this.listener = listener;
         }
-        
-        public BoundsChangedEventListener getListener() {
+        public IdleEventListener getListener() {
             return listener;
-        }
-        
-        public GeoBounds getBounds() {
-            return bounds;
         }
     }
 }

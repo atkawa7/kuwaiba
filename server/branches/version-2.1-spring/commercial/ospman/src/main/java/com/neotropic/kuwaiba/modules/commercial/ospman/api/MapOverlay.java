@@ -26,22 +26,6 @@ import java.util.function.Consumer;
  */
 public interface MapOverlay {
     /**
-     * Gets a rectangle representation in geographical coordinates from 
-     * southwest and northeast.
-     * @return A rectangle representation in geographical coordinates
-     */
-    GeoBounds getBounds();
-    /**
-     * Gets the map overlay width
-     * @return The width
-     */
-    Double getWidth();
-    /**
-     * Set the map overlay width
-     * @param width the map overlay width
-     */
-    void setWidth(double width);
-    /**
      * Gets a component that represent a map overlay
      * @return A component
      */

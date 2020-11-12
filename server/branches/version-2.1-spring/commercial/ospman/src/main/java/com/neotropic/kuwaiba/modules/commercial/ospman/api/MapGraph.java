@@ -40,6 +40,9 @@ public class MapGraph extends MxGraph {
     private boolean detached = false;
     
     public MapGraph() {
+        setSizeFull();
+        setOverflow(null);
+        setBeginUpdateOnInit(true);
         addGraphLoadedListener(event -> {
             enablePanning(false);
             event.unregisterListener();

@@ -16,9 +16,9 @@
 package com.neotropic.kuwaiba.modules.commercial.ospman.api;
 
 import com.neotropic.flow.component.mxgraph.Point;
-import com.neotropic.kuwaiba.modules.commercial.ospman.widgets.OutsidePlantView;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
@@ -38,13 +38,14 @@ import org.neotropic.util.visual.views.util.UtilHtml;
 public class MapEdge extends MxBusinessObjectEdge {
     
     public MapEdge(BusinessObjectViewEdge viewEdge, BusinessObjectLight source, BusinessObjectLight target, List<Point> points,
-        MetadataEntityManager mem, TranslationService ts, MapOverlay mapOverlay, MapGraph mapGraph) {
+        MetadataEntityManager mem, TranslationService ts, MapProvider mapProvider, MapOverlay mapOverlay, MapGraph mapGraph) {
         
         super(viewEdge.getIdentifier());
         Objects.requireNonNull(viewEdge);
         Objects.requireNonNull(source);
         Objects.requireNonNull(target);
         Objects.requireNonNull(mapOverlay);
+        Objects.requireNonNull(mapProvider);
         
         setUuid(viewEdge.getIdentifier().getId());
         setLabel(viewEdge.getIdentifier().getName());
@@ -69,9 +70,19 @@ public class MapEdge extends MxBusinessObjectEdge {
             event.unregisterListener();
         });
         addPointsChangedListener(event -> {
-            List<GeoCoordinate> coordinates = new ArrayList();
-            OutsidePlantView.setPoints(coordinates, mapGraph, mapOverlay, new ArrayList(getPointList()), () -> 
-                viewEdge.getProperties().put(MapConstants.PROPERTY_CONTROL_POINTS, coordinates)
+            mapOverlay.getProjectionFromLatLngToDivPixel(
+                Arrays.asList(mapProvider.getBounds().getNortheast(), mapProvider.getBounds().getSouthwest()),
+                pixelCoordinates -> {
+                    GeoPoint sw = pixelCoordinates.remove(1);
+                    GeoPoint ne = pixelCoordinates.remove(0);
+                    List<GeoPoint> newGeoPoints = new ArrayList();
+                    getPointList().forEach(point -> 
+                        newGeoPoints.add(new GeoPoint(point.getX() + sw.getX(), point.getY() + ne.getY()))
+                    );
+                    mapOverlay.getProjectionFromDivPixelToLatLng(newGeoPoints, geoCoordinates -> 
+                        viewEdge.getProperties().put(MapConstants.PROPERTY_CONTROL_POINTS, geoCoordinates)
+                    );
+                }
             );
         });
     }

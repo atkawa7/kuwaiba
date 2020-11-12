@@ -50,10 +50,10 @@ public class GoogleMapsMapProvider implements MapProvider {
     private GoogleMap googleMap;
     private DrawingManager drawingManager;
     /**
-     * Set of bounds changed event listeners
+     * Set of idle event listener.
      */
-    private final List<BoundsChangedEventListener> boundsChangedEventListeners = new ArrayList();
-        
+    private final List<IdleEventListener> idleEventListeners = new ArrayList();
+    
     public GoogleMapsMapProvider() {
     }
     
@@ -112,10 +112,10 @@ public class GoogleMapsMapProvider implements MapProvider {
         drawingManager = new DrawingManager();
         googleMap.newDrawingManager(drawingManager);
         
-        googleMap.addMapBoundsChanged(event -> {
-            new ArrayList<>(boundsChangedEventListeners).forEach(listener -> {
-                if (boundsChangedEventListeners.contains(listener))
-                    listener.accept(new BoundsChangedEvent(getBounds(), listener));
+        googleMap.addMapIdleListener(event -> {
+            new ArrayList<>(idleEventListeners).forEach(listener -> {
+                if (idleEventListeners.contains(listener))
+                    listener.accept(new IdleEvent(listener));
             });
         });
     }
@@ -126,11 +126,10 @@ public class GoogleMapsMapProvider implements MapProvider {
     }
 
     @Override
-    public MapOverlay createOverlay(GeoBounds bounds) {
-        Objects.requireNonNull(bounds);
+    public MapOverlay createOverlay() {
         
         if (googleMap != null) {
-            GoogleMapsOverlay mapOverlay = new GoogleMapsOverlay(bounds);
+            GoogleMapsOverlay mapOverlay = new GoogleMapsOverlay();
             googleMap.addOverlayView(mapOverlay.getComponent());
             return mapOverlay;
         }
@@ -158,17 +157,6 @@ public class GoogleMapsMapProvider implements MapProvider {
         return null;
     }
     @Override
-    public void getBounds(Consumer<GeoBounds> consumer) {
-        if (getBounds() != null) {
-            consumer.accept(getBounds());
-        } else {
-            googleMap.addMapBoundsChanged(event -> {
-                event.unregisterListener();
-                consumer.accept(getBounds());
-            });
-        }
-    }
-    @Override
     public void setCenter(GeoCoordinate center) {
         googleMap.setCenterLat(center.getLatitude());
         googleMap.setCenterLng(center.getLongitude());
@@ -182,35 +170,18 @@ public class GoogleMapsMapProvider implements MapProvider {
         googleMap.setZoom(zoom);
     }
     @Override
-    public boolean getDraggable() {
-        return googleMap.getDraggable();
-    }
-    @Override
-    public void setDraggable(boolean draggable) {
-        googleMap.setDraggable(draggable);
-    }
-    @Override
-    public double getMaxZoom() {
-        return googleMap.getMaxZoom();
-    }
-    @Override
-    public void setMaxZoom(Double maxZoom) {
-        googleMap.setMaxZoom(maxZoom);
-    }
-    @Override
-    public double getMinZoom() {
-        return googleMap.getMinZoom();
-    }
-    @Override
-    public void setMinZoom(Double minZoom) {
-        googleMap.setMinZoom(minZoom);
-    }
-    @Override
     public void setHandMode() {
         if (drawingManager != null)
             drawingManager.setDrawingMode(null);
     }
-    
+    @Override
+    public String jsExpressionLockMap() {
+        return "$0.map.setOptions({draggable: false, maxZoom: $0.map.getZoom(), minZoom: $0.map.getZoom()});";
+    }
+    @Override
+    public String jsExpressionUnlockMap() {
+        return "$0.map.setOptions({draggable: true, maxZoom: null, minZoom: null});";
+    }
     @Override
     public void setDrawingOverlayMode(Consumer<GeoBounds> drawingOverlayComplete) {
         if (drawingManager != null) {
@@ -264,15 +235,15 @@ public class GoogleMapsMapProvider implements MapProvider {
         }
     }
     @Override
-    public void addBoundsChangedEventListener(BoundsChangedEventListener listener) {
-        boundsChangedEventListeners.add(listener);
+    public void addIdleEventListener(IdleEventListener listener) {
+        idleEventListeners.add(listener);
     }
     @Override
-    public void removeBoundsChangedEventListener(BoundsChangedEventListener listener) {
-        boundsChangedEventListeners.removeIf(l -> l.equals(listener));
+    public void removeIdleEventListener(IdleEventListener listener) {
+        idleEventListeners.removeIf(l -> l.equals(listener));
     }
     @Override
-    public void removeAllBoundsChangedEventListener() {
-        boundsChangedEventListeners.clear();
+    public void removeAllIdleEventListener() {
+        idleEventListeners.clear();
     }
 }

@@ -16,19 +16,14 @@
 package com.neotropic.kuwaiba.modules.commercial.ospman.helpers;
 
 import com.neotropic.kuwaiba.modules.commercial.ospman.api.GeoCoordinate;
-import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapOverlay;
-import com.neotropic.flow.component.mxgraph.MxGraph;
-import com.neotropic.flow.component.mxgraph.MxGraphCell;
-import com.neotropic.flow.component.mxgraph.Point;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.server.Command;
+import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapGraph;
+import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapNode;
 import com.vaadin.flow.shared.Registration;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapProvider;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectNode;
 
 /**
@@ -37,61 +32,35 @@ import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectNode;
  */
 public class HelperEdgeDraw {
     private MxBusinessObjectNode source;
-    private List<GeoCoordinate> coordinates;
-    private List<Point> points;
     private MxBusinessObjectNode target;
-    private final MapProvider map;
-    private final MapOverlay mapOverlay;
-    private final MxGraph graph;
+    private List<GeoCoordinate> coordinates;
     private Registration selectListener;
-    private Consumer<HelperEdgeDraw> consumer;
     
-    public HelperEdgeDraw(MapProvider map, MapOverlay mapOverlay, MxGraph graph, Consumer<HelperEdgeDraw> consumer) {
-        Objects.requireNonNull(map);
-        Objects.requireNonNull(mapOverlay);
-        Objects.requireNonNull(graph);
-        this.map = map;
-        this.mapOverlay = mapOverlay;
-        this.graph = graph;
+    private final MapProvider mapProvider;
+    private final MapGraph mapGraph;
+    private final Consumer<HelperEdgeDraw> consumer;
+    
+    public HelperEdgeDraw(MapProvider mapProvider, MapGraph mapGraph, Consumer<HelperEdgeDraw> consumer) {
+        Objects.requireNonNull(mapProvider);
+        Objects.requireNonNull(mapGraph);
+        Objects.requireNonNull(consumer);
+        this.mapProvider = mapProvider;
+        this.mapGraph = mapGraph;
         this.consumer = consumer;
     }
     
     public void start() {
         cancel();
-        selectListener = graph.addCellSelectedListener(event -> {
-            Iterator<Component> children = graph.getChildren().iterator();
-            MxBusinessObjectNode vertex = null;
-            while (children.hasNext()) {
-                Component child = children.next();
-                if (child instanceof MxGraphCell) {
-                    MxGraphCell cell = (MxGraphCell) child;
-                    if ("true".equals(cell.getIsVertex()) && event.getCellId().equals(cell.getUuid())) {
-                        if (cell instanceof MxBusinessObjectNode)
-                            vertex = (MxBusinessObjectNode) cell;
-                    }
-                }
-            }
-            if (vertex != null) {
+        selectListener = mapGraph.addCellSelectedListener(event -> {
+            MapNode mapNode = mapGraph.findNode(new BusinessObjectLight(null, event.getCellId(), null));
+            if (mapNode != null) {
                 if (source == null) {
-                    source = vertex;
-                    map.setDrawingPolylineMode(coordinates -> {
-                        this.coordinates = new ArrayList(coordinates);
-                        mapOverlay.getProjectionFromLatLngToDivPixel(mapOverlay.getBounds().getSouthwest(), sw -> {
-                            mapOverlay.getProjectionFromLatLngToDivPixel(mapOverlay.getBounds().getNortheast(), ne -> {
-                                List<Point> newPoints = new ArrayList();
-                                setPoints(newPoints, coordinates, 
-                                    new Point(sw.getX(), sw.getY()), 
-                                    new Point(ne.getX(), ne.getY()), 
-                                    () -> {
-                                        this.points = newPoints;
-                                        map.setHandMode();
-                                    }
-                                );
-                            });
-                        });
-                    });
+                    source = mapNode;
+                    mapProvider.setDrawingPolylineMode(coordinates -> 
+                        this.coordinates = coordinates
+                    );
                 } else if (target == null) {
-                    target = vertex;
+                    target = mapNode;
                     consumer.accept(this);
                     cancel();
                 }
@@ -100,42 +69,25 @@ public class HelperEdgeDraw {
     }
     
     public void cancel() {
+        mapProvider.setHandMode();
         source = null;
-        points = null;
         target = null;
+        coordinates = null;
         if (selectListener != null) {
             selectListener.remove();
             selectListener = null;
         }
-        map.setHandMode();
     }
     
     public MxBusinessObjectNode getSource() {
         return source;
     }
     
-    public List<GeoCoordinate> getCoordintates() {
-        return coordinates;
-    }
-    
-    public List<Point> getPoints() {
-        return points;
-    }
-    
     public MxBusinessObjectNode getTarget() {
         return target;
     }
     
-    private void setPoints(List<Point> points, List<GeoCoordinate> coordinates, Point sw, Point ne, Command cmd) {
-        if (points != null && !coordinates.isEmpty()) {
-            mapOverlay.getProjectionFromLatLngToDivPixel(coordinates.remove(0), point -> {
-                double x = point.getX() - sw.getX();
-                double y = point.getY() - ne.getY();
-                points.add(new Point(x, y));
-                setPoints(points, coordinates, sw, ne, cmd);
-            });
-        }
-        else
-            cmd.execute();
+    public List<GeoCoordinate> getCoordintates() {
+        return coordinates;
     }
 }

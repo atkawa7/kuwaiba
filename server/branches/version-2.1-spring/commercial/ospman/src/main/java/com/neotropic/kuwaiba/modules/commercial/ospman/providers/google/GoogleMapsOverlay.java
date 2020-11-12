@@ -16,10 +16,8 @@
 package com.neotropic.kuwaiba.modules.commercial.ospman.providers.google;
 
 import com.neotropic.flow.component.googlemap.LatLng;
-import com.neotropic.flow.component.googlemap.LatLngBounds;
 import com.neotropic.flow.component.googlemap.OverlayView;
 import com.neotropic.flow.component.googlemap.Point;
-import com.neotropic.kuwaiba.modules.commercial.ospman.api.GeoBounds;
 import com.neotropic.kuwaiba.modules.commercial.ospman.api.GeoCoordinate;
 import com.neotropic.kuwaiba.modules.commercial.ospman.api.GeoPoint;
 import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapOverlay;
@@ -34,43 +32,20 @@ import java.util.function.Consumer;
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class GoogleMapsOverlay implements MapOverlay {
-    private final GeoBounds bounds;
     private OverlayView overlayView;
-    /**
-     * The map overlay width
-     */
-    private Double width;
     /**
      * Set of width changed event listeners
      */
     private List<WidthChangedEventListener> widthChangedEventListeners = new ArrayList();
     
-    public GoogleMapsOverlay(GeoBounds bounds) {
-        this.bounds = bounds;
+    public GoogleMapsOverlay() {
     }
-    @Override
-    public GeoBounds getBounds() {
-        return bounds;
-    }
-    @Override
-    public Double getWidth() {
-        return width;
-    }
-    @Override
-    public void setWidth(double width) {
-        this.width = width;
-    }
+    
     @Override
     public OverlayView getComponent() {
         if (overlayView == null) {
-            GeoCoordinate northeast = bounds.getNortheast();
-            GeoCoordinate southwest = bounds.getSouthwest();
-            overlayView = new OverlayView(new LatLngBounds(
-                new LatLng(southwest.getLatitude(), southwest.getLongitude()), 
-                new LatLng(northeast.getLatitude(), northeast.getLongitude()) 
-            ));
+            overlayView = new OverlayView(true);
             overlayView.addWidthChangedListener(event -> {
-                setWidth(event.getWidth());
                 new ArrayList<>(widthChangedEventListeners).forEach(listener -> {
                     if (widthChangedEventListeners.contains(listener))
                         listener.accept(new WidthChangedEvent(event.getWidth(), listener));

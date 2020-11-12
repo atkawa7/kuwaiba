@@ -18,6 +18,7 @@ package com.neotropic.kuwaiba.modules.commercial.ospman.api;
 import com.neotropic.flow.component.mxgraph.MxConstants;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.server.StreamResourceRegistry;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Objects;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
@@ -32,10 +33,11 @@ public class MapNode extends MxBusinessObjectNode {
     private boolean detached = false;
     private boolean added = false;
     
-    public MapNode(BusinessObjectViewNode viewNode, double x, double y, MapOverlay mapOverlay, ResourceFactory resourceFactory) {
+    public MapNode(BusinessObjectViewNode viewNode, double x, double y, MapProvider mapProvider, MapOverlay mapOverlay, ResourceFactory resourceFactory) {
         super(viewNode.getIdentifier());
         Objects.requireNonNull(viewNode);
         Objects.requireNonNull(resourceFactory);
+        Objects.requireNonNull(mapProvider);
         Objects.requireNonNull(mapOverlay);
         
         setUuid(viewNode.getIdentifier().getId());
@@ -56,16 +58,19 @@ public class MapNode extends MxBusinessObjectNode {
             event.unregisterListener();
         });
         addCellPositionChangedListener(event -> {
-            if (mapOverlay != null) {
-                mapOverlay.getProjectionFromLatLngToDivPixel(mapOverlay.getBounds().getSouthwest(), sw -> {
-                    mapOverlay.getProjectionFromLatLngToDivPixel(mapOverlay.getBounds().getNortheast(), ne -> {
-                        mapOverlay.getProjectionFromDivPixelToLatLng(new GeoPoint(sw.getX() + getX(), ne.getY() + getY()), coordinate -> {
-                            viewNode.getProperties().put(MapConstants.ATTR_LAT, coordinate.getLatitude());
-                            viewNode.getProperties().put(MapConstants.ATTR_LON, coordinate.getLongitude());
-                        });
+            mapOverlay.getProjectionFromLatLngToDivPixel(
+                Arrays.asList(mapProvider.getBounds().getNortheast(), mapProvider.getBounds().getSouthwest()),
+                pixelCoordinates -> {
+                    GeoPoint ne = pixelCoordinates.get(0);
+                    GeoPoint sw = pixelCoordinates.get(1);
+
+                    mapOverlay.getProjectionFromDivPixelToLatLng(
+                        new GeoPoint(getX() + sw.getX(), getY() + ne.getY()), geoCoordinate -> {
+                        viewNode.getProperties().put(MapConstants.ATTR_LAT, geoCoordinate.getLatitude());
+                        viewNode.getProperties().put(MapConstants.ATTR_LON, geoCoordinate.getLongitude());
                     });
-                });
-            }
+                }
+            );
         });
     }
 
