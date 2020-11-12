@@ -41,6 +41,10 @@ public class OverlayView extends Component implements HasComponents {
     public OverlayView() {
     }
     
+    public OverlayView(boolean mapBounds) {
+        getElement().setProperty(Constants.Property.MAP_BOUNDS, mapBounds);
+    }
+    
     public OverlayView(LatLngBounds bounds) {
         if (bounds != null)
             getElement().setPropertyJson(Constants.Property.BOUNDS, bounds.toJson());
@@ -57,6 +61,14 @@ public class OverlayView extends Component implements HasComponents {
             getElement().setPropertyJson(Constants.Property.BOUNDS, bounds.toJson());
         else
             getElement().setPropertyJson(Constants.Property.BOUNDS, Json.createNull());
+    }
+    
+    public boolean getMapBounds() {
+        return getElement().getProperty(Constants.Property.MAP_BOUNDS, false);
+    }
+    
+    public void setMapBounds(boolean mapBounds) {
+        getElement().setProperty(Constants.Property.MAP_BOUNDS, mapBounds);
     }
     
     public void fromLatLngToDivPixel(LatLng latLng, Consumer<Point> consumer) {

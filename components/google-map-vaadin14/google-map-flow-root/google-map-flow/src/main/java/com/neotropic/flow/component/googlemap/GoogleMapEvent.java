@@ -138,6 +138,24 @@ public class GoogleMapEvent {
             super(source, fromClient);
         }
     }
+    @DomEvent("map-drag-start")
+    public static class MapDragStartEvent extends ComponentEvent<GoogleMap> {
+        public MapDragStartEvent(GoogleMap source, boolean fromClient) {
+            super(source, fromClient);
+        }
+    }
+    @DomEvent("map-drag-end")
+    public static class MapDragEndEvent extends ComponentEvent<GoogleMap> {
+        public MapDragEndEvent(GoogleMap source, boolean fromClient) {
+            super(source, fromClient);
+        }
+    }
+    @DomEvent("map-idle")
+    public static class MapIdleEvent extends ComponentEvent<GoogleMap> {
+        public MapIdleEvent(GoogleMap source, boolean fromClient) {
+            super(source, fromClient);
+        }
+    }
     //</editor-fold>
     //<editor-fold desc="Marker Events" defaultstate="collapsed">
     @DomEvent("marker-click")

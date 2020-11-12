@@ -297,5 +297,17 @@ public class GoogleMap extends Component implements HasComponents {
     public Registration addMapBoundsChanged(ComponentEventListener<GoogleMapEvent.MapBoundsChangedEvent> listener) {
         return addListener(GoogleMapEvent.MapBoundsChangedEvent.class, listener);
     }
+    
+    public Registration addMapDragStartListener(ComponentEventListener<GoogleMapEvent.MapDragStartEvent> listener) {
+        return addListener(GoogleMapEvent.MapDragStartEvent.class, listener);
+    }
+    
+    public Registration addMapDragEndListener(ComponentEventListener<GoogleMapEvent.MapDragEndEvent> listener) {
+        return addListener(GoogleMapEvent.MapDragEndEvent.class, listener);
+    }
+    
+    public Registration addMapIdleListener(ComponentEventListener<GoogleMapEvent.MapIdleEvent> listener) {
+        return addListener(GoogleMapEvent.MapIdleEvent.class, listener);
+    }
 }
 

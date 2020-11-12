@@ -47,6 +47,14 @@ class OverlayView extends PolymerElement {
       bounds: {
         type: Object,
         observer: '_boundsChanged'
+      },
+      /**
+       * Bounds of the current viewport.
+       */
+      mapBounds: {
+        type: Boolean,
+        value: false,
+        observer: '_mapBoundsChanged'
       }
     };
   }
@@ -64,7 +72,6 @@ class OverlayView extends PolymerElement {
 
     function MyOverlay(bounds, map) {
       this._bounds = bounds;
-      this._map = map;
       this._div = null;
       this.setMap(map);
     }
@@ -77,11 +84,13 @@ class OverlayView extends PolymerElement {
 
     MyOverlay.prototype.draw = function() {
       _this.projection = this.getProjection();
-      var overlayProjection = this.getProjection();
-      
-      var sw = overlayProjection.fromLatLngToDivPixel(this._bounds.getSouthWest());
-      var ne = overlayProjection.fromLatLngToDivPixel(this._bounds.getNorthEast());
-      
+      if (_this.mapBounds) {
+        var sw = _this.projection.fromLatLngToDivPixel(this.getMap().getBounds().getSouthWest());
+        var ne = _this.projection.fromLatLngToDivPixel(this.getMap().getBounds().getNorthEast());
+      } else {
+        var sw = _this.projection.fromLatLngToDivPixel(this._bounds.getSouthWest());
+        var ne = _this.projection.fromLatLngToDivPixel(this._bounds.getNorthEast());
+      }
       var div = this._div;
       div.style.position = 'absolute';
       div.style.left = sw.x + 'px';
@@ -108,14 +117,17 @@ class OverlayView extends PolymerElement {
     this._observer = new FlattenedNodesObserver(this, info => {
       info.addedNodes.forEach(value => {
         this._div = value;
-
-        this.overlay = new MyOverlay(
-          new google.maps.LatLngBounds(
-            {lat: this.bounds.south, lng: this.bounds.west}, 
-            {lat: this.bounds.north, lng: this.bounds.east}
-          ), 
-          map
-        );
+        if (this.mapBounds) {
+          this.overlay = new MyOverlay(null, map);
+        } else {
+          this.overlay = new MyOverlay(
+            new google.maps.LatLngBounds(
+              {lat: this.bounds.south, lng: this.bounds.west}, 
+              {lat: this.bounds.north, lng: this.bounds.east}
+            ), 
+            map
+          );
+        }
       });
       info.removedNodes.forEach(value => {
       });
@@ -215,7 +227,7 @@ class OverlayView extends PolymerElement {
       this.overlay.setMap(null);
   }
 
-  _boundsChanged(newValue, oldValue) {
+  _boundsChanged(newValue) {
     if (this.overlay) {
       this.overlay._bounds = new google.maps.LatLngBounds(
         {lat: newValue.south, lng: newValue.west},

@@ -229,15 +229,15 @@ class GoogleMap extends PolymerElement {
     */
     /*
     Events:
-    bounds_changed, 
+    *bounds_changed, 
     *center_changed, 
     *click, 
     *dblclick, 
     drag, 
-    dragend, 
-    dragstart, 
+    *dragend, 
+    *dragstart, 
     heading_changed, 
-    idle, 
+    *idle, 
     maptypeid_changed, 
     *mousemove, 
     *mouseout, 
@@ -292,7 +292,10 @@ class GoogleMap extends PolymerElement {
     this.map.addListener('bounds_changed', event => {
       this.bounds = this.map.getBounds().toJSON();
       this.dispatchEvent(new CustomEvent('map-bounds-changed'));
-    })
+    });
+    this.map.addListener('dragstart', event => this.dispatchEvent(new CustomEvent('map-drag-start')))
+    this.map.addListener('dragend', event => this.dispatchEvent(new CustomEvent('map-drag-end')));
+    this.map.addListener('idle', event => this.dispatchEvent(new CustomEvent('map-idle')));
     var _this = this;
     this._observer = new FlattenedNodesObserver(this, (info) => {      
       _this._processAddedNodes(info.addedNodes);
