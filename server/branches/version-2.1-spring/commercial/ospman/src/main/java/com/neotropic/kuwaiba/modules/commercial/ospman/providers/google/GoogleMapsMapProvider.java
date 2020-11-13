@@ -50,9 +50,13 @@ public class GoogleMapsMapProvider implements MapProvider {
     private GoogleMap googleMap;
     private DrawingManager drawingManager;
     /**
-     * Set of idle event listener.
+     * Set of idle event listeners.
      */
     private final List<IdleEventListener> idleEventListeners = new ArrayList();
+    /**
+     * Set of bounds changed event listeners.
+     */
+    private final List<BoundsChangedEventListener> boundsChangedEventListeners = new ArrayList();
     
     public GoogleMapsMapProvider() {
     }
@@ -112,12 +116,18 @@ public class GoogleMapsMapProvider implements MapProvider {
         drawingManager = new DrawingManager();
         googleMap.newDrawingManager(drawingManager);
         
-        googleMap.addMapIdleListener(event -> {
+        googleMap.addMapBoundsChanged(event -> 
+            new ArrayList<>(boundsChangedEventListeners).forEach(listener -> {
+                if (boundsChangedEventListeners.contains(listener))
+                    listener.accept(new BoundsChangedEvent(listener));
+            })
+        );
+        googleMap.addMapIdleListener(event ->
             new ArrayList<>(idleEventListeners).forEach(listener -> {
                 if (idleEventListeners.contains(listener))
                     listener.accept(new IdleEvent(listener));
-            });
-        });
+            })
+        );
     }
 
     @Override
@@ -233,6 +243,18 @@ public class GoogleMapsMapProvider implements MapProvider {
                     drawingPolylineComplete.accept(coordinates);
                 });
         }
+    }
+    @Override
+    public void addBoundsChangedEventListener(BoundsChangedEventListener listener) {
+        boundsChangedEventListeners.add(listener);
+    }
+    @Override
+    public void removeBoundsChangedEventListener(BoundsChangedEventListener listener) {
+        boundsChangedEventListeners.removeIf(l -> l.equals(listener));
+    }
+    @Override
+    public void removeAllBoundsChangedEventListener() {
+        boundsChangedEventListeners.clear();
     }
     @Override
     public void addIdleEventListener(IdleEventListener listener) {

@@ -105,6 +105,20 @@ public interface MapProvider {
      */
     String jsExpressionUnlockMap();
     /**
+     * Adds a bounds changed event listener.
+     * @param listener Callback executed when bounds changed.
+     */
+    void addBoundsChangedEventListener(BoundsChangedEventListener listener);
+    /**
+     * Removes a bounds changed event listener.
+     * @param listener Callback executed when bounds changed.
+     */
+    void removeBoundsChangedEventListener(BoundsChangedEventListener listener);
+    /**
+     * Remove all bounds changed event listener.
+     */
+    void removeAllBoundsChangedEventListener();
+    /**
      * Adds an idle event listener.
      * @param listener Callback executed when idle.
      */
@@ -118,6 +132,21 @@ public interface MapProvider {
      * Removes all idle event listener.
      */
     void removeAllIdleEventListener();
+    /**
+     * Callback executed when bounds changed.
+     */
+    public interface BoundsChangedEventListener extends Consumer<BoundsChangedEvent>{
+    }
+    public class BoundsChangedEvent {
+        private BoundsChangedEventListener listener;
+        
+        public BoundsChangedEvent(BoundsChangedEventListener listener) {
+            this.listener = listener;
+        }
+        public BoundsChangedEventListener getListener() {
+            return listener;
+        }
+    }
     /**
      * Callback executed when idle.
      */

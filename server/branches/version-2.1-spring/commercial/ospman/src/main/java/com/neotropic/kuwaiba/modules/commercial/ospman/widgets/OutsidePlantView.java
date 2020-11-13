@@ -186,7 +186,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
      * The graph containing the nodes and edges
      */
     private MapGraph mapGraph;
-        
+    
     public OutsidePlantView(
         ApplicationEntityManager aem, 
         BusinessEntityManager bem, 
@@ -450,6 +450,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                 jsBuilder.append(mapProvider.jsExpressionUnlockMap()).append("\n");
                 
                 mapGraph.getElement().executeJs(jsBuilder.toString(), mapProvider.getComponent(),nodes, edges);
+                if (!mapGraph.isVisible())
+                    mapGraph.setVisible(true);
             });
         }
     }
@@ -769,6 +771,10 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                             component.add(componentTabs);
                             newOspView(true);
                         }
+                        mapProvider.addBoundsChangedEventListener(event -> {
+                            if (mapGraph != null && mapGraph.isVisible())
+                                mapGraph.setVisible(false);
+                        });
                         mapProvider.addIdleEventListener(event -> {
                             if (mapOverlay == null)
                                 newOverlay();
@@ -950,6 +956,10 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         
         if (mapOverlay != null)
             mapOverlay.removeAllWidthChangedEventListener();
+        if (mapProvider != null) {
+            mapProvider.removeAllBoundsChangedEventListener();
+            mapProvider.removeAllIdleEventListener();
+        }
         mapGraph = null;
         mapOverlay = null;
         mapProvider = null;
