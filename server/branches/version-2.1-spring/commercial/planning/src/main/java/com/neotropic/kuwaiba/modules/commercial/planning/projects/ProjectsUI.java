@@ -400,9 +400,11 @@ public class ProjectsUI extends VerticalLayout implements ActionCompletedListene
         Icon iconSearch = VaadinIcon.SEARCH.create();
         iconSearch.setSize("16px");
         
-        TextField txtPoolName = new TextField(ts.getTranslatedString("module.general.labels.filter"), ts.getTranslatedString("module.general.labels.filter-placeholder"));
+        TextField txtPoolName = new TextField();
+        txtPoolName.setPlaceholder(ts.getTranslatedString("module.general.labels.filter-placeholder"));
         txtPoolName.setValueChangeMode(ValueChangeMode.EAGER);
         txtPoolName.setWidthFull();
+        txtPoolName.setClassName("search");
         txtPoolName.setSuffixComponent(iconSearch);
         txtPoolName.addValueChangeListener(event -> dataProvider.addFilter(
                 project -> StringUtils.containsIgnoreCase(project.getName(),

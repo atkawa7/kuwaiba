@@ -18,6 +18,10 @@ limitations under the License.
     Author     : Mauricio Ruiz {@literal <mauricio.ruiz@kuwaiba.org>}
 */
 
+.search {
+    margin-top: -10px;
+}
+
 .project-button-position {
     padding-left: 200px;
 }
