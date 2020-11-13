@@ -250,6 +250,7 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
                 (event) -> {
                     this.newTaskVisualAction.getVisualComponent(new ModuleActionParameterSet()).open();
                 });
+        btnAddTask.setClassName("icon-button");
         
         Command deleteTask = () -> {
             lytTaskForm.setVisible(false);
@@ -264,18 +265,21 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
                     )).open();
                 });
         btnDeleteTask.setEnabled(false);
+        btnDeleteTask.setClassName("icon-button");
         
         btnAddTaskParameter = new Button(this.newTaskParameterVisualAction.getModuleAction().getDisplayName(), new Icon(VaadinIcon.PLUS),
                 (event) -> {
                     this.newTaskParameterVisualAction.getVisualComponent(new ModuleActionParameterSet(
                             new ModuleActionParameter("task", currentTask))).open();
                 });
+        btnAddTaskParameter.setClassName("icon-button");
         
         btnAddTaskUser = new Button(this.newTaskUserVisualAction.getModuleAction().getDisplayName(), new Icon(VaadinIcon.PLUS),
                 (event) -> {
                     this.newTaskUserVisualAction.getVisualComponent(new ModuleActionParameterSet(
                             new ModuleActionParameter("task", currentTask))).open();
                 });
+        btnAddTaskUser.setClassName("icon-button");
         
         Command deleteTaskUser = () -> {
             btnDeleteTaskUser.setEnabled(false);
@@ -288,6 +292,7 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
                             new ModuleActionParameter("commandClose", deleteTaskUser)
                     )).open();
                 });
+        btnDeleteTaskUser.setClassName("icon-button");
         
         Command deleteTaskParameter = () -> {
             btnDeleteTaskParameter.setEnabled(false);
@@ -300,6 +305,7 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
                             new ModuleActionParameter("commandClose", deleteTaskParameter)
                     )).open();
                 });
+        btnDeleteTaskParameter.setClassName("icon-button");
         
         VerticalLayout lytListTask = new VerticalLayout(tblTask, btnAddTask, btnDeleteTask);
         lytListTask.setPadding(false);
@@ -349,7 +355,9 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
         icon.getElement().setProperty("title", ts.getTranslatedString("module.taskman.task.label.filter-task"));
         icon.setSize("16px");
         
-        TextField txtTaskName = new TextField(ts.getTranslatedString("module.general.labels.filter"), ts.getTranslatedString("module.general.labels.filter-placeholder"));
+        TextField txtTaskName = new TextField();
+        txtTaskName.setPlaceholder(ts.getTranslatedString("module.general.labels.filter-placeholder"));
+        txtTaskName.setClassName("search");
         txtTaskName.setValueChangeMode(ValueChangeMode.EAGER);
         txtTaskName.setWidthFull();
         txtTaskName.setSuffixComponent(icon);
@@ -794,6 +802,7 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
             btnCancel.addClickListener(event -> {
                 wdwUpdateUsers.close();
             });
+            btnCancel.setClassName("icon-button");
             
             HorizontalLayout lytUserButtons = new HorizontalLayout(btnAddTaskUser, btnDeleteTaskUser, btnCancel);
             lytUserButtons.setSpacing(false);
@@ -825,6 +834,7 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
             btnCancel.addClickListener(event -> {
                 wdwUpdateParameters.close();
             });
+            btnCancel.setClassName("icon-button");
             
             HorizontalLayout lyParameterButtons = new HorizontalLayout(btnAddTaskParameter, btnDeleteTaskParameter, btnCancel);
             lyParameterButtons.setSpacing(false);
@@ -927,12 +937,13 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
             });
             
             Button btnCancel = new Button((ts.getTranslatedString("module.taskman.task.parameters.button.cancel")),
-                    (event) -> {
-                        wdwUpdateParameter.close();
-            });
+                (event) -> {
+                    wdwUpdateParameter.close();
+                });
             
             VerticalLayout lytUpdateParameter = new VerticalLayout(txtName, txtValue);
             HorizontalLayout lytMoreButtons = new HorizontalLayout(btnSave, btnCancel);
+            lytMoreButtons.setSpacing(false);
             VerticalLayout lytMain = new VerticalLayout(lytUpdateParameter, lytMoreButtons);
             lytMain.setSizeFull();
             lytMain.setHeightFull();
@@ -952,11 +963,12 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
         private TaskNotificationDialog(Task task) {
             Label headerTask = new Label(String.format("%s %s", ts.getTranslatedString("module.taskman.task.actions.execute-task-result"), task.getName()));
             Dialog wdwTaskNotification = new Dialog();
-            Button btnOk = new Button(ts.getTranslatedString("module.taskman.task.actions.execute-task-result.close"),
-                    (event) -> {
-                        wdwTaskNotification.close();
-                    });
+            Button btnOk = new Button(ts.getTranslatedString("module.taskman.task.actions.execute-task-result.close"), new Icon(VaadinIcon.CLOSE_SMALL),
+                (event) -> {
+                    wdwTaskNotification.close();
+                });
             btnOk.setAutofocus(true);
+            btnOk.setClassName("icon-button");
             
             buildTaskNotificationGrid();
             VerticalLayout lytTaskResult = new VerticalLayout(headerTask, tblResult);

@@ -40,3 +40,7 @@ limitations under the License.
 .bold-font {
     font-weight: bold;
 }
+
+.search {
+    margin-top: -10px;
+}
