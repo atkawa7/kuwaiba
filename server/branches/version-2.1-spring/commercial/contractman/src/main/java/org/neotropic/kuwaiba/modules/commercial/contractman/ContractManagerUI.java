@@ -187,7 +187,7 @@ public class ContractManagerUI extends VerticalLayout implements ActionCompleted
      */
     Boolean isPool = false;
     /**
-     * 
+     * Object to save pool name preselected
      */
     H4 headerPoolName;
     
@@ -371,7 +371,9 @@ public class ContractManagerUI extends VerticalLayout implements ActionCompleted
         Icon iconSearch = VaadinIcon.SEARCH.create();
         iconSearch.setSize("16px");
         
-        TextField txtPoolName = new TextField(ts.getTranslatedString("module.general.labels.filter"), ts.getTranslatedString("module.general.labels.filter-placeholder"));
+        TextField txtPoolName = new TextField();
+        txtPoolName.setPlaceholder(ts.getTranslatedString("module.general.labels.filter-placeholder"));
+        txtPoolName.setClassName("search");
         txtPoolName.setValueChangeMode(ValueChangeMode.EAGER);
         txtPoolName.setWidthFull();
         txtPoolName.setSuffixComponent(iconSearch);
@@ -437,6 +439,7 @@ public class ContractManagerUI extends VerticalLayout implements ActionCompleted
                 if (property.getName().equals(Constants.PROPERTY_NAME)) {
                     aem.setPoolProperties(currentPool.getId(), String.valueOf(property.getValue()), currentPool.getDescription());
                     currentPool.setName(String.valueOf(property.getValue()));
+                    headerPoolName.setText(String.valueOf(property.getValue()));
                 } else if (property.getDescription().equals(Constants.PROPERTY_DESCRIPTION)) {
                     aem.setPoolProperties(currentPool.getId(), currentPool.getName(), String.valueOf(property.getValue()));
                     currentPool.setDescription(String.valueOf(property.getValue()));
