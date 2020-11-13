@@ -60,24 +60,26 @@ public class DeleteProjectVisualAction extends AbstractVisualAction<Dialog> {
             selectedProject = (BusinessObjectLight) parameters.get("project");
             commandClose = (Command) parameters.get("commandClose");
             
-            ConfirmDialog wdwDeleteContract = new ConfirmDialog(ts.getTranslatedString("module.general.labels.confirmation"),
+            ConfirmDialog wdwDeleteProject = new ConfirmDialog(ts.getTranslatedString("module.general.labels.confirmation"),
                     String.format("%s %s?", ts.getTranslatedString("module.projects.actions.project.delete-project-confirm"), selectedProject.getName()),
                     ts.getTranslatedString("module.general.labels.delete"));
+            wdwDeleteProject.setCloseOnOutsideClick(false);
+            wdwDeleteProject.setCloseOnEsc(false);
             
-            wdwDeleteContract.getBtnConfirm().addClickListener((event) -> {
+            wdwDeleteProject.getBtnConfirm().addClickListener((event) -> {
                 try {
                     deleteProjectAction.getCallback().execute(new ModuleActionParameterSet(
                             new ModuleActionParameter<>("project", selectedProject)));
-                    fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
-                            ts.getTranslatedString("module.projects.actions.project.delete-project-success"), DeleteProjectVisualAction.class));
-                    wdwDeleteContract.close();
                     //refresh related grid
                     getCommandClose().execute();
+                    fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
+                            ts.getTranslatedString("module.projects.actions.project.delete-project-success"), DeleteProjectVisualAction.class));
+                    wdwDeleteProject.close();
                 } catch (ModuleActionException ex) {
                     Logger.getLogger(DeleteProjectVisualAction.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
-            return wdwDeleteContract;
+            return wdwDeleteProject;
         } else
             return new Dialog(new Label(ts.getTranslatedString("module.projects.actions.project.delete-project-error")));
     }

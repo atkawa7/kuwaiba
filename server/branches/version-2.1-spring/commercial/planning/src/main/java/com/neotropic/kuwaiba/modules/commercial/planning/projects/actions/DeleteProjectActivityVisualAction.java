@@ -60,24 +60,26 @@ public class DeleteProjectActivityVisualAction extends AbstractVisualAction<Dial
             selectedActivity = (BusinessObjectLight) parameters.get("activity");
             commandClose = (Command) parameters.get("commandClose");
             
-            ConfirmDialog wdwDeleteContract = new ConfirmDialog(ts.getTranslatedString("module.general.labels.confirmation"),
+            ConfirmDialog wdwDeleteActivity = new ConfirmDialog(ts.getTranslatedString("module.general.labels.confirmation"),
                     String.format("%s %s?", ts.getTranslatedString("module.projects.actions.activity.delete-activity.confirm"), selectedActivity.getName()),
                     ts.getTranslatedString("module.general.labels.delete"));
+            wdwDeleteActivity.setCloseOnOutsideClick(false);
+            wdwDeleteActivity.setCloseOnEsc(false);
             
-            wdwDeleteContract.getBtnConfirm().addClickListener((event) -> {
+            wdwDeleteActivity.getBtnConfirm().addClickListener((event) -> {
                 try {
                     deleteProjectActivityAction.getCallback().execute(new ModuleActionParameterSet(
                             new ModuleActionParameter<>("activity", selectedActivity)));
                     fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
                             ts.getTranslatedString("module.projects.actions.activity.delete-activity.success"), DeleteProjectActivityAction.class));
-                    wdwDeleteContract.close();
+                    wdwDeleteActivity.close();
                     //refresh related grid
                     getCommandClose().execute();
                 } catch (ModuleActionException ex) {
                     Logger.getLogger(DeleteProjectActivityVisualAction.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
-            return wdwDeleteContract;
+            return wdwDeleteActivity;
         } else
             return new Dialog(new Label(ts.getTranslatedString("module.projects.actions.activity.delete-activity.error")));
     }

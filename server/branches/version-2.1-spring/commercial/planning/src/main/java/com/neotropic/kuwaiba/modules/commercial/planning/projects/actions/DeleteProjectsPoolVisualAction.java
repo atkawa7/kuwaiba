@@ -66,6 +66,8 @@ public class DeleteProjectsPoolVisualAction extends AbstractVisualAction<Dialog>
             ConfirmDialog wdwDeletePool = new ConfirmDialog(ts.getTranslatedString("module.general.labels.confirmation"),
                     String.format("%s %s?", ts.getTranslatedString("module.projects.actions.pool.delete-pool-confirm"), selectedPool.getName()),
                     ts.getTranslatedString("module.general.labels.delete"));
+            wdwDeletePool.setCloseOnOutsideClick(false);
+            wdwDeletePool.setCloseOnEsc(false);
             
             wdwDeletePool.getBtnConfirm().addClickListener((event) -> {
                     try{
@@ -75,11 +77,10 @@ public class DeleteProjectsPoolVisualAction extends AbstractVisualAction<Dialog>
                         
                         if (actionResponse.containsKey("exception"))
                             throw new ModuleActionException(((Exception)actionResponse.get("exception")).getLocalizedMessage());
-                       
-                        fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
-                            ts.getTranslatedString("module.projects.actions.pool.delete-pool-success"), DeleteProjectsPoolVisualAction.class));
                         //refresh related grid
-                        getCommandClose().execute();  
+                        getCommandClose().execute(); 
+                        fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
+                            ts.getTranslatedString("module.projects.actions.pool.delete-pool-success"), DeleteProjectsPoolVisualAction.class)); 
                     } catch (ModuleActionException ex) {
                         new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(), 
                             AbstractNotification.NotificationType.ERROR, ts).open();

@@ -103,6 +103,9 @@ public class NewProjectVisualAction extends AbstractVisualAction<Dialog> {
             txtNotes.setSizeFull();
             
             wdwNewProject = new Dialog();
+            wdwNewProject.setCloseOnOutsideClick(false);
+            wdwNewProject.setCloseOnEsc(false);
+            // To show errors or warnings related to the input parameters.
             Label lblMessages = new Label();
             
             Button btnOk = new Button(ts.getTranslatedString("module.general.labels.create"), (event) -> {

@@ -91,8 +91,12 @@ public class PropertyFactory {
                         if (attributes.containsKey(anAttribute.getName())) {
                             if (attributes.get(anAttribute.getName()) instanceof String)
                                 value = Double.valueOf( (String) attributes.get(anAttribute.getName()));
-                            else 
-                                value = (Double) attributes.get(anAttribute.getName());
+                            else {
+                                if (attributes.get(anAttribute.getName()) instanceof Float)
+                                    value = Double.valueOf(String.valueOf( attributes.get(anAttribute.getName())));
+                                else
+                                    value = (Double) attributes.get(anAttribute.getName());
+                            }        
                         } else
                             value = null;
                         objectProperties.add(new DoubleProperty(anAttribute.getName(), anAttribute.getDisplayName(),

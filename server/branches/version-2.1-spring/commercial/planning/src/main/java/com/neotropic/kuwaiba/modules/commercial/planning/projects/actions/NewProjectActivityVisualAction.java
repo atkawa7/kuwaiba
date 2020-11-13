@@ -23,6 +23,7 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.server.Command;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,6 +52,10 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class NewProjectActivityVisualAction extends AbstractVisualAction<Dialog> {
+    /**
+     * Refresh action command
+     */
+    private Command commandRefresh;
     /**
      * Reference to the translation service.
      */
@@ -98,22 +103,25 @@ public class NewProjectActivityVisualAction extends AbstractVisualAction<Dialog>
                 selectedProject = (BusinessObjectLight) parameters.get("project");
             if (parameters.containsKey("pool"))
                 selectedPool = (Pool) parameters.get("pool");
+            //if (parameters.containsKey("commandRefresh"))
+            //commandRefresh = (Command) parameters.get("commandRefresh");
             
-            List<BusinessObjectLight> listProjects = bem.getPoolItems(selectedPool.getId(), LIMIT);
-            ComboBox<BusinessObjectLight> cmbProject = new ComboBox<>(ts.getTranslatedString("module.projects.activity.label.project-name"), listProjects);    
-            cmbProject.setAllowCustomValue(false);
-            cmbProject.setRequiredIndicatorVisible(true);
-            cmbProject.setSizeFull();
-         
-            //Project selected if exists
-            if (selectedProject != null) {
-                cmbProject.setValue(selectedProject);
-                cmbProject.setEnabled(false);
-            }
-            
-            TextField txtName = new TextField(ts.getTranslatedString("module.projects.activity.label.name"));
-            txtName.setSizeFull();
-            
+            if (selectedPool != null) {
+                List<BusinessObjectLight> listProjects = bem.getPoolItems(selectedPool.getId(), LIMIT);
+                ComboBox<BusinessObjectLight> cmbProject = new ComboBox<>(ts.getTranslatedString("module.projects.activity.label.project-name"), listProjects);
+                cmbProject.setAllowCustomValue(false);
+                cmbProject.setRequiredIndicatorVisible(true);
+                cmbProject.setSizeFull();
+
+                //Project selected if exists
+                if (selectedProject != null) {
+                    cmbProject.setValue(selectedProject);
+                    cmbProject.setEnabled(false);
+                }
+
+                TextField txtName = new TextField(ts.getTranslatedString("module.projects.activity.label.name"));
+                txtName.setSizeFull();
+
                 try {
                     classes = mem.getSubClassesLight(Constants.CLASS_GENERICACTIVITY, true, false);
                     cmbClasses = new ComboBox(ts.getTranslatedString("module.projects.activity.label.type"));
@@ -125,46 +133,55 @@ public class NewProjectActivityVisualAction extends AbstractVisualAction<Dialog>
                     Logger.getLogger(NewProjectActivityVisualAction.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-            wdwNewActivity = new Dialog();
-            Label lblMessages = new Label();
-            
-            Button btnOk = new Button(ts.getTranslatedString("module.general.labels.create"), (event) -> {
-                try {
-                    if (cmbProject.getValue() == null)
-                        lblMessages.setText(ts.getTranslatedString("module.general.messages.must-fill-all-fields"));
-                    else {
+                wdwNewActivity = new Dialog();
+                wdwNewActivity.setCloseOnOutsideClick(false);
+                wdwNewActivity.setCloseOnEsc(false);
+                // To show errors or warnings related to the input parameters.
+                Label lblMessages = new Label();
+
+                Button btnOk = new Button(ts.getTranslatedString("module.general.labels.create"), (event) -> {
+                    try {
+                        if (cmbProject.getValue() == null) {
+                            lblMessages.setText(ts.getTranslatedString("module.general.messages.must-fill-all-fields"));
+                        } else {
                             ClassMetadataLight activityType = (ClassMetadataLight) cmbClasses.getValue();
-                            
+
                             newProjectActivityAction.getCallback().execute(new ModuleActionParameterSet(
-                                new ModuleActionParameter<>("project", cmbProject.getValue()),
-                                new ModuleActionParameter<>("name", txtName.getValue()),
-                                new ModuleActionParameter<>("class", activityType.getName())    
-                        ));
-                        fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
-                            ts.getTranslatedString("module.projects.actions.activity.new-activity-success"), NewProjectAction.class));
-                        wdwNewActivity.close();
-                    }
-                } catch (ModuleActionException ex) {
+                                    new ModuleActionParameter<>("project", cmbProject.getValue()),
+                                    new ModuleActionParameter<>("name", txtName.getValue()),
+                                    new ModuleActionParameter<>("class", activityType.getName())
+                            ));
+                            fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
+                                    ts.getTranslatedString("module.projects.actions.activity.new-activity-success"), NewProjectAction.class));
+                            wdwNewActivity.close();
+                            //refresh related grid
+                            if (parameters.containsKey("commandRefresh")) {
+                                commandRefresh = (Command) parameters.get("commandRefresh");
+                                getCommandRefresh().execute();
+                            }
+                        }
+                    } catch (ModuleActionException ex) {
                         Logger.getLogger(NewProjectVisualAction.class.getName()).log(Level.SEVERE, null, ex);
-                  }
-            });
-            
-            btnOk.setEnabled(false);
-            txtName.addValueChangeListener((e) -> {
-            btnOk.setEnabled(!txtName.isEmpty());
-            });
-            
-            Button btnCancel = new Button(ts.getTranslatedString("module.general.messages.cancel"), (event) -> {
-            wdwNewActivity.close();
-            });
-            
-            FormLayout lytAttributes = new FormLayout(cmbProject, txtName, cmbClasses);
-            HorizontalLayout lytMoreButtons = new HorizontalLayout(btnOk, btnCancel);
-            lytMoreButtons.setSpacing(false);
-            VerticalLayout lytMain = new VerticalLayout(lytAttributes, lytMoreButtons);
-            lytMain.setSizeFull();
-            wdwNewActivity.add(lytMain);
-            
+                    }
+                });
+
+                btnOk.setEnabled(false);
+                txtName.addValueChangeListener((e) -> {
+                    btnOk.setEnabled(!txtName.isEmpty());
+                });
+
+                Button btnCancel = new Button(ts.getTranslatedString("module.general.messages.cancel"), (event) -> {
+                    wdwNewActivity.close();
+                });
+
+                FormLayout lytAttributes = new FormLayout(cmbProject, txtName, cmbClasses);
+                HorizontalLayout lytMoreButtons = new HorizontalLayout(btnOk, btnCancel);
+                lytMoreButtons.setSpacing(false);
+                VerticalLayout lytMain = new VerticalLayout(lytAttributes, lytMoreButtons);
+                lytMain.setSizeFull();
+                wdwNewActivity.add(lytMain);
+            } else
+            return new Dialog(new Label(ts.getTranslatedString("module.projects.actions.activity.new-activity-error"))); 
         } catch (InvalidArgumentException | ApplicationObjectNotFoundException ex) {
             Logger.getLogger(NewProjectVisualAction.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -176,4 +193,18 @@ public class NewProjectActivityVisualAction extends AbstractVisualAction<Dialog>
         return newProjectActivityAction;
     }
     
+    /**
+     * refresh grid 
+     * @return commandClose;Command; refresh action 
+     */
+    public Command getCommandRefresh() {
+        return commandRefresh;
+    }
+
+    /**
+     * @param commandRefresh
+     */
+    public void setCommandRefresh(Command commandRefresh) {
+        this.commandRefresh = commandRefresh;
+    }    
 }

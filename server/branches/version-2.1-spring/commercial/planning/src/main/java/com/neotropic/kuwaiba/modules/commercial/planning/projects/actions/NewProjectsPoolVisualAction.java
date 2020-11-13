@@ -90,6 +90,8 @@ public class NewProjectsPoolVisualAction extends AbstractVisualAction<Dialog> {
         }
         
             Dialog wdwProjectsPool = new Dialog();
+            wdwProjectsPool.setCloseOnOutsideClick(false);
+            wdwProjectsPool.setCloseOnEsc(false);
             // To show errors or warnings related to the input parameters.
             Label lblMessages = new Label();
             
