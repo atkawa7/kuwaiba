@@ -76,7 +76,7 @@ public class ConfigurationVariablesModule extends AbstractModule {
 
     @Override
     public String getId() {
-        return "configvars";
+        return "configuration/variables";
     }
 
     @Override

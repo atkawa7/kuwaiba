@@ -75,7 +75,7 @@ public class ValidatorDefinitionModule extends AbstractModule {
 
     @Override
     public String getId() {
-        return "validators";
+        return "configuration/validators";
     }
 
     @Override

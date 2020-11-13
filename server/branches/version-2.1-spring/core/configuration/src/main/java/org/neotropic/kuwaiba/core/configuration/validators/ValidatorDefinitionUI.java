@@ -75,7 +75,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * to different functionalities are presented in a single place.
  * @author Mauricio Ruiz {@literal <mauricio.ruiz@kuwaiba.org>}
  */
-@Route(value = "validators", layout = ConfigurationManagerLayout.class)
+@Route(value = "configuration/validators", layout = ConfigurationManagerLayout.class)
 public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompletedListener, HasDynamicTitle {
     /**
      * Reference to the Application Entity Manager.
@@ -166,6 +166,7 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
                     this.newValidatorDefinitionVisualAction.getVisualComponent(new ModuleActionParameterSet()).open();
                 });
         btnAddNewValidatorDefinition.setEnabled(true);
+        btnAddNewValidatorDefinition.setClassName("icon-button");
 
         Command deleteValidator = () -> {
             lytValidatorDefinition.setVisible(false);
@@ -179,6 +180,7 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
                     )).open();
                 });
         btnDeleteValidatorDefinition.setEnabled(false);
+        btnDeleteValidatorDefinition.setClassName("icon-button");
 
         splitLayout = new SplitLayout();
         splitLayout.setSizeFull();
@@ -186,12 +188,13 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
         initializeValidatorsTree();
 
         List<ClassMetadataLight> classes = mem.getSubClassesLight(Constants.CLASS_INVENTORYOBJECT, true, true);
-        cbxFilterTree = new ComboBox();
-        cbxFilterTree = new ComboBox<>(ts.getTranslatedString("module.general.labels.filter"));
+        cbxFilterTree = new ComboBox<>();
+        cbxFilterTree.setPlaceholder(ts.getTranslatedString("module.general.labels.filter-placeholder"));
         cbxFilterTree.setWidthFull();
         cbxFilterTree.setItems(classes);
         cbxFilterTree.setClearButtonVisible(true);
         cbxFilterTree.setItemLabelGenerator(ClassMetadataLight::getName);
+        cbxFilterTree.setClassName("search");
 
         cbxFilterTree.addValueChangeListener(event -> {
             if (event.getValue() != null) {
@@ -399,11 +402,13 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
                     Logger.getLogger(ValidatorDefinitionUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
+            btnSave.setClassName("icon-button");
             
             Button btnCancel = new Button(ts.getTranslatedString("module.configman.validator.properties-general.button-cancel"), new Icon(VaadinIcon.CLOSE_SMALL));
             btnCancel.addClickListener(event -> {
                         wdwUpdateProperties.close();
             });
+            btnCancel.setClassName("icon-button");
             
             HorizontalLayout lytMoreButtons = new HorizontalLayout(btnSave, btnCancel);
             lytMoreButtons.setSpacing(false);

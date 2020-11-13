@@ -5,6 +5,9 @@ paper-toggle-button.green {
     --paper-toggle-button-unchecked-bar-color:  #969696;;
     --paper-toggle-button-unchecked-button-color:  #fafafa;
     --paper-toggle-button-unchecked-ink-color: var(--paper-teal-500);
+    font-size: var(--material-button-font-size);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
 }
 paper-toggle-button.pink {
     --paper-toggle-button-checked-bar-color: yellow;

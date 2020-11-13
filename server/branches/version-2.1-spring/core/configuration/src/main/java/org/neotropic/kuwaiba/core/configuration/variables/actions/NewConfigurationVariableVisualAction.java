@@ -106,6 +106,7 @@ public class NewConfigurationVariableVisualAction extends AbstractVisualAction<D
         PaperToggleButton btnMasked = new PaperToggleButton(ts.getTranslatedString("module.configvarman.configvar.label.masked"));
         btnMasked.setChecked(false);
         btnMasked.setClassName("green", true);
+        btnMasked.addClassName("icon-button");
 
         ComboBox<ConfigurationVariableType> cbxTypes = new ComboBox<>(ts.getTranslatedString("module.configvarman.configvar.label.type"));
         cbxTypes.setItems(new ConfigurationVariableType(ts.getTranslatedString("module.configvarman.configvar.type.integer"), 1),

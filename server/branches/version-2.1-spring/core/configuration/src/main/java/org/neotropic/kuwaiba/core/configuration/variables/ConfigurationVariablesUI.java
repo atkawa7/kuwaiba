@@ -62,7 +62,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * to different functionalities are presented in a single place.
  * @author Mauricio Ruiz {@literal <mauricio.ruiz@kuwaiba.org>}
  */
-@Route(value = "configvars", layout = ConfigurationManagerLayout.class)
+@Route(value = "configuration/variables", layout = ConfigurationManagerLayout.class)
 public class ConfigurationVariablesUI extends VerticalLayout implements ActionCompletedListener, 
         PropertySheet.IPropertyValueChangedListener, HasDynamicTitle {  
     /**
@@ -192,7 +192,8 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
                 });
         
         btnAddConfigurationVariablePool.getElement().setProperty("title", ts.getTranslatedString("module.configvarman.actions.new-configuration-variable-pool.description"));
-
+        btnAddConfigurationVariablePool.setClassName("icon-button");
+        
         Command deleteVariablesPool = () -> {
             lytConfigurationVariables.setVisible(false);
             lytPropertySheet.setVisible(false);
@@ -209,6 +210,7 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
         
         btnDeleteConfigurationVariablesPool.getElement().setProperty("title", ts.getTranslatedString("module.configvarman.actions.delete-configuration-variable-pool.description"));
         btnDeleteConfigurationVariablesPool.setEnabled(false);
+        btnDeleteConfigurationVariablesPool.setClassName("icon-button");
         
         btnAddConfigurationVariable = new Button(this.newConfigurationVariableVisualAction.getModuleAction().getDisplayName(), new Icon(VaadinIcon.PLUS),
                 (event) -> {
@@ -216,7 +218,8 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
                 });
         
         btnAddConfigurationVariable.getElement().setProperty("title", ts.getTranslatedString("module.configvarman.actions.new-configuration-variable.description"));
-
+        btnAddConfigurationVariable.setClassName("icon-button");
+        
         btnAddConfigVariablesSec = new Button(this.newConfigurationVariableVisualAction.getModuleAction().getDisplayName(), new Icon(VaadinIcon.PLUS),
                 (event) -> {
                     this.newConfigurationVariableVisualAction.getVisualComponent(new ModuleActionParameterSet(
@@ -226,6 +229,7 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
         btnAddConfigVariablesSec.getElement().setProperty("title", ts.getTranslatedString("module.configvarman.actions.new-configuration-variable-sec.description"));
         btnAddConfigVariablesSec.setEnabled(false);
         btnAddConfigVariablesSec.setClassName("align-self-end");
+        btnAddConfigVariablesSec.addClassName("icon-button");
            
         lytConfigurationVariablesPool = new VerticalLayout(tblConfigVariablesPool, btnAddConfigurationVariable, btnAddConfigurationVariablePool, btnDeleteConfigurationVariablesPool);
         lytConfigurationVariablesPool.setWidth("25%");
@@ -234,9 +238,14 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
         lytConfigurationVariablesPool.setMargin(false);
         buildConfigurationVariablesPoolGrid();
         
-        headerCurrentConfigVariablesPool = new H4(); 
+        headerCurrentConfigVariablesPool = new H4();
+        headerCurrentConfigVariablesPool.setClassName("header-position");
         H4 headerConfigurationVariables = new H4(ts.getTranslatedString("module.configvarman.configurationvariables"));
+        headerConfigurationVariables.setClassName("header-position");
         HorizontalLayout lytConfigHeaders = new HorizontalLayout(headerCurrentConfigVariablesPool, headerConfigurationVariables);
+        lytConfigHeaders.setClassName("header-layout-position");
+        lytConfigHeaders.setMargin(false);
+        lytConfigHeaders.setPadding(false);
         lytConfigurationVariables = new VerticalLayout(lytConfigHeaders, btnAddConfigVariablesSec, tblConfigVariables);
         lytConfigurationVariables.setWidth("30%");
         lytConfigurationVariables.setSpacing(false);
@@ -248,6 +257,7 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
         propertysheet = new PropertySheet(ts, new ArrayList<>(), "");
         propertysheet.addPropertyValueChangedListener(this);
         H4 headerPropertySheet = new H4(ts.getTranslatedString("module.propertysheet.labels.header"));
+        headerPropertySheet.setClassName("header");
         lytPropertySheet = new VerticalLayout(headerPropertySheet, propertysheet);
         lytPropertySheet.setWidth("45%");
         lytPropertySheet.setVisible(false);
@@ -294,7 +304,7 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
         tblConfigVariables.setHeightFull();
         tblConfigVariables.addColumn(ConfigurationVariable::getName)
                 .setKey(ts.getTranslatedString("module.general.labels.name"));
-        tblConfigVariables.addComponentColumn(this::createConfigurationVariableActionGrid).setWidth("1%");
+        tblConfigVariables.addComponentColumn(this::createConfigurationVariableActionGrid);
 
         tblConfigVariables.addItemClickListener(ev -> {
             currentConfigVariable = ev.getItem();
@@ -314,7 +324,9 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
         icon.getElement().setProperty("title", ts.getTranslatedString("module.configvarman.label.filter-configuration-variable-pool"));
         icon.setSize("16px");
         
-        TextField txtPoolName = new TextField(ts.getTranslatedString("module.general.labels.filter"), ts.getTranslatedString("module.general.labels.filter-placeholder"));
+        TextField txtPoolName = new TextField();
+        txtPoolName.setPlaceholder(ts.getTranslatedString("module.general.labels.filter-placeholder"));
+        txtPoolName.setClassName("search");
         txtPoolName.setValueChangeMode(ValueChangeMode.EAGER);
         txtPoolName.setWidthFull();
         txtPoolName.setSuffixComponent(icon);
@@ -405,9 +417,8 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
         btnDelete.getElement().setProperty("title", ts.getTranslatedString("module.configvarman.actions.delete-configuration-variable.description"));
         
         lyt = new HorizontalLayout(btnDelete);
-        lyt.setDefaultVerticalComponentAlignment(Alignment.END);
+        lyt.setClassName("button-action-position");
         lyt.setSizeFull();
-        
         return lyt;
     }
 
