@@ -50,7 +50,6 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
-            <version>5.1.4.RELEASE</version>
             <type>jar</type>
         </dependency>
         
@@ -72,13 +71,6 @@
                     <artifactId>neo4j-udc</artifactId> <!-- Don't let N4J to phone home -->
                 </exclusion>
             </exclusions>
-        </dependency>
-        
-        <!-- Support for the bolt protocol -->
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j-bolt</artifactId>
-            <version>3.3.3</version>
         </dependency>
         
         <!-- Groovy is used to process scripts -->

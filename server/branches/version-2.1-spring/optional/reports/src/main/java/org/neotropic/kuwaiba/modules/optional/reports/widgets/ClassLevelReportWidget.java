@@ -16,7 +16,6 @@
 package org.neotropic.kuwaiba.modules.optional.reports.widgets;
 
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -85,11 +84,8 @@ public class ClassLevelReportWidget extends AbstractDashboardWidget {
             tblInventoryReports.addItemClickListener(item -> {
                  executeInventoryReport(item.getItem());
             });
-           
-            Button btnClose = new Button(ts.getTranslatedString("module.general.messages.close"), evt -> {
-                getWdwContent().close();
-            });
-            VerticalLayout lytContent = new VerticalLayout(lblTitle, tblInventoryReports, btnClose);
+
+            VerticalLayout lytContent = new VerticalLayout(lblTitle, tblInventoryReports);
             lytContent.setWidth("400px");
             contentComponent = lytContent;
 

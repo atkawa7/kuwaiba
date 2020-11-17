@@ -1192,9 +1192,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
     private void deleteOspView() {
         if (this.getProperties().get(Constants.PROPERTY_ID) instanceof Integer && (int) this.getProperties().get(Constants.PROPERTY_ID) == -1)
             return;
-        WindowDeleteOspView confirmDialog = new WindowDeleteOspView((long) this.getProperties().get(Constants.PROPERTY_ID), ts, aem, 
-            () -> componentTabs.setSelectedTab(tools.get(Tool.NewView))
-        );
+        WindowDeleteOspView confirmDialog = new WindowDeleteOspView((long) this.getProperties().get(Constants.PROPERTY_ID), ts, aem);
         confirmDialog.open();
     }
 }

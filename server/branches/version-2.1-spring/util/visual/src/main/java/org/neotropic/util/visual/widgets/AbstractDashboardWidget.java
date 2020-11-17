@@ -64,10 +64,6 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
      * Reference to the translation service.
      */
     protected TranslationService ts;
-    /**
-     * Dialog used to show the content Component
-     */
-    Dialog wdwContent;
 
     /**
      * Use this constructor only for those widgets that won't be accessing the database.
@@ -97,12 +93,20 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
         this.title = title;
     }
 
-    public Dialog getWdwContent() {
-        return wdwContent;
+    public Div getCoverComponent() {
+        return coverComponent;
     }
 
-    public void setWdwContent(Dialog wdwContent) {
-        this.wdwContent = wdwContent;
+    public void setCoverComponent(Div coverComponent) {
+        this.coverComponent = coverComponent;
+    }
+
+    public Component getContentComponent() {
+        return contentComponent;
+    }
+
+    public void setContentComponent(Component contentComponent) {
+        this.contentComponent = contentComponent;
     }
  
     /**
@@ -120,13 +124,16 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
     
     /**
      * Displays the contents of the content widget in a separate modal window.
+     * @return The dialog.
      */
-    public void launch() {
-        if (contentComponent != null) {
-            wdwContent = new Dialog();
+    public Dialog launchAsNewWindow() {
+        Dialog wdwContent = new Dialog();
+        if (contentComponent != null)
             wdwContent.add(contentComponent);
-            wdwContent.open();
-        }
+        else
+            wdwContent.add(new Label(ts.getTranslatedString("")));
+        
+        return wdwContent;
     }
     
     /**
@@ -143,7 +150,7 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
         
         divCover.addClickListener(event -> {
             this.createContent();
-            launch();
+            this.launchAsNewWindow().open();
         });
         
         removeAll();

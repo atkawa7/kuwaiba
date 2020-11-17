@@ -215,7 +215,7 @@ public class ProjectsUI extends VerticalLayout implements ActionCompletedListene
     public void actionCompleted(ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
             new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
-                            AbstractNotification.NotificationType.ERROR, ts).open();
+                            AbstractNotification.NotificationType.INFO, ts).open();
             if (currentPool != null) {
                 loadPools();
                 loadProjects(currentPool);
@@ -695,5 +695,4 @@ public class ProjectsUI extends VerticalLayout implements ActionCompletedListene
     public String getPageTitle() {
         return ts.getTranslatedString("module.projects.title");
     }
-     
 }

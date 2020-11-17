@@ -212,15 +212,11 @@ public class RackViewWidget extends AbstractDashboardWidget implements PropertyS
             lytTools.setMargin(false);
             lytTools.setSpacing(false);
            
-            Button btnClose = new Button(ts.getTranslatedString("module.general.messages.close"), evt -> {
-               getWdwContent().close();
-            });
-            
             HorizontalLayout lytViews = new HorizontalLayout(lytTools, lytRackView, lytDetailedRackView);
             lytViews.setSizeFull();
             lytViews.setMargin(false);
             BoldLabel lblTitle = new BoldLabel(String.format("%s : %s", ts.getTranslatedString("module.visualization.rack-view-name"), rack.getName()));
-            VerticalLayout lytContent = new VerticalLayout(lblTitle, lytViews, btnClose);
+            VerticalLayout lytContent = new VerticalLayout(lblTitle, lytViews);
             lytContent.setSpacing(false);
             lytContent.setMargin(false);
             contentComponent = lytContent;

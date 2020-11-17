@@ -178,10 +178,7 @@ public class ObjectViewWidget extends AbstractDashboardWidget {
             HorizontalLayout lytTools = new HorizontalLayout(btnSaveView, btnConnect, btnZoomIn, btnZoomOut);
             objectView = new ObjectView(businessObject, bem, aem, mem, ts, resourceFactory);
 
-            Button btnClose = new Button(ts.getTranslatedString("module.general.messages.close"), evt -> {
-                getWdwContent().close();
-            });
-            VerticalLayout lytContent = new VerticalLayout(lytTools, objectView.getAsComponent(), btnClose);
+            VerticalLayout lytContent = new VerticalLayout(lytTools, objectView.getAsComponent());
             contentComponent = lytContent;
 
         } catch (InventoryException ex) {
