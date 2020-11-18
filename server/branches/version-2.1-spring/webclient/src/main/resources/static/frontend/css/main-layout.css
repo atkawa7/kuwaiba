@@ -263,3 +263,30 @@ paper-swatch-picker paper-icon-button {
     min-height: 400px;
     max-height: 400px;
 }
+
+/*Navigation Parents path*/
+powerline{
+   display: flex;
+   justify-content: center;
+}
+/*Navigation creates the polygon divs as arrows for the parents*/
+.powerline-component{
+    background-color: yellow;
+    font-size: 0.65rem;
+    font-weight: 500;
+    position: relative;
+    padding: 3px .9rem 3px 1.1rem;
+    margin-right: -12px;
+    clip-path: polygon(0% 0%, calc(100% - 14px) 0%, 100% 50%, calc(100% - 14px) 100%, 100% 100%, 0% 100%, 14px 50%);
+}
+/*Navigation color of the parents in navigation module*/
+.dracula-pink{background-color: #ff79c6;}
+
+/** used instead of H4 to have full control of the padding*/
+.dialog-title{
+    color: var(--kuwaiba-secondary-color);
+    font-size: var(--material-h6-font-size);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    text-indent: -0.05em;
+}
