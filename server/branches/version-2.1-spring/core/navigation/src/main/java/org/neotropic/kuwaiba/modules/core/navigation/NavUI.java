@@ -17,14 +17,12 @@ package org.neotropic.kuwaiba.modules.core.navigation;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.CompositionEndEvent;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.KeyPressEvent;
 import com.vaadin.flow.component.accordion.Accordion;
+import com.vaadin.flow.component.accordion.AccordionPanel;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.ItemClickEvent;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
@@ -36,9 +34,13 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.CallbackDataProvider;
+import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
+import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import java.util.ArrayList;
@@ -47,6 +49,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionCompletedListener;
 import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionRegistry;
@@ -60,9 +64,14 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.actions.DeleteBusinessObjectVisualAction;
+import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectAction;
 import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualActionToo;
 import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicBusinessObjectIconGenerator;
+import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicTreeNodeIconGenerator;
+import org.neotropic.kuwaiba.modules.core.navigation.navtree.NavigationTree;
 import org.neotropic.kuwaiba.modules.core.navigation.navtree.nodes.InventoryObjectNode;
+import org.neotropic.kuwaiba.modules.core.navigation.resources.ComplexGrid;
+import org.neotropic.kuwaiba.modules.core.navigation.resources.GridFilter;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.kuwaiba.modules.core.search.BusinessObjectSearchResultRenderer;
 import org.neotropic.kuwaiba.modules.core.search.NavDashboardFactory;
@@ -112,6 +121,9 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
      */
     @Autowired
     private ResourceFactory resourceFactory;
+    /**
+     * 
+     */
     @Autowired
     private NavDashboardFactory navDashboardFactory;
     /**
@@ -146,6 +158,11 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
      */
     private VerticalLayout lytPropertys;
     /**
+     * The main search text input in the header
+     */
+    private TextField txtSearch;
+    private GridFilter gridFilter;
+    /**
      * The search bar in the header
      */
     private VerticalLayout lytSearch;
@@ -154,18 +171,21 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
      */
     private String lastSearchText;
     /**
-     * Last set of results after a search
-     */
-    private List<BusinessObjectLight> currentSearchedResults;
-    /**
      * To keep track of the grids that are been shown after a search
      */
-    private HashMap<String, Grid> currentGridResults;
+    private HashMap<String, ComplexGrid> currentGridResults;
     /**
-     * list of a search result grouped  by class name, used to create the 
-     * result grids
+     * Last set of results after a search, result grouped by class name
      */
-    private HashMap<String, List<BusinessObjectLight>> groupedResults;
+    private HashMap<String, List<BusinessObjectLight>> currentSearchedResults;
+
+    private int currentSkip;
+    private int currentLimit;
+    private int currentCount;
+    private Button btnNext;
+    private Button btnBack;
+    private Span lblPage;
+    private HorizontalLayout lytPagination;
     
     @Override
     public void onAttach(AttachEvent ev) {
@@ -179,9 +199,12 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
         setupSearchBar();
         setupLocationHeader();
         
-        this.groupedResults = new HashMap<>();
+        this.currentSkip = 0;
+        this.currentLimit = 10;
+        this.currentCount = 0;
+        this.gridFilter = new GridFilter();
+        this.currentSearchedResults = new HashMap<>();
         this.currentGridResults = new HashMap<>();
-        this.currentSearchedResults = new ArrayList<>();
         this.actNewObj.registerActionCompletedLister(this);
         this.actDeleteObj.registerActionCompletedLister(this);
     }
@@ -195,29 +218,20 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
     @Override
     public void actionCompleted(ActionCompletedListener.ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
-            //We update the UI
-            // if we are deleting we must remove the object(s) from the current list of results
-            // if we are creating we must add he object(s) to the current list of results
-            // if we are updating we must refresh of results
-            ev.getActionResponse().entrySet().forEach(entry -> {
-                ActionResponse.Action action = (ActionResponse.Action)entry.getKey();
-                BusinessObjectLight obj = (BusinessObjectLight)entry.getValue();
-
-                if(groupedResults.get(obj.getClassName()) == null && action.equals(ActionResponse.Action.ADD))
-                    groupedResults.put(obj.getClassName(), new ArrayList<>());
-
-                if(action.equals(ActionResponse.Action.REMOVE) && currentGridResults.get(obj.getClassName()) != null && groupedResults.get(obj.getClassName()).contains(obj)){
-                    groupedResults.get(obj.getClassName()).remove(obj);
-                    currentGridResults.get(obj.getClassName()).setItems(groupedResults.get(obj.getClassName()));
+            //We update the UI if we are deleting we must remove the object(s) from the current list of results
+            if(ev.getActionResponse().containsKey(ActionResponse.Action.REMOVE_OBJECT)){
+                BusinessObjectLight obj = (BusinessObjectLight)ev.getActionResponse().get(ActionResponse.Action.REMOVE_OBJECT);
+                if(currentGridResults.get(obj.getClassName()) != null && currentSearchedResults.get(obj.getClassName()).contains(obj))
                     currentGridResults.get(obj.getClassName()).getDataProvider().refreshAll();
-                }
-                else if(action.equals(ActionResponse.Action.ADD) && !currentSearchedResults.contains(obj)){
-                    groupedResults.get(obj.getClassName()).add(obj);
-                    currentGridResults.get(obj.getClassName()).setItems(groupedResults.get(obj.getClassName()));
-                    currentGridResults.get(obj.getClassName()).getDataProvider().refreshAll();
-                }
-            });
-            
+            }// if we are creating we must add he object(s) to the current list of results
+            else if(ev.getActionResponse().containsKey(NewBusinessObjectAction.PARAM_PARENT_OID) && 
+                    ev.getActionResponse().containsKey(NewBusinessObjectAction.PARAM_PARENT_CLASS_NAME))
+            {
+                String className = (String)ev.getActionResponse().get(NewBusinessObjectAction.PARAM_CLASS_NAME);
+                if(currentGridResults.get(className) != null)
+                        currentGridResults.get(className).getDataProvider().refreshAll();
+            }
+            //TODO if we are updating attributes we must refresh of results
             new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
                             AbstractNotification.NotificationType.ERROR, ts).open();
         } else 
@@ -239,9 +253,33 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
             lytSearch.setId("nav-search-component");
             lytSearch.setWidth("100%");
             lytSearch.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
+            
+            btnNext = new Button(">");
+            btnBack = new Button("<");
+            lblPage = new Span("1");
+            btnNext.addClickListener(e -> {
+                int nextSkip = currentSkip + currentLimit;
+                btnBack.setEnabled(true);
+                processResults(lastSearchText, nextSkip, currentLimit);
+            });
+
+            btnBack.addClickListener(e -> {
+                int backSkip = currentSkip - currentLimit;
+                if(backSkip < 0)
+                    btnBack.setEnabled(false);
+                else{
+                    processResults(lastSearchText, backSkip, currentLimit);
+                    btnNext.setEnabled(currentCount == currentLimit);
+                }
+            });
+            
+            btnBack.setEnabled(false);
+            lytPagination = new HorizontalLayout(btnBack, lblPage, btnNext);
+            lytPagination.setVisible(false);
         }
         //Main column that contains the three columns
         if(lytNav == null){
+            
             lytNav = new HorizontalLayout();
             lytNav.setSpacing(false);
             lytNav.setMargin(false);
@@ -291,36 +329,32 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
      * Setups the search bar
      */
     private void setupSearchBar(){
-        TextField txtSearch;
         Icon searchIcon = new Icon(VaadinIcon.SEARCH);
-        searchIcon.setSize("20px");
+        searchIcon.setSize("16px");
         txtSearch = new TextField();
         txtSearch.setClassName("search-box-large");
         txtSearch.setPlaceholder(ts.getTranslatedString("module.general.messages.search"));
-        txtSearch.setPrefixComponent(searchIcon);
+        txtSearch.setSuffixComponent(searchIcon);
         txtSearch.setClearButtonVisible(true);
         txtSearch.setTabIndex(0);
         txtSearch.setWidth("520px");
+        txtSearch.setValueChangeMode(ValueChangeMode.EAGER);
 
         lytSearch.add(txtSearch);
         lytSearch.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER,
-        txtSearch);
+                txtSearch);
         lytSearch.add(lytParents);
-   
-        txtSearch.addKeyPressListener(new ComponentEventListener<KeyPressEvent>() {
-            @Override
-            public void onComponentEvent(KeyPressEvent event) {
-                if (event.getKey().getKeys().get(0).equals(Key.ENTER.getKeys().get(0))) //Weirdly enough, event.getKey().equals(Key.Enter) ALWAYS returns fals
-                    processResults(txtSearch.getValue());
-            }
+        lytPagination.setVisible(false);
+        lytSearch.add(lytPagination);
+
+        txtSearch.addKeyPressListener(event -> {
+            if (event.getKey().getKeys().get(0).equals(Key.ENTER.getKeys().get(0))) //Weirdly enough, event.getKey().equals(Key.Enter) ALWAYS returns fals
+                processResults(txtSearch.getValue(), 0, 10);
         });
     }
     
-//    public void replaceContent(Component newContent) {
-//        this.lytContent.removeAll();
-//        this.lytContent.add(newContent);
-//    }
-
+    private ConfigurableFilterDataProvider<String, Void, GridFilter> dpConfigurableFilter;
+   
     /**
      * Default data provider to load the whole navigation tree staring on root
      *
@@ -374,77 +408,6 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
             @Override
             public boolean hasChildren(InventoryObjectNode node) {
                 return true;
-            }
-        };
-    }
-
-    /**
-     * Creates the data provider from a given class to filter
-     *
-     * @param parentId the relative root id of the navigation tree
-     * @param parentClassName the relative root className of the navigation tree
-     * @return a filtered data provider
-     */
-    private HierarchicalDataProvider getDataProviderSeveral(List<BusinessObjectLight> roots)
-            throws InvalidArgumentException {
-        List<InventoryObjectNode> inventoryNodes = new ArrayList<>();
-        roots.forEach(object -> {
-            inventoryNodes.add(new InventoryObjectNode(object));
-        });
-
-        return new AbstractBackEndHierarchicalDataProvider<InventoryObjectNode, Void>() {
-
-            @Override
-            protected Stream<InventoryObjectNode> fetchChildrenFromBackEnd(HierarchicalQuery<InventoryObjectNode, Void> query) {
-                InventoryObjectNode parent = query.getParent();
-                if (parent != null) {
-                    BusinessObjectLight object = parent.getObject();
-                    try {
-                        List<BusinessObjectLight> children = bem.getObjectChildren(
-                                object.getClassName(), object.getId(), query.getOffset(), query.getLimit());
-                        List<InventoryObjectNode> nodes = new ArrayList();
-                        for (BusinessObjectLight child : children) {
-                            nodes.add(new InventoryObjectNode(child));
-                        }
-                        return nodes.stream();
-                    } catch (InvalidArgumentException ex) {
-                        new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),
-                                ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
-                        return new ArrayList().stream();
-                    }
-                } else
-                    return inventoryNodes.stream();
-            }
-
-            @Override
-            public int getChildCount(HierarchicalQuery<InventoryObjectNode, Void> query) {
-                InventoryObjectNode parent = query.getParent();
-                if (parent != null) {
-                    BusinessObjectLight object = parent.getObject();
-                    try {
-                        //return (int) bem.getObjectsWithFilterLight(className, filterName, filterValue);
-                        
-                        
-                        return (int) bem.getObjectChildrenCount(object.getClassName(), object.getId());
-                    } catch (Exception ex) {
-                        new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),
-                                ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
-                        return 0;
-                    }
-                } else
-                    return inventoryNodes.size();
-            }
-
-            @Override
-            public boolean hasChildren(InventoryObjectNode node) {
-                try {
-                    List<BusinessObjectLight> children = bem.getObjectChildren(node.getClassName(), node.getObject().getId(), 0, 0);
-                    return children.size() > 0;
-                } catch (InvalidArgumentException ex) {
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),
-                            ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
-                    return false;
-                }
             }
         };
     }
@@ -665,7 +628,7 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
                 Span span = new Span(new Label(parent.getClassName().equals(Constants.DUMMY_ROOT) ? "/" : parent.getName()));
                 span.setSizeUndefined();
                 span.setTitle(String.format("[%s]", parent.getClassName()));
-                span.addClassNames("powerline__component", "dracula-pink");
+                span.addClassNames("powerline-component", "dracula-pink");
                 divPowerline.add(span);
             });
             
@@ -688,76 +651,161 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
         }
     }
      
-    private void processResults(String searchedText) {
+    private void processResults(String searchedText, int skip, int limit) {
         try {
             currentGridResults = new HashMap<>(); //we must clean what its been shown
-            List<BusinessObjectLight> searchResults = new ArrayList<>();
-            //TODO if we are searching for class name 
-            //List<BusinessObjectLight> searchResults = bem.getObjectsOfClassLight(txtSearch.getValue(), -1);
-            
+            HashMap<String, List<BusinessObjectLight>> searchResults = new HashMap<>();
             //if the search has changed we must execute the query again
-            if(!searchedText.equals(lastSearchText))
-                searchResults = bem.getSuggestedObjectsWithFilter(searchedText, Constants.CLASS_INVENTORYOBJECT, -1);
-            
+            if(!searchedText.equals(lastSearchText)){
+                currentSkip = 0;
+                searchResults = bem.getSuggestedObjectsWithFilterGroupedByClassName(searchedText, skip, limit);
+            }
+            else if(skip != currentSkip || currentLimit != limit){
+                searchResults = bem.getSuggestedObjectsWithFilterGroupedByClassName(lastSearchText, skip, limit);
+                currentCount = searchResults.keySet().size();
+            }
             if (searchResults.isEmpty())
                 lytLocation.add(new Label(ts.getTranslatedString("module.general.messages.no-search-results")));
             else {
                 if(!currentSearchedResults.equals(searchResults) || currentSearchedResults != null && currentGridResults.isEmpty()){
+                    lytPagination.setVisible(true);
                     currentSearchedResults = searchResults;
-                    groupedResults = new HashMap<>();
-                    for (BusinessObjectLight obj : currentSearchedResults) {
-                        if(groupedResults.get(obj.getClassName()) == null)
-                            groupedResults.put(obj.getClassName(), new ArrayList<>());
-
-                        groupedResults.get(obj.getClassName()).add(obj);
-                    }
+                    if(currentCount < 10 && skip > 0)
+                        btnNext.setEnabled(false);
+                    else if(skip == 0)
+                            btnNext.setEnabled(true);
                 }
-                
+                lastSearchText = searchedText;
+                currentSkip = skip;
+                //currentLimit = limit;
                 Component results = createGridsResults();
                 lytLocation.removeAll();
                 lytLocation.add(results);
+                int page = (currentSkip + currentLimit)/currentLimit;
+                lblPage.setText(Integer.toString(page));
                 //NavigationTree navTree = new NavigationTree(getDataProviderSeveral(searchResults), new BasicIconGenerator(resourceFactory));
                 //lytLocation.add(navTree);
             }
-            
-        } catch (Exception ex) {
+        } catch (InvalidArgumentException ex) {
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(),
                     AbstractNotification.NotificationType.ERROR, ts).open();
         }
     }
-    
+   
     /**
      * Creates the grids with the results
      * @return an accordion with a grid for every set of classes
      */
-    private Component createGridsResults() {    
+    private Component createGridsResults(){
         Accordion acrClasses = new Accordion();
         acrClasses.setWidth("100%");
         
-        for (Map.Entry<String, List<BusinessObjectLight>> entry : groupedResults.entrySet()) {
+        for (Map.Entry<String, List<BusinessObjectLight>> entry : currentSearchedResults.entrySet()) {
             String className = entry.getKey();
             List<BusinessObjectLight> objs = entry.getValue();
-            
-            Grid<BusinessObjectLight> grdResults = new  Grid<>();
-            grdResults.setSelectionMode(Grid.SelectionMode.SINGLE);
-            grdResults.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
-            grdResults.addThemeVariants(GridVariant.LUMO_COMPACT);
-            grdResults.setHeightByRows(true);
-            grdResults.setItems(objs);
-            grdResults.addColumn(new BusinessObjectSearchResultRenderer(
-                            actionRegistry.getActionsForModule(NavModule.MODULE_ID),
-                            new NavNodeSearchResultCallback(),
-                            new BasicBusinessObjectIconGenerator(resourceFactory)
-            ));
-            //we save a the data that it is been shown in case we need to update
-            currentGridResults.put(className, grdResults);
-            acrClasses.add(className + " (" + (objs.size()) + ") ", grdResults);
-            
-            grdResults.addItemClickListener((ItemClickEvent<BusinessObjectLight> t) -> {
+        
+            ComplexGrid<BusinessObjectLight> grid = new ComplexGrid<>(bem, className, lastSearchText);
+            grid.addItemClickListener((ItemClickEvent<BusinessObjectLight> t) -> {
                 lytParents.removeAll();
                 lytParents.add(getLocalizationPath(t.getItem()));
+                try{
+                    List<BusinessObjectLight> roots = new ArrayList<>();
+                    roots.add(t.getItem());
+                    lytNetwork.removeAll();
+                    NavigationTree navTree = new NavigationTree(getDataProviderSeveral(roots), new BasicTreeNodeIconGenerator(resourceFactory));
+                    lytNetwork.add(navTree);
+                } catch (InvalidArgumentException ex) {
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),
+                                ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
+                }
+                
             });
+            //uncommnet to avoid actions 
+            
+            grid.setFirstColumn(grid.addColumn(new BusinessObjectSearchResultRenderer(
+                    actionRegistry.getActionsForModule(NavModule.MODULE_ID),
+                    new NavNodeSearchResultCallback(),
+                    new BasicBusinessObjectIconGenerator(resourceFactory)
+            )));
+            
+            
+            grid.setPageSize(10);// Sets the max number of items to be rendered on the grid for each page, only works for the after 50 elements
+            currentGridResults.put(className, grid);
+            grid.createDataProviderPaginateGrid();
+            grid.createPaginateGridFilter();
+            acrClasses.add(className + " (" + currentSearchedResults.get(className).size() + ") ", grid);
         }
         return acrClasses;
+    }
+    
+     /**
+     * Creates the data provider from a given class to filter
+     *
+     * @param parentId the relative root id of the navigation tree
+     * @param parentClassName the relative root className of the navigation tree
+     * @return a filtered data provider
+     */
+    private HierarchicalDataProvider getDataProviderSeveral(List<BusinessObjectLight> roots)
+            throws InvalidArgumentException {
+        List<InventoryObjectNode> inventoryNodes = new ArrayList<>();
+        roots.forEach(object -> {
+            inventoryNodes.add(new InventoryObjectNode(object));
+        });
+
+        return new AbstractBackEndHierarchicalDataProvider<InventoryObjectNode, Void>() {
+
+            @Override
+            protected Stream<InventoryObjectNode> fetchChildrenFromBackEnd(HierarchicalQuery<InventoryObjectNode, Void> query) {
+                InventoryObjectNode parent = query.getParent();
+                if (parent != null) {
+                    BusinessObjectLight object = parent.getObject();
+                    try {
+                        List<BusinessObjectLight> children = bem.getObjectChildren(
+                                object.getClassName(), object.getId(), query.getOffset(), query.getLimit());
+                        List<InventoryObjectNode> nodes = new ArrayList();
+                        for (BusinessObjectLight child : children) {
+                            nodes.add(new InventoryObjectNode(child));
+                        }
+                        return nodes.stream();
+                    } catch (InvalidArgumentException ex) {
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),
+                                ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
+                        return new ArrayList().stream();
+                    }
+                } else
+                    return inventoryNodes.stream();
+            }
+
+            @Override
+            public int getChildCount(HierarchicalQuery<InventoryObjectNode, Void> query) {
+                InventoryObjectNode parent = query.getParent();
+                if (parent != null) {
+                    BusinessObjectLight object = parent.getObject();
+                    try {
+                        //return (int) bem.getObjectsWithFilterLight(className, filterName, filterValue);
+                        
+                        
+                        return (int) bem.getObjectChildrenCount(object.getClassName(), object.getId());
+                    } catch (Exception ex) {
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),
+                                ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
+                        return 0;
+                    }
+                } else
+                    return inventoryNodes.size();
+            }
+
+            @Override
+            public boolean hasChildren(InventoryObjectNode node) {
+                try {
+                    List<BusinessObjectLight> children = bem.getObjectChildren(node.getClassName(), node.getObject().getId(), 0, 0);
+                    return children.size() > 0;
+                } catch (InvalidArgumentException ex) {
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),
+                            ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
+                    return false;
+                }
+            }
+        };
     }
 }

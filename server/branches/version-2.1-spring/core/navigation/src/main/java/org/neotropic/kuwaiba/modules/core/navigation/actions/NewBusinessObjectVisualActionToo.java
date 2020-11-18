@@ -17,6 +17,8 @@ package org.neotropic.kuwaiba.modules.core.navigation.actions;
 
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.ShortcutRegistration;
+import com.vaadin.flow.component.accordion.Accordion;
+import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -39,6 +41,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionException;
@@ -47,6 +50,7 @@ import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionParameter
 import org.neotropic.kuwaiba.core.apis.integration.modules.actions.AbstractAction;
 import org.neotropic.kuwaiba.core.apis.integration.modules.actions.AbstractVisualInventoryAction;
 import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionCompletedListener.ActionCompletedEvent;
+import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionResponse;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.TemplateObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
@@ -85,10 +89,6 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
      * To keep the mandatory attributes of the selected class
      */
     private List<AttributeMetadata> mandatoryAttributesInSelectedClass;
-    /**
-     * To keep the possible templates of the selected class
-     */
-    private List<TemplateObjectLight> templatesForSelectedClass;
     /**
      * 
      */
@@ -135,19 +135,19 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
     public Dialog getVisualComponent(ModuleActionParameterSet parameters) {
         attributes = new HashMap();
         mandatoryAttrtsState =  new HashMap<>();
-        templatesForSelectedClass = new ArrayList<>();
         mandatoryAttributesInSelectedClass = new ArrayList<>();
         
         //options for object creation 
-        String singleObj = ts.getTranslatedString("module.navigation.actions.new-business-object.name");
-        String multipleObj = ts.getTranslatedString("module.navigation.actions.new-multiple-business-object.name");
-        String templateObj = ts.getTranslatedString("module.navigation.actions.new-business-object-from-template.name");
+        String singleObj = ts.getTranslatedString("module.navigation.actions.new-single-business-object");
+        String multipleObj = ts.getTranslatedString("module.navigation.actions.new-multiple-business-object");
+        String templateObj = ts.getTranslatedString("module.navigation.actions.new-business-object-from-template");
         
         HorizontalLayout lytExtraFields =  new HorizontalLayout();
         lytExtraFields.setWidth("100%");
         
         BusinessObjectLight businessObject = (BusinessObjectLight) parameters.get(PARAM_BUSINESS_OBJECT);
         Dialog wdwNewBusinessObject = new Dialog();
+        wdwNewBusinessObject.setMinWidth("450px");
         
         if (businessObject != null) {
             try {
@@ -156,41 +156,51 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
                 lytHeader.setSpacing(false);
                 lytHeader.setPadding(false);
                 lytHeader.setMargin(false);
-                H4 hdnTitle = new H4(newBusinessObjectAction.getDisplayName());
+                Label lblTitle = new Label(newBusinessObjectAction.getDisplayName());
+                lblTitle.setClassName("dialog_title");
                 Label lblParent = new Label(businessObject.toString());
                 
-                RadioButtonGroup<String> rdbNewObjtOptions = new RadioButtonGroup<>();
-                rdbNewObjtOptions.setRequired(true);
-                rdbNewObjtOptions.setItems(singleObj, multipleObj, templateObj);
-                rdbNewObjtOptions.setValue(ts.getTranslatedString("module.navigation.actions.new-business-object.name"));
+                Accordion acrNewObjtOptions = new Accordion();
+                acrNewObjtOptions.setWidth("100%");
+                
                 
                 ComboBox<ClassMetadataLight> cmbPossibleChildrenClass = new ComboBox(ts.getTranslatedString("module.navigation.actions.new-business-object.ui.object-class"));
                 cmbPossibleChildrenClass.setItems(getChildren(businessObject.getClassName()));
                 cmbPossibleChildrenClass.setRequired(true);
                 cmbPossibleChildrenClass.setEnabled(true);
-                cmbPossibleChildrenClass.setPlaceholder("aaaaaaaaa");
+                cmbPossibleChildrenClass.setPlaceholder(ts.getTranslatedString("module.navigation.actions.new-business-object.select-class"));
                 cmbPossibleChildrenClass.setItemLabelGenerator(class_ -> 
                     class_.getDisplayName() != null && !class_.getDisplayName().isEmpty() ? class_.getDisplayName() : class_.getName()
                 );
-                //mandatory fields
+                //New object name
                 TextField txtName = new TextField(ts.getTranslatedString("module.navigation.actions.new-business-object.ui.object-name"));
                 txtName.setErrorMessage(ts.getTranslatedString("module.navigation.actions.new-business-object.ui.empty-name"));
                 txtName.setClearButtonVisible(true);
                 txtName.setValueChangeMode(ValueChangeMode.EAGER);
                 txtName.setRequiredIndicatorVisible(true);
                 
+                //Templantes combo
                 ComboBox<TemplateObjectLight> cmbTemplate = new ComboBox(ts.getTranslatedString("module.navigation.actions.new-business-object.ui.object-template"));
                 cmbTemplate.setEnabled(false);
                 cmbTemplate.setSizeFull();
                 cmbTemplate.setItemLabelGenerator(TemplateObjectLight::getName);
-                
-                TextField txtCommand = new TextField(ts.getTranslatedString("module.navigation.actions.new-multiple-business-object-pattern"));
-                txtCommand.setSizeFull();
-                txtCommand.setPlaceholder("[sequence(x,y)]...");
-                
+                //Multilpe pattern
+                TextField txtPattern = new TextField(ts.getTranslatedString("module.navigation.actions.new-multiple-business-object-pattern"));
+                txtPattern.setSizeFull();
+                txtPattern.setPlaceholder("[sequence(x,y)]...");
+                //Mandatory Fields
                 FormLayout lytFields = new FormLayout();
-                lytFields.add(rdbNewObjtOptions, 2);
                 lytFields.add(cmbPossibleChildrenClass);
+                lytFields.add(txtName);
+                VerticalLayout lytSingleObj = new VerticalLayout(lytFields, lytExtraFields);
+                lytSingleObj.setPadding(false);
+                lytSingleObj.setMargin(false);
+                lytSingleObj.setSpacing(false);
+                
+                AccordionPanel add = acrNewObjtOptions.add(singleObj, lytSingleObj);
+                add.addThemeName("vaadin-accordion-panel");
+                AccordionPanel add1 = acrNewObjtOptions.add(multipleObj, txtPattern);
+                add1.addThemeName("vaadin-accordion-panel");
                 
                 Button btnCancel = new Button(ts.getTranslatedString("module.general.messages.cancel"), event -> wdwNewBusinessObject.close());
                 btnOk = new Button(ts.getTranslatedString("module.general.messages.ok"));
@@ -199,18 +209,37 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
                 btnOk.addClickListener(event -> {
                     try {
                         attributes.put(Constants.PROPERTY_NAME, txtName.getValue());
-                        newBusinessObjectAction.getCallback().execute(new ModuleActionParameterSet(
-                                new ModuleActionParameter(NewBusinessObjectAction.PARAM_CLASS_NAME, cmbPossibleChildrenClass.getValue().getName()),
-                                new ModuleActionParameter(NewBusinessObjectAction.PARAM_PARENT_CLASS_NAME, businessObject.getClassName()),
-                                new ModuleActionParameter(NewBusinessObjectAction.PARAM_PARENT_OID, businessObject.getId()),
-                                new ModuleActionParameter(NewBusinessObjectAction.PARAM_ATTRIBUTES, attributes),
-                                new ModuleActionParameter(NewBusinessObjectAction.PARAM_TEMPLATE_ID,
-                                        cmbTemplate.getValue() != null ? cmbTemplate.getValue().getId() : null)
-                        ));
+                        OptionalInt openedIndex = acrNewObjtOptions.getOpenedIndex();
+                        ModuleActionParameterSet params = new ModuleActionParameterSet(
+                            new ModuleActionParameter(NewBusinessObjectAction.PARAM_CLASS_NAME, cmbPossibleChildrenClass.getValue().getName()),
+                            new ModuleActionParameter(NewBusinessObjectAction.PARAM_PARENT_CLASS_NAME, businessObject.getClassName()),
+                            new ModuleActionParameter(NewBusinessObjectAction.PARAM_PARENT_OID, businessObject.getId()));
+                        openedIndex.ifPresent(i ->{
+                            if(i == 0){
+                                cmbTemplate.clear();
+                                txtPattern.clear();
+                                params.put(NewBusinessObjectAction.PARAM_ATTRIBUTES, attributes);
+                            }
+                            else if(i == 1){
+                                txtPattern.clear();
+                                params.put(NewBusinessObjectAction.PARAM_TEMPLATE_ID,
+                                        cmbTemplate.getValue() != null ? cmbTemplate.getValue().getId() : null);
+                            }else if(i == 2){
+                                cmbTemplate.clear();    
+                                params.put(NewBusinessObjectAction.PARAM_PATTERN,
+                                        txtPattern.getValue());
+                            }
+                        });
+                        ActionResponse actionResponse = new ActionResponse();
+                        actionResponse.put(NewBusinessObjectAction.PARAM_PARENT_OID, businessObject.getId());
+                        actionResponse.put(NewBusinessObjectAction.PARAM_PARENT_CLASS_NAME, businessObject.getClassName());
+                        actionResponse.put(NewBusinessObjectAction.PARAM_CLASS_NAME, businessObject.getClassName());
+                        
+                        newBusinessObjectAction.getCallback().execute(params);
                         fireActionCompletedEvent(new ActionCompletedEvent(
                                 ActionCompletedEvent.STATUS_SUCCESS,
                                 ts.getTranslatedString("module.navigation.actions.new-business-object.ui.success"),
-                                NewBusinessObjectAction.class)
+                                NewBusinessObjectAction.class, actionResponse)
                         );
                         wdwNewBusinessObject.close();
                     } catch (ModuleActionException ex) {
@@ -223,22 +252,7 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
                 });
                 btnOk.setAutofocus(true);
                 btnOk.setEnabled(false);
-                
-                rdbNewObjtOptions.addValueChangeListener(event -> {
-                    if(cmbPossibleChildrenClass.getValue() != null){
-                        lytExtraFields.removeAll();
-                        btnOk.setEnabled(false);
-                        if(event.getValue().equals(singleObj))
-                            lytExtraFields.add(createMandatoryAttributes(mandatoryAttributesInSelectedClass));
-                        
-                        else if(event.getValue().equals(multipleObj))
-                            lytExtraFields.add(txtCommand);
 
-                        else if(event.getValue().equals(templateObj))
-                            lytExtraFields.add(cmbTemplate);
-                    }
-                });
-                
                 txtName.addValueChangeListener(event -> {
                     if (event.getValue() != null && !event.getValue().isEmpty()) {
                         txtName.setInvalid(false);
@@ -253,36 +267,31 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
                         btnOk.setEnabled(false);
                     }
                 });
-                
+                //To keep the AccordionPanel for templates to remove it when the seletec class has no template
+                List<AccordionPanel> acpTemplate = new ArrayList<>();
                 cmbPossibleChildrenClass.addValueChangeListener(event -> {
                     if (event.getValue() != null) {
                         try {
                             lytExtraFields.removeAll();
                             btnOk.setEnabled(false);
                             //Templates
-                            templatesForSelectedClass = aem.getTemplatesForClass(event.getValue().getName());
-                            cmbTemplate.setItems(templatesForSelectedClass);
+                            List<TemplateObjectLight> templatesForSelectedClass = aem.getTemplatesForClass(event.getValue().getName());
+                            
                             if(!templatesForSelectedClass.isEmpty()){
+                                cmbTemplate.setItems(templatesForSelectedClass);
                                 cmbTemplate.setEnabled(true);
                                 cmbTemplate.setPlaceholder(ts.getTranslatedString("module.navigation.actions.new-business-object-from-template.select-template"));
+                                AccordionPanel add2 = acrNewObjtOptions.add(templateObj, cmbTemplate);
+                                add2.addThemeName("vaadin-accordion-panel");
+                                acpTemplate.add(add2);
                             }
-                            else{
-                                cmbTemplate.setPlaceholder(ts.getTranslatedString("module.navigation.actions.new-business-object-from-template.no-template"));
-                                cmbTemplate.setEnabled(false);
-                            }//end templates
-                            
+                            else
+                                acrNewObjtOptions.remove(acpTemplate.get(0));
                             //Mandatory attribtues
                             mandatoryAttributesInSelectedClass = mem.getMandatoryAttributesInClass(event.getValue().getName());
-                            if(!mandatoryAttributesInSelectedClass.isEmpty() && 
-                                    rdbNewObjtOptions.getValue().equals(singleObj))
+                            if(!mandatoryAttributesInSelectedClass.isEmpty())
                                 lytExtraFields.add(createMandatoryAttributes(mandatoryAttributesInSelectedClass));
-                            //end mandatory attributes
-                            else if(rdbNewObjtOptions.getValue().equals(templateObj))
-                                lytExtraFields.add(cmbTemplate);
-
-                            else if(rdbNewObjtOptions.getValue().equals(multipleObj))
-                                lytExtraFields.add(txtCommand);
-                            
+                           
                         } catch (InventoryException ex) {
                             lytExtraFields.removeAll();
                             cmbTemplate.setValue(null);
@@ -301,20 +310,23 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
                 });
                 
                 cmbTemplate.addValueChangeListener(e ->{
+                    txtPattern.clear();
                     btnOk.setEnabled(e.getValue()!= null);
                 });
                 
-                txtCommand.addValueChangeListener(e ->{
+                txtPattern.addValueChangeListener(e ->{
+                    cmbTemplate.clear();
                     btnOk.setEnabled(e.getValue()!= null);
                 });
                 
                 HorizontalLayout lytButtons = new HorizontalLayout(btnCancel, btnOk);
                 
-                VerticalLayout lytMain = new VerticalLayout(hdnTitle,
-                        lblParent,
-                        rdbNewObjtOptions, lytFields, lytExtraFields, lytButtons);
-                lytMain.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, rdbNewObjtOptions);
+                VerticalLayout lytMain = new VerticalLayout(lblTitle, lblParent); 
                 lytMain.setHorizontalComponentAlignment(FlexComponent.Alignment.END, lytButtons);
+                lytMain.setPadding(true);
+                
+                lytMain.addAndExpand(acrNewObjtOptions);
+                lytMain.add(lytButtons);
                 
                 wdwNewBusinessObject.add(lytMain);
             } catch (InventoryException ex) {

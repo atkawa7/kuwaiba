@@ -64,9 +64,9 @@ public class DeleteBusinessObjectAction extends AbstractAction {
         setCallback(parameters -> {
             try {
                 String className = (String) parameters.get(PARAM_OBJECT_CLASS_NAME);
-                String id = (String) parameters.get(PARAM_OBJECT_OID);
+                String id_ = (String) parameters.get(PARAM_OBJECT_OID);
             
-                bem.deleteObject(className, id, false);
+                bem.deleteObject(className, id_, false);
                 return new ActionResponse();
             } catch (InventoryException ex) {
                 throw new ModuleActionException(ex.getMessage());

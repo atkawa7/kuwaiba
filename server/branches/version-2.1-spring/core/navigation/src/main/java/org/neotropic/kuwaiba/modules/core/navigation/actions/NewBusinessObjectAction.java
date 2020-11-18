@@ -36,32 +36,40 @@ import org.springframework.stereotype.Component;
 @Component
 public class NewBusinessObjectAction extends AbstractAction {
     /**
-     * New business object action parameter class name.
+     * New business object action parameter class name
      */
     public static String PARAM_CLASS_NAME = "className"; //NOI18N
     /**
-     * New business object action parameter parent class name.
+     * New business object action parameter parent class name
      */
     public static String PARAM_PARENT_CLASS_NAME = "parentClassName"; //NOI18N
     /**
-     * New business object action parameter id.
+     * New business object action parameter id
      */
     public static String PARAM_PARENT_OID = "id"; //NOI18N
     /**
-     * New business object action parameter attributes.
+     * New business object action parameter id
+     */
+    public static String PARAM_OBJECTS_OIDS = "ids"; //NOI18N
+    /**
+     * New business object action parameter attributes
      */
     public static String PARAM_ATTRIBUTES = "attributes"; //NOI18N
     /**
-     * New business object action parameter template id.
+     * New business object action parameter template id
      */
     public static String PARAM_TEMPLATE_ID = "templateId"; //NOI18N
     /**
-     * Reference to the Business Entity Manager.
+     * Pattern to create multiple objects
+     */
+    public static String PARAM_PATTERN = "pattern"; //NOI18N
+    /**
+     * Reference to the Business Entity Manager
      */
     @Autowired
     private BusinessEntityManager bem;
     /**
-     * Reference to the Translation Service.
+     * Reference to the Translation Service
      */
     @Autowired
     private TranslationService ts;
@@ -81,8 +89,11 @@ public class NewBusinessObjectAction extends AbstractAction {
                 String parentOid = (String) parameters.get(PARAM_PARENT_OID);
                 HashMap<String, String> attributes = (HashMap) parameters.get(PARAM_ATTRIBUTES);
                 String templateId = (String) parameters.get(PARAM_TEMPLATE_ID);
-            
-                bem.createObject(className, parentClassName, parentOid, attributes, templateId);
+                String pattern = (String) parameters.get(PARAM_PATTERN);
+                if(pattern != null)
+                    bem.createBulkObjects(className, parentClassName, parentOid, pattern);
+                else
+                    bem.createObject(className, parentClassName, parentOid, attributes, templateId);
                 return new ActionResponse();
             } catch (InventoryException ex) {
                 throw new ModuleActionException(ex.getMessage());
