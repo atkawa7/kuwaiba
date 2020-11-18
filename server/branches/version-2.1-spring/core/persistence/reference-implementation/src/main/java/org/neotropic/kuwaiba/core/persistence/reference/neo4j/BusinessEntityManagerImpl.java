@@ -3630,5 +3630,117 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             return objectChildren;
         }
     }
+    
+    @Override
+    public List<BusinessObjectLight> getObjectOfClassLigth(String className, HashMap <String, String> filter, long skip, long limit) throws InvalidArgumentException, MetadataObjectNotFoundException {
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+            if (className == null)
+                throw new InvalidArgumentException("The className cannot be null");
+            if (skip < 0)
+                throw new InvalidArgumentException("The skip cannot be less than 0");
+            if (limit < 0)
+                throw new InvalidArgumentException("The limit cannot be less than 0");
+            
+            Node classMetadataNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, className);
+            final String INSTANCE = "instance"; //NOI18N
+            
+            if (classMetadataNode == null)
+                throw new MetadataObjectNotFoundException(className);
+
+            HashMap<String, Object> parameters = new HashMap();
+            StringBuilder queryBuilder = new StringBuilder();
+            StringBuilder queryFilterBuilder = new StringBuilder();
+            
+            boolean isAbstract = (Boolean) classMetadataNode.getProperty(Constants.PROPERTY_ABSTRACT);
+            parameters.put("className", className); //NOI18N
+            
+            for (Map.Entry<String, String> entry : filter.entrySet()){
+                String key = (String)entry.getKey();
+                String val = (String)entry.getValue();
+                if(val != null){
+                    parameters.put(key, val);
+                    queryFilterBuilder.append(String.format("AND TOLOWER(instance.%s) CONTAINS TOLOWER($%s) ", key, key)); //NOI18N
+                }
+            }
+            
+            if (isAbstract) {
+                queryBuilder.append("MATCH (class:classes)<-[:EXTENDS*]-"); //NOI18N
+                queryBuilder.append("(subclass:classes)<-[:INSTANCE_OF]-"); //NOI18N
+                queryBuilder.append("(instance:" + Constants.LABEL_INVENTORY_OBJECTS + ") "); //NOI18N
+                queryBuilder.append("WHERE class.name = $className "); //NOI18N
+                queryBuilder.append(queryFilterBuilder.toString());
+                queryBuilder.append(String.format("RETURN instance AS %s\n", INSTANCE)); //NOI18N
+                queryBuilder.append("ORDER BY instance.name ASC SKIP $skip LIMIT $limit;"); //NOI18N
+            } else {
+                queryBuilder.append("MATCH (class:classes)<-[:INSTANCE_OF]-"); //NOI18N
+                queryBuilder.append("(instance:" + Constants.LABEL_INVENTORY_OBJECTS + ") "); //NOI18N
+                queryBuilder.append("WHERE class.name=$className "); //NOI18N
+                queryBuilder.append(queryFilterBuilder.toString());
+                queryBuilder.append(String.format("RETURN instance AS %s\n", INSTANCE)); //NOI18N
+                queryBuilder.append("ORDER BY instance.name ASC SKIP $skip LIMIT $limit;"); //NOI18N
+            }
+            parameters.put("skip", skip); //NOI18N
+            parameters.put("limit", limit); //NOI18N
+            Result result = connectionManager.getConnectionHandler().execute(queryBuilder.toString(), parameters);
+            List<BusinessObjectLight> objectChildren = new ArrayList();
+            while (result.hasNext())
+                objectChildren.add(ogmService.createObjectLightFromNode((Node) result.next().get(INSTANCE)));
+            tx.success();
+            return objectChildren;
+        }
+    }
+    
+    @Override
+    public HashMap<String, List<BusinessObjectLight>> getSuggestedObjectsWithFilterGroupedByClassName(String filter,  long skip, long limit) throws InvalidArgumentException {
+        try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
+            if (filter == null)
+                throw new InvalidArgumentException("The className cannot be null");
+            if (skip < 0)
+                throw new InvalidArgumentException("The skip cannot be less than 0");
+            if (limit < 0)
+                throw new InvalidArgumentException("The limit cannot be less than 0");
+                        
+            HashMap<String, Object> parameters = new HashMap();
+            StringBuilder queryBuilder = new StringBuilder();
+            
+            queryBuilder.append(String.format("MATCH (object:%s)", inventoryObjectLabel)); //NOI18N
+            queryBuilder.append("-[:INSTANCE_OF]->(class) "); //NOI18N
+            queryBuilder.append("WHERE TOLOWER(object.name) CONTAINS TOLOWER($searchString) "); //NOI18N
+            queryBuilder.append("OR TOLOWER(class.name) CONTAINS TOLOWER($searchString) "); //NOI18N
+            queryBuilder.append("RETURN class {.name, objects: collect(object {.name, ._uuid})} "); //NOI18N
+            queryBuilder.append("ORDER BY class.name ASC SKIP $skip LIMIT $limit;"); //NOI18N
+
+            parameters.put("searchString", filter);
+            parameters.put("skip", skip); //NOI18N
+            parameters.put("limit", limit); //NOI18N
+            
+            HashMap<String, List<BusinessObjectLight>> res  = new HashMap<>();
+            Result result = connectionManager.getConnectionHandler().execute(queryBuilder.toString(), parameters);
+            //format {name: className1, Objects[{}, {}]} {name: className2, Objects[{}, {}]} 
+            while (result.hasNext()){
+                Map<String, Object> row = result.next();
+                
+                row.entrySet().forEach(entry_ -> {
+                    String key = entry_.getKey(); 
+                    //format {name: className1, Objects[{}, {}]} {name: className2, Objects[{}, {}]} 
+                    HashMap val = (HashMap)entry_.getValue();
+                    String className = (String)val.get("name"); //name: className
+                    //objects: list the objects attributes of the className in a map: [{name, _uuid:}, {name:, uuid:}, {name:, _uuid:}]
+                    ArrayList objects = (ArrayList)val.get("objects");
+
+                    if(res.get(className) == null)
+                        res.put(className, new ArrayList<>());
+
+                    objects.forEach(inventoryObjectData -> {
+                        res.get(className).add(new BusinessObjectLight(className,
+                                (String)((HashMap)inventoryObjectData).get("_uuid"), 
+                                (String)((HashMap)inventoryObjectData).get("name")));
+                    });
+                });
+            }
+            tx.success();
+            return res;
+        }
+    }
     //</editor-fold>
 }
