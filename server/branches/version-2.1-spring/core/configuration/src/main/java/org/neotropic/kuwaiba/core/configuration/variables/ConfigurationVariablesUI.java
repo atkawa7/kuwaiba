@@ -364,7 +364,7 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
             try {
                 new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
-                            AbstractNotification.NotificationType.ERROR, ts).open();
+                            AbstractNotification.NotificationType.INFO, ts).open();
                     
                 if(currentConfigVariablesPool != null){
                     loadConfigurationVariablesPools();

@@ -199,10 +199,10 @@ public class ContractManagerUI extends VerticalLayout implements ActionCompleted
     }
 
     @Override
-    public void actionCompleted(ActionCompletedEvent ev) {
+    public void actionCompleted(ActionCompletedListener.ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
             new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
-                            AbstractNotification.NotificationType.ERROR, ts).open();
+                            AbstractNotification.NotificationType.INFO, ts).open();
             if (currentPool != null) {
                 loadPools();
                 loadContracts(currentPool);
@@ -251,6 +251,7 @@ public class ContractManagerUI extends VerticalLayout implements ActionCompleted
         btnAddPool.setClassName("icon-button");
         
         Command deletePool = () -> {
+          currentPool = null;  
           lytContracts.setVisible(false);
           lytPropertySheet.setVisible(false);
           btnDeletePool.setEnabled(false);
@@ -285,7 +286,9 @@ public class ContractManagerUI extends VerticalLayout implements ActionCompleted
         btnAddContractSec.addClassName("icon-button");
          
         buildPoolGrid();
-        lytPools = new VerticalLayout(tblPools, btnAddContract, btnAddPool, btnDeletePool);
+        H4 headerPools = new H4(ts.getTranslatedString("module.contractman.pool.header"));
+        headerPools.setClassName("header-position");
+        lytPools = new VerticalLayout(headerPools, tblPools, btnAddContract, btnAddPool, btnDeletePool);
         lytPools.setWidth("25%");
         lytPools.setPadding(false);
         lytPools.setMargin(false);
@@ -296,7 +299,7 @@ public class ContractManagerUI extends VerticalLayout implements ActionCompleted
         headerPoolName.setClassName("header-position");
         H4 headerContract = new H4(ts.getTranslatedString("module.contractman.contract.header"));
         headerContract.setClassName("header-position");
-        HorizontalLayout lytHeaders = new HorizontalLayout(headerPoolName, headerContract);
+        HorizontalLayout lytHeaders = new HorizontalLayout(headerContract, headerPoolName);
         lytHeaders.setClassName("header-layout-position");
         lytHeaders.setMargin(false);
         lytHeaders.setPadding(false);
@@ -328,6 +331,10 @@ public class ContractManagerUI extends VerticalLayout implements ActionCompleted
             List<Pool> listPool = bem.getRootPools(Constants.CLASS_GENERICCONTRACT, POOL_TYPE_MODULE_ROOT, true);
             tblPools.setItems(listPool);
             tblPools.getDataProvider().refreshAll();
+            if (listPool.isEmpty())
+                btnAddContract.setEnabled(false);
+            else
+                btnAddContract.setEnabled(true);
         } catch (InvalidArgumentException ex) {
             Logger.getLogger(ContractManagerUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -341,7 +348,10 @@ public class ContractManagerUI extends VerticalLayout implements ActionCompleted
             tblPools.setHeightFull();
             tblPools.addColumn(Pool::getName)
                     .setKey(ts.getTranslatedString("module.general.labels.name"));
-
+            if (listPool.isEmpty())
+                btnAddContract.setEnabled(false);
+            else 
+                btnAddContract.setEnabled(true);
             tblPools.addItemClickListener(event -> {
                 btnDeletePool.setEnabled(true);
                 lytContracts.setVisible(true);

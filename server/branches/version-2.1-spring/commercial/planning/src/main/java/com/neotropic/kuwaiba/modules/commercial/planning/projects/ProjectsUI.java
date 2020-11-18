@@ -212,7 +212,7 @@ public class ProjectsUI extends VerticalLayout implements ActionCompletedListene
     }
     
     @Override
-    public void actionCompleted(ActionCompletedEvent ev) {
+    public void actionCompleted(ActionCompletedListener.ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
             new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
                             AbstractNotification.NotificationType.INFO, ts).open();
@@ -311,7 +311,9 @@ public class ProjectsUI extends VerticalLayout implements ActionCompletedListene
         btnAddActivity.setClassName("icon-button");
                 
         buildPoolGrid();
-        lytPools = new VerticalLayout(tblPools, btnAddProject, btnAddPool, btnDeletePool);
+        H4 headerPools = new H4(ts.getTranslatedString("module.projects.pool.header"));
+        headerPools.setClassName("header-position");
+        lytPools = new VerticalLayout(headerPools, tblPools, btnAddProject, btnAddPool, btnDeletePool);
         lytPools.setWidth("25%");
         lytPools.setPadding(false);
         lytPools.setMargin(false);
@@ -322,7 +324,7 @@ public class ProjectsUI extends VerticalLayout implements ActionCompletedListene
         headerPoolName.setClassName("header-position");
         H4 headerProject = new H4(ts.getTranslatedString("module.projects.project.header"));
         headerProject.setClassName("header-position");
-        HorizontalLayout lytHeaders = new HorizontalLayout(headerPoolName, headerProject);
+        HorizontalLayout lytHeaders = new HorizontalLayout(headerProject, headerPoolName);
         lytHeaders.setClassName("header-layout-position");
         lytHeaders.setMargin(false);
         lytHeaders.setPadding(false);
@@ -357,6 +359,10 @@ public class ProjectsUI extends VerticalLayout implements ActionCompletedListene
             List<Pool> listPool = bem.getRootPools(Constants.CLASS_GENERICPROJECT, ApplicationEntityManager.POOL_TYPE_MODULE_COMPONENT, true);
             tblPools.setItems(listPool);
             tblPools.getDataProvider().refreshAll();
+            if (listPool.isEmpty())
+                btnAddProject.setEnabled(false);
+            else
+                btnAddProject.setEnabled(true);
         } catch (InvalidArgumentException ex) {
             Logger.getLogger(ProjectsUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -370,7 +376,10 @@ public class ProjectsUI extends VerticalLayout implements ActionCompletedListene
             tblPools.setHeightFull();
             tblPools.addColumn(Pool::getName)
                     .setKey(ts.getTranslatedString("module.general.labels.name"));
-            
+            if(listPool.isEmpty())
+                btnAddProject.setEnabled(false);
+            else
+                btnAddProject.setEnabled(true);
             tblPools.addItemClickListener(event -> {
                 btnDeletePool.setEnabled(true);
                 lytProjects.setVisible(true);
@@ -398,6 +407,7 @@ public class ProjectsUI extends VerticalLayout implements ActionCompletedListene
      */
     private TextField createTxtFieldPoolName(ListDataProvider<Pool> dataProvider) {
         Icon iconSearch = VaadinIcon.SEARCH.create();
+        iconSearch.getElement().setProperty("title", ts.getTranslatedString("module.projects.pool.filter"));
         iconSearch.setSize("16px");
         
         TextField txtPoolName = new TextField();
@@ -417,6 +427,10 @@ public class ProjectsUI extends VerticalLayout implements ActionCompletedListene
             List<BusinessObjectLight> listProjects = bem.getPoolItems(pool.getId(), LIMIT);
             tblProjects.setItems(listProjects);
             tblProjects.getDataProvider().refreshAll();
+            if (listProjects.isEmpty())
+                btnAddActivity.setEnabled(false);
+            else 
+                btnAddActivity.setEnabled(true);
         } catch (ApplicationObjectNotFoundException | InvalidArgumentException ex) {
             Logger.getLogger(ProjectsUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -456,7 +470,7 @@ public class ProjectsUI extends VerticalLayout implements ActionCompletedListene
             });
         btnDeleteProject.getElement().setProperty("title", this.deleteProjectVisualAction.getModuleAction().getDisplayName());
         
-        Button btnActivity = new Button(new Icon(VaadinIcon.TOOLS),
+        Button btnActivity = new Button(new Icon(VaadinIcon.FILE_TREE),
             (event) -> {
                 ActivityDialog activityDialog = new ActivityDialog(project);
             });
@@ -539,7 +553,7 @@ public class ProjectsUI extends VerticalLayout implements ActionCompletedListene
             lytActivityPropertySheet.setSpacing(false);
 
             buildActivitiesGrid(project);
-            H4 headerActivities = new H4(String.format("%s %s", project.getName(), ts.getTranslatedString("module.projects.activity.header")));
+            H4 headerActivities = new H4(ts.getTranslatedString("module.projects.activity.header"));
             headerActivities.setClassName("header");
             HorizontalLayout lytButtons = new HorizontalLayout(btnAddActivity, btnDeleteActivity, btnClose);
             lytButtons.setSpacing(false);
@@ -552,8 +566,8 @@ public class ProjectsUI extends VerticalLayout implements ActionCompletedListene
             
             lytMainContent.add(lytContent, lytButtons);
             wdwActivityDialog.add(lytMainContent);
-            wdwActivityDialog.setWidthFull();
             wdwActivityDialog.setHeightFull();
+            wdwActivityDialog.setWidthFull();
             wdwActivityDialog.open();
         }
 

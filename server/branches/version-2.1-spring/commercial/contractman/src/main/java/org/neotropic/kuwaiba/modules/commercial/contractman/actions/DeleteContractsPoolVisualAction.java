@@ -75,11 +75,10 @@ public class DeleteContractsPoolVisualAction extends AbstractVisualAction<Dialog
                         
                         if (actionResponse.containsKey("exception"))
                             throw new ModuleActionException(((Exception)actionResponse.get("exception")).getLocalizedMessage());
-                       
-                        fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
-                            ts.getTranslatedString("module.contractman.actions.pool.delete-pool-success"), DeleteContractsPoolVisualAction.class));
                         //refresh related grid
-                        getCommandClose().execute();  
+                        getCommandClose().execute(); 
+                        fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
+                            ts.getTranslatedString("module.contractman.actions.pool.delete-pool-success"), DeleteContractsPoolVisualAction.class)); 
                     } catch (ModuleActionException ex) {
                         new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(), 
                             AbstractNotification.NotificationType.ERROR, ts).open();

@@ -222,7 +222,7 @@ public class ValidatorDefinitionUI extends VerticalLayout implements ActionCompl
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
             try {
                 new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
-                            AbstractNotification.NotificationType.ERROR, ts).open();
+                            AbstractNotification.NotificationType.INFO, ts).open();
                 objectTree.getDataProvider().refreshAll();
             } catch (UnsupportedOperationException ex) {
                 Logger.getLogger(ConfigurationVariablesUI.class.getName()).log(Level.SEVERE, null, ex);

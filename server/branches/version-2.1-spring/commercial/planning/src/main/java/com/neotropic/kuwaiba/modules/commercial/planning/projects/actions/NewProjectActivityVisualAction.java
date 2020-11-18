@@ -103,8 +103,6 @@ public class NewProjectActivityVisualAction extends AbstractVisualAction<Dialog>
                 selectedProject = (BusinessObjectLight) parameters.get("project");
             if (parameters.containsKey("pool"))
                 selectedPool = (Pool) parameters.get("pool");
-            //if (parameters.containsKey("commandRefresh"))
-            //commandRefresh = (Command) parameters.get("commandRefresh");
             
             if (selectedPool != null) {
                 List<BusinessObjectLight> listProjects = bem.getPoolItems(selectedPool.getId(), LIMIT);
