@@ -37,4 +37,5 @@ public class MapConstants {
     public static final String X = "x";
     public static final String Y = "y";
     public static final String POINTS = "points";
+    public static final String FROM_CLIENT_ADD_NODE = "fromClientAddNode";
 }

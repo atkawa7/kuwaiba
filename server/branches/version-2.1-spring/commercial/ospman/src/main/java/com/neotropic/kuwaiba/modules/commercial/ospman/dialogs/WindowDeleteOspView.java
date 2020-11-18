@@ -15,6 +15,7 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman.dialogs;
 
+import com.neotropic.kuwaiba.modules.commercial.ospman.widgets.OutsidePlantView;
 import com.vaadin.flow.component.html.H3;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
@@ -29,13 +30,14 @@ import org.neotropic.util.visual.notifications.SimpleNotification;
  */
 public class WindowDeleteOspView extends ConfirmDialog {
     
-    public WindowDeleteOspView(long ospViewId, TranslationService ts, ApplicationEntityManager aem) {
+    public WindowDeleteOspView(long ospViewId, TranslationService ts, ApplicationEntityManager aem, OutsidePlantView outsidePlantView) {
         super(ts, 
             ts.getTranslatedString("module.general.labels.confirmation"),                         
             new H3(ts.getTranslatedString("module.ospman.delete-view")), 
             ts.getTranslatedString("module.general.messages.ok"), () -> {
                 try {
                     aem.deleteOSPView(ospViewId);
+                    outsidePlantView.newOspView(false);
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.success"),
                         ts.getTranslatedString("module.ospman.view-deleted"), 

@@ -453,6 +453,9 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                 if (!mapGraph.isVisible())
                     mapGraph.setVisible(true);
             });
+        } else {
+            if (!mapGraph.isVisible())
+                mapGraph.setVisible(true);
         }
     }
     
@@ -539,9 +542,11 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
 
                     newViewNode.getProperties().put(MapConstants.X, pixelCoordinate.getX() - sw.getX());
                     newViewNode.getProperties().put(MapConstants.Y, pixelCoordinate.getY() - ne.getY());
+                    
+                    newViewNode.getProperties().put(MapConstants.FROM_CLIENT_ADD_NODE, true);
 
                     viewMap.addNode(newViewNode);
-                    mapGraph.beginUpdate();
+                    mapGraph.beginUpdate();                    
                     addNode(businessObject, newViewNode.getProperties());
                 });
             });
@@ -1009,9 +1014,14 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                     openWindowNode(viewNode);
             });
             newMapNode.addCellAddedListener(event -> {
+                event.unregisterListener();
+                if (properties.containsKey(MapConstants.FROM_CLIENT_ADD_NODE) && 
+                    (boolean) properties.remove(MapConstants.FROM_CLIENT_ADD_NODE)) {
+                        mapGraph.endUpdate();
+                        return;
+                }
                 if (viewMap.getEdges().isEmpty() && viewNode.equals(viewMap.getNodes().get(viewMap.getNodes().size() - 1)))
                     mapGraph.endUpdate();
-                event.unregisterListener();
             });
             mapGraph.addNode(newMapNode);
         }
@@ -1040,9 +1050,9 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                     openWindowEdge((BusinessObjectViewEdge) viewMap.findEdge(businessObject));
             });
             newMapEdge.addCellAddedListener(event -> {
+                event.unregisterListener();
                 if (viewEdge.equals(viewMap.getEdges().get(viewMap.getEdges().size() - 1)))
                     mapGraph.endUpdate();
-                event.unregisterListener();
             });
             mapGraph.addEdge(newMapEdge);
         }
@@ -1192,7 +1202,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
     private void deleteOspView() {
         if (this.getProperties().get(Constants.PROPERTY_ID) instanceof Integer && (int) this.getProperties().get(Constants.PROPERTY_ID) == -1)
             return;
-        WindowDeleteOspView confirmDialog = new WindowDeleteOspView((long) this.getProperties().get(Constants.PROPERTY_ID), ts, aem);
+        WindowDeleteOspView confirmDialog = new WindowDeleteOspView((long) this.getProperties().get(Constants.PROPERTY_ID), ts, aem, this);
         confirmDialog.open();
     }
 }
