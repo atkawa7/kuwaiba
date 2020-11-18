@@ -1166,5 +1166,30 @@ public interface BusinessEntityManager extends AbstractEntityManager {
      * @throws InvalidArgumentException If the class name is null
      */
     public List<BusinessObjectLight> getObjectChildren(String className, String oid, long skip, long limit) throws InvalidArgumentException;
+    /**
+     * Get a set of children to the given the parent class name and a set of 
+     * attributes to filter.
+     * @param className Parent class name
+     * @param filter attributes to filter
+     * @param skip Skip index
+     * @param limit Max count of child
+     * @return Set of children
+     * @throws InvalidArgumentException If the class name is null
+     * @throws MetadataObjectNotFoundException If the provided class name doesn't exists
+     */
+    public List<BusinessObjectLight> getObjectOfClassLigth(String className, HashMap <String, String> filter, long skip, long limit) throws InvalidArgumentException, MetadataObjectNotFoundException;
+    
+    /**
+     * Suggests a number of objects based on a search string.
+     * This search string will be case-insensitive-matched against the name of 
+     * the objects and classes in the inventory attributes to filter.
+     * @param filter attributes to filter
+     * @param skip Skip index
+     * @param limit Max count of child
+     * @return Set of children
+     * @throws InvalidArgumentException If the class name, skip or limit are null
+     */
+    public HashMap<String, List<BusinessObjectLight>> getSuggestedObjectsWithFilterGroupedByClassName(String filter,  long skip, long limit) throws InvalidArgumentException;
+    
     //</editor-fold>
 }
