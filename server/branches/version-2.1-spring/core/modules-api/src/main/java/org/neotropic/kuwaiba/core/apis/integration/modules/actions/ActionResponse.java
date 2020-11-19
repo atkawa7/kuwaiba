@@ -22,7 +22,7 @@ import java.util.Properties;
  * @author Orlando Paz  {@literal <orlando.paz@kuwaiba.org>} 
  */
 public class ActionResponse extends Properties{
-   public enum Action{
-       REMOVE, ADD, UPDATE,HIDE,SHOW;
-   }
+    public enum Action{
+        REMOVE_OBJECT, ADD, UPDATE,HIDE,SHOW;
+    }
 }
