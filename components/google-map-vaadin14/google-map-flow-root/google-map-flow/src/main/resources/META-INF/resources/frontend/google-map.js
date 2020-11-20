@@ -18,6 +18,7 @@ limitations under the License.
 import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
 import { FlattenedNodesObserver } from '@polymer/polymer/lib/utils/flattened-nodes-observer.js';
 import {MapApi} from './google-map-api.js';
+import {GeometryPoly} from './geometry-poly.js';
 import * as Constants from './google-map-constants.js';
 /**
  * `google-map`
@@ -414,6 +415,10 @@ class GoogleMap extends PolymerElement {
   _minZoomChanged(newValue) {
     if (this.map)
       this.map.setOptions({minZoom: newValue});
+  }
+
+  createGeometryPoly() {
+    return new GeometryPoly();
   }
 }
 
