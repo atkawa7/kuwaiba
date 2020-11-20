@@ -16,6 +16,7 @@
 package com.neotropic.kuwaiba.modules.commercial.ospman.providers.google;
 
 import com.neotropic.flow.component.googlemap.DrawingManager;
+import com.neotropic.flow.component.googlemap.GeometryPoly;
 import com.neotropic.flow.component.googlemap.GoogleMap;
 import com.neotropic.flow.component.googlemap.LatLng;
 import com.neotropic.flow.component.googlemap.LatLngBounds;
@@ -42,7 +43,7 @@ import org.neotropic.util.visual.notifications.AbstractNotification;
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class GoogleMapsMapProvider implements MapProvider {
-    public static final String LIBRARIES = "drawing"; //NOI18N
+    public static final String LIBRARIES = "drawing,geometry"; //NOI18N
     public static final String PROPERTY_API_KEY = "apiKey"; //NOI18N
     public static final String PROPERTY_CENTER = "center"; //NOI18N
     public static final String PROPERTY_ZOOM = "zoom"; //NOI18N
@@ -267,5 +268,24 @@ public class GoogleMapsMapProvider implements MapProvider {
     @Override
     public void removeAllIdleEventListener() {
         idleEventListeners.clear();
+    }
+    @Override
+    public void callbackContainsLocation(GeoCoordinate coordinate, List<List<GeoCoordinate>> paths, Consumer<Boolean> callback) {
+        Objects.requireNonNull(coordinate);
+        Objects.requireNonNull(paths);
+        Objects.requireNonNull(callback);
+        List<List<LatLng>> latLngPaths = new ArrayList();
+        paths.forEach(path -> {
+            List<LatLng> latLngPath = new ArrayList();
+            path.forEach(geoCoordinate -> 
+                latLngPath.add(new LatLng(geoCoordinate.getLatitude(), geoCoordinate.getLongitude()))
+            );
+            latLngPaths.add(latLngPath);
+        });
+        new GeometryPoly(googleMap).callbackContainsLocation(
+            new LatLng(coordinate.getLatitude(), coordinate.getLongitude()),
+            latLngPaths,
+            result -> callback.accept(result)
+        );
     }
 }

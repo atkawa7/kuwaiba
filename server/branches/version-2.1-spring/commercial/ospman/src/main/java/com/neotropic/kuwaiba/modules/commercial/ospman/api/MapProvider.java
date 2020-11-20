@@ -133,6 +133,13 @@ public interface MapProvider {
      */
     void removeAllIdleEventListener();
     /**
+     * Executes callback to calculate whether the given coordinate exist inside the specified path.
+     * @param coordinate Coordinate to calculate if exist inside the specified path.
+     * @param paths Polygon paths.
+     * @param callback Callback to execute.
+     */
+    void callbackContainsLocation(GeoCoordinate coordinate, List<List<GeoCoordinate>> paths, Consumer<Boolean> callback);
+    /**
      * Callback executed when bounds changed.
      */
     public interface BoundsChangedEventListener extends Consumer<BoundsChangedEvent>{
