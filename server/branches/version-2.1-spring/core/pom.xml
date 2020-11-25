@@ -25,5 +25,6 @@
         <module>services</module>
         <module>configuration</module>
         <module>containmentman</module>
+        <module>audit-trail</module>
     </modules>
 </project>

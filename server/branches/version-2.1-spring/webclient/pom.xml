@@ -89,7 +89,12 @@
             <groupId>org.neotropic.kuwaiba</groupId>
             <artifactId>taskman</artifactId>
             <version>2.1</version>
-        </dependency>   
+        </dependency>
+        <dependency>
+            <groupId>org.neotropic.kuwaiba</groupId>
+            <artifactId>audit-trail</artifactId>
+            <version>2.1</version>
+        </dependency>    
         <dependency>
             <groupId>org.neotropic.kuwaiba</groupId>
             <artifactId>templateman</artifactId>
@@ -159,7 +164,7 @@
             <artifactId>paper-toggle-button-flow</artifactId>
             <version>2.0</version>
             <type>jar</type>
-        </dependency>
+        </dependency> 
     </dependencies>
     <dependencyManagement>
         <dependencies>
