@@ -442,8 +442,8 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
         HorizontalLayout lyt;
         
         Command deleteVariable = () -> {
-            lytPropertySheet.setVisible(false);
             tblConfigVariables.getDataProvider().refreshAll();
+            updatePropertySheet(currentConfigVariablesPool);
         };
         Button btnDelete = new Button(new Icon(VaadinIcon.TRASH),
                 (event) -> {
