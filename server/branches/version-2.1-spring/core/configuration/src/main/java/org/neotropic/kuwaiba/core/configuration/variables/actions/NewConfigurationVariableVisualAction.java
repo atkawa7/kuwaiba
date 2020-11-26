@@ -81,7 +81,6 @@ public class NewConfigurationVariableVisualAction extends AbstractVisualAction<D
         }
 
         List<Pool> configurationVariablesPool = aem.getConfigurationVariablesPools();
-
         ComboBox<Pool> cbxConfigurationVariablesPool = new ComboBox<>(ts.getTranslatedString("module.configvarman.configurationvariablespool"), configurationVariablesPool);
         cbxConfigurationVariablesPool.setAllowCustomValue(false);
         cbxConfigurationVariablesPool.setRequiredIndicatorVisible(true);
@@ -109,13 +108,14 @@ public class NewConfigurationVariableVisualAction extends AbstractVisualAction<D
         btnMasked.addClassName("icon-button");
 
         ComboBox<ConfigurationVariableType> cbxTypes = new ComboBox<>(ts.getTranslatedString("module.configvarman.configvar.label.type"));
-        cbxTypes.setItems(new ConfigurationVariableType(ts.getTranslatedString("module.configvarman.configvar.type.integer"), 1),
+        cbxTypes.setItems(new ConfigurationVariableType(ts.getTranslatedString("module.configvarman.configvar.type.integer"), 0),
+                new ConfigurationVariableType(ts.getTranslatedString("module.configvarman.configvar.type.float"), 1),
                 new ConfigurationVariableType(ts.getTranslatedString("module.configvarman.configvar.type.string"), 2),
                 new ConfigurationVariableType(ts.getTranslatedString("module.configvarman.configvar.type.boolean"), 3),
                 new ConfigurationVariableType(ts.getTranslatedString("module.configvarman.configvar.type.array"), 4),
                 new ConfigurationVariableType(ts.getTranslatedString("module.configvarman.configvar.type.table"), 5)
         );
-        cbxTypes.setValue(new ConfigurationVariableType(ts.getTranslatedString("module.configvarman.configvar.type.integer"), 1));
+        cbxTypes.setValue(new ConfigurationVariableType(ts.getTranslatedString("module.configvarman.configvar.type.integer"), 0));
         cbxTypes.setAllowCustomValue(false);
         cbxTypes.setRequiredIndicatorVisible(false);
         cbxTypes.setSizeFull();
@@ -202,7 +202,5 @@ public class NewConfigurationVariableVisualAction extends AbstractVisualAction<D
         public String toString() {
             return displayName;
         }
-
     }
-
 }

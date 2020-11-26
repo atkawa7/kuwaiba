@@ -42,8 +42,10 @@ import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionComplet
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ConfigurationVariable;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Pool;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
+import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.core.configuration.ConfigurationManagerLayout;
 import org.neotropic.kuwaiba.core.configuration.variables.actions.DeleteConfigurationVariableVisualAction;
@@ -142,9 +144,12 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
     /**
      * Layout of property sheet
      */
-    VerticalLayout lytPropertySheet;
-    
+    VerticalLayout lytPropertySheet;  
     PropertySheet propertysheet;
+    /**
+     * Boolean used to update properties 
+     */
+    Boolean isPool = false;
     
     public ConfigurationVariablesUI() {
         super();
@@ -242,7 +247,7 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
         headerCurrentConfigVariablesPool.setClassName("header-position");
         H4 headerConfigurationVariables = new H4(ts.getTranslatedString("module.configvarman.configurationvariables"));
         headerConfigurationVariables.setClassName("header-position");
-        HorizontalLayout lytConfigHeaders = new HorizontalLayout(headerCurrentConfigVariablesPool, headerConfigurationVariables);
+        HorizontalLayout lytConfigHeaders = new HorizontalLayout(headerConfigurationVariables, headerCurrentConfigVariablesPool);
         lytConfigHeaders.setClassName("header-layout-position");
         lytConfigHeaders.setMargin(false);
         lytConfigHeaders.setPadding(false);
@@ -288,6 +293,8 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
                 currentConfigVariablesPool = listener.getItem();
                 headerCurrentConfigVariablesPool.setText(currentConfigVariablesPool.getName());
                 loadConfigurationVariables(listener.getItem());
+                updatePropertySheet(currentConfigVariablesPool);
+                lytPropertySheet.setVisible(true);
             } catch (ApplicationObjectNotFoundException | UnsupportedOperationException ex) {
                 Logger.getLogger(ConfigurationVariablesUI.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -347,14 +354,17 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
         tblConfigVariables.setItems(configurationVariables);
         tblConfigVariables.getDataProvider().refreshAll();
     }
-
+    private void updatePropertySheet(Pool pool) {
+            propertysheet.setItems(PropertyFactory.propertiesFromPool(pool));
+            isPool = true;
+    }
+    
     private void updatePropertySheet() {  
         try { 
              ConfigurationVariable aWholeConfigurationVariable = aem.getConfigurationVariable(currentConfigVariable.getName());
              propertysheet.setItems(PropertyFactory.propertiesFromConfigurationVariable(aWholeConfigurationVariable));
+             isPool = false;
         } catch (UnsupportedOperationException | ApplicationObjectNotFoundException ex) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(), 
-                            AbstractNotification.NotificationType.ERROR, ts).open();
             Logger.getLogger(ConfigurationVariablesUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -382,21 +392,50 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
 
     @Override
     public void updatePropertyChanged(AbstractProperty<? extends Object> property) {
-        try{ 
-            if(currentConfigVariable != null){
-                
-               aem.updateConfigurationVariable(currentConfigVariable.getName(), property.getName(), String.valueOf(property.getValue()));
-               
-               loadConfigurationVariables(currentConfigVariablesPool);
-               tblConfigVariables.select(currentConfigVariable);
-               
-               updatePropertySheet();
-               
-               new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update"), 
+        if (isPool == true) {
+            try {
+                if (currentConfigVariablesPool != null) {
+                    aem.updateConfigurationVariablesPool(currentConfigVariablesPool.getId(), property.getName(), String.valueOf(property.getValue()));
+                    if (property.getName().equals(Constants.PROPERTY_NAME)) {
+                        headerCurrentConfigVariablesPool.setText((String.valueOf(property.getValue())));
+                        currentConfigVariablesPool.setName(String.valueOf(property.getValue()));
+                    } else if (property.getName().equals(Constants.PROPERTY_DESCRIPTION))
+                        currentConfigVariablesPool.setDescription(String.valueOf(property.getValue()));                  
+                    loadConfigurationVariablesPools();    
+                    tblConfigVariablesPool.select(currentConfigVariablesPool);
+                    updatePropertySheet(currentConfigVariablesPool);
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update"),
                             AbstractNotification.NotificationType.INFO, ts).open();
+                }
+            } catch (ApplicationObjectNotFoundException | InvalidArgumentException ex) {
+                Logger.getLogger(ConfigurationVariablesUI.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (UnsupportedOperationException | InvalidArgumentException | ApplicationObjectNotFoundException  ex) {
-            Logger.getLogger(ConfigurationVariablesUI.class.getName()).log(Level.SEVERE, null, ex);
+        } else {
+            try {
+                if (currentConfigVariable != null) {
+                    aem.updateConfigurationVariable(currentConfigVariable.getName(), property.getName(), String.valueOf(property.getValue()));
+                    switch (property.getName()) {
+                        case Constants.PROPERTY_NAME:
+                            currentConfigVariable.setName(String.valueOf(property.getValue()));
+                            break;
+                        case Constants.PROPERTY_DESCRIPTION:
+                            currentConfigVariable.setDescription(String.valueOf(property.getValue()));
+                            break;
+                        case Constants.PROPERTY_VALUE:
+                            currentConfigVariable.setValueDefinition(String.valueOf(property.getValue()));
+                            break;
+                        default:
+                            break;
+                    }
+                    loadConfigurationVariables(currentConfigVariablesPool);
+                    tblConfigVariables.select(currentConfigVariable);
+                    updatePropertySheet();
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.general.messages.property-update"),
+                            AbstractNotification.NotificationType.INFO, ts).open();
+                }
+            } catch (UnsupportedOperationException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                Logger.getLogger(ConfigurationVariablesUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -426,5 +465,4 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
     public String getPageTitle() {
         return ts.getTranslatedString("module.configvarman.title");
     }
-
 }
