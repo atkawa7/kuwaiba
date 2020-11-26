@@ -73,8 +73,9 @@ public class ObjectAuditTrailWidget extends AbstractDashboardWidget {
     public void createContent() {
         getActivityType();
         buildAuditTrailGrid();
-        BoldLabel lblTitle = new BoldLabel(String.format(ts.getTranslatedString("module.audittrail.activity-object.header"), businessObject.getName()));
+        BoldLabel lblTitle = new BoldLabel(String.format("%s %s", ts.getTranslatedString("module.audittrail.activity-object.header"), businessObject.getName()));
         VerticalLayout lytContent = new VerticalLayout(lblTitle, tblObjectAuditTrail);
+        lytContent.setSizeFull();
         lytContent.setWidth("1000px");
         contentComponent = lytContent;
     }
@@ -96,10 +97,7 @@ public class ObjectAuditTrailWidget extends AbstractDashboardWidget {
                     .setHeader(ts.getTranslatedString("module.audittrail.activity-oldValue"));
             tblObjectAuditTrail.addColumn(ActivityLogEntry::getNewValue)
                     .setHeader(ts.getTranslatedString("module.audittrail.activity-newValue"));
-            tblObjectAuditTrail.addColumn(ActivityLogEntry::getNotes)
-                    .setHeader(ts.getTranslatedString("module.audittrail.activity-notes"));
             tblObjectAuditTrail.setClassNameGenerator(item -> !item.getNotes().isEmpty() ? "text" : "");
-
         } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
             Logger.getLogger(ObjectAuditTrailWidget.class.getName()).log(Level.SEVERE, null, ex);
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage(),

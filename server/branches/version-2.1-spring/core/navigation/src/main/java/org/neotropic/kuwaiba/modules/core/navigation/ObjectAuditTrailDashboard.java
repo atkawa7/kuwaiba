@@ -13,16 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.neotropic.kuwaiba.modules.core.navigation.widgets;
+package org.neotropic.kuwaiba.modules.core.navigation;
 
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ActivityLogEntry;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
@@ -31,21 +30,22 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.BusinessObjectNotF
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.util.visual.general.BoldLabel;
 import org.neotropic.util.visual.widgets.AbstractDashboardWidget;
 
 /**
- * Shows audit trail associated to a given object.
+ * This dashboard provides information and a grid for audit trail an object.
  * @author Mauricio Ruiz {@literal <mauricio.ruiz@kuwaiba.org>}
  */
-public class AuditTrailWidget extends AbstractDashboardWidget {
+public class ObjectAuditTrailDashboard extends AbstractDashboardWidget  {
     /**
-     * The inventory object we need the report list for.
+     * Reference to the object being edited/explored currently.
      */
-    private final BusinessObjectLight inventoryObject;
+    private final BusinessObjectLight selectedObject;
     /**
-     * The grid with the audit trail of an object
+     * The grid with the list audit trail
      */
     private final Grid<ActivityLogEntry> tblObjectAuditTrail;
     /**
@@ -56,24 +56,31 @@ public class AuditTrailWidget extends AbstractDashboardWidget {
      * Save activity type to display later in readable format
      */
     private final HashMap<Integer, String> types;
-    
-    public AuditTrailWidget(BusinessObjectLight inventoryObject, MetadataEntityManager mem, ApplicationEntityManager aem,
-            BusinessEntityManager bem, TranslationService ts) {
+
+    public ObjectAuditTrailDashboard(BusinessObjectLight selectedObject, MetadataEntityManager mem, 
+            ApplicationEntityManager aem, BusinessEntityManager bem, TranslationService ts) {
         super(mem, aem, bem, ts);
-        this.inventoryObject = inventoryObject;
+        this.selectedObject = selectedObject;
+        tblObjectAuditTrail = new Grid();
         types = new HashMap<>();
-        tblObjectAuditTrail = new Grid<>();
-        super.setTitle(ts.getTranslatedString("module.navigation.widgets.audit-trail.title"));
-        super.createCover();
-        coverComponent.addClassName("widgets-colors-good-green");
     }
-    
+        
     @Override
     public void createContent() {
         getActivityType();
         buildAuditTrailGrid();
-        BoldLabel lblTitle = new BoldLabel(String.format("%s %s", ts.getTranslatedString("module.audittrail.activity-object.header"), inventoryObject.getName()));
-        VerticalLayout lytContent = new VerticalLayout(lblTitle, tblObjectAuditTrail);
+        BoldLabel lblProperties = new BoldLabel(ts.getTranslatedString("module.navigation.widgets.object-dashboard"));
+        BoldLabel lblId = new BoldLabel();
+        BoldLabel lblName = new BoldLabel();
+        BoldLabel lblClassName = new BoldLabel();
+        lblId.setText(String.format("%s: %s", Constants.PROPERTY_ID, selectedObject.getId()));
+        lblName.setText(String.format("%s: %s", Constants.PROPERTY_NAME, selectedObject.getName()));
+        lblClassName.setText(String.format("%s: %s", Constants.PROPERTY_CLASS_NAME, selectedObject.getClassName()));
+        HorizontalLayout lytObject = new HorizontalLayout(lblId, lblName, lblClassName);
+        lytObject.setMargin(false);
+        lytObject.setPadding(false);
+        BoldLabel lblTitle = new BoldLabel(String.format("%s %s", ts.getTranslatedString("module.audittrail.activity-object.header"), selectedObject.getName()));
+        VerticalLayout lytContent = new VerticalLayout(lblProperties, lytObject, lblTitle, tblObjectAuditTrail);
         lytContent.setSizeFull();
         lytContent.addClassName("widgets-layout-dialog-list");
         contentComponent = lytContent;
@@ -81,7 +88,7 @@ public class AuditTrailWidget extends AbstractDashboardWidget {
     
     private void buildAuditTrailGrid() {
         try {
-            List<ActivityLogEntry> objectEntries = aem.getBusinessObjectAuditTrail(inventoryObject.getClassName(), inventoryObject.getId(), -1);
+            List<ActivityLogEntry> objectEntries = aem.getBusinessObjectAuditTrail(selectedObject.getClassName(), selectedObject.getId(), -1);
             if (objectEntries.isEmpty()) {
                 Label lblNoAuditTrail = new Label(ts.getTranslatedString("module.navigation.widgets.audit-trail.ui.no-audit-trail"));
                 lblNoAuditTrail.addClassName("text-padded");
@@ -104,13 +111,12 @@ public class AuditTrailWidget extends AbstractDashboardWidget {
                     .setHeader(ts.getTranslatedString("module.audittrail.activity-newValue"));
             tblObjectAuditTrail.setClassNameGenerator(item -> !item.getNotes().isEmpty() ? "text" : "");
         } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
-            Logger.getLogger(AuditTrailWidget.class.getName()).log(Level.SEVERE, null, ex);
             Label lblUnexpectedError = new Label(ex.getLocalizedMessage());
             lblUnexpectedError.addClassName("text-padded");
             contentComponent = lblUnexpectedError;
-        }
+        }        
     }
-
+    
     private void getActivityType() {
         types.put(ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, "module.audittrail.activity-type.create-application-object");
         types.put(ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, "module.audittrail.activity-type.delete-application-object");

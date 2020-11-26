@@ -102,7 +102,6 @@ import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.helpers.collection.Iterators;
-import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.persistence.reference.extras.caching.CacheManager;
 import org.neotropic.kuwaiba.core.persistence.reference.neo4j.util.Util;
 import org.neotropic.kuwaiba.core.persistence.reference.util.DynamicNameGenerator;
@@ -2175,7 +2174,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             List<ActivityLogEntry> log = new ArrayList<>();
             int i = 0;
             for (Relationship rel : instanceNode.getRelationships(RelTypes.HAS_HISTORY_ENTRY)) {
-                if (limit != 0) {
+                if (limit > 0) {
                     if (i < limit)
                         i++;
                     else
