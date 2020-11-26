@@ -42,7 +42,6 @@ import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionComplet
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ConfigurationVariable;
 import org.neotropic.kuwaiba.core.apis.persistence.application.Pool;
-import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
