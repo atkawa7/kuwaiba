@@ -97,7 +97,7 @@ public class ObjectAuditTrailWidget extends AbstractDashboardWidget {
                     .setHeader(ts.getTranslatedString("module.audittrail.activity-oldValue"));
             tblObjectAuditTrail.addColumn(ActivityLogEntry::getNewValue)
                     .setHeader(ts.getTranslatedString("module.audittrail.activity-newValue"));
-            tblObjectAuditTrail.setClassNameGenerator(item -> !item.getNotes().isEmpty() ? "text" : "");
+            tblObjectAuditTrail.setClassNameGenerator(item -> item.getNotes() != null && !item.getNotes().isEmpty() ? "text" : "");
         } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
             Logger.getLogger(ObjectAuditTrailWidget.class.getName()).log(Level.SEVERE, null, ex);
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getMessage(),

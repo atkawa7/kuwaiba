@@ -136,7 +136,7 @@ public class AuditTrailUI extends VerticalLayout implements ActionCompletedListe
                 .setHeader(ts.getTranslatedString("module.audittrail.activity-newValue")).setResizable(true);
         tblAuditTrail.addColumn(ActivityLogEntry::getNotes)
                 .setHeader(ts.getTranslatedString("module.audittrail.activity-notes")).setResizable(true);
-        tblAuditTrail.setClassNameGenerator(item -> !item.getNotes().isEmpty() ? "text" : "");
+        tblAuditTrail.setClassNameGenerator(item -> item.getNotes() != null && !item.getNotes().isEmpty() ? "text" : "");
         // Sets the max number of items to be rendered on the grid for each page
         tblAuditTrail.setPageSize(15);
         // Sets how many pages should be visible on the pagination before and/or after the current selected page
