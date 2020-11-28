@@ -122,6 +122,11 @@
         </dependency>
         <dependency>
             <groupId>org.neotropic.kuwaiba</groupId>
+            <artifactId>layouteditor</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.neotropic.kuwaiba</groupId>
             <artifactId>topoman</artifactId>
             <version>2.1</version>
         </dependency>
