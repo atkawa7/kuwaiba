@@ -19,5 +19,6 @@
         <module>reports</module>
         <module>topoman</module>
         <module>taskman</module>
+        <module>layouteditor</module>
     </modules>
 </project>
