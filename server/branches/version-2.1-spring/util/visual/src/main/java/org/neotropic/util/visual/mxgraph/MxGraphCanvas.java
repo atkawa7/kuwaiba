@@ -28,6 +28,7 @@ import com.neotropic.flow.component.mxgraph.Point;
 import com.vaadin.flow.server.Command;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
@@ -43,7 +44,7 @@ public class MxGraphCanvas<N, E> {
     
     MxGraph mxGraph;  
     
-    private HashMap<N, MxGraphNode> nodes;
+    private LinkedHashMap<N, MxGraphNode> nodes;
     /**
      * A dictionary with the edges in the current view
      */
@@ -75,7 +76,7 @@ public class MxGraphCanvas<N, E> {
         return nodes;
     }
 
-    public void setNodes(HashMap<N, MxGraphNode> nodes) {
+    public void setNodes(LinkedHashMap<N, MxGraphNode> nodes) {
         this.nodes = nodes;
     }
 
@@ -144,7 +145,7 @@ public class MxGraphCanvas<N, E> {
        mxGraph.setWidth(width);
        mxGraph.setHeight(height);    
 //       mxGraph.setGrid("img/grid.gif");
-       nodes = new HashMap<>();
+       nodes = new LinkedHashMap<>();
        edges = new HashMap<>();     
        sourceEdgeNodes = new HashMap<>();
        targetEdgeNodes = new HashMap<>();
@@ -296,28 +297,32 @@ public class MxGraphCanvas<N, E> {
      */
     public void removeNode(N businessObject) {
         
-        mxGraph.removeNode(nodes.get(businessObject));
-        nodes.remove(businessObject);
-                    
-        //delete edges related to the object
-        List<E> edgesToDelete = new ArrayList<>();
-        
-        for (Map.Entry<E, N> entry : sourceEdgeNodes.entrySet()) {
-            if (entry.getValue().equals(businessObject)) {
-                edgesToDelete.add(entry.getKey());
+        try {
+            mxGraph.removeNode(nodes.get(businessObject));
+            nodes.remove(businessObject);
+
+            //delete edges related to the object
+            List<E> edgesToDelete = new ArrayList<>();
+
+            for (Map.Entry<E, N> entry : sourceEdgeNodes.entrySet()) {
+                if (entry.getValue().equals(businessObject)) {
+                    edgesToDelete.add(entry.getKey());
+                }
             }
-        }
-        for (Map.Entry<E, N> entry : targetEdgeNodes.entrySet()) {
-            if (entry.getValue().equals(businessObject)) {
-                edgesToDelete.add(entry.getKey());
+            for (Map.Entry<E, N> entry : targetEdgeNodes.entrySet()) {
+                if (entry.getValue().equals(businessObject)) {
+                    edgesToDelete.add(entry.getKey());
+                }
             }
+
+            for (E edge : edgesToDelete) {   
+                edges.remove(edge);
+                sourceEdgeNodes.remove(edge);
+                targetEdgeNodes.remove(edge);
+            } 
+        } catch (Exception e) {
+            System.err.println("ex" + e);
         }
-        
-        for (E edge : edgesToDelete) {   
-            edges.remove(edge);
-            sourceEdgeNodes.remove(edge);
-            targetEdgeNodes.remove(edge);
-        }    
     }
     /**
      * Removes an edge from the canvas

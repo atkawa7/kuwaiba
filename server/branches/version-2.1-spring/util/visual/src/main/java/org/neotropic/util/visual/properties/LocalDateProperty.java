@@ -34,7 +34,7 @@ public class LocalDateProperty extends AbstractProperty<LocalDate> {
     /**
      * Default formatter.
      */
-    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH);
+    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MM, yyyy", Locale.ENGLISH);
 
     public LocalDateProperty(String name, String displayName, String description, LocalDate value) {
         super(name, displayName, description, value);
