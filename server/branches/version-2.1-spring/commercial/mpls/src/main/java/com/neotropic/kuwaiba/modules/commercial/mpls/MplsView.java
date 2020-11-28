@@ -27,6 +27,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -189,11 +190,26 @@ public class MplsView extends AbstractView<BusinessObjectLight, Component> {
                 xmlew.add(xmlef.createAttribute(new QName("bsideclass"), targetObject.getId().contains("-*") ? 
                         "" : targetObject.getClassName()));
                 
-                for (Point point : (List<Point>)edgeEntry.getProperties().get("controlPoints")) {
+                List<Point> cPoints = (List<Point>) edgeEntry.getProperties().get("controlPoints");
+                if (cPoints != null && cPoints.size() > 0) {
+                    // add start control point to desktop client compatibility
                     QName qnameControlpoint = new QName("controlpoint");
                     xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
-                    xmlew.add(xmlef.createAttribute(new QName("x"), ((int) point.getX()) + ""));
-                    xmlew.add(xmlef.createAttribute(new QName("y"), ((int) point.getY()) + ""));
+                    xmlew.add(xmlef.createAttribute(new QName("x"), ((Double) viewMap.getNode(sourceObject).getProperties().get("x")).intValue() + ""));
+                    xmlew.add(xmlef.createAttribute(new QName("y"), ((Double) viewMap.getNode(sourceObject).getProperties().get("y")).intValue() + ""));
+                    xmlew.add(xmlef.createEndElement(qnameControlpoint, null));
+                    for (Point point : cPoints) {                     
+                        qnameControlpoint = new QName("controlpoint");
+                        xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
+                        xmlew.add(xmlef.createAttribute(new QName("x"), ((int) point.getX()) + ""));
+                        xmlew.add(xmlef.createAttribute(new QName("y"), ((int) point.getY()) + ""));
+                        xmlew.add(xmlef.createEndElement(qnameControlpoint, null));
+                    } 
+                    // add end control point to desktop client compatibility
+                    qnameControlpoint = new QName("controlpoint");
+                    xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
+                    xmlew.add(xmlef.createAttribute(new QName("x"), ((Double) viewMap.getNode(targetObject).getProperties().get("x")).intValue() + ""));
+                    xmlew.add(xmlef.createAttribute(new QName("y"), ((Double) viewMap.getNode(targetObject).getProperties().get("y")).intValue() + ""));
                     xmlew.add(xmlef.createEndElement(qnameControlpoint, null));
                 }
                 xmlew.add(xmlef.createEndElement(qnameEdge, null));
@@ -327,7 +343,10 @@ public class MplsView extends AbstractView<BusinessObjectLight, Component> {
                                     }
                                 }
                                 Properties props = new Properties();
-                                props.put("controlPoints", controlPoints);
+                                if (controlPoints.size() > 2)  // ignore default control points of desktop client
+                                   props.put("controlPoints", controlPoints.subList(1, controlPoints.size() -1 )); 
+                                else                                         
+                                    props.put("controlPoints", controlPoints);
                                 props.put("sourceLabel", endPointA == null ? "" : endPointA.getName());
                                 props.put("targetLabel", endPointB == null ? "" : endPointB.getName());
                                 addEdge(mplsLink, aSideObject, bSideObject, props);
@@ -362,7 +381,7 @@ public class MplsView extends AbstractView<BusinessObjectLight, Component> {
         else
             this.viewMap.clear();
         
-        mxgraphCanvas.setNodes(new HashMap<>());
+        mxgraphCanvas.setNodes(new LinkedHashMap<>());
         mxgraphCanvas.setEdges(new HashMap<>());
         mxgraphCanvas.getMxGraph().removeAllCells();
     }
