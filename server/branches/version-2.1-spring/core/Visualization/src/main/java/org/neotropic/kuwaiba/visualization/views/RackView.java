@@ -751,8 +751,6 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                         if (renderCustomShape) {
                             percentWidth = deviceNode.getWidth() / (width * propSize );
                             percentHeight = deviceNode.getHeight() / (height * propSize);
-//                            percentHeight = deviceNode.getX() / (height * propSize);
-//                            percentHeight = deviceNode.getY()/ (height * propSize);
                         }
                     }
                     if (reader.getName().equals(tagShape)) {
@@ -1082,8 +1080,7 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                                     message += String.format(ts.getTranslatedString("module.visualization.rack-view-rack-value-greater-zero"), Constants.PROPERTY_POSITION, device.toString());
                                  else {
                                     if (devicePosition > objectRackUnits) 
-                                        message += String.format(ts.getTranslatedString("module.visualization.rack-view-rack-value-greater-number-rack-units"), Constants.PROPERTY_POSITION, device.toString());
-                                    
+                                        message += String.format(ts.getTranslatedString("module.visualization.rack-view-rack-value-greater-number-rack-units"), Constants.PROPERTY_POSITION, device.toString());    
                                 }
                                 
                                 if (deviceRackUnits < 0) 
