@@ -60,7 +60,7 @@ import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewEdge;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewNode;
 import org.neotropic.kuwaiba.core.apis.integration.views.ViewEventListener;
 import org.neotropic.kuwaiba.core.apis.integration.views.ViewMap;
-import org.neotropic.kuwaiba.modules.optional.topoman.tools.BasicStyleEditor;
+import org.neotropic.kuwaiba.visualization.mxgraph.BasicStyleEditor;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 
 /**
@@ -458,7 +458,7 @@ public class TopologyView extends AbstractView<BusinessObjectLight, Component> {
             this.viewMap.clear();
         }
 
-        mxgraphCanvas.setNodes(new HashMap<>());
+        mxgraphCanvas.setNodes(new LinkedHashMap<>());
         mxgraphCanvas.setEdges(new HashMap<>());
         mxgraphCanvas.getMxGraph().removeAllCells();
     }

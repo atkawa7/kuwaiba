@@ -73,9 +73,10 @@ import static org.neotropic.kuwaiba.modules.optional.topoman.TopologyView.ICON;
 import static org.neotropic.kuwaiba.modules.optional.topoman.TopologyView.URL_IMG_CLOUD;
 import org.neotropic.kuwaiba.modules.optional.topoman.actions.DeleteTopologyViewVisualAction;
 import org.neotropic.kuwaiba.modules.optional.topoman.actions.NewTopologyViewVisualAction;
-import org.neotropic.kuwaiba.modules.optional.topoman.tools.BasicStyleEditor;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewEdge;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
+import org.neotropic.kuwaiba.visualization.mxgraph.BasicStyleEditor;
+import org.neotropic.util.visual.colorpicker.slider.SliderMxGraphZoom;
 import org.neotropic.util.visual.general.BoldLabel;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
@@ -257,7 +258,7 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
             copyCurrentView();
         });
         setButtonTitle(btnCopyView, ts.getTranslatedString("module.topoman.copy-topo-view"));
-        btnNewView.setClassName("icon-button");
+        btnCopyView.setClassName("icon-button");
         btnRemoveView = new Button(new Icon(VaadinIcon.CLOSE_CIRCLE_O), evt -> {
             if (currentView != null)
                 this.deleteTopologyViewVisualAction.getVisualComponent(new ModuleActionParameterSet( new ModuleActionParameter("viewId", currentView.getId()))).open();
@@ -351,10 +352,11 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
         btnToogleGrid.setClassName("icon-button");
         btnToogleGrid.getElement().setProperty("title", ts.getTranslatedString("module.topoman.show-hide-grid"));
         
+        SliderMxGraphZoom sliderZoom = new SliderMxGraphZoom(topologyView.getMxgraphCanvas().getMxGraph());
         HorizontalLayout lytTools = new HorizontalLayout(btnNewView, btnOpenView, btnCopyView, 
                                     btnRemoveView, btnSaveView, viewSearch, btnRemoveObjectFromView,btnAddCloud,
-                                    btnAddRectShape, btnAddEllipseShape, btnAddLabel, btnToogleGrid, btnZoomIn, btnZoomOut);
-        lytTools.setAlignItems(Alignment.BASELINE);
+                                    btnAddRectShape, btnAddEllipseShape, btnAddLabel, btnToogleGrid, sliderZoom);
+        lytTools.setAlignItems(Alignment.CENTER);
         setGeneralToolsEnabled(false);
         setSelectionToolsEnabled(false);
 
@@ -441,7 +443,7 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
         BoldLabel lblStyleEditor = new BoldLabel(ts.getTranslatedString("module.topoman.shape-properties"));
         lblStyleEditor.addClassName("lbl-accordion");
         HorizontalLayout lytSummaryStyleEditor = new HorizontalLayout(lblStyleEditor); 
-        lytSummaryObjectProp.setWidthFull();       
+        lytSummaryStyleEditor.setWidthFull();       
         AccordionPanel apStyleEditor = new AccordionPanel(lytSummaryStyleEditor, styleEditor);
         accordionProperties.add(apStyleEditor);
         

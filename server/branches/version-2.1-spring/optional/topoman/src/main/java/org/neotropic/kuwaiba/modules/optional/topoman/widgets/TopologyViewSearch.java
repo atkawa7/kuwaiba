@@ -54,7 +54,7 @@ public class TopologyViewSearch extends Div {
     
     public TopologyViewSearch(TranslationService ts, BusinessEntityManager bem, List<BusinessObjectLight> addedNodes, List<BusinessObjectLight> addedLinks) {
         txtSearch = new TextField();
-        txtSearch.setWidth("300px");
+        txtSearch.setWidth("220px");
         txtSearch.setValueChangeMode(ValueChangeMode.EAGER);
         txtSearch.setClearButtonVisible(true);
         txtSearch.setPlaceholder(ts.getTranslatedString("module.topoman.search-objects"));
