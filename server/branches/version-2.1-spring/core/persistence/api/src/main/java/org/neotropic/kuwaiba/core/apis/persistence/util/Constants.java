@@ -702,5 +702,7 @@ public class Constants {
      
      public static double DEFAULT_ICON_HEIGHT = 24;
 
-           
+     public static String ATTRIBUTE_MODEL = "model";  
+     
+     public static String PROPERTY_CLASSNAME = "className";
 }
