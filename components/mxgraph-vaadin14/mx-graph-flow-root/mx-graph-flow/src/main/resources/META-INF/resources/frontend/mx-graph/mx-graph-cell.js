@@ -122,24 +122,26 @@ class MxGraphCell extends PolymerElement {
       width: {
         type: Number,
         value: 80,
-        notify: true
+        notify: true,
+        observer: '_WidthChanged'   // listener called when the value is changed
       },
       height: {
         type: Number,
         value: 30,
          notify: true,   
+         observer: '_HeightChanged'   // listener called when the value is changed
       },
       x: {         // position on the x axis.
         type: Number,
         value: 0,
         notify: true,    // notifty for changes in the property
-        observer: 'fireCellPositionChanged'   // listener called when the value is changed
+        observer: '_XChanged'   // listener called when the value is changed
       },
       y: {       //position on the y axis.
         type: Number,
         value: 0,
         notify: true,
-        observer: 'fireCellPositionChanged'    // listener called when the value is changed
+        observer: '_YChanged'    // listener called when the value is changed
       },
       strokeWidth: {
         type: Number,
@@ -148,7 +150,7 @@ class MxGraphCell extends PolymerElement {
       },
       labelBackgroundColor: {
         type: String,
-        value: 'white',
+        value: '#ffffff',
         notify: true
       },
       perimeterSpacing: {
@@ -157,12 +159,12 @@ class MxGraphCell extends PolymerElement {
       },
       strokeColor: {
         type: String,
-        value: 'black',
+        value: '#000000',
         notify: true
       },
       fontColor : {
         type: String,
-        value: 'black',
+        value: '#000000',
         notify: true
       },
       dashed: {
@@ -349,6 +351,7 @@ class MxGraphCell extends PolymerElement {
             ';fillColor=' + (this.fillColor ? this.fillColor : '#CCC') +                
             ';movable=' + this.movable +   
              ';resizable=' + this.resizable  +    
+             ';selectable=' + this.selectable  +    
               ';strokeColor=' + this.strokeColor  + 
               ';fontSize=' + this.fontSize  + 
             ';fontColor=' + this.fontColor +
@@ -601,6 +604,48 @@ updatePosition() {
     this.cell.geometry.x = this.x;
     this.cell.geometry.y = this.y;
     this.graph.refresh();
+}
+
+_XChanged() {
+    if (this.cell) {
+        if (this.cell.geometry.x !== this.x) {
+            this.cell.geometry.x = this.x;
+            this.graph.refresh();
+            console.log("DIF X fired");
+        }
+        this.fireCellPositionChanged();
+    }   
+}
+
+_YChanged() {
+    if (this.cell) {
+        if (this.cell.geometry.y !== this.y) {
+            this.cell.geometry.y = this.y;
+            this.graph.refresh();
+            console.log("DIF Y fired");
+        }
+        this.fireCellPositionChanged();
+    }   
+}
+
+_WidthChanged() {
+    if (this.cell) {
+        if (this.cell.geometry.width !== this.width) {
+            this.cell.geometry.width = this.width;
+            this.graph.refresh();
+            console.log("DIF Width fired");
+        }
+    }   
+}
+
+_HeightChanged() {
+    if (this.cell) {
+        if (this.cell.geometry.height !== this.height) {
+            this.cell.geometry.height = this.height;
+            this.graph.refresh();
+            console.log("DIF height fired");
+        }
+    }   
 }
 
 toggleVisibility() {

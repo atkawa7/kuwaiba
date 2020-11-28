@@ -142,7 +142,8 @@ class MxGraph extends PolymerElement {
             scale: {
                 type: Number,
                 value: 1.0,
-                notify: true
+                notify: true,
+                observer: '_scaleChanged'
             },
             translationX: {
                 type: Number
@@ -249,7 +250,8 @@ class MxGraph extends PolymerElement {
             mxEdgeHandler.prototype.addEnabled = true;
             mxEdgeHandler.prototype.removeEnabled = true;
             mxVertexHandler.prototype.rotationEnabled = this.rotationEnabled;
-            this.graph.getSelectionModel().setSingleSelection(true);
+            this.graph.getSelectionModel().setSingleSelection(true); 
+            this.graph.gridSize = 1;
 
 
             var _this = this;
@@ -431,7 +433,13 @@ class MxGraph extends PolymerElement {
                     }                  
                     console.log("CELL SELECTED :" + cell.id + " is Vertex : " + _this.graph.getModel().isVertex(cell));
                 }
-            }           
+            };    
+            
+//            this.graph.prototype.isCellSelectable = function(cell)
+//            {
+//              var cellObject = _this.getCellObjectById(cell.id);
+//              return cellObject.selectable && this.isCellsSelectable() && !this.isCellLocked(cell) ;
+//            };
             //allow custom logic when editing in edges labels
 //        mxGraph.prototype.isCellEditable = function(	cell	){
 //          return true;
@@ -857,7 +865,10 @@ class MxGraph extends PolymerElement {
     }   
     
         
-    scaleChanged(newV, oldV) {
+    _scaleChanged() {
+        if (this.graph) {
+            this.graph.view.setScale(this.scale);
+        }
         this.dispatchEvent(new CustomEvent('scale-changed'));
     }
 

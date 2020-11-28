@@ -364,12 +364,16 @@ public class MxGraph extends Component implements HasComponents, HasStyle, HasSi
     public void removeNode(MxGraphNode node) {
         getElement().removeChild(node.getElement());
         nodes.remove(node);
-        
+               
+        List<MxGraphNode> childrenNodesToDelete = new ArrayList<>();
         for (MxGraphNode mxNode : nodes) {  // delete childrens
             String parentNodeId = mxNode.getCellParent();
             if (parentNodeId != null && parentNodeId.equals(node.getUuid()))
-               removeNode(mxNode); 
+               childrenNodesToDelete.add(mxNode); 
         }
+        for (MxGraphNode child : childrenNodesToDelete)    
+            removeNode(child);
+        
         
          //delete edges related to the object
         List<MxGraphEdge> edgesToDelete = new ArrayList<>();
@@ -381,9 +385,9 @@ public class MxGraph extends Component implements HasComponents, HasStyle, HasSi
             }
         }
         
-        for (MxGraphEdge edge : edgesToDelete) {   
+        for (MxGraphEdge edge : edgesToDelete)    
             removeEdge(edge);
-        }    
+          
     }
     
     public void removeEdge(MxGraphEdge edge) {
