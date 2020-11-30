@@ -65,7 +65,7 @@ public class NewTaskAction extends AbstractAction {
             String name = (String) parameters.get("name");
             String dispName = (String)  parameters.get("description");
             
-            aem.createTask(name, dispName, true, true, "", taskParameters, schedule, notificationType);
+            aem.createTask(name, dispName, true, false, "", taskParameters, schedule, notificationType);
             return new ActionResponse();
         });
     }
