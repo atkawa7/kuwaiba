@@ -12,6 +12,8 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.CallbackDataProvider;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.hierarchy.HierarchicalConfigurableFilterDataProvider;
+import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,7 +47,7 @@ public class ComplexGrid<T> extends Grid<T>{
      */
     private ConfigurableFilterDataProvider<T, Void, GridFilter> dpConfigurableFilter;
     /**
-     * The fisrt column of the grid for filter the name
+     * The first column of the grid for filter the name
      */
     private Grid.Column<T> firstColumn;
     

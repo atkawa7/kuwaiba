@@ -15,16 +15,19 @@
  */
 package org.neotropic.kuwaiba.modules.core.navigation;
 
+import com.neotropic.flow.component.paper.toggle.PaperToggleButton;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.accordion.Accordion;
-import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.ItemClickEvent;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -34,15 +37,15 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.provider.CallbackDataProvider;
+import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
-import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.StreamResourceRegistry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,6 +60,7 @@ import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionRegistr
 import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionResponse;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -67,8 +71,6 @@ import org.neotropic.kuwaiba.modules.core.navigation.actions.DeleteBusinessObjec
 import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectAction;
 import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualActionToo;
 import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicBusinessObjectIconGenerator;
-import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicTreeNodeIconGenerator;
-import org.neotropic.kuwaiba.modules.core.navigation.navtree.NavigationTree;
 import org.neotropic.kuwaiba.modules.core.navigation.navtree.nodes.InventoryObjectNode;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.ComplexGrid;
 import org.neotropic.kuwaiba.modules.core.navigation.resources.GridFilter;
@@ -140,7 +142,18 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
      */
     private HorizontalLayout lytDetail;
     //Gui
+    /**
+     * Holds both the Locations parents and the device parent
+     */
     private HorizontalLayout lytParents;
+    /**
+     * The bread scrums for location
+     */
+    private HorizontalLayout lytLocationParents;
+    /**
+     * The bread scrums in device
+     */
+    private HorizontalLayout lytDeviceParents;
     /**
      * Contains the three columns
      */
@@ -154,6 +167,10 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
      */
     private VerticalLayout lytNetwork;
     /**
+     * Holds the name of the selected object and the option: show only ports 
+     */
+    private HorizontalLayout lytHeaderNetwork;
+    /**
      * Left Column
      */
     private VerticalLayout lytPropertys;
@@ -161,7 +178,6 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
      * The main search text input in the header
      */
     private TextField txtSearch;
-    private GridFilter gridFilter;
     /**
      * The search bar in the header
      */
@@ -182,6 +198,7 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
     private int currentSkip;
     private int currentLimit;
     private int currentCount;
+    private boolean isOnlyPorts;
     private Button btnNext;
     private Button btnBack;
     private Span lblPage;
@@ -197,12 +214,11 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
        
         setupLayouts();
         setupSearchBar();
-        setupLocationHeader();
         
         this.currentSkip = 0;
         this.currentLimit = 10;
         this.currentCount = 0;
-        this.gridFilter = new GridFilter();
+        this.isOnlyPorts = false;
         this.currentSearchedResults = new HashMap<>();
         this.currentGridResults = new HashMap<>();
         this.actNewObj.registerActionCompletedLister(this);
@@ -275,6 +291,7 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
             
             btnBack.setEnabled(false);
             lytPagination = new HorizontalLayout(btnBack, lblPage, btnNext);
+            lytPagination.setDefaultVerticalComponentAlignment(Alignment.CENTER);
             lytPagination.setVisible(false);
         }
         //Main column that contains the three columns
@@ -285,30 +302,41 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
             lytNav.setMargin(false);
             lytNav.setPadding(false);
             lytNav.setSizeFull();
-            //lytNav.getStyle().set("background-color", "purple");
         }
         //The rigth colum
         if(lytLocation == null){
             lytLocation = new VerticalLayout();
             lytLocation.setMaxWidth("30%");
-            //lytLocation.getStyle().set("background-color", "green");
         }
         //the first row of the rigth column
         if(lytParents == null){
-            lytParents = new HorizontalLayout();
-            lytParents.setSpacing(false);
+            lytLocationParents = new HorizontalLayout();
+            lytLocationParents.setSpacing(false);
+            lytLocationParents.setMargin(false);
+            lytLocationParents.setPadding(false);
+            
+            lytDeviceParents= new HorizontalLayout();
+            lytDeviceParents.setSpacing(false);
+            lytDeviceParents.setMargin(false);
+            lytDeviceParents.setPadding(false);
+            
+            lytParents = new HorizontalLayout(lytLocationParents, lytDeviceParents);
+            lytParents.setSpacing(true);
             lytParents.setMargin(false);
             lytParents.setPadding(false);
-            lytParents.setMinHeight("25px");
+            lytParents.setMinHeight("15px");
             lytParents.setWidth("100%");
         }
-        //TODO  add only ports button PaperToggleButton tgbOnlyPorts = new PaperToggleButton("aaaa");
         //Center column
         if(lytNetwork == null){
-            lytNetwork = new VerticalLayout();
-            //lytNetwork.getStyle().set("background-color", "yellow");
-            lytNetwork.setMaxWidth("40%");
-            lytNetwork.add(new Span("..."));
+            this.lytNetwork = new VerticalLayout();
+            this.lytHeaderNetwork = new HorizontalLayout();
+            this.lytHeaderNetwork.setSpacing(true);
+            this.lytHeaderNetwork.setMargin(false);
+            this.lytHeaderNetwork.setPadding(false);
+
+            this.lytNetwork.setMaxWidth("40%");
+            this.lytNetwork.add(new Span("..."));
         }
         //the main content 
         this.lytContent = new VerticalLayout();
@@ -352,290 +380,27 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
                 processResults(txtSearch.getValue(), 0, 10);
         });
     }
-    
-    private ConfigurableFilterDataProvider<String, Void, GridFilter> dpConfigurableFilter;
-   
-    /**
-     * Default data provider to load the whole navigation tree staring on root
-     *
-     * @return
-     */
-    private HierarchicalDataProvider getDataProvider() {
-        return new AbstractBackEndHierarchicalDataProvider<InventoryObjectNode, Void>() {
-            @Override
-            protected Stream<InventoryObjectNode> fetchChildrenFromBackEnd(HierarchicalQuery<InventoryObjectNode, Void> query) {
-                InventoryObjectNode parent = query.getParent();
-                if (parent != null) {
-                    BusinessObjectLight object = parent.getObject();
-                    try {
-                        List<BusinessObjectLight> children = bem.getObjectChildren(
-                                object.getClassName(), object.getId(), query.getOffset(), query.getLimit());
-                        List<InventoryObjectNode> nodes = new ArrayList();
-                        for (BusinessObjectLight child : children) {
-                            nodes.add(new InventoryObjectNode(child));
-                        }
-                        return nodes.stream();
-                    } catch (InvalidArgumentException ex) {
-                        new SimpleNotification(
-                                ts.getTranslatedString("module.general.messages.error"),
-                                ex.getMessage(), 
-                            AbstractNotification.NotificationType.ERROR, ts).open();
-                        return new ArrayList().stream();
-                    }
-                } else {
-                    return Arrays.asList(new InventoryObjectNode(
-                            new BusinessObjectLight(Constants.DUMMY_ROOT, null, "Root")
-                    )).stream();
-                }
-            }
-
-            @Override
-            public int getChildCount(HierarchicalQuery<InventoryObjectNode, Void> query) {
-                InventoryObjectNode parent = query.getParent();
-                if (parent != null) {
-                    BusinessObjectLight object = parent.getObject();
-                    try {
-                        return (int) bem.getObjectChildrenCount(object.getClassName(), object.getId());
-                    } catch (Exception ex) {
-                        new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),
-                                ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
-                        return 0;
-                    }
-                } else
-                    return 1;
-            }
-
-            @Override
-            public boolean hasChildren(InventoryObjectNode node) {
-                return true;
-            }
-        };
-    }
-
-    /**
-     * Creates the data provider from a given class to filter
-     *
-     * @param parentId the relative root id of the navigation tree
-     * @param parentClassName the relative root className of the navigation tree
-     * @return a filtered data provider
-     */
-    private HierarchicalDataProvider getDataProviderFiltered(String parentId, String parentClassName)
-            throws InvalidArgumentException {
-        List<BusinessObjectLight> children = bem.getObjectChildren(parentClassName, parentId, 0, 0);
-        List<InventoryObjectNode> inventoryNodes = null;
-
-        return new AbstractBackEndHierarchicalDataProvider<InventoryObjectNode, Void>() {
-
-            @Override
-            protected Stream<InventoryObjectNode> fetchChildrenFromBackEnd(HierarchicalQuery<InventoryObjectNode, Void> query) {
-                InventoryObjectNode parent = query.getParent();
-                if (parent != null) {
-                    BusinessObjectLight object = parent.getObject();
-                    try {
-                        List<BusinessObjectLight> children = bem.getObjectChildren(
-                                object.getClassName(), object.getId(), query.getOffset(), query.getLimit());
-                        List<InventoryObjectNode> nodes = new ArrayList();
-                        for (BusinessObjectLight child : children) {
-                            nodes.add(new InventoryObjectNode(child));
-                        }
-                        return nodes.stream();
-                    } catch (InvalidArgumentException ex) {
-                        new SimpleNotification(
-                                ts.getTranslatedString("module.general.messages.error"),
-                                ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
-                        return new ArrayList().stream();
-                    }
-                } else
-                    inventoryNodes.stream();
-                
-                inventoryNodes.stream();
-                return null;
-            }
-
-            @Override
-            public int getChildCount(HierarchicalQuery<InventoryObjectNode, Void> query) {
-                InventoryObjectNode parent = query.getParent();
-                if (parent != null) {
-                    BusinessObjectLight object = parent.getObject();
-                    try {
-
-                        return (int) bem.getObjectChildrenCount(object.getClassName(), object.getId());
-                    } catch (Exception ex) {
-                        new SimpleNotification(
-                                ts.getTranslatedString("module.general.messages.error"),
-                                ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
-                        return 0;
-                    }
-                } else
-                    return 1;
-            }
-
-            @Override
-            public boolean hasChildren(InventoryObjectNode node) {
-                try {
-                    List<BusinessObjectLight> children = bem.getObjectChildren(node.getClassName(), node.getObject().getId(), 0, 0);
-                    return children.size() > 0;
-                } catch (InvalidArgumentException ex) {
-                    new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),
-                            ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
-                    return false;
-                }
-            }
-        };
-    }
-
-    /**
-     * Create template data provider items (structure )and refresh items
-     *
-     * @param object; TemplateObjectLight; parent template
-     */
-    /*
-    private void refreshStructure(TemplateObjectLight object) {
-        //create fisrt call data
-        List<TemplateObjectLight> allChildsTemplateLight = new ArrayList<>();
-        allChildsTemplateLight.addAll(aem.getTemplateElementChildren(object.getClassName(), object.getId()));
-        allChildsTemplateLight.addAll(aem.getTemplateSpecialElementChildren(object.getClassName(), object.getId()));
-        childsTemplateDataProvider = new AbstractBackEndHierarchicalDataProvider<TemplateObjectLight, Void>() {
-            //count parent elements
-            @Override
-            public int getChildCount(HierarchicalQuery<TemplateObjectLight, Void> query) {
-                if (query.getParent() != null) {
-                    List<TemplateObjectLight> allInnerChildsTemplateLight = new ArrayList<>();
-                    allInnerChildsTemplateLight.addAll(aem.getTemplateElementChildren(query.getParent().getClassName(), query.getParent().getId()));
-                    allInnerChildsTemplateLight.addAll(aem.getTemplateSpecialElementChildren(query.getParent().getClassName(), query.getParent().getId()));
-                    return allInnerChildsTemplateLight.size();
-                } else { //in case element set for fisrt time 
-                    return allChildsTemplateLight.size();
-                }
-            }
-
-            //load child elements    
-            @Override
-            public boolean hasChildren(TemplateObjectLight item) {
-                List<TemplateObjectLight> innerChildsTemplateLight = new ArrayList<>();
-                innerChildsTemplateLight.addAll(aem.getTemplateElementChildren(item.getClassName(), item.getId()));
-                innerChildsTemplateLight.addAll(aem.getTemplateSpecialElementChildren(item.getClassName(), item.getId()));
-
-                return innerChildsTemplateLight.size() > 0;
-            }
-
-            //return parent elements list
-            @Override
-            protected Stream<TemplateObjectLight> fetchChildrenFromBackEnd(HierarchicalQuery<TemplateObjectLight, Void> query) {
-                //load normal and special children and gorus both to be display
-                if (query.getParent() != null) {
-                    List<TemplateObjectLight> allInnerChildsTemplateLight = new ArrayList<>();
-                    allInnerChildsTemplateLight.addAll(aem.getTemplateElementChildren(query.getParent().getClassName(), query.getParent().getId()));
-                    allInnerChildsTemplateLight.addAll(aem.getTemplateSpecialElementChildren(query.getParent().getClassName(), query.getParent().getId()));
-                    return allInnerChildsTemplateLight.stream();
-                } else {
-                    return allChildsTemplateLight.stream();
-                }
-            }
-        };
-        tblChildsTemplate.setDataProvider(childsTemplateDataProvider);
-        tblChildsTemplate.getDataProvider().refreshAll();
-    }*/
-//    private NavigationTree buildTree() {
-//        NavigationTree navigationTree = 
-//        navigationTree.setSizeFull();
-//        return navigationTree;
-//    }
-    
-
-
-    
-
-    /**
-     * Loads and creates the header of the tree for location
-     * The levels to filter
-     * ----
-     * Location: Country, City, etc until the first father of GenericNetWorkElement
-     * it could be Rack or Building
-     * All children of ViewableObject
-     * except: floor, room, slot - they will be show or hide filters
-     * except: ConfigurationItem
-     * ----
-     * GenericNetworkElement
-     * ----
-     * Ports
-     */
-    private void setupLocationHeader(){
-        //first we the list of classMetadata
-//        for(ClassMetadataLight classMetadata : locationFilters)
-//            locationButtonsFilters.add(new Button(classMetadata.getName()));
-//        
-//        for (Button button : locationButtonsFilters) {
-//            lytLocationButonsFilters.add(button);
-//
-//            button.addClickListener(e -> {
-//                try {
-//                    String className = e.getSource().getText();
-//                    List<BusinessObjectLight> searchResults = bem.getObjectsOfClassLight(className, -1);
-//                    lytLocation.removeAll();
-//                    if (searchResults.isEmpty())
-//                        new SimpleNotification(ts.getTranslatedString("module.general.messages.information"), ts.getTranslatedString("module.general.messages.no-search-results"), 
-//                            AbstractNotification.NotificationType.ERROR, ts).open();
-//                    else {
-//                        NavigationTree localitationNavTree = new NavigationTree(getDataProviderSeveral(searchResults), new BasicTreeNodeIconGenerator(resourceFactory));
-//                        localitationNavTree.addSelectionListener(ei -> {
-//                            Set selectedItems = ei.getAllSelectedItems();
-//                            for (Object item : selectedItems) {
-//                                try {
-//                                    BusinessObjectLight obj = ((InventoryObjectNode)item).getObject();
-//                                    
-//                                    List<BusinessObjectLight> childrenOfClassLight = bem.getChildrenOfClassLightRecursive(obj.getId(), obj.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, 0);
-//                                    if (childrenOfClassLight.isEmpty())
-//                                        lytNetwork.add(new Label(ts.getTranslatedString("module.general.messages.no-search-results")));
-//                                    else {
-//                                        lytNetwork.removeAll();
-//                                        NavigationTree navTree = new NavigationTree(getDataProviderSeveral(childrenOfClassLight), new BasicTreeNodeIconGenerator(resourceFactory));
-//                                        lytNetwork.add(navTree);
-//                                    }    
-//                                    break;
-//                                } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException ex) {
-//                                    Logger.getLogger(NavUI.class.getName()).log(Level.SEVERE, null, ex);
-//                                }
-//                            }
-//                        });
-//                        lytLocation.add(localitationNavTree);
-//                    }
-//                } catch (Exception ex) {
-//                    new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(), 
-//                            AbstractNotification.NotificationType.ERROR, ts).open();
-//                }
-//            });
-//        }
-//         
-//        lytSearch.add();
-    }
-    
+     
     /**
      * Creates/updates the localization path, that shows the whole list 
      * of the parents  of the selected object in the tree
-     * @param selectedLocationObj the selected object in the location tree
-     * @param selectedNetworkObj the selected object in the network tree
+     * @param selectedItemParents the selected object in the location tree
+     * @param kind the kind of bread crumbs if is location or device
      */
-    private Div getLocalizationPath(BusinessObjectLight selectedLocationObj){
+    private Div createBreadCrumbs(List<BusinessObjectLight> selectedItemParents, int kind){
         Div divPowerline = new Div();
         divPowerline.setWidthFull();
         divPowerline.setClassName("powerline");
-        try {
-            List<BusinessObjectLight> selectedItemParents = bem.getParents(selectedLocationObj.getClassName(), selectedLocationObj.getId());
-            Collections.reverse(selectedItemParents);
-            
-            selectedItemParents.forEach(parent -> {
-                Span span = new Span(new Label(parent.getClassName().equals(Constants.DUMMY_ROOT) ? "/" : parent.getName()));
-                span.setSizeUndefined();
-                span.setTitle(String.format("[%s]", parent.getClassName()));
-                span.addClassNames("powerline-component", "dracula-pink");
-                divPowerline.add(span);
-            });
-            
-        } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),
-                                ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
-        }
+        
+        Collections.reverse(selectedItemParents);
+        selectedItemParents.forEach(parent -> {
+            Span span = new Span(new Label(parent.getClassName().equals(Constants.DUMMY_ROOT) ? "/" : parent.getName()));
+            span.setSizeUndefined();
+            span.setTitle(String.format("[%s]", parent.getClassName()));
+            span.addClassNames("powerline-component", kind == 1 ? "dracula-cyan" : "dracula-orange");
+            divPowerline.add(span);
+        });
+        
         return divPowerline;
     }
     
@@ -651,6 +416,13 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
         }
     }
      
+    /**
+     * After a search the searched text is process to create a result of 
+     * business objects grouped by class name in grids
+     * @param searchedText the searched text
+     * @param skip the skip for pagination 
+     * @param limit the limit for pagination
+     */
     private void processResults(String searchedText, int skip, int limit) {
         try {
             currentGridResults = new HashMap<>(); //we must clean what its been shown
@@ -677,14 +449,11 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
                 }
                 lastSearchText = searchedText;
                 currentSkip = skip;
-                //currentLimit = limit;
                 Component results = createGridsResults();
                 lytLocation.removeAll();
                 lytLocation.add(results);
                 int page = (currentSkip + currentLimit)/currentLimit;
                 lblPage.setText(Integer.toString(page));
-                //NavigationTree navTree = new NavigationTree(getDataProviderSeveral(searchResults), new BasicIconGenerator(resourceFactory));
-                //lytLocation.add(navTree);
             }
         } catch (InvalidArgumentException ex) {
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(),
@@ -700,60 +469,147 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
         Accordion acrClasses = new Accordion();
         acrClasses.setWidth("100%");
         
-        for (Map.Entry<String, List<BusinessObjectLight>> entry : currentSearchedResults.entrySet()) {
+        currentSearchedResults.entrySet().forEach(entry -> {
             String className = entry.getKey();
-            List<BusinessObjectLight> objs = entry.getValue();
         
             ComplexGrid<BusinessObjectLight> grid = new ComplexGrid<>(bem, className, lastSearchText);
-            grid.addItemClickListener((ItemClickEvent<BusinessObjectLight> t) -> {
-                lytParents.removeAll();
-                lytParents.add(getLocalizationPath(t.getItem()));
+            grid.addItemClickListener(t -> {
                 try{
-                    List<BusinessObjectLight> roots = new ArrayList<>();
-                    roots.add(t.getItem());
+                    lytLocationParents.removeAll();
+                    List<BusinessObjectLight> selectedItemParents = bem.getParents(t.getItem().getClassName(), t.getItem().getId());
+                    lytLocationParents.add(createBreadCrumbs(selectedItemParents, 1));
+                    
                     lytNetwork.removeAll();
-                    NavigationTree navTree = new NavigationTree(getDataProviderSeveral(roots), new BasicTreeNodeIconGenerator(resourceFactory));
+                    TreeGrid<InventoryObjectNode> navTree = createNavigationTree(t.getItem());
                     lytNetwork.add(navTree);
-                } catch (InvalidArgumentException ex) {
-                        new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),
-                                ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
+                } catch (InvalidArgumentException | MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
+                    new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),
+                            ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
                 }
-                
             });
             //uncommnet to avoid actions 
-            
             grid.setFirstColumn(grid.addColumn(new BusinessObjectSearchResultRenderer(
                     actionRegistry.getActionsForModule(NavModule.MODULE_ID),
                     new NavNodeSearchResultCallback(),
                     new BasicBusinessObjectIconGenerator(resourceFactory)
             )));
             
-            
             grid.setPageSize(10);// Sets the max number of items to be rendered on the grid for each page, only works for the after 50 elements
             currentGridResults.put(className, grid);
             grid.createDataProviderPaginateGrid();
             grid.createPaginateGridFilter();
+            grid.setMaxHeight("570px");
             acrClasses.add(className + " (" + currentSearchedResults.get(className).size() + ") ", grid);
-        }
+        });
         return acrClasses;
     }
     
-     /**
+    /**
+     * Creates the navigation tree when a item is selected in the grid classes
+     * @param obj the selected business object 
+     * @return the navigation tree a vaadin tree grid 
+     * @throws InvalidArgumentException if something is wrong 
+     * @throws MetadataObjectNotFoundException if the parent class is not found when the parent's bread crumbs is been created for the selected item in the navigation tree
+     * @throws BusinessObjectNotFoundException if the object is not found when the parent's bread crumbs is been created for the selected item in the navigation tree
+     */
+    private TreeGrid createNavigationTree(BusinessObjectLight obj) throws InvalidArgumentException, MetadataObjectNotFoundException, BusinessObjectNotFoundException{
+        TreeGrid<InventoryObjectNode> navTree = new TreeGrid<>();
+        Grid.Column<InventoryObjectNode> column = navTree.addComponentHierarchyColumn(item -> createNode(item));
+        navTree.addThemeVariants(GridVariant.LUMO_NO_BORDER, 
+                GridVariant.LUMO_NO_ROW_BORDERS, GridVariant.LUMO_COMPACT);
+
+        navTree.setSelectionMode(Grid.SelectionMode.SINGLE);
+        navTree.addItemClickListener(e -> {
+            try {
+                lytDeviceParents.removeAll();
+                List<BusinessObjectLight> parents = bem.getParentsUntilFirstOfClass(e.getItem().getObject().getClassName(),
+                        e.getItem().getObject().getId(), obj.getClassName());
+                lytDeviceParents.add(createBreadCrumbs(parents, 2)); 
+            } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | ApplicationObjectNotFoundException | InvalidArgumentException ex) {
+                Logger.getLogger(NavUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        
+        HeaderRow headerRow = navTree.prependHeaderRow();
+        PaperToggleButton btn = new PaperToggleButton("onlyPorts");
+        btn.addValueChangeListener(e ->{
+            isOnlyPorts = e.getValue();
+            try {
+                navTree.setDataProvider(getDataProviderFiltered(obj.getId(), obj.getClassName()));
+            } catch (InvalidArgumentException | MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
+                Logger.getLogger(NavUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        headerRow.getCell(column).setComponent(new HorizontalLayout(new Label(obj.getName()), btn));
+        navTree.setDataProvider(getDataProviderFiltered(obj.getId(), obj.getClassName()));
+        
+        return navTree;
+    }
+    
+    /**
+     * Creates a node in the navigation tree
+     * @param obj the object that will be the node
+     * @return the business object as node
+     */
+    private Component createNode(InventoryObjectNode obj){
+        BasicBusinessObjectIconGenerator iconGenerator = new BasicBusinessObjectIconGenerator(resourceFactory);
+        Div divTitle = new Div(new Label(obj.getObject().toString()));
+        divTitle.setClassName("search-result-title");
+        divTitle.setWidthFull();
+        
+        Image objIcon = new Image(StreamResourceRegistry.getURI(iconGenerator.apply(obj.getObject())).toString(), "-");
+        objIcon.setHeight(Integer.toString(ResourceFactory.DEFAULT_SMALL_ICON_HEIGHT) + "px");
+        objIcon.setWidth(Integer.toString(ResourceFactory.DEFAULT_SMALL_ICON_WIDTH) + "px");
+        
+        HorizontalLayout lytTitle = new HorizontalLayout(objIcon, divTitle);
+
+        lytTitle.setBoxSizing(BoxSizing.BORDER_BOX);  
+        lytTitle.setSpacing(true);
+        lytTitle.setMargin(false);
+        lytTitle.setPadding(false);
+        lytTitle.setDefaultVerticalComponentAlignment(
+                FlexComponent.Alignment.CENTER);
+        
+        return lytTitle;
+    }
+    
+    /**
      * Creates the data provider from a given class to filter
-     *
      * @param parentId the relative root id of the navigation tree
      * @param parentClassName the relative root className of the navigation tree
      * @return a filtered data provider
      */
-    private HierarchicalDataProvider getDataProviderSeveral(List<BusinessObjectLight> roots)
-            throws InvalidArgumentException {
-        List<InventoryObjectNode> inventoryNodes = new ArrayList<>();
-        roots.forEach(object -> {
-            inventoryNodes.add(new InventoryObjectNode(object));
-        });
+    private HierarchicalDataProvider getDataProviderFiltered(String parentId, String parentClassName)
+            throws InvalidArgumentException, MetadataObjectNotFoundException, BusinessObjectNotFoundException {
+        List<BusinessObjectLight> children;
+        if(!isOnlyPorts)
+            children = bem.getObjectChildren(parentClassName, parentId, 0, 0);
+        else
+            children = bem.getChildrenOfClassLightRecursive(parentId, parentClassName, Constants.CLASS_GENERICPORT, -1);
 
+        List<InventoryObjectNode> inventoryNodes = new ArrayList<>();
+        children.forEach(object -> { inventoryNodes.add(new InventoryObjectNode(object)); });
+       
         return new AbstractBackEndHierarchicalDataProvider<InventoryObjectNode, Void>() {
 
+            @Override
+            public int getChildCount(HierarchicalQuery<InventoryObjectNode, Void> query) {
+                InventoryObjectNode parent = query.getParent();
+                if (parent != null) {
+                    BusinessObjectLight object = parent.getObject();
+                    try {
+                        
+                        return (int) bem.getObjectChildrenCount(object.getClassName(), object.getId());
+                    } catch (InvalidArgumentException ex) {
+                        new SimpleNotification(
+                                ts.getTranslatedString("module.general.messages.error"),
+                                ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
+                        return 0;
+                    }
+                } else
+                    return children.size();
+            }
+            
             @Override
             protected Stream<InventoryObjectNode> fetchChildrenFromBackEnd(HierarchicalQuery<InventoryObjectNode, Void> query) {
                 InventoryObjectNode parent = query.getParent();
@@ -763,36 +619,18 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
                         List<BusinessObjectLight> children = bem.getObjectChildren(
                                 object.getClassName(), object.getId(), query.getOffset(), query.getLimit());
                         List<InventoryObjectNode> nodes = new ArrayList();
-                        for (BusinessObjectLight child : children) {
+                        children.forEach(child -> {
                             nodes.add(new InventoryObjectNode(child));
-                        }
+                        });
                         return nodes.stream();
                     } catch (InvalidArgumentException ex) {
-                        new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),
+                        new SimpleNotification(
+                                ts.getTranslatedString("module.general.messages.error"),
                                 ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
                         return new ArrayList().stream();
                     }
                 } else
                     return inventoryNodes.stream();
-            }
-
-            @Override
-            public int getChildCount(HierarchicalQuery<InventoryObjectNode, Void> query) {
-                InventoryObjectNode parent = query.getParent();
-                if (parent != null) {
-                    BusinessObjectLight object = parent.getObject();
-                    try {
-                        //return (int) bem.getObjectsWithFilterLight(className, filterName, filterValue);
-                        
-                        
-                        return (int) bem.getObjectChildrenCount(object.getClassName(), object.getId());
-                    } catch (Exception ex) {
-                        new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),
-                                ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
-                        return 0;
-                    }
-                } else
-                    return inventoryNodes.size();
             }
 
             @Override

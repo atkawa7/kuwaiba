@@ -65,7 +65,7 @@ public class BusinessObjectSearchResultRenderer extends ComponentRenderer<Vertic
         lytSearchResult.setSizeFull();
         lytSearchResult.setPadding(false);
         
-        Div divTitle = new Div(new Label(obj.toString()));
+        Div divTitle = new Div(new Label(obj.getName()));
         divTitle.setClassName("search-result-title");
         divTitle.setWidthFull();
 
@@ -81,10 +81,6 @@ public class BusinessObjectSearchResultRenderer extends ComponentRenderer<Vertic
         lytTitle.setPadding(false);
         lytTitle.setDefaultVerticalComponentAlignment(
                 FlexComponent.Alignment.CENTER);
-                
-//        divTitle.addClickListener( e -> {
-//            replaceContent(this.resultCallback.buildSearchResultDetailsPage(result));
-//        });
 
         HorizontalLayout lytActions = new HorizontalLayout();
         lytActions.setClassName("search-result-actions");
