@@ -3603,7 +3603,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 queryBuilder.append("(childNode:inventoryObjects)\n"); //NOI18N
                 queryBuilder.append("WHERE dummyRoot.name = $name\n"); //NOI18N
                 queryBuilder.append(String.format("RETURN childNode AS %s\n", CHILD_NODE)); //NOI18N
-                queryBuilder.append("ORDER BY childNode.name ASC SKIP $skip LIMIT $limit;"); //NOI18N
+                queryBuilder.append((skip > 0 && limit > 0)  ? "ORDER BY childNode.name ASC SKIP $skip LIMIT $limit;" : ""); //NOI18N
                 
                 parameters.put("name", Constants.DUMMY_ROOT); //NOI18N
             } else {
@@ -3615,13 +3615,15 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 queryBuilder.append("WHERE classNode.name = $className\n"); //NOI18N
                 queryBuilder.append("AND parentNode._uuid = $oid\n"); //NOI18N
                 queryBuilder.append(String.format("RETURN childNode AS %s\n", CHILD_NODE)); //NOI18N
-                queryBuilder.append("ORDER BY childNode.name ASC SKIP $skip LIMIT $limit;"); //NOI18N
+                queryBuilder.append((skip > 0 && limit > 0)  ? "ORDER BY childNode.name ASC SKIP $skip LIMIT $limit;" : ""); //NOI18N
                 
                 parameters.put("className", className); //NOI18N
                 parameters.put("oid", oid); //NOI18N
             }
-            parameters.put("skip", skip); //NOI18N
-            parameters.put("limit", limit); //NOI18N
+            if(skip > 0 && limit > 0){
+                parameters.put("skip", skip); //NOI18N
+                parameters.put("limit", limit); //NOI18N
+            }
             Result result = connectionManager.getConnectionHandler().execute(queryBuilder.toString(), parameters);
             List<BusinessObjectLight> objectChildren = new ArrayList();
             while (result.hasNext())
