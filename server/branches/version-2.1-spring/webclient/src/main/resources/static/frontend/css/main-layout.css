@@ -265,7 +265,7 @@ paper-swatch-picker paper-icon-button {
 }
 
 /*Navigation Parents path*/
-powerline{
+.powerline{
    display: flex;
    justify-content: center;
 }
@@ -281,6 +281,9 @@ powerline{
 }
 /*Navigation color of the parents in navigation module*/
 .dracula-pink{background-color: #ff79c6;}
+.dracula-cyan{background-color: #8be9fd;}
+.dracula-green{background-color: #50fa7b;}
+.dracula-orange{background-color: #ffb86c;}
 
 /** used instead of H4 to have full control of the padding*/
 .dialog-title{
