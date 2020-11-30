@@ -2194,14 +2194,31 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public List<ActivityLogEntry> getGeneralActivityAuditTrail(int page, int limit) {        
+    public List<ActivityLogEntry> getGeneralActivityAuditTrail(int page, int limit, HashMap<String, Object> filters) {        
         try(Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
-            Node generalActivityLogNode = connectionManager.getConnectionHandler().findNode(specialNodeLabel, Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG);
-
-            String query = String.format("MATCH (n)<-[:%s]-(m)-[:%s]->(u) WHERE id(n) = %s RETURN m AS auditTrailEntry, u AS user ORDER BY n.creationDate DESC %s", 
-                    RelTypes.CHILD_OF_SPECIAL, RelTypes.PERFORMED_BY, generalActivityLogNode.getId(), page == 0 || limit == 0 ? "" : "SKIP " + (page * limit - limit) + " LIMIT " + limit);
+            HashMap<String, Object> parameters = new HashMap<>();
             
-            Result result = connectionManager.getConnectionHandler().execute(query);
+            String userFilter;
+            if (filters != null && filters.containsKey("user")) {
+                userFilter = "user.name = {username}";
+                parameters.put("user", filters.get("user"));
+            } else
+                userFilter = "true";
+            
+            String typeFilter;
+            if (filters != null && filters.containsKey("type")) {
+                typeFilter = "auditTrailEntry.type = {type}";
+                parameters.put("type", filters.get("type"));
+            } else
+                typeFilter = "true";
+            
+            String query = "MATCH (auditTrailEntry:generalActivityLogs)-[:PERFORMED_BY]->(user) "
+                    + ((filters == null || filters.isEmpty()) ? "" : "WHERE " + userFilter + " AND " + typeFilter)
+                    + " RETURN auditTrailEntry, user"
+                    + " ORDER BY auditTrailEntry.creationDate DESC"
+                    + (page < 1 || limit < 1 ? "" : " SKIP " + (page * limit - limit) + " LIMIT " + limit);
+            
+            Result result = connectionManager.getConnectionHandler().execute(query, parameters);
             
             List<ActivityLogEntry> log = new ArrayList<>();
             while (result.hasNext()) {
@@ -2217,6 +2234,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         logEntry.hasProperty(Constants.PROPERTY_NEW_VALUE) ? (String)logEntry.getProperty(Constants.PROPERTY_NEW_VALUE) : null, 
                         logEntry.hasProperty(Constants.PROPERTY_NOTES) ? (String)logEntry.getProperty(Constants.PROPERTY_NOTES) : null));
             }
+            
+            tx.success();
             return log;
         }
     }

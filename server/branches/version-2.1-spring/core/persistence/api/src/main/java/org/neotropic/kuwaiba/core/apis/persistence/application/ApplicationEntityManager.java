@@ -735,9 +735,12 @@ public interface ApplicationEntityManager extends AbstractEntityManager {
      * Retrieves the list of general activity log entries
      * @param page current page
      * @param limit limit of results per page. 0 to retrieve them all
-     * @return The list of activity log entries
+     * @param filters The response may be filtered by user (use key <code>user</code>, value the user name, a String) or event type (use key <code>type</code>, 
+     * value any from ActivityLogEntry.ACTIVITY_TYPE_XXXX, an integer). If this parameter is null, no filters will be applied. If a key is not present, it won't 
+     * be used as filter. If both are present, a logical AND will be applied.
+     * @return The list of activity log entries. The entries are sorted by creation date in descending order.
      */
-    public List<ActivityLogEntry> getGeneralActivityAuditTrail(int page, int limit);
+    public List<ActivityLogEntry> getGeneralActivityAuditTrail(int page, int limit, HashMap<String, Object> filters);
     
     /**
      * Validates if a user is allowed to call a given a northbound interface method

@@ -67,7 +67,6 @@ public class ClassLevelReportWidget extends AbstractDashboardWidget {
     @Override
     public void createContent() {
         try {
-
             BoldLabel lblTitle = new BoldLabel(String.format(ts.getTranslatedString("module.reporting.widget.class-level-report-available"), businessObject.getClassName()));
             List<ReportMetadataLight> reports = bem.getClassLevelReports(businessObject.getClassName(), true, false);
           

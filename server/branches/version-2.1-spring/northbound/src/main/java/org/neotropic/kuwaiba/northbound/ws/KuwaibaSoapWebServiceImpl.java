@@ -3672,7 +3672,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
             aem.validateCall("getGeneralActivityAuditTrail", "127.0.0.1", sessionId);
-            List<ActivityLogEntry> entries = aem.getGeneralActivityAuditTrail(page, limit);
+            List<ActivityLogEntry> entries = aem.getGeneralActivityAuditTrail(page, limit, null); // Filters are not required to keep API backward compatibility until version 3
             ApplicationLogEntry[] res = new ApplicationLogEntry[entries.size()];
             for (int i = 0; i< entries.size(); i++)
                 res[i] = new ApplicationLogEntry(entries.get(i));

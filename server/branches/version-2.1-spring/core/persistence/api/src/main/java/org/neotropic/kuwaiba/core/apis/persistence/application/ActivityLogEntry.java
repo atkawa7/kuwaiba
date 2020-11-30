@@ -74,8 +74,8 @@ public class ActivityLogEntry implements Serializable {
     public static final int ACTIVITY_TYPE_CLOSE_SESSION = 14;
     public static final int ACTIVITY_TYPE_CREATE_USER = 15;
     public static final int ACTIVITY_TYPE_MASSIVE_UPDATE_APPLICATION_OBJECT = 16;
-    public static final int ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT=17;
-    public static final int ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT=18;
+    public static final int ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT = 17;
+    public static final int ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT = 18;
 
     public ActivityLogEntry(long id, long objectId, int type, String userName, long timestamp, String affectedProperty, String oldValue, String newValue, String notes) {
         this.id = id;

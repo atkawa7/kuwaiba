@@ -118,7 +118,7 @@ public class AuditTrailUI extends VerticalLayout implements ActionCompletedListe
     }
 
     private void buildAuditTrailGrid() {
-        List<ActivityLogEntry> auditTrail = aem.getGeneralActivityAuditTrail(0, -1);
+        List<ActivityLogEntry> auditTrail = aem.getGeneralActivityAuditTrail(0, -1, null);
         ListDataProvider<ActivityLogEntry> dataprovider = new ListDataProvider<>(auditTrail);
         tblAuditTrail.setDataProvider(dataprovider);
         tblAuditTrail.setHeightFull();
@@ -144,7 +144,7 @@ public class AuditTrailUI extends VerticalLayout implements ActionCompletedListe
     }
     
     private void refreshAuditTrail() {
-        List<ActivityLogEntry> auditTrail = aem.getGeneralActivityAuditTrail(0, -1);
+        List<ActivityLogEntry> auditTrail = aem.getGeneralActivityAuditTrail(0, -1, null);
         tblAuditTrail.setItems(auditTrail);
         tblAuditTrail.getDataProvider().refreshAll();
     }

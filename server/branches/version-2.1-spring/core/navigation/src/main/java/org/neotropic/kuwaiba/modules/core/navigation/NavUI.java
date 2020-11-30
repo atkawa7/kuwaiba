@@ -531,7 +531,7 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
         });
         
         HeaderRow headerRow = navTree.prependHeaderRow();
-        PaperToggleButton btn = new PaperToggleButton("onlyPorts");
+        PaperToggleButton btn = new PaperToggleButton("Only Show Ports");
         btn.addValueChangeListener(e ->{
             isOnlyPorts = e.getValue();
             try {
