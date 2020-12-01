@@ -423,7 +423,7 @@ public class ContractManagerUI extends VerticalLayout implements ActionCompleted
     private void updatePropertySheet(Pool pool) {
         try {
             Pool aWholePool = bem.getPool(pool.getId());
-            propertysheet.setItems(PropertyFactory.propertiesFromPool(aWholePool));
+            propertysheet.setItems(PropertyFactory.propertiesFromPool(aWholePool, ts));
             isPool = true;
         } catch (ApplicationObjectNotFoundException | InvalidArgumentException ex) {
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(), 
