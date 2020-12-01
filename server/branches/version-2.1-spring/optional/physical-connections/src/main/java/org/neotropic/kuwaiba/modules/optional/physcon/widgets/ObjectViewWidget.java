@@ -85,6 +85,14 @@ public class ObjectViewWidget extends AbstractDashboardWidget {
         setTitle(ts.getTranslatedString("Object View"));
         createCover();
         coverComponent.addClassName("widgets-colors-magenta");
+        objectView = new ObjectView(businessObject, mem, aem, bem, ts, resourceFactory);
+    }
+    
+    public ObjectViewWidget(BusinessObjectLight businessObject, Integer width, Integer height, MetadataEntityManager mem, ApplicationEntityManager aem,
+            BusinessEntityManager bem, TranslationService ts, ResourceFactory resourceFactory, PhysicalConnectionsService physicalConnectionsService) {
+        this(businessObject, mem, aem, bem, ts, resourceFactory, physicalConnectionsService);
+        objectView.setWidth(width);
+        objectView.setHeight(height);
     }
 
     @Override
@@ -177,7 +185,6 @@ public class ObjectViewWidget extends AbstractDashboardWidget {
                     objectView.getMxGraph().getMxGraph().zoomOut();
                 });
             HorizontalLayout lytTools = new HorizontalLayout(btnSaveView, btnConnect, btnZoomIn, btnZoomOut);
-            objectView = new ObjectView(businessObject, mem, aem, bem, ts, resourceFactory);
 
             VerticalLayout lytContent = new VerticalLayout(lytTools, objectView.getAsComponent());
             contentComponent = lytContent;

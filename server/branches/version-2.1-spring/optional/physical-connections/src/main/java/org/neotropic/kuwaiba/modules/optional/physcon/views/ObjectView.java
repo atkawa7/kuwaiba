@@ -94,14 +94,10 @@ public class ObjectView extends AbstractDetailedView<BusinessObjectLight, Vertic
      * Utility class that help to load resources like icons and images
      */
     private ResourceFactory resourceFactory;  
-    
-    public ObjectView(BusinessObjectLight businessObject) {
-        super(businessObject);
-    }
-    
+       
     public ObjectView(BusinessObjectLight businessObject, MetadataEntityManager mem, ApplicationEntityManager aem, 
             BusinessEntityManager bem, TranslationService ts, ResourceFactory resourceFactory) {
-        this(businessObject);
+        super(businessObject);
         this.bem = bem;  
         this.aem = aem;
         this.mem = mem;
@@ -142,6 +138,14 @@ public class ObjectView extends AbstractDetailedView<BusinessObjectLight, Vertic
 
     public void setMxGraph(MxGraphCanvas<BusinessObjectLight, BusinessObjectLight> mxGraph) {
         this.mxGraph = mxGraph;
+    }
+    
+    public void setHeight(Integer height) {
+        this.mxGraph.getMxGraph().setHeight(height.toString());
+    }
+    
+    public void setWidth(Integer width) {
+        this.mxGraph.getMxGraph().setWidth(width.toString());
     }
 
     @Override
