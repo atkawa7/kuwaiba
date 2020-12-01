@@ -75,7 +75,7 @@ import org.neotropic.kuwaiba.visualization.api.properties.PropertyFactory;
 import org.neotropic.kuwaiba.visualization.api.properties.PropertyValueConverter;
 import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 import org.neotropic.kuwaiba.visualization.mxgraph.BasicStyleEditor;
-import org.neotropic.util.visual.colorpicker.slider.SliderMxGraphZoom;
+import org.neotropic.util.visual.slider.SliderMxGraphZoom;
 import org.neotropic.util.visual.general.BoldLabel;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
@@ -684,9 +684,9 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
         if (currentView != null) {
             ArrayList<AbstractProperty> viewProperties = new ArrayList<>();
             viewProperties.add(new StringProperty(Constants.PROPERTY_NAME,
-                    Constants.PROPERTY_NAME, "", currentView.getName()));
+                    Constants.PROPERTY_NAME, "", currentView.getName(), ts));
             viewProperties.add(new StringProperty(Constants.PROPERTY_DESCRIPTION,
-                    Constants.PROPERTY_DESCRIPTION, "", currentView.getDescription()));
+                    Constants.PROPERTY_DESCRIPTION, "", currentView.getDescription(), ts));
             propSheetTopoView.setItems(viewProperties);
         } else
             propSheetTopoView.clear();
