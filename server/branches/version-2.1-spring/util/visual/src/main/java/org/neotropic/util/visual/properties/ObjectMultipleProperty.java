@@ -19,7 +19,7 @@ import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import java.util.ArrayList;
 import java.util.List;
-import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.util.visual.general.BoldLabel;
 
 /**
@@ -32,10 +32,17 @@ public class ObjectMultipleProperty extends AbstractProperty<List>{
      */
     List<Object> allItems;
     
-    public ObjectMultipleProperty(String name, String displayName, String description, List value, List items, String type) {
-        super(name, displayName, description, value);
+    public static String NOT_ITEMS_SELECTED_LABEL = "Not Items Selected";
+    public static String ITEMS_SELECTED_LABEL = "Items Selected";
+    public static String SELECT_ITEMS_LABEL = "Select Items";
+    
+    public ObjectMultipleProperty(String name, String displayName, String description, List value, List items, String type, TranslationService ts) {
+        super(name, displayName, description, value, ts);
         this.allItems = items;
         setType(type);
+        NOT_ITEMS_SELECTED_LABEL = ts.getTranslatedString("module.propertysheet.labels.not-items-selected");
+        ITEMS_SELECTED_LABEL = ts.getTranslatedString("module.propertysheet.labels.items-selected");
+        SELECT_ITEMS_LABEL = ts.getTranslatedString("module.propertysheet.labels.select-items");
     }
 
     public List getListTypes() {
@@ -48,7 +55,7 @@ public class ObjectMultipleProperty extends AbstractProperty<List>{
 
     @Override
     public AbstractField getAdvancedEditor() {     
-        BoldLabel title = new BoldLabel(AbstractProperty.SELECT_ITEMS_LABEL);
+        BoldLabel title = new BoldLabel(SELECT_ITEMS_LABEL);
         MultiSelectListBox lstBoxEditor = new MultiSelectListBox<>();
         lstBoxEditor.setItems(allItems);
         lstBoxEditor.select(getValue());
@@ -68,9 +75,9 @@ public class ObjectMultipleProperty extends AbstractProperty<List>{
     @Override
     public String getAsString() {
         if(getValue() == null  || getValue().isEmpty())
-            return AbstractProperty.NOT_ITEMS_SELECTED_LABEL;
+            return NOT_ITEMS_SELECTED_LABEL;
         List<Object> tempList = new ArrayList<>(getValue());
-        return (tempList.size() + " " + AbstractProperty.ITEMS_SELECTED_LABEL);
+        return (tempList.size() + " " + ITEMS_SELECTED_LABEL);
     } 
     
     @Override

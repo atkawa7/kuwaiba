@@ -17,9 +17,9 @@
 package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.Component;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 
 /**
  * Support for date-type properties
@@ -27,12 +27,12 @@ import java.util.Date;
  */
 public class DateProperty extends AbstractProperty<Date>{
 
-    public DateProperty(String name, String displayName, String description, Date value) {
-        super(name, displayName, description, value);
+    public DateProperty(String name, String displayName, String description, Date value, TranslationService ts) {
+        super(name, displayName, description, value, ts);
     }
     
-    public DateProperty(String name, String displayName, String description, long value) {
-        super(name, displayName, description, new Date(value));
+    public DateProperty(String name, String displayName, String description, long value, TranslationService ts) {
+        super(name, displayName, description, new Date(value), ts);
     }
 
     @Override

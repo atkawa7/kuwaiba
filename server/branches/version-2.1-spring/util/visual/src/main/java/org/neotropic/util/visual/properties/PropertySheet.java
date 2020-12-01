@@ -47,6 +47,8 @@ public class PropertySheet extends Grid<AbstractProperty> {
     private Button currentBtnCancelInEditProperty;
     
     private boolean readOnly;
+    
+    private String title;
 
     public boolean isReadOnly() {
         return readOnly;
@@ -182,13 +184,14 @@ public class PropertySheet extends Grid<AbstractProperty> {
         }).setHeader("").setKey("advancedEditor").setWidth("50px");
     }
     
-    public PropertySheet(TranslationService ts, List<AbstractProperty> properties, String caption) {
+    public PropertySheet(TranslationService ts, List<AbstractProperty> properties) {
+        this(ts, properties, "");     
+    }
+    
+    public PropertySheet(TranslationService ts, List<AbstractProperty> properties, String title) {
         this(ts);
         setItems(properties); 
-        AbstractProperty.NULL_LABEL = ts.getTranslatedString("module.propertysheet.labels.null-value-property");
-        AbstractProperty.NOT_ITEMS_SELECTED_LABEL = ts.getTranslatedString("module.propertysheet.labels.not-items-selected");
-        AbstractProperty.ITEMS_SELECTED_LABEL = ts.getTranslatedString("module.propertysheet.labels.items-selected");
-        AbstractProperty.SELECT_ITEMS_LABEL = ts.getTranslatedString("module.propertysheet.labels.select-items");
+        this.title = title;
     }
 
     public void clear() {

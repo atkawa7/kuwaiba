@@ -58,11 +58,11 @@ public class MxGraphCanvas<N, E> {
     
     private String selectedCellType;
     
-    Command comObjectSelected;
+    private Command comObjectSelected;
     
-    Command comObjectDeleted;
+    private Command comObjectDeleted;
     
-    Command comObjectUnselected;
+    private Command comObjectUnselected;
     
     public MxGraph getMxGraph() {
         return mxGraph;
@@ -144,7 +144,7 @@ public class MxGraphCanvas<N, E> {
        mxGraph = new MxGraph();
        mxGraph.setWidth(width);
        mxGraph.setHeight(height);    
-//       mxGraph.setGrid("img/grid.gif");
+//       mxGraph.setGrid("img/grid.gif"); // sets the grid by default
        nodes = new LinkedHashMap<>();
        edges = new HashMap<>();     
        sourceEdgeNodes = new HashMap<>();
@@ -211,7 +211,6 @@ public class MxGraphCanvas<N, E> {
             newNode.setShape(MxConstants.SHAPE_IMAGE);
             nodes.put(node, newNode);
             mxGraph.addNode(newNode);
-//            mxGraph.refreshGraph();
             return newNode;
         }
         return null;
@@ -258,7 +257,6 @@ public class MxGraphCanvas<N, E> {
             sourceEdgeNodes.put(edgeObject, sourceObject);
             targetEdgeNodes.put(edgeObject, targetObject);
             mxGraph.addEdge(newEdge);
-//            mxGraph.refreshGraph();
             return newEdge;       
         }        
         return null;

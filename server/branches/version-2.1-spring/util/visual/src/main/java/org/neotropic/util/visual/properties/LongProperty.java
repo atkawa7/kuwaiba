@@ -19,6 +19,7 @@ import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.data.binder.Binder;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 
 
 /**
@@ -27,14 +28,14 @@ import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
  */
 public class LongProperty extends AbstractProperty<Long>{
 
-    public LongProperty(String name, String displayName, String description, Long value) {
-        super(name, displayName, description, value);
+    public LongProperty(String name, String displayName, String description, Long value, TranslationService ts) {
+        super(name, displayName, description, value, ts);
         setType(Constants.DATA_TYPE_LONG);
         setHasBinder(true);
     }
 
-    public LongProperty(String name, String displayName, String description, Long value, boolean readOnly) {
-        super(name, displayName, description, value, readOnly);
+    public LongProperty(String name, String displayName, String description, Long value, TranslationService ts, boolean readOnly) {
+        super(name, displayName, description, value, ts, readOnly);
         setType(Constants.DATA_TYPE_LONG);
         setHasBinder(true);
     }  

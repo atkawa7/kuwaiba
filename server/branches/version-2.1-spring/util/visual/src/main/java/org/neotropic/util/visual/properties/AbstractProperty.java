@@ -16,6 +16,7 @@
 package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.AbstractField;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 
 
 /**
@@ -31,37 +32,39 @@ public abstract class AbstractProperty<T> {
     private boolean hasBinder;
     private String type;
     private boolean readOnly;
+    private TranslationService ts;
     // Constants
-    public static String NULL_LABEL = "Not Set";
-    public static String NOT_ITEMS_SELECTED_LABEL = "Not Items Selected";
-    public static String ITEMS_SELECTED_LABEL = "Items Selected";
-    public static String SELECT_ITEMS_LABEL = "Select Items";
+    public static String NULL_LABEL;
 
-    public AbstractProperty(String name, String displayName, String description, T value) {
+    public AbstractProperty(String name, String displayName, String description, T value, TranslationService ts) {
         this.name = name;
         this.displayName = displayName;
         this.description = description;
         this.value = value;
         this.hasBinder = false;
         this.readOnly = false;
+        this.ts = ts;
+        NULL_LABEL = ts.getTranslatedString("module.propertysheet.labels.null-value-property");
     }
     
-    public AbstractProperty(String name, String displayName, String description, T value, boolean readOnly) {
+    public AbstractProperty(String name, String displayName, String description, T value, TranslationService ts, boolean readOnly) {
         this.name = name;
         this.displayName = displayName;
         this.description = description;
         this.value = value;
         this.hasBinder = false;
         this.readOnly = readOnly;
+        this.ts = ts;
     }
 
-    public AbstractProperty(String name, T value) {
+    public AbstractProperty(String name, T value, TranslationService ts) {
         this.name = name;
         this.value = value;
         this.displayName = name;
         this.description = "";
         this.hasBinder = false;
         this.readOnly = false;
+        this.ts = ts;
     }
 
     public String getName() {

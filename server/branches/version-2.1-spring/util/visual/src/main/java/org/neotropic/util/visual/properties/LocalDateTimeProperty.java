@@ -17,7 +17,6 @@
 package org.neotropic.util.visual.properties;
 
 import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -25,6 +24,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 
 /**
  * Support for local-date-time type properties
@@ -37,13 +37,13 @@ public class LocalDateTimeProperty extends AbstractProperty<LocalDateTime> {
     public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MM, yyyy HH:mm", Locale.ENGLISH);
 //    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("EE MMM dd HH:mm yyyy", Locale.ENGLISH);
 
-    public LocalDateTimeProperty(String name, String displayName, String description, LocalDateTime value) {
-        super(name, displayName, description, value);
+    public LocalDateTimeProperty(String name, String displayName, String description, LocalDateTime value, TranslationService ts) {
+        super(name, displayName, description, value, ts);
         setType(Constants.DATA_TYPE_TIME_STAMP);
     }  
     
-    public LocalDateTimeProperty(String name, String displayName, String description, long value) {
-        super(name, displayName, description, Instant.ofEpochMilli(value).atZone(ZoneId.systemDefault()).toLocalDateTime());
+    public LocalDateTimeProperty(String name, String displayName, String description, long value, TranslationService ts) {
+        super(name, displayName, description, Instant.ofEpochMilli(value).atZone(ZoneId.systemDefault()).toLocalDateTime(), ts);
          setType(Constants.DATA_TYPE_TIME_STAMP);
     }
 

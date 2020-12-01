@@ -20,6 +20,7 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 
 
 /**
@@ -30,18 +31,18 @@ public class StringProperty extends AbstractProperty<String>{
 
     private boolean masked = false;
     
-    public StringProperty(String name, String displayName, String description, String value) {
-        super(name, displayName, description, value);
+    public StringProperty(String name, String displayName, String description, String value, TranslationService ts) {
+        super(name, displayName, description, value, ts);
         setType(Constants.DATA_TYPE_STRING);
     }
 
-    public StringProperty(String name, String displayName, String description, String value, boolean readOnly) {
-        super(name, displayName, description, value, readOnly);
+    public StringProperty(String name, String displayName, String description, String value, TranslationService ts, boolean readOnly) {
+        super(name, displayName, description, value, ts, readOnly);
         setType(Constants.DATA_TYPE_STRING);
     }
     
-    public StringProperty(String name, String displayName, String description, String value, boolean readOnly, boolean masked) {
-        super(name, displayName, description, value, readOnly);
+    public StringProperty(String name, String displayName, String description, String value, TranslationService ts, boolean readOnly, boolean masked) {
+        super(name, displayName, description, value, ts, readOnly);
         setType(Constants.DATA_TYPE_STRING);
         this.masked = masked;
     }

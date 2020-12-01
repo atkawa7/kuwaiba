@@ -21,6 +21,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import java.util.List;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 
 
 /**
@@ -37,8 +38,8 @@ public class ObjectProperty extends AbstractProperty {
     
     String displayValue;
     
-    public ObjectProperty(String name, String displayName, String description, Object value, List<Object> items, String type, String displayValue, ItemLabelGenerator itemLabelGenerator) {
-        super(name, displayName, description, value);
+    public ObjectProperty(String name, String displayName, String description, Object value, List<Object> items, String type, String displayValue, ItemLabelGenerator itemLabelGenerator, TranslationService ts) {
+        super(name, displayName, description, value, ts);
         this.items = items;
         this.itemLabelGenerator = itemLabelGenerator;
         this.displayValue = displayValue;

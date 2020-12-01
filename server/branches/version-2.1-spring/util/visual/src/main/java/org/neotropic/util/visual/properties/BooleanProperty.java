@@ -10,6 +10,7 @@ import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.textfield.NumberField;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
+import org.neotropic.kuwaiba.core.i18n.TranslationService;
 
 /**
  * Support for Boolean properties
@@ -17,13 +18,13 @@ import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
  */
 public class BooleanProperty extends AbstractProperty<Boolean>{
 
-    public BooleanProperty(String name, String displayName, String description, Boolean value) {
-        super(name, displayName, description, value);
+    public BooleanProperty(String name, String displayName, String description, Boolean value, TranslationService ts) {
+        super(name, displayName, description, value, ts);
         setType( Constants.DATA_TYPE_BOOLEAN);
     }
 
-    public BooleanProperty(String name, String displayName, String description, Boolean value, boolean readOnly) {
-        super(name, displayName, description, value, readOnly);
+    public BooleanProperty(String name, String displayName, String description, Boolean value, TranslationService ts, boolean readOnly) {
+        super(name, displayName, description, value, ts, readOnly);
         setType( Constants.DATA_TYPE_BOOLEAN);
     }
     
