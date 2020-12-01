@@ -33,7 +33,7 @@
             <artifactId>visual</artifactId>
             <version>2.1</version>
         </dependency>
-        
+              
          <!-- Vaadin -->
        <dependency>
             <groupId>com.vaadin</groupId>

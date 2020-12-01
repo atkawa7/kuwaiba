@@ -676,7 +676,7 @@ public class TemplateManagerUI extends SplitLayout implements ActionCompletedLis
         try {
             ClassMetadata objectFull = mem.getClass(object.getId());
             if (objectFull != null) {
-                propertysheet.setItems(PropertyFactory.generalPropertiesFromClass(objectFull));
+                propertysheet.setItems(PropertyFactory.generalPropertiesFromClass(objectFull, ts));
                 propertysheet.setReadOnly(true);
             }
         } catch (InventoryException ex) {
