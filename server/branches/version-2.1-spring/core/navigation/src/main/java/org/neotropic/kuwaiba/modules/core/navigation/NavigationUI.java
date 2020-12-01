@@ -25,7 +25,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
-import com.vaadin.flow.component.grid.ItemClickEvent;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
@@ -38,7 +37,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.treegrid.TreeGrid;
-import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery;
@@ -47,11 +45,9 @@ import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResourceRegistry;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -60,7 +56,6 @@ import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionRegistr
 import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionResponse;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -73,7 +68,6 @@ import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVi
 import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicBusinessObjectIconGenerator;
 import org.neotropic.kuwaiba.modules.core.navigation.navtree.nodes.InventoryObjectNode;
 import org.neotropic.kuwaiba.visualization.api.resources.ComplexGrid;
-import org.neotropic.kuwaiba.visualization.api.resources.GridFilter;
 import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 import org.neotropic.kuwaiba.modules.core.search.BusinessObjectSearchResultRenderer;
 import org.neotropic.kuwaiba.modules.core.search.NavDashboardFactory;
@@ -524,8 +518,16 @@ public class NavigationUI extends VerticalLayout implements ActionCompletedListe
 //                lytDeviceParents.removeAll();
 //                List<BusinessObjectLight> parents = bem.getParentsUntilFirstOfClass(e.getItem().getObject().getClassName(),
 //                        e.getItem().getObject().getId(), obj.getClassName());
-//                lytDeviceParents.add(createBreadCrumbs(parents, 2)); 
-               // getUI().ifPresent( ui -> ui.navigate(ObjectDashboard.class, navTree.getSelectedItems().iterator().next().getObject()));
+//                lytDeviceParents.add(createBreadCrumbs(parents, 2));
+                if (!navTree.getSelectedItems().isEmpty()) {
+                    BusinessObjectLight selectedObject = navTree.getSelectedItems().iterator().next().getObject();
+                    getUI().ifPresent( ui -> { 
+                        ui.getSession().setAttribute(BusinessObjectLight.class, selectedObject);
+                        ui.navigate(ObjectDashboard.class);
+                    });
+                }
+                
+               
 //            } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | ApplicationObjectNotFoundException | InvalidArgumentException ex) {
 //                Logger.getLogger(NavigationUI.class.getName()).log(Level.SEVERE, null, ex);
 //            }

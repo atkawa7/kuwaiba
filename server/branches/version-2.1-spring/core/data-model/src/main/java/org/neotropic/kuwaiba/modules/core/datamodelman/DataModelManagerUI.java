@@ -504,7 +504,7 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
         try {
             ClassMetadata classMetadata = mem.getClass(selectedClass.getName());
             
-            propsheetGeneralAttributes.setItems(PropertyFactory.generalPropertiesFromClass(classMetadata));
+            propsheetGeneralAttributes.setItems(PropertyFactory.generalPropertiesFromClass(classMetadata, ts));
         } catch (MetadataObjectNotFoundException ex) {
             Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -512,7 +512,7 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
     
     private void updatePropertySheetClassAttributes() {
         try {           
-            propsheetClassAttributes.setItems(PropertyFactory.generalPropertiesFromAttribute(selectedAttribute, mem));
+            propsheetClassAttributes.setItems(PropertyFactory.generalPropertiesFromAttribute(selectedAttribute, mem, ts));
         } catch (Exception ex) {
             Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 

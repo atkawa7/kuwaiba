@@ -354,14 +354,14 @@ public class ConfigurationVariablesUI extends VerticalLayout implements ActionCo
         tblConfigVariables.getDataProvider().refreshAll();
     }
     private void updatePropertySheet(Pool pool) {
-            propertysheet.setItems(PropertyFactory.propertiesFromPool(pool));
+            propertysheet.setItems(PropertyFactory.propertiesFromPool(pool, ts));
             isPool = true;
     }
     
     private void updatePropertySheet() {  
         try { 
              ConfigurationVariable aWholeConfigurationVariable = aem.getConfigurationVariable(currentConfigVariable.getName());
-             propertysheet.setItems(PropertyFactory.propertiesFromConfigurationVariable(aWholeConfigurationVariable));
+             propertysheet.setItems(PropertyFactory.propertiesFromConfigurationVariable(aWholeConfigurationVariable, ts));
              isPool = false;
         } catch (UnsupportedOperationException | ApplicationObjectNotFoundException ex) {
             Logger.getLogger(ConfigurationVariablesUI.class.getName()).log(Level.SEVERE, null, ex);

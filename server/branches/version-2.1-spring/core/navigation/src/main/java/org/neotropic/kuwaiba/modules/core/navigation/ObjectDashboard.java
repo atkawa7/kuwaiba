@@ -17,7 +17,6 @@
 package org.neotropic.kuwaiba.modules.core.navigation;
 
 import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
@@ -25,10 +24,8 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
-import com.vaadin.flow.router.BeforeEvent;
-import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.WildcardParameter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,7 +53,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Route(value= "object-dashboard", layout = NavigationLayout.class)
-public class ObjectDashboard extends VerticalLayout implements HasUrlParameter<String> {
+public class ObjectDashboard extends VerticalLayout implements  HasDynamicTitle {
     /**
      * Reference to the object being edited/explored currently.
      */
@@ -94,68 +91,76 @@ public class ObjectDashboard extends VerticalLayout implements HasUrlParameter<S
     
      @Override
     public void onAttach(AttachEvent ev) {
-        SplitLayout lytContent = new SplitLayout();
-        lytContent.setSplitterPosition(30);
-        lytContent.setSizeFull();
-        Accordion accOptions = new Accordion();
-        try {
-            PropertySheet shtMain = new PropertySheet(ts, PropertyFactory.
-                    propertiesFromBusinessObject(bem.getObject(selectedObject.getClassName(), selectedObject.getId()), ts, aem, mem), "");
-            accOptions.add(ts.getTranslatedString("module.navigation.widgets.object-dashboard.object-properties"), shtMain);
-            Grid<AbstractVisualInventoryAction> tblCoreActions = new Grid<>();
-            tblCoreActions.setItems(actionRegistry.getActionsForModule(NavigationModule.MODULE_ID));
-            accOptions.add(ts.getTranslatedString("module.navigation.widgets.object-dashboard.object-core-actions"), tblCoreActions);
-            Grid<AbstractVisualInventoryAction> tblCustomActions = new Grid<>();
-            tblCoreActions.addColumn(AbstractVisualInventoryAction::getName);
-            tblCoreActions.setSelectionMode(Grid.SelectionMode.SINGLE);
-            tblCoreActions.addSelectionListener( evt -> {
-                if (evt.getFirstSelectedItem().isPresent()) {
-                    ModuleActionParameterSet parameters = new ModuleActionParameterSet(new ModuleActionParameter<BusinessObjectLight>("businessObject", selectedObject));
-                    Dialog wdwObjectAction = (Dialog)evt.getFirstSelectedItem().get().getVisualComponent(parameters);
-                    wdwObjectAction.open();
-                }
-            });
-            tblCustomActions.setItems(actionRegistry.getActionsApplicableToRecursive(selectedObject.getClassName()));
-            accOptions.add(ts.getTranslatedString("module.navigation.widgets.object-dashboard.object-custom-actions"), tblCustomActions);
-            Grid<AbstractDetailedView> tblViews = new Grid<>();
-            tblViews.addColumn(AbstractDetailedView::getName);
-            try {
-                AbstractDetailedView objectView = (AbstractDetailedView)Class.forName("org.neotropic.kuwaiba.modules.optional.physcon.views.ObjectView").getDeclaredConstructor(BusinessObjectLight.class,
-                        MetadataEntityManager.class, ApplicationEntityManager.class, BusinessEntityManager.class,
-                        TranslationService.class, ResourceFactory.class).newInstance(selectedObject, mem, aem, bem, ts, resourceFactory);
-                tblViews.setItems(objectView);
-            } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
-                Logger.getLogger(ObjectDashboard.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            tblViews.setSelectionMode(Grid.SelectionMode.SINGLE);
-            tblViews.addSelectionListener((evt) -> {
-                if (evt.getFirstSelectedItem().isPresent()) {
-                    try {
-                        lytContent.addToSecondary((VerticalLayout)evt.getFirstSelectedItem().get().getAsComponent());
-                    } catch (InvalidArgumentException ex) {
-                        lytContent.addToSecondary(new Label(ex.getLocalizedMessage()));
-                    }
-                }
-            });
+        getUI().ifPresent( ui -> {
+            this.selectedObject = ui.getSession().getAttribute(BusinessObjectLight.class);
+            SplitLayout lytMain = new SplitLayout();
+            lytMain.setSplitterPosition(30);
+            lytMain.setSizeFull();
             
-            accOptions.add(ts.getTranslatedString("module.navigation.widgets.object-dashboard.object-views"), tblViews);
-            Grid<AbstractVisualInventoryAction> tblExplorers = new Grid<>();
-            tblCustomActions.setItems(actionRegistry.getActionsApplicableToRecursive(selectedObject.getClassName()));
-            accOptions.add(ts.getTranslatedString("module.navigation.widgets.object-dashboard.object-explorers"), tblExplorers);
-            accOptions.add(ts.getTranslatedString("module.navigation.widgets.object-dashboard.object-context"), new Label("Nothing to see here for now"));
-            lytContent.addToPrimary(accOptions);
-        } catch (InventoryException ex) {
-            add(new Label(ex.getLocalizedMessage()));
-        }
-        add(lytContent);
+            VerticalLayout lytDetails = new VerticalLayout();
+            lytDetails.setSizeFull();
+            
+            Accordion accOptions = new Accordion();
+            try {
+                PropertySheet shtMain = new PropertySheet(ts, PropertyFactory.
+                        propertiesFromBusinessObject(bem.getObject(selectedObject.getClassName(), selectedObject.getId()), ts, aem, mem), "");
+                accOptions.add(ts.getTranslatedString("module.navigation.widgets.object-dashboard.object-properties"), shtMain);
+                Grid<AbstractVisualInventoryAction> tblCoreActions = new Grid<>();
+                tblCoreActions.setItems(actionRegistry.getActionsForModule(NavigationModule.MODULE_ID));
+                accOptions.add(ts.getTranslatedString("module.navigation.widgets.object-dashboard.object-core-actions"), tblCoreActions);
+                Grid<AbstractVisualInventoryAction> tblCustomActions = new Grid<>();
+                tblCoreActions.addColumn(AbstractVisualInventoryAction::getName);
+                tblCoreActions.setSelectionMode(Grid.SelectionMode.SINGLE);
+                tblCoreActions.addSelectionListener( evt -> {
+                    if (evt.getFirstSelectedItem().isPresent()) {
+                        ModuleActionParameterSet parameters = new ModuleActionParameterSet(new ModuleActionParameter<>("businessObject", selectedObject));
+                        Dialog wdwObjectAction = (Dialog)evt.getFirstSelectedItem().get().getVisualComponent(parameters);
+                        wdwObjectAction.open();
+                    }
+                });
+                tblCustomActions.setItems(actionRegistry.getActionsApplicableToRecursive(selectedObject.getClassName()));
+                accOptions.add(ts.getTranslatedString("module.navigation.widgets.object-dashboard.object-custom-actions"), tblCustomActions);
+                Grid<AbstractDetailedView> tblViews = new Grid<>();
+                tblViews.addColumn(AbstractDetailedView::getName);
+                try {
+                    AbstractDetailedView objectView = (AbstractDetailedView)Class.forName("org.neotropic.kuwaiba.modules.optional.physcon.views.ObjectView").getDeclaredConstructor(BusinessObjectLight.class,
+                            MetadataEntityManager.class, ApplicationEntityManager.class, BusinessEntityManager.class,
+                            TranslationService.class, ResourceFactory.class).newInstance(selectedObject, mem, aem, bem, ts, resourceFactory);
+                    tblViews.setItems(objectView);
+                } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+                    Logger.getLogger(ObjectDashboard.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                tblViews.setSelectionMode(Grid.SelectionMode.SINGLE);
+                tblViews.addSelectionListener((evt) -> {
+                    if (evt.getFirstSelectedItem().isPresent()) {
+                        try {
+                            lytDetails.add((VerticalLayout)evt.getFirstSelectedItem().get().getAsComponent());
+                        } catch (InvalidArgumentException ex) {
+                            lytDetails.add(new Label(ex.getLocalizedMessage()));
+                        }
+                    }
+                });
+
+                accOptions.add(ts.getTranslatedString("module.navigation.widgets.object-dashboard.object-views"), tblViews);
+                Grid<AbstractVisualInventoryAction> tblExplorers = new Grid<>();
+                tblCustomActions.setItems(actionRegistry.getActionsApplicableToRecursive(selectedObject.getClassName()));
+                accOptions.add(ts.getTranslatedString("module.navigation.widgets.object-dashboard.object-explorers"), tblExplorers);
+                accOptions.add(ts.getTranslatedString("module.navigation.widgets.object-dashboard.object-context"), new Label("Nothing to see here for now"));
+                
+                lytMain.addToPrimary(accOptions);
+                lytMain.addToSecondary(lytDetails);
+            } catch (InventoryException ex) {
+                add(new Label(ex.getLocalizedMessage()));
+            }
+            add(lytMain);
+        });
+        
     }
-    
+
     @Override
-    public void setParameter(BeforeEvent event, @WildcardParameter String parameter) {
-        String[] parameters = parameter.split("/");
-        if (parameters.length == 3)
-            this.selectedObject = new BusinessObjectLight(parameters[0], parameters[1], parameters[2]);        
+    public String getPageTitle() {
+        return String.format(ts.getTranslatedString("module.navigation.widgets.object-dashboard.title"), this.selectedObject);
     }
 }
 

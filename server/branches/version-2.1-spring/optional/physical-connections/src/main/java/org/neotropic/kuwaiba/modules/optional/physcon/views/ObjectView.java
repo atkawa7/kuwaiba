@@ -303,10 +303,11 @@ public class ObjectView extends AbstractDetailedView<BusinessObjectLight, Vertic
         dummyNode.setGeometry(0, 0, 0, 0);
         dummyNode.setMovable(false);
         mxGraph.getMxGraph().addNode(dummyNode);
-            //  execute the layout and disable moving when the last cell is added
+        //  execute the layout and disable moving when the last cell is added
         dummyNode.addCellAddedListener(eventListener -> {
             mxGraph.getMxGraph().refreshGraph();
         });
+        lytObjectView.setSizeFull();
         return lytObjectView;
     }
 
