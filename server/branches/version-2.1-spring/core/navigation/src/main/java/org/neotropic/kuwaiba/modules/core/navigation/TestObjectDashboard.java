@@ -17,6 +17,7 @@
 package org.neotropic.kuwaiba.modules.core.navigation;
 
 import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
@@ -36,33 +37,22 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-@Route("dashboard")
+@Route(value= "dashboard", layout = NavigationLayout.class)
 public class TestObjectDashboard extends VerticalLayout {
     
-    @Autowired
-    MetadataEntityManager mem;
-    @Autowired
-    ApplicationEntityManager aem;
-    @Autowired
-    BusinessEntityManager bem;
-    @Autowired
-    TranslationService ts;
-    @Autowired
-    ActionRegistry actionRegistry;
-    @Autowired
-    ResourceFactory resourceFactory;
     
-    @Override
-    public void onAttach(AttachEvent ev) {
-        setSizeFull();
-        try {
-            ObjectDashboard dashboard = new ObjectDashboard(bem.getObjectsOfClass("Router", 1).get(0), mem, aem, bem, 
-                    actionRegistry,resourceFactory, ts);
-            dashboard.createContent();
-            add(dashboard.getContentComponent());
-        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
-            Logger.getLogger(TestObjectDashboard.class.getName()).log(Level.SEVERE, null, ex);
-            add(new Label("Can't add shit"));
-        }
-    }
+    
+//    @Override
+//    public void onAttach(AttachEvent ev) {UI.getCurrent().na
+//        setSizeFull();
+//        try {
+//            ObjectDashboard dashboard = new ObjectDashboard(bem.getObjectsOfClass("City", 1).get(0), mem, aem, bem, 
+//                    actionRegistry,resourceFactory, ts);
+//            dashboard.createContent();
+//            add(dashboard.getContentComponent());
+//        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+//            Logger.getLogger(TestObjectDashboard.class.getName()).log(Level.SEVERE, null, ex);
+//            add(new Label("Can't add shit"));
+//        }
+//    }
 }

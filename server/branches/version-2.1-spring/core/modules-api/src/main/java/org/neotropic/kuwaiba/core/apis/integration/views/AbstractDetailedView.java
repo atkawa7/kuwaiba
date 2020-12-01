@@ -49,4 +49,9 @@ public abstract class AbstractDetailedView<T, C> extends AbstractView {
     public void setBusinessObject(T businessObject) {
         this.businessObject = businessObject;
     }
+    
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

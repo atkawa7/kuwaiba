@@ -79,13 +79,12 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotF
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyValueConverter;
-import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.modules.optional.layouteditor.actions.DeleteLayoutViewVisualAction;
+import org.neotropic.kuwaiba.visualization.api.properties.PropertyValueConverter;
+import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 import org.neotropic.kuwaiba.visualization.mxgraph.BasicStyleEditor;
 import org.neotropic.kuwaiba.visualization.mxgraph.MxGraphGeometryEditor;
-import org.neotropic.kuwaiba.visualization.views.ObjectView;
 import org.neotropic.util.visual.colorpicker.slider.SliderMxGraphZoom;
 import org.neotropic.util.visual.general.BoldLabel;
 import org.neotropic.util.visual.mxgraph.MxGraphCanvas;
@@ -1170,7 +1169,7 @@ public class LayoutEditorDashboard extends VerticalLayout implements PropertyShe
             }
             reader.close();
         } catch (XMLStreamException ex) {
-            Logger.getLogger(ObjectView.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LayoutEditorDashboard.class.getName()).log(Level.SEVERE, null, ex);
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
                             AbstractNotification.NotificationType.ERROR, ts).open();
             

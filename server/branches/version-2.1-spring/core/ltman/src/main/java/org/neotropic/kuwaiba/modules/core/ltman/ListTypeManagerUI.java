@@ -60,12 +60,11 @@ import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.ltman.actions.DeleteListTypeItemVisualAction;
 import org.neotropic.kuwaiba.modules.core.ltman.actions.NewListTypeItemVisualAction;
-import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
-import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyValueConverter;
+import org.neotropic.kuwaiba.visualization.api.properties.PropertyFactory;
+import org.neotropic.kuwaiba.visualization.api.properties.PropertyValueConverter;
 import org.neotropic.util.visual.general.BoldLabel;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.properties.PropertySheet;
-import org.neotropic.util.visual.properties.PropertySheet.IPropertyValueChangedListener;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.properties.AbstractProperty;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +75,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Route(value = "ltman", layout = ListTypeManagerLayout.class)
-public class ListTypeManagerUI extends VerticalLayout implements ActionCompletedListener, IPropertyValueChangedListener, HasDynamicTitle {
+public class ListTypeManagerUI extends VerticalLayout implements ActionCompletedListener, PropertySheet.IPropertyValueChangedListener, HasDynamicTitle {
 
     /**
      * the visual action to create a new list type item

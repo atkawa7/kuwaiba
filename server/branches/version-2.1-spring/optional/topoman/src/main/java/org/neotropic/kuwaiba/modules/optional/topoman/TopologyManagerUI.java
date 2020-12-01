@@ -29,10 +29,10 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentExc
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.kuwaiba.modules.optional.topoman.actions.DeleteTopologyViewVisualAction;
 import org.neotropic.kuwaiba.modules.optional.topoman.actions.NewTopologyViewVisualAction;
 import org.neotropic.kuwaiba.modules.optional.topoman.widgets.TopologyManagerDashboard;
+import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.springframework.beans.factory.annotation.Autowired;

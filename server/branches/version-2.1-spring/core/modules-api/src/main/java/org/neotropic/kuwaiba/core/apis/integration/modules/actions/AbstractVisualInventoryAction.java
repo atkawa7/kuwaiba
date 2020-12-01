@@ -36,4 +36,8 @@ public abstract class AbstractVisualInventoryAction extends AbstractVisualAction
      * @return 
      */
     public abstract boolean isModuleAction();
+    
+    public String getName() {
+        return getModuleAction() == null ? "" : getModuleAction().getDisplayName();
+    }
 }

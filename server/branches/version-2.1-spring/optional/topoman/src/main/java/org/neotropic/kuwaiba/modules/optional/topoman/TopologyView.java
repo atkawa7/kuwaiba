@@ -50,7 +50,6 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotF
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewEdge;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
 import org.neotropic.util.visual.mxgraph.MxGraphCanvas;
@@ -60,6 +59,7 @@ import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewEdge;
 import org.neotropic.kuwaiba.core.apis.integration.views.AbstractViewNode;
 import org.neotropic.kuwaiba.core.apis.integration.views.ViewEventListener;
 import org.neotropic.kuwaiba.core.apis.integration.views.ViewMap;
+import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 import org.neotropic.kuwaiba.visualization.mxgraph.BasicStyleEditor;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 

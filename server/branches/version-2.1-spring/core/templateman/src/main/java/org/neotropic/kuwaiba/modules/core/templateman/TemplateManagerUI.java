@@ -62,7 +62,6 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadataLight;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
 import org.neotropic.kuwaiba.modules.core.templateman.actions.DeleteTemplateItemVisualAction;
 import org.neotropic.kuwaiba.modules.core.templateman.actions.DeleteTemplateSubItemVisualAction;
 import org.neotropic.kuwaiba.modules.core.templateman.actions.DeleteTemplateVisualAction;
@@ -71,6 +70,7 @@ import org.neotropic.kuwaiba.modules.core.templateman.actions.NewBulkTemplateSpe
 import org.neotropic.kuwaiba.modules.core.templateman.actions.NewTemplateItemVisualAction;
 import org.neotropic.kuwaiba.modules.core.templateman.actions.NewTemplateSpecialItemVisualAction;
 import org.neotropic.kuwaiba.modules.core.templateman.actions.NewTemplateVisualAction;
+import org.neotropic.kuwaiba.visualization.api.properties.PropertyFactory;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.properties.AbstractProperty;

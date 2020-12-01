@@ -51,7 +51,7 @@ import org.neotropic.kuwaiba.core.configuration.variables.actions.DeleteConfigur
 import org.neotropic.kuwaiba.core.configuration.variables.actions.DeleteConfigurationVariablesPoolVisualAction;
 import org.neotropic.kuwaiba.core.configuration.variables.actions.NewConfigurationVariableVisualAction;
 import org.neotropic.kuwaiba.core.configuration.variables.actions.NewConfigurationVariablesPoolVisualAction;
-import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
+import org.neotropic.kuwaiba.visualization.api.properties.PropertyFactory;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.properties.PropertySheet;

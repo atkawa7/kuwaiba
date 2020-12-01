@@ -87,7 +87,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 @Route(value = "navman", layout = NavigationLayout.class)
-public class NavUI extends VerticalLayout implements ActionCompletedListener, HasDynamicTitle {
+public class NavigationUI extends VerticalLayout implements ActionCompletedListener, HasDynamicTitle {
     /**
      * Reference to the action that creates a new Business Object.
      */
@@ -507,7 +507,7 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
     /**
      * Creates the navigation tree when a item is selected in the grid classes
      * @param obj the selected business object 
-     * @return the navigation tree a vaadin tree grid 
+     * @return the navigation tree a Vaadin tree grid 
      * @throws InvalidArgumentException if something is wrong 
      * @throws MetadataObjectNotFoundException if the parent class is not found when the parent's bread crumbs is been created for the selected item in the navigation tree
      * @throws BusinessObjectNotFoundException if the object is not found when the parent's bread crumbs is been created for the selected item in the navigation tree
@@ -520,14 +520,15 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
 
         navTree.setSelectionMode(Grid.SelectionMode.SINGLE);
         navTree.addItemClickListener(e -> {
-            try {
-                lytDeviceParents.removeAll();
-                List<BusinessObjectLight> parents = bem.getParentsUntilFirstOfClass(e.getItem().getObject().getClassName(),
-                        e.getItem().getObject().getId(), obj.getClassName());
-                lytDeviceParents.add(createBreadCrumbs(parents, 2)); 
-            } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | ApplicationObjectNotFoundException | InvalidArgumentException ex) {
-                Logger.getLogger(NavUI.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            //try {
+//                lytDeviceParents.removeAll();
+//                List<BusinessObjectLight> parents = bem.getParentsUntilFirstOfClass(e.getItem().getObject().getClassName(),
+//                        e.getItem().getObject().getId(), obj.getClassName());
+//                lytDeviceParents.add(createBreadCrumbs(parents, 2)); 
+               // getUI().ifPresent( ui -> ui.navigate(ObjectDashboard.class, navTree.getSelectedItems().iterator().next().getObject()));
+//            } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | ApplicationObjectNotFoundException | InvalidArgumentException ex) {
+//                Logger.getLogger(NavigationUI.class.getName()).log(Level.SEVERE, null, ex);
+//            }
         });
         
         HeaderRow headerRow = navTree.prependHeaderRow();
@@ -537,7 +538,7 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
             try {
                 navTree.setDataProvider(getDataProviderFiltered(obj.getId(), obj.getClassName()));
             } catch (InvalidArgumentException | MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
-                Logger.getLogger(NavUI.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(NavigationUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
         headerRow.getCell(column).setComponent(new HorizontalLayout(new Label(obj.getName()), btn));

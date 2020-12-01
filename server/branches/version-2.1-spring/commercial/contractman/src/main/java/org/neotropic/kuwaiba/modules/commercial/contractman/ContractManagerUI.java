@@ -61,8 +61,8 @@ import org.neotropic.kuwaiba.modules.commercial.contractman.actions.DeleteContra
 import org.neotropic.kuwaiba.modules.commercial.contractman.actions.DeleteContractsPoolVisualAction;
 import org.neotropic.kuwaiba.modules.commercial.contractman.actions.NewContractVisualAction;
 import org.neotropic.kuwaiba.modules.commercial.contractman.actions.NewContractsPoolVisualAction;
-import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
-import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyValueConverter;
+import org.neotropic.kuwaiba.visualization.api.properties.PropertyFactory;
+import org.neotropic.kuwaiba.visualization.api.properties.PropertyValueConverter;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.properties.AbstractProperty;

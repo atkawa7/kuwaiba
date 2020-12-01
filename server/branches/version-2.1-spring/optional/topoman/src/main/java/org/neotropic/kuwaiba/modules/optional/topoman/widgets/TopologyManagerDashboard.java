@@ -27,7 +27,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
-import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -63,9 +62,6 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.NotAuthorizedExcep
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
-import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyValueConverter;
-import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.modules.optional.topoman.TopologyView;
 import static org.neotropic.kuwaiba.modules.optional.topoman.TopologyView.FREE_SHAPE;
@@ -75,6 +71,9 @@ import org.neotropic.kuwaiba.modules.optional.topoman.actions.DeleteTopologyView
 import org.neotropic.kuwaiba.modules.optional.topoman.actions.NewTopologyViewVisualAction;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewEdge;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
+import org.neotropic.kuwaiba.visualization.api.properties.PropertyFactory;
+import org.neotropic.kuwaiba.visualization.api.properties.PropertyValueConverter;
+import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 import org.neotropic.kuwaiba.visualization.mxgraph.BasicStyleEditor;
 import org.neotropic.util.visual.colorpicker.slider.SliderMxGraphZoom;
 import org.neotropic.util.visual.general.BoldLabel;

@@ -46,7 +46,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>Visualization</artifactId>
+            <artifactId>navigation</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

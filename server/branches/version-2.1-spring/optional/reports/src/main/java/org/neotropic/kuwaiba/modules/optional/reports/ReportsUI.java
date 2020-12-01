@@ -72,13 +72,13 @@ import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.apis.persistence.util.StringPair;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicTreeNodeIconGenerator;
 import org.neotropic.kuwaiba.modules.optional.reports.actions.DeleteParameterVisualAction;
 import org.neotropic.kuwaiba.modules.optional.reports.actions.DeleteReportVisualAction;
 import org.neotropic.kuwaiba.modules.optional.reports.actions.NewClassReportVisualAction;
 import org.neotropic.kuwaiba.modules.optional.reports.actions.NewInventoryReportVisualAction;
 import org.neotropic.kuwaiba.modules.optional.reports.actions.NewParameterVisualAction;
 import org.neotropic.kuwaiba.modules.optional.reports.nodes.ReportNode;
-import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicTreeNodeIconGenerator;
 import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;

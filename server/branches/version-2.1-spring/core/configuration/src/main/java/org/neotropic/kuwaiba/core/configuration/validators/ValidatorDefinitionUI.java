@@ -64,7 +64,7 @@ import org.neotropic.kuwaiba.core.configuration.validators.nodes.ClassNode;
 import org.neotropic.kuwaiba.core.configuration.validators.nodes.ValidatorDefinitionNode;
 import org.neotropic.kuwaiba.core.configuration.variables.ConfigurationVariablesUI;
 import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicTreeNodeIconGenerator;
-import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
+import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.tree.nodes.AbstractNode;

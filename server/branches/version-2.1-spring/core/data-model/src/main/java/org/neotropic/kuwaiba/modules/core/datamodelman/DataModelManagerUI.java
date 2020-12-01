@@ -83,11 +83,11 @@ import org.neotropic.kuwaiba.modules.core.datamodelman.actions.DeleteClassVisual
 import org.neotropic.kuwaiba.modules.core.datamodelman.actions.NewAttributeVisualAction;
 import org.neotropic.kuwaiba.modules.core.datamodelman.actions.NewClassVisualAction;
 import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicTreeNodeIconGenerator;
-import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
+import org.neotropic.kuwaiba.visualization.api.properties.PropertyFactory;
+import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 import org.neotropic.util.visual.general.BoldLabel;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.properties.AbstractProperty;
-import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.properties.PropertySheet;
 import org.neotropic.util.visual.tree.BasicTree;
