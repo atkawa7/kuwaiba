@@ -85,7 +85,7 @@ import org.neotropic.kuwaiba.visualization.api.properties.PropertyValueConverter
 import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 import org.neotropic.kuwaiba.visualization.mxgraph.BasicStyleEditor;
 import org.neotropic.kuwaiba.visualization.mxgraph.MxGraphGeometryEditor;
-import org.neotropic.util.visual.colorpicker.slider.SliderMxGraphZoom;
+import org.neotropic.util.visual.slider.SliderMxGraphZoom;
 import org.neotropic.util.visual.general.BoldLabel;
 import org.neotropic.util.visual.mxgraph.MxGraphCanvas;
 import org.neotropic.util.visual.notifications.AbstractNotification;
@@ -164,10 +164,6 @@ public class LayoutEditorDashboard extends VerticalLayout implements PropertyShe
      * Prop Sheet for view properties
      */
     PropertySheet propSheetLayoutView;
-    /**
-     * button to remove views
-     */
-    Button btnRemoveView;
     
     Button btnSaveView;
     
@@ -177,8 +173,7 @@ public class LayoutEditorDashboard extends VerticalLayout implements PropertyShe
     
     Button btnAddEllipseShape;
     
-    Button btnAddLabel;
-    
+    Button btnAddLabel; 
 
     PhysicalConnectionsService connectionsService;
     
@@ -194,6 +189,15 @@ public class LayoutEditorDashboard extends VerticalLayout implements PropertyShe
     
     String currentModel;
     
+    /**
+     * Reference to the grid that shows the custom layouts
+     */
+    private Grid<BusinessObjectLight> tblCustomLayouts;
+    
+    /**
+     * list of topology views
+     */
+    private List<BusinessObjectLight> customLayouts;
      /*
     map to store the device with their respective layout
      */
@@ -351,8 +355,6 @@ public class LayoutEditorDashboard extends VerticalLayout implements PropertyShe
                                     btnSaveView, btnRemoveObjectFromView,
                                     btnAddRectShape, btnAddEllipseShape, btnAddLabel, btnToogleGrid, btnZoomIn, sliderZoom);
         lytTools.setAlignItems(Alignment.CENTER);
-        setGeneralToolsEnabled(false);
-        setSelectionToolsEnabled(false);
 
         initializeActions();
         initializeTblViews();   
@@ -380,12 +382,14 @@ public class LayoutEditorDashboard extends VerticalLayout implements PropertyShe
         
         accordionProperties = new Accordion();
         accordionProperties.setWidthFull();
+        
+        initializeTblCustomLayouts();
           
         BoldLabel lblViewProperties = new BoldLabel(ts.getTranslatedString("Custom Layouts"));
         lblViewProperties.addClassName("lbl-accordion");
         HorizontalLayout lytSummaryViewProp = new HorizontalLayout(lblViewProperties); 
         lytSummaryViewProp.setWidthFull();       
-        AccordionPanel apViewProp = new AccordionPanel(lytSummaryViewProp, new VerticalLayout());
+        AccordionPanel apViewProp = new AccordionPanel(lytSummaryViewProp, tblCustomLayouts);
         accordionProperties.add(apViewProp);
   
         styleEditor = new BasicStyleEditor(ts, new ArrayList(Arrays.asList(
@@ -420,6 +424,9 @@ public class LayoutEditorDashboard extends VerticalLayout implements PropertyShe
         setMargin(false);
         addAndExpand(lytMain);
         setSizeFull();
+        
+        setGeneralToolsEnabled(false);
+        setSelectionToolsEnabled(false);
     }
 
     private void updateShapeProperties() {
@@ -500,7 +507,7 @@ public class LayoutEditorDashboard extends VerticalLayout implements PropertyShe
         ListDataProvider<BusinessObjectLight> dataProvider = new ListDataProvider<>(deviceLayouts);
         tblViews.setDataProvider(dataProvider);
         tblViews.addColumn(BusinessObjectLight::toString).setFlexGrow(3).setKey(ts.getTranslatedString("module.general.labels.name"));
-        tblViews.addComponentColumn(item -> createActionsColumn(item)).setKey("component-column");
+        tblViews.addComponentColumn(item -> createActionsColumnTblView(item)).setKey("component-column");
         tblViews.addItemDoubleClickListener(listener -> {
             openDeviceLayout(listener.getItem());
         });
@@ -516,8 +523,31 @@ public class LayoutEditorDashboard extends VerticalLayout implements PropertyShe
         filterRow.getCell(tblViews.getColumnByKey(ts.getTranslatedString("module.general.labels.name"))).setComponent(txtViewNameFilter);
 
     }
+    
+      private void initializeTblCustomLayouts() {
+        loadCustomLayouts();
+        tblCustomLayouts = new Grid<>();
+        ListDataProvider<BusinessObjectLight> dataProvider = new ListDataProvider<>(customLayouts);
+        tblCustomLayouts.setDataProvider(dataProvider);
+        tblCustomLayouts.addColumn(BusinessObjectLight::toString).setFlexGrow(3).setKey(ts.getTranslatedString("module.general.labels.name"));
+        tblCustomLayouts.addComponentColumn(item -> createActionsColumnTblCustomLayouts(item)).setKey("component-column");
+//        tblCustomLayouts.addItemDoubleClickListener(listener -> {
+//            openDeviceLayout(listener.getItem());
+//        });
+        HeaderRow filterRow = tblCustomLayouts.appendHeaderRow();
 
-    private HorizontalLayout createActionsColumn(BusinessObjectLight item) {
+        TextField txtViewNameFilter = new TextField(ts.getTranslatedString("module.general.labels.filter"), ts.getTranslatedString("module.general.labels.filter-placeholder"));
+        txtViewNameFilter.setValueChangeMode(ValueChangeMode.EAGER);
+        txtViewNameFilter.setWidthFull();
+        txtViewNameFilter.addValueChangeListener(event -> dataProvider.addFilter(
+                project -> StringUtils.containsIgnoreCase(project.getName(),
+                        txtViewNameFilter.getValue())));
+
+        filterRow.getCell(tblCustomLayouts.getColumnByKey(ts.getTranslatedString("module.general.labels.name"))).setComponent(txtViewNameFilter);
+
+    }
+
+    private HorizontalLayout createActionsColumnTblView(BusinessObjectLight item) {
         HorizontalLayout lytActions = new HorizontalLayout();
 
         Button btnEdit = new Button(new Icon(VaadinIcon.EDIT), evt -> {
@@ -526,6 +556,18 @@ public class LayoutEditorDashboard extends VerticalLayout implements PropertyShe
         btnEdit.setClassName("icon-button");
 
         lytActions.add(btnEdit);
+        return lytActions;
+    }
+    
+       private HorizontalLayout createActionsColumnTblCustomLayouts(BusinessObjectLight item) {
+        HorizontalLayout lytActions = new HorizontalLayout();
+
+        Button btnAdd = new Button(new Icon(VaadinIcon.PLUS_CIRCLE_O), evt -> {
+            addCustomShape(item);
+        });
+        btnAdd.setClassName("icon-button");
+
+        lytActions.add(btnAdd);
         return lytActions;
     }
 
@@ -562,20 +604,86 @@ public class LayoutEditorDashboard extends VerticalLayout implements PropertyShe
             updateShapeProperties();
             accordionProperties.open(0);
             setGeneralToolsEnabled(true);
-            this.btnRemoveView.setEnabled(true);
             new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.topoman.actions.view-loaded"), 
                             AbstractNotification.NotificationType.INFO, ts).open();
-        } catch (ApplicationObjectNotFoundException | InvalidArgumentException ex) {
-            Logger.getLogger(LayoutEditorDashboard.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (MetadataObjectNotFoundException ex) {
+        } catch (ApplicationObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException ex) {
             Logger.getLogger(LayoutEditorDashboard.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    /**
+     * loads the given layout view into the view
+     * @param item the layout view to be loaded
+     */
+    private void addCustomShape(BusinessObjectLight item) {
+        try {
+            List<ViewObjectLight> views = aem.getListTypeItemRelatedViews(item.getId(), CLASS_CUSTOM, 1);
+            ViewObject shapeView;
+            if (!views.isEmpty()) {
+                shapeView = aem.getListTypeItemRelatedView(item.getId(), CLASS_CUSTOM, views.get(0).getId());
+            } else 
+                return;
+            byte[] deviceStructure = shapeView.getStructure();
+            try {
+                FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/CUSTOM_SHAPE_ADD" + currentView.getId() + ".xml");
+                fos.write(deviceStructure);
+                fos.close();
+            } catch (IOException e) {
+            }
+            
+            ByteArrayInputStream bais = new ByteArrayInputStream(deviceStructure);
+            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+            XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
+            
+            QName tagLayout = new QName("layout"); //NOI18N
+            String attrValue;
 
+            int layoutWidth = 0, layoutHeight = 0;
+            while (reader.hasNext()) {
+                int event = reader.next();
+                if (event == XMLStreamConstants.START_ELEMENT) {
+                    if (reader.getName().equals(tagLayout)) {
+
+                        attrValue = reader.getAttributeValue(null, "width"); //NOI18N
+                        if (attrValue != null) {
+                            layoutWidth = Integer.valueOf(attrValue);
+                        }
+                        attrValue = reader.getAttributeValue(null, "height"); //NOI18N
+                        if (attrValue != null) {
+                            layoutHeight = Integer.valueOf(attrValue);
+                        }    
+                    }
+                }
+            }
+            
+            MxGraphNode nodeShape = new MxGraphNode();
+            String nodeUuid = UUID.randomUUID().toString();
+            nodeShape.setUuid(nodeUuid);
+            nodeShape.setCellParent("*main");
+            nodeShape.setGeometry(50, 50, layoutWidth, layoutHeight);
+            mxGraphCanvas.addNode(new BusinessObjectLight((SHAPE_CUSTOM), nodeUuid, item.getId()), nodeShape);                                 
+                                    
+            renderShape(item, deviceStructure, UNIT_WIDTH, UNIT_HEIGHT, nodeShape, true);
+
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.topoman.actions.view-loaded"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
+        } catch (ApplicationObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException | XMLStreamException ex) {
+            Logger.getLogger(LayoutEditorDashboard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public void loadViews() {
         try {
             deviceLayouts = aem.getDeviceLayouts();
         } catch (InvalidArgumentException ex) {
+            Logger.getLogger(LayoutEditorDashboard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+     public void loadCustomLayouts() {
+        try {
+            customLayouts = aem.getListTypeItems(CLASS_CUSTOM);
+        } catch (InvalidArgumentException | MetadataObjectNotFoundException ex) {
             Logger.getLogger(LayoutEditorDashboard.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -623,9 +731,9 @@ public class LayoutEditorDashboard extends VerticalLayout implements PropertyShe
         if (currentView != null) {
             ArrayList<AbstractProperty> viewProperties = new ArrayList<>();
             viewProperties.add(new StringProperty(Constants.PROPERTY_NAME,
-                    Constants.PROPERTY_NAME, "", currentView.getName()));
+                    Constants.PROPERTY_NAME, "", currentView.getName(), ts));
             viewProperties.add(new StringProperty(Constants.PROPERTY_DESCRIPTION,
-                    Constants.PROPERTY_DESCRIPTION, "", currentView.getDescription()));
+                    Constants.PROPERTY_DESCRIPTION, "", currentView.getDescription(), ts));
             propSheetLayoutView.setItems(viewProperties);
         } else
             propSheetLayoutView.clear();
@@ -679,7 +787,6 @@ public class LayoutEditorDashboard extends VerticalLayout implements PropertyShe
  
      public void addNode(BusinessObjectLight businessObject, Properties properties) {
    
-
                 int x = (int) properties.get("x");
                 int y = (int) properties.get("y");
                 Integer width = (Integer) properties.get("w");
@@ -740,6 +847,7 @@ public class LayoutEditorDashboard extends VerticalLayout implements PropertyShe
         btnAddRectShape.setEnabled(b);
         btnAddEllipseShape.setEnabled(b);
         btnAddLabel.setEnabled(b);
+        tblCustomLayouts.setEnabled(b);
     }
 
     private void buildCanvasSkeleton() { 
@@ -815,8 +923,6 @@ public class LayoutEditorDashboard extends VerticalLayout implements PropertyShe
         try {
             double propY =  1, propX =  1,
                     propSize = 1; 
-//            double propY =  .2, propX =  0.22,
-//                    propSize = 0.20; 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
             XMLEventWriter xmlew = xmlof.createXMLEventWriter(baos);
