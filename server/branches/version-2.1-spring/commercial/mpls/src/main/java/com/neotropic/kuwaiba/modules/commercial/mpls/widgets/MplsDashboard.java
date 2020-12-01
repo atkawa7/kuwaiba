@@ -34,7 +34,6 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
-import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
@@ -380,7 +379,6 @@ public class MplsDashboard extends VerticalLayout {
                 }
             }
         };
-        H4 headerListTypes = new H4(ts.getTranslatedString("module.propertysheet.labels.header"));
         propSheetObjects = new PropertySheet(ts, new ArrayList<>(), "");
         propSheetObjects.addPropertyValueChangedListener(listenerPropSheetObjects);
         
@@ -443,7 +441,6 @@ public class MplsDashboard extends VerticalLayout {
         accordion.open(apObjectProp);
         
         VerticalLayout lytSheet = new VerticalLayout(accordion);
-////        lytSheet.setFlexGrow(1, propSheetObjects);
         lytSheet.setSpacing(false);
         setMarginPaddingLayout(lytSheet, false);
         lytSheet.setWidth("30%");
@@ -927,9 +924,9 @@ public class MplsDashboard extends VerticalLayout {
         if (currentView != null) {
             ArrayList<AbstractProperty> viewProperties = new ArrayList<>();
             viewProperties.add(new StringProperty(Constants.PROPERTY_NAME,
-                    Constants.PROPERTY_NAME, "", currentView.getName()));
+                    Constants.PROPERTY_NAME, "", currentView.getName(), ts));
             viewProperties.add(new StringProperty(Constants.PROPERTY_DESCRIPTION,
-                    Constants.PROPERTY_DESCRIPTION, "", currentView.getDescription()));
+                    Constants.PROPERTY_DESCRIPTION, "", currentView.getDescription(), ts));
             propSheetMPLS.setItems(viewProperties);
         } else
             propSheetMPLS.clear();
