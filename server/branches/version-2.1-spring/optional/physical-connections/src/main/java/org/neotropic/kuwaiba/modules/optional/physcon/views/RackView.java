@@ -15,7 +15,6 @@
  */
 package org.neotropic.kuwaiba.modules.optional.physcon.views;
 
-import org.neotropic.kuwaiba.modules.optional.physcon.views.PhysicalPathView;
 import com.neotropic.flow.component.mxgraph.MxConstants;
 import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.neotropic.flow.component.mxgraph.MxGraphNode;
@@ -758,10 +757,10 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                     if (reader.getName().equals(tagShape)) {
                         String shapeType = reader.getAttributeValue(null, "type");
                         
-                        int borderWidth, color, borderColor, textColor, fontSize;
+                        int color, borderColor, textColor;
                         double width = 50, height = 50, x = 0, y = 0;
                         String name, label;
-                        boolean isSlot = false;
+                        boolean isSlot;
                         
                         if (shapeType != null) {
                             
@@ -769,42 +768,42 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                             nodeShape.setCellParent(deviceNode.getUuid());
                             
                             attrValue = reader.getAttributeValue(null, PROPERTY_X);
-                            if (attrValue != null) {
+                            if (attrValue != null) 
                                 x = Double.valueOf(attrValue)* percentWidth;
-                            }
+                            
                             
                             attrValue = reader.getAttributeValue(null, PROPERTY_Y);
-                            if (attrValue != null) {
+                            if (attrValue != null) 
                                 y = Double.valueOf(attrValue) * percentHeight;
-                            }
+                            
                             
                             attrValue = reader.getAttributeValue(null, PROPERTY_WIDTH);
-                            if (attrValue != null) {
+                            if (attrValue != null) 
                                 width = Double.valueOf(attrValue) * percentWidth;
-                            }
+                            
                             
                             attrValue = reader.getAttributeValue(null, PROPERTY_HEIGHT);
-                            if (attrValue != null) {
+                            if (attrValue != null) 
                                 height = Double.valueOf(attrValue) * percentHeight;
-                            }                            
+                                                       
                             
                             double widthAdjust;
                             width = (width * propSize);
                             height = height * propSize;
-                            if (width > unitWidth) {
+                            if (width > unitWidth) 
                                 width = unitWidth;
-                            }
-                            if (height > unitHeight) {
+                            
+                            if (height > unitHeight) 
                                 height = unitHeight;
-                            }
+                            
                             x = x * propX;
                             y = y * propY;
-                            if (x > unitWidth) {
+                            if (x > unitWidth) 
                                 x = unitWidth - width;
-                            }
-                            if (y > unitHeight) {
+                            
+                            if (y > unitHeight) 
                                 y = unitHeight - height;
-                            }
+                            
                             
                             nodeShape.setGeometry((int) x, (int) y, (int) width, (int) height);
                             nodeShape.setStrokeColor(MxConstants.NONE);
@@ -1001,15 +1000,11 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                 }
             }
             reader.close();
-        } catch (XMLStreamException ex) {
+        } catch (XMLStreamException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
             Logger.getLogger(RackView.class.getName()).log(Level.SEVERE, null, ex);
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
                             AbstractNotification.NotificationType.ERROR, ts).open();
             
-        } catch (MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
-            Logger.getLogger(RackView.class.getName()).log(Level.SEVERE, null, ex);
-             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.general.messages.unexpected-error"), 
-                            AbstractNotification.NotificationType.ERROR, ts).open();
         }
     }
     
@@ -1118,7 +1113,7 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                             }
                             return devices;
                         } else {
-                            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), String.format("%s %s", ts.getTranslatedString("module.visualization.rack-view-error-building-view") + message), 
+                            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), String.format("%s %s", ts.getTranslatedString("module.visualization.rack-view-error-building-view"), message), 
                             AbstractNotification.NotificationType.ERROR, ts).open();
                             return null;
                         }
@@ -1129,7 +1124,7 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                             AbstractNotification.NotificationType.ERROR, ts).open();
             return null;
         } catch (BusinessObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException e) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.rack-view-error-building-view") + e, 
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), String.format("%s %s", ts.getTranslatedString("module.visualization.rack-view-error-building-view"), e), 
                             AbstractNotification.NotificationType.INFO, ts).open();
             return null;
         }
