@@ -72,7 +72,7 @@ public class PropertyFactory {
     public static List<AbstractProperty> propertiesFromBusinessObject(BusinessObject businessObject, TranslationService ts, ApplicationEntityManager aem,
             MetadataEntityManager mem) throws InventoryException {
         ClassMetadata classMetadata = mem.getClass(businessObject.getClassName());
-        classMetadata.getAttributes().sort(Comparator.comparing(item -> item.getOrder()));
+        classMetadata.getAttributes().sort(Comparator.comparing(item -> (item.getOrder())));
                 
         ArrayList<AbstractProperty> objectProperties = new ArrayList<>();
         HashMap<String, Object> attributes = businessObject.getAttributes();
@@ -83,7 +83,7 @@ public class PropertyFactory {
 
                     objectProperties.add(new StringProperty(anAttribute.getName(),
                             anAttribute.getDisplayName(), anAttribute.getDescription(),
-                            (!attributes.containsKey(anAttribute.getName()) ? null : (String) attributes.get(anAttribute.getName())) ));
+                            (!attributes.containsKey(anAttribute.getName()) ? null : (String) attributes.get(anAttribute.getName())), ts));
                         break;
                     case Constants.DATA_TYPE_DOUBLE:
                     case Constants.DATA_TYPE_FLOAT: {
@@ -100,7 +100,7 @@ public class PropertyFactory {
                         } else
                             value = null;
                         objectProperties.add(new DoubleProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                anAttribute.getDescription(), value));
+                                anAttribute.getDescription(), value, ts));
                         break;
                     }
                     case Constants.DATA_TYPE_INTEGER:{
@@ -114,7 +114,7 @@ public class PropertyFactory {
                         } else
                             value = null;
                         objectProperties.add(new IntegerProperty(anAttribute.getName(),
-                            anAttribute.getDisplayName(), anAttribute.getDescription(), value));
+                            anAttribute.getDisplayName(), anAttribute.getDescription(), value, ts));
                         break;
                     }
                     case Constants.DATA_TYPE_BOOLEAN: {
@@ -127,7 +127,7 @@ public class PropertyFactory {
                         } else
                             value = false;
                         objectProperties.add(new BooleanProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                anAttribute.getDescription(), value));
+                                anAttribute.getDescription(), value, ts));
                         break;
                     }
                     case Constants.DATA_TYPE_LONG: {
@@ -140,7 +140,7 @@ public class PropertyFactory {
                         } else
                             value = null;
                         LongProperty aLongProperty = new LongProperty(anAttribute.getName(), 
-                                anAttribute.getDisplayName(), anAttribute.getDescription(), value);
+                                anAttribute.getDisplayName(), anAttribute.getDescription(), value, ts);
                         //special case for creation date attribute
                         if (Constants.PROPERTY_CREATION_DATE.equals(anAttribute.getName())) {
                             aLongProperty.setReadOnly(true);
@@ -158,7 +158,7 @@ public class PropertyFactory {
                         } else
                             value = 0l;
                         LocalDateProperty aDateProperty = new LocalDateProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                anAttribute.getDescription(), value);
+                                anAttribute.getDescription(), value, ts);
                         aDateProperty.setReadOnly(anAttribute.getName().equals(Constants.PROPERTY_CREATION_DATE));
                         objectProperties.add(aDateProperty);
                         break;
@@ -173,7 +173,7 @@ public class PropertyFactory {
                         } else
                             value = 0l;
                         LocalDateTimeProperty aDateTimeProperty = new LocalDateTimeProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                anAttribute.getDescription(), value);
+                                anAttribute.getDescription(), value, ts);
                         aDateTimeProperty.setReadOnly(anAttribute.getName().equals(Constants.PROPERTY_CREATION_DATE));
                         objectProperties.add(aDateTimeProperty);
                         break;
@@ -196,7 +196,7 @@ public class PropertyFactory {
                         if (anAttribute.isMultiple()) {
                             objectProperties.add(new ObjectMultipleProperty(anAttribute.getName(), anAttribute.getDisplayName(),
                                     anAttribute.getDescription(), 
-                                    new ArrayList<>(selectedItems), new ArrayList<>(items), anAttribute.getType()));
+                                    new ArrayList<>(selectedItems), new ArrayList<>(items), anAttribute.getType(), ts));
                         } else {
                             objectProperties.add(new ObjectProperty(anAttribute.getName(), anAttribute.getDisplayName(),
                                     anAttribute.getDescription(), (selectedItems.size() > 0 ? selectedItems.get(0) : null),
@@ -206,7 +206,7 @@ public class PropertyFactory {
                                             return ((BusinessObjectLight) t).getName();
                                         }
                                         return "";
-                            }));
+                            }, ts));
                         }
                     } catch (InventoryException ex) {
                         Logger.getLogger(PropertyFactory.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage());
@@ -242,51 +242,51 @@ public class PropertyFactory {
                     switch (anAttribute.getType()) {
                         case Constants.DATA_TYPE_STRING:
                             objectProperties.add(new StringProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                    anAttribute.getDescription(), (String) templateObject.getAttributes().get(anAttribute.getName())));
+                                    anAttribute.getDescription(), (String) templateObject.getAttributes().get(anAttribute.getName()), ts));
                             break;
                         case Constants.DATA_TYPE_FLOAT:
                             if (templateObject.getAttributes().get(anAttribute.getName()) != null) {
                                 objectProperties.add(new DoubleProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                        anAttribute.getDescription(), Double.valueOf(templateObject.getAttributes().get(anAttribute.getName()))));
+                                        anAttribute.getDescription(), Double.valueOf(templateObject.getAttributes().get(anAttribute.getName())), ts));
                             } else
                                 objectProperties.add(new DoubleProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                        anAttribute.getDescription(), null));
+                                        anAttribute.getDescription(), null, ts));
                             break;
                         case Constants.DATA_TYPE_INTEGER:
                             if (templateObject.getAttributes().get(anAttribute.getName()) != null) {
                                 objectProperties.add(new IntegerProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                        anAttribute.getDescription(), Integer.valueOf(templateObject.getAttributes().get(anAttribute.getName()))));
+                                        anAttribute.getDescription(), Integer.valueOf(templateObject.getAttributes().get(anAttribute.getName())), ts));
                             }
                             break;
                         case Constants.DATA_TYPE_BOOLEAN:
                             if (templateObject.getAttributes().get(anAttribute.getName()) != null) {
                                 objectProperties.add(new BooleanProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                        anAttribute.getDescription(), Boolean.valueOf(templateObject.getAttributes().get(anAttribute.getName()))));
+                                        anAttribute.getDescription(), Boolean.valueOf(templateObject.getAttributes().get(anAttribute.getName())), ts));
                             } else
                                 objectProperties.add(new DoubleProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                        anAttribute.getDescription(), null));
+                                        anAttribute.getDescription(), null, ts));
                             break;
                         case Constants.DATA_TYPE_LONG:
                             if (templateObject.getAttributes().get(anAttribute.getName()) != null) {
                                 LongProperty aLongProperty = new LongProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                        anAttribute.getDescription(), Long.valueOf(templateObject.getAttributes().get(anAttribute.getName())));
+                                        anAttribute.getDescription(), Long.valueOf(templateObject.getAttributes().get(anAttribute.getName())), ts);
                                 
                                 objectProperties.add(aLongProperty);
                             } else
                                 objectProperties.add(new DoubleProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                        anAttribute.getDescription(), null));
+                                        anAttribute.getDescription(), null, ts));
                             
                             break;
                         case Constants.DATA_TYPE_DATE:
                         case Constants.DATA_TYPE_TIME_STAMP:
                             if (templateObject.getAttributes().get(anAttribute.getName()) != null) {
                                 DateProperty aDateProperty = new DateProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                        anAttribute.getDescription(), Long.valueOf(templateObject.getAttributes().get(anAttribute.getName())));
+                                        anAttribute.getDescription(), Long.valueOf(templateObject.getAttributes().get(anAttribute.getName())), ts);
                                 aDateProperty.setReadOnly(anAttribute.getName().equals(Constants.PROPERTY_CREATION_DATE));
                                 objectProperties.add(aDateProperty);
                             } else {
                                 DateProperty aDateProperty = new DateProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                        anAttribute.getDescription(), null);
+                                        anAttribute.getDescription(), null, ts);
                                 //special case for creation date attribute
                                 aDateProperty.setReadOnly(anAttribute.getName().equals(Constants.PROPERTY_CREATION_DATE));                                
                                 objectProperties.add(aDateProperty);                                
@@ -309,7 +309,7 @@ public class PropertyFactory {
                             String listTypeItemId = templateObject.getAttributes().get(anAttribute.getName());
                             if (listTypeItemId != null) {
                                 objectProperties.add(new ObjectMultipleProperty(anAttribute.getName(), anAttribute.getDisplayName(),
-                                        anAttribute.getDescription(), objetcs, items, anAttribute.getType()));
+                                        anAttribute.getDescription(), objetcs, items, anAttribute.getType(), ts));
                             }
                         } else {
                             String listTypeItemId = templateObject.getAttributes().get(anAttribute.getName());
@@ -322,7 +322,7 @@ public class PropertyFactory {
                                                 return ((BusinessObjectLight) t).getName();
                                             }
                                             return "";
-                                }));
+                                }, ts));
                             }
                         }
                     } catch (InventoryException ex) {
@@ -333,14 +333,14 @@ public class PropertyFactory {
             } catch (Exception ex) { // Faulty values will be ignored and silently logged
                 Logger.getLogger(PropertyFactory.class.getName()).log(Level.SEVERE,
                         String.format(ts.getTranslatedString("module.propertysheet.labels.wrong-data-type"), anAttribute.getName(),
-                                templateObject.getId(), templateObject.getAttributes().get(anAttribute.getName())));
+                                templateObject.getId(), templateObject.getAttributes().get(anAttribute.getName())), ts);
             }
         });
 
         return objectProperties;
     }
 
-    public static List<AbstractProperty> generalPropertiesFromClass(ClassMetadata classMetadata) {
+    public static List<AbstractProperty> generalPropertiesFromClass(ClassMetadata classMetadata, TranslationService ts) {
 
         ArrayList<AbstractProperty> objectProperties = new ArrayList<>();
         AbstractProperty property;
@@ -348,47 +348,47 @@ public class PropertyFactory {
         property = new StringProperty(Constants.PROPERTY_NAME,
                 Constants.PROPERTY_NAME, Constants.PROPERTY_NAME,
                 classMetadata.getName() == null || classMetadata.getName().isEmpty()
-                ? AbstractProperty.NULL_LABEL : classMetadata.getName());
+                ? AbstractProperty.NULL_LABEL : classMetadata.getName(), ts);
         objectProperties.add(property);
 
         property = new StringProperty(Constants.PROPERTY_DISPLAY_NAME,
                 Constants.PROPERTY_DISPLAY_NAME, Constants.PROPERTY_DISPLAY_NAME,
                 classMetadata.getDisplayName() == null || classMetadata.getDisplayName().isEmpty()
-                ? AbstractProperty.NULL_LABEL : classMetadata.getDisplayName());
+                ? AbstractProperty.NULL_LABEL : classMetadata.getDisplayName(), ts);
         objectProperties.add(property);
 
         property = new StringProperty(Constants.PROPERTY_DESCRIPTION,
                 Constants.PROPERTY_DESCRIPTION, Constants.PROPERTY_DESCRIPTION,
                 classMetadata.getDescription() == null || classMetadata.getDescription().isEmpty()
-                ? AbstractProperty.NULL_LABEL : classMetadata.getDescription());
+                ? AbstractProperty.NULL_LABEL : classMetadata.getDescription(), ts);
         objectProperties.add(property);
 
         property = new BooleanProperty(Constants.PROPERTY_ABSTRACT,
                 Constants.PROPERTY_ABSTRACT, Constants.PROPERTY_ABSTRACT,
-                classMetadata.isAbstract());
+                classMetadata.isAbstract(), ts);
         objectProperties.add(property);
 
         property = new BooleanProperty(Constants.PROPERTY_IN_DESIGN,
                 Constants.PROPERTY_IN_DESIGN, Constants.PROPERTY_IN_DESIGN,
-                classMetadata.isInDesign());
+                classMetadata.isInDesign(), ts);
         objectProperties.add(property);
 
         property = new BooleanProperty(Constants.PROPERTY_COUNTABLE,
                 Constants.PROPERTY_COUNTABLE, Constants.PROPERTY_COUNTABLE,
-                classMetadata.isCountable());
+                classMetadata.isCountable(), ts);
         objectProperties.add(property);
 
         String hexColor = String.format("#%06x", (0xFFFFFF & classMetadata.getColor()));
 //        String hexColor = "#"+ Integer.toHexString(classMetadata.getColor());
         property = new ColorProperty(Constants.PROPERTY_COLOR,
                 Constants.PROPERTY_COLOR, Constants.PROPERTY_COLOR,
-                hexColor);
+                hexColor, ts);
         objectProperties.add(property);
 
         return objectProperties;
     }
 
-    public static List<AbstractProperty> generalPropertiesFromAttribute(AttributeMetadata attributeMetadata, MetadataEntityManager mem) {
+    public static List<AbstractProperty> generalPropertiesFromAttribute(AttributeMetadata attributeMetadata, MetadataEntityManager mem, TranslationService ts) {
 
         ArrayList<AbstractProperty> objectProperties = new ArrayList<>();
         AbstractProperty property;
@@ -400,21 +400,21 @@ public class PropertyFactory {
         property = new StringProperty(Constants.PROPERTY_NAME,
                 Constants.PROPERTY_NAME, Constants.PROPERTY_NAME,
                 attributeMetadata.getName() == null || attributeMetadata.getName().isEmpty()
-                ? AbstractProperty.NULL_LABEL : attributeMetadata.getName(),
+                ? AbstractProperty.NULL_LABEL : attributeMetadata.getName(), ts,
                 readOnlyAttribute);
         objectProperties.add(property);
 
         property = new StringProperty(Constants.PROPERTY_DISPLAY_NAME,
                 Constants.PROPERTY_DISPLAY_NAME, Constants.PROPERTY_DISPLAY_NAME,
                 attributeMetadata.getDisplayName() == null || attributeMetadata.getDisplayName().isEmpty()
-                ? AbstractProperty.NULL_LABEL : attributeMetadata.getDisplayName(),
+                ? AbstractProperty.NULL_LABEL : attributeMetadata.getDisplayName(), ts,
                 readOnlyAttribute);
         objectProperties.add(property);
 
         property = new StringProperty(Constants.PROPERTY_DESCRIPTION,
                 Constants.PROPERTY_DESCRIPTION, Constants.PROPERTY_DESCRIPTION,
                 attributeMetadata.getDescription() == null || attributeMetadata.getDescription().isEmpty()
-                ? AbstractProperty.NULL_LABEL : attributeMetadata.getDescription(),
+                ? AbstractProperty.NULL_LABEL : attributeMetadata.getDescription(), ts,
                 readOnlyAttribute);
         objectProperties.add(property);
         
@@ -434,105 +434,105 @@ public class PropertyFactory {
                 attributeMetadata.getType(), lstAllTypes, "", attributeMetadata.getType(), 
                 (ItemLabelGenerator) (Object t) -> {
                     return t.toString();
-                });
+                }, ts);
         objectProperties.add(property);
 
         property = new BooleanProperty(Constants.PROPERTY_MANDATORY,
                 Constants.PROPERTY_MANDATORY, Constants.PROPERTY_MANDATORY,
-                attributeMetadata.isMandatory(),
+                attributeMetadata.isMandatory(), ts,
                 readOnlyAttribute);
         objectProperties.add(property);
 
         property = new BooleanProperty(Constants.PROPERTY_UNIQUE,
                 Constants.PROPERTY_UNIQUE, Constants.PROPERTY_UNIQUE,
-                attributeMetadata.isUnique(),
+                attributeMetadata.isUnique(), ts,
                 readOnlyAttribute);
         objectProperties.add(property);
 
         property = new BooleanProperty(Constants.PROPERTY_MULTIPLE,
                 Constants.PROPERTY_MULTIPLE, Constants.PROPERTY_MULTIPLE,
-                attributeMetadata.isMultiple(),
+                attributeMetadata.isMultiple(), ts,
                 readOnlyAttribute);
         objectProperties.add(property);
 
         property = new BooleanProperty(Constants.PROPERTY_VISIBLE,
                 Constants.PROPERTY_VISIBLE, Constants.PROPERTY_VISIBLE,
-                attributeMetadata.isVisible(),
+                attributeMetadata.isVisible(), ts,
                 readOnlyAttribute);
         objectProperties.add(property);
 
         property = new BooleanProperty(Constants.PROPERTY_ADMINISTRATIVE,
                 Constants.PROPERTY_ADMINISTRATIVE, Constants.PROPERTY_ADMINISTRATIVE,
-                attributeMetadata.isAdministrative()
+                attributeMetadata.isAdministrative() ,ts
         );
         objectProperties.add(property);
 
         property = new BooleanProperty(Constants.PROPERTY_NO_COPY,
                 Constants.PROPERTY_NO_COPY, Constants.PROPERTY_NO_COPY,
-                attributeMetadata.isNoCopy(),
+                attributeMetadata.isNoCopy(), ts,
                 readOnlyAttribute);
         objectProperties.add(property);
 
         property = new IntegerProperty(Constants.PROPERTY_ORDER,
                 Constants.PROPERTY_ORDER, Constants.PROPERTY_ORDER,
-                attributeMetadata.getOrder(),
+                attributeMetadata.getOrder(), ts,
                 readOnlyAttribute);
         objectProperties.add(property);
 
         return objectProperties;
     }
     
-    public static List<AbstractProperty> propertiesFromConfigurationVariable(ConfigurationVariable configurationVariable) {
+    public static List<AbstractProperty> propertiesFromConfigurationVariable(ConfigurationVariable configurationVariable, TranslationService ts) {
         ArrayList<AbstractProperty> objectProperties = new ArrayList<>();
         AbstractProperty property;
         
         property = new StringProperty(Constants.PROPERTY_NAME,
                                       Constants.PROPERTY_NAME, Constants.PROPERTY_NAME, 
                                       configurationVariable.getName()==null || configurationVariable.getName().isEmpty() ?
-                                            AbstractProperty.NULL_LABEL : configurationVariable.getName());
+                                            AbstractProperty.NULL_LABEL : configurationVariable.getName(), ts);
         objectProperties.add(property);
         
         property = new StringProperty(Constants.PROPERTY_DESCRIPTION,
                                       Constants.PROPERTY_DESCRIPTION, Constants.PROPERTY_DESCRIPTION, 
                                       configurationVariable.getDescription()==null || configurationVariable.getDescription().isEmpty() ?
-                                            AbstractProperty.NULL_LABEL : configurationVariable.getDescription());
+                                            AbstractProperty.NULL_LABEL : configurationVariable.getDescription(), ts);
         objectProperties.add(property);
         
         property = new StringProperty(Constants.PROPERTY_VALUE,
                                       Constants.PROPERTY_VALUE, Constants.PROPERTY_VALUE, 
                                       configurationVariable.getValueDefinition()==null || configurationVariable.getValueDefinition().isEmpty() ?
-                                            AbstractProperty.NULL_LABEL : configurationVariable.getValueDefinition(),
+                                            AbstractProperty.NULL_LABEL : configurationVariable.getValueDefinition(), ts,
                                       false, configurationVariable.isMasked());
         objectProperties.add(property);
         
         property = new BooleanProperty(Constants.PROPERTY_MASKED,
                                       Constants.PROPERTY_MASKED, Constants.PROPERTY_MASKED, 
-                                      configurationVariable.isMasked());
+                                      configurationVariable.isMasked(), ts);
         objectProperties.add(property);
         
         return objectProperties;
     }
     
-    public static List<AbstractProperty> propertiesFromPool(Pool pool) {
+    public static List<AbstractProperty> propertiesFromPool(Pool pool, TranslationService ts) {
         ArrayList<AbstractProperty> objectProperties = new ArrayList<>();
         AbstractProperty property;
         
         property = new StringProperty(Constants.PROPERTY_CLASS_NAME,
                                       Constants.PROPERTY_CLASS_NAME, Constants.PROPERTY_CLASS_NAME,
                                       pool.getClassName()==null || pool.getClassName().isEmpty() ?
-                                            AbstractProperty.NULL_LABEL : pool.getClassName(), true);
+                                            AbstractProperty.NULL_LABEL : pool.getClassName(), ts, true);
         objectProperties.add(property);
         
         property = new StringProperty(Constants.PROPERTY_NAME,
                                       Constants.PROPERTY_NAME, Constants.PROPERTY_NAME, 
                                       pool.getName()==null || pool.getName().isEmpty() ?
-                                            AbstractProperty.NULL_LABEL : pool.getName());
+                                            AbstractProperty.NULL_LABEL : pool.getName(), ts);
         objectProperties.add(property);
         
         property = new StringProperty(Constants.PROPERTY_DESCRIPTION,
                                       Constants.PROPERTY_DESCRIPTION, Constants.PROPERTY_DESCRIPTION, 
                                       pool.getDescription()==null || pool.getDescription().isEmpty() ?
-                                            AbstractProperty.NULL_LABEL : pool.getDescription());
+                                            AbstractProperty.NULL_LABEL : pool.getDescription(), ts);
         objectProperties.add(property);
         
         return objectProperties;
