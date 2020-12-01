@@ -85,9 +85,9 @@ import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicTreeNodeIconGenerator;
 import org.neotropic.kuwaiba.modules.core.navigation.navtree.NavigationTree;
 import org.neotropic.kuwaiba.modules.core.navigation.navtree.nodes.InventoryObjectNode;
-import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyFactory;
-import org.neotropic.kuwaiba.modules.core.navigation.properties.PropertyValueConverter;
-import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
+import org.neotropic.kuwaiba.visualization.api.properties.PropertyFactory;
+import org.neotropic.kuwaiba.visualization.api.properties.PropertyValueConverter;
+import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewEdge;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
@@ -475,7 +475,6 @@ public class MplsDashboard extends VerticalLayout {
      * Create and open the dialog form to create a new Connection
      */
     private void openNewConnectionDialog() {
-         
         selectedSourceEquipment = null;
         selectedTargetEquipment = null;
         selectedEndPointA = null;

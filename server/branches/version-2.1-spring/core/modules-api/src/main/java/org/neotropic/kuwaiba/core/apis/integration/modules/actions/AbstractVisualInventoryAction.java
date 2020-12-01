@@ -16,8 +16,6 @@
 
 package org.neotropic.kuwaiba.core.apis.integration.modules.actions;
 
-import javax.swing.Icon;
-
 /**
  * Actions applicable to inventory objects must inherit from this class.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
@@ -32,4 +30,10 @@ public abstract class AbstractVisualInventoryAction extends AbstractVisualAction
      * (or any root pool, for that matter).
      */
     public abstract String appliesTo();
+    /**
+     * Visual actions can be deemed as "core" (general purpose actions not particular to any module, usually related to CRUD operations, such as delete or create object) and 
+     * "module actions", which, as the name says, are defined in each module. These actions usually deal with relating to other objects or launch custom tools.
+     * @return 
+     */
+    public abstract boolean isModuleAction();
 }

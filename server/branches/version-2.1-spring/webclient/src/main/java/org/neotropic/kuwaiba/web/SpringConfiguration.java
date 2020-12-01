@@ -38,6 +38,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
                                 "org.neotropic.kuwaiba.modules", // Core and optional modules
                                 "com.neotropic.kuwaiba.modules", // Commercial modules
                                 "org.neotropic.kuwaiba.northbound.ws", // The SOAP-based web service interface implementation.
+                                "org.neotropic.kuwaiba.visualization", // Temporary location of some core beans. TODO: Relocate them all
                               })
 // Vaadin routes
 @EnableVaadin(value = { "org.neotropic.kuwaiba.core.configuration", // General settings 

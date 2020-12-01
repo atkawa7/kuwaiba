@@ -39,16 +39,16 @@
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-spring-boot-starter</artifactId>
             <version>${vaadin.version}</version>
-        </dependency>       
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>navigation</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.neotropic.flow.component</groupId>
             <artifactId>ace-editor-flow</artifactId>
-        </dependency>    
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>Visualization</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     
     <dependencyManagement>

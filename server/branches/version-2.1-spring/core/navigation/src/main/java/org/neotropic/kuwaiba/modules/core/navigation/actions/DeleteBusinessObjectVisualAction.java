@@ -123,4 +123,9 @@ public class DeleteBusinessObjectVisualAction extends AbstractVisualInventoryAct
     public String appliesTo() {
         return null;
     }
+
+    @Override
+    public boolean isModuleAction() {
+        return false;
+    }
 }

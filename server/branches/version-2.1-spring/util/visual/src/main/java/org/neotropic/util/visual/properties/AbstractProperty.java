@@ -19,9 +19,9 @@ import com.vaadin.flow.component.AbstractField;
 
 
 /**
- * A property in a property sheet
+ * A property in a property sheet.
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
- * @param <T> The type of the property
+ * @param <T> The type of the property.
  */
 public abstract class AbstractProperty<T> {
     private String name;

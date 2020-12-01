@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
  * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 @Component
-public class NavModule extends AbstractModule {
+public class NavigationModule extends AbstractModule {
     /**
      * The module id.
      */

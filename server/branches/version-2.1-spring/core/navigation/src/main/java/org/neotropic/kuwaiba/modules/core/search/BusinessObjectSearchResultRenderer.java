@@ -32,7 +32,7 @@ import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionParameter
 import org.neotropic.kuwaiba.core.apis.integration.modules.actions.AbstractVisualInventoryAction;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.modules.core.navigation.actions.DeleteBusinessObjectVisualAction;
-import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
+import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 import org.neotropic.util.visual.icons.IconGenerator;
 
 /**

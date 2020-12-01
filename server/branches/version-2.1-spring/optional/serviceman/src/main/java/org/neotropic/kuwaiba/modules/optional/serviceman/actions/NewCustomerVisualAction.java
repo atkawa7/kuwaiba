@@ -177,4 +177,9 @@ public class NewCustomerVisualAction extends AbstractVisualInventoryAction {
     public String appliesTo() {
         return null;
     }
+    
+    @Override
+    public boolean isModuleAction() {
+        return true;
+    }
 }

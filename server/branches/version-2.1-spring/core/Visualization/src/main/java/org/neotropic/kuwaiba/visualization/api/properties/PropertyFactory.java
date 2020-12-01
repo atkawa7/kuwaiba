@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.neotropic.kuwaiba.modules.core.navigation.properties;
+package org.neotropic.kuwaiba.visualization.api.properties;
 
 import com.vaadin.flow.component.ItemLabelGenerator;
 import java.util.ArrayList;
@@ -72,7 +72,7 @@ public class PropertyFactory {
     public static List<AbstractProperty> propertiesFromBusinessObject(BusinessObject businessObject, TranslationService ts, ApplicationEntityManager aem,
             MetadataEntityManager mem) throws InventoryException {
         ClassMetadata classMetadata = mem.getClass(businessObject.getClassName());
-        classMetadata.getAttributes().sort(Comparator.comparing(item -> (item.getOrder() == null ? 0 : item.getOrder())));
+        classMetadata.getAttributes().sort(Comparator.comparing(item -> item.getOrder()));
                 
         ArrayList<AbstractProperty> objectProperties = new ArrayList<>();
         HashMap<String, Object> attributes = businessObject.getAttributes();
@@ -365,17 +365,17 @@ public class PropertyFactory {
 
         property = new BooleanProperty(Constants.PROPERTY_ABSTRACT,
                 Constants.PROPERTY_ABSTRACT, Constants.PROPERTY_ABSTRACT,
-                classMetadata.isAbstract() == null ? false : classMetadata.isAbstract());
+                classMetadata.isAbstract());
         objectProperties.add(property);
 
         property = new BooleanProperty(Constants.PROPERTY_IN_DESIGN,
                 Constants.PROPERTY_IN_DESIGN, Constants.PROPERTY_IN_DESIGN,
-                classMetadata.isInDesign() == null ? false : classMetadata.isInDesign());
+                classMetadata.isInDesign());
         objectProperties.add(property);
 
         property = new BooleanProperty(Constants.PROPERTY_COUNTABLE,
                 Constants.PROPERTY_COUNTABLE, Constants.PROPERTY_COUNTABLE,
-                classMetadata.isCountable() == null ? false : classMetadata.isCountable());
+                classMetadata.isCountable());
         objectProperties.add(property);
 
         String hexColor = String.format("#%06x", (0xFFFFFF & classMetadata.getColor()));
@@ -439,43 +439,43 @@ public class PropertyFactory {
 
         property = new BooleanProperty(Constants.PROPERTY_MANDATORY,
                 Constants.PROPERTY_MANDATORY, Constants.PROPERTY_MANDATORY,
-                attributeMetadata.isMandatory() == null ? false : attributeMetadata.isMandatory(),
+                attributeMetadata.isMandatory(),
                 readOnlyAttribute);
         objectProperties.add(property);
 
         property = new BooleanProperty(Constants.PROPERTY_UNIQUE,
                 Constants.PROPERTY_UNIQUE, Constants.PROPERTY_UNIQUE,
-                attributeMetadata.isUnique() == null ? false : attributeMetadata.isUnique(),
+                attributeMetadata.isUnique(),
                 readOnlyAttribute);
         objectProperties.add(property);
 
         property = new BooleanProperty(Constants.PROPERTY_MULTIPLE,
                 Constants.PROPERTY_MULTIPLE, Constants.PROPERTY_MULTIPLE,
-                attributeMetadata.isMultiple() == null ? false : attributeMetadata.isMultiple(),
+                attributeMetadata.isMultiple(),
                 readOnlyAttribute);
         objectProperties.add(property);
 
         property = new BooleanProperty(Constants.PROPERTY_VISIBLE,
                 Constants.PROPERTY_VISIBLE, Constants.PROPERTY_VISIBLE,
-                attributeMetadata.isVisible() == null ? false : attributeMetadata.isVisible(),
+                attributeMetadata.isVisible(),
                 readOnlyAttribute);
         objectProperties.add(property);
 
         property = new BooleanProperty(Constants.PROPERTY_ADMINISTRATIVE,
                 Constants.PROPERTY_ADMINISTRATIVE, Constants.PROPERTY_ADMINISTRATIVE,
-                attributeMetadata.isAdministrative() == null ? false : attributeMetadata.isAdministrative()
+                attributeMetadata.isAdministrative()
         );
         objectProperties.add(property);
 
         property = new BooleanProperty(Constants.PROPERTY_NO_COPY,
                 Constants.PROPERTY_NO_COPY, Constants.PROPERTY_NO_COPY,
-                attributeMetadata.isNoCopy() == null ? false : attributeMetadata.isNoCopy(),
+                attributeMetadata.isNoCopy(),
                 readOnlyAttribute);
         objectProperties.add(property);
 
         property = new IntegerProperty(Constants.PROPERTY_ORDER,
                 Constants.PROPERTY_ORDER, Constants.PROPERTY_ORDER,
-                attributeMetadata.getOrder() == null ? null : attributeMetadata.getOrder(),
+                attributeMetadata.getOrder(),
                 readOnlyAttribute);
         objectProperties.add(property);
 

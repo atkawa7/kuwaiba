@@ -41,9 +41,9 @@ import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntity
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
-import org.neotropic.kuwaiba.modules.core.navigation.navtree.NavigationTree;
 import org.neotropic.kuwaiba.modules.core.navigation.navtree.nodes.InventoryObjectNode;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
@@ -193,7 +193,7 @@ public class ExploreFromBusinessObjectVisualAction extends AbstractVisualInvento
                         
                         
                         return (int) bem.getObjectChildrenCount(object.getClassName(), object.getId());
-                    } catch (Exception ex) {
+                    } catch (InventoryException ex) {
                         new SimpleNotification(ts.getTranslatedString("module.general.messages.error"),
                                 ex.getMessage(), AbstractNotification.NotificationType.ERROR, ts).open();
                         return 0;
@@ -214,5 +214,10 @@ public class ExploreFromBusinessObjectVisualAction extends AbstractVisualInvento
                 }
             }
         };
+    }
+
+    @Override
+    public boolean isModuleAction() {
+        return false;
     }
 }

@@ -33,8 +33,8 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
-import org.neotropic.kuwaiba.visualization.views.PhysicalPathView;
-import org.neotropic.kuwaiba.visualization.views.PhysicalTreeView;
+import org.neotropic.kuwaiba.modules.optional.physcon.views.PhysicalPathView;
+import org.neotropic.kuwaiba.modules.optional.physcon.views.PhysicalTreeView;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 

@@ -19,7 +19,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Contains the basic meta data information about a class
+ * Contains the basic meta data information about a class.
  *
  * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
@@ -41,16 +41,16 @@ public class ClassMetadataLight implements Serializable {
      * Instances of this class can have views associated (this going to be
      * "true" for all subclasses of ViewableObject)
      */
-    private Boolean viewable;
+    private boolean viewable;
     /**
      * Indicates if a class can have instances by itself (All GenericXXX classes
      * and others in package entity.core are used to take advantage of OOP)
      */
-    private Boolean _abstract;
+    private boolean _abstract;
     /**
      * Is this class a list type (Vendor, LocationOwner, OpticalLinkType, etc)
      */
-    private Boolean listType;
+    private boolean listType;
     /**
      * Parent ClassMetada name
      */
@@ -66,16 +66,16 @@ public class ClassMetadataLight implements Serializable {
     /**
      * Class metadata state default false operational or in design true
      */
-    private Boolean inDesign;
+    private boolean inDesign;
     /**
      * Shows if this is a core class (the ones provided in the official release)
      * or a custom one
      */
-    private Boolean custom;
+    private boolean custom;
     /**
      * Is this attribute going to be used for administrative purposes?
      */
-    private Boolean administrative;
+    private boolean administrative;
 
     public ClassMetadataLight() {
     }
@@ -86,7 +86,7 @@ public class ClassMetadataLight implements Serializable {
         this.displayName = displayName;
     }
 
-    public ClassMetadataLight(long id, String name, Boolean inDesign, Boolean custom, Boolean administrative) {
+    public ClassMetadataLight(long id, String name, boolean inDesign, boolean custom, boolean administrative) {
         this.id = id;
         this.name = name;
         this.inDesign = inDesign;
@@ -116,27 +116,27 @@ public class ClassMetadataLight implements Serializable {
         this.id = id;
     }
 
-    public Boolean isListType() {
+    public boolean isListType() {
         return listType;
     }
 
-    public void setListType(Boolean listType) {
+    public void setListType(boolean listType) {
         this.listType = listType;
     }
 
-    public void setAbstract(Boolean _abstract) {
+    public void setAbstract(boolean _abstract) {
         this._abstract = _abstract;
     }
 
-    public Boolean isAbstract() {
+    public boolean isAbstract() {
         return _abstract;
     }
 
-    public Boolean isViewable() {
+    public boolean isViewable() {
         return viewable;
     }
 
-    public void setViewable(Boolean viewable) {
+    public void setViewable(boolean viewable) {
         this.viewable = viewable;
     }
 
@@ -164,19 +164,19 @@ public class ClassMetadataLight implements Serializable {
         this.smallIcon = smallIcon;
     }
 
-    public Boolean isInDesign() {
+    public boolean isInDesign() {
         return inDesign;
     }
 
-    public void setInDesign(Boolean inDesing) {
+    public void setInDesign(boolean inDesing) {
         this.inDesign = inDesing;
     }
 
-    public Boolean isCustom() {
+    public boolean isCustom() {
         return custom;
     }
 
-    public void setCustom(Boolean custom) {
+    public void setCustom(boolean custom) {
         this.custom = custom;
     }
 
@@ -188,11 +188,11 @@ public class ClassMetadataLight implements Serializable {
         this.displayName = displayName;
     }
 
-    public Boolean isAdministrative() {
+    public boolean isAdministrative() {
         return administrative;
     }
 
-    public void setAdministrative(Boolean administrative) {
+    public void setAdministrative(boolean administrative) {
         this.administrative = administrative;
     }
 

@@ -21,8 +21,8 @@ import com.vaadin.flow.server.StreamResourceRegistry;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Objects;
-import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
+import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectNode;
 
 /**

@@ -42,10 +42,10 @@ import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualAction;
 import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
-import org.neotropic.kuwaiba.visualization.views.FiberSplitterView;
-import org.neotropic.kuwaiba.visualization.views.PhysicalPathView;
-import org.neotropic.kuwaiba.visualization.views.PhysicalTreeView;
-import org.neotropic.kuwaiba.visualization.views.SpliceBoxView;
+import org.neotropic.kuwaiba.modules.optional.physcon.views.FiberSplitterView;
+import org.neotropic.kuwaiba.modules.optional.physcon.views.PhysicalPathView;
+import org.neotropic.kuwaiba.modules.optional.physcon.views.PhysicalTreeView;
+import org.neotropic.kuwaiba.modules.optional.physcon.views.SpliceBoxView;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 

@@ -21,4 +21,4 @@ import org.neotropic.util.visual.general.ModuleLayout;
  *
  * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
-public class NavLayout extends ModuleLayout { }
+public class NavigationLayout extends ModuleLayout { }

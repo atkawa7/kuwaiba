@@ -95,4 +95,9 @@ public class DeleteServiceVisualAction extends AbstractVisualInventoryAction {
     public String appliesTo() {
         return Constants.CLASS_GENERICSERVICE;
     }
+    
+    @Override
+    public boolean isModuleAction() {
+        return true;
+    }
 }

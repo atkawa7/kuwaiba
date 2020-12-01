@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.neotropic.kuwaiba.modules.core.navigation.resources;
+package org.neotropic.kuwaiba.visualization.api.resources;
 
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.server.InputStreamFactory;

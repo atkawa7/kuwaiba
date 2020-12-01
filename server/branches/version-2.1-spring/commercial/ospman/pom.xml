@@ -147,17 +147,17 @@
         </dependency>
         <dependency>
             <groupId>org.neotropic.kuwaiba</groupId>
-            <artifactId>Visualization</artifactId>
-            <version>2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.neotropic.kuwaiba</groupId>
             <artifactId>integration-api</artifactId>
             <version>2.1</version>
         </dependency>
         <dependency>
             <groupId>org.neotropic.util</groupId>
             <artifactId>visual</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.neotropic.kuwaiba</groupId>
+            <artifactId>Visualization</artifactId>
             <version>2.1</version>
         </dependency>
     </dependencies>

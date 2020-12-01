@@ -123,4 +123,9 @@ public class NewCustomerPoolVisualAction extends AbstractVisualInventoryAction {
     public String appliesTo() {
         return null;
     }
+    
+    @Override
+    public boolean isModuleAction() {
+        return true;
+    }
 }

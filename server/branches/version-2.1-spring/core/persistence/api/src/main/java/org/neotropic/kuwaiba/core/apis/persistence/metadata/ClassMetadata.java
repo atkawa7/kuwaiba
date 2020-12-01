@@ -36,7 +36,7 @@ public class ClassMetadata extends ClassMetadataLight {
      *  Classes marked with the annotation NoCount (Slot, Port and the like)
      *  have this attribute set as false
      */
-    private Boolean countable;
+    private boolean countable;
     /**
      *  Icon to show in views
      */
@@ -59,11 +59,11 @@ public class ClassMetadata extends ClassMetadataLight {
     }
     
    // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
-    public Boolean isCountable() {
+    public boolean isCountable() {
         return countable;
     }
 
-    public void setCountable(Boolean countable) {
+    public void setCountable(boolean countable) {
         this.countable = countable;
     }
 

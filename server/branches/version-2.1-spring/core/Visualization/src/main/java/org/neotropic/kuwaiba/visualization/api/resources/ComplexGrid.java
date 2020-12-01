@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.neotropic.kuwaiba.modules.core.navigation.resources;
+package org.neotropic.kuwaiba.visualization.api.resources;
 
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -12,8 +12,6 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.CallbackDataProvider;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.flow.data.provider.DataProvider;
-import com.vaadin.flow.data.provider.hierarchy.HierarchicalConfigurableFilterDataProvider;
-import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,7 +20,6 @@ import java.util.List;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.neotropic.kuwaiba.modules.core.search.BusinessObjectSearchResultRenderer;
 
 /**
  *
@@ -69,10 +66,12 @@ public class ComplexGrid<T> extends Grid<T>{
         this.gridFilter.setName(searchedText);
     }
     
+    @Override
     public String getClassName() {
         return className;
     }
 
+    @Override
     public void setClassName(String className) {
         this.className = className;
     }
@@ -157,9 +156,5 @@ public class ComplexGrid<T> extends Grid<T>{
         dpConfigurableFilter = provider.withConfigurableFilter();
         dpConfigurableFilter.setFilter(gridFilter);
         setDataProvider(dpConfigurableFilter);
-    }
-
-    public void setFirstColumn(BusinessObjectSearchResultRenderer businessObjectSearchResultRenderer) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

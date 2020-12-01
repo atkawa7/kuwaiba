@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.neotropic.kuwaiba.modules.core.navigation.properties;
+package org.neotropic.kuwaiba.visualization.api.properties;
 
 import java.time.Instant;
 import java.time.LocalDate;

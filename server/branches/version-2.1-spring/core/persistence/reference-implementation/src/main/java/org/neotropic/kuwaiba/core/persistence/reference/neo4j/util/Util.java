@@ -50,7 +50,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import org.neo4j.graphdb.Direction;
@@ -761,18 +760,18 @@ public class Util {
             Label label = Label.label(Constants.LABEL_ATTRIBUTE);
             Node attrNode = classNode.getGraphDatabase().createNode(label);
             attrNode.setProperty(Constants.PROPERTY_NAME, attributeDefinition.getName()); //This should not be null. That should be checked in the caller
-            attrNode.setProperty(Constants.PROPERTY_MANDATORY, attributeDefinition.isMandatory()== null ? false : attributeDefinition.isMandatory());
+            attrNode.setProperty(Constants.PROPERTY_MANDATORY, attributeDefinition.isMandatory());
             attrNode.setProperty(Constants.PROPERTY_DESCRIPTION, attributeDefinition.getDescription() ==  null ? "" : attributeDefinition.getDescription());
             attrNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, attributeDefinition.getDisplayName() == null ? "" : attributeDefinition.getDisplayName());
             attrNode.setProperty(Constants.PROPERTY_TYPE, attributeDefinition.getType() == null ? "String" : attributeDefinition.getType()); //NOI18N
-            attrNode.setProperty(Constants.PROPERTY_READ_ONLY, attributeDefinition.isReadOnly() == null ? false : attributeDefinition.isReadOnly());
-            attrNode.setProperty(Constants.PROPERTY_VISIBLE, attributeDefinition.isVisible() == null ? true : attributeDefinition.isVisible());
-            attrNode.setProperty(Constants.PROPERTY_ADMINISTRATIVE, attributeDefinition.isAdministrative() == null ? false : attributeDefinition.isAdministrative());
+            attrNode.setProperty(Constants.PROPERTY_READ_ONLY, attributeDefinition.isReadOnly());
+            attrNode.setProperty(Constants.PROPERTY_VISIBLE, attributeDefinition.isVisible());
+            attrNode.setProperty(Constants.PROPERTY_ADMINISTRATIVE,  attributeDefinition.isAdministrative());
             attrNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
-            attrNode.setProperty(Constants.PROPERTY_NO_COPY, attributeDefinition.isNoCopy() == null ? false : attributeDefinition.isNoCopy());
-            attrNode.setProperty(Constants.PROPERTY_UNIQUE, attributeDefinition.isUnique() == null ? false : attributeDefinition.isUnique());
-            attrNode.setProperty(Constants.PROPERTY_ORDER, attributeDefinition.getOrder() == null ? 1000 : attributeDefinition.getOrder());
-            attrNode.setProperty(Constants.PROPERTY_MULTIPLE, attributeDefinition.isMultiple() == null ? false : attributeDefinition.isMultiple());
+            attrNode.setProperty(Constants.PROPERTY_NO_COPY, attributeDefinition.isNoCopy());
+            attrNode.setProperty(Constants.PROPERTY_UNIQUE, attributeDefinition.isUnique());
+            attrNode.setProperty(Constants.PROPERTY_ORDER, attributeDefinition.getOrder());
+            attrNode.setProperty(Constants.PROPERTY_MULTIPLE, attributeDefinition.isMultiple());
             
             p.endNode().createRelationshipTo(attrNode, RelTypes.HAS_ATTRIBUTE);
         }

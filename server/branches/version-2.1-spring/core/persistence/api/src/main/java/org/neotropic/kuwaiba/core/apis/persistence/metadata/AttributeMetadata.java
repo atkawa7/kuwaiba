@@ -24,7 +24,7 @@ import java.io.Serializable;
  */
 public class AttributeMetadata implements Serializable, Comparable<AttributeMetadata> {
     /**
-     * Integer, Float, Long, Boolean, String or Text
+     * int, Float, Long, boolean, String or Text
      */
     public static final int MAPPING_PRIMITIVE = 1;
     /**
@@ -62,11 +62,11 @@ public class AttributeMetadata implements Serializable, Comparable<AttributeMeta
     /**
      * Flag to mark an attribute to be used for administrative purposes (beyond the operational inventory)
      */
-    private Boolean administrative;
+    private boolean administrative;
     /**
      * Should this be shown or hidden
      */
-    private Boolean visible;
+    private boolean visible;
     /**
      * Attribute's short description
      */
@@ -74,11 +74,11 @@ public class AttributeMetadata implements Serializable, Comparable<AttributeMeta
     /**
      * Marks the attribute as mandatory
      */
-    private Boolean mandatory; 
+    private boolean mandatory; 
     /**
      * Marks the attribute as unique
      */
-    private Boolean unique;
+    private boolean unique;
     /**
      * Attribute's creation Date
      */
@@ -86,31 +86,31 @@ public class AttributeMetadata implements Serializable, Comparable<AttributeMeta
     /**
      * Indicates if an attribute could be copy in the copy/paste operation
      */
-    private Boolean noCopy;
+    private boolean noCopy;
     /**
      * Marks the attribute as read only
      */
-    private Boolean readOnly;
+    private boolean readOnly;
     /**
      * A locked attribute can not be changed or deleted
      */
-    private Boolean locked;
+    private boolean locked;
     /**
      * Tells the system how to sort the attributes. A call to any method that returns the attributes of a class will return them sorted by order.
      * This is useful to show the attributes in property sheets in order of importance, for example. The default value is 1000
      */
-    private Integer order;
+    private int order;
     /**
      * Attributes marked with this flag are basically list types of multiple selection, thus this flag only makes sense for list type attributes and should not be set for primitive type (if so, it will be ignored)
      */
-    private Boolean multiple;
+    private boolean multiple;
     
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
-    public Boolean isAdministrative() {
+    public boolean isAdministrative() {
         return administrative;
     }
 
-    public void setAdministrative(Boolean administrative) {
+    public void setAdministrative(boolean administrative) {
         this.administrative = administrative;
     }
 
@@ -138,11 +138,11 @@ public class AttributeMetadata implements Serializable, Comparable<AttributeMeta
         this.name = name;
     }
 
-    public Boolean isReadOnly() {
+    public boolean isReadOnly() {
         return readOnly;
     }
 
-    public void setReadOnly(Boolean readOnly) {
+    public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
     }
 
@@ -154,27 +154,27 @@ public class AttributeMetadata implements Serializable, Comparable<AttributeMeta
         this.type = type;
     }
 
-    public Boolean isVisible() {
+    public boolean isVisible() {
         return visible;
     }
 
-    public void setVisible(Boolean visible) {
+    public void setVisible(boolean visible) {
         this.visible = visible;
     }
 
-    public Boolean isMandatory() {
+    public boolean isMandatory() {
         return mandatory;
     }
 
-    public void setMandatory(Boolean mandatory) {
+    public void setMandatory(boolean mandatory) {
         this.mandatory = mandatory;
     }
 
-    public Boolean isUnique() {
+    public boolean isUnique() {
         return unique;
     }
 
-    public void setUnique(Boolean unique) {
+    public void setUnique(boolean unique) {
         this.unique = unique;
     }
 
@@ -194,35 +194,35 @@ public class AttributeMetadata implements Serializable, Comparable<AttributeMeta
         this.creationDate = creationDate;
     }
 
-    public Boolean isNoCopy() {
+    public boolean isNoCopy() {
         return noCopy;
     }
 
-    public void setNoCopy(Boolean noCopy) {
+    public void setNoCopy(boolean noCopy) {
         this.noCopy = noCopy;
     }
     
-    public Boolean isLocked() {
+    public boolean isLocked() {
         return locked;
     }
 
-    public void setLocked(Boolean locked) {
+    public void setLocked(boolean locked) {
         this.locked = locked;
     }
 
-    public Integer getOrder() {
+    public int getOrder() {
         return order;
     }
 
-    public void setOrder(Integer order) {
+    public void setOrder(int order) {
         this.order = order;
     }
 
-    public Boolean isMultiple() {
+    public boolean isMultiple() {
         return multiple;
     }
 
-    public void setMultiple(Boolean multiple) {
+    public void setMultiple(boolean multiple) {
         this.multiple = multiple;
     }
     
@@ -248,19 +248,19 @@ public class AttributeMetadata implements Serializable, Comparable<AttributeMeta
     }
     
     /**
-     * Checks if a given type is primitive (String, Integer, Float, Long, Boolean, Date or Timestamp)
+     * Checks if a given type is primitive (String, int, Float, Long, boolean, Date or Timestamp)
      * @param type The type to be matched
      * @return true if the given type is primitive, false otherwise
      */
     public static boolean isPrimitive(String type) {
-        return type.equals("String") || type.equals("Integer") || type.equals("Float") //NOI18N
-                || type.equals("Long") || type.equals("Boolean") || type.equals("Date") //NOI18N
+        return type.equals("String") || type.equals("int") || type.equals("Float") //NOI18N
+                || type.equals("Long") || type.equals("boolean") || type.equals("Date") //NOI18N
                 || type.equals("Timestamp"); //NOI18N
     }
     
     @Override
     public int compareTo(AttributeMetadata o) {
-        return order.compareTo(o.order);
+        return Integer.compare(order, o.order);
     }
     
     @Override

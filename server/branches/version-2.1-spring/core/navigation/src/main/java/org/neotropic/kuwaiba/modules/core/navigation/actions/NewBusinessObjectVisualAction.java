@@ -206,4 +206,9 @@ public class NewBusinessObjectVisualAction extends AbstractVisualInventoryAction
     public String appliesTo() {
         return null;
     }
+
+    @Override
+    public boolean isModuleAction() {
+        return false;
+    }
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.neotropic.kuwaiba.modules.core.navigation.resources;
+package org.neotropic.kuwaiba.visualization.api.resources;
 
 import java.util.HashMap;
 import java.util.List;

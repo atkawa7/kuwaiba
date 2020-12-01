@@ -72,9 +72,9 @@ import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectAc
 import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualActionToo;
 import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicBusinessObjectIconGenerator;
 import org.neotropic.kuwaiba.modules.core.navigation.navtree.nodes.InventoryObjectNode;
-import org.neotropic.kuwaiba.modules.core.navigation.resources.ComplexGrid;
-import org.neotropic.kuwaiba.modules.core.navigation.resources.GridFilter;
-import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
+import org.neotropic.kuwaiba.visualization.api.resources.ComplexGrid;
+import org.neotropic.kuwaiba.visualization.api.resources.GridFilter;
+import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 import org.neotropic.kuwaiba.modules.core.search.BusinessObjectSearchResultRenderer;
 import org.neotropic.kuwaiba.modules.core.search.NavDashboardFactory;
 import org.neotropic.kuwaiba.modules.core.search.SearchResultCallback;
@@ -86,7 +86,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
-@Route(value = "navman", layout = NavLayout.class)
+@Route(value = "navman", layout = NavigationLayout.class)
 public class NavUI extends VerticalLayout implements ActionCompletedListener, HasDynamicTitle {
     /**
      * Reference to the action that creates a new Business Object.
@@ -489,7 +489,7 @@ public class NavUI extends VerticalLayout implements ActionCompletedListener, Ha
             });
             //uncommnet to avoid actions 
             grid.setFirstColumn(grid.addColumn(new BusinessObjectSearchResultRenderer(
-                    actionRegistry.getActionsForModule(NavModule.MODULE_ID),
+                    actionRegistry.getActionsForModule(NavigationModule.MODULE_ID),
                     new NavNodeSearchResultCallback(),
                     new BasicBusinessObjectIconGenerator(resourceFactory)
             )));

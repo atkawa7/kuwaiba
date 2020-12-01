@@ -17,13 +17,23 @@
 package org.neotropic.kuwaiba.modules.core.navigation;
 
 import com.vaadin.flow.component.accordion.Accordion;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.splitlayout.SplitLayout;
+import java.util.List;
+import org.neotropic.kuwaiba.core.apis.integration.modules.actions.AbstractVisualInventoryAction;
+import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionRegistry;
+import org.neotropic.kuwaiba.core.apis.integration.views.AbstractDetailedView;
+import org.neotropic.kuwaiba.core.apis.integration.views.ViewRegistry;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.visualization.api.properties.PropertyFactory;
+import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 import org.neotropic.util.visual.properties.PropertySheet;
 import org.neotropic.util.visual.widgets.AbstractDashboardWidget;
 
@@ -46,21 +56,55 @@ public class ObjectDashboard extends AbstractDashboardWidget {
      * Reference to the object being edited/explored currently.
      */
     private BusinessObjectLight selectedObject;
+    /**
+     * Reference to the action registry.
+     */
+    private ActionRegistry actionRegistry;
+    /**
+     * Reference to the view registry.
+     */
+    private ViewRegistry viewRegistry;
+    /**
+     * Reference to the resource factory.
+     */
+    private ResourceFactory resourceFactory;
     
-
     public ObjectDashboard(BusinessObjectLight selectedObject, MetadataEntityManager mem, 
-            ApplicationEntityManager aem, BusinessEntityManager bem, TranslationService ts) {
+            ApplicationEntityManager aem, BusinessEntityManager bem, ActionRegistry actionRegistry, 
+            ResourceFactory resourceFactory, TranslationService ts) {
         super(mem, aem, bem, ts);
+        this.actionRegistry = actionRegistry;
+        this.resourceFactory = resourceFactory;
         this.selectedObject = selectedObject;
     }
     
     @Override
     public void createContent() {
-        HorizontalLayout lytContent = new HorizontalLayout();
+        SplitLayout lytContent = new SplitLayout();
+        lytContent.setSplitterPosition(20);
         Accordion accOptions = new Accordion();
-        PropertySheet shtMain = new PropertySheet(ts);
-        accOptions.add(ts.getTranslatedString("module.navigation.widgets.object-dashboard."), shtMain);
-        this.contentComponent = accOptions;
+        try {
+            PropertySheet shtMain = new PropertySheet(ts, PropertyFactory.
+                    propertiesFromBusinessObject(bem.getObject(selectedObject.getClassName(), selectedObject.getId()), ts, aem, mem), "");
+            accOptions.add(ts.getTranslatedString("module.navigation.widgets.object-dashboard.object-properties"), shtMain);
+            Grid<AbstractVisualInventoryAction> tblCoreActions = new Grid<>();
+            tblCoreActions.setItems(actionRegistry.getActionsForModule(NavigationModule.MODULE_ID));
+            accOptions.add(ts.getTranslatedString("module.navigation.widgets.object-dashboard.object-core-actions"), tblCoreActions);
+            Grid<AbstractVisualInventoryAction> tblCustomActions = new Grid<>();
+            tblCustomActions.setItems(actionRegistry.getActionsApplicableToRecursive(selectedObject.getClassName()));
+            accOptions.add(ts.getTranslatedString("module.navigation.widgets.object-dashboard.object-custom-actions"), tblCustomActions);
+            Grid<AbstractDetailedView> tblViews = new Grid<>();
+            //tblViews.setItems(List.of(new ObjectView(selectedObject, mem, aem, bem, ts, resourceFactory)));
+            accOptions.add(ts.getTranslatedString("module.navigation.widgets.object-dashboard.object-views"), tblViews);
+            Grid<AbstractVisualInventoryAction> tblExplorers = new Grid<>();
+            tblCustomActions.setItems(actionRegistry.getActionsApplicableToRecursive(selectedObject.getClassName()));
+            accOptions.add(ts.getTranslatedString("module.navigation.widgets.object-dashboard.object-explorers"), tblExplorers);
+            accOptions.add(ts.getTranslatedString("module.navigation.widgets.object-dashboard.object-context"), new Label("Nothing to see here for now"));
+            lytContent.addToPrimary(accOptions);
+            this.contentComponent = lytContent;
+        } catch (InventoryException ex) {
+            this.contentComponent = new Label(ex.getLocalizedMessage());
+        }
         add(this.contentComponent);
     }
 }

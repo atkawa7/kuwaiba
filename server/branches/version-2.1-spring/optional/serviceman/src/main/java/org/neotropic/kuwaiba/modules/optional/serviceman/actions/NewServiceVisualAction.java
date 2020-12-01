@@ -203,4 +203,9 @@ public class NewServiceVisualAction extends AbstractVisualInventoryAction {
     public String appliesTo() {
         return Constants.CLASS_GENERICCUSTOMER;
     }
+    
+    @Override
+    public boolean isModuleAction() {
+        return true;
+    }
 }

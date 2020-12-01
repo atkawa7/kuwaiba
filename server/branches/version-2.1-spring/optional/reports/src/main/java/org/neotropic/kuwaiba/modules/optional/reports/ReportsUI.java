@@ -79,7 +79,7 @@ import org.neotropic.kuwaiba.modules.optional.reports.actions.NewInventoryReport
 import org.neotropic.kuwaiba.modules.optional.reports.actions.NewParameterVisualAction;
 import org.neotropic.kuwaiba.modules.optional.reports.nodes.ReportNode;
 import org.neotropic.kuwaiba.modules.core.navigation.icons.BasicTreeNodeIconGenerator;
-import org.neotropic.kuwaiba.modules.core.navigation.resources.ResourceFactory;
+import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.tree.BasicTree;

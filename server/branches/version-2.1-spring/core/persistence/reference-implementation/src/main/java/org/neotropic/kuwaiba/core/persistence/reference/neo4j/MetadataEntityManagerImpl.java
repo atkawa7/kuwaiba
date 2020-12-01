@@ -122,15 +122,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
             classNode.setProperty(Constants.PROPERTY_NAME, classDefinition.getName());
             classNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, classDefinition.getDisplayName() == null ? "" : classDefinition.getDisplayName());
-            classNode.setProperty(Constants.PROPERTY_CUSTOM, classDefinition.isCustom() == null ? true : classDefinition.isCustom());
-            classNode.setProperty(Constants.PROPERTY_COUNTABLE, classDefinition.isCountable() == null ? true : classDefinition.isCountable());
+            classNode.setProperty(Constants.PROPERTY_CUSTOM, classDefinition.isCustom());
+            classNode.setProperty(Constants.PROPERTY_COUNTABLE, classDefinition.isCountable());
             classNode.setProperty(Constants.PROPERTY_COLOR, classDefinition.getColor());
             classNode.setProperty(Constants.PROPERTY_DESCRIPTION, classDefinition.getDescription() == null ? "" : classDefinition.getDescription());
-            classNode.setProperty(Constants.PROPERTY_ABSTRACT, classDefinition.isAbstract() == null ? false : classDefinition.isAbstract());
+            classNode.setProperty(Constants.PROPERTY_ABSTRACT, classDefinition.isAbstract());
             classNode.setProperty(Constants.PROPERTY_ICON, classDefinition.getIcon() == null ? new byte[0] : classDefinition.getIcon());
             classNode.setProperty(Constants.PROPERTY_SMALL_ICON, classDefinition.getSmallIcon() ==  null ? new byte[0] : classDefinition.getSmallIcon());
             classNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
-            classNode.setProperty(Constants.PROPERTY_IN_DESIGN, classDefinition.isInDesign() == null ? false : classDefinition.isInDesign());
+            classNode.setProperty(Constants.PROPERTY_IN_DESIGN, classDefinition.isInDesign());
           
             //Here we add the attributes
             if (classDefinition.getAttributes() != null) {
@@ -275,34 +275,26 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 
                 classMetadata.setProperty(Constants.PROPERTY_COLOR, newClassDefinition.getColor());
             }
-            if (newClassDefinition.isCountable() != null) {
-                affectedProperties = Constants.PROPERTY_COUNTABLE + " ";
-                oldValues = classMetadata.getProperty(Constants.PROPERTY_COUNTABLE) + " ";
-                newValues = newClassDefinition.isCountable() + " ";
-                
-                classMetadata.setProperty(Constants.PROPERTY_COUNTABLE, newClassDefinition.isCountable());
-            }
-            if (newClassDefinition.isAbstract() != null) {
-                affectedProperties = Constants.PROPERTY_ABSTRACT + " ";
-                oldValues = classMetadata.getProperty(Constants.PROPERTY_ABSTRACT) + " ";
-                newValues = newClassDefinition.isAbstract() + " ";
-                
-                classMetadata.setProperty(Constants.PROPERTY_ABSTRACT, newClassDefinition.isAbstract());
-            }
-            if (newClassDefinition.isInDesign() != null) {
-                affectedProperties = Constants.PROPERTY_IN_DESIGN + " ";
-                oldValues = classMetadata.getProperty(Constants.PROPERTY_IN_DESIGN) + " ";
-                newValues = newClassDefinition.isInDesign() + " ";
-                
-                classMetadata.setProperty(Constants.PROPERTY_IN_DESIGN, newClassDefinition.isInDesign());
-            }
-            if (newClassDefinition.isCustom() != null) {
-                affectedProperties = Constants.PROPERTY_CUSTOM + " ";
-                oldValues = classMetadata.getProperty(Constants.PROPERTY_CUSTOM) + " ";
-                newValues = newClassDefinition.isCustom() + " ";
-                
-                classMetadata.setProperty(Constants.PROPERTY_CUSTOM, newClassDefinition.isCustom());
-            }
+            
+            affectedProperties = Constants.PROPERTY_COUNTABLE + " ";
+            oldValues = classMetadata.getProperty(Constants.PROPERTY_COUNTABLE) + " ";
+            newValues = newClassDefinition.isCountable() + " ";
+            classMetadata.setProperty(Constants.PROPERTY_COUNTABLE, newClassDefinition.isCountable());
+            
+            affectedProperties = Constants.PROPERTY_ABSTRACT + " ";
+            oldValues = classMetadata.getProperty(Constants.PROPERTY_ABSTRACT) + " ";
+            newValues = newClassDefinition.isAbstract() + " ";
+            classMetadata.setProperty(Constants.PROPERTY_ABSTRACT, newClassDefinition.isAbstract());
+
+            affectedProperties = Constants.PROPERTY_IN_DESIGN + " ";
+            oldValues = classMetadata.getProperty(Constants.PROPERTY_IN_DESIGN) + " ";
+            newValues = newClassDefinition.isInDesign() + " ";
+            classMetadata.setProperty(Constants.PROPERTY_IN_DESIGN, newClassDefinition.isInDesign());
+
+            affectedProperties = Constants.PROPERTY_CUSTOM + " ";
+            oldValues = classMetadata.getProperty(Constants.PROPERTY_CUSTOM) + " ";
+            newValues = newClassDefinition.isCustom() + " ";
+            classMetadata.setProperty(Constants.PROPERTY_CUSTOM, newClassDefinition.isCustom());
             
             if(newClassDefinition.getAttributes() != null ) {
                 for (AttributeMetadata attr : newClassDefinition.getAttributes()) {
@@ -902,87 +894,73 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         oldValues = " ";
                         newValues = newAttributeDefinition.getType() + " ";
                     }
-                    if(newAttributeDefinition.isReadOnly() != null) {
-                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_READ_ONLY, newAttributeDefinition.isReadOnly());
-                        
-                        affectedProperties = Constants.PROPERTY_READ_ONLY + " ";
-                        oldValues = " ";
-                        newValues = newAttributeDefinition.isReadOnly() + " ";
-                    }
-                    if(newAttributeDefinition.isVisible() != null) {
-                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_VISIBLE, newAttributeDefinition.isVisible());
-                        
-                        affectedProperties = Constants.PROPERTY_VISIBLE + " ";
-                        oldValues = " ";
-                        newValues = newAttributeDefinition.isVisible() + " ";
-                    }
-                    if(newAttributeDefinition.isAdministrative() != null) {
-                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_ADMINISTRATIVE, newAttributeDefinition.isAdministrative());
-                        
-                        affectedProperties = Constants.PROPERTY_ADMINISTRATIVE + " ";
-                        oldValues = " ";
-                        newValues = newAttributeDefinition.isAdministrative() + " ";
-                    }
-                    if(newAttributeDefinition.isNoCopy() != null) {
-                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_NO_COPY, newAttributeDefinition.isNoCopy());
-                        
-                        affectedProperties = Constants.PROPERTY_NO_COPY + " ";
-                        oldValues = " ";
-                        newValues = newAttributeDefinition.isNoCopy() + " ";
-                    }
-                    if(newAttributeDefinition.isUnique() != null) {
-                        if(newAttributeDefinition.isUnique()) {//checks only if unique changed from false to true
-                            String attributeType = (String) attrNode.getProperty(Constants.PROPERTY_TYPE);
-                            if (attributeType.equals("Boolean") || !AttributeMetadata.isPrimitive(attributeType))
-                                throw new InvalidArgumentException("Boolean and list type attributes can not be set as unique");
-                            
-                            if(canAttributeBeUnique(classNode, currentAttributeName))
-                                Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
-                            else
-                                throw new InvalidArgumentException(String.format("There are duplicated values of attribute \"%s\" among the existing instances of class %s or its subclasses", currentAttributeName, classNode.getProperty(Constants.PROPERTY_NAME)));
-                        }
-                        else
+
+                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_READ_ONLY, newAttributeDefinition.isReadOnly());
+                    affectedProperties = Constants.PROPERTY_READ_ONLY + " ";
+                    oldValues = " ";
+                    newValues = newAttributeDefinition.isReadOnly() + " ";
+
+                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_VISIBLE, newAttributeDefinition.isVisible());
+
+                    affectedProperties = Constants.PROPERTY_VISIBLE + " ";
+                    oldValues = " ";
+                    newValues = newAttributeDefinition.isVisible() + " ";
+
+                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_ADMINISTRATIVE, newAttributeDefinition.isAdministrative());
+                    affectedProperties = Constants.PROPERTY_ADMINISTRATIVE + " ";
+                    oldValues = " ";
+                    newValues = newAttributeDefinition.isAdministrative() + " ";
+
+                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_NO_COPY, newAttributeDefinition.isNoCopy());
+                    affectedProperties = Constants.PROPERTY_NO_COPY + " ";
+                    oldValues = " ";
+                    newValues = newAttributeDefinition.isNoCopy() + " ";
+
+                    if(newAttributeDefinition.isUnique()) {//checks only if unique changed from false to true
+                        String attributeType = (String) attrNode.getProperty(Constants.PROPERTY_TYPE);
+                        if (attributeType.equals("Boolean") || !AttributeMetadata.isPrimitive(attributeType))
+                            throw new InvalidArgumentException("Boolean and list type attributes can not be set as unique");
+
+                        if(canAttributeBeUnique(classNode, currentAttributeName))
                             Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
-                            
-                        affectedProperties = Constants.PROPERTY_UNIQUE + " ";
-                        oldValues = " ";
-                        newValues = newAttributeDefinition.isUnique() + " ";
-                    }       
-                    if(newAttributeDefinition.isMandatory() != null) {
-                        //this check if every object of the class and subclasses has a value in this attribute marked as mandatory
-                        if(newAttributeDefinition.isMandatory()) {//checks only if mandatory has changed from false to true
-                            if(objectsOfClassHasValueInMandatoryAttribute((String)classNode.getProperty(Constants.PROPERTY_NAME), currentAttributeName))
-                                Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
-                            else
-                                throw new InvalidArgumentException(String.format("Before setting an attribute as mandatory, all existing instances of this class must have valid values for attribute %s", currentAttributeName));
-                        }
                         else
+                            throw new InvalidArgumentException(String.format("There are duplicated values of attribute \"%s\" among the existing instances of class %s or its subclasses", currentAttributeName, classNode.getProperty(Constants.PROPERTY_NAME)));
+                    }
+                    else
+                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
+
+                    affectedProperties = Constants.PROPERTY_UNIQUE + " ";
+                    oldValues = " ";
+                    newValues = newAttributeDefinition.isUnique() + " ";
+
+                    //this checks if every object of the class and subclasses has a value in this attribute marked as mandatory
+                    if(newAttributeDefinition.isMandatory()) {//checks only if mandatory has changed from false to true
+                        if(objectsOfClassHasValueInMandatoryAttribute((String)classNode.getProperty(Constants.PROPERTY_NAME), currentAttributeName))
                             Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
-                        
-                        affectedProperties = Constants.PROPERTY_MANDATORY + " ";
-                        oldValues = " ";
-                        newValues = newAttributeDefinition.isMandatory() + " ";
+                        else
+                            throw new InvalidArgumentException(String.format("Before setting an attribute as mandatory, all existing instances of this class must have valid values for attribute %s", currentAttributeName));
                     }
+                    else
+                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
+
+                    affectedProperties = Constants.PROPERTY_MANDATORY + " ";
+                    oldValues = " ";
+                    newValues = newAttributeDefinition.isMandatory() + " ";
                     
-                    if(newAttributeDefinition.getOrder() != null) {
-                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_ORDER, newAttributeDefinition.getOrder());
-                        
-                        affectedProperties = Constants.PROPERTY_ORDER + " ";
-                        oldValues = " ";
-                        newValues = newAttributeDefinition.getOrder() + " ";
-                    }
+                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_ORDER, newAttributeDefinition.getOrder());
+                    affectedProperties = Constants.PROPERTY_ORDER + " ";
+                    oldValues = " ";
+                    newValues = newAttributeDefinition.getOrder() + " ";
                     
-                    if(newAttributeDefinition.isMultiple() != null) {
-                        if (newAttributeDefinition.isMultiple() && 
-                                AttributeMetadata.isPrimitive((String) attrNode.getProperty(Constants.PROPERTY_TYPE)))
-                            throw new InvalidArgumentException("Primitive types can not be set as multiple");
-                        
-                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MULTIPLE, newAttributeDefinition.isMultiple());
-                        
-                        affectedProperties = Constants.PROPERTY_MULTIPLE + " ";
-                        oldValues = " ";
-                        newValues = newAttributeDefinition.isMultiple() + " ";
-                    }
+                    if (newAttributeDefinition.isMultiple() && 
+                            AttributeMetadata.isPrimitive((String) attrNode.getProperty(Constants.PROPERTY_TYPE)))
+                        throw new InvalidArgumentException("Primitive types can not be set as multiple");
+
+                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MULTIPLE, newAttributeDefinition.isMultiple());
+
+                    affectedProperties = Constants.PROPERTY_MULTIPLE + " ";
+                    oldValues = " ";
+                    newValues = newAttributeDefinition.isMultiple() + " ";
                     
                     //Refresh cache for the affected classes
                     refreshCacheOn(classNode);
@@ -1053,85 +1031,74 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         oldValues = " ";
                         newValues = newAttributeDefinition.getType() + " ";
                     }
-                    if(newAttributeDefinition.isReadOnly() != null) {
-                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_READ_ONLY, newAttributeDefinition.isReadOnly());
-                        
-                        affectedProperties = Constants.PROPERTY_READ_ONLY + " ";
-                        oldValues = " ";
-                        newValues = newAttributeDefinition.isReadOnly() + " ";
-                    }
-                    if(newAttributeDefinition.isVisible() != null) {
-                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_VISIBLE, newAttributeDefinition.isVisible());
-                        
-                        affectedProperties = Constants.PROPERTY_VISIBLE + " ";
-                        oldValues = " ";
-                        newValues = newAttributeDefinition.isVisible() + " ";
-                    }
-                    if(newAttributeDefinition.isAdministrative() != null) {
-                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_ADMINISTRATIVE, newAttributeDefinition.isAdministrative());
-                        
-                        affectedProperties = Constants.PROPERTY_ADMINISTRATIVE + " ";
-                        oldValues = " ";
-                        newValues = newAttributeDefinition.isAdministrative() + " ";
-                    }
-                    if(newAttributeDefinition.isNoCopy() != null) {
-                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_NO_COPY, newAttributeDefinition.isNoCopy());
-                        
-                        affectedProperties = Constants.PROPERTY_NO_COPY + " ";
-                        oldValues = " ";
-                        newValues = newAttributeDefinition.isNoCopy() + " ";
-                    }
-                    if(newAttributeDefinition.isUnique() != null) {
-                        if(newAttributeDefinition.isUnique()) {//checks only if unique changed from false to true
-                            String attributeType = (String) attrNode.getProperty(Constants.PROPERTY_TYPE);
-                            if (attributeType.equals("Boolean") || !AttributeMetadata.isPrimitive(attributeType))
-                                throw new InvalidArgumentException("Boolean and list type attributes can not be set as unique");
-                            
-                            if(canAttributeBeUnique(classNode, currentAttributeName))
-                                Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
-                            else
-                                throw new InvalidArgumentException(String.format("There are duplicated values of attribute \"%s\" among the existing instances of class %s or its subclasses", currentAttributeName, className));
-                        }
-                        else
+
+                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_READ_ONLY, newAttributeDefinition.isReadOnly());
+
+                    affectedProperties = Constants.PROPERTY_READ_ONLY + " ";
+                    oldValues = " ";
+                    newValues = newAttributeDefinition.isReadOnly() + " ";
+
+                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_VISIBLE, newAttributeDefinition.isVisible());
+                    affectedProperties = Constants.PROPERTY_VISIBLE + " ";
+                    oldValues = " ";
+                    newValues = newAttributeDefinition.isVisible() + " ";
+
+                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_ADMINISTRATIVE, newAttributeDefinition.isAdministrative());
+                    affectedProperties = Constants.PROPERTY_ADMINISTRATIVE + " ";
+                    oldValues = " ";
+                    newValues = newAttributeDefinition.isAdministrative() + " ";
+
+                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_NO_COPY, newAttributeDefinition.isNoCopy());
+
+                    affectedProperties = Constants.PROPERTY_NO_COPY + " ";
+                    oldValues = " ";
+                    newValues = newAttributeDefinition.isNoCopy() + " ";
+
+                    if(newAttributeDefinition.isUnique()) {//checks only if unique changed from false to true
+                        String attributeType = (String) attrNode.getProperty(Constants.PROPERTY_TYPE);
+                        if (attributeType.equals("Boolean") || !AttributeMetadata.isPrimitive(attributeType))
+                            throw new InvalidArgumentException("Boolean and list type attributes can not be set as unique");
+
+                        if(canAttributeBeUnique(classNode, currentAttributeName))
                             Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
-                        
-                        affectedProperties = Constants.PROPERTY_UNIQUE + " ";
-                        oldValues = " ";
-                        newValues = newAttributeDefinition.isUnique() + " ";
-                    }   
-                    if(newAttributeDefinition.isMandatory() != null){
-                        if(newAttributeDefinition.isMandatory()){//checks only if mandatory changed from false to true
-                            //this check if every object of the class and subclasses has a value in this attribute marked as mandatory
-                            if(objectsOfClassHasValueInMandatoryAttribute(className, currentAttributeName))
-                                Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
-                            else
-                                throw new InvalidArgumentException(String.format("Before setting it as mandatory, all existing instances of this class must have valid values for attribute %s", currentAttributeName));
-                        }
                         else
+                            throw new InvalidArgumentException(String.format("There are duplicated values of attribute \"%s\" among the existing instances of class %s or its subclasses", currentAttributeName, className));
+                    }
+                    else
+                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
+
+                    affectedProperties = Constants.PROPERTY_UNIQUE + " ";
+                    oldValues = " ";
+                    newValues = newAttributeDefinition.isUnique() + " ";
+
+                    if(newAttributeDefinition.isMandatory()){//checks only if mandatory changed from false to true
+                        //this check if every object of the class and subclasses has a value in this attribute marked as mandatory
+                        if(objectsOfClassHasValueInMandatoryAttribute(className, currentAttributeName))
                             Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
-                        
-                        affectedProperties = Constants.PROPERTY_MANDATORY + " ";
-                        oldValues = " ";
-                        newValues = newAttributeDefinition.isMandatory() + " ";
+                        else
+                            throw new InvalidArgumentException(String.format("Before setting it as mandatory, all existing instances of this class must have valid values for attribute %s", currentAttributeName));
                     }
-                    if(newAttributeDefinition.getOrder() != null) {
-                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_ORDER, newAttributeDefinition.getOrder());
-                        
-                        affectedProperties = Constants.PROPERTY_ORDER + " ";
-                        oldValues = " ";
-                        newValues = newAttributeDefinition.getOrder() + " ";
-                    }
-                    if(newAttributeDefinition.isMultiple() != null) {
-                        if (newAttributeDefinition.isMultiple() && 
-                                AttributeMetadata.isPrimitive((String) attrNode.getProperty(Constants.PROPERTY_TYPE)))
-                            throw new InvalidArgumentException("Primitive types can not be set as multiple");
-                        
-                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MULTIPLE, newAttributeDefinition.isMultiple());
-                        
-                        affectedProperties = Constants.PROPERTY_MULTIPLE + " ";
-                        oldValues = " ";
-                        newValues = newAttributeDefinition.isMultiple() + " ";
-                    }
+                    else
+                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
+
+                    affectedProperties = Constants.PROPERTY_MANDATORY + " ";
+                    oldValues = " ";
+                    newValues = newAttributeDefinition.isMandatory() + " ";
+
+                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_ORDER, newAttributeDefinition.getOrder());
+                    affectedProperties = Constants.PROPERTY_ORDER + " ";
+                    oldValues = " ";
+                    newValues = newAttributeDefinition.getOrder() + " ";
+
+                    if (newAttributeDefinition.isMultiple() && 
+                            AttributeMetadata.isPrimitive((String) attrNode.getProperty(Constants.PROPERTY_TYPE)))
+                        throw new InvalidArgumentException("Primitive types can not be set as multiple");
+
+                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MULTIPLE, newAttributeDefinition.isMultiple());
+
+                    affectedProperties = Constants.PROPERTY_MULTIPLE + " ";
+                    oldValues = " ";
+                    newValues = newAttributeDefinition.isMultiple() + " ";
                     
                     //Refresh cache for the affected classes
                     refreshCacheOn(classNode);
