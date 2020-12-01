@@ -614,7 +614,7 @@ public class ProjectsUI extends VerticalLayout implements ActionCompletedListene
     private void updatePropertySheet(Pool pool) {
         try {
             Pool aWholePool = bem.getPool(pool.getId());
-            propertySheet.setItems(PropertyFactory.propertiesFromPool(aWholePool));
+            propertySheet.setItems(PropertyFactory.propertiesFromPool(aWholePool, ts));
             isPool = true;
         } catch (ApplicationObjectNotFoundException | InvalidArgumentException ex) {
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ex.getLocalizedMessage(), 
