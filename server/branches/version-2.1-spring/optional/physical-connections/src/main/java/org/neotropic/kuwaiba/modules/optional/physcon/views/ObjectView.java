@@ -103,7 +103,7 @@ public class ObjectView extends AbstractDetailedView<BusinessObjectLight, Vertic
         this.mem = mem;
         this.ts = ts;
         this.resourceFactory = resourceFactory;
-        mxGraph = new MxGraphCanvas("800px", "400px");
+        mxGraph = new MxGraphCanvas("100%", "100%");
         mxGraph.getMxGraph().setOverflow("scroll");
     }
 
