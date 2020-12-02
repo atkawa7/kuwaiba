@@ -550,7 +550,6 @@ public class MplsDashboard extends VerticalLayout {
                 return;
             }
             try {
-
                 if (!mem.isSubclassOf(Constants.CLASS_GENERICPORT, selectedEndPointA.getClassName())) {
                     new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.mpls.must-be-genericport-endpointA"), 
                             AbstractNotification.NotificationType.WARNING, ts).open();
@@ -589,8 +588,8 @@ public class MplsDashboard extends VerticalLayout {
         
         HorizontalLayout lytButtons = new HorizontalLayout(btnCancel, btnCreateConnection);
         VerticalLayout lytForm = new VerticalLayout(txtConnectionName, cbxSourceObject, cbxTargetObject);
-        lytForm.setWidth("500px");
-        HorizontalLayout lytContent = new HorizontalLayout(lytForm, lytTrees);
+        //lytForm.setWidth("500px");
+        VerticalLayout lytContent = new VerticalLayout(lytForm, lytTrees);
         lytContent.setWidthFull();
         lytContent.setSpacing(false);
         lytContent.setPadding(false);

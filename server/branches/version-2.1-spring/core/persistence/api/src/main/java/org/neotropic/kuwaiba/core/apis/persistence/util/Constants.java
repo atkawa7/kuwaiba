@@ -198,6 +198,14 @@ public class Constants {
      */
     public static final String LABEL_ATTACHMENTS = "attachments";
     /**
+     * Label used for general log entries.
+     */
+    public static final String LABEL_GENERAL_ACTIVITY_LOGS = "generalActivityLogs";
+    /**
+     * Label used for object-specific log entries.
+     */
+    public static final String LABEL_OBJECT_ACTIVITY_LOGS = "objectActivityLogs";
+    /**
      * Label used for the metadata classes nodes label
      */
     public static final String LABEL_SYNCDSCONFIG = "syncDatasourceConfiguration"; //NOI18N

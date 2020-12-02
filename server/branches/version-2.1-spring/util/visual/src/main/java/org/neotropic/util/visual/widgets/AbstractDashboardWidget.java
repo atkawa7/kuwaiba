@@ -102,6 +102,8 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
     }
 
     public Component getContentComponent() {
+        if (contentComponent == null)
+            createContent();
         return contentComponent;
     }
 

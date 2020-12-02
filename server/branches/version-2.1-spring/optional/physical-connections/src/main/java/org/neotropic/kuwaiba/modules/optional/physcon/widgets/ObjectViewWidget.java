@@ -45,7 +45,6 @@ import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.neotropic.kuwaiba.modules.optional.physcon.NewPhysicalConnectionWizard;
 import org.neotropic.kuwaiba.modules.optional.physcon.views.ObjectView;
-import org.neotropic.kuwaiba.modules.optional.physcon.widgets.RackViewWidget;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import org.neotropic.util.visual.views.util.UtilHtml;
@@ -82,17 +81,14 @@ public class ObjectViewWidget extends AbstractDashboardWidget {
         this.resourceFactory = resourceFactory;
         this.businessObject = businessObject;
         this.physicalConnectionsService = physicalConnectionsService;
-        setTitle(ts.getTranslatedString("Object View"));
-        createCover();
-        coverComponent.addClassName("widgets-colors-magenta");
         objectView = new ObjectView(businessObject, mem, aem, bem, ts, resourceFactory);
+        setTitle(ts.getTranslatedString("module.visualization.object-view-name"));
+        
     }
     
-    public ObjectViewWidget(BusinessObjectLight businessObject, Integer width, Integer height, MetadataEntityManager mem, ApplicationEntityManager aem,
-            BusinessEntityManager bem, TranslationService ts, ResourceFactory resourceFactory, PhysicalConnectionsService physicalConnectionsService) {
-        this(businessObject, mem, aem, bem, ts, resourceFactory, physicalConnectionsService);
-        objectView.setWidth(width);
-        objectView.setHeight(height);
+    public ObjectViewWidget(BusinessObjectLight businessObject, MetadataEntityManager mem, ApplicationEntityManager aem,
+            BusinessEntityManager bem, TranslationService ts, ResourceFactory resourceFactory) {
+        this(businessObject, mem, aem, bem, ts, resourceFactory, null);
     }
 
     @Override

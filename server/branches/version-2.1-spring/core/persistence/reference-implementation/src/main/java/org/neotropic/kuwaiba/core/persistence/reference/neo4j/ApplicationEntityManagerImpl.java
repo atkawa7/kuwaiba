@@ -2359,15 +2359,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public void createGeneralActivityLogEntry(String userName, int type, String notes) throws ApplicationObjectNotFoundException {
         try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
-            
-            Node generalActivityLogNode = connectionManager.getConnectionHandler().findNode(specialNodeLabel, Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG);
-
-            if (generalActivityLogNode == null)
-                throw new ApplicationObjectNotFoundException("The general activity log node can not be found. The database could be corrupted");
-
-            Util.createActivityLogEntry(null, generalActivityLogNode, userName, type,
-                    Calendar.getInstance().getTimeInMillis(), null, null, null, notes);
-
+            Util.createActivityLogEntry(null, userName, type,
+                    Calendar.getInstance().getTimeInMillis(), null, null, null, notes, connectionManager.getConnectionHandler());
             tx.success();        
         }
     }
@@ -2375,15 +2368,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public void createGeneralActivityLogEntry(String userName, int type, ChangeDescriptor changeDescriptor) throws ApplicationObjectNotFoundException {
         try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
-
-            Node generalActivityLogNode = connectionManager.getConnectionHandler().findNode(specialNodeLabel, Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG);
-
-            if (generalActivityLogNode == null)
-                throw new ApplicationObjectNotFoundException("The general activity log node can not be found. The database could be corrupted");
-
-            Util.createActivityLogEntry(null, generalActivityLogNode, userName, type,
+            Util.createActivityLogEntry(null, userName, type,
                     Calendar.getInstance().getTimeInMillis(), changeDescriptor.getAffectedProperties(), 
-                    changeDescriptor.getOldValues(), changeDescriptor.getNewValues(), changeDescriptor.getNotes());
+                    changeDescriptor.getOldValues(), changeDescriptor.getNewValues(), changeDescriptor.getNotes(), connectionManager.getConnectionHandler());
 
             tx.success();  
         }
@@ -2398,11 +2385,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (objectNode == null)
                 throw new BusinessObjectNotFoundException(className, oid);
             
-            Node activityNode =  connectionManager.getConnectionHandler().findNode(specialNodeLabel, Constants.PROPERTY_NAME, Constants.NODE_OBJECT_ACTIVITY_LOG);
-            if (activityNode == null)
-                throw new ApplicationObjectNotFoundException("The object activity log node can not be found. The database could be corrupted");
-
-            Util.createActivityLogEntry(objectNode, activityNode, userName, type, Calendar.getInstance().getTimeInMillis(), affectedProperties, oldValues, newValues, notes);
+            Util.createActivityLogEntry(objectNode, userName, type, Calendar.getInstance().getTimeInMillis(), 
+                    affectedProperties, oldValues, newValues, notes, connectionManager.getConnectionHandler());
 
             tx.success();
         }

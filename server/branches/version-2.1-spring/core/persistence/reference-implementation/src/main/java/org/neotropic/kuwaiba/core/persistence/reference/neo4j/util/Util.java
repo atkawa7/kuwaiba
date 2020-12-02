@@ -927,9 +927,8 @@ public class Util {
     }
     
     /**
-     * Creates a new log entry upon an action performed by an user. Transactions are not managed here
-     * @param object The object that was affected by the action. Provide the db's root node if it's a general activity log entry (that is, it's not related to any specific object)
-     * @param logRoot
+     * Creates a new log entry upon an action performed by an user.Transactions are not managed here
+     * @param objectNode The node corresponding to the object that was affected by the action. Null if it's a general activity log entry (that is, it's not related to any specific object)
      * @param userName User that performed the action
      * @param type
      * @param timestamp
@@ -937,19 +936,20 @@ public class Util {
      * @param oldValue
      * @param newValue
      * @param affectedProperty
+     * @param graphDb A reference to the connection handler.
      * @return 
      * @throws ApplicationObjectNotFoundException If the user or the root of all log entries can't be found
      */
-    public static Node createActivityLogEntry(Node object, Node logRoot, String userName, 
-            int type, long timestamp, String affectedProperty, String oldValue, String newValue, String notes) 
+    public static Node createActivityLogEntry(Node objectNode, String userName, 
+            int type, long timestamp, String affectedProperty, String oldValue, String newValue, String notes, GraphDatabaseService graphDb) 
             throws ApplicationObjectNotFoundException
     {
-        Node userNode = logRoot.getGraphDatabase().findNode(Label.label(Constants.LABEL_USER), Constants.PROPERTY_NAME, userName);
+        Node userNode = graphDb.findNode(Label.label(Constants.LABEL_USER), Constants.PROPERTY_NAME, userName);
         
         if (userNode == null)
-            throw new ApplicationObjectNotFoundException(String.format("User %s can not be found", userName));
+            throw new ApplicationObjectNotFoundException(String.format("User %s could not be found", userName));
         
-        Node newEntry = logRoot.getGraphDatabase().createNode();
+        Node newEntry = graphDb.createNode(Label.label(Constants.LABEL_GENERAL_ACTIVITY_LOGS));
         
         newEntry.setProperty(Constants.PROPERTY_TYPE, type);
         newEntry.setProperty(Constants.PROPERTY_CREATION_DATE, timestamp);
@@ -962,10 +962,9 @@ public class Util {
         if (notes != null)
             newEntry.setProperty(Constants.PROPERTY_NOTES, notes);
         
-        newEntry.createRelationshipTo(logRoot, RelTypes.CHILD_OF_SPECIAL);
         newEntry.createRelationshipTo(userNode, RelTypes.PERFORMED_BY);
-        if (object != null)
-            object.createRelationshipTo(newEntry, RelTypes.HAS_HISTORY_ENTRY);
+        if (objectNode != null)
+            objectNode.createRelationshipTo(newEntry, RelTypes.HAS_HISTORY_ENTRY);
         return newEntry;
     }
     

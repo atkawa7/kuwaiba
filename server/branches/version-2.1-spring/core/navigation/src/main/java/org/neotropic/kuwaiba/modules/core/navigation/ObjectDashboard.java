@@ -17,10 +17,10 @@
 package org.neotropic.kuwaiba.modules.core.navigation;
 
 import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
@@ -33,17 +33,16 @@ import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionParameter
 import org.neotropic.kuwaiba.core.apis.integration.modules.ModuleActionParameterSet;
 import org.neotropic.kuwaiba.core.apis.integration.modules.actions.AbstractVisualInventoryAction;
 import org.neotropic.kuwaiba.core.apis.integration.modules.actions.ActionRegistry;
-import org.neotropic.kuwaiba.core.apis.integration.views.AbstractDetailedView;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.visualization.api.properties.PropertyFactory;
 import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 import org.neotropic.util.visual.properties.PropertySheet;
+import org.neotropic.util.visual.widgets.AbstractDashboardWidget;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -88,10 +87,12 @@ public class ObjectDashboard extends VerticalLayout implements  HasDynamicTitle 
      */
     @Autowired
     private ResourceFactory resourceFactory;
+
     
      @Override
     public void onAttach(AttachEvent ev) {
-        getUI().ifPresent( ui -> {
+        UI ui = UI.getCurrent();
+        if (ui != null) {
             this.selectedObject = ui.getSession().getAttribute(BusinessObjectLight.class);
             SplitLayout lytMain = new SplitLayout();
             lytMain.setSplitterPosition(30);
@@ -120,26 +121,31 @@ public class ObjectDashboard extends VerticalLayout implements  HasDynamicTitle 
                 });
                 tblCustomActions.setItems(actionRegistry.getActionsApplicableToRecursive(selectedObject.getClassName()));
                 accOptions.add(ts.getTranslatedString("module.navigation.widgets.object-dashboard.object-custom-actions"), tblCustomActions);
-                Grid<AbstractDetailedView> tblViews = new Grid<>();
-                tblViews.addColumn(AbstractDetailedView::getName);
+                Grid<AbstractDashboardWidget> tblViews = new Grid<>();
+                tblViews.addColumn(AbstractDashboardWidget::getTitle);
                 try {
-                    AbstractDetailedView objectView = (AbstractDetailedView)Class.forName("org.neotropic.kuwaiba.modules.optional.physcon.views.ObjectView").getDeclaredConstructor(BusinessObjectLight.class,
+                    AbstractDashboardWidget objectViewWidget = (AbstractDashboardWidget)Class.forName("org.neotropic.kuwaiba.modules.optional.physcon.widgets.ObjectViewWidget").getDeclaredConstructor(BusinessObjectLight.class,
                             MetadataEntityManager.class, ApplicationEntityManager.class, BusinessEntityManager.class,
                             TranslationService.class, ResourceFactory.class).newInstance(selectedObject, mem, aem, bem, ts, resourceFactory);
-                    tblViews.setItems(objectView);
+                    
+                    AbstractDashboardWidget rackViewWidget = null;
+                    if (selectedObject.getClassName().equals("Rack"))
+                        rackViewWidget = (AbstractDashboardWidget)Class.forName("org.neotropic.kuwaiba.modules.optional.physcon.widgets.RackViewWidget").getDeclaredConstructor(BusinessObjectLight.class,
+                            MetadataEntityManager.class, ApplicationEntityManager.class, BusinessEntityManager.class,
+                            TranslationService.class, ResourceFactory.class).newInstance(selectedObject, mem, aem, bem, ts, resourceFactory);
+                    
+                    if (rackViewWidget == null)
+                        tblViews.setItems(objectViewWidget);
+                    else
+                        tblViews.setItems(objectViewWidget, rackViewWidget);
                 } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
                     Logger.getLogger(ObjectDashboard.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
                 tblViews.setSelectionMode(Grid.SelectionMode.SINGLE);
                 tblViews.addSelectionListener((evt) -> {
-                    if (evt.getFirstSelectedItem().isPresent()) {
-                        try {
-                            lytDetails.add((VerticalLayout)evt.getFirstSelectedItem().get().getAsComponent());
-                        } catch (InvalidArgumentException ex) {
-                            lytDetails.add(new Label(ex.getLocalizedMessage()));
-                        }
-                    }
+                    if (evt.getFirstSelectedItem().isPresent())
+                        lytDetails.add((VerticalLayout)evt.getFirstSelectedItem().get().getContentComponent());
                 });
 
                 accOptions.add(ts.getTranslatedString("module.navigation.widgets.object-dashboard.object-views"), tblViews);
@@ -154,7 +160,7 @@ public class ObjectDashboard extends VerticalLayout implements  HasDynamicTitle 
                 add(new Label(ex.getLocalizedMessage()));
             }
             add(lytMain);
-        });
+        };
         
     }
 

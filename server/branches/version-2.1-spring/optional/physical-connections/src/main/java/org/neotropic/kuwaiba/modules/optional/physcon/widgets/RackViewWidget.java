@@ -86,8 +86,11 @@ public class RackViewWidget extends AbstractDashboardWidget implements PropertyS
         this.businessObject = businessObject;
         this.physicalConnectionsService = physicalConnectionsService;
         setTitle(ts.getTranslatedString(ts.getTranslatedString("module.visualization.rack-view-name")));
-        createCover();
-        coverComponent.addClassName("widgets-colors-magenta");
+    }
+    
+    public RackViewWidget(BusinessObjectLight businessObject, MetadataEntityManager mem, ApplicationEntityManager aem,
+            BusinessEntityManager bem, TranslationService ts, ResourceFactory resourceFactory) {
+        this(businessObject, mem, aem, bem, ts, resourceFactory, null);
     }
 
     @Override

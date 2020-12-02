@@ -253,8 +253,8 @@ public class AttributeMetadata implements Serializable, Comparable<AttributeMeta
      * @return true if the given type is primitive, false otherwise
      */
     public static boolean isPrimitive(String type) {
-        return type.equals("String") || type.equals("int") || type.equals("Float") //NOI18N
-                || type.equals("Long") || type.equals("boolean") || type.equals("Date") //NOI18N
+        return type.equals("String") || type.equals("Integer") || type.equals("Float") //NOI18N
+                || type.equals("Long") || type.equals("Boolean") || type.equals("Date") //NOI18N
                 || type.equals("Timestamp"); //NOI18N
     }
     
