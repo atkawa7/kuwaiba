@@ -15,6 +15,8 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman.api;
 
+import com.neotropic.flow.component.mxgraph.MxConstants;
+
 /**
  * Set of constants used in the Outside Plant Module
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
@@ -32,6 +34,14 @@ public class MapConstants {
      * View Edge property controlPoints
      */
     public static final String PROPERTY_CONTROL_POINTS = "controlPoints"; //NOI18N
+    /**
+     * View node/edge property editable
+     */
+    public static final String PROPERTY_CELL_EDITABLE = MxConstants.STYLE_EDITABLE;
+    /**
+     * View node/edge property movable
+     */
+    public static final String PROPERTY_CELL_MOVABLE = MxConstants.STYLE_MOVABLE;
     
     public static final String CELL_ID = "cellId";
     public static final String X = "x";

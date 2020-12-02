@@ -16,7 +16,6 @@
 package com.neotropic.kuwaiba.modules.commercial.ospman.api;
 
 import com.neotropic.flow.component.mxgraph.MxConstants;
-import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.server.StreamResourceRegistry;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -30,9 +29,7 @@ import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectNode;
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class MapNode extends MxBusinessObjectNode {
-    private boolean detached = false;
-    private boolean added = false;
-    
+        
     public MapNode(BusinessObjectViewNode viewNode, double x, double y, MapProvider mapProvider, MapOverlay mapOverlay, ResourceFactory resourceFactory) {
         super(viewNode.getIdentifier());
         Objects.requireNonNull(viewNode);
@@ -41,7 +38,6 @@ public class MapNode extends MxBusinessObjectNode {
         Objects.requireNonNull(mapOverlay);
         
         setUuid(viewNode.getIdentifier().getId());
-        setLabel(viewNode.getIdentifier().getName());
         setGeometry((int) x, (int) y, 16, 16);
         
         LinkedHashMap<String, String> styles = new LinkedHashMap();
@@ -51,12 +47,19 @@ public class MapNode extends MxBusinessObjectNode {
         );
         styles.put(MxConstants.STYLE_SHAPE, MxConstants.SHAPE_IMAGE);
         styles.put(MxConstants.STYLE_RESIZABLE, String.valueOf(0));
+        if (viewNode.getProperties().containsKey(MapConstants.PROPERTY_CELL_EDITABLE) && 
+            !(boolean) viewNode.getProperties().get(MapConstants.PROPERTY_CELL_EDITABLE))
+            styles.put(MxConstants.STYLE_EDITABLE, String.valueOf(0));
+        
+        if (viewNode.getProperties().containsKey(MapConstants.PROPERTY_CELL_MOVABLE) && 
+            !(boolean) viewNode.getProperties().get(MapConstants.PROPERTY_CELL_MOVABLE))
+            styles.put(MxConstants.STYLE_MOVABLE, String.valueOf(0));
+        
         this.setRawStyle(styles);
         
-        addCellAddedListener(event -> {
-            added = true;
-            event.unregisterListener();
-        });
+        if (mapProvider.getZoom() >= mapProvider.getMinZoomForLabels())
+            setLabel(viewNode.getIdentifier().getName());
+        
         addCellPositionChangedListener(event -> {
             mapOverlay.getProjectionFromLatLngToDivPixel(
                 Arrays.asList(mapProvider.getBounds().getNortheast(), mapProvider.getBounds().getSouthwest()),
@@ -72,19 +75,5 @@ public class MapNode extends MxBusinessObjectNode {
                 }
             );
         });
-    }
-
-    @Override
-    protected void onDetach(DetachEvent detachEvent) {
-        super.onDetach(detachEvent);
-        this.detached = true;
-    }
-    
-    public boolean getAdded() {
-        return added;
-    }
-    
-    public boolean getDetached() {
-        return detached;
     }
 }

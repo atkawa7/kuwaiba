@@ -80,14 +80,26 @@ import org.neotropic.util.visual.dialog.ConfirmDialog;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapProvider;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.server.VaadinServlet;
 import elemental.json.Json;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
+import io.netty.util.internal.ResourcesUtil;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.UUID;
 import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualAction;
 import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 import org.neotropic.util.visual.notifications.AbstractNotification;
+import org.springframework.util.ResourceUtils;
 
 /**
  * Graphically displays Outside Plant elements on a map.
@@ -187,6 +199,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
      */
     private MapGraph mapGraph;
     
+    private final String jsRedrawGraph;
+    
     public OutsidePlantView(
         ApplicationEntityManager aem, 
         BusinessEntityManager bem, 
@@ -195,7 +209,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         ResourceFactory resourceFactory,
         PhysicalConnectionsService physicalConnectionsService, 
         NewBusinessObjectVisualAction newBusinessObjectVisualAction,
-        boolean viewTools) {
+        boolean viewTools, String jsRedrawGraph) {
+        Objects.requireNonNull(jsRedrawGraph);
         this.aem = aem;
         this.bem = bem;
         this.mem = mem;
@@ -204,6 +219,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         this.physicalConnectionsService = physicalConnectionsService;
         this.newBusinessObjectVisualAction = newBusinessObjectVisualAction;
         this.viewTools = viewTools;
+        this.jsRedrawGraph = jsRedrawGraph;
     }
     
     @Override
@@ -363,95 +379,111 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
     }
     
     private void redrawGraph() {
-        HashMap<String, List<GeoCoordinate>> coordinates = new HashMap();
+        HashMap<String, List<GeoCoordinate>> coordinates = new HashMap();        
+        HashMap<String, GeoCoordinate> coordinatesToContainsLocations = new HashMap();
+        HashMap<String, String> labels = new HashMap();
         
-        viewMap.getNodes().forEach(node -> coordinates.put(
-                ((BusinessObjectLight) node.getIdentifier()).getId(), 
+        viewMap.getNodes().forEach(node -> {
+            BusinessObjectLight identifier = (BusinessObjectLight) node.getIdentifier();
+            
+            coordinates.put(
+                identifier.getId(), 
                 Arrays.asList(new GeoCoordinate(
                     (double) node.getProperties().get(MapConstants.ATTR_LAT), 
                     (double) node.getProperties().get(MapConstants.ATTR_LON)
                 ))
-        ));
+            );
+            coordinatesToContainsLocations.put(
+                identifier.getId(), 
+                new GeoCoordinate(
+                    (double) node.getProperties().get(MapConstants.ATTR_LAT),
+                    (double) node.getProperties().get(MapConstants.ATTR_LON)
+                )
+            );
+            labels.put(identifier.getId(), identifier.getName());
+        });
         viewMap.getEdges().forEach(edge -> coordinates.put(
             ((BusinessObjectLight) edge.getIdentifier()).getId(),
             (List) edge.getProperties().get(MapConstants.PROPERTY_CONTROL_POINTS)
         ));
         if (!coordinates.isEmpty()) {
-            String boundsId = UUID.randomUUID().toString();
-            
-            coordinates.put(boundsId, Arrays.asList(
-                mapProvider.getBounds().getNortheast(),
-                mapProvider.getBounds().getSouthwest()
-            ));
-            mapOverlay.getProjectionFromLatLngToDivPixel(coordinates, pixelCoordinates -> {
-                GeoPoint ne = pixelCoordinates.get(boundsId).get(0);
-                GeoPoint sw = pixelCoordinates.get(boundsId).get(1);
-                
-                JsonObject nodes = Json.createObject();
-                viewMap.getNodes().forEach(node -> {
-                    BusinessObjectLight businessObject = (BusinessObjectLight) node.getIdentifier();
-                    GeoPoint point = pixelCoordinates.get(businessObject.getId()).get(0);
-                    
-                    JsonArray jsonPoints = Json.createArray();
-                    JsonObject jsonPoint = Json.createObject();
-                    jsonPoint.put(MapConstants.X, point.getX() - sw.getX());
-                    jsonPoint.put(MapConstants.Y, point.getY() - ne.getY());
-                    jsonPoints.set(0, jsonPoint);
-                    nodes.put(businessObject.getId(), jsonPoints);
-                });
-                JsonObject edges = Json.createObject();
-                viewMap.getEdges().forEach(edge -> {
-                    BusinessObjectLight businessObject = (BusinessObjectLight) edge.getIdentifier();
-                    if (pixelCoordinates.containsKey(businessObject.getId())) {
-                        List<GeoPoint> points = pixelCoordinates.get(businessObject.getId());
-                        if (!points.isEmpty()) {
-                            JsonArray jsonPoints = Json.createArray();
-                            for (int i = 0; i < points.size(); i++) {
-                                GeoPoint point = points.get(i);
-                                JsonObject jsonPoint = Json.createObject();
-                                jsonPoint.put(MapConstants.X, point.getX() - sw.getX());
-                                jsonPoint.put(MapConstants.Y, point.getY() - ne.getY());
-                                jsonPoints.set(i, jsonPoint);
+            List<List<GeoCoordinate>> paths = new ArrayList();            
+            /**
+             *  The rectangle represents the visible area of the map.
+             *  nw --------------- ne
+             *     |             |
+             *     |             |
+             *     |             |
+             *  sw --------------- se
+             */
+            GeoCoordinate northeast = mapProvider.getBounds().getNortheast();
+            GeoCoordinate southwest = mapProvider.getBounds().getSouthwest();
+
+            GeoCoordinate nw = new GeoCoordinate(northeast.getLatitude(), southwest.getLongitude());
+            GeoCoordinate se = new GeoCoordinate(southwest.getLatitude(), northeast.getLongitude());
+
+            paths.add(Arrays.asList(nw, northeast, se, southwest, nw));
+        
+            mapProvider.callbackContainsLocations(coordinatesToContainsLocations, paths, containsLocations -> {
+                String boundsId = UUID.randomUUID().toString();
+
+                coordinates.put(boundsId, Arrays.asList(
+                    mapProvider.getBounds().getNortheast(),
+                    mapProvider.getBounds().getSouthwest()
+                ));
+                mapOverlay.getProjectionFromLatLngToDivPixel(coordinates, pixelCoordinates -> {
+                    GeoPoint ne = pixelCoordinates.get(boundsId).get(0);
+                    GeoPoint sw = pixelCoordinates.get(boundsId).get(1);
+
+                    JsonObject nodes = Json.createObject();
+                    viewMap.getNodes().forEach(node -> {
+                        BusinessObjectLight businessObject = (BusinessObjectLight) node.getIdentifier();
+                        GeoPoint point = pixelCoordinates.get(businessObject.getId()).get(0);
+
+                        JsonArray jsonPoints = Json.createArray();
+                        JsonObject jsonPoint = Json.createObject();
+                        jsonPoint.put(MapConstants.X, point.getX() - sw.getX());
+                        jsonPoint.put(MapConstants.Y, point.getY() - ne.getY());
+                        jsonPoints.set(0, jsonPoint);
+                        nodes.put(businessObject.getId(), jsonPoints);
+                    });
+                    JsonObject edges = Json.createObject();
+                    viewMap.getEdges().forEach(edge -> {
+                        BusinessObjectLight businessObject = (BusinessObjectLight) edge.getIdentifier();
+                        if (pixelCoordinates.containsKey(businessObject.getId())) {
+                            List<GeoPoint> points = pixelCoordinates.get(businessObject.getId());
+                            if (!points.isEmpty()) {
+                                JsonArray jsonPoints = Json.createArray();
+                                for (int i = 0; i < points.size(); i++) {
+                                    GeoPoint point = points.get(i);
+                                    JsonObject jsonPoint = Json.createObject();
+                                    jsonPoint.put(MapConstants.X, point.getX() - sw.getX());
+                                    jsonPoint.put(MapConstants.Y, point.getY() - ne.getY());
+                                    jsonPoints.set(i, jsonPoint);
+                                }
+                                edges.put(businessObject.getId(), jsonPoints);
                             }
-                            edges.put(businessObject.getId(), jsonPoints);
                         }
-                    }
+                    });
+                    JsonObject jsonContainsLocations = Json.createObject();
+                    containsLocations.forEach((key, value) -> jsonContainsLocations.put(key, value));
+                    
+                    JsonObject jsonLabels = Json.createObject();
+                    labels.forEach((key, value) -> jsonLabels.put(key, value));
+
+                    mapGraph.getElement().executeJs(jsRedrawGraph,
+                        mapProvider.getComponent(), //JS parameter $0
+                        nodes, //JS parameter $1
+                        edges, //JS parameter $2
+                        jsonContainsLocations, //JS parameter $3
+                        mapProvider.getZoom(), //JS parameter $4
+                        mapProvider.getMinZoomForLabels(), //JS parameter $5
+                        jsonLabels //JS parameter $6
+                    );
+                    
+                    if (!mapGraph.isVisible())
+                        mapGraph.setVisible(true);
                 });
-                StringBuilder jsBuilder = new StringBuilder();
-                
-                jsBuilder.append(mapProvider.jsExpressionLockMap()).append("\n");
-                jsBuilder.append("var nodes = $1;").append("\n"); //NOI8N
-                jsBuilder.append("var edges = $2;").append("\n"); //NOI8N
-                jsBuilder.append("this.graph.getModel().beginUpdate();").append("\n"); //NOI8N
-                jsBuilder.append("try {").append("\n"); //NOI8N
-                // Updating the node geometries
-                jsBuilder.append("  for (const cellId in nodes) {").append("\n");
-                jsBuilder.append("    var cell = this.getCellObjectById(cellId).cell;").append("\n"); //NOI8N
-                jsBuilder.append("    var geo = this.graph.getCellGeometry(cell).clone();").append("\n"); //NOI8N
-                jsBuilder.append("    var point = nodes[cellId][0];").append("\n"); //NOI8N
-                jsBuilder.append("    geo.x = point.x;").append("\n"); //NOI8N
-                jsBuilder.append("    geo.y = point.y;").append("\n"); //NOI8N
-                jsBuilder.append("    this.graph.getModel().setGeometry(cell, geo);").append("\n"); //NOI8N
-                jsBuilder.append("  }").append("\n");
-                // Updating the edge geometries
-                jsBuilder.append("  for (const cellId in edges) {").append("\n"); //NOI8N
-                jsBuilder.append("    var cell = this.getCellObjectById(cellId).cell;").append("\n"); //NOI8N
-                jsBuilder.append("    var geo = this.graph.getCellGeometry(cell).clone();").append("\n"); //NOI8N
-                jsBuilder.append("    var points = [];").append("\n"); //NOI8N
-                jsBuilder.append("    edges[cellId].forEach(point => {").append("\n"); //NOI8N
-                jsBuilder.append("      points.push(new mxPoint(point.x, point.y));").append("\n"); //NOI8N
-                jsBuilder.append("    });").append("\n"); //NOI8N
-                jsBuilder.append("    geo.points = points;").append("\n"); //NOI8N
-                jsBuilder.append("    this.graph.getModel().setGeometry(cell, geo);").append("\n"); //NOI8N
-                jsBuilder.append("  }").append("\n"); //NOI8N
-                jsBuilder.append("} finally {").append("\n"); //NOI8N
-                jsBuilder.append("  this.graph.getModel().endUpdate();").append("\n"); //NOI8N
-                jsBuilder.append("}").append("\n"); //NOI8N
-                jsBuilder.append(mapProvider.jsExpressionUnlockMap()).append("\n");
-                
-                mapGraph.getElement().executeJs(jsBuilder.toString(), mapProvider.getComponent(),nodes, edges);
-                if (!mapGraph.isVisible())
-                    mapGraph.setVisible(true);
             });
         } else {
             if (!mapGraph.isVisible())

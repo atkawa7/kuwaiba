@@ -41,6 +41,10 @@ public class OutsidePlantService {
      */
     public static int DEFAULT_ZOOM = 6;
     /**
+     * Default minimum zoom level for the map when displaying labels.
+     */
+    public static final double DEFAULT_MIN_ZOOM_FOR_LABELS = 15;
+    /**
      * Default map language (English). This language will be used if the configuration variable <code>widgets.simplemap.language</code> could not be found
      */
     public static String DEFAULT_LANGUAGE = "english"; //NOI18N

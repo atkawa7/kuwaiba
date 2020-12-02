@@ -50,6 +50,8 @@ public class GoogleMapsMapProvider implements MapProvider {
     
     private GoogleMap googleMap;
     private DrawingManager drawingManager;
+    private GeometryPoly geometryPoly;
+    private double minZoomForLabels;
     /**
      * Set of idle event listeners.
      */
@@ -97,6 +99,12 @@ public class GoogleMapsMapProvider implements MapProvider {
             properties.put(PROPERTY_ZOOM, OutsidePlantService.DEFAULT_ZOOM);
         }
         
+        try {
+            setMinZoomForLabels(Double.valueOf(String.valueOf(aem.getConfigurationVariableValue("module.ospman.minZoomForLabels")))); //NOI18N
+        } catch (InventoryException ex) {
+            setMinZoomForLabels(OutsidePlantService.DEFAULT_MIN_ZOOM_FOR_LABELS); //NOI18N
+        }
+        
         return properties;
     }
     
@@ -116,6 +124,8 @@ public class GoogleMapsMapProvider implements MapProvider {
         
         drawingManager = new DrawingManager();
         googleMap.newDrawingManager(drawingManager);
+        
+        geometryPoly = new GeometryPoly(googleMap);
         
         googleMap.addMapBoundsChanged(event -> 
             new ArrayList<>(boundsChangedEventListeners).forEach(listener -> {
@@ -179,6 +189,14 @@ public class GoogleMapsMapProvider implements MapProvider {
     @Override
     public void setZoom(double zoom) {
         googleMap.setZoom(zoom);
+    }
+    @Override
+    public double getMinZoomForLabels() {
+        return minZoomForLabels;
+    }
+    @Override
+    public void setMinZoomForLabels(double minZoomForLabels) {
+        this.minZoomForLabels = minZoomForLabels;
     }
     @Override
     public void setHandMode() {
@@ -274,6 +292,26 @@ public class GoogleMapsMapProvider implements MapProvider {
         Objects.requireNonNull(coordinate);
         Objects.requireNonNull(paths);
         Objects.requireNonNull(callback);
+
+        geometryPoly.callbackContainsLocation(
+            new LatLng(coordinate.getLatitude(), coordinate.getLongitude()),
+            getPaths(paths),
+            callback
+        );
+    }
+    @Override
+    public void callbackContainsLocations(HashMap<String, GeoCoordinate> coordinates, List<List<GeoCoordinate>> paths, Consumer<HashMap<String, Boolean>> callback) {
+        Objects.requireNonNull(coordinates);
+        Objects.requireNonNull(paths);
+        Objects.requireNonNull(callback);
+        
+        HashMap<String, LatLng> points = new HashMap();
+        coordinates.forEach((id, coordinate) -> points.put(id, new LatLng(coordinate.getLatitude(), coordinate.getLongitude())));
+        
+        geometryPoly.callbackContainsLocations(points, getPaths(paths), callback);
+    }
+    
+    private List<List<LatLng>> getPaths(List<List<GeoCoordinate>> paths) {
         List<List<LatLng>> latLngPaths = new ArrayList();
         paths.forEach(path -> {
             List<LatLng> latLngPath = new ArrayList();
@@ -282,10 +320,6 @@ public class GoogleMapsMapProvider implements MapProvider {
             );
             latLngPaths.add(latLngPath);
         });
-        new GeometryPoly(googleMap).callbackContainsLocation(
-            new LatLng(coordinate.getLatitude(), coordinate.getLongitude()),
-            latLngPaths,
-            result -> callback.accept(result)
-        );
+        return latLngPaths;
     }
 }

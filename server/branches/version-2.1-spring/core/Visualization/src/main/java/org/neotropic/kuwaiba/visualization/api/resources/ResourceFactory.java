@@ -22,11 +22,17 @@ import com.vaadin.flow.server.VaadinSession;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.ClassMetadata;
@@ -90,11 +96,42 @@ public class ResourceFactory extends AbstractResourceFactory {
     @Autowired
     private  MetadataEntityManager mem;
     
+    private String jsRedrawGraph;
+    
     public ResourceFactory() {
         icons = new HashMap();
         smallIcons = new HashMap();
         defaultIcons = new HashMap();
         defaultSmallIcons = new HashMap();
+    }
+    
+    @PostConstruct
+    public void init() {
+        BufferedReader bufferedReader = null;
+        try {
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("src/redraw-graph.js");
+            bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"));
+            StringBuilder stringBuilder = new StringBuilder();
+            String string;
+            while ((string = bufferedReader.readLine()) != null)
+                stringBuilder.append(string).append("\n");
+            bufferedReader.close();
+            jsRedrawGraph = stringBuilder.toString();
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(ResourceFactory.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ResourceFactory.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                bufferedReader.close();
+            } catch (IOException ex) {
+                Logger.getLogger(ResourceFactory.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    public String getRedrawGraphJs() {
+        return jsRedrawGraph;
     }
        
    @Override

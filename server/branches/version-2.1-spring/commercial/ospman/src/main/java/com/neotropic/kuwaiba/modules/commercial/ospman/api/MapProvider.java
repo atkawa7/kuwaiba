@@ -16,6 +16,7 @@
 package com.neotropic.kuwaiba.modules.commercial.ospman.api;
 
 import com.vaadin.flow.component.Component;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
@@ -71,6 +72,16 @@ public interface MapProvider {
      * @param zoom map zoom
      */
     void setZoom(double zoom);
+    /**
+     * Gets the minimum zoom level for the map when displaying labels.
+     * @return The minimum zoom level for the map when displaying labels.
+     */
+    double getMinZoomForLabels();
+    /**
+     * Sets the minimum zoom level for the map when displaying labels.
+     * @param minZoomForLabels The minimum zoom level for the map when displaying labels.
+     */
+    void setMinZoomForLabels(double minZoomForLabels);
     /**
      * Set the map hand mode.
      */
@@ -139,6 +150,13 @@ public interface MapProvider {
      * @param callback Callback to execute.
      */
     void callbackContainsLocation(GeoCoordinate coordinate, List<List<GeoCoordinate>> paths, Consumer<Boolean> callback);
+    /**
+     * Executes callback to calculate whether the given coordinates exist inside the specified path.
+     * @param coordinates Coordinates to calculate if exist inside the specified path.
+     * @param paths Polygon paths.
+     * @param callback Callback to execute.
+     */
+    void callbackContainsLocations(HashMap<String, GeoCoordinate> coordinates, List<List<GeoCoordinate>> paths, Consumer<HashMap<String, Boolean>> callback);
     /**
      * Callback executed when bounds changed.
      */
