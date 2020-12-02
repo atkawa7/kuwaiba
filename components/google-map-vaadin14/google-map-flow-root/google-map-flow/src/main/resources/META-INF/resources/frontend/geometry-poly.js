@@ -39,6 +39,22 @@ class GeometryPoly {
     return false;
   }
   /**
+   * Calculate whether the given points exist inside the specified path.
+   * @param {Object} points - {id: {lat: 0, lng: 0}, ..}
+   * @param {Object[]} paths - [.. ,[.. ,{lat: 0, lng: 0}]]
+   * @returns {Object} {id: true | false, ..}
+   */
+  containsLocations(points, paths) {
+    var contains = {};
+    if (window._mapApi) {
+      for (const point in points) {
+        contains[point] = this.containsLocation(points[point], paths);
+      }
+    }
+    console.error('geometry-poly: Google Map API does not available');
+    return contains;
+  }
+  /**
    * Calculate whether the given point exist inside the specified path.
    * @param {Object} point - {lat: 0, lng: 0}
    * @param {Object[]} paths - [.. ,[.. ,{lat: 0, lng: 0}]]

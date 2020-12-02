@@ -17,6 +17,8 @@ package com.neotropic.flow.component.googlemap;
 
 import elemental.json.Json;
 import elemental.json.JsonArray;
+import elemental.json.JsonObject;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -44,10 +46,33 @@ public class GeometryPoly {
     public void callbackContainsLocation(LatLng point, List<List<LatLng>> paths, Consumer<Boolean> callback) {
         Objects.requireNonNull(point);
         Objects.requireNonNull(paths);
+        Objects.requireNonNull(callback);
         
         googleMap.getElement().executeJs("return this.createGeometryPoly().containsLocation($0, $1)", //NOI18N
             point.toJson(), getPaths(paths))
             .then(Boolean.class, result -> callback.accept(result));
+    }
+    /**
+     * Callback to calculate whether the given points exist inside the specified path.
+     * @param points Points to calculate if exist inside the specified path.
+     * @param paths Polygon paths.
+     * @param callback Callback to execute.
+     */
+    public void callbackContainsLocations(HashMap<String, LatLng> points, List<List<LatLng>> paths, Consumer<HashMap<String, Boolean>> callback) {
+        Objects.requireNonNull(points);
+        Objects.requireNonNull(paths);
+        Objects.requireNonNull(callback);
+        
+        JsonObject jsonPoints = Json.createObject();
+        points.forEach((id, point) -> jsonPoints.put(id, point.toJson()));
+        
+        googleMap.getElement().executeJs("return this.createGeometryPoly().containsLocations($0, $1)",
+            jsonPoints, getPaths(paths))
+            .then(JsonObject.class, result -> {
+                HashMap<String, Boolean> contains = new HashMap();
+                points.keySet().forEach(id -> contains.put(id, result.getBoolean(id)));
+                callback.accept(contains);
+            });
     }
     /**
      * Callback to calculate whether the given point exist inside the specified path.
