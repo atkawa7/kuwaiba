@@ -160,7 +160,7 @@ class MxGraph extends PolymerElement {
             },
             overrideCurrentStyle: {
                 type: Boolean,
-                value: true,
+                value: false,
                 observer: '_overrideCurrentStyleChanged'
             }
         }
