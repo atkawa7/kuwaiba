@@ -211,7 +211,7 @@ class MxGraph extends PolymerElement {
         } else
         {
             this._currentStyle = mxUtils.getCurrentStyle;
-            mxUtils.getCurrentStyle = () => {return null;}
+//            mxUtils.getCurrentStyle = () => {return null;}
             // Disables the built-in context menu
             mxEvent.disableContextMenu(this.$.graphContainer);            
          
@@ -243,8 +243,7 @@ class MxGraph extends PolymerElement {
             //enable panning
 //            this.graph.panningHandler.ignoreCell = true;
             this.graph.setPanning(true);
-            this.graph.panningHandler.useLeftButtonForPanning = true;
-				  
+            this.graph.panningHandler.useLeftButtonForPanning = true;				  
 
             //enable adding and removing control points. 
             mxEdgeHandler.prototype.addEnabled = true;
@@ -848,7 +847,24 @@ class MxGraph extends PolymerElement {
     setCellsMovable(value) {
         if (this.graph) {
             this.graph.setCellsMovable(value);
-            //mxGraph.prototype.cellsMovable = value;
+        }
+    }
+    
+    setCellsResizable(value) {
+        if (this.graph) {
+            this.graph.setCellsResizable(value);
+        }
+    }
+    
+    setCellsSelectable(value) {
+        if (this.graph) {
+            this.graph.setCellsSelectable(value);
+        }
+    }
+    
+    setCellsEditable(value) {
+        if (this.graph) {
+            this.graph.setCellsEditable(value);
         }
     }
     
@@ -863,8 +879,7 @@ class MxGraph extends PolymerElement {
             this.graph.getModel().endUpdate();
         }
     }   
-    
-        
+          
     _scaleChanged() {
         if (this.graph) {
             this.graph.view.setScale(this.scale);

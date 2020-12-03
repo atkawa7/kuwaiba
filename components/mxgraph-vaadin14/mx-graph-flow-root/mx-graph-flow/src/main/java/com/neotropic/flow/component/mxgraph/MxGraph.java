@@ -78,7 +78,7 @@ public class MxGraph extends Component implements HasComponents, HasStyle, HasSi
         getElement().getStyle().set(PROPERTY_HEIGHT, "100%");
     }
     
-     public String getGrid() {
+    public String getGrid() {
         return getElement().getProperty(PROPERTY_GRID);
     }
         
@@ -448,6 +448,18 @@ public class MxGraph extends Component implements HasComponents, HasStyle, HasSi
     
     public void setCellsMovable(boolean value) {
        getElement().callJsFunction("setCellsMovable", value);
+    }
+    
+    public void setCellsResizable(boolean value) {
+       getElement().callJsFunction("setCellsResizable", value);
+    }
+    
+    public void setCellsSelectable(boolean value) {
+       getElement().callJsFunction("setCellsSelectable", value);
+    }
+    
+    public void setCellsEditable(boolean value) {
+       getElement().callJsFunction("setCellsEditable", value);
     }
     
     public void setChildrenCellPosition(String cellId, int position) {
