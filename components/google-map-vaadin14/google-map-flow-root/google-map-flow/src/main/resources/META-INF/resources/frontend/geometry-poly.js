@@ -27,16 +27,12 @@ class GeometryPoly {
    * @returns {boolean} True if the given point exist inside the specified path.
    */
   containsLocation(point, paths) {
-    if (window._mapApi) {
-      const polygon = new google.maps.Polygon({paths: paths});
+    const polygon = new google.maps.Polygon({paths: paths});
 
-      return google.maps.geometry.poly.containsLocation(
-        new google.maps.LatLng(point.lat, point.lng),
-        polygon
-      );
-    }
-    console.error('geometry-poly: Google Map API does not available');
-    return false;
+    return google.maps.geometry.poly.containsLocation(
+      new google.maps.LatLng(point.lat, point.lng),
+      polygon
+    );
   }
   /**
    * Calculate whether the given points exist inside the specified path.
@@ -46,12 +42,9 @@ class GeometryPoly {
    */
   containsLocations(points, paths) {
     var contains = {};
-    if (window._mapApi) {
-      for (const point in points) {
-        contains[point] = this.containsLocation(points[point], paths);
-      }
+    for (const point in points) {
+      contains[point] = this.containsLocation(points[point], paths);
     }
-    console.error('geometry-poly: Google Map API does not available');
     return contains;
   }
   /**
@@ -63,21 +56,17 @@ class GeometryPoly {
    * @returns {boolean} True if the given point exist inside the specified path.
    */
   isLocationOnEdge(point, paths, isPolyline, tolerance) {
-    if (window._mapApi) {
-      const poly = null;
-      if (isPolyline)
-        poly = new google.maps.Polyline({path: paths[0]});
-      else
-        poly = new google.maps.Polygon({paths: paths});
+    const poly = null;
+    if (isPolyline)
+      poly = new google.maps.Polyline({path: paths[0]});
+    else
+      poly = new google.maps.Polygon({paths: paths});
 
-      return google.maps.geometry.poly.isLocationOnEdge(
-        new google.maps.LatLng(point.lat, point.lng),
-        poly,
-        tolerance
-      );
-    }
-    console.error('geometry-poly: Google Map API does not available');
-    return false;
+    return google.maps.geometry.poly.isLocationOnEdge(
+      new google.maps.LatLng(point.lat, point.lng),
+      poly,
+      tolerance
+    );
   }
 }
 
