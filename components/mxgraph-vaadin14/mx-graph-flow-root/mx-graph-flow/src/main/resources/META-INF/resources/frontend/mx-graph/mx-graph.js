@@ -210,7 +210,10 @@ class MxGraph extends PolymerElement {
             mxUtils.error('Browser is not supported!', 200, false);
         } else
         {
-            this._currentStyle = mxUtils.getCurrentStyle;
+            if (this.overrideCurrentStyle) {
+                this._currentStyle = mxUtils.getCurrentStyle;
+                mxUtils.getCurrentStyle = () => {return null;}
+            }
 //            mxUtils.getCurrentStyle = () => {return null;}
             // Disables the built-in context menu
             mxEvent.disableContextMenu(this.$.graphContainer);            
