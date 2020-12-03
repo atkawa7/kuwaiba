@@ -41,6 +41,7 @@ public class MapGraph extends MxGraph {
     
     public MapGraph() {
         setSizeFull();
+        setOverrideCurrentStyle(true);
         setOverflow(null);
         setBeginUpdateOnInit(true);
         addGraphLoadedListener(event -> {

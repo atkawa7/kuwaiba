@@ -48,7 +48,8 @@ public class MapEdge extends MxBusinessObjectEdge {
         Objects.requireNonNull(mapProvider);
         
         setUuid(viewEdge.getIdentifier().getId());
-        setLabel(viewEdge.getIdentifier().getName());
+        if (mapProvider.getZoom() >= mapProvider.getMinZoomForLabels())
+            setLabel(viewEdge.getIdentifier().getName());
         setStrokeWidth(2);
         if (points != null)
             setPoints(points);

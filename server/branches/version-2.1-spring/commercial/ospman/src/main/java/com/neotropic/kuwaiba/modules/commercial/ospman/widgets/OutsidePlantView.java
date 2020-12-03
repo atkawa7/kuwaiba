@@ -402,10 +402,15 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
             );
             labels.put(identifier.getId(), identifier.getName());
         });
-        viewMap.getEdges().forEach(edge -> coordinates.put(
-            ((BusinessObjectLight) edge.getIdentifier()).getId(),
-            (List) edge.getProperties().get(MapConstants.PROPERTY_CONTROL_POINTS)
-        ));
+        viewMap.getEdges().forEach(edge -> {
+            BusinessObjectLight identifier = (BusinessObjectLight) edge.getIdentifier();
+            
+            coordinates.put(
+                identifier.getId(),
+                (List) edge.getProperties().get(MapConstants.PROPERTY_CONTROL_POINTS)
+            );
+            labels.put(identifier.getId(), identifier.getName());
+        });
         if (!coordinates.isEmpty()) {
             List<List<GeoCoordinate>> paths = new ArrayList();            
             /**

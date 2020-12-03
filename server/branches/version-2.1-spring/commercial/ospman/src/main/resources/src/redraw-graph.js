@@ -61,6 +61,16 @@ try {
     });
     geo.points = points;
     this.graph.getModel().setGeometry(cell, geo);
+
+    if (mapZoom >= mapMinZoomForLabels) {
+      if (!this.graph.getModel().getValue(cell)) {
+        this.graph.getModel().setValue(cell, labels[cellId]);
+      }
+    } else {
+      if (this.graph.getModel().getValue(cell)) {
+        this.graph.getModel().setValue(cell, null);
+      }
+    }
   }
 } finally {
   this.graph.getModel().endUpdate();
