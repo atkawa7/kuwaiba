@@ -190,6 +190,10 @@ public class MxGraph extends Component implements HasComponents, HasStyle, HasSi
         return super.addListener(MxGraphCellSelectedEvent.class, eventListener);
     }
     
+    public Registration addCellMovedListener(ComponentEventListener<MxGraphCellMovedEvent> eventListener) {
+        return super.addListener(MxGraphCellMovedEvent.class, eventListener);
+    }
+    
     public Registration addGraphLoadedListener(ComponentEventListener<MxGraphGraphLoadedEvent> eventListener) {
         return super.addListener(MxGraphGraphLoadedEvent.class, eventListener);
     }

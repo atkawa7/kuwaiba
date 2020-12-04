@@ -334,6 +334,7 @@ class MxGraph extends PolymerElement {
                                 cellObject.x = cellMoved.geometry.x;
                                 cellObject.y = cellMoved.geometry.y;
                             }
+                            _this.fireCellMoved(cellObject.uuid, _this.graph.getModel().isVertex(cellMoved));
                             console.log("VERTEX WITH ID " + cellMoved.id + " MOVED")
 
                         } else if (_this.graph.getModel().isEdge(cellMoved)) {
@@ -378,7 +379,9 @@ class MxGraph extends PolymerElement {
                                 cellObject.height = cellResized.geometry.height;
                                 cellObject.x = cellResized.geometry.x;
                                 cellObject.y = cellResized.geometry.y;
+                                _this.fireCellMoved(cellObject.uuid, _this.graph.getModel().isVertex(cellResized));
                             }
+                           
                             console.log("VERTEX WITH ID " + cellResized.id + " Resized")
                         } 
                     });
@@ -909,10 +912,16 @@ class MxGraph extends PolymerElement {
         this.dispatchEvent(new CustomEvent('cell-selected',
                 {detail: {kicked: true, cellId: cellId, isVertex: isVertex}}));
     }
-
+    
     //This method dispatches a custom event when any edge is unselected
     fireCellUnselected(cellId, isVertex) {
         this.dispatchEvent(new CustomEvent('cell-unselected',
+                {detail: {kicked: true, cellId: cellId, isVertex: isVertex}}));
+    }
+    
+    //This method dispatches a custom event when any cell was moved
+    fireCellMoved(cellId, isVertex) {
+        this.dispatchEvent(new CustomEvent('cell-moved',
                 {detail: {kicked: true, cellId: cellId, isVertex: isVertex}}));
     }
 
