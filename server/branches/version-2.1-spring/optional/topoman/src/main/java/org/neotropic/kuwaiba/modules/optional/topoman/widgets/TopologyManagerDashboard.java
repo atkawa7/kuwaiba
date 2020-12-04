@@ -545,8 +545,7 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
         ListDataProvider<ViewObjectLight> dataProvider = new ListDataProvider<>(topologyViews);
         tblViews.setDataProvider(dataProvider);
         tblViews.addColumn(ViewObjectLight::getName).setFlexGrow(3).setKey(ts.getTranslatedString("module.general.labels.name"));
-        tblViews.addComponentColumn(item -> createActionsColumn(item)).setKey("component-column");
-        tblViews.addItemDoubleClickListener(listener -> {
+        tblViews.addItemClickListener(listener -> {
             openTopologyView(listener.getItem());
         });
         HeaderRow filterRow = tblViews.appendHeaderRow();
@@ -765,6 +764,8 @@ public class TopologyManagerDashboard extends VerticalLayout implements Property
         props.put("x", 50);
         props.put("y", 100);
         props.put("shape", shape);
+        if (shape.equals(MxConstants.SHAPE_LABEL))
+            props.put("label", "Sample Text");  
         addNode(props, obj);
     }
     
