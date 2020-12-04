@@ -78,9 +78,14 @@ public class PropertyValueConverter {
             case Constants.DATA_TYPE_STRING:
                 return (String) property.getValue();
             case Constants.DATA_TYPE_DOUBLE:
-                return (String) String.valueOf((Double) property.getValue());
+            case Constants.DATA_TYPE_FLOAT:
+                return  String.valueOf((Double) property.getValue());
             case Constants.DATA_TYPE_INTEGER:
-                return (String) String.valueOf((Integer) property.getValue());
+                return  String.valueOf((Integer) property.getValue());
+            case Constants.DATA_TYPE_BOOLEAN: 
+                 return String.valueOf((Boolean) property.getValue());
+            case Constants.DATA_TYPE_LONG: 
+                 return String.valueOf((Long) property.getValue());
             default:
                 if (property.getValue() != null) {
                     if (property.getValue() instanceof BusinessObjectLight)
