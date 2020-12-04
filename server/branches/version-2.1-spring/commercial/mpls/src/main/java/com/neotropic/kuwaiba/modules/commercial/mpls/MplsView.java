@@ -16,6 +16,7 @@
 
 package com.neotropic.kuwaiba.modules.commercial.mpls;
 
+import com.neotropic.flow.component.mxgraph.MxConstants;
 import com.neotropic.kuwaiba.modules.commercial.mpls.widgets.MplsDashboard;
 import com.neotropic.flow.component.mxgraph.MxGraphEdge;
 import com.neotropic.flow.component.mxgraph.MxGraphNode;
@@ -400,7 +401,20 @@ public class MplsView extends AbstractView<BusinessObjectLight, Component> {
                 int y = (int) properties.get("y");
                 String urlImage = (String) properties.get("imageUrl");
 
-                mxgraphCanvas.addNode(businessObject, businessObject.getId(), x, y, urlImage);                           
+                MxGraphNode newMxNode = new MxGraphNode();
+                if (urlImage != null && !urlImage.isEmpty()) 
+                    newMxNode.setImage(urlImage);
+
+                newMxNode.setUuid(businessObject.getId());
+                newMxNode.setLabel(businessObject.toString());
+                newMxNode.setWidth((int) Constants.DEFAULT_ICON_WIDTH);
+                newMxNode.setHeight((int) Constants.DEFAULT_ICON_HEIGHT);
+                newMxNode.setX((x)); //The position is scaled
+                newMxNode.setY((y));
+                newMxNode.setShape(MxConstants.SHAPE_IMAGE);
+                newMxNode.setUsePortToConnect(true);
+                
+                mxgraphCanvas.addNode(businessObject, newMxNode);                           
             }          
             return newNode;
         } else

@@ -39,11 +39,10 @@ import com.vaadin.flow.shared.Registration;
 import java.util.List;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InvalidArgumentException;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.util.visual.general.BoldLabel;
+import org.neotropic.util.visual.mxgraph.MxGraphCanvas;
 
 /**
  *
@@ -53,7 +52,7 @@ public class MplsSearch extends Div {
     
     TranslationService ts;
     
-    public MplsSearch(TranslationService ts, BusinessEntityManager bem, List<BusinessObjectLight> addedNodes, List<BusinessObjectLight> addedLinks) {
+    public MplsSearch(TranslationService ts, BusinessEntityManager bem, MxGraphCanvas mxGraphCanvas) {
         TextField txtSearch = new TextField();
         txtSearch.setWidth("300px");
         txtSearch.setValueChangeMode(ValueChangeMode.EAGER);
@@ -78,95 +77,89 @@ public class MplsSearch extends Div {
             public void valueChanged(AbstractField.ComponentValueChangeEvent<TextField, String> event) {
                 paperDialog.removeAll();
                 if (event.isFromClient()) {
-                    try {
-                        VerticalLayout lytContent = new VerticalLayout();
-                        lytContent.setPadding(false);
-                        lytContent.setMargin(false);
+                    VerticalLayout lytContent = new VerticalLayout();
+                    lytContent.setPadding(false);
+                    lytContent.setMargin(false);
+                    List<BusinessObjectLight> lstEquipmentsSearch = bem.getSuggestedObjectsWithFilter(event.getValue(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, 5);
+                    if (!lstEquipmentsSearch.isEmpty()) {
                         
-                        List<BusinessObjectLight> lstEquipmentsSearch = bem.getSuggestedObjectsWithFilter(event.getValue(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, 10);              
-                        if (!lstEquipmentsSearch.isEmpty()) {
+                        Grid<BusinessObjectLight> gridEquipments = new Grid();
+                        gridEquipments.addThemeVariants(GridVariant.LUMO_NO_ROW_BORDERS);
+                        gridEquipments.setItems(lstEquipmentsSearch);
+                        gridEquipments.setHeightByRows(true);
+                        gridEquipments.addColumn(new ComponentRenderer<>((obj) -> {
+                            HorizontalLayout hly = new HorizontalLayout();
+                            hly.setMargin(false);
+                            hly.setPadding(false);
+                            Icon icon = new Icon(VaadinIcon.COG);
+                            icon.setColor("#737373");
+                            FlexLayout lytObjectName = new FlexLayout();
+                            lytObjectName.setWidthFull();
+                            lytObjectName.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
+                            lytObjectName.setWrapMode(FlexLayout.WrapMode.WRAP);
                             
-                            Grid<BusinessObjectLight> gridEquipments = new Grid();
-                            gridEquipments.addThemeVariants(GridVariant.LUMO_NO_ROW_BORDERS);
-                            gridEquipments.setItems(lstEquipmentsSearch);
-                            gridEquipments.setHeightByRows(true);
-                            gridEquipments.addColumn(new ComponentRenderer<>((obj) -> {
-                                HorizontalLayout hly = new HorizontalLayout();
-                                hly.setMargin(false);
-                                hly.setPadding(false);
-                                Icon icon = new Icon(VaadinIcon.COG);
-                                icon.setColor("#737373");
-                                FlexLayout lytObjectName = new FlexLayout();
-                                lytObjectName.setWidthFull();
-                                lytObjectName.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
-                                lytObjectName.setWrapMode(FlexLayout.WrapMode.WRAP);
-
-                                Label lblObjName = new Label(obj.getName());
-                                Emphasis emObjClass = new Emphasis(obj.getClassName());
-                                lytObjectName.add(lblObjName, emObjClass);
-                                Button btnAdd = new Button(new Icon(VaadinIcon.PLUS));
-                                paperDialog.dialogConfirm(btnAdd);
-                                btnAdd.addClickListener((clickEvent) -> {
-                                    txtSearch.setValue(obj.getName());
-                                    fireEvent(new NewObjectEvent(MplsSearch.this, false, obj));
-                                });
-                                hly.add(icon, lytObjectName, btnAdd);
-                                hly.setJustifyContentMode(FlexComponent.JustifyContentMode.START);
-                                hly.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
-                                if (addedNodes.contains(obj)) {
-                                    icon.setColor("#E74C3C");
-                                    btnAdd.setVisible(false);
-                                }   
-                                return hly;
-                            }));
-                         
-                            lytContent.add(new BoldLabel(ts.getTranslatedString("module.mpls.equipment")), gridEquipments);                          
-                        }
-
-                        List<BusinessObjectLight> lstMPLSLinksSearch = bem.getObjectsWithFilterLight(Constants.CLASS_MPLSLINK, Constants.PROPERTY_NAME, event.getValue());
-                        if (!lstMPLSLinksSearch.isEmpty()) {   
-                            
-                            Grid<BusinessObjectLight> gridMPLSLinks = new Grid();
-                            gridMPLSLinks.setHeightByRows(true);
-                            gridMPLSLinks.addThemeVariants(GridVariant.LUMO_NO_ROW_BORDERS);
-                            gridMPLSLinks.setItems(lstMPLSLinksSearch);
-                            gridMPLSLinks.addColumn(new ComponentRenderer<>((obj) -> {
-                                HorizontalLayout hly = new HorizontalLayout();
-                                hly.setMargin(false);
-                                hly.setPadding(false);
-                                Icon icon = new Icon(VaadinIcon.CONNECT_O);
-                                icon.setColor("#737373");
-                                FlexLayout lytObjectName = new FlexLayout();
-                                lytObjectName.setWidthFull();
-                                lytObjectName.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
-                                lytObjectName.setWrapMode(FlexLayout.WrapMode.WRAP);
-                                Label lblObjName = new Label(obj.getName());
-                                Emphasis emObjClass = new Emphasis(obj.getClassName());
-                                lytObjectName.add(lblObjName, emObjClass);
-                                Button btnAdd = new Button(new Icon(VaadinIcon.PLUS));
-                                paperDialog.dialogConfirm(btnAdd);
-                                btnAdd.addClickListener((clickEvent) -> {
-                                    txtSearch.setValue(obj.getName());
-                                    fireEvent(new NewObjectEvent(MplsSearch.this, false, obj));
-                                });
-                                hly.add(icon, lytObjectName, btnAdd);
-                                hly.setJustifyContentMode(FlexComponent.JustifyContentMode.START);
-                                hly.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
-                                if (addedLinks.contains(obj)) {
-                                    icon.setColor("#E74C3C");
-                                    btnAdd.setVisible(false);
-                                }  
-                                return hly;
-                            }));
-                            lytContent.add(new BoldLabel(ts.getTranslatedString("module.mpls.mpls-links")), gridMPLSLinks);
-                        }
-                        if (!lstEquipmentsSearch.isEmpty() || !lstMPLSLinksSearch.isEmpty()) {
-                            paperDialog.add(lytContent);
-                            paperDialog.open();
-                            txtSearch.focus();
-                        }
-                    }catch (InvalidArgumentException | MetadataObjectNotFoundException ex) {
-                        ex.printStackTrace();
+                            Label lblObjName = new Label(obj.getName());
+                            Emphasis emObjClass = new Emphasis(obj.getClassName());
+                            lytObjectName.add(lblObjName, emObjClass);
+                            Button btnAdd = new Button(new Icon(VaadinIcon.PLUS));
+                            paperDialog.dialogConfirm(btnAdd);
+                            btnAdd.addClickListener((clickEvent) -> {
+                                txtSearch.setValue(obj.getName());
+                                fireEvent(new NewObjectEvent(MplsSearch.this, false, obj));
+                            });
+                            hly.add(icon, lytObjectName, btnAdd);
+                            hly.setJustifyContentMode(FlexComponent.JustifyContentMode.START);
+                            hly.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
+                            if (mxGraphCanvas.getNodes().containsKey(obj)) {
+                                icon.setColor("#E74C3C");
+                                btnAdd.setVisible(false);
+                            }
+                            return hly;
+                        }));
+                        
+                        lytContent.add(new BoldLabel(ts.getTranslatedString("module.mpls.equipment")), gridEquipments);
+                    }
+                    List<BusinessObjectLight> lstMPLSLinksSearch = bem.getSuggestedObjectsWithFilter(event.getValue(), Constants.CLASS_MPLSLINK, 5);
+                    if (!lstMPLSLinksSearch.isEmpty()) {
+                        
+                        Grid<BusinessObjectLight> gridMPLSLinks = new Grid();
+                        gridMPLSLinks.setHeightByRows(true);
+                        gridMPLSLinks.addThemeVariants(GridVariant.LUMO_NO_ROW_BORDERS);
+                        gridMPLSLinks.setItems(lstMPLSLinksSearch);
+                        gridMPLSLinks.addColumn(new ComponentRenderer<>((obj) -> {
+                            HorizontalLayout hly = new HorizontalLayout();
+                            hly.setMargin(false);
+                            hly.setPadding(false);
+                            Icon icon = new Icon(VaadinIcon.CONNECT_O);
+                            icon.setColor("#737373");
+                            FlexLayout lytObjectName = new FlexLayout();
+                            lytObjectName.setWidthFull();
+                            lytObjectName.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
+                            lytObjectName.setWrapMode(FlexLayout.WrapMode.WRAP);
+                            Label lblObjName = new Label(obj.getName());
+                            Emphasis emObjClass = new Emphasis(obj.getClassName());
+                            lytObjectName.add(lblObjName, emObjClass);
+                            Button btnAdd = new Button(new Icon(VaadinIcon.PLUS));
+                            paperDialog.dialogConfirm(btnAdd);
+                            btnAdd.addClickListener((clickEvent) -> {
+                                txtSearch.setValue(obj.getName());
+                                fireEvent(new NewObjectEvent(MplsSearch.this, false, obj));
+                            });
+                            hly.add(icon, lytObjectName, btnAdd);
+                            hly.setJustifyContentMode(FlexComponent.JustifyContentMode.START);
+                            hly.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
+                            if (mxGraphCanvas.getEdges().containsKey(obj)) {
+                                icon.setColor("#E74C3C");
+                                btnAdd.setVisible(false);
+                            }
+                            return hly;
+                        }));
+                        lytContent.add(new BoldLabel(ts.getTranslatedString("module.mpls.mpls-links")), gridMPLSLinks);
+                    }
+                    if (!lstEquipmentsSearch.isEmpty() || !lstMPLSLinksSearch.isEmpty()) {
+                        paperDialog.add(lytContent);
+                        paperDialog.open();
+                        txtSearch.focus();
                     }
                 }
             }

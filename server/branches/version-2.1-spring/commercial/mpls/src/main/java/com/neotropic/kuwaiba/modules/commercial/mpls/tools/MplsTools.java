@@ -15,6 +15,7 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.mpls.tools;
 
+import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
@@ -22,10 +23,12 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.shared.Registration;
+import java.util.ArrayList;
 import java.util.List;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.util.visual.mxgraph.MxGraphCanvas;
 
 /**
  * Component with a set of tools available to work in an Mpls view
@@ -40,10 +43,13 @@ public class MplsTools extends HorizontalLayout {
     private Button btnSaveView;  
     private Button btnRemoveFromDatabase;  
     private Button btnRemoveFromView;  
-     
-    public MplsTools(BusinessEntityManager bem, TranslationService ts, List<BusinessObjectLight> addedNodes, List<BusinessObjectLight> addedLinks) {
+    private MxGraphCanvas mxGraphCanvas;
+    
+    
+    public MplsTools(MxGraphCanvas mxGraphCanvas, BusinessEntityManager bem, TranslationService ts) {
         
         this.ts = ts;
+        this.mxGraphCanvas = mxGraphCanvas;
       
         btnNewConnection = new Button(new Icon(VaadinIcon.CONNECT),
                 e -> {
@@ -57,7 +63,7 @@ public class MplsTools extends HorizontalLayout {
         }); 
         setButtonTitle(btnDetectConnections, ts.getTranslatedString("module.mpls.detect-connections"));
         
-        mplsSearch = new MplsSearch(ts, bem, addedNodes, addedLinks);
+        mplsSearch = new MplsSearch(ts, bem, mxGraphCanvas);
         mplsSearch.addNewObjectListener(evt -> {
             fireEvent(new NewObjectEvent(this, false, (BusinessObjectLight) evt.getObject()));
         });
@@ -83,7 +89,7 @@ public class MplsTools extends HorizontalLayout {
         setButtonTitle(btnRemoveFromView, ts.getTranslatedString("module.mpls.delete-from-view"));        
          
         this.setAlignItems(Alignment.BASELINE);
-        add(btnSaveView, mplsSearch, btnNewConnection, btnDetectConnections, btnRemoveFromDatabase, btnRemoveFromView);
+        add(mplsSearch, btnNewConnection, btnDetectConnections, btnRemoveFromDatabase, btnRemoveFromView);
         
     }
     

@@ -251,7 +251,7 @@ public class MplsDashboard extends VerticalLayout {
     public void showActionCompledMessages(ActionCompletedListener.ActionCompletedEvent ev) {
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) 
             new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
-                            AbstractNotification.NotificationType.ERROR, ts).open();
+                            AbstractNotification.NotificationType.INFO, ts).open();
         else
             new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ev.getMessage(), 
                             AbstractNotification.NotificationType.ERROR, ts).open();
@@ -297,10 +297,12 @@ public class MplsDashboard extends VerticalLayout {
         });
         mplsView.getMxgraphCanvas().setComObjectDeleted(() -> {
             openConfirmDialogDeleteObject();   // delete from database by default
+        }); 
+        mplsView.getMxgraphCanvas().getMxGraph().addCellMovedListener(eventListener -> {
+            saveCurrentView();
         });
         
-        mplsTools = new MplsTools(bem, ts, new ArrayList(mplsView.getMxgraphCanvas().getNodes().keySet()),
-                                     new ArrayList(mplsView.getMxgraphCanvas().getEdges().keySet()));
+        mplsTools = new MplsTools(mplsView.getMxgraphCanvas(), bem, ts);
         mplsTools.addNewObjectListener(event -> {   
              BusinessObjectLight tmpObject = event.getObject();
              if (tmpObject == null)
@@ -313,11 +315,13 @@ public class MplsDashboard extends VerticalLayout {
                        addNodeToView(connectionDetails.getDeviceA(), 100, 50);
                        addNodeToView(connectionDetails.getDeviceB(), 400, 50);
                        addEdgeToView(connectionDetails);
-                   }                   
+                   } else 
+                        new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ts.getTranslatedString("module.mpls.null-endpoint"), 
+                            AbstractNotification.NotificationType.INFO, ts).open();
                 }  else 
                         addNodeToView(tmpObject, 100, 50);               
                 
-                mplsView.syncViewMap();
+                saveCurrentView();
              } catch (InvalidArgumentException ex) {
                  Notification.show(ex.getMessage());
              }
@@ -330,12 +334,14 @@ public class MplsDashboard extends VerticalLayout {
         });
         mplsTools.addDeleteObjectListener(event -> {
            deleteSelectedObject(false); 
+           saveCurrentView();
         });
         mplsTools.addDeleteObjectPermanentlyObjectListener(event -> {
             openConfirmDialogDeleteObject();
         });
         mplsTools.AddDetectConnectionsListener(event -> {
             detectRelationships();
+            saveCurrentView();
         });
         mplsTools.setGeneralToolsEnabled(false);
         
@@ -452,11 +458,20 @@ public class MplsDashboard extends VerticalLayout {
                      
         addAndExpand(lytMain);
         setSizeFull();
+        configureEdgeCreation();
     }
 
     private void setMarginPaddingLayout(ThemableLayout lytViewInfo, boolean enable) {
         lytViewInfo.setMargin(enable);
         lytViewInfo.setPadding(enable);
+    }
+    
+    private void configureEdgeCreation() {
+        mplsView.getMxgraphCanvas().getMxGraph().addEdgeCompleteListener(evt -> {
+            selectedSourceEquipment = ((BusinessObjectViewNode) mplsView.getAsViewMap().findNode(evt.getSourceId())).getIdentifier();
+            selectedTargetEquipment = ((BusinessObjectViewNode) mplsView.getAsViewMap().findNode(evt.getTargetId())).getIdentifier();          
+            openNewConnectionDialog();
+        });
     }
     
     /**
@@ -472,8 +487,7 @@ public class MplsDashboard extends VerticalLayout {
      * Create and open the dialog form to create a new Connection
      */
     private void openNewConnectionDialog() {
-        selectedSourceEquipment = null;
-        selectedTargetEquipment = null;
+
         selectedEndPointA = null;
         selectedEndPointB = null;
         Dialog dlgConnection = new Dialog();
@@ -486,10 +500,12 @@ public class MplsDashboard extends VerticalLayout {
         cbxSourceObject.setAllowCustomValue(false);
         cbxSourceObject.setClearButtonVisible(true);
         cbxSourceObject.setItems(mplsView.getMxgraphCanvas().getNodes().keySet());
+        cbxSourceObject.setValue(selectedSourceEquipment);
         
         cbxTargetObject.setAllowCustomValue(false);
         cbxTargetObject.setClearButtonVisible(true);
         cbxTargetObject.setItems(mplsView.getMxgraphCanvas().getNodes().keySet());
+        cbxTargetObject.setValue(selectedTargetEquipment);
         
         HierarchicalDataProvider dataProviderSourceTree = buildHierarchicalDataProvider(new BusinessObjectLight("", "", ""));
         HierarchicalDataProvider dataProviderTargetTree = buildHierarchicalDataProvider(new BusinessObjectLight("", "", ""));
@@ -681,7 +697,8 @@ public class MplsDashboard extends VerticalLayout {
         dlgConfirmDelete.open();
         dlgConfirmDelete.getBtnConfirm().addClickListener(evt -> {
             deleteSelectedObject(true);
-            dlgConfirmDelete.close();
+            saveCurrentView();
+            dlgConfirmDelete.close();           
         });
     }
 
@@ -785,8 +802,7 @@ public class MplsDashboard extends VerticalLayout {
         ListDataProvider<ViewObjectLight> dataProvider = new ListDataProvider<>(mplsViews);
         tblViews.setDataProvider(dataProvider);
         tblViews.addColumn(ViewObjectLight::getName).setFlexGrow(3).setKey(ts.getTranslatedString("module.general.labels.name"));
-        tblViews.addComponentColumn(item -> createActionsColumn(item)).setKey("component-column");
-        tblViews.addItemDoubleClickListener(listener -> {
+        tblViews.addItemClickListener(listener -> {
             openMplsView(listener.getItem());
         });
         HeaderRow filterRow = tblViews.appendHeaderRow();
@@ -802,17 +818,6 @@ public class MplsDashboard extends VerticalLayout {
         
     }
 
-    private HorizontalLayout createActionsColumn(ViewObjectLight item) {
-        HorizontalLayout lytActions = new HorizontalLayout();
-              
-        Button btnEdit = new Button(new Icon(VaadinIcon.EDIT), evt -> {
-            openMplsView(item);
-        });
-        btnEdit.setClassName("icon-button");
-        
-        lytActions.add(btnEdit);      
-        return lytActions;      
-    }
     /**
      * loads the given mpls view into the view
      * @param item the mpls view to be loaded
