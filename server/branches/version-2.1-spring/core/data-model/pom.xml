@@ -53,7 +53,8 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>navigation</artifactId>
-            <version>${project.version}</version>
+            <version>2.1</version>
+            <type>jar</type>
         </dependency>
     </dependencies>
     

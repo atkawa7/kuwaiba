@@ -250,7 +250,7 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
             try {
                 new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
-                            AbstractNotification.NotificationType.ERROR, ts).open();                                          
+                            AbstractNotification.NotificationType.INFO, ts).open();                                          
             } catch (Exception ex) {
                 Logger.getLogger(DataModelManagerUI.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -558,7 +558,7 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
     }
 
     private void initializePropSheetGenericAttributes() {
-        propsheetGeneralAttributes = new PropertySheet(ts, new ArrayList<>(), "");
+        propsheetGeneralAttributes = new PropertySheet(ts, new ArrayList<>());
         propsheetGeneralAttributes.addPropertyValueChangedListener((AbstractProperty<? extends Object> property) -> {
             try {
                 if (selectedClass != null) { 
@@ -649,7 +649,7 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
     }
 
     private void initializePropSheetClassAttributes() {
-        propsheetClassAttributes = new PropertySheet(ts, new ArrayList<>(), "");
+        propsheetClassAttributes = new PropertySheet(ts, new ArrayList<>());
         propsheetClassAttributes.addPropertyValueChangedListener((AbstractProperty<? extends Object> property) -> {
              try {
                 if (selectedAttribute != null && selectedClass != null) {
