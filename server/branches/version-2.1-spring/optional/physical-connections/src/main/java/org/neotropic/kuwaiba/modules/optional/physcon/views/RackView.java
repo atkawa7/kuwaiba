@@ -248,7 +248,7 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                 });                       
                 
                 rackUnits = (Integer) rack.getAttributes().get(Constants.PROPERTY_RACK_UNITS);
-                orderDescending = (boolean) rack.getAttributes().get(Constants.PROPERTY_RACK_UNITS_NUMBERING);
+                orderDescending = rack.getAttributes().containsKey(Constants.PROPERTY_RACK_UNITS_NUMBERING)  ? (boolean) rack.getAttributes().get(Constants.PROPERTY_RACK_UNITS_NUMBERING) : false;
                 int[] rackNumbers = new int[rackUnits];
                 for (int i = 0; i < rackUnits; i++) {
                     rackNumbers[i] = orderDescending ? rackUnits - i : i + 1;
@@ -276,6 +276,7 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                 nodeUnitNumbers.setUuid("nodeNumbers");
                 nodeUnitNumbers.setGeometry(50, 50, 50, unitHeight * rackUnits);
                 nodeUnitNumbers.setCellParent(mainBox.getUuid());
+                nodeUnitNumbers.setIsResizable(false);
                 mxGraph.addNode(nodeUnitNumbers);
                 mxGraph.addNode(rackNode);
                 for (int i = 0; i < rackUnits; i++) {                    
@@ -590,7 +591,10 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                     }
                     mxGraph.executeStackLayout(rackNode.getUuid(), false, heightSeparator);
                     mxGraph.executeStackLayout(mainBox.getUuid(), true, 5);
+                    mxGraph.setCellsResizable(false);
                     mxGraph.setCellsMovable(false);
+                    mxGraph.setCellsSelectable(false);
+                    mxGraph.setCellsEditable(false);
                     mxGraph.endUpdate();
                     
                 });
@@ -639,7 +643,7 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
         for (int j = desiredPosition; j <= newFinalPosition; j++) {
             int pos = j;
             RackSegment rs = rackContent.stream()
-                    .filter(item -> item.getInitialPosition() == pos || item.getFinalPosition() == pos)
+                    .filter(item -> item.getInitialPosition() <= pos && item.getFinalPosition() >= pos)
                     .findFirst().get();
             
             if (rs == null) // empty rack unit            
@@ -657,7 +661,7 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
             emptySegmentsToMove.add(rs);
         }
         if (!unitAvailable) {
-            new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.rack-view-rack-unit-occupied"), 
+            new SimpleNotification(ts.getTranslatedString("module.general.messages.warning"), ts.getTranslatedString("module.visualization.rack-view-rack-unit-occupied"), 
                             AbstractNotification.NotificationType.ERROR, ts).open();
             return;
         }
@@ -1036,7 +1040,7 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
             
             if (rack == null) {
                 new SimpleNotification(ts.getTranslatedString("module.general.messages.error"), ts.getTranslatedString("module.visualization.rack-view-cant-find-object"), 
-                            AbstractNotification.NotificationType.INFO, ts).open();
+                            AbstractNotification.NotificationType.ERROR, ts).open();
             } else {
                 Integer objectRackUnits = (Integer) rack.getAttributes().get(Constants.PROPERTY_RACK_UNITS);
                 if (objectRackUnits == null || objectRackUnits <= 0) {
