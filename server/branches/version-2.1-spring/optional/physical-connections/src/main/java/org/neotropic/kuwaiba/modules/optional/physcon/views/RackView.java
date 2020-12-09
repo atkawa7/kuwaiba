@@ -156,6 +156,8 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
     public static String PROPERTY_NUM_OF_SIDES = "numberOfSides"; //NOI18N
     public static String PROPERTY_OUTLINE_COLOR = "outlineColor"; //NOI18N
     public static String PROPERTY_INTERIOR_COLOR = "interiorColor"; //NOI18N
+    public static int UNIT_WIDTH = 1086 * 3; //NOI18N
+    public static int UNIT_HEIGHT = 100 * 3;//NOI18N
 
     public MxGraph getMxGraph() {
         return mxGraph;
@@ -243,6 +245,7 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                 mxGraph.setHasOutline(true);
                 mxGraph.setOutlineWidth("100px");
                 mxGraph.setBeginUpdateOnInit(true);
+                mxGraph.setIsCellEditable(false);
                 mxGraph.addGraphLoadedListener(eventListener -> {
                     mxGraph.enablePanning(true);
                 });                       
@@ -254,8 +257,9 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                     rackNumbers[i] = orderDescending ? rackUnits - i : i + 1;
                 }
                 
-                int unitHeight = 58, unitWidth = 640, deviceRackUnits, deviceRackPosition, currentRackUnitPosition = 0, currentRackUnitSize = 0;
-                heightSeparator = 0;
+//                int unitHeight = 58, unitWidth = 640, deviceRackUnits, deviceRackPosition, currentRackUnitPosition = 0, currentRackUnitSize = 0;
+                int unitHeight = 100, unitWidth = 1086, deviceRackUnits, deviceRackPosition, currentRackUnitPosition = 0, currentRackUnitSize = 0;
+                heightSeparator = 5;
                 MxGraphNode rackUnit = new MxGraphNode();
                 MxGraphNode deviceNode = null;
                 rackNode = new MxGraphNode();
@@ -547,7 +551,7 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                         if (layoutDevices.containsKey(theObject) && showLayouts) {
                             byte[] structure = layoutDevices.get(theObject);
                             if (structure.length > 0) {
-                                renderShape(theObject, structure, unitWidth / unitNodes.size(), unitHeight * deviceRackUnits, mxGraph, deviceNode, false, false);
+                                renderShape(theObject, structure, unitWidth / unitNodes.size(), unitHeight * deviceRackUnits, deviceRackUnits, mxGraph, deviceNode, false, false);
                             }                            
                         }                        
                     }
@@ -715,7 +719,7 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
         });
     }
     
-    private void renderShape(BusinessObject theObject, byte[] structure, int unitWidth, int unitHeight, MxGraph mxGraph, MxGraphNode deviceNode, boolean renderCustomShape, boolean renderSlot) throws FactoryConfigurationError, NumberFormatException {
+    private void renderShape(BusinessObject theObject, byte[] structure, int unitWidth, int unitHeight, int deviceunits, MxGraph mxGraph, MxGraphNode deviceNode, boolean renderCustomShape, boolean renderSlot) throws FactoryConfigurationError, NumberFormatException {
         try {
 
             //          <editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
@@ -734,9 +738,12 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
             QName tagLayout = new QName("layout"); //NOI18N
             QName tagShape = new QName("shape"); //NOI18N
             String attrValue;
-            double percentWidth = 1, percentHeight = 1, percentX = 1, percentY = 1;
-            double propY = renderSlot ? .45 : .2, propX = renderSlot ? 0.44 : renderCustomShape ? 0.22 : 0.195,
-                    propSize = renderSlot ? 0.45 : 0.20; // Fix coordinates
+            double percentWidth = 1, percentHeight = 1;
+            double propSize = 1.0/3; // Fix coordinates
+                    
+//            double percentWidth = 1, percentHeight = 1, percentX = 1, percentY = 1;
+//            double propY = renderSlot ? .45 : .2, propX = renderSlot ? 0.44 : renderCustomShape ? 0.22 : 0.195,
+//                    propSize = renderSlot ? 0.45 : 0.20; // Fix coordinates
 
             while (reader.hasNext()) {
                 int event = reader.next();
@@ -794,20 +801,23 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                             double widthAdjust;
                             width = (width * propSize);
                             height = height * propSize;
-                            if (width > unitWidth) 
-                                width = unitWidth;
-                            
-                            if (height > unitHeight) 
-                                height = unitHeight;
-                            
-                            x = x * propX;
-                            y = y * propY;
-                            if (x > unitWidth) 
-                                x = unitWidth - width;
-                            
-                            if (y > unitHeight) 
-                                y = unitHeight - height;
-                            
+                         
+                            x = x * propSize;
+                            y = y * propSize;
+
+                            if (!renderCustomShape && !renderSlot) {
+                                int initSeparatorsSize = (deviceunits -1) * heightSeparator;
+                                if (width > unitWidth)  
+                                    width = unitWidth;
+
+                                if (height > unitHeight + initSeparatorsSize) 
+                                    height = unitHeight;
+                                if (x > unitWidth) 
+                                    x = unitWidth - width;
+
+                                if (y > unitHeight + initSeparatorsSize) 
+                                    y = unitHeight - height;
+                            }
                             
                             nodeShape.setGeometry((int) x, (int) y, (int) width, (int) height);
                             nodeShape.setStrokeColor(MxConstants.NONE);
@@ -831,7 +841,7 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                                 }
                                 if (customShapeStructure != null) {
                                     mxGraph.addNode(nodeShape);                                    
-                                    renderShape(theObject, customShapeStructure, unitWidth, unitHeight, mxGraph, nodeShape, true, false);                                    
+                                    renderShape(theObject, customShapeStructure, unitWidth, unitHeight, deviceunits, mxGraph, nodeShape, true, false);                                    
                                 }
                             } else {
                                 attrValue = reader.getAttributeValue(null, PROPERTY_COLOR);
@@ -931,7 +941,7 @@ public class RackView extends AbstractDetailedView<BusinessObjectLight, Vertical
                                                             lytContent.setPadding(true);
                                                             dlgSlotContent.add(lytContent);
                                                             
-                                                            renderShape(slotDevice, slotDeviceStructure, 900, 400, mxGraphSlot, slotNode, false, true);
+                                                            renderShape(slotDevice, slotDeviceStructure, 1500, 400, 1, mxGraphSlot, slotNode, false, true);
                                                             
                                                             MxGraphNode dummyNode = new MxGraphNode();
                                                             dummyNode.setGeometry(0, 0, 0, 0);
