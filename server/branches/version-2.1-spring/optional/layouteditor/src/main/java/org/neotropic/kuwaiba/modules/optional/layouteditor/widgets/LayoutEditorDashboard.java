@@ -598,7 +598,7 @@ public class LayoutEditorDashboard extends VerticalLayout implements PropertyShe
             resetDashboard();
             byte[] deviceStructure = currentView.getStructure();
             try {
-                FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/LAYOUT_OPEN" + currentView.getId() + ".xml");
+                FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/LAYOUT_OPEN" + ".xml");
                 fos.write(deviceStructure);
                 fos.close();
             } catch (IOException e) {
@@ -916,7 +916,7 @@ public class LayoutEditorDashboard extends VerticalLayout implements PropertyShe
 //        int rackUnitHeight = 100 * 3;
 //        int spanHeight = 15;
         int unitHeight = UNIT_HEIGHT, unitWidth = UNIT_WIDTH, deviceRackUnits, deviceRackPosition, currentRackUnitPosition = 0, currentRackUnitSize = 0;
-        int rackUnits = 5;
+        int rackUnits = 8;
         MxGraphNode rackUnit = new MxGraphNode();
         MxGraphNode deviceNode = null;
         MxGraphNode rackNode = new MxGraphNode();
@@ -969,7 +969,7 @@ public class LayoutEditorDashboard extends VerticalLayout implements PropertyShe
             mxGraphCanvas.addNode(new BusinessObjectLight(NODE_GUIDE, "*rackUnit" + i, ""), rackUnit);
 
             if (i == (rackUnits - 1)) {
-                nodeNumber.addCellAddedListener(eventListener -> {
+                rackUnit.addCellAddedListener(eventListener -> {
 //                    mxGraphCanvas.getMxGraph().executeStackLayout(nodeUnitNumbers.getUuid(), false, 0);
                     mxGraphCanvas.getMxGraph().executeStackLayout(rackNode.getUuid(), false, 15);
                 });
@@ -995,7 +995,10 @@ public class LayoutEditorDashboard extends VerticalLayout implements PropertyShe
             QName tagLayout = new QName("layout"); //NOI18N
             xmlew.add(xmlef.createStartElement(tagLayout, null, null));
             
-            List<MxGraphNode> deviceLayoutNodes = mxGraphCanvas.getNodes().values().stream().filter(node -> !node.getUuid().startsWith("*")).collect(Collectors.toList());
+            List<MxGraphNode> deviceLayoutNodes = mxGraphCanvas.getNodes().entrySet().stream()
+                                           .filter(node -> !node.getKey().getClassName().equals(INNER_SHAPE) &&
+                                                   !node.getKey().getClassName().equals(NODE_GUIDE)).map(item -> item.getValue())
+                                               .collect(Collectors.toList());
             Rectangle layoutBounds = getLayoutBounds(deviceLayoutNodes);
             
             xmlew.add(xmlef.createAttribute(new QName("x"), Integer.toString((int) (layoutBounds.getX() / propX)))); //NOI18N
@@ -1025,21 +1028,7 @@ public class LayoutEditorDashboard extends VerticalLayout implements PropertyShe
                     HashMap mapStyle = MxNode.getRawStyleAsMap();
                     StyleSheet s = new StyleSheet();
                     if ("container".equals(shapeType)) {
-//
-//                    List<Shape> shapesSet = ((ContainerShapeWidget) child).getShapesSet();
-//                    for (Shape innerShape : shapesSet) {
-//                        Widget innerShapeWidget = findWidget(innerShape);
-//                        
-//                        if (innerShapeWidget == null)
-//                            continue;
-//                        
-//                        int index = nodeLayer.getChildren().indexOf(innerShapeWidget);
-//                        
-//                        QName qnameChild = new QName("child"); //NOI18N
-//                        xmlew.add(xmlef.createStartElement(qnameChild, null, null));
-//                        xmlew.add(xmlef.createAttribute(new QName("index"), Integer.toString(index))); //NOI18N                        
-//                        xmlew.add(xmlef.createEndElement(qnameChild, null));
-//                    }
+
                     } else if (SHAPE_CUSTOM.equals(shapeType)) {
                         xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), objectNode.getName()));
                         xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASSNAME), CLASS_CUSTOM));
@@ -1048,7 +1037,6 @@ public class LayoutEditorDashboard extends VerticalLayout implements PropertyShe
                         s = new StyleSheet();
                         String fillColor = (String) mapStyle.get(MxConstants.STYLE_FILLCOLOR);
                         Color clrFillColor = s.stringToColor(fillColor.equals(MxConstants.NONE) ? "#ffffff00" : fillColor);
-//                    clrFillColor = Color.decode(fillColor.equals(MxConstants.NONE) ? "#ffffff00" : fillColor) ;
                         xmlew.add(xmlef.createAttribute(new QName(PROPERTY_COLOR), clrFillColor.getRGB() + ""));
                         String strokeColor = (String) mapStyle.get(MxConstants.STYLE_STROKECOLOR);
                         Color clrStrokeColor;// = Color.decode(strokeColor.equals(MxConstants.NONE) ? "#000000" : fillColor) ;
@@ -1102,6 +1090,7 @@ public class LayoutEditorDashboard extends VerticalLayout implements PropertyShe
                 
         for (MxGraphNode child : children) {
             Point childPoint = new Point(child.getX(), child.getY());
+           
             double childW = child.getWidth();
             double childH = child.getHeight();
             /*
