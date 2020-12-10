@@ -53,8 +53,7 @@ class OverlayView extends PolymerElement {
        */
       mapBounds: {
         type: Boolean,
-        value: false,
-        observer: '_mapBoundsChanged'
+        value: false
       }
     };
   }

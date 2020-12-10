@@ -102,15 +102,6 @@ class MxGraph extends PolymerElement {
                 value: false,
                 observer: '_connectableChanged'
             },
-            /**
-             * Sets if any cell may be moved, sized, bended, disconnected, 
-             * edited or selected
-             */
-            cellsLocked: {
-                type: Boolean,
-                value: false,
-                observer: '_cellsLockedChanged'
-            },
             partitionLayout: {
                 type: Object,
                 value: null
@@ -246,8 +237,8 @@ class MxGraph extends PolymerElement {
             //enable panning
 //            this.graph.panningHandler.ignoreCell = true;
             this.graph.setPanning(true);
-            this.graph.panningHandler.useLeftButtonForPanning = true;				  
-
+            this.graph.panningHandler.useLeftButtonForPanning = true;	
+            
             //enable adding and removing control points. 
             mxEdgeHandler.prototype.addEnabled = true;
             mxEdgeHandler.prototype.removeEnabled = true;
