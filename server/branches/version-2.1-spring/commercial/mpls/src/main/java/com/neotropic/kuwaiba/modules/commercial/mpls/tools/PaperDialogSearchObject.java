@@ -37,6 +37,7 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.shared.Registration;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.apis.persistence.util.Constants;
@@ -48,11 +49,11 @@ import org.neotropic.util.visual.mxgraph.MxGraphCanvas;
  *
  * @author Orlando Paz {@literal <orlando.paz@kuwaiba.org>}
  */
-public class MplsSearch extends Div {
+public class PaperDialogSearchObject extends Div {
     
     TranslationService ts;
     
-    public MplsSearch(TranslationService ts, BusinessEntityManager bem, MxGraphCanvas mxGraphCanvas) {
+    public PaperDialogSearchObject(TranslationService ts, BusinessEntityManager bem, MxGraphCanvas<BusinessObjectLight, BusinessObjectLight> mxGraphCanvas) {
         TextField txtSearch = new TextField();
         txtSearch.setWidth("300px");
         txtSearch.setValueChangeMode(ValueChangeMode.EAGER);
@@ -80,7 +81,9 @@ public class MplsSearch extends Div {
                     VerticalLayout lytContent = new VerticalLayout();
                     lytContent.setPadding(false);
                     lytContent.setMargin(false);
-                    List<BusinessObjectLight> lstEquipmentsSearch = bem.getSuggestedObjectsWithFilter(event.getValue(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, 5);
+                    List<BusinessObjectLight> lstEquipmentsSearch = mxGraphCanvas.getNodes().keySet().stream()
+                                        .filter(item -> item.getName().toLowerCase().contains(event.getValue().toLowerCase()) ||
+                                                item.getClassName().toLowerCase().contains(event.getValue().toLowerCase()) ).collect(Collectors.toList());
                     if (!lstEquipmentsSearch.isEmpty()) {
                         
                         Grid<BusinessObjectLight> gridEquipments = new Grid();
@@ -100,26 +103,24 @@ public class MplsSearch extends Div {
                             
                             Label lblObjName = new Label(obj.getName());
                             Emphasis emObjClass = new Emphasis(obj.getClassName());
-                            lytObjectName.add(lblObjName, emObjClass);
-                            Button btnAdd = new Button(new Icon(VaadinIcon.PLUS));
-                            paperDialog.dialogConfirm(btnAdd);
-                            btnAdd.addClickListener((clickEvent) -> {
-                                txtSearch.setValue(obj.getName());
-                                fireEvent(new NewObjectEvent(MplsSearch.this, false, obj));
-                            });
-                            hly.add(icon, lytObjectName, btnAdd);
+                            lytObjectName.add(lblObjName, emObjClass);                          
+                            
+                            hly.add(icon, lytObjectName);
                             hly.setJustifyContentMode(FlexComponent.JustifyContentMode.START);
                             hly.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
-                            if (mxGraphCanvas.getNodes().containsKey(obj)) {
-                                icon.setColor("#E74C3C");
-                                btnAdd.setVisible(false);
-                            }
+
                             return hly;
                         }));
+                        gridEquipments.addItemClickListener(listener -> {
+                             txtSearch.setValue(listener.getItem().getName());
+                             fireEvent(new SelectObjectEvent(PaperDialogSearchObject.this, false, listener.getItem()));
+                        });
                         
                         lytContent.add(new BoldLabel(ts.getTranslatedString("module.mpls.equipment")), gridEquipments);
                     }
-                    List<BusinessObjectLight> lstMPLSLinksSearch = bem.getSuggestedObjectsWithFilter(event.getValue(), Constants.CLASS_MPLSLINK, 5);
+                    List<BusinessObjectLight> lstMPLSLinksSearch = mxGraphCanvas.getEdges().keySet().stream()
+                                        .filter(item -> item.getName().toLowerCase().contains(event.getValue().toLowerCase()) ||
+                                                item.getClassName().toLowerCase().contains(event.getValue().toLowerCase()) ).collect(Collectors.toList());
                     if (!lstMPLSLinksSearch.isEmpty()) {
                         
                         Grid<BusinessObjectLight> gridMPLSLinks = new Grid();
@@ -139,21 +140,17 @@ public class MplsSearch extends Div {
                             Label lblObjName = new Label(obj.getName());
                             Emphasis emObjClass = new Emphasis(obj.getClassName());
                             lytObjectName.add(lblObjName, emObjClass);
-                            Button btnAdd = new Button(new Icon(VaadinIcon.PLUS));
-                            paperDialog.dialogConfirm(btnAdd);
-                            btnAdd.addClickListener((clickEvent) -> {
-                                txtSearch.setValue(obj.getName());
-                                fireEvent(new NewObjectEvent(MplsSearch.this, false, obj));
-                            });
-                            hly.add(icon, lytObjectName, btnAdd);
+                            
+                            hly.add(icon, lytObjectName);
                             hly.setJustifyContentMode(FlexComponent.JustifyContentMode.START);
                             hly.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
-                            if (mxGraphCanvas.getEdges().containsKey(obj)) {
-                                icon.setColor("#E74C3C");
-                                btnAdd.setVisible(false);
-                            }
+
                             return hly;
                         }));
+                        gridMPLSLinks.addItemClickListener(listener -> {
+                             txtSearch.setValue(listener.getItem().getName());
+                             fireEvent(new SelectObjectEvent(PaperDialogSearchObject.this, false, listener.getItem()));
+                        });
                         lytContent.add(new BoldLabel(ts.getTranslatedString("module.mpls.mpls-links")), gridMPLSLinks);
                     }
                     if (!lstEquipmentsSearch.isEmpty() || !lstMPLSLinksSearch.isEmpty()) {
@@ -166,14 +163,14 @@ public class MplsSearch extends Div {
         });
     }
 
-    public Registration addNewObjectListener(ComponentEventListener<NewObjectEvent> listener) {
-        return addListener(NewObjectEvent.class, listener);
+    public Registration addSelectObjectListener(ComponentEventListener<SelectObjectEvent> listener) {
+        return addListener(SelectObjectEvent.class, listener);
     }
 
-    public class NewObjectEvent extends ComponentEvent<MplsSearch> {
+    public class SelectObjectEvent extends ComponentEvent<PaperDialogSearchObject> {
         private final BusinessObjectLight object;
         
-        public NewObjectEvent(MplsSearch source, boolean fromClient, BusinessObjectLight object) {
+        public SelectObjectEvent(PaperDialogSearchObject source, boolean fromClient, BusinessObjectLight object) {
             super(source, fromClient);
             this.object = object;
         }

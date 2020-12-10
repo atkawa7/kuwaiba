@@ -112,6 +112,8 @@ public class MplsView extends AbstractView<BusinessObjectLight, Component> {
         this.ts = ts;
         this.resourceFactory = resourceFactory;
         mxgraphCanvas = new MxGraphCanvas();
+        mxgraphCanvas.getMxGraph().setIsCellEditable(false);
+        mxgraphCanvas.getMxGraph().setIsCellResizable(false);
     }
     
 

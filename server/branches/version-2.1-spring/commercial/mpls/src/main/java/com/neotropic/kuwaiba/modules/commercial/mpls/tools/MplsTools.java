@@ -15,16 +15,15 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.mpls.tools;
 
-import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.shared.Registration;
-import java.util.ArrayList;
-import java.util.List;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
@@ -37,14 +36,16 @@ import org.neotropic.util.visual.mxgraph.MxGraphCanvas;
 public class MplsTools extends HorizontalLayout {
     
     private TranslationService ts;
-    private MplsSearch mplsSearch;
+    private PaperDialogAddObject mplsAddObject;
+    private PaperDialogSearchObject mplsSearchObject;
     private Button btnNewConnection;  
+    private Button btnAddObject;  
     private Button btnDetectConnections;  
     private Button btnSaveView;  
     private Button btnRemoveFromDatabase;  
     private Button btnRemoveFromView;  
     private MxGraphCanvas mxGraphCanvas;
-    
+    private Dialog dlgAddobject;
     
     public MplsTools(MxGraphCanvas mxGraphCanvas, BusinessEntityManager bem, TranslationService ts) {
         
@@ -56,16 +57,29 @@ public class MplsTools extends HorizontalLayout {
               fireEvent(new NewConnectionEvent(this, false));
         }); 
         setButtonTitle(btnNewConnection, ts.getTranslatedString("module.mpls.new-connection"));
-       
+        
+        btnAddObject= new Button(new Icon(VaadinIcon.INSERT),
+                e -> {
+              openDlgAddobject();
+        }); 
+        setButtonTitle(btnAddObject, ts.getTranslatedString("module.mpls.add-objects-links"));
+            
         btnDetectConnections = new Button(new Icon(VaadinIcon.CLUSTER),
                 e -> {
               fireEvent(new DetectConnectionsEvent(this, false));
         }); 
         setButtonTitle(btnDetectConnections, ts.getTranslatedString("module.mpls.detect-connections"));
         
-        mplsSearch = new MplsSearch(ts, bem, mxGraphCanvas);
-        mplsSearch.addNewObjectListener(evt -> {
+        mplsAddObject = new PaperDialogAddObject(ts, bem, mxGraphCanvas);
+        mplsAddObject.addNewObjectListener(evt -> {
             fireEvent(new NewObjectEvent(this, false, (BusinessObjectLight) evt.getObject()));
+            dlgAddobject.close();
+        });
+        initDlgAddobject();
+        
+        mplsSearchObject = new PaperDialogSearchObject(ts, bem, mxGraphCanvas);
+        mplsSearchObject.addSelectObjectListener(evt -> {
+            fireEvent(new SelectObjectEvent(this, false, (BusinessObjectLight) evt.getObject()));
         });
      
         btnSaveView = new Button(new Icon(VaadinIcon.DOWNLOAD), evt -> {
@@ -89,12 +103,16 @@ public class MplsTools extends HorizontalLayout {
         setButtonTitle(btnRemoveFromView, ts.getTranslatedString("module.mpls.delete-from-view"));        
          
         this.setAlignItems(Alignment.BASELINE);
-        add(mplsSearch, btnNewConnection, btnDetectConnections, btnRemoveFromDatabase, btnRemoveFromView);
+        add(btnAddObject, mplsSearchObject, btnNewConnection, btnDetectConnections, btnRemoveFromDatabase, btnRemoveFromView);
         
     }
     
     public Registration addNewObjectListener(ComponentEventListener<NewObjectEvent> listener) {
         return addListener(NewObjectEvent.class, listener);
+    }
+    
+    public Registration addSelectObjectListener(ComponentEventListener<SelectObjectEvent> listener) {
+        return addListener(SelectObjectEvent.class, listener);
     }
     
     public Registration addNewConnectionListener(ComponentEventListener<NewConnectionEvent> listener) {
@@ -120,10 +138,36 @@ public class MplsTools extends HorizontalLayout {
     public Registration AddDetectConnectionsListener(ComponentEventListener<DetectConnectionsEvent> listener) {
         return addListener(DetectConnectionsEvent.class, listener);
     }
+
+    private void initDlgAddobject() {
+        dlgAddobject = new Dialog();
+        dlgAddobject.setWidth("450px");
+        dlgAddobject.setDraggable(true);
+          Button btnCancel = new Button(ts.getTranslatedString("module.general.messages.cancel"), evt -> {
+            dlgAddobject.close();
+        });
+        VerticalLayout lytContent = new VerticalLayout(mplsAddObject, btnCancel);
+        dlgAddobject.add(lytContent);
+    }
+
+    private void openDlgAddobject() {
+        dlgAddobject.open();
+    }
    
     public class NewObjectEvent extends ComponentEvent<MplsTools> {
         private final BusinessObjectLight object;
         public NewObjectEvent(MplsTools source, boolean fromClient, BusinessObjectLight object) {
+            super(source, fromClient);
+            this.object = object;
+        }
+        public BusinessObjectLight getObject() {
+            return object;
+        }
+    }
+    
+    public class SelectObjectEvent extends ComponentEvent<MplsTools> {
+        private final BusinessObjectLight object;
+        public SelectObjectEvent(MplsTools source, boolean fromClient, BusinessObjectLight object) {
             super(source, fromClient);
             this.object = object;
         }
@@ -176,7 +220,8 @@ public class MplsTools extends HorizontalLayout {
         btnNewConnection.setEnabled(enable);
         btnSaveView.setEnabled(enable);
         btnDetectConnections.setEnabled(enable);
-        mplsSearch.setEnabled(enable);
+        mplsSearchObject.setEnabled(enable);
+        btnAddObject.setEnabled(enable);
     }
     
     /**

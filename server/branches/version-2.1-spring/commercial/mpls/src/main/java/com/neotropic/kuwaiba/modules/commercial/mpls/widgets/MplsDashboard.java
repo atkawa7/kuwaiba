@@ -24,6 +24,7 @@ import com.neotropic.kuwaiba.modules.commercial.mpls.persistence.MplsConnectionD
 import com.neotropic.kuwaiba.modules.commercial.mpls.persistence.MplsService;
 import com.neotropic.kuwaiba.modules.commercial.mpls.tools.MplsTools;
 import com.neotropic.flow.component.mxgraph.MxGraphCell;
+import com.neotropic.flow.component.mxgraph.MxGraphNode;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.UI;
@@ -200,6 +201,8 @@ public class MplsDashboard extends VerticalLayout {
     Button btnRemoveView;
 
     PhysicalConnectionsService connectionsService;
+    
+    private boolean openningView;
 
     public ViewObject getCurrentView() {
         return currentView;
@@ -234,6 +237,7 @@ public class MplsDashboard extends VerticalLayout {
         setSizeFull();
         setPadding(false);
         setMargin(false);
+        this.openningView = false;
     }        
 
     @Override
@@ -264,7 +268,7 @@ public class MplsDashboard extends VerticalLayout {
         });
         MplsTools.setButtonTitle(btnOpenView, ts.getTranslatedString("module.mpls.open-mpls-view"));
         btnOpenView.setClassName("icon-button");
-        Button btnNewView = new Button(new Icon(VaadinIcon.PLUS), ev -> {
+        Button btnNewView = new Button(new Icon(VaadinIcon.PLUS_CIRCLE_O), ev -> {
              this.newMPLSViewVisualAction.getVisualComponent(new ModuleActionParameterSet()).open();
         });
         MplsTools.setButtonTitle(btnNewView, ts.getTranslatedString("module.mpls.new-mpls-view"));
@@ -296,10 +300,11 @@ public class MplsDashboard extends VerticalLayout {
             mplsTools.setSelectionToolsEnabled(false);
         });
         mplsView.getMxgraphCanvas().setComObjectDeleted(() -> {
-            openConfirmDialogDeleteObject();   // delete from database by default
+            openConfirmDialogDeleteObject();   
         }); 
-        mplsView.getMxgraphCanvas().getMxGraph().addCellMovedListener(eventListener -> {
-            saveCurrentView();
+        mplsView.getMxgraphCanvas().getMxGraph().addGraphChangedListener(eventListener -> {
+            if (!openningView)
+                saveCurrentView();
         });
         
         mplsTools = new MplsTools(mplsView.getMxgraphCanvas(), bem, ts);
@@ -321,10 +326,23 @@ public class MplsDashboard extends VerticalLayout {
                 }  else 
                         addNodeToView(tmpObject, 100, 50);               
                 
-                saveCurrentView();
+//                saveCurrentView();
              } catch (InvalidArgumentException ex) {
                  Notification.show(ex.getMessage());
              }
+        });
+        mplsTools.addSelectObjectListener(event -> {   
+             BusinessObjectLight tmpObject = event.getObject();
+             if (tmpObject == null)
+                 return;
+             MxGraphCell cell;
+             if(tmpObject.getClassName().equals(Constants.CLASS_MPLSLINK))
+                 cell = mplsView.getMxgraphCanvas().getEdges().get(tmpObject);
+             else
+                 cell = mplsView.getMxgraphCanvas().getNodes().get(tmpObject);
+             if (cell != null)
+                 cell.selectCell();
+
         });
         mplsTools.addNewConnectionListener(event -> {                           
             openNewConnectionDialog();           
@@ -334,14 +352,14 @@ public class MplsDashboard extends VerticalLayout {
         });
         mplsTools.addDeleteObjectListener(event -> {
            deleteSelectedObject(false); 
-           saveCurrentView();
+//           saveCurrentView();
         });
         mplsTools.addDeleteObjectPermanentlyObjectListener(event -> {
             openConfirmDialogDeleteObject();
         });
         mplsTools.AddDetectConnectionsListener(event -> {
             detectRelationships();
-            saveCurrentView();
+//            saveCurrentView();
         });
         mplsTools.setGeneralToolsEnabled(false);
         
@@ -697,7 +715,7 @@ public class MplsDashboard extends VerticalLayout {
         dlgConfirmDelete.open();
         dlgConfirmDelete.getBtnConfirm().addClickListener(evt -> {
             deleteSelectedObject(true);
-            saveCurrentView();
+//            saveCurrentView();
             dlgConfirmDelete.close();           
         });
     }
@@ -803,7 +821,14 @@ public class MplsDashboard extends VerticalLayout {
         tblViews.setDataProvider(dataProvider);
         tblViews.addColumn(ViewObjectLight::getName).setFlexGrow(3).setKey(ts.getTranslatedString("module.general.labels.name"));
         tblViews.addItemClickListener(listener -> {
+            openningView = true; // added to ignore change events while we are opening the view
             openMplsView(listener.getItem());
+            MxGraphNode dummyNode = new MxGraphNode(); 
+            dummyNode.addCellAddedListener(eventListener ->  {
+                openningView = false;
+                mplsView.getMxgraphCanvas().getMxGraph().removeNode(dummyNode);
+            });
+            mplsView.getMxgraphCanvas().getMxGraph().addNode(dummyNode);
         });
         HeaderRow filterRow = tblViews.appendHeaderRow();
         
