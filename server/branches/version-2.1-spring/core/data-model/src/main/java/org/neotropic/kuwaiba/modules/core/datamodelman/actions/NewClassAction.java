@@ -61,6 +61,8 @@ public class NewClassAction extends AbstractAction {
             ClassMetadata newClass = new ClassMetadata();
             newClass.setName(className);
             newClass.setParentClassName(parentClass);
+            newClass.setInDesign(true);
+            newClass.setViewable(true);
             
             try {
                 mem.createClass(newClass);

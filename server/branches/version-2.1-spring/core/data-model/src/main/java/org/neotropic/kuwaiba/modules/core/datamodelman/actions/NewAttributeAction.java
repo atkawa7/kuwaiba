@@ -64,6 +64,8 @@ public class NewAttributeAction extends AbstractAction {
             newAttribute.setName(attributeName);
             newAttribute.setDisplayName(attributeDisplayName);
             newAttribute.setType(attributeType);
+            newAttribute.setVisible(true);
+            newAttribute.setOrder(1000);
             
             try {
                 mem.createAttribute(className, newAttribute, false);
