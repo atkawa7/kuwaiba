@@ -163,7 +163,7 @@ public class ListTypeManagerUI extends VerticalLayout implements ActionCompleted
         if (ev.getStatus() == ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS) {
             try {
                 new SimpleNotification(ts.getTranslatedString("module.general.messages.success"), ev.getMessage(), 
-                            AbstractNotification.NotificationType.ERROR, ts).open();
+                            AbstractNotification.NotificationType.INFO, ts).open();
                 
                 if (currentListType != null)
                     loadListTypeItems(currentListType);
