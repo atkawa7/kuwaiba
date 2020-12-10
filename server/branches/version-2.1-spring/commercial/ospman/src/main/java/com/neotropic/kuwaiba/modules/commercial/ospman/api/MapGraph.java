@@ -18,7 +18,6 @@ package com.neotropic.kuwaiba.modules.commercial.ospman.api;
 import com.neotropic.flow.component.mxgraph.MxGraph;
 import com.neotropic.flow.component.mxgraph.MxGraphEdge;
 import com.neotropic.flow.component.mxgraph.MxGraphNode;
-import com.vaadin.flow.component.DetachEvent;
 import java.util.HashMap;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
 
@@ -36,8 +35,6 @@ public class MapGraph extends MxGraph {
      * Set of business object edges
      */
     private final HashMap<BusinessObjectLight, MapEdge> businessObjectEdges = new HashMap();
-    
-    private boolean detached = false;
     
     public MapGraph() {
         setSizeFull();
@@ -88,15 +85,5 @@ public class MapGraph extends MxGraph {
     
     public MapEdge findEdge(BusinessObjectLight businessObject) {
         return businessObjectEdges.get(businessObject);
-    }
-    
-    @Override
-    protected void onDetach(DetachEvent detachEvent) {
-        super.onDetach(detachEvent);
-        detached = true;
-    }
-    
-    public boolean getDetached() {
-        return detached;
     }
 }

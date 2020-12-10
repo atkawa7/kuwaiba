@@ -61,7 +61,7 @@ try {
     });
     geo.points = points;
     this.graph.getModel().setGeometry(cell, geo);
-
+    
     if (mapZoom >= mapMinZoomForLabels) {
       if (!this.graph.getModel().getValue(cell)) {
         this.graph.getModel().setValue(cell, labels[cellId]);
@@ -73,6 +73,7 @@ try {
     }
   }
 } finally {
-  this.graph.getModel().endUpdate();
+  this.graph.getModel().endUpdate();  
 }
+this.style.opacity = 1;
 $0.map.setOptions({draggable: true, maxZoom: null, minZoom: null});

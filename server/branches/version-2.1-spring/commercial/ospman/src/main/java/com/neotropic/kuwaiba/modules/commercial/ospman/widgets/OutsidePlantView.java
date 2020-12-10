@@ -80,26 +80,15 @@ import org.neotropic.util.visual.dialog.ConfirmDialog;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapProvider;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.server.VaadinServlet;
 import elemental.json.Json;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
-import io.netty.util.internal.ResourcesUtil;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.UUID;
 import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualAction;
 import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 import org.neotropic.util.visual.notifications.AbstractNotification;
-import org.springframework.util.ResourceUtils;
 
 /**
  * Graphically displays Outside Plant elements on a map.
@@ -485,14 +474,23 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                         mapProvider.getMinZoomForLabels(), //JS parameter $5
                         jsonLabels //JS parameter $6
                     );
-                    
-                    if (!mapGraph.isVisible())
-                        mapGraph.setVisible(true);
                 });
             });
-        } else {
-            if (!mapGraph.isVisible())
-                mapGraph.setVisible(true);
+        }
+        else
+            hideMapGraph(false);
+    }
+    
+    private void hideMapGraph(boolean hidden) {
+        if (mapGraph != null) {
+            StringBuilder expression = new StringBuilder();
+            // Necessary checks to not modify the DOM multiple times.
+            expression.append("if ($0) {").append("\n");
+            expression.append("  this.style.opacity = 0;").append("\n");
+            expression.append("} else {").append("\n");
+            expression.append("  this.style.opacity = 1;").append("\n");
+            expression.append("}");
+            mapGraph.getElement().executeJs(expression.toString(), hidden);
         }
     }
     
@@ -813,10 +811,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                             component.add(componentTabs);
                             newOspView(true);
                         }
-                        mapProvider.addBoundsChangedEventListener(event -> {
-                            if (mapGraph != null && mapGraph.isVisible())
-                                mapGraph.setVisible(false);
-                        });
+                        mapProvider.addBoundsChangedEventListener(event -> hideMapGraph(true));
                         mapProvider.addIdleEventListener(event -> {
                             if (mapOverlay == null)
                                 newOverlay();
