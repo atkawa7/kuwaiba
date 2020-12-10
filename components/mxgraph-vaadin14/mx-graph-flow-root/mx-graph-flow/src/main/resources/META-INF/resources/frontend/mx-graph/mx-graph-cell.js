@@ -748,6 +748,12 @@ cellLabelChanged() {
      var state = this.graph.view.getState(this.cell);
      state.shape.node.classList.remove('cell-animated'); 
   }
+  
+  selectCell() {
+      if (this.graph && this.cell) {
+          this.graph.setSelectionCell(this.cell)
+      }
+  }
   /**
    * Overrides the current cell style by the raw style.
    */

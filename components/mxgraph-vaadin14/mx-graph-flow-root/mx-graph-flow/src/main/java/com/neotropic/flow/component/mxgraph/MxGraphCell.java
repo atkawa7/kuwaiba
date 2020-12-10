@@ -565,6 +565,10 @@ public class MxGraphCell extends Component implements HasComponents {
         getElement().callJsFunction("removeOverlayButtons");
     }
     
+    public void selectCell() {
+        getElement().callJsFunction("selectCell");
+    }
+    
     public void setChildrenCellPosition(String cellId, int position) {
        getElement().callJsFunction("setChildrenCellPosition", cellId , position);
     }

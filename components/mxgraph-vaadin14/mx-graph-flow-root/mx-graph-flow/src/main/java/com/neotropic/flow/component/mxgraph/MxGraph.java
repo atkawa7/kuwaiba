@@ -45,6 +45,7 @@ public class MxGraph extends Component implements HasComponents, HasStyle, HasSi
     private static final String PROPERTY_MAX_HEIGHT = "maxHeight";
     private static final String PROPERTY_CELLS_MOVABLE = "cellsMovable";
     private static final String PROPERTY_CELLS_EDITABLE = "cellsEditable";
+    private static final String PROPERTY_CELLS_RESIZABLE = "cellsResizable";
     private static final String PROPERTY_OVERFLOW = "overflow";
     /**
      * Specifies if the graph should allow new connections.
@@ -198,6 +199,10 @@ public class MxGraph extends Component implements HasComponents, HasStyle, HasSi
         return super.addListener(MxGraphGraphLoadedEvent.class, eventListener);
     }
     
+     public Registration addGraphChangedListener(ComponentEventListener<MxGraphGraphChangedEvent> eventListener) {
+        return super.addListener(MxGraphGraphChangedEvent.class, eventListener);
+    }
+    
     public Registration addDeleteCellSelectedListener(ComponentEventListener<MxGraphDeleteCellSelectedEvent> eventListener) {
         return super.addListener(MxGraphDeleteCellSelectedEvent.class, eventListener);
     }
@@ -279,6 +284,14 @@ public class MxGraph extends Component implements HasComponents, HasStyle, HasSi
         
     public void setIsCellMovable(boolean prop) {
         getElement().setProperty(PROPERTY_CELLS_MOVABLE, prop);
+    }
+    
+     public boolean getIsCellResizable() {
+        return getElement().getProperty(PROPERTY_CELLS_RESIZABLE,false);
+    }
+        
+    public void setIsCellResizable(boolean prop) {
+        getElement().setProperty(PROPERTY_CELLS_RESIZABLE, prop);
     }
     
     public void setOutlineWidth(String prop) {

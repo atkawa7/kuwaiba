@@ -90,6 +90,10 @@ class MxGraph extends PolymerElement {
                 type: Boolean,
                 value: true
             },
+            cellsResizable: {
+                type: Boolean,
+                value: true
+            },
             stackLayout: {
                 type: Object,
                 value: null
@@ -222,10 +226,9 @@ class MxGraph extends PolymerElement {
             //this.graph.setConnectable(true);
             this.graph.setAllowDanglingEdges(false);
 
-            this.graph.setCellsEditable(this.cellsEditable);
-            //mxGraph.prototype.cellsEditable = this.cellsEditable;
-            this.graph.setCellsMovable(this.cellsMovable);
-            //mxGraph.prototype.cellsMovable = this.cellsMovable;
+            this.setCellsEditable(this.cellsEditable);
+            this.setCellsResizable(this.cellsResizable);
+            this.setCellsMovable(this.cellsMovable);
             
             // Set scale
             this.graph.view.setScale(this.scale);
@@ -393,6 +396,10 @@ class MxGraph extends PolymerElement {
                     }
                     console.log("CELL LABEL WITH ID " + cell.id + " CHANGED")
                 }
+            });
+            
+            this.graph.getModel().addListener(mxEvent.CHANGE, function (sender, evt) {
+                _this.fireGraphChanged();              
             });
                         
             //allow custom logic when unselect cells
@@ -925,6 +932,12 @@ class MxGraph extends PolymerElement {
     fireGraphLoaded() {
         this.dispatchEvent(new CustomEvent('graph-loaded', {detail: {kicked: true}}));
         console.log("****************************************** graphLoaded-Fired")
+    }
+    
+     //This method dispatches a custom event when the graph is loaded
+    fireGraphChanged() {
+        this.dispatchEvent(new CustomEvent('graph-changed', {detail: {kicked: true}}));
+        console.log("****************************************** graphChanged-Fired")
     }
 
     //this method remove all cells(vertex and edges) in the graph
