@@ -44,13 +44,13 @@ public class SimpleNotification extends AbstractNotification {
         Button btnCopyToClipboard = new Button(ts.getTranslatedString("module.general.labels.copy-to-clipboard"));
         //content properties
         btnCopyToClipboard.setClassName("simple-notification-button-copy");
-        btnCopyToClipboard.setVisible(false);
-        btnCopyToClipboard.addAttachListener(event -> copyClipboard(event, this.text));
+        btnCopyToClipboard.addAttachListener(event -> copyClipboard(event, this.text));        
         lytContent.setSpacing(false);
         lytContent.setPadding(false);
-        lytContent.setMargin(false);
-        lytContent.setWidth("100%");
-
+        lytContent.setMargin(false);        
+        lytContent.add(lblTitle, lblText);
+        lytContent.setHorizontalComponentAlignment(FlexComponent.Alignment.END, btnCopyToClipboard);
+        lytContent.addClickListener(e -> notification.close());
         switch (type) {
             default:
             case INFO:
@@ -62,16 +62,10 @@ public class SimpleNotification extends AbstractNotification {
                 break;
             case ERROR:
                 lblTitle.setClassName("simple-notification-title-error");
-                btnCopyToClipboard.setVisible(true);
-        }
-
-        lytContent.add(lblTitle, lblText);
-        lytContent.add(btnCopyToClipboard);
-        lytContent.setHorizontalComponentAlignment(FlexComponent.Alignment.END, btnCopyToClipboard);
-        lytContent.addClickListener(e -> notification.close());
-
+                lytContent.add(btnCopyToClipboard);
+        }                
         notification.setThemeName("simple-notification");
-        notification.add(lytContent);
+        notification.add(lytContent);        
         notification.setDuration(3000);
         notification.setPosition(Notification.Position.BOTTOM_CENTER);
         notification.open();

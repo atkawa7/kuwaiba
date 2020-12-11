@@ -23,17 +23,20 @@ limitations under the License.
  * Author     : Hardy Ryan Chingal Martinez {@literal <ryan.chingal@kuwaiba.org>}
 */
 
+
 :host([theme~="simple-notification"]) [part="overlay"] {    
     background: var(--kuwaiba-primary-color);
     color: var(--kuwaiba-primary-text-color);    
-    border-radius: 0px;
-    max-width: 100%;
-    padding: 1px 15px 1px 15px;
-
+    border-radius: 4px;
+    padding: 1px 20px 20px 20px;
+    
 }
 
 :host([theme~="simple-notification"]) [part="content"] {
-    padding: 1px 15px 1px 15px;
+    padding-top: 1px;
+    padding-right: 1px;
+    padding-bottom: 1px;
+    padding-left: 1px;
     font-size: small;
     display: block;
 }
