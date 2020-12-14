@@ -54,7 +54,7 @@ public class CacheManager {
     /**
      * Possible children index. The key is the class, the value its possible children. Note that a blank key ("") represents the navigation tree root
      */
-    private HashMap<String, List<String>> possibleChildrenIndex;
+    private HashMap<String, List<ClassMetadata>> possibleChildrenIndex;
     /**
      * Possible special children index. The key is the class, the value its possible special children. Note that a blank key ("") represents the navigation tree root. The only difference with the possibleChildrenIndex, is that the relationship used to link the parent object with its children is CHILD_OF_SPECIAL
      */
@@ -145,7 +145,7 @@ public class CacheManager {
      * @param parent
      * @param children
      */
-    public void putPossibleChildren(String parent, List<String>children){
+    public void putPossibleChildren(String parent, List<ClassMetadata>children){
         possibleChildrenIndex.put(parent, children);
     }
     
@@ -232,12 +232,12 @@ public class CacheManager {
      * @param parent
      * @param child
      */
-    public void putPossibleChild(String parent, String child){
-        List<String> myList = possibleChildrenIndex.get(parent);
+    public void putPossibleChild(String parent, ClassMetadata child){
+        List<ClassMetadata> myList = possibleChildrenIndex.get(parent);
         if (myList != null) {
             myList.add(child);
             myList.sort((classNameA, classNameB) -> { //Sorts the list everytime a new entry is added
-                return classNameA.compareTo(classNameB);
+                return classNameA.getName().compareTo(classNameB.getName());
             });
         }
     }
@@ -257,7 +257,7 @@ public class CacheManager {
         }
     }
 
-    public List<String> getPossibleChildren(String parent){
+    public List<ClassMetadata> getPossibleChildren(String parent){
         if (parent == null)
             return possibleChildrenIndex.get(Constants.NODE_DUMMYROOT);
         return possibleChildrenIndex.get(parent);

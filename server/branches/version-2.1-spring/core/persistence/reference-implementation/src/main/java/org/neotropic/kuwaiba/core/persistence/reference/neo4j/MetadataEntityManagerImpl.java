@@ -210,108 +210,114 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     }
 
     @Override
-    public ChangeDescriptor setClassProperties (ClassMetadata newClassDefinition) 
+    public ChangeDescriptor setClassProperties (long classId, HashMap<String, Object> newProperties) 
             throws MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException {
         String affectedProperties = "", oldValues = "", newValues = "";
         
         try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
-            Node classMetadata = Util.findNodeByLabelAndId(connectionManager.getConnectionHandler(), classLabel, newClassDefinition.getId());
-            if (classMetadata == null)
+            Node classMetadataNode = Util.findNodeByLabelAndId(connectionManager.getConnectionHandler(), classLabel, classId);
+            if (classMetadataNode == null)
                 throw new MetadataObjectNotFoundException(String.format(
-                        "The class with id %s could not be found. Contact your administrator.", newClassDefinition.getId()));
-            
-            String formerName = (String)classMetadata.getProperty(Constants.PROPERTY_NAME);
-            
-            if (newClassDefinition.getName() != null){
-                if (newClassDefinition.getName().isEmpty())
-                    throw new InvalidArgumentException("Class name can not be an empty string");
-                
-                if (!newClassDefinition.getName().matches("^[a-zA-Z0-9_-]*$"))
-                    throw new InvalidArgumentException(String.format("Class name %s contains invalid characters", newClassDefinition.getName()));
-                
-                if (connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, newClassDefinition.getName()) != null)
-                   throw new InvalidArgumentException(String.format("Class %s already exists", newClassDefinition.getName()));
-                
-                classMetadata.setProperty(Constants.PROPERTY_NAME, newClassDefinition.getName());
-                
-                affectedProperties = Constants.PROPERTY_NAME + " ";
-                oldValues = classMetadata.getProperty(Constants.PROPERTY_NAME) + " ";
-                newValues = newClassDefinition.getName() + " ";
-                                
-                buildClassCache();
-            }
-            if(newClassDefinition.getDisplayName() != null) {
-                affectedProperties = Constants.PROPERTY_DISPLAY_NAME + " ";
-                oldValues = classMetadata.getProperty(Constants.PROPERTY_DISPLAY_NAME) + " ";
-                newValues = newClassDefinition.getDisplayName() + " ";
-                
-                classMetadata.setProperty(Constants.PROPERTY_DISPLAY_NAME, newClassDefinition.getDisplayName());
-            }
-            if(newClassDefinition.getDescription() != null) {
-                affectedProperties = Constants.PROPERTY_DESCRIPTION + " ";
-                oldValues = classMetadata.getProperty(Constants.PROPERTY_DESCRIPTION) + " ";
-                newValues = newClassDefinition.getDescription() + " ";
-                
-                classMetadata.setProperty(Constants.PROPERTY_DESCRIPTION, newClassDefinition.getDescription());
-            }
-            if(newClassDefinition.getIcon() != null) {
-                affectedProperties = Constants.PROPERTY_ICON + " ";
-                oldValues = " ";
-                newValues = " ";
-                
-                classMetadata.setProperty(Constants.PROPERTY_ICON, newClassDefinition.getIcon());
-            }
-            if(newClassDefinition.getSmallIcon() != null) {
-                affectedProperties = Constants.PROPERTY_SMALL_ICON + " ";
-                oldValues = " ";
-                newValues = " ";
-                
-                classMetadata.setProperty(Constants.PROPERTY_SMALL_ICON, newClassDefinition.getSmallIcon());
-            }
-            if(newClassDefinition.getColor() != -1) {
-                affectedProperties = Constants.PROPERTY_COLOR + " ";
-                oldValues = classMetadata.getProperty(Constants.PROPERTY_COLOR) + " ";
-                newValues = newClassDefinition.getColor() + " ";
-                
-                classMetadata.setProperty(Constants.PROPERTY_COLOR, newClassDefinition.getColor());
-            }
-            
-            affectedProperties = Constants.PROPERTY_COUNTABLE + " ";
-            oldValues = classMetadata.getProperty(Constants.PROPERTY_COUNTABLE) + " ";
-            newValues = newClassDefinition.isCountable() + " ";
-            classMetadata.setProperty(Constants.PROPERTY_COUNTABLE, newClassDefinition.isCountable());
-            
-            affectedProperties = Constants.PROPERTY_ABSTRACT + " ";
-            oldValues = classMetadata.getProperty(Constants.PROPERTY_ABSTRACT) + " ";
-            newValues = newClassDefinition.isAbstract() + " ";
-            classMetadata.setProperty(Constants.PROPERTY_ABSTRACT, newClassDefinition.isAbstract());
+                        "The class with id %s could not be found", classId));
 
-            affectedProperties = Constants.PROPERTY_IN_DESIGN + " ";
-            oldValues = classMetadata.getProperty(Constants.PROPERTY_IN_DESIGN) + " ";
-            newValues = newClassDefinition.isInDesign() + " ";
-            classMetadata.setProperty(Constants.PROPERTY_IN_DESIGN, newClassDefinition.isInDesign());
-
-            affectedProperties = Constants.PROPERTY_CUSTOM + " ";
-            oldValues = classMetadata.getProperty(Constants.PROPERTY_CUSTOM) + " ";
-            newValues = newClassDefinition.isCustom() + " ";
-            classMetadata.setProperty(Constants.PROPERTY_CUSTOM, newClassDefinition.isCustom());
+            String className = (String)classMetadataNode.getProperty(Constants.PROPERTY_NAME);
             
-            if(newClassDefinition.getAttributes() != null ) {
-                for (AttributeMetadata attr : newClassDefinition.getAttributes()) {
-                    ChangeDescriptor changeDescriptor = setAttributeProperties(newClassDefinition.getId(), attr);
-                    
-                    affectedProperties = changeDescriptor.getAffectedProperties() + " ";
-                    oldValues = changeDescriptor.getOldValues() + " ";
-                    newValues = changeDescriptor.getNewValues() + " ";
+            for (String aProperty : newProperties.keySet()) {
+                switch (aProperty) {
+                    case Constants.PROPERTY_NAME:
+                        String newName = (String)newProperties.get(aProperty);
+                        String formerName = className;
+                        if (newName != null) {
+                            if (newName.trim().isEmpty())
+                                throw new InvalidArgumentException("Class name can not be an empty string");
+
+                            if (!newName.matches("^[a-zA-Z0-9_-]*$"))
+                                throw new InvalidArgumentException(String.format("Class name %s contains invalid characters", newName));
+
+                            if (connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, newName) != null)
+                               throw new InvalidArgumentException(String.format("Class %s already exists", newName));
+
+                            classMetadataNode.setProperty(Constants.PROPERTY_NAME, newName);
+
+                            affectedProperties += Constants.PROPERTY_NAME + " ";
+                            oldValues += formerName + " ";
+                            newValues += newName + " ";
+                            
+                            className = newName;
+                            
+                            buildClassCache();
+                        }
+                        break;
+                    case Constants.PROPERTY_DESCRIPTION:
+                        String newDescription = (String)newProperties.get(aProperty);
+                        affectedProperties += Constants.PROPERTY_DESCRIPTION + " ";
+                        oldValues += classMetadataNode.getProperty(Constants.PROPERTY_DESCRIPTION) + " ";
+                        newValues += newDescription + " ";
+                        classMetadataNode.setProperty(Constants.PROPERTY_DESCRIPTION, newDescription == null ? "" : newDescription);
+                        break;
+                    case Constants.PROPERTY_DISPLAY_NAME:
+                        String newDisplayName = (String)newProperties.get(aProperty);
+                        affectedProperties += Constants.PROPERTY_DISPLAY_NAME + " ";
+                        oldValues += classMetadataNode.getProperty(Constants.PROPERTY_DISPLAY_NAME) + " ";
+                        newValues += newDisplayName + " ";
+                        classMetadataNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, newDisplayName);
+                        break;
+                    case Constants.PROPERTY_ICON:
+                        affectedProperties += Constants.PROPERTY_ICON + " ";
+                        oldValues += " ";
+                        newValues += " ";
+                        classMetadataNode.setProperty(Constants.PROPERTY_ICON, newProperties.get(aProperty) == null ?
+                                new byte[0] : newProperties.get(aProperty));
+                        break;
+                    case Constants.PROPERTY_SMALL_ICON:
+                        affectedProperties += Constants.PROPERTY_SMALL_ICON + " ";
+                        oldValues += " ";
+                        newValues += " ";
+                        classMetadataNode.setProperty(Constants.PROPERTY_SMALL_ICON, newProperties.get(aProperty) == null ? 
+                                new byte[0] : newProperties.get(aProperty));
+                        break;
+                    case Constants.PROPERTY_COLOR:
+                        int newColor = (int)newProperties.get(aProperty);
+                        affectedProperties += Constants.PROPERTY_COLOR + " ";
+                        oldValues += classMetadataNode.getProperty(Constants.PROPERTY_COLOR) + " ";
+                        newValues += newColor + " ";
+
+                        classMetadataNode.setProperty(Constants.PROPERTY_COLOR, newColor);
+                        break;
+                    case Constants.PROPERTY_COUNTABLE:
+                        boolean newCountable = (boolean)newProperties.get(aProperty);
+                        affectedProperties = Constants.PROPERTY_COUNTABLE + " ";
+                        oldValues = classMetadataNode.getProperty(Constants.PROPERTY_COUNTABLE) + " ";
+                        newValues = newCountable + " ";
+                        classMetadataNode.setProperty(Constants.PROPERTY_COUNTABLE, newCountable);
+                        break;
+                    case Constants.PROPERTY_ABSTRACT:
+                        boolean newAbstract = (boolean)newProperties.get(aProperty);
+                        affectedProperties = Constants.PROPERTY_ABSTRACT + " ";
+                        oldValues = classMetadataNode.getProperty(Constants.PROPERTY_ABSTRACT) + " ";
+                        newValues = newAbstract + " ";
+                        classMetadataNode.setProperty(Constants.PROPERTY_ABSTRACT, newAbstract);
+                        break;
+                    case Constants.PROPERTY_IN_DESIGN:
+                        boolean newInDesign = (boolean)newProperties.get(aProperty);
+                        affectedProperties = Constants.PROPERTY_IN_DESIGN + " ";
+                        oldValues = classMetadataNode.getProperty(Constants.PROPERTY_IN_DESIGN) + " ";
+                        newValues = newInDesign + " ";
+                        classMetadataNode.setProperty(Constants.PROPERTY_IN_DESIGN, newInDesign);
+                        break;
+                    case Constants.PROPERTY_CUSTOM:
+                        break;
+                    default:
+                        throw new IllegalArgumentException(String.format("Class property %s is unknown", aProperty));
                 }
-            }        
+            }
+            
             tx.success();
             cm.clearClassCache();
-            cm.removeClass(formerName);
-            cm.putClass(Util.createClassMetadataFromNode(classMetadata));
+            cm.putClass(Util.createClassMetadataFromNode(classMetadataNode));
 
             return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), 
-                    newValues.trim(), String.format("Set class properties and/or attributes for class %s", classMetadata.getProperty(Constants.PROPERTY_NAME)));
+                    newValues.trim(), "");
         }
     }
   
@@ -838,276 +844,30 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     }
     
     @Override
-    public ChangeDescriptor setAttributeProperties(long classId, AttributeMetadata newAttributeDefinition) 
+    public ChangeDescriptor setAttributeProperties(long classId, long attributeId, HashMap<String, Object> newProperties) 
             throws MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException {
-        
-        String affectedProperties = "", oldValues = "", newValues = "";
-        
         try(Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             Node classNode = Util.findNodeByLabelAndId(connectionManager.getConnectionHandler(), classLabel, classId);
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("The class with id %s could not be found. Contact your administrator.", classId));
 
-            for (Relationship relationship : classNode.getRelationships(RelTypes.HAS_ATTRIBUTE)) {
-                Node attrNode = relationship.getEndNode();
-                if (attrNode.getId() == newAttributeDefinition.getId())  {
-                    String currentAttributeName = (String)attrNode.getProperty(Constants.PROPERTY_NAME);
-
-                    if (currentAttributeName.equals(Constants.PROPERTY_CREATION_DATE))
-                        throw new InvalidArgumentException("Attribute \"creationDate\" can not be modified");
-
-                    if(newAttributeDefinition.getName() != null){
-                        if (currentAttributeName.equals(Constants.PROPERTY_NAME))
-                            throw new InvalidArgumentException("Attribute \"name\" can not be renamed");
-                        if (!newAttributeDefinition.getName().matches("^[a-zA-Z0-9_]*$"))
-                            throw new InvalidArgumentException(String.format("Attribute %s contains invalid characters", newAttributeDefinition.getName()));
-                        
-                        Util.changeAttributeName(classNode, currentAttributeName, newAttributeDefinition.getName());
-                        
-                        affectedProperties = Constants.PROPERTY_NAME + " ";
-                        oldValues = currentAttributeName + " ";
-                        newValues = newAttributeDefinition.getName() + " ";
-                    }
-                    if(newAttributeDefinition.getDescription() != null) {
-                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_DESCRIPTION, newAttributeDefinition.getDescription());
-                        
-                        affectedProperties = Constants.PROPERTY_DESCRIPTION + " ";
-                        oldValues = currentAttributeName + " ";
-                        newValues = newAttributeDefinition.getDescription() + " ";
-                    }
-                    if(newAttributeDefinition.getDisplayName() != null) {
-                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_DISPLAY_NAME, newAttributeDefinition.getDisplayName());
-                        
-                        affectedProperties = Constants.PROPERTY_DISPLAY_NAME + " ";
-                        oldValues = " ";
-                        newValues = newAttributeDefinition.getDisplayName() + " ";
-                    }
-                    if(newAttributeDefinition.getType() != null){
-                        if (currentAttributeName.equals(Constants.PROPERTY_NAME))
-                            throw new InvalidArgumentException("Attribute \"name\" can only be a String");
-                        if (AttributeMetadata.isPrimitive((String)attrNode.getProperty(Constants.PROPERTY_TYPE)))
-                            Util.changeAttributeTypeIfPrimitive(classNode, currentAttributeName, newAttributeDefinition.getType());
-                        else
-                            Util.changeAttributeTypeIfListType(classNode, currentAttributeName, newAttributeDefinition.getType());
-                        
-                        affectedProperties = Constants.PROPERTY_TYPE + " ";
-                        oldValues = " ";
-                        newValues = newAttributeDefinition.getType() + " ";
-                    }
-
-                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_READ_ONLY, newAttributeDefinition.isReadOnly());
-                    affectedProperties = Constants.PROPERTY_READ_ONLY + " ";
-                    oldValues = " ";
-                    newValues = newAttributeDefinition.isReadOnly() + " ";
-
-                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_VISIBLE, newAttributeDefinition.isVisible());
-
-                    affectedProperties = Constants.PROPERTY_VISIBLE + " ";
-                    oldValues = " ";
-                    newValues = newAttributeDefinition.isVisible() + " ";
-
-                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_ADMINISTRATIVE, newAttributeDefinition.isAdministrative());
-                    affectedProperties = Constants.PROPERTY_ADMINISTRATIVE + " ";
-                    oldValues = " ";
-                    newValues = newAttributeDefinition.isAdministrative() + " ";
-
-                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_NO_COPY, newAttributeDefinition.isNoCopy());
-                    affectedProperties = Constants.PROPERTY_NO_COPY + " ";
-                    oldValues = " ";
-                    newValues = newAttributeDefinition.isNoCopy() + " ";
-
-                    if(newAttributeDefinition.isUnique()) {//checks only if unique changed from false to true
-                        String attributeType = (String) attrNode.getProperty(Constants.PROPERTY_TYPE);
-                        if (attributeType.equals("Boolean") || !AttributeMetadata.isPrimitive(attributeType))
-                            throw new InvalidArgumentException("Boolean and list type attributes can not be set as unique");
-
-                        if(canAttributeBeUnique(classNode, currentAttributeName))
-                            Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
-                        else
-                            throw new InvalidArgumentException(String.format("There are duplicated values of attribute \"%s\" among the existing instances of class %s or its subclasses", currentAttributeName, classNode.getProperty(Constants.PROPERTY_NAME)));
-                    }
-                    else
-                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
-
-                    affectedProperties = Constants.PROPERTY_UNIQUE + " ";
-                    oldValues = " ";
-                    newValues = newAttributeDefinition.isUnique() + " ";
-
-                    //this checks if every object of the class and subclasses has a value in this attribute marked as mandatory
-                    if(newAttributeDefinition.isMandatory()) {//checks only if mandatory has changed from false to true
-                        if(objectsOfClassHasValueInMandatoryAttribute((String)classNode.getProperty(Constants.PROPERTY_NAME), currentAttributeName))
-                            Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
-                        else
-                            throw new InvalidArgumentException(String.format("Before setting an attribute as mandatory, all existing instances of this class must have valid values for attribute %s", currentAttributeName));
-                    }
-                    else
-                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
-
-                    affectedProperties = Constants.PROPERTY_MANDATORY + " ";
-                    oldValues = " ";
-                    newValues = newAttributeDefinition.isMandatory() + " ";
-                    
-                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_ORDER, newAttributeDefinition.getOrder());
-                    affectedProperties = Constants.PROPERTY_ORDER + " ";
-                    oldValues = " ";
-                    newValues = newAttributeDefinition.getOrder() + " ";
-                    
-                    if (newAttributeDefinition.isMultiple() && 
-                            AttributeMetadata.isPrimitive((String) attrNode.getProperty(Constants.PROPERTY_TYPE)))
-                        throw new InvalidArgumentException("Primitive types can not be set as multiple");
-
-                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MULTIPLE, newAttributeDefinition.isMultiple());
-
-                    affectedProperties = Constants.PROPERTY_MULTIPLE + " ";
-                    oldValues = " ";
-                    newValues = newAttributeDefinition.isMultiple() + " ";
-                    
-                    //Refresh cache for the affected classes
-                    refreshCacheOn(classNode);
-                    tx.success();                    
-                    return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), newValues.trim(), String.format("Update attribute properties of class %s", classNode.getProperty(Constants.PROPERTY_NAME)));
-                }
-            }//end for
-            throw new MetadataObjectNotFoundException(String.format(
-                    "Can not find attribute %s in class %s", newAttributeDefinition.getName(), classNode.getProperty(Constants.PROPERTY_NAME)));
+            ChangeDescriptor changeDescriptor = setAttributeProperties(classNode, attributeId, newProperties);
+            tx.success();
+            return changeDescriptor;
         } 
     }
     
     @Override
-    public ChangeDescriptor setAttributeProperties (String className, AttributeMetadata newAttributeDefinition) 
+    public ChangeDescriptor setAttributeProperties (String className, long attributeId, HashMap<String, Object> newProperties) 
             throws MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException {
-        
-        String affectedProperties = "", oldValues = "", newValues = "";
-        
-        try(Transaction tx = connectionManager.getConnectionHandler().beginTx()) 
-        {
+        try(Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             Node classNode = connectionManager.getConnectionHandler().findNode(classLabel, Constants.PROPERTY_NAME, className);
             if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.", className));
-
-            for (Relationship relationship : classNode.getRelationships(RelTypes.HAS_ATTRIBUTE)) {
-                Node attrNode = relationship.getEndNode();
-                if (attrNode.getId() == newAttributeDefinition.getId()) {
-                    String currentAttributeName = (String)attrNode.getProperty(Constants.PROPERTY_NAME);
-
-                    if (currentAttributeName.equals(Constants.PROPERTY_CREATION_DATE))
-                        throw new InvalidArgumentException("Attribute \"creationDate\" can not be modified");
-
-                    if(newAttributeDefinition.getName() != null){
-                        if (currentAttributeName.equals(Constants.PROPERTY_NAME))
-                            throw new InvalidArgumentException("Attribute \"name\" can not be renamed");
-                        if (!newAttributeDefinition.getName().matches("^[a-zA-Z0-9_]*$"))
-                            throw new InvalidArgumentException(String.format("Attribute %s contains invalid characters", newAttributeDefinition.getName()));
-
-                        Util.changeAttributeName(classNode, currentAttributeName, newAttributeDefinition.getName());
-                        
-                        affectedProperties = Constants.PROPERTY_NAME + " ";
-                        oldValues = currentAttributeName + " ";
-                        newValues = newAttributeDefinition.getName() + " ";
-                    }
-                    if(newAttributeDefinition.getDescription() != null) {
-                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_DESCRIPTION, newAttributeDefinition.getDescription());
-                        
-                        affectedProperties = Constants.PROPERTY_DESCRIPTION + " ";
-                        oldValues = currentAttributeName + " ";
-                        newValues = newAttributeDefinition.getDescription() + " ";
-                    }
-                    if(newAttributeDefinition.getDisplayName() != null) {
-                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_DISPLAY_NAME, newAttributeDefinition.getDisplayName());
-                        
-                        affectedProperties = Constants.PROPERTY_DISPLAY_NAME + " ";
-                        oldValues = " ";
-                        newValues = newAttributeDefinition.getDisplayName() + " ";
-                    }
-                    if(newAttributeDefinition.getType() != null){
-                        if (currentAttributeName.equals(Constants.PROPERTY_NAME))
-                            throw new InvalidArgumentException("Attribute \"name\" can only be a String");
-                        if (AttributeMetadata.isPrimitive((String)attrNode.getProperty(Constants.PROPERTY_TYPE)))
-                            Util.changeAttributeTypeIfPrimitive(classNode, currentAttributeName, newAttributeDefinition.getType());
-                        else
-                            Util.changeAttributeTypeIfListType(classNode, currentAttributeName, newAttributeDefinition.getType());
-                        
-                        affectedProperties = Constants.PROPERTY_TYPE + " ";
-                        oldValues = " ";
-                        newValues = newAttributeDefinition.getType() + " ";
-                    }
-
-                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_READ_ONLY, newAttributeDefinition.isReadOnly());
-
-                    affectedProperties = Constants.PROPERTY_READ_ONLY + " ";
-                    oldValues = " ";
-                    newValues = newAttributeDefinition.isReadOnly() + " ";
-
-                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_VISIBLE, newAttributeDefinition.isVisible());
-                    affectedProperties = Constants.PROPERTY_VISIBLE + " ";
-                    oldValues = " ";
-                    newValues = newAttributeDefinition.isVisible() + " ";
-
-                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_ADMINISTRATIVE, newAttributeDefinition.isAdministrative());
-                    affectedProperties = Constants.PROPERTY_ADMINISTRATIVE + " ";
-                    oldValues = " ";
-                    newValues = newAttributeDefinition.isAdministrative() + " ";
-
-                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_NO_COPY, newAttributeDefinition.isNoCopy());
-
-                    affectedProperties = Constants.PROPERTY_NO_COPY + " ";
-                    oldValues = " ";
-                    newValues = newAttributeDefinition.isNoCopy() + " ";
-
-                    if(newAttributeDefinition.isUnique()) {//checks only if unique changed from false to true
-                        String attributeType = (String) attrNode.getProperty(Constants.PROPERTY_TYPE);
-                        if (attributeType.equals("Boolean") || !AttributeMetadata.isPrimitive(attributeType))
-                            throw new InvalidArgumentException("Boolean and list type attributes can not be set as unique");
-
-                        if(canAttributeBeUnique(classNode, currentAttributeName))
-                            Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
-                        else
-                            throw new InvalidArgumentException(String.format("There are duplicated values of attribute \"%s\" among the existing instances of class %s or its subclasses", currentAttributeName, className));
-                    }
-                    else
-                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
-
-                    affectedProperties = Constants.PROPERTY_UNIQUE + " ";
-                    oldValues = " ";
-                    newValues = newAttributeDefinition.isUnique() + " ";
-
-                    if(newAttributeDefinition.isMandatory()){//checks only if mandatory changed from false to true
-                        //this check if every object of the class and subclasses has a value in this attribute marked as mandatory
-                        if(objectsOfClassHasValueInMandatoryAttribute(className, currentAttributeName))
-                            Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
-                        else
-                            throw new InvalidArgumentException(String.format("Before setting it as mandatory, all existing instances of this class must have valid values for attribute %s", currentAttributeName));
-                    }
-                    else
-                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
-
-                    affectedProperties = Constants.PROPERTY_MANDATORY + " ";
-                    oldValues = " ";
-                    newValues = newAttributeDefinition.isMandatory() + " ";
-
-                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_ORDER, newAttributeDefinition.getOrder());
-                    affectedProperties = Constants.PROPERTY_ORDER + " ";
-                    oldValues = " ";
-                    newValues = newAttributeDefinition.getOrder() + " ";
-
-                    if (newAttributeDefinition.isMultiple() && 
-                            AttributeMetadata.isPrimitive((String) attrNode.getProperty(Constants.PROPERTY_TYPE)))
-                        throw new InvalidArgumentException("Primitive types can not be set as multiple");
-
-                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MULTIPLE, newAttributeDefinition.isMultiple());
-
-                    affectedProperties = Constants.PROPERTY_MULTIPLE + " ";
-                    oldValues = " ";
-                    newValues = newAttributeDefinition.isMultiple() + " ";
-                    
-                    //Refresh cache for the affected classes
-                    refreshCacheOn(classNode);
-                    tx.success();
-                    return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), newValues.trim(), String.format("Update attribute properties of class %s", classNode.getProperty(Constants.PROPERTY_NAME)));
-                }
-            }//end for
-            throw new MetadataObjectNotFoundException(String.format(
-                    "Can not find attribute %s in class %s", newAttributeDefinition.getName(), className));
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
+            
+            ChangeDescriptor changeDescriptor = setAttributeProperties(classNode, attributeId, newProperties);
+            tx.success();
+            return changeDescriptor;
         }
     }
     
@@ -1172,14 +932,16 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     }
     
     @Override
-    public List<ClassMetadataLight> getPossibleChildren(String parentClassName) throws MetadataObjectNotFoundException {
+    public List<ClassMetadataLight> getPossibleChildren(String parentClassName, boolean ignoreAbstract) throws MetadataObjectNotFoundException {
         List<ClassMetadataLight> classMetadataResultList = new ArrayList<>();
         
-        List<String> cachedPossibleChildren = cm.getPossibleChildren(parentClassName);
+        List<ClassMetadata> cachedPossibleChildren = cm.getPossibleChildren(parentClassName);
                 
         if (cachedPossibleChildren != null) {
-            for (String cachedPossibleChild : cachedPossibleChildren)
-                classMetadataResultList.add(cm.getClass(cachedPossibleChild));
+            for (ClassMetadata cachedPossibleChild : cachedPossibleChildren) {
+                if (!(ignoreAbstract && cachedPossibleChild.isAbstract()))
+                    classMetadataResultList.add(cachedPossibleChild);
+            }
             return classMetadataResultList;
         }
         
@@ -1273,7 +1035,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     
     @Override
     public boolean canBeChild(String allegedParent, String childToBeEvaluated) throws MetadataObjectNotFoundException {
-        List<ClassMetadataLight> possibleChildren = getPossibleChildren(allegedParent);
+        List<ClassMetadataLight> possibleChildren = getPossibleChildren(allegedParent, true);
 
         for (ClassMetadataLight possibleChild : possibleChildren) {
             if (possibleChild.getName().equals(childToBeEvaluated))
@@ -1299,7 +1061,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         Node parentNode;
         try(Transaction tx = connectionManager.getConnectionHandler().beginTx()) {
             if(parentClassId != -1) {
-                
                 parentNode = Util.findNodeByLabelAndId(connectionManager.getConnectionHandler(), classLabel, parentClassId);
 
                 if (parentNode == null)
@@ -1308,15 +1069,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 if (!isSubclassOf(Constants.CLASS_INVENTORYOBJECT, (String)parentNode.getProperty(Constants.PROPERTY_NAME)))
                     throw new InvalidArgumentException(
                             String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
-            }else
+            } else
                 parentNode = connectionManager.getConnectionHandler().findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
 
             List<ClassMetadataLight> currentPossibleChildren = refreshPossibleChildren(parentNode);
             
             for (long id : possibleChildren) {
-                
                 Node childNode = Util.findNodeByLabelAndId(connectionManager.getConnectionHandler(), classLabel, id);
-
                 if (childNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
                             "Can not find class with id %s", parentClassId));
@@ -1348,12 +1107,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 
                 //Refresh cache
                 if ((Boolean)childNode.getProperty(Constants.PROPERTY_ABSTRACT)) {
-                    for (Node subClassNode : Util.getAllSubclasses(childNode)) {
-                        if (!(boolean)subClassNode.getProperty(Constants.PROPERTY_ABSTRACT))
-                            cm.putPossibleChild(parentClassName, (String)subClassNode.getProperty(Constants.PROPERTY_NAME));
-                    }
+                    for (Node subClassNode : Util.getAllSubclasses(childNode)) 
+                        cm.putPossibleChild(parentClassName, Util.createClassMetadataFromNode(subClassNode));
                 } else
-                    cm.putPossibleChild(parentClassName, newPossibleChildrenClassName);
+                    cm.putPossibleChild(parentClassName, Util.createClassMetadataFromNode(childNode));
             }
             tx.success();
         }
@@ -1473,13 +1230,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     }
                 }
                 parentNode.createRelationshipTo(childNode, RelTypes.POSSIBLE_CHILD);
+                
                 //Refresh cache
                 if ((boolean)childNode.getProperty(Constants.PROPERTY_ABSTRACT)){
-                    for(ClassMetadataLight subclass : getSubClassesLight((String)childNode.getProperty(Constants.PROPERTY_NAME), false, false))
-                        cm.putPossibleChild(parentClassName,subclass.getName());
+                    for(ClassMetadata subclass : getSubClasses(childNode, false))
+                        cm.putPossibleChild(parentClassName, subclass);
                 }
                 else
-                    cm.putPossibleChild(parentClassName, (String)childNode.getProperty(Constants.PROPERTY_NAME));
+                    cm.putPossibleChild(parentClassName, Util.createClassMetadataFromNode(childNode));
                 tx.success();
             }
         }
@@ -1756,6 +1514,153 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     /**
      * HELPERS
      */
+    /**
+     * 
+     * @param classNode
+     * @param attributeId
+     * @param newProperties
+     * @return
+     * @throws InvalidArgumentException
+     * @throws MetadataObjectNotFoundException 
+     */
+    public ChangeDescriptor setAttributeProperties(Node classNode, long attributeId, HashMap<String, Object> newProperties) 
+            throws InvalidArgumentException, MetadataObjectNotFoundException {
+        String affectedProperties = "", oldValues = "", newValues = "";
+
+        for (Relationship relationship : classNode.getRelationships(RelTypes.HAS_ATTRIBUTE)) {
+            Node attrNode = relationship.getEndNode();
+            if (attrNode.getId() == attributeId) {
+                String currentAttributeName = (String)attrNode.getProperty(Constants.PROPERTY_NAME);
+
+                for (String aProperty : newProperties.keySet()) {
+                    switch (aProperty) {
+                        case Constants.PROPERTY_NAME:
+                            if (currentAttributeName.equals(Constants.PROPERTY_NAME))
+                                throw new InvalidArgumentException("Attribute \"name\" can not be renamed");
+                            if (((String)newProperties.get(aProperty)).matches("^[a-zA-Z0-9_]*$"))
+                                throw new InvalidArgumentException(String.format("Attribute name contains invalid characters"));
+
+                            Util.changeAttributeName(classNode, currentAttributeName, (String)newProperties.get(aProperty));
+
+                            affectedProperties += Constants.PROPERTY_NAME + " ";
+                            oldValues += currentAttributeName + " ";
+                            newValues += newProperties.get(aProperty) + " ";
+                            break;
+                        case Constants.PROPERTY_DESCRIPTION:
+                            Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_DESCRIPTION, 
+                                    (String)newProperties.get(aProperty));
+                            affectedProperties = Constants.PROPERTY_DESCRIPTION + " ";
+                            oldValues += currentAttributeName + " ";
+                            newValues += newProperties.get(aProperty) + " ";
+                            break;
+                        case Constants.PROPERTY_DISPLAY_NAME:
+                            oldValues += attrNode.getProperty(Constants.PROPERTY_DISPLAY_NAME) + " ";
+                            Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_DISPLAY_NAME, (String)newProperties.get(aProperty));
+                            affectedProperties = Constants.PROPERTY_DISPLAY_NAME + " ";
+                            newValues += newProperties.get(aProperty) + " ";
+                            break;
+                        case Constants.PROPERTY_TYPE:
+                            if (currentAttributeName.equals(Constants.PROPERTY_NAME))
+                                throw new InvalidArgumentException("Attribute \"name\" can only be a String");
+                            oldValues += attrNode.getProperty(Constants.PROPERTY_TYPE) + " ";
+
+                            if (AttributeMetadata.isPrimitive((String)attrNode.getProperty(Constants.PROPERTY_TYPE)))
+                                Util.changeAttributeTypeIfPrimitive(classNode, currentAttributeName, (String)newProperties.get(aProperty));
+                            else
+                                Util.changeAttributeTypeIfListType(classNode, currentAttributeName, (String)newProperties.get(aProperty));
+
+                            affectedProperties = Constants.PROPERTY_TYPE + " ";
+                            newValues += newProperties.get(aProperty) + " ";
+                            break;
+                        case Constants.PROPERTY_READ_ONLY:
+                            oldValues += " " + attrNode.getProperty(Constants.PROPERTY_READ_ONLY);                              
+                            Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_READ_ONLY, (boolean)newProperties.get(aProperty));
+                            affectedProperties = Constants.PROPERTY_READ_ONLY + " ";
+                            newValues += newProperties.get(aProperty) + " ";
+                            break;
+                        case Constants.PROPERTY_VISIBLE:
+                            oldValues += " " + attrNode.getProperty(Constants.PROPERTY_VISIBLE);
+                            Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_VISIBLE, (boolean)newProperties.get(aProperty));
+                            affectedProperties = Constants.PROPERTY_VISIBLE + " ";
+                            newValues += newProperties.get(aProperty) + " ";
+                            break;
+                        case Constants.PROPERTY_ADMINISTRATIVE:
+                            oldValues += " " + attrNode.getProperty(Constants.PROPERTY_ADMINISTRATIVE);
+                            Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_ADMINISTRATIVE, (boolean)newProperties.get(aProperty));
+                            affectedProperties = Constants.PROPERTY_ADMINISTRATIVE + " ";
+                            newValues += newProperties.get(aProperty) + " ";
+                            break;
+                        case Constants.PROPERTY_NO_COPY:
+                            oldValues += " " + attrNode.getProperty(Constants.PROPERTY_NO_COPY);
+                            Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_NO_COPY, (boolean)newProperties.get(aProperty));
+                            affectedProperties = Constants.PROPERTY_NO_COPY + " ";
+                            newValues += (boolean)newProperties.get(aProperty) + " ";
+                            break;
+                        case Constants.PROPERTY_UNIQUE:
+                            oldValues += " " + attrNode.getProperty(Constants.PROPERTY_UNIQUE);
+                            if((boolean)newProperties.get(aProperty)) { // Do additional validations only if unique changed from false to true
+                                String attributeType = (String) attrNode.getProperty(Constants.PROPERTY_TYPE);
+                                if (attributeType.equals("Boolean") || !AttributeMetadata.isPrimitive(attributeType))
+                                    throw new InvalidArgumentException("Boolean and list type attributes can not be set as unique");
+
+                                if(canAttributeBeUnique(classNode, currentAttributeName))
+                                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newProperties.get(aProperty));
+                                else
+                                    throw new InvalidArgumentException(String.format("There are duplicated values of attribute \"%s\" among the existing instances of class %s or its subclasses", 
+                                            currentAttributeName, classNode.getProperty(Constants.PROPERTY_NAME)));
+                            }
+                            else
+                                Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newProperties.get(aProperty));
+
+                            affectedProperties = Constants.PROPERTY_UNIQUE + " ";
+                            newValues += newProperties.get(aProperty) + " ";
+                            break;
+                        case Constants.PROPERTY_MANDATORY:
+                            oldValues += " " + attrNode.getProperty(Constants.PROPERTY_MANDATORY);
+                            if((boolean)newProperties.get(aProperty)) { // Do additional validations only if mandatory changed from false to true
+                                // This checks if every object of the class and subclasses has a value in this attribute marked as mandatory
+                                if(objectsOfClassHasValueInMandatoryAttribute((String)classNode.getProperty(Constants.PROPERTY_NAME), currentAttributeName))
+                                    Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, 
+                                            newProperties.get(aProperty));
+                                else
+                                    throw new InvalidArgumentException(String.format("Before setting it as mandatory, all existing instances of this class must have valid values for attribute %s", 
+                                            currentAttributeName));
+                            }
+                            else
+                                Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newProperties.get(aProperty));
+
+                            affectedProperties = Constants.PROPERTY_MANDATORY + " ";
+                            newValues += newProperties.get(aProperty) + " ";
+                            break;
+                        case Constants.PROPERTY_ORDER:
+                            oldValues += " " + attrNode.getProperty(Constants.PROPERTY_ORDER);
+                            Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_ORDER, newProperties.get(aProperty));
+                            affectedProperties = Constants.PROPERTY_ORDER + " ";
+                            newValues += newProperties.get(aProperty) + " ";
+                            break;
+                        case Constants.PROPERTY_MULTIPLE:
+                            if (AttributeMetadata.isPrimitive((String) attrNode.getProperty(Constants.PROPERTY_TYPE)))
+                                throw new InvalidArgumentException("Primitive types can not be set as multiple");
+                            oldValues += " " + attrNode.getProperty(Constants.PROPERTY_MULTIPLE);
+                            Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MULTIPLE, (boolean)newProperties.get(aProperty));
+                            affectedProperties = Constants.PROPERTY_MULTIPLE + " ";
+                            newValues += newProperties.get(aProperty) + " ";
+                            break;
+                        default:
+                            throw new IllegalArgumentException(String.format("Property %s is unknown or can not be changed", aProperty));
+                    }
+                }
+
+                //Refresh cache for the affected classes
+                refreshCacheOn(classNode);
+                return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), newValues.trim(), String.format("Update attribute properties of class %s", classNode.getProperty(Constants.PROPERTY_NAME)));
+            }
+        }
+        throw new MetadataObjectNotFoundException(String.format(
+                    "Attribute with id %s in class %s could not be found", attributeId, classNode.getProperty(Constants.PROPERTY_NAME)));
+    }
+    
+    
     //Callers must handle associated transactions
    private void refreshCacheOn(Node rootClassNode){
         TraversalDescription UPDATE_TRAVERSAL = connectionManager.getConnectionHandler().traversalDescription().
@@ -1802,14 +1707,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             if ((Boolean) relationship.getEndNode().getProperty(Constants.PROPERTY_ABSTRACT)) {
                 Iterable<Node> allSubclasses = Util.getAllSubclasses(relationship.getEndNode());
                 for (Node childNode : allSubclasses) {
-                    if (!(Boolean) childNode.getProperty(Constants.PROPERTY_ABSTRACT)) {
-                        cm.putPossibleChild(className, (String) childNode.getProperty(Constants.PROPERTY_NAME));
-                        possibleChildren.add(Util.createClassMetadataLightFromNode(childNode));
-                   }
+                    ClassMetadata aSubclass = Util.createClassMetadataFromNode(childNode);
+                    cm.putPossibleChild(className, aSubclass);
+                    possibleChildren.add(aSubclass);
                }
             } else {
-                cm.putPossibleChild(className, (String) relationship.getEndNode().getProperty(Constants.PROPERTY_NAME));
-                possibleChildren.add(Util.createClassMetadataLightFromNode(relationship.getEndNode()));
+                ClassMetadata aSubclass = Util.createClassMetadataFromNode(relationship.getEndNode());
+                cm.putPossibleChild(className, aSubclass);
+                possibleChildren.add(aSubclass);
            }
        }
        return possibleChildren;
@@ -1993,7 +1898,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     }
     
     /**
-     * Fetches recursively all the subclasses of a given class without using a transaction
+     * Fetches recursively all the subclasses in a light flavor of a given class without using a transaction.
      * @param classNode The class node to start the search
      * @param includeAbstractClasses should abstract classes be included in the result?
      * @return The list of the recursive subclasses, given the filters <code>includeAbstractClasses</code>
@@ -2005,6 +1910,24 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             if (subClassNode.hasProperty(Constants.PROPERTY_ABSTRACT) && includeAbstractClasses) {
                 res.add(Util.createClassMetadataLightFromNode(subClassNode));
                 res.addAll(getSubClassesLight(subClassNode, includeAbstractClasses));
+            }
+        }
+        return res;
+    }
+    
+    /**
+     * Fetches recursively all the subclasses of a given class without using a transaction and re
+     * @param classNode The class node to start the search
+     * @param includeAbstractClasses should abstract classes be included in the result?
+     * @return The list of the recursive subclasses, given the filters <code>includeAbstractClasses</code>
+     */
+    private List<ClassMetadata> getSubClasses(Node classNode, boolean includeAbstractClasses) {
+        List<ClassMetadata> res = new ArrayList<>();
+        for (Relationship inheritanceRelationship : classNode.getRelationships(Direction.INCOMING, RelTypes.EXTENDS)) {
+            Node subClassNode = inheritanceRelationship.getStartNode();
+            if (subClassNode.hasProperty(Constants.PROPERTY_ABSTRACT) && includeAbstractClasses) {
+                res.add(Util.createClassMetadataFromNode(subClassNode));
+                res.addAll(getSubClasses(subClassNode, includeAbstractClasses));
             }
         }
         return res;

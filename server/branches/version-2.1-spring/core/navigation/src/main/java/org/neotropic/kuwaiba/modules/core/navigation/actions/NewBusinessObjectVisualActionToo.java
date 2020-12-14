@@ -145,6 +145,8 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
         
         BusinessObjectLight businessObject = (BusinessObjectLight) parameters.get(PARAM_BUSINESS_OBJECT);
         Dialog wdwNewBusinessObject = new Dialog();
+        wdwNewBusinessObject.setDraggable(true);
+        wdwNewBusinessObject.setSizeFull();
         wdwNewBusinessObject.setMinWidth("450px");
         
         if (businessObject != null) {
@@ -155,21 +157,21 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
                 lytHeader.setPadding(false);
                 lytHeader.setMargin(false);
                 Label lblTitle = new Label(newBusinessObjectAction.getDisplayName());
-                lblTitle.setClassName("dialog_title");
+                lblTitle.setClassName("dialog-title");
                 Label lblParent = new Label(businessObject.toString());
                 
-                Accordion acrNewObjtOptions = new Accordion();
-                acrNewObjtOptions.setWidth("100%");
-                
-                
                 ComboBox<ClassMetadataLight> cmbPossibleChildrenClass = new ComboBox(ts.getTranslatedString("module.navigation.actions.new-business-object.ui.object-class"));
-                cmbPossibleChildrenClass.setItems(getChildren(businessObject.getClassName()));
+                cmbPossibleChildrenClass.setItems(mem.getPossibleChildren(businessObject.getClassName(), true));
                 cmbPossibleChildrenClass.setRequired(true);
                 cmbPossibleChildrenClass.setEnabled(true);
                 cmbPossibleChildrenClass.setPlaceholder(ts.getTranslatedString("module.navigation.actions.new-business-object.select-class"));
                 cmbPossibleChildrenClass.setItemLabelGenerator(class_ -> 
                     class_.getDisplayName() != null && !class_.getDisplayName().isEmpty() ? class_.getDisplayName() : class_.getName()
                 );
+                
+                Accordion accOptions = new Accordion();
+                accOptions.setWidth("100%");
+                
                 //New object name
                 TextField txtName = new TextField(ts.getTranslatedString("module.navigation.actions.new-business-object.ui.object-name"));
                 txtName.setErrorMessage(ts.getTranslatedString("module.navigation.actions.new-business-object.ui.empty-name"));
@@ -185,7 +187,6 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
                 //Multilpe pattern
                 TextField txtPattern = new TextField(ts.getTranslatedString("module.navigation.actions.new-multiple-business-object-pattern"));
                 txtPattern.setSizeFull();
-                txtPattern.setPlaceholder("[sequence(x,y)]...");
                 //Mandatory Fields
                 FormLayout lytFields = new FormLayout();
                 lytFields.add(cmbPossibleChildrenClass);
@@ -195,10 +196,10 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
                 lytSingleObj.setMargin(false);
                 lytSingleObj.setSpacing(false);
                 
-                AccordionPanel add = acrNewObjtOptions.add(singleObj, lytSingleObj);
-                add.addThemeName("vaadin-accordion-panel");
-                AccordionPanel add1 = acrNewObjtOptions.add(multipleObj, txtPattern);
-                add1.addThemeName("vaadin-accordion-panel");
+                AccordionPanel pnlSingleBusinessObject = accOptions.add(singleObj, lytSingleObj);
+                pnlSingleBusinessObject.addThemeName("vaadin-accordion-panel");
+                AccordionPanel pnlMultipleBusinessObject = accOptions.add(multipleObj, txtPattern);
+                pnlMultipleBusinessObject.addThemeName("vaadin-accordion-panel");
                 
                 Button btnCancel = new Button(ts.getTranslatedString("module.general.messages.cancel"), event -> wdwNewBusinessObject.close());
                 btnOk = new Button(ts.getTranslatedString("module.general.messages.ok"));
@@ -207,7 +208,7 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
                 btnOk.addClickListener(event -> {
                     try {
                         attributes.put(Constants.PROPERTY_NAME, txtName.getValue());
-                        OptionalInt openedIndex = acrNewObjtOptions.getOpenedIndex();
+                        OptionalInt openedIndex = accOptions.getOpenedIndex();
                         ModuleActionParameterSet params = new ModuleActionParameterSet(
                             new ModuleActionParameter(NewBusinessObjectAction.PARAM_CLASS_NAME, cmbPossibleChildrenClass.getValue().getName()),
                             new ModuleActionParameter(NewBusinessObjectAction.PARAM_PARENT_CLASS_NAME, businessObject.getClassName()),
@@ -279,12 +280,12 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
                                 cmbTemplate.setItems(templatesForSelectedClass);
                                 cmbTemplate.setEnabled(true);
                                 cmbTemplate.setPlaceholder(ts.getTranslatedString("module.navigation.actions.new-business-object-from-template.select-template"));
-                                AccordionPanel add2 = acrNewObjtOptions.add(templateObj, cmbTemplate);
+                                AccordionPanel add2 = accOptions.add(templateObj, cmbTemplate);
                                 add2.addThemeName("vaadin-accordion-panel");
                                 acpTemplate.add(add2);
                             }
                             else
-                                acrNewObjtOptions.remove(acpTemplate.get(0));
+                                accOptions.remove(acpTemplate.get(0));
                             //Mandatory attribtues
                             mandatoryAttributesInSelectedClass = mem.getMandatoryAttributesInClass(event.getValue().getName());
                             if(!mandatoryAttributesInSelectedClass.isEmpty())
@@ -323,7 +324,7 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
                 lytMain.setHorizontalComponentAlignment(FlexComponent.Alignment.END, lytButtons);
                 lytMain.setPadding(true);
                 
-                lytMain.addAndExpand(acrNewObjtOptions);
+                lytMain.addAndExpand(accOptions);
                 lytMain.add(lytButtons);
                 
                 wdwNewBusinessObject.add(lytMain);
@@ -456,24 +457,7 @@ public class NewBusinessObjectVisualActionToo extends AbstractVisualInventoryAct
         return lytMandatoryAttributes;
     }
 
-    /**
-     * Gets the possible children removing the the abstract classes and 
-     * adding the children of those abstract classes
-     * @param className the class name to get its possible children
-     * @return the list of possible children
-     * @throws MetadataObjectNotFoundException 
-     */
-    private List<ClassMetadataLight> getChildren(String className) throws MetadataObjectNotFoundException, InvalidArgumentException {
-        List<ClassMetadataLight> possibleChildrenWithoutAbstracts = new ArrayList<>();
-        List<ClassMetadataLight> possibleChildrenNoRecursive = mem.getPossibleChildrenNoRecursive(className);
-        for (ClassMetadataLight classMetadata : possibleChildrenNoRecursive) {
-            if(classMetadata.isAbstract())
-                possibleChildrenWithoutAbstracts.addAll(mem.getSubClassesLight(classMetadata.getName(), false, false));
-            else
-                possibleChildrenWithoutAbstracts.add(classMetadata);
-        }
-        return possibleChildrenWithoutAbstracts;
-    }
+    
     
     /**
      * checks if every mandatory attribute has a value and enables or disables 

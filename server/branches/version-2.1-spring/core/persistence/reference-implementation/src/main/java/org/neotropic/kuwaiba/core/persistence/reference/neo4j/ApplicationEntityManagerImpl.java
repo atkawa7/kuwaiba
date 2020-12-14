@@ -2780,7 +2780,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         MetadataObjectNotFoundException, ApplicationObjectNotFoundException, OperationNotPermittedException {
         
         boolean isPossibleChildren = false;
-        for (ClassMetadataLight possibleChildren : mem.getPossibleChildren(templateElementParentClassName)) {
+        for (ClassMetadataLight possibleChildren : mem.getPossibleChildren(templateElementParentClassName, true)) {
             if (possibleChildren.getName().equals(templateElementClass)) {
                 isPossibleChildren = true;
                 break;
@@ -2889,7 +2889,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         throws MetadataObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException, InvalidArgumentException {
         
         boolean isPossibleChildren = false;
-        for (ClassMetadataLight possibleChildren : mem.getPossibleChildren(templateElementParentClassName)) {
+        for (ClassMetadataLight possibleChildren : mem.getPossibleChildren(templateElementParentClassName, true)) {
             if (possibleChildren.getName().equals(templateElementClassName)) {
                 isPossibleChildren = true;
                 break;

@@ -562,39 +562,37 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
         propsheetGeneralAttributes.addPropertyValueChangedListener((AbstractProperty<? extends Object> property) -> {
             try {
                 if (selectedClass != null) { 
-
-                    ClassMetadata classToUpdate = new ClassMetadata();
-                    classToUpdate.setId(selectedClass.getId());
+                    HashMap<String, Object> newProperties = new HashMap<>();
                     switch(property.getName()) {
                         case Constants.PROPERTY_NAME:
-                            classToUpdate.setName(property.getValue().toString());
+                            newProperties.put(Constants.PROPERTY_NAME, property.getValue());
                             selectedClass.setName(property.getValue().toString());
                             break;
                         case Constants.PROPERTY_DISPLAY_NAME:
-                            classToUpdate.setDisplayName(property.getValue().toString());
+                            newProperties.put(Constants.PROPERTY_DISPLAY_NAME, property.getValue());
                             selectedClass.setDisplayName(property.getValue().toString());
                             break;
                         case Constants.PROPERTY_DESCRIPTION:
-                            classToUpdate.setDescription(property.getValue().toString());
+                            newProperties.put(Constants.PROPERTY_DESCRIPTION, property.getValue());
                             break;
                         case Constants.PROPERTY_ABSTRACT:
-                            classToUpdate.setAbstract((Boolean)property.getValue());
+                            newProperties.put(Constants.PROPERTY_ABSTRACT, property.getValue());
                             selectedClass.setAbstract((Boolean)property.getValue());
                             break;
                         case Constants.PROPERTY_IN_DESIGN:
-                            classToUpdate.setInDesign((Boolean)property.getValue());
+                            newProperties.put(Constants.PROPERTY_IN_DESIGN, property.getValue());
                             selectedClass.setInDesign((Boolean)property.getValue());
                             break;
                         case Constants.PROPERTY_COUNTABLE:
-                            classToUpdate.setCountable((Boolean)property.getValue());
+                            newProperties.put(Constants.PROPERTY_COUNTABLE, property.getValue());
                             break; 
                         case Constants.PROPERTY_COLOR:
                             int color = Color.decode((String) property.getValue()).getRGB();
-                            classToUpdate.setColor(color);
+                            newProperties.put(Constants.PROPERTY_COLOR, property.getValue());
                             selectedClass.setColor(color);
                             break;  
                     }                                     
-                    mem.setClassProperties(classToUpdate);   
+                    mem.setClassProperties(selectedClass.getId(), newProperties);   
 
                     genericObjectListTree.getDataProvider().refreshAll();
                     inventoryObjectTree.getDataProvider().refreshAll();
@@ -653,48 +651,46 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
         propsheetClassAttributes.addPropertyValueChangedListener((AbstractProperty<? extends Object> property) -> {
              try {
                 if (selectedAttribute != null && selectedClass != null) {
-                    AttributeMetadata attributeMetadataToUpdate = new AttributeMetadata();
-                    attributeMetadataToUpdate.setId(selectedAttribute.getId());
-                    attributeMetadataToUpdate.setName(null);
+                    HashMap<String, Object> newProperties = new HashMap<>();
                     
                     switch(property.getName()) {
                         case Constants.PROPERTY_NAME:
-                            attributeMetadataToUpdate.setName(property.getValue().toString());
+                            newProperties.put(Constants.PROPERTY_NAME, property.getValue().toString());
                             break;
                         case Constants.PROPERTY_DISPLAY_NAME:
-                            attributeMetadataToUpdate.setDisplayName(property.getValue().toString());
+                            newProperties.put(Constants.PROPERTY_DISPLAY_NAME, property.getValue());
                             break;
                         case Constants.PROPERTY_DESCRIPTION:
-                            attributeMetadataToUpdate.setDescription(property.getValue().toString());
+                            newProperties.put(Constants.PROPERTY_DESCRIPTION, property.getValue());
                             break;
                         case Constants.PROPERTY_TYPE:
                             if (property.getValue() != null)
-                                 attributeMetadataToUpdate.setType(property.getValue().toString());
+                                 newProperties.put(Constants.PROPERTY_TYPE, property.getValue());
                             break;
                         case Constants.PROPERTY_MANDATORY:
-                            attributeMetadataToUpdate.setMandatory((Boolean)property.getValue());
+                            newProperties.put(Constants.PROPERTY_MANDATORY, property.getValue());
                             break;
                         case Constants.PROPERTY_UNIQUE:
-                            attributeMetadataToUpdate.setUnique((Boolean)property.getValue());
+                            newProperties.put(Constants.PROPERTY_UNIQUE, property.getValue());
                             break;
                         case Constants.PROPERTY_MULTIPLE:
-                            attributeMetadataToUpdate.setMultiple((Boolean)property.getValue());
+                            newProperties.put(Constants.PROPERTY_MULTIPLE, property.getValue());
                             break;                     
                         case Constants.PROPERTY_VISIBLE:
-                            attributeMetadataToUpdate.setVisible((Boolean)property.getValue());
+                            newProperties.put(Constants.PROPERTY_VISIBLE, property.getValue());
                             break;                     
                         case Constants.PROPERTY_ADMINISTRATIVE:
-                            attributeMetadataToUpdate.setAdministrative((Boolean)property.getValue());
+                            newProperties.put(Constants.PROPERTY_ADMINISTRATIVE, property.getValue());
                             break;                     
                         case Constants.PROPERTY_NO_COPY:
-                            attributeMetadataToUpdate.setNoCopy((Boolean)property.getValue());
+                            newProperties.put(Constants.PROPERTY_NO_COPY, property.getValue());
                             break;                     
                         case Constants.PROPERTY_ORDER:
-                            attributeMetadataToUpdate.setOrder((Integer)property.getValue());
+                            newProperties.put(Constants.PROPERTY_ORDER, property.getValue());
                             break;                     
                     }
                                       
-                    mem.setAttributeProperties(selectedClass.getId(), attributeMetadataToUpdate);
+                    mem.setAttributeProperties(selectedClass.getId(), selectedAttribute.getId(), newProperties);
                     // Refresh Objects
                     selectedAttribute = mem.getAttribute(selectedClass.getId(), selectedAttribute.getId());
                     updateGridClassAttributes(selectedClass);
@@ -784,15 +780,10 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
         uploadIcon.addSucceededListener(event -> {
             try {
                 byte [] imageData = IOUtils.toByteArray(bufferIcon.getInputStream());
-                
                 if (selectedClass != null) { 
-
-                    ClassMetadata classToUpdate = new ClassMetadata();
-                    classToUpdate.setId(selectedClass.getId());
-                    
-                    classToUpdate.setIcon(imageData);
-                    
-                    mem.setClassProperties(classToUpdate);
+                    HashMap<String, Object> newIcon = new HashMap<>();
+                    newIcon.put(Constants.PROPERTY_ICON, imageData);
+                    mem.setClassProperties(selectedClass.getId(), newIcon);
                     genericObjectListTree.getDataProvider().refreshAll();
                     inventoryObjectTree.getDataProvider().refreshAll();
                     
@@ -825,15 +816,10 @@ public class DataModelManagerUI extends VerticalLayout implements HasDynamicTitl
         uploadSmallIcon.addSucceededListener(event -> {
             try {
                 byte [] imageData = IOUtils.toByteArray(bufferSmallIcon.getInputStream());
-                
                 if (selectedClass != null) { 
-
-                    ClassMetadata classToUpdate = new ClassMetadata();
-                    classToUpdate.setId(selectedClass.getId());
-                    
-                    classToUpdate.setSmallIcon(imageData);
-                    
-                    mem.setClassProperties(classToUpdate);  
+                    HashMap<String, Object> newSmallIcon = new HashMap<>();
+                    newSmallIcon.put(Constants.PROPERTY_SMALL_ICON, imageData);
+                    mem.setClassProperties(selectedClass.getId(), newSmallIcon);  
                     genericObjectListTree.getDataProvider().refreshAll();
                     inventoryObjectTree.getDataProvider().refreshAll();
                     

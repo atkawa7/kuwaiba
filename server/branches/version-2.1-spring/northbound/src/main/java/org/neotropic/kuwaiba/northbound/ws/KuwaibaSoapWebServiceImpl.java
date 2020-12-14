@@ -3815,21 +3815,29 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
              throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));
         try {
             aem.validateCall("setClassProperties", "127.0.0.1", sessionId);
-            ClassMetadata cm = new ClassMetadata();
-            cm.setId(classId);
-            cm.setName(className);
-            cm.setDisplayName(displayName);
-            cm.setDescription(description);
-            cm.setAbstract(isAbstract);
-            cm.setInDesign(isInDesign);
-            cm.setColor(color);
-            cm.setCountable(isCountable);
-            cm.setCreationDate(Calendar.getInstance().getTimeInMillis());
-            cm.setIcon(icon);
-            cm.setSmallIcon(smallIcon);
-            cm.setCustom(isCustom);
+            HashMap<String, Object> newProperties = new HashMap<>();
+            if (className != null)
+                newProperties.put(Constants.PROPERTY_NAME, className);
+            if (displayName != null)
+                newProperties.put(Constants.PROPERTY_DISPLAY_NAME, displayName);
+            if (description != null)
+                newProperties.put(Constants.PROPERTY_DESCRIPTION, description);
+            if (isAbstract != null)
+                newProperties.put(Constants.PROPERTY_ABSTRACT, isAbstract);
+            if (isInDesign != null)
+                newProperties.put(Constants.PROPERTY_IN_DESIGN, isInDesign);
+            if (color != -1)
+                newProperties.put(Constants.PROPERTY_COLOR, color);
+            if (isCountable != null)
+                newProperties.put(Constants.PROPERTY_COUNTABLE, isCountable);
+            if (isCustom != null)
+                newProperties.put(Constants.PROPERTY_CUSTOM, isCustom);
+            if (icon != null)
+                newProperties.put(Constants.PROPERTY_ICON, icon);
+            if (smallIcon != null)
+                newProperties.put(Constants.PROPERTY_SMALL_ICON, smallIcon);
             
-            ChangeDescriptor changeDescriptor = mem.setClassProperties(cm);
+            ChangeDescriptor changeDescriptor = mem.setClassProperties(classId, newProperties);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
@@ -3988,23 +3996,34 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));       
         try {
             aem.validateCall("setAttributeProperties", "127.0.0.1", sessionId);
-            AttributeMetadata attrMtdt = new AttributeMetadata();
+            HashMap<String, Object> newProperties = new HashMap<>();
 
-            attrMtdt.setId(attributeId);
-            attrMtdt.setName(name);
-            attrMtdt.setDisplayName(displayName);
-            attrMtdt.setDescription(description);
-            attrMtdt.setType(type);
-            attrMtdt.setAdministrative(administrative);
-            attrMtdt.setUnique(unique);
-            attrMtdt.setMandatory(mandatory);
-            attrMtdt.setMultiple(multiple);
-            attrMtdt.setVisible(visible);
-            attrMtdt.setReadOnly(readOnly);
-            attrMtdt.setNoCopy(noCopy);
-            attrMtdt.setOrder(order);
+            if (name != null)
+                newProperties.put(Constants.PROPERTY_NAME, name);
+            if (displayName != null)
+                newProperties.put(Constants.PROPERTY_DISPLAY_NAME, displayName);
+            if (description != null)
+                newProperties.put(Constants.PROPERTY_DESCRIPTION, description);
+            if (type != null)
+                newProperties.put(Constants.PROPERTY_TYPE, type);
+            if (administrative != null)
+                newProperties.put(Constants.PROPERTY_ADMINISTRATIVE, administrative);
+            if (unique != null)
+                newProperties.put(Constants.PROPERTY_UNIQUE, unique);
+            if (mandatory != null)
+                newProperties.put(Constants.PROPERTY_MANDATORY, mandatory);
+            if (multiple != null)
+                newProperties.put(Constants.PROPERTY_MULTIPLE, multiple);
+            if (visible != null)
+                newProperties.put(Constants.PROPERTY_VISIBLE, visible);
+            if (readOnly != null)
+                newProperties.put(Constants.PROPERTY_READ_ONLY, readOnly);
+            if (noCopy != null)
+                newProperties.put(Constants.PROPERTY_NO_COPY, noCopy);
+            if (order != null)
+                newProperties.put(Constants.PROPERTY_ORDER, order);
 
-            mem.setAttributeProperties(className, attrMtdt);
+            mem.setAttributeProperties(className, attributeId, newProperties);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
@@ -4012,7 +4031,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
 
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
-        } catch (Exception ex) { // Unexpected error. Log the stach trace and 
+        } catch (Exception ex) { // Unexpected error. Log the stack trace and rethrow
             Logger.getLogger(KuwaibaSoapWebServiceImpl.class.getName()).log(Level.SEVERE, 
                     String.format(ts.getTranslatedString("module.webservice.messages.unexpected-error"), "setAttributeProperties"), ex);
             throw new ServerSideException(ex.getMessage());
@@ -4020,28 +4039,40 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
     }
 
     @Override
-    public void setAttributePropertiesForClassWithId(long classId, long attributeId, String name, String displayName, String description, String type, Boolean administrative, Boolean mandatory, Boolean multiple, Boolean noCopy, Boolean readOnly, Boolean unique, Boolean visible, Integer order, String sessionId) throws ServerSideException {
+    public void setAttributePropertiesForClassWithId(long classId, long attributeId, String name, String displayName, 
+            String description, String type, Boolean administrative, Boolean mandatory, Boolean multiple, Boolean noCopy, 
+            Boolean readOnly, Boolean unique, Boolean visible, Integer order, String sessionId) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(ts.getTranslatedString("module.general.messages.cant-reach-backend"));       
         try {
             aem.validateCall("setAttributePropertiesForClassWithId", "127.0.0.1", sessionId);
-            AttributeMetadata attrMtdt = new AttributeMetadata();
-
-            attrMtdt.setId(attributeId);
-            attrMtdt.setName(name);
-            attrMtdt.setDisplayName(displayName);
-            attrMtdt.setDescription(description);
-            attrMtdt.setType(type);
-            attrMtdt.setAdministrative(administrative);
-            attrMtdt.setUnique(unique);
-            attrMtdt.setMandatory(mandatory);
-            attrMtdt.setMultiple(multiple);
-            attrMtdt.setVisible(visible);
-            attrMtdt.setReadOnly(readOnly);
-            attrMtdt.setNoCopy(noCopy);
-            attrMtdt.setOrder(order);
-
-            ChangeDescriptor changeDescriptor = mem.setAttributeProperties(classId, attrMtdt);
+            HashMap<String, Object> newProperties = new HashMap<>();
+            if (name != null)
+                newProperties.put(Constants.PROPERTY_NAME, name);
+            if (displayName != null)
+                newProperties.put(Constants.PROPERTY_DISPLAY_NAME, displayName);
+            if (description != null)
+                newProperties.put(Constants.PROPERTY_DESCRIPTION, description);
+            if (type != null)
+                newProperties.put(Constants.PROPERTY_TYPE, type);
+            if (administrative != null)
+                newProperties.put(Constants.PROPERTY_ADMINISTRATIVE, administrative);
+            if (unique != null)
+                newProperties.put(Constants.PROPERTY_UNIQUE, unique);
+            if (mandatory != null)
+                newProperties.put(Constants.PROPERTY_MANDATORY, mandatory);
+            if (multiple != null)
+                newProperties.put(Constants.PROPERTY_MULTIPLE, multiple);
+            if (visible != null)
+                newProperties.put(Constants.PROPERTY_VISIBLE, visible);
+            if (readOnly != null)
+                newProperties.put(Constants.PROPERTY_READ_ONLY, readOnly);
+            if (noCopy != null)
+                newProperties.put(Constants.PROPERTY_NO_COPY, noCopy);
+            if (order != null)
+                newProperties.put(Constants.PROPERTY_ORDER, order);
+            
+            ChangeDescriptor changeDescriptor = mem.setAttributeProperties(classId, attributeId, newProperties);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
@@ -4267,7 +4298,7 @@ public class KuwaibaSoapWebServiceImpl implements KuwaibaSoapWebService {
         try {
             aem.validateCall("getPossibleChildren", "127.0.0.1", sessionId);
             List<RemoteClassMetadataLight> cml = new ArrayList<>();
-            List<ClassMetadataLight> classMetadataList = mem.getPossibleChildren(parentClassName);
+            List<ClassMetadataLight> classMetadataList = mem.getPossibleChildren(parentClassName, true);
 
             for (ClassMetadataLight classMetadata : classMetadataList)
                 cml.add(new RemoteClassMetadataLight(classMetadata));

@@ -180,7 +180,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 
         ClassMetadata myClass= mem.getClass(className);
         
-        if (!mem.getPossibleChildren(parentClassName).contains(myClass)) 
+        if (!mem.canBeChild(parentClassName, className)) 
             throw new OperationNotPermittedException(String.format("An instance of class %s can't be created as child of %s", className, parentClassName == null ? Constants.NODE_DUMMYROOT : parentClassName));
         
         try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {        
@@ -256,7 +256,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         if (!mem.isSubclassOf("InventoryObject", className))
             throw new OperationNotPermittedException("Can not create non-inventory objects");
         
-        if (!mem.getPossibleChildren(parentClassName).contains(objectClass))
+        if (!mem.canBeChild(parentClassName, className))
             throw new OperationNotPermittedException(String.format("An instance of class %s can't be created as child of %s", className, parentClassName == null ? Constants.NODE_DUMMYROOT : parentClassName));
         
         String[] splitCriteria = criteria.split(":");
@@ -521,7 +521,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 
         ClassMetadata myClass = mem.getClass(className);
         
-        if (!mem.getPossibleChildren(parentClassName).contains(myClass))
+        if (!mem.canBeChild(parentClassName, className))
             throw new OperationNotPermittedException(String.format("An instance of class %s can't be created as child of %s", className, parentClassName == null ? Constants.NODE_DUMMYROOT : parentClassName));
         
         try (Transaction tx = connectionManager.getConnectionHandler().beginTx()) {

@@ -16,6 +16,7 @@
 
 package org.neotropic.kuwaiba.core.apis.persistence.metadata;
 
+import java.util.HashMap;
 import org.neotropic.kuwaiba.core.apis.persistence.ChangeDescriptor;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.neotropic.kuwaiba.core.apis.persistence.exceptions.BusinessObjectNotFoundException;
@@ -41,18 +42,19 @@ public interface MetadataEntityManager extends AbstractEntityManager {
     public long createClass(ClassMetadata classDefinition) throws DatabaseException, MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
-     * Changes a class metadata definition
-     * @param newClassDefinition the new class definition 
-     * @return The summary of the changes that were made
+     * Changes a class metadata definition.
+     * @param classId The id of the class. A class metadata definition can not be updated using the name as the key, because the name itself could change.
+     * @param newProperties A hashmap with the properties to be updated. The possible key values are: name, color, displayName, description, icon, 
+     * smallIcon, countable, abstract, inDesign and custom. See user manual for a more complete explanation on what each one of them are for.
+     * @return The summary of the changes that were made.
      * @throws ApplicationObjectNotFoundException
-     * @throws MetadataObjectNotFoundException If the class could no be found
-     * @throws InvalidArgumentException If the name has invalid characters, the 
+     * @throws MetadataObjectNotFoundException If the class could no be found.
+     * @throws InvalidArgumentException If any of the property names provided is unknown or if the name has invalid characters, the 
      * new name is empty or if that name already exists.
      * @throws BusinessObjectNotFoundException If there is any problem retrieving an 
-     * object, while checking if every created object of the class with an 
-     * attributes marked as mandatory has value.
+     * object while checking if every created object of the class with an attributes marked as mandatory has value.
      */
-    public ChangeDescriptor setClassProperties(ClassMetadata newClassDefinition) 
+    public ChangeDescriptor setClassProperties(long classId, HashMap<String, Object> newProperties) 
             throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException;
 
     /**
@@ -202,25 +204,31 @@ public interface MetadataEntityManager extends AbstractEntityManager {
 
     /**
      * Changes an attribute definition belonging to a class metadata using the class id as key
-     * @param classId Class id.
-     * @param newAttributeDefinition An object with the new attribute definition. Null values will be ignored.
+     * @param classId Id of the class the attribute belongs to.
+     * @param attributeId
+     * @param newProperties A hashmap with the properties to be updated. The possible key values are: name, color, displayName, description, icon, 
+     * smallIcon, countable, abstract, inDesign and custom. See user manual for a more complete explanation on what each one of them are for.
      * @return The summary of the changes that were made.
      * @throws MetadataObjectNotFoundException If the class could not be found.
      * @throws InvalidArgumentException If any of the new attribute parameters has a wrong value.
      * @throws BusinessObjectNotFoundException If an object can't be find, while it is checking if every object of the class (or subclasses) has a value in an attribute marked as mandatory
      */
-    public ChangeDescriptor setAttributeProperties(long classId, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException;
+    public ChangeDescriptor setAttributeProperties(long classId,  long attributeId, HashMap<String, Object> newProperties) throws 
+            MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException;
     
     /**
      * Changes an attribute definition belonging to a class metadata use the class name as id
-     * @param className Class name.
-     * @param newAttributeDefinition An object with the new attribute definition. Null values will be ignored.
+     * @param className Class the attribute belongs to.
+     * @param attributeId Id of the attribute to be updated.
+     * @param newProperties A hashmap with the properties to be updated. The possible key values are: name, color, displayName, description, icon, 
+     * smallIcon, countable, abstract, inDesign and custom. See user manual for a more complete explanation on what each one of them are for.
      * @return The summary of the changes that were made.
      * @throws MetadataObjectNotFoundException If the class could not be found.
      * @throws InvalidArgumentException If any of the new attribute parameters has a wrong value.
      * @throws BusinessObjectNotFoundException  If an object can't be find, while it is checking if every object of the class (or subclasses) has a value in an attribute marked as mandatory
      */
-    public ChangeDescriptor setAttributeProperties(String className, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException;
+    public ChangeDescriptor setAttributeProperties(String className, long attributeId, HashMap<String, Object> newProperties) 
+            throws MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException;
 
     /**
      * Deletes an attribute from a class.
@@ -243,13 +251,14 @@ public interface MetadataEntityManager extends AbstractEntityManager {
             throws MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
-     * Gets all classes whose instances can be contained into the given parent class. This method
-     * is recursive, so the result include the possible children in children classes
+     * Gets all classes whose instances can be contained into the given parent class.This method
+ is recursive, so the result include the possible children in children classes
      * @param parentClassName The name of the class.
+     * @param ignoreAbstract true to ignore abstract classes.
      * @return An array with the list of direct possible children classes in the containment hierarchy.
      * @throws MetadataObjectNotFoundException If the class can not be found.
      */
-    public List<ClassMetadataLight> getPossibleChildren(String parentClassName) throws MetadataObjectNotFoundException;
+    public List<ClassMetadataLight> getPossibleChildren(String parentClassName, boolean ignoreAbstract) throws MetadataObjectNotFoundException;
     
     /**
      * Gets all classes whose instances can be contained into the given parent class, but using a CHILD_OF_SPECIAL relationship instead of a CHILD_OF one. This is mostly used in complex models, such as the physical layer model. This method
