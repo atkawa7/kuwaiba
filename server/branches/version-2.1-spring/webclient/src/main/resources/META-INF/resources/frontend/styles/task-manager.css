@@ -37,6 +37,10 @@ limitations under the License.
     margin: 0px;
 }
 
+.properties-header {
+    margin-top: 2px;
+}
+
 .bold-font {
     font-weight: bold;
 }

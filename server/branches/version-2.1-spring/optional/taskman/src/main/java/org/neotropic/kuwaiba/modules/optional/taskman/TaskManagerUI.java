@@ -253,6 +253,7 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
         btnAddTask.setClassName("icon-button");
         
         Command deleteTask = () -> {
+            currentTask = null;
             lytTaskForm.setVisible(false);
             btnDeleteTask.setEnabled(false);
             tblTask.getDataProvider().refreshAll();
@@ -509,7 +510,22 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
             btnEditProperties.setClassName("icon-button");
             btnEditProperties.addClickListener(event -> {
                 UpdatePropertiesDialog propertiesDialog = new UpdatePropertiesDialog(task);
-                propertiesDialog.setWidthFull();
+            });
+            
+            Button btnUsers = new Button(ts.getTranslatedString("module.taskman.task.actions.edit-users.name"), new Icon(VaadinIcon.USERS));
+            btnUsers.setClassName("icon-button");
+            btnUsers.addClickListener(event -> {
+               tblUsers.removeAllColumns();
+               loadTaskUsers(task);
+               updateUsersDialog usersDialog = new updateUsersDialog(task); 
+            });
+            
+            Button btnParameters = new Button(ts.getTranslatedString("module.taskman.task.actions.edit-parameters.name"), new Icon(VaadinIcon.EDIT));
+            btnParameters.setClassName("icon-button");
+            btnParameters.addClickListener(event -> {
+               tblParameters.removeAllColumns();
+               loadTaskParameters(task);
+               updateParametersDialog parametersDialog = new updateParametersDialog(task);
             });
                         
             Button btnExecuteTask = new Button(ts.getTranslatedString("module.taskman.task.actions.execute-task.name"), new Icon(VaadinIcon.PLAY));
@@ -530,7 +546,7 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
             lytHeaderMain.setPadding(false);
             lytHeaderMain.setMargin(false);
             lytHeaderMain.setSpacing(false);
-            HorizontalLayout lytHeaderButton = new HorizontalLayout(btnCommit, btnEditProperties, btnExecuteTask);
+            HorizontalLayout lytHeaderButton = new HorizontalLayout(btnCommit, btnEditProperties, btnParameters, btnUsers, btnExecuteTask);
             lytHeaderButton.setAlignItems(Alignment.END);
             lytHeaderButton.setWidth("65%");
             lytHeaderButton.setSpacing(false);
@@ -563,54 +579,38 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
             String executeType;
             
             // Header Task Properties
-            H4 headerMain = new H4(String.format("%s %s", task.getName(), ts.getTranslatedString("module.taskman.task.properties.header-main")));
-            headerMain.setClassName("header");
-            
-            Button btnUsers = new Button(ts.getTranslatedString("module.taskman.task.actions.edit-users.name"), new Icon(VaadinIcon.USERS));
-            btnUsers.setClassName("icon-button");
-            btnUsers.addClickListener(event -> {
-               tblUsers.removeAllColumns();
-               loadTaskUsers(task);
-               updateUsersDialog usersDialog = new updateUsersDialog(task); 
-            });
-            
-            Button btnParameters = new Button(ts.getTranslatedString("module.taskman.task.actions.edit-parameters.name"), new Icon(VaadinIcon.EDIT));
-            btnParameters.setClassName("icon-button");
-            btnParameters.addClickListener(event -> {
-               tblParameters.removeAllColumns();
-               loadTaskParameters(task);
-               updateParametersDialog parametersDialog = new updateParametersDialog(task);
-            });
-            
+            H4 headerMain = new H4(String.format("%s %s", task.getName(), ts.getTranslatedString("module.taskman.task.properties.header-main"))); 
+            headerMain.setClassName("properties-header");
+                    
             // Init general properties
             Label headerGeneral = new Label(ts.getTranslatedString("module.taskman.task.properties-general.header"));
 
             TextField txtName = new TextField(ts.getTranslatedString("module.taskman.task.properties-general.name"));
             txtName.setValue(task.getName());
-            txtName.setWidth("33%");
+            txtName.setWidth("50%");
             txtName.addValueChangeListener(event -> {
                task.setName(txtName.getValue());
             });
 
             TextField txtDescription = new TextField(ts.getTranslatedString("module.taskman.task.properties-general.description"));
             txtDescription.setValue(task.getDescription());
-            txtDescription.setWidth("33%");
+            txtDescription.setWidth("50%");
             txtDescription.addValueChangeListener(event -> {
                task.setDescription(txtDescription.getValue());
             });
             
             PaperToggleButton btnEnable = new PaperToggleButton(ts.getTranslatedString("module.taskman.task.properties-general.enable"));
             btnEnable.setChecked(task.isEnabled());
+            btnEnable.setWidth("50%");
             btnEnable.setClassName("green", true);
-            btnEnable.setWidth("17%");
             btnEnable.addValueChangeListener(event -> {
                task.setEnabled(event.getValue());
             });
  
             PaperToggleButton btnCommit = new PaperToggleButton(ts.getTranslatedString("module.taskman.task.properties-general.commit-on-execute"));
             btnCommit.setChecked(task.commitOnExecute());
+            btnCommit.setWidth("50%");
             btnCommit.setClassName("green", true);
-            btnCommit.setWidth("16%");
             btnCommit.addValueChangeListener(event -> {
                 task.setCommitOnExecute(event.getValue());
             });
@@ -623,7 +623,7 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
             DateTimePicker dateStart = new DateTimePicker(ts.getTranslatedString("module.taskman.task.properties-scheduling.start-time"));
             dateStart.setValue(TaskManagerRenderingTools.convertLongToLocalDateTime(task.getSchedule().getStartTime()));
             dateStart.setMin(LocalDateTime.now());
-            dateStart.setWidth("33%");
+            dateStart.setWidth("40%");
             dateStart.isRequiredIndicatorVisible();
             dateStart.addValueChangeListener(event -> {
                 task.getSchedule().setStartTime(TaskManagerRenderingTools.convertLocalDateTimeToLong(dateStart.getValue()));
@@ -633,7 +633,7 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
             intEveryxMinutes.setValue(task.getSchedule().getEveryXMinutes());
             intEveryxMinutes.setHasControls(true);
             intEveryxMinutes.setMin(1);
-            intEveryxMinutes.setWidth("33%");
+            intEveryxMinutes.setWidth("20%");
             intEveryxMinutes.addValueChangeListener(event -> {
                task.getSchedule().setEveryXMinutes(intEveryxMinutes.getValue());
             });
@@ -663,7 +663,7 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
             cmbExecutionType.setValue(new ExecutionType(executeType, task.getSchedule().getExecutionType()));
             cmbExecutionType.setAllowCustomValue(false);
             cmbExecutionType.setSizeFull();
-            cmbExecutionType.setWidth("33%");
+            cmbExecutionType.setWidth("40%");
             cmbExecutionType.addValueChangeListener(event -> {
                task.getSchedule().setExecutionType(cmbExecutionType.getValue().getType());
             });
@@ -674,7 +674,7 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
 
             TextField txtEmail = new TextField(ts.getTranslatedString("module.taskman.task.properties-notification.email"));
             txtEmail.setValue(task.getNotificationType().getEmail());
-            txtEmail.setWidth("33%");
+            txtEmail.setWidth("50%");
             txtEmail.addValueChangeListener(event -> {
                task.getNotificationType().setEmail(txtEmail.getValue());
             });
@@ -700,7 +700,7 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
             cmbnotificationType.setValue(new NotificationType(notificationType, task.getNotificationType().getNotificationType()));
             cmbnotificationType.setAllowCustomValue(false);
             cmbnotificationType.setSizeFull();
-            cmbnotificationType.setWidth("33%");
+            cmbnotificationType.setWidth("50%");
             cmbnotificationType.addValueChangeListener(event -> {
                task.getNotificationType().setNotificationType(cmbnotificationType.getValue().getType());
             });
@@ -745,42 +745,34 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
             
             HorizontalLayout lytHeaderMain = new HorizontalLayout(headerMain);
             lytHeaderMain.setHeight("20%");
-            lytHeaderMain.setWidth("70%");
+            lytHeaderMain.setWidth("90%");
             lytHeaderMain.setPadding(false);
             lytHeaderMain.setMargin(false);
-            HorizontalLayout lytHeaderButton = new HorizontalLayout(btnUsers, btnParameters, btnSave, btnCancel);
+            HorizontalLayout lytHeaderButton = new HorizontalLayout(btnSave, btnCancel);
             lytHeaderButton.setSpacing(false);
             lytHeaderButton.setHeight("80%");
             HorizontalLayout lytHeader = new HorizontalLayout(lytHeaderMain, lytHeaderButton);
             lytHeader.setWidthFull();
-            lytHeader.setPadding(false);
-            lytHeader.setMargin(false);
                         
-            HorizontalLayout lytGeneralProperties = new HorizontalLayout(txtName, txtDescription, btnEnable, btnCommit);
+            HorizontalLayout lytGeneralProperties = new HorizontalLayout(txtName, txtDescription);
             lytGeneralProperties.setWidthFull();
-            lytGeneralProperties.setMargin(false);
-            lytGeneralProperties.setPadding(false);
+            
+            HorizontalLayout lytGeneralToggleBtn = new HorizontalLayout(btnCommit, btnEnable);
+            lytGeneralToggleBtn.setWidthFull();
             
             HorizontalLayout lytSchedulingProperties = new HorizontalLayout(dateStart, intEveryxMinutes, cmbExecutionType);
             lytSchedulingProperties.setWidthFull();
-            lytSchedulingProperties.setMargin(false);
-            lytSchedulingProperties.setPadding(false);
             
             HorizontalLayout lytNotificationProperties = new HorizontalLayout(txtEmail, cmbnotificationType);
             lytNotificationProperties.setWidthFull();
-            lytNotificationProperties.setMargin(false);
-            lytNotificationProperties.setPadding(false);
             
-            VerticalLayout lytMain = new VerticalLayout(lytHeader, headerGeneral, lytGeneralProperties, 
+            VerticalLayout lytMain = new VerticalLayout(lytHeader, headerGeneral, lytGeneralProperties, lytGeneralToggleBtn,
                     headerScheduling, lytSchedulingProperties, headerNotificationType, lytNotificationProperties);
-            lytMain.setMargin(false);
-            lytMain.setPadding(false);
-            lytMain.setSizeFull();
             lytMain.setHeightFull();
             
             wdwUpdateProperties.add(lytMain);
-            wdwUpdateProperties.setWidthFull();
-            wdwUpdateProperties.setHeightFull();
+            wdwUpdateProperties.setWidth("600px");
+            wdwUpdateProperties.setHeight("600px");
             wdwUpdateProperties.open();           
         }    
     }
@@ -985,5 +977,4 @@ public class TaskManagerUI extends VerticalLayout implements ActionCompletedList
             wdwTaskNotification.open();
         }
     }
-    
 }

@@ -67,12 +67,11 @@ public class DeleteTaskVisualAction extends AbstractVisualAction<Dialog> {
                 try {
                     deleteTaskAction.getCallback().execute(new ModuleActionParameterSet(
                             new ModuleActionParameter<>("taskId", selectTask.getId())));
-
+                    //refresh related grid
+                    getCommandClose().execute();
                     fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_SUCCESS,
                             ts.getTranslatedString("module.taskman.task.actions.delete-task-success"), DeleteTaskAction.class));
                     wdwDeleteTask.close();
-                    //refresh related grid
-                    getCommandClose().execute();
                 } catch (ModuleActionException ex) {
                     fireActionCompletedEvent(new ActionCompletedListener.ActionCompletedEvent(ActionCompletedListener.ActionCompletedEvent.STATUS_ERROR,
                             ex.getMessage(), DeleteTaskAction.class));
@@ -103,5 +102,4 @@ public class DeleteTaskVisualAction extends AbstractVisualAction<Dialog> {
     public void setCommandClose(Command commandClose) {
         this.commandClose = commandClose;
     }
-  
 }
