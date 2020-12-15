@@ -98,8 +98,7 @@ public class OutsidePlantManagerDashboard extends VerticalLayout implements Abst
         removeAll();
         try {
             OutsidePlantView ospView = new OutsidePlantView(aem, bem, mem, ts, resourceFactory, 
-                physicalConnectionService, newBusinessObjectVisualAction, true, 
-                resourceFactory.getRedrawGraphJs());
+                physicalConnectionService, newBusinessObjectVisualAction);
             ospView.buildEmptyView();
             if (ospView.getAsComponent() != null)
                 add(ospView.getAsComponent());

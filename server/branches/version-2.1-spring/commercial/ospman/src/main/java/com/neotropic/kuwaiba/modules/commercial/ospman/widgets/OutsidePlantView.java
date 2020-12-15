@@ -15,24 +15,17 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman.widgets;
 
-import com.neotropic.kuwaiba.modules.commercial.ospman.helpers.HelperEdgeDraw;
-import com.neotropic.kuwaiba.modules.commercial.ospman.helpers.HelperContainerSelector;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.DialogOspViews;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.DialogMarker;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.WindowContainers;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.WindowNode;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.WindowEdge;
 import com.neotropic.kuwaiba.modules.commercial.ospman.api.GeoCoordinate;
-import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapOverlay;
-import com.neotropic.flow.component.mxgraph.Point;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OutsidePlantService;
-import com.neotropic.kuwaiba.modules.commercial.ospman.api.GeoPoint;
 import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapConstants;
 import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapEdge;
-import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapGraph;
 import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapNode;
 import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.WindowDeleteOspView;
-import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.WindowNewContainer;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
@@ -79,13 +72,10 @@ import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
 import org.neotropic.util.visual.dialog.ConfirmDialog;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapProvider;
+import com.neotropic.kuwaiba.modules.commercial.ospman.dialogs.WindowNewContainer;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
-import elemental.json.Json;
-import elemental.json.JsonArray;
-import elemental.json.JsonObject;
-import java.util.Collections;
 import java.util.Objects;
-import java.util.UUID;
 import org.neotropic.kuwaiba.modules.core.navigation.actions.NewBusinessObjectVisualAction;
 import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 import org.neotropic.util.visual.notifications.AbstractNotification;
@@ -151,18 +141,15 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
     /**
      * Reference to the Physical Connections Service
      */
-    private final PhysicalConnectionsService physicalConnectionsService;
+    private PhysicalConnectionsService physicalConnectionsService;
     /**
      * Reference to the New Business Object Visual Action
      */
-    private final NewBusinessObjectVisualAction newBusinessObjectVisualAction;
+    private NewBusinessObjectVisualAction newBusinessObjectVisualAction;
     /**
      * The Outside Plant View Component
      */
     private Div component;
-    
-    private HelperEdgeDraw polylineDrawHelper;
-    private HelperContainerSelector wiresHelper;
     
     enum Tool {
         Hand,
@@ -179,17 +166,9 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
     private Tabs componentTabs;
     private Tab selectedTab;
     private final boolean viewTools;
-    /**
-     * Contains the graph of nodes and edges
-     */
-    private MapOverlay mapOverlay;
-    /**
-     * The graph containing the nodes and edges
-     */
-    private MapGraph mapGraph;
     
-    private final String jsRedrawGraph;
-    
+    private final HashMap<BusinessObjectViewEdge, MapEdge> edges = new HashMap();
+        
     public OutsidePlantView(
         ApplicationEntityManager aem, 
         BusinessEntityManager bem, 
@@ -197,9 +176,16 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         TranslationService ts, 
         ResourceFactory resourceFactory,
         PhysicalConnectionsService physicalConnectionsService, 
-        NewBusinessObjectVisualAction newBusinessObjectVisualAction,
-        boolean viewTools, String jsRedrawGraph) {
-        Objects.requireNonNull(jsRedrawGraph);
+        NewBusinessObjectVisualAction newBusinessObjectVisualAction) {
+        
+        Objects.requireNonNull(aem);
+        Objects.requireNonNull(bem);
+        Objects.requireNonNull(mem);
+        Objects.requireNonNull(ts);
+        Objects.requireNonNull(resourceFactory);
+        Objects.requireNonNull(physicalConnectionsService);
+        Objects.requireNonNull(newBusinessObjectVisualAction);
+                        
         this.aem = aem;
         this.bem = bem;
         this.mem = mem;
@@ -207,8 +193,28 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         this.resourceFactory = resourceFactory;
         this.physicalConnectionsService = physicalConnectionsService;
         this.newBusinessObjectVisualAction = newBusinessObjectVisualAction;
-        this.viewTools = viewTools;
-        this.jsRedrawGraph = jsRedrawGraph;
+        this.viewTools = true;
+    }
+    
+    public OutsidePlantView(
+        ApplicationEntityManager aem, 
+        BusinessEntityManager bem, 
+        MetadataEntityManager mem, 
+        TranslationService ts, 
+        ResourceFactory resourceFactory) {
+        
+        Objects.requireNonNull(aem);
+        Objects.requireNonNull(bem);
+        Objects.requireNonNull(mem);
+        Objects.requireNonNull(ts);
+        Objects.requireNonNull(resourceFactory);
+                        
+        this.aem = aem;
+        this.bem = bem;
+        this.mem = mem;
+        this.ts = ts;
+        this.resourceFactory = resourceFactory;
+        this.viewTools = false;
     }
     
     @Override
@@ -350,295 +356,42 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
             enableTabs.forEach(tab -> tab.setEnabled(true));
     }
     
-    private void newOverlay() {
-        mapOverlay = mapProvider.createOverlay();
-        
-        Div divGraph = new Div();
-        divGraph.setSizeFull();
-        mapOverlay.addWidthChangedEventListener(widthChangedEvent -> {
-            mapOverlay.removeWidthChangedEventListener(widthChangedEvent.getListener());
-            mapGraph = new MapGraph();
-            mapGraph.addGraphLoadedListener(event -> {
-                event.unregisterListener();
-                drawGraph();
-            });
-            divGraph.add(mapGraph);
-        });
-        mapOverlay.getComponent().add(divGraph);
-    }
-    
-    private void redrawGraph() {
-        HashMap<String, List<GeoCoordinate>> coordinates = new HashMap();        
-        HashMap<String, GeoCoordinate> coordinatesToContainsLocations = new HashMap();
-        HashMap<String, String> labels = new HashMap();
-        
-        viewMap.getNodes().forEach(node -> {
-            BusinessObjectLight identifier = (BusinessObjectLight) node.getIdentifier();
-            
-            coordinates.put(
-                identifier.getId(), 
-                Arrays.asList(new GeoCoordinate(
-                    (double) node.getProperties().get(MapConstants.ATTR_LAT), 
-                    (double) node.getProperties().get(MapConstants.ATTR_LON)
-                ))
-            );
-            coordinatesToContainsLocations.put(
-                identifier.getId(), 
-                new GeoCoordinate(
-                    (double) node.getProperties().get(MapConstants.ATTR_LAT),
-                    (double) node.getProperties().get(MapConstants.ATTR_LON)
-                )
-            );
-            labels.put(identifier.getId(), identifier.getName());
-        });
-        viewMap.getEdges().forEach(edge -> {
-            BusinessObjectLight identifier = (BusinessObjectLight) edge.getIdentifier();
-            
-            coordinates.put(
-                identifier.getId(),
-                (List) edge.getProperties().get(MapConstants.PROPERTY_CONTROL_POINTS)
-            );
-            labels.put(identifier.getId(), identifier.getName());
-        });
-        if (!coordinates.isEmpty()) {
-            List<List<GeoCoordinate>> paths = new ArrayList();            
-            /**
-             *  The rectangle represents the visible area of the map.
-             *  nw --------------- ne
-             *     |             |
-             *     |             |
-             *     |             |
-             *  sw --------------- se
-             */
-            GeoCoordinate northeast = mapProvider.getBounds().getNortheast();
-            GeoCoordinate southwest = mapProvider.getBounds().getSouthwest();
-
-            GeoCoordinate nw = new GeoCoordinate(northeast.getLatitude(), southwest.getLongitude());
-            GeoCoordinate se = new GeoCoordinate(southwest.getLatitude(), northeast.getLongitude());
-
-            paths.add(Arrays.asList(nw, northeast, se, southwest, nw));
-        
-            mapProvider.callbackContainsLocations(coordinatesToContainsLocations, paths, containsLocations -> {
-                String boundsId = UUID.randomUUID().toString();
-
-                coordinates.put(boundsId, Arrays.asList(
-                    mapProvider.getBounds().getNortheast(),
-                    mapProvider.getBounds().getSouthwest()
-                ));
-                mapOverlay.getProjectionFromLatLngToDivPixel(coordinates, pixelCoordinates -> {
-                    GeoPoint ne = pixelCoordinates.get(boundsId).get(0);
-                    GeoPoint sw = pixelCoordinates.get(boundsId).get(1);
-
-                    JsonObject nodes = Json.createObject();
-                    viewMap.getNodes().forEach(node -> {
-                        BusinessObjectLight businessObject = (BusinessObjectLight) node.getIdentifier();
-                        GeoPoint point = pixelCoordinates.get(businessObject.getId()).get(0);
-
-                        JsonArray jsonPoints = Json.createArray();
-                        JsonObject jsonPoint = Json.createObject();
-                        jsonPoint.put(MapConstants.X, point.getX() - sw.getX());
-                        jsonPoint.put(MapConstants.Y, point.getY() - ne.getY());
-                        jsonPoints.set(0, jsonPoint);
-                        nodes.put(businessObject.getId(), jsonPoints);
-                    });
-                    JsonObject edges = Json.createObject();
-                    viewMap.getEdges().forEach(edge -> {
-                        BusinessObjectLight businessObject = (BusinessObjectLight) edge.getIdentifier();
-                        if (pixelCoordinates.containsKey(businessObject.getId())) {
-                            List<GeoPoint> points = pixelCoordinates.get(businessObject.getId());
-                            if (!points.isEmpty()) {
-                                JsonArray jsonPoints = Json.createArray();
-                                for (int i = 0; i < points.size(); i++) {
-                                    GeoPoint point = points.get(i);
-                                    JsonObject jsonPoint = Json.createObject();
-                                    jsonPoint.put(MapConstants.X, point.getX() - sw.getX());
-                                    jsonPoint.put(MapConstants.Y, point.getY() - ne.getY());
-                                    jsonPoints.set(i, jsonPoint);
-                                }
-                                edges.put(businessObject.getId(), jsonPoints);
-                            }
-                        }
-                    });
-                    JsonObject jsonContainsLocations = Json.createObject();
-                    containsLocations.forEach((key, value) -> jsonContainsLocations.put(key, value));
-                    
-                    JsonObject jsonLabels = Json.createObject();
-                    labels.forEach((key, value) -> jsonLabels.put(key, value));
-
-                    mapGraph.getElement().executeJs(jsRedrawGraph,
-                        mapProvider.getComponent(), //JS parameter $0
-                        nodes, //JS parameter $1
-                        edges, //JS parameter $2
-                        jsonContainsLocations, //JS parameter $3
-                        mapProvider.getZoom(), //JS parameter $4
-                        mapProvider.getMinZoomForLabels(), //JS parameter $5
-                        jsonLabels //JS parameter $6
-                    );
-                });
-            });
-        }
-        else
-            hideMapGraph(false);
-    }
-    
-    private void hideMapGraph(boolean hidden) {
-        if (mapGraph != null) {
-            StringBuilder expression = new StringBuilder();
-            // Necessary checks to not modify the DOM multiple times.
-            expression.append("if ($0) {").append("\n");
-            expression.append("  this.style.opacity = 0;").append("\n");
-            expression.append("} else {").append("\n");
-            expression.append("  this.style.opacity = 1;").append("\n");
-            expression.append("}");
-            mapGraph.getElement().executeJs(expression.toString(), hidden);
-        }
-    }
-    
-    private void drawGraph() {
-        HashMap<String, List<GeoCoordinate>> coordinates = new HashMap();
-
-        viewMap.getNodes().forEach(node -> 
-            coordinates.put(
-                ((BusinessObjectLight) node.getIdentifier()).getId(), 
-                Arrays.asList(new GeoCoordinate(
-                    (double) node.getProperties().get(MapConstants.ATTR_LAT), 
-                    (double) node.getProperties().get(MapConstants.ATTR_LON)
-                ))
-            )
-        );
-        viewMap.getEdges().forEach(edge -> coordinates.put(
-            ((BusinessObjectLight) edge.getIdentifier()).getId(), 
-            (List) edge.getProperties().get(MapConstants.PROPERTY_CONTROL_POINTS)
-        ));
-        if (!coordinates.isEmpty()) {
-            String boundsId = UUID.randomUUID().toString();
-            coordinates.put(boundsId, Arrays.asList(
-                mapProvider.getBounds().getNortheast(),
-                mapProvider.getBounds().getSouthwest()
-            ));
-            mapOverlay.getProjectionFromLatLngToDivPixel(coordinates, pixelCoordinates -> {
-                List<GeoPoint> bounds = pixelCoordinates.get(boundsId);                        
-                GeoPoint ne = bounds.get(0);
-                GeoPoint sw = bounds.get(1);
-
-                viewMap.getNodes().forEach(node -> {
-                    BusinessObjectViewNode viewNode = (BusinessObjectViewNode) node;
-                    GeoPoint pixelCoordinate = pixelCoordinates.get(viewNode.getIdentifier().getId()).get(0);
-
-                    viewNode.getProperties().put(MapConstants.X, pixelCoordinate.getX() - sw.getX());
-                    viewNode.getProperties().put(MapConstants.Y, pixelCoordinate.getY() - ne.getY());
-
-                    addNode(viewNode.getIdentifier(), viewNode.getProperties());
-                });
-                viewMap.getEdges().forEach(edge -> {
-                    BusinessObjectViewEdge viewEdge = (BusinessObjectViewEdge) edge;
-                    AbstractViewNode source = viewMap.getEdgeSource(edge);
-                    AbstractViewNode target = viewMap.getEdgeTarget(edge);
-
-                    List<GeoPoint> points = new ArrayList();
-                    if (pixelCoordinates.containsKey(viewEdge.getIdentifier().getId())) {
-                        pixelCoordinates.get(viewEdge.getIdentifier().getId()).forEach(point -> 
-                            points.add(new GeoPoint(
-                                point.getX() - sw.getX(), 
-                                point.getY() - ne.getY()
-                            ))
-                        );
-                    }
-                    edge.getProperties().put(MapConstants.POINTS, points);
-
-                    addEdge(
-                        (BusinessObjectLight) edge.getIdentifier(), 
-                        (BusinessObjectLight) source.getIdentifier(), 
-                        (BusinessObjectLight) target.getIdentifier(), 
-                        edge.getProperties()
-                    );
-                });
-            });
-        }
-        else
-            mapGraph.endUpdate();
-    }
-            
     private void setDrawingMarkerMode(BusinessObjectLight businessObject) {
         if (mapProvider != null)
             mapProvider.setDrawingMarkerMode(coordinate -> {
-                List<GeoCoordinate> coordinates = new ArrayList();
-                coordinates.add(mapProvider.getBounds().getNortheast());
-                coordinates.add(mapProvider.getBounds().getSouthwest());
-                coordinates.add(coordinate);
-                mapOverlay.getProjectionFromLatLngToDivPixel(coordinates, pixelCoordinates -> {
-                    GeoPoint ne = pixelCoordinates.get(0);
-                    GeoPoint sw = pixelCoordinates.get(1);
-                    GeoPoint pixelCoordinate = pixelCoordinates.get(2);
-
-                    BusinessObjectViewNode newViewNode = new BusinessObjectViewNode(businessObject);
-                    newViewNode.getProperties().put(MapConstants.ATTR_LAT, coordinate.getLatitude());
-                    newViewNode.getProperties().put(MapConstants.ATTR_LON, coordinate.getLongitude());
-
-                    newViewNode.getProperties().put(MapConstants.X, pixelCoordinate.getX() - sw.getX());
-                    newViewNode.getProperties().put(MapConstants.Y, pixelCoordinate.getY() - ne.getY());
-                    
-                    newViewNode.getProperties().put(MapConstants.FROM_CLIENT_ADD_NODE, true);
-
-                    viewMap.addNode(newViewNode);
-                    mapGraph.beginUpdate();                    
-                    addNode(businessObject, newViewNode.getProperties());
-                });
+                BusinessObjectViewNode newViewNode = new BusinessObjectViewNode(businessObject);
+                newViewNode.getProperties().put(MapConstants.ATTR_LAT, coordinate.getLatitude());
+                newViewNode.getProperties().put(MapConstants.ATTR_LON, coordinate.getLongitude());
+                viewMap.addNode(newViewNode);
+                addNode(businessObject, newViewNode.getProperties());
             });
     }
     
     private void setDrawingPolylineMode() {
         if (mapProvider != null) {
-            polylineDrawHelper = new HelperEdgeDraw(mapProvider, mapGraph, helper-> {
-                BusinessObjectLight source = helper.getSource().getBusinessObject();
-                BusinessObjectLight target = helper.getTarget().getBusinessObject();
-                List<GeoCoordinate> controlPoints = new ArrayList(helper.getCoordintates());
+            mapProvider.setDrawingEdgeMode((parameters, callbackEdgeHelperCancel) -> {
+                BusinessObjectLight source = (BusinessObjectLight) parameters.get(MapConstants.BUSINESS_OBJECT_SOURCE);
+                BusinessObjectLight target = (BusinessObjectLight) parameters.get(MapConstants.BUSINESS_OBJECT_TARGET);
+                List<GeoCoordinate> controlPoints = (List) parameters.get(MapConstants.PROPERTY_CONTROL_POINTS);
                 
                 WindowNewContainer dialogNewContainer = new WindowNewContainer(
                     source, target, ts, aem, bem, mem, physicalConnectionsService, 
                     container -> {
-                        if (controlPoints.size() >= 2) {
-                            controlPoints.remove(controlPoints.size() - 1);
-                            controlPoints.remove(0);
-                        }
                         if (!controlPoints.isEmpty()) {
-                            List<GeoCoordinate> coordinates = new ArrayList();
-                            coordinates.add(mapProvider.getBounds().getNortheast());
-                            coordinates.add(mapProvider.getBounds().getSouthwest());
-                            coordinates.addAll(controlPoints);
-                            
-                            mapOverlay.getProjectionFromLatLngToDivPixel(coordinates, pixelCoordinates -> {
-                                GeoPoint sw = pixelCoordinates.remove(1);
-                                GeoPoint ne = pixelCoordinates.remove(0);
-                                List<Point> points = new ArrayList();
-                                pixelCoordinates.forEach(point -> 
-                                    points.add(new Point(point.getX() - sw.getX(), point.getY() - ne.getY()))                                        
-                                );
-                                BusinessObjectViewEdge viewEdge = new BusinessObjectViewEdge(container);
-                                viewEdge.getProperties().put(MapConstants.PROPERTY_CONTROL_POINTS, controlPoints);
-                                viewEdge.getProperties().put(MapConstants.POINTS, points);
-                                viewMap.addEdge(viewEdge);
-                                viewMap.attachSourceNode(viewEdge, viewMap.findNode(source));
-                                viewMap.attachTargetNode(viewEdge, viewMap.findNode(target));
-                                mapGraph.beginUpdate();
-                                addEdge(container, source, target, viewEdge.getProperties());
-                            });
-                        } else {
                             BusinessObjectViewEdge viewEdge = new BusinessObjectViewEdge(container);
                             viewEdge.getProperties().put(MapConstants.PROPERTY_CONTROL_POINTS, controlPoints);
-                            viewEdge.getProperties().put(MapConstants.POINTS, Collections.EMPTY_LIST);
                             viewMap.addEdge(viewEdge);
                             viewMap.attachSourceNode(viewEdge, viewMap.findNode(source));
                             viewMap.attachTargetNode(viewEdge, viewMap.findNode(target));
-                            mapGraph.beginUpdate();
                             addEdge(container, source, target, viewEdge.getProperties());
+                            
+                            callbackEdgeHelperCancel.run();
                         }
-                    }
+                    },
+                    () -> callbackEdgeHelperCancel.run()
                 );
                 dialogNewContainer.open();
-                setDrawingPolylineMode();
             });
-            polylineDrawHelper.start();
         }
     }
     
@@ -671,7 +424,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                 Class mapClass = Class.forName(generalMapsProvider);
                 if (MapProvider.class.isAssignableFrom(mapClass)) {
                     mapProvider = (MapProvider) mapClass.getDeclaredConstructor().newInstance();
-                    mapProvider.createComponent(aem, ts);
+                    mapProvider.createComponent(aem, mem, resourceFactory, ts);
                     if (mapProvider.getComponent() != null) {
                         if (viewMap.getProperties().containsKey(PropertyNames.CENTER))
                             mapProvider.setCenter((GeoCoordinate) viewMap.getProperties().get(PropertyNames.CENTER));
@@ -686,13 +439,13 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                             componentTabs = new Tabs();
                             componentTabs.addClassName("ospman-tabs");
                             
-                            Icon iconNewOspView = new Icon(VaadinIcon.FILE_ADD);
+                            Icon iconNewOspView = new Icon(VaadinIcon.PLUS);
                             
                             Tab tabNewOspView = new Tab(iconNewOspView);
                             tabNewOspView.setClassName("ospman-tab");
                             tabNewOspView.getElement().setAttribute("title", ts.getTranslatedString("module.ospman.tools.osp-view.new"));
                             
-                            Tab tabOpenOspView = new Tab(new Icon(VaadinIcon.FILE_SEARCH));
+                            Tab tabOpenOspView = new Tab(new Icon(VaadinIcon.FOLDER_OPEN_O));
                             tabOpenOspView.setClassName("ospman-tab");
                             tabOpenOspView.getElement().setAttribute("title", ts.getTranslatedString("module.ospman.tools.osp-view.open"));
 
@@ -700,7 +453,7 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                             tabSaveOspView.setClassName("ospman-tab");
                             tabSaveOspView.getElement().setAttribute("title", ts.getTranslatedString("module.ospman.tools.osp-view.save"));
 
-                            Tab tabDeleteOspView = new Tab(new Icon(VaadinIcon.FILE_REMOVE));
+                            Tab tabDeleteOspView = new Tab(new Icon(VaadinIcon.CLOSE_CIRCLE_O));
                             tabDeleteOspView.setClassName("ospman-tab");
                             tabDeleteOspView.getElement().setAttribute("title", ts.getTranslatedString("module.ospman.tools.osp-view.delete"));
 
@@ -708,15 +461,22 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                             tabHand.setClassName("ospman-tab");
                             tabHand.getElement().setAttribute("title", ts.getTranslatedString("module.ospman.tools.hand"));
                             
-                            Tab tabMarker = new Tab(new Icon(VaadinIcon.MAP_MARKER));
+                            Image imgMapMarkerAdd = new Image("map-marker-add.svg", "map-marker-add");
+                            imgMapMarkerAdd.setWidth("24px");
+                            imgMapMarkerAdd.setHeight("24px");
+                            Tab tabMarker = new Tab(imgMapMarkerAdd);
                             tabMarker.setClassName("ospman-tab");
                             tabMarker.getElement().setAttribute("title", ts.getTranslatedString("module.ospman.tools.marker"));
 
                             Tab tabPolyline = new Tab(new Icon(VaadinIcon.PLUG));
                             tabPolyline.setClassName("ospman-tab");
                             tabPolyline.getElement().setAttribute("title", ts.getTranslatedString("module.ospman.tools.polyline"));
+                            
+                            Image imgWireAdd = new Image("wire-add.svg", "wire-add");
+                            imgWireAdd.setWidth("24px");
+                            imgWireAdd.setHeight("24px");
 
-                            Tab tabWire = new Tab(new Icon(VaadinIcon.DOT_CIRCLE));
+                            Tab tabWire = new Tab(imgWireAdd);
                             tabWire.setClassName("ospman-tab");
                             tabWire.getElement().setAttribute("title", ts.getTranslatedString("module.ospman.tools.wire"));
 
@@ -753,12 +513,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                             tools.put(Tool.DeleteView, tabDeleteOspView);
 
                             componentTabs.addSelectedChangeListener(selectedChangeEvent -> {
-                                if (polylineDrawHelper != null)
-                                    polylineDrawHelper.cancel();
-                                if (wiresHelper != null)
-                                    wiresHelper.cancel();
-
                                 selectedTab = selectedChangeEvent.getSelectedTab();
+                                
                                 if (selectedTab != null) {
                                     if (selectedTab.equals(tabNewOspView))
                                         newOspView(false);
@@ -803,20 +559,30 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
                                     else if (selectedTab.equals(tabPolyline))
                                         setDrawingPolylineMode();
                                     else if (selectedTab.equals(tabWire)) {
-                                        wiresHelper = new HelperContainerSelector(mapGraph);
-                                        wiresHelper.start();
+                                        mapProvider.setPathSelectionMode((edges, callbackPathSelectionCancel) -> {
+                                            WindowContainers wdwContainer = new WindowContainers(edges, aem, bem, mem, ts, callbackPathSelectionCancel);
+                                            wdwContainer.open();
+                                        });
                                     }
                                 }
                             });
                             component.add(componentTabs);
                             newOspView(true);
                         }
-                        mapProvider.addBoundsChangedEventListener(event -> hideMapGraph(true));
                         mapProvider.addIdleEventListener(event -> {
-                            if (mapOverlay == null)
-                                newOverlay();
-                            else
-                                redrawGraph();
+                            mapProvider.removeIdleEventListener(event.getListener());
+                            
+                            viewMap.getNodes().forEach(viewNode -> 
+                                addNode((BusinessObjectLight) viewNode.getIdentifier(), viewNode.getProperties())
+                            );
+                            viewMap.getEdges().forEach(viewEdge -> 
+                                addEdge(
+                                    (BusinessObjectLight) viewEdge.getIdentifier(),
+                                    (BusinessObjectLight) viewMap.getEdgeSource(viewEdge).getIdentifier(),
+                                    (BusinessObjectLight) viewMap.getEdgeTarget(viewEdge).getIdentifier(),
+                                    viewEdge.getProperties()
+                                )
+                            );
                         });
                         component.add(mapProvider.getComponent());
                     }
@@ -991,18 +757,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         else
             this.viewMap.clear();
         
-        if (mapOverlay != null)
-            mapOverlay.removeAllWidthChangedEventListener();
-        if (mapProvider != null) {
-            mapProvider.removeAllBoundsChangedEventListener();
-            mapProvider.removeAllIdleEventListener();
-        }
-        mapGraph = null;
-        mapOverlay = null;
         mapProvider = null;
         
-        polylineDrawHelper = null;
-        wiresHelper = null;
         tabs.clear();
         tools.clear();
         componentTabs = null;
@@ -1010,6 +766,8 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
         
         if (component != null)
             component.removeAll();
+        
+        edges.clear();
         
         this.getProperties().put(Constants.PROPERTY_ID, -1);
         this.getProperties().put(Constants.PROPERTY_NAME, "");
@@ -1034,111 +792,93 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
 
     @Override
     public AbstractViewNode addNode(BusinessObjectLight businessObject, Properties properties) {
-        MapNode mapNode = mapGraph.findNode(businessObject);
-        if (mapNode == null) {
-            BusinessObjectViewNode viewNode = (BusinessObjectViewNode) viewMap.findNode(businessObject.getId());
-            MapNode newMapNode = new MapNode(viewNode, 
-                (double) properties.get(MapConstants.X),
-                (double) properties.get(MapConstants.Y),
-                mapProvider, mapOverlay, resourceFactory);
-            newMapNode.addRightClickCellListener(event -> {
-                if (viewTools)
-                    openWindowNode(viewNode);
+        BusinessObjectViewNode viewNode = (BusinessObjectViewNode) viewMap.findNode(businessObject.getId());
+        MapNode mapNode = mapProvider.addNode(viewNode);
+        if (viewTools) {
+            mapNode.setDraggableNode(true);
+            mapNode.addPositionChangedEventListener(event -> {
+                GeoCoordinate geoCoordinate = new GeoCoordinate(event.getLat(), event.getLng());
+                viewNode.getProperties().put(MapConstants.ATTR_LAT, geoCoordinate.getLatitude());
+                viewNode.getProperties().put(MapConstants.ATTR_LON, geoCoordinate.getLongitude());
+                
+                viewMap.getEdges().forEach(edge -> {
+                    List<GeoCoordinate> controlPoints = (List) edge.getProperties().get(MapConstants.PROPERTY_CONTROL_POINTS);
+                    
+                    if (viewNode.equals(viewMap.getEdgeSource(edge))) {
+                        controlPoints.remove(0);
+                        controlPoints.add(0, geoCoordinate);
+                        
+                        edges.get((BusinessObjectViewEdge) edge).setControlPoints(controlPoints);
+                    }
+                    else if (viewNode.equals(viewMap.getEdgeTarget(edge))) {
+                        controlPoints.remove(controlPoints.size() - 1);
+                        controlPoints.add(geoCoordinate);
+                        
+                        edges.get((BusinessObjectViewEdge) edge).setControlPoints(controlPoints);
+                    }
+                });
             });
-            newMapNode.addCellAddedListener(event -> {
-                event.unregisterListener();
-                if (properties.containsKey(MapConstants.FROM_CLIENT_ADD_NODE) && 
-                    (boolean) properties.remove(MapConstants.FROM_CLIENT_ADD_NODE)) {
-                        mapGraph.endUpdate();
-                        return;
-                }
-                if (viewMap.getEdges().isEmpty() && viewNode.equals(viewMap.getNodes().get(viewMap.getNodes().size() - 1)))
-                    mapGraph.endUpdate();
-            });
-            mapGraph.addNode(newMapNode);
+            mapNode.addRightClickEventListener(event -> openWindowNode(viewNode));
         }
-        return this.viewMap.findNode(businessObject.getId());
+        return viewNode;
     }
     
     @Override
     public AbstractViewEdge addEdge(BusinessObjectLight businessObject, BusinessObjectLight sourceBusinessObject, BusinessObjectLight targetBusinessObject, Properties properties) {
-        MapEdge mapEdge = mapGraph.findEdge(businessObject);
-        if (mapEdge == null) {
-            AbstractViewNode sourceNode = this.viewMap.findNode(sourceBusinessObject.getId());
-            if (sourceNode == null)
-                return null;
-            AbstractViewNode targetNode = this.viewMap.findNode(targetBusinessObject.getId());
-            if (targetNode == null)
-                return null;
-            BusinessObjectViewEdge viewEdge = (BusinessObjectViewEdge) viewMap.findEdge(businessObject);
-            MapEdge newMapEdge = new MapEdge(
-                viewEdge, 
-                sourceBusinessObject, targetBusinessObject, 
-                (List) properties.get(MapConstants.POINTS), 
-                mem, ts, mapProvider, mapOverlay, mapGraph
+        AbstractViewNode sourceNode = this.viewMap.findNode(sourceBusinessObject.getId());
+        if (sourceNode == null)
+            return null;
+        AbstractViewNode targetNode = this.viewMap.findNode(targetBusinessObject.getId());
+        if (targetNode == null)
+            return null;
+        BusinessObjectViewEdge viewEdge = (BusinessObjectViewEdge) viewMap.findEdge(businessObject.getId());
+        MapEdge mapEdge = mapProvider.addEdge(viewEdge);
+        edges.put(viewEdge, mapEdge);
+        if (viewTools) {
+            mapEdge.addPathChangedEventListener(event -> 
+                viewEdge.getProperties().put(MapConstants.PROPERTY_CONTROL_POINTS, event.getControlPoints())
             );
-            newMapEdge.addRightClickCellListener(event -> {
-                if (viewTools)
-                    openWindowEdge((BusinessObjectViewEdge) viewMap.findEdge(businessObject));
+            mapEdge.addClickEventListener(event -> {
+                edges.values().forEach(edge -> edge.setEditableEdge(false));
+                mapEdge.setEditableEdge(!mapEdge.getEditableEdge());
             });
-            newMapEdge.addCellAddedListener(event -> {
-                event.unregisterListener();
-                if (viewEdge.equals(viewMap.getEdges().get(viewMap.getEdges().size() - 1)))
-                    mapGraph.endUpdate();
-            });
-            mapGraph.addEdge(newMapEdge);
+            mapEdge.addRightClickEventListener(event -> openWindowEdge(viewEdge));
         }
-        return this.viewMap.findEdge(businessObject.getId());
+        return viewEdge;
     }
 
     @Override
     public void removeNode(BusinessObjectLight businessObject) {
-        AbstractViewNode node = viewMap.getNode(businessObject);
-        if (node instanceof BusinessObjectViewNode) {
-            BusinessObjectViewNode objectNode = (BusinessObjectViewNode) node;
-            if (mapGraph != null) {
-                MapNode mapNode = mapGraph.findNode(businessObject);
-                if (mapNode != null) {
-                    List<BusinessObjectLight> edgesToRemove = new ArrayList();
-                    mapGraph.getEdges().forEach(edge -> {
-                        if (edge instanceof MapEdge && (
-                            businessObject.getId().equals(edge.getSource()) || 
-                            businessObject.getId().equals(edge.getTarget())
-                           )) {
-                            edgesToRemove.add(((MapEdge) edge).getBusinessObject());
-                        }
-                    });
-                    edgesToRemove.forEach(edge -> removeEdge(edge));
-                    mapGraph.removeNode(mapNode);
-                    viewMap.getNodes().remove(objectNode);
-                }
-            }
+        AbstractViewNode viewNode = viewMap.findNode(businessObject.getId());
+        if (viewNode instanceof BusinessObjectViewNode) {
+            List<BusinessObjectViewEdge> viewEdgesToRemove = new ArrayList();
+            viewMap.getEdges().forEach(viewEdge -> {
+                if (viewNode.equals(viewMap.getEdgeSource(viewEdge)) || viewNode.equals(viewMap.getEdgeTarget(viewEdge)))
+                    viewEdgesToRemove.add((BusinessObjectViewEdge) viewEdge);
+            });
+            viewEdgesToRemove.forEach(viewEdge -> removeEdge(viewEdge.getIdentifier()));
+            mapProvider.removeNode((BusinessObjectViewNode) viewNode);
+            viewMap.getNodes().remove(viewNode);
         }
     }
 
     @Override
     public void removeEdge(BusinessObjectLight businessObject) {
-        AbstractViewEdge edge = viewMap.getEdge(businessObject);
-        if (edge instanceof BusinessObjectViewEdge) {
-            BusinessObjectViewEdge objectEdge = (BusinessObjectViewEdge) edge;
-            if (mapGraph != null) {
-                MapEdge mapEdge = mapGraph.findEdge(businessObject);
-                if (mapEdge != null) {
-                    mapGraph.removeEdge(mapEdge);
-                    viewMap.getEdges().remove(objectEdge);
-                }
-            }
+        AbstractViewEdge viewEdge = viewMap.findEdge(businessObject.getId());
+        if (viewEdge instanceof BusinessObjectViewEdge) {
+            mapProvider.removeEdge((BusinessObjectViewEdge) viewEdge);
+            viewMap.getEdges().remove(viewEdge);
         }
     }
 
     @Override
     public void addNodeClickListener(ViewEventListener listener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // No need to add node click listener in the Outside Plant View
     }
 
     @Override
     public void addEdgeClickListener(ViewEventListener listener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // No need to add edge click listener in the Outside Plant View
     }
         
     private void openWindowNode(BusinessObjectViewNode viewNode) {
@@ -1159,23 +899,6 @@ public class OutsidePlantView extends AbstractView<BusinessObjectLight, Componen
     
     private void openWindowEdge(BusinessObjectViewEdge viewEdge) {
         if (viewEdge != null) {
-            if (selectedTab != null && tabs.containsKey(selectedTab) && 
-                Tool.Wire.equals(tabs.get(selectedTab))) {
-                List<BusinessObjectViewEdge> edges = new ArrayList();
-                wiresHelper.getEdges().forEach(cell -> {
-                    if (cell instanceof MapEdge) {
-                        MapEdge businessObjectEdge = (MapEdge) cell;
-                        AbstractViewEdge edge = viewMap.findEdge(businessObjectEdge.getBusinessObject());
-                        if (edge instanceof BusinessObjectViewEdge)
-                            edges.add((BusinessObjectViewEdge) edge);
-                    }
-                });
-                WindowContainers wdwContainer = new WindowContainers(edges, aem, bem, mem, ts);
-                wiresHelper.cancel();
-                wiresHelper.start();                
-                wdwContainer.open();
-                return;
-            }
             WindowEdge wdwEdge = new WindowEdge(viewEdge, ts, 
                 () -> {
                     new ConfirmDialog(ts, 

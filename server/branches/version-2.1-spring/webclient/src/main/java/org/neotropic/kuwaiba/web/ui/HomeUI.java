@@ -30,7 +30,6 @@ import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManage
 import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
-import org.neotropic.kuwaiba.modules.optional.physcon.PhysicalConnectionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -64,12 +63,7 @@ public class HomeUI extends VerticalLayout implements BeforeEnterObserver, HasDy
      */
     @Autowired
     private MetadataEntityManager mem;
-    /**
-     * Reference to the Physical Connections Service
-     */
-    @Autowired
-    private PhysicalConnectionsService physicalConnectionsService;
-
+    
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
         if (UI.getCurrent().getSession().getAttribute(Session.class) == null) // If there is no session, redirect to the login page
@@ -82,7 +76,7 @@ public class HomeUI extends VerticalLayout implements BeforeEnterObserver, HasDy
         setPadding(false);
         setSpacing(false);
         
-        add(new AllBuildingsMapWidget(aem, bem, mem, ts, resourceFactory, physicalConnectionsService));
+        add(new AllBuildingsMapWidget(aem, bem, mem, ts, resourceFactory));
     }
 
     @Override

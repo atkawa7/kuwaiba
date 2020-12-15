@@ -18,9 +18,15 @@ package com.neotropic.kuwaiba.modules.commercial.ospman.api;
 import com.vaadin.flow.component.Component;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
+import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewEdge;
+import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
+import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 
 /**
  * Operations to implement a map in the Outside Plant module.
@@ -30,33 +36,21 @@ public interface MapProvider {
     /**
      * Create a component that represents a map.
      * @param ts The Translation Service
+     * @param resourceFactory The resource factory. Used to get node icons
      * @param aem The Application Entity Manager
+     * @param mem The Metadata Entity Manager
      */
-    void createComponent(ApplicationEntityManager aem, TranslationService ts);
+    void createComponent(ApplicationEntityManager aem, MetadataEntityManager mem, ResourceFactory resourceFactory, TranslationService ts);
     /**
      * Gets a component that represents a map.
+     * @return The map provider component.
      */
     Component getComponent();
-    /**
-     * Creates a map overlay.
-     * @return A map overlay
-     */
-    MapOverlay createOverlay();
-    /**
-     * Removes a map overlay.
-     * @param mapOverlay Map overlay to remove.
-     */
-    void removeOverlay(MapOverlay mapOverlay);
     /**
      * Gets the map center
      * @return map center
      */
     GeoCoordinate getCenter();
-    /**
-     * Gets the lat/lng of the current viewport
-     * @return map bounds
-     */
-    GeoBounds getBounds();
     /**
      * Set map center
      * @param center map center
@@ -87,48 +81,20 @@ public interface MapProvider {
      */
     void setHandMode();
     /**
-     * Set the drawing mode to overlay.
-     * @param drawingOverlayComplete Operation that accepts a rectangle in geographical coordinates
-     */
-    void setDrawingOverlayMode(Consumer<GeoBounds> drawingOverlayComplete);
-    /**
-     * Set the drawing mode to marker.
+     * Sets the drawing mode to marker.
      * @param drawingMarkerComplete Operation that accepts a coordinate
      */
     void setDrawingMarkerMode(Consumer<GeoCoordinate> drawingMarkerComplete);
     /**
-     * Set the drawing mode to polyline.
-     * @param drawingPolylineComplete Operation that accepts coordinates
+     * Sets the drawing mode to edge.
+     * @param callbackEdgeComplete Callback to execute when drawing edge complete.
      */
-    void setDrawingPolylineMode(Consumer<List<GeoCoordinate>> drawingPolylineComplete);
+    void setDrawingEdgeMode(BiConsumer<HashMap<String, Object>, Runnable> callbackEdgeComplete);
     /**
-     * Js Expression to lock the map.
-     * Only the parameter $0 are reserved to be used by the expression.
-     * The parameter $0 is { @link #getComponent() }
-     * @return Java Script expression to lock Map
+     * Sets the path selection mode.
+     * @param callbackPathSelectionComplete  Callback to execute when path selection complete.
      */
-    String jsExpressionLockMap();
-    /**
-     * Js Expression to unlock the map.
-     * Only the parameter $0 are reserved to be use by the expression.
-     * The parameter $0 is { @link #getComponent() }
-     * @return Java Script expression to unlock map
-     */
-    String jsExpressionUnlockMap();
-    /**
-     * Adds a bounds changed event listener.
-     * @param listener Callback executed when bounds changed.
-     */
-    void addBoundsChangedEventListener(BoundsChangedEventListener listener);
-    /**
-     * Removes a bounds changed event listener.
-     * @param listener Callback executed when bounds changed.
-     */
-    void removeBoundsChangedEventListener(BoundsChangedEventListener listener);
-    /**
-     * Remove all bounds changed event listener.
-     */
-    void removeAllBoundsChangedEventListener();
+    void setPathSelectionMode(BiConsumer<List<BusinessObjectViewEdge>, Runnable> callbackPathSelectionComplete);
     /**
      * Adds an idle event listener.
      * @param listener Callback executed when idle.
@@ -158,20 +124,27 @@ public interface MapProvider {
      */
     void callbackContainsLocations(HashMap<String, GeoCoordinate> coordinates, List<List<GeoCoordinate>> paths, Consumer<HashMap<String, Boolean>> callback);
     /**
-     * Callback executed when bounds changed.
+     * Adds a node to map.
+     * @param viewNode Node to add to map.
+     * @return
      */
-    public interface BoundsChangedEventListener extends Consumer<BoundsChangedEvent>{
-    }
-    public class BoundsChangedEvent {
-        private BoundsChangedEventListener listener;
-        
-        public BoundsChangedEvent(BoundsChangedEventListener listener) {
-            this.listener = listener;
-        }
-        public BoundsChangedEventListener getListener() {
-            return listener;
-        }
-    }
+    MapNode addNode(BusinessObjectViewNode viewNode);
+    /**
+     * Adds an edge to map.
+     * @param viewEdge Edge to add to map.
+     * @return
+     */
+    MapEdge addEdge(BusinessObjectViewEdge viewEdge);
+    /**
+     * Removes a node to map.
+     * @param viewNode Node to remove from map.
+     */
+    void removeNode(BusinessObjectViewNode viewNode);
+    /**
+     * Removes an edge to map.
+     * @param viewEdge Edge to remove from map.
+     */
+    void removeEdge(BusinessObjectViewEdge viewEdge);
     /**
      * Callback executed when idle.
      */

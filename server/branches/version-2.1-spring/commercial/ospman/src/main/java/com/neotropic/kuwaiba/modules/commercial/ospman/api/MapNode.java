@@ -15,65 +15,81 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman.api;
 
-import com.neotropic.flow.component.mxgraph.MxConstants;
-import com.vaadin.flow.server.StreamResourceRegistry;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Objects;
+import com.neotropic.kuwaiba.modules.commercial.ospman.api.ClickEvent.ClickEventListener;
+import com.neotropic.kuwaiba.modules.commercial.ospman.api.PositionChangedEvent.PositionChangedEventListener;
+import com.neotropic.kuwaiba.modules.commercial.ospman.api.RightClickEvent.RightClickEventListener;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
-import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
-import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectNode;
 
 /**
- * Class to configure the nodes in the map
+ * Node to add in the Outside Plant View.
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class MapNode extends MxBusinessObjectNode {
-        
-    public MapNode(BusinessObjectViewNode viewNode, double x, double y, MapProvider mapProvider, MapOverlay mapOverlay, ResourceFactory resourceFactory) {
-        super(viewNode.getIdentifier());
-        Objects.requireNonNull(viewNode);
-        Objects.requireNonNull(resourceFactory);
-        Objects.requireNonNull(mapProvider);
-        Objects.requireNonNull(mapOverlay);
-        
-        setUuid(viewNode.getIdentifier().getId());
-        setGeometry((int) x, (int) y, 16, 16);
-        
-        LinkedHashMap<String, String> styles = new LinkedHashMap();
-        styles.put(
-            MxConstants.STYLE_IMAGE, 
-            StreamResourceRegistry.getURI(resourceFactory.getClassIcon(viewNode.getIdentifier().getClassName())).toString()
-        );
-        styles.put(MxConstants.STYLE_SHAPE, MxConstants.SHAPE_IMAGE);
-        styles.put(MxConstants.STYLE_RESIZABLE, String.valueOf(0));
-        if (viewNode.getProperties().containsKey(MapConstants.PROPERTY_CELL_EDITABLE) && 
-            !(boolean) viewNode.getProperties().get(MapConstants.PROPERTY_CELL_EDITABLE))
-            styles.put(MxConstants.STYLE_EDITABLE, String.valueOf(0));
-        
-        if (viewNode.getProperties().containsKey(MapConstants.PROPERTY_CELL_MOVABLE) && 
-            !(boolean) viewNode.getProperties().get(MapConstants.PROPERTY_CELL_MOVABLE))
-            styles.put(MxConstants.STYLE_MOVABLE, String.valueOf(0));
-        
-        this.setRawStyle(styles);
-        
-        if (mapProvider.getZoom() >= mapProvider.getMinZoomForLabels())
-            setLabel(viewNode.getIdentifier().getName());
-        
-        addCellPositionChangedListener(event -> {
-            mapOverlay.getProjectionFromLatLngToDivPixel(
-                Arrays.asList(mapProvider.getBounds().getNortheast(), mapProvider.getBounds().getSouthwest()),
-                pixelCoordinates -> {
-                    GeoPoint ne = pixelCoordinates.get(0);
-                    GeoPoint sw = pixelCoordinates.get(1);
-
-                    mapOverlay.getProjectionFromDivPixelToLatLng(
-                        new GeoPoint(getX() + sw.getX(), getY() + ne.getY()), geoCoordinate -> {
-                        viewNode.getProperties().put(MapConstants.ATTR_LAT, geoCoordinate.getLatitude());
-                        viewNode.getProperties().put(MapConstants.ATTR_LON, geoCoordinate.getLongitude());
-                    });
-                }
-            );
-        });
-    }
+public interface MapNode {
+    /**
+     * Gets the view node.
+     * @return the view node.
+     */
+    BusinessObjectViewNode getViewNode();
+    /**
+     * Gets if the node can receives mouse events.
+     * @return If true, the node can receives mouse events.
+     */
+    public boolean getClickableNode();
+    /**
+     * Sets if the node can receives mouse events.
+     * @param clickable True to receives mouse events.
+     */
+    public void setClickableNode(boolean clickable);
+    /**
+     * Gets if the node can be dragged.
+     * @return If true, the node can be dragged.
+     */
+    public boolean getDraggableNode();
+    /**
+     * Sets if the node can be dragged.
+     * @param draggable True to drag the node.
+     */
+    public void setDraggableNode(boolean draggable);
+    /**
+     * Adds a click event listener.
+     * @param clickEventListener Callback executed on node click.
+     */
+    void addClickEventListener(ClickEventListener clickEventListener);
+    /**
+     * Removes a click event listener.
+     * @param clickEventListener Callback executed on node click.
+     */
+    void removeClickEventListener(ClickEventListener clickEventListener);
+    /**
+     * Removes all click event listener.
+     */
+    void removeAllClickEventListeners();
+    /**
+     * Adds a right click event listener.
+     * @param rightClickEventListener Callback executed on node right click.
+     */
+    void addRightClickEventListener(RightClickEventListener rightClickEventListener);
+    /**
+     * Removes a right click event listener.
+     * @param rightClickEventListener Callback executed on node right click.
+     */
+    void removeRightClickEventListener(RightClickEventListener rightClickEventListener);
+    /**
+     * Removes all right click event listener.
+     */
+    void removeAllRightClickEventListeners();
+    /**
+     * Adds position changed event listener.
+     * @param positionChangedEventListener Callback executed on node position changed.
+     */
+    void addPositionChangedEventListener(PositionChangedEventListener positionChangedEventListener);
+    /**
+     * Removes position changed event listener.
+     * @param positionChangedEventListener Callback executed on node position changed.
+     */
+    void removePositionChangedEventListener(PositionChangedEventListener positionChangedEventListener);
+    /**
+     * Removes all position changed event listeners.
+     */
+    void removeAllPositionChangedEventListeners();
 }

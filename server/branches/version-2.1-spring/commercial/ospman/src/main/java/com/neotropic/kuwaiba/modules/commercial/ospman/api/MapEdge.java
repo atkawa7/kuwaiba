@@ -15,77 +15,84 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman.api;
 
-import com.neotropic.flow.component.mxgraph.Point;
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
-import org.neotropic.kuwaiba.core.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
-import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewEdge;
-import org.neotropic.kuwaiba.visualization.mxgraph.MxBusinessObjectEdge;
-import org.neotropic.util.visual.notifications.AbstractNotification;
-import org.neotropic.util.visual.notifications.SimpleNotification;
-import org.neotropic.util.visual.views.util.UtilHtml;
 
 /**
- * Class to configure the edges in the map
+ * Edge to add in the Outside Plant View.
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class MapEdge extends MxBusinessObjectEdge {
-    
-    public MapEdge(BusinessObjectViewEdge viewEdge, BusinessObjectLight source, BusinessObjectLight target, List<Point> points,
-        MetadataEntityManager mem, TranslationService ts, MapProvider mapProvider, MapOverlay mapOverlay, MapGraph mapGraph) {
-        
-        super(viewEdge.getIdentifier());
-        Objects.requireNonNull(viewEdge);
-        Objects.requireNonNull(source);
-        Objects.requireNonNull(target);
-        Objects.requireNonNull(mapOverlay);
-        Objects.requireNonNull(mapProvider);
-        
-        setUuid(viewEdge.getIdentifier().getId());
-        if (mapProvider.getZoom() >= mapProvider.getMinZoomForLabels())
-            setLabel(viewEdge.getIdentifier().getName());
-        setStrokeWidth(2);
-        if (points != null)
-            setPoints(points);
-        
-        try {
-            setStrokeColor(UtilHtml.toHexString(new Color(mem.getClass(viewEdge.getIdentifier().getClassName()).getColor())));
-        } catch (MetadataObjectNotFoundException ex) {
-            new SimpleNotification(
-                ts.getTranslatedString("module.general.messages.error"), 
-                ts.getTranslatedString("module.general.messages.unexpected-error"), 
-                AbstractNotification.NotificationType.ERROR, ts
-            ).open();
-        }
-        setSource(source.getId());
-        setTarget(target.getId());
-                
-        addCellAddedListener(event -> {
-            orderCell(true);
-            event.unregisterListener();
-        });
-        addPointsChangedListener(event -> {
-            mapOverlay.getProjectionFromLatLngToDivPixel(
-                Arrays.asList(mapProvider.getBounds().getNortheast(), mapProvider.getBounds().getSouthwest()),
-                pixelCoordinates -> {
-                    GeoPoint sw = pixelCoordinates.remove(1);
-                    GeoPoint ne = pixelCoordinates.remove(0);
-                    List<GeoPoint> newGeoPoints = new ArrayList();
-                    getPointList().forEach(point -> 
-                        newGeoPoints.add(new GeoPoint(point.getX() + sw.getX(), point.getY() + ne.getY()))
-                    );
-                    mapOverlay.getProjectionFromDivPixelToLatLng(newGeoPoints, geoCoordinates -> 
-                        viewEdge.getProperties().put(MapConstants.PROPERTY_CONTROL_POINTS, geoCoordinates)
-                    );
-                }
-            );
-        });
-    }
-    
+public interface MapEdge {
+    /**
+     * Gets the view edge.
+     * @return the view edge.
+     */
+    BusinessObjectViewEdge getViewEdge();
+    /**
+     * Sets the edge control points.
+     * @param controlPoints The edge control points.
+     */
+    void setControlPoints(List<GeoCoordinate> controlPoints);
+    /**
+     * Gets if the edge can receives mouse events.
+     * @return If true, the edge can receives mouse events.
+     */
+    boolean getClickableEdge();
+    /**
+     * Sets if the edge can receives mouse events.
+     * @param clickable True to receives mouse events.
+     */
+    void setClickableEdge(boolean clickable);
+    /**
+     * Gets if the edge can be edited.
+     * @return If true, the edge can be edited.
+     */
+    boolean getEditableEdge();
+    /**
+     * Sets if the edge can be edited.
+     * @param editable True to edit the edge.
+     */
+    void setEditableEdge(boolean editable);
+    /**
+     * Adds a click event listener.
+     * @param clickEventListener Callback executed on edge click.
+     */
+    void addClickEventListener(ClickEvent.ClickEventListener clickEventListener);
+    /**
+     * Removes a click event listener.
+     * @param clickEventListener Callback executed on edge click.
+     */
+    void removeClickEventListener(ClickEvent.ClickEventListener clickEventListener);
+    /**
+     * Removes all click event listener.
+     */
+    void removeAllClickEventListeners();
+    /**
+     * Adds a right click event listener.
+     * @param rightClickEventListener Callback executed on edge right click.
+     */
+    void addRightClickEventListener(RightClickEvent.RightClickEventListener rightClickEventListener);
+    /**
+     * Removes a right click event listener.
+     * @param rightClickEventListener Callback executed on edge right click.
+     */
+    void removeRightClickEventListener(RightClickEvent.RightClickEventListener rightClickEventListener);
+    /**
+     * Removes all right click event listener.
+     */
+    void removeAllRightClickEventListeners();
+    /**
+     * Adds a path changed event listener.
+     * @param pathChangedEventListener Callback executed on edge path changed.
+     */
+    void addPathChangedEventListener(PathChangedEvent.PathChangedEventListener pathChangedEventListener);
+    /**
+     * Removes a path changed event listener.
+     * @param pathChangedEventListener Callback executed on edge path changed.
+     */
+    void removePathChangedEventListener(PathChangedEvent.PathChangedEventListener pathChangedEventListener);
+    /**
+     * Removes all path changed event listener.
+     */
+    void removeAllPathChangedEventListeners();
 }

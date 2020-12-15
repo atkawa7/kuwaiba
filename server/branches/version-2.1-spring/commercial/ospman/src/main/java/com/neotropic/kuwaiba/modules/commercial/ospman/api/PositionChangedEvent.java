@@ -15,29 +15,34 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman.api;
 
+import java.util.function.Consumer;
+
 /**
- * Set of constants used in the Outside Plant Module
+ * Position Changed Event to add/fire in the Outside Plant View
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class MapConstants {
-    /**
-     * XML Outside Plant View attribute lat
-     */
-    public static final String ATTR_LAT = "lat"; //NOI18N
-    /**
-     * XML Outside Plant View attribute lon
-     */
-    public static final String ATTR_LON = "lon"; //NOI18N
-    /**
-     * View Edge property controlPoints
-     */
-    public static final String PROPERTY_CONTROL_POINTS = "controlPoints"; //NOI18N
+public class PositionChangedEvent {
+    public interface PositionChangedEventListener extends Consumer<PositionChangedEvent> {
+    }
+    private final PositionChangedEventListener listener;
+    private final double lat;
+    private final double lng;
     
-    public static final String BUSINESS_OBJECT_SOURCE = "source"; //NOI18N
+    public PositionChangedEvent(double lat, double lng, PositionChangedEventListener listener) {
+        this.listener = listener;
+        this.lat = lat;
+        this.lng = lng;
+    }
     
-    public static final String BUSINESS_OBJECT_TARGET = "target"; //NOI18N
+    public double getLat() {
+        return lat;
+    }
     
-    public static final double EDGE_STROKE_WEIGHT = 2;
+    public double getLng() {
+        return lng;
+    }
     
-    public static final double EDGE_STROKE_WEIGHT_MOUSE_OVER = 4;
+    public PositionChangedEventListener getListener() {
+        return listener;
+    }
 }

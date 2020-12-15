@@ -18,7 +18,6 @@ package com.neotropic.kuwaiba.modules.commercial.ospman.widgets;
 
 import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapConstants;
 import java.util.List;
-import java.util.Map;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
@@ -43,16 +42,11 @@ public class AllBuildingsMapWidget extends AbstractDashboardWidget {
      * Reference to the Resource Factory
      */
     private final ResourceFactory resourceFactory;
-    /**
-     * Resource to the Physical Connections Service
-     */
-    private final PhysicalConnectionsService physicalConnectionsService;
     
     public AllBuildingsMapWidget(ApplicationEntityManager aem, BusinessEntityManager bem, 
-            MetadataEntityManager mem, TranslationService ts, ResourceFactory resourceFactory, PhysicalConnectionsService physicalConnectionsService) {
+            MetadataEntityManager mem, TranslationService ts, ResourceFactory resourceFactory) {
         super(mem, aem, bem, ts);
         this.resourceFactory = resourceFactory;
-        this.physicalConnectionsService = physicalConnectionsService;
         setSizeFull();
         setMargin(false);
         setPadding(false);
@@ -64,8 +58,7 @@ public class AllBuildingsMapWidget extends AbstractDashboardWidget {
     @Override
     public void createContent() {
         try {
-            OutsidePlantView ospView = new OutsidePlantView(aem, bem, mem, ts, resourceFactory, 
-                physicalConnectionsService, null, false, resourceFactory.getRedrawGraphJs());
+            OutsidePlantView ospView = new OutsidePlantView(aem, bem, mem, ts, resourceFactory);
             ospView.buildEmptyView();
             try {
                 List<BusinessObjectLight> allPhysicalLocation = bem.getObjectsOfClassLight(Constants.CLASS_GENERICLOCATION, -1);
@@ -78,8 +71,6 @@ public class AllBuildingsMapWidget extends AbstractDashboardWidget {
                                 BusinessObjectViewNode newViewNode = new BusinessObjectViewNode(aPhysicalLocation);
                                 newViewNode.getProperties().put(MapConstants.ATTR_LAT, Double.valueOf(lat));
                                 newViewNode.getProperties().put(MapConstants.ATTR_LON, Double.valueOf(lng));
-                                newViewNode.getProperties().put(MapConstants.PROPERTY_CELL_EDITABLE, false);
-                                newViewNode.getProperties().put(MapConstants.PROPERTY_CELL_MOVABLE, false);
                                 
                                 ospView.getAsViewMap().addNode(newViewNode);
                             }

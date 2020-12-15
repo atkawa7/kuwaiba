@@ -96,45 +96,14 @@ public class ResourceFactory extends AbstractResourceFactory {
     @Autowired
     private  MetadataEntityManager mem;
     
-    private String jsRedrawGraph;
-    
     public ResourceFactory() {
         icons = new HashMap();
         smallIcons = new HashMap();
         defaultIcons = new HashMap();
         defaultSmallIcons = new HashMap();
     }
-    
-    @PostConstruct
-    public void init() {
-        BufferedReader bufferedReader = null;
-        try {
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("src/redraw-graph.js");
-            bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"));
-            StringBuilder stringBuilder = new StringBuilder();
-            String string;
-            while ((string = bufferedReader.readLine()) != null)
-                stringBuilder.append(string).append("\n");
-            bufferedReader.close();
-            jsRedrawGraph = stringBuilder.toString();
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(ResourceFactory.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(ResourceFactory.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                bufferedReader.close();
-            } catch (IOException ex) {
-                Logger.getLogger(ResourceFactory.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-    
-    public String getRedrawGraphJs() {
-        return jsRedrawGraph;
-    }
-       
-   @Override
+           
+    @Override
     public StreamResource getClassIcon(String className) {
         if (className == null || className.isEmpty() || mem == null) {
             StreamResource icon = buildIcon("default.png", getIcon(Color.black, DEFAULT_ICON_WIDTH, DEFAULT_ICON_HEIGHT));

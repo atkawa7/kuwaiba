@@ -19,12 +19,11 @@ import com.neotropic.flow.component.googlemap.DrawingManager;
 import com.neotropic.flow.component.googlemap.GeometryPoly;
 import com.neotropic.flow.component.googlemap.GoogleMap;
 import com.neotropic.flow.component.googlemap.LatLng;
-import com.neotropic.flow.component.googlemap.LatLngBounds;
 import com.neotropic.flow.component.googlemap.OverlayType;
 import com.neotropic.kuwaiba.modules.commercial.ospman.OutsidePlantService;
-import com.neotropic.kuwaiba.modules.commercial.ospman.api.GeoBounds;
 import com.neotropic.kuwaiba.modules.commercial.ospman.api.GeoCoordinate;
-import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapOverlay;
+import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapEdge;
+import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapNode;
 import com.vaadin.flow.component.Component;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +35,12 @@ import org.neotropic.kuwaiba.core.apis.persistence.exceptions.InventoryException
 import org.neotropic.kuwaiba.core.i18n.TranslationService;
 import org.neotropic.util.visual.notifications.SimpleNotification;
 import com.neotropic.kuwaiba.modules.commercial.ospman.api.MapProvider;
+import java.util.function.BiConsumer;
+import org.neotropic.kuwaiba.core.apis.persistence.business.BusinessObjectLight;
+import org.neotropic.kuwaiba.core.apis.persistence.metadata.MetadataEntityManager;
+import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewEdge;
+import org.neotropic.kuwaiba.visualization.api.BusinessObjectViewNode;
+import org.neotropic.kuwaiba.visualization.api.resources.ResourceFactory;
 import org.neotropic.util.visual.notifications.AbstractNotification;
 
 /**
@@ -57,9 +62,29 @@ public class GoogleMapsMapProvider implements MapProvider {
      */
     private final List<IdleEventListener> idleEventListeners = new ArrayList();
     /**
-     * Set of bounds changed event listeners.
+     * Set of View and Google Map Nodes
      */
-    private final List<BoundsChangedEventListener> boundsChangedEventListeners = new ArrayList();
+    private final HashMap<BusinessObjectViewNode, GoogleMapNode> nodes = new HashMap();
+    /**
+     * Set of View and Google Map Edges
+     */
+    private final HashMap<BusinessObjectViewEdge, GoogleMapEdge> edges = new HashMap();
+    /**
+     * Resource factory. Used to get node icons.
+     */
+    private ResourceFactory resourceFactory;
+    /**
+     * Metadata Entity Manager.
+     */
+    private MetadataEntityManager mem;
+    /**
+     * Translation Service.
+     */
+    private TranslationService ts;
+    
+    private EdgeHelper edgeHelper;
+    
+    private PathSelectionHelper pathSelectionHelper;
     
     public GoogleMapsMapProvider() {
     }
@@ -109,8 +134,15 @@ public class GoogleMapsMapProvider implements MapProvider {
     }
     
     @Override
-    public void createComponent(ApplicationEntityManager aem, TranslationService ts) {
+    public void createComponent(ApplicationEntityManager aem, MetadataEntityManager mem, ResourceFactory resourceFactory, TranslationService ts) {
+        Objects.requireNonNull(aem);
+        Objects.requireNonNull(resourceFactory);
+        Objects.requireNonNull(ts);
+        Objects.requireNonNull(mem);
         HashMap<String, Object> properties = getProperties(aem, ts);
+        this.resourceFactory = resourceFactory;
+        this.ts = ts;
+        this.mem = mem;
         
         final String apiKey = (String) properties.get(PROPERTY_API_KEY);
         final GeoCoordinate center = (GeoCoordinate) properties.get(PROPERTY_CENTER);
@@ -127,12 +159,6 @@ public class GoogleMapsMapProvider implements MapProvider {
         
         geometryPoly = new GeometryPoly(googleMap);
         
-        googleMap.addMapBoundsChanged(event -> 
-            new ArrayList<>(boundsChangedEventListeners).forEach(listener -> {
-                if (boundsChangedEventListeners.contains(listener))
-                    listener.accept(new BoundsChangedEvent(listener));
-            })
-        );
         googleMap.addMapIdleListener(event ->
             new ArrayList<>(idleEventListeners).forEach(listener -> {
                 if (idleEventListeners.contains(listener))
@@ -145,37 +171,9 @@ public class GoogleMapsMapProvider implements MapProvider {
     public Component getComponent() {
         return googleMap;
     }
-
-    @Override
-    public MapOverlay createOverlay() {
-        
-        if (googleMap != null) {
-            GoogleMapsOverlay mapOverlay = new GoogleMapsOverlay();
-            googleMap.addOverlayView(mapOverlay.getComponent());
-            return mapOverlay;
-        }
-        return null;
-    }
-    @Override
-    public void removeOverlay(MapOverlay mapOverlay) {
-        Objects.requireNonNull(mapOverlay);
-        if (googleMap != null && mapOverlay instanceof GoogleMapsOverlay)
-            googleMap.removeOverlayView(((GoogleMapsOverlay) mapOverlay).getComponent());
-    }
     @Override
     public GeoCoordinate getCenter() {
         return new GeoCoordinate(googleMap.getCenterLat(), googleMap.getCenterLng());
-    }
-    @Override
-    public GeoBounds getBounds() {
-        LatLngBounds bounds = googleMap.getBounds();
-        if (bounds != null) {
-            return new GeoBounds(
-                new GeoCoordinate(bounds.getNorthEast().getLat(), bounds.getNorthEast().getLng()), 
-                new GeoCoordinate(bounds.getSouthWest().getLat(), bounds.getSouthWest().getLng())
-            );
-        }
-        return null;
     }
     @Override
     public void setCenter(GeoCoordinate center) {
@@ -202,40 +200,16 @@ public class GoogleMapsMapProvider implements MapProvider {
     public void setHandMode() {
         if (drawingManager != null)
             drawingManager.setDrawingMode(null);
-    }
-    @Override
-    public String jsExpressionLockMap() {
-        return "$0.map.setOptions({draggable: false, maxZoom: $0.map.getZoom(), minZoom: $0.map.getZoom()});";
-    }
-    @Override
-    public String jsExpressionUnlockMap() {
-        return "$0.map.setOptions({draggable: true, maxZoom: null, minZoom: null});";
-    }
-    @Override
-    public void setDrawingOverlayMode(Consumer<GeoBounds> drawingOverlayComplete) {
-        if (drawingManager != null) {
-            drawingManager.setDrawingMode(null);
-            drawingManager.setDrawingMode(OverlayType.RECTANGLE);
-            if (drawingOverlayComplete != null)
-                drawingManager.addDrawingManagerRectangleCompleteListener(event -> {
-                    drawingManager.setDrawingMode(null);
-                    event.unregisterListener();
-                    
-                    LatLng northEast = event.getBounds().getNorthEast();
-                    LatLng southWest = event.getBounds().getSouthWest();
-                    
-                    drawingOverlayComplete.accept(new GeoBounds(
-                        new GeoCoordinate(northEast.getLat(), northEast.getLng()), 
-                        new GeoCoordinate(southWest.getLat(), southWest.getLng())
-                    ));
-                });
-        }
+        if (edgeHelper != null)
+            edgeHelper.cancel();
+        if (pathSelectionHelper != null)
+            pathSelectionHelper.cancel();
     }
     
     @Override    
     public void setDrawingMarkerMode(Consumer<GeoCoordinate> drawingMarkerComplete) {
+        setHandMode();
         if (drawingManager != null) {
-            drawingManager.setDrawingMode(null);
             drawingManager.setDrawingMode(OverlayType.MARKER);
             if (drawingMarkerComplete != null)
                 drawingManager.addDrawingManagerMarkerCompleteListener(event -> {
@@ -246,35 +220,22 @@ public class GoogleMapsMapProvider implements MapProvider {
                 });
         }
     }
-    @Override    
-    public void setDrawingPolylineMode(Consumer<List<GeoCoordinate>> drawingPolylineComplete) {
-        if (drawingManager != null) {
-            drawingManager.setDrawingMode(null);
-            drawingManager.setDrawingMode(OverlayType.POLYLINE);
-            if (drawingPolylineComplete != null)
-                drawingManager.addDrawingManagerPolylineCompleteListener(event -> {
-                    drawingManager.setDrawingMode(null);
-                    event.unregisterListener();
-                    
-                    List<GeoCoordinate> coordinates = new ArrayList();
-                    for (LatLng latLng : event.getPath())
-                        coordinates.add(new GeoCoordinate(latLng.getLat(), latLng.getLng()));
-                    drawingPolylineComplete.accept(coordinates);
-                });
-        }
-    }
     @Override
-    public void addBoundsChangedEventListener(BoundsChangedEventListener listener) {
-        boundsChangedEventListeners.add(listener);
+    public void setDrawingEdgeMode(BiConsumer<HashMap<String, Object>, Runnable> callbackEdgeComplete) {
+        setHandMode();
+        if (edgeHelper == null)
+            edgeHelper = new EdgeHelper(callbackEdgeComplete, nodes.values(), edges.values(), googleMap);
+        edgeHelper.init();
     }
+    
     @Override
-    public void removeBoundsChangedEventListener(BoundsChangedEventListener listener) {
-        boundsChangedEventListeners.removeIf(l -> l.equals(listener));
+    public void setPathSelectionMode(BiConsumer<List<BusinessObjectViewEdge>, Runnable> callbackPathSelectionComplete) {
+        setHandMode();
+        if (pathSelectionHelper == null)
+            pathSelectionHelper = new PathSelectionHelper(callbackPathSelectionComplete, googleMap, nodes.values(), edges.values());
+        pathSelectionHelper.init();
     }
-    @Override
-    public void removeAllBoundsChangedEventListener() {
-        boundsChangedEventListeners.clear();
-    }
+    
     @Override
     public void addIdleEventListener(IdleEventListener listener) {
         idleEventListeners.add(listener);
@@ -309,6 +270,34 @@ public class GoogleMapsMapProvider implements MapProvider {
         coordinates.forEach((id, coordinate) -> points.put(id, new LatLng(coordinate.getLatitude(), coordinate.getLongitude())));
         
         geometryPoly.callbackContainsLocations(points, getPaths(paths), callback);
+    }
+    
+    @Override
+    public MapNode addNode(BusinessObjectViewNode viewNode) {
+        GoogleMapNode node = new GoogleMapNode(viewNode, resourceFactory);
+        nodes.put(viewNode, node);
+        googleMap.newMarker(node);
+        return node;
+    }
+    
+    @Override
+    public MapEdge addEdge(BusinessObjectViewEdge viewEdge) {
+        GoogleMapEdge edge = new GoogleMapEdge(viewEdge, mem, ts);
+        edges.put(viewEdge, edge);
+        googleMap.newPolyline(edge);
+        return edge;
+    }
+    
+    @Override
+    public void removeNode(BusinessObjectViewNode viewNode) {
+        GoogleMapNode node = nodes.remove(viewNode);
+        googleMap.removeMarker(node);
+    }
+    
+    @Override
+    public void removeEdge(BusinessObjectViewEdge viewEdge) {
+        GoogleMapEdge edge = edges.remove(viewEdge);
+        googleMap.removePolyline(edge);
     }
     
     private List<List<LatLng>> getPaths(List<List<GeoCoordinate>> paths) {

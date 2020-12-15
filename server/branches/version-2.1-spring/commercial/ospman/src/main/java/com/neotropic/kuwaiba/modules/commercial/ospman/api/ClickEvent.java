@@ -15,29 +15,21 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman.api;
 
+import java.util.function.Consumer;
+
 /**
- * Set of constants used in the Outside Plant Module
+ * Click Event to add/fire in the Outside Plant View
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class MapConstants {
-    /**
-     * XML Outside Plant View attribute lat
-     */
-    public static final String ATTR_LAT = "lat"; //NOI18N
-    /**
-     * XML Outside Plant View attribute lon
-     */
-    public static final String ATTR_LON = "lon"; //NOI18N
-    /**
-     * View Edge property controlPoints
-     */
-    public static final String PROPERTY_CONTROL_POINTS = "controlPoints"; //NOI18N
+public class ClickEvent {
+    public interface ClickEventListener extends Consumer<ClickEvent> {
+    }
+    private ClickEventListener listener;
     
-    public static final String BUSINESS_OBJECT_SOURCE = "source"; //NOI18N
-    
-    public static final String BUSINESS_OBJECT_TARGET = "target"; //NOI18N
-    
-    public static final double EDGE_STROKE_WEIGHT = 2;
-    
-    public static final double EDGE_STROKE_WEIGHT_MOUSE_OVER = 4;
+    public ClickEvent(ClickEventListener listener) {
+        this.listener = listener;
+    }
+    public ClickEventListener getListener() {
+        return listener;
+    }
 }

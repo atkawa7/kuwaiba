@@ -67,7 +67,7 @@ public class WindowNewContainer extends Dialog {
     
     public WindowNewContainer(BusinessObjectLight source, BusinessObjectLight target, 
         TranslationService ts, ApplicationEntityManager aem, BusinessEntityManager bem, MetadataEntityManager mem, 
-        PhysicalConnectionsService physicalConnectionService, Consumer<BusinessObjectLight> containerConsumer) {
+        PhysicalConnectionsService physicalConnectionService, Consumer<BusinessObjectLight> containerConsumer, Runnable callbackCancel) {
         Objects.requireNonNull(source);
         Objects.requireNonNull(target);
         Objects.requireNonNull(ts);
@@ -76,6 +76,7 @@ public class WindowNewContainer extends Dialog {
         Objects.requireNonNull(mem);
         Objects.requireNonNull(physicalConnectionService);
         Objects.requireNonNull(containerConsumer);
+        Objects.requireNonNull(callbackCancel);
         
         this.source = source;
         this.target = target;
@@ -117,7 +118,10 @@ public class WindowNewContainer extends Dialog {
             VerticalLayout content = new VerticalLayout();
             
             HorizontalLayout buttons = new HorizontalLayout();
-            Button btnCancel = new Button(ts.getTranslatedString("module.general.messages.cancel"), event -> close());
+            Button btnCancel = new Button(ts.getTranslatedString("module.general.messages.cancel"), event -> {
+                close();
+                callbackCancel.run();
+            });
             Button btnOk = new Button(ts.getTranslatedString("module.general.messages.ok"), event -> {
                 try {
                     String containerName = txtName.getValue();

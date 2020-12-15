@@ -38,6 +38,7 @@ import com.vaadin.flow.component.treegrid.TreeGrid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import org.neotropic.kuwaiba.core.apis.persistence.application.ApplicationEntityManager;
 import org.neotropic.kuwaiba.core.apis.persistence.application.TemplateObjectLight;
@@ -84,15 +85,23 @@ public class WindowContainers extends Dialog {
     private String containerName;
     private ClassMetadataLight containerClass;
     private TemplateObjectLight containerTemplate;
+    private Runnable callbackPathSelectionCancel;
     
     public WindowContainers(List<BusinessObjectViewEdge> edges, 
         ApplicationEntityManager aem, BusinessEntityManager bem, MetadataEntityManager mem,
-        TranslationService ts) {
+        TranslationService ts, Runnable callbackPathSelectionCancel) {
+        Objects.requireNonNull(edges);
+        Objects.requireNonNull(aem);
+        Objects.requireNonNull(bem);
+        Objects.requireNonNull(mem);
+        Objects.requireNonNull(ts);
+        Objects.requireNonNull(callbackPathSelectionCancel);
         
         this.aem = aem;
         this.bem = bem;
         this.mem = mem;
         this.ts = ts;
+        this.callbackPathSelectionCancel = callbackPathSelectionCancel;
         edges.forEach(edge -> rootContainers.add(edge.getIdentifier()));
     }
     
@@ -103,6 +112,7 @@ public class WindowContainers extends Dialog {
         getElement().getThemeList().add("osp-70vh-70-vw");
         
         if (rootContainers.isEmpty()) {
+            callbackPathSelectionCancel.run();
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"), 
                 ts.getTranslatedString("module.ospman.containers.error.select-container"), 
@@ -126,6 +136,7 @@ public class WindowContainers extends Dialog {
                 if (!listEndpointsB.isEmpty())
                     endpointsB.put(rootContainer, listEndpointsB.get(0));
             } catch (InventoryException ex) {
+                callbackPathSelectionCancel.run();
                 new SimpleNotification(
                     ts.getTranslatedString("module.general.messages.error"), 
                     ex.getLocalizedMessage(), 
@@ -134,6 +145,7 @@ public class WindowContainers extends Dialog {
             }
         });
         if (!hasPath()) {
+            callbackPathSelectionCancel.run();
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"), 
                 ts.getTranslatedString("module.ospman.containers.path.not-continuous"), 
@@ -151,7 +163,10 @@ public class WindowContainers extends Dialog {
             Tab tabPath = new Tab(ts.getTranslatedString("module.ospman.containers.path.step"));
             tabPath.setEnabled(false);
                         
-            Button btnCancel = new Button(ts.getTranslatedString("module.general.messages.cancel"), event -> close());
+            Button btnCancel = new Button(ts.getTranslatedString("module.general.messages.cancel"), event -> {
+                callbackPathSelectionCancel.run();
+                close();
+            });
             
             Button btnPrevious = new Button(ts.getTranslatedString("module.general.messages.previous"));
             btnPrevious.setVisible(false);
@@ -189,12 +204,14 @@ public class WindowContainers extends Dialog {
             
             btnFinish.addClickListener(event -> {
                 if (containers.isEmpty()) {
+                    callbackPathSelectionCancel.run();
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.warning"), 
                         ts.getTranslatedString("module.ospman.containers.error.select-container"), 
                         AbstractNotification.NotificationType.WARNING, ts
                     ).open();
                 } else if (!hasPath()) {
+                    callbackPathSelectionCancel.run();
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.error"), 
                         ts.getTranslatedString("module.ospman.containers.path.not-continuous"), 
@@ -228,12 +245,14 @@ public class WindowContainers extends Dialog {
                                 );
                             }
                         }
+                        callbackPathSelectionCancel.run();
                         new SimpleNotification(
                             ts.getTranslatedString("module.general.messages.information"), 
                             ts.getTranslatedString("module.ospman.container.created-successfully"), 
                             AbstractNotification.NotificationType.INFO, ts
                         ).open();
                     } catch (InventoryException ex) {
+                        callbackPathSelectionCancel.run();
                         new SimpleNotification(
                             ts.getTranslatedString("module.general.messages.error"), 
                             ex.getLocalizedMessage(), 
@@ -264,6 +283,7 @@ public class WindowContainers extends Dialog {
             lyt.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, lytButtons);
             add(lyt);
         } catch (InventoryException ex) {
+            callbackPathSelectionCancel.run();
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"), 
                 ex.getLocalizedMessage(), 
@@ -312,6 +332,7 @@ public class WindowContainers extends Dialog {
                 try {
                     cmbContainerTemplate.setItems(aem.getTemplatesForClass(containerClass.getName()));
                 } catch (MetadataObjectNotFoundException ex) {
+                    callbackPathSelectionCancel.run();
                     new SimpleNotification(
                         ts.getTranslatedString("module.general.messages.error"), 
                         ex.getMessage(), 
@@ -368,6 +389,7 @@ public class WindowContainers extends Dialog {
                 specialChildren.forEach(specialChild -> itemChildren.add(new BusinessObjectItem(specialChild)));
                 return itemChildren;
             } catch (InventoryException ex) {
+                callbackPathSelectionCancel.run();
                 new SimpleNotification(
                     ts.getTranslatedString("module.general.messages.error"),
                     ex.getLocalizedMessage(), 
@@ -462,6 +484,7 @@ public class WindowContainers extends Dialog {
                 }
             }
         } catch (InventoryException ex) {
+            callbackPathSelectionCancel.run();
             new SimpleNotification(
                 ts.getTranslatedString("module.general.messages.error"), //NOI18N
                 ex.getLocalizedMessage(), 

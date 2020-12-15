@@ -15,32 +15,29 @@
  */
 package com.neotropic.kuwaiba.modules.commercial.ospman.api;
 
+import java.util.List;
+import java.util.function.Consumer;
+
 /**
- * Represents a rectangle in a geographical coordinates
+ * Path Changed Event to add/fire in the Outside Plant View.
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class GeoBounds {
-    private GeoCoordinate northeast;
-    private GeoCoordinate southwest;
-    
-    public GeoBounds(GeoCoordinate northeast, GeoCoordinate southwest) {
-        this.northeast = northeast;
-        this.southwest = southwest;
+public class PathChangedEvent {
+    public interface PathChangedEventListener extends Consumer<PathChangedEvent> {
     }
-        
-    public GeoCoordinate getNortheast() {
-        return northeast;
-    }
+    private final PathChangedEventListener listener;
+    private final List<GeoCoordinate> controlPoints;
     
-    public void setNortheast(GeoCoordinate northeast) {
-        this.northeast = northeast;
+    public PathChangedEvent(List<GeoCoordinate> controlPoints, PathChangedEventListener listener) {
+        this.controlPoints = controlPoints;
+        this.listener = listener;
+    } 
+    
+    public List<GeoCoordinate> getControlPoints() {
+        return controlPoints;
     }
     
-    public GeoCoordinate getSouthwest() {
-        return southwest;
-    }
-    
-    public void setSouthwest(GeoCoordinate southwest) {
-        this.southwest = southwest;
+    public PathChangedEventListener getListener() {
+        return listener;
     }
 }
