@@ -205,6 +205,20 @@ public class GoogleMap extends Component implements HasComponents {
         JsonObject bounds = (JsonObject) getElement().getPropertyRaw(Constants.Property.BOUNDS);
         return bounds != null ? new LatLngBounds(bounds) : null;
     }
+    /**
+     * Indicates whether point of interest are not clickable. Default value is true.
+     * @return Indicates whether point of interest are not clickable.
+     */
+    public boolean getClickableIcons() {
+        return getElement().getProperty(Constants.Property.CLICKABLE_ICONS, true);
+    }
+    /**
+     * Indicates whether point of interest are not clickable. Default value is true.
+     * @param clickableIcons Indicates whether point of interest are not clickable.
+     */
+    public void setClickableIcons(boolean clickableIcons) {
+        getElement().setProperty(Constants.Property.CLICKABLE_ICONS, clickableIcons);
+    }
     
     public void newMarker(GoogleMapMarker googleMapMarker) {
         add(googleMapMarker);

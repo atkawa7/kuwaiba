@@ -108,6 +108,20 @@ public class GoogleMapMarker extends Component {
         else
             getElement().setPropertyJson(Constants.Property.ANIMATION, Json.createNull());
     }
+    /**
+     * Indicates whether handles mouse events. Default value is true.
+     * @return Indicates whether handles mouse events.
+     */
+    public boolean getClickable() {
+        return getElement().getProperty(Constants.Property.CLICKABLE, true);
+    }
+    /**
+     * Indicates whether handles mouse events.
+     * @param clickable Indicates whether handles mouse events.
+     */
+    public void setClickable(boolean clickable) {
+        getElement().setProperty(Constants.Property.CLICKABLE, clickable);
+    }
     //</editor-fold>
     //<editor-fold desc="Marker Listeners" defaultstate="collapsed">
     public Registration addMarkerClickListener(ComponentEventListener<GoogleMapEvent.MarkerClickEvent> listener) {

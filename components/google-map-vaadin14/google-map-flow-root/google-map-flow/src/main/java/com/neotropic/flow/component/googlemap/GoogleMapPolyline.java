@@ -83,7 +83,29 @@ public class GoogleMapPolyline extends Component {
     }
     
     public void setPolylineVisible(boolean visible) {
-        getElement().setAttribute(Constants.Property.VISIBLE, visible);
+        getElement().setProperty(Constants.Property.VISIBLE, visible);
+    }
+    /**
+     * Indicates whether handles mouse events. Default value is true.
+     * @return Indicates whether handles mouse events.
+     */
+    public boolean getClickable() {
+        return getElement().getProperty(Constants.Property.CLICKABLE, true);
+    }
+    /**
+     * Indicates whether handles mouse events.
+     * @param clickable Indicates whether handles mouse events.
+     */
+    public void setClickable(boolean clickable) {
+        getElement().setProperty(Constants.Property.CLICKABLE, clickable);
+    }
+    
+    public double getZIndex() {
+        return getElement().getProperty(Constants.Property.Z_INDEX, 0);
+    }
+    
+    public void setZIndex(double zIndex) {
+        getElement().setProperty(Constants.Property.Z_INDEX, zIndex);
     }
     
     @Synchronize(property="path", value="polyline-path-changed")

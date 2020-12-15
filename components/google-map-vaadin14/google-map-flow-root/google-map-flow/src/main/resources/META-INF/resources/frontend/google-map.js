@@ -183,6 +183,14 @@ class GoogleMap extends PolymerElement {
       minZomm: {
         type: Number,
         observer: '_minZoomChanged'
+      },
+      /**
+       * Indicates whether point of interest are not clickable.
+       */
+      clickableIcons: {
+        type: Boolean,
+        value: true,
+        observer: '_clickableIconsChanged'
       }
     };
   }
@@ -218,7 +226,8 @@ class GoogleMap extends PolymerElement {
     this.map = new google.maps.Map(this.shadowRoot.getElementById(this.divId), {
       center: {lat: this.lat, lng: this.lng},
       zoom: this.zoom,
-      disableDefaultUI: this.disableDefaultUi
+      disableDefaultUI: this.disableDefaultUi,
+      clickableIcons: this.clickableIcons
     });
     this.map.setMapTypeId(this.mapTypeId);
     this._stylesChanged(this.styles);
@@ -415,6 +424,15 @@ class GoogleMap extends PolymerElement {
   _minZoomChanged(newValue) {
     if (this.map)
       this.map.setOptions({minZoom: newValue});
+  }
+  /**
+   * Indicates whether point of interest are not clickable.
+   * 
+   * @param {boolean} newValue
+   */
+  _clickableIconsChanged(newValue) {
+    if (this.map)
+      this.map.setOptions({clickableIcons: newValue});
   }
 
   createGeometryPoly() {

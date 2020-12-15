@@ -76,6 +76,18 @@ class GoogleMapPolyline extends PolymerElement {
 			path: {
 				type: Array,
 				observer: '_pathChanged'
+			},
+			/**
+			 * Indicates whether handles mouse events.
+			 */
+			clickable: {
+				type: Boolean,
+				value: true,
+				observer: '_clickableChanged'
+			},
+			zIndex: {
+				type: Number,
+				observer: '_zIndexChanged'
 			}
 		};
 	}
@@ -94,8 +106,12 @@ class GoogleMapPolyline extends PolymerElement {
 			strokeColor: this.strokeColor,
 			strokeOpacity: this.strokeOpacity,
 			strokeWeight: this.strokeWeight,
-			visible: this.visible
+			visible: this.visible,
+			clickable: this.clickable
 		});
+		if (this.zIndex)
+			this._zIndexChanged(this.zIndex);
+		
 		this.polyline.addListener('click', function(event) {
 			_this.dispatchEvent(new CustomEvent('polyline-click'));
 		});
@@ -199,6 +215,21 @@ class GoogleMapPolyline extends PolymerElement {
 				this._setPolylinePath(newValue);
 			}
 		}
+	}
+	/**
+	 * Indicates whether handles mouse events.
+	 * @param {boolean} newValue 
+	 */
+	_clickableChanged(newValue) {
+		if (this.polyline)
+			this.polyline.setOptions({clickable: newValue});
+	}
+	/**
+	 * @param {number} newValue
+	 */
+	_zIndexChanged(newValue) {
+		if (this.polyline)
+			this.polyline.setOptions({zIndex: newValue});
 	}
 }
 

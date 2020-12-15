@@ -90,6 +90,14 @@ class GoogleMapMarker extends PolymerElement {
       animation: {
         type: String,
         observer: '_animationChanged'
+      },
+      /**
+       * Indicates whether handles mouse events.
+       */
+      clickable: {
+        type: Boolean,
+        value: true,
+        observer: '_clickableChanged'
       }
     };
   }
@@ -117,7 +125,8 @@ class GoogleMapMarker extends PolymerElement {
       label: this.label,
       draggable: this._draggable,
       visible: this.visible,
-      animation: this.animation
+      animation: this.animation,
+      clickable: this.clickable
     });
     var _this = this;
     this.marker.addListener('click', function(event) {
@@ -246,6 +255,15 @@ class GoogleMapMarker extends PolymerElement {
       else
         this.marker.setAnimation(null);
     }
+  }
+  /**
+   * Indicates whether handles mouse events.
+   * 
+   * @param {boolean} newValue 
+   */
+  _clickableChanged(newValue) {
+    if (this.marker)
+      this.marker.setOptions({clickable: newValue});
   }
 }
 

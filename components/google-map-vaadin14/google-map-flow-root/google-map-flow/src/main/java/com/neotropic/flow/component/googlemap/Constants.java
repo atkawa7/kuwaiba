@@ -74,6 +74,7 @@ public class Constants {
         public static String MAX_ZOOM = "maxZoom"; //NOI18N
         public static String MIN_ZOOM = "minZoom"; //NOI18N
         public static String MAP_BOUNDS = "mapBounds"; //NOI18N
+        public static String CLICKABLE_ICONS = "clickableIcons"; //NOI18N
     }
     
     public static class Default {
